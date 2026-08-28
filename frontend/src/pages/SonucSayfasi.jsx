@@ -30,7 +30,7 @@ export default function SonucSayfasi() {
         <>
           <div className="taslak-onizleme">
             <div className="taslak-onizleme-icerik ob-grid">
-              {[94, 88, 82, 77, 71].map((genislik, i) => (
+              {[94, 88, 82, 77, 71, 66, 60, 55, 50, 46, 42, 38].map((genislik, i) => (
                 <div key={i} className="ob-card">
                   <div className="ob-top">
                     <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
