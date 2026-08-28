@@ -10,6 +10,9 @@ import K5DalSoruSayfasi from './pages/K5DalSoruSayfasi'
 import SonucSayfasi from './pages/SonucSayfasi'
 import KesfetSayfasi from './pages/KesfetSayfasi'
 import KoclukSayfasi from './pages/KoclukSayfasi'
+import ProfilAyarlariSayfasi from './pages/ProfilAyarlariSayfasi'
+import AnaSayfa from './pages/AnaSayfa'
+import KatmanDetaySayfasi from './pages/KatmanDetaySayfasi'
 import AdminGirisSayfasi from './pages/admin/AdminGirisSayfasi'
 import KontrolPaneliSayfasi from './pages/admin/KontrolPaneliSayfasi'
 import PipelineDurumuSayfasi from './pages/admin/PipelineDurumuSayfasi'
@@ -44,16 +47,16 @@ function AnaUygulama() {
           </OzelRota>
         }
       >
-        <Route path="/" element={<Navigate to="/katmanlar" replace />} />
+        <Route path="/" element={<AnaSayfa />} />
         <Route path="/katmanlar" element={<KatmanlarSayfasi />} />
         <Route path="/katmanlar/:kod" element={<SoruSayfasi />} />
-        {/* K5 artık ayrı bir "sayfa" değil — /katmanlar listesinin devamı.
-            Biri eski /k5 linkine gelirse listeye yönlendir; dal cevaplama rotası aynen kalıyor. */}
         <Route path="/k5" element={<Navigate to="/katmanlar" replace />} />
         <Route path="/k5/:kod" element={<K5DalSoruSayfasi />} />
         <Route path="/sonuc" element={<SonucSayfasi />} />
+        <Route path="/sonuc/:kod" element={<KatmanDetaySayfasi />} />
         <Route path="/kesfet" element={<KesfetSayfasi />} />
         <Route path="/koclugu" element={<KoclukSayfasi />} />
+        <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
       </Route>
 
       {/* --- Yönetici --- */}
