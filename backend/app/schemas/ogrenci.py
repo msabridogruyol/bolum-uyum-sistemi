@@ -56,6 +56,11 @@ class KatmanSonucSatiri(BaseModel):
     degisken_id: int
     degisken_adi: str
     puan: float
+    # --- Gelişim yorumu (sonradan eklendi, opsiyonel — geriye dönük uyumlu) ---
+    durum_tespiti: str | None = None
+    aksiyon_onerisi: str | None = None
+    kaynak_tipi: str | None = None
+    tahmini_efor: str | None = None
 
 
 class KatmanTamamlamaCevap(BaseModel):
