@@ -8,6 +8,30 @@ function renkSec(puan) {
   return 'var(--tx3)'
 }
 
+function DegiskenKarti({ s }) {
+  return (
+    <div style={{ padding: '14px 0', borderBottom: '1px solid var(--bor)' }}>
+      <div className="dr" style={{ marginBottom: s.durum_tespiti ? 8 : 0 }}>
+        <div className="dl">{s.degisken_adi}</div>
+        <div className="db"><div className="df" style={{ width: `${s.puan}%`, background: renkSec(s.puan) }} /></div>
+        <div className="ds" style={{ color: renkSec(s.puan) }}>{s.puan}</div>
+      </div>
+      {s.durum_tespiti && (
+        <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.6, marginTop: 4 }}>{s.durum_tespiti}</div>
+      )}
+      {s.aksiyon_onerisi && (
+        <div style={{
+          marginTop: 8, fontSize: 12, color: 'var(--am)', background: 'var(--aml)',
+          padding: '8px 12px', borderRadius: 10, display: 'flex', gap: 8, alignItems: 'flex-start',
+        }}>
+          <span>💡</span>
+          <span>{s.aksiyon_onerisi}</span>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function SoruSayfasi() {
   const { kod } = useParams()
   const navigate = useNavigate()
@@ -33,32 +57,28 @@ export default function SoruSayfasi() {
   if (!sorular) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
 
   if (tamamlandi) {
+    const siraliSonuclar = [...tamamlandi.sonuclar].sort((a, b) => b.puan - a.puan)
+
     return (
       <div className="pg">
-        <div className="qwrap">
+        <div className="qwrap" style={{ maxWidth: 640 }}>
           <div className="ph">
             <div className="pt">{kod} tamamlandı 🎉</div>
-            <div className="ps">Bu katmandaki değişken puanların:</div>
+            <div className="ps">Bu katmandaki değişken puanların ve ne anlama geldikleri:</div>
           </div>
 
-          {tamamlandi.sonuclar.length === 0 ? (
+          {siraliSonuclar.length === 0 ? (
             <div className="veri-yok-grafik">
               <div className="vg-ikon">📊</div>
               <div className="vg-metin">Bu katman için henüz sonuç hesaplanmadı.</div>
             </div>
           ) : (
             <div className="card">
-              {tamamlandi.sonuclar.map((s) => (
-                <div key={s.degisken_id} className="dr">
-                  <div className="dl">{s.degisken_adi}</div>
-                  <div className="db"><div className="df" style={{ width: `${s.puan}%`, background: renkSec(s.puan) }} /></div>
-                  <div className="ds" style={{ color: renkSec(s.puan) }}>{s.puan}</div>
-                </div>
-              ))}
+              {siraliSonuclar.map((s) => <DegiskenKarti key={s.degisken_id} s={s} />)}
             </div>
           )}
 
-          <button className="btn full" onClick={() => navigate(tamamlandi.tum_katmanlar_tamamlandi_mi ? '/sonuc' : '/katmanlar')}>
+          <button className="btn full" onClick={() => navigate(tamamlandi.tum_katmanlar_tamamlandi_mi ? '/sonuc/genel' : '/katmanlar')}>
             {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sonuçlarımı Gör →' : 'Katmanlara Dön'}
           </button>
         </div>
