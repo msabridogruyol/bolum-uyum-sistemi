@@ -2,16 +2,22 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
+function renkSec(puan) {
+  if (puan >= 70) return 'var(--gr)'
+  if (puan >= 40) return 'var(--pu)'
+  return 'var(--tx3)'
+}
+
 export default function SoruSayfasi() {
   const { kod } = useParams()
   const navigate = useNavigate()
 
   const [sorular, setSorular] = useState(null)
   const [aktifIndex, setAktifIndex] = useState(0)
-  const [cevaplar, setCevaplar] = useState({}) // { soru_id: secenek_id }
+  const [cevaplar, setCevaplar] = useState({})
   const [gonderiliyor, setGonderiliyor] = useState(false)
   const [hata, setHata] = useState(null)
-  const [tamamlandi, setTamamlandi] = useState(null) // katman tamamlama cevabı
+  const [tamamlandi, setTamamlandi] = useState(null)
 
   useEffect(() => {
     setSorular(null)
@@ -34,18 +40,24 @@ export default function SoruSayfasi() {
             <div className="pt">{kod} tamamlandı 🎉</div>
             <div className="ps">Bu katmandaki değişken puanların:</div>
           </div>
-          <div className="ob-grid">
-            {tamamlandi.sonuclar.map((s) => (
-              <div key={s.degisken_id} className="ob-card">
-                <div className="ob-top">
-                  <div className="ob-body">
-                    <div className="ob-name">{s.degisken_adi}</div>
-                  </div>
-                  <div className="ob-score">{s.puan}</div>
+
+          {tamamlandi.sonuclar.length === 0 ? (
+            <div className="veri-yok-grafik">
+              <div className="vg-ikon">📊</div>
+              <div className="vg-metin">Bu katman için henüz sonuç hesaplanmadı.</div>
+            </div>
+          ) : (
+            <div className="card">
+              {tamamlandi.sonuclar.map((s) => (
+                <div key={s.degisken_id} className="dr">
+                  <div className="dl">{s.degisken_adi}</div>
+                  <div className="db"><div className="df" style={{ width: `${s.puan}%`, background: renkSec(s.puan) }} /></div>
+                  <div className="ds" style={{ color: renkSec(s.puan) }}>{s.puan}</div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
           <button className="btn full" onClick={() => navigate(tamamlandi.tum_katmanlar_tamamlandi_mi ? '/sonuc' : '/katmanlar')}>
             {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sonuçlarımı Gör →' : 'Katmanlara Dön'}
           </button>
