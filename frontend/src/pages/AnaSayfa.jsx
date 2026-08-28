@@ -118,47 +118,50 @@ export default function AnaSayfa() {
         </div>
       </div>
 
-      {/* --- Önerilen bölümler --- */}
-      {ozet.tur_tamamlandi_mi ? (
+      {/* --- Önerilen bölümler — başlık her zaman görünür --- */}
+      <div className="ct" style={{ marginTop: 20 }}>Sana Önerilen Bölümler</div>
+      {!ozet.tur_tamamlandi_mi ? (
+        <div className="card" style={{ background: 'linear-gradient(135deg,var(--pul),var(--sur))', borderColor: 'var(--pu)' }}>
+          <div className="veri-yok-grafik" style={{ padding: '18px 10px' }}>
+            <div className="vg-ikon">🌱</div>
+            <div className="vg-metin">
+              Bölüm önerilerin, K1-K4 katmanlarının **tamamı** bitince burada görünecek.
+              {' '}Şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
+            </div>
+            <button className="btn" style={{ marginTop: 14 }} onClick={() => navigate('/katmanlar')}>
+              {ozet.tamamlanan_katman_sayisi === 0 ? 'Yolculuğuna Başla' : 'Kaldığın Yerden Devam Et'} →
+            </button>
+          </div>
+        </div>
+      ) : siralama === null ? (
+        <div className="bos-durum">Yükleniyor…</div>
+      ) : siralama.length === 0 ? (
+        <div className="veri-yok-grafik">
+          <div className="vg-ikon">🌱</div>
+          <div className="vg-metin">Henüz önerilecek bölüm hesaplanmadı.</div>
+        </div>
+      ) : (
         <>
-          <div className="ct" style={{ marginTop: 20 }}>Sana Önerilen Bölümler</div>
-          {siralama === null ? (
-            <div className="bos-durum">Yükleniyor…</div>
-          ) : siralama.length === 0 ? (
-            <div className="veri-yok-grafik">
-              <div className="vg-ikon">🌱</div>
-              <div className="vg-metin">Henüz önerilecek bölüm hesaplanmadı.</div>
-            </div>
-          ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
-              {siralama.map((s, i) => (
-                <div key={s.bolum_id} className="ob-card" style={{ cursor: 'default' }}>
-                  <div className="ob-top">
-                    <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
-                    <div className="ob-body">
-                      <div className="ob-name">{s.bolum_adi}</div>
-                      <div className="mini-ilerleme-track" style={{ width: '100%', marginTop: 6 }}>
-                        <div className="mini-ilerleme-fill" style={{ width: `${s.toplam_uyum}%`, background: i < 3 ? 'var(--gold, var(--pu))' : 'var(--pu)' }} />
-                      </div>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
+            {siralama.map((s, i) => (
+              <div key={s.bolum_id} className="ob-card" style={{ cursor: 'default' }}>
+                <div className="ob-top">
+                  <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
+                  <div className="ob-body">
+                    <div className="ob-name">{s.bolum_adi}</div>
+                    <div className="mini-ilerleme-track" style={{ width: '100%', marginTop: 6 }}>
+                      <div className="mini-ilerleme-fill" style={{ width: `${s.toplam_uyum}%`, background: 'var(--pu)' }} />
                     </div>
-                    <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>
                   </div>
+                  <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>
                 </div>
-              ))}
-            </div>
-          )}
+              </div>
+            ))}
+          </div>
           <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/koclugu')}>
             Bölüm Karşılaştırmasına Git →
           </button>
         </>
-      ) : (
-        <div className="card" style={{ background: 'linear-gradient(135deg,var(--pul),var(--sur))', borderColor: 'var(--pu)' }}>
-          <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--pu)', marginBottom: 6 }}>SIRADAKİ ADIM</div>
-          <div style={{ fontSize: 16, fontWeight: 700, marginBottom: 14 }}>
-            {ozet.tamamlanan_katman_sayisi === 0 ? 'Yolculuğuna ilk katmanla başla' : 'Kaldığın yerden devam et'}
-          </div>
-          <button className="btn" onClick={() => navigate('/katmanlar')}>Yol Haritama Git →</button>
-        </div>
       )}
     </div>
   )
