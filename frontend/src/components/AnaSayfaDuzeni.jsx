@@ -55,6 +55,9 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/sonuc" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölüm Uyumum
         </NavLink>
+        <NavLink to="/sonuc/genel" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          📊 Genel Sonuçlar
+        </NavLink>
         <NavLink to="/sonuc/K1" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌱 K1 — Değerler
         </NavLink>
