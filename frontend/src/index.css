@@ -337,3 +337,16 @@ button,input{font-family:inherit}
 .ol{font-size:9.5px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
 .op{font-family:var(--fd);font-size:22px;font-weight:700;line-height:1.1}
 .ob{font-size:11px;color:var(--tx2);font-weight:600;margin-top:3px}
+
+/* ============ İki sütunlu düzen (K1-K4 sonuç ekranı) ============ */
+.two{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:14px;align-items:start}
+@media(max-width:680px){.two{grid-template-columns:1fr}}
+
+/* ============ Tıklanabilir/açılan boyut satırı ============ */
+.boyut-satir{padding:10px 0;border-bottom:1px solid var(--bor);cursor:pointer}
+.boyut-satir:last-child{border-bottom:none}
+.boyut-satir-ust{display:flex;align-items:center;gap:8px}
+.boyut-satir-ust .ok{font-size:10px;color:var(--tx3);transition:transform .15s;flex-shrink:0}
+.boyut-satir.acik .ok{transform:rotate(90deg)}
+.boyut-detay{overflow:hidden;max-height:0;transition:max-height .2s ease}
+.boyut-satir.acik .boyut-detay{max-height:200px;margin-top:8px}
