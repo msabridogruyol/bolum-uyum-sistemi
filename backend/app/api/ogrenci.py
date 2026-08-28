@@ -36,6 +36,45 @@ from app.schemas.ogrenci import (
 router = APIRouter()
 
 
+def _puan_araligi(puan: float) -> str:
+    """
+    Bir puanı 5 aralıktan birine ('belirgin_ustun'...'belirgin_altinda') eşler.
+    NOT: Sınırlar (80/60/40/20) belgede açık şekilde tanımlanmamıştı — F2.1'deki
+    gap kategorilerinin (±15/±5) aralık genişliği mantığına dayanan, buraya
+    özel çıkarılmış bir varsayım. Kalibre edilmesi gerekirse yalnızca bu
+    fonksiyon değişir.
+    """
+    if puan >= 80:
+        return "belirgin_ustun"
+    if puan >= 60:
+        return "ustun"
+    if puan >= 40:
+        return "beklenti"
+    if puan >= 20:
+        return "altinda"
+    return "belirgin_altinda"
+
+
+def _yorumlari_ekle(db: Session, sonuclar: list[KatmanSonucSatiri]) -> list[KatmanSonucSatiri]:
+    """Her sonuç satırına, gelisim_yorum_havuzu'ndan puana uygun yorumu ekler."""
+    for s in sonuclar:
+        aralik = _puan_araligi(s.puan)
+        satir = db.execute(
+            text("""
+                SELECT durum_tespiti, aksiyon_onerisi, kaynak_tipi, tahmini_efor
+                FROM gelisim_yorum_havuzu
+                WHERE degisken_id = :did AND aralik = :aralik
+            """),
+            {"did": s.degisken_id, "aralik": aralik},
+        ).mappings().first()
+        if satir:
+            s.durum_tespiti = satir["durum_tespiti"]
+            s.aksiyon_onerisi = satir["aksiyon_onerisi"]
+            s.kaynak_tipi = satir["kaynak_tipi"]
+            s.tahmini_efor = satir["tahmini_efor"]
+    return sonuclar
+
+
 def _katman_bul(db: Session, kod: str) -> Katman:
     katman = db.query(Katman).filter(Katman.kod == kod.upper()).first()
     if katman is None:
@@ -186,12 +225,14 @@ def katmani_tamamla_uc_nokta(
 
     degisken_adlari = {d.id: d.ad for d in db.query(Degisken).filter(Degisken.id.in_([s[0] for s in sonuclar])).all()}
 
+    sonuc_satirlari = _yorumlari_ekle(db, [
+        KatmanSonucSatiri(degisken_id=did, degisken_adi=degisken_adlari.get(did, "?"), puan=puan)
+        for did, puan in sonuclar
+    ])
+
     return KatmanTamamlamaCevap(
         katman_kodu=katman.kod,
-        sonuclar=[
-            KatmanSonucSatiri(degisken_id=did, degisken_adi=degisken_adlari.get(did, "?"), puan=puan)
-            for did, puan in sonuclar
-        ],
+        sonuclar=sonuc_satirlari,
         tum_katmanlar_tamamlandi_mi=tum_tamam,
     )
 
@@ -581,8 +622,8 @@ def katman_gecmis_sonucu(
     return KatmanGecmisSonucOut(
         katman_kodu=katman.kod,
         tamamlandi_mi=True,
-        sonuclar=[
+        sonuclar=_yorumlari_ekle(db, [
             KatmanSonucSatiri(degisken_id=r["degisken_id"], degisken_adi=r["degisken_adi"], puan=float(r["puan"]))
             for r in satirlar
-        ],
+        ]),
     )
