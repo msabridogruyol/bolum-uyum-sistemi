@@ -8,7 +8,7 @@ Kendall's W gibi alanlar burada YOK ve asla eklenmemeli. Bu alanlar
 YALNIZCA app/schemas/admin.py içindeki (henüz yazılmadı) ayrı şemalarda
 bulunabilir.
 """
-from datetime import datetime
+from datetime import datetime, date
 from pydantic import BaseModel
 
 
@@ -127,3 +127,52 @@ class DalBaslatCevap(BaseModel):
 class DalTamamlamaCevap(BaseModel):
     dal_kodu: str
     sonuclar: list[KatmanSonucSatiri]
+
+
+# ============================================================================
+# Profil (sonradan eklendi)
+# ============================================================================
+# NOT (hukuki): dogum_tarihi/cinsiyet KVKK açısından hassas veri sayılabilir,
+# veli onayı akışı ayrıca kurulmalıdır — bu şema yalnızca teknik alt yapıdır.
+
+class ProfilOut(BaseModel):
+    ad_soyad: str
+    email: str
+    okul: str | None
+    sinif: str | None
+    dogum_tarihi: date | None
+    cinsiyet: str | None
+    ilgi_alanlari: str | None
+    hedef_universite: str | None
+    hedef_meslek_id: int | None
+    hedef_meslek_adi: str | None  # join ile doldurulur, hedef_meslek_id NULL ise None
+    profil_foto_base64: str | None
+
+    model_config = {"from_attributes": True}
+
+
+class ProfilGuncelleIstek(BaseModel):
+    ad_soyad: str | None = None
+    okul: str | None = None
+    sinif: str | None = None
+    dogum_tarihi: date | None = None
+    cinsiyet: str | None = None  # 'kadin' | 'erkek' | 'belirtmek_istemiyorum' | 'diger'
+    ilgi_alanlari: str | None = None
+    hedef_universite: str | None = None
+    hedef_meslek_id: int | None = None
+
+
+class SifreDegistirIstek(BaseModel):
+    eski_sifre: str
+    yeni_sifre: str  # min 8 karakter — router'da doğrulanır
+
+
+class ProfilFotoIstek(BaseModel):
+    foto_base64: str  # "data:image/png;base64,..." formatında, tam data URI
+
+
+class MeslekAramaSonucu(BaseModel):
+    id: int
+    ad: str
+
+    model_config = {"from_attributes": True}
