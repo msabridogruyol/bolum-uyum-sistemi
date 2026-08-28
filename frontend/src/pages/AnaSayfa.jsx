@@ -124,7 +124,7 @@ export default function AnaSayfa() {
         <>
           <div className="taslak-onizleme">
             <div className="taslak-onizleme-icerik" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 10 }}>
-              {[92, 87, 81, 76, 70, 65].map((genislik, i) => (
+              {[92, 87, 81, 76, 70, 65, 60, 55, 50, 46, 42, 38].map((genislik, i) => (
                 <div key={i} className="ob-card" style={{ cursor: 'default' }}>
                   <div className="ob-top">
                     <div className="ob-rank">{i + 1}</div>
