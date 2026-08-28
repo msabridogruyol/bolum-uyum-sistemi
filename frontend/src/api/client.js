@@ -137,6 +137,8 @@ export const api = {
   bolumleriListele: () => aget('/admin/bolumler'),
   bolumDurumDegistir: (bolumId, yeniDurum, gerekce) =>
     apost(`/admin/bolumler/${bolumId}/durum`, { yeni_durum: yeniDurum, gerekce }),
+  bolumAciklamaGuncelle: (bolumId, kisaAciklama) =>
+    aput(`/admin/bolumler/${bolumId}/aciklama`, { kisa_aciklama: kisaAciklama }),
   katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
   yeniAgirlikVersiyonu: (agirliklar) => apost('/admin/katman-agirliklari', { agirliklar }),
   dallariListele: () => aget('/admin/dallar'),
