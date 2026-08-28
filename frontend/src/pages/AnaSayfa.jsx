@@ -24,20 +24,21 @@ export default function AnaSayfa() {
     if (!ozet) return
     if (ozet.tur_tamamlandi_mi) {
       api.siralamaGetir(10).then(setSiralama).catch(() => setSiralama([]))
-      Promise.all(ANA_KATMANLAR.map((kod) => api.katmanSonucuGetir(kod).then((r) => [kod, r]).catch(() => [kod, null])))
-        .then((liste) => {
-          const harita = {}
-          liste.forEach(([kod, r]) => {
-            harita[kod] = (r && r.tamamlandi_mi && r.sonuclar.length)
-              ? { puanOrtalama: Math.round(r.sonuclar.reduce((a, s) => a + s.puan, 0) / r.sonuclar.length), sonuclar: r.sonuclar }
-              : null
-          })
-          setKatmanSonuclari(harita)
-        })
     } else {
       setSiralama([])
-      setKatmanSonuclari({})
     }
+    // Katman sonuçlarını her durumda tek tek çek — tur tamamlanmamış olsa bile
+    // bireysel katmanlar bitmiş olabilir.
+    Promise.all(ANA_KATMANLAR.map((kod) => api.katmanSonucuGetir(kod).then((r) => [kod, r]).catch(() => [kod, null])))
+      .then((liste) => {
+        const harita = {}
+        liste.forEach(([kod, r]) => {
+          harita[kod] = (r && r.tamamlandi_mi && r.sonuclar.length)
+            ? { puanOrtalama: Math.round(r.sonuclar.reduce((a, s) => a + s.puan, 0) / r.sonuclar.length), sonuclar: r.sonuclar }
+            : null
+        })
+        setKatmanSonuclari(harita)
+      })
   }, [ozet])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
@@ -108,8 +109,8 @@ export default function AnaSayfa() {
               >
                 <div style={{ fontSize: 18 }}>{KATMAN_IKON[kod]}</div>
                 <div style={{ fontSize: 9.5, color: 'var(--tx3)', marginTop: 3, fontWeight: 600 }}>{k?.ad?.split('/')[0]?.split('&')[0]?.trim() || kod}</div>
-                <div style={{ fontSize: 13, fontWeight: 700, marginTop: 1, color: sonuc ? 'var(--gr)' : 'var(--tx3)' }}>
-                  {sonuc ? `${sonuc.puanOrtalama}%` : k?.durum === 'devam_ediyor' ? '···' : '—'}
+                <div style={{ fontSize: 13, fontWeight: 700, marginTop: 1, color: sonuc ? 'var(--gr)' : k?.durum === 'devam_ediyor' ? 'var(--pu)' : 'var(--tx3)' }}>
+                  {sonuc ? `${sonuc.puanOrtalama}%` : k?.durum === 'devam_ediyor' ? 'Devam ediyor' : 'Henüz başlanmadı'}
                 </div>
               </div>
             )
