@@ -255,3 +255,9 @@ button,input{font-family:inherit}
 
 /* placeholder çubuklar — hafif çizgili/soluk, "henüz veri yok" hissi */
 .df-placeholder{background:repeating-linear-gradient(45deg,var(--sur2),var(--sur2) 5px,var(--bor) 5px,var(--bor) 10px)}
+
+/* ============ Mini ilerleme çubuğu (liste kartları için) ============ */
+.mini-ilerleme-wrap{display:flex;flex-direction:column;align-items:flex-end;gap:5px;min-width:70px}
+.mini-ilerleme-track{width:72px;height:5px;background:var(--sur2);border-radius:3px;overflow:hidden}
+.mini-ilerleme-fill{height:100%;border-radius:3px;transition:width .3s}
+.mini-ilerleme-yuzde{font-size:11px;font-weight:700}
