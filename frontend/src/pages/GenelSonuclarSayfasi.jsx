@@ -92,6 +92,19 @@ export default function GenelSonuclarSayfasi() {
         </div>
       </div>
 
+      {tumTamam && guclerListesi.length > 0 && (
+        <div className="card">
+          <div className="ct">Öne Çıkan Boyutların</div>
+          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+            {guclerListesi.map((s) => (
+              <span key={s.degisken_id} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>
+                {s.degisken_adi}
+              </span>
+            ))}
+          </div>
+        </div>
+      )}
+
       {!tumTamam ? (
         <>
           <div className="taslak-onizleme">
