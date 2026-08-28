@@ -2,17 +2,19 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
-const KATMAN_IKON = { K1: '❤️', K2: '🧠', K3: '💡', K4: '🎯' }
+const KATMAN_IKON = { K1: '❤️', K2: '🧠', K3: '💡', K4: '🎯', K5: '🔭' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
 
 export default function GenelSonuclarSayfasi() {
   const [katmanlar, setKatmanlar] = useState(null)
-  const [katmanSonuclari, setKatmanSonuclari] = useState(null) // { K1: {puan_ort, sonuclar}, ... }
+  const [katmanSonuclari, setKatmanSonuclari] = useState(null)
+  const [k5Durum, setK5Durum] = useState(null)
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail || 'Katmanlar yüklenemedi.'))
+    api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
   }, [])
 
   useEffect(() => {
@@ -36,12 +38,15 @@ export default function GenelSonuclarSayfasi() {
   }, [katmanlar])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!katmanlar || !katmanSonuclari) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!katmanlar || !katmanSonuclari || !k5Durum) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
 
   const tamamlanan = katmanlar.filter((k) => k.durum === 'tamamlandi').length
   const tumTamam = ANA_KATMANLAR.every((kod) => katmanSonuclari[kod] !== null)
 
-  // Tüm katmanlardaki tüm değişken puanlarını tek listede topla
+  const k5OrtalamaPuan = k5Durum.acilan.length > 0
+    ? Math.round(k5Durum.acilan.reduce((a, d) => a + d.puan, 0) / k5Durum.acilan.length)
+    : null
+
   const tumSonuclar = ANA_KATMANLAR.flatMap((kod) => katmanSonuclari[kod]?.sonuclar || [])
   const genelOrtalama = tumSonuclar.length
     ? Math.round(tumSonuclar.reduce((a, s) => a + s.puan, 0) / tumSonuclar.length)
@@ -61,7 +66,7 @@ export default function GenelSonuclarSayfasi() {
         </div>
       </div>
 
-      {/* --- Katman özet kartları --- */}
+      {/* --- Katman özet kartları (K1-K5) --- */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10, marginBottom: 20 }}>
         {ANA_KATMANLAR.map((kod, i) => {
           const k = katmanlar.find((x) => x.kod === kod)
@@ -77,14 +82,48 @@ export default function GenelSonuclarSayfasi() {
             </div>
           )
         })}
+        <div className="oc" onClick={() => navigate('/katmanlar')}>
+          <div className="oi">{KATMAN_IKON.K5}</div>
+          <div className="ol">Katman 5</div>
+          <div className="op" style={{ color: k5OrtalamaPuan !== null ? 'var(--gr)' : 'var(--tx3)' }}>
+            {k5OrtalamaPuan !== null ? k5OrtalamaPuan : '—'}
+          </div>
+          <div className="ob">Derinleşme</div>
+        </div>
       </div>
 
       {!tumTamam ? (
-        <div className="veri-yok-grafik">
-          <div className="vg-ikon">📊</div>
-          <div className="vg-metin">Tam bir özet için önce K1-K4'ün tamamını bitirmelisin.</div>
-          <button className="btn" style={{ marginTop: 12 }} onClick={() => navigate('/katmanlar')}>Yol Haritama Git →</button>
-        </div>
+        <>
+          <div className="taslak-onizleme">
+            <div className="taslak-onizleme-icerik sw">
+              <div className="swc">
+                <div className="swh"><div className="swi" style={{ background: 'var(--grl)' }}>✓</div><div className="swt">Öne Çıkan Güçlerin</div></div>
+                {['Entelektüel Merak', 'Sistemik Düşünce', 'Sosyal Etki', 'Özerklik', 'Yaratıcılık'].map((ad, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
+                    <span>{ad}</span><b style={{ color: 'var(--gr)' }}>{90 - i * 6}</b>
+                  </div>
+                ))}
+              </div>
+              <div className="swc">
+                <div className="swh"><div className="swi" style={{ background: 'var(--aml)' }}>↻</div><div className="swt">Gelişim Alanların</div></div>
+                {['Dışadönüklük', 'Risk Toleransı', 'Rekabet', 'Statü'].map((ad, i) => (
+                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
+                    <span>{ad}</span><b style={{ color: 'var(--am)' }}>{35 - i * 4}</b>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="taslak-onizleme-overlay">
+              <div className="to-ikon">📊</div>
+              <div className="to-metin">
+                Güçlerin ve gelişim alanların, K1-K4'ün tamamı bitince burada görünecek — şu an {tamamlanan}/{katmanlar.length} katman tamamlandı.
+              </div>
+            </div>
+          </div>
+          <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>
+            {tamamlanan === 0 ? 'Yolculuğuna Başla' : 'Kaldığın Yerden Devam Et'} →
+          </button>
+        </>
       ) : (
         <div className="sw">
           <div className="swc">
@@ -128,7 +167,7 @@ export default function GenelSonuclarSayfasi() {
         </div>
       )}
 
-      <button className="btn full" onClick={() => navigate('/')}>Ana Sayfaya Dön</button>
+      <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/')}>Ana Sayfaya Dön</button>
     </div>
   )
 }
