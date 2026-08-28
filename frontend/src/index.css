@@ -307,3 +307,9 @@ button,input{font-family:inherit}
 .donut-legend-nokta{width:10px;height:10px;border-radius:50%;flex-shrink:0}
 .donut-legend-etiket{flex:1;color:var(--tx2);font-weight:600}
 .donut-legend-sayi{font-weight:700}
+
+/* ============ Yolculuk Bilgisi kartı satırları ============ */
+.mini-satir{display:flex;justify-content:space-between;align-items:center;padding:9px 0;border-bottom:1px solid var(--bor)}
+.mini-satir:last-child{border-bottom:none}
+.mini-ad{font-size:12.5px;color:var(--tx2);font-weight:600}
+.mini-deger{font-family:var(--fd);font-weight:700;font-size:13px;color:var(--tx)}
