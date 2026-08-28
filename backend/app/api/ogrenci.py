@@ -421,3 +421,126 @@ def durum_ozetini_getir(
         k5_acilan_dal_sayisi=k5_acilan, k5_tamamlanan_dal_sayisi=k5_tamamlanan,
         sonraki_tur_tarihi=sonraki_tur_tarihi,
     )
+
+# ============================================================================
+# Profil (sonradan eklendi)
+# ============================================================================
+# NOT (hukuki): dogum_tarihi/cinsiyet KVKK açısından hassas veri sayılabilir,
+# veli onayı akışı ayrıca kurulmalıdır — bu uç noktalar yalnızca teknik alt yapıdır.
+#
+# BU BLOĞU app/api/ogrenci.py DOSYASININ EN SONUNA YAPIŞTIRIN.
+# Ayrıca dosyanın en üstündeki import bloğuna şu iki satırı ekleyin:
+#   from sqlalchemy import text
+#   from app.core.security import sifre_hashle, sifre_dogrula
+# ve app.schemas.ogrenci import satırına şunları ekleyin:
+#   ProfilOut, ProfilGuncelleIstek, SifreDegistirIstek, ProfilFotoIstek, MeslekAramaSonucu
+#
+# Uç noktalar:
+#   GET  /ogrenci/profil                — profil bilgilerini getir
+#   PUT  /ogrenci/profil                — profil bilgilerini güncelle
+#   POST /ogrenci/profil/sifre-degistir — şifre değiştir
+#   POST /ogrenci/profil/fotograf       — profil fotoğrafını güncelle (base64)
+#   GET  /ogrenci/meslek-ara            — hedef meslek seçimi için arama
+
+
+@router.get("/profil", response_model=ProfilOut)
+def profil_getir(
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    hedef_meslek_adi = None
+    if ogrenci.hedef_meslek_id:
+        satir = db.execute(
+            text("SELECT ad FROM meslekler WHERE id = :id"), {"id": ogrenci.hedef_meslek_id}
+        ).first()
+        hedef_meslek_adi = satir[0] if satir else None
+
+    return ProfilOut(
+        ad_soyad=ogrenci.ad_soyad,
+        email=ogrenci.email,
+        okul=ogrenci.okul,
+        sinif=ogrenci.sinif,
+        dogum_tarihi=ogrenci.dogum_tarihi,
+        cinsiyet=ogrenci.cinsiyet,
+        ilgi_alanlari=ogrenci.ilgi_alanlari,
+        hedef_universite=ogrenci.hedef_universite,
+        hedef_meslek_id=ogrenci.hedef_meslek_id,
+        hedef_meslek_adi=hedef_meslek_adi,
+        profil_foto_base64=ogrenci.profil_foto_base64,
+    )
+
+
+@router.put("/profil", response_model=ProfilOut)
+def profil_guncelle(
+    istek: ProfilGuncelleIstek,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    veri = istek.model_dump(exclude_unset=True)
+
+    if "cinsiyet" in veri and veri["cinsiyet"] is not None:
+        if veri["cinsiyet"] not in ("kadin", "erkek", "belirtmek_istemiyorum", "diger"):
+            raise HTTPException(status_code=400, detail="Geçersiz cinsiyet değeri.")
+
+    if "hedef_meslek_id" in veri and veri["hedef_meslek_id"] is not None:
+        var_mi = db.execute(
+            text("SELECT 1 FROM meslekler WHERE id = :id"), {"id": veri["hedef_meslek_id"]}
+        ).first()
+        if not var_mi:
+            raise HTTPException(status_code=400, detail="Geçersiz meslek seçimi.")
+
+    for alan, deger in veri.items():
+        setattr(ogrenci, alan, deger)
+
+    db.commit()
+    db.refresh(ogrenci)
+    return profil_getir(db=db, ogrenci=ogrenci)
+
+
+@router.post("/profil/sifre-degistir", status_code=204)
+def sifre_degistir(
+    istek: SifreDegistirIstek,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    if not sifre_dogrula(istek.eski_sifre, ogrenci.sifre_hash):
+        raise HTTPException(status_code=400, detail="Mevcut şifre yanlış.")
+    if len(istek.yeni_sifre) < 8:
+        raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
+
+    ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
+    db.commit()
+    return None
+
+
+@router.post("/profil/fotograf", response_model=ProfilOut)
+def profil_fotografi_guncelle(
+    istek: ProfilFotoIstek,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    # Basit boyut koruması — çok büyük base64 string'leri reddet (~2MB sınırı)
+    if len(istek.foto_base64) > 2_800_000:
+        raise HTTPException(status_code=400, detail="Fotoğraf çok büyük (maks. ~2MB).")
+    if not istek.foto_base64.startswith("data:image/"):
+        raise HTTPException(status_code=400, detail="Geçersiz görsel formatı.")
+
+    ogrenci.profil_foto_base64 = istek.foto_base64
+    db.commit()
+    db.refresh(ogrenci)
+    return profil_getir(db=db, ogrenci=ogrenci)
+
+
+@router.get("/meslek-ara", response_model=list[MeslekAramaSonucu])
+def meslek_ara(
+    q: str,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    if len(q.strip()) < 2:
+        raise HTTPException(status_code=400, detail="Arama terimi en az 2 karakter olmalı.")
+    satirlar = db.execute(
+        text("SELECT id, ad FROM meslekler WHERE ad ILIKE :q ORDER BY ad LIMIT 15"),
+        {"q": f"%{q.strip()}%"},
+    ).mappings().all()
+    return [MeslekAramaSonucu(id=r["id"], ad=r["ad"]) for r in satirlar]
