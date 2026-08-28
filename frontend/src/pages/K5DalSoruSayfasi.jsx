@@ -2,6 +2,12 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
+function renkSec(puan) {
+  if (puan >= 70) return 'var(--gr)'
+  if (puan >= 40) return 'var(--pu)'
+  return 'var(--tx3)'
+}
+
 export default function K5DalSoruSayfasi() {
   const { kod } = useParams()
   const navigate = useNavigate()
@@ -27,16 +33,24 @@ export default function K5DalSoruSayfasi() {
       <div className="pg">
         <div className="qwrap">
           <div className="ph"><div className="pt">{kod} tamamlandı 🎉</div></div>
-          <div className="ob-grid">
-            {tamamlandi.sonuclar.map((s) => (
-              <div key={s.degisken_id} className="ob-card">
-                <div className="ob-top">
-                  <div className="ob-body"><div className="ob-name">{s.degisken_adi}</div></div>
-                  <div className="ob-score">{s.puan}</div>
+
+          {tamamlandi.sonuclar.length === 0 ? (
+            <div className="veri-yok-grafik">
+              <div className="vg-ikon">📊</div>
+              <div className="vg-metin">Bu dal için henüz sonuç hesaplanmadı.</div>
+            </div>
+          ) : (
+            <div className="card">
+              {tamamlandi.sonuclar.map((s) => (
+                <div key={s.degisken_id} className="dr">
+                  <div className="dl">{s.degisken_adi}</div>
+                  <div className="db"><div className="df" style={{ width: `${s.puan}%`, background: renkSec(s.puan) }} /></div>
+                  <div className="ds" style={{ color: renkSec(s.puan) }}>{s.puan}</div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
+
           <button className="btn full" onClick={() => navigate('/katmanlar')}>Yol Haritama Dön</button>
         </div>
       </div>
