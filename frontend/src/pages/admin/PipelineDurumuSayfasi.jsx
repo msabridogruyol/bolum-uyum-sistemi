@@ -11,12 +11,16 @@ export default function PipelineDurumuSayfasi() {
   return (
     <div className="pg">
       <div className="ph">
-        <div className="pt">Pipeline Durumu</div>
-        <div className="ps">Meslek↔bölüm eşleştirme motorunun (offline hesaplama) çalışma durumu.</div>
+        <div className="pt">Bölüm Ağırlıkları — Hesaplama Durumu</div>
+        <div className="ps">
+          Her bölümün hangi değişkenlerde ne kadar öne çıktığını belirleyen arka plan hesaplaması burada
+          takip edilir. Bu, sorularla veya günlük içerik yönetimiyle ilgili bir ekran değil — teknik ekip
+          için bir durum göstergesidir.
+        </div>
       </div>
       <div className="card" style={{ borderColor: 'var(--am)', background: 'var(--aml)' }}>
         <div className="ct">Durum: {veri?.durum ?? '—'}</div>
-        <div style={{ fontSize: 13 }}>{veri?.aciklama}</div>
+        <div style={{ fontSize: 13 }}>{veri?.aciklama || 'Bu özellik henüz devrede değil.'}</div>
       </div>
     </div>
   )

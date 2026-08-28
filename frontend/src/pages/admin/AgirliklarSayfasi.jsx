@@ -2,6 +2,14 @@ import { useEffect, useState, useCallback } from 'react'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { api } from '../../api/client'
 
+const KATMAN_ADI = {
+  K1: 'Değerler / Motivasyon',
+  K2: 'Kişilik & Çalışma Tarzı',
+  K3: 'İş Ortamı & Profesyonel Yetkinlik',
+  K4: 'Alan Eğilimi & Bilişsel Stil',
+  K5: 'Derinleşme',
+}
+
 export default function AgirliklarSayfasi() {
   const [agirliklar, setAgirliklar] = useState(null)
   const [taslak, setTaslak] = useState({})
@@ -13,14 +21,21 @@ export default function AgirliklarSayfasi() {
     api.katmanAgirliklariGetir().then((veri) => {
       setAgirliklar(veri)
       const t = {}
-      veri.forEach((a) => { t[a.katman_kod] = a.agirlik })
+      veri.forEach((a) => { if (a.agirlik !== null && a.agirlik !== undefined) t[a.katman_kod] = a.agirlik })
       setTaslak(t)
     }).catch((e) => setHata(e.detail || 'Ağırlıklar yüklenemedi.'))
   }, [])
 
   useEffect(() => { yukle() }, [yukle])
 
-  const toplam = Object.values(taslak).reduce((a, b) => a + Number(b || 0), 0)
+  if (!agirliklar) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+
+  // K5 (Derinleşme) koşullu bir katman — sabit bir yüzdesi yok, bu yüzden
+  // "toplam %100" hesabına ve düzenlenebilir listeye dahil edilmez.
+  const yuzdeliKatmanlar = agirliklar.filter((a) => a.agirlik !== null && a.agirlik !== undefined)
+  const kosulluKatmanlar = agirliklar.filter((a) => a.agirlik === null || a.agirlik === undefined)
+
+  const toplam = yuzdeliKatmanlar.reduce((acc, a) => acc + Number(taslak[a.katman_kod] ?? a.agirlik ?? 0), 0)
 
   async function yeniVersiyonKaydet() {
     try {
@@ -30,8 +45,6 @@ export default function AgirliklarSayfasi() {
       setHata(err.detail || 'Kaydedilemedi.')
     }
   }
-
-  if (!agirliklar) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
 
   return (
     <div className="pg">
@@ -43,9 +56,9 @@ export default function AgirliklarSayfasi() {
       <div className="card">
         <div className="ct">Aktif Versiyon: v{agirliklar[0]?.versiyon}</div>
         <div className="ll">
-          {agirliklar.map((a) => (
-            <div key={a.katman_kod} className="lc" style={{ cursor: 'default' }}>
-              <div className="lb-wrap"><div className="lt">{a.katman_kod}</div></div>
+          {yuzdeliKatmanlar.map((a) => (
+            <div key={`${a.katman_kod}-${a.versiyon}`} className="lc" style={{ cursor: 'default' }}>
+              <div className="lb-wrap"><div className="lt">{KATMAN_ADI[a.katman_kod] || a.katman_kod}</div></div>
               <input
                 className="auth-input"
                 style={{ width: 80 }}
@@ -67,6 +80,16 @@ export default function AgirliklarSayfasi() {
           </button>
         )}
       </div>
+
+      {kosulluKatmanlar.length > 0 && (
+        <div className="card" style={{ marginTop: 14 }}>
+          <div className="ct">Koşullu Katmanlar</div>
+          <div className="ps" style={{ margin: 0 }}>
+            {kosulluKatmanlar.map((a) => KATMAN_ADI[a.katman_kod] || a.katman_kod).join(', ')} — sabit bir yüzdesi yok,
+            yukarıdaki %100'lük dağılıma dahil değil. Öğrencinin önceki sonucuna göre koşullu olarak devreye girer.
+          </div>
+        </div>
+      )}
     </div>
   )
 }

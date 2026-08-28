@@ -2,6 +2,13 @@ import { useEffect, useState, useCallback } from 'react'
 import { api } from '../../api/client'
 
 const KATMAN_ID = { K1: 1, K2: 2, K3: 3, K4: 4, K5: 5 }
+const KATMAN_ADI = {
+  K1: 'Değerler / Motivasyon',
+  K2: 'Kişilik & Çalışma Tarzı',
+  K3: 'İş Ortamı & Profesyonel Yetkinlik',
+  K4: 'Alan Eğilimi & Bilişsel Stil',
+  K5: 'Derinleşme',
+}
 
 const DEGISKENLER = [
   { id: 1, kod: 'D1' }, { id: 2, kod: 'D2' }, { id: 3, kod: 'D3' }, { id: 4, kod: 'D4' },
@@ -103,7 +110,7 @@ function YeniSoruFormu({ onEklendi }) {
           <div style={{ flex: 1 }}>
             <label className="auth-label">Katman</label>
             <select className="auth-input" value={katmanKod} onChange={(e) => setKatmanKod(e.target.value)}>
-              {Object.keys(KATMAN_ID).map((k) => <option key={k} value={k}>{k}</option>)}
+              {Object.keys(KATMAN_ID).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
             </select>
           </div>
           <div style={{ flex: 1 }}>
@@ -199,9 +206,9 @@ export default function SorularSayfasi() {
       {hata && <div className="auth-error">{hata}</div>}
 
       <div style={{ display: 'flex', gap: 10, marginBottom: 14, alignItems: 'center' }}>
-        <select className="auth-input" style={{ width: 160 }} value={katmanFiltre} onChange={(e) => setKatmanFiltre(e.target.value)}>
+        <select className="auth-input" style={{ width: 240 }} value={katmanFiltre} onChange={(e) => setKatmanFiltre(e.target.value)}>
           <option value="">Tüm katmanlar</option>
-          {['K1', 'K2', 'K3', 'K4', 'K5'].map((k) => <option key={k} value={k}>{k}</option>)}
+          {Object.keys(KATMAN_ADI).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
         </select>
         <button className="btn" onClick={() => setFormAcik((a) => !a)}>
           {formAcik ? 'Formu Kapat' : '+ Yeni Soru Ekle'}
@@ -220,7 +227,7 @@ export default function SorularSayfasi() {
             <div key={s.id} className="lc" style={{ cursor: 'default', opacity: s.aktif_mi ? 1 : 0.5 }}>
               <div className="lb-wrap">
                 <div className="lt">{s.soru_metni}</div>
-                <div className="ld">{s.katman_kod} · {s.soru_tipi}</div>
+                <div className="ld">{KATMAN_ADI[s.katman_kod] || s.katman_kod} · {s.soru_tipi === 'likert' ? 'Likert' : 'SJT'}</div>
               </div>
               <span className={`bdg ${s.aktif_mi ? 'bdg-done' : 'bdg-lock'}`}>{s.aktif_mi ? 'Aktif' : 'Pasif'}</span>
               <button className="btn sec" onClick={() => aktiflikDegistir(s.id, s.aktif_mi)}>

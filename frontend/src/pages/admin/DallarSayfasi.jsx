@@ -40,8 +40,8 @@ export default function DallarSayfasi() {
   return (
     <div className="pg">
       <div className="ph">
-        <div className="pt">Dallar (K5)</div>
-        <div className="ps">K5'te açılabilecek dal derinleşme alanları.</div>
+        <div className="pt">Derinleşme Alanları</div>
+        <div className="ps">Öğrencinin son değerlendirme adımındaki sonucuna göre kendisine özel olarak açılabilecek ek inceleme alanları.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
@@ -52,7 +52,7 @@ export default function DallarSayfasi() {
         </div>
         <div style={{ flex: 1 }}>
           <label className="auth-label">Ad</label>
-          <input className="auth-input" value={yeniAd} onChange={(e) => setYeniAd(e.target.value)} placeholder="Yeni dal adı" required />
+          <input className="auth-input" value={yeniAd} onChange={(e) => setYeniAd(e.target.value)} placeholder="Yeni alan adı" required />
         </div>
         <button className="btn" type="submit">Ekle</button>
       </form>
@@ -61,14 +61,15 @@ export default function DallarSayfasi() {
         {dallar.map((d) => (
           <div key={d.id} className="lc" style={{ cursor: 'default' }}>
             <div className="lb-wrap">
-              <div className="lt">{d.kod} — {d.ad}</div>
+              <div className="lt">{d.ad}</div>
               <span className="bdg bdg-prog">{d.dogrulama_durumu}</span>
             </div>
-            <select className="auth-input" style={{ width: 160 }} value={d.dogrulama_durumu} onChange={(e) => durumGuncelle(d.id, e.target.value)}>
+            <select className="auth-input" style={{ width: 180 }} value={d.dogrulama_durumu} onChange={(e) => durumGuncelle(d.id, e.target.value)}>
               {DURUMLAR.map((du) => <option key={du} value={du}>{du}</option>)}
             </select>
           </div>
         ))}
+        {dallar.length === 0 && <div className="bos-durum">Henüz tanımlı bir derinleşme alanı yok — yukarıdaki formdan ekleyebilirsiniz.</div>}
       </div>
     </div>
   )
