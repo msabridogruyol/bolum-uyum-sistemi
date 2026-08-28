@@ -1,4 +1,4 @@
-import { useEffect, useState, useCallback } from 'react'
+import { useEffect, useState, useCallback, useRef } from 'react'
 import { api } from '../../api/client'
 
 const KATMAN_ID = { K1: 1, K2: 2, K3: 3, K4: 4, K5: 5 }
@@ -20,9 +20,173 @@ const DEGISKENLER = [
   { id: 25, kod: 'I1' }, { id: 26, kod: 'I2' }, { id: 27, kod: 'I3' }, { id: 28, kod: 'I4' },
   { id: 29, kod: 'I5' }, { id: 30, kod: 'I6' }, { id: 31, kod: 'I7' },
 ]
+const DEGISKEN_ID_MAP = Object.fromEntries(DEGISKENLER.map((d) => [d.kod, d.id]))
 
 const BOS_LIKERT_SECENEK = ['Kesinlikle Katılmıyorum', 'Katılmıyorum', 'Kararsızım', 'Katılıyorum', 'Kesinlikle Katılıyorum']
 
+// ============================================================
+// Excel içe aktarma
+// ============================================================
+function SheetJSYukluMu() {
+  return typeof window !== 'undefined' && window.XLSX
+}
+
+function satirlariAyristir(dosya) {
+  return new Promise((resolve, reject) => {
+    if (!SheetJSYukluMu()) {
+      reject(new Error('Excel okuma kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.'))
+      return
+    }
+    const okuyucu = new FileReader()
+    okuyucu.onload = (e) => {
+      try {
+        const wb = window.XLSX.read(e.target.result, { type: 'array' })
+        const sayfaAdi = wb.SheetNames.find((n) => n.toLowerCase().includes('soru')) || wb.SheetNames[0]
+        const sayfa = wb.Sheets[sayfaAdi]
+        const satirlar = window.XLSX.utils.sheet_to_json(sayfa, { header: 1, defval: '' })
+        resolve(satirlar)
+      } catch (err) {
+        reject(err)
+      }
+    }
+    okuyucu.onerror = () => reject(new Error('Dosya okunamadı.'))
+    okuyucu.readAsArrayBuffer(dosya)
+  })
+}
+
+function satiriDogrula(hucreler, satirNo) {
+  const [katmanKod, soruTipi, degiskenKod, soruMetni, tersMi, ...secenekHam] = hucreler.map((h) => String(h ?? '').trim())
+
+  if (!katmanKod && !soruMetni) return null // tamamen boş satır — yok say
+
+  if (!['K1', 'K2', 'K3', 'K4'].includes(katmanKod)) {
+    return { hata: `Satır ${satirNo}: katman_kod "K1-K4" dışında bir değer ("${katmanKod}") — atlandı.` }
+  }
+  if (!['likert', 'sjt'].includes(soruTipi)) {
+    return { hata: `Satır ${satirNo}: soru_tipi "likert" veya "sjt" olmalı ("${soruTipi}" geçersiz) — atlandı.` }
+  }
+  if (soruMetni.length < 5) {
+    return { hata: `Satır ${satirNo}: soru metni çok kısa veya boş — atlandı.` }
+  }
+  let degiskenId = null
+  if (soruTipi === 'likert') {
+    degiskenId = DEGISKEN_ID_MAP[degiskenKod]
+    if (!degiskenId) {
+      return { hata: `Satır ${satirNo}: likert soru için geçerli bir degisken_kod gerekli ("${degiskenKod}" tanınmadı) — atlandı.` }
+    }
+  }
+  const secenekler = secenekHam.map((s) => s.trim()).filter((s) => s.length > 0)
+  if (secenekler.length < 2) {
+    return { hata: `Satır ${satirNo}: en az 2 seçenek gerekli — atlandı.` }
+  }
+
+  return {
+    payload: {
+      katman_id: KATMAN_ID[katmanKod],
+      degisken_id: degiskenId,
+      soru_tipi: soruTipi,
+      soru_metni: soruMetni,
+      ters_kodlanmis_mi: soruTipi === 'likert' && tersMi.toUpperCase() === 'EVET',
+      secenekler,
+    },
+  }
+}
+
+function IceAktarPaneli({ onTamamlandi }) {
+  const [durum, setDurum] = useState('bekliyor') // bekliyor | okunuyor | yukleniyor | bitti
+  const [sonuc, setSonuc] = useState(null) // { basarili, hatalar }
+  const dosyaInputRef = useRef(null)
+
+  async function dosyaSecildi(e) {
+    const dosya = e.target.files?.[0]
+    if (!dosya) return
+    setDurum('okunuyor')
+    setSonuc(null)
+
+    try {
+      const satirlar = await satirlariAyristir(dosya)
+      const veriSatirlari = satirlar.slice(1) // başlık satırını atla
+
+      const gecerliler = []
+      const hatalar = []
+      veriSatirlari.forEach((hucreler, i) => {
+        const sonucSatir = satiriDogrula(hucreler, i + 2) // Excel'de satır 2'den başlar
+        if (!sonucSatir) return // tamamen boş satır
+        if (sonucSatir.hata) hatalar.push(sonucSatir.hata)
+        else gecerliler.push(sonucSatir.payload)
+      })
+
+      if (gecerliler.length === 0) {
+        setSonuc({ basarili: 0, hatalar: hatalar.length ? hatalar : ['Dosyada geçerli bir soru satırı bulunamadı.'] })
+        setDurum('bitti')
+        return
+      }
+
+      setDurum('yukleniyor')
+      let basarili = 0
+      const yuklemeHatalari = [...hatalar]
+      for (const payload of gecerliler) {
+        try {
+          await api.soruEkle(payload)
+          basarili++
+        } catch (err) {
+          yuklemeHatalari.push(`"${payload.soru_metni.slice(0, 40)}..." eklenemedi: ${err.detail || 'bilinmeyen hata'}`)
+        }
+      }
+      setSonuc({ basarili, hatalar: yuklemeHatalari })
+      setDurum('bitti')
+      onTamamlandi()
+    } catch (err) {
+      setSonuc({ basarili: 0, hatalar: [err.message || 'Dosya işlenemedi.'] })
+      setDurum('bitti')
+    } finally {
+      if (dosyaInputRef.current) dosyaInputRef.current.value = ''
+    }
+  }
+
+  return (
+    <div className="card" style={{ borderColor: 'var(--tl)', background: 'var(--tll)' }}>
+      <div className="ct">Excel İle Toplu Soru Ekle</div>
+      <div className="ps" style={{ margin: '0 0 14px' }}>
+        Önce şablonu indirip doldurun, sonra buradan yükleyin. Yalnızca K1-K4 sorularını destekler.
+      </div>
+
+      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
+        <a href="/soru_bankasi_sablonu.xlsx" download className="btn sec">⬇ Şablonu İndir</a>
+
+        <label className="btn" style={{ cursor: durum === 'yukleniyor' || durum === 'okunuyor' ? 'not-allowed' : 'pointer', opacity: durum === 'yukleniyor' || durum === 'okunuyor' ? 0.6 : 1 }}>
+          {durum === 'okunuyor' ? 'Dosya okunuyor...' : durum === 'yukleniyor' ? 'Yükleniyor...' : '⬆ Doldurulmuş Dosyayı Yükle'}
+          <input
+            ref={dosyaInputRef}
+            type="file"
+            accept=".xlsx,.xls"
+            onChange={dosyaSecildi}
+            disabled={durum === 'yukleniyor' || durum === 'okunuyor'}
+            style={{ display: 'none' }}
+          />
+        </label>
+      </div>
+
+      {sonuc && (
+        <div style={{ marginTop: 14 }}>
+          <div style={{ fontSize: 13, fontWeight: 700, color: sonuc.basarili > 0 ? 'var(--gr)' : 'var(--re)', marginBottom: 6 }}>
+            {sonuc.basarili} soru başarıyla eklendi.
+          </div>
+          {sonuc.hatalar.length > 0 && (
+            <div style={{ fontSize: 12, color: 'var(--tx2)', background: 'var(--sur)', borderRadius: 10, padding: '10px 12px', maxHeight: 180, overflowY: 'auto' }}>
+              <div style={{ fontWeight: 700, marginBottom: 6 }}>{sonuc.hatalar.length} satır atlandı / hata verdi:</div>
+              {sonuc.hatalar.map((h, i) => <div key={i} style={{ marginBottom: 3 }}>• {h}</div>)}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
+// Tekil soru ekleme formu (mevcut)
+// ============================================================
 function YeniSoruFormu({ onEklendi }) {
   const [katmanKod, setKatmanKod] = useState('K1')
   const [soruTipi, setSoruTipi] = useState('likert')
@@ -94,7 +258,7 @@ function YeniSoruFormu({ onEklendi }) {
 
   return (
     <div className="card">
-      <div className="ct">Yeni Soru Ekle</div>
+      <div className="ct">Tek Tek Soru Ekle</div>
 
       {soruTipi === 'sjt' && (
         <div className="auth-error" style={{ background: 'var(--aml)', color: 'var(--am)' }}>
@@ -176,10 +340,13 @@ function YeniSoruFormu({ onEklendi }) {
   )
 }
 
+// ============================================================
+// Ana sayfa
+// ============================================================
 export default function SorularSayfasi() {
   const [sorular, setSorular] = useState(null)
   const [katmanFiltre, setKatmanFiltre] = useState('')
-  const [formAcik, setFormAcik] = useState(false)
+  const [aktifSekme, setAktifSekme] = useState(null) // null | 'tekli' | 'toplu'
   const [hata, setHata] = useState(null)
 
   const yukle = useCallback((kod) => {
@@ -187,6 +354,15 @@ export default function SorularSayfasi() {
   }, [])
 
   useEffect(() => { yukle(katmanFiltre) }, [yukle, katmanFiltre])
+
+  // SheetJS kütüphanesini bir kez, sayfa açılınca yükle
+  useEffect(() => {
+    if (window.XLSX) return
+    const script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    script.async = true
+    document.body.appendChild(script)
+  }, [])
 
   async function aktiflikDegistir(soruId, aktifMi) {
     try {
@@ -205,17 +381,25 @@ export default function SorularSayfasi() {
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
-      <div style={{ display: 'flex', gap: 10, marginBottom: 14, alignItems: 'center' }}>
+      <div style={{ display: 'flex', gap: 10, marginBottom: 14, alignItems: 'center', flexWrap: 'wrap' }}>
         <select className="auth-input" style={{ width: 240 }} value={katmanFiltre} onChange={(e) => setKatmanFiltre(e.target.value)}>
           <option value="">Tüm katmanlar</option>
           {Object.keys(KATMAN_ADI).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
         </select>
-        <button className="btn" onClick={() => setFormAcik((a) => !a)}>
-          {formAcik ? 'Formu Kapat' : '+ Yeni Soru Ekle'}
+        <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'toplu' ? null : 'toplu'))}>
+          {aktifSekme === 'toplu' ? 'Kapat' : '⬆ Excel İle Toplu Ekle'}
+        </button>
+        <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
+          {aktifSekme === 'tekli' ? 'Kapat' : '+ Tek Tek Soru Ekle'}
         </button>
       </div>
 
-      {formAcik && (
+      {aktifSekme === 'toplu' && (
+        <div style={{ marginBottom: 20 }}>
+          <IceAktarPaneli onTamamlandi={() => yukle(katmanFiltre)} />
+        </div>
+      )}
+      {aktifSekme === 'tekli' && (
         <div style={{ marginBottom: 20 }}>
           <YeniSoruFormu onEklendi={() => yukle(katmanFiltre)} />
         </div>
