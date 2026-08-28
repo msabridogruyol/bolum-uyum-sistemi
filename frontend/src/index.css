@@ -325,3 +325,15 @@ button,input{font-family:inherit}
 }
 .ilerleme-halka-buyuk-ic .sayi{font-size:26px;font-weight:700;line-height:1}
 .ilerleme-halka-buyuk-ic .etiket{font-size:9px;color:var(--tx3);font-weight:600;margin-top:3px}
+
+/* ============ Katman özet kartları (Genel Sonuçlar üstü) ============ */
+.oc{
+  background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--r16);
+  padding:16px 12px;text-align:center;cursor:pointer;transition:all .15s;
+  box-shadow:0 2px 10px rgba(60,50,20,0.04);
+}
+.oc:hover{border-color:var(--pu);transform:translateY(-1px)}
+.oi{font-size:22px;margin-bottom:8px}
+.ol{font-size:9.5px;color:var(--tx3);font-weight:700;text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.op{font-family:var(--fd);font-size:22px;font-weight:700;line-height:1.1}
+.ob{font-size:11px;color:var(--tx2);font-weight:600;margin-top:3px}
