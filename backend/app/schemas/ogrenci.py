@@ -176,3 +176,10 @@ class MeslekAramaSonucu(BaseModel):
     ad: str
 
     model_config = {"from_attributes": True}
+
+
+class KatmanGecmisSonucOut(BaseModel):
+    """Bir katman daha önce tamamlanmışsa, sonucunu tekrar sorgulamak için."""
+    katman_kodu: str
+    tamamlandi_mi: bool
+    sonuclar: list[KatmanSonucSatiri]
