@@ -126,21 +126,61 @@ export default function KatmanDetaySayfasi() {
           )}
 
           <div className="ps" style={{ marginBottom: 14, fontSize: 12 }}>
-            Bir boyuta tıklayınca detaylı açıklaması açılır.
+            Bir boyuta tıklayınca detaylı açıklaması açılır. 60 ve üzeri puan alan boyutlar "Güçlü", altındakiler "{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'}" olarak gruplanır.
           </div>
 
           <div className="two">
-            {guclu.length > 0 && (
+            {guclu.length > 0 ? (
               <div className="card" style={{ marginBottom: 0 }}>
                 <div className="ct">Güçlü Boyutların</div>
                 {guclu.map((s) => <BoyutSatiri key={s.degisken_id} s={s} />)}
               </div>
+            ) : (
+              <div className="card taslak-onizleme" style={{ marginBottom: 0 }}>
+                <div className="taslak-onizleme-icerik">
+                  <div className="ct">Güçlü Boyutların</div>
+                  {[88, 76, 65].map((p, i) => (
+                    <div key={i} className="boyut-satir">
+                      <div className="boyut-satir-ust">
+                        <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
+                          <div className="iskelet-satir" style={{ width: 90 }} />
+                          <div className="db"><div className="df" style={{ width: `${p}%`, background: 'var(--gr)' }} /></div>
+                          <div className="ds" style={{ color: 'var(--gr)' }}>{p}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="taslak-onizleme-overlay">
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz 60+ çıkan bir boyutun yok</div>
+                </div>
+              </div>
             )}
 
-            {digerleri.length > 0 && (
+            {digerleri.length > 0 ? (
               <div className="card" style={{ marginBottom: 0 }}>
                 <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
                 {digerleri.map((s) => <BoyutSatiri key={s.degisken_id} s={s} />)}
+              </div>
+            ) : (
+              <div className="card taslak-onizleme" style={{ marginBottom: 0 }}>
+                <div className="taslak-onizleme-icerik">
+                  <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
+                  {[45, 30, 18].map((p, i) => (
+                    <div key={i} className="boyut-satir">
+                      <div className="boyut-satir-ust">
+                        <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
+                          <div className="iskelet-satir" style={{ width: 90 }} />
+                          <div className="db"><div className="df" style={{ width: `${p}%`, background: 'var(--tx3)' }} /></div>
+                          <div className="ds" style={{ color: 'var(--tx3)' }}>{p}</div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+                <div className="taslak-onizleme-overlay">
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz 60 altı çıkan bir boyutun yok</div>
+                </div>
               </div>
             )}
           </div>
