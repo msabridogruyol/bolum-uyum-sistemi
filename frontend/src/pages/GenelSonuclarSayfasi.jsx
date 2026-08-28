@@ -57,7 +57,7 @@ export default function GenelSonuclarSayfasi() {
   const gelisimListesi = [...tumSonuclar].sort((a, b) => a.puan - b.puan).slice(0, 4)
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Genel Sonuçlar</div>
         <div className="ps">
@@ -67,7 +67,7 @@ export default function GenelSonuclarSayfasi() {
       </div>
 
       {/* --- Katman özet kartları (K1-K5) --- */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: 10, marginBottom: 20 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 20 }}>
         {ANA_KATMANLAR.map((kod, i) => {
           const k = katmanlar.find((x) => x.kod === kod)
           const sonuc = katmanSonuclari[kod]
