@@ -11,6 +11,7 @@ export default function AnaSayfa() {
   const [siralama, setSiralama] = useState(null)
   const [profil, setProfil] = useState(null)
   const [katmanSonuclari, setKatmanSonuclari] = useState(null)
+  const [k5Durum, setK5Durum] = useState(null)
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
 
@@ -18,6 +19,7 @@ export default function AnaSayfa() {
     api.durumOzetiGetir().then(setOzet).catch(() => {})
     api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail))
     api.profilGetir().then(setProfil).catch(() => {})
+    api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
   }, [])
 
   useEffect(() => {
@@ -42,10 +44,15 @@ export default function AnaSayfa() {
   }, [ozet])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!katmanlar || !ozet || !katmanSonuclari) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!katmanlar || !ozet || !katmanSonuclari || !k5Durum) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
 
   const ilkAd = (profil?.ad_soyad || 'Öğrenci').split(' ')[0]
   const tamamlananYuzde = katmanlar.length ? Math.round((ozet.tamamlanan_katman_sayisi / ozet.toplam_ana_katman_sayisi) * 100) : 0
+
+  // K5 — dal bazlı, açılan dalların ortalama puanı (varsa)
+  const k5OrtalamaPuan = k5Durum.acilan.length > 0
+    ? Math.round(k5Durum.acilan.reduce((a, d) => a + d.puan, 0) / k5Durum.acilan.length)
+    : null
 
   // Gerçek "profil skoru" — en yüksek bölüm uyum puanı
   const profilSkoru = siralama && siralama.length > 0 ? Math.round(siralama[0].toplam_uyum) : null
@@ -230,6 +237,16 @@ export default function AnaSayfa() {
 
           <div className="card" style={{ marginBottom: 0 }}>
             <div className="ct">Katman Ortalamaların</div>
+
+            {/* Genel tamamlama oranı — ayrı, vurgulu satır */}
+            <div className="mini-cubuk-satir" style={{ marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid var(--bor)' }}>
+              <div className="mini-cubuk-etiket" style={{ width: 78 }}>🎯 Genel</div>
+              <div className="mini-cubuk-track">
+                <div className="mini-cubuk-fill" style={{ width: `${tamamlananYuzde}%`, background: 'var(--pu)' }} />
+              </div>
+              <div className="mini-cubuk-deger" style={{ color: 'var(--pu)' }}>{tamamlananYuzde}%</div>
+            </div>
+
             {ANA_KATMANLAR.map((kod) => {
               const sonuc = katmanSonuclari[kod]
               const k = katmanlar.find((x) => x.kod === kod)
@@ -249,6 +266,20 @@ export default function AnaSayfa() {
                 </div>
               )
             })}
+
+            {/* K5 — dal bazlı, farklı mantık */}
+            <div className="mini-cubuk-satir">
+              <div className="mini-cubuk-etiket">🌻 K5</div>
+              <div className="mini-cubuk-track">
+                <div
+                  className={`mini-cubuk-fill${k5OrtalamaPuan === null ? ' df-placeholder' : ''}`}
+                  style={{ width: k5OrtalamaPuan !== null ? `${k5OrtalamaPuan}%` : '100%', background: k5OrtalamaPuan !== null ? 'var(--gr)' : 'transparent' }}
+                />
+              </div>
+              <div className="mini-cubuk-deger" style={{ color: k5OrtalamaPuan !== null ? 'var(--gr)' : 'var(--tx3)', width: k5OrtalamaPuan === null ? 74 : 32, fontSize: k5OrtalamaPuan === null ? 9.5 : 11.5, textAlign: 'right' }}>
+                {k5OrtalamaPuan !== null ? `${k5OrtalamaPuan}%` : 'Henüz kapalı'}
+              </div>
+            </div>
           </div>
 
           <div className="card" style={{ marginBottom: 0 }}>
