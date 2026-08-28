@@ -10,12 +10,7 @@ function tahminiSureDk(kod) {
   return Math.max(1, Math.round((boyut * SANIYE_BASINA_SORU_TAHMINI) / 60))
 }
 
-// K1 (Değerler) bir TERCİH katmanı — düşük puan "eksiklik" değil, "öncelik değil"
-// demektir. Bu yüzden yalnızca K1'de nötr "Diğer Boyutların" başlığı kullanılır;
-// K2-K4 (kişilik/yetkinlik/eğilim) için "Gelişim Alanların" daha doğru çünkü
-// oralarda düşük puan gerçekten geliştirilebilir bir alana işaret eder.
 const IKINCI_BOLUM_BASLIGI = { K1: 'Diğer Boyutların', K2: 'Gelişim Alanların', K3: 'Gelişim Alanların', K4: 'Gelişim Alanların' }
-
 const SONRAKI_KATMAN = { K1: 'K2', K2: 'K3', K3: 'K4', K4: null }
 
 function renkSec(puan) {
@@ -24,24 +19,33 @@ function renkSec(puan) {
   return 'var(--tx3)'
 }
 
-function DegiskenKarti({ s }) {
+function BoyutSatiri({ s }) {
+  const [acik, setAcik] = useState(false)
+  const detayVarMi = s.durum_tespiti || s.aksiyon_onerisi
+
   return (
-    <div style={{ padding: '14px 0', borderBottom: '1px solid var(--bor)' }}>
-      <div className="dr" style={{ marginBottom: s.durum_tespiti ? 8 : 0 }}>
-        <div className="dl">{s.degisken_adi}</div>
-        <div className="db"><div className="df" style={{ width: `${s.puan}%`, background: renkSec(s.puan) }} /></div>
-        <div className="ds" style={{ color: renkSec(s.puan) }}>{s.puan}</div>
+    <div className={`boyut-satir${acik ? ' acik' : ''}`} onClick={() => detayVarMi && setAcik((a) => !a)}>
+      <div className="boyut-satir-ust">
+        {detayVarMi && <span className="ok">▶</span>}
+        <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
+          <div className="dl">{s.degisken_adi}</div>
+          <div className="db"><div className="df" style={{ width: `${s.puan}%`, background: renkSec(s.puan) }} /></div>
+          <div className="ds" style={{ color: renkSec(s.puan) }}>{s.puan}</div>
+        </div>
       </div>
-      {s.durum_tespiti && (
-        <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.6, marginTop: 4 }}>{s.durum_tespiti}</div>
-      )}
-      {s.aksiyon_onerisi && (
-        <div style={{
-          marginTop: 8, fontSize: 12, color: 'var(--am)', background: 'var(--aml)',
-          padding: '8px 12px', borderRadius: 10, display: 'flex', gap: 8, alignItems: 'flex-start',
-        }}>
-          <span>💡</span>
-          <span>{s.aksiyon_onerisi}</span>
+      {detayVarMi && (
+        <div className="boyut-detay">
+          {s.durum_tespiti && (
+            <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.55, paddingLeft: 18 }}>{s.durum_tespiti}</div>
+          )}
+          {s.aksiyon_onerisi && (
+            <div style={{
+              marginTop: 6, marginLeft: 18, fontSize: 11.5, color: 'var(--am)', background: 'var(--aml)',
+              padding: '7px 10px', borderRadius: 8, display: 'flex', gap: 6, alignItems: 'flex-start',
+            }}>
+              <span>💡</span><span>{s.aksiyon_onerisi}</span>
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -79,7 +83,7 @@ export default function KatmanDetaySayfasi() {
   const siraliSonuclar = [...sonuc.sonuclar].sort((a, b) => b.puan - a.puan)
   const guclu = siraliSonuclar.filter((s) => s.puan >= 60)
   const digerleri = siraliSonuclar.filter((s) => s.puan < 60)
-  const enUst3Etiket = siraliSonuclar.slice(0, 4)
+  const enUst4Etiket = siraliSonuclar.slice(0, 4)
   const sonrakiKod = SONRAKI_KATMAN[kod]
 
   return (
@@ -111,10 +115,9 @@ export default function KatmanDetaySayfasi() {
         </div>
       ) : (
         <>
-          {/* --- Üst etiket satırı (mockup'taki tag pills) --- */}
-          {enUst3Etiket.length > 0 && (
+          {enUst4Etiket.length > 0 && (
             <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-              {enUst3Etiket.map((s) => (
+              {enUst4Etiket.map((s) => (
                 <span key={s.degisken_id} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>
                   {s.degisken_adi}
                 </span>
@@ -122,19 +125,25 @@ export default function KatmanDetaySayfasi() {
             </div>
           )}
 
-          {guclu.length > 0 && (
-            <div className="card">
-              <div className="ct">Güçlü Boyutların</div>
-              {guclu.map((s) => <DegiskenKarti key={s.degisken_id} s={s} />)}
-            </div>
-          )}
+          <div className="ps" style={{ marginBottom: 14, fontSize: 12 }}>
+            Bir boyuta tıklayınca detaylı açıklaması açılır.
+          </div>
 
-          {digerleri.length > 0 && (
-            <div className="card">
-              <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
-              {digerleri.map((s) => <DegiskenKarti key={s.degisken_id} s={s} />)}
-            </div>
-          )}
+          <div className="two">
+            {guclu.length > 0 && (
+              <div className="card" style={{ marginBottom: 0 }}>
+                <div className="ct">Güçlü Boyutların</div>
+                {guclu.map((s) => <BoyutSatiri key={s.degisken_id} s={s} />)}
+              </div>
+            )}
+
+            {digerleri.length > 0 && (
+              <div className="card" style={{ marginBottom: 0 }}>
+                <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
+                {digerleri.map((s) => <BoyutSatiri key={s.degisken_id} s={s} />)}
+              </div>
+            )}
+          </div>
 
           {sonuc.sonuclar.length === 0 && (
             <div className="veri-yok-grafik">
@@ -143,7 +152,6 @@ export default function KatmanDetaySayfasi() {
             </div>
           )}
 
-          {/* --- Sonraki katmana geçiş --- */}
           <button
             className="btn full"
             style={{ marginTop: 16 }}
