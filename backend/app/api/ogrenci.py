@@ -7,9 +7,11 @@ POST /ogrenci/katmanlar/{kod}/tamamla       — katmanı bitir, değişken puanl
 """
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
+from sqlalchemy import text
 
 from app.api.deps import get_mevcut_ogrenci
 from app.core.database import get_db
+from app.core.security import sifre_hashle, sifre_dogrula
 from datetime import datetime, timedelta, timezone
 
 from app.core.katman_servisi import (
@@ -27,6 +29,7 @@ from app.schemas.ogrenci import (
     CevapIstek, KatmanTamamlamaCevap, KatmanSonucSatiri,
     K5DurumOut, DalAdayOut, DalBaslatCevap, DalTamamlamaCevap,
     BolumSiralamaSatiri, KesfetSonucOut, DurumOzetiOut,
+    ProfilOut, ProfilGuncelleIstek, SifreDegistirIstek, ProfilFotoIstek, MeslekAramaSonucu,
 )
 
 router = APIRouter()
@@ -422,26 +425,12 @@ def durum_ozetini_getir(
         sonraki_tur_tarihi=sonraki_tur_tarihi,
     )
 
+
 # ============================================================================
 # Profil (sonradan eklendi)
 # ============================================================================
 # NOT (hukuki): dogum_tarihi/cinsiyet KVKK açısından hassas veri sayılabilir,
 # veli onayı akışı ayrıca kurulmalıdır — bu uç noktalar yalnızca teknik alt yapıdır.
-#
-# BU BLOĞU app/api/ogrenci.py DOSYASININ EN SONUNA YAPIŞTIRIN.
-# Ayrıca dosyanın en üstündeki import bloğuna şu iki satırı ekleyin:
-#   from sqlalchemy import text
-#   from app.core.security import sifre_hashle, sifre_dogrula
-# ve app.schemas.ogrenci import satırına şunları ekleyin:
-#   ProfilOut, ProfilGuncelleIstek, SifreDegistirIstek, ProfilFotoIstek, MeslekAramaSonucu
-#
-# Uç noktalar:
-#   GET  /ogrenci/profil                — profil bilgilerini getir
-#   PUT  /ogrenci/profil                — profil bilgilerini güncelle
-#   POST /ogrenci/profil/sifre-degistir — şifre değiştir
-#   POST /ogrenci/profil/fotograf       — profil fotoğrafını güncelle (base64)
-#   GET  /ogrenci/meslek-ara            — hedef meslek seçimi için arama
-
 
 @router.get("/profil", response_model=ProfilOut)
 def profil_getir(
