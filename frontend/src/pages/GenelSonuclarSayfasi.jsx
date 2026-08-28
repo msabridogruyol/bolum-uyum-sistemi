@@ -92,44 +92,41 @@ export default function GenelSonuclarSayfasi() {
         </div>
       </div>
 
-      {tumTamam && guclerListesi.length > 0 && (
-        <div className="card">
-          <div className="ct">Öne Çıkan Boyutların</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-            {guclerListesi.map((s) => (
-              <span key={s.degisken_id} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>
-                {s.degisken_adi}
-              </span>
-            ))}
-          </div>
-        </div>
-      )}
-
       {!tumTamam ? (
         <>
           <div className="taslak-onizleme">
-            <div className="taslak-onizleme-icerik sw">
-              <div className="swc">
-                <div className="swh"><div className="swi" style={{ background: 'var(--grl)' }}>✓</div><div className="swt">Öne Çıkan Güçlerin</div></div>
-                {['Entelektüel Merak', 'Sistemik Düşünce', 'Sosyal Etki', 'Özerklik', 'Yaratıcılık'].map((ad, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
-                    <span>{ad}</span><b style={{ color: 'var(--gr)' }}>{90 - i * 6}</b>
-                  </div>
-                ))}
+            <div className="taslak-onizleme-icerik">
+              <div className="card">
+                <div className="ct">Öne Çıkan Boyutların</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                  {['Entelektüel Merak', 'Sistemik Düşünce', 'Sosyal Etki', 'Özerklik'].map((ad, i) => (
+                    <span key={i} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>{ad}</span>
+                  ))}
+                </div>
               </div>
-              <div className="swc">
-                <div className="swh"><div className="swi" style={{ background: 'var(--aml)' }}>↻</div><div className="swt">Gelişim Alanların</div></div>
-                {['Dışadönüklük', 'Risk Toleransı', 'Rekabet', 'Statü'].map((ad, i) => (
-                  <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
-                    <span>{ad}</span><b style={{ color: 'var(--am)' }}>{35 - i * 4}</b>
-                  </div>
-                ))}
+              <div className="sw">
+                <div className="swc">
+                  <div className="swh"><div className="swi" style={{ background: 'var(--grl)' }}>✓</div><div className="swt">Öne Çıkan Güçlerin</div></div>
+                  {['Entelektüel Merak', 'Sistemik Düşünce', 'Sosyal Etki', 'Özerklik', 'Yaratıcılık'].map((ad, i) => (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
+                      <span>{ad}</span><b style={{ color: 'var(--gr)' }}>{90 - i * 6}</b>
+                    </div>
+                  ))}
+                </div>
+                <div className="swc">
+                  <div className="swh"><div className="swi" style={{ background: 'var(--aml)' }}>↻</div><div className="swt">Gelişim Alanların</div></div>
+                  {['Dışadönüklük', 'Risk Toleransı', 'Rekabet', 'Statü'].map((ad, i) => (
+                    <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
+                      <span>{ad}</span><b style={{ color: 'var(--am)' }}>{35 - i * 4}</b>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
             <div className="taslak-onizleme-overlay">
               <div className="to-ikon">📊</div>
               <div className="to-metin">
-                Güçlerin ve gelişim alanların, K1-K4'ün tamamı bitince burada görünecek — şu an {tamamlanan}/{katmanlar.length} katman tamamlandı.
+                Öne çıkan boyutların, güçlerin ve gelişim alanların, K1-K4'ün tamamı bitince burada görünecek — şu an {tamamlanan}/{katmanlar.length} katman tamamlandı.
               </div>
             </div>
           </div>
@@ -138,7 +135,20 @@ export default function GenelSonuclarSayfasi() {
           </button>
         </>
       ) : (
-        <div className="sw">
+        <>
+          {guclerListesi.length > 0 && (
+            <div className="card">
+              <div className="ct">Öne Çıkan Boyutların</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
+                {guclerListesi.map((s) => (
+                  <span key={s.degisken_id} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>
+                    {s.degisken_adi}
+                  </span>
+                ))}
+              </div>
+            </div>
+          )}
+          <div className="sw">
           <div className="swc">
             <div className="swh">
               <div className="swi" style={{ background: 'var(--grl)' }}>✓</div>
@@ -178,6 +188,7 @@ export default function GenelSonuclarSayfasi() {
             ))}
           </div>
         </div>
+        </>
       )}
 
       <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/')}>Ana Sayfaya Dön</button>
