@@ -44,19 +44,41 @@ export default function AnaSayfaDuzeni() {
         )}
 
         <div className="ns">Genel</div>
+        <NavLink to="/" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🏠 Ana Sayfa
+        </NavLink>
         <NavLink to="/katmanlar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌱 Yol Haritam
         </NavLink>
 
         <div className="ns">Sonuç</div>
-        <NavLink to="/sonuc" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+        <NavLink to="/sonuc" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölüm Uyumum
+        </NavLink>
+        <NavLink to="/sonuc/K1" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🌱 K1 — Değerler
+        </NavLink>
+        <NavLink to="/sonuc/K2" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🌿 K2 — Kişilik
+        </NavLink>
+        <NavLink to="/sonuc/K3" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🍃 K3 — İş Ortamı
+        </NavLink>
+        <NavLink to="/sonuc/K4" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🌸 K4 — Alan Eğilimi
         </NavLink>
         <NavLink to="/kesfet" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🔍 Tüm Bölümleri Keşfet
         </NavLink>
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🎯 Hedef Bölüm Koçluğu
+        </NavLink>
+
+        <div style={{ flex: 1 }} />
+
+        <div className="ns">Hesap</div>
+        <NavLink to="/profil" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          ⚙️ Ayarlar
         </NavLink>
       </div>
 
