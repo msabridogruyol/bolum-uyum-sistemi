@@ -2,6 +2,22 @@ import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
+const KATMAN_BOYUT_SAYISI = { K1: 7, K2: 8, K3: 7, K4: 9 }
+const SANIYE_BASINA_SORU_TAHMINI = 25
+function tahminiSureDk(kod) {
+  const boyut = KATMAN_BOYUT_SAYISI[kod]
+  if (!boyut) return null
+  return Math.max(1, Math.round((boyut * SANIYE_BASINA_SORU_TAHMINI) / 60))
+}
+
+// K1 (Değerler) bir TERCİH katmanı — düşük puan "eksiklik" değil, "öncelik değil"
+// demektir. Bu yüzden yalnızca K1'de nötr "Diğer Boyutların" başlığı kullanılır;
+// K2-K4 (kişilik/yetkinlik/eğilim) için "Gelişim Alanların" daha doğru çünkü
+// oralarda düşük puan gerçekten geliştirilebilir bir alana işaret eder.
+const IKINCI_BOLUM_BASLIGI = { K1: 'Diğer Boyutların', K2: 'Gelişim Alanların', K3: 'Gelişim Alanların', K4: 'Gelişim Alanların' }
+
+const SONRAKI_KATMAN = { K1: 'K2', K2: 'K3', K3: 'K4', K4: null }
+
 function renkSec(puan) {
   if (puan >= 70) return 'var(--gr)'
   if (puan >= 40) return 'var(--pu)'
@@ -25,14 +41,7 @@ function DegiskenKarti({ s }) {
           padding: '8px 12px', borderRadius: 10, display: 'flex', gap: 8, alignItems: 'flex-start',
         }}>
           <span>💡</span>
-          <span>
-            {s.aksiyon_onerisi}
-            {s.tahmini_efor && (
-              <span style={{ opacity: 0.75, marginLeft: 6, fontWeight: 600 }}>
-                ({s.tahmini_efor === 'kisa' ? 'kısa vadeli' : s.tahmini_efor === 'orta' ? 'orta vadeli' : 'uzun vadeli'})
-              </span>
-            )}
-          </span>
+          <span>{s.aksiyon_onerisi}</span>
         </div>
       )}
     </div>
@@ -70,6 +79,8 @@ export default function KatmanDetaySayfasi() {
   const siraliSonuclar = [...sonuc.sonuclar].sort((a, b) => b.puan - a.puan)
   const guclu = siraliSonuclar.filter((s) => s.puan >= 60)
   const digerleri = siraliSonuclar.filter((s) => s.puan < 60)
+  const enUst3Etiket = siraliSonuclar.slice(0, 4)
+  const sonrakiKod = SONRAKI_KATMAN[kod]
 
   return (
     <div className="pg">
@@ -79,7 +90,10 @@ export default function KatmanDetaySayfasi() {
         <div className="ph-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
           <div>
             <div className="pt">{katman.ad}</div>
-            <div className="ps">{katman.kod} katmanı — detaylı sonuçların</div>
+            <div className="ps">
+              {katman.kod} katmanı
+              {KATMAN_BOYUT_SAYISI[kod] && <> · {KATMAN_BOYUT_SAYISI[kod]} boyut · ~{tahminiSureDk(kod)} dakika</>}
+            </div>
           </div>
           <span className={`bdg ${katman.durum === 'tamamlandi' ? 'bdg-done' : 'bdg-lock'}`} style={{ fontSize: 11, padding: '4px 10px' }}>
             {katman.durum === 'tamamlandi' ? 'Tamamlandı' : 'Devam Ediyor'}
@@ -97,16 +111,27 @@ export default function KatmanDetaySayfasi() {
         </div>
       ) : (
         <>
+          {/* --- Üst etiket satırı (mockup'taki tag pills) --- */}
+          {enUst3Etiket.length > 0 && (
+            <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+              {enUst3Etiket.map((s) => (
+                <span key={s.degisken_id} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>
+                  {s.degisken_adi}
+                </span>
+              ))}
+            </div>
+          )}
+
           {guclu.length > 0 && (
             <div className="card">
-              <div className="ct">Öne Çıkan Yönlerin</div>
+              <div className="ct">Güçlü Boyutların</div>
               {guclu.map((s) => <DegiskenKarti key={s.degisken_id} s={s} />)}
             </div>
           )}
 
           {digerleri.length > 0 && (
             <div className="card">
-              <div className="ct">Gelişim Alanların</div>
+              <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
               {digerleri.map((s) => <DegiskenKarti key={s.degisken_id} s={s} />)}
             </div>
           )}
@@ -117,6 +142,15 @@ export default function KatmanDetaySayfasi() {
               <div className="vg-metin">Bu katman için sonuç bulunamadı.</div>
             </div>
           )}
+
+          {/* --- Sonraki katmana geçiş --- */}
+          <button
+            className="btn full"
+            style={{ marginTop: 16 }}
+            onClick={() => navigate(sonrakiKod ? `/sonuc/${sonrakiKod}` : '/sonuc/genel')}
+          >
+            {sonrakiKod ? `Katman ${sonrakiKod} Sonuçlarına Git →` : 'Genel Sonuçlara Git →'}
+          </button>
         </>
       )}
     </div>
