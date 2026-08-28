@@ -23,7 +23,10 @@ export default function GenelSonuclarSayfasi() {
         sonuclarListesi.forEach(([kod, r]) => {
           if (r && r.tamamlandi_mi && r.sonuclar.length) {
             const ortalama = r.sonuclar.reduce((a, s) => a + s.puan, 0) / r.sonuclar.length
-            harita[kod] = { puanOrtalama: Math.round(ortalama), sonuclar: r.sonuclar }
+            harita[kod] = {
+              puanOrtalama: Math.round(ortalama),
+              sonuclar: r.sonuclar.map((s) => ({ ...s, katmanKod: kod })),
+            }
           } else {
             harita[kod] = null
           }
@@ -90,8 +93,11 @@ export default function GenelSonuclarSayfasi() {
               <div className="swt">Öne Çıkan Güçlerin</div>
             </div>
             {guclerListesi.map((s) => (
-              <div key={s.degisken_id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
-                <span>{s.degisken_adi}</span>
+              <div key={s.degisken_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <span style={{ fontSize: 9.5, fontWeight: 800, color: 'var(--pu)', background: 'var(--pul)', padding: '2px 7px', borderRadius: 20 }}>{s.katmanKod}</span>
+                  {s.degisken_adi}
+                </span>
                 <b style={{ color: 'var(--gr)' }}>{s.puan}</b>
               </div>
             ))}
@@ -102,8 +108,11 @@ export default function GenelSonuclarSayfasi() {
               <div className="swt">Gelişim Alanların</div>
             </div>
             {gelisimListesi.map((s) => (
-              <div key={s.degisken_id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
-                <span>{s.degisken_adi}</span>
+              <div key={s.degisken_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
+                  <span style={{ fontSize: 9.5, fontWeight: 800, color: 'var(--am)', background: 'var(--aml)', padding: '2px 7px', borderRadius: 20 }}>{s.katmanKod}</span>
+                  {s.degisken_adi}
+                </span>
                 <b style={{ color: 'var(--am)' }}>{s.puan}</b>
               </div>
             ))}
