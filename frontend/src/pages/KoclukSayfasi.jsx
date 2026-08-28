@@ -44,7 +44,7 @@ export default function KoclukSayfasi() {
       setSorgu('')
     } catch (err) {
       if (err.status === 409) {
-        setOnayBekleyenBolum(bolumId) // "emin misin?" onayı göster
+        setOnayBekleyenBolum(bolumId)
       } else {
         setHata(err.detail || 'Hedef seçilemedi.')
       }
@@ -115,25 +115,44 @@ export default function KoclukSayfasi() {
       {hedef && gelisim && (
         <>
           <div className="ct" style={{ marginTop: 20 }}>Gelişim Analizi</div>
-          <div className="ll">
-            {gelisim.map((g) => (
-              <div key={g.degisken_id} className="ob-card">
-                <div className="ob-top">
-                  <div className="ob-body">
-                    <div className="ob-name">{g.degisken_adi}</div>
-                    <div className="ld">
-                      Sen: {g.ogrenci_puan} · Beklenen: {g.bolum_beklenen} · Fark: {g.gap > 0 ? '+' : ''}{g.gap}
-                    </div>
-                  </div>
-                  <span className={`bdg ${g.kategori.includes('ustun') ? 'bdg-done' : g.kategori === 'beklenti' ? 'bdg-prog' : 'bdg-lock'}`}>
-                    {g.kategori.replaceAll('_', ' ')}
-                  </span>
-                </div>
-                {g.durum_tespiti && <div className="ld" style={{ marginTop: 8 }}>{g.durum_tespiti}</div>}
-                {g.aksiyon_onerisi && <div className="ld" style={{ marginTop: 4 }}><i>{g.aksiyon_onerisi}</i></div>}
+          {gelisim.length === 0 ? (
+            <div className="card">
+              <div className="veri-yok-grafik">
+                <div className="vg-ikon">📊</div>
+                <div className="vg-metin">Bu hedef için henüz karşılaştırılacak veri yok — önce katmanlarını tamamla.</div>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="card">
+              <div className="drl">
+                <div className="dli"><div className="ddt" style={{ background: 'var(--pu)' }} /> Sen</div>
+                <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
+              </div>
+              {gelisim.map((g) => (
+                <div key={g.degisken_id} className="dcr">
+                  <div className="dcl">{g.degisken_adi}</div>
+                  <div className="dcb">
+                    <div className="dcf" style={{ width: `${g.ogrenci_puan}%`, background: 'var(--pu)' }} />
+                    <div className="dcf" style={{ width: `${g.bolum_beklenen}%`, background: 'var(--gr)' }} />
+                  </div>
+                </div>
+              ))}
+              <div className="sw" style={{ marginTop: 16, marginBottom: 0 }}>
+                {gelisim.filter((g) => g.durum_tespiti || g.aksiyon_onerisi).slice(0, 4).map((g) => (
+                  <div key={g.degisken_id} className="swc">
+                    <div className="swh">
+                      <div className="swi" style={{ background: g.kategori.includes('ustun') ? 'var(--grl)' : g.kategori === 'beklenti' ? 'var(--pul)' : 'var(--aml)' }}>
+                        {g.kategori.includes('ustun') ? '✓' : g.kategori === 'beklenti' ? '≈' : '↻'}
+                      </div>
+                      <div className="swt">{g.degisken_adi}</div>
+                    </div>
+                    {g.durum_tespiti && <div className="swb">{g.durum_tespiti}</div>}
+                    {g.aksiyon_onerisi && <div className="swb" style={{ marginTop: 4, fontStyle: 'italic' }}>{g.aksiyon_onerisi}</div>}
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </>
       )}
 
@@ -154,19 +173,28 @@ export default function KoclukSayfasi() {
       {hedef && karsilastirma && (
         <>
           <div className="ct" style={{ marginTop: 20 }}>Turlar Arası Karşılaştırma</div>
-          <div className="ll">
-            {karsilastirma.map((k) => (
-              <div key={k.degisken_id} className="ob-card">
-                <div className="ob-top">
-                  <div className="ob-body">
-                    <div className="ob-name">{k.degisken_adi}</div>
-                    <div className="ld">{k.eski_puan} → {k.yeni_puan} ({k.degisim > 0 ? '+' : ''}{k.degisim})</div>
-                  </div>
-                  <span className="bdg bdg-prog">{k.trend.replaceAll('_', ' ')}</span>
-                </div>
+          {karsilastirma.length === 0 ? (
+            <div className="card">
+              <div className="veri-yok-grafik">
+                <div className="vg-ikon">📈</div>
+                <div className="vg-metin">Henüz karşılaştırılacak ikinci bir tur yok.</div>
               </div>
-            ))}
-          </div>
+            </div>
+          ) : (
+            <div className="ll">
+              {karsilastirma.map((k) => (
+                <div key={k.degisken_id} className="ob-card">
+                  <div className="ob-top">
+                    <div className="ob-body">
+                      <div className="ob-name">{k.degisken_adi}</div>
+                      <div className="ld">{k.eski_puan} → {k.yeni_puan} ({k.degisim > 0 ? '+' : ''}{k.degisim})</div>
+                    </div>
+                    <span className="bdg bdg-prog">{k.trend.replaceAll('_', ' ')}</span>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
         </>
       )}
     </div>
