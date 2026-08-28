@@ -2,6 +2,7 @@
 Admin uç noktaları.
 GET/PUT /admin/parametreler         — E8, sistem parametreleri
 POST    /admin/bolumler/{id}/durum  — E5, taslak->test_ediliyor->yayinda geçişi (audit loglu)
+PUT     /admin/bolumler/{id}/aciklama — kısa açıklamayı günceller (öğrenciye Keşfet'te gösterilir)
 GET     /admin/bolumler              — E5, tüm bölümler (durum dahil)
 GET     /admin/uyum-detay/{ogrenci_id}/{bolum_id}  — E7, admin-only skor detayı
 GET     /admin/audit-log             — E9
@@ -23,6 +24,7 @@ from app.models import (
 from app.core.security import sifre_hashle
 from app.schemas.admin import (
     SistemParametresiOut, ParametreGuncelleIstek, BolumDurumIstek, BolumOut,
+    BolumAciklamaIstek,
     OgrenciBolumUyumDetayOut, AuditLogOut, OgrenciListeOut,
     YoneticiEkleIstek, RolGuncelleIstek, YoneticiOut,
     KontrolPaneliOut, PipelineDurumuOut, KatmanAgirligiOut, YeniAgirlikVersiyonuIstek,
@@ -119,6 +121,36 @@ def bolum_durumunu_degistir(
 
     _audit_yaz(db, admin, "bolum_durum_degisikligi", "bolumler", str(bolum_id),
                f"{eski_durum} -> {istek.yeni_durum}: {istek.gerekce}")
+    db.commit()
+    db.refresh(bolum)
+    return bolum
+
+
+@router.put("/bolumler/{bolum_id}/aciklama", response_model=BolumOut)
+def bolum_aciklamasini_guncelle(
+    bolum_id: int,
+    istek: BolumAciklamaIstek,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """
+    [YENİ] Bölümün kısa_aciklama alanını günceller — bu metin öğrenciye
+    Katman 2 (Tüm Bölümleri Keşfet) ekranında gösterilir. Durum geçişinden
+    (E5) bağımsız, ayrı bir uç nokta — içerik editörleri bunu sık sık
+    değiştirebilmeli, bir durum geçişi/gerekçe gerektirmemeli.
+    """
+    if not istek.kisa_aciklama or not istek.kisa_aciklama.strip():
+        raise HTTPException(status_code=400, detail="Açıklama boş olamaz.")
+
+    bolum = db.get(Bolum, bolum_id)
+    if bolum is None:
+        raise HTTPException(status_code=404, detail="Bölüm bulunamadı.")
+
+    eski = bolum.kisa_aciklama
+    bolum.kisa_aciklama = istek.kisa_aciklama.strip()
+
+    _audit_yaz(db, admin, "bolum_aciklama_guncelleme", "bolumler", str(bolum_id),
+               f"'{eski}' -> '{istek.kisa_aciklama.strip()}'")
     db.commit()
     db.refresh(bolum)
     return bolum
