@@ -93,12 +93,15 @@ export default function GenelSonuclarSayfasi() {
               <div className="swt">Öne Çıkan Güçlerin</div>
             </div>
             {guclerListesi.map((s) => (
-              <div key={s.degisken_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <span style={{ fontSize: 9.5, fontWeight: 800, color: 'var(--pu)', background: 'var(--pul)', padding: '2px 7px', borderRadius: 20 }}>{s.katmanKod}</span>
-                  {s.degisken_adi}
-                </span>
-                <b style={{ color: 'var(--gr)' }}>{s.puan}</b>
+              <div key={s.degisken_id} style={{ padding: '9px 0', borderBottom: '1px solid var(--bor)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12.5, fontWeight: 600 }}>
+                    <span style={{ fontSize: 9.5, fontWeight: 800, color: 'var(--pu)', background: 'var(--pul)', padding: '2px 7px', borderRadius: 20 }}>{s.katmanKod}</span>
+                    {s.degisken_adi}
+                  </span>
+                  <b style={{ color: 'var(--gr)' }}>{s.puan}</b>
+                </div>
+                {s.durum_tespiti && <div style={{ fontSize: 11.5, color: 'var(--tx3)', marginTop: 4, lineHeight: 1.5 }}>{s.durum_tespiti}</div>}
               </div>
             ))}
           </div>
@@ -108,12 +111,17 @@ export default function GenelSonuclarSayfasi() {
               <div className="swt">Gelişim Alanların</div>
             </div>
             {gelisimListesi.map((s) => (
-              <div key={s.degisken_id} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 7 }}>
-                  <span style={{ fontSize: 9.5, fontWeight: 800, color: 'var(--am)', background: 'var(--aml)', padding: '2px 7px', borderRadius: 20 }}>{s.katmanKod}</span>
-                  {s.degisken_adi}
-                </span>
-                <b style={{ color: 'var(--am)' }}>{s.puan}</b>
+              <div key={s.degisken_id} style={{ padding: '9px 0', borderBottom: '1px solid var(--bor)' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12.5, fontWeight: 600 }}>
+                    <span style={{ fontSize: 9.5, fontWeight: 800, color: 'var(--am)', background: 'var(--aml)', padding: '2px 7px', borderRadius: 20 }}>{s.katmanKod}</span>
+                    {s.degisken_adi}
+                  </span>
+                  <b style={{ color: 'var(--am)' }}>{s.puan}</b>
+                </div>
+                {s.aksiyon_onerisi && (
+                  <div style={{ fontSize: 11.5, color: 'var(--tx2)', marginTop: 4, lineHeight: 1.5 }}>💡 {s.aksiyon_onerisi}</div>
+                )}
               </div>
             ))}
           </div>
