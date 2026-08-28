@@ -1,67 +1,59 @@
 import { useEffect, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { NavLink, Outlet, useLocation } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
+import TemaAnahtari from './TemaAnahtari'
+
+const MENU = [
+  { yol: '/katmanlar', ikon: '🌱', ad: 'Yol Haritam' },
+  { yol: '/sonuc', ikon: '🌟', ad: 'Uyumum' },
+  { yol: '/kesfet', ikon: '🔍', ad: 'Keşfet' },
+  { yol: '/koclugu', ikon: '🎯', ad: 'Koçluk' },
+]
 
 export default function AnaSayfaDuzeni() {
   const { cikisYap } = useAuth()
   const [ozet, setOzet] = useState(null)
+  const location = useLocation()
 
   useEffect(() => {
     api.durumOzetiGetir().then(setOzet).catch(() => {})
   }, [])
 
+  // /katmanlar/:kod veya /k5/:kod gibi alt rotalarda da "Yol Haritam" sekmesi aktif görünsün
+  const aktifYol = (yol) => {
+    if (yol === '/katmanlar') return location.pathname.startsWith('/katmanlar') || location.pathname.startsWith('/k5')
+    return location.pathname.startsWith(yol)
+  }
+
   return (
-    <div className="app">
-      <div className="sb">
-        <div className="sb-logo">
-          <div className="nm">Bölüm Uyum Sistemi</div>
-          <div className="su">Kariyer keşif platformu</div>
-        </div>
-        <div className="sb-user">
-          <div className="av">🎓</div>
-          <div style={{ flex: 1 }}>
-            <div className="u-nm">Öğrenci</div>
-            {ozet?.tur_no && <div className="u-id">Tur {ozet.tur_no}</div>}
+    <div className="app-alt">
+      <div className="ust-cubuk">
+        <div className="ust-logo">
+          <span style={{ fontSize: 18 }}>🌱</span>
+          <div>
+            <div className="nm">Bölüm Uyum Sistemi</div>
+            {ozet?.tur_no && <div className="su">Tur {ozet.tur_no}</div>}
           </div>
+        </div>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <TemaAnahtari sabit={false} />
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
-
-        {ozet && (
-          <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--bor)', fontSize: 11, color: 'var(--tx2)' }}>
-            <div>Katmanlar: <b>{ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi}</b></div>
-            {ozet.k5_acilan_dal_sayisi > 0 && (
-              <div style={{ marginTop: 3 }}>K5: <b>{ozet.k5_tamamlanan_dal_sayisi}/{ozet.k5_acilan_dal_sayisi}</b> dal tamamlandı</div>
-            )}
-            {ozet.sonraki_tur_tarihi && (
-              <div style={{ marginTop: 3 }}>Sonraki tur: <b>{new Date(ozet.sonraki_tur_tarihi).toLocaleDateString('tr-TR')}</b></div>
-            )}
-          </div>
-        )}
-
-        <div className="ns">Ana Katmanlar</div>
-        <NavLink to="/katmanlar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          Değerlendirme
-        </NavLink>
-        <NavLink to="/k5" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          Dal Derinleşme (K5)
-        </NavLink>
-
-        <div className="ns">Sonuç</div>
-        <NavLink to="/sonuc" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          Bölüm Uyumum
-        </NavLink>
-        <NavLink to="/kesfet" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          Tüm Bölümleri Keşfet
-        </NavLink>
-        <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          Hedef Bölüm Koçluğu
-        </NavLink>
       </div>
 
-      <div className="main">
+      <div className="main-alt">
         <Outlet />
       </div>
+
+      <nav className="alt-menu">
+        {MENU.map((m) => (
+          <NavLink key={m.yol} to={m.yol} className={`am-item${aktifYol(m.yol) ? ' active' : ''}`}>
+            <span className="am-ikon">{m.ikon}</span>
+            <span className="am-ad">{m.ad}</span>
+          </NavLink>
+        ))}
+      </nav>
     </div>
   )
 }

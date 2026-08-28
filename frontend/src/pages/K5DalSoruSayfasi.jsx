@@ -37,7 +37,7 @@ export default function K5DalSoruSayfasi() {
               </div>
             ))}
           </div>
-          <button className="btn full" onClick={() => navigate('/k5')}>K5'e Dön</button>
+          <button className="btn full" onClick={() => navigate('/katmanlar')}>Yol Haritama Dön</button>
         </div>
       </div>
     )
@@ -88,7 +88,7 @@ export default function K5DalSoruSayfasi() {
           ))}
         </div>
         <div className="qnav">
-          <button className="btn sec" onClick={() => navigate('/k5')}>← K5'e dön</button>
+          <button className="btn sec" onClick={() => navigate('/katmanlar')}>← Yol haritama dön</button>
           <button className="btn" onClick={ileriGit} disabled={!secilenSecenek || gonderiliyor}>
             {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Dalı tamamla'}
           </button>

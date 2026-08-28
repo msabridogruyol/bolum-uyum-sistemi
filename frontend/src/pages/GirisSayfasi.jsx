@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
+import TemaAnahtari from '../components/TemaAnahtari'
 
 export default function GirisSayfasi() {
   const [sekme, setSekme] = useState('giris') // 'giris' | 'kayit'
@@ -34,18 +35,21 @@ export default function GirisSayfasi() {
 
   return (
     <div className="auth-wrap">
+      <TemaAnahtari />
       <div className="auth-card">
+        <span className="auth-emoji">🌱</span>
         <div className="auth-logo">Bölüm Uyum Sistemi</div>
-        <div className="auth-sub">Kariyer keşif platformu</div>
+        <div className="auth-sub">Kendi yolunu filizlendir</div>
 
-        <div style={{ display: 'flex', gap: 4, background: 'var(--sur2)', borderRadius: 12, padding: 3, marginBottom: 22 }}>
+        <div style={{ display: 'flex', gap: 4, background: 'var(--sur2)', borderRadius: 14, padding: 4, marginBottom: 22 }}>
           <button
             type="button"
             onClick={() => setSekme('giris')}
             style={{
-              flex: 1, padding: 8, fontSize: 12, fontWeight: 500, border: 'none', borderRadius: 9, cursor: 'pointer',
-              background: sekme === 'giris' ? 'var(--sur)' : 'transparent',
-              color: sekme === 'giris' ? 'var(--pu)' : 'var(--tx3)',
+              flex: 1, padding: 9, fontSize: 12.5, fontWeight: 700, border: 'none', borderRadius: 11, cursor: 'pointer',
+              fontFamily: 'var(--fd)',
+              background: sekme === 'giris' ? 'var(--pu)' : 'transparent',
+              color: sekme === 'giris' ? '#fff' : 'var(--tx3)',
             }}
           >
             Giriş Yap
@@ -54,9 +58,10 @@ export default function GirisSayfasi() {
             type="button"
             onClick={() => setSekme('kayit')}
             style={{
-              flex: 1, padding: 8, fontSize: 12, fontWeight: 500, border: 'none', borderRadius: 9, cursor: 'pointer',
-              background: sekme === 'kayit' ? 'var(--sur)' : 'transparent',
-              color: sekme === 'kayit' ? 'var(--pu)' : 'var(--tx3)',
+              flex: 1, padding: 9, fontSize: 12.5, fontWeight: 700, border: 'none', borderRadius: 11, cursor: 'pointer',
+              fontFamily: 'var(--fd)',
+              background: sekme === 'kayit' ? 'var(--pu)' : 'transparent',
+              color: sekme === 'kayit' ? '#fff' : 'var(--tx3)',
             }}
           >
             Kayıt Ol
