@@ -27,18 +27,30 @@ export default function SonucSayfasi() {
       </div>
 
       {siralama.length === 0 ? (
-        <div className="card" style={{ background: 'linear-gradient(135deg,var(--pul),var(--sur))', borderColor: 'var(--pu)' }}>
-          <div className="veri-yok-grafik" style={{ padding: '18px 10px' }}>
-            <div className="vg-ikon">🌟</div>
-            <div className="vg-metin">
-              Sonuçların, K1-K4 katmanlarının tamamı bitince burada görünecek.
-              {' '}Şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
+        <>
+          <div className="taslak-onizleme">
+            <div className="taslak-onizleme-icerik ob-grid">
+              {[94, 88, 82, 77, 71].map((genislik, i) => (
+                <div key={i} className="ob-card">
+                  <div className="ob-top">
+                    <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
+                    <div className="ob-body"><div className="iskelet-satir" style={{ width: '65%' }} /></div>
+                    <div className="ob-score">%{genislik}</div>
+                  </div>
+                </div>
+              ))}
             </div>
-            <button className="btn" style={{ marginTop: 14 }} onClick={() => navigate('/katmanlar')}>
-              {ozet.tamamlanan_katman_sayisi === 0 ? 'Yolculuğuna Başla' : 'Kaldığın Yerden Devam Et'} →
-            </button>
+            <div className="taslak-onizleme-overlay">
+              <div className="to-ikon">🌟</div>
+              <div className="to-metin">
+                Sonuçların, K1-K4'ün tamamı bitince burada görünecek — şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
+              </div>
+            </div>
           </div>
-        </div>
+          <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>
+            {ozet.tamamlanan_katman_sayisi === 0 ? 'Yolculuğuna Başla' : 'Kaldığın Yerden Devam Et'} →
+          </button>
+        </>
       ) : (
         <div className="ob-grid">
           {siralama.map((s, i) => (
