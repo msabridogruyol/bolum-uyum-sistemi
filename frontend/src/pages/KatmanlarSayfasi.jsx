@@ -4,16 +4,16 @@ import { api } from '../api/client'
 
 const DURUM_ETIKET = { baslamadi: null, devam_ediyor: 'Devam Ediyor', tamamlandi: 'Tamamlandı' }
 const DURUM_RENK = { devam_ediyor: 'bdg-prog', tamamlandi: 'bdg-done' }
+const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸', K5: '🌻' }
 
 export default function KatmanlarSayfasi() {
   const [katmanlar, setKatmanlar] = useState(null)
-  const [k5Durum, setK5Durum] = useState(null) // null = henüz kontrol edilmedi/uygun değil
+  const [k5Durum, setK5Durum] = useState(null)
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail || 'Katmanlar yüklenemedi.'))
-    // K5, ancak K4 tamamlandıysa anlamlı olur — hata verirse (henüz uygun değilse) sessizce yok sayıyoruz
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum(null))
   }, [])
 
@@ -40,7 +40,9 @@ export default function KatmanlarSayfasi() {
             className={`lc${k.durum === 'tamamlandi' ? ' done' : k.durum === 'devam_ediyor' ? ' cur' : ''}`}
             onClick={() => navigate(`/katmanlar/${k.kod}`)}
           >
-            <div className="ln">{k.durum === 'tamamlandi' ? '✓' : k.sira}</div>
+            <div className="ln" style={{ fontSize: 18 }}>
+              {k.durum === 'tamamlandi' ? '✓' : KATMAN_IKON[k.kod] || k.sira}
+            </div>
             <div className="lb-wrap">
               <div className="lt">{k.ad}</div>
               <div className="ld">{k.kosullu_mu ? 'Koşullu / Dinamik — önceki katmana bağlı' : `Ağırlık: %${k.normalizasyon_agirligi}`}</div>
@@ -49,10 +51,9 @@ export default function KatmanlarSayfasi() {
           </div>
         ))}
 
-        {/* K5 dalları — ayrı bir sayfa değil, aynı listenin devamı */}
         {k5Durum?.acilan?.map((d) => (
           <div key={d.dal_kodu} className="lc" onClick={() => navigate(`/k5/${d.dal_kodu}`)}>
-            <div className="ln" style={{ background: 'var(--pul)', color: 'var(--pu)' }}>◆</div>
+            <div className="ln" style={{ background: 'var(--pul)', color: 'var(--pu)', fontSize: 18 }}>🌟</div>
             <div className="lb-wrap">
               <div className="lt">{d.dal_adi}</div>
               <div className="ld">Derinleşme dalı — Puanın: {d.puan}</div>
