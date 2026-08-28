@@ -30,6 +30,7 @@ from app.schemas.ogrenci import (
     K5DurumOut, DalAdayOut, DalBaslatCevap, DalTamamlamaCevap,
     BolumSiralamaSatiri, KesfetSonucOut, DurumOzetiOut,
     ProfilOut, ProfilGuncelleIstek, SifreDegistirIstek, ProfilFotoIstek, MeslekAramaSonucu,
+    KatmanGecmisSonucOut,
 )
 
 router = APIRouter()
@@ -533,3 +534,55 @@ def meslek_ara(
         {"q": f"%{q.strip()}%"},
     ).mappings().all()
     return [MeslekAramaSonucu(id=r["id"], ad=r["ad"]) for r in satirlar]
+
+# ===================== Geçmiş katman sonucu (sonradan eklendi) ===================== #
+
+@router.get("/katmanlar/{kod}/sonuc", response_model=KatmanGecmisSonucOut)
+def katman_gecmis_sonucu(
+    kod: str,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    """
+    [YENİ] Bir katman daha önce tamamlanmışsa, sonucunu (Ana Sayfa/detay
+    ekranları için) tekrar sorgulamayı sağlar — önceden yalnızca tamamlama
+    anında bir kereliğine dönüyordu. Katman tamamlanmadıysa boş liste döner,
+    hata fırlatmaz.
+    """
+    katman = _katman_bul(db, kod)
+    try:
+        tur = son_tur_getir(db, ogrenci)
+    except IsKuraliHatasi:
+        return KatmanGecmisSonucOut(katman_kodu=katman.kod, tamamlandi_mi=False, sonuclar=[])
+
+    oturum = (
+        db.query(OgrenciKatmanOturumu)
+        .filter(
+            OgrenciKatmanOturumu.ogrenci_id == ogrenci.id,
+            OgrenciKatmanOturumu.tur_id == tur.id,
+            OgrenciKatmanOturumu.katman_id == katman.id,
+        )
+        .first()
+    )
+    if oturum is None or oturum.durum != "tamamlandi":
+        return KatmanGecmisSonucOut(katman_kodu=katman.kod, tamamlandi_mi=False, sonuclar=[])
+
+    satirlar = db.execute(
+        text("""
+            SELECT s.degisken_id, d.ad AS degisken_adi, s.puan
+            FROM ogrenci_degisken_skorlari s
+            JOIN degiskenler d ON d.id = s.degisken_id
+            WHERE s.ogrenci_id = :oid AND s.tur_id = :tid AND d.katman_id = :kid
+            ORDER BY d.sira
+        """),
+        {"oid": str(ogrenci.id), "tid": tur.id, "kid": katman.id},
+    ).mappings().all()
+
+    return KatmanGecmisSonucOut(
+        katman_kodu=katman.kod,
+        tamamlandi_mi=True,
+        sonuclar=[
+            KatmanSonucSatiri(degisken_id=r["degisken_id"], degisken_adi=r["degisken_adi"], puan=float(r["puan"]))
+            for r in satirlar
+        ],
+    )
