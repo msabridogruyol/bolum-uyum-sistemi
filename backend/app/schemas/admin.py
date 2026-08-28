@@ -38,8 +38,13 @@ class BolumOut(BaseModel):
     ad: str
     durum: str
     test_notu: str | None
+    kisa_aciklama: str | None
 
     model_config = {"from_attributes": True}
+
+
+class BolumAciklamaIstek(BaseModel):
+    kisa_aciklama: str
 
 
 # --- E7 — Model Yakınsaması / Geçerlilik (admin-only skorlar) ---
