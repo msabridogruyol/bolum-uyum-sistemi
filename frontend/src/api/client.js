@@ -102,6 +102,14 @@ export const api = {
   kesfetAra: (q, limit = 20) => get(`/ogrenci/sonuc/kesfet?q=${encodeURIComponent(q)}&limit=${limit}`),
   durumOzetiGetir: () => get('/ogrenci/durum-ozeti'),
 
+  // --- Profil (sonradan eklendi) ---
+  profilGetir: () => get('/ogrenci/profil'),
+  profilGuncelle: (veri) => put('/ogrenci/profil', veri),
+  sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri),
+  profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
+  meslekAra: (q) => get(`/ogrenci/meslek-ara?q=${encodeURIComponent(q)}`),
+  katmanSonucuGetir: (kod) => get(`/ogrenci/katmanlar/${kod}/sonuc`),
+
   // --- Bölüm F: Koçluk ---
   aktifHedefGetir: () => get('/koclugu/hedef'),
   hedefSec: (bolumId, onay = false) => post('/koclugu/hedef', { bolum_id: bolumId, onay }),
