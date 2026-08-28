@@ -54,6 +54,12 @@ export default function AnaSayfa() {
   const tumSonuclar = ANA_KATMANLAR.flatMap((kod) => katmanSonuclari[kod]?.sonuclar || [])
   const enYuksek3 = [...tumSonuclar].sort((a, b) => b.puan - a.puan).slice(0, 3)
 
+  // Güç dağılımı — güçlü/orta/gelişim sayıları (gerçek puanlardan)
+  const guclu = tumSonuclar.filter((s) => s.puan >= 70).length
+  const gelisimSayisi = tumSonuclar.filter((s) => s.puan < 40).length
+  const orta = tumSonuclar.length - guclu - gelisimSayisi
+  const toplamBoyut = tumSonuclar.length || 1 // 0'a bölünmeyi önle
+
   return (
     <div className="pg pg-genis">
       <div className="ph">
@@ -182,6 +188,46 @@ export default function AnaSayfa() {
 
         {/* ============ SAĞ SÜTUN — yan panel widget'ları ============ */}
         <div className="yan-panel">
+          <div className="card" style={{ marginBottom: 0 }}>
+            <div className="ct">Güç Dağılımın</div>
+            {tumSonuclar.length === 0 ? (
+              <div className="taslak-onizleme">
+                <div className="taslak-onizleme-icerik">
+                  <div className="donut-wrap">
+                    <div className="donut" style={{ background: 'conic-gradient(var(--sur2) 0deg 360deg)' }} />
+                    <div className="donut-legend">
+                      <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--sur2)' }} /><span className="donut-legend-etiket">Güçlü</span></div>
+                      <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--sur2)' }} /><span className="donut-legend-etiket">Orta</span></div>
+                      <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--sur2)' }} /><span className="donut-legend-etiket">Gelişim</span></div>
+                    </div>
+                  </div>
+                </div>
+                <div className="taslak-onizleme-overlay">
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>Katmanlar tamamlandıkça burada dolacak</div>
+                </div>
+              </div>
+            ) : (
+              <div className="donut-wrap">
+                <div
+                  className="donut"
+                  style={{
+                    background: `conic-gradient(var(--gr) 0deg ${(guclu / toplamBoyut) * 360}deg, var(--pu) ${(guclu / toplamBoyut) * 360}deg ${((guclu + orta) / toplamBoyut) * 360}deg, var(--am) ${((guclu + orta) / toplamBoyut) * 360}deg 360deg)`,
+                  }}
+                >
+                  <div className="donut-ortasi">
+                    <div className="sayi">{toplamBoyut}</div>
+                    <div className="etiket">BOYUT</div>
+                  </div>
+                </div>
+                <div className="donut-legend">
+                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--gr)' }} /><span className="donut-legend-etiket">Güçlü (70+)</span><span className="donut-legend-sayi" style={{ color: 'var(--gr)' }}>{guclu}</span></div>
+                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--pu)' }} /><span className="donut-legend-etiket">Orta (40-69)</span><span className="donut-legend-sayi" style={{ color: 'var(--pu)' }}>{orta}</span></div>
+                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--am)' }} /><span className="donut-legend-etiket">Gelişim (&lt;40)</span><span className="donut-legend-sayi" style={{ color: 'var(--am)' }}>{gelisimSayisi}</span></div>
+                </div>
+              </div>
+            )}
+          </div>
+
           <div className="card" style={{ marginBottom: 0 }}>
             <div className="ct">Katman Ortalamaların</div>
             {ANA_KATMANLAR.map((kod) => {
