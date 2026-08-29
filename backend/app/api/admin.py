@@ -27,6 +27,7 @@ from app.core.security import sifre_hashle
 from app.schemas.admin import (
     SistemParametresiOut, ParametreGuncelleIstek, BolumDurumIstek, BolumOut,
     BolumAciklamaIstek,
+    BolumTopluAciklamaIstek, BolumTopluAciklamaSonucu,
     OgrenciBolumUyumDetayOut, AuditLogOut, OgrenciListeOut,
     YoneticiEkleIstek, RolGuncelleIstek, YoneticiOut,
     KontrolPaneliOut, PipelineDurumuOut, KatmanAgirligiOut, YeniAgirlikVersiyonuIstek,
@@ -157,6 +158,31 @@ def bolum_aciklamasini_guncelle(
     db.commit()
     db.refresh(bolum)
     return bolum
+
+
+@router.post("/bolumler/toplu-aciklama", response_model=BolumTopluAciklamaSonucu)
+def bolum_aciklamalarini_toplu_guncelle(
+    istek: BolumTopluAciklamaIstek,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """[YENİ] CSV'den toplu bölüm açıklaması güncelleme — ad eşleşmesiyle çalışır."""
+    bolum_map = {b.ad: b for b in db.query(Bolum).all()}
+    guncellenen = 0
+    eslesmeyenler = []
+
+    for satir in istek.satirlar:
+        bolum = bolum_map.get(satir.ad)
+        if bolum is None:
+            eslesmeyenler.append(satir.ad)
+            continue
+        bolum.kisa_aciklama = satir.kisa_aciklama.strip()
+        guncellenen += 1
+
+    _audit_yaz(db, admin, "bolum_aciklama_toplu_guncelleme", "bolumler", "toplu",
+               f"{guncellenen} bölüm güncellendi, {len(eslesmeyenler)} eşleşmedi")
+    db.commit()
+    return BolumTopluAciklamaSonucu(guncellenen=guncellenen, eslesmeyenler=eslesmeyenler[:50])
 
 
 # ===================== E7 — Model Yakınsaması / Geçerlilik (admin-only) ===================== #
