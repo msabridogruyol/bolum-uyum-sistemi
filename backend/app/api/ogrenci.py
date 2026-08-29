@@ -31,6 +31,7 @@ from app.schemas.ogrenci import (
     BolumSiralamaSatiri, KesfetSonucOut, DurumOzetiOut,
     ProfilOut, ProfilGuncelleIstek, SifreDegistirIstek, ProfilFotoIstek, MeslekAramaSonucu,
     KatmanGecmisSonucOut,
+    BolumOrnekMeslekOut,
 )
 
 router = APIRouter()
@@ -627,3 +628,31 @@ def katman_gecmis_sonucu(
             for r in satirlar
         ]),
     )
+
+
+# ===================== Bölüm örnek meslekleri (Keşfet ekranı için) ===================== #
+
+@router.get("/sonuc/kesfet/{bolum_id}/meslekler", response_model=list[BolumOrnekMeslekOut])
+def bolum_ornek_meslekleri_getir(
+    bolum_id: int,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    """
+    [YENİ] Bir bölümün altında gösterilecek örnek meslekleri getirir —
+    a2_meslek_bolum_eslesme_aday.csv'den türetilmiş gerçek benzerlik
+    skorlarına dayanır (bolum_ornek_meslekler tablosu).
+    """
+    satirlar = db.execute(
+        text("""
+            SELECT meslek_adi, benzerlik_skoru
+            FROM bolum_ornek_meslekler
+            WHERE bolum_id = :bid
+            ORDER BY sira
+        """),
+        {"bid": bolum_id},
+    ).mappings().all()
+    return [
+        BolumOrnekMeslekOut(meslek_adi=r["meslek_adi"], benzerlik_skoru=float(r["benzerlik_skoru"]))
+        for r in satirlar
+    ]
