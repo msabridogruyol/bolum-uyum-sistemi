@@ -145,6 +145,7 @@ export const api = {
     apost(`/admin/bolumler/${bolumId}/durum`, { yeni_durum: yeniDurum, gerekce }),
   bolumAciklamaGuncelle: (bolumId, kisaAciklama) =>
     aput(`/admin/bolumler/${bolumId}/aciklama`, { kisa_aciklama: kisaAciklama }),
+  bolumAciklamalariniTopluGuncelle: (satirlar) => apost('/admin/bolumler/toplu-aciklama', { satirlar }),
   katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
   yeniAgirlikVersiyonu: (agirliklar) => apost('/admin/katman-agirliklari', { agirliklar }),
   dallariListele: () => aget('/admin/dallar'),
