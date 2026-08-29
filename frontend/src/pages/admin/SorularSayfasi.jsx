@@ -343,6 +343,18 @@ function YeniSoruFormu({ onEklendi }) {
 // ============================================================
 // Ana sayfa
 // ============================================================
+function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
+  const kacisla = (deger) => `"${String(deger ?? '').replace(/"/g, '""')}"`
+  const icerik = [basliklar.join(','), ...satirlar.map((s) => s.map(kacisla).join(','))].join('\r\n')
+  const blob = new Blob(['\uFEFF' + icerik], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = dosyaAdi
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function SorularSayfasi() {
   const [sorular, setSorular] = useState(null)
   const [katmanFiltre, setKatmanFiltre] = useState('')
@@ -391,6 +403,17 @@ export default function SorularSayfasi() {
         </button>
         <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
           {aktifSekme === 'tekli' ? 'Kapat' : '+ Tek Tek Soru Ekle'}
+        </button>
+        <button
+          className="btn sec"
+          onClick={() => csvDisaAktar(
+            'sorular_disa_aktarim.csv',
+            ['id', 'katman_kod', 'soru_tipi', 'soru_metni', 'aktif_mi'],
+            (sorular || []).map((s) => [s.id, s.katman_kod, s.soru_tipi, s.soru_metni, s.aktif_mi]),
+          )}
+          disabled={!sorular || sorular.length === 0}
+        >
+          ⬇ CSV Dışa Aktar
         </button>
       </div>
 
