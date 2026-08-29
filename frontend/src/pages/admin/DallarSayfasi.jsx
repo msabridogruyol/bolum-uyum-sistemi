@@ -103,10 +103,10 @@ export default function DallarSayfasi() {
     }
   }
 
-  if (!dallar) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+  if (!dallar) return <div className="pg pg-genis"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Derinleşme Alanları</div>
         <div className="ps">Öğrencinin son değerlendirme adımındaki sonucuna göre kendisine özel olarak açılabilecek ek inceleme alanları.</div>
