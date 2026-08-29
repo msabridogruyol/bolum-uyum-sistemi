@@ -21,7 +21,7 @@ from app.core.database import get_db
 from app.models import (
     AdminKullanici, SistemParametresi, Bolum, OgrenciBolumUyumSkoru,
     OgrenciDegerlendirmeTuru, AuditLog, Ogrenci, Katman, KatmanAgirligi,
-    Dal, Soru, SoruSecenegi, OgrenciKatmanOturumu,
+    Dal, Soru, SoruSecenegi, OgrenciKatmanOturumu, Degisken,
 )
 from app.core.security import sifre_hashle
 from app.schemas.admin import (
@@ -36,6 +36,7 @@ from app.schemas.admin import (
     KullanimIstatistikleriOut, GunlukZiyaretOut, SayfaZiyaretOut,
     OgrenciDetayOut, OgrenciIstatistikleriOut, OkulSayisiOut, HedefBolumSayisiOut,
     BolumKademeIstatistigiOut, OkulKirilimOut, SinifKirilimOut, DetayliIstatistiklerOut,
+    SoruGecerlilikYuklemeIstek, SoruGecerlilikOzetOut, SoruGecerlilikSonucuOut,
 )
 
 router = APIRouter()
@@ -496,13 +497,20 @@ def sorulari_listele(
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
-    sorgu = db.query(Soru, Katman.kod).join(Katman, Katman.id == Soru.katman_id)
+    sorgu = (
+        db.query(Soru, Katman.kod, Degisken.kod, Degisken.ad)
+        .join(Katman, Katman.id == Soru.katman_id)
+        .outerjoin(Degisken, Degisken.id == Soru.degisken_id)
+    )
     if katman_kod:
         sorgu = sorgu.filter(Katman.kod == katman_kod)
     sonuc = sorgu.order_by(Soru.id).all()
     return [
-        SoruOut(id=s.id, katman_kod=kod, soru_tipi=s.soru_tipi, soru_metni=s.soru_metni, aktif_mi=s.aktif_mi)
-        for s, kod in sonuc
+        SoruOut(
+            id=s.id, katman_kod=katman_kodu, degisken_kod=degisken_kodu, degisken_adi=degisken_adi,
+            soru_tipi=s.soru_tipi, soru_metni=s.soru_metni, aktif_mi=s.aktif_mi,
+        )
+        for s, katman_kodu, degisken_kodu, degisken_adi in sonuc
     ]
 
 
@@ -1004,3 +1012,99 @@ def detayli_istatistikleri_getir(
     siniflar.sort(key=lambda s: -s.ogrenci_sayisi)
 
     return DetayliIstatistiklerOut(bolumler=bolumler, okullar=okullar, siniflar=siniflar)
+
+
+# ============================================================================
+# A7 — Soru Geçerlilik Testi (sonradan eklendi)
+# ============================================================================
+# Test hesaplaması (embedding) yerel pipeline'da (kullanıcının bilgisayarında)
+# çalışır — bu uç noktalar yalnızca SONUCU yükler/görüntüler.
+
+@router.post("/soru-gecerlilik/yukle", status_code=204)
+def soru_gecerlilik_sonuclarini_yukle(
+    istek: SoruGecerlilikYuklemeIstek,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    if not istek.sonuclar:
+        raise HTTPException(status_code=400, detail="Yüklenecek sonuç yok.")
+
+    gecerli_soru_idler = {
+        r[0] for r in db.execute(text("SELECT id FROM sorular")).all()
+    }
+
+    eslesmeyen = 0
+    for s in istek.sonuclar:
+        if s.soru_id not in gecerli_soru_idler:
+            eslesmeyen += 1
+            continue
+        db.execute(
+            text("""
+                INSERT INTO soru_gecerlilik_sonuclari
+                    (soru_id, gercek_degisken_kod, model_a_tahmin, model_a_dogru, model_a_benzerlik,
+                     model_b_tahmin, model_b_dogru, model_b_benzerlik,
+                     model_c_tahmin, model_c_dogru, model_c_benzerlik)
+                VALUES
+                    (:soru_id, :gercek, :a_t, :a_d, :a_b, :b_t, :b_d, :b_b, :c_t, :c_d, :c_b)
+            """),
+            {
+                "soru_id": s.soru_id, "gercek": s.gercek_degisken_kod,
+                "a_t": s.model_a_tahmin, "a_d": s.model_a_dogru, "a_b": s.model_a_benzerlik,
+                "b_t": s.model_b_tahmin, "b_d": s.model_b_dogru, "b_b": s.model_b_benzerlik,
+                "c_t": s.model_c_tahmin, "c_d": s.model_c_dogru, "c_b": s.model_c_benzerlik,
+            },
+        )
+
+    _audit_yaz(db, admin, "soru_gecerlilik_yukleme", "soru_gecerlilik_sonuclari", "toplu",
+               f"{len(istek.sonuclar) - eslesmeyen} sonuç yüklendi, {eslesmeyen} eşleşmedi")
+    db.commit()
+
+
+@router.get("/soru-gecerlilik", response_model=SoruGecerlilikOzetOut)
+def soru_gecerlilik_sonuclarini_getir(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    satirlar = db.execute(
+        text("""
+            SELECT DISTINCT ON (g.soru_id)
+                g.soru_id, s.soru_metni, k.kod AS katman_kod, g.gercek_degisken_kod,
+                g.model_a_tahmin, g.model_a_dogru, g.model_b_tahmin, g.model_b_dogru,
+                g.model_c_tahmin, g.model_c_dogru, g.model_a_benzerlik, g.model_b_benzerlik,
+                g.model_c_benzerlik, g.test_zamani
+            FROM soru_gecerlilik_sonuclari g
+            JOIN sorular s ON s.id = g.soru_id
+            JOIN katmanlar k ON k.id = s.katman_id
+            ORDER BY g.soru_id, g.test_zamani DESC
+        """)
+    ).mappings().all()
+
+    sonuclar = []
+    tam_dogru = kismi_dogru = hic_dogru_degil = 0
+    for r in satirlar:
+        kac_dogru = sum([r["model_a_dogru"], r["model_b_dogru"], r["model_c_dogru"]])
+        if kac_dogru == 3:
+            tam_dogru += 1
+        elif kac_dogru == 0:
+            hic_dogru_degil += 1
+        else:
+            kismi_dogru += 1
+        ortalama_benzerlik = round(
+            (float(r["model_a_benzerlik"]) + float(r["model_b_benzerlik"]) + float(r["model_c_benzerlik"])) / 3, 4
+        )
+        sonuclar.append(SoruGecerlilikSonucuOut(
+            soru_id=r["soru_id"], soru_metni=r["soru_metni"], katman_kod=r["katman_kod"],
+            gercek_degisken_kod=r["gercek_degisken_kod"],
+            model_a_tahmin=r["model_a_tahmin"], model_a_dogru=r["model_a_dogru"],
+            model_b_tahmin=r["model_b_tahmin"], model_b_dogru=r["model_b_dogru"],
+            model_c_tahmin=r["model_c_tahmin"], model_c_dogru=r["model_c_dogru"],
+            kac_model_dogru=kac_dogru, ortalama_benzerlik=ortalama_benzerlik,
+            test_zamani=r["test_zamani"],
+        ))
+
+    sonuclar.sort(key=lambda s: (s.kac_model_dogru, s.ortalama_benzerlik))  # en sorunlu en üstte
+
+    return SoruGecerlilikOzetOut(
+        toplam_soru=len(sonuclar), tam_dogru=tam_dogru, kismi_dogru=kismi_dogru,
+        hic_dogru_degil=hic_dogru_degil, sonuclar=sonuclar,
+    )
