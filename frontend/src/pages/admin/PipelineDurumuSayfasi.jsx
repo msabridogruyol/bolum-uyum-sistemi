@@ -89,7 +89,7 @@ export default function PipelineDurumuSayfasi() {
   }
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Pipeline Sonuçları</div>
         <div className="ps">
