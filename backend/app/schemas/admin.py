@@ -177,3 +177,46 @@ class OgrenciListeOut(BaseModel):
     olusturulma_zamani: datetime
 
     model_config = {"from_attributes": True}
+
+
+# --- Pipeline Sonuçları (sonradan eklendi) ---
+# Bilgisayarınızda çalışan pipeline'ın çıktısını (CSV) admin panelinden
+# yükleyip, canlıya yansımadan ÖNCE önizleyip onaylamanızı sağlar.
+
+class PipelineTaslakSatiri(BaseModel):
+    bolum_adi: str
+    degisken_kod: str
+    agirlik_degeri: float
+    yakinsama_skoru: float | None = None
+    agirlikli_varyans: float | None = None
+    etkin_meslek_sayisi: int | None = None
+
+
+class PipelineYuklemeIstek(BaseModel):
+    satirlar: list[PipelineTaslakSatiri]
+
+
+class PipelineBolumAralikOut(BaseModel):
+    bolum_adi: str
+    min_deger: float
+    max_deger: float
+    aralik: float
+
+
+class PipelineYuklemeSonucu(BaseModel):
+    yukleme_grubu: str
+    toplam_satir: int
+    eslesen_satir: int
+    eslesmeyen_satirlar: list[str]  # "bolum_adi / degisken_kod" formatında, teşhis için
+    bolum_sayisi: int
+    ortalama_aralik: float
+    en_duz_10: list[PipelineBolumAralikOut]
+
+
+class PipelineTaslakGrubuOut(BaseModel):
+    yukleme_grubu: str
+    yuklenme_zamani: datetime
+    toplam_satir: int
+    bolum_sayisi: int
+    ortalama_aralik: float
+    durum: str
