@@ -103,7 +103,7 @@ export default function KatmanDetaySayfasi() {
   const hedefKarsilastirma = gelisim.filter((g) => buKatmanDegiskenIdleri.has(g.degisken_id))
 
   return (
-    <div className={`pg${hedef ? ' pg-genis' : ''}`}>
+    <div className="pg pg-genis">
       <button className="back" onClick={() => navigate('/sonuc/genel')}>← Genel sonuçlara dön</button>
 
       <div className="ph">
@@ -121,85 +121,13 @@ export default function KatmanDetaySayfasi() {
         </div>
       </div>
 
-      {!sonuc.tamamlandi_mi ? (
-        <>
-          <div className="taslak-onizleme">
-            <div className="taslak-onizleme-icerik two">
-              <div className="card" style={{ marginBottom: 0 }}>
-                <div className="ct">Güçlü Boyutların</div>
-                {[88, 76, 65].map((p, i) => (
-                  <div key={i} className="boyut-satir">
-                    <div className="boyut-satir-ust">
-                      <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
-                        <div className="iskelet-satir" style={{ width: 90 }} />
-                        <div className="db"><div className="df" style={{ width: `${p}%`, background: 'var(--gr)' }} /></div>
-                        <div className="ds" style={{ color: 'var(--gr)' }}>{p}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <div className="card" style={{ marginBottom: 0 }}>
-                <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
-                {[45, 30, 18].map((p, i) => (
-                  <div key={i} className="boyut-satir">
-                    <div className="boyut-satir-ust">
-                      <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
-                        <div className="iskelet-satir" style={{ width: 90 }} />
-                        <div className="db"><div className="df" style={{ width: `${p}%`, background: 'var(--tx3)' }} /></div>
-                        <div className="ds" style={{ color: 'var(--tx3)' }}>{p}</div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="taslak-onizleme-overlay">
-              <div className="to-ikon">📊</div>
-              <div className="to-metin">Bu katmanı henüz tamamlamadın.</div>
-            </div>
-          </div>
-          <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate(`/katmanlar/${kod}`)}>
-            {katman.durum === 'devam_ediyor' ? 'Kaldığın Yerden Devam Et' : 'Bu Katmana Başla'}
-          </button>
-        </>
-      ) : (
-        <div className={hedef ? 'yol-duzen' : undefined}>
-          <div>
-            {siraliSonuclar.length >= 2 && (
-              <div className="card">
-                <div className="ct" style={{ color: 'var(--pu)' }}>{PROFIL_ETIKETI[kod] || 'PROFİLİN'}</div>
-                <div style={{ fontSize: 14.5, fontWeight: 600, lineHeight: 1.55 }}>
-                  Bu katmanda en güçlü çıkan boyutların: <b style={{ color: 'var(--pu)' }}>{siraliSonuclar[0].degisken_adi}</b>
-                  {' '}(puan {siraliSonuclar[0].puan}) ve <b style={{ color: 'var(--pu)' }}>{siraliSonuclar[1].degisken_adi}</b>
-                  {' '}(puan {siraliSonuclar[1].puan}).
-                </div>
-              </div>
-            )}
-
-            {enUst4Etiket.length > 0 && (
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
-                {enUst4Etiket.map((s) => (
-                  <span key={s.degisken_id} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>
-                    {s.degisken_adi}
-                  </span>
-                ))}
-              </div>
-            )}
-
-            <div className="ps" style={{ marginBottom: 14, fontSize: 12 }}>
-              Bir boyuta tıklayınca detaylı açıklaması açılır. 60 ve üzeri puan alan boyutlar "Güçlü", altındakiler "{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'}" olarak gruplanır.
-            </div>
-
-            <div className="two">
-              {guclu.length > 0 ? (
-                <div className="card" style={{ marginBottom: 0 }}>
-                  <div className="ct">Güçlü Boyutların</div>
-                  {guclu.map((s) => <BoyutSatiri key={s.degisken_id} s={s} />)}
-                </div>
-              ) : (
-                <div className="card taslak-onizleme" style={{ marginBottom: 0 }}>
-                  <div className="taslak-onizleme-icerik">
+      <div className="yol-duzen">
+        <div>
+          {!sonuc.tamamlandi_mi ? (
+            <>
+              <div className="taslak-onizleme">
+                <div className="taslak-onizleme-icerik two">
+                  <div className="card" style={{ marginBottom: 0 }}>
                     <div className="ct">Güçlü Boyutların</div>
                     {[88, 76, 65].map((p, i) => (
                       <div key={i} className="boyut-satir">
@@ -213,20 +141,7 @@ export default function KatmanDetaySayfasi() {
                       </div>
                     ))}
                   </div>
-                  <div className="taslak-onizleme-overlay">
-                    <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz 60+ çıkan bir boyutun yok</div>
-                  </div>
-                </div>
-              )}
-
-              {digerleri.length > 0 ? (
-                <div className="card" style={{ marginBottom: 0 }}>
-                  <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
-                  {digerleri.map((s) => <BoyutSatiri key={s.degisken_id} s={s} />)}
-                </div>
-              ) : (
-                <div className="card taslak-onizleme" style={{ marginBottom: 0 }}>
-                  <div className="taslak-onizleme-icerik">
+                  <div className="card" style={{ marginBottom: 0 }}>
                     <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
                     {[45, 30, 18].map((p, i) => (
                       <div key={i} className="boyut-satir">
@@ -240,60 +155,198 @@ export default function KatmanDetaySayfasi() {
                       </div>
                     ))}
                   </div>
-                  <div className="taslak-onizleme-overlay">
-                    <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz 60 altı çıkan bir boyutun yok</div>
+                </div>
+                <div className="taslak-onizleme-overlay">
+                  <div className="to-ikon">📊</div>
+                  <div className="to-metin">Bu katmanı henüz tamamlamadın.</div>
+                </div>
+              </div>
+              <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate(`/katmanlar/${kod}`)}>
+                {katman.durum === 'devam_ediyor' ? 'Kaldığın Yerden Devam Et' : 'Bu Katmana Başla'}
+              </button>
+            </>
+          ) : (
+            <>
+              {siraliSonuclar.length >= 2 && (
+                <div className="card">
+                  <div className="ct" style={{ color: 'var(--pu)' }}>{PROFIL_ETIKETI[kod] || 'PROFİLİN'}</div>
+                  <div style={{ fontSize: 14.5, fontWeight: 600, lineHeight: 1.55 }}>
+                    Bu katmanda en güçlü çıkan boyutların: <b style={{ color: 'var(--pu)' }}>{siraliSonuclar[0].degisken_adi}</b>
+                    {' '}(puan {siraliSonuclar[0].puan}) ve <b style={{ color: 'var(--pu)' }}>{siraliSonuclar[1].degisken_adi}</b>
+                    {' '}(puan {siraliSonuclar[1].puan}).
                   </div>
                 </div>
               )}
-            </div>
 
-            {sonuc.sonuclar.length === 0 && (
-              <div className="veri-yok-grafik">
-                <div className="vg-ikon">📊</div>
-                <div className="vg-metin">Bu katman için sonuç bulunamadı.</div>
+              {enUst4Etiket.length > 0 && (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+                  {enUst4Etiket.map((s) => (
+                    <span key={s.degisken_id} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>
+                      {s.degisken_adi}
+                    </span>
+                  ))}
+                </div>
+              )}
+
+              <div className="ps" style={{ marginBottom: 14, fontSize: 12 }}>
+                Bir boyuta tıklayınca detaylı açıklaması açılır. 60 ve üzeri puan alan boyutlar "Güçlü", altındakiler "{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'}" olarak gruplanır.
               </div>
-            )}
 
-            <button
-              className="btn full"
-              style={{ marginTop: 16 }}
-              onClick={() => navigate(sonrakiKod ? `/sonuc/${sonrakiKod}` : '/sonuc/genel')}
-            >
-              {sonrakiKod ? `Katman ${sonrakiKod} Sonuçlarına Git →` : 'Genel Sonuçlara Git →'}
-            </button>
-          </div>
-
-          {hedef && (
-            <div className="yan-panel">
-              <div className="card" style={{ marginBottom: 0 }}>
-                <div className="ct">🎯 {hedef.bolum_adi} İle Karşılaştırma</div>
-                {hedefKarsilastirma.length === 0 ? (
-                  <div className="ps" style={{ margin: 0 }}>Bu katman için henüz karşılaştırma verisi yok.</div>
+              <div className="two">
+                {guclu.length > 0 ? (
+                  <div className="card" style={{ marginBottom: 0 }}>
+                    <div className="ct">Güçlü Boyutların</div>
+                    {guclu.map((s) => <BoyutSatiri key={s.degisken_id} s={s} />)}
+                  </div>
                 ) : (
-                  <>
-                    <div className="drl" style={{ marginBottom: 12 }}>
-                      <div className="dli"><div className="ddt" style={{ background: 'var(--pu)' }} /> Sen</div>
-                      <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
-                    </div>
-                    {hedefKarsilastirma.map((g) => (
-                      <div key={g.degisken_id} className="dcr">
-                        <div className="dcl" style={{ width: 130, minWidth: 130, fontSize: 11.5 }}>{g.degisken_adi}</div>
-                        <div className="dcb">
-                          <div className="dcf" style={{ width: `${g.ogrenci_puan}%`, background: 'var(--pu)' }} />
-                          <div className="dcf" style={{ width: `${g.bolum_beklenen}%`, background: 'var(--gr)' }} />
+                  <div className="card taslak-onizleme" style={{ marginBottom: 0 }}>
+                    <div className="taslak-onizleme-icerik">
+                      <div className="ct">Güçlü Boyutların</div>
+                      {[88, 76, 65].map((p, i) => (
+                        <div key={i} className="boyut-satir">
+                          <div className="boyut-satir-ust">
+                            <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
+                              <div className="iskelet-satir" style={{ width: 90 }} />
+                              <div className="db"><div className="df" style={{ width: `${p}%`, background: 'var(--gr)' }} /></div>
+                              <div className="ds" style={{ color: 'var(--gr)' }}>{p}</div>
+                            </div>
+                          </div>
                         </div>
-                      </div>
-                    ))}
-                    <button className="btn sec" style={{ width: '100%', marginTop: 12 }} onClick={() => navigate('/koclugu')}>
-                      Koçluk Detayına Git
-                    </button>
-                  </>
+                      ))}
+                    </div>
+                    <div className="taslak-onizleme-overlay">
+                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz 60+ çıkan bir boyutun yok</div>
+                    </div>
+                  </div>
+                )}
+
+                {digerleri.length > 0 ? (
+                  <div className="card" style={{ marginBottom: 0 }}>
+                    <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
+                    {digerleri.map((s) => <BoyutSatiri key={s.degisken_id} s={s} />)}
+                  </div>
+                ) : (
+                  <div className="card taslak-onizleme" style={{ marginBottom: 0 }}>
+                    <div className="taslak-onizleme-icerik">
+                      <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
+                      {[45, 30, 18].map((p, i) => (
+                        <div key={i} className="boyut-satir">
+                          <div className="boyut-satir-ust">
+                            <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
+                              <div className="iskelet-satir" style={{ width: 90 }} />
+                              <div className="db"><div className="df" style={{ width: `${p}%`, background: 'var(--tx3)' }} /></div>
+                              <div className="ds" style={{ color: 'var(--tx3)' }}>{p}</div>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="taslak-onizleme-overlay">
+                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz 60 altı çıkan bir boyutun yok</div>
+                    </div>
+                  </div>
                 )}
               </div>
+
+              {sonuc.sonuclar.length === 0 && (
+                <div className="veri-yok-grafik">
+                  <div className="vg-ikon">📊</div>
+                  <div className="vg-metin">Bu katman için sonuç bulunamadı.</div>
+                </div>
+              )}
+
+              <button
+                className="btn full"
+                style={{ marginTop: 16 }}
+                onClick={() => navigate(sonrakiKod ? `/sonuc/${sonrakiKod}` : '/sonuc/genel')}
+              >
+                {sonrakiKod ? `Katman ${sonrakiKod} Sonuçlarına Git →` : 'Genel Sonuçlara Git →'}
+              </button>
+            </>
+          )}
+        </div>
+
+        {/* ============ SAĞ PANEL — her zaman görünür ============ */}
+        <div className="yan-panel">
+          <div className="card" style={{ marginBottom: 0 }}>
+            <div className="ct">Öne Çıkanlar</div>
+            {!sonuc.tamamlandi_mi ? (
+              <div className="taslak-onizleme">
+                <div className="taslak-onizleme-icerik">
+                  {['Güçlü Yönün', 'Zayıf Yönün'].map((baslik, i) => (
+                    <div key={i} style={{ marginBottom: i === 0 ? 14 : 0 }}>
+                      <div style={{ fontSize: 10.5, fontWeight: 700, color: i === 0 ? 'var(--gr)' : 'var(--am)', marginBottom: 5 }}>
+                        {i === 0 ? '✓' : '↻'} {baslik}
+                      </div>
+                      <div className="iskelet-satir" style={{ width: '85%' }} />
+                      <div className="iskelet-satir" style={{ width: '60%' }} />
+                    </div>
+                  ))}
+                </div>
+                <div className="taslak-onizleme-overlay">
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>Katmanı tamamlayınca gerçek yorumların burada görünecek</div>
+                </div>
+              </div>
+            ) : (
+              <>
+                {guclu.slice(0, 2).length > 0 && (
+                  <div style={{ marginBottom: digerleri.length > 0 ? 14 : 0 }}>
+                    <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--gr)', marginBottom: 6 }}>✓ Güçlü Yönlerin</div>
+                    {guclu.slice(0, 2).map((s) => (
+                      <div key={s.degisken_id} style={{ fontSize: 12, color: 'var(--tx2)', marginBottom: 6, lineHeight: 1.5 }}>
+                        <b style={{ color: 'var(--tx)' }}>{s.degisken_adi}</b>
+                        {s.durum_tespiti ? `: ${s.durum_tespiti}` : ` (puan: ${s.puan})`}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {[...digerleri].reverse().slice(0, 2).length > 0 && (
+                  <div>
+                    <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--am)', marginBottom: 6 }}>↻ {IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'} Yönlerin</div>
+                    {[...digerleri].reverse().slice(0, 2).map((s) => (
+                      <div key={s.degisken_id} style={{ fontSize: 12, color: 'var(--tx2)', marginBottom: 6, lineHeight: 1.5 }}>
+                        <b style={{ color: 'var(--tx)' }}>{s.degisken_adi}</b>
+                        {s.durum_tespiti ? `: ${s.durum_tespiti}` : ` (puan: ${s.puan})`}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {guclu.length === 0 && digerleri.length === 0 && (
+                  <div className="ps" style={{ margin: 0 }}>Henüz veri yok.</div>
+                )}
+              </>
+            )}
+          </div>
+
+          {hedef && sonuc.tamamlandi_mi && (
+            <div className="card" style={{ marginBottom: 0 }}>
+              <div className="ct">🎯 {hedef.bolum_adi} İle Karşılaştırma</div>
+              {hedefKarsilastirma.length === 0 ? (
+                <div className="ps" style={{ margin: 0 }}>Bu katman için henüz karşılaştırma verisi yok.</div>
+              ) : (
+                <>
+                  <div className="drl" style={{ marginBottom: 12 }}>
+                    <div className="dli"><div className="ddt" style={{ background: 'var(--pu)' }} /> Sen</div>
+                    <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
+                  </div>
+                  {hedefKarsilastirma.map((g) => (
+                    <div key={g.degisken_id} className="dcr">
+                      <div className="dcl" style={{ width: 130, minWidth: 130, fontSize: 11.5 }}>{g.degisken_adi}</div>
+                      <div className="dcb">
+                        <div className="dcf" style={{ width: `${g.ogrenci_puan}%`, background: 'var(--pu)' }} />
+                        <div className="dcf" style={{ width: `${g.bolum_beklenen}%`, background: 'var(--gr)' }} />
+                      </div>
+                    </div>
+                  ))}
+                  <button className="btn sec" style={{ width: '100%', marginTop: 12 }} onClick={() => navigate('/koclugu')}>
+                    Koçluk Detayına Git
+                  </button>
+                </>
+              )}
             </div>
           )}
         </div>
-      )}
+      </div>
     </div>
   )
 }
