@@ -18,11 +18,15 @@ const DURUM_IKON = { iyi: '✓', dikkat: '⚠️', kritik: '✕' }
 export default function KontrolPaneliSayfasi() {
   const [veri, setVeri] = useState(null)
   const [kullanim, setKullanim] = useState(null)
+  const [detay, setDetay] = useState(null)
+  const [acikBolumId, setAcikBolumId] = useState(null)
+  const [aktifSekme, setAktifSekme] = useState('bolumler') // bolumler | okullar | siniflar
   const [hata, setHata] = useState(null)
 
   useEffect(() => {
     api.kontrolPaneli().then(setVeri).catch((e) => setHata(e.detail || 'Veri alınamadı.'))
     api.kullanimIstatistikleriGetir().then(setKullanim).catch(() => setKullanim(null))
+    api.detayliIstatistikleriGetir().then(setDetay).catch(() => setDetay(null))
   }, [])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
@@ -139,6 +143,117 @@ export default function KontrolPaneliSayfasi() {
           )}
         </div>
       </div>
+
+      {/* --- Detaylı İstatistikler (Kırılımlar) --- */}
+      <div className="ct" style={{ marginTop: 20 }}>Detaylı İstatistikler (Kırılımlar)</div>
+
+      {!detay ? (
+        <div className="bos-durum">Veri toplanmaya yeni başladı, henüz kırılım gösterilecek veri yok.</div>
+      ) : (
+        <div className="card">
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+            {[
+              { kod: 'bolumler', ad: `Hedeflenen Bölümler (${detay.bolumler.length})` },
+              { kod: 'okullar', ad: `Okullar (${detay.okullar.length})` },
+              { kod: 'siniflar', ad: `Sınıflar (${detay.siniflar.length})` },
+            ].map((s) => (
+              <button
+                key={s.kod}
+                className={aktifSekme === s.kod ? 'btn' : 'btn sec'}
+                onClick={() => setAktifSekme(s.kod)}
+              >
+                {s.ad}
+              </button>
+            ))}
+          </div>
+
+          {/* --- Bölümler: kademeli, tıklanınca açılan --- */}
+          {aktifSekme === 'bolumler' && (
+            detay.bolumler.length === 0 ? (
+              <div className="bos-durum">Henüz hiçbir öğrenci hedef bölüm seçmedi.</div>
+            ) : (
+              <div className="ll">
+                {detay.bolumler.map((b) => {
+                  const acik = acikBolumId === b.bolum_id
+                  return (
+                    <div key={b.bolum_id} className="lc" style={{ flexDirection: 'column', alignItems: 'stretch' }} onClick={() => setAcikBolumId(acik ? null : b.bolum_id)}>
+                      <div style={{ display: 'flex', alignItems: 'center', width: '100%' }}>
+                        <div className="lb-wrap">
+                          <div className="lt">{b.bolum_adi}</div>
+                          <div className="ld">{b.hedefleyen_sayisi} öğrenci hedefliyor {b.ortalama_uyum !== null && `· ortalama uyum: %${b.ortalama_uyum}`}</div>
+                        </div>
+                        <span style={{ fontSize: 11, color: 'var(--tx3)' }}>{acik ? '▲ kapat' : '▼ detay'}</span>
+                      </div>
+                      {acik && (
+                        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bor)', display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 8 }}>
+                          <div className="sc" style={{ padding: '10px 8px', textAlign: 'center' }}>
+                            <div className="sl" style={{ color: 'var(--gr)' }}>Yetiyor (70+)</div>
+                            <div className="sv gr">{b.yetiyor_sayisi}</div>
+                          </div>
+                          <div className="sc" style={{ padding: '10px 8px', textAlign: 'center' }}>
+                            <div className="sl" style={{ color: 'var(--am)' }}>Sınırda (40-69)</div>
+                            <div className="sv" style={{ color: 'var(--am)' }}>{b.sinirda_sayisi}</div>
+                          </div>
+                          <div className="sc" style={{ padding: '10px 8px', textAlign: 'center' }}>
+                            <div className="sl" style={{ color: 'var(--re)' }}>Yetmiyor (&lt;40)</div>
+                            <div className="sv" style={{ color: 'var(--re)' }}>{b.yetmiyor_sayisi}</div>
+                          </div>
+                          <div className="sc" style={{ padding: '10px 8px', textAlign: 'center' }}>
+                            <div className="sl">Henüz Hesaplanmadı</div>
+                            <div className="sv" style={{ color: 'var(--tx3)' }}>{b.henuz_hesaplanmadi_sayisi}</div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )
+                })}
+              </div>
+            )
+          )}
+
+          {/* --- Okullar --- */}
+          {aktifSekme === 'okullar' && (
+            detay.okullar.length === 0 ? (
+              <div className="bos-durum">Henüz hiçbir öğrenci okul bilgisi girmedi.</div>
+            ) : (
+              <div className="ll">
+                {detay.okullar.map((o) => (
+                  <div key={o.okul} className="lc" style={{ cursor: 'default' }}>
+                    <div className="lb-wrap">
+                      <div className="lt">{o.okul}</div>
+                      <div className="ld">{o.ogrenci_sayisi} öğrenci · {o.hedefi_olan_sayisi} hedefi var</div>
+                    </div>
+                    <div style={{ fontFamily: 'var(--fd)', fontWeight: 700, color: o.ortalama_uyum !== null ? 'var(--gr)' : 'var(--tx3)' }}>
+                      {o.ortalama_uyum !== null ? `%${o.ortalama_uyum}` : '—'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+
+          {/* --- Sınıflar --- */}
+          {aktifSekme === 'siniflar' && (
+            detay.siniflar.length === 0 ? (
+              <div className="bos-durum">Henüz hiçbir öğrenci sınıf bilgisi girmedi.</div>
+            ) : (
+              <div className="ll">
+                {detay.siniflar.map((s) => (
+                  <div key={s.sinif} className="lc" style={{ cursor: 'default' }}>
+                    <div className="lb-wrap">
+                      <div className="lt">{s.sinif}</div>
+                      <div className="ld">{s.ogrenci_sayisi} öğrenci · {s.hedefi_olan_sayisi} hedefi var</div>
+                    </div>
+                    <div style={{ fontFamily: 'var(--fd)', fontWeight: 700, color: s.ortalama_uyum !== null ? 'var(--gr)' : 'var(--tx3)' }}>
+                      {s.ortalama_uyum !== null ? `%${s.ortalama_uyum}` : '—'}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )
+          )}
+        </div>
+      )}
     </div>
   )
 }
