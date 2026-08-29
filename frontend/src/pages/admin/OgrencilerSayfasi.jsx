@@ -21,11 +21,11 @@ export default function OgrencilerSayfasi() {
     api.ogrencileriListele().then(setOgrenciler).catch((e) => setHata(e.detail || 'Öğrenciler yüklenemedi.'))
   }, [])
 
-  if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!ogrenciler) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (hata) return <div className="pg pg-genis"><div className="bos-durum">{hata}</div></div>
+  if (!ogrenciler) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Öğrenciler</div>
         <div className="ps">Sistemdeki öğrenci hesapları.</div>
