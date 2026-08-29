@@ -150,6 +150,7 @@ export const api = {
   soruGecerlilikYukle: (sonuclar) => apost('/admin/soru-gecerlilik/yukle', { sonuclar }),
   soruGecerlilikGetir: () => aget('/admin/soru-gecerlilik'),
   degiskenleriListele: () => aget('/admin/degiskenler'),
+  sjtSorulariniTopluYukle: (satirlar) => apost('/admin/sorular/toplu-sjt', { satirlar }),
   katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
   yeniAgirlikVersiyonu: (agirliklar) => apost('/admin/katman-agirliklari', { agirliklar }),
   dallariListele: () => aget('/admin/dallar'),
