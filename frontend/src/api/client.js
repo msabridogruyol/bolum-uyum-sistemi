@@ -133,6 +133,11 @@ export const api = {
   // --- Admin: E1-E9 ---
   kontrolPaneli: () => aget('/admin/kontrol-paneli'),
   pipelineDurumu: () => aget('/admin/pipeline-durumu'),
+  pipelineCiktisiYukle: (satirlar) => apost('/admin/pipeline/yukle', { satirlar }),
+  pipelineTaslaklariListele: () => aget('/admin/pipeline/taslaklar'),
+  pipelineTaslakDetayi: (grup) => aget(`/admin/pipeline/taslaklar/${grup}`),
+  pipelineTaslaginiOnayla: (grup) => apost(`/admin/pipeline/taslaklar/${grup}/onayla`),
+  pipelineTaslaginiReddet: (grup) => apost(`/admin/pipeline/taslaklar/${grup}/reddet`),
   parametreleriListele: () => aget('/admin/parametreler'),
   parametreGuncelle: (anahtar, deger) => aput(`/admin/parametreler/${anahtar}`, { deger }),
   bolumleriListele: () => aget('/admin/bolumler'),
