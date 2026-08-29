@@ -128,6 +128,23 @@ class DalDurumIstek(BaseModel):
 
 # --- E6 — Soru Bankası ---
 
+class SjtAgirlikGirisi(BaseModel):
+    degisken_id: int
+    agirlik: float  # -1.000 ile 1.000 arası (negatif = ters yönlü katkı)
+
+
+class SecenekGirisi(BaseModel):
+    metin: str
+    sjt_agirliklari: list[SjtAgirlikGirisi] = []  # yalnızca soru_tipi='sjt' için kullanılır
+
+
+class DegiskenListeOut(BaseModel):
+    id: int
+    kod: str
+    ad: str
+    katman_kod: str
+
+
 class SoruOut(BaseModel):
     id: int
     katman_kod: str
@@ -188,7 +205,7 @@ class SoruEkleIstek(BaseModel):
     soru_tipi: str
     soru_metni: str
     ters_kodlanmis_mi: bool = False
-    secenekler: list[str]  # sırasıyla seçenek metinleri (1'den başlayan sıra)
+    secenekler: list[SecenekGirisi]  # [DEĞİŞTİ] artık obje listesi — her seçenek SJT ağırlıkları taşıyabilir
 
 
 class SoruAktifIstek(BaseModel):
