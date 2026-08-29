@@ -234,3 +234,25 @@ class PipelineTaslakGrubuOut(BaseModel):
     bolum_sayisi: int
     ortalama_aralik: float
     durum: str
+
+
+# --- Kullanım İstatistikleri (sonradan eklendi) ---
+
+class GunlukZiyaretOut(BaseModel):
+    tarih: str  # ISO tarih (YYYY-MM-DD)
+    sayi: int
+
+
+class SayfaZiyaretOut(BaseModel):
+    yol: str
+    sayi: int
+
+
+class KullanimIstatistikleriOut(BaseModel):
+    bugun_toplam: int
+    son_7_gun_toplam: int
+    ogrenci_ziyaret: int
+    admin_ziyaret: int
+    anonim_ziyaret: int
+    gunluk_dagilim: list[GunlukZiyaretOut]  # son 7 gün
+    en_cok_ziyaret_edilen: list[SayfaZiyaretOut]  # ilk 5
