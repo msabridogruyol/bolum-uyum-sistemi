@@ -193,6 +193,7 @@ function YeniSoruFormu({ onEklendi }) {
   const [degiskenId, setDegiskenId] = useState(DEGISKENLER[0].id)
   const [soruMetni, setSoruMetni] = useState('')
   const [tersKodlanmisMi, setTersKodlanmisMi] = useState(false)
+  // Likert: string[]. SJT: { metin, agirliklar: [{degisken_id, agirlik}] }[]
   const [secenekler, setSecenekler] = useState([...BOS_LIKERT_SECENEK])
   const [gonderiliyor, setGonderiliyor] = useState(false)
   const [hata, setHata] = useState(null)
@@ -200,19 +201,45 @@ function YeniSoruFormu({ onEklendi }) {
 
   function tipDegistir(yeniTip) {
     setSoruTipi(yeniTip)
-    setSecenekler(yeniTip === 'likert' ? [...BOS_LIKERT_SECENEK] : ['', ''])
+    setSecenekler(yeniTip === 'likert'
+      ? [...BOS_LIKERT_SECENEK]
+      : [{ metin: '', agirliklar: [] }, { metin: '', agirliklar: [] }])
   }
 
-  function secenekMetniGuncelle(i, deger) {
+  function likertMetniGuncelle(i, deger) {
     setSecenekler((onceki) => onceki.map((s, idx) => (idx === i ? deger : s)))
   }
 
-  function secenekEkle() {
-    setSecenekler((onceki) => [...onceki, ''])
+  function sjtMetniGuncelle(i, deger) {
+    setSecenekler((onceki) => onceki.map((s, idx) => (idx === i ? { ...s, metin: deger } : s)))
   }
 
-  function secenekSil(i) {
+  function sjtSecenekEkle() {
+    setSecenekler((onceki) => [...onceki, { metin: '', agirliklar: [] }])
+  }
+
+  function sjtSecenekSil(i) {
     setSecenekler((onceki) => onceki.filter((_, idx) => idx !== i))
+  }
+
+  function sjtAgirlikEkle(secenekIdx) {
+    setSecenekler((onceki) => onceki.map((s, idx) =>
+      idx === secenekIdx ? { ...s, agirliklar: [...s.agirliklar, { degisken_id: DEGISKENLER[0].id, agirlik: 0 }] } : s
+    ))
+  }
+
+  function sjtAgirlikGuncelle(secenekIdx, agirlikIdx, alan, deger) {
+    setSecenekler((onceki) => onceki.map((s, idx) => {
+      if (idx !== secenekIdx) return s
+      const yeniAgirliklar = s.agirliklar.map((a, ai) => (ai === agirlikIdx ? { ...a, [alan]: deger } : a))
+      return { ...s, agirliklar: yeniAgirliklar }
+    }))
+  }
+
+  function sjtAgirlikSil(secenekIdx, agirlikIdx) {
+    setSecenekler((onceki) => onceki.map((s, idx) =>
+      idx === secenekIdx ? { ...s, agirliklar: s.agirliklar.filter((_, ai) => ai !== agirlikIdx) } : s
+    ))
   }
 
   async function gonder(e) {
@@ -224,14 +251,28 @@ function YeniSoruFormu({ onEklendi }) {
       setHata('Soru metni en az 5 karakter olmalı.')
       return
     }
-    const temizSecenekler = secenekler.map((s) => s.trim())
-    if (temizSecenekler.some((s) => s.length === 0)) {
-      setHata('Tüm seçenek alanları doldurulmalı (boş seçenek olamaz).')
-      return
-    }
-    if (temizSecenekler.length < 2) {
-      setHata('En az 2 seçenek gerekli.')
-      return
+
+    let secenekPayload
+    if (soruTipi === 'likert') {
+      const temiz = secenekler.map((s) => s.trim())
+      if (temiz.some((s) => s.length === 0)) {
+        setHata('Tüm seçenek alanları doldurulmalı.')
+        return
+      }
+      secenekPayload = temiz.map((metin) => ({ metin, sjt_agirliklari: [] }))
+    } else {
+      if (secenekler.some((s) => s.metin.trim().length === 0)) {
+        setHata('Tüm seçenek metinleri doldurulmalı.')
+        return
+      }
+      if (secenekler.length < 2) {
+        setHata('En az 2 seçenek gerekli.')
+        return
+      }
+      secenekPayload = secenekler.map((s) => ({
+        metin: s.metin.trim(),
+        sjt_agirliklari: s.agirliklar.map((a) => ({ degisken_id: a.degisken_id, agirlik: Number(a.agirlik) })),
+      }))
     }
 
     setGonderiliyor(true)
@@ -242,11 +283,11 @@ function YeniSoruFormu({ onEklendi }) {
         soru_tipi: soruTipi,
         soru_metni: soruMetni.trim(),
         ters_kodlanmis_mi: soruTipi === 'likert' ? tersKodlanmisMi : false,
-        secenekler: temizSecenekler,
+        secenekler: secenekPayload,
       })
       setBasari(true)
       setSoruMetni('')
-      setSecenekler(soruTipi === 'likert' ? [...BOS_LIKERT_SECENEK] : ['', ''])
+      setSecenekler(soruTipi === 'likert' ? [...BOS_LIKERT_SECENEK] : [{ metin: '', agirliklar: [] }, { metin: '', agirliklar: [] }])
       setTersKodlanmisMi(false)
       onEklendi()
     } catch (err) {
@@ -260,12 +301,6 @@ function YeniSoruFormu({ onEklendi }) {
     <div className="card">
       <div className="ct">Tek Tek Soru Ekle</div>
 
-      {soruTipi === 'sjt' && (
-        <div className="auth-error" style={{ background: 'var(--aml)', color: 'var(--am)' }}>
-          Not: SJT sorularında seçenek başına değişken ağırlığı bu formdan girilemiyor — yalnızca soru ve
-          seçenek metinleri kaydedilir. Ağırlıklandırma ayrıca yapılmalı.
-        </div>
-      )}
       {hata && <div className="auth-error">{hata}</div>}
       {basari && <div style={{ background: 'var(--grl)', color: 'var(--gr)', fontSize: 12.5, fontWeight: 600, padding: '10px 13px', borderRadius: 8, marginBottom: 14 }}>Soru eklendi ✓</div>}
 
@@ -308,28 +343,68 @@ function YeniSoruFormu({ onEklendi }) {
             style={{ minHeight: 70, resize: 'vertical', fontFamily: 'var(--fn)' }}
             value={soruMetni}
             onChange={(e) => setSoruMetni(e.target.value)}
-            placeholder="Örn: İşimde en çok değer verdiğim şey..."
+            placeholder={soruTipi === 'likert' ? 'Örn: İşimde en çok değer verdiğim şey...' : 'Senaryo metnini yazın...'}
           />
         </div>
 
-        <label className="auth-label">Seçenekler</label>
-        {secenekler.map((s, i) => (
-          <div key={i} style={{ display: 'flex', gap: 8, marginBottom: 8 }}>
-            <input
-              className="auth-input"
-              style={{ flex: 1 }}
-              value={s}
-              onChange={(e) => secenekMetniGuncelle(i, e.target.value)}
-              placeholder={`Seçenek ${i + 1}`}
-              disabled={soruTipi === 'likert'}
-            />
-            {soruTipi === 'sjt' && secenekler.length > 2 && (
-              <button type="button" className="btn sec" onClick={() => secenekSil(i)}>Sil</button>
-            )}
-          </div>
-        ))}
-        {soruTipi === 'sjt' && (
-          <button type="button" className="btn sec" style={{ marginBottom: 14 }} onClick={secenekEkle}>+ Seçenek Ekle</button>
+        {soruTipi === 'likert' ? (
+          <>
+            <label className="auth-label">Seçenekler (sabit 5'li ölçek)</label>
+            {secenekler.map((s, i) => (
+              <div key={i} style={{ marginBottom: 8 }}>
+                <input className="auth-input" style={{ width: '100%' }} value={s} onChange={(e) => likertMetniGuncelle(i, e.target.value)} disabled />
+              </div>
+            ))}
+          </>
+        ) : (
+          <>
+            <label className="auth-label">Seçenekler ve Değişken Ağırlıkları</label>
+            <div className="ps" style={{ margin: '0 0 12px', fontSize: 11.5 }}>
+              Her seçeneğe, o seçeneği işaretleyen öğrencinin hangi değişkenlerde ne kadar puan alacağını ekleyin.
+              Ağırlık -1.000 ile 1.000 arasında olmalı (negatif = o değişkende düşük/ters katkı).
+            </div>
+            {secenekler.map((s, i) => (
+              <div key={i} className="card" style={{ marginBottom: 10, background: 'var(--sur2)' }}>
+                <div style={{ display: 'flex', gap: 8, marginBottom: 10 }}>
+                  <input
+                    className="auth-input"
+                    style={{ flex: 1 }}
+                    value={s.metin}
+                    onChange={(e) => sjtMetniGuncelle(i, e.target.value)}
+                    placeholder={`Seçenek ${i + 1} metni`}
+                  />
+                  {secenekler.length > 2 && (
+                    <button type="button" className="btn sec" onClick={() => sjtSecenekSil(i)}>Seçeneği Sil</button>
+                  )}
+                </div>
+
+                {s.agirliklar.map((a, ai) => (
+                  <div key={ai} style={{ display: 'flex', gap: 8, marginBottom: 6, alignItems: 'center' }}>
+                    <select
+                      className="auth-input"
+                      style={{ width: 100 }}
+                      value={a.degisken_id}
+                      onChange={(e) => sjtAgirlikGuncelle(i, ai, 'degisken_id', Number(e.target.value))}
+                    >
+                      {DEGISKENLER.map((d) => <option key={d.id} value={d.id}>{d.kod}</option>)}
+                    </select>
+                    <input
+                      className="auth-input"
+                      type="number" step="0.05" min="-1" max="1"
+                      style={{ width: 90 }}
+                      value={a.agirlik}
+                      onChange={(e) => sjtAgirlikGuncelle(i, ai, 'agirlik', e.target.value)}
+                    />
+                    <button type="button" className="btn sec" style={{ padding: '6px 10px' }} onClick={() => sjtAgirlikSil(i, ai)}>✕</button>
+                  </div>
+                ))}
+                <button type="button" className="btn sec" style={{ fontSize: 11.5, padding: '5px 10px' }} onClick={() => sjtAgirlikEkle(i)}>
+                  + Değişken Ağırlığı Ekle
+                </button>
+              </div>
+            ))}
+            <button type="button" className="btn sec" style={{ marginBottom: 14 }} onClick={sjtSecenekEkle}>+ Seçenek Ekle</button>
+          </>
         )}
 
         <button className="btn full" type="submit" disabled={gonderiliyor} style={{ marginTop: 6 }}>
