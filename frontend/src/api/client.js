@@ -149,6 +149,7 @@ export const api = {
   bolumAciklamalariniTopluGuncelle: (satirlar) => apost('/admin/bolumler/toplu-aciklama', { satirlar }),
   soruGecerlilikYukle: (sonuclar) => apost('/admin/soru-gecerlilik/yukle', { sonuclar }),
   soruGecerlilikGetir: () => aget('/admin/soru-gecerlilik'),
+  degiskenleriListele: () => aget('/admin/degiskenler'),
   katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
   yeniAgirlikVersiyonu: (agirliklar) => apost('/admin/katman-agirliklari', { agirliklar }),
   dallariListele: () => aget('/admin/dallar'),
