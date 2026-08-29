@@ -2,6 +2,18 @@ import { useEffect, useState, useCallback } from 'react'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { api } from '../../api/client'
 
+function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
+  const kacisla = (deger) => `"${String(deger ?? '').replace(/"/g, '""')}"`
+  const icerik = [basliklar.join(','), ...satirlar.map((s) => s.map(kacisla).join(','))].join('\r\n')
+  const blob = new Blob(['\uFEFF' + icerik], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = dosyaAdi
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 export default function YoneticilerSayfasi() {
   const [yoneticiler, setYoneticiler] = useState(null)
   const [hata, setHata] = useState(null)
@@ -52,6 +64,22 @@ export default function YoneticilerSayfasi() {
         <div className="ps">Yeni yönetici ekle veya mevcutların rolünü değiştir. Kendi rolünü değiştiremezsin.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
+
+      <button
+        className="btn sec"
+        style={{ marginBottom: 14 }}
+        onClick={() => csvDisaAktar(
+          'yoneticiler_disa_aktarim.csv',
+          ['ad_soyad', 'email', 'rol', 'olusturulma_zamani'],
+          yoneticiler.map((y) => [y.ad_soyad, y.email, y.rol, y.olusturulma_zamani]),
+        )}
+        disabled={yoneticiler.length === 0}
+      >
+        ⬇ CSV Dışa Aktar
+      </button>
+      <div className="ps" style={{ marginTop: -8, marginBottom: 14, fontSize: 11 }}>
+        Şifreler asla dışa aktarılmaz — güvenlik nedeniyle toplu yönetici ekleme (içe aktarma) kasıtlı olarak sunulmuyor.
+      </div>
 
       <form onSubmit={ekle} className="card" style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
         <div><label className="auth-label">Ad Soyad</label><input className="auth-input" value={form.ad_soyad} onChange={(e) => setForm((f) => ({ ...f, ad_soyad: e.target.value }))} required /></div>
