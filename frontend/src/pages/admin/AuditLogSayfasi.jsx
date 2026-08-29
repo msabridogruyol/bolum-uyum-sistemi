@@ -13,7 +13,7 @@ export default function AuditLogSayfasi() {
   if (!kayitlar) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Audit Log</div>
         <div className="ps">Tüm yönetici işlemlerinin geçmişi — kim, ne zaman, ne yaptı.</div>
