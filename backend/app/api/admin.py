@@ -38,6 +38,7 @@ from app.schemas.admin import (
     BolumKademeIstatistigiOut, OkulKirilimOut, SinifKirilimOut, DetayliIstatistiklerOut,
     SoruGecerlilikYuklemeIstek, SoruGecerlilikOzetOut, SoruGecerlilikSonucuOut,
     SjtAgirlikGirisi, SecenekGirisi, DegiskenListeOut,
+    TopluSjtYuklemeIstek, TopluSjtSonuc,
 )
 
 router = APIRouter()
@@ -1137,4 +1138,86 @@ def soru_gecerlilik_sonuclarini_getir(
     return SoruGecerlilikOzetOut(
         toplam_soru=len(sonuclar), tam_dogru=tam_dogru, kismi_dogru=kismi_dogru,
         hic_dogru_degil=hic_dogru_degil, sonuclar=sonuclar,
+    )
+
+
+# ============================================================================
+# SJT Toplu Yükleme (sonradan eklendi)
+# ============================================================================
+# Uzun/tidy format kabul eder — her satır bir (soru, seçenek, değişken-ağırlığı)
+# üçlüsü. Aynı soru_gecici_id'ye sahip satırlar tek bir soruya gruplanır.
+
+@router.post("/sorular/toplu-sjt", response_model=TopluSjtSonuc)
+def sjt_sorularini_toplu_yukle(
+    istek: TopluSjtYuklemeIstek,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    if not istek.satirlar:
+        raise HTTPException(status_code=400, detail="Yüklenecek satır yok.")
+
+    katman_map = {k.kod: k.id for k in db.query(Katman).all()}
+    degisken_map = {d.kod: d.id for d in db.query(Degisken).all()}
+
+    # soru_gecici_id -> { katman_kod, soru_metni, secenekler: { sira -> {metin, agirliklar:[(kod,agirlik)]} } }
+    gruplar: dict[str, dict] = {}
+    for satir in istek.satirlar:
+        grup = gruplar.setdefault(satir.soru_gecici_id, {
+            "katman_kod": satir.katman_kod, "soru_metni": satir.soru_metni, "secenekler": {},
+        })
+        secenek = grup["secenekler"].setdefault(satir.secenek_sira, {"metin": satir.secenek_metni, "agirliklar": []})
+        secenek["agirliklar"].append((satir.degisken_kod, satir.agirlik))
+
+    eklenen_soru = eklenen_secenek = eklenen_agirlik = 0
+    hatalar: list[str] = []
+
+    for gecici_id, grup in gruplar.items():
+        katman_id = katman_map.get(grup["katman_kod"])
+        if katman_id is None:
+            hatalar.append(f"{gecici_id}: bilinmeyen katman kodu '{grup['katman_kod']}'")
+            continue
+        if len(grup["secenekler"]) < 2:
+            hatalar.append(f"{gecici_id}: en az 2 seçenek gerekli, {len(grup['secenekler'])} bulundu")
+            continue
+
+        gecersiz_kod = False
+        for sira, sec in grup["secenekler"].items():
+            for kod, _ in sec["agirliklar"]:
+                if kod not in degisken_map:
+                    hatalar.append(f"{gecici_id} / seçenek {sira}: bilinmeyen değişken kodu '{kod}'")
+                    gecersiz_kod = True
+        if gecersiz_kod:
+            continue
+
+        soru = Soru(
+            katman_id=katman_id, degisken_id=None, soru_tipi="sjt",
+            soru_metni=grup["soru_metni"], ters_kodlanmis_mi=False, aktif_mi=True,
+        )
+        db.add(soru)
+        db.flush()
+        eklenen_soru += 1
+
+        for sira in sorted(grup["secenekler"].keys()):
+            sec = grup["secenekler"][sira]
+            secenek_kaydi = SoruSecenegi(soru_id=soru.id, secenek_sirasi=sira, secenek_metni=sec["metin"])
+            db.add(secenek_kaydi)
+            db.flush()
+            eklenen_secenek += 1
+            for kod, agirlik in sec["agirliklar"]:
+                db.add(SjtSecenekDegiskenAgirlik(
+                    secenek_id=secenek_kaydi.id, degisken_id=degisken_map[kod], agirlik=agirlik,
+                ))
+                eklenen_agirlik += 1
+
+    if eklenen_soru == 0:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=f"Hiçbir soru eklenemedi. Hatalar: {'; '.join(hatalar[:10])}")
+
+    _audit_yaz(db, admin, "sjt_toplu_yukleme", "sorular", "toplu",
+               f"{eklenen_soru} SJT sorusu eklendi, {len(hatalar)} hata")
+    db.commit()
+
+    return TopluSjtSonuc(
+        eklenen_soru_sayisi=eklenen_soru, eklenen_secenek_sayisi=eklenen_secenek,
+        eklenen_agirlik_sayisi=eklenen_agirlik, hatalar=hatalar[:50],
     )
