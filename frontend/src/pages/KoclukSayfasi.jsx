@@ -116,10 +116,25 @@ export default function KoclukSayfasi() {
         <>
           <div className="ct" style={{ marginTop: 20 }}>Gelişim Analizi</div>
           {gelisim.length === 0 ? (
-            <div className="card">
-              <div className="veri-yok-grafik">
-                <div className="vg-ikon">📊</div>
-                <div className="vg-metin">Bu hedef için henüz karşılaştırılacak veri yok — önce katmanlarını tamamla.</div>
+            <div className="taslak-onizleme">
+              <div className="taslak-onizleme-icerik card">
+                <div className="drl">
+                  <div className="dli"><div className="ddt" style={{ background: 'var(--pu)' }} /> Sen</div>
+                  <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
+                </div>
+                {[[78, 65], [55, 80], [70, 50]].map((cift, i) => (
+                  <div key={i} className="dcr">
+                    <div className="dcl"><div className="iskelet-satir" style={{ width: 110 }} /></div>
+                    <div className="dcb">
+                      <div className="dcf" style={{ width: `${cift[0]}%`, background: 'var(--pu)' }} />
+                      <div className="dcf" style={{ width: `${cift[1]}%`, background: 'var(--gr)' }} />
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="taslak-onizleme-overlay">
+                <div className="to-ikon">📊</div>
+                <div className="to-metin">Bu hedef için henüz karşılaştırılacak veri yok — önce katmanlarını tamamla.</div>
               </div>
             </div>
           ) : (
@@ -174,10 +189,20 @@ export default function KoclukSayfasi() {
         <>
           <div className="ct" style={{ marginTop: 20 }}>Turlar Arası Karşılaştırma</div>
           {karsilastirma.length === 0 ? (
-            <div className="card">
-              <div className="veri-yok-grafik">
-                <div className="vg-ikon">📈</div>
-                <div className="vg-metin">Henüz karşılaştırılacak ikinci bir tur yok.</div>
+            <div className="taslak-onizleme">
+              <div className="taslak-onizleme-icerik ll">
+                {[72, 65, 58].map((p, i) => (
+                  <div key={i} className="ob-card">
+                    <div className="ob-top">
+                      <div className="ob-body"><div className="iskelet-satir" style={{ width: 130 }} /></div>
+                      <span className="bdg bdg-prog">değişim</span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="taslak-onizleme-overlay">
+                <div className="to-ikon">📈</div>
+                <div className="to-metin">Henüz karşılaştırılacak ikinci bir tur yok.</div>
               </div>
             </div>
           ) : (
