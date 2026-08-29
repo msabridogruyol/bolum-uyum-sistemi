@@ -9,9 +9,11 @@ GET     /admin/audit-log             — E9
 GET     /admin/ogrenciler            — E9
 """
 from datetime import datetime, timezone
+import uuid
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_admin, get_mevcut_super_admin
@@ -29,6 +31,7 @@ from app.schemas.admin import (
     YoneticiEkleIstek, RolGuncelleIstek, YoneticiOut,
     KontrolPaneliOut, PipelineDurumuOut, KatmanAgirligiOut, YeniAgirlikVersiyonuIstek,
     DalOut, DalEkleIstek, DalDurumIstek, SoruOut, SoruEkleIstek, SoruAktifIstek,
+    PipelineYuklemeIstek, PipelineYuklemeSonucu, PipelineBolumAralikOut, PipelineTaslakGrubuOut,
 )
 
 router = APIRouter()
@@ -526,3 +529,192 @@ def soru_aktifligini_guncelle(
     db.commit()
     db.refresh(soru)
     return SoruOut(id=soru.id, katman_kod=katman.kod, soru_tipi=soru.soru_tipi, soru_metni=soru.soru_metni, aktif_mi=soru.aktif_mi)
+
+
+# ============================================================================
+# Pipeline Sonuçları (sonradan eklendi)
+# ============================================================================
+# Pipeline sizin bilgisayarınızda çalışır (bulutta değil — maliyet/karmaşıklık
+# nedeniyle bilinçli bir tercih). Bu uç noktalar, o çıktının admin panelinden
+# GÜVENLİ şekilde (önce taslak, yalnızca onaylanınca canlıya) yüklenmesini
+# sağlar. Taslak aşamasında canlı bolum_agirliklari tablosuna HİÇBİR yazma
+# işlemi yapılmaz.
+
+def _bolum_aralik_istatistigi(db: Session, yukleme_grubu: str) -> tuple[list[PipelineBolumAralikOut], float]:
+    satirlar = db.execute(
+        text("""
+            SELECT b.ad AS bolum_adi, MIN(t.agirlik_degeri) AS min_deger, MAX(t.agirlik_degeri) AS max_deger
+            FROM bolum_agirliklari_taslak t
+            JOIN bolumler b ON b.id = t.bolum_id
+            WHERE t.yukleme_grubu = :grup
+            GROUP BY b.ad
+            ORDER BY (MAX(t.agirlik_degeri) - MIN(t.agirlik_degeri)) ASC
+        """),
+        {"grup": yukleme_grubu},
+    ).mappings().all()
+
+    hepsi = [
+        PipelineBolumAralikOut(
+            bolum_adi=r["bolum_adi"], min_deger=float(r["min_deger"]), max_deger=float(r["max_deger"]),
+            aralik=float(r["max_deger"]) - float(r["min_deger"]),
+        )
+        for r in satirlar
+    ]
+    ortalama = sum(b.aralik for b in hepsi) / len(hepsi) if hepsi else 0.0
+    return hepsi[:10], round(ortalama, 2)
+
+
+@router.post("/pipeline/yukle", response_model=PipelineYuklemeSonucu)
+def pipeline_ciktisi_yukle(
+    istek: PipelineYuklemeIstek,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """
+    Pipeline'ın (sizin bilgisayarınızda üretilen) CSV çıktısını taslak
+    tabloya yükler. CANLI bolum_agirliklari tablosuna DOKUNMAZ — yalnızca
+    /onayla çağrıldığında gerçek tabloya yazılır.
+    """
+    if not istek.satirlar:
+        raise HTTPException(status_code=400, detail="Yüklenecek satır yok.")
+
+    yukleme_grubu = str(uuid.uuid4())
+
+    # bölüm adı / değişken kodu -> id eşleme tabloları (tek seferde çekilir)
+    bolum_map = {ad: bid for bid, ad in db.execute(text("SELECT id, ad FROM bolumler")).all()}
+    degisken_map = {kod: did for did, kod in db.execute(text("SELECT id, kod FROM degiskenler")).all()}
+
+    eslesmeyen = []
+    eslesen_sayisi = 0
+
+    for satir in istek.satirlar:
+        bolum_id = bolum_map.get(satir.bolum_adi)
+        degisken_id = degisken_map.get(satir.degisken_kod)
+        if bolum_id is None or degisken_id is None:
+            eslesmeyen.append(f"{satir.bolum_adi} / {satir.degisken_kod}")
+            continue
+        eslesen_sayisi += 1
+        db.execute(
+            text("""
+                INSERT INTO bolum_agirliklari_taslak
+                    (yukleme_grubu, bolum_adi_ham, degisken_kod_ham, bolum_id, degisken_id,
+                     agirlik_degeri, yakinsama_skoru, agirlikli_varyans, etkin_meslek_sayisi,
+                     yukleyen_admin_id, durum)
+                VALUES
+                    (:grup, :bolum_ham, :degisken_ham, :bolum_id, :degisken_id,
+                     :agirlik, :yakinsama, :varyans, :etkin_meslek, :admin_id, 'bekliyor')
+            """),
+            {
+                "grup": yukleme_grubu, "bolum_ham": satir.bolum_adi, "degisken_ham": satir.degisken_kod,
+                "bolum_id": bolum_id, "degisken_id": degisken_id, "agirlik": satir.agirlik_degeri,
+                "yakinsama": satir.yakinsama_skoru, "varyans": satir.agirlikli_varyans,
+                "etkin_meslek": satir.etkin_meslek_sayisi, "admin_id": str(admin.id),
+            },
+        )
+
+    if eslesen_sayisi == 0:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Hiçbir satır eşleşmedi — bölüm adları/değişken kodları kontrol edilmeli.")
+
+    _audit_yaz(db, admin, "pipeline_ciktisi_yukleme", "bolum_agirliklari_taslak", yukleme_grubu,
+               f"{eslesen_sayisi} satır yüklendi, {len(eslesmeyen)} eşleşmedi")
+    db.commit()
+
+    en_duz_10, ortalama_aralik = _bolum_aralik_istatistigi(db, yukleme_grubu)
+    bolum_sayisi = db.execute(
+        text("SELECT COUNT(DISTINCT bolum_id) FROM bolum_agirliklari_taslak WHERE yukleme_grubu = :grup"),
+        {"grup": yukleme_grubu},
+    ).scalar()
+
+    return PipelineYuklemeSonucu(
+        yukleme_grubu=yukleme_grubu, toplam_satir=len(istek.satirlar), eslesen_satir=eslesen_sayisi,
+        eslesmeyen_satirlar=eslesmeyen[:50],  # çok uzunsa kırp
+        bolum_sayisi=bolum_sayisi or 0, ortalama_aralik=ortalama_aralik, en_duz_10=en_duz_10,
+    )
+
+
+@router.get("/pipeline/taslaklar", response_model=list[PipelineTaslakGrubuOut])
+def pipeline_taslaklarini_listele(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    gruplar = db.execute(
+        text("""
+            SELECT yukleme_grubu, MIN(yuklenme_zamani) AS yuklenme_zamani,
+                   COUNT(*) AS toplam_satir, COUNT(DISTINCT bolum_id) AS bolum_sayisi,
+                   MAX(durum) AS durum
+            FROM bolum_agirliklari_taslak
+            GROUP BY yukleme_grubu
+            ORDER BY MIN(yuklenme_zamani) DESC
+        """)
+    ).mappings().all()
+
+    sonuc = []
+    for g in gruplar:
+        _, ortalama = _bolum_aralik_istatistigi(db, str(g["yukleme_grubu"]))
+        sonuc.append(PipelineTaslakGrubuOut(
+            yukleme_grubu=str(g["yukleme_grubu"]), yuklenme_zamani=g["yuklenme_zamani"],
+            toplam_satir=g["toplam_satir"], bolum_sayisi=g["bolum_sayisi"],
+            ortalama_aralik=ortalama, durum=g["durum"],
+        ))
+    return sonuc
+
+
+@router.get("/pipeline/taslaklar/{grup}", response_model=PipelineYuklemeSonucu)
+def pipeline_taslak_detayi(
+    grup: str,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    en_duz_10, ortalama = _bolum_aralik_istatistigi(db, grup)
+    if not en_duz_10:
+        raise HTTPException(status_code=404, detail="Taslak grubu bulunamadı.")
+    toplam = db.execute(text("SELECT COUNT(*) FROM bolum_agirliklari_taslak WHERE yukleme_grubu = :g"), {"g": grup}).scalar()
+    bolum_sayisi = db.execute(text("SELECT COUNT(DISTINCT bolum_id) FROM bolum_agirliklari_taslak WHERE yukleme_grubu = :g"), {"g": grup}).scalar()
+    return PipelineYuklemeSonucu(
+        yukleme_grubu=grup, toplam_satir=toplam, eslesen_satir=toplam, eslesmeyen_satirlar=[],
+        bolum_sayisi=bolum_sayisi, ortalama_aralik=ortalama, en_duz_10=en_duz_10,
+    )
+
+
+@router.post("/pipeline/taslaklar/{grup}/onayla", status_code=204)
+def pipeline_taslagini_onayla(
+    grup: str,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_super_admin),  # yalnızca super_admin canlıya alabilir
+):
+    """
+    Taslağı gerçek bolum_agirliklari tablosuna YENİ bir versiyon olarak
+    yazar. Eski versiyon SİLİNMEZ (skor_motoru zaten en yüksek versiyonu
+    kullanıyor) — geçmişe dönük inceleme için durur.
+    """
+    var_mi = db.execute(text("SELECT 1 FROM bolum_agirliklari_taslak WHERE yukleme_grubu = :g AND durum = 'bekliyor' LIMIT 1"), {"g": grup}).first()
+    if not var_mi:
+        raise HTTPException(status_code=404, detail="Onay bekleyen taslak bulunamadı (zaten işlenmiş olabilir).")
+
+    yeni_versiyon = (db.execute(text("SELECT COALESCE(MAX(versiyon), 0) + 1 FROM bolum_agirliklari")).scalar())
+
+    db.execute(
+        text("""
+            INSERT INTO bolum_agirliklari (bolum_id, degisken_id, agirlik_degeri, yakinsama_skoru, agirlikli_varyans, etkin_meslek_sayisi, versiyon)
+            SELECT bolum_id, degisken_id, agirlik_degeri, yakinsama_skoru, agirlikli_varyans, etkin_meslek_sayisi, :versiyon
+            FROM bolum_agirliklari_taslak
+            WHERE yukleme_grubu = :grup AND durum = 'bekliyor'
+        """),
+        {"versiyon": yeni_versiyon, "grup": grup},
+    )
+    db.execute(text("UPDATE bolum_agirliklari_taslak SET durum = 'onaylandi' WHERE yukleme_grubu = :g"), {"g": grup})
+
+    _audit_yaz(db, admin, "pipeline_taslagi_onaylama", "bolum_agirliklari", grup, f"versiyon {yeni_versiyon} olarak canlıya alındı")
+    db.commit()
+
+
+@router.post("/pipeline/taslaklar/{grup}/reddet", status_code=204)
+def pipeline_taslagini_reddet(
+    grup: str,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    db.execute(text("UPDATE bolum_agirliklari_taslak SET durum = 'reddedildi' WHERE yukleme_grubu = :g AND durum = 'bekliyor'"), {"g": grup})
+    _audit_yaz(db, admin, "pipeline_taslagi_reddetme", "bolum_agirliklari_taslak", grup, None)
+    db.commit()
