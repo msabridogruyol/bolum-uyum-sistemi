@@ -386,7 +386,7 @@ export default function SorularSayfasi() {
   }
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Soru Bankası</div>
         <div className="ps">Sorular silinmez, yalnızca pasife alınır — geçmiş öğrenci oturumları bozulmasın diye.</div>
