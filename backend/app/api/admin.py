@@ -21,7 +21,7 @@ from app.core.database import get_db
 from app.models import (
     AdminKullanici, SistemParametresi, Bolum, OgrenciBolumUyumSkoru,
     OgrenciDegerlendirmeTuru, AuditLog, Ogrenci, Katman, KatmanAgirligi,
-    Dal, Soru, SoruSecenegi, OgrenciKatmanOturumu, Degisken,
+    Dal, Soru, SoruSecenegi, OgrenciKatmanOturumu, Degisken, SjtSecenekDegiskenAgirlik,
 )
 from app.core.security import sifre_hashle
 from app.schemas.admin import (
@@ -37,6 +37,7 @@ from app.schemas.admin import (
     OgrenciDetayOut, OgrenciIstatistikleriOut, OkulSayisiOut, HedefBolumSayisiOut,
     BolumKademeIstatistigiOut, OkulKirilimOut, SinifKirilimOut, DetayliIstatistiklerOut,
     SoruGecerlilikYuklemeIstek, SoruGecerlilikOzetOut, SoruGecerlilikSonucuOut,
+    SjtAgirlikGirisi, SecenekGirisi, DegiskenListeOut,
 )
 
 router = APIRouter()
@@ -514,6 +515,23 @@ def sorulari_listele(
     ]
 
 
+@router.get("/degiskenler", response_model=list[DegiskenListeOut])
+def degiskenleri_listele(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    satirlar = (
+        db.query(Degisken, Katman.kod)
+        .join(Katman, Katman.id == Degisken.katman_id)
+        .order_by(Katman.kod, Degisken.kod)
+        .all()
+    )
+    return [
+        DegiskenListeOut(id=d.id, kod=d.kod, ad=d.ad, katman_kod=katman_kodu)
+        for d, katman_kodu in satirlar
+    ]
+
+
 @router.post("/sorular", response_model=SoruOut, status_code=201)
 def soru_ekle(
     istek: SoruEkleIstek,
@@ -524,6 +542,8 @@ def soru_ekle(
         raise HTTPException(status_code=400, detail=f"Geçersiz soru tipi: {istek.soru_tipi}")
     if len(istek.secenekler) < 2:
         raise HTTPException(status_code=400, detail="Bir soru en az 2 seçenek içermeli.")
+    if istek.soru_tipi == "likert" and istek.degisken_id is None:
+        raise HTTPException(status_code=400, detail="Likert sorusu bir değişkene bağlı olmalı.")
 
     katman = db.get(Katman, istek.katman_id)
     if katman is None:
@@ -535,8 +555,18 @@ def soru_ekle(
     )
     db.add(soru)
     db.flush()
-    for i, metin in enumerate(istek.secenekler, start=1):
-        db.add(SoruSecenegi(soru_id=soru.id, secenek_sirasi=i, secenek_metni=metin))
+
+    for i, secenek_girisi in enumerate(istek.secenekler, start=1):
+        secenek = SoruSecenegi(soru_id=soru.id, secenek_sirasi=i, secenek_metni=secenek_girisi.metin)
+        db.add(secenek)
+        db.flush()  # secenek.id lazım (SJT ağırlığı için)
+
+        if istek.soru_tipi == "sjt":
+            for agirlik_girisi in secenek_girisi.sjt_agirliklari:
+                db.add(SjtSecenekDegiskenAgirlik(
+                    secenek_id=secenek.id, degisken_id=agirlik_girisi.degisken_id,
+                    agirlik=agirlik_girisi.agirlik,
+                ))
 
     _audit_yaz(db, admin, "soru_ekleme", "sorular", str(soru.id), None)
     db.commit()
