@@ -188,3 +188,10 @@ class KatmanGecmisSonucOut(BaseModel):
     katman_kodu: str
     tamamlandi_mi: bool
     sonuclar: list[KatmanSonucSatiri]
+
+
+class BolumOrnekMeslekOut(BaseModel):
+    """Keşfet ekranında bir bölümün altında gösterilecek örnek meslekler —
+    a2_meslek_bolum_eslesme_aday.csv'den (3 modelin ortalaması) türetildi."""
+    meslek_adi: str
+    benzerlik_skoru: float
