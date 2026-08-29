@@ -35,6 +35,7 @@ from app.schemas.admin import (
     PipelineYuklemeIstek, PipelineYuklemeSonucu, PipelineBolumAralikOut, PipelineTaslakGrubuOut,
     KullanimIstatistikleriOut, GunlukZiyaretOut, SayfaZiyaretOut,
     OgrenciDetayOut, OgrenciIstatistikleriOut, OkulSayisiOut, HedefBolumSayisiOut,
+    BolumKademeIstatistigiOut, OkulKirilimOut, SinifKirilimOut, DetayliIstatistiklerOut,
 )
 
 router = APIRouter()
@@ -885,3 +886,121 @@ def ogrencileri_detayli_listele(
         en_cok_hedeflenen_bolum=[HedefBolumSayisiOut(bolum_adi=r["bolum_adi"], sayi=r["sayi"]) for r in en_cok_hedef_satirlari],
         ogrenciler=ogrenciler,
     )
+
+
+# ============================================================================
+# Detaylı/Kademeli İstatistikler (sonradan eklendi)
+# ============================================================================
+
+@router.get("/istatistikler/detay", response_model=DetayliIstatistiklerOut)
+def detayli_istatistikleri_getir(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    # --- Bölüm bazlı kademeli istatistik (hedefleyen -> yetiyor/sınırda/yetmiyor) ---
+    hedef_satirlari = db.execute(
+        text("""
+            SELECT hb.bolum_id, b.ad AS bolum_adi,
+                   (SELECT s.toplam_uyum FROM ogrenci_bolum_uyum_skorlari s
+                    WHERE s.ogrenci_id = hb.ogrenci_id AND s.bolum_id = hb.bolum_id
+                    ORDER BY s.tur_id DESC LIMIT 1) AS uyum
+            FROM ogrenci_hedef_bolum hb
+            JOIN bolumler b ON b.id = hb.bolum_id
+            WHERE hb.aktif_mi = true
+        """)
+    ).mappings().all()
+
+    bolum_gruplari: dict[int, dict] = {}
+    for r in hedef_satirlari:
+        grup = bolum_gruplari.setdefault(r["bolum_id"], {
+            "bolum_adi": r["bolum_adi"], "hedefleyen": 0, "yetiyor": 0,
+            "sinirda": 0, "yetmiyor": 0, "hesaplanmadi": 0, "uyumlar": [],
+        })
+        grup["hedefleyen"] += 1
+        uyum = float(r["uyum"]) if r["uyum"] is not None else None
+        if uyum is None:
+            grup["hesaplanmadi"] += 1
+        elif uyum >= 70:
+            grup["yetiyor"] += 1
+            grup["uyumlar"].append(uyum)
+        elif uyum >= 40:
+            grup["sinirda"] += 1
+            grup["uyumlar"].append(uyum)
+        else:
+            grup["yetmiyor"] += 1
+            grup["uyumlar"].append(uyum)
+
+    bolumler = [
+        BolumKademeIstatistigiOut(
+            bolum_id=bid, bolum_adi=g["bolum_adi"], hedefleyen_sayisi=g["hedefleyen"],
+            yetiyor_sayisi=g["yetiyor"], sinirda_sayisi=g["sinirda"], yetmiyor_sayisi=g["yetmiyor"],
+            henuz_hesaplanmadi_sayisi=g["hesaplanmadi"],
+            ortalama_uyum=round(sum(g["uyumlar"]) / len(g["uyumlar"]), 2) if g["uyumlar"] else None,
+        )
+        for bid, g in bolum_gruplari.items()
+    ]
+    bolumler.sort(key=lambda b: -b.hedefleyen_sayisi)
+
+    # --- Okul kırılımı ---
+    okul_satirlari = db.execute(
+        text("""
+            SELECT o.id AS ogrenci_id, o.okul, hb.bolum_id,
+                   (SELECT s.toplam_uyum FROM ogrenci_bolum_uyum_skorlari s
+                    WHERE s.ogrenci_id = o.id AND s.bolum_id = hb.bolum_id
+                    ORDER BY s.tur_id DESC LIMIT 1) AS uyum
+            FROM ogrenciler o
+            LEFT JOIN ogrenci_hedef_bolum hb ON hb.ogrenci_id = o.id AND hb.aktif_mi = true
+            WHERE o.okul IS NOT NULL AND o.okul <> ''
+        """)
+    ).mappings().all()
+
+    okul_gruplari: dict[str, dict] = {}
+    for r in okul_satirlari:
+        grup = okul_gruplari.setdefault(r["okul"], {"ogrenci": 0, "hedefi_olan": 0, "uyumlar": []})
+        grup["ogrenci"] += 1
+        if r["bolum_id"] is not None:
+            grup["hedefi_olan"] += 1
+            if r["uyum"] is not None:
+                grup["uyumlar"].append(float(r["uyum"]))
+
+    okullar = [
+        OkulKirilimOut(
+            okul=okul, ogrenci_sayisi=g["ogrenci"], hedefi_olan_sayisi=g["hedefi_olan"],
+            ortalama_uyum=round(sum(g["uyumlar"]) / len(g["uyumlar"]), 2) if g["uyumlar"] else None,
+        )
+        for okul, g in okul_gruplari.items()
+    ]
+    okullar.sort(key=lambda o: -o.ogrenci_sayisi)
+
+    # --- Sınıf kırılımı ---
+    sinif_satirlari = db.execute(
+        text("""
+            SELECT o.id AS ogrenci_id, o.sinif, hb.bolum_id,
+                   (SELECT s.toplam_uyum FROM ogrenci_bolum_uyum_skorlari s
+                    WHERE s.ogrenci_id = o.id AND s.bolum_id = hb.bolum_id
+                    ORDER BY s.tur_id DESC LIMIT 1) AS uyum
+            FROM ogrenciler o
+            LEFT JOIN ogrenci_hedef_bolum hb ON hb.ogrenci_id = o.id AND hb.aktif_mi = true
+            WHERE o.sinif IS NOT NULL AND o.sinif <> ''
+        """)
+    ).mappings().all()
+
+    sinif_gruplari: dict[str, dict] = {}
+    for r in sinif_satirlari:
+        grup = sinif_gruplari.setdefault(r["sinif"], {"ogrenci": 0, "hedefi_olan": 0, "uyumlar": []})
+        grup["ogrenci"] += 1
+        if r["bolum_id"] is not None:
+            grup["hedefi_olan"] += 1
+            if r["uyum"] is not None:
+                grup["uyumlar"].append(float(r["uyum"]))
+
+    siniflar = [
+        SinifKirilimOut(
+            sinif=sinif, ogrenci_sayisi=g["ogrenci"], hedefi_olan_sayisi=g["hedefi_olan"],
+            ortalama_uyum=round(sum(g["uyumlar"]) / len(g["uyumlar"]), 2) if g["uyumlar"] else None,
+        )
+        for sinif, g in sinif_gruplari.items()
+    ]
+    siniflar.sort(key=lambda s: -s.ogrenci_sayisi)
+
+    return DetayliIstatistiklerOut(bolumler=bolumler, okullar=okullar, siniflar=siniflar)
