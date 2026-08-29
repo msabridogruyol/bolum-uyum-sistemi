@@ -131,9 +131,55 @@ class DalDurumIstek(BaseModel):
 class SoruOut(BaseModel):
     id: int
     katman_kod: str
+    degisken_kod: str | None = None
+    degisken_adi: str | None = None
     soru_tipi: str
     soru_metni: str
     aktif_mi: bool
+
+
+# --- A7 — Soru Geçerlilik Testi (sonradan eklendi) ---
+
+class SoruGecerlilikSonucuGiris(BaseModel):
+    soru_id: int
+    gercek_degisken_kod: str
+    model_a_tahmin: str
+    model_a_dogru: bool
+    model_a_benzerlik: float
+    model_b_tahmin: str
+    model_b_dogru: bool
+    model_b_benzerlik: float
+    model_c_tahmin: str
+    model_c_dogru: bool
+    model_c_benzerlik: float
+
+
+class SoruGecerlilikYuklemeIstek(BaseModel):
+    sonuclar: list[SoruGecerlilikSonucuGiris]
+
+
+class SoruGecerlilikSonucuOut(BaseModel):
+    soru_id: int
+    soru_metni: str
+    katman_kod: str
+    gercek_degisken_kod: str
+    model_a_tahmin: str
+    model_a_dogru: bool
+    model_b_tahmin: str
+    model_b_dogru: bool
+    model_c_tahmin: str
+    model_c_dogru: bool
+    kac_model_dogru: int
+    ortalama_benzerlik: float
+    test_zamani: datetime
+
+
+class SoruGecerlilikOzetOut(BaseModel):
+    toplam_soru: int
+    tam_dogru: int          # 3/3 model doğru
+    kismi_dogru: int        # 1-2/3 model doğru
+    hic_dogru_degil: int    # 0/3 model doğru
+    sonuclar: list[SoruGecerlilikSonucuOut]
 
 
 class SoruEkleIstek(BaseModel):
