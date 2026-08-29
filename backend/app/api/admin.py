@@ -34,7 +34,7 @@ from app.schemas.admin import (
     DalOut, DalEkleIstek, DalDurumIstek, SoruOut, SoruEkleIstek, SoruAktifIstek,
     PipelineYuklemeIstek, PipelineYuklemeSonucu, PipelineBolumAralikOut, PipelineTaslakGrubuOut,
     KullanimIstatistikleriOut, GunlukZiyaretOut, SayfaZiyaretOut,
-    OgrenciDetayOut, OgrenciIstatistikleriOut,
+    OgrenciDetayOut, OgrenciIstatistikleriOut, OkulSayisiOut, HedefBolumSayisiOut,
 )
 
 router = APIRouter()
@@ -860,7 +860,28 @@ def ogrencileri_detayli_listele(
     toplam = db.execute(text("SELECT COUNT(*) FROM ogrenciler")).scalar() or 0
     ortalama = round(sum(uyum_degerleri) / len(uyum_degerleri), 2) if uyum_degerleri else None
 
+    en_cok_okul_satirlari = db.execute(
+        text("""
+            SELECT okul, COUNT(*) AS sayi FROM ogrenciler
+            WHERE okul IS NOT NULL AND okul <> ''
+            GROUP BY okul ORDER BY COUNT(*) DESC LIMIT 5
+        """)
+    ).mappings().all()
+
+    en_cok_hedef_satirlari = db.execute(
+        text("""
+            SELECT b.ad AS bolum_adi, COUNT(*) AS sayi
+            FROM ogrenci_hedef_bolum hb
+            JOIN bolumler b ON b.id = hb.bolum_id
+            WHERE hb.aktif_mi = true
+            GROUP BY b.ad ORDER BY COUNT(*) DESC LIMIT 5
+        """)
+    ).mappings().all()
+
     return OgrenciIstatistikleriOut(
         toplam_ogrenci=toplam, hedefi_olan_ogrenci=hedefi_olan,
-        ortalama_hedef_uyum_orani=ortalama, ogrenciler=ogrenciler,
+        ortalama_hedef_uyum_orani=ortalama,
+        en_cok_okul=[OkulSayisiOut(okul=r["okul"], sayi=r["sayi"]) for r in en_cok_okul_satirlari],
+        en_cok_hedeflenen_bolum=[HedefBolumSayisiOut(bolum_adi=r["bolum_adi"], sayi=r["sayi"]) for r in en_cok_hedef_satirlari],
+        ogrenciler=ogrenciler,
     )
