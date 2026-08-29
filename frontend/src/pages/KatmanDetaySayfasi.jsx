@@ -122,13 +122,47 @@ export default function KatmanDetaySayfasi() {
       </div>
 
       {!sonuc.tamamlandi_mi ? (
-        <div className="veri-yok-grafik">
-          <div className="vg-ikon">📊</div>
-          <div className="vg-metin">Bu katmanı henüz tamamlamadın.</div>
-          <button className="btn" style={{ marginTop: 12 }} onClick={() => navigate(`/katmanlar/${kod}`)}>
+        <>
+          <div className="taslak-onizleme">
+            <div className="taslak-onizleme-icerik two">
+              <div className="card" style={{ marginBottom: 0 }}>
+                <div className="ct">Güçlü Boyutların</div>
+                {[88, 76, 65].map((p, i) => (
+                  <div key={i} className="boyut-satir">
+                    <div className="boyut-satir-ust">
+                      <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
+                        <div className="iskelet-satir" style={{ width: 90 }} />
+                        <div className="db"><div className="df" style={{ width: `${p}%`, background: 'var(--gr)' }} /></div>
+                        <div className="ds" style={{ color: 'var(--gr)' }}>{p}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <div className="card" style={{ marginBottom: 0 }}>
+                <div className="ct">{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer Boyutların'}</div>
+                {[45, 30, 18].map((p, i) => (
+                  <div key={i} className="boyut-satir">
+                    <div className="boyut-satir-ust">
+                      <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
+                        <div className="iskelet-satir" style={{ width: 90 }} />
+                        <div className="db"><div className="df" style={{ width: `${p}%`, background: 'var(--tx3)' }} /></div>
+                        <div className="ds" style={{ color: 'var(--tx3)' }}>{p}</div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="taslak-onizleme-overlay">
+              <div className="to-ikon">📊</div>
+              <div className="to-metin">Bu katmanı henüz tamamlamadın.</div>
+            </div>
+          </div>
+          <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate(`/katmanlar/${kod}`)}>
             {katman.durum === 'devam_ediyor' ? 'Kaldığın Yerden Devam Et' : 'Bu Katmana Başla'}
           </button>
-        </div>
+        </>
       ) : (
         <div className={hedef ? 'yol-duzen' : undefined}>
           <div>
