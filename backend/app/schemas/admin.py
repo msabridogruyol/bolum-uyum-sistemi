@@ -222,6 +222,39 @@ class OgrenciIstatistikleriOut(BaseModel):
     ogrenciler: list[OgrenciDetayOut]
 
 
+# --- Detaylı/Kademeli İstatistikler (sonradan eklendi) ---
+
+class BolumKademeIstatistigiOut(BaseModel):
+    bolum_id: int
+    bolum_adi: str
+    hedefleyen_sayisi: int
+    yetiyor_sayisi: int       # uyum >= 70
+    sinirda_sayisi: int       # 40 <= uyum < 70
+    yetmiyor_sayisi: int      # uyum < 40
+    henuz_hesaplanmadi_sayisi: int  # K1-K4 bitmediği için uyum yok
+    ortalama_uyum: float | None
+
+
+class OkulKirilimOut(BaseModel):
+    okul: str
+    ogrenci_sayisi: int
+    hedefi_olan_sayisi: int
+    ortalama_uyum: float | None
+
+
+class SinifKirilimOut(BaseModel):
+    sinif: str
+    ogrenci_sayisi: int
+    hedefi_olan_sayisi: int
+    ortalama_uyum: float | None
+
+
+class DetayliIstatistiklerOut(BaseModel):
+    bolumler: list[BolumKademeIstatistigiOut]
+    okullar: list[OkulKirilimOut]
+    siniflar: list[SinifKirilimOut]
+
+
 # --- Pipeline Sonuçları (sonradan eklendi) ---
 # Bilgisayarınızda çalışan pipeline'ın çıktısını (CSV) admin panelinden
 # yükleyip, canlıya yansımadan ÖNCE önizleyip onaylamanızı sağlar.
