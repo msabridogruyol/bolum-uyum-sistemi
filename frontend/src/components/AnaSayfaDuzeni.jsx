@@ -70,6 +70,9 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/sonuc/K4" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌸 K4 — Alan Eğilimi
         </NavLink>
+        <NavLink to="/sonuc/K5" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🌻 K5 — Derinleşme
+        </NavLink>
         <NavLink to="/kesfet" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🔍 Tüm Bölümleri Keşfet
         </NavLink>
