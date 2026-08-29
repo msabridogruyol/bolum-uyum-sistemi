@@ -33,6 +33,7 @@ from app.schemas.admin import (
     KontrolPaneliOut, PipelineDurumuOut, KatmanAgirligiOut, YeniAgirlikVersiyonuIstek,
     DalOut, DalEkleIstek, DalDurumIstek, SoruOut, SoruEkleIstek, SoruAktifIstek,
     PipelineYuklemeIstek, PipelineYuklemeSonucu, PipelineBolumAralikOut, PipelineTaslakGrubuOut,
+    KullanimIstatistikleriOut, GunlukZiyaretOut, SayfaZiyaretOut,
 )
 
 router = APIRouter()
@@ -744,3 +745,59 @@ def pipeline_taslagini_reddet(
     db.execute(text("UPDATE bolum_agirliklari_taslak SET durum = 'reddedildi' WHERE yukleme_grubu = :g AND durum = 'bekliyor'"), {"g": grup})
     _audit_yaz(db, admin, "pipeline_taslagi_reddetme", "bolum_agirliklari_taslak", grup, None)
     db.commit()
+
+
+# ============================================================================
+# Kullanım İstatistikleri (sonradan eklendi)
+# ============================================================================
+# Kişi bazlı DEĞİL — yalnızca toplu/anonim sayım (sayfa_ziyaretleri tablosu,
+# main.py'deki ZiyaretKaydiMiddleware tarafından doldurulur).
+
+@router.get("/kullanim-istatistikleri", response_model=KullanimIstatistikleriOut)
+def kullanim_istatistiklerini_getir(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    bugun_toplam = db.execute(
+        text("SELECT COUNT(*) FROM sayfa_ziyaretleri WHERE zaman >= CURRENT_DATE")
+    ).scalar() or 0
+
+    son_7_gun_toplam = db.execute(
+        text("SELECT COUNT(*) FROM sayfa_ziyaretleri WHERE zaman >= now() - interval '7 days'")
+    ).scalar() or 0
+
+    tip_dagilimi = dict(db.execute(
+        text("""
+            SELECT kullanici_tipi, COUNT(*) FROM sayfa_ziyaretleri
+            WHERE zaman >= now() - interval '7 days'
+            GROUP BY kullanici_tipi
+        """)
+    ).all())
+
+    gunluk = db.execute(
+        text("""
+            SELECT to_char(zaman::date, 'YYYY-MM-DD') AS tarih, COUNT(*) AS sayi
+            FROM sayfa_ziyaretleri
+            WHERE zaman >= now() - interval '7 days'
+            GROUP BY zaman::date
+            ORDER BY zaman::date
+        """)
+    ).mappings().all()
+
+    en_cok = db.execute(
+        text("""
+            SELECT yol, COUNT(*) AS sayi FROM sayfa_ziyaretleri
+            WHERE zaman >= now() - interval '7 days'
+            GROUP BY yol ORDER BY COUNT(*) DESC LIMIT 5
+        """)
+    ).mappings().all()
+
+    return KullanimIstatistikleriOut(
+        bugun_toplam=bugun_toplam,
+        son_7_gun_toplam=son_7_gun_toplam,
+        ogrenci_ziyaret=tip_dagilimi.get("ogrenci", 0),
+        admin_ziyaret=tip_dagilimi.get("admin", 0),
+        anonim_ziyaret=tip_dagilimi.get("anonim", 0),
+        gunluk_dagilim=[GunlukZiyaretOut(tarih=g["tarih"], sayi=g["sayi"]) for g in gunluk],
+        en_cok_ziyaret_edilen=[SayfaZiyaretOut(yol=e["yol"], sayi=e["sayi"]) for e in en_cok],
+    )
