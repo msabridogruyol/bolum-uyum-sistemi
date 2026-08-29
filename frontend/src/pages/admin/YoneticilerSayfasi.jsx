@@ -28,7 +28,7 @@ export default function YoneticilerSayfasi() {
 
   if (kendiRol !== 'super_admin') {
     return (
-      <div className="pg">
+      <div className="pg pg-genis">
         <div className="ph"><div className="pt">Yöneticiler</div></div>
         <div className="bos-durum">Bu sayfa yalnızca süper adminlere açık.</div>
       </div>
@@ -55,10 +55,10 @@ export default function YoneticilerSayfasi() {
     }
   }
 
-  if (!yoneticiler) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!yoneticiler) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Yöneticiler</div>
         <div className="ps">Yeni yönetici ekle veya mevcutların rolünü değiştir. Kendi rolünü değiştiremezsin.</div>
