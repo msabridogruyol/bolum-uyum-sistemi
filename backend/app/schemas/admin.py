@@ -145,6 +145,29 @@ class DegiskenListeOut(BaseModel):
     katman_kod: str
 
 
+# --- SJT Toplu Yükleme (uzun/tidy format — her satır bir seçenek-değişken ağırlığı) ---
+
+class TopluSjtSatiri(BaseModel):
+    soru_gecici_id: str      # aynı soruyu gruplamak için geçici anahtar (örn. "K1-SJT-1")
+    katman_kod: str
+    soru_metni: str
+    secenek_sira: int
+    secenek_metni: str
+    degisken_kod: str
+    agirlik: float
+
+
+class TopluSjtYuklemeIstek(BaseModel):
+    satirlar: list[TopluSjtSatiri]
+
+
+class TopluSjtSonuc(BaseModel):
+    eklenen_soru_sayisi: int
+    eklenen_secenek_sayisi: int
+    eklenen_agirlik_sayisi: int
+    hatalar: list[str]
+
+
 class SoruOut(BaseModel):
     id: int
     katman_kod: str
