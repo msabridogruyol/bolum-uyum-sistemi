@@ -193,6 +193,23 @@ class OgrenciListeOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class OgrenciDetayOut(BaseModel):
+    id: str
+    ad_soyad: str
+    email: str
+    okul: str | None
+    hedef_bolum_adi: str | None
+    hedef_bolum_uyum_orani: float | None
+    olusturulma_zamani: datetime
+
+
+class OgrenciIstatistikleriOut(BaseModel):
+    toplam_ogrenci: int
+    hedefi_olan_ogrenci: int
+    ortalama_hedef_uyum_orani: float | None
+    ogrenciler: list[OgrenciDetayOut]
+
+
 # --- Pipeline Sonuçları (sonradan eklendi) ---
 # Bilgisayarınızda çalışan pipeline'ın çıktısını (CSV) admin panelinden
 # yükleyip, canlıya yansımadan ÖNCE önizleyip onaylamanızı sağlar.
