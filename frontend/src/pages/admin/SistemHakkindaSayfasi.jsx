@@ -65,14 +65,44 @@ export default function SistemHakkindaSayfasi() {
           bilgisayarında çalıştırdığı bir işlemdir. Amaç: 301 bölümün her birinin, 31 değişkende
           <b> "beklenen profilini"</b> (agirlik_degeri) hesaplamak.
         </p>
-        <Madde>7.764 gerçek mesleğin her biri, <b>3 farklı embedding modeli</b> ile 31 değişkenin her birinde puanlanır</Madde>
+        <Madde>Meslek veri kaynağı: <b>ESCO</b> (Avrupa Birliği'nin resmi meslek sınıflandırması) — 3.039 meslek, her biri için gerçek, uzmanlarca yazılmış açıklama içerir</Madde>
+        <Madde>Bölüm veri kaynağı: sistemin kendi 301 bölümü, her biri için yazılmış kısa açıklama</Madde>
         <Madde>Her meslek, isim/tanım benzerliğine göre bölümlerle eşleştirilir (benzerlik skoru)</Madde>
         <Madde>Bir bölüme "yakın" mesleklerin puanları ağırlıklı ortalamayla birleştirilip o bölümün 31 değişkenlik profili çıkarılır</Madde>
         <Madde><b>etkin_meslek_sayisi</b> ve <b>agirlikli_varyans</b>, bu hesaplamanın ne kadar güvenilir olduğunun göstergesidir (admin-only, öğrenciye asla gösterilmez)</Madde>
-        <p style={{ marginTop: 10, padding: '10px 12px', background: 'var(--aml)', borderRadius: 8, color: 'var(--am)' }}>
-          ⚠️ Bilinen kısıt: embedding modelleri bazen kelime <i>kökü</i> benzerliğini anlam benzerliği sanabiliyor
-          (örn. "Hukuk" ↔ "Hakkak"). Bu yüzden pipeline çıktısı, admin panelindeki <b>Pipeline Sonuçları</b>
-          ekranında önce önizlenip onaylanmadan canlıya yansımaz.
+
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Eşleştirme Neden İsme Değil, Açıklamaya Dayanıyor</div>
+          <p style={{ marginBottom: 8 }}>
+            Meslek ve bölüm eşleştirmesi, yalnızca <b>isimlerin</b> karşılaştırılmasıyla değil, her ikisinin
+            <b> tam açıklama metninin anlamsal (context/meaning) benzerliğiyle</b> yapılır. Bunun nedeni: yalnızca
+            isim kullanıldığında, aralarında gerçek bir anlam ilişkisi olmayan ama harf/hece düzeyinde benzer
+            görünen kelimeler (örn. ortak bir kökten gelen ama tamamen farklı anlamlara sahip iki sözcük) modelin
+            kafasını karıştırabiliyor. Tam açıklama kullanıldığında model, kelimenin yüzeysel görünümü yerine
+            <b> gerçekte ne anlama geldiğine</b> odaklanıyor — bu da isim benzerliğinden kaynaklanan yanlış
+            eşleşmeleri büyük ölçüde ortadan kaldırıyor.
+          </p>
+        </div>
+
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Çeviri Süreci</div>
+          <Madde>Modellerden biri (model_c) İngilizce çalışıyor — ESCO'nun orijinal İngilizce meslek açıklamaları <b>doğrudan</b> kullanılıyor, çeviri gerekmiyor</Madde>
+          <Madde>Bölüm açıklamaları, aynı İngilizce model için Türkçe'den İngilizce'ye çevriliyor (Helsinki-NLP makine çeviri modeli, yerel/offline — dış API kullanılmıyor)</Madde>
+          <Madde>Meslek adları ve açıklamaları ise ESCO'dan İngilizce'den Türkçe'ye çevrilip Türkçe çalışan iki model için kullanılıyor</Madde>
+          <Madde>Çeviri kalitesi, isim ile açıklamanın anlamsal olarak tutarlı olup olmadığını ölçen otomatik bir kontrolden geçiriliyor — tutarsız çıkan meslekler bir listeye yazılıp elle gözden geçiriliyor</Madde>
+        </div>
+
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Veri Kalitesi Kontrolleri</div>
+          <Madde><b>Güven eşiği (z-skoru):</b> bir mesleğin bir bölümle "ilişkili" sayılması için, o ilişkinin ortalamanın en az 1 standart sapma üstünde olması gerekir — rastgele/zayıf eşleşmeler bu şekilde elenir</Madde>
+          <Madde><b>Model konsensüsü:</b> 3 bağımsız model kullanılır; bir eşleşme kaç modelde tutarlı çıktıysa, önceliği o kadar yüksektir</Madde>
+          <Madde>Sözde bilim/akademik olmayan kategoriler (üniversite eğitimiyle ilgisi olmayan meslekler), kaynak veriden ayıklanır</Madde>
+        </div>
+
+        <p style={{ marginTop: 14, padding: '10px 12px', background: 'var(--aml)', borderRadius: 8, color: 'var(--am)' }}>
+          ⚠️ Bu süreç istatistiksel bir yöntemdir, kesin/matematiksel sıfır hata garantisi vermez. Bu yüzden
+          pipeline çıktısı, admin panelindeki <b>Pipeline Sonuçları</b> ekranında önce önizlenip onaylanmadan
+          canlıya yansımaz.
         </p>
       </Bolum>
 
