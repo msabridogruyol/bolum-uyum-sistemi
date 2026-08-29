@@ -47,6 +47,20 @@ class BolumAciklamaIstek(BaseModel):
     kisa_aciklama: str
 
 
+class BolumTopluAciklamaSatiri(BaseModel):
+    ad: str
+    kisa_aciklama: str
+
+
+class BolumTopluAciklamaIstek(BaseModel):
+    satirlar: list[BolumTopluAciklamaSatiri]
+
+
+class BolumTopluAciklamaSonucu(BaseModel):
+    guncellenen: int
+    eslesmeyenler: list[str]
+
+
 # --- E7 — Model Yakınsaması / Geçerlilik (admin-only skorlar) ---
 
 class OgrenciBolumUyumDetayOut(BaseModel):
