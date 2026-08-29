@@ -203,10 +203,22 @@ class OgrenciDetayOut(BaseModel):
     olusturulma_zamani: datetime
 
 
+class OkulSayisiOut(BaseModel):
+    okul: str
+    sayi: int
+
+
+class HedefBolumSayisiOut(BaseModel):
+    bolum_adi: str
+    sayi: int
+
+
 class OgrenciIstatistikleriOut(BaseModel):
     toplam_ogrenci: int
     hedefi_olan_ogrenci: int
     ortalama_hedef_uyum_orani: float | None
+    en_cok_okul: list[OkulSayisiOut]
+    en_cok_hedeflenen_bolum: list[HedefBolumSayisiOut]
     ogrenciler: list[OgrenciDetayOut]
 
 
