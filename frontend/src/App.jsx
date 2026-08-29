@@ -14,6 +14,7 @@ import ProfilAyarlariSayfasi from './pages/ProfilAyarlariSayfasi'
 import AnaSayfa from './pages/AnaSayfa'
 import GenelSonuclarSayfasi from './pages/GenelSonuclarSayfasi'
 import KatmanDetaySayfasi from './pages/KatmanDetaySayfasi'
+import K5SonucSayfasi from './pages/K5SonucSayfasi'
 import AdminGirisSayfasi from './pages/admin/AdminGirisSayfasi'
 import KontrolPaneliSayfasi from './pages/admin/KontrolPaneliSayfasi'
 import PipelineDurumuSayfasi from './pages/admin/PipelineDurumuSayfasi'
@@ -55,6 +56,7 @@ function AnaUygulama() {
         <Route path="/k5/:kod" element={<K5DalSoruSayfasi />} />
         <Route path="/sonuc" element={<SonucSayfasi />} />
         <Route path="/sonuc/genel" element={<GenelSonuclarSayfasi />} />
+        <Route path="/sonuc/K5" element={<K5SonucSayfasi />} />
         <Route path="/sonuc/:kod" element={<KatmanDetaySayfasi />} />
         <Route path="/kesfet" element={<KesfetSayfasi />} />
         <Route path="/koclugu" element={<KoclukSayfasi />} />
