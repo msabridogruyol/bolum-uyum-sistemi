@@ -22,12 +22,12 @@ export default function KontrolPaneliSayfasi() {
   ]
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Kontrol Paneli</div>
         <div className="ps">Sistemin genel durumuna ilişkin özet metrikler.</div>
       </div>
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 12 }}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: 12 }}>
         {kartlar.map((k) => (
           <div key={k.baslik} className="card" style={{ marginBottom: 0 }}>
             <div className="ct">{k.baslik}</div>
