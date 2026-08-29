@@ -1,81 +1,165 @@
-import { useEffect, useState } from 'react'
-import { api } from '../../api/client'
+const TABAN_URL = '/api'
 
-function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
-  const kacisla = (deger) => `"${String(deger ?? '').replace(/"/g, '""')}"`
-  const icerik = [basliklar.join(','), ...satirlar.map((s) => s.map(kacisla).join(','))].join('\r\n')
-  const blob = new Blob(['\uFEFF' + icerik], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = dosyaAdi
-  a.click()
-  URL.revokeObjectURL(url)
+function tokenAl(kapsam = 'ogrenci') {
+  return localStorage.getItem(`${kapsam}_erisim_tokeni`)
 }
 
-export default function OgrencilerSayfasi() {
-  const [veri, setVeri] = useState(null)
-  const [hata, setHata] = useState(null)
+function tokenlariKaydet(erisim, yenileme, kapsam = 'ogrenci') {
+  localStorage.setItem(`${kapsam}_erisim_tokeni`, erisim)
+  localStorage.setItem(`${kapsam}_yenileme_tokeni`, yenileme)
+}
 
-  useEffect(() => {
-    api.ogrencileriDetayliListele().then(setVeri).catch((e) => setHata(e.detail || 'Öğrenciler yüklenemedi.'))
-  }, [])
+function tokenlariTemizle(kapsam = 'ogrenci') {
+  localStorage.removeItem(`${kapsam}_erisim_tokeni`)
+  localStorage.removeItem(`${kapsam}_yenileme_tokeni`)
+}
 
-  if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!veri) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+class ApiHatasi extends Error {
+  constructor(status, detail) {
+    super(detail || `HTTP ${status}`)
+    this.status = status
+    this.detail = detail
+  }
+}
 
-  return (
-    <div className="pg pg-genis">
-      <div className="ph">
-        <div className="pt">Öğrenciler</div>
-        <div className="ps">Sistemdeki öğrenci hesapları, okulları ve hedef bölüm uyum durumları.</div>
-      </div>
+function jwtCoz(token) {
+  if (!token) return null
+  try {
+    const govde = token.split('.')[1]
+    return JSON.parse(atob(govde.replace(/-/g, '+').replace(/_/g, '/')))
+  } catch {
+    return null
+  }
+}
 
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 10, marginBottom: 18 }}>
-        <div className="sc"><div className="sl">Toplam Öğrenci</div><div className="sv">{veri.toplam_ogrenci}</div></div>
-        <div className="sc"><div className="sl">Hedefi Olan</div><div className="sv pu">{veri.hedefi_olan_ogrenci}</div></div>
-        <div className="sc">
-          <div className="sl">Ortalama Hedef Uyum</div>
-          <div className="sv gr">{veri.ortalama_hedef_uyum_orani !== null ? `%${veri.ortalama_hedef_uyum_orani}` : '—'}</div>
-        </div>
-      </div>
+async function istek(yol, secenekler = {}, kapsam = 'ogrenci') {
+  const token = tokenAl(kapsam)
+  const headers = { 'Content-Type': 'application/json', ...secenekler.headers }
+  if (token) headers['Authorization'] = `Bearer ${token}`
 
-      <button
-        className="btn sec"
-        style={{ marginBottom: 14 }}
-        onClick={() => csvDisaAktar(
-          'ogrenciler_disa_aktarim.csv',
-          ['ad_soyad', 'email', 'okul', 'hedef_bolum_adi', 'hedef_bolum_uyum_orani', 'olusturulma_zamani'],
-          veri.ogrenciler.map((o) => [o.ad_soyad, o.email, o.okul || '', o.hedef_bolum_adi || '', o.hedef_bolum_uyum_orani ?? '', o.olusturulma_zamani]),
-        )}
-        disabled={veri.ogrenciler.length === 0}
-      >
-        ⬇ CSV Dışa Aktar
-      </button>
+  const yanit = await fetch(`${TABAN_URL}${yol}`, { ...secenekler, headers })
 
-      <div className="ll">
-        {veri.ogrenciler.map((o) => (
-          <div key={o.id} className="lc" style={{ cursor: 'default' }}>
-            <div className="lb-wrap">
-              <div className="lt">{o.ad_soyad}</div>
-              <div className="ld">
-                {o.email} · {o.okul || 'Okul bilgisi yok'} · {new Date(o.olusturulma_zamani).toLocaleDateString('tr-TR')}
-              </div>
-            </div>
-            {o.hedef_bolum_adi ? (
-              <div style={{ textAlign: 'right' }}>
-                <div style={{ fontSize: 12, fontWeight: 600 }}>{o.hedef_bolum_adi}</div>
-                <div style={{ fontFamily: 'var(--fd)', fontWeight: 700, color: 'var(--gr)' }}>
-                  {o.hedef_bolum_uyum_orani !== null ? `%${o.hedef_bolum_uyum_orani}` : '—'}
-                </div>
-              </div>
-            ) : (
-              <span className="bdg bdg-lock">Hedef yok</span>
-            )}
-          </div>
-        ))}
-        {veri.ogrenciler.length === 0 && <div className="bos-durum">Henüz öğrenci yok.</div>}
-      </div>
-    </div>
-  )
+  if (yanit.status === 204) return null
+
+  let govde = null
+  const metin = await yanit.text()
+  if (metin) {
+    try {
+      govde = JSON.parse(metin)
+    } catch {
+      govde = metin
+    }
+  }
+
+  if (!yanit.ok) {
+    const detay = govde && typeof govde === 'object' ? govde.detail : govde
+    throw new ApiHatasi(yanit.status, detay)
+  }
+  return govde
+}
+
+const get = (yol, kapsam) => istek(yol, { method: 'GET' }, kapsam)
+const post = (yol, gövde, kapsam) => istek(yol, { method: 'POST', body: gövde !== undefined ? JSON.stringify(gövde) : undefined }, kapsam)
+const put = (yol, gövde, kapsam) => istek(yol, { method: 'PUT', body: JSON.stringify(gövde) }, kapsam)
+
+// admin-scoped kısayollar
+const aget = (yol) => get(yol, 'admin')
+const apost = (yol, gövde) => post(yol, gövde, 'admin')
+const aput = (yol, gövde) => put(yol, gövde, 'admin')
+
+export const api = {
+  ApiHatasi,
+  tokenAl,
+  tokenlariKaydet,
+  tokenlariTemizle,
+
+  // --- D1: Auth (öğrenci) ---
+  kayitOl: (veri) => post('/auth/kayit', veri),
+  girisYap: async (veri) => {
+    const sonuc = await post('/auth/giris', veri)
+    tokenlariKaydet(sonuc.erisim_tokeni, sonuc.yenileme_tokeni, 'ogrenci')
+    return sonuc
+  },
+  cikisYap: () => tokenlariTemizle('ogrenci'),
+  girisYapildiMi: () => !!tokenAl('ogrenci'),
+
+  // --- D2: Katman akışı ---
+  katmanlariListele: () => get('/ogrenci/katmanlar'),
+  katmaniBaslat: (kod) => post(`/ogrenci/katmanlar/${kod}/basla`),
+  soruyuCevapla: (kod, soruId, secenekId) =>
+    post(`/ogrenci/katmanlar/${kod}/cevap`, { soru_id: soruId, secenek_id: secenekId }),
+  katmaniTamamla: (kod) => post(`/ogrenci/katmanlar/${kod}/tamamla`),
+
+  // --- D3: K5 ---
+  k5Durumu: () => get('/ogrenci/k5/durum'),
+  daliBaslat: (kod) => post(`/ogrenci/dallar/${kod}/basla`),
+  dalSoruyuCevapla: (kod, soruId, secenekId) =>
+    post(`/ogrenci/dallar/${kod}/cevap`, { soru_id: soruId, secenek_id: secenekId }),
+  daliTamamla: (kod) => post(`/ogrenci/dallar/${kod}/tamamla`),
+
+  // --- D5: Sonuç ---
+  siralamaGetir: (ilkN = 20) => get(`/ogrenci/sonuc/siralama?ilk_n=${ilkN}`),
+  kesfetAra: (q, limit = 20) => get(`/ogrenci/sonuc/kesfet?q=${encodeURIComponent(q)}&limit=${limit}`),
+  durumOzetiGetir: () => get('/ogrenci/durum-ozeti'),
+
+  // --- Profil (sonradan eklendi) ---
+  profilGetir: () => get('/ogrenci/profil'),
+  profilGuncelle: (veri) => put('/ogrenci/profil', veri),
+  sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri),
+  profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
+  meslekAra: (q) => get(`/ogrenci/meslek-ara?q=${encodeURIComponent(q)}`),
+  katmanSonucuGetir: (kod) => get(`/ogrenci/katmanlar/${kod}/sonuc`),
+  bolumOrnekMeslekleriGetir: (bolumId) => get(`/ogrenci/sonuc/kesfet/${bolumId}/meslekler`),
+
+  // --- Bölüm F: Koçluk ---
+  aktifHedefGetir: () => get('/koclugu/hedef'),
+  hedefSec: (bolumId, onay = false) => post('/koclugu/hedef', { bolum_id: bolumId, onay }),
+  gelisimAnaliziGetir: () => get('/koclugu/hedef/gelisim'),
+  yolHaritasiGetir: () => get('/koclugu/hedef/yol-haritasi'),
+  aksiyonDurumuGuncelle: (degiskenId, durum) => post(`/koclugu/hedef/aksiyon/${degiskenId}`, { durum }),
+  turKarsilastirmasiGetir: () => get('/koclugu/karsilastirma'),
+
+  // --- Admin: Auth ---
+  adminGirisYap: async (veri) => {
+    const sonuc = await post('/admin/auth/giris', veri)
+    tokenlariKaydet(sonuc.erisim_tokeni, sonuc.yenileme_tokeni, 'admin')
+    return sonuc
+  },
+  adminCikisYap: () => tokenlariTemizle('admin'),
+  adminGirisYapildiMi: () => !!tokenAl('admin'),
+  adminRolGetir: () => jwtCoz(tokenAl('admin'))?.rol ?? null,
+  adminIdGetir: () => jwtCoz(tokenAl('admin'))?.sub ?? null,
+
+  // --- Admin: E1-E9 ---
+  kontrolPaneli: () => aget('/admin/kontrol-paneli'),
+  kullanimIstatistikleriGetir: () => aget('/admin/kullanim-istatistikleri'),
+  pipelineDurumu: () => aget('/admin/pipeline-durumu'),
+  pipelineCiktisiYukle: (satirlar) => apost('/admin/pipeline/yukle', { satirlar }),
+  pipelineTaslaklariListele: () => aget('/admin/pipeline/taslaklar'),
+  pipelineTaslakDetayi: (grup) => aget(`/admin/pipeline/taslaklar/${grup}`),
+  pipelineTaslaginiOnayla: (grup) => apost(`/admin/pipeline/taslaklar/${grup}/onayla`),
+  pipelineTaslaginiReddet: (grup) => apost(`/admin/pipeline/taslaklar/${grup}/reddet`),
+  parametreleriListele: () => aget('/admin/parametreler'),
+  parametreGuncelle: (anahtar, deger) => aput(`/admin/parametreler/${anahtar}`, { deger }),
+  bolumleriListele: () => aget('/admin/bolumler'),
+  bolumDurumDegistir: (bolumId, yeniDurum, gerekce) =>
+    apost(`/admin/bolumler/${bolumId}/durum`, { yeni_durum: yeniDurum, gerekce }),
+  bolumAciklamaGuncelle: (bolumId, kisaAciklama) =>
+    aput(`/admin/bolumler/${bolumId}/aciklama`, { kisa_aciklama: kisaAciklama }),
+  bolumAciklamalariniTopluGuncelle: (satirlar) => apost('/admin/bolumler/toplu-aciklama', { satirlar }),
+  katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
+  yeniAgirlikVersiyonu: (agirliklar) => apost('/admin/katman-agirliklari', { agirliklar }),
+  dallariListele: () => aget('/admin/dallar'),
+  dalEkle: (veri) => apost('/admin/dallar', veri),
+  dalDurumGuncelle: (dalId, yeniDurum) => apost(`/admin/dallar/${dalId}/durum`, { yeni_durum: yeniDurum }),
+  sorulariListele: (katmanKod) => aget(`/admin/sorular${katmanKod ? `?katman_kod=${katmanKod}` : ''}`),
+  soruEkle: (veri) => apost('/admin/sorular', veri),
+  soruAktiflikGuncelle: (soruId, aktifMi) => apost(`/admin/sorular/${soruId}/aktiflik`, { aktif_mi: aktifMi }),
+  auditLogGetir: (limit = 50) => aget(`/admin/audit-log?limit=${limit}`),
+  ogrencileriListele: (limit = 50) => aget(`/admin/ogrenciler?limit=${limit}`),
+  ogrencileriDetayliListele: (limit = 100) => aget(`/admin/ogrenciler-detay?limit=${limit}`),
+  uyumDetayiGetir: (ogrenciId, bolumId) => aget(`/admin/uyum-detay/${ogrenciId}/${bolumId}`),
+  yoneticileriListele: () => aget('/admin/yoneticiler'),
+  yoneticiEkle: (veri) => apost('/admin/yoneticiler', veri),
+  yoneticiRolGuncelle: (yoneticiId, yeniRol) => aput(`/admin/yoneticiler/${yoneticiId}/rol`, { yeni_rol: yeniRol }),
 }
