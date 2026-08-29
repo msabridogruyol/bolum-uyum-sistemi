@@ -30,8 +30,6 @@ export default function AgirliklarSayfasi() {
 
   if (!agirliklar) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
 
-  // K5 (Derinleşme) koşullu bir katman — sabit bir yüzdesi yok, bu yüzden
-  // "toplam %100" hesabına ve düzenlenebilir listeye dahil edilmez.
   const yuzdeliKatmanlar = agirliklar.filter((a) => a.agirlik !== null && a.agirlik !== undefined)
   const kosulluKatmanlar = agirliklar.filter((a) => a.agirlik === null || a.agirlik === undefined)
 
@@ -47,7 +45,7 @@ export default function AgirliklarSayfasi() {
   }
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Katman Ağırlıkları</div>
         <div className="ps">Yeni bir versiyon oluşturmak eskisini otomatik pasife alır. Toplam %100 olmalı.</div>
