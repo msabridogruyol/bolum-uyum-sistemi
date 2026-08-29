@@ -158,6 +158,7 @@ export const api = {
   auditLogGetir: (limit = 50) => aget(`/admin/audit-log?limit=${limit}`),
   ogrencileriListele: (limit = 50) => aget(`/admin/ogrenciler?limit=${limit}`),
   ogrencileriDetayliListele: (limit = 100) => aget(`/admin/ogrenciler-detay?limit=${limit}`),
+  detayliIstatistikleriGetir: () => aget('/admin/istatistikler/detay'),
   uyumDetayiGetir: (ogrenciId, bolumId) => aget(`/admin/uyum-detay/${ogrenciId}/${bolumId}`),
   yoneticileriListele: () => aget('/admin/yoneticiler'),
   yoneticiEkle: (veri) => apost('/admin/yoneticiler', veri),
