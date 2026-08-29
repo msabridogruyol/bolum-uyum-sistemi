@@ -34,6 +34,7 @@ from app.schemas.admin import (
     DalOut, DalEkleIstek, DalDurumIstek, SoruOut, SoruEkleIstek, SoruAktifIstek,
     PipelineYuklemeIstek, PipelineYuklemeSonucu, PipelineBolumAralikOut, PipelineTaslakGrubuOut,
     KullanimIstatistikleriOut, GunlukZiyaretOut, SayfaZiyaretOut,
+    OgrenciDetayOut, OgrenciIstatistikleriOut,
 )
 
 router = APIRouter()
@@ -800,4 +801,66 @@ def kullanim_istatistiklerini_getir(
         anonim_ziyaret=tip_dagilimi.get("anonim", 0),
         gunluk_dagilim=[GunlukZiyaretOut(tarih=g["tarih"], sayi=g["sayi"]) for g in gunluk],
         en_cok_ziyaret_edilen=[SayfaZiyaretOut(yol=e["yol"], sayi=e["sayi"]) for e in en_cok],
+    )
+
+
+# ============================================================================
+# Öğrenci Detayları (sonradan eklendi)
+# ============================================================================
+# KVKK notu: bu uç nokta zaten yalnızca admin erişimindeki mevcut öğrenci
+# tablosunu genişletiyor (yeni bir kişisel veri toplama değil) — okul ve
+# hedef bölüm bilgisi öğrenci zaten kendi profilinde/koçlukta oluşturmuştu.
+
+@router.get("/ogrenciler-detay", response_model=OgrenciIstatistikleriOut)
+def ogrencileri_detayli_listele(
+    limit: int = 100,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    satirlar = db.execute(
+        text("""
+            SELECT o.id, o.ad_soyad, o.email, o.okul, o.olusturulma_zamani,
+                   b.ad AS hedef_bolum_adi, hb.bolum_id AS hedef_bolum_id
+            FROM ogrenciler o
+            LEFT JOIN ogrenci_hedef_bolum hb ON hb.ogrenci_id = o.id AND hb.aktif_mi = true
+            LEFT JOIN bolumler b ON b.id = hb.bolum_id
+            ORDER BY o.olusturulma_zamani DESC
+            LIMIT :limit
+        """),
+        {"limit": limit},
+    ).mappings().all()
+
+    ogrenciler = []
+    uyum_degerleri = []
+    hedefi_olan = 0
+
+    for r in satirlar:
+        uyum = None
+        if r["hedef_bolum_id"] is not None:
+            hedefi_olan += 1
+            uyum_satiri = db.execute(
+                text("""
+                    SELECT toplam_uyum FROM ogrenci_bolum_uyum_skorlari
+                    WHERE ogrenci_id = :oid AND bolum_id = :bid
+                    ORDER BY tur_id DESC LIMIT 1
+                """),
+                {"oid": str(r["id"]), "bid": r["hedef_bolum_id"]},
+            ).first()
+            if uyum_satiri:
+                uyum = float(uyum_satiri[0])
+                uyum_degerleri.append(uyum)
+
+        ogrenciler.append(OgrenciDetayOut(
+            id=str(r["id"]), ad_soyad=r["ad_soyad"], email=r["email"], okul=r["okul"],
+            hedef_bolum_adi=r["hedef_bolum_adi"],
+            hedef_bolum_uyum_orani=round(uyum, 2) if uyum is not None else None,
+            olusturulma_zamani=r["olusturulma_zamani"],
+        ))
+
+    toplam = db.execute(text("SELECT COUNT(*) FROM ogrenciler")).scalar() or 0
+    ortalama = round(sum(uyum_degerleri) / len(uyum_degerleri), 2) if uyum_degerleri else None
+
+    return OgrenciIstatistikleriOut(
+        toplam_ogrenci=toplam, hedefi_olan_ogrenci=hedefi_olan,
+        ortalama_hedef_uyum_orani=ortalama, ogrenciler=ogrenciler,
     )
