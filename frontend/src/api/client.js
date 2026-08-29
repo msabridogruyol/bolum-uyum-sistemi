@@ -109,6 +109,7 @@ export const api = {
   profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
   meslekAra: (q) => get(`/ogrenci/meslek-ara?q=${encodeURIComponent(q)}`),
   katmanSonucuGetir: (kod) => get(`/ogrenci/katmanlar/${kod}/sonuc`),
+  bolumOrnekMeslekleriGetir: (bolumId) => get(`/ogrenci/sonuc/kesfet/${bolumId}/meslekler`),
 
   // --- Bölüm F: Koçluk ---
   aktifHedefGetir: () => get('/koclugu/hedef'),
