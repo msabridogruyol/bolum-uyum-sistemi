@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
@@ -12,7 +12,14 @@ export default function KesfetSayfasi() {
   const [yukleniyor, setYukleniyor] = useState(false)
   const [hata, setHata] = useState(null)
   const [secili, setSecili] = useState(null)
+  const [meslekler, setMeslekler] = useState(null)
   const navigate = useNavigate()
+
+  useEffect(() => {
+    if (!secili) { setMeslekler(null); return }
+    setMeslekler(null)
+    api.bolumOrnekMeslekleriGetir(secili.bolum_id).then(setMeslekler).catch(() => setMeslekler([]))
+  }, [secili])
 
   async function aramaYap(terim) {
     const t = (terim ?? sorgu).trim()
@@ -25,8 +32,7 @@ export default function KesfetSayfasi() {
     setSorgu(t)
     setSecili(null)
     try {
-      const veri = await api.kesfetAra(t)
-      setSonuclar(veri)
+      setSonuclar(await api.kesfetAra(t))
     } catch (err) {
       setHata(err.detail || 'Arama yapılamadı.')
     } finally {
@@ -40,10 +46,10 @@ export default function KesfetSayfasi() {
   }
 
   return (
-    <div className="pg">
+    <div className={`pg${secili ? ' pg-genis' : ''}`}>
       <div className="ph">
         <div className="pt">Tüm Bölümleri Keşfet</div>
-        <div className="ps">301 bölümün tamamı elinin altında — bir bölüme tıkla, genel profilini incele.</div>
+        <div className="ps">301 bölümün tamamı elinin altında — bir bölüme tıkla, genel profilini ve örnek mesleklerini incele.</div>
       </div>
 
       <form onSubmit={ara} style={{ display: 'flex', gap: 8, marginBottom: sonuclar ? 20 : 14 }}>
@@ -116,44 +122,82 @@ export default function KesfetSayfasi() {
 
           {secili && (
             <>
-              <div className="sep" style={{ height: 1, background: 'var(--bor)', margin: '20px 0' }} />
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-                <div style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 700, textTransform: 'uppercase' }}>Seçilen Bölüm</div>
-                {secili.toplam_uyum !== null && (
-                  <div style={{ textAlign: 'right' }}>
-                    <div style={{ fontSize: 11, color: 'var(--tx3)' }}>Senin uyumun</div>
-                    <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--pu)', fontFamily: 'var(--fd)' }}>%{Math.round(secili.toplam_uyum)}</div>
-                  </div>
-                )}
-              </div>
-              <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 14 }}>{secili.bolum_adi}</div>
+              <div style={{ height: 1, background: 'var(--bor)', margin: '20px 0' }} />
 
-              <div className="card">
-                <div className="ct">Bölüm Hakkında</div>
-                <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.6 }}>
-                  {secili.kisa_aciklama || 'Bu bölüm için henüz açıklama eklenmedi.'}
-                </div>
-              </div>
-
-              {Object.keys(secili.katman_ortalamalari).length > 0 && (
-                <div className="card">
-                  <div className="ct">Bu Bölümün Genel Profili</div>
-                  <div className="ps" style={{ margin: '0 0 12px', fontSize: 12 }}>
-                    Bu bölüme genelde uyum sağlayan öğrencilerin katman ortalamaları — kendi puanınla karşılaştırma değil, bölümün genel eğilimi.
+              <div className="yol-duzen">
+                <div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
+                    <div style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 700, textTransform: 'uppercase' }}>Seçilen Bölüm</div>
+                    {secili.toplam_uyum !== null && (
+                      <div style={{ textAlign: 'right' }}>
+                        <div style={{ fontSize: 11, color: 'var(--tx3)' }}>Senin uyumun</div>
+                        <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--pu)', fontFamily: 'var(--fd)' }}>%{Math.round(secili.toplam_uyum)}</div>
+                      </div>
+                    )}
                   </div>
-                  {Object.entries(secili.katman_ortalamalari).map(([kod, deger]) => (
-                    <div key={kod} className="dr">
-                      <div className="dl">{KATMAN_ADI[kod] || kod}</div>
-                      <div className="db"><div className="df" style={{ width: `${deger}%`, background: KATMAN_RENK[kod] || 'var(--pu)' }} /></div>
-                      <div className="ds" style={{ color: KATMAN_RENK[kod] || 'var(--pu)' }}>{deger}</div>
+                  <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 14 }}>{secili.bolum_adi}</div>
+
+                  <div className="card">
+                    <div className="ct">Bölüm Hakkında</div>
+                    <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.6 }}>
+                      {secili.kisa_aciklama || 'Bu bölüm için henüz açıklama eklenmedi.'}
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
 
-              <button className="btn full" onClick={() => navigate('/koclugu')}>
-                Bu Bölümü Hedef Olarak Seç ve Kişisel Karşılaştırmamı Gör →
-              </button>
+                  {Object.keys(secili.katman_ortalamalari).length > 0 && (
+                    <div className="card">
+                      <div className="ct">Bu Bölümün Genel Profili</div>
+                      <div className="ps" style={{ margin: '0 0 12px', fontSize: 12 }}>
+                        Bu bölüme genelde uyum sağlayan öğrencilerin katman ortalamaları — kendi puanınla karşılaştırma değil, bölümün genel eğilimi.
+                      </div>
+                      {Object.entries(secili.katman_ortalamalari).map(([kod, deger]) => (
+                        <div key={kod} className="dr">
+                          <div className="dl">{KATMAN_ADI[kod] || kod}</div>
+                          <div className="db"><div className="df" style={{ width: `${deger}%`, background: KATMAN_RENK[kod] || 'var(--pu)' }} /></div>
+                          <div className="ds" style={{ color: KATMAN_RENK[kod] || 'var(--pu)' }}>{deger}</div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  <button className="btn full" onClick={() => navigate('/koclugu')}>
+                    Bu Bölümü Hedef Olarak Seç ve Kişisel Karşılaştırmamı Gör →
+                  </button>
+                </div>
+
+                {/* ============ SAĞ PANEL — Örnek Meslekler ============ */}
+                <div className="yan-panel">
+                  <div className="card" style={{ marginBottom: 0 }}>
+                    <div className="ct">Örnek Meslekler</div>
+                    {meslekler === null ? (
+                      <div className="taslak-onizleme">
+                        <div className="taslak-onizleme-icerik">
+                          {[85, 72, 64, 58, 50].map((p, i) => (
+                            <div key={i} className="mini-cubuk-satir">
+                              <div className="iskelet-satir" style={{ width: 100, height: 12 }} />
+                              <div className="mini-cubuk-track"><div className="mini-cubuk-fill" style={{ width: `${p}%`, background: 'var(--pu)' }} /></div>
+                            </div>
+                          ))}
+                        </div>
+                        <div className="taslak-onizleme-overlay">
+                          <div className="to-metin" style={{ fontSize: 11.5 }}>Yükleniyor…</div>
+                        </div>
+                      </div>
+                    ) : meslekler.length === 0 ? (
+                      <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz örnek meslek eşleşmesi yok.</div>
+                    ) : (
+                      meslekler.map((m, i) => (
+                        <div key={i} className="mini-cubuk-satir">
+                          <div style={{ fontSize: 12, color: 'var(--tx2)', fontWeight: 600, flex: '0 0 auto', width: 'auto', maxWidth: '55%' }}>{m.meslek_adi}</div>
+                          <div className="mini-cubuk-track">
+                            <div className="mini-cubuk-fill" style={{ width: `${Math.round(m.benzerlik_skoru * 100)}%`, background: 'var(--pu)' }} />
+                          </div>
+                        </div>
+                      ))
+                    )}
+                  </div>
+                </div>
+              </div>
             </>
           )}
         </>
