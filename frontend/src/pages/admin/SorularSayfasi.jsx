@@ -430,10 +430,103 @@ function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
   URL.revokeObjectURL(url)
 }
 
+// ============================================================
+// SJT toplu yükleme (uzun/tidy CSV formatı)
+// ============================================================
+function sjtCsvAyristir(metin) {
+  const satirlar = metin.split(/\r?\n/).filter((s) => s.trim().length > 0)
+  if (satirlar.length < 2) return []
+  const baslik = satirlar[0].split(',').map((s) => s.trim())
+  const idx = Object.fromEntries(baslik.map((b, i) => [b, i]))
+  const gerekli = ['soru_gecici_id', 'katman_kod', 'soru_metni', 'secenek_sira', 'secenek_metni', 'degisken_kod', 'agirlik']
+  if (gerekli.some((g) => !(g in idx))) return []
+
+  return satirlar.slice(1).map((satir) => {
+    // basit CSV ayrıştırma — tırnak içindeki virgülleri koru
+    const parcalar = []
+    let mevcut = ''
+    let tirnakIci = false
+    for (const k of satir) {
+      if (k === '"') tirnakIci = !tirnakIci
+      else if (k === ',' && !tirnakIci) { parcalar.push(mevcut); mevcut = '' }
+      else mevcut += k
+    }
+    parcalar.push(mevcut)
+    const bul = (ad) => parcalar[idx[ad]]?.trim().replace(/^"|"$/g, '')
+    return {
+      soru_gecici_id: bul('soru_gecici_id'),
+      katman_kod: bul('katman_kod'),
+      soru_metni: bul('soru_metni'),
+      secenek_sira: parseInt(bul('secenek_sira'), 10),
+      secenek_metni: bul('secenek_metni'),
+      degisken_kod: bul('degisken_kod'),
+      agirlik: parseFloat(bul('agirlik')),
+    }
+  }).filter((s) => s.soru_gecici_id && s.katman_kod && s.soru_metni && !isNaN(s.secenek_sira) && s.degisken_kod && !isNaN(s.agirlik))
+}
+
+function SjtTopluYuklemeFormu({ onTamamlandi }) {
+  const [yukleniyor, setYukleniyor] = useState(false)
+  const [sonuc, setSonuc] = useState(null)
+  const [hata, setHata] = useState(null)
+
+  async function dosyaSecildi(e) {
+    const dosya = e.target.files?.[0]
+    if (!dosya) return
+    setHata(null)
+    setSonuc(null)
+    setYukleniyor(true)
+    try {
+      const metin = await dosya.text()
+      const satirlar = sjtCsvAyristir(metin)
+      if (satirlar.length === 0) {
+        throw new Error('CSV okunamadı — sütunları kontrol edin: soru_gecici_id, katman_kod, soru_metni, secenek_sira, secenek_metni, degisken_kod, agirlik')
+      }
+      const sonucVerisi = await api.sjtSorulariniTopluYukle(satirlar)
+      setSonuc(sonucVerisi)
+      onTamamlandi()
+    } catch (err) {
+      setHata(err.detail || err.message || 'Yükleme başarısız.')
+    } finally {
+      setYukleniyor(false)
+      e.target.value = ''
+    }
+  }
+
+  return (
+    <div className="card">
+      <div className="ct">SJT Toplu Yükleme (CSV)</div>
+      <div className="ps" style={{ margin: '0 0 12px' }}>
+        Uzun/tidy format: her satır bir (soru, seçenek, değişken-ağırlığı) üçlüsü. Aynı <code>soru_gecici_id</code>'ye
+        sahip satırlar otomatik olarak tek bir soruya gruplanır. Sütunlar: <code>soru_gecici_id, katman_kod, soru_metni,
+        secenek_sira, secenek_metni, degisken_kod, agirlik</code>
+      </div>
+      {hata && <div className="auth-error">{hata}</div>}
+      <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
+        {yukleniyor ? <span className="spin" /> : '⬆ CSV Seç ve Yükle'}
+        <input type="file" accept=".csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
+      </label>
+      {sonuc && (
+        <div style={{ marginTop: 14, fontSize: 12.5 }}>
+          <b style={{ color: 'var(--gr)' }}>
+            {sonuc.eklenen_soru_sayisi} soru, {sonuc.eklenen_secenek_sayisi} seçenek, {sonuc.eklenen_agirlik_sayisi} ağırlık eklendi.
+          </b>
+          {sonuc.hatalar.length > 0 && (
+            <div style={{ color: 'var(--am)', marginTop: 6 }}>
+              {sonuc.hatalar.length} hata: {sonuc.hatalar.slice(0, 5).join(' · ')}
+              {sonuc.hatalar.length > 5 && ' ...'}
+            </div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function SorularSayfasi() {
   const [sorular, setSorular] = useState(null)
   const [katmanFiltre, setKatmanFiltre] = useState('')
-  const [aktifSekme, setAktifSekme] = useState(null) // null | 'tekli' | 'toplu'
+  const [aktifSekme, setAktifSekme] = useState(null) // null | 'tekli' | 'toplu' | 'sjt_toplu'
   const [hata, setHata] = useState(null)
 
   const yukle = useCallback((kod) => {
@@ -476,6 +569,9 @@ export default function SorularSayfasi() {
         <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'toplu' ? null : 'toplu'))}>
           {aktifSekme === 'toplu' ? 'Kapat' : '⬆ Excel İle Toplu Ekle'}
         </button>
+        <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'sjt_toplu' ? null : 'sjt_toplu'))}>
+          {aktifSekme === 'sjt_toplu' ? 'Kapat' : '⬆ SJT Toplu Yükle (CSV)'}
+        </button>
         <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
           {aktifSekme === 'tekli' ? 'Kapat' : '+ Tek Tek Soru Ekle'}
         </button>
@@ -495,6 +591,11 @@ export default function SorularSayfasi() {
       {aktifSekme === 'toplu' && (
         <div style={{ marginBottom: 20 }}>
           <IceAktarPaneli onTamamlandi={() => yukle(katmanFiltre)} />
+        </div>
+      )}
+      {aktifSekme === 'sjt_toplu' && (
+        <div style={{ marginBottom: 20 }}>
+          <SjtTopluYuklemeFormu onTamamlandi={() => yukle(katmanFiltre)} />
         </div>
       )}
       {aktifSekme === 'tekli' && (
