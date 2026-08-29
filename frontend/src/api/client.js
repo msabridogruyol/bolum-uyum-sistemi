@@ -132,6 +132,7 @@ export const api = {
 
   // --- Admin: E1-E9 ---
   kontrolPaneli: () => aget('/admin/kontrol-paneli'),
+  kullanimIstatistikleriGetir: () => aget('/admin/kullanim-istatistikleri'),
   pipelineDurumu: () => aget('/admin/pipeline-durumu'),
   pipelineCiktisiYukle: (satirlar) => apost('/admin/pipeline/yukle', { satirlar }),
   pipelineTaslaklariListele: () => aget('/admin/pipeline/taslaklar'),
