@@ -5,17 +5,54 @@ const GECISLER = { taslak: ['test_ediliyor'], test_ediliyor: ['yayinda', 'taslak
 const DURUM_ETIKET = { taslak: 'Taslak', test_ediliyor: 'Test Ediliyor', yayinda: 'Yayında' }
 const DURUM_RENK = { taslak: 'bdg-lock', test_ediliyor: 'bdg-prog', yayinda: 'bdg-done' }
 
+function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
+  const kacisla = (deger) => `"${String(deger ?? '').replace(/"/g, '""')}"`
+  const icerik = [basliklar.join(','), ...satirlar.map((s) => s.map(kacisla).join(','))].join('\r\n')
+  const blob = new Blob(['\uFEFF' + icerik], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = dosyaAdi
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
+function csvSatirlariniAyristir(metin) {
+  const satirlar = metin.split(/\r?\n/).filter((s) => s.trim().length > 0)
+  if (satirlar.length < 2) return []
+  const baslik = satirlar[0].split(',').map((s) => s.trim().replace(/^"|"$/g, ''))
+  const adIdx = baslik.indexOf('ad')
+  const aciklamaIdx = baslik.indexOf('kisa_aciklama')
+  if (adIdx === -1 || aciklamaIdx === -1) return []
+
+  return satirlar.slice(1).map((satir) => {
+    // basit CSV ayrıştırma — tırnak içindeki virgülleri koru
+    const parcalar = []
+    let mevcut = ''
+    let tirnakIci = false
+    for (const karakter of satir) {
+      if (karakter === '"') tirnakIci = !tirnakIci
+      else if (karakter === ',' && !tirnakIci) { parcalar.push(mevcut); mevcut = '' }
+      else mevcut += karakter
+    }
+    parcalar.push(mevcut)
+    return { ad: parcalar[adIdx]?.trim(), kisa_aciklama: parcalar[aciklamaIdx]?.trim() }
+  }).filter((s) => s.ad && s.kisa_aciklama)
+}
+
 export default function BolumlerSayfasi() {
   const [bolumler, setBolumler] = useState(null)
   const [hata, setHata] = useState(null)
-  const [gerekceModal, setGerekceModal] = useState(null) // { bolumId, yeniDurum }
+  const [gerekceModal, setGerekceModal] = useState(null)
   const [gerekceMetni, setGerekceMetni] = useState('')
   const [aramaMetni, setAramaMetni] = useState('')
 
-  // açıklama düzenleme
   const [duzenlemeId, setDuzenlemeId] = useState(null)
   const [duzenlemeMetni, setDuzenlemeMetni] = useState('')
   const [kaydediliyor, setKaydediliyor] = useState(false)
+
+  const [topluYukleniyor, setTopluYukleniyor] = useState(false)
+  const [topluSonuc, setTopluSonuc] = useState(null)
 
   const yukle = useCallback(() => {
     api.bolumleriListele().then(setBolumler).catch((e) => setHata(e.detail || 'Bölümler yüklenemedi.'))
@@ -56,6 +93,29 @@ export default function BolumlerSayfasi() {
     }
   }
 
+  async function dosyaSecildi(e) {
+    const dosya = e.target.files?.[0]
+    if (!dosya) return
+    setHata(null)
+    setTopluSonuc(null)
+    setTopluYukleniyor(true)
+    try {
+      const metin = await dosya.text()
+      const satirlar = csvSatirlariniAyristir(metin)
+      if (satirlar.length === 0) {
+        throw new Error('CSV okunamadı — "ad" ve "kisa_aciklama" sütunları gerekli.')
+      }
+      const sonuc = await api.bolumAciklamalariniTopluGuncelle(satirlar)
+      setTopluSonuc(sonuc)
+      yukle()
+    } catch (err) {
+      setHata(err.detail || err.message || 'Toplu yükleme başarısız.')
+    } finally {
+      setTopluYukleniyor(false)
+      e.target.value = ''
+    }
+  }
+
   if (hata && !bolumler) return <div className="pg"><div className="bos-durum">{hata}</div></div>
   if (!bolumler) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
 
@@ -69,6 +129,37 @@ export default function BolumlerSayfasi() {
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
+
+      <div className="card">
+        <div className="ct">Toplu Açıklama Yönetimi</div>
+        <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
+          <button
+            className="btn sec"
+            onClick={() => csvDisaAktar(
+              'bolumler_disa_aktarim.csv',
+              ['ad', 'durum', 'kisa_aciklama'],
+              bolumler.map((b) => [b.ad, b.durum, b.kisa_aciklama || '']),
+            )}
+          >
+            ⬇ CSV Dışa Aktar
+          </button>
+          <label className="btn" style={{ cursor: topluYukleniyor ? 'not-allowed' : 'pointer', opacity: topluYukleniyor ? 0.6 : 1 }}>
+            {topluYukleniyor ? <span className="spin" /> : '⬆ CSV İçe Aktar (ad, kisa_aciklama)'}
+            <input type="file" accept=".csv" onChange={dosyaSecildi} disabled={topluYukleniyor} style={{ display: 'none' }} />
+          </label>
+        </div>
+        {topluSonuc && (
+          <div style={{ marginTop: 12, fontSize: 12.5 }}>
+            <b style={{ color: 'var(--gr)' }}>{topluSonuc.guncellenen} bölüm güncellendi.</b>
+            {topluSonuc.eslesmeyenler.length > 0 && (
+              <div style={{ color: 'var(--am)', marginTop: 4 }}>
+                Eşleşmeyen {topluSonuc.eslesmeyenler.length} ad: {topluSonuc.eslesmeyenler.slice(0, 5).join(', ')}
+                {topluSonuc.eslesmeyenler.length > 5 && '...'}
+              </div>
+            )}
+          </div>
+        )}
+      </div>
 
       <input
         className="auth-input"
