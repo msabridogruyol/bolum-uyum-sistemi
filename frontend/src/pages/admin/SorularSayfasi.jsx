@@ -407,9 +407,9 @@ export default function SorularSayfasi() {
         <button
           className="btn sec"
           onClick={() => csvDisaAktar(
-            'sorular_disa_aktarim.csv',
-            ['id', 'katman_kod', 'soru_tipi', 'soru_metni', 'aktif_mi'],
-            (sorular || []).map((s) => [s.id, s.katman_kod, s.soru_tipi, s.soru_metni, s.aktif_mi]),
+            'sorular.csv',
+            ['id', 'katman_kod', 'degisken_kod', 'soru_tipi', 'soru_metni', 'aktif_mi'],
+            (sorular || []).map((s) => [s.id, s.katman_kod, s.degisken_kod || '', s.soru_tipi, s.soru_metni, s.aktif_mi]),
           )}
           disabled={!sorular || sorular.length === 0}
         >
