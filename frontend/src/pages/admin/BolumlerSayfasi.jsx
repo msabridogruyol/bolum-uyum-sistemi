@@ -116,13 +116,13 @@ export default function BolumlerSayfasi() {
     }
   }
 
-  if (hata && !bolumler) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!bolumler) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (hata && !bolumler) return <div className="pg pg-genis"><div className="bos-durum">{hata}</div></div>
+  if (!bolumler) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
   const filtrelenmis = bolumler.filter((b) => b.ad.toLowerCase().includes(aramaMetni.toLowerCase()))
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Bölümler</div>
         <div className="ps">Taslak → Test Ediliyor → Yayında akışı ve öğrenciye gösterilen kısa açıklamalar buradan yönetilir.</div>
