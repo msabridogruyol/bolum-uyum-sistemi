@@ -4,7 +4,7 @@ import { api } from '../../api/client'
 
 export default function ParametrelerSayfasi() {
   const [parametreler, setParametreler] = useState(null)
-  const [duzenleme, setDuzenleme] = useState({}) // { anahtar: yeniDeger }
+  const [duzenleme, setDuzenleme] = useState({})
   const [hata, setHata] = useState(null)
   const { rol } = useAdminAuth()
   const suAdminMi = rol === 'super_admin'
@@ -27,7 +27,7 @@ export default function ParametrelerSayfasi() {
   if (!parametreler) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Sistem Parametreleri</div>
         <div className="ps">
