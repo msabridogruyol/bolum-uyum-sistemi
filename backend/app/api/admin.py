@@ -38,7 +38,7 @@ from app.schemas.admin import (
     BolumKademeIstatistigiOut, OkulKirilimOut, SinifKirilimOut, DetayliIstatistiklerOut,
     SoruGecerlilikYuklemeIstek, SoruGecerlilikOzetOut, SoruGecerlilikSonucuOut,
     SjtAgirlikGirisi, SecenekGirisi, DegiskenListeOut,
-    TopluSjtYuklemeIstek, TopluSjtSonuc,
+    TopluSoruYuklemeIstek, TopluSoruSonuc,
 )
 
 router = APIRouter()
@@ -1142,14 +1142,15 @@ def soru_gecerlilik_sonuclarini_getir(
 
 
 # ============================================================================
-# SJT Toplu Yükleme (sonradan eklendi)
+# Birleşik Toplu Soru Yükleme (sonradan eklendi)
 # ============================================================================
-# Uzun/tidy format kabul eder — her satır bir (soru, seçenek, değişken-ağırlığı)
-# üçlüsü. Aynı soru_gecici_id'ye sahip satırlar tek bir soruya gruplanır.
+# TEK dosya, TEK format — 1. sütun katman, 2. sütun soru_tipi (likert/sjt).
+# Uzun/tidy format: her satır bir (soru, seçenek[, sjt ağırlığı]) satırı.
+# Aynı soru_gecici_id'ye sahip satırlar tek bir soruya gruplanır.
 
-@router.post("/sorular/toplu-sjt", response_model=TopluSjtSonuc)
-def sjt_sorularini_toplu_yukle(
-    istek: TopluSjtYuklemeIstek,
+@router.post("/sorular/toplu", response_model=TopluSoruSonuc)
+def sorulari_toplu_yukle(
+    istek: TopluSoruYuklemeIstek,
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
@@ -1159,39 +1160,52 @@ def sjt_sorularini_toplu_yukle(
     katman_map = {k.kod: k.id for k in db.query(Katman).all()}
     degisken_map = {d.kod: d.id for d in db.query(Degisken).all()}
 
-    # soru_gecici_id -> { katman_kod, soru_metni, secenekler: { sira -> {metin, agirliklar:[(kod,agirlik)]} } }
     gruplar: dict[str, dict] = {}
     for satir in istek.satirlar:
         grup = gruplar.setdefault(satir.soru_gecici_id, {
-            "katman_kod": satir.katman_kod, "soru_metni": satir.soru_metni, "secenekler": {},
+            "katman_kod": satir.katman_kod, "soru_tipi": satir.soru_tipi,
+            "degisken_kod": satir.degisken_kod, "soru_metni": satir.soru_metni,
+            "ters_kodlanmis_mi": satir.ters_kodlanmis_mi, "secenekler": {},
         })
         secenek = grup["secenekler"].setdefault(satir.secenek_sira, {"metin": satir.secenek_metni, "agirliklar": []})
-        secenek["agirliklar"].append((satir.degisken_kod, satir.agirlik))
+        if satir.soru_tipi == "sjt" and satir.sjt_degisken_kod:
+            secenek["agirliklar"].append((satir.sjt_degisken_kod, satir.sjt_agirlik))
 
     eklenen_soru = eklenen_secenek = eklenen_agirlik = 0
     hatalar: list[str] = []
 
     for gecici_id, grup in gruplar.items():
+        if grup["soru_tipi"] not in ("likert", "sjt"):
+            hatalar.append(f"{gecici_id}: geçersiz soru_tipi '{grup['soru_tipi']}'")
+            continue
         katman_id = katman_map.get(grup["katman_kod"])
         if katman_id is None:
             hatalar.append(f"{gecici_id}: bilinmeyen katman kodu '{grup['katman_kod']}'")
             continue
         if len(grup["secenekler"]) < 2:
-            hatalar.append(f"{gecici_id}: en az 2 seçenek gerekli, {len(grup['secenekler'])} bulundu")
+            hatalar.append(f"{gecici_id}: en az 2 seçenek gerekli")
             continue
 
+        degisken_id = None
+        if grup["soru_tipi"] == "likert":
+            degisken_id = degisken_map.get(grup["degisken_kod"])
+            if degisken_id is None:
+                hatalar.append(f"{gecici_id}: likert sorusu için geçersiz değişken kodu '{grup['degisken_kod']}'")
+                continue
+
         gecersiz_kod = False
-        for sira, sec in grup["secenekler"].items():
-            for kod, _ in sec["agirliklar"]:
-                if kod not in degisken_map:
-                    hatalar.append(f"{gecici_id} / seçenek {sira}: bilinmeyen değişken kodu '{kod}'")
-                    gecersiz_kod = True
+        if grup["soru_tipi"] == "sjt":
+            for sira, sec in grup["secenekler"].items():
+                for kod, _ in sec["agirliklar"]:
+                    if kod not in degisken_map:
+                        hatalar.append(f"{gecici_id} / seçenek {sira}: bilinmeyen değişken kodu '{kod}'")
+                        gecersiz_kod = True
         if gecersiz_kod:
             continue
 
         soru = Soru(
-            katman_id=katman_id, degisken_id=None, soru_tipi="sjt",
-            soru_metni=grup["soru_metni"], ters_kodlanmis_mi=False, aktif_mi=True,
+            katman_id=katman_id, degisken_id=degisken_id, soru_tipi=grup["soru_tipi"],
+            soru_metni=grup["soru_metni"], ters_kodlanmis_mi=grup["ters_kodlanmis_mi"], aktif_mi=True,
         )
         db.add(soru)
         db.flush()
@@ -1213,11 +1227,11 @@ def sjt_sorularini_toplu_yukle(
         db.rollback()
         raise HTTPException(status_code=400, detail=f"Hiçbir soru eklenemedi. Hatalar: {'; '.join(hatalar[:10])}")
 
-    _audit_yaz(db, admin, "sjt_toplu_yukleme", "sorular", "toplu",
-               f"{eklenen_soru} SJT sorusu eklendi, {len(hatalar)} hata")
+    _audit_yaz(db, admin, "soru_toplu_yukleme", "sorular", "toplu",
+               f"{eklenen_soru} soru eklendi, {len(hatalar)} hata")
     db.commit()
 
-    return TopluSjtSonuc(
+    return TopluSoruSonuc(
         eklenen_soru_sayisi=eklenen_soru, eklenen_secenek_sayisi=eklenen_secenek,
         eklenen_agirlik_sayisi=eklenen_agirlik, hatalar=hatalar[:50],
     )
