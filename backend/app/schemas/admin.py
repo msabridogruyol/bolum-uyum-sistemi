@@ -171,6 +171,15 @@ class TopluSoruSonuc(BaseModel):
     hatalar: list[str]
 
 
+class TopluSoruIdIstek(BaseModel):
+    soru_idler: list[int]
+
+
+class TopluAktifIstek(BaseModel):
+    soru_idler: list[int]
+    aktif_mi: bool
+
+
 class SoruOut(BaseModel):
     id: int
     katman_kod: str
