@@ -50,6 +50,85 @@ function satirlariDondur(hamSatirlar) {
 const DURUM_ETIKET = { bekliyor: 'Onay Bekliyor', onaylandi: 'Canlıda', reddedildi: 'Reddedildi' }
 const DURUM_RENK = { bekliyor: 'bdg-prog', onaylandi: 'bdg-done', reddedildi: 'bdg-lock' }
 
+// ============================================================
+// Meslek Verisi Toplu Yükleme (sonradan eklendi)
+// ============================================================
+function meslekSatirlariniDondur(hamSatirlar) {
+  const baslik = (hamSatirlar[0] || []).map((h) => String(h).trim())
+  const beklenen = ['esco_kodu', 'isco_grubu', 'ad', 'aciklama']
+  const idx = Object.fromEntries(beklenen.map((k) => [k, baslik.indexOf(k)]))
+  if (idx.esco_kodu < 0 || idx.ad < 0) return null  // gerekli sütunlar yok
+
+  return hamSatirlar.slice(1).map((hucreler) => ({
+    esco_kodu: String(hucreler[idx.esco_kodu] ?? '').trim(),
+    ad: String(hucreler[idx.ad] ?? '').trim(),
+    aciklama: idx.aciklama >= 0 ? String(hucreler[idx.aciklama] ?? '').trim() || null : null,
+    isco_grubu: idx.isco_grubu >= 0 ? String(hucreler[idx.isco_grubu] ?? '').trim() || null : null,
+  })).filter((m) => m.esco_kodu && m.ad)
+}
+
+function MeslekYuklemeKarti() {
+  const [mevcutSayi, setMevcutSayi] = useState(null)
+  const [yukleniyor, setYukleniyor] = useState(false)
+  const [sonuc, setSonuc] = useState(null)
+  const [hata, setHata] = useState(null)
+
+  useEffect(() => {
+    api.meslekSayisiniGetir().then((v) => setMevcutSayi(v.meslek_sayisi)).catch(() => {})
+  }, [sonuc])
+
+  async function dosyaSecildi(e) {
+    const dosya = e.target.files?.[0]
+    if (!dosya) return
+    setHata(null)
+    setSonuc(null)
+    setYukleniyor(true)
+    try {
+      const hamSatirlar = await dosyayiAyristir(dosya)  // aynı dosyada üstte tanımlı yardımcı
+      const meslekler = meslekSatirlariniDondur(hamSatirlar)
+      if (!meslekler || meslekler.length === 0) {
+        throw new Error('Dosya okunamadı — sütunları kontrol edin: esco_kodu, ad, aciklama, isco_grubu.')
+      }
+      if (!window.confirm(
+        `${meslekler.length} meslek yüklenecek. Bu işlem MEVCUT meslek listesini tamamen siler ve yeniden doldurur. Devam edilsin mi?`
+      )) {
+        setYukleniyor(false)
+        return
+      }
+      const cevap = await api.meslekleriTopluYukle(meslekler)
+      setSonuc(cevap)
+    } catch (err) {
+      setHata(err.detail || err.message || 'Yükleme başarısız.')
+    } finally {
+      setYukleniyor(false)
+      e.target.value = ''
+    }
+  }
+
+  return (
+    <div className="card" style={{ borderColor: 'var(--tl)', background: 'var(--tll)' }}>
+      <div className="ct">Meslek Verisi Yükle (Hedef Meslek Araması İçin)</div>
+      <div className="ps" style={{ margin: '0 0 8px' }}>
+        <code>meslekler_esco.csv</code> (ya da .xlsx) dosyasını yükler — öğrencinin profilindeki
+        "hedef meslek" arama özelliğinin kullandığı veriyi besler. Mevcut listeyi tamamen değiştirir.
+      </div>
+      <div className="ps" style={{ margin: '0 0 12px', fontWeight: 600 }}>
+        Şu an sistemde: {mevcutSayi === null ? '…' : `${mevcutSayi} meslek`}
+      </div>
+      {hata && <div className="auth-error">{hata}</div>}
+      <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
+        {yukleniyor ? <span className="spin" /> : '⬆ Dosya Seç ve Yükle'}
+        <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
+      </label>
+      {sonuc && (
+        <div style={{ marginTop: 12, fontSize: 13, fontWeight: 700, color: 'var(--gr)' }}>
+          ✓ {sonuc.yuklenen_sayisi} meslek yüklendi (önceki: {sonuc.onceki_sayisi}).
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function PipelineDurumuSayfasi() {
   const { rol } = useAdminAuth()
   const suAdminMi = rol === 'super_admin'
@@ -124,6 +203,10 @@ export default function PipelineDurumuSayfasi() {
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
+
+      <div style={{ marginBottom: 20 }}>
+        <MeslekYuklemeKarti />
+      </div>
 
       <div className="card">
         <div className="ct">Yeni Çıktı Yükle</div>
