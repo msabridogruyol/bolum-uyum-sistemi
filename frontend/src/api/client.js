@@ -159,6 +159,14 @@ export const api = {
   soruGecerlilikGetir: () => aget('/admin/soru-gecerlilik'),
   gecerlilikTestGirdisiGetir: () => aget('/admin/sorular/gecerlilik-girdisi'),
   degiskenleriListele: () => aget('/admin/degiskenler'),
+  guvenlikTurlariniListele: (yalnizGecersiz, enAzKritikOlay) => {
+    const p = new URLSearchParams()
+    if (yalnizGecersiz) p.set('yalniz_gecersiz', 'true')
+    if (enAzKritikOlay) p.set('en_az_kritik_olay', String(enAzKritikOlay))
+    const s = p.toString()
+    return aget(`/admin/guvenlik/turlar${s ? `?${s}` : ''}`)
+  },
+  guvenlikTurDetayiGetir: (turId) => aget(`/admin/guvenlik/turlar/${turId}`),
   sorulariTopluYukle: (satirlar) => apost('/admin/sorular/toplu', { satirlar }),
   soruSil: (id) => adel(`/admin/sorular/${id}`),
   sorulariTopluSil: (soru_idler) => apost('/admin/sorular/toplu-sil', { soru_idler }),
