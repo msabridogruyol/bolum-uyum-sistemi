@@ -25,22 +25,29 @@ const DEGISKEN_ID_MAP = Object.fromEntries(DEGISKENLER.map((d) => [d.kod, d.id])
 const BOS_LIKERT_SECENEK = ['Kesinlikle Katılmıyorum', 'Katılmıyorum', 'Kararsızım', 'Katılıyorum', 'Kesinlikle Katılıyorum']
 
 // ============================================================
-// Excel içe aktarma
+// Birleşik toplu içe aktarma (Likert + SJT, tek dosya tek format)
 // ============================================================
+// Sütun sırası: soru_gecici_id, katman_kod, soru_tipi, degisken_kod,
+// soru_metni, ters_kodlanmis_mi, secenek_sira, secenek_metni,
+// sjt_degisken_kod, sjt_agirlik
+// Likert satırlarında sjt_degisken_kod/sjt_agirlik boş bırakılır.
+// SJT satırlarında degisken_kod boş bırakılır.
 function SheetJSYukluMu() {
   return typeof window !== 'undefined' && window.XLSX
 }
 
-function satirlariAyristir(dosya) {
+function dosyayiAyristir(dosya) {
   return new Promise((resolve, reject) => {
     if (!SheetJSYukluMu()) {
-      reject(new Error('Excel okuma kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.'))
+      reject(new Error('Okuma kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.'))
       return
     }
     const okuyucu = new FileReader()
     okuyucu.onload = (e) => {
       try {
-        const wb = window.XLSX.read(e.target.result, { type: 'array' })
+        const tur = dosya.name.toLowerCase().endsWith('.csv') ? 'string' : 'array'
+        const veri = tur === 'string' ? e.target.result : e.target.result
+        const wb = window.XLSX.read(veri, { type: tur })
         const sayfaAdi = wb.SheetNames.find((n) => n.toLowerCase().includes('soru')) || wb.SheetNames[0]
         const sayfa = wb.Sheets[sayfaAdi]
         const satirlar = window.XLSX.utils.sheet_to_json(sayfa, { header: 1, defval: '' })
@@ -50,51 +57,57 @@ function satirlariAyristir(dosya) {
       }
     }
     okuyucu.onerror = () => reject(new Error('Dosya okunamadı.'))
-    okuyucu.readAsArrayBuffer(dosya)
+    if (dosya.name.toLowerCase().endsWith('.csv')) okuyucu.readAsText(dosya, 'utf-8')
+    else okuyucu.readAsArrayBuffer(dosya)
   })
 }
 
-function satiriDogrula(hucreler, satirNo) {
-  const [katmanKod, soruTipi, degiskenKod, soruMetni, tersMi, ...secenekHam] = hucreler.map((h) => String(h ?? '').trim())
+function birlesikSatirlariDondur(hamSatirlar) {
+  const veriSatirlari = hamSatirlar.slice(1) // başlık satırını atla
+  const satirlar = []
+  const hatalar = []
 
-  if (!katmanKod && !soruMetni) return null // tamamen boş satır — yok say
+  veriSatirlari.forEach((hucreler, i) => {
+    const satirNo = i + 2
+    const [gecidiId, katmanKod, soruTipi, degiskenKod, soruMetni, tersMi, secenekSira, secenekMetni, sjtDegiskenKod, sjtAgirlik] =
+      hucreler.map((h) => String(h ?? '').trim())
 
-  if (!['K1', 'K2', 'K3', 'K4'].includes(katmanKod)) {
-    return { hata: `Satır ${satirNo}: katman_kod "K1-K4" dışında bir değer ("${katmanKod}") — atlandı.` }
-  }
-  if (!['likert', 'sjt'].includes(soruTipi)) {
-    return { hata: `Satır ${satirNo}: soru_tipi "likert" veya "sjt" olmalı ("${soruTipi}" geçersiz) — atlandı.` }
-  }
-  if (soruMetni.length < 5) {
-    return { hata: `Satır ${satirNo}: soru metni çok kısa veya boş — atlandı.` }
-  }
-  let degiskenId = null
-  if (soruTipi === 'likert') {
-    degiskenId = DEGISKEN_ID_MAP[degiskenKod]
-    if (!degiskenId) {
-      return { hata: `Satır ${satirNo}: likert soru için geçerli bir degisken_kod gerekli ("${degiskenKod}" tanınmadı) — atlandı.` }
+    if (!gecidiId && !soruMetni) return // tamamen boş satır
+
+    if (!['K1', 'K2', 'K3', 'K4', 'K5'].includes(katmanKod)) {
+      hatalar.push(`Satır ${satirNo}: geçersiz katman_kod "${katmanKod}"`)
+      return
     }
-  }
-  const secenekler = secenekHam.map((s) => s.trim()).filter((s) => s.length > 0)
-  if (secenekler.length < 2) {
-    return { hata: `Satır ${satirNo}: en az 2 seçenek gerekli — atlandı.` }
-  }
+    if (!['likert', 'sjt'].includes(soruTipi)) {
+      hatalar.push(`Satır ${satirNo}: soru_tipi "likert" veya "sjt" olmalı ("${soruTipi}")`)
+      return
+    }
+    const sira = parseInt(secenekSira, 10)
+    if (isNaN(sira)) {
+      hatalar.push(`Satır ${satirNo}: secenek_sira sayı olmalı`)
+      return
+    }
 
-  return {
-    payload: {
-      katman_id: KATMAN_ID[katmanKod],
-      degisken_id: degiskenId,
+    satirlar.push({
+      soru_gecici_id: gecidiId,
+      katman_kod: katmanKod,
       soru_tipi: soruTipi,
+      degisken_kod: degiskenKod || null,
       soru_metni: soruMetni,
-      ters_kodlanmis_mi: soruTipi === 'likert' && tersMi.toUpperCase() === 'EVET',
-      secenekler,
-    },
-  }
+      ters_kodlanmis_mi: tersMi.toUpperCase() === 'EVET' || tersMi.toUpperCase() === 'TRUE',
+      secenek_sira: sira,
+      secenek_metni: secenekMetni,
+      sjt_degisken_kod: sjtDegiskenKod || null,
+      sjt_agirlik: sjtAgirlik ? parseFloat(sjtAgirlik) : null,
+    })
+  })
+
+  return { satirlar, hatalar }
 }
 
-function IceAktarPaneli({ onTamamlandi }) {
+function TopluYuklemeFormu({ onTamamlandi }) {
   const [durum, setDurum] = useState('bekliyor') // bekliyor | okunuyor | yukleniyor | bitti
-  const [sonuc, setSonuc] = useState(null) // { basarili, hatalar }
+  const [sonuc, setSonuc] = useState(null)
   const dosyaInputRef = useRef(null)
 
   async function dosyaSecildi(e) {
@@ -104,40 +117,26 @@ function IceAktarPaneli({ onTamamlandi }) {
     setSonuc(null)
 
     try {
-      const satirlar = await satirlariAyristir(dosya)
-      const veriSatirlari = satirlar.slice(1) // başlık satırını atla
+      const hamSatirlar = await dosyayiAyristir(dosya)
+      const { satirlar, hatalar } = birlesikSatirlariDondur(hamSatirlar)
 
-      const gecerliler = []
-      const hatalar = []
-      veriSatirlari.forEach((hucreler, i) => {
-        const sonucSatir = satiriDogrula(hucreler, i + 2) // Excel'de satır 2'den başlar
-        if (!sonucSatir) return // tamamen boş satır
-        if (sonucSatir.hata) hatalar.push(sonucSatir.hata)
-        else gecerliler.push(sonucSatir.payload)
-      })
-
-      if (gecerliler.length === 0) {
-        setSonuc({ basarili: 0, hatalar: hatalar.length ? hatalar : ['Dosyada geçerli bir soru satırı bulunamadı.'] })
+      if (satirlar.length === 0) {
+        setSonuc({ basarili: false, mesaj: null, hatalar: hatalar.length ? hatalar : ['Dosyada geçerli satır bulunamadı.'] })
         setDurum('bitti')
         return
       }
 
       setDurum('yukleniyor')
-      let basarili = 0
-      const yuklemeHatalari = [...hatalar]
-      for (const payload of gecerliler) {
-        try {
-          await api.soruEkle(payload)
-          basarili++
-        } catch (err) {
-          yuklemeHatalari.push(`"${payload.soru_metni.slice(0, 40)}..." eklenemedi: ${err.detail || 'bilinmeyen hata'}`)
-        }
-      }
-      setSonuc({ basarili, hatalar: yuklemeHatalari })
+      const cevap = await api.sorulariTopluYukle(satirlar)
+      setSonuc({
+        basarili: true,
+        mesaj: `${cevap.eklenen_soru_sayisi} soru, ${cevap.eklenen_secenek_sayisi} seçenek, ${cevap.eklenen_agirlik_sayisi} SJT ağırlığı eklendi.`,
+        hatalar: [...hatalar, ...cevap.hatalar],
+      })
       setDurum('bitti')
       onTamamlandi()
     } catch (err) {
-      setSonuc({ basarili: 0, hatalar: [err.message || 'Dosya işlenemedi.'] })
+      setSonuc({ basarili: false, mesaj: null, hatalar: [err.detail || err.message || 'Dosya işlenemedi.'] })
       setDurum('bitti')
     } finally {
       if (dosyaInputRef.current) dosyaInputRef.current.value = ''
@@ -146,36 +145,34 @@ function IceAktarPaneli({ onTamamlandi }) {
 
   return (
     <div className="card" style={{ borderColor: 'var(--tl)', background: 'var(--tll)' }}>
-      <div className="ct">Excel İle Toplu Soru Ekle</div>
-      <div className="ps" style={{ margin: '0 0 14px' }}>
-        Önce şablonu indirip doldurun, sonra buradan yükleyin. Yalnızca K1-K4 sorularını destekler.
+      <div className="ct">Toplu Soru Yükle (Likert + SJT, Tek Dosya)</div>
+      <div className="ps" style={{ margin: '0 0 12px' }}>
+        Sütunlar: <code>soru_gecici_id, katman_kod, soru_tipi, degisken_kod, soru_metni, ters_kodlanmis_mi,
+        secenek_sira, secenek_metni, sjt_degisken_kod, sjt_agirlik</code>. Aynı <code>soru_gecici_id</code>'ye
+        sahip satırlar tek soruya gruplanır. Likert satırlarında son iki sütun boş bırakılır;
+        SJT satırlarında <code>degisken_kod</code> boş bırakılır. CSV veya Excel (.xlsx) kabul edilir.
       </div>
-
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center', flexWrap: 'wrap' }}>
-        <a href="/soru_bankasi_sablonu.xlsx" download className="btn sec">⬇ Şablonu İndir</a>
-
-        <label className="btn" style={{ cursor: durum === 'yukleniyor' || durum === 'okunuyor' ? 'not-allowed' : 'pointer', opacity: durum === 'yukleniyor' || durum === 'okunuyor' ? 0.6 : 1 }}>
-          {durum === 'okunuyor' ? 'Dosya okunuyor...' : durum === 'yukleniyor' ? 'Yükleniyor...' : '⬆ Doldurulmuş Dosyayı Yükle'}
-          <input
-            ref={dosyaInputRef}
-            type="file"
-            accept=".xlsx,.xls"
-            onChange={dosyaSecildi}
-            disabled={durum === 'yukleniyor' || durum === 'okunuyor'}
-            style={{ display: 'none' }}
-          />
-        </label>
-      </div>
+      <label className="btn" style={{ cursor: durum === 'yukleniyor' || durum === 'okunuyor' ? 'not-allowed' : 'pointer', opacity: durum === 'yukleniyor' || durum === 'okunuyor' ? 0.6 : 1 }}>
+        {durum === 'okunuyor' ? 'Okunuyor...' : durum === 'yukleniyor' ? <span className="spin" /> : '⬆ Dosya Seç ve Yükle'}
+        <input
+          ref={dosyaInputRef}
+          type="file"
+          accept=".xlsx,.xls,.csv"
+          onChange={dosyaSecildi}
+          disabled={durum === 'yukleniyor' || durum === 'okunuyor'}
+          style={{ display: 'none' }}
+        />
+      </label>
 
       {sonuc && (
         <div style={{ marginTop: 14 }}>
-          <div style={{ fontSize: 13, fontWeight: 700, color: sonuc.basarili > 0 ? 'var(--gr)' : 'var(--re)', marginBottom: 6 }}>
-            {sonuc.basarili} soru başarıyla eklendi.
-          </div>
+          {sonuc.mesaj && (
+            <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--gr)', marginBottom: 6 }}>{sonuc.mesaj}</div>
+          )}
           {sonuc.hatalar.length > 0 && (
             <div style={{ fontSize: 12, color: 'var(--tx2)', background: 'var(--sur)', borderRadius: 10, padding: '10px 12px', maxHeight: 180, overflowY: 'auto' }}>
-              <div style={{ fontWeight: 700, marginBottom: 6 }}>{sonuc.hatalar.length} satır atlandı / hata verdi:</div>
-              {sonuc.hatalar.map((h, i) => <div key={i} style={{ marginBottom: 3 }}>• {h}</div>)}
+              <div style={{ fontWeight: 700, marginBottom: 6 }}>{sonuc.hatalar.length} sorun:</div>
+              {sonuc.hatalar.slice(0, 30).map((h, i) => <div key={i}>{h}</div>)}
             </div>
           )}
         </div>
@@ -430,103 +427,10 @@ function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
   URL.revokeObjectURL(url)
 }
 
-// ============================================================
-// SJT toplu yükleme (uzun/tidy CSV formatı)
-// ============================================================
-function sjtCsvAyristir(metin) {
-  const satirlar = metin.split(/\r?\n/).filter((s) => s.trim().length > 0)
-  if (satirlar.length < 2) return []
-  const baslik = satirlar[0].split(',').map((s) => s.trim())
-  const idx = Object.fromEntries(baslik.map((b, i) => [b, i]))
-  const gerekli = ['soru_gecici_id', 'katman_kod', 'soru_metni', 'secenek_sira', 'secenek_metni', 'degisken_kod', 'agirlik']
-  if (gerekli.some((g) => !(g in idx))) return []
-
-  return satirlar.slice(1).map((satir) => {
-    // basit CSV ayrıştırma — tırnak içindeki virgülleri koru
-    const parcalar = []
-    let mevcut = ''
-    let tirnakIci = false
-    for (const k of satir) {
-      if (k === '"') tirnakIci = !tirnakIci
-      else if (k === ',' && !tirnakIci) { parcalar.push(mevcut); mevcut = '' }
-      else mevcut += k
-    }
-    parcalar.push(mevcut)
-    const bul = (ad) => parcalar[idx[ad]]?.trim().replace(/^"|"$/g, '')
-    return {
-      soru_gecici_id: bul('soru_gecici_id'),
-      katman_kod: bul('katman_kod'),
-      soru_metni: bul('soru_metni'),
-      secenek_sira: parseInt(bul('secenek_sira'), 10),
-      secenek_metni: bul('secenek_metni'),
-      degisken_kod: bul('degisken_kod'),
-      agirlik: parseFloat(bul('agirlik')),
-    }
-  }).filter((s) => s.soru_gecici_id && s.katman_kod && s.soru_metni && !isNaN(s.secenek_sira) && s.degisken_kod && !isNaN(s.agirlik))
-}
-
-function SjtTopluYuklemeFormu({ onTamamlandi }) {
-  const [yukleniyor, setYukleniyor] = useState(false)
-  const [sonuc, setSonuc] = useState(null)
-  const [hata, setHata] = useState(null)
-
-  async function dosyaSecildi(e) {
-    const dosya = e.target.files?.[0]
-    if (!dosya) return
-    setHata(null)
-    setSonuc(null)
-    setYukleniyor(true)
-    try {
-      const metin = await dosya.text()
-      const satirlar = sjtCsvAyristir(metin)
-      if (satirlar.length === 0) {
-        throw new Error('CSV okunamadı — sütunları kontrol edin: soru_gecici_id, katman_kod, soru_metni, secenek_sira, secenek_metni, degisken_kod, agirlik')
-      }
-      const sonucVerisi = await api.sjtSorulariniTopluYukle(satirlar)
-      setSonuc(sonucVerisi)
-      onTamamlandi()
-    } catch (err) {
-      setHata(err.detail || err.message || 'Yükleme başarısız.')
-    } finally {
-      setYukleniyor(false)
-      e.target.value = ''
-    }
-  }
-
-  return (
-    <div className="card">
-      <div className="ct">SJT Toplu Yükleme (CSV)</div>
-      <div className="ps" style={{ margin: '0 0 12px' }}>
-        Uzun/tidy format: her satır bir (soru, seçenek, değişken-ağırlığı) üçlüsü. Aynı <code>soru_gecici_id</code>'ye
-        sahip satırlar otomatik olarak tek bir soruya gruplanır. Sütunlar: <code>soru_gecici_id, katman_kod, soru_metni,
-        secenek_sira, secenek_metni, degisken_kod, agirlik</code>
-      </div>
-      {hata && <div className="auth-error">{hata}</div>}
-      <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
-        {yukleniyor ? <span className="spin" /> : '⬆ CSV Seç ve Yükle'}
-        <input type="file" accept=".csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
-      </label>
-      {sonuc && (
-        <div style={{ marginTop: 14, fontSize: 12.5 }}>
-          <b style={{ color: 'var(--gr)' }}>
-            {sonuc.eklenen_soru_sayisi} soru, {sonuc.eklenen_secenek_sayisi} seçenek, {sonuc.eklenen_agirlik_sayisi} ağırlık eklendi.
-          </b>
-          {sonuc.hatalar.length > 0 && (
-            <div style={{ color: 'var(--am)', marginTop: 6 }}>
-              {sonuc.hatalar.length} hata: {sonuc.hatalar.slice(0, 5).join(' · ')}
-              {sonuc.hatalar.length > 5 && ' ...'}
-            </div>
-          )}
-        </div>
-      )}
-    </div>
-  )
-}
-
 export default function SorularSayfasi() {
   const [sorular, setSorular] = useState(null)
   const [katmanFiltre, setKatmanFiltre] = useState('')
-  const [aktifSekme, setAktifSekme] = useState(null) // null | 'tekli' | 'toplu' | 'sjt_toplu'
+  const [aktifSekme, setAktifSekme] = useState(null) // null | 'tekli' | 'toplu'
   const [hata, setHata] = useState(null)
 
   const yukle = useCallback((kod) => {
@@ -567,10 +471,7 @@ export default function SorularSayfasi() {
           {Object.keys(KATMAN_ADI).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
         </select>
         <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'toplu' ? null : 'toplu'))}>
-          {aktifSekme === 'toplu' ? 'Kapat' : '⬆ Excel İle Toplu Ekle'}
-        </button>
-        <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'sjt_toplu' ? null : 'sjt_toplu'))}>
-          {aktifSekme === 'sjt_toplu' ? 'Kapat' : '⬆ SJT Toplu Yükle (CSV)'}
+          {aktifSekme === 'toplu' ? 'Kapat' : '⬆ Toplu Yükle (Likert + SJT)'}
         </button>
         <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
           {aktifSekme === 'tekli' ? 'Kapat' : '+ Tek Tek Soru Ekle'}
@@ -590,12 +491,7 @@ export default function SorularSayfasi() {
 
       {aktifSekme === 'toplu' && (
         <div style={{ marginBottom: 20 }}>
-          <IceAktarPaneli onTamamlandi={() => yukle(katmanFiltre)} />
-        </div>
-      )}
-      {aktifSekme === 'sjt_toplu' && (
-        <div style={{ marginBottom: 20 }}>
-          <SjtTopluYuklemeFormu onTamamlandi={() => yukle(katmanFiltre)} />
+          <TopluYuklemeFormu onTamamlandi={() => yukle(katmanFiltre)} />
         </div>
       )}
       {aktifSekme === 'tekli' && (
