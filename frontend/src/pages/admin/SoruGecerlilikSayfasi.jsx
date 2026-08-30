@@ -1,42 +1,64 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 
-function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
-  const kacisla = (deger) => `"${String(deger ?? '').replace(/"/g, '""')}"`
-  const icerik = [basliklar.join(','), ...satirlar.map((s) => s.map(kacisla).join(','))].join('\r\n')
-  const blob = new Blob(['\uFEFF' + icerik], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = dosyaAdi
-  a.click()
-  URL.revokeObjectURL(url)
+// [DÜZELTME] Artık .csv değil .xlsx — Türkçe karakter bozulma riskini önler.
+function xlsxDisaAktar(dosyaAdi, basliklar, satirlar) {
+  const XLSX = window.XLSX
+  if (!XLSX) {
+    alert('Okuma/yazma kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.')
+    return
+  }
+  const ws = XLSX.utils.aoa_to_sheet([basliklar, ...satirlar])
+  const wb = XLSX.utils.book_new()
+  XLSX.utils.book_append_sheet(wb, ws, 'Veri')
+  XLSX.writeFile(wb, dosyaAdi)
 }
 
-function csvSatirlariniAyristir(metin) {
-  const satirlar = metin.split(/\r?\n/).filter((s) => s.trim().length > 0)
-  if (satirlar.length < 2) return []
-  const baslik = satirlar[0].split(',').map((s) => s.trim())
-  const idx = Object.fromEntries(baslik.map((b, i) => [b, i]))
+function dosyayiAyristir(dosya) {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined' || !window.XLSX) {
+      reject(new Error('Okuma kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.'))
+      return
+    }
+    const okuyucu = new FileReader()
+    okuyucu.onload = (e) => {
+      try {
+        const csvMi = dosya.name.toLowerCase().endsWith('.csv')
+        const wb = window.XLSX.read(e.target.result, { type: csvMi ? 'string' : 'array' })
+        const sayfa = wb.Sheets[wb.SheetNames[0]]
+        const satirlar = window.XLSX.utils.sheet_to_json(sayfa, { header: 1, defval: '' })
+        resolve(satirlar)
+      } catch (err) {
+        reject(err)
+      }
+    }
+    okuyucu.onerror = () => reject(new Error('Dosya okunamadı.'))
+    if (dosya.name.toLowerCase().endsWith('.csv')) okuyucu.readAsText(dosya, 'utf-8')
+    else okuyucu.readAsArrayBuffer(dosya)
+  })
+}
 
-  return satirlar.slice(1).map((satir) => {
-    const p = satir.split(',')
-    const bul = (ad) => p[idx[ad]]?.trim()
-    const secenekIdHam = bul('secenek_id')
+function satirlariDondur(hamSatirlar) {
+  const baslik = (hamSatirlar[0] || []).map((h) => String(h).trim())
+  const idx = Object.fromEntries(baslik.map((b, i) => [b, i]))
+  const bul = (hucreler, ad) => (idx[ad] >= 0 ? hucreler[idx[ad]] : undefined)
+
+  return hamSatirlar.slice(1).map((hucreler) => {
+    const secenekIdHam = bul(hucreler, 'secenek_id')
     return {
-      birim_anahtari: bul('birim_anahtari'),
-      kaynak_soru_id: parseInt(bul('kaynak_soru_id'), 10),
-      secenek_id: secenekIdHam ? parseInt(secenekIdHam, 10) : null,
-      gercek_degisken_kod: bul('gercek_degisken_kod'),
-      model_a_tahmin: bul('model_a_tahmin'),
-      model_a_dogru: bul('model_a_dogru')?.toLowerCase() === 'true',
-      model_a_benzerlik: parseFloat(bul('model_a_benzerlik')),
-      model_b_tahmin: bul('model_b_tahmin'),
-      model_b_dogru: bul('model_b_dogru')?.toLowerCase() === 'true',
-      model_b_benzerlik: parseFloat(bul('model_b_benzerlik')),
-      model_c_tahmin: bul('model_c_tahmin'),
-      model_c_dogru: bul('model_c_dogru')?.toLowerCase() === 'true',
-      model_c_benzerlik: parseFloat(bul('model_c_benzerlik')),
+      birim_anahtari: String(bul(hucreler, 'birim_anahtari') ?? ''),
+      kaynak_soru_id: parseInt(bul(hucreler, 'kaynak_soru_id'), 10),
+      secenek_id: secenekIdHam !== undefined && secenekIdHam !== '' ? parseInt(secenekIdHam, 10) : null,
+      gercek_degisken_kod: String(bul(hucreler, 'gercek_degisken_kod') ?? ''),
+      model_a_tahmin: String(bul(hucreler, 'model_a_tahmin') ?? ''),
+      model_a_dogru: String(bul(hucreler, 'model_a_dogru')).toLowerCase() === 'true',
+      model_a_benzerlik: parseFloat(bul(hucreler, 'model_a_benzerlik')),
+      model_b_tahmin: String(bul(hucreler, 'model_b_tahmin') ?? ''),
+      model_b_dogru: String(bul(hucreler, 'model_b_dogru')).toLowerCase() === 'true',
+      model_b_benzerlik: parseFloat(bul(hucreler, 'model_b_benzerlik')),
+      model_c_tahmin: String(bul(hucreler, 'model_c_tahmin') ?? ''),
+      model_c_dogru: String(bul(hucreler, 'model_c_dogru')).toLowerCase() === 'true',
+      model_c_benzerlik: parseFloat(bul(hucreler, 'model_c_benzerlik')),
     }
   }).filter((s) => !isNaN(s.kaynak_soru_id) && s.gercek_degisken_kod)
 }
@@ -63,8 +85,8 @@ export default function SoruGecerlilikSayfasi() {
       if (birimler.length === 0) {
         throw new Error('Test edilecek aktif soru/seçenek bulunamadı.')
       }
-      csvDisaAktar(
-        'gecerlilik_girdisi.csv',
+      xlsxDisaAktar(
+        'gecerlilik_girdisi.xlsx',
         ['birim_anahtari', 'kaynak_soru_id', 'secenek_id', 'kaynak_tipi', 'metin', 'baglam', 'beklenen_degisken_kod'],
         birimler.map((b) => [b.birim_anahtari, b.kaynak_soru_id, b.secenek_id ?? '', b.kaynak_tipi, b.metin, b.baglam, b.beklenen_degisken_kod]),
       )
@@ -81,10 +103,10 @@ export default function SoruGecerlilikSayfasi() {
     setHata(null)
     setYukleniyor(true)
     try {
-      const metin = await dosya.text()
-      const satirlar = csvSatirlariniAyristir(metin)
+      const hamSatirlar = await dosyayiAyristir(dosya)
+      const satirlar = satirlariDondur(hamSatirlar)
       if (satirlar.length === 0) {
-        throw new Error('CSV okunamadı — soru_gecerlilik_testi.py çıktısını yüklediğinizden emin olun.')
+        throw new Error('Dosya okunamadı — soru_gecerlilik_testi.py çıktısını yüklediğinizden emin olun.')
       }
       await api.soruGecerlilikYukle(satirlar)
       yukle()
@@ -131,7 +153,7 @@ export default function SoruGecerlilikSayfasi() {
         </div>
         <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
           {yukleniyor ? <span className="spin" /> : '⬆ Sonuç CSV Yükle'}
-          <input type="file" accept=".csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
+          <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
         </label>
       </div>
 
