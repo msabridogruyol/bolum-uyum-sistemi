@@ -145,23 +145,26 @@ class DegiskenListeOut(BaseModel):
     katman_kod: str
 
 
-# --- SJT Toplu Yükleme (uzun/tidy format — her satır bir seçenek-değişken ağırlığı) ---
+# --- Birleşik Toplu Soru Yükleme (Likert + SJT tek dosyada, tek format) ---
 
-class TopluSjtSatiri(BaseModel):
-    soru_gecici_id: str      # aynı soruyu gruplamak için geçici anahtar (örn. "K1-SJT-1")
+class TopluSoruSatiri(BaseModel):
+    soru_gecici_id: str
     katman_kod: str
+    soru_tipi: str  # 'likert' | 'sjt'
+    degisken_kod: str | None = None       # yalnızca likert satırlarında dolu
     soru_metni: str
+    ters_kodlanmis_mi: bool = False
     secenek_sira: int
     secenek_metni: str
-    degisken_kod: str
-    agirlik: float
+    sjt_degisken_kod: str | None = None   # yalnızca sjt satırlarında dolu
+    sjt_agirlik: float | None = None      # yalnızca sjt satırlarında dolu
 
 
-class TopluSjtYuklemeIstek(BaseModel):
-    satirlar: list[TopluSjtSatiri]
+class TopluSoruYuklemeIstek(BaseModel):
+    satirlar: list[TopluSoruSatiri]
 
 
-class TopluSjtSonuc(BaseModel):
+class TopluSoruSonuc(BaseModel):
     eklenen_soru_sayisi: int
     eklenen_secenek_sayisi: int
     eklenen_agirlik_sayisi: int
