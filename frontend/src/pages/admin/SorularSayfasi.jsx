@@ -430,14 +430,21 @@ function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
 export default function SorularSayfasi() {
   const [sorular, setSorular] = useState(null)
   const [katmanFiltre, setKatmanFiltre] = useState('')
+  const [aktifFiltre, setAktifFiltre] = useState('') // '' | 'aktif' | 'pasif'
   const [aktifSekme, setAktifSekme] = useState(null) // null | 'tekli' | 'toplu'
   const [hata, setHata] = useState(null)
+  const [secilenler, setSecilenler] = useState(new Set())
+  const [topluIslemYukleniyor, setTopluIslemYukleniyor] = useState(false)
 
-  const yukle = useCallback((kod) => {
-    api.sorulariListele(kod || undefined).then(setSorular).catch((e) => setHata(e.detail || 'Sorular yüklenemedi.'))
+  const yukle = useCallback((kod, aktif) => {
+    const aktifParam = aktif === 'aktif' ? true : aktif === 'pasif' ? false : undefined
+    api.sorulariListele(kod || undefined, aktifParam).then((veri) => {
+      setSorular(veri)
+      setSecilenler(new Set()) // liste yenilenince seçim sıfırlanır
+    }).catch((e) => setHata(e.detail || 'Sorular yüklenemedi.'))
   }, [])
 
-  useEffect(() => { yukle(katmanFiltre) }, [yukle, katmanFiltre])
+  useEffect(() => { yukle(katmanFiltre, aktifFiltre) }, [yukle, katmanFiltre, aktifFiltre])
 
   // SheetJS kütüphanesini bir kez, sayfa açılınca yükle
   useEffect(() => {
@@ -451,9 +458,62 @@ export default function SorularSayfasi() {
   async function aktiflikDegistir(soruId, aktifMi) {
     try {
       await api.soruAktiflikGuncelle(soruId, !aktifMi)
-      yukle(katmanFiltre)
+      yukle(katmanFiltre, aktifFiltre)
     } catch (err) {
       setHata(err.detail || 'Güncellenemedi.')
+    }
+  }
+
+  async function tekilSil(soruId, soruMetni) {
+    if (!window.confirm(`Bu soruyu kalıcı olarak silmek istediğinize emin misiniz?\n\n"${soruMetni.slice(0, 80)}..."`)) return
+    try {
+      await api.soruSil(soruId)
+      yukle(katmanFiltre, aktifFiltre)
+    } catch (err) {
+      setHata(err.detail || 'Silinemedi.')
+    }
+  }
+
+  function secimDegistir(soruId) {
+    setSecilenler((onceki) => {
+      const yeni = new Set(onceki)
+      if (yeni.has(soruId)) yeni.delete(soruId)
+      else yeni.add(soruId)
+      return yeni
+    })
+  }
+
+  function hepsiniSec() {
+    if (!sorular) return
+    setSecilenler((onceki) =>
+      onceki.size === sorular.length ? new Set() : new Set(sorular.map((s) => s.id))
+    )
+  }
+
+  async function topluSil() {
+    if (secilenler.size === 0) return
+    if (!window.confirm(`${secilenler.size} soruyu kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) return
+    setTopluIslemYukleniyor(true)
+    try {
+      await api.sorulariTopluSil([...secilenler])
+      yukle(katmanFiltre, aktifFiltre)
+    } catch (err) {
+      setHata(err.detail || 'Toplu silme başarısız.')
+    } finally {
+      setTopluIslemYukleniyor(false)
+    }
+  }
+
+  async function topluAktifDurumDegistir(aktifMi) {
+    if (secilenler.size === 0) return
+    setTopluIslemYukleniyor(true)
+    try {
+      await api.sorulariTopluAktifYap([...secilenler], aktifMi)
+      yukle(katmanFiltre, aktifFiltre)
+    } catch (err) {
+      setHata(err.detail || 'Toplu güncelleme başarısız.')
+    } finally {
+      setTopluIslemYukleniyor(false)
     }
   }
 
@@ -461,14 +521,19 @@ export default function SorularSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Soru Bankası</div>
-        <div className="ps">Sorular silinmez, yalnızca pasife alınır — geçmiş öğrenci oturumları bozulmasın diye.</div>
+        <div className="ps">Soruları pasife alabilir ya da kalıcı olarak silebilirsiniz. Pasife almak, geçmiş öğrenci oturumlarını bozmadan soruyu anketten çıkarır.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
       <div style={{ display: 'flex', gap: 10, marginBottom: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-        <select className="auth-input" style={{ width: 240 }} value={katmanFiltre} onChange={(e) => setKatmanFiltre(e.target.value)}>
+        <select className="auth-input" style={{ width: 220 }} value={katmanFiltre} onChange={(e) => setKatmanFiltre(e.target.value)}>
           <option value="">Tüm katmanlar</option>
           {Object.keys(KATMAN_ADI).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
+        </select>
+        <select className="auth-input" style={{ width: 160 }} value={aktifFiltre} onChange={(e) => setAktifFiltre(e.target.value)}>
+          <option value="">Aktif + Pasif</option>
+          <option value="aktif">Yalnızca Aktif</option>
+          <option value="pasif">Yalnızca Pasif</option>
         </select>
         <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'toplu' ? null : 'toplu'))}>
           {aktifSekme === 'toplu' ? 'Kapat' : '⬆ Toplu Yükle (Likert + SJT)'}
@@ -491,12 +556,49 @@ export default function SorularSayfasi() {
 
       {aktifSekme === 'toplu' && (
         <div style={{ marginBottom: 20 }}>
-          <TopluYuklemeFormu onTamamlandi={() => yukle(katmanFiltre)} />
+          <TopluYuklemeFormu onTamamlandi={() => yukle(katmanFiltre, aktifFiltre)} />
         </div>
       )}
       {aktifSekme === 'tekli' && (
         <div style={{ marginBottom: 20 }}>
-          <YeniSoruFormu onEklendi={() => yukle(katmanFiltre)} />
+          <YeniSoruFormu onEklendi={() => yukle(katmanFiltre, aktifFiltre)} />
+        </div>
+      )}
+
+      {sorular && sorular.length > 0 && (
+        <div style={{
+          display: 'flex', gap: 10, alignItems: 'center', marginBottom: 12, padding: '10px 14px',
+          background: secilenler.size > 0 ? 'var(--tll)' : 'var(--sur2)', borderRadius: 10,
+        }}>
+          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
+            <input
+              type="checkbox"
+              checked={sorular.length > 0 && secilenler.size === sorular.length}
+              onChange={hepsiniSec}
+            />
+            Tümünü Seç
+          </label>
+          <span style={{ fontSize: 12.5, color: 'var(--tx2)' }}>
+            {secilenler.size > 0 ? `${secilenler.size} soru seçildi` : ''}
+          </span>
+          {secilenler.size > 0 && (
+            <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
+              <button className="btn sec" disabled={topluIslemYukleniyor} onClick={() => topluAktifDurumDegistir(true)}>
+                Seçilenleri Aktif Yap
+              </button>
+              <button className="btn sec" disabled={topluIslemYukleniyor} onClick={() => topluAktifDurumDegistir(false)}>
+                Seçilenleri Pasif Yap
+              </button>
+              <button
+                className="btn"
+                style={{ background: 'var(--re)', borderColor: 'var(--re)' }}
+                disabled={topluIslemYukleniyor}
+                onClick={topluSil}
+              >
+                {topluIslemYukleniyor ? <span className="spin" /> : `Seçilenleri Sil (${secilenler.size})`}
+              </button>
+            </div>
+          )}
         </div>
       )}
 
@@ -504,6 +606,12 @@ export default function SorularSayfasi() {
         <div className="ll">
           {sorular.map((s) => (
             <div key={s.id} className="lc" style={{ cursor: 'default', opacity: s.aktif_mi ? 1 : 0.5 }}>
+              <input
+                type="checkbox"
+                checked={secilenler.has(s.id)}
+                onChange={() => secimDegistir(s.id)}
+                style={{ marginRight: 10 }}
+              />
               <div className="lb-wrap">
                 <div className="lt">{s.soru_metni}</div>
                 <div className="ld">{KATMAN_ADI[s.katman_kod] || s.katman_kod} · {s.soru_tipi === 'likert' ? 'Likert' : 'SJT'}</div>
@@ -512,9 +620,16 @@ export default function SorularSayfasi() {
               <button className="btn sec" onClick={() => aktiflikDegistir(s.id, s.aktif_mi)}>
                 {s.aktif_mi ? 'Pasife Al' : 'Aktifleştir'}
               </button>
+              <button
+                className="btn sec"
+                style={{ color: 'var(--re)', borderColor: 'var(--re)' }}
+                onClick={() => tekilSil(s.id, s.soru_metni)}
+              >
+                Sil
+              </button>
             </div>
           ))}
-          {sorular.length === 0 && <div className="bos-durum">Bu katmanda soru yok.</div>}
+          {sorular.length === 0 && <div className="bos-durum">Bu filtreye uyan soru yok.</div>}
         </div>
       )}
     </div>
