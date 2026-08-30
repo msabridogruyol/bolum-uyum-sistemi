@@ -92,6 +92,12 @@ export const api = {
     post(`/ogrenci/katmanlar/${kod}/cevap`, { soru_id: soruId, secenek_id: secenekId }),
   katmaniTamamla: (kod) => post(`/ogrenci/katmanlar/${kod}/tamamla`),
 
+  // --- Güvenlik/Tutarlılık (sonradan eklendi) ---
+  guvenlikOlayiKaydet: (turId, olayTipi, katmanKod) =>
+    post('/ogrenci/guvenlik/olay', { tur_id: turId, olay_tipi: olayTipi, katman_kod: katmanKod }),
+  guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
+    post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),
+
   // --- D3: K5 ---
   k5Durumu: () => get('/ogrenci/k5/durum'),
   daliBaslat: (kod) => post(`/ogrenci/dallar/${kod}/basla`),
