@@ -40,6 +40,7 @@ from app.schemas.admin import (
     GecerlilikTestBirimiOut,
     SjtAgirlikGirisi, SecenekGirisi, DegiskenListeOut,
     TopluSoruYuklemeIstek, TopluSoruSonuc,
+    TopluSoruIdIstek, TopluAktifIstek,
 )
 
 router = APIRouter()
@@ -497,6 +498,7 @@ def dal_durumunu_guncelle(
 @router.get("/sorular", response_model=list[SoruOut])
 def sorulari_listele(
     katman_kod: str | None = None,
+    aktif_mi: bool | None = None,
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
@@ -507,6 +509,8 @@ def sorulari_listele(
     )
     if katman_kod:
         sorgu = sorgu.filter(Katman.kod == katman_kod)
+    if aktif_mi is not None:
+        sorgu = sorgu.filter(Soru.aktif_mi == aktif_mi)
     sonuc = sorgu.order_by(Soru.id).all()
     return [
         SoruOut(
@@ -1293,3 +1297,53 @@ def sorulari_toplu_yukle(
         eklenen_soru_sayisi=eklenen_soru, eklenen_secenek_sayisi=eklenen_secenek,
         eklenen_agirlik_sayisi=eklenen_agirlik, hatalar=hatalar[:50],
     )
+
+
+# ============================================================================
+# Soru Silme + Toplu İşlemler (sonradan eklendi)
+# ============================================================================
+
+@router.delete("/sorular/{soru_id}", status_code=204)
+def soru_sil(
+    soru_id: int,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    soru = db.get(Soru, soru_id)
+    if soru is None:
+        raise HTTPException(status_code=404, detail="Soru bulunamadı.")
+    _audit_yaz(db, admin, "soru_silme", "sorular", str(soru_id), soru.soru_metni[:100])
+    db.delete(soru)  # soru_secenekleri ve sjt_secenek_degisken_agirlik CASCADE ile silinir
+    db.commit()
+
+
+@router.post("/sorular/toplu-sil", status_code=204)
+def sorulari_toplu_sil(
+    istek: TopluSoruIdIstek,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    if not istek.soru_idler:
+        raise HTTPException(status_code=400, detail="Silinecek soru seçilmedi.")
+    silinen = db.query(Soru).filter(Soru.id.in_(istek.soru_idler)).delete(synchronize_session=False)
+    _audit_yaz(db, admin, "soru_toplu_silme", "sorular", "toplu", f"{silinen} soru silindi")
+    db.commit()
+
+
+@router.post("/sorular/toplu-aktif", status_code=204)
+def sorulari_toplu_aktif_durumu_degistir(
+    istek: TopluAktifIstek,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    if not istek.soru_idler:
+        raise HTTPException(status_code=400, detail="Soru seçilmedi.")
+    guncellenen = (
+        db.query(Soru)
+        .filter(Soru.id.in_(istek.soru_idler))
+        .update({Soru.aktif_mi: istek.aktif_mi}, synchronize_session=False)
+    )
+    etiket = "aktif" if istek.aktif_mi else "pasif"
+    _audit_yaz(db, admin, "soru_toplu_durum_degistirme", "sorular", "toplu",
+               f"{guncellenen} soru {etiket} yapıldı")
+    db.commit()
