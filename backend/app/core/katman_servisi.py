@@ -15,6 +15,8 @@ from app.models import (
     OgrenciDegerlendirmeTuru, OgrenciKatmanOturumu, OgrenciCevap,
     OgrenciDegiskenSkoru, SistemParametresi,
 )
+# [EKLENDİ] Güven skoru — tur tamamlanınca otomatik hesaplanır.
+from app.core.guvenlik_servisi import guven_skorunu_hesapla_ve_kaydet
 
 
 class IsKuraliHatasi(Exception):
@@ -212,6 +214,10 @@ def katmani_tamamla(
     ortalaması alınır — [ÇIKARIM], belgede birden fazla soru/değişken
     durumu için birleştirme kuralı açıkça yazılmamıştı), ogrenci_degisken_skorlari'na
     yazar, oturumu 'tamamlandi' yapar. Dönen liste: [(degisken_id, puan), ...]
+
+    [NOT] soru_tipi='kontrol' soruları buradan bilinçli olarak DIŞLANIR —
+    bunlar hiçbir değişken puanına katkı yapmaz, yalnızca güven skoru
+    hesaplamasında (guvenlik_servisi.py) kullanılır.
     """
     soru_idler = oturum.kilitlenen_soru_id_listesi or []
     sorular = {s.id: s for s in db.query(Soru).filter(Soru.id.in_(soru_idler)).all()}
@@ -250,6 +256,8 @@ def katmani_tamamla(
             )
             for a in agirliklar:
                 degisken_puanlari.setdefault(a.degisken_id, []).append(float(a.agirlik) * 100)
+
+        # soru_tipi == "kontrol" -> hiçbir değişkene puan katkısı yapılmaz (kasıtlı)
 
     sonuc: list[tuple[int, float]] = []
     for degisken_id, puanlar in degisken_puanlari.items():
@@ -294,5 +302,8 @@ def tum_ana_katmanlar_tamamlandi_mi(db: Session, ogrenci: Ogrenci, tur: OgrenciD
         tur.durum = "tamamlandi"
         tur.tamamlanma_zamani = datetime.now(timezone.utc)
         db.flush()
+        # [EKLENDİ] Güven skoru — kontrol soruları + güvenlik olayları
+        # birleştirilip hesaplanır, eşik altındaysa tur.sonuc_gecerli_mi=False olur.
+        guven_skorunu_hesapla_ve_kaydet(db, ogrenci, tur)
         return True
     return False
