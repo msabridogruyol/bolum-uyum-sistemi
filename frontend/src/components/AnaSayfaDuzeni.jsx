@@ -7,10 +7,14 @@ import TemaAnahtari from './TemaAnahtari'
 export default function AnaSayfaDuzeni() {
   const { cikisYap } = useAuth()
   const [ozet, setOzet] = useState(null)
+  const [profil, setProfil] = useState(null)
 
   useEffect(() => {
     api.durumOzetiGetir().then(setOzet).catch(() => {})
+    api.profilGetir().then(setProfil).catch(() => {})
   }, [])
+
+  const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0] || 'Öğrenci'
 
   return (
     <div className="app">
@@ -23,14 +27,22 @@ export default function AnaSayfaDuzeni() {
           <TemaAnahtari sabit={false} />
         </div>
         <div className="sb-user">
-          <div className="av">🎓</div>
+          {profil?.profil_foto_base64 ? (
+            <img
+              src={profil.profil_foto_base64}
+              alt=""
+              className="av"
+              style={{ objectFit: 'cover', width: 36, height: 36, borderRadius: '50%' }}
+            />
+          ) : (
+            <div className="av">🎓</div>
+          )}
           <div style={{ flex: 1 }}>
-            <div className="u-nm">Öğrenci</div>
+            <div className="u-nm">{ilkAd}</div>
             {ozet?.tur_no && <div className="u-id">Tur {ozet.tur_no}</div>}
           </div>
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
-
         {ozet && (
           <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--bor)', fontSize: 11, color: 'var(--tx2)' }}>
             <div>Katmanlar: <b>{ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi}</b></div>
@@ -42,7 +54,6 @@ export default function AnaSayfaDuzeni() {
             )}
           </div>
         )}
-
         <div className="ns">Genel</div>
         <NavLink to="/" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🏠 Ana Sayfa
@@ -50,7 +61,6 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/katmanlar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌱 Yol Haritam
         </NavLink>
-
         <div className="ns">Sonuç</div>
         <NavLink to="/sonuc" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölüm Uyumum
@@ -79,15 +89,12 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🎯 Hedef Bölüm Koçluğu
         </NavLink>
-
         <div style={{ flex: 1 }} />
-
         <div className="ns">Hesap</div>
         <NavLink to="/profil" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           ⚙️ Ayarlar
         </NavLink>
       </div>
-
       <div className="main">
         <Outlet />
       </div>
