@@ -6,6 +6,7 @@ POST /ogrenci/katmanlar/{kod}/cevap         — bir soruyu cevapla
 POST /ogrenci/katmanlar/{kod}/tamamla       — katmanı bitir, değişken puanlarını hesapla
 """
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 
@@ -23,7 +24,10 @@ from app.core.dal_servisi import (
 )
 from app.core.skor_motoru import toplam_uyum_hesapla, siralama_getir
 from app.core.kesfet_servisi import bolumleri_ara
-from app.models import Ogrenci, Katman, OgrenciKatmanOturumu, Degisken, SoruSecenegi, OgrenciDalOturumu, Bolum, OgrenciDegerlendirmeTuru
+from app.models import (
+    Ogrenci, Katman, OgrenciKatmanOturumu, Degisken, SoruSecenegi, OgrenciDalOturumu, Bolum,
+    OgrenciDegerlendirmeTuru, GuvenlikOlayi, GuvenlikFotografi,
+)
 from app.schemas.ogrenci import (
     KatmanOut, KatmanBaslatCevap, SoruOut, SecenekOut,
     CevapIstek, KatmanTamamlamaCevap, KatmanSonucSatiri,
@@ -656,3 +660,76 @@ def bolum_ornek_meslekleri_getir(
         BolumOrnekMeslekOut(meslek_adi=r["meslek_adi"], benzerlik_skoru=float(r["benzerlik_skoru"]))
         for r in satirlar
     ]
+
+
+# ============================================================================
+# Güvenlik/Tutarlılık Altyapısı (sonradan eklendi)
+# ============================================================================
+# NOT: Fotoğraf için, yukarıdaki profil_foto_base64 ile AYNI kanıtlanmış
+# deseni kullanıyoruz (Supabase Storage entegrasyonu yerine base64, doğrudan
+# DB'de) — tutarlılık ve basitlik için. İleride gerçek dosya depolamaya
+# taşınabilir.
+
+GUVENLIK_OLAY_TIPLERI = {
+    "tam_ekrandan_cikti", "tam_ekrana_geri_donuldu",
+    "sekme_degisti", "sekmeye_geri_donuldu",
+    "pencere_odagi_kaybedildi", "pencere_odagi_geri_kazanildi",
+}
+
+
+class GuvenlikOlayiIstek(BaseModel):
+    tur_id: int
+    olay_tipi: str
+    katman_kod: str | None = None
+
+
+class GuvenlikFotografIstek(BaseModel):
+    tur_id: int
+    foto_base64: str
+    katman_kod: str | None = None
+
+
+def _tur_sahipligini_dogrula(db: Session, ogrenci: Ogrenci, tur_id: int) -> OgrenciDegerlendirmeTuru:
+    tur = db.get(OgrenciDegerlendirmeTuru, tur_id)
+    if tur is None or tur.ogrenci_id != ogrenci.id:
+        raise HTTPException(status_code=404, detail="Tur bulunamadı.")
+    return tur
+
+
+@router.post("/guvenlik/olay", status_code=204)
+def guvenlik_olayi_kaydet(
+    istek: GuvenlikOlayiIstek,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    """Tam ekrandan çıkma / sekme değiştirme / pencere odağı kaybı olaylarını loglar."""
+    if istek.olay_tipi not in GUVENLIK_OLAY_TIPLERI:
+        raise HTTPException(status_code=400, detail="Geçersiz olay_tipi.")
+    _tur_sahipligini_dogrula(db, ogrenci, istek.tur_id)
+
+    db.add(GuvenlikOlayi(
+        ogrenci_id=ogrenci.id, tur_id=istek.tur_id,
+        olay_tipi=istek.olay_tipi, katman_kod=istek.katman_kod,
+    ))
+    db.commit()
+
+
+@router.post("/guvenlik/fotograf", status_code=204)
+def guvenlik_fotografi_kaydet(
+    istek: GuvenlikFotografIstek,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    """Periyodik kimlik doğrulama fotoğrafı — profil_foto_base64 ile aynı boyut/format kontrolü."""
+    if len(istek.foto_base64) > 1_500_000:  # tek kare için fazlasıyla yeterli
+        raise HTTPException(status_code=400, detail="Fotoğraf çok büyük (maks ~1MB).")
+    if not istek.foto_base64.startswith("data:image/"):
+        raise HTTPException(status_code=400, detail="Geçersiz görsel formatı.")
+    _tur_sahipligini_dogrula(db, ogrenci, istek.tur_id)
+
+    db.add(GuvenlikFotografi(
+        ogrenci_id=ogrenci.id, tur_id=istek.tur_id,
+        depolama_yolu=istek.foto_base64,  # [NOT] isim "depolama_yolu" ama şu an base64 içerik tutuyor
+        katman_kod=istek.katman_kod,
+    ))
+    db.commit()
