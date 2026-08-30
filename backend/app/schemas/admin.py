@@ -181,10 +181,23 @@ class SoruOut(BaseModel):
     aktif_mi: bool
 
 
-# --- A7 — Soru Geçerlilik Testi (sonradan eklendi) ---
+# --- A7 — Soru Geçerlilik Testi (sonradan eklendi, seçenek düzeyine genelleştirildi) ---
+
+class GecerlilikTestBirimiOut(BaseModel):
+    """Test edilecek TEK bir metin birimi — Likert'te soru, SJT'de bir seçenek."""
+    birim_anahtari: str          # örn "soru_12" ya da "secenek_45" — sonucu geri eşlemek için
+    kaynak_soru_id: int
+    secenek_id: int | None = None
+    kaynak_tipi: str             # 'likert' | 'sjt'
+    metin: str                   # embed edilecek gerçek metin
+    baglam: str                  # SJT'de üst senaryo metni, Likert'te aynı metin (bilgi amaçlı)
+    beklenen_degisken_kod: str
+
 
 class SoruGecerlilikSonucuGiris(BaseModel):
-    soru_id: int
+    birim_anahtari: str
+    kaynak_soru_id: int
+    secenek_id: int | None = None
     gercek_degisken_kod: str
     model_a_tahmin: str
     model_a_dogru: bool
@@ -203,8 +216,11 @@ class SoruGecerlilikYuklemeIstek(BaseModel):
 
 class SoruGecerlilikSonucuOut(BaseModel):
     soru_id: int
-    soru_metni: str
+    secenek_id: int | None = None
+    soru_metni: str              # SJT'de üst senaryo, Likert'te soru metni
+    test_edilen_metin: str       # SJT'de seçenek metni, Likert'te soru metniyle aynı
     katman_kod: str
+    kaynak_tipi: str
     gercek_degisken_kod: str
     model_a_tahmin: str
     model_a_dogru: bool
@@ -218,10 +234,10 @@ class SoruGecerlilikSonucuOut(BaseModel):
 
 
 class SoruGecerlilikOzetOut(BaseModel):
-    toplam_soru: int
-    tam_dogru: int          # 3/3 model doğru
-    kismi_dogru: int        # 1-2/3 model doğru
-    hic_dogru_degil: int    # 0/3 model doğru
+    toplam_birim: int
+    tam_dogru: int
+    kismi_dogru: int
+    hic_dogru_degil: int
     sonuclar: list[SoruGecerlilikSonucuOut]
 
 
