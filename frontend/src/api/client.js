@@ -167,6 +167,8 @@ export const api = {
     return aget(`/admin/guvenlik/turlar${s ? `?${s}` : ''}`)
   },
   guvenlikTurDetayiGetir: (turId) => aget(`/admin/guvenlik/turlar/${turId}`),
+  meslekSayisiniGetir: () => aget('/admin/meslekler/sayi'),
+  meslekleriTopluYukle: (meslekler) => apost('/admin/meslekler/toplu-yukle', { meslekler }),
   sorulariTopluYukle: (satirlar) => apost('/admin/sorular/toplu', { satirlar }),
   soruSil: (id) => adel(`/admin/sorular/${id}`),
   sorulariTopluSil: (soru_idler) => apost('/admin/sorular/toplu-sil', { soru_idler }),
