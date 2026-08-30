@@ -2,22 +2,47 @@ import { useEffect, useState, useCallback } from 'react'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { api } from '../../api/client'
 
-function csvSatirlariniAyristir(metin) {
-  const satirlar = metin.split(/\r?\n/).filter((s) => s.trim().length > 0)
-  if (satirlar.length < 2) return []
-  const baslik = satirlar[0].split(',').map((s) => s.trim())
+// [DÜZELTME] Artık pipeline çıktıları .xlsx (Türkçe karakter bozulmasını
+// önlemek için) — bu yüzden düz CSV metin ayrıştırma yerine SheetJS
+// kullanıyoruz, hem .xlsx hem .csv okuyabiliyor.
+function dosyayiAyristir(dosya) {
+  return new Promise((resolve, reject) => {
+    if (typeof window === 'undefined' || !window.XLSX) {
+      reject(new Error('Okuma kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.'))
+      return
+    }
+    const okuyucu = new FileReader()
+    okuyucu.onload = (e) => {
+      try {
+        const csvMi = dosya.name.toLowerCase().endsWith('.csv')
+        const wb = window.XLSX.read(e.target.result, { type: csvMi ? 'string' : 'array' })
+        const sayfa = wb.Sheets[wb.SheetNames[0]]
+        const satirlar = window.XLSX.utils.sheet_to_json(sayfa, { header: 1, defval: '' })
+        resolve(satirlar)
+      } catch (err) {
+        reject(err)
+      }
+    }
+    okuyucu.onerror = () => reject(new Error('Dosya okunamadı.'))
+    if (dosya.name.toLowerCase().endsWith('.csv')) okuyucu.readAsText(dosya, 'utf-8')
+    else okuyucu.readAsArrayBuffer(dosya)
+  })
+}
+
+function satirlariDondur(hamSatirlar) {
+  const baslik = (hamSatirlar[0] || []).map((h) => String(h).trim())
   const beklenen = ['bolum_adi', 'degisken_kod', 'agirlik_degeri', 'yakinsama_skoru', 'agirlikli_varyans', 'etkin_meslek_sayisi']
   const idx = Object.fromEntries(beklenen.map((k) => [k, baslik.indexOf(k)]))
 
-  return satirlar.slice(1).map((satir) => {
-    const parcalar = satir.split(',')
+  return hamSatirlar.slice(1).map((hucreler) => {
+    const say = (i) => (i >= 0 ? hucreler[i] : undefined)
     return {
-      bolum_adi: parcalar[idx.bolum_adi]?.trim() ?? '',
-      degisken_kod: parcalar[idx.degisken_kod]?.trim() ?? '',
-      agirlik_degeri: parseFloat(parcalar[idx.agirlik_degeri]),
-      yakinsama_skoru: idx.yakinsama_skoru >= 0 ? parseFloat(parcalar[idx.yakinsama_skoru]) || null : null,
-      agirlikli_varyans: idx.agirlikli_varyans >= 0 ? parseFloat(parcalar[idx.agirlikli_varyans]) || null : null,
-      etkin_meslek_sayisi: idx.etkin_meslek_sayisi >= 0 ? parseInt(parcalar[idx.etkin_meslek_sayisi], 10) || null : null,
+      bolum_adi: String(say(idx.bolum_adi) ?? '').trim(),
+      degisken_kod: String(say(idx.degisken_kod) ?? '').trim(),
+      agirlik_degeri: parseFloat(say(idx.agirlik_degeri)),
+      yakinsama_skoru: idx.yakinsama_skoru >= 0 ? (parseFloat(say(idx.yakinsama_skoru)) || null) : null,
+      agirlikli_varyans: idx.agirlikli_varyans >= 0 ? (parseFloat(say(idx.agirlikli_varyans)) || null) : null,
+      etkin_meslek_sayisi: idx.etkin_meslek_sayisi >= 0 ? (parseInt(say(idx.etkin_meslek_sayisi), 10) || null) : null,
     }
   }).filter((s) => s.bolum_adi && s.degisken_kod && !isNaN(s.agirlik_degeri))
 }
@@ -48,10 +73,10 @@ export default function PipelineDurumuSayfasi() {
     setSonYukleme(null)
     setYukleniyor(true)
     try {
-      const metin = await dosya.text()
-      const satirlar = csvSatirlariniAyristir(metin)
+      const hamSatirlar = await dosyayiAyristir(dosya)
+      const satirlar = satirlariDondur(hamSatirlar)
       if (satirlar.length === 0) {
-        throw new Error('CSV okunamadı — sütun başlıklarını kontrol edin (bolum_adi, degisken_kod, agirlik_degeri gerekli).')
+        throw new Error('Dosya okunamadı — sütun başlıklarını kontrol edin (bolum_adi, degisken_kod, agirlik_degeri gerekli).')
       }
       const sonuc = await api.pipelineCiktisiYukle(satirlar)
       setSonYukleme(sonuc)
@@ -108,7 +133,7 @@ export default function PipelineDurumuSayfasi() {
         </div>
         <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
           {yukleniyor ? <span className="spin" /> : '⬆ CSV Seç ve Yükle'}
-          <input type="file" accept=".csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
+          <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
         </label>
       </div>
 
