@@ -61,11 +61,13 @@ async function istek(yol, secenekler = {}, kapsam = 'ogrenci') {
 const get = (yol, kapsam) => istek(yol, { method: 'GET' }, kapsam)
 const post = (yol, gövde, kapsam) => istek(yol, { method: 'POST', body: gövde !== undefined ? JSON.stringify(gövde) : undefined }, kapsam)
 const put = (yol, gövde, kapsam) => istek(yol, { method: 'PUT', body: JSON.stringify(gövde) }, kapsam)
+const del = (yol, kapsam) => istek(yol, { method: 'DELETE' }, kapsam)
 
 // admin-scoped kısayollar
 const aget = (yol) => get(yol, 'admin')
 const apost = (yol, gövde) => post(yol, gövde, 'admin')
 const aput = (yol, gövde) => put(yol, gövde, 'admin')
+const adel = (yol) => del(yol, 'admin')
 
 export const api = {
   ApiHatasi,
@@ -152,12 +154,21 @@ export const api = {
   gecerlilikTestGirdisiGetir: () => aget('/admin/sorular/gecerlilik-girdisi'),
   degiskenleriListele: () => aget('/admin/degiskenler'),
   sorulariTopluYukle: (satirlar) => apost('/admin/sorular/toplu', { satirlar }),
+  soruSil: (id) => adel(`/admin/sorular/${id}`),
+  sorulariTopluSil: (soru_idler) => apost('/admin/sorular/toplu-sil', { soru_idler }),
+  sorulariTopluAktifYap: (soru_idler, aktif_mi) => apost('/admin/sorular/toplu-aktif', { soru_idler, aktif_mi }),
   katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
   yeniAgirlikVersiyonu: (agirliklar) => apost('/admin/katman-agirliklari', { agirliklar }),
   dallariListele: () => aget('/admin/dallar'),
   dalEkle: (veri) => apost('/admin/dallar', veri),
   dalDurumGuncelle: (dalId, yeniDurum) => apost(`/admin/dallar/${dalId}/durum`, { yeni_durum: yeniDurum }),
-  sorulariListele: (katmanKod) => aget(`/admin/sorular${katmanKod ? `?katman_kod=${katmanKod}` : ''}`),
+  sorulariListele: (katmanKod, aktifMi) => {
+    const parametreler = new URLSearchParams()
+    if (katmanKod) parametreler.set('katman_kod', katmanKod)
+    if (aktifMi !== undefined) parametreler.set('aktif_mi', aktifMi)
+    const sorguMetni = parametreler.toString()
+    return aget(`/admin/sorular${sorguMetni ? `?${sorguMetni}` : ''}`)
+  },
   soruEkle: (veri) => apost('/admin/sorular', veri),
   soruAktiflikGuncelle: (soruId, aktifMi) => apost(`/admin/sorular/${soruId}/aktiflik`, { aktif_mi: aktifMi }),
   auditLogGetir: (limit = 50) => aget(`/admin/audit-log?limit=${limit}`),
