@@ -48,16 +48,24 @@ class Degisken(Base):
 class Soru(Base):
     __tablename__ = "sorular"
     __table_args__ = (
-        CheckConstraint("soru_tipi IN ('likert','sjt')", name="ck_soru_tipi"),
+        # [DÜZELTME] 'kontrol' eklendi — güvenlik/tutarlılık (dikkat) soruları
+        # için yeni bir soru tipi. Bu sorularda degisken_id NULL kalır (SJT'de
+        # olduğu gibi), beklenen_secenek_sira doludur.
+        CheckConstraint("soru_tipi IN ('likert','sjt','kontrol')", name="ck_soru_tipi"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     katman_id: Mapped[int] = mapped_column(ForeignKey("katmanlar.id"), nullable=False)
-    degisken_id: Mapped[int | None] = mapped_column(ForeignKey("degiskenler.id"))  # SJT'de NULL
+    degisken_id: Mapped[int | None] = mapped_column(ForeignKey("degiskenler.id"))  # SJT/kontrol'de NULL
     soru_tipi: Mapped[str] = mapped_column(String, nullable=False)
     soru_metni: Mapped[str] = mapped_column(String, nullable=False)
     ters_kodlanmis_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     aktif_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    # [EKLENDİ] Yalnızca soru_tipi='kontrol' sorularında dolu — hangi seçenek
+    # "beklenen/doğru" cevap sayılıyor. guvenlik_servisi.py'deki kontrol soru
+    # skoru hesaplaması, öğrencinin seçtiği seçeneğin secenek_sirasi'nı bununla
+    # karşılaştırır.
+    beklenen_secenek_sira: Mapped[int | None] = mapped_column(Integer)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
