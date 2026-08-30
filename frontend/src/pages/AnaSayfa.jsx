@@ -12,6 +12,7 @@ export default function AnaSayfa() {
   const [profil, setProfil] = useState(null)
   const [katmanSonuclari, setKatmanSonuclari] = useState(null)
   const [k5Durum, setK5Durum] = useState(null)
+  const [hedef, setHedef] = useState(null)
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
 
@@ -20,6 +21,7 @@ export default function AnaSayfa() {
     api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail))
     api.profilGetir().then(setProfil).catch(() => {})
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
+    api.aktifHedefGetir().then(setHedef).catch(() => setHedef(null))
   }, [])
 
   useEffect(() => {
@@ -67,15 +69,46 @@ export default function AnaSayfa() {
   const orta = tumSonuclar.length - guclu - gelisimSayisi
   const toplamBoyut = tumSonuclar.length || 1 // 0'a bölünmeyi önle
 
+  const hedefBolumAdi = hedef?.bolum_adi || null
+  const hedefUniversite = profil?.hedef_universite || null
+
   return (
     <div className="pg pg-genis">
-      <div className="ph">
-        <div className="pt">Merhaba, {ilkAd} 👋</div>
-        <div className="ps">
-          {ozet.tur_tamamlandi_mi
-            ? 'Tüm katmanlar tamamlandı — işte senin bölüm uyum profilin.'
-            : `Yolculuğunun %${tamamlananYuzde}'ini tamamladın.`}
+      <div className="ph" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14 }}>
+        <div>
+          <div className="pt">Merhaba, {ilkAd} 👋</div>
+          <div className="ps">
+            {ozet.tur_tamamlandi_mi
+              ? 'Tüm katmanlar tamamlandı — işte senin bölüm uyum profilin.'
+              : `Yolculuğunun %${tamamlananYuzde}'ini tamamladın.`}
+          </div>
         </div>
+
+        {hedefBolumAdi && (
+          <div
+            onClick={() => navigate('/koclugu')}
+            style={{
+              cursor: 'pointer',
+              background: 'linear-gradient(135deg, var(--pu) 0%, #f0a868 100%)',
+              borderRadius: 16,
+              padding: '12px 20px',
+              boxShadow: '0 6px 18px -6px rgba(232, 128, 74, 0.55)',
+              minWidth: 200,
+            }}
+          >
+            <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.85)', letterSpacing: 0.6, textTransform: 'uppercase' }}>
+              🎯 Hedef
+            </div>
+            <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', marginTop: 2, lineHeight: 1.25 }}>
+              {hedefBolumAdi}
+            </div>
+            {hedefUniversite && (
+              <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.9)', marginTop: 2 }}>
+                {hedefUniversite}
+              </div>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="anasayfa-duzen">
