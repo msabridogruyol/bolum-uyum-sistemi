@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
@@ -32,26 +32,163 @@ function DegiskenKarti({ s }) {
   )
 }
 
+// ============================================================
+// Güvenlik altyapısı — tam ekran zorlama, sekme/odak takibi, periyodik fotoğraf
+// ============================================================
+const FOTOGRAF_ARALIGI_SORU = 4  // her 4 soruda bir fotoğraf çek
+
+function GuvenlikUyariKatmani({ tamEkranaGeriDon }) {
+  return (
+    <div style={{
+      position: 'fixed', inset: 0, background: 'rgba(20,16,10,0.92)', zIndex: 9999,
+      display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+      color: '#fff', textAlign: 'center', padding: 24,
+    }}>
+      <div style={{ fontSize: 40, marginBottom: 12 }}>⚠️</div>
+      <div style={{ fontSize: 18, fontWeight: 700, marginBottom: 8 }}>Tam ekrandan çıktınız</div>
+      <div style={{ fontSize: 13.5, opacity: 0.85, marginBottom: 20, maxWidth: 380 }}>
+        Bu değerlendirme tam ekran modunda yapılmalı. Devam etmek için tam ekrana geri dönün.
+      </div>
+      <button className="btn" onClick={tamEkranaGeriDon}>Tam Ekrana Geri Dön</button>
+    </div>
+  )
+}
+
 export default function SoruSayfasi() {
   const { kod } = useParams()
   const navigate = useNavigate()
 
   const [sorular, setSorular] = useState(null)
+  const [turId, setTurId] = useState(null)
   const [aktifIndex, setAktifIndex] = useState(0)
   const [cevaplar, setCevaplar] = useState({})
   const [gonderiliyor, setGonderiliyor] = useState(false)
   const [hata, setHata] = useState(null)
   const [tamamlandi, setTamamlandi] = useState(null)
+  const [tamEkranDisinda, setTamEkranDisinda] = useState(false)
 
+  const videoRef = useRef(null)
+  const canvasRef = useRef(null)
+  const kameraAktifRef = useRef(false)
+  const turIdRef = useRef(null)  // olay/fotoğraf gönderirken en güncel tur_id'yi kullanmak için
+
+  useEffect(() => { turIdRef.current = turId }, [turId])
+
+  // ------------------------------------------------------------------
+  // Katman başlatma
+  // ------------------------------------------------------------------
   useEffect(() => {
     setSorular(null)
     setAktifIndex(0)
     setCevaplar({})
     setTamamlandi(null)
     api.katmaniBaslat(kod)
-      .then((veri) => setSorular(veri.sorular))
+      .then((veri) => {
+        setSorular(veri.sorular)
+        setTurId(veri.tur_id)
+      })
       .catch((e) => setHata(e.detail || 'Katman başlatılamadı.'))
   }, [kod])
+
+  // ------------------------------------------------------------------
+  // Tam ekrana geçiş + çıkış/geri dönüş yönetimi
+  // ------------------------------------------------------------------
+  const tamEkranaGec = useCallback(() => {
+    const el = document.documentElement
+    if (el.requestFullscreen) el.requestFullscreen().catch(() => {})
+  }, [])
+
+  useEffect(() => {
+    if (sorular && !tamamlandi) tamEkranaGec()
+  }, [sorular, tamamlandi, tamEkranaGec])
+
+  useEffect(() => {
+    function tamEkranDegisti() {
+      const disinda = !document.fullscreenElement
+      setTamEkranDisinda(disinda)
+      if (turIdRef.current) {
+        api.guvenlikOlayiKaydet(
+          turIdRef.current,
+          disinda ? 'tam_ekrandan_cikti' : 'tam_ekrana_geri_donuldu',
+          kod,
+        ).catch(() => {})
+      }
+    }
+    function gorunurlukDegisti() {
+      if (!turIdRef.current) return
+      api.guvenlikOlayiKaydet(
+        turIdRef.current,
+        document.hidden ? 'sekme_degisti' : 'sekmeye_geri_donuldu',
+        kod,
+      ).catch(() => {})
+    }
+    function odakKaybedildi() {
+      if (!turIdRef.current) return
+      api.guvenlikOlayiKaydet(turIdRef.current, 'pencere_odagi_kaybedildi', kod).catch(() => {})
+    }
+    function odakKazanildi() {
+      if (!turIdRef.current) return
+      api.guvenlikOlayiKaydet(turIdRef.current, 'pencere_odagi_geri_kazanildi', kod).catch(() => {})
+    }
+
+    document.addEventListener('fullscreenchange', tamEkranDegisti)
+    document.addEventListener('visibilitychange', gorunurlukDegisti)
+    window.addEventListener('blur', odakKaybedildi)
+    window.addEventListener('focus', odakKazanildi)
+    return () => {
+      document.removeEventListener('fullscreenchange', tamEkranDegisti)
+      document.removeEventListener('visibilitychange', gorunurlukDegisti)
+      window.removeEventListener('blur', odakKaybedildi)
+      window.removeEventListener('focus', odakKazanildi)
+    }
+  }, [kod])
+
+  // ------------------------------------------------------------------
+  // Kamera kurulumu — izin verilmezse sessizce atlanır, testi bloklamaz
+  // ------------------------------------------------------------------
+  useEffect(() => {
+    if (!sorular || tamamlandi) return
+    let akis = null
+    navigator.mediaDevices?.getUserMedia?.({ video: { width: 320, height: 240 } })
+      .then((s) => {
+        akis = s
+        if (videoRef.current) {
+          videoRef.current.srcObject = s
+          videoRef.current.play().catch(() => {})
+          kameraAktifRef.current = true
+        }
+      })
+      .catch(() => { kameraAktifRef.current = false })
+
+    return () => {
+      akis?.getTracks().forEach((t) => t.stop())
+      kameraAktifRef.current = false
+    }
+  }, [sorular, tamamlandi])
+
+  const fotografCek = useCallback(() => {
+    if (!kameraAktifRef.current || !videoRef.current || !canvasRef.current || !turIdRef.current) return
+    const video = videoRef.current
+    const canvas = canvasRef.current
+    if (!video.videoWidth) return
+    canvas.width = video.videoWidth
+    canvas.height = video.videoHeight
+    const ctx = canvas.getContext('2d')
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
+    const base64 = canvas.toDataURL('image/jpeg', 0.7)
+    api.guvenlikFotografiKaydet(turIdRef.current, base64, kod).catch(() => {})
+  }, [kod])
+
+  // Katman başında bir kare + her FOTOGRAF_ARALIGI_SORU soruda bir kare
+  useEffect(() => {
+    if (!sorular || tamamlandi || !turId) return
+    const zamanlayici = setTimeout(fotografCek, 1500)  // kameranın açılmasına küçük bir pay
+    return () => clearTimeout(zamanlayici)
+  }, [turId, sorular, tamamlandi, fotografCek])
+
+  useEffect(() => {
+    if (aktifIndex > 0 && aktifIndex % FOTOGRAF_ARALIGI_SORU === 0) fotografCek()
+  }, [aktifIndex, fotografCek])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
   if (!sorular) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
@@ -110,6 +247,7 @@ export default function SoruSayfasi() {
       try {
         const sonuc = await api.katmaniTamamla(kod)
         setTamamlandi(sonuc)
+        if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
       } catch (e) {
         setHata(e.detail || 'Katman tamamlanamadı.')
       } finally {
@@ -120,6 +258,12 @@ export default function SoruSayfasi() {
 
   return (
     <div className="pg">
+      {tamEkranDisinda && <GuvenlikUyariKatmani tamEkranaGeriDon={tamEkranaGec} />}
+
+      {/* Kamera önizlemesi görünmez tutulur — yalnızca kare yakalamak için */}
+      <video ref={videoRef} muted playsInline style={{ position: 'fixed', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }} />
+      <canvas ref={canvasRef} style={{ display: 'none' }} />
+
       <div className="qwrap">
         <div className="qmeta">
           <span>Soru {aktifIndex + 1} / {sorular.length}</span>
