@@ -464,16 +464,6 @@ export default function SorularSayfasi() {
     }
   }
 
-  async function tekilSil(soruId, soruMetni) {
-    if (!window.confirm(`Bu soruyu kalıcı olarak silmek istediğinize emin misiniz?\n\n"${soruMetni.slice(0, 80)}..."`)) return
-    try {
-      await api.soruSil(soruId)
-      yukle(katmanFiltre, aktifFiltre)
-    } catch (err) {
-      setHata(err.detail || 'Silinemedi.')
-    }
-  }
-
   function secimDegistir(soruId) {
     setSecilenler((onceki) => {
       const yeni = new Set(onceki)
@@ -488,20 +478,6 @@ export default function SorularSayfasi() {
     setSecilenler((onceki) =>
       onceki.size === sorular.length ? new Set() : new Set(sorular.map((s) => s.id))
     )
-  }
-
-  async function topluSil() {
-    if (secilenler.size === 0) return
-    if (!window.confirm(`${secilenler.size} soruyu kalıcı olarak silmek istediğinize emin misiniz? Bu işlem geri alınamaz.`)) return
-    setTopluIslemYukleniyor(true)
-    try {
-      await api.sorulariTopluSil([...secilenler])
-      yukle(katmanFiltre, aktifFiltre)
-    } catch (err) {
-      setHata(err.detail || 'Toplu silme başarısız.')
-    } finally {
-      setTopluIslemYukleniyor(false)
-    }
   }
 
   async function topluAktifDurumDegistir(aktifMi) {
@@ -521,7 +497,7 @@ export default function SorularSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Soru Bankası</div>
-        <div className="ps">Soruları pasife alabilir ya da kalıcı olarak silebilirsiniz. Pasife almak, geçmiş öğrenci oturumlarını bozmadan soruyu anketten çıkarır.</div>
+        <div className="ps">Soruları pasife alabilirsiniz — geçmiş öğrenci oturumları bozulmasın diye kalıcı silme yoktur.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
@@ -589,14 +565,6 @@ export default function SorularSayfasi() {
               <button className="btn sec" disabled={topluIslemYukleniyor} onClick={() => topluAktifDurumDegistir(false)}>
                 Seçilenleri Pasif Yap
               </button>
-              <button
-                className="btn"
-                style={{ background: 'var(--re)', borderColor: 'var(--re)' }}
-                disabled={topluIslemYukleniyor}
-                onClick={topluSil}
-              >
-                {topluIslemYukleniyor ? <span className="spin" /> : `Seçilenleri Sil (${secilenler.size})`}
-              </button>
             </div>
           )}
         </div>
@@ -619,13 +587,6 @@ export default function SorularSayfasi() {
               <span className={`bdg ${s.aktif_mi ? 'bdg-done' : 'bdg-lock'}`}>{s.aktif_mi ? 'Aktif' : 'Pasif'}</span>
               <button className="btn sec" onClick={() => aktiflikDegistir(s.id, s.aktif_mi)}>
                 {s.aktif_mi ? 'Pasife Al' : 'Aktifleştir'}
-              </button>
-              <button
-                className="btn sec"
-                style={{ color: 'var(--re)', borderColor: 'var(--re)' }}
-                onClick={() => tekilSil(s.id, s.soru_metni)}
-              >
-                Sil
               </button>
             </div>
           ))}
