@@ -4,7 +4,7 @@ Kaynak: sistem_genel_anlatim.md D2, D2c (tur/yeniden değerlendirme mekanizması
 """
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Integer, BigInteger, Numeric, DateTime, ForeignKey, JSON, CheckConstraint, UniqueConstraint
+from sqlalchemy import String, Integer, BigInteger, Numeric, Boolean, DateTime, ForeignKey, JSON, CheckConstraint, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
@@ -24,6 +24,11 @@ class OgrenciDegerlendirmeTuru(Base):
     baslama_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
     tamamlanma_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     durum: Mapped[str] = mapped_column(String, nullable=False, default="devam_ediyor")
+    # [EKLENDİ] Güvenlik/tutarlılık altyapısı — kontrol soruları + tam ekran/
+    # sekme olaylarından hesaplanan birleşik güven skoru (bkz. guvenlik_servisi.py).
+    guven_skoru: Mapped[float | None] = mapped_column(Numeric(5, 2))
+    sonuc_gecerli_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+    gecersizlik_nedeni: Mapped[str | None] = mapped_column(String)
 
 
 class OgrenciKatmanOturumu(Base):
@@ -96,3 +101,44 @@ class OgrenciCevap(Base):
     soru_id: Mapped[int] = mapped_column(ForeignKey("sorular.id"), nullable=False)
     secenek_id: Mapped[int] = mapped_column(ForeignKey("soru_secenekleri.id"), nullable=False)
     cevap_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class GuvenlikOlayi(Base):
+    """
+    [EKLENDİ] Güvenlik/tutarlılık altyapısı — tam ekrandan çıkma, sekme
+    değiştirme, pencere odağı kaybı gibi olayları loglar. guvenlik_servisi.py
+    bu tabloyu sayarak güven skorunun "olay" bileşenini hesaplar.
+    """
+    __tablename__ = "guvenlik_olaylari"
+    __table_args__ = (
+        CheckConstraint(
+            "olay_tipi IN ("
+            "'tam_ekrandan_cikti','tam_ekrana_geri_donuldu',"
+            "'sekme_degisti','sekmeye_geri_donuldu',"
+            "'pencere_odagi_kaybedildi','pencere_odagi_geri_kazanildi'"
+            ")",
+            name="ck_go_olay_tipi",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id"), nullable=False)
+    tur_id: Mapped[int] = mapped_column(ForeignKey("ogrenci_degerlendirme_turu.id"), nullable=False)
+    olay_tipi: Mapped[str] = mapped_column(String, nullable=False)
+    katman_kod: Mapped[str | None] = mapped_column(String)
+    olay_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class GuvenlikFotografi(Base):
+    """
+    [EKLENDİ] Periyodik kimlik doğrulama fotoğraflarının referansı — asıl
+    dosya Supabase Storage'da, burada yalnızca yol/zaman/bağlam tutulur.
+    """
+    __tablename__ = "guvenlik_fotograflari"
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id"), nullable=False)
+    tur_id: Mapped[int] = mapped_column(ForeignKey("ogrenci_degerlendirme_turu.id"), nullable=False)
+    depolama_yolu: Mapped[str] = mapped_column(String, nullable=False)
+    katman_kod: Mapped[str | None] = mapped_column(String)
+    cekim_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
