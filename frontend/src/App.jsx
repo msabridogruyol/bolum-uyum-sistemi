@@ -21,7 +21,6 @@ import PipelineDurumuSayfasi from './pages/admin/PipelineDurumuSayfasi'
 import BolumlerSayfasi from './pages/admin/BolumlerSayfasi'
 import DallarSayfasi from './pages/admin/DallarSayfasi'
 import SorularSayfasi from './pages/admin/SorularSayfasi'
-import AgirliklarSayfasi from './pages/admin/AgirliklarSayfasi'
 import ParametrelerSayfasi from './pages/admin/ParametrelerSayfasi'
 import OgrencilerSayfasi from './pages/admin/OgrencilerSayfasi'
 import AuditLogSayfasi from './pages/admin/AuditLogSayfasi'
@@ -80,7 +79,6 @@ function AnaUygulama() {
         <Route path="bolumler" element={<BolumlerSayfasi />} />
         <Route path="dallar" element={<DallarSayfasi />} />
         <Route path="sorular" element={<SorularSayfasi />} />
-        <Route path="agirliklar" element={<AgirliklarSayfasi />} />
         <Route path="parametreler" element={<ParametrelerSayfasi />} />
         <Route path="ogrenciler" element={<OgrencilerSayfasi />} />
         <Route path="audit-log" element={<AuditLogSayfasi />} />
