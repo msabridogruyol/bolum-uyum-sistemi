@@ -16,6 +16,7 @@ from app.models.hesaplama_ciktilari import BolumAgirligi
 from app.models.ogrenci_verisi import (
     OgrenciDegerlendirmeTuru, OgrenciKatmanOturumu,
     OgrenciDalOturumu, OgrenciDegiskenSkoru, OgrenciCevap,
+    GuvenlikOlayi, GuvenlikFotografi,
 )
 from app.models.sonuclar import OgrenciBolumUyumSkoru, OgrenciDalUyumSkoru
 from app.models.sistem import (
@@ -26,7 +27,6 @@ from app.models.koclugu import (
     OgrenciHedefBolum, GelisimYorumHavuzu,
     GelisimKarsilastirmaYorumu, OgrenciGelisimAksiyonDurumu,
 )
-
 __all__ = [
     "Ogrenci", "AdminKullanici",
     "Katman", "Degisken", "Soru", "SoruSecenegi", "SjtSecenekDegiskenAgirlik",
@@ -36,6 +36,7 @@ __all__ = [
     "BolumAgirligi",
     "OgrenciDegerlendirmeTuru", "OgrenciKatmanOturumu",
     "OgrenciDalOturumu", "OgrenciDegiskenSkoru", "OgrenciCevap",
+    "GuvenlikOlayi", "GuvenlikFotografi",
     "OgrenciBolumUyumSkoru", "OgrenciDalUyumSkoru",
     "SistemParametresi", "KatmanAgirligi", "GecerlilikSonucu",
     "GecerlilikOzeti", "AuditLog",
