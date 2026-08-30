@@ -149,7 +149,15 @@ export default function SoruSayfasi() {
   useEffect(() => {
     if (!sorular || tamamlandi) return
     let akis = null
-    navigator.mediaDevices?.getUserMedia?.({ video: { width: 320, height: 240 } })
+
+    if (!navigator.mediaDevices?.getUserMedia) {
+      // Tarayıcı hiç desteklemiyor — test bloklanmaz, yalnızca loglanır
+      if (turIdRef.current) api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_desteklenmiyor', kod).catch(() => {})
+      else setTimeout(() => api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_desteklenmiyor', kod).catch(() => {}), 500)
+      return
+    }
+
+    navigator.mediaDevices.getUserMedia({ video: { width: 320, height: 240 } })
       .then((s) => {
         akis = s
         if (videoRef.current) {
@@ -158,13 +166,19 @@ export default function SoruSayfasi() {
           kameraAktifRef.current = true
         }
       })
-      .catch(() => { kameraAktifRef.current = false })
+      .catch(() => {
+        // İzin reddedildi ya da cihaz hatası — test bloklanmaz, yalnızca loglanır
+        kameraAktifRef.current = false
+        const gonder = () => api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_izni_reddedildi', kod).catch(() => {})
+        if (turIdRef.current) gonder()
+        else setTimeout(gonder, 500)
+      })
 
     return () => {
       akis?.getTracks().forEach((t) => t.stop())
       kameraAktifRef.current = false
     }
-  }, [sorular, tamamlandi])
+  }, [sorular, tamamlandi, kod])
 
   const fotografCek = useCallback(() => {
     if (!kameraAktifRef.current || !videoRef.current || !canvasRef.current || !turIdRef.current) return
