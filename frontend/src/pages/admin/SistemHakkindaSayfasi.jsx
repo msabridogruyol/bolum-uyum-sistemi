@@ -93,6 +93,32 @@ export default function SistemHakkindaSayfasi() {
         </div>
 
         <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Hangi Aşamada Hangi Model(ler) Kullanılıyor</div>
+          <table style={{ width: '100%', fontSize: 12.5, borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--bor)' }}>
+                <th style={{ textAlign: 'left', padding: '6px 8px' }}>Aşama</th>
+                <th style={{ textAlign: 'left', padding: '6px 8px' }}>Kullanılan Model(ler)</th>
+                <th style={{ textAlign: 'left', padding: '6px 8px' }}>Neden</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['Ana eşleştirme (00 → A2 → A3 → A4)', '3 model (model_a, model_b, model_c)', 'Üretim skoru — konsensüs güvenilirlik sağlar'],
+                ['Bölüm açıklaması çevirisi (TR→EN)', 'Helsinki-NLP MT modeli', 'Model C\'nin İngilizce girdisi için'],
+                ['Meslek adı/açıklaması çevirisi (EN→TR)', 'Helsinki-NLP MT modeli (tc-big-en-tr)', 'ESCO kaynağı yalnızca İngilizce'],
+                ['Çeviri tutarlılık kontrolü', 'Yalnızca model_a (1 model)', 'Hızlı ön tarama — üretim skoru değil, tanılama amaçlı'],
+                ['Soru geçerlilik testi', '3 model (model_a, model_b, model_c)', 'Üretim kalite kontrolü — konsensüs önemli'],
+              ].map((satir, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid var(--bor)' }}>
+                  {satir.map((hucre, j) => <td key={j} style={{ padding: '6px 8px', color: j === 0 ? 'var(--tx)' : 'var(--tx2)' }}>{hucre}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--bor)' }}>
           <div className="ct" style={{ fontSize: 13 }}>Veri Kalitesi Kontrolleri</div>
           <Madde><b>Güven eşiği (z-skoru):</b> bir mesleğin bir bölümle "ilişkili" sayılması için, o ilişkinin ortalamanın en az 1 standart sapma üstünde olması gerekir — rastgele/zayıf eşleşmeler bu şekilde elenir</Madde>
           <Madde><b>Model konsensüsü:</b> 3 bağımsız model kullanılır; bir eşleşme kaç modelde tutarlı çıktıysa, önceliği o kadar yüksektir</Madde>
