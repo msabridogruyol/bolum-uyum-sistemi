@@ -74,7 +74,7 @@ export default function AnaSayfa() {
 
   return (
     <div className="pg pg-genis">
-      <div className="ph" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', flexWrap: 'wrap', gap: 14 }}>
+      <div className="ph anasayfa-duzen" style={{ alignItems: 'flex-start' }}>
         <div>
           <div className="pt">Merhaba, {ilkAd} 👋</div>
           <div className="ps">
@@ -91,19 +91,19 @@ export default function AnaSayfa() {
               cursor: 'pointer',
               background: 'linear-gradient(135deg, var(--pu) 0%, #f0a868 100%)',
               borderRadius: 16,
-              padding: '12px 20px',
+              padding: '14px 22px',
               boxShadow: '0 6px 18px -6px rgba(232, 128, 74, 0.55)',
-              minWidth: 200,
+              width: '100%',
             }}
           >
             <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.85)', letterSpacing: 0.6, textTransform: 'uppercase' }}>
               🎯 Hedef
             </div>
-            <div style={{ fontSize: 16, fontWeight: 800, color: '#fff', marginTop: 2, lineHeight: 1.25 }}>
+            <div style={{ fontSize: 19, fontWeight: 800, color: '#fff', marginTop: 3, lineHeight: 1.25 }}>
               {hedefBolumAdi}
             </div>
             {hedefUniversite && (
-              <div style={{ fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.9)', marginTop: 2 }}>
+              <div style={{ fontSize: 14, fontWeight: 700, color: 'rgba(255,255,255,0.92)', marginTop: 3 }}>
                 {hedefUniversite}
               </div>
             )}
