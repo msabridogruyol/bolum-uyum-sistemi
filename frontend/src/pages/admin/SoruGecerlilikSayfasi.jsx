@@ -1,6 +1,18 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 
+function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
+  const kacisla = (deger) => `"${String(deger ?? '').replace(/"/g, '""')}"`
+  const icerik = [basliklar.join(','), ...satirlar.map((s) => s.map(kacisla).join(','))].join('\r\n')
+  const blob = new Blob(['\uFEFF' + icerik], { type: 'text/csv;charset=utf-8;' })
+  const url = URL.createObjectURL(blob)
+  const a = document.createElement('a')
+  a.href = url
+  a.download = dosyaAdi
+  a.click()
+  URL.revokeObjectURL(url)
+}
+
 function csvSatirlariniAyristir(metin) {
   const satirlar = metin.split(/\r?\n/).filter((s) => s.trim().length > 0)
   if (satirlar.length < 2) return []
@@ -10,8 +22,11 @@ function csvSatirlariniAyristir(metin) {
   return satirlar.slice(1).map((satir) => {
     const p = satir.split(',')
     const bul = (ad) => p[idx[ad]]?.trim()
+    const secenekIdHam = bul('secenek_id')
     return {
-      soru_id: parseInt(bul('soru_id'), 10),
+      birim_anahtari: bul('birim_anahtari'),
+      kaynak_soru_id: parseInt(bul('kaynak_soru_id'), 10),
+      secenek_id: secenekIdHam ? parseInt(secenekIdHam, 10) : null,
       gercek_degisken_kod: bul('gercek_degisken_kod'),
       model_a_tahmin: bul('model_a_tahmin'),
       model_a_dogru: bul('model_a_dogru')?.toLowerCase() === 'true',
@@ -23,20 +38,42 @@ function csvSatirlariniAyristir(metin) {
       model_c_dogru: bul('model_c_dogru')?.toLowerCase() === 'true',
       model_c_benzerlik: parseFloat(bul('model_c_benzerlik')),
     }
-  }).filter((s) => !isNaN(s.soru_id) && s.gercek_degisken_kod)
+  }).filter((s) => !isNaN(s.kaynak_soru_id) && s.gercek_degisken_kod)
 }
 
 export default function SoruGecerlilikSayfasi() {
   const [ozet, setOzet] = useState(null)
   const [yukleniyor, setYukleniyor] = useState(false)
+  const [disaAktariliyor, setDisaAktariliyor] = useState(false)
   const [hata, setHata] = useState(null)
   const [filtre, setFiltre] = useState('hepsi') // hepsi | sorunlu
+  const [tipFiltre, setTipFiltre] = useState('hepsi') // hepsi | likert | sjt
 
   function yukle() {
     api.soruGecerlilikGetir().then(setOzet).catch(() => setOzet(null))
   }
 
   useEffect(() => { yukle() }, [])
+
+  async function testGirdisiniIndir() {
+    setDisaAktariliyor(true)
+    setHata(null)
+    try {
+      const birimler = await api.gecerlilikTestGirdisiGetir()
+      if (birimler.length === 0) {
+        throw new Error('Test edilecek aktif soru/seçenek bulunamadı.')
+      }
+      csvDisaAktar(
+        'gecerlilik_girdisi.csv',
+        ['birim_anahtari', 'kaynak_soru_id', 'secenek_id', 'kaynak_tipi', 'metin', 'baglam', 'beklenen_degisken_kod'],
+        birimler.map((b) => [b.birim_anahtari, b.kaynak_soru_id, b.secenek_id ?? '', b.kaynak_tipi, b.metin, b.baglam, b.beklenen_degisken_kod]),
+      )
+    } catch (err) {
+      setHata(err.detail || err.message || 'Test girdisi alınamadı.')
+    } finally {
+      setDisaAktariliyor(false)
+    }
+  }
 
   async function dosyaSecildi(e) {
     const dosya = e.target.files?.[0]
@@ -59,30 +96,41 @@ export default function SoruGecerlilikSayfasi() {
     }
   }
 
-  const gosterilecekler = !ozet ? [] : (
-    filtre === 'sorunlu' ? ozet.sonuclar.filter((s) => s.kac_model_dogru < 3) : ozet.sonuclar
-  )
+  const gosterilecekler = !ozet ? [] : ozet.sonuclar
+    .filter((s) => filtre === 'hepsi' || s.kac_model_dogru < 3)
+    .filter((s) => tipFiltre === 'hepsi' || s.kaynak_tipi === tipFiltre)
 
   return (
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Soru Geçerlilik Testi</div>
         <div className="ps">
-          Her sorunun metni, hangi değişkene ait olduğu gizlenerek 3 bağımsız dil modeline veriliyor —
-          model soruyu doğru değişkene mi bağlıyor? 3/3 uyuşma = yüksek güven, uyuşmazlık = revizyon adayı.
+          Her test biriminin (Likert sorusu ya da SJT seçeneği) metni, hangi değişkene ait olduğu gizlenerek
+          3 bağımsız dil modeline veriliyor — model doğru değişkene mi bağlıyor?
         </div>
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
 
       <div className="card">
-        <div className="ct">Yeni Test Sonucu Yükle</div>
+        <div className="ct">1. Adım — Test Girdisini İndir</div>
         <div className="ps" style={{ margin: '0 0 12px' }}>
-          Bilgisayarınızda <code>soru_gecerlilik_testi.py</code>'yi çalıştırıp ürettiği
-          <code> soru_gecerlilik_sonuclari.csv</code> dosyasını seçin.
+          Tüm aktif Likert sorularını ve SJT seçeneklerini (kaynak metinleriyle) CSV olarak indirir.
+        </div>
+        <button className="btn" onClick={testGirdisiniIndir} disabled={disaAktariliyor}>
+          {disaAktariliyor ? <span className="spin" /> : '⬇ Test Girdisini İndir'}
+        </button>
+      </div>
+
+      <div className="card">
+        <div className="ct">2. Adım — Sonucu Yükle</div>
+        <div className="ps" style={{ margin: '0 0 12px' }}>
+          İndirdiğiniz dosyayı <code>C:\pipeline\veri\gecerlilik_girdisi.csv</code> olarak kaydedip
+          <code> python soru_gecerlilik_testi.py</code> çalıştırın. Çıkan
+          <code> soru_gecerlilik_sonuclari.csv</code>'yi buradan yükleyin.
         </div>
         <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
-          {yukleniyor ? <span className="spin" /> : '⬆ CSV Yükle'}
+          {yukleniyor ? <span className="spin" /> : '⬆ Sonuç CSV Yükle'}
           <input type="file" accept=".csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
         </label>
       </div>
@@ -92,26 +140,37 @@ export default function SoruGecerlilikSayfasi() {
       ) : (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 18 }}>
-            <div className="sc"><div className="sl">Toplam Soru</div><div className="sv">{ozet.toplam_soru}</div></div>
+            <div className="sc"><div className="sl">Toplam Birim</div><div className="sv">{ozet.toplam_birim}</div></div>
             <div className="sc"><div className="sl">Tam Doğru (3/3)</div><div className="sv gr">{ozet.tam_dogru}</div></div>
             <div className="sc"><div className="sl">Kısmi (1-2/3)</div><div className="sv" style={{ color: 'var(--am)' }}>{ozet.kismi_dogru}</div></div>
             <div className="sc"><div className="sl">Hiç Doğru Değil (0/3)</div><div className="sv" style={{ color: 'var(--re)' }}>{ozet.hic_dogru_degil}</div></div>
           </div>
 
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14 }}>
+          <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
             <button className={filtre === 'hepsi' ? 'btn' : 'btn sec'} onClick={() => setFiltre('hepsi')}>Tümü</button>
             <button className={filtre === 'sorunlu' ? 'btn' : 'btn sec'} onClick={() => setFiltre('sorunlu')}>
               Yalnızca Sorunlu ({ozet.kismi_dogru + ozet.hic_dogru_degil})
             </button>
+            <select className="auth-input" style={{ width: 160 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
+              <option value="hepsi">Tüm Tipler</option>
+              <option value="likert">Yalnızca Likert</option>
+              <option value="sjt">Yalnızca SJT</option>
+            </select>
           </div>
 
           <div className="ll">
             {gosterilecekler.map((s) => (
-              <div key={s.soru_id} className="lc" style={{ flexDirection: 'column', alignItems: 'stretch', cursor: 'default' }}>
+              <div key={s.secenek_id ? `sec-${s.secenek_id}` : `soru-${s.soru_id}`} className="lc" style={{ flexDirection: 'column', alignItems: 'stretch', cursor: 'default' }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
                   <div style={{ flex: 1 }}>
-                    <div className="lt">{s.soru_metni}</div>
-                    <div className="ld">{s.katman_kod} · Gerçek değişken: <b>{s.gercek_degisken_kod}</b></div>
+                    <div className="lt">
+                      {s.test_edilen_metin}
+                      {s.kaynak_tipi === 'sjt' && <span className="bdg bdg-prog" style={{ marginLeft: 8, fontSize: 10 }}>SJT seçeneği</span>}
+                    </div>
+                    {s.kaynak_tipi === 'sjt' && (
+                      <div className="ld" style={{ fontStyle: 'italic' }}>Senaryo: {s.soru_metni}</div>
+                    )}
+                    <div className="ld">{s.katman_kod} · Beklenen değişken: <b>{s.gercek_degisken_kod}</b></div>
                   </div>
                   <span className={`bdg ${s.kac_model_dogru === 3 ? 'bdg-done' : s.kac_model_dogru === 0 ? 'bdg-lock' : 'bdg-prog'}`}>
                     {s.kac_model_dogru}/3 model doğru
@@ -130,7 +189,7 @@ export default function SoruGecerlilikSayfasi() {
                 </div>
               </div>
             ))}
-            {gosterilecekler.length === 0 && <div className="bos-durum">Bu filtreye uyan soru yok.</div>}
+            {gosterilecekler.length === 0 && <div className="bos-durum">Bu filtreye uyan birim yok.</div>}
           </div>
         </>
       )}
