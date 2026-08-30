@@ -37,6 +37,7 @@ from app.schemas.admin import (
     OgrenciDetayOut, OgrenciIstatistikleriOut, OkulSayisiOut, HedefBolumSayisiOut,
     BolumKademeIstatistigiOut, OkulKirilimOut, SinifKirilimOut, DetayliIstatistiklerOut,
     SoruGecerlilikYuklemeIstek, SoruGecerlilikOzetOut, SoruGecerlilikSonucuOut,
+    GecerlilikTestBirimiOut,
     SjtAgirlikGirisi, SecenekGirisi, DegiskenListeOut,
     TopluSoruYuklemeIstek, TopluSoruSonuc,
 )
@@ -1046,10 +1047,65 @@ def detayli_istatistikleri_getir(
 
 
 # ============================================================================
-# A7 — Soru Geçerlilik Testi (sonradan eklendi)
+# A7 — Soru Geçerlilik Testi (sonradan eklendi, seçenek düzeyine genelleştirildi)
 # ============================================================================
 # Test hesaplaması (embedding) yerel pipeline'da (kullanıcının bilgisayarında)
-# çalışır — bu uç noktalar yalnızca SONUCU yükler/görüntüler.
+# çalışır — bu uç noktalar test edilecek metin birimlerini dışa verir ve
+# sonucu yükler/görüntüler. Likert'te test birimi = soru; SJT'de test
+# birimi = her seçenek (en yüksek ağırlıklı değişkenine göre).
+
+@router.get("/sorular/gecerlilik-girdisi", response_model=list[GecerlilikTestBirimiOut])
+def gecerlilik_test_girdisini_getir(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    birimler: list[GecerlilikTestBirimiOut] = []
+
+    # --- Likert: her aktif soru tek bir test birimi ---
+    likert_satirlari = db.execute(
+        text("""
+            SELECT s.id, s.soru_metni, d.kod AS degisken_kod
+            FROM sorular s
+            JOIN degiskenler d ON d.id = s.degisken_id
+            WHERE s.soru_tipi = 'likert' AND s.aktif_mi = true
+        """)
+    ).mappings().all()
+    for r in likert_satirlari:
+        birimler.append(GecerlilikTestBirimiOut(
+            birim_anahtari=f"soru_{r['id']}", kaynak_soru_id=r["id"], secenek_id=None,
+            kaynak_tipi="likert", metin=r["soru_metni"], baglam=r["soru_metni"],
+            beklenen_degisken_kod=r["degisken_kod"],
+        ))
+
+    # --- SJT: her seçenek, en yüksek |ağırlık|lı değişkenine göre ayrı test birimi ---
+    sjt_secenek_satirlari = db.execute(
+        text("""
+            SELECT sec.id AS secenek_id, sec.secenek_metni, s.id AS soru_id, s.soru_metni
+            FROM soru_secenekleri sec
+            JOIN sorular s ON s.id = sec.soru_id
+            WHERE s.soru_tipi = 'sjt' AND s.aktif_mi = true
+        """)
+    ).mappings().all()
+    for r in sjt_secenek_satirlari:
+        en_iyi = db.execute(
+            text("""
+                SELECT d.kod FROM sjt_secenek_degisken_agirlik a
+                JOIN degiskenler d ON d.id = a.degisken_id
+                WHERE a.secenek_id = :sid
+                ORDER BY ABS(a.agirlik) DESC LIMIT 1
+            """),
+            {"sid": r["secenek_id"]},
+        ).first()
+        if en_iyi is None:
+            continue  # bu seçeneğe hiç ağırlık atanmamış — test edilemez
+        birimler.append(GecerlilikTestBirimiOut(
+            birim_anahtari=f"secenek_{r['secenek_id']}", kaynak_soru_id=r["soru_id"], secenek_id=r["secenek_id"],
+            kaynak_tipi="sjt", metin=r["secenek_metni"], baglam=r["soru_metni"],
+            beklenen_degisken_kod=en_iyi[0],
+        ))
+
+    return birimler
+
 
 @router.post("/soru-gecerlilik/yukle", status_code=204)
 def soru_gecerlilik_sonuclarini_yukle(
@@ -1060,26 +1116,24 @@ def soru_gecerlilik_sonuclarini_yukle(
     if not istek.sonuclar:
         raise HTTPException(status_code=400, detail="Yüklenecek sonuç yok.")
 
-    gecerli_soru_idler = {
-        r[0] for r in db.execute(text("SELECT id FROM sorular")).all()
-    }
+    gecerli_soru_idler = {r[0] for r in db.execute(text("SELECT id FROM sorular")).all()}
 
     eslesmeyen = 0
     for s in istek.sonuclar:
-        if s.soru_id not in gecerli_soru_idler:
+        if s.kaynak_soru_id not in gecerli_soru_idler:
             eslesmeyen += 1
             continue
         db.execute(
             text("""
                 INSERT INTO soru_gecerlilik_sonuclari
-                    (soru_id, gercek_degisken_kod, model_a_tahmin, model_a_dogru, model_a_benzerlik,
+                    (soru_id, secenek_id, gercek_degisken_kod, model_a_tahmin, model_a_dogru, model_a_benzerlik,
                      model_b_tahmin, model_b_dogru, model_b_benzerlik,
                      model_c_tahmin, model_c_dogru, model_c_benzerlik)
                 VALUES
-                    (:soru_id, :gercek, :a_t, :a_d, :a_b, :b_t, :b_d, :b_b, :c_t, :c_d, :c_b)
+                    (:soru_id, :secenek_id, :gercek, :a_t, :a_d, :a_b, :b_t, :b_d, :b_b, :c_t, :c_d, :c_b)
             """),
             {
-                "soru_id": s.soru_id, "gercek": s.gercek_degisken_kod,
+                "soru_id": s.kaynak_soru_id, "secenek_id": s.secenek_id, "gercek": s.gercek_degisken_kod,
                 "a_t": s.model_a_tahmin, "a_d": s.model_a_dogru, "a_b": s.model_a_benzerlik,
                 "b_t": s.model_b_tahmin, "b_d": s.model_b_dogru, "b_b": s.model_b_benzerlik,
                 "c_t": s.model_c_tahmin, "c_d": s.model_c_dogru, "c_b": s.model_c_benzerlik,
@@ -1098,15 +1152,17 @@ def soru_gecerlilik_sonuclarini_getir(
 ):
     satirlar = db.execute(
         text("""
-            SELECT DISTINCT ON (g.soru_id)
-                g.soru_id, s.soru_metni, k.kod AS katman_kod, g.gercek_degisken_kod,
+            SELECT DISTINCT ON (g.soru_id, g.secenek_id)
+                g.soru_id, g.secenek_id, s.soru_metni, sec.secenek_metni, s.soru_tipi,
+                k.kod AS katman_kod, g.gercek_degisken_kod,
                 g.model_a_tahmin, g.model_a_dogru, g.model_b_tahmin, g.model_b_dogru,
                 g.model_c_tahmin, g.model_c_dogru, g.model_a_benzerlik, g.model_b_benzerlik,
                 g.model_c_benzerlik, g.test_zamani
             FROM soru_gecerlilik_sonuclari g
             JOIN sorular s ON s.id = g.soru_id
             JOIN katmanlar k ON k.id = s.katman_id
-            ORDER BY g.soru_id, g.test_zamani DESC
+            LEFT JOIN soru_secenekleri sec ON sec.id = g.secenek_id
+            ORDER BY g.soru_id, g.secenek_id, g.test_zamani DESC
         """)
     ).mappings().all()
 
@@ -1124,7 +1180,9 @@ def soru_gecerlilik_sonuclarini_getir(
             (float(r["model_a_benzerlik"]) + float(r["model_b_benzerlik"]) + float(r["model_c_benzerlik"])) / 3, 4
         )
         sonuclar.append(SoruGecerlilikSonucuOut(
-            soru_id=r["soru_id"], soru_metni=r["soru_metni"], katman_kod=r["katman_kod"],
+            soru_id=r["soru_id"], secenek_id=r["secenek_id"], soru_metni=r["soru_metni"],
+            test_edilen_metin=r["secenek_metni"] if r["secenek_id"] else r["soru_metni"],
+            katman_kod=r["katman_kod"], kaynak_tipi=r["soru_tipi"],
             gercek_degisken_kod=r["gercek_degisken_kod"],
             model_a_tahmin=r["model_a_tahmin"], model_a_dogru=r["model_a_dogru"],
             model_b_tahmin=r["model_b_tahmin"], model_b_dogru=r["model_b_dogru"],
@@ -1136,7 +1194,7 @@ def soru_gecerlilik_sonuclarini_getir(
     sonuclar.sort(key=lambda s: (s.kac_model_dogru, s.ortalama_benzerlik))  # en sorunlu en üstte
 
     return SoruGecerlilikOzetOut(
-        toplam_soru=len(sonuclar), tam_dogru=tam_dogru, kismi_dogru=kismi_dogru,
+        toplam_birim=len(sonuclar), tam_dogru=tam_dogru, kismi_dogru=kismi_dogru,
         hic_dogru_degil=hic_dogru_degil, sonuclar=sonuclar,
     )
 
