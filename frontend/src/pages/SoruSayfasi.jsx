@@ -54,6 +54,32 @@ function GuvenlikUyariKatmani({ tamEkranaGeriDon }) {
   )
 }
 
+// Sınav ekranının üstündeki sabit logo/marka satırı
+function SinavBasligi() {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '22px 0 4px' }}>
+      <span style={{ fontSize: 20 }}>🌱</span>
+      <span style={{ fontFamily: 'var(--fd)', fontSize: 16, fontWeight: 700, color: 'var(--tx)' }}>
+        Bölüm Uyum Sistemi
+      </span>
+    </div>
+  )
+}
+
+// Sağ üstte, öğrencinin kendini görebildiği canlı kamera önizlemesi
+function KameraOnizleme({ videoRef }) {
+  return (
+    <div style={{
+      position: 'fixed', top: 16, right: 16, zIndex: 500,
+      width: 120, height: 90, borderRadius: 12, overflow: 'hidden',
+      border: '2px solid var(--bor2)', boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+      background: 'var(--sur2)',
+    }}>
+      <video ref={videoRef} muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} />
+    </div>
+  )
+}
+
 export default function SoruSayfasi() {
   const { kod } = useParams()
   const navigate = useNavigate()
@@ -151,9 +177,9 @@ export default function SoruSayfasi() {
     let akis = null
 
     if (!navigator.mediaDevices?.getUserMedia) {
-      // Tarayıcı hiç desteklemiyor — test bloklanmaz, yalnızca loglanır
-      if (turIdRef.current) api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_desteklenmiyor', kod).catch(() => {})
-      else setTimeout(() => api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_desteklenmiyor', kod).catch(() => {}), 500)
+      const gonder = () => api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_desteklenmiyor', kod).catch(() => {})
+      if (turIdRef.current) gonder()
+      else setTimeout(gonder, 500)
       return
     }
 
@@ -167,7 +193,6 @@ export default function SoruSayfasi() {
         }
       })
       .catch(() => {
-        // İzin reddedildi ya da cihaz hatası — test bloklanmaz, yalnızca loglanır
         kameraAktifRef.current = false
         const gonder = () => api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_izni_reddedildi', kod).catch(() => {})
         if (turIdRef.current) gonder()
@@ -193,10 +218,9 @@ export default function SoruSayfasi() {
     api.guvenlikFotografiKaydet(turIdRef.current, base64, kod).catch(() => {})
   }, [kod])
 
-  // Katman başında bir kare + her FOTOGRAF_ARALIGI_SORU soruda bir kare
   useEffect(() => {
     if (!sorular || tamamlandi || !turId) return
-    const zamanlayici = setTimeout(fotografCek, 1500)  // kameranın açılmasına küçük bir pay
+    const zamanlayici = setTimeout(fotografCek, 1500)
     return () => clearTimeout(zamanlayici)
   }, [turId, sorular, tamamlandi, fotografCek])
 
@@ -204,58 +228,24 @@ export default function SoruSayfasi() {
     if (aktifIndex > 0 && aktifIndex % FOTOGRAF_ARALIGI_SORU === 0) fotografCek()
   }, [aktifIndex, fotografCek])
 
-  if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!sorular) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
-
-  if (tamamlandi) {
-    const siraliSonuclar = [...tamamlandi.sonuclar].sort((a, b) => b.puan - a.puan)
-
-    return (
-      <div className="pg">
-        <div className="qwrap" style={{ maxWidth: 640 }}>
-          <div className="ph">
-            <div className="pt">{kod} tamamlandı 🎉</div>
-            <div className="ps">Bu katmandaki değişken puanların ve ne anlama geldikleri:</div>
-          </div>
-
-          {siraliSonuclar.length === 0 ? (
-            <div className="veri-yok-grafik">
-              <div className="vg-ikon">📊</div>
-              <div className="vg-metin">Bu katman için henüz sonuç hesaplanmadı.</div>
-            </div>
-          ) : (
-            <div className="card">
-              {siraliSonuclar.map((s) => <DegiskenKarti key={s.degisken_id} s={s} />)}
-            </div>
-          )}
-
-          <button className="btn full" onClick={() => navigate(tamamlandi.tum_katmanlar_tamamlandi_mi ? '/sonuc/genel' : '/katmanlar')}>
-            {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sonuçlarımı Gör →' : 'Katmanlara Dön'}
-          </button>
-        </div>
-      </div>
-    )
+  // ------------------------------------------------------------------
+  // Kullanıcı aksiyonları
+  // ------------------------------------------------------------------
+  function sinavdanCik() {
+    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
+    navigate('/katmanlar')
   }
 
-  const aktifSoru = sorular[aktifIndex]
-  const secilenSecenek = cevaplar[aktifSoru.id]
-  const ilerlemeYuzde = Math.round((aktifIndex / sorular.length) * 100)
-
-  async function secenekSec(secenekId) {
-    setCevaplar((onceki) => ({ ...onceki, [aktifSoru.id]: secenekId }))
+  async function secenekSec(secenekId, soruId) {
+    setCevaplar((onceki) => ({ ...onceki, [soruId]: secenekId }))
     setGonderiliyor(true)
     try {
-      await api.soruyuCevapla(kod, aktifSoru.id, secenekId)
+      await api.soruyuCevapla(kod, soruId, secenekId)
     } catch (e) {
       setHata(e.detail || 'Cevap kaydedilemedi.')
     } finally {
       setGonderiliyor(false)
     }
-  }
-
-  function sinavdanCik() {
-    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
-    navigate('/katmanlar')
   }
 
   async function ileriGit() {
@@ -275,46 +265,95 @@ export default function SoruSayfasi() {
     }
   }
 
+  // ------------------------------------------------------------------
+  // Render — her durumda aynı ortalanmış/logolu dış çerçeve
+  // ------------------------------------------------------------------
   return (
-    <div className="pg">
+    <div style={{
+      minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', background: 'var(--bg)',
+    }}>
       {tamEkranDisinda && <GuvenlikUyariKatmani tamEkranaGeriDon={tamEkranaGec} />}
-
-      {/* Kamera önizlemesi — sağ üstte görünür, öğrenci kendini görebilsin */}
-      <div style={{
-        position: 'fixed', top: 16, right: 16, zIndex: 500,
-        width: 120, height: 90, borderRadius: 12, overflow: 'hidden',
-        border: '2px solid var(--bor2)', boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-        background: 'var(--sur2)',
-      }}>
-        <video ref={videoRef} muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} />
-      </div>
+      <KameraOnizleme videoRef={videoRef} />
       <canvas ref={canvasRef} style={{ display: 'none' }} />
+      <SinavBasligi />
 
-      <div className="qwrap">
-        <div className="qmeta">
-          <span>Soru {aktifIndex + 1} / {sorular.length}</span>
-          <span>{kod}</span>
-        </div>
-        <div className="qtrack"><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
-        <div className="qtext">{aktifSoru.soru_metni}</div>
-        <div className="qopts">
-          {aktifSoru.secenekler.map((sec) => (
-            <button
-              key={sec.id}
-              className={`qopt${secilenSecenek === sec.id ? ' sel' : ''}`}
-              onClick={() => secenekSec(sec.id)}
-              disabled={gonderiliyor}
-            >
-              {sec.secenek_metni}
+      <div className="pg" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+        {hata ? (
+          <div className="bos-durum">{hata}</div>
+        ) : !sorular ? (
+          <div className="bos-durum">Yükleniyor…</div>
+        ) : tamamlandi ? (
+          <div className="qwrap" style={{ maxWidth: 640 }}>
+            <div className="ph">
+              <div className="pt">{kod} tamamlandı 🎉</div>
+              <div className="ps">Bu katmandaki değişken puanların ve ne anlama geldikleri:</div>
+            </div>
+
+            {tamamlandi.sonuclar.length === 0 ? (
+              <div className="veri-yok-grafik">
+                <div className="vg-ikon">📊</div>
+                <div className="vg-metin">Bu katman için henüz sonuç hesaplanmadı.</div>
+              </div>
+            ) : (
+              <div className="card">
+                {[...tamamlandi.sonuclar].sort((a, b) => b.puan - a.puan).map((s) => (
+                  <DegiskenKarti key={s.degisken_id} s={s} />
+                ))}
+              </div>
+            )}
+
+            <button className="btn full" onClick={() => navigate(tamamlandi.tum_katmanlar_tamamlandi_mi ? '/sonuc/genel' : '/katmanlar')}>
+              {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sonuçlarımı Gör →' : 'Katmanlara Dön'}
             </button>
-          ))}
-        </div>
-        <div className="qnav">
-          <button className="btn sec" onClick={sinavdanCik}>← Katmanlara dön</button>
-          <button className="btn" onClick={ileriGit} disabled={!secilenSecenek || gonderiliyor}>
-            {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla'}
+          </div>
+        ) : (
+          <SoruIcerigi
+            sorular={sorular}
+            aktifIndex={aktifIndex}
+            cevaplar={cevaplar}
+            gonderiliyor={gonderiliyor}
+            kod={kod}
+            onSecenekSec={secenekSec}
+            onIleriGit={ileriGit}
+            onCik={sinavdanCik}
+          />
+        )}
+      </div>
+    </div>
+  )
+}
+
+function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecenekSec, onIleriGit, onCik }) {
+  const aktifSoru = sorular[aktifIndex]
+  const secilenSecenek = cevaplar[aktifSoru.id]
+  const ilerlemeYuzde = Math.round((aktifIndex / sorular.length) * 100)
+
+  return (
+    <div className="qwrap">
+      <div className="qmeta">
+        <span>Soru {aktifIndex + 1} / {sorular.length}</span>
+        <span>{kod}</span>
+      </div>
+      <div className="qtrack"><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
+      <div className="qtext">{aktifSoru.soru_metni}</div>
+      <div className="qopts">
+        {aktifSoru.secenekler.map((sec) => (
+          <button
+            key={sec.id}
+            className={`qopt${secilenSecenek === sec.id ? ' sel' : ''}`}
+            onClick={() => onSecenekSec(sec.id, aktifSoru.id)}
+            disabled={gonderiliyor}
+          >
+            {sec.secenek_metni}
           </button>
-        </div>
+        ))}
+      </div>
+      <div className="qnav">
+        <button className="btn sec" onClick={onCik}>← Katmanlara dön</button>
+        <button className="btn" onClick={onIleriGit} disabled={!secilenSecenek || gonderiliyor}>
+          {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla'}
+        </button>
       </div>
     </div>
   )
