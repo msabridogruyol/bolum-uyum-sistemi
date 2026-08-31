@@ -44,6 +44,19 @@ function AnaUygulama() {
     <Routes>
       {/* --- Öğrenci --- */}
       <Route path="/giris" element={<GirisSayfasi />} />
+
+      {/* [DÜZELTME] Sınav ekranı bilinçli olarak AnaSayfaDuzeni'nin (kenar
+          menüsü) DIŞINDA — sınav sırasında dikkat dağıtıcı hiçbir menü
+          görünmesin, yalnızca soru + kamera önizlemesi görünsün. */}
+      <Route
+        path="/katmanlar/:kod"
+        element={
+          <OzelRota>
+            <SoruSayfasi />
+          </OzelRota>
+        }
+      />
+
       <Route
         element={
           <OzelRota>
@@ -53,7 +66,6 @@ function AnaUygulama() {
       >
         <Route path="/" element={<AnaSayfa />} />
         <Route path="/katmanlar" element={<KatmanlarSayfasi />} />
-        <Route path="/katmanlar/:kod" element={<SoruSayfasi />} />
         <Route path="/k5" element={<Navigate to="/katmanlar" replace />} />
         <Route path="/k5/:kod" element={<K5DalSoruSayfasi />} />
         <Route path="/sonuc" element={<SonucSayfasi />} />
