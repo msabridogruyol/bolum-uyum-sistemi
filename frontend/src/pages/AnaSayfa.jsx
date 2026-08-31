@@ -72,6 +72,11 @@ export default function AnaSayfa() {
   const hedefBolumAdi = hedef?.bolum_adi || null
   const hedefUniversite = profil?.hedef_universite || null
 
+  // Yeniden değerlendirme zamanı geldi mi? (sonraki_tur_tarihi geçmişse)
+  const yenidenDegerlendirmeHazir = Boolean(
+    ozet.sonraki_tur_tarihi && new Date(ozet.sonraki_tur_tarihi) <= new Date()
+  )
+
   return (
     <div className="pg pg-genis">
       <div className="ph anasayfa-duzen" style={{ alignItems: 'flex-start' }}>
@@ -110,6 +115,28 @@ export default function AnaSayfa() {
           </div>
         )}
       </div>
+
+      {yenidenDegerlendirmeHazir && (
+        <div
+          onClick={() => navigate('/katmanlar')}
+          style={{
+            display: 'flex', alignItems: 'center', gap: 12, cursor: 'pointer',
+            background: 'var(--grl)', border: '1.5px solid var(--gr)', borderRadius: 16,
+            padding: '14px 20px', marginBottom: 20,
+          }}
+        >
+          <span style={{ fontSize: 22 }}>🔔</span>
+          <div style={{ flex: 1 }}>
+            <div style={{ fontSize: 14, fontWeight: 700, color: 'var(--gr)' }}>
+              Yeniden değerlendirme zamanın geldi!
+            </div>
+            <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 2 }}>
+              90 günlük bekleme süresi doldu — profilini tazelemek için tekrar değerlendirilebilirsin.
+            </div>
+          </div>
+          <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--gr)' }}>Başla →</span>
+        </div>
+      )}
 
       <div className="anasayfa-duzen">
         {/* ============ SOL SÜTUN — ana içerik ============ */}
