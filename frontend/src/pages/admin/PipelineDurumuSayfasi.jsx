@@ -135,6 +135,16 @@ export default function PipelineDurumuSayfasi() {
 
   const [taslaklar, setTaslaklar] = useState(null)
   const [yukleniyor, setYukleniyor] = useState(false)
+
+  // [DÜZELTME] SheetJS kütüphanesi bu sayfaya doğrudan gelindiğinde yüklü
+  // olmuyordu — .xlsx okuma/yazma "kütüphane yüklenemedi" hatası veriyordu.
+  useEffect(() => {
+    if (window.XLSX) return
+    const script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    script.async = true
+    document.body.appendChild(script)
+  }, [])
   const [sonYukleme, setSonYukleme] = useState(null)
   const [hata, setHata] = useState(null)
   const [islemGrubu, setIslemGrubu] = useState(null)
