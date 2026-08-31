@@ -32,6 +32,7 @@ export default function AdminSayfaDuzeni() {
         <div className="ns">Sistem</div>
         <NavLink to="/admin/parametreler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>Parametreler</NavLink>
         <NavLink to="/admin/ogrenciler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>Öğrenciler</NavLink>
+        <NavLink to="/admin/soru-gecerlilik" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>Soru Geçerlilik Testi</NavLink>
         <NavLink to="/admin/audit-log" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>Audit Log</NavLink>
         <NavLink to="/admin/yoneticiler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>Yöneticiler</NavLink>
         <NavLink to="/admin/sistem-hakkinda" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>Sistem Hakkında</NavLink>
