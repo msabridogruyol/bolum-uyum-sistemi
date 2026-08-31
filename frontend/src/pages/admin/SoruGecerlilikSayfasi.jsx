@@ -1,12 +1,32 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 
-// [DÜZELTME] Artık .csv değil .xlsx — Türkçe karakter bozulma riskini önler.
+// [DÜZELTME] Önceki sürüm script etiketini ekleyip HİÇ BEKLEMİYORDU — kullanıcı
+// script tam inmeden butona basarsa "kütüphane yüklenemedi" hatası çıkıyordu
+// (yarış durumu). Bu sürüm gerçek bir Promise ile yüklenmenin bitmesini bekliyor
+// ve CDN başarısız olursa (ağ engeli vb.) bunu AÇIKÇA hata olarak bildiriyor.
+let xlsxYuklemeSozu = null
+function xlsxYukle() {
+  if (typeof window !== 'undefined' && window.XLSX) return Promise.resolve()
+  if (xlsxYuklemeSozu) return xlsxYuklemeSozu
+  xlsxYuklemeSozu = new Promise((resolve, reject) => {
+    const script = document.createElement('script')
+    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
+    script.async = true
+    script.onload = () => resolve()
+    script.onerror = () => {
+      xlsxYuklemeSozu = null  // tekrar denenebilsin diye sıfırla
+      reject(new Error('Excel kütüphanesi (cdnjs.cloudflare.com) yüklenemedi — ağ/güvenlik duvarı engelliyor olabilir.'))
+    }
+    document.body.appendChild(script)
+  })
+  return xlsxYuklemeSozu
+}
+
 function xlsxDisaAktar(dosyaAdi, basliklar, satirlar) {
   const XLSX = window.XLSX
   if (!XLSX) {
-    alert('Okuma/yazma kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.')
-    return
+    throw new Error('Excel kütüphanesi henüz hazır değil — birkaç saniye bekleyip tekrar deneyin.')
   }
   const ws = XLSX.utils.aoa_to_sheet([basliklar, ...satirlar])
   const wb = XLSX.utils.book_new()
@@ -17,7 +37,7 @@ function xlsxDisaAktar(dosyaAdi, basliklar, satirlar) {
 function dosyayiAyristir(dosya) {
   return new Promise((resolve, reject) => {
     if (typeof window === 'undefined' || !window.XLSX) {
-      reject(new Error('Okuma kütüphanesi yüklenemedi. Sayfayı yenileyip tekrar deneyin.'))
+      reject(new Error('Excel kütüphanesi henüz hazır değil — birkaç saniye bekleyip tekrar deneyin.'))
       return
     }
     const okuyucu = new FileReader()
@@ -71,6 +91,11 @@ export default function SoruGecerlilikSayfasi() {
   const [filtre, setFiltre] = useState('hepsi') // hepsi | sorunlu
   const [tipFiltre, setTipFiltre] = useState('hepsi') // hepsi | likert | sjt
 
+  // [DÜZELTME] Artık burada arka planda "fire and forget" yüklemiyoruz —
+  // her işlem (indirme/yükleme) kendi başında xlsxYukle()'yi bekliyor.
+  // Yine de sayfa açılır açılmaz indirmeyi başlatmak için erken tetikleriz.
+  useEffect(() => { xlsxYukle().catch(() => {}) }, [])
+
   function yukle() {
     api.soruGecerlilikGetir().then(setOzet).catch(() => setOzet(null))
   }
@@ -81,6 +106,7 @@ export default function SoruGecerlilikSayfasi() {
     setDisaAktariliyor(true)
     setHata(null)
     try {
+      await xlsxYukle()
       const birimler = await api.gecerlilikTestGirdisiGetir()
       if (birimler.length === 0) {
         throw new Error('Test edilecek aktif soru/seçenek bulunamadı.')
@@ -103,6 +129,7 @@ export default function SoruGecerlilikSayfasi() {
     setHata(null)
     setYukleniyor(true)
     try {
+      await xlsxYukle()
       const hamSatirlar = await dosyayiAyristir(dosya)
       const satirlar = satirlariDondur(hamSatirlar)
       if (satirlar.length === 0) {
