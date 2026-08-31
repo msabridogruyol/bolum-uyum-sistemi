@@ -147,9 +147,9 @@ export default function SoruGecerlilikSayfasi() {
       <div className="card">
         <div className="ct">2. Adım — Sonucu Yükle</div>
         <div className="ps" style={{ margin: '0 0 12px' }}>
-          İndirdiğiniz dosyayı <code>C:\pipeline\veri\gecerlilik_girdisi.csv</code> olarak kaydedip
+          İndirdiğiniz dosyayı <code>C:\pipeline\veri\gecerlilik_girdisi.xlsx</code> olarak kaydedip
           <code> python soru_gecerlilik_testi.py</code> çalıştırın. Çıkan
-          <code> soru_gecerlilik_sonuclari.csv</code>'yi buradan yükleyin.
+          <code> soru_gecerlilik_sonuclari.xlsx</code>'i buradan yükleyin.
         </div>
         <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
           {yukleniyor ? <span className="spin" /> : '⬆ Sonuç CSV Yükle'}
