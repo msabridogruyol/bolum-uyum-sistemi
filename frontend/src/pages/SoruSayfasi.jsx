@@ -253,6 +253,11 @@ export default function SoruSayfasi() {
     }
   }
 
+  function sinavdanCik() {
+    if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
+    navigate('/katmanlar')
+  }
+
   async function ileriGit() {
     if (aktifIndex < sorular.length - 1) {
       setAktifIndex((i) => i + 1)
@@ -274,8 +279,15 @@ export default function SoruSayfasi() {
     <div className="pg">
       {tamEkranDisinda && <GuvenlikUyariKatmani tamEkranaGeriDon={tamEkranaGec} />}
 
-      {/* Kamera önizlemesi görünmez tutulur — yalnızca kare yakalamak için */}
-      <video ref={videoRef} muted playsInline style={{ position: 'fixed', width: 1, height: 1, opacity: 0, pointerEvents: 'none' }} />
+      {/* Kamera önizlemesi — sağ üstte görünür, öğrenci kendini görebilsin */}
+      <div style={{
+        position: 'fixed', top: 16, right: 16, zIndex: 500,
+        width: 120, height: 90, borderRadius: 12, overflow: 'hidden',
+        border: '2px solid var(--bor2)', boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
+        background: 'var(--sur2)',
+      }}>
+        <video ref={videoRef} muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} />
+      </div>
       <canvas ref={canvasRef} style={{ display: 'none' }} />
 
       <div className="qwrap">
@@ -298,7 +310,7 @@ export default function SoruSayfasi() {
           ))}
         </div>
         <div className="qnav">
-          <button className="btn sec" onClick={() => navigate('/katmanlar')}>← Katmanlara dön</button>
+          <button className="btn sec" onClick={sinavdanCik}>← Katmanlara dön</button>
           <button className="btn" onClick={ileriGit} disabled={!secilenSecenek || gonderiliyor}>
             {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla'}
           </button>
