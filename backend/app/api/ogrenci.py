@@ -8,7 +8,7 @@ POST /ogrenci/katmanlar/{kod}/tamamla       — katmanı bitir, değişken puanl
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
-from sqlalchemy import text
+from sqlalchemy import text, func
 
 from app.api.deps import get_mevcut_ogrenci
 from app.core.database import get_db
@@ -101,6 +101,15 @@ def katmanlari_listele(
     """
     katmanlar = db.query(Katman).order_by(Katman.sira).all()
 
+    # [EKLENDİ] Her katmanın gerçek aktif soru sayısı — frontend'de artık
+    # sabit/tahmini "boyut" bilgisi yerine bunu kullanıyor.
+    soru_sayilari = dict(
+        db.query(Soru.katman_id, func.count(Soru.id))
+        .filter(Soru.aktif_mi.is_(True))
+        .group_by(Soru.katman_id)
+        .all()
+    )
+
     try:
         tur = son_tur_getir(db, ogrenci)
     except IsKuraliHatasi:
@@ -108,7 +117,8 @@ def katmanlari_listele(
         return [
             KatmanOut(id=k.id, kod=k.kod, ad=k.ad, sira=k.sira,
                       normalizasyon_agirligi=float(k.normalizasyon_agirligi) if k.normalizasyon_agirligi else None,
-                      kosullu_mu=k.kosullu_mu, durum="baslamadi")
+                      kosullu_mu=k.kosullu_mu, durum="baslamadi",
+                      soru_sayisi=soru_sayilari.get(k.id, 0))
             for k in katmanlar
         ]
 
@@ -125,6 +135,7 @@ def katmanlari_listele(
             normalizasyon_agirligi=float(k.normalizasyon_agirligi) if k.normalizasyon_agirligi else None,
             kosullu_mu=k.kosullu_mu,
             durum=oturumlar.get(k.id, "baslamadi"),
+            soru_sayisi=soru_sayilari.get(k.id, 0),
         )
         for k in katmanlar
     ]
