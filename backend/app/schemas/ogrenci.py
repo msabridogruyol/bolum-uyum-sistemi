@@ -20,9 +20,9 @@ class KatmanOut(BaseModel):
     normalizasyon_agirligi: float | None
     kosullu_mu: bool
     durum: str  # 'baslamadi' | 'devam_ediyor' | 'tamamlandi' — öğrencinin bu katmandaki ilerlemesi
-    soru_sayisi: int = 0
+    
     model_config = {"from_attributes": True}
-
+    soru_sayisi: int = 0
 
 class SecenekOut(BaseModel):
     id: int
