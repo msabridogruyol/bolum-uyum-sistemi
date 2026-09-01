@@ -6,12 +6,14 @@ const DURUM_ETIKET = { baslamadi: null, devam_ediyor: 'Devam Ediyor', tamamlandi
 const DURUM_RENK = { devam_ediyor: 'bdg-prog', tamamlandi: 'bdg-done' }
 const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸', K5: '🌻' }
 
-const KATMAN_BOYUT_SAYISI = { K1: 7, K2: 8, K3: 7, K4: 9 }
-const SANIYE_BASINA_SORU_TAHMINI = 25
-function tahminiSureDk(kod) {
-  const boyut = KATMAN_BOYUT_SAYISI[kod]
-  if (!boyut) return null
-  return Math.max(1, Math.round((boyut * SANIYE_BASINA_SORU_TAHMINI) / 60))
+// [DÜZELTME] Önceden "boyut sayısı" (K1:7, K2:8 vb.) öğrenciye gösteriliyordu
+// — bu teknik bir detay, öğrencinin bilmesine gerek yok, kaldırıldı.
+// Süre artık backend'den gelen GERÇEK aktif soru sayısına göre hesaplanıyor
+// (sabit/tahmini bir tablo değil).
+const SANIYE_BASINA_SORU_TAHMINI = 20 // Likert+SJT karışık ortalama kaba tahmin
+function tahminiSureDk(soruSayisi) {
+  if (!soruSayisi) return null
+  return Math.max(1, Math.round((soruSayisi * SANIYE_BASINA_SORU_TAHMINI) / 60))
 }
 
 const KATMAN_ACIKLAMA = {
@@ -49,7 +51,6 @@ export default function KatmanlarSayfasi() {
   const profilYuzde = Math.round((tamamlanan / katmanlar.length) * 100)
   const k5AcikMi = k5Durum && (k5Durum.acilan?.length > 0 || k5Durum.ilgi_gosterilen?.length > 0)
 
-  // Gerçek K1 sonucundan en yüksek değeri (motivasyon kaynağı) bul
   const enGucluDeger = k1Sonuc?.tamamlandi_mi && k1Sonuc.sonuclar.length
     ? [...k1Sonuc.sonuclar].sort((a, b) => b.puan - a.puan)[0]
     : null
@@ -66,7 +67,6 @@ export default function KatmanlarSayfasi() {
       </div>
 
       <div className="yol-duzen">
-        {/* ============ SOL SÜTUN ============ */}
         <div>
           <div className="sg">
             <div className="sc"><div className="sl">Toplam Katman</div><div className="sv">{katmanlar.length}</div></div>
@@ -92,9 +92,9 @@ export default function KatmanlarSayfasi() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
                     {DURUM_ETIKET[k.durum] && <span className={`bdg ${DURUM_RENK[k.durum]}`}>{DURUM_ETIKET[k.durum]}</span>}
-                    {KATMAN_BOYUT_SAYISI[k.kod] && (
+                    {k.soru_sayisi > 0 && (
                       <span style={{ fontSize: 10.5, color: 'var(--tx3)' }}>
-                        {KATMAN_BOYUT_SAYISI[k.kod]} boyut · ~{tahminiSureDk(k.kod)} dk
+                        {k.soru_sayisi} soru · ~{tahminiSureDk(k.soru_sayisi)} dk
                       </span>
                     )}
                   </div>
@@ -137,9 +137,7 @@ export default function KatmanlarSayfasi() {
           )}
         </div>
 
-        {/* ============ SAĞ SÜTUN — motivasyon kartları ============ */}
         <div className="yan-panel">
-          {/* --- Hedefin --- */}
           <div className="card" style={{ marginBottom: 0, background: hedefVarMi ? 'linear-gradient(135deg,var(--pul),var(--sur))' : undefined, borderColor: hedefVarMi ? 'var(--pu)' : undefined }}>
             <div className="ct">🎯 Hedefin</div>
             {hedefVarMi ? (
@@ -176,7 +174,6 @@ export default function KatmanlarSayfasi() {
             )}
           </div>
 
-          {/* --- Motivasyon --- */}
           <div className="card" style={{ marginBottom: 0 }}>
             <div className="ct">💛 Seni Motive Eden</div>
             {enGucluDeger ? (
