@@ -63,7 +63,7 @@ function GuvenlikUyariKatmani({ tamEkranaGeriDon, onErkenBitir }) {
 // Sınav ekranının üstündeki sabit logo/marka satırı
 function SinavBasligi() {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '22px 0 4px' }}>
+    <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 0 2px' }}>
       <span style={{ fontSize: 20 }}>🌱</span>
       <span style={{ fontFamily: 'var(--fd)', fontSize: 16, fontWeight: 700, color: 'var(--tx)' }}>
         Bölüm Uyum Sistemi
@@ -442,35 +442,27 @@ function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, o
   const mesaj = FILIZLENME_MESAJLARI[aktifIndex % FILIZLENME_MESAJLARI.length]
 
   return (
-    <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
+    <div style={{ display: 'flex', gap: 18, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
       <SoruIcerigi
         sorular={sorular} aktifIndex={aktifIndex} cevaplar={cevaplar} gonderiliyor={gonderiliyor}
         kod={kod} onSecenekSec={onSecenekSec} onIleriGit={onIleriGit} onCik={onCik}
       />
 
-      {/* Sağ panel — katman bilgisi + ilerleme, boş kalan alanı dolduruyor */}
-      <div style={{ width: 260, paddingTop: 0, flexShrink: 0 }}>
-        <div className="card" style={{ textAlign: 'center', marginBottom: 14 }}>
-          <div style={{ fontSize: 30, marginBottom: 6 }}>{katman.ikon}</div>
-          <div style={{ fontFamily: 'var(--fd)', fontSize: 14.5, fontWeight: 700, marginBottom: 4 }}>{katman.ad}</div>
-          <div style={{ fontSize: 11.5, color: 'var(--tx3)', fontWeight: 600 }}>{kod} katmanı</div>
-        </div>
-
-        <div className="card" style={{ marginBottom: 14 }}>
-          <div className="ct" style={{ marginBottom: 10 }}>İlerleme</div>
-          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 8 }}>
-            <span style={{ fontFamily: 'var(--fd)', fontSize: 26, fontWeight: 700, color: 'var(--pu)' }}>{aktifIndex + 1}</span>
-            <span style={{ fontSize: 13, color: 'var(--tx3)', fontWeight: 600 }}>/ {sorular.length} soru</span>
-          </div>
-          <div style={{ fontSize: 12, color: 'var(--tx2)', fontWeight: 600 }}>
-            {kalanSoru > 0 ? `${kalanSoru} soru kaldı` : 'Son soru 🎉'}
+      {/* Sağ panel — katman bilgisi + ilerleme, tek kompakt kart halinde */}
+      <div style={{ width: 220, flexShrink: 0 }}>
+        <div className="card" style={{ textAlign: 'center', padding: '16px 14px', marginBottom: 10 }}>
+          <div style={{ fontSize: 22, marginBottom: 2 }}>{katman.ikon}</div>
+          <div style={{ fontFamily: 'var(--fd)', fontSize: 12.5, fontWeight: 700, lineHeight: 1.3 }}>{katman.ad}</div>
+          <div style={{ fontSize: 10, color: 'var(--tx3)', fontWeight: 600, marginTop: 6, paddingTop: 8, borderTop: '1px solid var(--bor)' }}>
+            <span style={{ fontFamily: 'var(--fd)', fontSize: 20, fontWeight: 700, color: 'var(--pu)' }}>{aktifIndex + 1}</span>
+            {' '}/ {sorular.length} soru · {kalanSoru > 0 ? `${kalanSoru} kaldı` : 'son soru 🎉'}
           </div>
         </div>
 
         <div style={{
-          background: 'var(--grl)', borderRadius: 16, padding: '14px 16px',
-          fontSize: 12.5, color: 'var(--gr)', fontWeight: 600, lineHeight: 1.5,
-          display: 'flex', gap: 8, alignItems: 'flex-start',
+          background: 'var(--grl)', borderRadius: 14, padding: '10px 13px',
+          fontSize: 11.5, color: 'var(--gr)', fontWeight: 600, lineHeight: 1.4,
+          display: 'flex', gap: 6, alignItems: 'flex-start',
         }}>
           <span>🌱</span>
           <span>{mesaj}</span>
@@ -486,21 +478,21 @@ function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecen
   const ilerlemeYuzde = Math.round((aktifIndex / sorular.length) * 100)
 
   return (
-    <div className="qwrap" style={{ maxWidth: 760, width: '100%', paddingTop: 50, minHeight: 620 }}>
+    <div className="qwrap" style={{ maxWidth: 700, width: '100%', paddingTop: 24, minHeight: 560 }}>
       <div className="qmeta" style={{ fontSize: 13 }}>
         <span>Soru {aktifIndex + 1} / {sorular.length}</span>
         <span>{kod}</span>
       </div>
-      <div className="qtrack" style={{ height: 10 }}><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
-      <div className="qtext" style={{ fontSize: 27, minHeight: 130, display: 'flex', alignItems: 'center' }}>{aktifSoru.soru_metni}</div>
-      <div className="qopts" style={{ gap: 13 }}>
+      <div className="qtrack" style={{ height: 8 }}><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
+      <div className="qtext" style={{ fontSize: 23, minHeight: 100, display: 'flex', alignItems: 'center' }}>{aktifSoru.soru_metni}</div>
+      <div className="qopts" style={{ gap: 10 }}>
         {aktifSoru.secenekler.map((sec) => (
           <button
             key={sec.id}
             className={`qopt${secilenSecenek === sec.id ? ' sel' : ''}`}
             onClick={() => onSecenekSec(sec.id, aktifSoru.id)}
             disabled={gonderiliyor}
-            style={{ padding: '17px 20px', fontSize: 15.5 }}
+            style={{ padding: '14px 18px', fontSize: 14.5 }}
           >
             {sec.secenek_metni}
           </button>
