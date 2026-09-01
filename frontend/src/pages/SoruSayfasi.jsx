@@ -228,10 +228,24 @@ export default function SoruSayfasi() {
     if (aktifIndex > 0 && aktifIndex % FOTOGRAF_ARALIGI_SORU === 0) fotografCek()
   }, [aktifIndex, fotografCek])
 
+  useEffect(() => {
+    if (!sorular || tamamlandi) return
+    function kapatmaUyarisi(e) {
+      e.preventDefault()
+      e.returnValue = ''
+    }
+    window.addEventListener('beforeunload', kapatmaUyarisi)
+    return () => window.removeEventListener('beforeunload', kapatmaUyarisi)
+  }, [sorular, tamamlandi])
+
   // ------------------------------------------------------------------
   // Kullanıcı aksiyonları
   // ------------------------------------------------------------------
   function sinavdanCik() {
+    const uyari = tamamlandi
+      ? null
+      : 'Şu anki katmandan çıkarsan bu oturumdaki ilerlemen kaybolur — kaldığın soruya değil, katmanın başına dönmen gerekir. Yine de çıkmak istiyor musun?'
+    if (uyari && !window.confirm(uyari)) return
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
     navigate('/katmanlar')
   }
@@ -308,7 +322,7 @@ export default function SoruSayfasi() {
             </button>
           </div>
         ) : (
-          <SoruIcerigi
+          <SoruIcerigiDuzeni
             sorular={sorular}
             aktifIndex={aktifIndex}
             cevaplar={cevaplar}
@@ -324,34 +338,94 @@ export default function SoruSayfasi() {
   )
 }
 
+const KATMAN_BILGI = {
+  K1: { ikon: '🌱', ad: 'Değerler / Motivasyon' },
+  K2: { ikon: '🌿', ad: 'Kişilik & Çalışma Tarzı' },
+  K3: { ikon: '🍃', ad: 'İş Ortamı & Profesyonel Yetkinlik' },
+  K4: { ikon: '🌸', ad: 'Alan Eğilimi & Bilişsel Stil' },
+  K5: { ikon: '🌻', ad: 'Derinleşme' },
+}
+
+const FILIZLENME_MESAJLARI = [
+  'Her cevap, profilini biraz daha netleştiriyor.',
+  'Doğru ya da yanlış cevap yok — yalnızca sana en uygun olanı seç.',
+  'Az kaldı, kendi yolunu filizlendirmeye devam ediyorsun.',
+  'İçtenlikle cevapladığın her soru, daha isabetli bir sonuç demek.',
+]
+
+function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecenekSec, onIleriGit, onCik }) {
+  const katman = KATMAN_BILGI[kod] || { ikon: '🌱', ad: kod }
+  const kalanSoru = sorular.length - aktifIndex - 1
+  const mesaj = FILIZLENME_MESAJLARI[aktifIndex % FILIZLENME_MESAJLARI.length]
+
+  return (
+    <div style={{ display: 'flex', gap: 28, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
+      <SoruIcerigi
+        sorular={sorular} aktifIndex={aktifIndex} cevaplar={cevaplar} gonderiliyor={gonderiliyor}
+        kod={kod} onSecenekSec={onSecenekSec} onIleriGit={onIleriGit} onCik={onCik}
+      />
+
+      {/* Sağ panel — katman bilgisi + ilerleme, boş kalan alanı dolduruyor */}
+      <div style={{ width: 260, paddingTop: 50, flexShrink: 0 }}>
+        <div className="card" style={{ textAlign: 'center', marginBottom: 14 }}>
+          <div style={{ fontSize: 30, marginBottom: 6 }}>{katman.ikon}</div>
+          <div style={{ fontFamily: 'var(--fd)', fontSize: 14.5, fontWeight: 700, marginBottom: 4 }}>{katman.ad}</div>
+          <div style={{ fontSize: 11.5, color: 'var(--tx3)', fontWeight: 600 }}>{kod} katmanı</div>
+        </div>
+
+        <div className="card" style={{ marginBottom: 14 }}>
+          <div className="ct" style={{ marginBottom: 10 }}>İlerleme</div>
+          <div style={{ display: 'flex', alignItems: 'baseline', gap: 6, marginBottom: 8 }}>
+            <span style={{ fontFamily: 'var(--fd)', fontSize: 26, fontWeight: 700, color: 'var(--pu)' }}>{aktifIndex + 1}</span>
+            <span style={{ fontSize: 13, color: 'var(--tx3)', fontWeight: 600 }}>/ {sorular.length} soru</span>
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--tx2)', fontWeight: 600 }}>
+            {kalanSoru > 0 ? `${kalanSoru} soru kaldı` : 'Son soru 🎉'}
+          </div>
+        </div>
+
+        <div style={{
+          background: 'var(--grl)', borderRadius: 16, padding: '14px 16px',
+          fontSize: 12.5, color: 'var(--gr)', fontWeight: 600, lineHeight: 1.5,
+          display: 'flex', gap: 8, alignItems: 'flex-start',
+        }}>
+          <span>🌱</span>
+          <span>{mesaj}</span>
+        </div>
+      </div>
+    </div>
+  )
+}
+
 function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecenekSec, onIleriGit, onCik }) {
   const aktifSoru = sorular[aktifIndex]
   const secilenSecenek = cevaplar[aktifSoru.id]
   const ilerlemeYuzde = Math.round((aktifIndex / sorular.length) * 100)
 
   return (
-    <div className="qwrap">
-      <div className="qmeta">
+    <div className="qwrap" style={{ maxWidth: 760, width: '100%', paddingTop: 50, minHeight: 620 }}>
+      <div className="qmeta" style={{ fontSize: 13 }}>
         <span>Soru {aktifIndex + 1} / {sorular.length}</span>
         <span>{kod}</span>
       </div>
-      <div className="qtrack"><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
-      <div className="qtext">{aktifSoru.soru_metni}</div>
-      <div className="qopts">
+      <div className="qtrack" style={{ height: 10 }}><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
+      <div className="qtext" style={{ fontSize: 27, minHeight: 130, display: 'flex', alignItems: 'center' }}>{aktifSoru.soru_metni}</div>
+      <div className="qopts" style={{ gap: 13 }}>
         {aktifSoru.secenekler.map((sec) => (
           <button
             key={sec.id}
             className={`qopt${secilenSecenek === sec.id ? ' sel' : ''}`}
             onClick={() => onSecenekSec(sec.id, aktifSoru.id)}
             disabled={gonderiliyor}
+            style={{ padding: '17px 20px', fontSize: 15.5 }}
           >
             {sec.secenek_metni}
           </button>
         ))}
       </div>
       <div className="qnav">
-        <button className="btn sec" onClick={onCik}>← Katmanlara dön</button>
-        <button className="btn" onClick={onIleriGit} disabled={!secilenSecenek || gonderiliyor}>
+        <button className="btn sec" onClick={onCik} style={{ padding: '13px 22px', fontSize: 15 }}>← Katmanlara dön</button>
+        <button className="btn" onClick={onIleriGit} disabled={!secilenSecenek || gonderiliyor} style={{ padding: '13px 26px', fontSize: 15 }}>
           {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla'}
         </button>
       </div>
