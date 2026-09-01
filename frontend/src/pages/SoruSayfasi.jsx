@@ -211,6 +211,10 @@ export default function SoruSayfasi() {
 
   useEffect(() => {
     function tamEkranDegisti() {
+      // [DÜZELTME] Katman tamamlanınca sistem KENDİSİ tam ekrandan çıkıyor
+      // (ileriGit içinde) — bu kasıtlı çıkış, "kullanıcı izinsiz çıktı"
+      // uyarısını YANLIŞLIKLA tetikliyordu. tamamlandi doluysa görmezden gel.
+      if (tamamlandi) return
       const disinda = !document.fullscreenElement
       setTamEkranDisinda(disinda)
       if (turIdRef.current) {
@@ -222,7 +226,7 @@ export default function SoruSayfasi() {
       }
     }
     function gorunurlukDegisti() {
-      if (!turIdRef.current) return
+      if (tamamlandi || !turIdRef.current) return
       api.guvenlikOlayiKaydet(
         turIdRef.current,
         document.hidden ? 'sekme_degisti' : 'sekmeye_geri_donuldu',
@@ -230,11 +234,11 @@ export default function SoruSayfasi() {
       ).catch(() => {})
     }
     function odakKaybedildi() {
-      if (!turIdRef.current) return
+      if (tamamlandi || !turIdRef.current) return
       api.guvenlikOlayiKaydet(turIdRef.current, 'pencere_odagi_kaybedildi', kod).catch(() => {})
     }
     function odakKazanildi() {
-      if (!turIdRef.current) return
+      if (tamamlandi || !turIdRef.current) return
       api.guvenlikOlayiKaydet(turIdRef.current, 'pencere_odagi_geri_kazanildi', kod).catch(() => {})
     }
 
@@ -248,7 +252,7 @@ export default function SoruSayfasi() {
       window.removeEventListener('blur', odakKaybedildi)
       window.removeEventListener('focus', odakKazanildi)
     }
-  }, [kod])
+  }, [kod, tamamlandi])
 
   // ------------------------------------------------------------------
   // Kamera kurulumu — izin verilmezse sessizce atlanır, testi bloklamaz
