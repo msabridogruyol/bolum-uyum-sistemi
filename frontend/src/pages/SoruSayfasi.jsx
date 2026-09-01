@@ -37,7 +37,7 @@ function DegiskenKarti({ s }) {
 // ============================================================
 const FOTOGRAF_ARALIGI_SORU = 4  // her 4 soruda bir fotoğraf çek
 
-function GuvenlikUyariKatmani({ tamEkranaGeriDon }) {
+function GuvenlikUyariKatmani({ tamEkranaGeriDon, onErkenBitir }) {
   return (
     <div style={{
       position: 'fixed', inset: 0, background: 'rgba(20,16,10,0.92)', zIndex: 9999,
@@ -50,6 +50,12 @@ function GuvenlikUyariKatmani({ tamEkranaGeriDon }) {
         Bu değerlendirme tam ekran modunda yapılmalı. Devam etmek için tam ekrana geri dönün.
       </div>
       <button className="btn" onClick={tamEkranaGeriDon}>Tam Ekrana Geri Dön</button>
+      <button
+        onClick={onErkenBitir}
+        style={{ marginTop: 16, background: 'none', border: 'none', color: 'rgba(255,255,255,0.65)', fontSize: 12.5, fontWeight: 600, cursor: 'pointer', textDecoration: 'underline' }}
+      >
+        Sınavı erken bitir
+      </button>
     </div>
   )
 }
@@ -80,6 +86,79 @@ function KameraOnizleme({ videoRef }) {
   )
 }
 
+// ============================================================
+// Katman Tanıtım / Onay Ekranı — her katman başında bir kez gösterilir
+// ============================================================
+const ONAY_METNI = 'ONAYLIYORUM'
+
+function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor }) {
+  const [yaziliOnay, setYaziliOnay] = useState('')
+  const katman = KATMAN_BILGI[kod] || { ikon: '🌱', ad: kod }
+
+  const likertSayisi = sorular.filter((s) => s.soru_tipi === 'likert').length
+  const sjtSayisi = sorular.filter((s) => s.soru_tipi === 'sjt').length
+  const tahminiDakika = Math.max(1, Math.ceil((likertSayisi * 15 + sjtSayisi * 30) / 60))
+  const onayGecerli = yaziliOnay.trim() === ONAY_METNI
+
+  return (
+    <div className="qwrap" style={{ maxWidth: 620, width: '100%', minHeight: 620 }}>
+      <div style={{ textAlign: 'center', marginBottom: 28 }}>
+        <div style={{ fontSize: 42, marginBottom: 10 }}>{katman.ikon}</div>
+        <div style={{ fontFamily: 'var(--fd)', fontSize: 22, fontWeight: 700 }}>{katman.ad}</div>
+        <div style={{ fontSize: 12.5, color: 'var(--tx3)', fontWeight: 600, marginTop: 3 }}>{kod} katmanına başlıyorsun</div>
+      </div>
+
+      <div className="sg" style={{ marginBottom: 18 }}>
+        <div className="sc">
+          <div className="sl">Toplam Soru</div>
+          <div className="sv pu">{sorular.length}</div>
+        </div>
+        <div className="sc">
+          <div className="sl">Tahmini Süre</div>
+          <div className="sv pu">~{tahminiDakika} dk</div>
+        </div>
+        <div className="sc">
+          <div className="sl">Soru Tipleri</div>
+          <div className="sv" style={{ fontSize: 14, lineHeight: 1.5 }}>
+            {likertSayisi > 0 && <div>{likertSayisi} Likert</div>}
+            {sjtSayisi > 0 && <div>{sjtSayisi} Durum Sorusu</div>}
+          </div>
+        </div>
+      </div>
+
+      <div style={{
+        background: 'var(--tll)', border: '1.5px solid var(--tl)', borderRadius: 16,
+        padding: '16px 18px', marginBottom: 20, fontSize: 12.5, color: 'var(--tx)', lineHeight: 1.7,
+      }}>
+        <div style={{ fontWeight: 700, marginBottom: 6, color: 'var(--tl)' }}>📋 Bilmen Gerekenler</div>
+        <div>• Bu değerlendirme <b>tam ekran</b> modunda yapılacak — tam ekrandan çıkarsan uyarı alırsın.</div>
+        <div>• <b>Kameran</b>, kimlik doğrulama amacıyla aralıklarla fotoğraf çekecek (izin verirsen).</div>
+        <div>• Sekme değiştirme ve pencere odağı kaybı gibi olaylar kayıt altına alınır.</div>
+        <div>• Katmandan erken çıkarsan, o ana kadarki ilerlemen kaybolur — baştan başlaman gerekir.</div>
+        <div>• Doğru/yanlış cevap yok — içtenlikle, düşünmeden hızlıca cevapla.</div>
+      </div>
+
+      <div className="auth-field">
+        <label className="auth-label">
+          Devam etmek için aşağıya <b>büyük harflerle tam olarak</b> "{ONAY_METNI}" yazın:
+        </label>
+        <input
+          className="auth-input"
+          value={yaziliOnay}
+          onChange={(e) => setYaziliOnay(e.target.value)}
+          placeholder={ONAY_METNI}
+          autoComplete="off"
+        />
+      </div>
+
+      <button className="btn full" disabled={!onayGecerli || cikisYapiliyor} onClick={onBasla} style={{ marginTop: 4 }}>
+        {cikisYapiliyor ? <span className="spin" /> : 'Değerlendirmeye Başla →'}
+      </button>
+    </div>
+  )
+}
+
+
 export default function SoruSayfasi() {
   const { kod } = useParams()
   const navigate = useNavigate()
@@ -92,6 +171,7 @@ export default function SoruSayfasi() {
   const [hata, setHata] = useState(null)
   const [tamamlandi, setTamamlandi] = useState(null)
   const [tamEkranDisinda, setTamEkranDisinda] = useState(false)
+  const [basladiMi, setBasladiMi] = useState(false)  // tanıtım/onay ekranı geçildi mi
 
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
@@ -108,6 +188,7 @@ export default function SoruSayfasi() {
     setAktifIndex(0)
     setCevaplar({})
     setTamamlandi(null)
+    setBasladiMi(false)
     api.katmaniBaslat(kod)
       .then((veri) => {
         setSorular(veri.sorular)
@@ -125,8 +206,8 @@ export default function SoruSayfasi() {
   }, [])
 
   useEffect(() => {
-    if (sorular && !tamamlandi) tamEkranaGec()
-  }, [sorular, tamamlandi, tamEkranaGec])
+    if (sorular && basladiMi && !tamamlandi) tamEkranaGec()
+  }, [sorular, basladiMi, tamamlandi, tamEkranaGec])
 
   useEffect(() => {
     function tamEkranDegisti() {
@@ -173,7 +254,7 @@ export default function SoruSayfasi() {
   // Kamera kurulumu — izin verilmezse sessizce atlanır, testi bloklamaz
   // ------------------------------------------------------------------
   useEffect(() => {
-    if (!sorular || tamamlandi) return
+    if (!sorular || !basladiMi || tamamlandi) return
     let akis = null
 
     if (!navigator.mediaDevices?.getUserMedia) {
@@ -203,7 +284,7 @@ export default function SoruSayfasi() {
       akis?.getTracks().forEach((t) => t.stop())
       kameraAktifRef.current = false
     }
-  }, [sorular, tamamlandi, kod])
+  }, [sorular, basladiMi, tamamlandi, kod])
 
   const fotografCek = useCallback(() => {
     if (!kameraAktifRef.current || !videoRef.current || !canvasRef.current || !turIdRef.current) return
@@ -219,24 +300,24 @@ export default function SoruSayfasi() {
   }, [kod])
 
   useEffect(() => {
-    if (!sorular || tamamlandi || !turId) return
+    if (!sorular || !basladiMi || tamamlandi || !turId) return
     const zamanlayici = setTimeout(fotografCek, 1500)
     return () => clearTimeout(zamanlayici)
-  }, [turId, sorular, tamamlandi, fotografCek])
+  }, [turId, sorular, basladiMi, tamamlandi, fotografCek])
 
   useEffect(() => {
     if (aktifIndex > 0 && aktifIndex % FOTOGRAF_ARALIGI_SORU === 0) fotografCek()
   }, [aktifIndex, fotografCek])
 
   useEffect(() => {
-    if (!sorular || tamamlandi) return
+    if (!sorular || !basladiMi || tamamlandi) return
     function kapatmaUyarisi(e) {
       e.preventDefault()
       e.returnValue = ''
     }
     window.addEventListener('beforeunload', kapatmaUyarisi)
     return () => window.removeEventListener('beforeunload', kapatmaUyarisi)
-  }, [sorular, tamamlandi])
+  }, [sorular, basladiMi, tamamlandi])
 
   // ------------------------------------------------------------------
   // Kullanıcı aksiyonları
@@ -287,7 +368,7 @@ export default function SoruSayfasi() {
       minHeight: '100vh', width: '100%', display: 'flex', flexDirection: 'column',
       alignItems: 'center', background: 'var(--bg)',
     }}>
-      {tamEkranDisinda && <GuvenlikUyariKatmani tamEkranaGeriDon={tamEkranaGec} />}
+      {tamEkranDisinda && <GuvenlikUyariKatmani tamEkranaGeriDon={tamEkranaGec} onErkenBitir={sinavdanCik} />}
       <KameraOnizleme videoRef={videoRef} />
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       <SinavBasligi />
@@ -321,6 +402,8 @@ export default function SoruSayfasi() {
               {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sonuçlarımı Gör →' : 'Katmanlara Dön'}
             </button>
           </div>
+        ) : !basladiMi ? (
+          <KatmanTanitimEkrani kod={kod} sorular={sorular} onBasla={() => setBasladiMi(true)} cikisYapiliyor={false} />
         ) : (
           <SoruIcerigiDuzeni
             sorular={sorular}
@@ -366,7 +449,7 @@ function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, o
       />
 
       {/* Sağ panel — katman bilgisi + ilerleme, boş kalan alanı dolduruyor */}
-      <div style={{ width: 260, paddingTop: 50, flexShrink: 0 }}>
+      <div style={{ width: 260, paddingTop: 0, flexShrink: 0 }}>
         <div className="card" style={{ textAlign: 'center', marginBottom: 14 }}>
           <div style={{ fontSize: 30, marginBottom: 6 }}>{katman.ikon}</div>
           <div style={{ fontFamily: 'var(--fd)', fontSize: 14.5, fontWeight: 700, marginBottom: 4 }}>{katman.ad}</div>
