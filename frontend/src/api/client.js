@@ -195,6 +195,7 @@ export const api = {
   secenekMetniGuncelle: (secenekId, secenekMetni) => aput(`/admin/sorular-detay/secenek/${secenekId}`, { secenek_metni: secenekMetni }),
   dallariDetayliListele: () => aget('/admin/sorular-detay/dallar-detay'),
   gecerlilikTestGirdisiGetirV2: () => aget('/admin/gecerlilik-girdisi-v2'),
+  kutupSorulariniTopluYukle: (satirlar) => apost('/admin/kutup-sorulari/toplu', { satirlar }),
   sorulariTopluYukle: (satirlar) => apost('/admin/sorular/toplu', { satirlar }),
   soruSil: (id) => adel(`/admin/sorular/${id}`),
   sorulariTopluSil: (soru_idler) => apost('/admin/sorular/toplu-sil', { soru_idler }),
