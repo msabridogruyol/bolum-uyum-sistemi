@@ -25,7 +25,7 @@ from app.core.dal_servisi import (
 from app.core.skor_motoru import toplam_uyum_hesapla, siralama_getir
 from app.core.kesfet_servisi import bolumleri_ara
 from app.models import (
-    Ogrenci, Katman, OgrenciKatmanOturumu, Degisken, SoruSecenegi, OgrenciDalOturumu, Bolum,
+    Ogrenci, Katman, OgrenciKatmanOturumu, Degisken, Soru, SoruSecenegi, OgrenciDalOturumu, Bolum,
     OgrenciDegerlendirmeTuru, GuvenlikOlayi, GuvenlikFotografi,
 )
 from app.schemas.ogrenci import (
