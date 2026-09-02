@@ -3,6 +3,24 @@ import { api } from '../../api/client'
 
 const DURUMLAR = ['taslak', 'guclu_kanitli', 'gozden_gecirilmeli']
 
+const DURUM_BILGI = {
+  taslak: {
+    etiket: 'Taslak — İncelenmeyi Bekliyor',
+    renk: 'bdg-lock',
+    aciklama: 'Yalnızca tek bir yöntemden (kümeleme analizi) geldi. Henüz farklı bir yöntemle çapraz doğrulanmadı.',
+  },
+  guclu_kanitli: {
+    etiket: 'Güçlü Kanıtlı',
+    renk: 'bdg-done',
+    aciklama: 'Birden fazla bağımsız yöntem (dil modelleri + kümeleme) aynı sonuca ulaştı — güvenilirliği yüksek.',
+  },
+  gozden_gecirilmeli: {
+    etiket: 'Gözden Geçirilmeli',
+    renk: 'bdg-prog',
+    aciklama: 'Yöntemler arasında çelişki var ya da veri sınırlı — admin tarafından elle kontrol edilmesi önerilir.',
+  },
+}
+
 function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
   const kacisla = (deger) => `"${String(deger ?? '').replace(/"/g, '""')}"`
   const icerik = [basliklar.join(','), ...satirlar.map((s) => s.map(kacisla).join(','))].join('\r\n')
@@ -37,6 +55,47 @@ function csvSatirlariniAyristir(metin) {
   }).filter((s) => s.kod && s.ad)
 }
 
+function DalKarti({ dal, onDurumGuncelle }) {
+  const bilgi = DURUM_BILGI[dal.dogrulama_durumu] || DURUM_BILGI.taslak
+  const [degistiriliyor, setDegistiriliyor] = useState(false)
+
+  return (
+    <div className="card" style={{ marginBottom: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: 220 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
+            <span style={{ fontSize: 14.5, fontWeight: 700 }}>{dal.ad}</span>
+            <span className="bdg bdg-lock">{dal.kod}</span>
+            <span className={`bdg ${bilgi.renk}`}>{bilgi.etiket}</span>
+          </div>
+          <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5, marginBottom: 8 }}>{bilgi.aciklama}</div>
+          <div style={{ display: 'flex', gap: 16, fontSize: 11.5, color: 'var(--tx3)', fontWeight: 600 }}>
+            <span>📚 {dal.bolum_sayisi} bölüm</span>
+            <span>🧬 {dal.degisken_sayisi} değişken</span>
+            <span>❓ {dal.soru_sayisi} soru</span>
+            <span>{dal.coklu_kaynakli_mi ? '✅ Çoklu yöntem doğrulaması var' : '⚠️ Tek yöntemden geldi'}</span>
+          </div>
+        </div>
+
+        {degistiriliyor ? (
+          <select
+            className="auth-input"
+            style={{ width: 200 }}
+            value={dal.dogrulama_durumu}
+            onChange={(e) => { onDurumGuncelle(dal.id, e.target.value); setDegistiriliyor(false) }}
+            onBlur={() => setDegistiriliyor(false)}
+            autoFocus
+          >
+            {DURUMLAR.map((du) => <option key={du} value={du}>{DURUM_BILGI[du].etiket}</option>)}
+          </select>
+        ) : (
+          <button className="btn sec" onClick={() => setDegistiriliyor(true)}>Durumu Değiştir</button>
+        )}
+      </div>
+    </div>
+  )
+}
+
 export default function DallarSayfasi() {
   const [dallar, setDallar] = useState(null)
   const [hata, setHata] = useState(null)
@@ -44,9 +103,10 @@ export default function DallarSayfasi() {
   const [yeniAd, setYeniAd] = useState('')
   const [topluYukleniyor, setTopluYukleniyor] = useState(false)
   const [topluSonuc, setTopluSonuc] = useState(null)
+  const [durumFiltre, setDurumFiltre] = useState('')
 
   const yukle = useCallback(() => {
-    api.dallariListele().then(setDallar).catch((e) => setHata(e.detail || 'Dallar yüklenemedi.'))
+    api.dallariDetayliListele().then(setDallar).catch((e) => setHata(e.detail || 'Dallar yüklenemedi.'))
   }, [])
 
   useEffect(() => { yukle() }, [yukle])
@@ -105,13 +165,27 @@ export default function DallarSayfasi() {
 
   if (!dallar) return <div className="pg pg-genis"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
 
+  const gosterilecekler = durumFiltre ? dallar.filter((d) => d.dogrulama_durumu === durumFiltre) : dallar
+  const durumSayilari = DURUMLAR.reduce((acc, du) => ({ ...acc, [du]: dallar.filter((d) => d.dogrulama_durumu === du).length }), {})
+
   return (
     <div className="pg pg-genis">
       <div className="ph">
-        <div className="pt">Derinleşme Alanları</div>
-        <div className="ps">Öğrencinin son değerlendirme adımındaki sonucuna göre kendisine özel olarak açılabilecek ek inceleme alanları.</div>
+        <div className="pt">Derinleşme Alanları (K5)</div>
+        <div className="ps">Öğrencinin K4 sonucuna göre kendisine özel açılabilecek ek inceleme alanları. "Taslak" durumu bir hata değil — yalnızca henüz tek yöntemle doğrulandığı anlamına gelir.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
+
+      <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
+        <button className={`btn ${durumFiltre === '' ? '' : 'sec'}`} onClick={() => setDurumFiltre('')}>
+          Tümü ({dallar.length})
+        </button>
+        {DURUMLAR.map((du) => (
+          <button key={du} className={`btn ${durumFiltre === du ? '' : 'sec'}`} onClick={() => setDurumFiltre(du)}>
+            {DURUM_BILGI[du].etiket} ({durumSayilari[du] || 0})
+          </button>
+        ))}
+      </div>
 
       <div className="card">
         <div className="ct">Toplu Yönetim</div>
@@ -120,8 +194,8 @@ export default function DallarSayfasi() {
             className="btn sec"
             onClick={() => csvDisaAktar(
               'dallar_disa_aktarim.csv',
-              ['kod', 'ad', 'dogrulama_durumu'],
-              dallar.map((d) => [d.kod, d.ad, d.dogrulama_durumu]),
+              ['kod', 'ad', 'dogrulama_durumu', 'bolum_sayisi', 'degisken_sayisi', 'soru_sayisi'],
+              dallar.map((d) => [d.kod, d.ad, d.dogrulama_durumu, d.bolum_sayisi, d.degisken_sayisi, d.soru_sayisi]),
             )}
             disabled={dallar.length === 0}
           >
@@ -145,7 +219,7 @@ export default function DallarSayfasi() {
       <form onSubmit={dalEkle} className="card" style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
         <div style={{ flex: '0 0 100px' }}>
           <label className="auth-label">Kod</label>
-          <input className="auth-input" value={yeniKod} onChange={(e) => setYeniKod(e.target.value)} placeholder="D22" required />
+          <input className="auth-input" value={yeniKod} onChange={(e) => setYeniKod(e.target.value)} placeholder="D09" required />
         </div>
         <div style={{ flex: 1 }}>
           <label className="auth-label">Ad</label>
@@ -154,20 +228,11 @@ export default function DallarSayfasi() {
         <button className="btn" type="submit">Ekle</button>
       </form>
 
-      <div className="ll">
-        {dallar.map((d) => (
-          <div key={d.id} className="lc" style={{ cursor: 'default' }}>
-            <div className="lb-wrap">
-              <div className="lt">{d.ad}</div>
-              <span className="bdg bdg-prog">{d.dogrulama_durumu}</span>
-            </div>
-            <select className="auth-input" style={{ width: 180 }} value={d.dogrulama_durumu} onChange={(e) => durumGuncelle(d.id, e.target.value)}>
-              {DURUMLAR.map((du) => <option key={du} value={du}>{du}</option>)}
-            </select>
-          </div>
-        ))}
-        {dallar.length === 0 && <div className="bos-durum">Henüz tanımlı bir derinleşme alanı yok — yukarıdaki formdan ekleyebilirsiniz.</div>}
-      </div>
+      {gosterilecekler.length === 0 ? (
+        <div className="bos-durum">Bu filtreye uyan dal yok.</div>
+      ) : (
+        gosterilecekler.map((d) => <DalKarti key={d.id} dal={d} onDurumGuncelle={durumGuncelle} />)
+      )}
     </div>
   )
 }
