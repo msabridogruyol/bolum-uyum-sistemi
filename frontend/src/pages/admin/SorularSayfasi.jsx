@@ -64,13 +64,17 @@ function dosyayiAyristir(dosya) {
 
 function birlesikSatirlariDondur(hamSatirlar) {
   const veriSatirlari = hamSatirlar.slice(1) // başlık satırını atla
-  const satirlar = []
+  const satirlar = []       // Likert/SJT satırları — api.sorulariTopluYukle'ye gider
+  const kutupSatirlari = [] // Kutup satırları — api.kutupSorulariniTopluYukle'ye gider
   const hatalar = []
 
   veriSatirlari.forEach((hucreler, i) => {
     const satirNo = i + 2
-    const [gecidiId, katmanKod, soruTipi, degiskenKod, soruMetni, tersMi, secenekSira, secenekMetni, sjtDegiskenKod, sjtAgirlik] =
-      hucreler.map((h) => String(h ?? '').trim())
+    const [
+      gecidiId, katmanKod, soruTipi, degiskenKod, soruMetni, tersMi,
+      secenekSira, secenekMetni, sjtDegiskenKod, sjtAgirlik,
+      bUcuDegiskenKod, aUcuEtiketi, bUcuEtiketi,
+    ] = hucreler.map((h) => String(h ?? '').trim())
 
     if (!gecidiId && !soruMetni) return // tamamen boş satır
 
@@ -78,10 +82,29 @@ function birlesikSatirlariDondur(hamSatirlar) {
       hatalar.push(`Satır ${satirNo}: geçersiz katman_kod "${katmanKod}"`)
       return
     }
-    if (!['likert', 'sjt'].includes(soruTipi)) {
-      hatalar.push(`Satır ${satirNo}: soru_tipi "likert" veya "sjt" olmalı ("${soruTipi}")`)
+    if (!['likert', 'sjt', 'kutup'].includes(soruTipi)) {
+      hatalar.push(`Satır ${satirNo}: soru_tipi "likert", "sjt" veya "kutup" olmalı ("${soruTipi}")`)
       return
     }
+
+    // [EKLENDİ] Kutup satırı — Likert/SJT'den farklı olarak TEK satır = TEK soru,
+    // ayrı bir uç noktaya (kutupSorulariniTopluYukle) gönderilir.
+    if (soruTipi === 'kutup') {
+      if (!degiskenKod || !bUcuDegiskenKod || !aUcuEtiketi || !bUcuEtiketi) {
+        hatalar.push(`Satır ${satirNo}: kutup sorusu için degisken_kod, b_ucu_degisken_kod, a_ucu_etiketi, b_ucu_etiketi gerekli`)
+        return
+      }
+      kutupSatirlari.push({
+        katman_kod: katmanKod,
+        a_degisken_kod: degiskenKod,
+        b_degisken_kod: bUcuDegiskenKod,
+        soru_metni: soruMetni,
+        a_ucu_etiketi: aUcuEtiketi,
+        b_ucu_etiketi: bUcuEtiketi,
+      })
+      return
+    }
+
     const sira = parseInt(secenekSira, 10)
     if (isNaN(sira)) {
       hatalar.push(`Satır ${satirNo}: secenek_sira sayı olmalı`)
@@ -102,7 +125,7 @@ function birlesikSatirlariDondur(hamSatirlar) {
     })
   })
 
-  return { satirlar, hatalar }
+  return { satirlar, kutupSatirlari, hatalar }
 }
 
 function TopluYuklemeFormu({ onTamamlandi }) {
@@ -118,20 +141,35 @@ function TopluYuklemeFormu({ onTamamlandi }) {
 
     try {
       const hamSatirlar = await dosyayiAyristir(dosya)
-      const { satirlar, hatalar } = birlesikSatirlariDondur(hamSatirlar)
+      const { satirlar, kutupSatirlari, hatalar } = birlesikSatirlariDondur(hamSatirlar)
 
-      if (satirlar.length === 0) {
+      if (satirlar.length === 0 && kutupSatirlari.length === 0) {
         setSonuc({ basarili: false, mesaj: null, hatalar: hatalar.length ? hatalar : ['Dosyada geçerli satır bulunamadı.'] })
         setDurum('bitti')
         return
       }
 
       setDurum('yukleniyor')
-      const cevap = await api.sorulariTopluYukle(satirlar)
+      // [EKLENDİ] Aynı dosyada hem Likert/SJT hem Kutup satırı olabilir —
+      // ikisi ayrı uç noktalara gönderilip sonuçlar tek özette birleştirilir.
+      const mesajParcalari = []
+      const tumHatalar = [...hatalar]
+
+      if (satirlar.length > 0) {
+        const cevap = await api.sorulariTopluYukle(satirlar)
+        mesajParcalari.push(`${cevap.eklenen_soru_sayisi} Likert/SJT sorusu, ${cevap.eklenen_secenek_sayisi} seçenek, ${cevap.eklenen_agirlik_sayisi} SJT ağırlığı`)
+        tumHatalar.push(...cevap.hatalar)
+      }
+      if (kutupSatirlari.length > 0) {
+        const kutupCevap = await api.kutupSorulariniTopluYukle(kutupSatirlari)
+        mesajParcalari.push(`${kutupCevap.eklenen_soru_sayisi} Kutup sorusu`)
+        tumHatalar.push(...kutupCevap.hatalar)
+      }
+
       setSonuc({
         basarili: true,
-        mesaj: `${cevap.eklenen_soru_sayisi} soru, ${cevap.eklenen_secenek_sayisi} seçenek, ${cevap.eklenen_agirlik_sayisi} SJT ağırlığı eklendi.`,
-        hatalar: [...hatalar, ...cevap.hatalar],
+        mesaj: mesajParcalari.join(' + ') + ' eklendi.',
+        hatalar: tumHatalar,
       })
       setDurum('bitti')
       onTamamlandi()
@@ -145,12 +183,14 @@ function TopluYuklemeFormu({ onTamamlandi }) {
 
   return (
     <div className="card" style={{ borderColor: 'var(--tl)', background: 'var(--tll)' }}>
-      <div className="ct">Toplu Soru Yükle (Likert + SJT, Tek Dosya)</div>
+      <div className="ct">Toplu Soru Yükle (Likert + SJT + Kutup, Tek Dosya)</div>
       <div className="ps" style={{ margin: '0 0 12px' }}>
         Sütunlar: <code>soru_gecici_id, katman_kod, soru_tipi, degisken_kod, soru_metni, ters_kodlanmis_mi,
-        secenek_sira, secenek_metni, sjt_degisken_kod, sjt_agirlik</code>. Aynı <code>soru_gecici_id</code>'ye
-        sahip satırlar tek soruya gruplanır. Likert satırlarında son iki sütun boş bırakılır;
-        SJT satırlarında <code>degisken_kod</code> boş bırakılır. CSV veya Excel (.xlsx) kabul edilir.
+        secenek_sira, secenek_metni, sjt_degisken_kod, sjt_agirlik, b_ucu_degisken_kod, a_ucu_etiketi, b_ucu_etiketi</code>.
+        <br />Likert/SJT'de aynı <code>soru_gecici_id</code>'ye sahip satırlar tek soruya gruplanır (Likert'te son 5 sütun boş,
+        SJT'de <code>degisken_kod</code> boş). <b>Kutup'ta her satır tek bir sorudur</b> — yalnızca
+        <code> katman_kod, degisken_kod (A ucu), b_ucu_degisken_kod, soru_metni, a_ucu_etiketi, b_ucu_etiketi</code> doldurulur,
+        diğer sütunlar boş bırakılır. CSV veya Excel (.xlsx) kabul edilir.
       </div>
       <label className="btn" style={{ cursor: durum === 'yukleniyor' || durum === 'okunuyor' ? 'not-allowed' : 'pointer', opacity: durum === 'yukleniyor' || durum === 'okunuyor' ? 0.6 : 1 }}>
         {durum === 'okunuyor' ? 'Okunuyor...' : durum === 'yukleniyor' ? <span className="spin" /> : '⬆ Dosya Seç ve Yükle'}
@@ -408,77 +448,6 @@ function YeniSoruFormu({ onEklendi }) {
           {gonderiliyor ? <span className="spin" /> : 'Soruyu Kaydet'}
         </button>
       </form>
-    </div>
-  )
-}
-
-// ============================================================
-// Kutup Soru Toplu Yükleme (3. soru tipi — A-mı-B-mi)
-// ============================================================
-function kutupSatirlariniDondur(hamSatirlar) {
-  const baslik = (hamSatirlar[0] || []).map((h) => String(h).trim())
-  const beklenen = ['katman_kod', 'a_degisken_kod', 'b_degisken_kod', 'soru_metni', 'a_ucu_etiketi', 'b_ucu_etiketi']
-  const idx = Object.fromEntries(beklenen.map((k) => [k, baslik.indexOf(k)]))
-  if (Object.values(idx).some((i) => i < 0)) return null
-
-  return hamSatirlar.slice(1).map((h) => ({
-    katman_kod: String(h[idx.katman_kod] ?? '').trim(),
-    a_degisken_kod: String(h[idx.a_degisken_kod] ?? '').trim(),
-    b_degisken_kod: String(h[idx.b_degisken_kod] ?? '').trim(),
-    soru_metni: String(h[idx.soru_metni] ?? '').trim(),
-    a_ucu_etiketi: String(h[idx.a_ucu_etiketi] ?? '').trim(),
-    b_ucu_etiketi: String(h[idx.b_ucu_etiketi] ?? '').trim(),
-  })).filter((s) => s.katman_kod && s.a_degisken_kod && s.b_degisken_kod && s.soru_metni)
-}
-
-function KutupYuklemeFormu({ onTamamlandi }) {
-  const [yukleniyor, setYukleniyor] = useState(false)
-  const [sonuc, setSonuc] = useState(null)
-  const [hata, setHata] = useState(null)
-
-  async function dosyaSecildi(e) {
-    const dosya = e.target.files?.[0]
-    if (!dosya) return
-    setHata(null); setSonuc(null); setYukleniyor(true)
-    try {
-      const hamSatirlar = await dosyayiAyristir(dosya)
-      const satirlar = kutupSatirlariniDondur(hamSatirlar)
-      if (!satirlar || satirlar.length === 0) {
-        throw new Error('Dosya okunamadı — sütunlar: katman_kod, a_degisken_kod, b_degisken_kod, soru_metni, a_ucu_etiketi, b_ucu_etiketi')
-      }
-      const cevap = await api.kutupSorulariniTopluYukle(satirlar)
-      setSonuc(cevap)
-      onTamamlandi()
-    } catch (err) {
-      setHata(err.detail || err.message || 'Yükleme başarısız.')
-    } finally {
-      setYukleniyor(false)
-      e.target.value = ''
-    }
-  }
-
-  return (
-    <div className="card" style={{ borderColor: 'var(--tl)', background: 'var(--tll)' }}>
-      <div className="ct">Kutup Soru Toplu Yükle (A-mı-B-mi, 4'lü ölçek)</div>
-      <div className="ps" style={{ margin: '0 0 12px' }}>
-        Her satır <b>tek bir soru</b> tanımlar (Likert/SJT'den farklı — çok satırlı değil). Sütunlar:{' '}
-        <code>katman_kod, a_degisken_kod, b_degisken_kod, soru_metni, a_ucu_etiketi, b_ucu_etiketi</code>.
-        4 seçenek metni ("Kesinlikle {'{A}'}", "Daha Çok {'{A}'}", "Daha Çok {'{B}'}", "Kesinlikle {'{B}'}") otomatik üretilir.
-        CSV veya Excel (.xlsx) kabul edilir.
-      </div>
-      {hata && <div className="auth-error">{hata}</div>}
-      <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
-        {yukleniyor ? <span className="spin" /> : '⬆ Dosya Seç ve Yükle'}
-        <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
-      </label>
-      {sonuc && (
-        <div style={{ marginTop: 12, fontSize: 12.5 }}>
-          <b style={{ color: 'var(--gr)' }}>{sonuc.eklenen_soru_sayisi} kutup sorusu eklendi.</b>
-          {sonuc.hatalar.length > 0 && (
-            <div style={{ color: 'var(--am)', marginTop: 4 }}>{sonuc.hatalar.slice(0, 5).join(', ')}</div>
-          )}
-        </div>
-      )}
     </div>
   )
 }
@@ -758,9 +727,6 @@ export default function SorularSayfasi() {
         <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
           {aktifSekme === 'tekli' ? 'Kapat' : '+ Soru Ekle'}
         </button>
-        <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'kutup' ? null : 'kutup'))}>
-          {aktifSekme === 'kutup' ? 'Kapat' : '⬆ Kutup Soru Yükle'}
-        </button>
       </div>
 
       {aktifSekme === 'toplu' && (
@@ -771,11 +737,6 @@ export default function SorularSayfasi() {
       {aktifSekme === 'tekli' && (
         <div style={{ marginBottom: 20 }}>
           <YeniSoruFormu onEklendi={yenidenYukle} />
-        </div>
-      )}
-      {aktifSekme === 'kutup' && (
-        <div style={{ marginBottom: 20 }}>
-          <KutupYuklemeFormu onTamamlandi={yenidenYukle} />
         </div>
       )}
 
