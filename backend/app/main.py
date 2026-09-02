@@ -12,6 +12,7 @@ from app.core.database import SessionLocal
 from app.core.security import token_coz
 from app.api import auth, ogrenci, koclugu, admin, admin_auth
 from app.api.admin_guvenlik import router as admin_guvenlik_router
+from app.api.admin_sorular_detay import router as admin_sorular_detay_router
 
 app = FastAPI(
     title="Bölüm Uyum Sistemi API",
@@ -100,6 +101,7 @@ app.include_router(ogrenci.router, prefix="/ogrenci", tags=["Öğrenci — Katma
 app.include_router(koclugu.router, prefix="/koclugu", tags=["Koçluk — Bölüm F"])
 app.include_router(admin.router, prefix="/admin", tags=["Yönetim — E1-E9"])
 app.include_router(admin_guvenlik_router, prefix="/admin", tags=["admin"])
+app.include_router(admin_sorular_detay_router, prefix="/admin", tags=["admin"])
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
 # yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi,
 # model bilgisi gibi alanları ASLA response'a dahil etmemeli — bu response
