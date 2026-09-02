@@ -122,6 +122,78 @@ def dal_filtre_listesi(
     return [DalFiltreOut(kod=d.kod, ad=d.ad) for d in dallar]
 
 
+class DalDetayOut(BaseModel):
+    id: int
+    kod: str
+    ad: str
+    dogrulama_durumu: str
+    bolum_sayisi: int
+    degisken_sayisi: int
+    soru_sayisi: int
+    coklu_kaynakli_mi: bool  # kaynak1 (model) VE kaynak2 (kümeleme) ikisi de dolu mu
+
+
+@router.get("/dallar-detay", response_model=list[DalDetayOut])
+def dallari_detayli_listele(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    from app.models import BolumDalEslesme
+
+    dallar = db.query(Dal).order_by(Dal.kod).all()
+
+    bolum_sayilari = dict(
+        db.query(BolumDalEslesme.dal_id, func.count(BolumDalEslesme.id))
+        .group_by(BolumDalEslesme.dal_id).all()
+    )
+    degisken_sayilari = dict(
+        db.query(Degisken.dal_id, func.count(Degisken.id))
+        .filter(Degisken.dal_id.isnot(None))
+        .group_by(Degisken.dal_id).all()
+    )
+    # bir dalın soru sayısı = o dala bağlı değişkenlerin (likert) + o değişkenlere
+    # ağırlıklı seçeneği olan sorularının (sjt) birleşimi — basitlik için
+    # değişken bazlı likert soru sayımı + benzersiz sjt soru sayımı toplanır
+    degisken_id_to_dal = dict(
+        db.query(Degisken.id, Degisken.dal_id).filter(Degisken.dal_id.isnot(None)).all()
+    )
+    likert_soru_sayilari: dict[int, int] = {}
+    for degisken_id, adet in db.query(Soru.degisken_id, func.count(Soru.id)).filter(
+        Soru.soru_tipi == "likert", Soru.degisken_id.in_(degisken_id_to_dal.keys())
+    ).group_by(Soru.degisken_id).all():
+        dal_id = degisken_id_to_dal[degisken_id]
+        likert_soru_sayilari[dal_id] = likert_soru_sayilari.get(dal_id, 0) + adet
+
+    sjt_soru_id_by_dal: dict[int, set] = {}
+    sjt_satirlari = (
+        db.query(SoruSecenegi.soru_id, Degisken.dal_id)
+        .join(SjtSecenekDegiskenAgirlik, SjtSecenekDegiskenAgirlik.secenek_id == SoruSecenegi.id)
+        .join(Degisken, Degisken.id == SjtSecenekDegiskenAgirlik.degisken_id)
+        .filter(Degisken.dal_id.isnot(None))
+        .all()
+    )
+    for soru_id, dal_id in sjt_satirlari:
+        sjt_soru_id_by_dal.setdefault(dal_id, set()).add(soru_id)
+
+    sonuc = []
+    for d in dallar:
+        soru_sayisi = likert_soru_sayilari.get(d.id, 0) + len(sjt_soru_id_by_dal.get(d.id, set()))
+        coklu_kaynakli = False
+        eslesme = db.query(BolumDalEslesme).filter(BolumDalEslesme.dal_id == d.id).first()
+        if eslesme and eslesme.kaynak2_kumeleme_dal_id and any([
+            eslesme.kaynak1_model_a_dal_id, eslesme.kaynak1_model_b_dal_id, eslesme.kaynak1_model_c_dal_id,
+        ]):
+            coklu_kaynakli = True
+        sonuc.append(DalDetayOut(
+            id=d.id, kod=d.kod, ad=d.ad, dogrulama_durumu=d.dogrulama_durumu,
+            bolum_sayisi=bolum_sayilari.get(d.id, 0),
+            degisken_sayisi=degisken_sayilari.get(d.id, 0),
+            soru_sayisi=soru_sayisi,
+            coklu_kaynakli_mi=coklu_kaynakli,
+        ))
+    return sonuc
+
+
 @router.get("", response_model=SayfalanmisSorularOut)
 def sorulari_detayli_listele(
     katman_kod: str | None = None,
