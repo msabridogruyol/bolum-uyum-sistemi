@@ -52,7 +52,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>K2 — Kişilik & Çalışma Tarzı</b> (8 değişken, P1-P8): dışadönüklük, uyumluluk, sorumluluk, nevrotiklik, deneyime açıklık, rutin/dinamik tercihi, risk toleransı, liderlik isteği</Madde>
         <Madde><b>K3 — İş Ortamı & Yetkinlik</b> (7 değişken, I1-I7): zaman yönetimi, çatışma yönetimi, kriz kararı, etik, inisiyatif, geri bildirime açıklık, yönetim/strateji yetkinliği</Madde>
         <Madde><b>K4 — Alan Eğilimi & Bilişsel Stil</b> (9 değişken, A1-A9): sayısal, sözel, sosyal, yaratıcı, doğa/laboratuvar, fiziksel, yapılandırılmış/sezgisel stil, girişimcilik eğilimi</Madde>
-        <Madde><b>K5 — Dal Derinleşme</b> (koşullu): K4 sonucuna göre, belirli bir eşiği (%) geçen "dal"lar (örn. Sayısal Ağırlıklı Derinleşme) otomatik açılır, ek sorular sorulur</Madde>
+        <Madde><b>K5 — Dal Derinleşme</b> (koşullu): K4 sonucuna göre, öğrencinin profili kümeleme analiziyle bulunan 8 dandan (Sağlık & Hizmet, Mühendislik & Teknoloji, Sanat & Tasarım vb.) birine ya da birkaçına eşik değeri geçince otomatik açılır, o dala özel 7 yeni değişken ve ek sorular sorulur</Madde>
         <p style={{ marginTop: 10 }}>
           Her katman tamamlandığında, o katmandaki her değişken için 0-100 arası bir puan hesaplanır ve
           <code> ogrenci_degisken_skorlari</code> tablosuna, o "tur"a (değerlendirme dönemi) bağlı olarak kaydedilir.
@@ -85,6 +85,37 @@ export default function SistemHakkindaSayfasi() {
         </div>
 
         <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>3 Modelin Teknik Detayları</div>
+          <table style={{ width: '100%', fontSize: 12.5, borderCollapse: 'collapse' }}>
+            <thead>
+              <tr style={{ borderBottom: '1px solid var(--bor)' }}>
+                <th style={{ textAlign: 'left', padding: '6px 8px' }}>Model</th>
+                <th style={{ textAlign: 'left', padding: '6px 8px' }}>Hugging Face Adı</th>
+                <th style={{ textAlign: 'left', padding: '6px 8px' }}>Temel Mimari</th>
+                <th style={{ textAlign: 'left', padding: '6px 8px' }}>Boyut</th>
+                <th style={{ textAlign: 'left', padding: '6px 8px' }}>Yayın</th>
+              </tr>
+            </thead>
+            <tbody>
+              {[
+                ['model_a', 'nezahatkorkmaz/turkce-embedding-bge-m3', "BAAI/bge-m3'ün Türkçe fine-tune'u (XLM-RoBERTa)", '~568M parametre, 1024 boyut', 'Temel model 2024 (BGE-M3)'],
+                ['model_b', 'emrecan/bert-base-turkish-cased-mean-nli-stsb-tr', 'BERT-base Türkçe (NLI+STS-b ile fine-tune)', '~110M parametre, 768 boyut', 'Ocak 2022'],
+                ['model_c', 'BAAI/bge-large-en-v1.5', 'BERT tabanlı, İngilizce', '335M parametre, 1024 boyut', 'Eylül 2023'],
+              ].map((satir, i) => (
+                <tr key={i} style={{ borderBottom: '1px solid var(--bor)' }}>
+                  {satir.map((hucre, j) => <td key={j} style={{ padding: '6px 8px', color: j === 0 ? 'var(--tx)' : 'var(--tx2)', fontWeight: j === 0 ? 700 : 400 }}>{hucre}</td>)}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          <p style={{ fontSize: 11.5, color: 'var(--tx3)', marginTop: 8 }}>
+            model_a ve model_c aynı temel mimariden (BGE) türetildiği için birbirine yakın sonuçlar üretme eğiliminde
+            olabilir — bu yüzden model_b'nin (tamamen farklı, düz BERT tabanlı bir aile) üçüncü bağımsız kaynak olarak
+            sistemde bulunması, konsensüsün gerçekten çeşitli yöntemlerden geldiğinden emin olmak için önemlidir.
+          </p>
+        </div>
+
+        <div style={{ marginTop: 14, paddingTop: 14, borderTop: '1px solid var(--bor)' }}>
           <div className="ct" style={{ fontSize: 13 }}>Çeviri Süreci</div>
           <Madde>Modellerden biri (model_c) İngilizce çalışıyor — ESCO'nun orijinal İngilizce meslek açıklamaları <b>doğrudan</b> kullanılıyor, çeviri gerekmiyor</Madde>
           <Madde>Bölüm açıklamaları, aynı İngilizce model için Türkçe'den İngilizce'ye çevriliyor (Helsinki-NLP makine çeviri modeli, yerel/offline — dış API kullanılmıyor)</Madde>
@@ -108,6 +139,7 @@ export default function SistemHakkindaSayfasi() {
                 ['Bölüm açıklaması çevirisi (TR→EN)', 'Helsinki-NLP MT modeli', 'Model C\'nin İngilizce girdisi için'],
                 ['Meslek adı/açıklaması çevirisi (EN→TR)', 'Helsinki-NLP MT modeli (tc-big-en-tr)', 'ESCO kaynağı yalnızca İngilizce'],
                 ['Çeviri tutarlılık kontrolü', 'Yalnızca model_a (1 model)', 'Hızlı ön tarama — üretim skoru değil, tanılama amaçlı'],
+                ['Bölüm kümeleme (K5 dalları)', 'K-Means (dil modeli değil, klasik ML)', 'A1-A9 sayısal profiline dayalı matematiksel gruplama'],
                 ['Soru geçerlilik testi', '3 model (model_a, model_b, model_c)', 'Üretim kalite kontrolü — konsensüs önemli'],
               ].map((satir, i) => (
                 <tr key={i} style={{ borderBottom: '1px solid var(--bor)' }}>
@@ -147,6 +179,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde>10 yöntemin sonucu 0-100'e normalize edilip <b>ortalaması</b> alınır → nihai <b>toplam_uyum</b> puanı</Madde>
         <Madde><b>Kendall's W</b> hesaplanır — 10 yöntem ne kadar "hemfikir", bu bir güvenilirlik/sağlamlık kontrolüdür</Madde>
         <Madde>Bu ham skorlar (yontem_skorlari, kendall_w) yalnızca admin şemasında bulunur — öğrenciye asla gösterilmez</Madde>
+        <Madde><b>Katman ağırlıkları:</b> K1-K4'ün her biri eşit ağırlıkla (%25) toplam uyuma katkı verir</Madde>
       </Bolum>
 
       <Bolum ikon="📊" baslik="4. Aşama 4 — Sonuç Sunumu ve Gizlilik Kuralları">
@@ -163,20 +196,42 @@ export default function SistemHakkindaSayfasi() {
 
       <Bolum ikon="🧭" baslik="5. Aşama 5 — Koçluk Modülü (Hedef Bölüm)">
         <p style={{ marginBottom: 10 }}>
-          Öğrenci, herhangi bir bölümü (yalnızca 1 tanesini, odaklanma ilkesiyle) <b>hedef</b> olarak seçebilir.
+          Öğrenci, herhangi bir bölümü (en fazla 3 tane, odaklanma ilkesiyle) <b>hedef</b> olarak seçebilir.
         </p>
         <Madde><b>Gap Analizi:</b> her değişkende (öğrenci puanı − bölüm beklentisi) hesaplanır, 5 kademeye ayrılır (belirgin üstün → belirgin altında)</Madde>
         <Madde><b>Öncelik Skoru:</b> fark büyüklüğü × o değişkenin bölüm için ağırlığı — hangi boyutun geliştirilmesi en çok fark yaratır, onu öne çıkarır</Madde>
-        <Madde><b>Gelişim Yol Haritası:</b> geliştirilmesi gereken boyutlar, tahmini efora göre "Şimdi / Bu Dönem / Uzun Vadede" olarak gruplanır</Madde>
-        <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (min. 120 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
+        <Madde><b>Gelişim Yol Haritası:</b> geliştirilmesi gereken boyutlar, tahmini efora göre "Şimdi / Bu Dönem / Uzun Vadede" olarak gruplanır, her biri için gerçek kaynak önerileri (kitap, aktivite) sunulur</Madde>
+        <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (min. 90 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
       </Bolum>
 
-      <Bolum ikon="🛠️" baslik="6. Admin Süreçleri — Veri Nasıl Yönetiliyor">
+      <Bolum ikon="🛡️" baslik="6. Güvenlik & Tutarlılık Sistemi">
+        <p style={{ marginBottom: 10 }}>
+          Değerlendirme sırasında, sonucun güvenilirliğini artırmak için çok katmanlı bir izleme sistemi çalışır:
+        </p>
+        <Madde><b>Tam ekran zorunluluğu:</b> değerlendirme yalnızca tam ekran modunda yapılabilir; çıkılırsa uyarı gösterilir ve olay kaydedilir</Madde>
+        <Madde><b>Kamera doğrulaması:</b> katman başında ve aralıklarla (izin verilirse) kimlik doğrulama fotoğrafı çekilir</Madde>
+        <Madde><b>Davranış izleme:</b> sekme değiştirme, pencere odağı kaybı gibi olaylar zaman damgalı kaydedilir</Madde>
+        <Madde><b>Güven Skoru:</b> kontrol (dikkat) sorularının doğruluk oranı + güvenlik olaylarının sayısı eşit ağırlıkla birleştirilip 0-100 arası bir skor üretir; eşiğin altında kalan sonuçlar "geçersiz" işaretlenir (silinmez, yalnızca etiketlenir)</Madde>
+        <Madde>Tüm bu veriler admin panelindeki <b>Güvenlik / Tutarlılık</b> sayfasından, tur bazında incelenebilir</Madde>
+      </Bolum>
+
+      <Bolum ikon="🛠️" baslik="7. Admin Süreçleri — Veri Nasıl Yönetiliyor">
         <Madde><b>Bölümler:</b> Taslak → Test Ediliyor → Yayında akışı; her geçiş gerekçeli ve audit log'a yazılı</Madde>
-        <Madde><b>Soru Bankası:</b> sorular hiç silinmez, yalnızca pasife alınır (geçmiş öğrenci oturumları bozulmasın diye)</Madde>
-        <Madde><b>Katman Ağırlıkları:</b> K1-K4'ün toplam %100'lük ağırlık dağılımı; yeni versiyon eskisini otomatik pasife alır ama silmez</Madde>
+        <Madde><b>Soru Bankası:</b> sorular hiç silinmez, yalnızca pasife alınır (geçmiş öğrenci oturumları bozulmasın diye); katman bazlı sekmeler, arama ve çoklu filtrelerle yönetilir</Madde>
+        <Madde><b>Katman Ağırlıkları:</b> K1-K4 eşit (%25) sabitlenmiştir, ayrı bir yönetim ekranı yoktur</Madde>
+        <Madde><b>Derinleşme Alanları (K5):</b> her dal, tek/çoklu yöntem kaynaklı olup olmadığına göre "Taslak", "Güçlü Kanıtlı" ya da "Gözden Geçirilmeli" olarak işaretlenir</Madde>
         <Madde><b>Pipeline Sonuçları:</b> bilgisayarınızda üretilen bölüm profili çıktısı, önce taslak tabloya gider, istatistiksel önizleme sonrası yalnızca süper admin onayıyla canlıya (yeni bir versiyon olarak) yazılır</Madde>
         <Madde><b>Audit Log:</b> durum değişikliği, rol değişikliği, pipeline onayı gibi kritik her işlem kalıcı olarak kaydedilir</Madde>
+      </Bolum>
+
+      <Bolum ikon="🕓" baslik="8. Son Güncellemeler">
+        <Madde><b>ESCO geçişi:</b> meslek veri kaynağı 7.764 kayıtlı eski listeden, AB'nin resmi 3.039 kayıtlı ESCO sınıflandırmasına taşındı — hatalı eşleşmeler büyük ölçüde ortadan kalktı</Madde>
+        <Madde><b>K5 dalları kuruldu:</b> 301 bölüm, A1-A9 profiline göre kümeleme analiziyle 8 dala ayrıldı; her dal için 7'şer yeni değişken ve toplam 186 soru (168 Likert + 18 SJT) yazıldı</Madde>
+        <Madde><b>Güvenlik/Tutarlılık altyapısı:</b> tam ekran zorunluluğu, kamera doğrulaması, davranış izleme ve güven skoru sistemi kuruldu</Madde>
+        <Madde><b>Katman ağırlıkları eşitlendi:</b> K1-K4 artık eşit (%25) ağırlıkla hesaba katılıyor</Madde>
+        <Madde><b>Soru Bankası yeniden tasarlandı:</b> katman bazlı sekmeler, arama, değişken/tip filtreleri, sayfa sayfa görünüm ve doğrudan düzenleme eklendi</Madde>
+        <Madde><b>Dosya formatı:</b> pipeline çıktıları ve admin yüklemeleri artık .csv yerine .xlsx — Türkçe karakter bozulması riski ortadan kalktı</Madde>
+        <Madde><b>Yeniden değerlendirme süresi:</b> 120 günden 90 güne indirildi</Madde>
       </Bolum>
     </div>
   )
