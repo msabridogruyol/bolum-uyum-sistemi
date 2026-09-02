@@ -85,6 +85,26 @@ def gecerlilik_girdisi_getir_v2(
                 beklenen_degisken_kod=degisken_kodlari.get(en_yuksek.degisken_id, ""),
             ))
 
+    # --- [EKLENDİ] Kutup seçenekleri: 1-2 numaralı şıklar A ucu değişkenine,
+    # 3-4 numaralı şıklar B ucu değişkenine "beklenen" olarak atanır. ---
+    kutup_sorular = (
+        db.query(Soru, Katman.kod)
+        .join(Katman, Katman.id == Soru.katman_id)
+        .filter(Soru.soru_tipi == "kutup", Soru.aktif_mi.is_(True))
+        .all()
+    )
+    for soru, katman_kodu in kutup_sorular:
+        if soru.degisken_id is None or soru.b_ucu_degisken_id is None:
+            continue
+        secenekler = db.query(SoruSecenegi).filter(SoruSecenegi.soru_id == soru.id).order_by(SoruSecenegi.secenek_sirasi).all()
+        for sec in secenekler:
+            beklenen_id = soru.degisken_id if sec.secenek_sirasi <= 2 else soru.b_ucu_degisken_id
+            sonuc.append(GecerlilikBirimiOut(
+                birim_anahtari=f"kutup_{soru.id}_{sec.id}", kaynak_soru_id=soru.id, secenek_id=sec.id,
+                kaynak_tipi="kutup", katman_kod=katman_kodu, metin=sec.secenek_metni, baglam=soru.soru_metni,
+                beklenen_degisken_kod=degisken_kodlari.get(beklenen_id, ""),
+            ))
+
     return sonuc
 
 
