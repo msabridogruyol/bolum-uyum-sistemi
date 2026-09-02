@@ -37,7 +37,7 @@ class SecenekDetayOut(BaseModel):
     id: int
     secenek_sirasi: int
     secenek_metni: str
-    sjt_agirliklar: list[dict] = []  # [{"degisken_kod": "M1", "agirlik": 1.0}, ...] — yalnızca SJT'de dolu
+    sjt_agirliklar: list[dict] = []  # [{"degisken_kod": "M1", "degisken_ad": "Yazılım/Algoritma Odaklılık", "agirlik": 1.0}, ...]
 
 
 class SoruDetayOut(BaseModel):
@@ -47,6 +47,7 @@ class SoruDetayOut(BaseModel):
     dal_adi: str | None
     soru_tipi: str
     degisken_kod: str | None
+    degisken_adi: str | None
     soru_metni: str
     ters_kodlanmis_mi: bool
     aktif_mi: bool
@@ -297,6 +298,7 @@ def sorulari_detayli_listele(
 
     soru_idler = [s.id for s, _ in sayfa_satirlari]
     degisken_kodlari = dict(db.query(Degisken.id, Degisken.kod).all())
+    degisken_adlari = dict(db.query(Degisken.id, Degisken.ad).all())
 
     tum_secenekler = (
         db.query(SoruSecenegi)
@@ -306,15 +308,15 @@ def sorulari_detayli_listele(
     )
     secenek_idler = [sec.id for sec in tum_secenekler]
     agirliklar = (
-        db.query(SjtSecenekDegiskenAgirlik, Degisken.kod)
+        db.query(SjtSecenekDegiskenAgirlik, Degisken.kod, Degisken.ad)
         .join(Degisken, Degisken.id == SjtSecenekDegiskenAgirlik.degisken_id)
         .filter(SjtSecenekDegiskenAgirlik.secenek_id.in_(secenek_idler))
         .all()
     )
     agirlik_by_secenek: dict[int, list[dict]] = {}
-    for a, degisken_kod in agirliklar:
+    for a, degisken_kod, degisken_ad in agirliklar:
         agirlik_by_secenek.setdefault(a.secenek_id, []).append(
-            {"degisken_kod": degisken_kod, "agirlik": float(a.agirlik)}
+            {"degisken_kod": degisken_kod, "degisken_ad": degisken_ad, "agirlik": float(a.agirlik)}
         )
 
     secenekler_by_soru: dict[int, list[SecenekDetayOut]] = {}
@@ -330,6 +332,7 @@ def sorulari_detayli_listele(
         sonuc.append(SoruDetayOut(
             id=s.id, katman_kod=katman_kodu, dal_kod=dal_kodu, dal_adi=dal_adi,
             soru_tipi=s.soru_tipi, degisken_kod=degisken_kodlari.get(s.degisken_id),
+            degisken_adi=degisken_adlari.get(s.degisken_id),
             soru_metni=s.soru_metni, ters_kodlanmis_mi=s.ters_kodlanmis_mi, aktif_mi=s.aktif_mi,
             secenekler=secenekler_by_soru.get(s.id, []),
         ))
