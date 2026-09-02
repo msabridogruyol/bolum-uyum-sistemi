@@ -257,6 +257,19 @@ def katmani_tamamla(
             for a in agirliklar:
                 degisken_puanlari.setdefault(a.degisken_id, []).append(float(a.agirlik) * 100)
 
+        elif soru.soru_tipi == "kutup":
+            # [EKLENDİ] A-mı-B-mi, 4'lü ölçek. secenek_sirasi: 1=Kesinlikle A,
+            # 2=Daha Çok A, 3=Daha Çok B, 4=Kesinlikle B. A ucu puanı bu 4
+            # noktaya göre lineer enterpole edilir (1->100, 4->0); B ucu
+            # puanı bunun tamamlayanıdır (100 - A_puani) — iki uç birbirinin
+            # simetrik zıttı olduğu için bu matematiksel olarak tutarlıdır.
+            if soru.degisken_id is None or soru.b_ucu_degisken_id is None:
+                continue
+            a_puani = (4 - secenek.secenek_sirasi) / 3 * 100
+            b_puani = 100 - a_puani
+            degisken_puanlari.setdefault(soru.degisken_id, []).append(a_puani)
+            degisken_puanlari.setdefault(soru.b_ucu_degisken_id, []).append(b_puani)
+
         # soru_tipi == "kontrol" -> hiçbir değişkene puan katkısı yapılmaz (kasıtlı)
 
     sonuc: list[tuple[int, float]] = []
