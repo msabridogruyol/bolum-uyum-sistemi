@@ -538,26 +538,70 @@ function SoruKarti({ soru, sira, onGuncelle }) {
   )
 }
 
+const KATMANLAR = ['K1', 'K2', 'K3', 'K4', 'K5']
+
+function OzetKartlari({ ozet }) {
+  if (!ozet) return null
+  return (
+    <div className="sg" style={{ marginBottom: 16 }}>
+      <div className="sc"><div className="sl">Toplam</div><div className="sv">{ozet.toplam}</div></div>
+      <div className="sc"><div className="sl">Likert</div><div className="sv pu">{ozet.likert_sayisi}</div></div>
+      <div className="sc"><div className="sl">SJT</div><div className="sv pu">{ozet.sjt_sayisi}</div></div>
+      <div className="sc"><div className="sl">Aktif</div><div className="sv gr">{ozet.aktif_sayisi}</div></div>
+      <div className="sc"><div className="sl">Pasif</div><div className="sv">{ozet.pasif_sayisi}</div></div>
+    </div>
+  )
+}
+
 export default function SorularSayfasi() {
-  const [veri, setVeri] = useState(null) // { sorular, toplam_soru_sayisi, toplam_sayfa_sayisi, su_anki_sayfa }
+  const [aktifKatman, setAktifKatman] = useState('K1')
+  const [veri, setVeri] = useState(null)
+  const [ozet, setOzet] = useState(null)
   const [dallar, setDallar] = useState([])
-  const [katmanFiltre, setKatmanFiltre] = useState('')
+  const [degiskenler, setDegiskenler] = useState([])
   const [dalFiltre, setDalFiltre] = useState('')
+  const [degiskenFiltre, setDegiskenFiltre] = useState('')
+  const [tipFiltre, setTipFiltre] = useState('')
   const [aktifFiltre, setAktifFiltre] = useState('')
+  const [arama, setArama] = useState('')
+  const [aramaGecikmeli, setAramaGecikmeli] = useState('')
   const [sayfa, setSayfa] = useState(1)
   const [aktifSekme, setAktifSekme] = useState(null)
   const [hata, setHata] = useState(null)
 
-  const yukle = useCallback((kod, dal, aktif, sayfaNo) => {
+  // Arama kutusuna yazarken 400ms bekleyip sorguyu tetikle (her tuş vuruşunda değil)
+  useEffect(() => {
+    const zamanlayici = setTimeout(() => setAramaGecikmeli(arama), 400)
+    return () => clearTimeout(zamanlayici)
+  }, [arama])
+
+  const yukle = useCallback((katman, dal, degisken, tip, aktif, sayfaNo, aramaMetni) => {
     const aktifParam = aktif === 'aktif' ? true : aktif === 'pasif' ? false : undefined
-    api.sorularDetayliListele(kod || undefined, dal || undefined, aktifParam, sayfaNo)
+    api.sorularDetayliListele(katman, dal || undefined, aktifParam, sayfaNo, degisken || undefined, tip || undefined, aramaMetni || undefined)
       .then(setVeri)
       .catch((e) => setHata(e.detail || 'Sorular yüklenemedi.'))
+    api.katmanOzetiGetir(katman, dal || undefined).then(setOzet).catch(() => setOzet(null))
   }, [])
 
-  useEffect(() => { setSayfa(1) }, [katmanFiltre, dalFiltre, aktifFiltre])
-  useEffect(() => { yukle(katmanFiltre, dalFiltre, aktifFiltre, sayfa) }, [yukle, katmanFiltre, dalFiltre, aktifFiltre, sayfa])
-  useEffect(() => { api.dalFiltreListesiGetir().then(setDallar).catch(() => setDallar([])) }, [])
+  // Katman değişince tüm alt filtreleri sıfırla
+  useEffect(() => {
+    setDalFiltre(''); setDegiskenFiltre(''); setTipFiltre(''); setAktifFiltre(''); setArama(''); setSayfa(1)
+  }, [aktifKatman])
+
+  useEffect(() => { setSayfa(1) }, [dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, aramaGecikmeli])
+
+  useEffect(() => {
+    yukle(aktifKatman, dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, sayfa, aramaGecikmeli)
+  }, [yukle, aktifKatman, dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, sayfa, aramaGecikmeli])
+
+  useEffect(() => {
+    if (aktifKatman === 'K5') api.dalFiltreListesiGetir().then(setDallar).catch(() => setDallar([]))
+    else setDallar([])
+  }, [aktifKatman])
+
+  useEffect(() => {
+    api.katmanDegiskenleriGetir(aktifKatman, dalFiltre || undefined).then(setDegiskenler).catch(() => setDegiskenler([]))
+  }, [aktifKatman, dalFiltre])
 
   useEffect(() => {
     if (window.XLSX) return
@@ -570,49 +614,88 @@ export default function SorularSayfasi() {
   async function alanGuncelle(tip, id, yeniMetin) {
     if (tip === 'soru') await api.soruMetniGuncelle(id, yeniMetin)
     else await api.secenekMetniGuncelle(id, yeniMetin)
-    yukle(katmanFiltre, dalFiltre, aktifFiltre, sayfa) // taze veri
+    yukle(aktifKatman, dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, sayfa, aramaGecikmeli)
+  }
+
+  function yenidenYukle() {
+    yukle(aktifKatman, dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, sayfa, aramaGecikmeli)
   }
 
   return (
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Soru Bankası</div>
-        <div className="ps">Her soru numaralı, tüm şıklarıyla görünür — metne tıklayıp doğrudan düzenleyebilirsiniz.</div>
+        <div className="ps">Her katmanın kendi sekmesi altında; arayıp, filtreleyip, doğrudan düzenleyebilirsiniz.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
+      {/* Katman sekmeleri */}
+      <div style={{ display: 'flex', gap: 6, marginBottom: 18, borderBottom: '1.5px solid var(--bor)', paddingBottom: 0 }}>
+        {KATMANLAR.map((k) => (
+          <button
+            key={k}
+            onClick={() => setAktifKatman(k)}
+            style={{
+              padding: '10px 20px', border: 'none', background: 'none', cursor: 'pointer',
+              fontFamily: 'var(--fd)', fontSize: 13.5, fontWeight: 700,
+              color: aktifKatman === k ? 'var(--pu)' : 'var(--tx3)',
+              borderBottom: aktifKatman === k ? '2.5px solid var(--pu)' : '2.5px solid transparent',
+              marginBottom: -1.5, transition: 'all .12s',
+            }}
+          >
+            {k} — {KATMAN_ADI[k]}
+          </button>
+        ))}
+      </div>
+
+      <OzetKartlari ozet={ozet} />
+
+      {/* Filtre satırı */}
       <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
-        <select className="auth-input" style={{ width: 200 }} value={katmanFiltre} onChange={(e) => { setKatmanFiltre(e.target.value); setDalFiltre('') }}>
-          <option value="">Tüm katmanlar</option>
-          {Object.keys(KATMAN_ADI).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
-        </select>
-        {katmanFiltre === 'K5' && (
+        <input
+          className="auth-input"
+          style={{ width: 240 }}
+          placeholder="🔍 Soru metninde ara…"
+          value={arama}
+          onChange={(e) => setArama(e.target.value)}
+        />
+        {aktifKatman === 'K5' && (
           <select className="auth-input" style={{ width: 220 }} value={dalFiltre} onChange={(e) => setDalFiltre(e.target.value)}>
             <option value="">Tüm dallar</option>
             {dallar.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}
           </select>
         )}
-        <select className="auth-input" style={{ width: 160 }} value={aktifFiltre} onChange={(e) => setAktifFiltre(e.target.value)}>
+        <select className="auth-input" style={{ width: 170 }} value={degiskenFiltre} onChange={(e) => setDegiskenFiltre(e.target.value)}>
+          <option value="">Tüm değişkenler</option>
+          {degiskenler.map((d) => <option key={d.kod} value={d.kod}>{d.kod} — {d.ad}</option>)}
+        </select>
+        <select className="auth-input" style={{ width: 140 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
+          <option value="">Tüm tipler</option>
+          <option value="likert">Yalnızca Likert</option>
+          <option value="sjt">Yalnızca SJT</option>
+        </select>
+        <select className="auth-input" style={{ width: 150 }} value={aktifFiltre} onChange={(e) => setAktifFiltre(e.target.value)}>
           <option value="">Aktif + Pasif</option>
           <option value="aktif">Yalnızca Aktif</option>
           <option value="pasif">Yalnızca Pasif</option>
         </select>
+        <div style={{ flex: 1 }} />
         <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'toplu' ? null : 'toplu'))}>
-          {aktifSekme === 'toplu' ? 'Kapat' : '⬆ Toplu Yükle (Likert + SJT)'}
+          {aktifSekme === 'toplu' ? 'Kapat' : '⬆ Toplu Yükle'}
         </button>
         <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
-          {aktifSekme === 'tekli' ? 'Kapat' : '+ Tek Tek Soru Ekle'}
+          {aktifSekme === 'tekli' ? 'Kapat' : '+ Soru Ekle'}
         </button>
       </div>
 
       {aktifSekme === 'toplu' && (
         <div style={{ marginBottom: 20 }}>
-          <TopluYuklemeFormu onTamamlandi={() => yukle(katmanFiltre, dalFiltre, aktifFiltre, sayfa)} />
+          <TopluYuklemeFormu onTamamlandi={yenidenYukle} />
         </div>
       )}
       {aktifSekme === 'tekli' && (
         <div style={{ marginBottom: 20 }}>
-          <YeniSoruFormu onEklendi={() => yukle(katmanFiltre, dalFiltre, aktifFiltre, sayfa)} />
+          <YeniSoruFormu onEklendi={yenidenYukle} />
         </div>
       )}
 
