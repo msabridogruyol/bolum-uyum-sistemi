@@ -194,11 +194,79 @@ def dallari_detayli_listele(
     return sonuc
 
 
+class OzetOut(BaseModel):
+    toplam: int
+    likert_sayisi: int
+    sjt_sayisi: int
+    aktif_sayisi: int
+    pasif_sayisi: int
+    degisken_bazli: list[dict]  # [{"degisken_kod": "D1", "soru_sayisi": 3}, ...]
+
+
+class DegiskenFiltreOut(BaseModel):
+    kod: str
+    ad: str
+
+
+@router.get("/degiskenler", response_model=list[DegiskenFiltreOut])
+def katman_degiskenleri_listele(
+    katman_kod: str,
+    dal_kod: str | None = None,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """Filtre menüsü için — bir katmandaki (K5'te isteğe bağlı bir dal içindeki) değişkenler."""
+    sorgu = (
+        db.query(Degisken.kod, Degisken.ad)
+        .join(Katman, Katman.id == Degisken.katman_id)
+        .filter(Katman.kod == katman_kod)
+    )
+    if dal_kod:
+        sorgu = sorgu.join(Dal, Dal.id == Degisken.dal_id).filter(Dal.kod == dal_kod)
+    satirlar = sorgu.order_by(Degisken.sira).all()
+    return [DegiskenFiltreOut(kod=k, ad=a) for k, a in satirlar]
+
+
+@router.get("/ozet", response_model=OzetOut)
+def katman_ozeti_getir(
+    katman_kod: str,
+    dal_kod: str | None = None,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """Bir katmanın (K5'te isteğe bağlı bir dalın) özet istatistikleri."""
+    sorgu = db.query(Soru).join(Katman, Katman.id == Soru.katman_id).filter(Katman.kod == katman_kod)
+    tum_sorular = sorgu.all()
+
+    if dal_kod:
+        dal_haritasi = _dal_haritasi_olustur(db)
+        tum_sorular = [s for s in tum_sorular if dal_haritasi.get(s.id, (None, None))[0] == dal_kod]
+
+    degisken_kodlari = dict(db.query(Degisken.id, Degisken.kod).all())
+    degisken_sayaci: dict[str, int] = {}
+    for s in tum_sorular:
+        if s.degisken_id and s.degisken_id in degisken_kodlari:
+            kod = degisken_kodlari[s.degisken_id]
+            degisken_sayaci[kod] = degisken_sayaci.get(kod, 0) + 1
+
+    return OzetOut(
+        toplam=len(tum_sorular),
+        likert_sayisi=sum(1 for s in tum_sorular if s.soru_tipi == "likert"),
+        sjt_sayisi=sum(1 for s in tum_sorular if s.soru_tipi == "sjt"),
+        aktif_sayisi=sum(1 for s in tum_sorular if s.aktif_mi),
+        pasif_sayisi=sum(1 for s in tum_sorular if not s.aktif_mi),
+        degisken_bazli=[{"degisken_kod": k, "soru_sayisi": v} for k, v in sorted(degisken_sayaci.items())],
+    )
+
+
 @router.get("", response_model=SayfalanmisSorularOut)
 def sorulari_detayli_listele(
     katman_kod: str | None = None,
     dal_kod: str | None = None,
+    degisken_kod: str | None = None,
+    soru_tipi: str | None = None,
     aktif_mi: bool | None = None,
+    arama: str | None = None,
     sayfa: int = 1,
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
@@ -208,12 +276,16 @@ def sorulari_detayli_listele(
         sorgu = sorgu.filter(Katman.kod == katman_kod)
     if aktif_mi is not None:
         sorgu = sorgu.filter(Soru.aktif_mi == aktif_mi)
+    if soru_tipi:
+        sorgu = sorgu.filter(Soru.soru_tipi == soru_tipi)
+    if arama and arama.strip():
+        sorgu = sorgu.filter(Soru.soru_metni.ilike(f"%{arama.strip()}%"))
+    if degisken_kod:
+        sorgu = sorgu.join(Degisken, Degisken.id == Soru.degisken_id).filter(Degisken.kod == degisken_kod)
 
     tum_satirlar = sorgu.order_by(Soru.id).all()
     dal_haritasi = _dal_haritasi_olustur(db) if (katman_kod == "K5" or dal_kod) else {}
 
-    # dal_kod filtresi Python tarafında uygulanıyor (haritalama SQL join'e taşınabilir
-    # ama K5 soru sayısı küçük olduğu için performans sorun değil)
     if dal_kod:
         tum_satirlar = [(s, kk) for s, kk in tum_satirlar if dal_haritasi.get(s.id, (None, None))[0] == dal_kod]
 
