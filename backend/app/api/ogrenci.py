@@ -135,7 +135,6 @@ def katmanlari_listele(
             normalizasyon_agirligi=float(k.normalizasyon_agirligi) if k.normalizasyon_agirligi else None,
             kosullu_mu=k.kosullu_mu,
             durum=oturumlar.get(k.id, "baslamadi"),
-            soru_sayisi=soru_sayilari.get(k.id, 0),
         )
         for k in katmanlar
     ]
