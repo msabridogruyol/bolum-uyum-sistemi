@@ -413,6 +413,77 @@ function YeniSoruFormu({ onEklendi }) {
 }
 
 // ============================================================
+// Kutup Soru Toplu Yükleme (3. soru tipi — A-mı-B-mi)
+// ============================================================
+function kutupSatirlariniDondur(hamSatirlar) {
+  const baslik = (hamSatirlar[0] || []).map((h) => String(h).trim())
+  const beklenen = ['katman_kod', 'a_degisken_kod', 'b_degisken_kod', 'soru_metni', 'a_ucu_etiketi', 'b_ucu_etiketi']
+  const idx = Object.fromEntries(beklenen.map((k) => [k, baslik.indexOf(k)]))
+  if (Object.values(idx).some((i) => i < 0)) return null
+
+  return hamSatirlar.slice(1).map((h) => ({
+    katman_kod: String(h[idx.katman_kod] ?? '').trim(),
+    a_degisken_kod: String(h[idx.a_degisken_kod] ?? '').trim(),
+    b_degisken_kod: String(h[idx.b_degisken_kod] ?? '').trim(),
+    soru_metni: String(h[idx.soru_metni] ?? '').trim(),
+    a_ucu_etiketi: String(h[idx.a_ucu_etiketi] ?? '').trim(),
+    b_ucu_etiketi: String(h[idx.b_ucu_etiketi] ?? '').trim(),
+  })).filter((s) => s.katman_kod && s.a_degisken_kod && s.b_degisken_kod && s.soru_metni)
+}
+
+function KutupYuklemeFormu({ onTamamlandi }) {
+  const [yukleniyor, setYukleniyor] = useState(false)
+  const [sonuc, setSonuc] = useState(null)
+  const [hata, setHata] = useState(null)
+
+  async function dosyaSecildi(e) {
+    const dosya = e.target.files?.[0]
+    if (!dosya) return
+    setHata(null); setSonuc(null); setYukleniyor(true)
+    try {
+      const hamSatirlar = await dosyayiAyristir(dosya)
+      const satirlar = kutupSatirlariniDondur(hamSatirlar)
+      if (!satirlar || satirlar.length === 0) {
+        throw new Error('Dosya okunamadı — sütunlar: katman_kod, a_degisken_kod, b_degisken_kod, soru_metni, a_ucu_etiketi, b_ucu_etiketi')
+      }
+      const cevap = await api.kutupSorulariniTopluYukle(satirlar)
+      setSonuc(cevap)
+      onTamamlandi()
+    } catch (err) {
+      setHata(err.detail || err.message || 'Yükleme başarısız.')
+    } finally {
+      setYukleniyor(false)
+      e.target.value = ''
+    }
+  }
+
+  return (
+    <div className="card" style={{ borderColor: 'var(--tl)', background: 'var(--tll)' }}>
+      <div className="ct">Kutup Soru Toplu Yükle (A-mı-B-mi, 4'lü ölçek)</div>
+      <div className="ps" style={{ margin: '0 0 12px' }}>
+        Her satır <b>tek bir soru</b> tanımlar (Likert/SJT'den farklı — çok satırlı değil). Sütunlar:{' '}
+        <code>katman_kod, a_degisken_kod, b_degisken_kod, soru_metni, a_ucu_etiketi, b_ucu_etiketi</code>.
+        4 seçenek metni ("Kesinlikle {'{A}'}", "Daha Çok {'{A}'}", "Daha Çok {'{B}'}", "Kesinlikle {'{B}'}") otomatik üretilir.
+        CSV veya Excel (.xlsx) kabul edilir.
+      </div>
+      {hata && <div className="auth-error">{hata}</div>}
+      <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
+        {yukleniyor ? <span className="spin" /> : '⬆ Dosya Seç ve Yükle'}
+        <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
+      </label>
+      {sonuc && (
+        <div style={{ marginTop: 12, fontSize: 12.5 }}>
+          <b style={{ color: 'var(--gr)' }}>{sonuc.eklenen_soru_sayisi} kutup sorusu eklendi.</b>
+          {sonuc.hatalar.length > 0 && (
+            <div style={{ color: 'var(--am)', marginTop: 4 }}>{sonuc.hatalar.slice(0, 5).join(', ')}</div>
+          )}
+        </div>
+      )}
+    </div>
+  )
+}
+
+// ============================================================
 // Ana sayfa
 // ============================================================
 function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
@@ -498,7 +569,7 @@ function SoruKarti({ soru, sira, onGuncelle }) {
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
             <span className="bdg bdg-prog">{soru.katman_kod}</span>
             {soru.dal_adi && <span className="bdg" style={{ background: 'var(--tll)', color: 'var(--tl)' }}>{soru.dal_adi}</span>}
-            <span className="bdg bdg-lock">{soru.soru_tipi === 'likert' ? 'Likert' : 'SJT'}</span>
+            <span className="bdg bdg-lock">{{likert:'Likert', sjt:'SJT', kutup:'Kutup', kontrol:'Kontrol'}[soru.soru_tipi] || soru.soru_tipi}</span>
             {soru.degisken_adi && <span className="bdg bdg-lock">{soru.degisken_adi}</span>}
             {soru.ters_kodlanmis_mi && <span className="bdg" style={{ background: 'var(--aml)', color: 'var(--am)' }}>Ters Kodlanmış</span>}
             <span className={`bdg ${soru.aktif_mi ? 'bdg-done' : 'bdg-lock'}`}>{soru.aktif_mi ? 'Aktif' : 'Pasif'}</span>
@@ -673,6 +744,7 @@ export default function SorularSayfasi() {
           <option value="">Tüm tipler</option>
           <option value="likert">Yalnızca Likert</option>
           <option value="sjt">Yalnızca SJT</option>
+          <option value="kutup">Yalnızca Kutup</option>
         </select>
         <select className="auth-input" style={{ width: 150 }} value={aktifFiltre} onChange={(e) => setAktifFiltre(e.target.value)}>
           <option value="">Aktif + Pasif</option>
@@ -686,6 +758,9 @@ export default function SorularSayfasi() {
         <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
           {aktifSekme === 'tekli' ? 'Kapat' : '+ Soru Ekle'}
         </button>
+        <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'kutup' ? null : 'kutup'))}>
+          {aktifSekme === 'kutup' ? 'Kapat' : '⬆ Kutup Soru Yükle'}
+        </button>
       </div>
 
       {aktifSekme === 'toplu' && (
@@ -696,6 +771,11 @@ export default function SorularSayfasi() {
       {aktifSekme === 'tekli' && (
         <div style={{ marginBottom: 20 }}>
           <YeniSoruFormu onEklendi={yenidenYukle} />
+        </div>
+      )}
+      {aktifSekme === 'kutup' && (
+        <div style={{ marginBottom: 20 }}>
+          <KutupYuklemeFormu onTamamlandi={yenidenYukle} />
         </div>
       )}
 
