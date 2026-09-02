@@ -427,26 +427,138 @@ function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
   URL.revokeObjectURL(url)
 }
 
-export default function SorularSayfasi() {
-  const [sorular, setSorular] = useState(null)
-  const [katmanFiltre, setKatmanFiltre] = useState('')
-  const [aktifFiltre, setAktifFiltre] = useState('') // '' | 'aktif' | 'pasif'
-  const [aktifSekme, setAktifSekme] = useState(null) // null | 'tekli' | 'toplu'
-  const [hata, setHata] = useState(null)
-  const [secilenler, setSecilenler] = useState(new Set())
-  const [topluIslemYukleniyor, setTopluIslemYukleniyor] = useState(false)
 
-  const yukle = useCallback((kod, aktif) => {
+// ============================================================
+// Düzenlenebilir metin — tıklayınca input'a döner, blur/enter'da kaydeder
+// ============================================================
+function DuzenlenebilirMetin({ deger, onKaydet, coklu = false, stil = {} }) {
+  const [duzenleniyor, setDuzenleniyor] = useState(false)
+  const [taslak, setTaslak] = useState(deger)
+  const [kaydediliyor, setKaydediliyor] = useState(false)
+
+  useEffect(() => { setTaslak(deger) }, [deger])
+
+  async function kaydet() {
+    if (taslak.trim() === deger.trim()) { setDuzenleniyor(false); return }
+    setKaydediliyor(true)
+    try {
+      await onKaydet(taslak.trim())
+      setDuzenleniyor(false)
+    } catch (err) {
+      alert(err.detail || 'Kaydedilemedi.')
+    } finally {
+      setKaydediliyor(false)
+    }
+  }
+
+  if (!duzenleniyor) {
+    return (
+      <div
+        onClick={() => setDuzenleniyor(true)}
+        style={{ cursor: 'text', padding: '2px 4px', borderRadius: 6, ...stil }}
+        title="Düzenlemek için tıkla"
+        onMouseEnter={(e) => (e.currentTarget.style.background = 'var(--sur2)')}
+        onMouseLeave={(e) => (e.currentTarget.style.background = 'transparent')}
+      >
+        {deger}
+      </div>
+    )
+  }
+
+  const OrtakProps = {
+    value: taslak,
+    autoFocus: true,
+    disabled: kaydediliyor,
+    onChange: (e) => setTaslak(e.target.value),
+    onBlur: kaydet,
+    onKeyDown: (e) => {
+      if (e.key === 'Enter' && !coklu) kaydet()
+      if (e.key === 'Escape') { setTaslak(deger); setDuzenleniyor(false) }
+    },
+    style: { width: '100%', fontFamily: 'inherit', fontSize: 'inherit', padding: '4px 6px', border: '1.5px solid var(--pu)', borderRadius: 6, ...stil },
+  }
+
+  return coklu ? <textarea rows={2} {...OrtakProps} /> : <input type="text" {...OrtakProps} />
+}
+
+// ============================================================
+// Tek bir soru kartı — numaralı, tüm şıklarıyla, düzenlenebilir
+// ============================================================
+function SoruKarti({ soru, sira, onGuncelle }) {
+  return (
+    <div className="card" style={{ marginBottom: 10, opacity: soru.aktif_mi ? 1 : 0.55 }}>
+      <div style={{ display: 'flex', alignItems: 'flex-start', gap: 12, marginBottom: 10 }}>
+        <div style={{
+          width: 28, height: 28, borderRadius: 8, background: 'var(--sur2)', color: 'var(--tx2)',
+          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 12, fontWeight: 700, flexShrink: 0,
+        }}>
+          {sira}
+        </div>
+        <div style={{ flex: 1 }}>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
+            <span className="bdg bdg-prog">{soru.katman_kod}</span>
+            {soru.dal_adi && <span className="bdg" style={{ background: 'var(--tll)', color: 'var(--tl)' }}>{soru.dal_adi}</span>}
+            <span className="bdg bdg-lock">{soru.soru_tipi === 'likert' ? 'Likert' : 'SJT'}</span>
+            {soru.degisken_kod && <span className="bdg bdg-lock">{soru.degisken_kod}</span>}
+            {soru.ters_kodlanmis_mi && <span className="bdg" style={{ background: 'var(--aml)', color: 'var(--am)' }}>Ters Kodlanmış</span>}
+            <span className={`bdg ${soru.aktif_mi ? 'bdg-done' : 'bdg-lock'}`}>{soru.aktif_mi ? 'Aktif' : 'Pasif'}</span>
+          </div>
+          <DuzenlenebilirMetin
+            deger={soru.soru_metni}
+            coklu
+            stil={{ fontSize: 14.5, fontWeight: 700 }}
+            onKaydet={(yeniMetin) => onGuncelle('soru', soru.id, yeniMetin)}
+          />
+        </div>
+      </div>
+
+      <div style={{ paddingLeft: 40, display: 'flex', flexDirection: 'column', gap: 6 }}>
+        {soru.secenekler.map((sec) => (
+          <div key={sec.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+            <span style={{ width: 18, color: 'var(--tx3)', fontWeight: 700, flexShrink: 0 }}>{sec.secenek_sirasi}.</span>
+            <div style={{ flex: 1 }}>
+              <DuzenlenebilirMetin
+                deger={sec.secenek_metni}
+                onKaydet={(yeniMetin) => onGuncelle('secenek', sec.id, yeniMetin)}
+              />
+            </div>
+            {sec.sjt_agirliklar.length > 0 && (
+              <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', flexShrink: 0 }}>
+                {sec.sjt_agirliklar.map((a, i) => (
+                  <span key={i} style={{ fontSize: 10, background: 'var(--pul)', color: 'var(--pud)', padding: '2px 7px', borderRadius: 10, fontWeight: 700 }}>
+                    {a.degisken_kod}: {a.agirlik}
+                  </span>
+                ))}
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default function SorularSayfasi() {
+  const [veri, setVeri] = useState(null) // { sorular, toplam_soru_sayisi, toplam_sayfa_sayisi, su_anki_sayfa }
+  const [dallar, setDallar] = useState([])
+  const [katmanFiltre, setKatmanFiltre] = useState('')
+  const [dalFiltre, setDalFiltre] = useState('')
+  const [aktifFiltre, setAktifFiltre] = useState('')
+  const [sayfa, setSayfa] = useState(1)
+  const [aktifSekme, setAktifSekme] = useState(null)
+  const [hata, setHata] = useState(null)
+
+  const yukle = useCallback((kod, dal, aktif, sayfaNo) => {
     const aktifParam = aktif === 'aktif' ? true : aktif === 'pasif' ? false : undefined
-    api.sorulariListele(kod || undefined, aktifParam).then((veri) => {
-      setSorular(veri)
-      setSecilenler(new Set()) // liste yenilenince seçim sıfırlanır
-    }).catch((e) => setHata(e.detail || 'Sorular yüklenemedi.'))
+    api.sorularDetayliListele(kod || undefined, dal || undefined, aktifParam, sayfaNo)
+      .then(setVeri)
+      .catch((e) => setHata(e.detail || 'Sorular yüklenemedi.'))
   }, [])
 
-  useEffect(() => { yukle(katmanFiltre, aktifFiltre) }, [yukle, katmanFiltre, aktifFiltre])
+  useEffect(() => { setSayfa(1) }, [katmanFiltre, dalFiltre, aktifFiltre])
+  useEffect(() => { yukle(katmanFiltre, dalFiltre, aktifFiltre, sayfa) }, [yukle, katmanFiltre, dalFiltre, aktifFiltre, sayfa])
+  useEffect(() => { api.dalFiltreListesiGetir().then(setDallar).catch(() => setDallar([])) }, [])
 
-  // SheetJS kütüphanesini bir kez, sayfa açılınca yükle
   useEffect(() => {
     if (window.XLSX) return
     const script = document.createElement('script')
@@ -455,57 +567,31 @@ export default function SorularSayfasi() {
     document.body.appendChild(script)
   }, [])
 
-  async function aktiflikDegistir(soruId, aktifMi) {
-    try {
-      await api.soruAktiflikGuncelle(soruId, !aktifMi)
-      yukle(katmanFiltre, aktifFiltre)
-    } catch (err) {
-      setHata(err.detail || 'Güncellenemedi.')
-    }
-  }
-
-  function secimDegistir(soruId) {
-    setSecilenler((onceki) => {
-      const yeni = new Set(onceki)
-      if (yeni.has(soruId)) yeni.delete(soruId)
-      else yeni.add(soruId)
-      return yeni
-    })
-  }
-
-  function hepsiniSec() {
-    if (!sorular) return
-    setSecilenler((onceki) =>
-      onceki.size === sorular.length ? new Set() : new Set(sorular.map((s) => s.id))
-    )
-  }
-
-  async function topluAktifDurumDegistir(aktifMi) {
-    if (secilenler.size === 0) return
-    setTopluIslemYukleniyor(true)
-    try {
-      await api.sorulariTopluAktifYap([...secilenler], aktifMi)
-      yukle(katmanFiltre, aktifFiltre)
-    } catch (err) {
-      setHata(err.detail || 'Toplu güncelleme başarısız.')
-    } finally {
-      setTopluIslemYukleniyor(false)
-    }
+  async function alanGuncelle(tip, id, yeniMetin) {
+    if (tip === 'soru') await api.soruMetniGuncelle(id, yeniMetin)
+    else await api.secenekMetniGuncelle(id, yeniMetin)
+    yukle(katmanFiltre, dalFiltre, aktifFiltre, sayfa) // taze veri
   }
 
   return (
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Soru Bankası</div>
-        <div className="ps">Soruları pasife alabilirsiniz — geçmiş öğrenci oturumları bozulmasın diye kalıcı silme yoktur.</div>
+        <div className="ps">Her soru numaralı, tüm şıklarıyla görünür — metne tıklayıp doğrudan düzenleyebilirsiniz.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
-      <div style={{ display: 'flex', gap: 10, marginBottom: 14, alignItems: 'center', flexWrap: 'wrap' }}>
-        <select className="auth-input" style={{ width: 220 }} value={katmanFiltre} onChange={(e) => setKatmanFiltre(e.target.value)}>
+      <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+        <select className="auth-input" style={{ width: 200 }} value={katmanFiltre} onChange={(e) => { setKatmanFiltre(e.target.value); setDalFiltre('') }}>
           <option value="">Tüm katmanlar</option>
           {Object.keys(KATMAN_ADI).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
         </select>
+        {katmanFiltre === 'K5' && (
+          <select className="auth-input" style={{ width: 220 }} value={dalFiltre} onChange={(e) => setDalFiltre(e.target.value)}>
+            <option value="">Tüm dallar</option>
+            {dallar.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}
+          </select>
+        )}
         <select className="auth-input" style={{ width: 160 }} value={aktifFiltre} onChange={(e) => setAktifFiltre(e.target.value)}>
           <option value="">Aktif + Pasif</option>
           <option value="aktif">Yalnızca Aktif</option>
@@ -517,81 +603,64 @@ export default function SorularSayfasi() {
         <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
           {aktifSekme === 'tekli' ? 'Kapat' : '+ Tek Tek Soru Ekle'}
         </button>
-        <button
-          className="btn sec"
-          onClick={() => csvDisaAktar(
-            'sorular.csv',
-            ['id', 'katman_kod', 'degisken_kod', 'soru_tipi', 'soru_metni', 'aktif_mi'],
-            (sorular || []).map((s) => [s.id, s.katman_kod, s.degisken_kod || '', s.soru_tipi, s.soru_metni, s.aktif_mi]),
-          )}
-          disabled={!sorular || sorular.length === 0}
-        >
-          ⬇ CSV Dışa Aktar
-        </button>
       </div>
 
       {aktifSekme === 'toplu' && (
         <div style={{ marginBottom: 20 }}>
-          <TopluYuklemeFormu onTamamlandi={() => yukle(katmanFiltre, aktifFiltre)} />
+          <TopluYuklemeFormu onTamamlandi={() => yukle(katmanFiltre, dalFiltre, aktifFiltre, sayfa)} />
         </div>
       )}
       {aktifSekme === 'tekli' && (
         <div style={{ marginBottom: 20 }}>
-          <YeniSoruFormu onEklendi={() => yukle(katmanFiltre, aktifFiltre)} />
+          <YeniSoruFormu onEklendi={() => yukle(katmanFiltre, dalFiltre, aktifFiltre, sayfa)} />
         </div>
       )}
 
-      {sorular && sorular.length > 0 && (
-        <div style={{
-          display: 'flex', gap: 10, alignItems: 'center', marginBottom: 12, padding: '10px 14px',
-          background: secilenler.size > 0 ? 'var(--tll)' : 'var(--sur2)', borderRadius: 10,
-        }}>
-          <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 600, cursor: 'pointer' }}>
-            <input
-              type="checkbox"
-              checked={sorular.length > 0 && secilenler.size === sorular.length}
-              onChange={hepsiniSec}
-            />
-            Tümünü Seç
-          </label>
-          <span style={{ fontSize: 12.5, color: 'var(--tx2)' }}>
-            {secilenler.size > 0 ? `${secilenler.size} soru seçildi` : ''}
-          </span>
-          {secilenler.size > 0 && (
-            <div style={{ display: 'flex', gap: 8, marginLeft: 'auto' }}>
-              <button className="btn sec" disabled={topluIslemYukleniyor} onClick={() => topluAktifDurumDegistir(true)}>
-                Seçilenleri Aktif Yap
-              </button>
-              <button className="btn sec" disabled={topluIslemYukleniyor} onClick={() => topluAktifDurumDegistir(false)}>
-                Seçilenleri Pasif Yap
-              </button>
+      {!veri ? <div className="bos-durum">Yükleniyor…</div> : (
+        <>
+          <div style={{ fontSize: 12, color: 'var(--tx3)', fontWeight: 600, marginBottom: 10 }}>
+            {veri.toplam_soru_sayisi} soru bulundu — Sayfa {veri.su_anki_sayfa} / {veri.toplam_sayfa_sayisi}
+          </div>
+
+          {veri.sorular.length === 0 ? (
+            <div className="bos-durum">Bu filtreye uyan soru yok.</div>
+          ) : (
+            veri.sorular.map((s, i) => (
+              <SoruKarti
+                key={s.id}
+                soru={s}
+                sira={(veri.su_anki_sayfa - 1) * 8 + i + 1}
+                onGuncelle={alanGuncelle}
+              />
+            ))
+          )}
+
+          {veri.toplam_sayfa_sayisi > 1 && (
+            <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: 6, marginTop: 20 }}>
+              <button className="btn sec" disabled={sayfa <= 1} onClick={() => setSayfa((p) => p - 1)}>‹ Önceki</button>
+              {Array.from({ length: veri.toplam_sayfa_sayisi }, (_, i) => i + 1)
+                .filter((n) => n === 1 || n === veri.toplam_sayfa_sayisi || Math.abs(n - sayfa) <= 2)
+                .reduce((acc, n, idx, arr) => {
+                  if (idx > 0 && n - arr[idx - 1] > 1) acc.push('...')
+                  acc.push(n)
+                  return acc
+                }, [])
+                .map((n, i) => n === '...' ? (
+                  <span key={`b${i}`} style={{ color: 'var(--tx3)', padding: '0 4px' }}>…</span>
+                ) : (
+                  <button
+                    key={n}
+                    onClick={() => setSayfa(n)}
+                    className={n === sayfa ? 'btn' : 'btn sec'}
+                    style={{ minWidth: 36, padding: '8px 12px' }}
+                  >
+                    {n}
+                  </button>
+                ))}
+              <button className="btn sec" disabled={sayfa >= veri.toplam_sayfa_sayisi} onClick={() => setSayfa((p) => p + 1)}>Sonraki ›</button>
             </div>
           )}
-        </div>
-      )}
-
-      {!sorular ? <div className="bos-durum">Yükleniyor…</div> : (
-        <div className="ll">
-          {sorular.map((s) => (
-            <div key={s.id} className="lc" style={{ cursor: 'default', opacity: s.aktif_mi ? 1 : 0.5 }}>
-              <input
-                type="checkbox"
-                checked={secilenler.has(s.id)}
-                onChange={() => secimDegistir(s.id)}
-                style={{ marginRight: 10 }}
-              />
-              <div className="lb-wrap">
-                <div className="lt">{s.soru_metni}</div>
-                <div className="ld">{KATMAN_ADI[s.katman_kod] || s.katman_kod} · {s.soru_tipi === 'likert' ? 'Likert' : 'SJT'}</div>
-              </div>
-              <span className={`bdg ${s.aktif_mi ? 'bdg-done' : 'bdg-lock'}`}>{s.aktif_mi ? 'Aktif' : 'Pasif'}</span>
-              <button className="btn sec" onClick={() => aktiflikDegistir(s.id, s.aktif_mi)}>
-                {s.aktif_mi ? 'Pasife Al' : 'Aktifleştir'}
-              </button>
-            </div>
-          ))}
-          {sorular.length === 0 && <div className="bos-durum">Bu filtreye uyan soru yok.</div>}
-        </div>
+        </>
       )}
     </div>
   )
