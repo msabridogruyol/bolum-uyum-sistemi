@@ -48,15 +48,19 @@ class Degisken(Base):
 class Soru(Base):
     __tablename__ = "sorular"
     __table_args__ = (
-        # [DÜZELTME] 'kontrol' eklendi — güvenlik/tutarlılık (dikkat) soruları
-        # için yeni bir soru tipi. Bu sorularda degisken_id NULL kalır (SJT'de
-        # olduğu gibi), beklenen_secenek_sira doludur.
-        CheckConstraint("soru_tipi IN ('likert','sjt','kontrol')", name="ck_soru_tipi"),
+        # [DÜZELTME] 'kontrol' ve 'kutup' eklendi. 'kontrol' — güvenlik/
+        # tutarlılık (dikkat) soruları; degisken_id NULL kalır, beklenen_secenek_sira
+        # doludur. 'kutup' — A-mı-B-mi tarzı 4'lü ölçek; degisken_id A ucu,
+        # b_ucu_degisken_id B ucu için kullanılır.
+        CheckConstraint("soru_tipi IN ('likert','sjt','kontrol','kutup')", name="ck_soru_tipi"),
     )
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     katman_id: Mapped[int] = mapped_column(ForeignKey("katmanlar.id"), nullable=False)
-    degisken_id: Mapped[int | None] = mapped_column(ForeignKey("degiskenler.id"))  # SJT/kontrol'de NULL
+    degisken_id: Mapped[int | None] = mapped_column(ForeignKey("degiskenler.id"))  # SJT/kontrol'de NULL; kutup'ta A ucu
+    # [EKLENDİ] Yalnızca soru_tipi='kutup' sorularında dolu — ölçeğin B ucunun
+    # bağlı olduğu değişken.
+    b_ucu_degisken_id: Mapped[int | None] = mapped_column(ForeignKey("degiskenler.id"))
     soru_tipi: Mapped[str] = mapped_column(String, nullable=False)
     soru_metni: Mapped[str] = mapped_column(String, nullable=False)
     ters_kodlanmis_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
