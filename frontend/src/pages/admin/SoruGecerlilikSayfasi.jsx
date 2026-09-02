@@ -1,247 +1,96 @@
-import { useEffect, useState } from 'react'
-import { api } from '../../api/client'
+# -*- coding: utf-8 -*-
+"""
+Admin — Soru Geçerlilik Testi Girdisi V2 (sonradan eklendi)
 
-// [DÜZELTME] Önceki sürüm script etiketini ekleyip HİÇ BEKLEMİYORDU — kullanıcı
-// script tam inmeden butona basarsa "kütüphane yüklenemedi" hatası çıkıyordu
-// (yarış durumu). Bu sürüm gerçek bir Promise ile yüklenmenin bitmesini bekliyor
-// ve CDN başarısız olursa (ağ engeli vb.) bunu AÇIKÇA hata olarak bildiriyor.
-let xlsxYuklemeSozu = null
-function xlsxYukle() {
-  if (typeof window !== 'undefined' && window.XLSX) return Promise.resolve()
-  if (xlsxYuklemeSozu) return xlsxYuklemeSozu
-  xlsxYuklemeSozu = new Promise((resolve, reject) => {
-    const script = document.createElement('script')
-    script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js'
-    script.async = true
-    script.onload = () => resolve()
-    script.onerror = () => {
-      xlsxYuklemeSozu = null  // tekrar denenebilsin diye sıfırla
-      reject(new Error('Excel kütüphanesi (cdnjs.cloudflare.com) yüklenemedi — ağ/güvenlik duvarı engelliyor olabilir.'))
-    }
-    document.body.appendChild(script)
-  })
-  return xlsxYuklemeSozu
-}
+Mevcut gecerlilik girdisi uç noktasından TEK FARKI: her satıra katman_kod
+ekliyor. Bu sayede yerel test script'i (soru_gecerlilik_testi.py), her
+soruyu yalnızca KENDİ KATMANINDAKİ değişkenler arasından test edebiliyor
+— önceki sürüm 87+ değişkenin TAMAMI arasından seçtirdiği için katmanlar
+arası anlamsız eşleşmeler (K1 sorusu K3 değişkeniyle karışması gibi) çıkıyordu.
 
-function xlsxDisaAktar(dosyaAdi, basliklar, satirlar) {
-  const XLSX = window.XLSX
-  if (!XLSX) {
-    throw new Error('Excel kütüphanesi henüz hazır değil — birkaç saniye bekleyip tekrar deneyin.')
-  }
-  const ws = XLSX.utils.aoa_to_sheet([basliklar, ...satirlar])
-  const wb = XLSX.utils.book_new()
-  XLSX.utils.book_append_sheet(wb, ws, 'Veri')
-  XLSX.writeFile(wb, dosyaAdi)
-}
+Bağımsız router — mevcut admin.py'ye dokunmaz.
 
-function dosyayiAyristir(dosya) {
-  return new Promise((resolve, reject) => {
-    if (typeof window === 'undefined' || !window.XLSX) {
-      reject(new Error('Excel kütüphanesi henüz hazır değil — birkaç saniye bekleyip tekrar deneyin.'))
-      return
-    }
-    const okuyucu = new FileReader()
-    okuyucu.onload = (e) => {
-      try {
-        const csvMi = dosya.name.toLowerCase().endsWith('.csv')
-        const wb = window.XLSX.read(e.target.result, { type: csvMi ? 'string' : 'array' })
-        const sayfa = wb.Sheets[wb.SheetNames[0]]
-        const satirlar = window.XLSX.utils.sheet_to_json(sayfa, { header: 1, defval: '' })
-        resolve(satirlar)
-      } catch (err) {
-        reject(err)
-      }
-    }
-    okuyucu.onerror = () => reject(new Error('Dosya okunamadı.'))
-    if (dosya.name.toLowerCase().endsWith('.csv')) okuyucu.readAsText(dosya, 'utf-8')
-    else okuyucu.readAsArrayBuffer(dosya)
-  })
-}
+GET /admin/gecerlilik-girdisi-v2 — Likert soruları + SJT seçeneklerini,
+                                     katman_kod dahil, dışa aktarır.
+"""
 
-function satirlariDondur(hamSatirlar) {
-  const baslik = (hamSatirlar[0] || []).map((h) => String(h).trim())
-  const idx = Object.fromEntries(baslik.map((b, i) => [b, i]))
-  const bul = (hucreler, ad) => (idx[ad] >= 0 ? hucreler[idx[ad]] : undefined)
+from pydantic import BaseModel
+from sqlalchemy.orm import Session
+from fastapi import APIRouter, Depends
 
-  return hamSatirlar.slice(1).map((hucreler) => {
-    const secenekIdHam = bul(hucreler, 'secenek_id')
-    return {
-      birim_anahtari: String(bul(hucreler, 'birim_anahtari') ?? ''),
-      kaynak_soru_id: parseInt(bul(hucreler, 'kaynak_soru_id'), 10),
-      secenek_id: secenekIdHam !== undefined && secenekIdHam !== '' ? parseInt(secenekIdHam, 10) : null,
-      gercek_degisken_kod: String(bul(hucreler, 'gercek_degisken_kod') ?? ''),
-      model_a_tahmin: String(bul(hucreler, 'model_a_tahmin') ?? ''),
-      model_a_dogru: String(bul(hucreler, 'model_a_dogru')).toLowerCase() === 'true',
-      model_a_benzerlik: parseFloat(bul(hucreler, 'model_a_benzerlik')),
-      model_b_tahmin: String(bul(hucreler, 'model_b_tahmin') ?? ''),
-      model_b_dogru: String(bul(hucreler, 'model_b_dogru')).toLowerCase() === 'true',
-      model_b_benzerlik: parseFloat(bul(hucreler, 'model_b_benzerlik')),
-      model_c_tahmin: String(bul(hucreler, 'model_c_tahmin') ?? ''),
-      model_c_dogru: String(bul(hucreler, 'model_c_dogru')).toLowerCase() === 'true',
-      model_c_benzerlik: parseFloat(bul(hucreler, 'model_c_benzerlik')),
-    }
-  }).filter((s) => !isNaN(s.kaynak_soru_id) && s.gercek_degisken_kod)
-}
+from app.core.database import get_db
+from app.api.deps import get_mevcut_admin
+from app.models import (
+    AdminKullanici, Soru, SoruSecenegi, SjtSecenekDegiskenAgirlik, Katman, Degisken,
+)
 
-export default function SoruGecerlilikSayfasi() {
-  const [ozet, setOzet] = useState(null)
-  const [yukleniyor, setYukleniyor] = useState(false)
-  const [disaAktariliyor, setDisaAktariliyor] = useState(false)
-  const [hata, setHata] = useState(null)
-  const [filtre, setFiltre] = useState('hepsi') // hepsi | sorunlu
-  const [tipFiltre, setTipFiltre] = useState('hepsi') // hepsi | likert | sjt
+router = APIRouter(prefix="/gecerlilik-girdisi-v2", tags=["admin-gecerlilik-v2"])
 
-  // [DÜZELTME] Artık burada arka planda "fire and forget" yüklemiyoruz —
-  // her işlem (indirme/yükleme) kendi başında xlsxYukle()'yi bekliyor.
-  // Yine de sayfa açılır açılmaz indirmeyi başlatmak için erken tetikleriz.
-  useEffect(() => { xlsxYukle().catch(() => {}) }, [])
 
-  function yukle() {
-    api.soruGecerlilikGetir().then(setOzet).catch(() => setOzet(null))
-  }
+class GecerlilikBirimiOut(BaseModel):
+    birim_anahtari: str
+    kaynak_soru_id: int
+    secenek_id: int | None
+    kaynak_tipi: str  # 'likert' | 'sjt'
+    katman_kod: str
+    metin: str
+    baglam: str | None
+    beklenen_degisken_kod: str
 
-  useEffect(() => { yukle() }, [])
 
-  async function testGirdisiniIndir() {
-    setDisaAktariliyor(true)
-    setHata(null)
-    try {
-      await xlsxYukle()
-      const birimler = await api.gecerlilikTestGirdisiGetir()
-      if (birimler.length === 0) {
-        throw new Error('Test edilecek aktif soru/seçenek bulunamadı.')
-      }
-      xlsxDisaAktar(
-        'gecerlilik_girdisi.xlsx',
-        ['birim_anahtari', 'kaynak_soru_id', 'secenek_id', 'kaynak_tipi', 'metin', 'baglam', 'beklenen_degisken_kod'],
-        birimler.map((b) => [b.birim_anahtari, b.kaynak_soru_id, b.secenek_id ?? '', b.kaynak_tipi, b.metin, b.baglam, b.beklenen_degisken_kod]),
-      )
-    } catch (err) {
-      setHata(err.detail || err.message || 'Test girdisi alınamadı.')
-    } finally {
-      setDisaAktariliyor(false)
-    }
-  }
+@router.get("", response_model=list[GecerlilikBirimiOut])
+def gecerlilik_girdisi_getir_v2(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    sonuc: list[GecerlilikBirimiOut] = []
+    degisken_kodlari = dict(db.query(Degisken.id, Degisken.kod).all())
 
-  async function dosyaSecildi(e) {
-    const dosya = e.target.files?.[0]
-    if (!dosya) return
-    setHata(null)
-    setYukleniyor(true)
-    try {
-      await xlsxYukle()
-      const hamSatirlar = await dosyayiAyristir(dosya)
-      const satirlar = satirlariDondur(hamSatirlar)
-      if (satirlar.length === 0) {
-        throw new Error('Dosya okunamadı — soru_gecerlilik_testi.py çıktısını yüklediğinizden emin olun.')
-      }
-      await api.soruGecerlilikYukle(satirlar)
-      yukle()
-    } catch (err) {
-      setHata(err.detail || err.message || 'Yükleme başarısız.')
-    } finally {
-      setYukleniyor(false)
-      e.target.value = ''
-    }
-  }
+    # --- Likert sorular: soru metninin kendisi test edilir ---
+    likert_sorular = (
+        db.query(Soru, Katman.kod)
+        .join(Katman, Katman.id == Soru.katman_id)
+        .filter(Soru.soru_tipi == "likert", Soru.aktif_mi.is_(True), Soru.degisken_id.isnot(None))
+        .all()
+    )
+    for soru, katman_kodu in likert_sorular:
+        sonuc.append(GecerlilikBirimiOut(
+            birim_anahtari=f"soru_{soru.id}", kaynak_soru_id=soru.id, secenek_id=None,
+            kaynak_tipi="likert", katman_kod=katman_kodu, metin=soru.soru_metni, baglam=None,
+            beklenen_degisken_kod=degisken_kodlari.get(soru.degisken_id, ""),
+        ))
 
-  const gosterilecekler = !ozet ? [] : ozet.sonuclar
-    .filter((s) => filtre === 'hepsi' || s.kac_model_dogru < 3)
-    .filter((s) => tipFiltre === 'hepsi' || s.kaynak_tipi === tipFiltre)
+    # --- SJT seçenekleri: her seçeneğin EN YÜKSEK ağırlıklı değişkeni "beklenen" sayılır ---
+    sjt_sorular = (
+        db.query(Soru, Katman.kod)
+        .join(Katman, Katman.id == Soru.katman_id)
+        .filter(Soru.soru_tipi == "sjt", Soru.aktif_mi.is_(True))
+        .all()
+    )
+    for soru, katman_kodu in sjt_sorular:
+        secenekler = db.query(SoruSecenegi).filter(SoruSecenegi.soru_id == soru.id).all()
+        for sec in secenekler:
+            agirliklar = (
+                db.query(SjtSecenekDegiskenAgirlik)
+                .filter(SjtSecenekDegiskenAgirlik.secenek_id == sec.id)
+                .order_by(SjtSecenekDegiskenAgirlik.agirlik.desc())
+                .all()
+            )
+            if not agirliklar:
+                continue
+            en_yuksek = agirliklar[0]
+            sonuc.append(GecerlilikBirimiOut(
+                birim_anahtari=f"sjt_{soru.id}_{sec.id}", kaynak_soru_id=soru.id, secenek_id=sec.id,
+                kaynak_tipi="sjt", katman_kod=katman_kodu, metin=sec.secenek_metni, baglam=soru.soru_metni,
+                beklenen_degisken_kod=degisken_kodlari.get(en_yuksek.degisken_id, ""),
+            ))
 
-  return (
-    <div className="pg pg-genis">
-      <div className="ph">
-        <div className="pt">Soru Geçerlilik Testi</div>
-        <div className="ps">
-          Her test biriminin (Likert sorusu ya da SJT seçeneği) metni, hangi değişkene ait olduğu gizlenerek
-          3 bağımsız dil modeline veriliyor — model doğru değişkene mi bağlıyor?
-        </div>
-      </div>
+    return sonuc
 
-      {hata && <div className="auth-error">{hata}</div>}
 
-      <div className="card">
-        <div className="ct">1. Adım — Test Girdisini İndir</div>
-        <div className="ps" style={{ margin: '0 0 12px' }}>
-          Tüm aktif Likert sorularını ve SJT seçeneklerini (kaynak metinleriyle) CSV olarak indirir.
-        </div>
-        <button className="btn" onClick={testGirdisiniIndir} disabled={disaAktariliyor}>
-          {disaAktariliyor ? <span className="spin" /> : '⬇ Test Girdisini İndir'}
-        </button>
-      </div>
-
-      <div className="card">
-        <div className="ct">2. Adım — Sonucu Yükle</div>
-        <div className="ps" style={{ margin: '0 0 12px' }}>
-          İndirdiğiniz dosyayı <code>C:\pipeline\veri\gecerlilik_girdisi.xlsx</code> olarak kaydedip
-          <code> python soru_gecerlilik_testi.py</code> çalıştırın. Çıkan
-          <code> soru_gecerlilik_sonuclari.xlsx</code>'i buradan yükleyin.
-        </div>
-        <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
-          {yukleniyor ? <span className="spin" /> : '⬆ Sonuç CSV Yükle'}
-          <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
-        </label>
-      </div>
-
-      {!ozet ? (
-        <div className="bos-durum">Henüz hiç test sonucu yüklenmedi.</div>
-      ) : (
-        <>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 18 }}>
-            <div className="sc"><div className="sl">Toplam Birim</div><div className="sv">{ozet.toplam_birim}</div></div>
-            <div className="sc"><div className="sl">Tam Doğru (3/3)</div><div className="sv gr">{ozet.tam_dogru}</div></div>
-            <div className="sc"><div className="sl">Kısmi (1-2/3)</div><div className="sv" style={{ color: 'var(--am)' }}>{ozet.kismi_dogru}</div></div>
-            <div className="sc"><div className="sl">Hiç Doğru Değil (0/3)</div><div className="sv" style={{ color: 'var(--re)' }}>{ozet.hic_dogru_degil}</div></div>
-          </div>
-
-          <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
-            <button className={filtre === 'hepsi' ? 'btn' : 'btn sec'} onClick={() => setFiltre('hepsi')}>Tümü</button>
-            <button className={filtre === 'sorunlu' ? 'btn' : 'btn sec'} onClick={() => setFiltre('sorunlu')}>
-              Yalnızca Sorunlu ({ozet.kismi_dogru + ozet.hic_dogru_degil})
-            </button>
-            <select className="auth-input" style={{ width: 160 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
-              <option value="hepsi">Tüm Tipler</option>
-              <option value="likert">Yalnızca Likert</option>
-              <option value="sjt">Yalnızca SJT</option>
-            </select>
-          </div>
-
-          <div className="ll">
-            {gosterilecekler.map((s) => (
-              <div key={s.secenek_id ? `sec-${s.secenek_id}` : `soru-${s.soru_id}`} className="lc" style={{ flexDirection: 'column', alignItems: 'stretch', cursor: 'default' }}>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 8 }}>
-                  <div style={{ flex: 1 }}>
-                    <div className="lt">
-                      {s.test_edilen_metin}
-                      {s.kaynak_tipi === 'sjt' && <span className="bdg bdg-prog" style={{ marginLeft: 8, fontSize: 10 }}>SJT seçeneği</span>}
-                    </div>
-                    {s.kaynak_tipi === 'sjt' && (
-                      <div className="ld" style={{ fontStyle: 'italic' }}>Senaryo: {s.soru_metni}</div>
-                    )}
-                    <div className="ld">{s.katman_kod} · Beklenen değişken: <b>{s.gercek_degisken_kod}</b></div>
-                  </div>
-                  <span className={`bdg ${s.kac_model_dogru === 3 ? 'bdg-done' : s.kac_model_dogru === 0 ? 'bdg-lock' : 'bdg-prog'}`}>
-                    {s.kac_model_dogru}/3 model doğru
-                  </span>
-                </div>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: 8 }}>
-                  {[
-                    { ad: 'Model A', tahmin: s.model_a_tahmin, dogru: s.model_a_dogru },
-                    { ad: 'Model B', tahmin: s.model_b_tahmin, dogru: s.model_b_dogru },
-                    { ad: 'Model C', tahmin: s.model_c_tahmin, dogru: s.model_c_dogru },
-                  ].map((m) => (
-                    <div key={m.ad} style={{ fontSize: 11.5, padding: '6px 10px', borderRadius: 8, background: m.dogru ? 'var(--grl)' : 'var(--rel, #fdecea)' }}>
-                      <b>{m.ad}:</b> {m.tahmin} {m.dogru ? '✓' : '✗'}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-            {gosterilecekler.length === 0 && <div className="bos-durum">Bu filtreye uyan birim yok.</div>}
-          </div>
-        </>
-      )}
-    </div>
-  )
-}
+# ============================================================================
+# NOT — main.py'de, admin_guvenlik ile AYNI yere şunu ekleyin:
+#   from app.api.admin_gecerlilik_v2 import router as admin_gecerlilik_v2_router
+#   app.include_router(admin_gecerlilik_v2_router, prefix="/admin", tags=["admin"])
+# Dosyayı backend/app/api/admin_gecerlilik_v2.py olarak kaydedin.
+# ============================================================================
