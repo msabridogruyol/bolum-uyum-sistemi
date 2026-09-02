@@ -499,7 +499,7 @@ function SoruKarti({ soru, sira, onGuncelle }) {
             <span className="bdg bdg-prog">{soru.katman_kod}</span>
             {soru.dal_adi && <span className="bdg" style={{ background: 'var(--tll)', color: 'var(--tl)' }}>{soru.dal_adi}</span>}
             <span className="bdg bdg-lock">{soru.soru_tipi === 'likert' ? 'Likert' : 'SJT'}</span>
-            {soru.degisken_kod && <span className="bdg bdg-lock">{soru.degisken_kod}</span>}
+            {soru.degisken_adi && <span className="bdg bdg-lock">{soru.degisken_adi}</span>}
             {soru.ters_kodlanmis_mi && <span className="bdg" style={{ background: 'var(--aml)', color: 'var(--am)' }}>Ters Kodlanmış</span>}
             <span className={`bdg ${soru.aktif_mi ? 'bdg-done' : 'bdg-lock'}`}>{soru.aktif_mi ? 'Aktif' : 'Pasif'}</span>
           </div>
@@ -526,7 +526,7 @@ function SoruKarti({ soru, sira, onGuncelle }) {
               <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap', flexShrink: 0 }}>
                 {sec.sjt_agirliklar.map((a, i) => (
                   <span key={i} style={{ fontSize: 10, background: 'var(--pul)', color: 'var(--pud)', padding: '2px 7px', borderRadius: 10, fontWeight: 700 }}>
-                    {a.degisken_kod}: {a.agirlik}
+                    {a.degisken_ad}: {a.agirlik}
                   </span>
                 ))}
               </div>
@@ -667,7 +667,7 @@ export default function SorularSayfasi() {
         )}
         <select className="auth-input" style={{ width: 170 }} value={degiskenFiltre} onChange={(e) => setDegiskenFiltre(e.target.value)}>
           <option value="">Tüm değişkenler</option>
-          {degiskenler.map((d) => <option key={d.kod} value={d.kod}>{d.kod} — {d.ad}</option>)}
+          {degiskenler.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}
         </select>
         <select className="auth-input" style={{ width: 140 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
           <option value="">Tüm tipler</option>
