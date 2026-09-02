@@ -169,13 +169,26 @@ export const api = {
   guvenlikTurDetayiGetir: (turId) => aget(`/admin/guvenlik/turlar/${turId}`),
   meslekSayisiniGetir: () => aget('/admin/meslekler/sayi'),
   meslekleriTopluYukle: (meslekler) => apost('/admin/meslekler/toplu-yukle', { meslekler }),
-  sorularDetayliListele: (katmanKod, dalKod, aktifMi, sayfa) => {
+  sorularDetayliListele: (katmanKod, dalKod, aktifMi, sayfa, degiskenKod, soruTipi, arama) => {
     const p = new URLSearchParams()
     if (katmanKod) p.set('katman_kod', katmanKod)
     if (dalKod) p.set('dal_kod', dalKod)
     if (aktifMi !== undefined) p.set('aktif_mi', aktifMi)
     if (sayfa) p.set('sayfa', String(sayfa))
+    if (degiskenKod) p.set('degisken_kod', degiskenKod)
+    if (soruTipi) p.set('soru_tipi', soruTipi)
+    if (arama) p.set('arama', arama)
     return aget(`/admin/sorular-detay?${p.toString()}`)
+  },
+  katmanOzetiGetir: (katmanKod, dalKod) => {
+    const p = new URLSearchParams({ katman_kod: katmanKod })
+    if (dalKod) p.set('dal_kod', dalKod)
+    return aget(`/admin/sorular-detay/ozet?${p.toString()}`)
+  },
+  katmanDegiskenleriGetir: (katmanKod, dalKod) => {
+    const p = new URLSearchParams({ katman_kod: katmanKod })
+    if (dalKod) p.set('dal_kod', dalKod)
+    return aget(`/admin/sorular-detay/degiskenler?${p.toString()}`)
   },
   dalFiltreListesiGetir: () => aget('/admin/sorular-detay/dallar'),
   soruMetniGuncelle: (soruId, soruMetni) => aput(`/admin/sorular-detay/soru/${soruId}`, { soru_metni: soruMetni }),
