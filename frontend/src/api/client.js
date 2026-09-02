@@ -169,6 +169,17 @@ export const api = {
   guvenlikTurDetayiGetir: (turId) => aget(`/admin/guvenlik/turlar/${turId}`),
   meslekSayisiniGetir: () => aget('/admin/meslekler/sayi'),
   meslekleriTopluYukle: (meslekler) => apost('/admin/meslekler/toplu-yukle', { meslekler }),
+  sorularDetayliListele: (katmanKod, dalKod, aktifMi, sayfa) => {
+    const p = new URLSearchParams()
+    if (katmanKod) p.set('katman_kod', katmanKod)
+    if (dalKod) p.set('dal_kod', dalKod)
+    if (aktifMi !== undefined) p.set('aktif_mi', aktifMi)
+    if (sayfa) p.set('sayfa', String(sayfa))
+    return aget(`/admin/sorular-detay?${p.toString()}`)
+  },
+  dalFiltreListesiGetir: () => aget('/admin/sorular-detay/dallar'),
+  soruMetniGuncelle: (soruId, soruMetni) => aput(`/admin/sorular-detay/soru/${soruId}`, { soru_metni: soruMetni }),
+  secenekMetniGuncelle: (secenekId, secenekMetni) => aput(`/admin/sorular-detay/secenek/${secenekId}`, { secenek_metni: secenekMetni }),
   sorulariTopluYukle: (satirlar) => apost('/admin/sorular/toplu', { satirlar }),
   soruSil: (id) => adel(`/admin/sorular/${id}`),
   sorulariTopluSil: (soru_idler) => apost('/admin/sorular/toplu-sil', { soru_idler }),
