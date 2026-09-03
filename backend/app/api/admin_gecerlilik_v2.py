@@ -214,6 +214,15 @@ def gecerlilik_girdisi_getir_v2(
             if not agirliklar:
                 continue
             en_yuksek = agirliklar[0]
+            # [DÜZELTME — metodolojik hata] Bir seçeneğin en yüksek ağırlığı
+            # NEGATİFSE, o seçenek metni o değişkenin TERSİNİ ifade ediyor
+            # demektir (örn. "Bu bana zor ve yorucu gelir" -> A3'ün -0.8
+            # ağırlıklı "tersi" seçeneği). Böyle bir metnin A3'e semantik
+            # olarak YAKIN çıkması zaten beklenmez — bunu teste dahil etmek
+            # haksız bir başarısızlık üretir. Yalnızca pozitif ağırlıklı
+            # (gerçekten o değişkeni TEMSİL EDEN) seçenekler test edilir.
+            if en_yuksek.agirlik <= 0:
+                continue
             sonuc.append(GecerlilikBirimiOut(
                 birim_anahtari=f"sjt_{soru.id}_{sec.id}", kaynak_soru_id=soru.id, secenek_id=sec.id,
                 kaynak_tipi="sjt", katman_kod=katman_kodu, metin=sec.secenek_metni, baglam=soru.soru_metni,
