@@ -198,6 +198,7 @@ export const api = {
   kutupSorulariniTopluYukle: (satirlar) => apost('/admin/kutup-sorulari/toplu', { satirlar }),
   katmaninTumSorulariniSil: (katmanKod) => adel(`/admin/sorular-detay/katman/${katmanKod}`),
   gecerlilikSonuclariniTemizle: () => adel('/admin/gecerlilik-girdisi-v2/sonuclar'),
+  gecerlilikAnaliziniGetir: () => aget('/admin/gecerlilik-girdisi-v2/analiz'),
   sorulariTopluYukle: (satirlar) => apost('/admin/sorular/toplu', { satirlar }),
   soruSil: (id) => adel(`/admin/sorular/${id}`),
   sorulariTopluSil: (soru_idler) => apost('/admin/sorular/toplu-sil', { soru_idler }),
