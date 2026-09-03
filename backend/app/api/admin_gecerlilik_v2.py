@@ -27,6 +27,19 @@ from app.models import (
 router = APIRouter(prefix="/gecerlilik-girdisi-v2", tags=["admin-gecerlilik-v2"])
 
 
+@router.delete("/sonuclar", status_code=204)
+def gecerlilik_sonuclarini_temizle(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """[EKLENDİ] Ekrandaki eski soru geçerlilik test sonuçlarının tamamını
+    siler — soruların/sistemin kendisine dokunmaz, yalnızca bu test
+    kayıtlarını temizler. Yeni bir test çalıştırıp tekrar yükleyebilirsiniz."""
+    from sqlalchemy import text
+    db.execute(text("DELETE FROM soru_gecerlilik_sonuclari"))
+    db.commit()
+
+
 class GecerlilikBirimiOut(BaseModel):
     birim_anahtari: str
     kaynak_soru_id: int
