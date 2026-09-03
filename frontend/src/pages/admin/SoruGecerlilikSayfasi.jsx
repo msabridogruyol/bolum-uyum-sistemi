@@ -93,6 +93,7 @@ export default function SoruGecerlilikSayfasi() {
   const [temizlemeYaziliOnay, setTemizlemeYaziliOnay] = useState('')
   const [temizlemeSekmesiAcik, setTemizlemeSekmesiAcik] = useState(false)
   const [temizleniyor, setTemizleniyor] = useState(false)
+  const [analiz, setAnaliz] = useState(null)
 
   // [DÜZELTME] Artık burada arka planda "fire and forget" yüklemiyoruz —
   // her işlem (indirme/yükleme) kendi başında xlsxYukle()'yi bekliyor.
@@ -101,6 +102,7 @@ export default function SoruGecerlilikSayfasi() {
 
   function yukle() {
     api.soruGecerlilikGetir().then(setOzet).catch(() => setOzet(null))
+    api.gecerlilikAnaliziniGetir().then(setAnaliz).catch(() => setAnaliz(null))
   }
 
   useEffect(() => { yukle() }, [])
@@ -113,6 +115,7 @@ export default function SoruGecerlilikSayfasi() {
       await api.gecerlilikSonuclariniTemizle()
       setTemizlemeYaziliOnay('')
       setTemizlemeSekmesiAcik(false)
+      setAnaliz(null)
       yukle()
     } catch (err) {
       setHata(err.detail || 'Temizleme başarısız.')
@@ -254,6 +257,83 @@ export default function SoruGecerlilikSayfasi() {
             <div className="sc"><div className="sl">Kısmi (1-2/3)</div><div className="sv" style={{ color: 'var(--am)' }}>{ozet.kismi_dogru}</div></div>
             <div className="sc"><div className="sl">Hiç Doğru Değil (0/3)</div><div className="sv" style={{ color: 'var(--re)' }}>{ozet.hic_dogru_degil}</div></div>
           </div>
+
+          {analiz && (
+            <div className="card" style={{ marginBottom: 18 }}>
+              <div className="ct">Katman Bazlı Geçerlilik Analizi</div>
+              <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.7, marginBottom: 12 }}>
+                <p style={{ margin: '0 0 8px' }}>
+                  <b>Ölçüt:</b> 3 bağımsız dil modelinden en az 2'sinin aynı değişkeni işaret etmesi
+                  (tam 3/3 konsensüs aranmaz — topluluk/çoğunluk kararı yöntemi). Bu, üç bağımsız
+                  "değerlendiricinin" (model) bir soruyu aynı kategoriye atamasını ölçen bir
+                  <b> gözlemciler arası uyum (inter-rater agreement)</b> değerlendirmesidir.
+                </p>
+                <p style={{ margin: '0 0 8px' }}>
+                  <b>Eşik değerlerin kaynağı:</b> Gözlemciler arası uyum literatüründe <b>%70</b>, kabul
+                  edilebilir minimum eşik olarak önerilir (Stemler, 2004). <b>%75-80</b> aralığı ise
+                  "tatmin edici/kabul edilebilir" uyum düzeyi olarak yaygın kabul görür (Graham,
+                  Milanowski &amp; Miller, 2012; McHugh, 2012) ve Landis &amp; Koch'un (1977) kappa
+                  sınıflandırmasında "önemli ölçüde – neredeyse mükemmel" uyum kategorisine karşılık
+                  gelir. Bu nedenle her <b>katman</b> kendi içinde en az <b>%{analiz.katman_esigi_yuzde}</b>'e
+                  (minimum kabul edilebilir eşik), sistemin <b>genel ortalaması</b> ise en az
+                  <b> %{analiz.genel_esik_yuzde}</b>'e (tatmin edici düzey) ulaşmalıdır.
+                </p>
+                <p style={{ margin: 0 }}>
+                  "Rastgele Baseline" sütunu, üç modelin şansla en az ikisinin aynı adayı seçme
+                  ihtimalini, o katmandaki gerçek aday sayısına göre matematiksel olarak hesaplar —
+                  gerçek oranın bu şans seviyesine ne kadar yakın ya da uzak olduğunu görmek için
+                  referans noktasıdır.
+                </p>
+              </div>
+
+              <div style={{
+                display: 'flex', alignItems: 'center', gap: 10, marginBottom: 14,
+                padding: '10px 14px', borderRadius: 10,
+                background: analiz.genel_gecerli_mi ? 'var(--grl)' : 'var(--rel)',
+              }}>
+                <span className={`bdg ${analiz.genel_gecerli_mi ? 'bdg-done' : 'bdg-lock'}`}>
+                  {analiz.genel_gecerli_mi ? 'Sistem Geneli Geçerli' : 'Sistem Geneli Eşiğin Altında'}
+                </span>
+                <span style={{ fontSize: 12.5, fontWeight: 700 }}>
+                  Genel ortalama: %{analiz.genel_en_az_2_3_orani} (eşik: %{analiz.genel_esik_yuzde})
+                </span>
+              </div>
+              <table style={{ width: '100%', fontSize: 12.5, borderCollapse: 'collapse' }}>
+                <thead>
+                  <tr style={{ borderBottom: '1.5px solid var(--bor)' }}>
+                    <th style={{ textAlign: 'left', padding: '6px 8px' }}>Katman</th>
+                    <th style={{ textAlign: 'right', padding: '6px 8px' }}>Birim</th>
+                    <th style={{ textAlign: 'right', padding: '6px 8px' }}>≥2/3 Doğru</th>
+                    <th style={{ textAlign: 'right', padding: '6px 8px' }}>Rastgele Baseline</th>
+                    <th style={{ textAlign: 'right', padding: '6px 8px' }}>Kaç Kat Üstü</th>
+                    <th style={{ textAlign: 'center', padding: '6px 8px' }}>Durum</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {analiz.katmanlar.map((k) => (
+                    <tr key={k.katman_kod} style={{ borderBottom: '1px solid var(--bor)' }}>
+                      <td style={{ padding: '7px 8px', fontWeight: 700 }}>{k.katman_kod}</td>
+                      <td style={{ padding: '7px 8px', textAlign: 'right', color: 'var(--tx2)' }}>{k.toplam_birim}</td>
+                      <td style={{ padding: '7px 8px', textAlign: 'right', fontWeight: 700 }}>
+                        {k.en_az_2_3_orani}% <span style={{ color: 'var(--tx3)', fontWeight: 400 }}>({k.en_az_2_3_sayisi}/{k.toplam_birim})</span>
+                      </td>
+                      <td style={{ padding: '7px 8px', textAlign: 'right', color: 'var(--tx3)' }}>{k.rastgele_baseline_orani}%</td>
+                      <td style={{ padding: '7px 8px', textAlign: 'right', fontWeight: 700, color: 'var(--pu)' }}>{k.kac_kat_ustu}x</td>
+                      <td style={{ padding: '7px 8px', textAlign: 'center' }}>
+                        <span className={`bdg ${k.geçerli_mi ? 'bdg-done' : 'bdg-lock'}`}>{k.geçerli_mi ? 'Geçerli' : 'Geçersiz'}</span>
+                      </td>
+                    </tr>
+                  ))}
+                  <tr>
+                    <td style={{ padding: '9px 8px', fontWeight: 800 }}>Genel</td>
+                    <td style={{ padding: '9px 8px', textAlign: 'right', fontWeight: 700 }}>{analiz.genel_toplam_birim}</td>
+                    <td style={{ padding: '9px 8px', textAlign: 'right', fontWeight: 800 }}>{analiz.genel_en_az_2_3_orani}%</td>
+                    <td colSpan={3}></td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          )}
 
           <div style={{ display: 'flex', gap: 8, marginBottom: 14, flexWrap: 'wrap' }}>
             <button className={filtre === 'hepsi' ? 'btn' : 'btn sec'} onClick={() => setFiltre('hepsi')}>Tümü</button>
