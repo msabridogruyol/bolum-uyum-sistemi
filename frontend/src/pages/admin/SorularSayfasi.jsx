@@ -608,6 +608,8 @@ export default function SorularSayfasi() {
   const [sayfa, setSayfa] = useState(1)
   const [aktifSekme, setAktifSekme] = useState(null)
   const [hata, setHata] = useState(null)
+  const [silmeYazisi, setSilmeYazisi] = useState('')
+  const [siliniyor, setSiliniyor] = useState(false)
 
   // Arama kutusuna yazarken 400ms bekleyip sorguyu tetikle (her tuş vuruşunda değil)
   useEffect(() => {
@@ -626,6 +628,7 @@ export default function SorularSayfasi() {
   // Katman değişince tüm alt filtreleri sıfırla
   useEffect(() => {
     setDalFiltre(''); setDegiskenFiltre(''); setTipFiltre(''); setAktifFiltre(''); setArama(''); setSayfa(1)
+    setSilmeYazisi('')
   }, [aktifKatman])
 
   useEffect(() => { setSayfa(1) }, [dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, aramaGecikmeli])
@@ -659,6 +662,22 @@ export default function SorularSayfasi() {
 
   function yenidenYukle() {
     yukle(aktifKatman, dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, sayfa, aramaGecikmeli)
+  }
+
+  async function katmaniSil() {
+    if (silmeYazisi.trim() !== aktifKatman) return
+    setSiliniyor(true)
+    setHata(null)
+    try {
+      await api.katmaninTumSorulariniSil(aktifKatman)
+      setSilmeYazisi('')
+      setSayfa(1)
+      yenidenYukle()
+    } catch (err) {
+      setHata(err.detail || 'Silme başarısız.')
+    } finally {
+      setSiliniyor(false)
+    }
   }
 
   return (
@@ -727,6 +746,13 @@ export default function SorularSayfasi() {
         <button className="btn" onClick={() => setAktifSekme((s) => (s === 'tekli' ? null : 'tekli'))}>
           {aktifSekme === 'tekli' ? 'Kapat' : '+ Soru Ekle'}
         </button>
+        <button
+          className="btn sec"
+          style={{ color: 'var(--re)', borderColor: 'var(--re)' }}
+          onClick={() => setAktifSekme((s) => (s === 'sil' ? null : 'sil'))}
+        >
+          {aktifSekme === 'sil' ? 'Kapat' : `🗑 ${aktifKatman}'i Komple Sil`}
+        </button>
       </div>
 
       {aktifSekme === 'toplu' && (
@@ -737,6 +763,34 @@ export default function SorularSayfasi() {
       {aktifSekme === 'tekli' && (
         <div style={{ marginBottom: 20 }}>
           <YeniSoruFormu onEklendi={yenidenYukle} />
+        </div>
+      )}
+      {aktifSekme === 'sil' && (
+        <div className="card" style={{ marginBottom: 20, borderColor: 'var(--re)', background: 'var(--rel)' }}>
+          <div className="ct" style={{ color: 'var(--re)' }}>⚠️ {aktifKatman} Katmanını Komple Sil</div>
+          <div className="ps" style={{ margin: '0 0 12px' }}>
+            Bu işlem <b>{aktifKatman}</b> katmanındaki <b>tüm soruları, şıkları ve o sorulara verilmiş
+            öğrenci cevaplarını kalıcı olarak siler</b> — geri alınamaz. Diğer katmanlara dokunmaz.
+            Devam etmek için aşağıya <b>{aktifKatman}</b> yazın:
+          </div>
+          <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+            <input
+              className="auth-input"
+              style={{ width: 160 }}
+              value={silmeYazisi}
+              onChange={(e) => setSilmeYazisi(e.target.value)}
+              placeholder={aktifKatman}
+              autoComplete="off"
+            />
+            <button
+              className="btn"
+              style={{ background: 'var(--re)', borderColor: 'var(--re)' }}
+              disabled={silmeYazisi.trim() !== aktifKatman || siliniyor}
+              onClick={katmaniSil}
+            >
+              {siliniyor ? <span className="spin" /> : `Evet, ${aktifKatman}'i Sil`}
+            </button>
+          </div>
         </div>
       )}
 
