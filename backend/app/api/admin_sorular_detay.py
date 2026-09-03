@@ -199,6 +199,7 @@ class OzetOut(BaseModel):
     toplam: int
     likert_sayisi: int
     sjt_sayisi: int
+    kutup_sayisi: int
     aktif_sayisi: int
     pasif_sayisi: int
     degisken_bazli: list[dict]  # [{"degisken_kod": "D1", "soru_sayisi": 3}, ...]
@@ -254,6 +255,7 @@ def katman_ozeti_getir(
         toplam=len(tum_sorular),
         likert_sayisi=sum(1 for s in tum_sorular if s.soru_tipi == "likert"),
         sjt_sayisi=sum(1 for s in tum_sorular if s.soru_tipi == "sjt"),
+        kutup_sayisi=sum(1 for s in tum_sorular if s.soru_tipi == "kutup"),
         aktif_sayisi=sum(1 for s in tum_sorular if s.aktif_mi),
         pasif_sayisi=sum(1 for s in tum_sorular if not s.aktif_mi),
         degisken_bazli=[{"degisken_kod": k, "soru_sayisi": v} for k, v in sorted(degisken_sayaci.items())],
