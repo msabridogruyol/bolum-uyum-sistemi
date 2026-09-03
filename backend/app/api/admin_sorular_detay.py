@@ -373,3 +373,38 @@ def secenek_metnini_guncelle(
         raise HTTPException(status_code=400, detail="Seçenek metni boş olamaz.")
     secenek.secenek_metni = istek.secenek_metni.strip()
     db.commit()
+
+
+@router.delete("/katman/{katman_kod}", status_code=204)
+def katmanin_tum_sorularini_sil(
+    katman_kod: str,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """
+    [EKLENDİ] Bir katmanın TÜM sorularını (+ seçenekleri, SJT ağırlıkları,
+    o sorulara verilmiş öğrenci cevapları) kalıcı olarak siler. Diğer
+    katmanlara ve öğrenci turlarına dokunmaz — yalnızca hedef katman.
+    """
+    from app.models import OgrenciCevap
+
+    katman = db.query(Katman).filter(Katman.kod == katman_kod).first()
+    if katman is None:
+        raise HTTPException(status_code=404, detail=f"Katman bulunamadı: {katman_kod}")
+
+    soru_idler = [s.id for s in db.query(Soru.id).filter(Soru.katman_id == katman.id).all()]
+    if not soru_idler:
+        return  # zaten boş, silecek bir şey yok
+
+    secenek_idler = [
+        sec.id for sec in db.query(SoruSecenegi.id).filter(SoruSecenegi.soru_id.in_(soru_idler)).all()
+    ]
+
+    db.query(OgrenciCevap).filter(OgrenciCevap.soru_id.in_(soru_idler)).delete(synchronize_session=False)
+    db.query(SjtSecenekDegiskenAgirlik).filter(
+        SjtSecenekDegiskenAgirlik.secenek_id.in_(secenek_idler)
+    ).delete(synchronize_session=False)
+    db.query(SoruSecenegi).filter(SoruSecenegi.soru_id.in_(soru_idler)).delete(synchronize_session=False)
+    db.query(Soru).filter(Soru.id.in_(soru_idler)).delete(synchronize_session=False)
+
+    db.commit()
