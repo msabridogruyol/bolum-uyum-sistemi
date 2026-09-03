@@ -204,7 +204,87 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (min. 90 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
       </Bolum>
 
-      <Bolum ikon="🛡️" baslik="6. Güvenlik & Tutarlılık Sistemi">
+      <Bolum ikon="❓" baslik="6. Soru Tipleri ve Puanlama Mantığı">
+        <p style={{ marginBottom: 10 }}>
+          Sistemde 3 farklı soru tipi var; her biri farklı bir psikolojik ölçüm mantığına ve farklı bir
+          puanlama formülüne dayanır:
+        </p>
+
+        <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Likert (5'li Ölçek)</div>
+          <Madde>"Kesinlikle Katılmıyorum" → "Kesinlikle Katılıyorum" arası 5 seçenek</Madde>
+          <Madde>Doğrudan bir değişkeni ölçer; seçilen seçeneğin sırası 0-100 aralığına ölçeklenir</Madde>
+          <Madde><code>ters_kodlanmis_mi</code> işaretliyse skala tersine çevrilir (örn. "Rutin işler beni sıkar" sorusuna "Katılıyorum" demek, aslında düşük "rutin tercihi" puanı demektir)</Madde>
+        </div>
+
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>SJT (Durumsal Yargı Testi)</div>
+          <Madde>Bir senaryo anlatılır, öğrenci birden fazla davranış seçeneğinden birini seçer</Madde>
+          <Madde>Her seçenek, bir veya birden fazla değişkene <b>ağırlıklı</b> bağlanabilir (örn. bir seçenek hem D1'e 0.6 hem D2'ye 0.7 ağırlıkla katkı verebilir)</Madde>
+          <Madde>Ağırlık <b>negatif</b> de olabilir — bu, "bu seçeneği seçmek, o değişkenin DÜŞÜK olduğunu gösterir" anlamına gelir (örn. "Karışmam, kendi işime odaklanırım" seçeneği, çatışma yönetimi değişkenine -0.7 ağırlıkla bağlanır)</Madde>
+          <Madde>Puana katkı: seçilen seçeneğin ağırlığı × 100, ilgili değişkenin puan listesine eklenir</Madde>
+        </div>
+
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Kutup (A-mı-B-mi, 4'lü Ölçek)</div>
+          <Madde>İki değişkeni doğrudan birbirine karşı konumlandıran, hikayeleştirilmiş bir tercih sorusu (örn. "Güvenceli bir kurum mu, esnek/bağımsız bir düzen mi?")</Madde>
+          <Madde>4 seçenek: Kesinlikle A / Daha Çok A / Daha Çok B / Kesinlikle B</Madde>
+          <Madde>A ucu puanı, seçilen seçeneğe göre lineer enterpole edilir: 1→100, 2→66.7, 3→33.3, 4→0. B ucu puanı bunun tamamlayanıdır (100 − A puanı) — iki uç matematiksel olarak birbirinin simetrik zıttıdır</Madde>
+          <Madde>Kavramsal olarak birbirine yakın/karışabilecek iki değişkeni (örn. "Deneyime Açıklık" ile "Rutin/Dinamik Tercihi") ayrı ayrı Likert yerine <b>doğrudan karşılaştırarak</b> ölçmek, hem daha az soru gerektirir hem de aralarındaki ayrımı daha net ortaya çıkarır</Madde>
+        </div>
+      </Bolum>
+
+      <Bolum ikon="🔬" baslik="7. Soru Geçerlilik Testi — Metodoloji">
+        <p style={{ marginBottom: 10 }}>
+          Bir sorunun "iyi yazılmış" sayılması için, sorunun metni ile hangi değişkeni ölçtüğü arasında
+          <b> anlamsal olarak net bir bağ</b> olmalı — aksi halde öğrenci soruyu doğru yorumlasa bile
+          puanlama sistemi yanlış bir sinyal almış olabilir. Bunu <b>insan gözüyle değil, 3 bağımsız dil
+          modeliyle "kör" test ederek</b> ölçüyoruz.
+        </p>
+
+        <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Nasıl Çalışıyor</div>
+          <Madde>Her sorunun (Likert) veya seçeneğin (SJT, Kutup) metni, hangi değişkene ait olduğu <b>modele söylenmeden</b> 3 modele veriliyor</Madde>
+          <Madde>Her model, metni tüm aday değişkenlerin açıklamalarıyla karşılaştırıp en yakın olanı "tahmin" ediyor</Madde>
+          <Madde>Adaylar, sorunun <b>kendi ailesiyle</b> sınırlı tutulur (K1 sorusu yalnızca D1-D7 arasından, Mühendislik dalı sorusu yalnızca kendi 7 değişkeni arasından) — tüm 87+ değişken arasından seçtirmek görevi yapay olarak zorlaştırır ve katmanlar arası anlamsız karışmalara yol açar</Madde>
+          <Madde><b>Negatif ağırlıklı SJT seçenekleri teste dahil edilmez</b> — böyle bir seçenek metni değişkenin "tersini" ifade eder (örn. "Karışmam, kendi işime odaklanırım"), bu metnin değişkene semantik olarak yakın çıkması zaten beklenmez; bunu test etmek modele haksız bir başarısızlık yükler</Madde>
+        </div>
+
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Kabul Ölçütü — Neden "En Az 2/3", Tam 3/3 Değil</div>
+          <p style={{ marginBottom: 8 }}>
+            Ölçüt, 3 modelden <b>tamamının</b> hemfikir olmasını değil, <b>en az ikisinin</b> aynı değişkeni
+            işaret etmesini arar — bu, topluluk/çoğunluk kararı (ensemble/majority voting) yöntemidir ve
+            gözlemciler arası uyum (inter-rater agreement) literatüründeki yerleşik pratiklerle örtüşür.
+          </p>
+        </div>
+
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Eşik Değerlerin Akademik Kaynağı</div>
+          <Madde><b>%70</b> — her katmanın kendi içinde ulaşması gereken minimum eşik. Stemler (2004)'in gözlemciler arası uyum için önerdiği "kabul edilebilir minimum eşik" ile birebir örtüşür</Madde>
+          <Madde><b>%80</b> — sistemin genel ortalamasının ulaşması gereken eşik. Graham, Milanowski &amp; Miller (2012) ve McHugh (2012)'un "tatmin edici/kabul edilebilir" uyum düzeyi olarak kabul ettiği eşik; Landis &amp; Koch (1977) kappa sınıflandırmasında bu aralık "önemli ölçüde – neredeyse mükemmel" uyum kategorisine karşılık gelir</Madde>
+          <Madde>Katman bazında minimum kabul edilebilir (%70), sistemin bütünü ise daha yüksek bir tatmin edicilik standardında (%80) tutulur</Madde>
+        </div>
+
+        <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bor)' }}>
+          <div className="ct" style={{ fontSize: 13 }}>Rastgele Baseline — Sonucun Anlamlı Olduğunu Nasıl Kanıtlıyoruz</div>
+          <p style={{ marginBottom: 8 }}>
+            Yalnızca "%77 doğru" demek yeterli bir kanıt değil — bu sayının şansla ulaşılabilecek seviyeden
+            ne kadar uzak olduğunu göstermek gerekir. Bu yüzden her katman için, 3 modelin <b>tamamen rastgele
+            tahmin etseydi</b> en az 2'sinin aynı adayı seçme ihtimali matematiksel olarak hesaplanır (aday
+            sayısına göre değişir — K1'de 7 aday, K4'te 9 aday gibi). Gerçek sonuçlarımız bu şans seviyesinin
+            genellikle <b>10-20 kat üzerinde</b> çıkıyor; bu, soruların şans eseri değil, gerçekten anlamlı
+            şekilde ayırt edilebilir olduğunun istatistiksel kanıtıdır.
+          </p>
+        </div>
+
+        <p style={{ marginTop: 14, padding: '10px 12px', background: 'var(--tll)', borderRadius: 8, color: 'var(--tl)' }}>
+          📊 Bu analiz, admin panelindeki <b>Soru Geçerlilik Testi</b> sayfasında katman bazında canlı olarak
+          görülebilir — hangi katmanın eşiği geçtiği, hangisinin geliştirilmesi gerektiği orada işaretlenir.
+        </p>
+      </Bolum>
+
+      <Bolum ikon="🛡️" baslik="8. Güvenlik & Tutarlılık Sistemi">
         <p style={{ marginBottom: 10 }}>
           Değerlendirme sırasında, sonucun güvenilirliğini artırmak için çok katmanlı bir izleme sistemi çalışır:
         </p>
@@ -215,7 +295,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde>Tüm bu veriler admin panelindeki <b>Güvenlik / Tutarlılık</b> sayfasından, tur bazında incelenebilir</Madde>
       </Bolum>
 
-      <Bolum ikon="🛠️" baslik="7. Admin Süreçleri — Veri Nasıl Yönetiliyor">
+      <Bolum ikon="🛠️" baslik="9. Admin Süreçleri — Veri Nasıl Yönetiliyor">
         <Madde><b>Bölümler:</b> Taslak → Test Ediliyor → Yayında akışı; her geçiş gerekçeli ve audit log'a yazılı</Madde>
         <Madde><b>Soru Bankası:</b> sorular hiç silinmez, yalnızca pasife alınır (geçmiş öğrenci oturumları bozulmasın diye); katman bazlı sekmeler, arama ve çoklu filtrelerle yönetilir</Madde>
         <Madde><b>Katman Ağırlıkları:</b> K1-K4 eşit (%25) sabitlenmiştir, ayrı bir yönetim ekranı yoktur</Madde>
@@ -224,7 +304,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Audit Log:</b> durum değişikliği, rol değişikliği, pipeline onayı gibi kritik her işlem kalıcı olarak kaydedilir</Madde>
       </Bolum>
 
-      <Bolum ikon="🕓" baslik="8. Son Güncellemeler">
+      <Bolum ikon="🕓" baslik="10. Son Güncellemeler">
         <Madde><b>ESCO geçişi:</b> meslek veri kaynağı 7.764 kayıtlı eski listeden, AB'nin resmi 3.039 kayıtlı ESCO sınıflandırmasına taşındı — hatalı eşleşmeler büyük ölçüde ortadan kalktı</Madde>
         <Madde><b>K5 dalları kuruldu:</b> 301 bölüm, A1-A9 profiline göre kümeleme analiziyle 8 dala ayrıldı; her dal için 7'şer yeni değişken ve toplam 186 soru (168 Likert + 18 SJT) yazıldı</Madde>
         <Madde><b>Güvenlik/Tutarlılık altyapısı:</b> tam ekran zorunluluğu, kamera doğrulaması, davranış izleme ve güven skoru sistemi kuruldu</Madde>
@@ -232,6 +312,8 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Soru Bankası yeniden tasarlandı:</b> katman bazlı sekmeler, arama, değişken/tip filtreleri, sayfa sayfa görünüm ve doğrudan düzenleme eklendi</Madde>
         <Madde><b>Dosya formatı:</b> pipeline çıktıları ve admin yüklemeleri artık .csv yerine .xlsx — Türkçe karakter bozulması riski ortadan kalktı</Madde>
         <Madde><b>Yeniden değerlendirme süresi:</b> 120 günden 90 güne indirildi</Madde>
+        <Madde><b>3. soru tipi eklendi (Kutup):</b> A-mı-B-mi tarzı, 4'lü ölçekli, iki değişkeni doğrudan karşılaştıran yeni bir soru tipi kuruldu</Madde>
+        <Madde><b>Soru geçerlilik testi metodolojisi düzeltildi:</b> adaylar artık yalnızca sorunun kendi değişken ailesiyle sınırlı tutuluyor, negatif ağırlıklı SJT seçenekleri teste dahil edilmiyor, akademik kaynaklara dayalı %70/%80 eşikleri ve rastgele baseline karşılaştırması eklendi</Madde>
       </Bolum>
     </div>
   )
