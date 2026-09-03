@@ -90,6 +90,9 @@ export default function SoruGecerlilikSayfasi() {
   const [hata, setHata] = useState(null)
   const [filtre, setFiltre] = useState('hepsi') // hepsi | sorunlu
   const [tipFiltre, setTipFiltre] = useState('hepsi') // hepsi | likert | sjt
+  const [temizlemeYaziliOnay, setTemizlemeYaziliOnay] = useState('')
+  const [temizlemeSekmesiAcik, setTemizlemeSekmesiAcik] = useState(false)
+  const [temizleniyor, setTemizleniyor] = useState(false)
 
   // [DÜZELTME] Artık burada arka planda "fire and forget" yüklemiyoruz —
   // her işlem (indirme/yükleme) kendi başında xlsxYukle()'yi bekliyor.
@@ -101,6 +104,22 @@ export default function SoruGecerlilikSayfasi() {
   }
 
   useEffect(() => { yukle() }, [])
+
+  async function sonuclariTemizle() {
+    if (temizlemeYaziliOnay.trim().toUpperCase() !== 'SİL') return
+    setTemizleniyor(true)
+    setHata(null)
+    try {
+      await api.gecerlilikSonuclariniTemizle()
+      setTemizlemeYaziliOnay('')
+      setTemizlemeSekmesiAcik(false)
+      yukle()
+    } catch (err) {
+      setHata(err.detail || 'Temizleme başarısız.')
+    } finally {
+      setTemizleniyor(false)
+    }
+  }
 
   async function testGirdisiniIndir() {
     setDisaAktariliyor(true)
@@ -183,6 +202,47 @@ export default function SoruGecerlilikSayfasi() {
           <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
         </label>
       </div>
+
+      {ozet && (
+        <div className="card" style={{ marginTop: 14 }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="ct" style={{ margin: 0 }}>Ekrandaki Sonuçları Temizle</div>
+            <button
+              className="btn sec"
+              style={{ color: 'var(--re)', borderColor: 'var(--re)' }}
+              onClick={() => setTemizlemeSekmesiAcik((a) => !a)}
+            >
+              {temizlemeSekmesiAcik ? 'Kapat' : '🗑 Temizle'}
+            </button>
+          </div>
+          {temizlemeSekmesiAcik && (
+            <div style={{ marginTop: 12 }}>
+              <div className="ps" style={{ margin: '0 0 10px' }}>
+                Bu, ekrandaki <b>{ozet.toplam_birim} sonucun tamamını</b> kalıcı olarak siler (sorulara dokunmaz,
+                yalnızca test sonuçlarını temizler). Devam etmek için aşağıya <b>SİL</b> yazın:
+              </div>
+              <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+                <input
+                  className="auth-input"
+                  style={{ width: 140 }}
+                  value={temizlemeYaziliOnay}
+                  onChange={(e) => setTemizlemeYaziliOnay(e.target.value)}
+                  placeholder="SİL"
+                  autoComplete="off"
+                />
+                <button
+                  className="btn"
+                  style={{ background: 'var(--re)', borderColor: 'var(--re)' }}
+                  disabled={temizlemeYaziliOnay.trim().toUpperCase() !== 'SİL' || temizleniyor}
+                  onClick={sonuclariTemizle}
+                >
+                  {temizleniyor ? <span className="spin" /> : 'Evet, Hepsini Sil'}
+                </button>
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       {!ozet ? (
         <div className="bos-durum">Henüz hiç test sonucu yüklenmedi.</div>
