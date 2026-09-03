@@ -583,12 +583,13 @@ const KATMANLAR = ['K1', 'K2', 'K3', 'K4', 'K5']
 function OzetKartlari({ ozet }) {
   if (!ozet) return null
   return (
-    <div className="sg" style={{ marginBottom: 16 }}>
-      <div className="sc"><div className="sl">Toplam</div><div className="sv">{ozet.toplam}</div></div>
-      <div className="sc"><div className="sl">Likert</div><div className="sv pu">{ozet.likert_sayisi}</div></div>
-      <div className="sc"><div className="sl">SJT</div><div className="sv pu">{ozet.sjt_sayisi}</div></div>
-      <div className="sc"><div className="sl">Aktif</div><div className="sv gr">{ozet.aktif_sayisi}</div></div>
-      <div className="sc"><div className="sl">Pasif</div><div className="sv">{ozet.pasif_sayisi}</div></div>
+    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(6, 1fr)', gap: 8, marginBottom: 16 }}>
+      <div className="sc" style={{ padding: '10px 12px' }}><div className="sl" style={{ fontSize: 9, marginBottom: 3 }}>Toplam</div><div className="sv" style={{ fontSize: 18 }}>{ozet.toplam}</div></div>
+      <div className="sc" style={{ padding: '10px 12px' }}><div className="sl" style={{ fontSize: 9, marginBottom: 3 }}>Likert</div><div className="sv pu" style={{ fontSize: 18 }}>{ozet.likert_sayisi}</div></div>
+      <div className="sc" style={{ padding: '10px 12px' }}><div className="sl" style={{ fontSize: 9, marginBottom: 3 }}>SJT</div><div className="sv pu" style={{ fontSize: 18 }}>{ozet.sjt_sayisi}</div></div>
+      <div className="sc" style={{ padding: '10px 12px' }}><div className="sl" style={{ fontSize: 9, marginBottom: 3 }}>Kutup</div><div className="sv pu" style={{ fontSize: 18 }}>{ozet.kutup_sayisi}</div></div>
+      <div className="sc" style={{ padding: '10px 12px' }}><div className="sl" style={{ fontSize: 9, marginBottom: 3 }}>Aktif</div><div className="sv gr" style={{ fontSize: 18 }}>{ozet.aktif_sayisi}</div></div>
+      <div className="sc" style={{ padding: '10px 12px' }}><div className="sl" style={{ fontSize: 9, marginBottom: 3 }}>Pasif</div><div className="sv" style={{ fontSize: 18 }}>{ozet.pasif_sayisi}</div></div>
     </div>
   )
 }
