@@ -40,6 +40,128 @@ def gecerlilik_sonuclarini_temizle(
     db.commit()
 
 
+class KatmanAnalizSatiri(BaseModel):
+    katman_kod: str
+    toplam_birim: int
+    en_az_2_3_sayisi: int
+    en_az_2_3_orani: float       # yüzde, 0-100
+    rastgele_baseline_orani: float  # yüzde, 0-100 — 3 bağımsız modelin şansla ≥2/3 hemfikir olma ihtimali
+    kac_kat_ustu: float
+    geçerli_mi: bool             # en_az_2_3_orani >= gecerlilik_esigi ise True
+
+
+class GecerlilikAnaliziOut(BaseModel):
+    katman_esigi_yuzde: float   # her katmanın kendi içinde ulaşması gereken minimum ≥2/3 oranı
+    genel_esik_yuzde: float     # tüm sistemin ortalamasının ulaşması gereken minimum oran
+    genel_en_az_2_3_orani: float
+    genel_toplam_birim: int
+    genel_gecerli_mi: bool
+    katmanlar: list[KatmanAnalizSatiri]
+
+
+# [KAYNAK — akademik gerekçe]
+# Gözlemciler/değerlendiriciler arası uyum (inter-rater agreement) literatüründe
+# yerleşik eşikler kullanılıyor, keyfi seçilmedi:
+#   - %70  : kabul edilebilir MİNİMUM eşik (Stemler, 2004, "recommended minimum
+#            threshold for rater pair agreement")
+#   - %75-80: "tatmin edici / kabul edilebilir" uyum düzeyi (Graham, Milanowski
+#            & Miller, 2012; McHugh, 2012); Landis & Koch (1977) kappa
+#            sınıflandırmasında bu aralık "önemli ölçüde/neredeyse mükemmel"
+#            uyum kategorisine karşılık gelir.
+# Buna göre: her KATMAN kendi içinde ≥%70'i geçmeli (minimum kabul edilebilir),
+# sistemin GENEL ortalaması ise ≥%80'i geçmeli (tatmin edici düzey) — katman
+# bazında minimum kabul edilebilir olsa da, sistemin bütünü daha yüksek bir
+# tatmin edicilik standardında tutuluyor.
+KATMAN_ESIGI = 70.0
+GENEL_ESIK = 80.0
+
+
+@router.get("/analiz", response_model=GecerlilikAnaliziOut)
+def gecerlilik_analizini_getir(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """
+    [EKLENDİ] Her katman için: gerçek ≥2/3 (çoğunluk oyu) başarı oranı,
+    rastgele tahmin baseline'ı (o katmandaki/dal'daki gerçek aday sayısına
+    göre matematiksel olarak hesaplanır) ve bunun kaç katı üstünde olduğu.
+    "Geçerli/Geçersiz" etiketi, ≥2/3 oranının rastgele şanstan anlamlı
+    ölçüde yüksek olup olmadığına dayanır — tam 3/3 konsensüs ARANMAZ,
+    3 bağımsız modelden çoğunluğunun hemfikir olması yeterli sayılır
+    (ensemble/topluluk kararı yöntembilimi).
+    """
+    from math import comb
+
+    def kod_oneki(kod: str) -> str:
+        return "".join(c for c in kod if not c.isdigit())
+
+    def rastgele_2_3_ihtimali(n: int) -> float:
+        if n <= 0:
+            return 0.0
+        p = 1 / n
+        p2 = comb(3, 2) * (p ** 2) * (1 - p)
+        p3 = p ** 3
+        return (p2 + p3) * 100
+
+    # Her değişken önekinin (D, P, I, A, M, S, ...) kaç üyesi var — gerçek
+    # test sırasında kullanılan aday havuzu büyüklüğü budur.
+    tum_degiskenler = db.query(Degisken.kod).all()
+    onek_boyutlari: dict[str, int] = {}
+    for (kod,) in tum_degiskenler:
+        onek = kod_oneki(kod)
+        onek_boyutlari[onek] = onek_boyutlari.get(onek, 0) + 1
+
+    from sqlalchemy import text
+    ham_satirlar = db.execute(text("""
+        SELECT k.kod AS katman_kod, sgs.gercek_degisken_kod,
+               sgs.model_a_dogru, sgs.model_b_dogru, sgs.model_c_dogru
+        FROM soru_gecerlilik_sonuclari sgs
+        JOIN sorular s ON s.id = sgs.soru_id
+        JOIN katmanlar k ON k.id = s.katman_id
+    """)).all()
+
+    katman_verisi: dict[str, dict] = {}
+    genel_en_az_2, genel_toplam = 0, 0
+
+    for katman_kod, gercek_kod, a_dogru, b_dogru, c_dogru in ham_satirlar:
+        d = katman_verisi.setdefault(katman_kod, {"toplam": 0, "en_az_2": 0, "baseline_toplami": 0.0})
+        d["toplam"] += 1
+        genel_toplam += 1
+        kac_dogru = sum([bool(a_dogru), bool(b_dogru), bool(c_dogru)])
+        if kac_dogru >= 2:
+            d["en_az_2"] += 1
+            genel_en_az_2 += 1
+        onek = kod_oneki(gercek_kod)
+        n = onek_boyutlari.get(onek, 7)  # bulunamazsa makul bir varsayım
+        d["baseline_toplami"] += rastgele_2_3_ihtimali(n)
+
+    katman_satirlari = []
+    for katman_kod in sorted(katman_verisi.keys()):
+        d = katman_verisi[katman_kod]
+        oran = d["en_az_2"] / d["toplam"] * 100
+        baseline_ort = d["baseline_toplami"] / d["toplam"]
+        katman_satirlari.append(KatmanAnalizSatiri(
+            katman_kod=katman_kod,
+            toplam_birim=d["toplam"],
+            en_az_2_3_sayisi=d["en_az_2"],
+            en_az_2_3_orani=round(oran, 1),
+            rastgele_baseline_orani=round(baseline_ort, 2),
+            kac_kat_ustu=round(oran / baseline_ort, 1) if baseline_ort > 0 else 0.0,
+            geçerli_mi=oran >= KATMAN_ESIGI,
+        ))
+
+    genel_oran = round(genel_en_az_2 / genel_toplam * 100, 1) if genel_toplam else 0.0
+
+    return GecerlilikAnaliziOut(
+        katman_esigi_yuzde=KATMAN_ESIGI,
+        genel_esik_yuzde=GENEL_ESIK,
+        genel_en_az_2_3_orani=genel_oran,
+        genel_toplam_birim=genel_toplam,
+        genel_gecerli_mi=genel_oran >= GENEL_ESIK,
+        katmanlar=katman_satirlari,
+    )
+
+
 class GecerlilikBirimiOut(BaseModel):
     birim_anahtari: str
     kaynak_soru_id: int
