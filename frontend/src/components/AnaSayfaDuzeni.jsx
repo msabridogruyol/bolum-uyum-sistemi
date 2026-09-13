@@ -89,9 +89,6 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🎯 Hedef Bölüm Koçluğu
         </NavLink>
-        <NavLink to="/koclugu/asistan" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🧭 Kariyer Koçun (AI)
-        </NavLink>
         <div style={{ flex: 1 }} />
         <div className="ns">Hesap</div>
         <NavLink to="/profil" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
