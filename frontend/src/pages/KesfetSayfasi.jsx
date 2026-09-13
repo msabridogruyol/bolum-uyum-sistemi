@@ -3,8 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
 const ORNEK_ARAMALAR = ['Tıp', 'Bilgisayar Mühendisliği', 'Psikoloji', 'Hukuk', 'İşletme', 'Mimarlık']
-const KATMAN_ADI = { K1: 'Değerler', K2: 'Kişilik', K3: 'İş Ortamı', K4: 'Alan Eğilimi' }
-const KATMAN_RENK = { K1: 'var(--pu)', K2: 'var(--gr)', K3: 'var(--am)', K4: 'var(--tl, var(--pu))' }
+
+// [EKLENDİ] on_cikan_degiskenler artık katman adı taşımıyor (yalnızca
+// degisken_kod, degisken_adi, agirlik_degeri) — kod önekinden (D/P/I/A)
+// hangi katmana ait olduğunu çıkarıp renklendirmede kullanıyoruz.
+const ONEK_KATMAN_RENK = { D: 'var(--pu)', P: 'var(--gr)', I: 'var(--am)', A: 'var(--tl, var(--pu))' }
+function katmanRengi(degiskenKod) {
+  const onek = degiskenKod?.[0]
+  return ONEK_KATMAN_RENK[onek] || 'var(--pu)'
+}
 
 export default function KesfetSayfasi() {
   const [sorgu, setSorgu] = useState('')
@@ -144,17 +151,17 @@ export default function KesfetSayfasi() {
                     </div>
                   </div>
 
-                  {Object.keys(secili.katman_ortalamalari).length > 0 && (
+                  {secili.on_cikan_degiskenler?.length > 0 && (
                     <div className="card">
-                      <div className="ct">Bu Bölümün Genel Profili</div>
+                      <div className="ct">Bu Bölümü En Çok Öne Çıkaran Özellikler</div>
                       <div className="ps" style={{ margin: '0 0 12px', fontSize: 12 }}>
-                        Bu bölüme genelde uyum sağlayan öğrencilerin katman ortalamaları — kendi puanınla karşılaştırma değil, bölümün genel eğilimi.
+                        Bu bölümün en yüksek beklenti duyduğu 5 özellik — kendi puanınla karşılaştırma değil, bölümün genel eğilimi.
                       </div>
-                      {Object.entries(secili.katman_ortalamalari).map(([kod, deger]) => (
-                        <div key={kod} className="dr">
-                          <div className="dl">{KATMAN_ADI[kod] || kod}</div>
-                          <div className="db"><div className="df" style={{ width: `${deger}%`, background: KATMAN_RENK[kod] || 'var(--pu)' }} /></div>
-                          <div className="ds" style={{ color: KATMAN_RENK[kod] || 'var(--pu)' }}>{deger}</div>
+                      {secili.on_cikan_degiskenler.map((d) => (
+                        <div key={d.degisken_kod} className="dr">
+                          <div className="dl">{d.degisken_adi}</div>
+                          <div className="db"><div className="df" style={{ width: `${d.agirlik_degeri}%`, background: katmanRengi(d.degisken_kod) }} /></div>
+                          <div className="ds" style={{ color: katmanRengi(d.degisken_kod) }}>{d.agirlik_degeri}</div>
                         </div>
                       ))}
                     </div>
