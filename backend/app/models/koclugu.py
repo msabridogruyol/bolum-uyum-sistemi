@@ -90,3 +90,38 @@ class OgrenciGelisimAksiyonDurumu(Base):
     degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
     durum: Mapped[str] = mapped_column(String, nullable=False, default="planlandi")
     guncelleme_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+# ============================================================================
+# AI Koçluk Asistanı (sonradan eklendi)
+# ============================================================================
+
+class OgrenciKoclukOturumu(Base):
+    __tablename__ = "ogrenci_koclugu_oturumlari"
+    __table_args__ = (
+        CheckConstraint("durum IN ('aktif','tamamlandi')", name="ck_koclugu_oturum_durum"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id"), nullable=False)
+    tur_id: Mapped[int | None] = mapped_column(ForeignKey("ogrenci_degerlendirme_turu.id"))
+    baslama_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    bitis_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    durum: Mapped[str] = mapped_column(String, nullable=False, default="aktif")
+    # [NOT] Oturum bitince doldurulur; bir sonraki oturumda ham mesaj
+    # geçmişi yerine bu kısa özet modele verilir (maliyet + kalite kontrolü
+    # için — bkz. app/core/ai_koc_servisi.py)
+    ozet: Mapped[str | None] = mapped_column(String)
+
+
+class OgrenciKoclukMesaji(Base):
+    __tablename__ = "ogrenci_koclugu_mesajlari"
+    __table_args__ = (
+        CheckConstraint("rol IN ('ogrenci','asistan')", name="ck_koclugu_mesaj_rol"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    oturum_id: Mapped[int] = mapped_column(ForeignKey("ogrenci_koclugu_oturumlari.id"), nullable=False)
+    rol: Mapped[str] = mapped_column(String, nullable=False)
+    icerik: Mapped[str] = mapped_column(String, nullable=False)
+    olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
