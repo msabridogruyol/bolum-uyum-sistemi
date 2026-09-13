@@ -126,6 +126,10 @@ export const api = {
   yolHaritasiGetir: () => get('/koclugu/hedef/yol-haritasi'),
   aksiyonDurumuGuncelle: (degiskenId, durum) => post(`/koclugu/hedef/aksiyon/${degiskenId}`, { durum }),
   turKarsilastirmasiGetir: () => get('/koclugu/karsilastirma'),
+  aiKocOturumBaslat: () => post('/koclugu/asistan/oturum/baslat', {}),
+  aiKocMesajGonder: (oturumId, mesaj) => post(`/koclugu/asistan/oturum/${oturumId}/mesaj`, { mesaj }),
+  aiKocOturumuBitir: (oturumId) => post(`/koclugu/asistan/oturum/${oturumId}/bitir`, {}),
+  aiKocGecmisiGetir: () => get('/koclugu/asistan/gecmis'),
 
   // --- Admin: Auth ---
   adminGirisYap: async (veri) => {
