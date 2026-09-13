@@ -20,7 +20,7 @@ class KatmanOut(BaseModel):
     normalizasyon_agirligi: float | None
     kosullu_mu: bool
     durum: str  # 'baslamadi' | 'devam_ediyor' | 'tamamlandi' — öğrencinin bu katmandaki ilerlemesi
-    
+
     model_config = {"from_attributes": True}
     soru_sayisi: int = 0
 
@@ -93,12 +93,26 @@ class DurumOzetiOut(BaseModel):
 
 # --- D5 Katman 2 — Keşfet ---
 
+class OnCikanDegiskenOut(BaseModel):
+    """
+    [EKLENDİ — proje sahibinin kararıyla] Bir bölümün en yüksek ağırlıklı
+    değişkenlerinden biri. Eskiden burada katman_ortalamalari (dict[str,
+    float], K1-K4 için 4 sayı) vardı — proje sahibi bu ortalamanın
+    bölümün kendine özgü profilini gizlediğini fark edip, bunun yerine en
+    yüksek ağırlıklı 5 değişkenin doğrudan gösterilmesine karar verdi.
+    Bkz. app/core/kesfet_servisi.py, bolum_on_cikan_degiskenler().
+    """
+    degisken_kod: str
+    degisken_adi: str
+    agirlik_degeri: float
+
+
 class KesfetSonucOut(BaseModel):
     bolum_id: int
     bolum_adi: str
     kisa_aciklama: str | None
     toplam_uyum: float | None  # None = öğrenci henüz K1-K4'ü tamamlamadı
-    katman_ortalamalari: dict[str, float]
+    on_cikan_degiskenler: list[OnCikanDegiskenOut]  # [DEĞİŞTİRİLDİ] eski: katman_ortalamalari: dict[str, float]
 
 class BolumSiralamaSatiri(BaseModel):
     """
