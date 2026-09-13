@@ -13,6 +13,16 @@ yaratacağı için "bölümün kendi katman ortalaması" (bolum_agirliklari'nin
 katman bazında ortalaması) olarak yorumlandı — aksi halde öğrencinin
 kendi K1-K4 puanları her aramada aynı kalır, bu görüntüleme katmanının
 amacına aykırı olurdu.
+
+[DÜZELTME — kullanıcı bildirimi üzerine bulundu] Önceki sürüm arama için
+SQL'in ILIKE komutunu kullanıyordu (Bolum.ad.ilike(...)). PostgreSQL'in
+ILIKE'ı, veritabanı collation ayarına bağlı olarak Türkçe'nin dört harfli
+İ/I/ı/i ayrımını doğru çeviremiyor — örneğin "TIP" (düz ASCII I) tam
+yazılınca eşleşiyordu ama "tıp" (Türkçe'ye özel noktasız ı) hiç
+eşleşmiyordu, çünkü veritabanı "ı"yı "I"ya doğru büyütemiyordu. Çözüm:
+arama artık SQL'e bırakılmıyor; 301 bölüm zaten küçük bir küme olduğu
+için tamamı çekilip Python'da, Türkçe'ye özel doğru bir küçültme
+fonksiyonuyla karşılaştırılıyor.
 """
 from sqlalchemy.orm import Session
 
@@ -20,6 +30,19 @@ from app.models import (
     Ogrenci, Bolum, Degisken, Katman, BolumAgirligi,
     OgrenciDegerlendirmeTuru, OgrenciBolumUyumSkoru,
 )
+
+
+def turkce_kucult(metin: str) -> str:
+    """
+    Python'un (ve çoğu veritabanının) varsayılan küçültme/büyütme mantığı
+    İngilizce kurallarını kullanır: 'I'.lower() -> 'i' verir. Ama Türkçe'de
+    'I' harfinin küçüğü 'ı'dır (noktasız), 'i'nin büyüğü ise 'İ'dir
+    (noktalı) — bunlar dört AYRI harf. Bu fonksiyon önce bu iki harfi
+    Türkçe kurallarına göre doğru çevirir, sonra geri kalanını (ş, ğ, ü,
+    ö, ç dahil — bunlarda İngilizce/Türkçe kuralı zaten aynı olduğu için
+    sorun yok) standart .lower() ile küçültür.
+    """
+    return metin.replace("İ", "i").replace("I", "ı").lower()
 
 
 def bolum_katman_ortalamalari(db: Session, bolum_id: int) -> dict[str, float]:
@@ -49,16 +72,25 @@ def bolum_katman_ortalamalari(db: Session, bolum_id: int) -> dict[str, float]:
 
 def bolumleri_ara(db: Session, ogrenci: Ogrenci, arama_terimi: str, limit: int = 20) -> list[dict]:
     """
-    D5 Katman 2 — isim bazlı arama (case-insensitive, kısmi eşleşme).
-    Yalnızca durum='yayinda' bölümler döner (E5 kuralı).
+    D5 Katman 2 — isim bazlı arama (case-insensitive, kısmi eşleşme,
+    Türkçe İ/I/ı/i ayrımına duyarlı). Yalnızca durum='yayinda' bölümler
+    döner (E5 kuralı).
     """
-    bolumler = (
+    arama_normalize = turkce_kucult(arama_terimi.strip())
+
+    # [DÜZELTME] SQL ILIKE yerine: tüm yayındaki bölümler çekilip Python'da
+    # Türkçe-güvenli karşılaştırma yapılıyor (301 satır — performans sorunu
+    # yaratmayacak kadar küçük bir küme).
+    tum_bolumler = (
         db.query(Bolum)
-        .filter(Bolum.durum == "yayinda", Bolum.ad.ilike(f"%{arama_terimi}%"))
+        .filter(Bolum.durum == "yayinda")
         .order_by(Bolum.ad)
-        .limit(limit)
         .all()
     )
+    bolumler = [
+        b for b in tum_bolumler
+        if arama_normalize in turkce_kucult(b.ad)
+    ][:limit]
 
     # öğrencinin en son tamamlanmış turu varsa TOPLAM_UYUM'u oradan oku
     son_tamamlanan_tur = (
