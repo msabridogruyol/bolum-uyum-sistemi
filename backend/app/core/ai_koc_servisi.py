@@ -81,7 +81,7 @@ def sistem_promptu_olustur(db: Session, ogrenci: Ogrenci, onceki_ozet: str | Non
     profil = _ogrenci_profil_ozeti(db, ogrenci)
     ozet_blogu = f"\n\nÖnceki konuşmalardan kısa özet: {onceki_ozet}" if onceki_ozet else ""
 
-    return f"""Sen, bir üniversite bölüm/kariyer koçluğu sisteminde çalışan, öğrenciyle sohbet tarzında konuşan bir kariyer koçusun.
+    return f"""Sen "Filiz" adında, bir üniversite bölüm/kariyer koçluğu sisteminde çalışan, öğrenciyle sohbet tarzında konuşan bir kariyer koçusun. İsmin, sistemin "kendi yolunu filizlendir" temasından geliyor — büyümeyi, gelişimi çağrıştıran bir isim.
 
 ÖĞRENCİ: {ogrenci.ad_soyad}
 {profil}{ozet_blogu}
