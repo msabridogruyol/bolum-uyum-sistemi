@@ -3,16 +3,15 @@ D5, Katman 2 — Tüm Bölümleri Keşfet.
 Kaynak: sistem_genel_anlatim.md D5
 
 301 bölümün tamamı aranabilir; her sonuç için % uyum (varsa, D4'ten —
-hesaplanmamışsa null) + katman bazlı ortalama (31 değişkenin tek tek
-dökümü DEĞİL, K1-K4 için 4 sayı) + kısa bilgi notu döner.
+hesaplanmamışsa null) + öne çıkan değişkenler + kısa bilgi notu döner.
 
-[ÇIKARIM]: "Katman bazlı ortalama" ifadesinin, öğrencinin kendi katman
-puanları mı yoksa BÖLÜMÜN o katmandaki ortalama beklentisi mi olduğu
-belgede net değildi. Bölüm-özgü, arama sonucunda anlamlı bir fark
-yaratacağı için "bölümün kendi katman ortalaması" (bolum_agirliklari'nin
-katman bazında ortalaması) olarak yorumlandı — aksi halde öğrencinin
-kendi K1-K4 puanları her aramada aynı kalır, bu görüntüleme katmanının
-amacına aykırı olurdu.
+[ÇIKARIM — SONRADAN DEĞİŞTİRİLDİ]: İlk sürümde bu alan "katman bazlı
+ortalama" (31 değişkenin K1-K4 için 4 sayıya indirgenmiş hali) olarak
+yorumlanmıştı. Proje sahibi, bu ortalamanın bölümün kendine özgü
+profilini gizlediğini (farklı profildeki iki bölümün aynı ortalamaya
+sahip olup ayırt edilemez hale gelebildiğini) fark edip, bunun yerine
+bölümün en yüksek ağırlıklı 5 değişkenini doğrudan göstermeye karar
+verdi — bkz. bolum_on_cikan_degiskenler().
 
 [DÜZELTME — kullanıcı bildirimi üzerine bulundu] Önceki sürüm arama için
 SQL'in ILIKE komutunu kullanıyordu (Bolum.ad.ilike(...)). PostgreSQL'in
@@ -27,7 +26,7 @@ fonksiyonuyla karşılaştırılıyor.
 from sqlalchemy.orm import Session
 
 from app.models import (
-    Ogrenci, Bolum, Degisken, Katman, BolumAgirligi,
+    Ogrenci, Bolum, Degisken, BolumAgirligi,
     OgrenciDegerlendirmeTuru, OgrenciBolumUyumSkoru,
 )
 
@@ -45,29 +44,38 @@ def turkce_kucult(metin: str) -> str:
     return metin.replace("İ", "i").replace("I", "ı").lower()
 
 
-def bolum_katman_ortalamalari(db: Session, bolum_id: int) -> dict[str, float]:
-    """Bölümün 31 değişkenlik agirlik_degeri'lerini katman bazında ortalar."""
+def bolum_on_cikan_degiskenler(db: Session, bolum_id: int, adet: int = 5) -> list[dict]:
+    """
+    [DEĞİŞTİRİLDİ — proje sahibinin kararıyla] Önceki sürüm, 31 değişkeni
+    katman bazında ortalayıp yalnızca 4 sayı (K1-K4) döndürüyordu. Ancak
+    bu ortalama, bölümün KENDİNE ÖZGÜ profilini gizliyor — biri D1'de çok
+    yüksek diğer değişkenlerde düşük, öbürü tam tersi olan iki bölüm bile
+    aynı katman ortalamasına sahip olabiliyor, bu da arama sonuçlarını
+    ayırt edici olmaktan çıkarıyordu.
+
+    Yeni yaklaşım: bölümün 31 değişken ağırlığından EN YÜKSEK olan N
+    tanesini (varsayılan 5), hangi katmandan olduklarına bakmaksızın,
+    doğrudan isimleriyle döndürür — bu, o bölümü gerçekten diğerlerinden
+    ayıran özellikleri (örn. "Bu bölüm özellikle Analitik Düşünme ve
+    Sayısal Yetkinlik istiyor") ortaya çıkarır.
+    """
     satirlar = (
-        db.query(BolumAgirligi, Degisken.katman_id)
+        db.query(BolumAgirligi, Degisken.kod, Degisken.ad)
         .join(Degisken, Degisken.id == BolumAgirligi.degisken_id)
         .filter(BolumAgirligi.bolum_id == bolum_id)
         .all()
     )
-    en_guncel: dict[tuple[int, int], tuple[BolumAgirligi, int]] = {}
-    for agirlik, katman_id in satirlar:
-        anahtar = (agirlik.degisken_id, katman_id)
+    en_guncel: dict[int, tuple] = {}  # degisken_id -> (agirlik, kod, ad)
+    for agirlik, kod, ad in satirlar:
+        anahtar = agirlik.degisken_id
         if anahtar not in en_guncel or agirlik.versiyon > en_guncel[anahtar][0].versiyon:
-            en_guncel[anahtar] = (agirlik, katman_id)
+            en_guncel[anahtar] = (agirlik, kod, ad)
 
-    katmanlar = {k.id: k.kod for k in db.query(Katman).all()}
-    toplam: dict[str, list[float]] = {}
-    for agirlik, katman_id in en_guncel.values():
-        kod = katmanlar.get(katman_id)
-        if kod is None:
-            continue
-        toplam.setdefault(kod, []).append(float(agirlik.agirlik_degeri))
-
-    return {kod: round(sum(v) / len(v), 2) for kod, v in toplam.items()}
+    siralanmis = sorted(en_guncel.values(), key=lambda x: float(x[0].agirlik_degeri), reverse=True)
+    return [
+        {"degisken_kod": kod, "degisken_adi": ad, "agirlik_degeri": round(float(agirlik.agirlik_degeri), 2)}
+        for agirlik, kod, ad in siralanmis[:adet]
+    ]
 
 
 def bolumleri_ara(db: Session, ogrenci: Ogrenci, arama_terimi: str, limit: int = 20) -> list[dict]:
@@ -116,6 +124,6 @@ def bolumleri_ara(db: Session, ogrenci: Ogrenci, arama_terimi: str, limit: int =
             "bolum_adi": bolum.ad,
             "kisa_aciklama": bolum.kisa_aciklama,
             "toplam_uyum": uyum_skorlari.get(bolum.id),  # None -> henüz hesaplanmadı
-            "katman_ortalamalari": bolum_katman_ortalamalari(db, bolum.id),
+            "on_cikan_degiskenler": bolum_on_cikan_degiskenler(db, bolum.id),
         })
     return sonuc
