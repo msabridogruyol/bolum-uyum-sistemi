@@ -10,6 +10,7 @@ import K5DalSoruSayfasi from './pages/K5DalSoruSayfasi'
 import SonucSayfasi from './pages/SonucSayfasi'
 import KesfetSayfasi from './pages/KesfetSayfasi'
 import KoclukSayfasi from './pages/KoclukSayfasi'
+import AiKocSayfasi from './pages/AiKocSayfasi'
 import ProfilAyarlariSayfasi from './pages/ProfilAyarlariSayfasi'
 import AnaSayfa from './pages/AnaSayfa'
 import GenelSonuclarSayfasi from './pages/GenelSonuclarSayfasi'
@@ -74,6 +75,7 @@ function AnaUygulama() {
         <Route path="/sonuc/:kod" element={<KatmanDetaySayfasi />} />
         <Route path="/kesfet" element={<KesfetSayfasi />} />
         <Route path="/koclugu" element={<KoclukSayfasi />} />
+        <Route path="/koclugu/asistan" element={<AiKocSayfasi />} />
         <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
       </Route>
 
