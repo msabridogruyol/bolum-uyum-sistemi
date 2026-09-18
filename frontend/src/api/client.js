@@ -198,6 +198,19 @@ export const api = {
   soruMetniGuncelle: (soruId, soruMetni) => aput(`/admin/sorular-detay/soru/${soruId}`, { soru_metni: soruMetni }),
   secenekMetniGuncelle: (secenekId, secenekMetni) => aput(`/admin/sorular-detay/secenek/${secenekId}`, { secenek_metni: secenekMetni }),
   dallariDetayliListele: () => aget('/admin/sorular-detay/dallar-detay'),
+  gelisimKaynakDegiskenleriGetir: (katmanKod) => {
+    const p = new URLSearchParams()
+    if (katmanKod) p.set('katman_kod', katmanKod)
+    return aget(`/admin/gelisim-kaynak/degiskenler?${p.toString()}`)
+  },
+  gelisimKaynaklariListele: (filtreler = {}) => {
+    const p = new URLSearchParams()
+    Object.entries(filtreler).forEach(([k, v]) => { if (v) p.set(k, v) })
+    return aget(`/admin/gelisim-kaynak?${p.toString()}`)
+  },
+  gelisimKaynagiEkle: (veri) => apost('/admin/gelisim-kaynak', veri),
+  gelisimKaynagiGuncelle: (id, veri) => aput(`/admin/gelisim-kaynak/${id}`, veri),
+  gelisimKaynagiSil: (id) => adel(`/admin/gelisim-kaynak/${id}`),
   gecerlilikTestGirdisiGetirV2: () => aget('/admin/gecerlilik-girdisi-v2'),
   kutupSorulariniTopluYukle: (satirlar) => apost('/admin/kutup-sorulari/toplu', { satirlar }),
   katmaninTumSorulariniSil: (katmanKod) => adel(`/admin/sorular-detay/katman/${katmanKod}`),
