@@ -17,9 +17,9 @@ Tasarım prensipleri:
 import os
 from sqlalchemy.orm import Session
 
-from app.models import Ogrenci, Bolum
+from app.models import Ogrenci, Bolum, GelisimKaynakOnerisi
 from app.core.katman_servisi import son_tur_getir, IsKuraliHatasi
-from app.core.koclugu_servisi import aktif_hedef_getir, gap_analizi_hesapla
+from app.core.koclugu_servisi import aktif_hedef_getir, gap_analizi_hesapla, gap_kategorisi
 
 MAKSIMUM_TUR = 20  # bir oturumda bu kadar (öğrenci+asistan) mesajdan sonra oturum otomatik kapanır
 MODEL_ADI = "gpt-4o-mini"
@@ -74,6 +74,29 @@ def _ogrenci_profil_ozeti(db: Session, ogrenci: Ogrenci) -> str:
         parcalar.append(f"Bu bölüme göre en güçlü olduğu yönler: {guclu_metni}.")
     if gelisim_metni:
         parcalar.append(f"Gelişime en açık yönler: {gelisim_metni}.")
+
+    # [EKLENDİ] En belirgin 3 güçlü + 3 gelişim alanı için, o değişkenin
+    # gerçek gap kategorisine uygun kaynak önerilerini (kitap/film/rol
+    # model/psikolojik yaklaşım/aktivite) çek — bölümden BAĞIMSIZ, genel
+    # öneriler. Filiz bunları öğrencinin hedef bölümüne göre YORUMLAYARAK
+    # sunacak (bkz. aşağıdaki sistem promptu talimatı).
+    onemli_satirlar = en_guclu + en_gelisim
+    if onemli_satirlar:
+        degisken_idler = [s.degisken.id for s in onemli_satirlar]
+        tum_kaynaklar = (
+            db.query(GelisimKaynakOnerisi)
+            .filter(GelisimKaynakOnerisi.degisken_id.in_(degisken_idler))
+            .all()
+        )
+        kaynak_metinleri = []
+        for s in onemli_satirlar:
+            aralik = gap_kategorisi(duzeltilmis_fark(s))
+            eslesenler = [k for k in tum_kaynaklar if k.degisken_id == s.degisken.id and k.aralik == aralik]
+            for k in eslesenler[:2]:  # değişken başına en fazla 2 kaynak, prompt şişmesin
+                kaynak_metinleri.append(f"[{s.degisken.ad} / {k.kaynak_tipi}] {k.baslik} — {k.aciklama}")
+        if kaynak_metinleri:
+            parcalar.append("Önerilebilecek somut kaynaklar (bunları öğrencinin HEDEF BÖLÜMÜNE göre yorumlayarak sun, olduğu gibi kopyalama):\n" + "\n".join(kaynak_metinleri))
+
     return " ".join(parcalar)
 
 
@@ -93,6 +116,7 @@ KURALLAR (bunlara kesinlikle uy):
 4. Sistemin kendi hesapladığı sonuçlarla ÇELİŞME — örneğin hedef bölümü olarak gösterilenden başka bir bölümü "asıl sana bu uyar" diye önerme; onun yerine mevcut hedefi/güçlü yönlerini nasıl değerlendirebileceğini konuş.
 5. Ne çok dar (yalnızca tek cümlelik cevaplar) ne çok geniş (alakasız konulara sürüklenen) ol — kariyer, bölüm, gelişim, motivasyon eksenli sohbet et, öğrenci başka bir şey sorarsa nazikçe konuya geri dön.
 6. Sıcak, meraklı, yargılamayan bir ton kullan — bir sınav sonucu okur gibi değil, gerçekten önemsiyormuş gibi konuş.
+7. Yukarıdaki "önerilebilecek somut kaynaklar" listesi BÖLÜMDEN BAĞIMSIZ, genel önerilerdir. Bunları öğrenciye önerirken, mutlaka öğrencinin HEDEF BÖLÜMÜYLE ilişkilendirerek, o bölüme özel bir çerçeveyle anlat — kaynağı olduğu gibi kopyalama. Örneğin aynı kitap önerisi bir hukuk öğrencisine "dava argümanlarını kurarken işine yarar" diye, bir mühendislik öğrencisine "sistem tasarımında işine yarar" diye farklı şekilde çerçevelenmeli. Bir sohbette en fazla 1-2 kaynak öner, hepsini birden sıralama — doğal bir sohbet akışında, sorulduğunda ya da uygun geldiğinde bahset.
 """
 
 
