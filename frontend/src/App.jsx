@@ -28,6 +28,7 @@ import YoneticilerSayfasi from './pages/admin/YoneticilerSayfasi'
 import SistemHakkindaSayfasi from './pages/admin/SistemHakkindaSayfasi'
 import SoruGecerlilikSayfasi from './pages/admin/SoruGecerlilikSayfasi'
 import GuvenlikSayfasi from './pages/admin/GuvenlikSayfasi'
+import GelisimKaynakSayfasi from './pages/admin/GelisimKaynakSayfasi'
 
 function OzelRota({ children }) {
   const { girisYapildi } = useAuth()
@@ -99,6 +100,7 @@ function AnaUygulama() {
         <Route path="sistem-hakkinda" element={<SistemHakkindaSayfasi />} />
         <Route path="soru-gecerlilik" element={<SoruGecerlilikSayfasi />} />
         <Route path="guvenlik" element={<GuvenlikSayfasi />} />
+        <Route path="gelisim-kaynak" element={<GelisimKaynakSayfasi />} />
       </Route>
     </Routes>
   )
