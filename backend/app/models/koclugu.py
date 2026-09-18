@@ -125,3 +125,31 @@ class OgrenciKoclukMesaji(Base):
     rol: Mapped[str] = mapped_column(String, nullable=False)
     icerik: Mapped[str] = mapped_column(String, nullable=False)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class GelisimKaynakOnerisi(Base):
+    """
+    [EKLENDİ — genişletilmiş kaynak havuzu] Bölümden BAĞIMSIZ, genel
+    kitap/film/rol model/psikolojik yaklaşım/aktivite önerileri. Bölüme
+    özel HİÇBİR satır yazılmaz — Filiz (ai_koc_servisi.py) bu genel
+    önerileri öğrencinin hedef bölümüne göre YORUMLAYARAK sunar.
+    """
+    __tablename__ = "gelisim_kaynak_onerileri"
+    __table_args__ = (
+        CheckConstraint(
+            "aralik IN ('belirgin_ustun','ustun','beklenti','altinda','belirgin_altinda')",
+            name="ck_gko_aralik",
+        ),
+        CheckConstraint(
+            "kaynak_tipi IN ('kitap','film','rol_model','psikolojik_yaklasim','aktivite')",
+            name="ck_gko_kaynak_tipi",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
+    aralik: Mapped[str] = mapped_column(String, nullable=False)
+    kaynak_tipi: Mapped[str] = mapped_column(String, nullable=False)
+    baslik: Mapped[str] = mapped_column(String, nullable=False)
+    aciklama: Mapped[str] = mapped_column(String, nullable=False)
+    sira: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
