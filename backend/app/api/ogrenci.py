@@ -149,6 +149,21 @@ def katmani_baslat(
     katman = _katman_bul(db, kod)
     try:
         tur = aktif_veya_yeni_tur_getir(db, ogrenci)
+        # [2026-10-03] Katmanlar sırayla ilerler: önceki ana katmanların hepsi tamamlanmadan bu katman başlatılamaz
+        if not katman.kosullu_mu:
+            tamamlananlar = {
+                o.katman_id for o in db.query(OgrenciKatmanOturumu).filter(
+                    OgrenciKatmanOturumu.ogrenci_id == ogrenci.id,
+                    OgrenciKatmanOturumu.tur_id == tur.id,
+                    OgrenciKatmanOturumu.durum == "tamamlandi",
+                ).all()
+            }
+            eksik = [
+                k for k in db.query(Katman).filter(Katman.kosullu_mu.is_(False), Katman.sira < katman.sira).order_by(Katman.sira).all()
+                if k.id not in tamamlananlar
+            ]
+            if eksik:
+                raise IsKuraliHatasi(f"Katmanlar sırayla ilerler. Önce {eksik[0].kod} — {eksik[0].ad} katmanını tamamlamalısın.")
         oturum, sorular = katman_oturumu_baslat(db, ogrenci, katman, tur)
     except IsKuraliHatasi as e:
         db.rollback()
