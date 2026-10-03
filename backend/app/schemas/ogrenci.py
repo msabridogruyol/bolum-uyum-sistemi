@@ -141,6 +141,8 @@ class K5DurumOut(BaseModel):
 class DalBaslatCevap(BaseModel):
     dal_oturum_id: int
     sorular: list[SoruOut]
+    tur_id: int | None = None
+    dal_adi: str | None = None
 
 
 class DalTamamlamaCevap(BaseModel):
