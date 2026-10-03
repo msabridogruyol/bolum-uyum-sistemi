@@ -17,7 +17,8 @@ from app.core.koclugu_servisi import (
     aktif_hedef_getir, hedef_sec, gap_analizi_hesapla, yol_haritasi_olustur,
     aksiyon_durumu_guncelle, tur_karsilastirmasi_hesapla,
 )
-from app.models import Ogrenci, Bolum
+from app.models import Ogrenci, Bolum, Katman, OgrenciGelisimAksiyonDurumu
+from app.core.dal_servisi import bekleyen_dal_var_mi
 from app.schemas.koclugu import (
     HedefSecIstek, AktifHedefOut, GapSatiriOut, YolHaritasiOut,
     AksiyonDurumIstek, KarsilastirmaSatiriOut,
@@ -64,13 +65,33 @@ def _gap_satirlarini_hazirla(db: Session, ogrenci: Ogrenci):
         raise HTTPException(status_code=400, detail=str(e))
     if tur.durum != "tamamlandi":
         raise HTTPException(status_code=400, detail="K1-K4 tamamlanmadan gelişim analizi hesaplanamaz.")
-    return gap_analizi_hesapla(db, ogrenci, tur, hedef.bolum_id)
+    # [2026-10-03] Sonuç ekranıyla aynı kural: açılan alan (K5) soruları bitmeden koçluk analizi gösterilmez
+    if bekleyen_dal_var_mi(db, ogrenci, tur):
+        raise HTTPException(status_code=409, detail="Koçluk analizinin hazırlanması için önce sana açılan alan (K5) sorularını tamamlamalısın.")
+    satirlar = gap_analizi_hesapla(db, ogrenci, tur, hedef.bolum_id)
+    katmanlar = {k.id: k for k in db.query(Katman).all()}
+    durumlar = {
+        a.degisken_id: a.durum
+        for a in db.query(OgrenciGelisimAksiyonDurumu).filter(
+            OgrenciGelisimAksiyonDurumu.ogrenci_id == ogrenci.id,
+            OgrenciGelisimAksiyonDurumu.hedef_bolum_id == hedef.bolum_id,
+        ).all()
+    }
+    for s in satirlar:
+        k = katmanlar.get(s.degisken.katman_id)
+        s.katman_kod, s.katman_adi = (k.kod, k.ad) if k else (None, None)
+        s.aksiyon_durumu = durumlar.get(s.degisken.id)
+    return satirlar
 
 
 def _gap_satiri_to_out(s) -> GapSatiriOut:
     kart = s.gelisim_karti
     return GapSatiriOut(
-        degisken_id=s.degisken.id, degisken_adi=s.degisken.ad,
+        degisken_id=s.degisken.id, degisken_kod=s.degisken.kod, degisken_adi=s.degisken.ad,
+        katman_kod=getattr(s, "katman_kod", None), katman_adi=getattr(s, "katman_adi", None),
+        ogrenci_goreli=round(getattr(s, "ogrenci_goreli", s.ogrenci_puan), 1),
+        bolum_goreli=round(getattr(s, "bolum_goreli", s.bolum_beklenen), 1),
+        aksiyon_durumu=getattr(s, "aksiyon_durumu", None),
         ogrenci_puan=s.ogrenci_puan, bolum_beklenen=s.bolum_beklenen,
         gap=round(s.gap, 2), kategori=s.kategori, oncelik_skoru=round(s.oncelik_skoru, 2),
         durum_tespiti=kart.durum_tespiti if kart else None,
