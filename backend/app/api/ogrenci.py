@@ -225,16 +225,15 @@ def katmani_tamamla_uc_nokta(
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
 
-    # D3 — K4 (Alan Eğilimi) tamamlanınca K5 tetikleme otomatik çalışır
-    if katman.kod == "K4":
-        k5_tetikle(db, ogrenci, tur)
-
     tum_tamam = tum_ana_katmanlar_tamamlandi_mi(db, ogrenci, tur)
 
     # D4 — K1-K4'ün dördü de tamamlandığında TOPLAM_UYUM hesaplanır
     # (D4 kuralı: "yarım profille yanıltıcı bir sıralama üretilmez")
     if tum_tamam:
         toplam_uyum_hesapla(db, ogrenci, tur)
+        # [YENİ 2026-10-03] K5 dalları artık bölüm listesine göre seçildiği için
+        # TOPLAM_UYUM'dan SONRA tetiklenir (K4 hangi sırada bitirilmiş olursa olsun).
+        k5_tetikle(db, ogrenci, tur)
 
     db.commit()
 
