@@ -92,6 +92,22 @@ class OgrenciGelisimAksiyonDurumu(Base):
     guncelleme_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
+class OgrenciGelisimAdimDurumu(Base):
+    """[2026-10-03] Detaylı yol haritasındaki her ADIMIN durumu (adım kodu: 'P3-G-2', bkz. gelisim_icerigi.py)."""
+    __tablename__ = "ogrenci_gelisim_adim_durumu"
+    __table_args__ = (
+        CheckConstraint("durum IN ('planlandi','devam_ediyor','tamamlandi')", name="ck_ogadim_durum"),
+        UniqueConstraint("ogrenci_id", "hedef_bolum_id", "adim_kodu", name="uq_ogadim_ogrenci_bolum_adim"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id"), nullable=False)
+    hedef_bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id"), nullable=False)
+    adim_kodu: Mapped[str] = mapped_column(String, nullable=False)
+    durum: Mapped[str] = mapped_column(String, nullable=False, default="planlandi")
+    guncelleme_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
 # ============================================================================
 # AI Koçluk Asistanı (sonradan eklendi)
 # ============================================================================
