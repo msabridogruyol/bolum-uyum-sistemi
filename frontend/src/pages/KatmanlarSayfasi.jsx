@@ -80,7 +80,16 @@ export default function KatmanlarSayfasi() {
               <div
                 key={k.id}
                 className={`lc${k.durum === 'tamamlandi' ? ' done' : k.durum === 'devam_ediyor' ? ' cur' : ''}`}
-                onClick={() => navigate(`/katmanlar/${k.kod}`)}
+                onClick={() => {
+                  // [2026-10-03] K5 (koşullu katman) doğrudan başlatılamaz — soruları dallar üzerinden gelir.
+                  // Önceden /katmanlar/K5'e gidiyordu; backend bunu "yeni tur" sanıp 120 gün kuralına takılıyordu.
+                  if (k.kosullu_mu) {
+                    const ilkDal = k5Durum?.acilan?.[0]
+                    if (ilkDal) navigate(`/k5/${ilkDal.dal_kodu}`)
+                    return
+                  }
+                  navigate(`/katmanlar/${k.kod}`)
+                }}
               >
                 <div className="ln" style={{ fontSize: 18 }}>
                   {k.durum === 'tamamlandi' ? '✓' : KATMAN_IKON[k.kod] || k.sira}
