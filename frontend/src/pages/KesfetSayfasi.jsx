@@ -167,7 +167,7 @@ export default function KesfetSayfasi() {
                     </div>
                   )}
 
-                  <button className="btn full" onClick={() => navigate('/koclugu')}>
+                  <button className="btn full" onClick={() => navigate(`/koclugu?hedef=${secili.bolum_id}`)}>
                     Bu Bölümü Hedef Olarak Seç ve Kişisel Karşılaştırmamı Gör →
                   </button>
                 </div>
