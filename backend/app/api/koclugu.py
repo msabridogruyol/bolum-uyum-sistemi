@@ -16,12 +16,15 @@ from app.core.katman_servisi import IsKuraliHatasi, son_tur_getir
 from app.core.koclugu_servisi import (
     aktif_hedef_getir, hedef_sec, gap_analizi_hesapla, yol_haritasi_olustur,
     aksiyon_durumu_guncelle, tur_karsilastirmasi_hesapla,
+    gelisim_plani_olustur, adim_durumu_guncelle,
 )
+from app.core.gelisim_icerigi import ICERIK
 from app.models import Ogrenci, Bolum, Katman, OgrenciGelisimAksiyonDurumu
 from app.core.dal_servisi import bekleyen_dal_var_mi
 from app.schemas.koclugu import (
     HedefSecIstek, AktifHedefOut, GapSatiriOut, YolHaritasiOut,
     AksiyonDurumIstek, KarsilastirmaSatiriOut,
+    GelisimPlaniOut, AdimDurumIstek,
 )
 
 router = APIRouter()
@@ -92,6 +95,7 @@ def _gap_satiri_to_out(s) -> GapSatiriOut:
         ogrenci_goreli=round(getattr(s, "ogrenci_goreli", s.ogrenci_puan), 1),
         bolum_goreli=round(getattr(s, "bolum_goreli", s.bolum_beklenen), 1),
         aksiyon_durumu=getattr(s, "aksiyon_durumu", None),
+        nedir=ICERIK.get(s.degisken.kod, {}).get("nedir") or s.degisken.aciklama,
         ogrenci_puan=s.ogrenci_puan, bolum_beklenen=s.bolum_beklenen,
         gap=round(s.gap, 2), kategori=s.kategori, oncelik_skoru=round(s.oncelik_skoru, 2),
         durum_tespiti=kart.durum_tespiti if kart else None,
@@ -155,3 +159,34 @@ def tur_karsilastirmasini_getir(
         )
         for s in satirlar
     ]
+
+
+# ============================= [2026-10-03] Detaylı gelişim planı ============================= #
+
+@router.get("/hedef/plan", response_model=GelisimPlaniOut)
+def gelisim_planini_getir(
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    """3 odak alan × 3 aşama yol haritası + güçlü yön adımları + sıradaki adım."""
+    satirlar = _gap_satirlarini_hazirla(db, ogrenci)
+    hedef = aktif_hedef_getir(db, ogrenci)
+    return GelisimPlaniOut(**gelisim_plani_olustur(db, ogrenci, hedef.bolum_id, satirlar))
+
+
+@router.post("/hedef/adim/{adim_kodu}", status_code=204)
+def adim_durumunu_guncelle(
+    adim_kodu: str,
+    istek: AdimDurumIstek,
+    db: Session = Depends(get_db),
+    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+):
+    hedef = aktif_hedef_getir(db, ogrenci)
+    if hedef is None:
+        raise HTTPException(status_code=400, detail="Henüz bir hedef bölümün yok.")
+    try:
+        adim_durumu_guncelle(db, ogrenci, hedef.bolum_id, adim_kodu, istek.durum)
+    except IsKuraliHatasi as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    db.commit()
