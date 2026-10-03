@@ -402,8 +402,9 @@ export default function SoruSayfasi() {
               </div>
             )}
 
-            <button className="btn full" onClick={() => navigate(tamamlandi.tum_katmanlar_tamamlandi_mi ? '/sonuc/genel' : '/katmanlar')}>
-              {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sonuçlarımı Gör →' : 'Katmanlara Dön'}
+            {/* [2026-10-03] K5 zorunlu: K4 bitince öğrenci önce açılan dallara (Katmanlar sayfasında listelenir) yönlendirilir */}
+            <button className="btn full" onClick={() => navigate('/katmanlar')}>
+              {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Alan Sorularına (K5) Geç →' : 'Katmanlara Dön'}
             </button>
           </div>
         ) : !basladiMi ? (
