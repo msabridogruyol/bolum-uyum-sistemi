@@ -321,7 +321,7 @@ def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     return n
 
 
-K5_SIRALAMA_AGIRLIGI = 0.30  # dal_ici_uyum'un nihai sıralamadaki payı (açılan dalın bölümleri için)
+K5_SIRALAMA_ETKISI = 0.30  # dal_ici_uyum 50'den her 1 puan sapma → nihai skorda 0.30 puan (en fazla ±15)
 
 
 @dataclass
@@ -338,7 +338,8 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
     kuralı: agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad alfabetik.
 
     [YENİ 2026-10-03] K5: öğrencinin tamamladığı dal(lar)ın bölümleri için
-    nihai skor = %70 TOPLAM_UYUM + %30 dal_ici_uyum. Diğer bölümler değişmez.
+    nihai skor = TOPLAM_UYUM + 0.30 × (dal_ici_uyum − 50). 50 = nötr (K5 bilgi vermediyse
+    sıralama değişmez); en fazla ±15 puan. Diğer bölümler değişmez.
     Veritabanındaki TOPLAM_UYUM kaydı değiştirilmez; birleştirme okunurken yapılır.
     """
     from app.models import OgrenciDalUyumSkoru  # döngüsel import olmasın diye burada
@@ -363,7 +364,7 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
     for s in skorlar:
         nihai = float(s.toplam_uyum)
         if s.bolum_id in dal_ici:
-            nihai = (1 - K5_SIRALAMA_AGIRLIGI) * nihai + K5_SIRALAMA_AGIRLIGI * dal_ici[s.bolum_id]
+            nihai = min(100.0, max(0.0, nihai + K5_SIRALAMA_ETKISI * (dal_ici[s.bolum_id] - 50.0)))
         satirlar.append(SiralamaSatiri(bolum_id=s.bolum_id, toplam_uyum=round(nihai, 2),
                                       kendall_w=float(s.kendall_w) if s.kendall_w is not None else None,
                                       yontem_skorlari=s.yontem_skorlari))
