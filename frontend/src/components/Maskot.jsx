@@ -26,12 +26,13 @@ const KIYAFET_KURALLARI = [
   ['dis', ['diş hekimliği']],
   ['eczaci', ['eczacılık']],
   ['doktor', ['tıp', 'hemşirelik', 'ebelik', 'sağlık', 'fizyoterapi', 'ergoterapi', 'odyoloji', 'perfüzyon', 'beslenme', 'konuşma terapisi', 'ortez', 'acil yardım', 'gerontoloji']],
-  ['yazilimci', ['bilgisayar', 'yazılım', 'yapay zeka', 'veri bilimi', 'siber', 'bilişim', 'bilgi güvenliği', 'oyun', 'teknoloji girişimciliği']],
+  ['analist', ['ekonometri', 'istatistik', 'veri bilimi', 'aktüerya', 'matematik']],
+  ['yazilimci', ['bilgisayar', 'yazılım', 'yapay zeka', 'siber', 'bilişim', 'bilgi güvenliği', 'oyun', 'teknoloji girişimciliği']],
   ['elektrik', ['elektrik', 'elektronik', 'mekatronik', 'kontrol ve otomasyon', 'enerji', 'nükleer', 'fotonik', 'optik']],
   ['mimar', ['mimarlık', 'şehir ve bölge', 'kentsel', 'iç mimarlık']],
   ['insaat', ['inşaat', 'harita', 'maden', 'jeoloji', 'jeofizik', 'petrol', 'hidro', 'cevher', 'su bilimleri']],
   ['makine', ['makine', 'otomotiv', 'endüstri mühendisliği', 'imalat', 'metalurji', 'malzeme', 'polimer', 'raylı', 'tekstil mühendisliği', 'ağaç işleri', 'deri', 'ulaştırma', 'işletme mühendisliği', 'endüstriyel tasarım mühendisliği']],
-  ['bilimci', ['kimya', 'biyoloji', 'fizik', 'genetik', 'biyotek', 'moleküler', 'biyokimya', 'biyomühendislik', 'nano', 'biyomedikal', 'gıda', 'matematik', 'istatistik', 'ekonometri', 'meteoroloji', 'iklim', 'tıp mühendisliği']],
+  ['bilimci', ['kimya', 'biyoloji', 'fizik', 'genetik', 'biyotek', 'moleküler', 'biyokimya', 'biyomühendislik', 'nano', 'biyomedikal', 'gıda', 'meteoroloji', 'iklim', 'tıp mühendisliği']],
   ['sef', ['gastronomi', 'mutfak', 'yiyecek', 'otel', 'turizm', 'konaklama', 'seyahat', 'rekreasyon']],
   ['muzisyen', ['müzik', 'çalgı', 'orkestra', 'koro', 'bestecilik', 'caz', 'ses sanatları']],
   ['sahne', ['tiyatro', 'oyunculuk', 'drama', 'sahne', 'dans', 'halk oyunları']],
@@ -43,13 +44,392 @@ const KIYAFET_KURALLARI = [
   ['akademisyen', ['psikoloji', 'sosyoloji', 'felsefe', 'tarih', 'edebiyat', 'dil', 'mütercim', 'arkeoloji', 'antropoloji', 'ilahiyat', 'islam', 'coğrafya', 'halkbilimi', 'müzecilik', 'bilgi ve belge', 'siyaset', 'uluslararası', 'kamu yönetimi', 'sosyal hizmet', 'yerel yönetim', 'kültür', 'avrupa birliği', 'politika']],
 ]
 
-export function kiyafetBul(bolumAdi) {
-  if (!bolumAdi) return 'gunluk'
-  const ad = String(bolumAdi).toLocaleLowerCase('tr')
-  for (const [kiyafet, kelimeler] of KIYAFET_KURALLARI) {
-    if (kelimeler.some((k) => ad.includes(k))) return kiyafet
+// [2026-10-04] Önce profildeki HEDEF MESLEĞE bakılır (daha belirleyici), bulunamazsa hedef bölüme.
+// Karşılaştırma büyük/küçük harf ve ı/i farkından etkilenmez (fold).
+const fold = (t) => ` ${String(t || '').toLocaleLowerCase('tr').replace(/ı/g, 'i')} `
+
+// 301 bölümün her biri tek tek eşlendi (kelime eşleştirmesi 'Gastronomi'yi astronot yapıyordu).
+const BOLUM_KIYAFET = {
+  'acil yardim ve afet yönetimi': 'doktor',
+  'adli bilimler': 'dedektif',
+  'adli bilişim mühendisliği': 'yazilimci',
+  'aile ve tüketici bilimleri': 'ogretmen',
+  'aksesuar tasarimi': 'ressam',
+  'aktüerya bilimleri': 'analist',
+  'animasyon ve oyun tasarimi': 'yazilimci',
+  'antrenörlük eğitimi': 'sporcu',
+  'antropoloji': 'akademisyen',
+  'arkeoloji': 'akademisyen',
+  'astronomi ve uzay bilimleri': 'astronot',
+  'avrupa birliği ilişkileri': 'is_insani',
+  'ayakkabi tasarimi ve üretimi': 'ressam',
+  'ağaç işleri endüstri mühendisliği': 'makine',
+  'bahçe bitkileri': 'ciftci',
+  'balikçilik teknolojisi mühendisliği': 'ciftci',
+  'bankacilik ve finans': 'is_insani',
+  'bankacilik ve sigortacilik': 'is_insani',
+  'basim teknolojileri': 'ressam',
+  'basin ve yayin': 'gazeteci',
+  'baski sanatlari': 'ressam',
+  'beslenme ve diyetetik': 'doktor',
+  'bestecilik ve orkestra şefliği': 'muzisyen',
+  'bileşik sanatlar': 'ressam',
+  'bilgi güvenliği mühendisliği': 'yazilimci',
+  'bilgi ve belge yönetimi': 'akademisyen',
+  'bilgisayar bilimleri': 'yazilimci',
+  'bilgisayar mühendisliği': 'yazilimci',
+  'bilgisayar ve öğretim teknolojileri öğretmenliği': 'ogretmen',
+  'bilim tarihi': 'akademisyen',
+  'bilişim sistemleri mühendisliği': 'yazilimci',
+  'bitki koruma': 'ciftci',
+  'bitkisel üretim ve teknolojileri': 'ciftci',
+  'biyokimya': 'bilimci',
+  'biyoloji': 'bilimci',
+  'biyoloji öğretmenliği': 'ogretmen',
+  'biyomedikal mühendisliği': 'bilimci',
+  'biyomühendislik': 'bilimci',
+  'biyosistem mühendisliği': 'ciftci',
+  'biyoteknoloji': 'bilimci',
+  'cam': 'ressam',
+  'caz ve popüler müzik': 'muzisyen',
+  'cevher hazirlama mühendisliği': 'insaat',
+  'coğrafya': 'akademisyen',
+  'coğrafya öğretmenliği': 'ogretmen',
+  'deniz ulaştirma işletme mühendisliği': 'kaptan',
+  'denizcilik işletmeleri yönetimi': 'kaptan',
+  'deri mühendisliği': 'makine',
+  'dijital medya ve pazarlama': 'gazeteci',
+  'dijital oyun tasarimi': 'yazilimci',
+  'dil ve edebiyat': 'akademisyen',
+  'dil ve konuşma terapisi': 'doktor',
+  'dil öğretmenliği': 'ogretmen',
+  'diş hekimliği': 'dis',
+  'doğa koruma ve biyoçeşitlilik yönetimi': 'ciftci',
+  'drama ve oyunculuk': 'sahne',
+  'drama yazarliği ve dramaturji': 'sahne',
+  'ebelik': 'doktor',
+  'eczacilik': 'eczaci',
+  'egzersiz ve spor bilimleri': 'sporcu',
+  'ekonometri': 'analist',
+  'ekonomi': 'is_insani',
+  'ekonomi ve finans': 'is_insani',
+  'el sanatlari': 'ressam',
+  'elektrik ve elektronik mühendisliği': 'elektrik',
+  'elektronik ticaret ve yönetimi': 'is_insani',
+  'endüstri mühendisliği': 'makine',
+  'endüstriyel tasarim': 'ressam',
+  'endüstriyel tasarim mühendisliği': 'makine',
+  'enerji sistemleri mühendisliği': 'elektrik',
+  'enerji yönetimi': 'elektrik',
+  'ergoterapi': 'doktor',
+  'felsefe': 'akademisyen',
+  'felsefe grubu öğretmenliği': 'ogretmen',
+  'fen bilgisi öğretmenliği': 'ogretmen',
+  'film tasarimi ve yazarliği': 'gazeteci',
+  'film tasarimi ve yönetmenliği': 'gazeteci',
+  'film yapimi ve yayincilik': 'gazeteci',
+  'finans ve bankacilik': 'is_insani',
+  'fizik': 'bilimci',
+  'fizik mühendisliği': 'bilimci',
+  'fizik öğretmenliği': 'ogretmen',
+  'fizyoterapi ve rehabilitasyon': 'doktor',
+  'fotonik': 'elektrik',
+  'fotoğraf ve video': 'ressam',
+  'gastronomi ve mutfak sanatlari': 'sef',
+  'gayrimenkul geliştirme ve yönetimi': 'is_insani',
+  'gazetecilik': 'gazeteci',
+  'geleneksel türk sanatlari': 'ressam',
+  'gemi inşaati ve gemi makineleri mühendisliği': 'kaptan',
+  'gemi makineleri işletme mühendisliği': 'kaptan',
+  'gemi ve yat tasarimi': 'kaptan',
+  'genetik ve biyomühendislik': 'bilimci',
+  'gerontoloji': 'doktor',
+  'gida mühendisliği': 'bilimci',
+  'girişimcilik': 'is_insani',
+  'grafik tasarimi': 'ressam',
+  'görsel iletişim tasarimi': 'ressam',
+  'görsel sanatlar': 'ressam',
+  'görsel sanatlar öğretmenliği': 'ogretmen',
+  'gümrük işletme': 'is_insani',
+  'güverte': 'kaptan',
+  'hali tasarimi': 'ressam',
+  'hali, kilim ve geleneksel kumaş desenleri': 'ressam',
+  'halkbilimi': 'akademisyen',
+  'halkla ilişkiler ve reklamcilik': 'gazeteci',
+  'harita mühendisliği': 'insaat',
+  'hassas tarim ve tarimsal robotlar': 'ciftci',
+  'hat sanati': 'ressam',
+  'hava trafik kontrolü': 'pilot',
+  'havacilik elektrik ve elektroniği': 'pilot',
+  'havacilik ve uzay mühendisliği': 'pilot',
+  'havacilik yönetimi': 'pilot',
+  'hayvansal üretim ve teknolojileri': 'ciftci',
+  'hemşirelik': 'doktor',
+  'heykel': 'ressam',
+  'hidrojeoloji mühendisliği': 'insaat',
+  'hidrolik ve su kaynaklari mühendisliği': 'insaat',
+  'hukuk': 'hukuk',
+  'iklim bilimi ve meteoroloji mühendisliği': 'bilimci',
+  'iktisat': 'is_insani',
+  'ilahiyat': 'akademisyen',
+  'iletişim bilimleri': 'gazeteci',
+  'iletişim tasarimi ve yönetimi': 'gazeteci',
+  'ilköğretim matematik öğretmenliği': 'ogretmen',
+  'imalat mühendisliği': 'makine',
+  'insan kaynaklari yönetimi': 'is_insani',
+  'inşaat mühendisliği': 'insaat',
+  'islam bilimleri': 'akademisyen',
+  'islam iktisadi ve finans': 'is_insani',
+  'istatistik': 'analist',
+  'iç mimarlik ve çevre tasarimi': 'mimar',
+  'iş sağliği ve güvenliği': 'insaat',
+  'işletme': 'is_insani',
+  'işletme mühendisliği': 'makine',
+  'jeofizik mühendisliği': 'insaat',
+  'jeoloji mühendisliği': 'insaat',
+  'kamu yönetimi': 'is_insani',
+  'kanatli hayvan yetiştiriciliği': 'ciftci',
+  'karşilaştirmali edebiyat': 'akademisyen',
+  'kentsel tasarim ve peyzaj mimarliği': 'mimar',
+  'kimya': 'bilimci',
+  'kimya mühendisliği': 'bilimci',
+  'kimya öğretmenliği': 'ogretmen',
+  'kimya-biyoloji mühendisliği': 'bilimci',
+  'kontrol ve otomasyon mühendisliği': 'elektrik',
+  'kurgu, ses ve görüntü yönetimi': 'gazeteci',
+  'kuyumculuk ve mücevher tasarimi': 'ressam',
+  'kültür varliklarini koruma ve onarim': 'ressam',
+  'kültür ve iletişim bilimleri': 'gazeteci',
+  'küresel siyaset ve uluslararasi ilişkiler': 'is_insani',
+  'liderlik': 'is_insani',
+  'lojistik yönetimi': 'is_insani',
+  'maden mühendisliği': 'insaat',
+  'makine mühendisliği': 'makine',
+  'maliye': 'is_insani',
+  'malzeme bilimi ve mühendisliği': 'makine',
+  'malzeme bilimi ve nanoteknoloji mühendisliği': 'makine',
+  'matematik': 'analist',
+  'matematik mühendisliği': 'analist',
+  'matematik ve bilgisayar bilimleri': 'analist',
+  'matematik öğretmenliği': 'ogretmen',
+  'medya ve iletişim': 'gazeteci',
+  'mekatronik mühendisliği': 'elektrik',
+  'metalurji ve malzeme mühendisliği': 'makine',
+  'mimarlik': 'mimar',
+  'moda tasarimi': 'ressam',
+  'modern dans': 'sahne',
+  'moleküler biyoloji ve genetik': 'bilimci',
+  'moleküler biyoteknoloji': 'bilimci',
+  'muhasebe ve denetim': 'is_insani',
+  'muhasebe ve finans yönetimi': 'is_insani',
+  'mütercim ve tercümanlik': 'akademisyen',
+  'müzecilik': 'akademisyen',
+  'müzik': 'muzisyen',
+  'müzik ses ve performans': 'muzisyen',
+  'müzik teknolojisi': 'muzisyen',
+  'müzik teorisi': 'muzisyen',
+  'müzik çalgi': 'muzisyen',
+  'müzik öğretmenliği': 'ogretmen',
+  'müzikoloji': 'muzisyen',
+  'nanobilim ve nanoteknoloji': 'bilimci',
+  'nanoteknoloji mühendisliği': 'bilimci',
+  'nükleer enerji mühendisliği': 'elektrik',
+  'odyoloji': 'doktor',
+  'okul öncesi öğretmenliği': 'ogretmen',
+  'optik ve akustik mühendisliği': 'elektrik',
+  'organik tarim işletmeciliği': 'ciftci',
+  'orkestra ve koro şefliği': 'muzisyen',
+  'orman endüstrisi mühendisliği': 'ciftci',
+  'orman mühendisliği': 'ciftci',
+  'ortez ve protez': 'doktor',
+  'otel yöneticiliği': 'sef',
+  'otomotiv mühendisliği': 'makine',
+  'oyunculuk': 'sahne',
+  'pazarlama': 'is_insani',
+  'pazarlama iletişimi': 'gazeteci',
+  'perfüzyon': 'doktor',
+  'petrol ve doğalgaz mühendisliği': 'insaat',
+  'peyzaj mimarliği': 'ciftci',
+  'pilotaj': 'pilot',
+  'plastik sanatlar ve resim': 'ressam',
+  'polimer malzeme mühendisliği': 'makine',
+  'politika ve ekonomi': 'is_insani',
+  'psikoloji': 'akademisyen',
+  'psikolojik danişmanlik ve rehberlik öğretmenliği': 'ogretmen',
+  'radyo, televizyon ve sinema': 'gazeteci',
+  'rayli sistemler mühendisliği': 'makine',
+  'rehberlik ve psikolojik danişmanlik': 'ogretmen',
+  'reklamcilik': 'gazeteci',
+  'rekreasyon yönetimi': 'sporcu',
+  'resim': 'ressam',
+  'resim öğretmenliği': 'ogretmen',
+  'sahne dekoru ve kostümü': 'sahne',
+  'sahne sanatlari': 'sahne',
+  'sahne tasarimi': 'sahne',
+  'sahne ve gösteri sanatlari yönetimi': 'sahne',
+  'sanat tarihi': 'akademisyen',
+  'sanat ve kültür yönetimi': 'ressam',
+  'saç ve güzellik uygulamalari': 'kuafor',
+  'sağlik yönetimi': 'is_insani',
+  'seramik ve cam': 'ressam',
+  'sermaye piyasasi': 'is_insani',
+  'ses sanatlari tasarimi': 'muzisyen',
+  'seyahat işletmeciliği ve turizm rehberliği': 'rehber',
+  'siber güvenlik mühendisliği': 'yazilimci',
+  'sigortacilik ve aktüerya bilimleri': 'analist',
+  'sigortacilik ve risk yönetimi': 'is_insani',
+  'sinema ve dijital medya': 'gazeteci',
+  'sinif öğretmenliği': 'ogretmen',
+  'sivil hava ulaştirma işletmeciliği': 'pilot',
+  'siyaset bilimi ve kamu yönetimi': 'is_insani',
+  'siyaset bilimi ve uluslararasi ilişkiler': 'is_insani',
+  'sosyal bilgiler öğretmenliği': 'ogretmen',
+  'sosyal hizmet': 'ogretmen',
+  'sosyoloji': 'akademisyen',
+  'spor yöneticiliği': 'sporcu',
+  'spor öğretmenliği': 'ogretmen',
+  'su bilimleri ve mühendisliği': 'insaat',
+  'su ürünleri mühendisliği': 'ciftci',
+  'süt teknolojisi': 'ciftci',
+  'taki tasarimi ve imalati': 'ressam',
+  'tarih': 'akademisyen',
+  'tarih öğretmenliği': 'ogretmen',
+  'tarim ekonomisi': 'ciftci',
+  'tarim makineleri ve teknolojileri mühendisliği': 'makine',
+  'tarim ticareti ve işletmeciliği': 'ciftci',
+  'tarimsal biyoteknoloji': 'bilimci',
+  'tarimsal genetik mühendisliği': 'bilimci',
+  'tarimsal yapilar ve sulama': 'ciftci',
+  'tarla bitkileri': 'ciftci',
+  'teknoloji girişimciliği': 'yazilimci',
+  'tekstil mühendisliği': 'makine',
+  'tekstil tasarimi': 'ressam',
+  'tekstil ve moda tasarimi': 'ressam',
+  'televizyon haberciliği ve programciliği': 'gazeteci',
+  'tezhip-minyatür ve ebru': 'ressam',
+  'tip': 'doktor',
+  'tip mühendisliği': 'bilimci',
+  'tiyatro': 'sahne',
+  'tiyatro eleştirmenliği ve dramaturji': 'sahne',
+  'tohum bilimi ve teknolojisi': 'ciftci',
+  'toprak bilimi ve bitki besleme': 'ciftci',
+  'turizm işletmeciliği': 'rehber',
+  'turizm rehberliği': 'rehber',
+  'turizm ve konaklama işletmeciliği': 'sef',
+  'türk halk oyunlari': 'sahne',
+  'türk halkbilimi': 'akademisyen',
+  'ulaştirma ve trafik mühendisliği': 'insaat',
+  'uluslararasi ekonomik ilişkiler': 'is_insani',
+  'uluslararasi finans': 'is_insani',
+  'uluslararasi girişimcilik': 'is_insani',
+  'uluslararasi hukuk': 'hukuk',
+  'uluslararasi ilişkiler': 'is_insani',
+  'uluslararasi işletmecilik ve ticaret': 'is_insani',
+  'uluslararasi ticaret ve lojistik': 'is_insani',
+  'uzay bilimleri ve teknolojileri': 'astronot',
+  'uzay mühendisliği': 'astronot',
+  'uçak bakim ve onarim': 'pilot',
+  'uçak mühendisliği': 'pilot',
+  'veri bilimi ve analitiği': 'analist',
+  'veterinerlik': 'veteriner',
+  'yaban hayati ekolojisi ve yönetimi': 'ciftci',
+  'yapay zeka mühendisliği': 'yazilimci',
+  'yapay zeka ve makine öğrenmesi': 'yazilimci',
+  'yapay zeka ve veri mühendisliği': 'yazilimci',
+  'yazilim mühendisliği': 'yazilimci',
+  'yeni medya ve gazetecilik': 'gazeteci',
+  'yeni medya ve iletişim': 'gazeteci',
+  'yerel yönetimler': 'is_insani',
+  'yiyecek ve içecek işletmeciliği': 'sef',
+  'yönetim bilişim sistemleri': 'yazilimci',
+  'zootekni': 'ciftci',
+  'çalgi teknolojileri': 'muzisyen',
+  'çalişma ekonomisi ve endüstri ilişkileri': 'is_insani',
+  'çevre mühendisliği': 'insaat',
+  'çini tasarimi ve onarimi': 'ressam',
+  'çizgi film ve animasyon': 'ressam',
+  'çocuk gelişimi': 'ogretmen',
+  'özel eğitim öğretmenliği': 'ogretmen',
+  'şehir ve bölge planlama': 'mimar',
+}
+
+// Meslek kuralları SIRAYLA denenir; özel olan önce, genel olan sonra gelir.
+const MESLEK_KURALLARI = [
+  // 1) Özel durumlar — genel kurallardan önce yakalanmalı
+  ['muzisyen', ['müzik öğretmen', 'müzik eğitmen', 'konservatuvar', 'koro şef', 'müzik şef', 'elektronik müzik']],
+  ['sporcu', ['beden eğitimi']],
+  ['sahne', ['oyuncu', ' aktör', 'aktris', 'dans öğretmen', 'dans eğitmen', 'tiyatro eğitmen', 'drama öğretmen', 'sahne uçuş', 'mekan programcı', 'mekân programcı']],
+  ['ressam', ['görsel sanatlar öğretmen', 'sanat öğretmen', 'güzel sanatlar eğitmen', 'fotoğrafçılık öğretmen', 'model yapımcı']],
+  ['ciftci', ['su ürünleri', 'tarım, ormancılık']],
+  ['veteriner', ['equine', 'hayvanat bahçesi']],
+  ['kaptan', ['gemi pilot']],
+  ['insaat', ['sondaj', 'iş sağlığı']],
+  ['bilimci', ['gıda analist']],
+  ['makine', ['tasarım mühendis', 'motor tasarım', 'araç döşeme', 'tipetter']],
+  ['doktor', ['kilo kaybı', 'kilo yönetimi', 'yaşlı ev', 'sitoteknolo', 'sağlığ']],
+  ['yazilimci', ['bilgi işlem', 'gömülü sistem', 'veri deposu', 'teknoloji şef', 'kurumsal mimar', 'girişim mimar']],
+  ['mimar', ['iç peyzaj']],
+  ['sef', ['ev hizmetçi']],
+  ['is_insani', ['iş değeri', 'özel ilgi grup', 'gayrimenkul']],
+  // 2) Öğretmenler (meslek öğretmenleri alanının kıyafetini alır)
+  ['ogretmen', ['öğretmen', 'öğretim tasarım', 'okuryazarlık', 'rehberlik danışman', 'bebek bakıcı'], ['meslek öğretmen', 'eczacılık öğretmen']],
+  // 3) Genel kurallar
+  ['ressam', ['sanat terapist']], ['muzisyen', ['müzik terapist']], ['sahne', ['dans terap']], ['sporcu', ['spor terapist']],
+  ['insaat', ['iş sağlığı']],
+  ['dis', ['diş hekim', 'diş hijyen', 'diş teknisyen', 'diş protez', 'ağız ve diş']],
+  ['eczaci', ['eczacı', 'ilaç']],
+  ['veteriner', ['veteriner', 'hayvan terapist', 'hayvan tımar', 'evcil hayvan', 'hayvan eğitmen', 'hayvan fizyoterap', 'hayvan osteopat']],
+  ['kuafor', ['kuaför', 'berber', 'manikür', 'güzellik', 'solaryum', 'makyaj', 'cilt bakım', 'estetisyen']],
+  ['yazilimci', ['yazılım', 'veritabanı geliştirici', 'programcı', 'siber', 'veritabanı', 'yapay zeka', 'bilgisayar', ' oyun', 'dijital oyun', ' ict ', ' bt ', 'bilgi güvenliği', 'etik hacker', ' web', 'uygulama mühendis', 'entegrasyon mühendis', 'teknoloji direktör', 'klinik kodlayıcı', ' iot', 'nesnelerin', 'sistem analist', 'e-öğrenme']],
+  ['analist', ['analist', 'istatistik', 'veri bilim', 'veri mühendis', 'aktüer', 'ekonomist', 'ekonometri', 'matematik', 'biyoinformatik', 'hesaplama', 'fiyatlandırma', 'trader', 'hisse', 'döviz', 'yatırım', 'kıymet']],
+  ['hukuk', ['avukat', 'hakim', 'savcı', 'hukuk', 'noter', 'arabulucu', 'ombudsman']],
+  ['dedektif', ['dedektif', 'kriminolog', 'suç ', 'adli', 'poligraf', 'grafolog', 'polis', 'ıslah', 'denetimli serbestlik']],
+  ['astronot', ['astronot', 'astronom', 'kozmolog', 'uzay', 'uydu']],
+  ['pilot', ['pilot', 'hava trafik', 'kabin', 'havacılık', 'havaalanı', 'havalimanı', 'uçak', 'uçuş', 'aviyonik', 'apron', 'hostes']],
+  ['doktor', ['hekim', 'doktor', 'hemşire', 'cerrah', ' ebe', 'doğum', 'fizyoterap', 'diyetisyen', 'diyetetik', 'odyolog', 'ergoterap', 'meslek terapist', 'paramedik', 'sağlık', 'ameliyat', 'anestezi', 'perfüzyon', 'radyograf', 'optometrist', 'optikçi', 'ortopedi', 'osteopat', 'kiropraktör', 'chiropractor', 'protez', 'ortez', 'prosthetist', 'solunum', 'konuşma ve dil', 'terapist', 'klinik', 'tıbbi', 'tıp ', 'bakım personel', 'bakım işçi', 'bakım çalışan', 'evde bakım', 'bakım yardımcı', 'ilk yardım', 'shiatsu', 'rehabilitasyon', 'kineziyolog', 'fizyolog', 'bitkisel terapist', 'pratisyen']],
+  ['sef', ['şef', 'aşçı', 'pasta', 'mutfak', 'garson', 'restoran', 'gıda hizmet', 'kasap', 'kesimci', 'helal', 'otel', 'pansiyon', 'konaklama', 'misafirperverlik', 'konsiyerj', 'concierge', 'oda ve kahvaltı', 'kat hizmet', 'barista', 'servis']],
+  ['akademisyen', ['öğretim görevlisi', 'öğretim üyesi', 'araştırmacı', 'araştırma asistan', 'psikolog', 'sosyolog', 'tarihçi', 'filozof', 'dilbilimci', 'dil mühendis', 'çevirmen', 'tercüman', 'yerelleştirici', 'arkeolog', 'antropolog', 'coğrafyacı', 'soybilim', 'kütüphaneci', 'arşiv', 'müze', 'sergi', 'eleştirmen', 'edebiyat', 'siyaset bilim', 'davranış bilim', 'iletişim bilim', 'medya bilim', 'halkbilim', 'teolog', ' din ', ' dini', 'koreolog']],
+  ['bilimci', ['kimya', 'biyolog', 'biyoloji', 'fizik', 'genetik', 'mikrobiyolog', 'biyokimya', 'laboratuvar', 'toksikolog', 'botanik teknisyen', 'botanikçi', 'zoolog', 'paleontolog', 'meteorolog', 'meteoroloji', 'klimatolog', 'hava tahmin', 'çevre bilim', 'çevre uzman', 'koruma bilim', 'duyu', 'duyusal', 'gıda', 'biyomühendis', 'biyomedikal', 'nanomühendis', 'bilim adam', 'bilim insan', 'bilimci', 'bilgin', 'klinik deneme']],
+  ['kaptan', ['kaptan', 'denizci', 'gemi', 'güverte', 'deniz ', 'liman', 'su trafik', 'filo komutan']],
+  ['mimar', ['mimar', 'iç mekân', 'iç mekan', 'iç planlayıcı', 'şehir planla', 'arazi kullanım', 'peyzaj tasarım', 'kentsel', 'akıllı şehir']],
+  ['insaat', ['inşaat', 'harita', 'kadastro', 'jeolog', 'jeoloji', 'jeofizik', 'jeoteknik', 'geoteknik', 'maden', 'petrol', 'sondaj', 'hidrolog', 'hidrojeolog', 'yeraltı', 'su mühendis', 'su sistemleri', 'su koruma', 'çevre mühendis', 'sismolog', 'mineral', 'ray döşeme', 'ray tabakası', 'tahlil', 'uzaktan algılama', 'coğrafi bilgi', 'sulama', 'mayın', 'kurtarma', 'ulaşım planla', 'trafik']],
+  ['elektrik', ['elektrik', 'elektronik', 'enerji', 'nükleer', 'otomasyon', 'robot', 'fotonik', 'optik mühendis', 'santral', 'mikrosistem', 'mikroelektronik', 'elektrolitik', 'güvenlik alarm', ' pil ', 'akıllı ev']],
+  ['rehber', ['rehber', 'tur organizatör', 'turist', 'seyahat', 'turizm', 'hayatta kalma', 'kamp']],
+  ['muzisyen', ['müzik', 'müzisyen', 'besteci', 'şarkıcı', 'koro', 'orkestra', 'çalgı', 'enstrüman', ' ses ', 'kayıt stüdyo', 'podcast', 'lirik', 'söz yazarı', 'aranjör', 'dj']],
+  ['sahne', ['oyuncu', ' aktör', 'aktris', 'dansçı', 'dans ', 'koreograf', 'komedyen', 'sahne', 'tiyatro', 'kukla', 'sirk', 'dramaturg', 'performans', 'maske yapım', 'kostüm', 'giydirici', 'varyete', 'dövüş', 'repetitör', 'etkinlik']],
+  ['sporcu', ['spor', 'antrenör', 'atlet', 'fitness', 'futbol', 'rekreasyon', 'beden eğitimi', 'hakem', 'kondisyon', 'yüzme', 'basketbol', 'voleybol']],
+  ['gazeteci', ['gazeteci', 'muhabir', 'spiker', 'editör', 'sunucu', 'yayın', 'haber', 'medya', 'reklam', 'halkla ilişkiler', 'iletişim', 'yönetmen', 'yapımcı', 'senaryo', 'kamera', 'görüntü', 'film', 'video', 'sinema', 'post-prodüksiyon', 'metin yazar', 'yazar', 'doğruluk kontrol', 'gerçek denetleyici', 'kopya düzenleyici', 'sesli betimleme', 'görsel-işitsel', 'konuşma koçu']],
+  ['ressam', ['ressam', 'tasarımcı', 'tasarım', 'grafik', 'illüstratör', 'fotoğraf', 'sanatçı', 'sanat', 'animatör', 'animasyon', 'heykel', 'seramik', ' cam ', 'çini', 'hattat', 'minyatür', 'tezhip', 'ebru', 'kuyumcu', 'mücevher', 'takı', 'filigran', 'nakış', 'örgü', 'halı', 'dokumacı', 'terzi', 'dressmaker', 'moda', 'model', 'oymacı', 'restoratör', 'konservatör', 'konservatuvar', 'storyboard', '3d ', 'tabela', 'işaret yapıcı', 'litograf', 'baskı', 'ofset', 'prepress', 'dijital yazıcı', 'vitrin', 'görsel mal', 'dekoratif', 'el sanat', 'hasır', 'saat ', 'silah ustası']],
+  ['ciftci', ['ziraat', 'tarım', 'orman', 'forester', 'çiftçi', 'bahçıvan', 'bahçe', 'bitki', 'çiçek', 'tohum', 'toprak', 'hayvancılık', 'yetiştirici', 'kümes', 'civciv', 'sığır', 'süt', ' yem', 'su ürünleri', 'balık', 'arıcı', 'şerbetçiotu', 'meyve', 'sebze', 'ekin', 'tarla', 'haşere', 'doğa koruma', 'yaban', 'hayvan yakalama', 'yakalayıcı', 'değirmen', 'miller', 'damıtım', 'yağlı tohum', 'hayvan yemi', 'kırsal', 'hayvanat bahçesi', 'köpek', 'veteriner']],
+  ['ogretmen', ['öğretmen', 'eğitmen', 'eğitimci', 'headteacher', 'okul müdürü', 'öğrenme', 'mentor', 'eğitim', ' koç', 'sosyal hizmet', 'sosyal pedagog', 'pedagoji', 'çocuk', 'refah', 'özel eğitim', 'okul', 'gönüllü', 'topluluk', 'toplum', 'kriz', 'gerontoloji']],
+  ['makine', ['makine', 'mekanik', 'otomotiv', 'motor', 'mekatronik', 'endüstri', 'üretim mühendis', 'imalat', 'metalurji', 'metal', 'malzeme', 'montaj', 'derleyici', 'birleştirici', 'teknik ressam', 'taslak', 'draftör', 'tasarım mühendis', 'ürün geliştirme', 'süreç mühendis', 'kauçuk', 'plastik', 'polimer', 'tekstil', 'deri', 'ayakkabı', 'giyim', 'tren', 'demiryolu', 'rolling', 'kurulum', 'araştırma mühendis', 'inovasyon mühendis', 'güç aktarma', 'powertrain', 'sıvı yakıt', 'nakliye mühendis', 'metrolog', 'metroloji', 'ahşap', 'dokuma', 'kalıp', 'apre', 'renkçi', 'tamirci', 'teknisyen', 'tekniker', 'operatör', 'işletmeci', 'amiri', 'süpervizör', 'usta', 'işçi', 'mühendis']],
+  ['is_insani', ['müdür', 'yönetici', 'muhasebe', 'bankacı', 'banka', 'pazarlama', 'finans', 'girişim', 'denetçi', 'denetim', 'danışman', 'satış', 'satıcı', 'satın alma', 'ithalat', 'ihracat', 'ticaret', 'tüccar', 'lojistik', 'tedarik', 'insan kaynakları', 'yetenek', 'sigorta', 'risk', 'vergi', 'mali ', 'gayrimenkul', 'emlak', 'mülk', 'değerleme', 'kiralama', 'iş geliştir', 'marka', 'politika', 'belediye', 'vali', 'kamu', 'siyasi', 'konsolos', 'dışişleri', 'büyükelçi', 'diplomat', 'uluslararası', 'merkez bankası', 'sevkiyat', 'sevkıyat', 'koordinatör', 'sorumlu', 'görevli', 'memur', 'planlayıcı', 'uzman', 'direktör', 'başkan', 'müfettiş', 'kâtip', 'katip', 'asistan', 'lider', 'kapitalist']],
+].map(([k, l, haric = []]) => [k, l.map((x) => fold(x).slice(1, -1)), haric.map((x) => fold(x).slice(1, -1))])
+
+function meslektenKiyafet(meslek) {
+  if (!meslek) return null
+  const t = fold(meslek)
+  for (const [kiyafet, kelimeler, haric] of MESLEK_KURALLARI) {
+    if (haric.some((k) => t.includes(k))) continue
+    if (kelimeler.some((k) => t.includes(k))) return kiyafet
   }
-  return 'gunluk'
+  return null
+}
+
+function bolumdenKiyafet(bolum) {
+  if (!bolum) return null
+  const anahtar = fold(bolum).trim()
+  if (BOLUM_KIYAFET[anahtar]) return BOLUM_KIYAFET[anahtar]
+  // listede olmayan (yeni eklenmiş) bölüm: kelime kuralları
+  const t = fold(bolum)
+  for (const [kiyafet, kelimeler] of KIYAFET_KURALLARI) {
+    if (kelimeler.some((k) => t.includes(fold(k).trim()))) return kiyafet
+  }
+  return null
+}
+
+export function kiyafetBul(bolumAdi, meslekAdi) {
+  return meslektenKiyafet(meslekAdi) || bolumdenKiyafet(bolumAdi) || 'gunluk'
 }
 
 // ----------------------------------------------------------------------------- Mesajlar
@@ -61,6 +441,9 @@ const KIYAFET_MESAJLARI = {
   eczaci: ['Kimya bilgisi şifanın formülüdür. 💊', 'Her gün biraz kimya, uzun vadede büyük fark!'],
   doktor: ['Beyaz önlük yakıştı mı? 🩺', 'Biyoloji ve kimyaya her gün 20 dakika ayır — gerisi gelir.', 'İyi bir sağlıkçı önce iyi bir dinleyicidir.'],
   yazilimci: ['Kod yazmak bir dil öğrenmek gibi: her gün biraz! 💻', 'Bug değil, öğrenme fırsatı. 🐛➡️🦋'],
+  kuafor: ['Makaslar hazır! ✂️ Güzellik sabır ve dikkat ister.', 'İnsanlara iyi hissettirmek de bir meslek sanatı. 💇'],
+  rehber: ['Yola çıkıyoruz! 🗺️ İyi bir rehber önce iyi bir anlatıcıdır.', 'Bir yabancı dile her gün 15 dakika — rehberliğin anahtarı!'],
+  analist: ['Veriler konuşur, iyi analist dinler. 📊', 'İstatistik dersine bugün 20 dakika ayıralım mı?', 'Her grafik bir hikâye anlatır — sen hangisini anlatacaksın?'],
   elektrik: ['Enerjimiz tam! ⚡', 'Fizik formülleri devrelerin dilidir — bir tanesini bugün tekrar et.'],
   mimar: ['Her büyük yapı küçük bir eskizle başlar. ✏️', 'Bugün çevrendeki bir binayı inceleyip çizmeye ne dersin?'],
   insaat: ['Baretim hazır! 👷 Sağlam temel, sağlam gelecek.', 'Matematik bir yapının iskeleti gibidir.'],
@@ -145,6 +528,12 @@ function Kiyafet({ tip }) {
       return <>{onluk('#6BAA75')}<g transform="translate(70 106)" fill="#8B5E3C"><circle cx="0" cy="2" r="2.2" /><circle cx="-2.5" cy="-1.5" r="1" /><circle cx="0" cy="-2.5" r="1" /><circle cx="2.5" cy="-1.5" r="1" /></g></>
     case 'bilimci':
       return <>{onluk('#8EC5FC')}<rect x="44" y="104" width="7" height="2" rx="1" fill="#E76F51" /><rect x="44" y="108" width="7" height="2" rx="1" fill="#2A9D8F" /></>
+    case 'kuafor':
+      return <>{govde('#F4ACB7')}<path d="M44 92 L76 92 L79 124 Q60 128 41 124 Z" fill="#2B2B2B" /><path d="M50 92 Q50 84 54 82 M70 92 Q70 84 66 82" stroke="#2B2B2B" strokeWidth="2.5" fill="none" /><rect x="52" y="102" width="16" height="9" rx="1.5" fill="#3D3D3D" /><rect x="55" y="99" width="2" height="8" fill="#C0C0C0" /><rect x="59" y="98" width="2" height="9" fill="#E76F51" /><rect x="63" y="99" width="2" height="8" fill="#C0C0C0" /></>
+    case 'rehber':
+      return <>{govde('#F1FAEE')}<path d="M41 86 L54 83 L55 124 L39 122 Z M79 86 L66 83 L65 124 L81 122 Z" fill="#B08968" /><rect x="42" y="100" width="9" height="7" rx="1.2" fill="#9C7356" /><rect x="69" y="100" width="9" height="7" rx="1.2" fill="#9C7356" /><rect x="42" y="112" width="9" height="7" rx="1.2" fill="#9C7356" /><rect x="69" y="112" width="9" height="7" rx="1.2" fill="#9C7356" /><circle cx="60" cy="94" r="2" fill="#E76F51" /></>
+    case 'analist':
+      return <>{govde('#2A9D8F')}<path d="M52 82 L56 90 L60 84 L64 90 L68 82" fill="#E9F5F3" stroke="#1F7A6F" strokeWidth="1" /><line x1="60" y1="86" x2="60" y2="124" stroke="#1F7A6F" strokeWidth="1.2" /><rect x="64" y="98" width="9" height="8" rx="1.5" fill="#23867B" /><rect x="66" y="94" width="1.6" height="8" fill="#FFD23F" /><rect x="69" y="95" width="1.6" height="7" fill="#E63946" /></>
     case 'yazilimci':
       return <>{govde('#3A3F58')}<path d="M48 82 Q60 92 72 82" stroke="#2A2E42" strokeWidth="4" fill="none" /><line x1="56" y1="88" x2="55" y2="100" stroke="#DADDE8" strokeWidth="1.5" /><line x1="64" y1="88" x2="65" y2="100" stroke="#DADDE8" strokeWidth="1.5" /><path d="M46 110 L74 110 L72 120 L48 120 Z" fill="#2A2E42" /><text x="60" y="118" fontSize="7" textAnchor="middle" fill="#7EE787" fontFamily="monospace">{'</>'}</text></>
     case 'elektrik':
@@ -207,6 +596,8 @@ function Sapka({ tip }) {
       return <g><path d="M34 34 Q36 18 60 17 Q84 18 86 34 Z" fill="#FFFFFF" stroke="#D1D5DB" /><rect x="34" y="32" width="52" height="5" rx="2.5" fill="#1D3557" /><text x="60" y="29" fontSize="10" textAnchor="middle">⚓</text></g>
     case 'sporcu':
       return <rect x="34" y="32" width="52" height="6" rx="3" fill="#FFFFFF" stroke="#E63946" />
+    case 'rehber':
+      return <g><ellipse cx="60" cy="33" rx="33" ry="6" fill="#C2A878" /><path d="M42 33 Q42 18 60 18 Q78 18 78 33 Z" fill="#D4BE94" /><rect x="42" y="27" width="36" height="4" fill="#8B6B4A" /></g>
     case 'muzisyen':
       return <g fill="none" stroke="#2D2D2D" strokeWidth="4"><path d="M34 52 Q34 22 60 22 Q86 22 86 52" /><rect x="28" y="46" width="9" height="14" rx="4" fill="#6C4AB6" stroke="none" /><rect x="83" y="46" width="9" height="14" rx="4" fill="#6C4AB6" stroke="none" /></g>
     case 'hukuk':
@@ -227,6 +618,9 @@ function Aksesuar({ tip }) {
     case 'veteriner': return <g><rect x="16" y="108" width="20" height="5" rx="2.5" fill="#F3E9DC" /><circle cx="16" cy="107" r="3" fill="#F3E9DC" /><circle cx="16" cy="114" r="3" fill="#F3E9DC" /><circle cx="36" cy="107" r="3" fill="#F3E9DC" /><circle cx="36" cy="114" r="3" fill="#F3E9DC" /></g>
     case 'bilimci': return <g><path d="M24 96 L30 96 L30 104 L36 118 Q37 122 33 122 L21 122 Q17 122 18 118 L24 104 Z" fill="#E6F4F1" stroke="#9CA3AF" /><path d="M20 114 L34 114 L36 118 Q37 122 33 122 L21 122 Q17 122 18 118 Z" fill="#52B788" /><circle className="msk-kabarcik" cx="26" cy="112" r="1.6" fill="#B7E4C7" /><circle className="msk-kabarcik msk-gecikme" cx="30" cy="115" r="1.2" fill="#B7E4C7" /></g>
     case 'yazilimci': return null
+    case 'kuafor': return <g transform="translate(14 98)"><circle cx="4" cy="16" r="3.6" fill="none" stroke="#E63946" strokeWidth="2" /><circle cx="13" cy="16" r="3.6" fill="none" stroke="#E63946" strokeWidth="2" /><path d="M6 13 L20 -2 M11 13 L-1 -2" stroke="#9CA3AF" strokeWidth="2.2" strokeLinecap="round" /></g>
+    case 'rehber': return <g><line x1="24" y1="92" x2="24" y2="124" stroke="#6B4F3A" strokeWidth="2" /><path d="M24 92 L40 96 L24 101 Z" fill="#F77F00" /><circle cx="24" cy="92" r="1.6" fill="#6B4F3A" /></g>
+    case 'analist': return <g><rect x="12" y="96" width="24" height="20" rx="2" fill="#FFFFFF" stroke="#9CA3AF" /><rect x="15" y="108" width="3.5" height="6" fill="#2A9D8F" /><rect x="20" y="104" width="3.5" height="10" fill="#3A86FF" /><rect x="25" y="100" width="3.5" height="14" fill="#E76F51" /><path d="M15 106 L21 102 L26 98 L33 99" stroke="#E63946" strokeWidth="1.3" fill="none" /><circle className="msk-kabarcik msk-gecikme" cx="33" cy="99" r="1.4" fill="#E63946" /></g>
     case 'elektrik': return <g><rect x="18" y="100" width="14" height="20" rx="2.5" fill="#FFD23F" stroke="#B08900" /><rect x="20.5" y="103" width="9" height="6" fill="#2D3748" /><text x="25" y="108" fontSize="4.5" textAnchor="middle" fill="#7EE787" fontFamily="monospace">12V</text><circle cx="25" cy="114" r="2.5" fill="#2D3748" /></g>
     case 'makine': return <g transform="translate(18 98) rotate(25)"><rect x="4" y="4" width="4" height="22" rx="1.5" fill="#9CA3AF" /><path d="M0 4 Q0 -2 6 -2 Q12 -2 12 4 L9 4 L9 1 L3 1 L3 4 Z" fill="#9CA3AF" /></g>
     case 'insaat': return <g><rect x="14" y="108" width="24" height="6" rx="1.5" fill="#F4A261" /><circle cx="26" cy="111" r="2" fill="#90E0EF" stroke="#264653" strokeWidth=".8" /></g>
@@ -249,10 +643,10 @@ function Aksesuar({ tip }) {
 
 const KOL_RENK = {
   hukuk: '#1F1F24', dedektif: '#9C7A54', doktor: '#FFFFFF', dis: '#FFFFFF', eczaci: '#FFFFFF', veteriner: '#FFFFFF',
-  bilimci: '#FFFFFF', yazilimci: '#3A3F58', elektrik: '#2F5D8A', makine: '#2F5D8A', insaat: '#9CA3AF', mimar: '#2B2B2B',
+  bilimci: '#FFFFFF', yazilimci: '#3A3F58', analist: '#2A9D8F', elektrik: '#2F5D8A', makine: '#2F5D8A', insaat: '#9CA3AF', mimar: '#2B2B2B',
   ogretmen: '#C97B63', sef: '#FFFFFF', muzisyen: '#6C4AB6', sahne: '#9B2335', gazeteci: '#F1F1F1', ressam: '#E9C46A',
   sporcu: '#E63946', ciftci: '#E9EDC9', is_insani: '#2C3E50', akademisyen: '#7D5A50', pilot: '#1D3557', kaptan: '#FFFFFF',
-  astronot: '#F3F4F6', gunluk: '#7FB069',
+  astronot: '#F3F4F6', gunluk: '#7FB069', kuafor: '#F4ACB7', rehber: '#F1FAEE',
 }
 
 function Kol({ x1, y1, x2, y2, renk, el }) {
@@ -270,10 +664,10 @@ export function Karakter({ cinsiyet, kiyafet, gozGoz, kirp, uyku, konusuyor }) {
   const elRenk = kiyafet === 'astronot' ? '#D1D5DB' : TEN
   const sacli = cinsiyet === 'erkek' || cinsiyet === 'kadin'
   const kafaRenk = sacli ? TEN : '#9BD18B'
-  const gozluk = ['mimar', 'ogretmen', 'akademisyen'].includes(kiyafet)
+  const gozluk = ['mimar', 'ogretmen', 'akademisyen', 'analist'].includes(kiyafet)
   const goggles = kiyafet === 'bilimci'
   const kapuson = kiyafet === 'yazilimci'
-  const sapkaVar = !['hukuk', 'yazilimci', 'gunluk', 'doktor', 'dis', 'eczaci', 'veteriner', 'bilimci', 'ogretmen', 'akademisyen', 'mimar', 'is_insani', 'gazeteci', 'sahne', 'astronot'].includes(kiyafet)
+  const sapkaVar = !['hukuk', 'yazilimci', 'analist', 'kuafor', 'gunluk', 'doktor', 'dis', 'eczaci', 'veteriner', 'bilimci', 'ogretmen', 'akademisyen', 'mimar', 'is_insani', 'gazeteci', 'sahne', 'astronot'].includes(kiyafet)
   return (
     <svg viewBox="0 0 120 160" width="100%" height="100%" style={{ overflow: 'visible' }}>
       <ellipse className="msk-golge" cx="60" cy="150" rx="26" ry="4.5" fill="rgba(0,0,0,.15)" />
@@ -376,7 +770,7 @@ export default function Maskot({ profil, ozet }) {
   const sonHareket = useRef(Date.now())
   const mesajSirasi = useRef(0)
 
-  const kiyafet = useMemo(() => kiyafetBul(hedef), [hedef])
+  const kiyafet = useMemo(() => kiyafetBul(hedef, profil?.hedef_meslek_adi), [hedef, profil?.hedef_meslek_adi])
   const cinsiyet = profil?.cinsiyet === 'erkek' || profil?.cinsiyet === 'kadin' ? profil.cinsiyet : 'notr'
   const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0]
 
