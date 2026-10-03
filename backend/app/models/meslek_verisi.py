@@ -11,7 +11,7 @@ from app.core.database import Base
 class Meslek(Base):
     __tablename__ = "meslekler"
     __table_args__ = (
-        CheckConstraint("kaynak IN ('tmss_resmi','ek_guncel')", name="ck_meslek_kaynak"),
+        CheckConstraint("kaynak IN ('tmss_resmi','ek_guncel','esco')", name="ck_meslek_kaynak"),
     )
 
     id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
