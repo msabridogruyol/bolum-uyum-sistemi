@@ -1,18 +1,50 @@
-import { useEffect, useState } from 'react'
-import { NavLink, Outlet } from 'react-router-dom'
+import { useCallback, useEffect, useState } from 'react'
+import { NavLink, Outlet, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
 import TemaAnahtari from './TemaAnahtari'
+import TanitimPenceresi from './TanitimPenceresi'
+import Maskot from './Maskot'
+
+// [2026-10-03] İlk giriş akışı: tanıtım penceresi → profil (okul + sınıf zorunlu) → ana sayfa
+export const profilEksikMi = (p) => !p || !p.ad_soyad?.trim() || !p.okul?.trim() || !p.sinif?.trim()
+const tanitimAnahtari = (p) => `tanitim_goruldu_${p?.email || 'misafir'}`
+function tanitimGorulduMu(p) {
+  try { return localStorage.getItem(tanitimAnahtari(p)) === '1' } catch { return true }
+}
 
 export default function AnaSayfaDuzeni() {
   const { cikisYap } = useAuth()
   const [ozet, setOzet] = useState(null)
   const [profil, setProfil] = useState(null)
+  const [profilYuklendi, setProfilYuklendi] = useState(false)
+  const [tanitimAcik, setTanitimAcik] = useState(false)
+  const konum = useLocation()
+  const navigate = useNavigate()
 
   useEffect(() => {
     api.durumOzetiGetir().then(setOzet).catch(() => {})
-    api.profilGetir().then(setProfil).catch(() => {})
+    api.profilGetir()
+      .then((p) => { setProfil(p); if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
+      .catch(() => {})
+      .finally(() => setProfilYuklendi(true))
   }, [])
+
+  // Profil sayfası kaydettiğinde menüdeki ad/foto ve zorunlu alan kontrolü hemen güncellensin
+  const profilYenile = useCallback((p) => setProfil(p), [])
+  const tanitimiAc = useCallback(() => setTanitimAcik(true), [])
+
+  function tanitimiBitir() {
+    try { localStorage.setItem(tanitimAnahtari(profil), '1') } catch { /* gizli sekme vb. */ }
+    setTanitimAcik(false)
+    if (profilEksikMi(profil)) navigate('/profil?ilk=1')
+  }
+
+  // Profil tamamlanmadan diğer sayfalara geçilmez (tanıtım açıkken yönlendirme beklenir)
+  const profilSayfasinda = konum.pathname.startsWith('/profil')
+  if (profilYuklendi && profil && !tanitimAcik && profilEksikMi(profil) && !profilSayfasinda) {
+    return <Navigate to="/profil?ilk=1" replace />
+  }
 
   const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0] || 'Öğrenci'
 
@@ -96,8 +128,10 @@ export default function AnaSayfaDuzeni() {
         </NavLink>
       </div>
       <div className="main">
-        <Outlet />
+        <Outlet context={{ profilYenile, tanitimiAc }} />
       </div>
+      {tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
+      {!tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
     </div>
   )
 }
