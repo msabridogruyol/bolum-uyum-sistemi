@@ -21,6 +21,17 @@ ağırlıklandırıp birleştirdiklerinde ortaya çıkar (D4'ün kendi "sağlaml
 kontrolü" çerçevesiyle tutarlı — bkz. ana belge, "10 yöntemin metodolojik
 rolü").
 
+[DÜZELTME 2026-10-03 — katman içi göreli karşılaştırma]
+Ham formül (100 - |öğrenci - bölüm|) öğrenci profilinin SEVİYESİNE bakıyordu:
+bölüm ağırlıkları ~30-70 bandında, öğrenci puanları 0-100'e yayıldığı için
+"genel seviyesi öğrenciye en yakın" bölüm kazanıyor, öğrencinin hangi alanda
+öne çıktığı neredeyse hiç yansımıyordu (örn. A2 Sözel=95 olan öğrenciye
+Veterinerlik/Uçak Bakım önerildi). Artık karşılaştırmadan önce hem öğrenci
+hem her bölüm profili, HER KATMAN İÇİNDE kendi ortalama/std'sine göre
+ölçekleniyor (50 + 15·z). Böylece "en güçlü yönün / bölümün en çok istediği
+yön" karşılaştırılıyor — kutup sorularının göreli mantığıyla da tutarlı.
+10 yöntem, ağırlıklar ve sonraki tüm adımlar değişmedi.
+
 Kriter ağırlıkları: her değişkenin ağırlığı, bağlı olduğu katmanın
 normalizasyon_agirligi'nin o katmandaki değişken sayısına eşit
 bölünmesiyle bulunur [ÇIKARIM — belgede değişken-bazlı ağırlık
@@ -38,6 +49,18 @@ from app.models import (
 )
 
 EPS = 1e-9
+IPSATIF_OLCEK = 15.0  # katman içi z-skoru -> 50 ± 15 bandına
+
+
+def _katman_ici_olcekle(matris: np.ndarray, katman_gruplari: list[list[int]]) -> np.ndarray:
+    """matris: (..., m). Her katmanın sütunlarını satır bazında kendi ortalama/std'sine göre ölçekler."""
+    sonuc = matris.astype(float).copy()
+    for idx in katman_gruplari:
+        x = sonuc[..., idx]
+        ort = x.mean(axis=-1, keepdims=True)
+        std = x.std(axis=-1, keepdims=True)
+        sonuc[..., idx] = 50.0 + IPSATIF_OLCEK * (x - ort) / (std + EPS)
+    return sonuc
 
 
 @dataclass
@@ -107,7 +130,7 @@ def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) 
             en_guncel[anahtar] = satir
 
     n, m = len(bolum_idler), len(degisken_idler)
-    performans = np.zeros((n, m))
+    bolum_matrisi = np.zeros((n, m))
     agirlikli_varyans: dict[int, float] = {}
     etkin_meslek_sayisi: dict[int, int] = {}
 
@@ -115,14 +138,22 @@ def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) 
         varyans_listesi = []
         for j, degisken_id in enumerate(degisken_idler):
             satir = en_guncel.get((bolum_id, degisken_id))
-            bolum_agirlik = float(satir.agirlik_degeri) if satir else 50.0  # veri yoksa nötr varsayım
-            performans[i, j] = max(0.0, 100.0 - abs(ogrenci_vektor[j] - bolum_agirlik))
+            bolum_matrisi[i, j] = float(satir.agirlik_degeri) if satir else 50.0  # veri yoksa nötr varsayım
             if satir and satir.agirlikli_varyans is not None:
                 varyans_listesi.append(float(satir.agirlikli_varyans))
             if satir and satir.etkin_meslek_sayisi is not None:
                 etkin_meslek_sayisi[bolum_id] = satir.etkin_meslek_sayisi
         agirlikli_varyans[bolum_id] = sum(varyans_listesi) / len(varyans_listesi) if varyans_listesi else 0.0
         etkin_meslek_sayisi.setdefault(bolum_id, 0)
+
+    # [DÜZELTME 2026-10-03] Katman içi göreli karşılaştırma (bkz. modül docstring'i)
+    katman_gruplari: dict[int, list[int]] = {}
+    for j, d in enumerate(degiskenler):
+        katman_gruplari.setdefault(d.katman_id, []).append(j)
+    gruplar = list(katman_gruplari.values())
+    ogrenci_olcekli = _katman_ici_olcekle(ogrenci_vektor[None, :], gruplar)[0]
+    bolum_olcekli = _katman_ici_olcekle(bolum_matrisi, gruplar)
+    performans = np.maximum(0.0, 100.0 - np.abs(ogrenci_olcekli[None, :] - bolum_olcekli))
 
     return HesaplamaGirdisi(
         bolum_idler=bolum_idler, bolum_adlari=bolum_adlari, degisken_idler=degisken_idler,
