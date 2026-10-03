@@ -378,12 +378,14 @@ def dali_tamamla_uc_nokta(
 
 @router.get("/sonuc/siralama", response_model=list[BolumSiralamaSatiri])
 def bolum_siralamasi_getir(
-    ilk_n: int = 20,
+    ilk_n: int = 10,
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
     """
-    D5, Katman 1 — Öneri Listesi (ilk 15-20 bölüm). K1-K4'ün dördü de
+    D5, Katman 1 — Öneri Listesi (en fazla 10 bölüm).
+    [2026-10-03] Üst sınır 10: 10. sıradan sonrası öğrenci için anlamlı ayrışma taşımıyor;
+    frontend daha fazla istese bile en fazla 10 döner. K1-K4'ün dördü de
     tamamlanmadıysa boş liste döner — D4 kuralı: yarım profille yanıltıcı
     bir sıralama üretilmez.
     """
@@ -405,7 +407,7 @@ def bolum_siralamasi_getir(
             detail="Sonuçlarının hazırlanması için önce sana açılan alan (K5) sorularını tamamlamalısın.",
         )
 
-    siralama = siralama_getir(db, ogrenci, tur, ilk_n=ilk_n)
+    siralama = siralama_getir(db, ogrenci, tur, ilk_n=max(1, min(ilk_n, 10)))
     bolum_adlari = {b.id: b.ad for b in db.query(Bolum).all()}
     return [
         BolumSiralamaSatiri(bolum_id=s.bolum_id, bolum_adi=bolum_adlari.get(s.bolum_id, "?"), toplam_uyum=float(s.toplam_uyum))
