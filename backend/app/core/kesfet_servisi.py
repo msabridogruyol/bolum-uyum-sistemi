@@ -109,13 +109,12 @@ def bolumleri_ara(db: Session, ogrenci: Ogrenci, arama_terimi: str, limit: int =
     )
     uyum_skorlari: dict[int, float] = {}
     if son_tamamlanan_tur is not None:
-        uyum_skorlari = {
-            s.bolum_id: float(s.toplam_uyum)
-            for s in db.query(OgrenciBolumUyumSkoru).filter(
-                OgrenciBolumUyumSkoru.ogrenci_id == ogrenci.id,
-                OgrenciBolumUyumSkoru.tur_id == son_tamamlanan_tur.id,
-            ).all()
-        }
+        # [DÜZELTME 2026-10-03] Sonuç listesiyle aynı nihai skor (K5 dahil) gösterilir;
+        # K5 dalları bitmeden uyum gösterilmez (sonuç ekranındaki kilitle tutarlı).
+        from app.core.skor_motoru import nihai_uyum_haritasi
+        from app.core.dal_servisi import bekleyen_dal_var_mi
+        if not bekleyen_dal_var_mi(db, ogrenci, son_tamamlanan_tur):
+            uyum_skorlari = nihai_uyum_haritasi(db, ogrenci, son_tamamlanan_tur)
 
     sonuc = []
     for bolum in bolumler:
