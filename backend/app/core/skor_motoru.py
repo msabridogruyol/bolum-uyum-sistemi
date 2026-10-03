@@ -332,6 +332,31 @@ class SiralamaSatiri:
     yontem_skorlari: dict | None = None   # admin/test amaçlı; öğrenci API şemasına girmez
 
 
+def nihai_uyum_haritasi(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> dict[int, float]:
+    """
+    [YENİ 2026-10-03] bolum_id -> öğrenciye GÖSTERİLEN nihai uyum. Sonuç listesi ve Keşfet
+    aynı sayıyı göstersin diye tek yerde hesaplanır:
+    nihai = TOPLAM_UYUM + 0.30 × (dal_ici_uyum − 50)  (yalnızca tamamlanan dalların bölümleri için)
+    """
+    from app.models import OgrenciDalUyumSkoru  # döngüsel import olmasın diye burada
+
+    dal_ici: dict[int, float] = {}
+    for d in db.query(OgrenciDalUyumSkoru).filter(
+        OgrenciDalUyumSkoru.ogrenci_id == ogrenci.id, OgrenciDalUyumSkoru.tur_id == tur.id
+    ).all():
+        dal_ici[d.bolum_id] = float(d.dal_ici_uyum)
+
+    harita: dict[int, float] = {}
+    for s in db.query(OgrenciBolumUyumSkoru).filter(
+        OgrenciBolumUyumSkoru.ogrenci_id == ogrenci.id, OgrenciBolumUyumSkoru.tur_id == tur.id
+    ).all():
+        nihai = float(s.toplam_uyum)
+        if s.bolum_id in dal_ici:
+            nihai = min(100.0, max(0.0, nihai + K5_SIRALAMA_ETKISI * (dal_ici[s.bolum_id] - 50.0)))
+        harita[s.bolum_id] = round(nihai, 2)
+    return harita
+
+
 def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, ilk_n: int = 20) -> list[SiralamaSatiri]:
     """
     D5, Katman 1 — Öneri Listesi. Eşit skor durumunda D4'teki tie-break
@@ -342,8 +367,6 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
     sıralama değişmez); en fazla ±15 puan. Diğer bölümler değişmez.
     Veritabanındaki TOPLAM_UYUM kaydı değiştirilmez; birleştirme okunurken yapılır.
     """
-    from app.models import OgrenciDalUyumSkoru  # döngüsel import olmasın diye burada
-
     girdi = girdi_hazirla(db, ogrenci, tur)
     varyans = girdi.agirlikli_varyans if girdi else {}
     meslek_sayisi = girdi.etkin_meslek_sayisi if girdi else {}
@@ -354,18 +377,10 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
         .filter(OgrenciBolumUyumSkoru.ogrenci_id == ogrenci.id, OgrenciBolumUyumSkoru.tur_id == tur.id)
         .all()
     )
-    dal_ici: dict[int, float] = {}
-    for d in db.query(OgrenciDalUyumSkoru).filter(
-        OgrenciDalUyumSkoru.ogrenci_id == ogrenci.id, OgrenciDalUyumSkoru.tur_id == tur.id
-    ).all():
-        dal_ici[d.bolum_id] = max(dal_ici.get(d.bolum_id, 0.0), float(d.dal_ici_uyum))
-
+    nihai_harita = nihai_uyum_haritasi(db, ogrenci, tur)
     satirlar = []
     for s in skorlar:
-        nihai = float(s.toplam_uyum)
-        if s.bolum_id in dal_ici:
-            nihai = min(100.0, max(0.0, nihai + K5_SIRALAMA_ETKISI * (dal_ici[s.bolum_id] - 50.0)))
-        satirlar.append(SiralamaSatiri(bolum_id=s.bolum_id, toplam_uyum=round(nihai, 2),
+        satirlar.append(SiralamaSatiri(bolum_id=s.bolum_id, toplam_uyum=nihai_harita.get(s.bolum_id, float(s.toplam_uyum)),
                                       kendall_w=float(s.kendall_w) if s.kendall_w is not None else None,
                                       yontem_skorlari=s.yontem_skorlari))
 
