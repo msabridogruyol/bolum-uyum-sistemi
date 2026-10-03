@@ -16,6 +16,8 @@ from app.models import (
     OgrenciGelisimAksiyonDurumu,
 )
 from app.core.katman_servisi import IsKuraliHatasi
+from app.core.skor_motoru import _katman_ici_olcekle
+import numpy as np
 
 
 # ============================= F1 — Hedef Seçme ============================= #
@@ -89,11 +91,15 @@ def gap_kategorisi(gap: float) -> str:
 
 class GapSatiri:
     def __init__(self, degisken: Degisken, ogrenci_puan: float, bolum_beklenen: float,
-                 bolum_agirlik: float, gelisim_karti: GelisimYorumHavuzu | None):
+                 bolum_agirlik: float, gelisim_karti: GelisimYorumHavuzu | None,
+                 goreli_fark: float | None = None):
         self.degisken = degisken
         self.ogrenci_puan = ogrenci_puan
         self.bolum_beklenen = bolum_beklenen
-        self.gap = ogrenci_puan - bolum_beklenen  # HAM fark — her zaman "öğrenci - bölüm", şeffaflık için değişmez
+        # [DÜZELTME 2026-10-03] Fark artık skor motoruyla AYNI ölçekte (katman içi göreli,
+        # 50±15) hesaplanır. Ham fark ölçek farkı yüzünden (bölüm ağırlıkları ~30-70,
+        # öğrenci puanları 0-100) çoğu değişkeni yapay olarak "belirgin eksik" gösteriyordu.
+        self.gap = goreli_fark if goreli_fark is not None else ogrenci_puan - bolum_beklenen
         # [DÜZELTME] Bazı değişkenlerde (ters_yonlu=True) yüksek ham fark
         # aslında olumsuzdur (örn. P4 Nevrotiklik'te öğrencinin bölüm
         # beklentisinden DAHA hassas olması iyi değildir). Kategori ve
@@ -130,6 +136,21 @@ def gap_analizi_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
         for h in db.query(GelisimYorumHavuzu).filter(GelisimYorumHavuzu.degisken_id.in_(en_guncel.keys())).all()
     }
 
+    # Göreli fark: her katman (K5'te her dal) içinde öğrenci ve bölüm profili ayrı ayrı ölçeklenir
+    gruplar: dict[tuple, list[int]] = {}
+    for degisken_id in en_guncel:
+        d = degiskenler.get(degisken_id)
+        if d is not None:
+            gruplar.setdefault((d.katman_id, d.dal_id), []).append(degisken_id)
+    goreli: dict[int, float] = {}
+    for idler in gruplar.values():
+        ogr = np.array([[ogrenci_skorlari[i] for i in idler]])
+        blm = np.array([[float(en_guncel[i].agirlik_degeri) for i in idler]])
+        tum = [list(range(len(idler)))]
+        fark = (_katman_ici_olcekle(ogr, tum) - _katman_ici_olcekle(blm, tum))[0]
+        for i, f in zip(idler, fark):
+            goreli[i] = float(f)
+
     satirlar: list[GapSatiri] = []
     for degisken_id, agirlik_satiri in en_guncel.items():
         degisken = degiskenler.get(degisken_id)
@@ -137,7 +158,8 @@ def gap_analizi_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
             continue
         ogrenci_puan = ogrenci_skorlari[degisken_id]
         bolum_beklenen = float(agirlik_satiri.agirlik_degeri)
-        satir = GapSatiri(degisken, ogrenci_puan, bolum_beklenen, bolum_beklenen, None)
+        satir = GapSatiri(degisken, ogrenci_puan, bolum_beklenen, bolum_beklenen, None,
+                          goreli_fark=goreli.get(degisken_id))
         satir.gelisim_karti = havuz.get((degisken_id, satir.kategori))
         satirlar.append(satir)
 
