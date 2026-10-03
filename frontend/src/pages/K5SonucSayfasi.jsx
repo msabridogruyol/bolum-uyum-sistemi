@@ -112,7 +112,7 @@ export default function K5SonucSayfasi() {
                   <div style={{ marginBottom: k5Durum.ilgi_gosterilen.length > 0 ? 14 : 0 }}>
                     <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--gr)', marginBottom: 6 }}>✓ En Güçlü Dalın</div>
                     <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5 }}>
-                      <b style={{ color: 'var(--tx)' }}>{siraliDallar[0].dal_adi}</b> (puan: {siraliDallar[0].puan})
+                      <b style={{ color: 'var(--tx)' }}>{siraliDallar[0].dal_adi}</b> — önerilerinin %{Math.round(siraliDallar[0].puan)}'i bu alanda
                     </div>
                   </div>
                 )}
@@ -120,7 +120,7 @@ export default function K5SonucSayfasi() {
                   <div>
                     <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--am)', marginBottom: 6 }}>↻ Yakın Olduğun Alan</div>
                     <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5 }}>
-                      <b style={{ color: 'var(--tx)' }}>{k5Durum.ilgi_gosterilen[0].dal_adi}</b> (puan: {k5Durum.ilgi_gosterilen[0].puan})
+                      <b style={{ color: 'var(--tx)' }}>{k5Durum.ilgi_gosterilen[0].dal_adi}</b> — önerilerinin %{Math.round(k5Durum.ilgi_gosterilen[0].puan)}'i bu alanda
                     </div>
                   </div>
                 )}
