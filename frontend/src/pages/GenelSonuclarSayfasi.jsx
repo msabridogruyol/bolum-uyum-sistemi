@@ -9,12 +9,14 @@ export default function GenelSonuclarSayfasi() {
   const [katmanlar, setKatmanlar] = useState(null)
   const [katmanSonuclari, setKatmanSonuclari] = useState(null)
   const [k5Durum, setK5Durum] = useState(null)
+  const [ozet, setOzet] = useState(null)
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
 
   useEffect(() => {
     api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail || 'Katmanlar yüklenemedi.'))
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
+    api.durumOzetiGetir().then(setOzet).catch(() => setOzet(null))
   }, [])
 
   useEffect(() => {
@@ -43,6 +45,9 @@ export default function GenelSonuclarSayfasi() {
   const tamamlanan = katmanlar.filter((k) => k.durum === 'tamamlandi').length
   const tumTamam = ANA_KATMANLAR.every((kod) => katmanSonuclari[kod] !== null)
 
+  // [2026-10-03] K5 zorunlu: açılan dal(lar) bitmediyse öğrenci K5'e yönlendirilir
+  const k5Bekliyor = !!ozet && ozet.k5_acilan_dal_sayisi > ozet.k5_tamamlanan_dal_sayisi
+
   const k5OrtalamaPuan = k5Durum.acilan.length > 0
     ? Math.round(k5Durum.acilan.reduce((a, d) => a + d.puan, 0) / k5Durum.acilan.length)
     : null
@@ -65,6 +70,16 @@ export default function GenelSonuclarSayfasi() {
           {genelOrtalama !== null && <> · Genel ortalama puan: <b>{genelOrtalama}</b></>}
         </div>
       </div>
+
+      {k5Bekliyor && (
+        <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)', marginBottom: 16 }}>
+          <div className="ct">Bir adım kaldı: Alan Soruları (K5)</div>
+          <div className="ps" style={{ margin: '0 0 12px' }}>
+            K4 sonuçlarına göre sana özel alan sorusu seti açıldı. Bölüm önerilerin bu soruları tamamladıktan sonra hazırlanacak.
+          </div>
+          <button className="btn" onClick={() => navigate('/katmanlar')}>K5'e Devam Et →</button>
+        </div>
+      )}
 
       {/* --- Katman özet kartları (K1-K5) --- */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 20 }}>
@@ -191,7 +206,11 @@ export default function GenelSonuclarSayfasi() {
         </>
       )}
 
-      <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/')}>Ana Sayfaya Dön</button>
+      {k5Bekliyor ? (
+        <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>Alan Sorularına (K5) Devam Et →</button>
+      ) : (
+        <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/')}>Ana Sayfaya Dön</button>
+      )}
     </div>
   )
 }
