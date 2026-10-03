@@ -39,6 +39,7 @@ from app.core.skor_motoru import _katman_ici_olcekle
 
 DAL_SECIM_UST_N = 15        # dal seçiminde bakılan ilk N bölüm
 IKINCI_DAL_MIN_BOLUM = 4    # ikinci dalın açılması için ilk N'de en az bu kadar bölüm
+K5_GUVEN_STD = 15.0         # öğrencinin K5 puanlarında bu std'ye ulaşınca K5 tam etkili; düz profilde etki 0
 
 
 class DalAday:
@@ -188,8 +189,13 @@ def dal_ici_uyum_hesapla(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDe
     grup = [list(range(len(degisken_idler)))]
     perf = np.maximum(0.0, 100.0 - np.abs(_katman_ici_olcekle(ogr, grup) - _katman_ici_olcekle(blm, grup)))
     ham = perf.mean(axis=1)
-    lo, hi = ham.min(), ham.max()
-    skor = np.full_like(ham, 50.0) if hi - lo < 1e-9 else (ham - lo) / (hi - lo) * 100
+    # [DÜZELTME 2026-10-03] Önceki sürüm min-max ile her zaman 0-100'e yayıyordu: öğrenci
+    # K5'te hep aynı cevabı verse bile (bilgi yok) bölümleri rastgele ödüllendirip cezalandırıyordu.
+    # Artık: dal içi z-skoru (50 ± 15) ve öğrencinin K5 cevaplarındaki ayrışma kadar güven katsayısı.
+    # Düz profil (std≈0) → herkes 50 = nötr → sıralama değişmez.
+    z = (ham - ham.mean()) / (ham.std() + 1e-9)
+    guven = float(min(1.0, ogr.std() / K5_GUVEN_STD))
+    skor = np.clip(50.0 + guven * 15.0 * z, 0.0, 100.0)
 
     db.query(OgrenciDalUyumSkoru).filter(
         OgrenciDalUyumSkoru.ogrenci_id == ogrenci.id,
