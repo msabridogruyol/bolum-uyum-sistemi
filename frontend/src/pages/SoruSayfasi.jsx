@@ -91,13 +91,14 @@ function KameraOnizleme({ videoRef }) {
 // ============================================================
 const ONAY_METNI = 'ONAYLIYORUM'
 
-function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor }) {
+function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, altBaslik }) {
   const [yaziliOnay, setYaziliOnay] = useState('')
-  const katman = KATMAN_BILGI[kod] || { ikon: '🌱', ad: kod }
+  const katman = KATMAN_BILGI[kod] || { ikon: '🌻', ad: baslik || kod }
 
   const likertSayisi = sorular.filter((s) => s.soru_tipi === 'likert').length
   const sjtSayisi = sorular.filter((s) => s.soru_tipi === 'sjt').length
-  const tahminiDakika = Math.max(1, Math.ceil((likertSayisi * 15 + sjtSayisi * 30) / 60))
+  const kutupSayisi = sorular.filter((s) => s.soru_tipi === 'kutup').length
+  const tahminiDakika = Math.max(1, Math.ceil((likertSayisi * 15 + kutupSayisi * 20 + sjtSayisi * 30) / 60))
   const onayGecerli = yaziliOnay.trim() === ONAY_METNI
 
   return (
@@ -105,7 +106,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor }) {
       <div style={{ textAlign: 'center', marginBottom: 28 }}>
         <div style={{ fontSize: 42, marginBottom: 10 }}>{katman.ikon}</div>
         <div style={{ fontFamily: 'var(--fd)', fontSize: 22, fontWeight: 700 }}>{katman.ad}</div>
-        <div style={{ fontSize: 12.5, color: 'var(--tx3)', fontWeight: 600, marginTop: 3 }}>{kod} katmanına başlıyorsun</div>
+        <div style={{ fontSize: 12.5, color: 'var(--tx3)', fontWeight: 600, marginTop: 3 }}>{altBaslik || `${kod} katmanına başlıyorsun`}</div>
       </div>
 
       <div className="sg" style={{ marginBottom: 18 }}>
@@ -120,6 +121,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor }) {
         <div className="sc">
           <div className="sl">Soru Tipleri</div>
           <div className="sv" style={{ fontSize: 14, lineHeight: 1.5 }}>
+            {kutupSayisi > 0 && <div>{kutupSayisi} Tercih Sorusu</div>}
             {likertSayisi > 0 && <div>{likertSayisi} Likert</div>}
             {sjtSayisi > 0 && <div>{sjtSayisi} Durum Sorusu</div>}
           </div>
@@ -159,9 +161,14 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor }) {
 }
 
 
-export default function SoruSayfasi() {
+// [2026-10-03] mod='dal' → K5 dal soruları da K1-K4 ile birebir aynı akışta
+// (tanıtım/onay ekranı, tam ekran, kamera, sonuç ekranı) çalışır; yalnızca API uç noktaları farklıdır.
+export default function SoruSayfasi({ mod = 'katman' }) {
   const { kod } = useParams()
   const navigate = useNavigate()
+  const dalMi = mod === 'dal'
+  const [dalAdi, setDalAdi] = useState(null)
+  const [k5Bekliyor, setK5Bekliyor] = useState(false)
 
   const [sorular, setSorular] = useState(null)
   const [turId, setTurId] = useState(null)
@@ -189,13 +196,14 @@ export default function SoruSayfasi() {
     setCevaplar({})
     setTamamlandi(null)
     setBasladiMi(false)
-    api.katmaniBaslat(kod)
+    ;(dalMi ? api.daliBaslat(kod) : api.katmaniBaslat(kod))
       .then((veri) => {
         setSorular(veri.sorular)
-        setTurId(veri.tur_id)
+        setTurId(veri.tur_id ?? null)
+        if (dalMi) setDalAdi(veri.dal_adi || null)
       })
-      .catch((e) => setHata(e.detail || 'Katman başlatılamadı.'))
-  }, [kod])
+      .catch((e) => setHata(e.detail || (dalMi ? 'Alan soruları başlatılamadı.' : 'Katman başlatılamadı.')))
+  }, [kod, dalMi])
 
   // ------------------------------------------------------------------
   // Tam ekrana geçiş + çıkış/geri dönüş yönetimi
@@ -339,7 +347,7 @@ export default function SoruSayfasi() {
     setCevaplar((onceki) => ({ ...onceki, [soruId]: secenekId }))
     setGonderiliyor(true)
     try {
-      await api.soruyuCevapla(kod, soruId, secenekId)
+      await (dalMi ? api.dalSoruyuCevapla(kod, soruId, secenekId) : api.soruyuCevapla(kod, soruId, secenekId))
     } catch (e) {
       setHata(e.detail || 'Cevap kaydedilemedi.')
     } finally {
@@ -353,7 +361,12 @@ export default function SoruSayfasi() {
     } else {
       setGonderiliyor(true)
       try {
-        const sonuc = await api.katmaniTamamla(kod)
+        const sonuc = await (dalMi ? api.daliTamamla(kod) : api.katmaniTamamla(kod))
+        if (dalMi) {
+          // Başka açık dal kaldı mı? Kalmadıysa öğrenci doğrudan bölüm sonuçlarına gider.
+          const ozet = await api.durumOzetiGetir().catch(() => null)
+          setK5Bekliyor(!!ozet && ozet.k5_acilan_dal_sayisi > ozet.k5_tamamlanan_dal_sayisi)
+        }
         setTamamlandi(sonuc)
         if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
       } catch (e) {
@@ -385,8 +398,8 @@ export default function SoruSayfasi() {
         ) : tamamlandi ? (
           <div className="qwrap" style={{ maxWidth: 640 }}>
             <div className="ph">
-              <div className="pt">{kod} tamamlandı 🎉</div>
-              <div className="ps">Bu katmandaki değişken puanların ve ne anlama geldikleri:</div>
+              <div className="pt">{dalMi ? (dalAdi || kod) : kod} tamamlandı 🎉</div>
+              <div className="ps">{dalMi ? 'Bu alandaki değişken puanların:' : 'Bu katmandaki değişken puanların ve ne anlama geldikleri:'}</div>
             </div>
 
             {tamamlandi.sonuclar.length === 0 ? (
@@ -403,12 +416,22 @@ export default function SoruSayfasi() {
             )}
 
             {/* [2026-10-03] K5 zorunlu: K4 bitince öğrenci önce açılan dallara (Katmanlar sayfasında listelenir) yönlendirilir */}
-            <button className="btn full" onClick={() => navigate('/katmanlar')}>
-              {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Alan Sorularına (K5) Geç →' : 'Katmanlara Dön'}
-            </button>
+            {dalMi ? (
+              <button className="btn full" onClick={() => navigate(k5Bekliyor ? '/katmanlar' : '/sonuc')}>
+                {k5Bekliyor ? 'Sıradaki Alan Sorularına Geç →' : 'Bölüm Sonuçlarımı Gör →'}
+              </button>
+            ) : (
+              <button className="btn full" onClick={() => navigate('/katmanlar')}>
+                {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Alan Sorularına (K5) Geç →' : 'Katmanlara Dön'}
+              </button>
+            )}
           </div>
         ) : !basladiMi ? (
-          <KatmanTanitimEkrani kod={kod} sorular={sorular} onBasla={() => setBasladiMi(true)} cikisYapiliyor={false} />
+          <KatmanTanitimEkrani
+            kod={kod} sorular={sorular} onBasla={() => setBasladiMi(true)} cikisYapiliyor={false}
+            baslik={dalMi ? (dalAdi || 'Alan Soruları') : undefined}
+            altBaslik={dalMi ? 'K5 — sana özel alan sorularına başlıyorsun' : undefined}
+          />
         ) : (
           <SoruIcerigiDuzeni
             sorular={sorular}
@@ -416,6 +439,7 @@ export default function SoruSayfasi() {
             cevaplar={cevaplar}
             gonderiliyor={gonderiliyor}
             kod={kod}
+            baslik={dalMi ? (dalAdi || 'Alan Soruları') : undefined}
             onSecenekSec={secenekSec}
             onIleriGit={ileriGit}
             onCik={sinavdanCik}
@@ -441,8 +465,8 @@ const FILIZLENME_MESAJLARI = [
   'İçtenlikle cevapladığın her soru, daha isabetli bir sonuç demek.',
 ]
 
-function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecenekSec, onIleriGit, onCik }) {
-  const katman = KATMAN_BILGI[kod] || { ikon: '🌱', ad: kod }
+function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, baslik, onSecenekSec, onIleriGit, onCik }) {
+  const katman = KATMAN_BILGI[kod] || { ikon: '🌻', ad: baslik || kod }
   const kalanSoru = sorular.length - aktifIndex - 1
   const mesaj = FILIZLENME_MESAJLARI[aktifIndex % FILIZLENME_MESAJLARI.length]
 
