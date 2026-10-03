@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 
 // ============================================================
@@ -135,30 +136,106 @@ function FilizSohbetWidgeti() {
 // ============================================================
 // Ana sayfa
 // ============================================================
+// [2026-10-03] Kategori etiketleri — grafik ve kartlar AYNI göreli ölçekten gelir, birbiriyle çelişmez
+const KATEGORI = {
+  belirgin_ustun: { etiket: 'Belirgin güçlü', renk: 'var(--gr)', zemin: 'var(--grl)', grup: 'guclu' },
+  ustun: { etiket: 'Güçlü', renk: 'var(--gr)', zemin: 'var(--grl)', grup: 'guclu' },
+  beklenti: { etiket: 'Uyumlu', renk: 'var(--pu)', zemin: 'var(--pul)', grup: 'uyumlu' },
+  altinda: { etiket: 'Gelişime açık', renk: 'var(--am)', zemin: 'var(--aml)', grup: 'gelisim' },
+  belirgin_altinda: { etiket: 'Öncelikli gelişim', renk: 'var(--re)', zemin: 'var(--rel)', grup: 'gelisim' },
+}
+const KAYNAK_TIPI = { kurs: 'Kurs', proje: 'Proje', okuma: 'Okuma / araştırma', staj_deneyim: 'Deneyim / staj', aliskanlik: 'Alışkanlık' }
+const DURUMLAR = [
+  { kod: 'planlandi', etiket: 'Planladım' },
+  { kod: 'devam_ediyor', etiket: 'Devam ediyorum' },
+  { kod: 'tamamlandi', etiket: 'Tamamladım' },
+]
+const ASAMALAR = [
+  { kod: 'simdi', baslik: 'Şimdi başla', alt: 'Kısa sürede yapılabilecek adımlar' },
+  { kod: 'bu_donem', baslik: 'Bu dönem', alt: 'Birkaç hafta–ay sürecek çalışmalar' },
+  { kod: 'uzun_vadede', baslik: 'Uzun vadede', alt: 'Zamanla oturacak alışkanlıklar' },
+  { kod: 'efor_belirsiz', baslik: 'Diğer gelişim alanları', alt: 'Henüz öneri eklenmemiş alanlar' },
+]
+
+function KategoriRozeti({ kategori }) {
+  const k = KATEGORI[kategori] || KATEGORI.beklenti
+  return (
+    <span style={{ fontSize: 10.5, fontWeight: 700, color: k.renk, background: k.zemin, padding: '2px 8px', borderRadius: 20, whiteSpace: 'nowrap' }}>
+      {k.etiket}
+    </span>
+  )
+}
+
+function KarsilastirmaSatiri({ g }) {
+  return (
+    <div style={{ marginBottom: 12 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 5 }}>
+        <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--tx2)' }}>{g.degisken_adi}</div>
+        <KategoriRozeti kategori={g.kategori} />
+      </div>
+      <div className="mini-cubuk-track" style={{ width: '100%', marginBottom: 3 }}>
+        <div className="mini-cubuk-fill" style={{ width: `${g.ogrenci_goreli ?? g.ogrenci_puan}%`, background: 'var(--pu)' }} />
+      </div>
+      <div className="mini-cubuk-track" style={{ width: '100%' }}>
+        <div className="mini-cubuk-fill" style={{ width: `${g.bolum_goreli ?? g.bolum_beklenen}%`, background: 'var(--gr)' }} />
+      </div>
+    </div>
+  )
+}
+
 export default function KoclukSayfasi() {
   const [hedef, setHedef] = useState(undefined) // undefined=yükleniyor, null=yok
   const [gelisim, setGelisim] = useState(null)
   const [yolHaritasi, setYolHaritasi] = useState(null)
   const [karsilastirma, setKarsilastirma] = useState(null)
   const [hata, setHata] = useState(null)
+  const [kilit, setKilit] = useState(null) // K5 bitmediyse backend 409 döner
+  const [oneriler, setOneriler] = useState([])
+  const [acikKatman, setAcikKatman] = useState(null)
 
   // hedef değiştirme akışı
   const [sorgu, setSorgu] = useState('')
   const [aramaSonuclari, setAramaSonuclari] = useState(null)
   const [onayBekleyenBolum, setOnayBekleyenBolum] = useState(null)
-
-  const yukle = useCallback(() => {
-    api.aktifHedefGetir().then(setHedef).catch(() => setHedef(null))
-  }, [])
-
-  useEffect(() => { yukle() }, [yukle])
+  const [params, setParams] = useSearchParams()
+  const urlIslendi = useRef(false)
 
   useEffect(() => {
-    if (!hedef) return
-    api.gelisimAnaliziGetir().then(setGelisim).catch((e) => setHata(e.detail))
+    api.aktifHedefGetir().then(setHedef).catch(() => setHedef(null))
+    api.siralamaGetir(5).then((l) => setOneriler(Array.isArray(l) ? l : [])).catch(() => setOneriler([]))
+  }, [])
+
+  const analiziYukle = useCallback(() => {
+    setGelisim(null); setYolHaritasi(null); setKilit(null); setHata(null)
+    api.gelisimAnaliziGetir().then(setGelisim).catch((e) => (e.status === 409 ? setKilit(e.detail) : setHata(e.detail)))
     api.yolHaritasiGetir().then(setYolHaritasi).catch(() => {})
     api.turKarsilastirmasiGetir().then(setKarsilastirma).catch(() => {})
-  }, [hedef])
+  }, [])
+
+  useEffect(() => { if (hedef) analiziYukle() }, [hedef, analiziYukle])
+
+  async function hedefSecmeyeCalis(bolumId) {
+    setHata(null)
+    try {
+      const sonuc = await api.hedefSec(bolumId, false)
+      setHedef(sonuc)
+      setAramaSonuclari(null)
+      setSorgu('')
+    } catch (err) {
+      if (err.status === 409) setOnayBekleyenBolum(bolumId)
+      else setHata(err.detail || 'Hedef seçilemedi.')
+    }
+  }
+
+  // Keşfet'teki "Bu bölümü hedef olarak seç" butonu /koclugu?hedef=ID ile gelir
+  useEffect(() => {
+    const id = Number(params.get('hedef'))
+    if (!urlIslendi.current && id && hedef !== undefined) {
+      urlIslendi.current = true
+      if (!hedef || hedef.bolum_id !== id) hedefSecmeyeCalis(id)
+      params.delete('hedef'); setParams(params, { replace: true })
+    }
+  }, [params, hedef]) // eslint-disable-line react-hooks/exhaustive-deps
 
   async function ara(e) {
     e.preventDefault()
@@ -167,21 +244,6 @@ export default function KoclukSayfasi() {
       setAramaSonuclari(await api.kesfetAra(sorgu.trim(), 8))
     } catch (err) {
       setHata(err.detail || 'Arama yapılamadı.')
-    }
-  }
-
-  async function hedefSecmeyeCalis(bolumId) {
-    try {
-      const sonuc = await api.hedefSec(bolumId, false)
-      setHedef(sonuc)
-      setAramaSonuclari(null)
-      setSorgu('')
-    } catch (err) {
-      if (err.status === 409) {
-        setOnayBekleyenBolum(bolumId)
-      } else {
-        setHata(err.detail || 'Hedef seçilemedi.')
-      }
     }
   }
 
@@ -197,24 +259,56 @@ export default function KoclukSayfasi() {
     }
   }
 
+  async function durumGuncelle(degiskenId, durum) {
+    try {
+      await api.aksiyonDurumuGuncelle(degiskenId, durum)
+      const guncelle = (liste) => liste.map((g) => (g.degisken_id === degiskenId ? { ...g, aksiyon_durumu: durum } : g))
+      setGelisim((l) => (l ? guncelle(l) : l))
+      setYolHaritasi((h) => (h ? Object.fromEntries(Object.entries(h).map(([k, v]) => [k, guncelle(v)])) : h))
+    } catch (err) {
+      setHata(err.detail || 'Durum kaydedilemedi.')
+    }
+  }
+
   if (hedef === undefined) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+
+  // --- özetler
+  const gruplar = {}
+  ;(gelisim || []).forEach((g) => {
+    const anahtar = g.katman_kod || '?'
+    if (!gruplar[anahtar]) gruplar[anahtar] = { ad: g.katman_adi || anahtar, satirlar: [] }
+    gruplar[anahtar].satirlar.push(g)
+  })
+  const katmanSirasi = Object.keys(gruplar).sort()
+  const sayac = { guclu: 0, uyumlu: 0, gelisim: 0 }
+  ;(gelisim || []).forEach((g) => { sayac[(KATEGORI[g.kategori] || KATEGORI.beklenti).grup] += 1 })
+  const gucluler = (gelisim || []).filter((g) => KATEGORI[g.kategori]?.grup === 'guclu' && g.durum_tespiti).sort((a, b) => b.gap - a.gap).slice(0, 3)
+  const gelisimler = (gelisim || []).filter((g) => KATEGORI[g.kategori]?.grup === 'gelisim' && g.durum_tespiti).slice(0, 3)
+  const tumAdimlar = yolHaritasi ? ASAMALAR.flatMap((a) => yolHaritasi[a.kod] || []) : []
+  const tamamlanan = tumAdimlar.filter((g) => g.aksiyon_durumu === 'tamamlandi').length
 
   return (
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Hedef Bölüm Koçluğu</div>
-        <div className="ps">İstediğin bir bölümü hedef seç, kendini onunla karşılaştır. Aynı anda yalnızca 1 aktif hedefin olabilir — odaklanman için.</div>
+        <div className="ps">İstediğin bir bölümü hedef seç, kendini onunla karşılaştır ve gelişim planını takip et. Aynı anda yalnızca 1 aktif hedefin olabilir — odaklanman için.</div>
       </div>
 
       <div className="yol-duzen">
-        {/* ============ SOL SÜTUN — mevcut koçluk içeriği ============ */}
         <div>
           {hedef && (
-            <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
               <div>
                 <div className="ct" style={{ marginBottom: 4 }}>Şu anki hedefin</div>
                 <div style={{ fontSize: 16, fontWeight: 600 }}>{hedef.bolum_adi}</div>
               </div>
+              {gelisim && gelisim.length > 0 && (
+                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
+                  <span className="bdg" style={{ background: 'var(--grl)', color: 'var(--gr)' }}>{sayac.guclu} güçlü</span>
+                  <span className="bdg" style={{ background: 'var(--pul)', color: 'var(--pu)' }}>{sayac.uyumlu} uyumlu</span>
+                  <span className="bdg" style={{ background: 'var(--aml)', color: 'var(--am)' }}>{sayac.gelisim} gelişime açık</span>
+                </div>
+              )}
             </div>
           )}
 
@@ -232,15 +326,31 @@ export default function KoclukSayfasi() {
 
           <div className="card">
             <div className="ct">{hedef ? 'Hedefi Değiştir' : 'Bir Hedef Seç'}</div>
+            {oneriler.length > 0 && (
+              <>
+                <div className="ps" style={{ margin: '0 0 8px', fontSize: 12 }}>Sana en uygun bölümlerden seç:</div>
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
+                  {oneriler.map((o) => (
+                    <button key={o.bolum_id} className="btn sec" style={{ fontSize: 12, padding: '6px 10px', opacity: hedef?.bolum_id === o.bolum_id ? 0.5 : 1 }}
+                      disabled={hedef?.bolum_id === o.bolum_id} onClick={() => hedefSecmeyeCalis(o.bolum_id)}>
+                      {o.bolum_adi} · %{Math.round(o.toplam_uyum)}
+                    </button>
+                  ))}
+                </div>
+                <div className="ps" style={{ margin: '0 0 8px', fontSize: 12 }}>ya da başka bir bölüm ara:</div>
+              </>
+            )}
             <form onSubmit={ara} style={{ display: 'flex', gap: 8, marginBottom: aramaSonuclari ? 14 : 0 }}>
               <input className="auth-input" style={{ flex: 1 }} value={sorgu} onChange={(e) => setSorgu(e.target.value)} placeholder="Bölüm ara..." />
               <button className="btn sec" type="submit">Ara</button>
             </form>
             {aramaSonuclari && (
               <div className="ll">
+                {aramaSonuclari.length === 0 && <div className="ps" style={{ margin: 0 }}>Sonuç bulunamadı.</div>}
                 {aramaSonuclari.map((s) => (
                   <div key={s.bolum_id} className="lc" onClick={() => hedefSecmeyeCalis(s.bolum_id)}>
                     <div className="lb-wrap"><div className="lt">{s.bolum_adi}</div></div>
+                    {s.toplam_uyum !== null && s.toplam_uyum !== undefined && <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>}
                   </div>
                 ))}
               </div>
@@ -249,114 +359,124 @@ export default function KoclukSayfasi() {
 
           {hata && <div className="auth-error">{hata}</div>}
 
-          {hedef && gelisim && (
+          {hedef && kilit && (
+            <div className="card" style={{ borderColor: 'var(--am)', background: 'var(--aml)' }}>
+              <div style={{ fontSize: 13 }}>{kilit}</div>
+            </div>
+          )}
+
+          {hedef && gelisim && gelisim.length === 0 && (
+            <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedef için henüz karşılaştırılacak veri yok — önce katmanlarını tamamla.</div></div>
+          )}
+
+          {hedef && gelisim && gelisim.length > 0 && (
             <>
-              <div className="ct" style={{ marginTop: 20 }}>Gelişim Analizi</div>
-              {gelisim.length === 0 ? (
-                <div className="taslak-onizleme">
-                  <div className="taslak-onizleme-icerik card">
-                    <div className="drl">
-                      <div className="dli"><div className="ddt" style={{ background: 'var(--pu)' }} /> Sen</div>
-                      <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
-                    </div>
-                    {[[78, 65], [55, 80], [70, 50]].map((cift, i) => (
-                      <div key={i} className="dcr">
-                        <div className="dcl"><div className="iskelet-satir" style={{ width: 110 }} /></div>
-                        <div className="dcb">
-                          <div className="dcf" style={{ width: `${cift[0]}%`, background: 'var(--pu)' }} />
-                          <div className="dcf" style={{ width: `${cift[1]}%`, background: 'var(--gr)' }} />
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="taslak-onizleme-overlay">
-                    <div className="to-ikon">📊</div>
-                    <div className="to-metin">Bu hedef için henüz karşılaştırılacak veri yok — önce katmanlarını tamamla.</div>
-                  </div>
-                </div>
-              ) : (
-                <div className="card">
-                  <div className="drl">
-                    <div className="dli"><div className="ddt" style={{ background: 'var(--pu)' }} /> Sen</div>
-                    <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
-                  </div>
-                  {gelisim.map((g) => (
-                    <div key={g.degisken_id} className="dcr">
-                      <div className="dcl">{g.degisken_adi}</div>
-                      <div className="dcb">
-                        <div className="dcf" style={{ width: `${g.ogrenci_puan}%`, background: 'var(--pu)' }} />
-                        <div className="dcf" style={{ width: `${g.bolum_beklenen}%`, background: 'var(--gr)' }} />
-                      </div>
-                    </div>
-                  ))}
-                  <div className="sw" style={{ marginTop: 16, marginBottom: 0 }}>
-                    {gelisim.filter((g) => g.durum_tespiti || g.aksiyon_onerisi).slice(0, 4).map((g) => (
-                      <div key={g.degisken_id} className="swc">
-                        <div className="swh">
-                          <div className="swi" style={{ background: g.kategori.includes('ustun') ? 'var(--grl)' : g.kategori === 'beklenti' ? 'var(--pul)' : 'var(--aml)' }}>
-                            {g.kategori.includes('ustun') ? '✓' : g.kategori === 'beklenti' ? '≈' : '↻'}
+              {(gucluler.length > 0 || gelisimler.length > 0) && (
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12, marginTop: 20 }}>
+                  {[['Bu bölüm için güçlü yönlerin', gucluler, '✓', 'var(--grl)'], ['Gelişime açık yönlerin', gelisimler, '↻', 'var(--aml)']].map(([baslik, liste, ikon, zemin]) => (
+                    liste.length > 0 && (
+                      <div key={baslik} className="card" style={{ marginBottom: 0 }}>
+                        <div className="ct">{baslik}</div>
+                        {liste.map((g) => (
+                          <div key={g.degisken_id} style={{ display: 'flex', gap: 10, marginBottom: 12 }}>
+                            <div className="swi" style={{ background: zemin, flex: '0 0 auto' }}>{ikon}</div>
+                            <div>
+                              <div style={{ fontSize: 13, fontWeight: 600, marginBottom: 2 }}>{g.degisken_adi}</div>
+                              <div className="swb">{g.durum_tespiti}</div>
+                            </div>
                           </div>
-                          <div className="swt">{g.degisken_adi}</div>
-                        </div>
-                        {g.durum_tespiti && <div className="swb">{g.durum_tespiti}</div>}
-                        {g.aksiyon_onerisi && <div className="swb" style={{ marginTop: 4, fontStyle: 'italic' }}>{g.aksiyon_onerisi}</div>}
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    )
+                  ))}
                 </div>
               )}
+
+              <div className="ct" style={{ marginTop: 20 }}>Gelişim Analizi</div>
+              <div className="card">
+                <div className="drl" style={{ marginBottom: 6 }}>
+                  <div className="dli"><div className="ddt" style={{ background: 'var(--pu)' }} /> Sen</div>
+                  <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
+                </div>
+                <div className="ps" style={{ margin: '0 0 14px', fontSize: 11.5 }}>
+                  Her katmanda, özelliklerinin kendi içindeki ağırlığı bölümün beklentisiyle karşılaştırılır. Çubuklar aynı ölçekte; etiket farkın yönünü gösterir.
+                </div>
+                {katmanSirasi.map((kod) => {
+                  const acik = acikKatman === null ? kod === katmanSirasi[0] : acikKatman === kod
+                  const grup = gruplar[kod]
+                  const gelisimSayisi = grup.satirlar.filter((g) => KATEGORI[g.kategori]?.grup === 'gelisim').length
+                  return (
+                    <div key={kod} style={{ borderTop: '1px solid var(--bor)', paddingTop: 10, marginTop: 10 }}>
+                      <div onClick={() => setAcikKatman(acik ? '' : kod)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer', marginBottom: acik ? 12 : 0 }}>
+                        <div style={{ fontSize: 13, fontWeight: 700 }}>{grup.ad}</div>
+                        <div style={{ fontSize: 11.5, color: 'var(--tx3)' }}>
+                          {gelisimSayisi > 0 ? `${gelisimSayisi} gelişim alanı · ` : ''}{acik ? 'Gizle ▲' : 'Göster ▼'}
+                        </div>
+                      </div>
+                      {acik && grup.satirlar.slice().sort((a, b) => a.degisken_adi.localeCompare(b.degisken_adi, 'tr')).map((g) => <KarsilastirmaSatiri key={g.degisken_id} g={g} />)}
+                    </div>
+                  )
+                })}
+              </div>
             </>
           )}
 
-          {hedef && yolHaritasi && (yolHaritasi.simdi.length + yolHaritasi.bu_donem.length + yolHaritasi.uzun_vadede.length > 0) && (
+          {hedef && yolHaritasi && tumAdimlar.length > 0 && (
             <>
               <div className="ct" style={{ marginTop: 20 }}>Gelişim Yol Haritası</div>
-              {['simdi', 'bu_donem', 'uzun_vadede'].map((asama) => (
-                yolHaritasi[asama].length > 0 && (
-                  <div key={asama} className="card">
-                    <div className="ct">{asama === 'simdi' ? 'Şimdi' : asama === 'bu_donem' ? 'Bu Dönem' : 'Uzun Vadede'}</div>
-                    {yolHaritasi[asama].map((g) => <div key={g.degisken_id} className="ld" style={{ marginBottom: 4 }}>• {g.degisken_adi}</div>)}
+              <div className="card">
+                <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 6 }}>
+                  <span>İlerleme</span><span style={{ fontWeight: 700 }}>{tamamlanan} / {tumAdimlar.length} adım</span>
+                </div>
+                <div className="mini-cubuk-track" style={{ width: '100%' }}>
+                  <div className="mini-cubuk-fill" style={{ width: `${Math.round((100 * tamamlanan) / tumAdimlar.length)}%`, background: 'var(--gr)' }} />
+                </div>
+              </div>
+              {ASAMALAR.map((asama) => (
+                (yolHaritasi[asama.kod] || []).length > 0 && (
+                  <div key={asama.kod} className="card">
+                    <div className="ct" style={{ marginBottom: 2 }}>{asama.baslik}</div>
+                    <div className="ps" style={{ margin: '0 0 12px', fontSize: 11.5 }}>{asama.alt}</div>
+                    {yolHaritasi[asama.kod].map((g) => (
+                      <div key={g.degisken_id} style={{ borderTop: '1px solid var(--bor)', paddingTop: 10, marginTop: 10, opacity: g.aksiyon_durumu === 'tamamlandi' ? 0.65 : 1 }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 4 }}>
+                          <div style={{ fontSize: 13, fontWeight: 600 }}>{g.degisken_adi}</div>
+                          {g.kaynak_tipi && <span className="bdg bdg-prog">{KAYNAK_TIPI[g.kaynak_tipi] || g.kaynak_tipi}</span>}
+                        </div>
+                        {g.aksiyon_onerisi && <div className="swb" style={{ marginBottom: 8 }}>{g.aksiyon_onerisi}</div>}
+                        <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+                          {DURUMLAR.map((d) => (
+                            <button key={d.kod} className={g.aksiyon_durumu === d.kod ? 'btn' : 'btn sec'} style={{ fontSize: 11.5, padding: '5px 10px' }}
+                              onClick={() => durumGuncelle(g.degisken_id, d.kod)}>
+                              {g.aksiyon_durumu === d.kod ? '✓ ' : ''}{d.etiket}
+                            </button>
+                          ))}
+                        </div>
+                      </div>
+                    ))}
                   </div>
                 )
               ))}
             </>
           )}
 
-          {hedef && karsilastirma && (
+          {hedef && karsilastirma && karsilastirma.length > 0 && (
             <>
               <div className="ct" style={{ marginTop: 20 }}>Turlar Arası Karşılaştırma</div>
-              {karsilastirma.length === 0 ? (
-                <div className="taslak-onizleme">
-                  <div className="taslak-onizleme-icerik ll">
-                    {[72, 65, 58].map((p, i) => (
-                      <div key={i} className="ob-card">
-                        <div className="ob-top">
-                          <div className="ob-body"><div className="iskelet-satir" style={{ width: 130 }} /></div>
-                          <span className="bdg bdg-prog">değişim</span>
-                        </div>
+              <div className="ll">
+                {karsilastirma.map((k) => (
+                  <div key={k.degisken_id} className="ob-card">
+                    <div className="ob-top">
+                      <div className="ob-body">
+                        <div className="ob-name">{k.degisken_adi}</div>
+                        <div className="ld">{k.eski_puan} → {k.yeni_puan} ({k.degisim > 0 ? '+' : ''}{k.degisim})</div>
+                        {k.yorum_metni && <div className="ld" style={{ marginTop: 4 }}>{k.yorum_metni}</div>}
                       </div>
-                    ))}
-                  </div>
-                  <div className="taslak-onizleme-overlay">
-                    <div className="to-ikon">📈</div>
-                    <div className="to-metin">Henüz karşılaştırılacak ikinci bir tur yok.</div>
-                  </div>
-                </div>
-              ) : (
-                <div className="ll">
-                  {karsilastirma.map((k) => (
-                    <div key={k.degisken_id} className="ob-card">
-                      <div className="ob-top">
-                        <div className="ob-body">
-                          <div className="ob-name">{k.degisken_adi}</div>
-                          <div className="ld">{k.eski_puan} → {k.yeni_puan} ({k.degisim > 0 ? '+' : ''}{k.degisim})</div>
-                        </div>
-                        <span className="bdg bdg-prog">{k.trend.replaceAll('_', ' ')}</span>
-                      </div>
+                      <span className="bdg bdg-prog">{k.trend.replaceAll('_', ' ')}</span>
                     </div>
-                  ))}
-                </div>
-              )}
+                  </div>
+                ))}
+              </div>
             </>
           )}
         </div>
