@@ -119,14 +119,18 @@ def k5_tetikle(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> 
         dal_id = bolum_dal.get(u.bolum_id)
         if dal_id is not None:
             sayim.setdefault(dal_id, []).append(float(u.toplam_uyum))
-    sirali = sorted(sayim.items(), key=lambda kv: (-len(kv[1]), -sum(kv[1]) / len(kv[1])))
+    # [DÜZELTME 2026-10-03] Seçim ve gösterilen puan TEK ölçüye bağlandı: dalın ilk N bölümdeki
+    # toplam uyum payı (%). Önceden seçim "bölüm sayısı", puan "ortalama" idi → ekranda daha
+    # düşük puanlı dal "en güçlü" görünebiliyordu.
+    toplam_pay = sum(sum(v) for v in sayim.values()) or 1.0
+    sirali = sorted(sayim.items(), key=lambda kv: (-sum(kv[1]), -len(kv[1])))
     dallar = {d.id: d for d in db.query(Dal).filter(Dal.id.in_(list(sayim.keys()))).all()} if sayim else {}
 
     def _ozet(dal_id: int) -> dict:
         d = dallar.get(dal_id) or db.get(Dal, dal_id)
         puanlar = sayim.get(dal_id, [])
-        ort = round(sum(puanlar) / len(puanlar), 1) if puanlar else 0.0
-        return {"dal_kodu": d.kod, "dal_adi": d.ad, "puan": ort}
+        pay = round(100.0 * sum(puanlar) / toplam_pay, 1) if puanlar else 0.0
+        return {"dal_kodu": d.kod, "dal_adi": d.ad, "puan": pay}  # ilk N bölümdeki uyum payı (%)
 
     mevcut = (
         db.query(OgrenciDalOturumu)
@@ -147,6 +151,8 @@ def k5_tetikle(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> 
         acilan_idler = []
 
     ilgi_idler = [dal_id for dal_id, liste in sirali if dal_id not in acilan_idler and len(liste) >= 2]
+    # açık dallar her zaman puan sırasıyla (en güçlü önce) dönsün
+    acilan_idler = sorted(acilan_idler, key=lambda i: -sum(sayim.get(i, [])))
     return {
         "esik": esik,
         "acilan": [_ozet(i) for i in acilan_idler],
