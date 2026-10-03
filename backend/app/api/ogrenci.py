@@ -20,7 +20,7 @@ from app.core.katman_servisi import (
     cevabi_kaydet, katmani_tamamla, tum_ana_katmanlar_tamamlandi_mi, parametre_oku,
 )
 from app.core.dal_servisi import (
-    k5_tetikle, dal_bul, dal_oturumu_baslat, dali_tamamla,
+    k5_tetikle, dal_bul, dal_oturumu_baslat, dali_tamamla, bekleyen_dal_var_mi,
 )
 from app.core.skor_motoru import toplam_uyum_hesapla, siralama_getir
 from app.core.kesfet_servisi import bolumleri_ara
@@ -395,6 +395,16 @@ def bolum_siralamasi_getir(
 
     if tur.durum != "tamamlandi":
         return []  # K1-K4 henüz bitmedi — D4 kuralı gereği hiçbir skor gösterilmez
+
+    # [YENİ 2026-10-03] K5 zorunlu — açılan dallar bitmeden sonuç gösterilmez.
+    # Dalların açılmış olduğundan emin olmak için önce tetikleme (idempotent).
+    k5_tetikle(db, ogrenci, tur)
+    db.commit()
+    if bekleyen_dal_var_mi(db, ogrenci, tur):
+        raise HTTPException(
+            status_code=409,
+            detail="Sonuçlarının hazırlanması için önce sana açılan alan (K5) sorularını tamamlamalısın.",
+        )
 
     siralama = siralama_getir(db, ogrenci, tur, ilk_n=ilk_n)
     bolum_adlari = {b.id: b.ad for b in db.query(Bolum).all()}
