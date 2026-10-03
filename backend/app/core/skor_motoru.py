@@ -56,6 +56,8 @@ def _katman_ici_olcekle(matris: np.ndarray, katman_gruplari: list[list[int]]) ->
     """matris: (..., m). Her katmanın sütunlarını satır bazında kendi ortalama/std'sine göre ölçekler."""
     sonuc = matris.astype(float).copy()
     for idx in katman_gruplari:
+        if len(idx) < 3:
+            continue  # 1-2 değişkenli katmanda göreli şekil anlamsız — ham değer kullanılır
         x = sonuc[..., idx]
         ort = x.mean(axis=-1, keepdims=True)
         std = x.std(axis=-1, keepdims=True)
@@ -319,11 +321,28 @@ def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     return n
 
 
-def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, ilk_n: int = 20) -> list[OgrenciBolumUyumSkoru]:
+K5_SIRALAMA_AGIRLIGI = 0.30  # dal_ici_uyum'un nihai sıralamadaki payı (açılan dalın bölümleri için)
+
+
+@dataclass
+class SiralamaSatiri:
+    bolum_id: int
+    toplam_uyum: float
+    kendall_w: float | None = None        # admin/test amaçlı; öğrenci API şemasına girmez
+    yontem_skorlari: dict | None = None   # admin/test amaçlı; öğrenci API şemasına girmez
+
+
+def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, ilk_n: int = 20) -> list[SiralamaSatiri]:
     """
     D5, Katman 1 — Öneri Listesi. Eşit skor durumunda D4'teki tie-break
     kuralı: agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad alfabetik.
+
+    [YENİ 2026-10-03] K5: öğrencinin tamamladığı dal(lar)ın bölümleri için
+    nihai skor = %70 TOPLAM_UYUM + %30 dal_ici_uyum. Diğer bölümler değişmez.
+    Veritabanındaki TOPLAM_UYUM kaydı değiştirilmez; birleştirme okunurken yapılır.
     """
+    from app.models import OgrenciDalUyumSkoru  # döngüsel import olmasın diye burada
+
     girdi = girdi_hazirla(db, ogrenci, tur)
     varyans = girdi.agirlikli_varyans if girdi else {}
     meslek_sayisi = girdi.etkin_meslek_sayisi if girdi else {}
@@ -334,10 +353,25 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
         .filter(OgrenciBolumUyumSkoru.ogrenci_id == ogrenci.id, OgrenciBolumUyumSkoru.tur_id == tur.id)
         .all()
     )
-    skorlar.sort(key=lambda s: (
+    dal_ici: dict[int, float] = {}
+    for d in db.query(OgrenciDalUyumSkoru).filter(
+        OgrenciDalUyumSkoru.ogrenci_id == ogrenci.id, OgrenciDalUyumSkoru.tur_id == tur.id
+    ).all():
+        dal_ici[d.bolum_id] = max(dal_ici.get(d.bolum_id, 0.0), float(d.dal_ici_uyum))
+
+    satirlar = []
+    for s in skorlar:
+        nihai = float(s.toplam_uyum)
+        if s.bolum_id in dal_ici:
+            nihai = (1 - K5_SIRALAMA_AGIRLIGI) * nihai + K5_SIRALAMA_AGIRLIGI * dal_ici[s.bolum_id]
+        satirlar.append(SiralamaSatiri(bolum_id=s.bolum_id, toplam_uyum=round(nihai, 2),
+                                      kendall_w=float(s.kendall_w) if s.kendall_w is not None else None,
+                                      yontem_skorlari=s.yontem_skorlari))
+
+    satirlar.sort(key=lambda s: (
         -s.toplam_uyum,
         varyans.get(s.bolum_id, 0.0),
         -meslek_sayisi.get(s.bolum_id, 0),
         adlar.get(s.bolum_id, ""),
     ))
-    return skorlar[:ilk_n]
+    return satirlar[:ilk_n]
