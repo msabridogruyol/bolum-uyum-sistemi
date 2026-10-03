@@ -421,9 +421,18 @@ export default function SoruSayfasi({ mod = 'katman' }) {
                 {k5Bekliyor ? 'Sıradaki Alan Sorularına Geç →' : 'Bölüm Sonuçlarımı Gör →'}
               </button>
             ) : (
-              <button className="btn full" onClick={() => navigate('/katmanlar')}>
-                {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Alan Sorularına (K5) Geç →' : 'Katmanlara Dön'}
-              </button>
+              (() => {
+                // [2026-10-03] Katmanlar sırayla ilerler: K1 → K2 → K3 → K4 → (K5 alan soruları)
+                const n = Number(String(kod).replace(/\D/g, ''))
+                const sonraki = !tamamlandi.tum_katmanlar_tamamlandi_mi && n >= 1 && n < 4 ? `K${n + 1}` : null
+                return sonraki ? (
+                  <button className="btn full" onClick={() => navigate(`/katmanlar/${sonraki}`)}>Sıradaki Katmana Geç: {sonraki} →</button>
+                ) : (
+                  <button className="btn full" onClick={() => navigate('/katmanlar')}>
+                    {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Alan Sorularına (K5) Geç →' : 'Katmanlara Dön'}
+                  </button>
+                )
+              })()
             )}
           </div>
         ) : !basladiMi ? (
