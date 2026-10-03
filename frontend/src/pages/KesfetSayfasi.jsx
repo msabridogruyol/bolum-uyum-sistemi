@@ -193,14 +193,22 @@ export default function KesfetSayfasi() {
                     ) : meslekler.length === 0 ? (
                       <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz örnek meslek eşleşmesi yok.</div>
                     ) : (
-                      meslekler.map((m, i) => (
-                        <div key={i} className="mini-cubuk-satir">
-                          <div style={{ fontSize: 12, color: 'var(--tx2)', fontWeight: 600, flex: '0 0 auto', width: 'auto', maxWidth: '55%' }}>{m.meslek_adi}</div>
-                          <div className="mini-cubuk-track">
-                            <div className="mini-cubuk-fill" style={{ width: `${Math.round(m.benzerlik_skoru * 100)}%`, background: 'var(--pu)' }} />
-                          </div>
+                      <>
+                        <div className="ps" style={{ margin: '0 0 12px', fontSize: 11.5 }}>
+                          Çubuk, mesleğin bu bölümle ne kadar örtüştüğünü gösterir.
                         </div>
-                      ))
+                        {/* [2026-10-03] Ad üstte, çubuk altta: tüm çubuklar aynı noktadan başlar, ad uzunluğu çubuğu etkilemez */}
+                        {meslekler.map((m, i) => (
+                          <div key={i} style={{ marginBottom: i === meslekler.length - 1 ? 0 : 12 }}>
+                            <div style={{ fontSize: 12, color: 'var(--tx2)', fontWeight: 600, marginBottom: 5, lineHeight: 1.35 }}>
+                              {i + 1}. {m.meslek_adi}
+                            </div>
+                            <div className="mini-cubuk-track" style={{ width: '100%' }}>
+                              <div className="mini-cubuk-fill" style={{ width: `${Math.min(100, Math.round(m.benzerlik_skoru * 100))}%`, background: 'var(--pu)' }} />
+                            </div>
+                          </div>
+                        ))}
+                      </>
                     )}
                   </div>
                 </div>
