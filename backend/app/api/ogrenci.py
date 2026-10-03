@@ -315,7 +315,7 @@ def dali_baslat(
         )
         for s in sorular
     ]
-    return DalBaslatCevap(dal_oturum_id=oturum.id, sorular=soru_out)
+    return DalBaslatCevap(dal_oturum_id=oturum.id, sorular=soru_out, tur_id=tur.id, dal_adi=dal.ad)
 
 
 @router.post("/dallar/{kod}/cevap", status_code=204)
