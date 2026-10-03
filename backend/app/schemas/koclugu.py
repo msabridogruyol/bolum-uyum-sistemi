@@ -15,7 +15,15 @@ class AktifHedefOut(BaseModel):
 
 class GapSatiriOut(BaseModel):
     degisken_id: int
+    degisken_kod: str | None = None
     degisken_adi: str
+    katman_kod: str | None = None
+    katman_adi: str | None = None
+    # [2026-10-03] Ekrandaki karşılaştırma bu GÖRELİ değerlerle çizilir (katman içinde 50 = profilinin ortası).
+    # Kategori de aynı ölçekten hesaplandığı için grafik ile "güçlü/gelişime açık" etiketi çelişmez.
+    ogrenci_goreli: float | None = None
+    bolum_goreli: float | None = None
+    aksiyon_durumu: str | None = None   # planlandi | devam_ediyor | tamamlandi | None
     ogrenci_puan: float
     bolum_beklenen: float
     gap: float
