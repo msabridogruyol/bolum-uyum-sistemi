@@ -6,7 +6,6 @@ import AdminSayfaDuzeni from './components/AdminSayfaDuzeni'
 import GirisSayfasi from './pages/GirisSayfasi'
 import KatmanlarSayfasi from './pages/KatmanlarSayfasi'
 import SoruSayfasi from './pages/SoruSayfasi'
-import K5DalSoruSayfasi from './pages/K5DalSoruSayfasi'
 import SonucSayfasi from './pages/SonucSayfasi'
 import KesfetSayfasi from './pages/KesfetSayfasi'
 import KoclukSayfasi from './pages/KoclukSayfasi'
@@ -57,6 +56,15 @@ function AnaUygulama() {
           </OzelRota>
         }
       />
+      {/* [2026-10-03] K5 dal soruları da sınav ekranında (menüsüz, tam ekran) ve aynı akışla açılır */}
+      <Route
+        path="/k5/:kod"
+        element={
+          <OzelRota>
+            <SoruSayfasi mod="dal" />
+          </OzelRota>
+        }
+      />
 
       <Route
         element={
@@ -68,7 +76,6 @@ function AnaUygulama() {
         <Route path="/" element={<AnaSayfa />} />
         <Route path="/katmanlar" element={<KatmanlarSayfasi />} />
         <Route path="/k5" element={<Navigate to="/katmanlar" replace />} />
-        <Route path="/k5/:kod" element={<K5DalSoruSayfasi />} />
         <Route path="/sonuc" element={<SonucSayfasi />} />
         <Route path="/sonuc/genel" element={<GenelSonuclarSayfasi />} />
         <Route path="/sonuc/K5" element={<K5SonucSayfasi />} />
