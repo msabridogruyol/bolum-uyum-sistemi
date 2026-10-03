@@ -1,5 +1,7 @@
 import { useEffect, useState, useRef } from 'react'
+import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
+import { profilEksikMi } from '../components/AnaSayfaDuzeni'
 
 const CINSIYET_SECENEKLERI = [
   { deger: '', etiket: 'Belirtilmedi' },
@@ -29,6 +31,12 @@ export default function ProfilAyarlariSayfasi() {
   const fotoInputRef = useRef(null)
   const [fotoYukleniyor, setFotoYukleniyor] = useState(false)
 
+  // [2026-10-03] İlk giriş akışı (?ilk=1): kaydedince ana sayfaya geçilir
+  const [params] = useSearchParams()
+  const ilkGiris = params.get('ilk') === '1'
+  const navigate = useNavigate()
+  const duzen = useOutletContext() || {}
+
   useEffect(() => {
     api.profilGetir().then((p) => { setProfil(p); setTaslak(p) }).catch((e) => setHata(e.detail || 'Profil yüklenemedi.'))
   }, [])
@@ -41,6 +49,10 @@ export default function ProfilAyarlariSayfasi() {
     e.preventDefault()
     setHata(null)
     setBasari(null)
+    if (!taslak.okul?.trim() || !taslak.sinif?.trim()) {
+      setHata('Devam etmek için okul ve sınıf bilgisini doldurmalısın.')
+      return
+    }
     setKaydediliyor(true)
     try {
       const guncellenmis = await api.profilGuncelle({
@@ -55,6 +67,11 @@ export default function ProfilAyarlariSayfasi() {
       })
       setProfil(guncellenmis)
       setTaslak(guncellenmis)
+      duzen.profilYenile?.(guncellenmis)
+      if (ilkGiris && !profilEksikMi(guncellenmis)) {
+        navigate('/', { replace: true })
+        return
+      }
       setBasari('Profil bilgilerin kaydedildi.')
     } catch (err) {
       setHata(err.detail || 'Kaydedilemedi.')
@@ -143,6 +160,15 @@ export default function ProfilAyarlariSayfasi() {
         <div className="ps">Profilini, hedeflerini ve hesap güvenliğini buradan yönet.</div>
       </div>
 
+      {(ilkGiris || profilEksikMi(profil)) && (
+        <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)' }}>
+          <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>👋 Başlamadan önce profilini tamamla</div>
+          <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5 }}>
+            Ad soyad, okul ve sınıf bilgilerini doldurup <b>Bilgileri Kaydet</b>'e bas; ardından ana sayfaya geçip ilk katmana başlayabilirsin. Diğer alanlar isteğe bağlı.
+          </div>
+        </div>
+      )}
+
       {hata && <div className="auth-error">{hata}</div>}
       {basari && <div style={{ background: 'var(--grl)', color: 'var(--gr)', fontSize: 12.5, fontWeight: 600, padding: '10px 13px', borderRadius: 8, marginBottom: 14 }}>{basari}</div>}
 
@@ -169,18 +195,21 @@ export default function ProfilAyarlariSayfasi() {
           <div className="ct">Kişisel Bilgiler</div>
 
           <div className="auth-field">
-            <label className="auth-label">Ad Soyad</label>
+            <label className="auth-label">Ad Soyad <span style={{ color: 'var(--re)' }}>*</span></label>
             <input className="auth-input" value={taslak.ad_soyad} onChange={(e) => alanGuncelle('ad_soyad', e.target.value)} required minLength={2} />
           </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
             <div className="auth-field" style={{ flex: 1 }}>
-              <label className="auth-label">Okul</label>
-              <input className="auth-input" value={taslak.okul || ''} onChange={(e) => alanGuncelle('okul', e.target.value)} placeholder="Örn. Atatürk Lisesi" />
+              <label className="auth-label">Okul <span style={{ color: 'var(--re)' }}>*</span></label>
+              <input className="auth-input" value={taslak.okul || ''} onChange={(e) => alanGuncelle('okul', e.target.value)} placeholder="Örn. Atatürk Lisesi" required />
             </div>
             <div className="auth-field" style={{ flex: 1 }}>
-              <label className="auth-label">Sınıf</label>
-              <input className="auth-input" value={taslak.sinif || ''} onChange={(e) => alanGuncelle('sinif', e.target.value)} placeholder="Örn. 12. Sınıf" />
+              <label className="auth-label">Sınıf <span style={{ color: 'var(--re)' }}>*</span></label>
+              <select className="auth-input" value={taslak.sinif || ''} onChange={(e) => alanGuncelle('sinif', e.target.value)} required>
+                <option value="">Seç…</option>
+                {['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].concat(taslak.sinif && !['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].includes(taslak.sinif) ? [taslak.sinif] : []).map((s) => <option key={s} value={s}>{s}</option>)}
+              </select>
             </div>
           </div>
 
@@ -248,7 +277,7 @@ export default function ProfilAyarlariSayfasi() {
         </div>
 
         <button className="btn" type="submit" disabled={kaydediliyor}>
-          {kaydediliyor ? <span className="spin" /> : 'Bilgileri Kaydet'}
+          {kaydediliyor ? <span className="spin" /> : ilkGiris ? 'Kaydet ve Başla →' : 'Bilgileri Kaydet'}
         </button>
       </form>
 
@@ -277,6 +306,17 @@ export default function ProfilAyarlariSayfasi() {
           </button>
         </form>
       </div>
+
+      {/* --- Tanıtım --- */}
+      {duzen.tanitimiAc && (
+        <div className="card" style={{ marginTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
+          <div>
+            <div className="ct" style={{ marginBottom: 2 }}>Sistem Tanıtımı</div>
+            <div className="ps" style={{ margin: 0, fontSize: 12 }}>Sistemin nasıl çalıştığını anlatan kısa tanıtımı yeniden izle.</div>
+          </div>
+          <button className="btn sec" type="button" onClick={duzen.tanitimiAc}>Tanıtımı Göster</button>
+        </div>
+      )}
 
       {/* --- Hukuki not --- */}
       <div className="ps" style={{ marginTop: 16, color: 'var(--tx3)', fontSize: 11.5 }}>
