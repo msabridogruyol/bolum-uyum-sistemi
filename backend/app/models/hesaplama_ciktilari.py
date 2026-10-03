@@ -18,8 +18,8 @@ class BolumAgirligi(Base):
     bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id"), nullable=False)
     degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
     agirlik_degeri: Mapped[float] = mapped_column(Numeric(5, 2), nullable=False)     # A5 — ORTALAMA(A,B,C)
-    yakinsama_skoru: Mapped[float] = mapped_column(Numeric(6, 4), nullable=False)    # A5 — STD_SAPMA(A,B,C)
-    agirlikli_varyans: Mapped[float | None] = mapped_column(Numeric(6, 4))           # A4 — güvenilirlik göstergesi
+    yakinsama_skoru: Mapped[float] = mapped_column(Numeric(10, 4), nullable=False)    # A5 — STD_SAPMA(A,B,C)
+    agirlikli_varyans: Mapped[float | None] = mapped_column(Numeric(12, 4))          # A4 — güvenilirlik göstergesi
     etkin_meslek_sayisi: Mapped[int | None] = mapped_column(Integer)                 # A4 — güvenilirlik göstergesi
     versiyon: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
