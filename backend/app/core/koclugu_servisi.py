@@ -143,13 +143,15 @@ def gap_analizi_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
         if d is not None:
             gruplar.setdefault((d.katman_id, d.dal_id), []).append(degisken_id)
     goreli: dict[int, float] = {}
+    goreli_deger: dict[int, tuple[float, float]] = {}   # [2026-10-03] ekranda gösterilecek (öğrenci, bölüm) göreli değerleri
     for idler in gruplar.values():
         ogr = np.array([[ogrenci_skorlari[i] for i in idler]])
         blm = np.array([[float(en_guncel[i].agirlik_degeri) for i in idler]])
         tum = [list(range(len(idler)))]
-        fark = (_katman_ici_olcekle(ogr, tum) - _katman_ici_olcekle(blm, tum))[0]
-        for i, f in zip(idler, fark):
-            goreli[i] = float(f)
+        ogr_o, blm_o = _katman_ici_olcekle(ogr, tum)[0], _katman_ici_olcekle(blm, tum)[0]
+        for i, a, b in zip(idler, ogr_o, blm_o):
+            goreli[i] = float(a - b)
+            goreli_deger[i] = (float(np.clip(a, 0, 100)), float(np.clip(b, 0, 100)))
 
     satirlar: list[GapSatiri] = []
     for degisken_id, agirlik_satiri in en_guncel.items():
@@ -161,6 +163,7 @@ def gap_analizi_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
         satir = GapSatiri(degisken, ogrenci_puan, bolum_beklenen, bolum_beklenen, None,
                           goreli_fark=goreli.get(degisken_id))
         satir.gelisim_karti = havuz.get((degisken_id, satir.kategori))
+        satir.ogrenci_goreli, satir.bolum_goreli = goreli_deger.get(degisken_id, (ogrenci_puan, bolum_beklenen))
         satirlar.append(satir)
 
     return sorted(satirlar, key=lambda s: s.oncelik_skoru, reverse=True)
