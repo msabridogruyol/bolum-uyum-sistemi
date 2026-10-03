@@ -76,11 +76,20 @@ export default function KatmanlarSayfasi() {
           </div>
 
           <div className="ll">
-            {katmanlar.map((k) => (
+            {katmanlar.map((k) => {
+              // [2026-10-03] Katmanlar sırayla açılır: önceki ana katmanların hepsi bitmeden bu katman kilitli
+              const oncekiEksik = katmanlar.filter((o) => !o.kosullu_mu && o.sira < k.sira && o.durum !== 'tamamlandi')
+              const k5Hazir = k.kosullu_mu && k5Durum?.acilan?.length > 0
+              const kilitli = k.durum !== 'tamamlandi' && (k.kosullu_mu ? !k5Hazir : oncekiEksik.length > 0)
+              const siradaki = !kilitli && k.durum !== 'tamamlandi'
+              return (
               <div
                 key={k.id}
-                className={`lc${k.durum === 'tamamlandi' ? ' done' : k.durum === 'devam_ediyor' ? ' cur' : ''}`}
+                className={`lc${k.durum === 'tamamlandi' ? ' done' : k.durum === 'devam_ediyor' || siradaki ? ' cur' : ''}`}
+                style={kilitli ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}
+                title={kilitli ? (k.kosullu_mu ? 'K1-K4 bitince açılır' : `Önce ${oncekiEksik[0]?.kod} katmanını tamamla`) : undefined}
                 onClick={() => {
+                  if (kilitli) return
                   // [2026-10-03] K5 (koşullu katman) doğrudan başlatılamaz — soruları dallar üzerinden gelir.
                   // Önceden /katmanlar/K5'e gidiyordu; backend bunu "yeni tur" sanıp 120 gün kuralına takılıyordu.
                   if (k.kosullu_mu) {
@@ -92,7 +101,7 @@ export default function KatmanlarSayfasi() {
                 }}
               >
                 <div className="ln" style={{ fontSize: 18 }}>
-                  {k.durum === 'tamamlandi' ? '✓' : KATMAN_IKON[k.kod] || k.sira}
+                  {k.durum === 'tamamlandi' ? '✓' : kilitli ? '🔒' : KATMAN_IKON[k.kod] || k.sira}
                 </div>
                 <div className="lb-wrap">
                   <div className="lt">{k.ad}</div>
@@ -101,6 +110,12 @@ export default function KatmanlarSayfasi() {
                   </div>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
                     {DURUM_ETIKET[k.durum] && <span className={`bdg ${DURUM_RENK[k.durum]}`}>{DURUM_ETIKET[k.durum]}</span>}
+                    {siradaki && k.durum === 'baslamadi' && <span className="bdg bdg-prog">Sıradaki ▶</span>}
+                    {kilitli && (
+                      <span style={{ fontSize: 10.5, color: 'var(--tx3)' }}>
+                        🔒 {k.kosullu_mu ? 'K1-K4 bitince açılır' : `Önce ${oncekiEksik[0]?.kod} katmanını tamamla`}
+                      </span>
+                    )}
                     {k.soru_sayisi > 0 && (
                       <span style={{ fontSize: 10.5, color: 'var(--tx3)' }}>
                         {k.soru_sayisi} soru · ~{tahminiSureDk(k.soru_sayisi)} dk
@@ -115,7 +130,8 @@ export default function KatmanlarSayfasi() {
                   <div className="mini-ilerleme-yuzde" style={{ color: DURUM_RENK_HEX[k.durum] }}>%{DURUM_YUZDE[k.durum]}</div>
                 </div>
               </div>
-            ))}
+              )
+            })}
 
             {k5Durum?.acilan?.map((d) => (
               <div key={d.dal_kodu} className="lc" onClick={() => navigate(`/k5/${d.dal_kodu}`)}>
