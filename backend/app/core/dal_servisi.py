@@ -45,15 +45,17 @@ def k5_adaylarini_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendir
         return []
 
     k4_degiskenler = db.query(Degisken).filter(Degisken.katman_id == k4.id).all()
-    degisken_id_to_dal = {
-        d.bagli_degisken_id: d
-        for d in db.query(Dal).filter(Dal.bagli_degisken_id.in_([v.id for v in k4_degiskenler])).all()
-    }
+    # [DÜZELTME 2026-10-03] Önceden {degisken_id: dal} sözlüğüydü — aynı K4
+    # değişkenine bağlı İKİ dal varsa (örn. A5 → Sağlık ve Doğa Bilimleri)
+    # biri sessizce eziliyordu. Artık her değişken bir dal LİSTESİNE eşleniyor.
+    degisken_id_to_dallar: dict[int, list[Dal]] = {}
+    for d in db.query(Dal).filter(Dal.bagli_degisken_id.in_([v.id for v in k4_degiskenler])).order_by(Dal.id).all():
+        degisken_id_to_dallar.setdefault(d.bagli_degisken_id, []).append(d)
 
     adaylar: list[DalAday] = []
     for degisken in k4_degiskenler:
-        dal = degisken_id_to_dal.get(degisken.id)
-        if dal is None:
+        dallar = degisken_id_to_dallar.get(degisken.id)
+        if not dallar:
             continue  # bu K4 değişkenine bağlı bir dal tanımlanmamış
         skor = (
             db.query(OgrenciDegiskenSkoru)
@@ -65,7 +67,8 @@ def k5_adaylarini_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendir
             .first()
         )
         if skor is not None:
-            adaylar.append(DalAday(dal=dal, degisken_id=degisken.id, puan=float(skor.puan)))
+            for dal in dallar:
+                adaylar.append(DalAday(dal=dal, degisken_id=degisken.id, puan=float(skor.puan)))
 
     return sorted(adaylar, key=lambda a: a.puan, reverse=True)
 
@@ -118,6 +121,35 @@ def k5_tetikle(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> 
     }
 
 
+def bekleyen_dal_var_mi(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> bool:
+    """
+    [YENİ 2026-10-03] K5 zorunlu kuralı — açılmış ama tamamlanmamış bir dal
+    oturumu varsa True döner; sonuç ekranı bu durumda gösterilmez.
+    Sorusu olmayan bir dal (içerik eksikliği) öğrenciyi kilitlemesin diye sayılmaz.
+    """
+    oturumlar = (
+        db.query(OgrenciDalOturumu)
+        .filter(
+            OgrenciDalOturumu.ogrenci_id == ogrenci.id,
+            OgrenciDalOturumu.tur_id == tur.id,
+            OgrenciDalOturumu.durum != "tamamlandi",
+        )
+        .all()
+    )
+    for o in oturumlar:
+        dal_degisken_idler = [d.id for d in db.query(Degisken).filter(Degisken.dal_id == o.dal_id).all()]
+        if not dal_degisken_idler:
+            continue
+        soru_var = (
+            db.query(Soru.id)
+            .filter(Soru.degisken_id.in_(dal_degisken_idler), Soru.aktif_mi.is_(True))
+            .first()
+        )
+        if soru_var is not None:
+            return True
+    return False
+
+
 def dal_bul(db: Session, kod: str) -> Dal:
     dal = db.query(Dal).filter(Dal.kod == kod.upper()).first()
     if dal is None:
@@ -168,8 +200,10 @@ def dali_tamamla(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDegerlendi
     """
     dal_degiskenleri = db.query(Degisken).filter(Degisken.dal_id == dal.id).all()
     degisken_idler = [d.id for d in dal_degiskenleri]
+    # [DÜZELTME] aktif_mi filtresi eklendi — dal_oturumu_baslat yalnızca aktif
+    # soruları soruyor; burada pasif sorular da sayılırsa "cevaplanmadı" hatası çıkar.
     sorular = {
-        s.id: s for s in db.query(Soru).filter(Soru.degisken_id.in_(degisken_idler)).all()
+        s.id: s for s in db.query(Soru).filter(Soru.degisken_id.in_(degisken_idler), Soru.aktif_mi.is_(True)).all()
     }
 
     cevaplar = (
