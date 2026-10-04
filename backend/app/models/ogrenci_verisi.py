@@ -116,7 +116,7 @@ class GuvenlikOlayi(Base):
             "'tam_ekrandan_cikti','tam_ekrana_geri_donuldu',"
             "'sekme_degisti','sekmeye_geri_donuldu',"
             "'pencere_odagi_kaybedildi','pencere_odagi_geri_kazanildi',"
-            "'kamera_izni_reddedildi','kamera_desteklenmiyor'"
+            "'kamera_izni_reddedildi','kamera_desteklenmiyor','kamera_rizasi_verilmedi'"
             ")",
             name="ck_go_olay_tipi",
         ),
