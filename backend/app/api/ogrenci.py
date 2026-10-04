@@ -692,6 +692,13 @@ def bolum_ornek_meslekleri_getir(
         """),
         {"bid": bolum_id},
     ).mappings().all()
+    # [2026-10-04] Bu haftanın keşif görevi bu bölümse tamamlanır (hata olsa da liste yine döner)
+    try:
+        from app.core.haftalik_servisi import kesif_isaretle
+        if kesif_isaretle(db, ogrenci, bolum_id):
+            db.commit()
+    except Exception:
+        db.rollback()
     return [
         BolumOrnekMeslekOut(meslek_adi=r["meslek_adi"], benzerlik_skoru=float(r["benzerlik_skoru"]))
         for r in satirlar
