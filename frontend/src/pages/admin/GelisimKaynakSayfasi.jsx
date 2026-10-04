@@ -181,7 +181,7 @@ export default function GelisimKaynakSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Gelişim Kaynak Havuzu</div>
-        <div className="ps">Filiz'in (AI koç) öğrenciye önerdiği kitap, film, rol model, psikolojik yaklaşım ve aktivite önerileri — bölümden bağımsız, genel bir havuz.</div>
+        <div className="ps">Filiz Gelişim Koçu'nun (AI koç) öğrenciye önerdiği kitap, film, rol model, psikolojik yaklaşım ve aktivite önerileri — bölümden bağımsız, genel bir havuz.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
