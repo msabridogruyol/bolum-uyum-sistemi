@@ -24,7 +24,7 @@ export default function SistemHakkindaSayfasi() {
       <div className="ph">
         <div className="pt">Sistem Hakkında</div>
         <div className="ps">
-          Bölüm Uyum Sistemi'nin uçtan uca nasıl çalıştığının teknik özeti — bu sayfa yalnızca bilgilendirme
+          Filizyol'un uçtan uca nasıl çalıştığının teknik özeti — bu sayfa yalnızca bilgilendirme
           amaçlıdır, buradan hiçbir veri düzenlenemez.
         </div>
       </div>
