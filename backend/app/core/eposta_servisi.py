@@ -25,7 +25,7 @@ from app.core.config import settings
 
 log = logging.getLogger("eposta")
 GONDERILENLER: list[dict] = []          # yalnızca testler için
-GONDEREN_ADI = "Bölüm Uyum Sistemi"
+GONDEREN_ADI = "Filizyol"
 
 
 def eposta_yapilandirildi_mi() -> bool:
@@ -75,7 +75,7 @@ def eposta_gonder(alici: str, konu: str, html: str, metin: str) -> bool:
 def _sablon(baslik: str, govde_html: str) -> str:
     return f"""<!doctype html><html><body style="margin:0;background:#FAF7EF;font-family:Arial,Helvetica,sans-serif;color:#2C2717">
 <div style="max-width:520px;margin:0 auto;padding:28px 18px">
-  <div style="font-size:20px;font-weight:bold;margin-bottom:4px">🌱 Bölüm Uyum Sistemi</div>
+  <div style="font-size:20px;font-weight:bold;margin-bottom:4px">🌱 Filizyol</div>
   <div style="font-size:12px;color:#A79C7C;margin-bottom:18px">Kendi yolunu filizlendir</div>
   <div style="background:#fff;border-radius:16px;padding:24px;border:1px solid #ece5d3">
     <div style="font-size:17px;font-weight:bold;margin-bottom:12px">{baslik}</div>
@@ -94,7 +94,7 @@ def dogrulama_kodu_epostasi(ad: str, kod: str) -> tuple[str, str, str]:
       <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, giriş yapmak için aşağıdaki kodu kullan:</p>
       <div style="font-size:32px;font-weight:bold;letter-spacing:8px;text-align:center;background:#FBE4D2;color:#C86530;border-radius:12px;padding:14px;margin:16px 0">{kod}</div>
       <p style="font-size:13px;color:#7A7157;line-height:1.6">Kod 10 dakika geçerlidir. Kodu kimseyle paylaşma.</p>""")
-    metin = f"Merhaba {ad},\n\nGiriş doğrulama kodun: {kod}\nKod 10 dakika geçerlidir. Kodu kimseyle paylaşma.\n\nBölüm Uyum Sistemi"
+    metin = f"Merhaba {ad},\n\nGiriş doğrulama kodun: {kod}\nKod 10 dakika geçerlidir. Kodu kimseyle paylaşma.\n\nFilizyol"
     return konu, html, metin
 
 
@@ -110,16 +110,16 @@ def sifre_sifirlama_epostasi(ad: str, baglanti: str) -> tuple[str, str, str]:
     html = _sablon("Şifreni sıfırla", f"""
       <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, şifreni sıfırlamak için aşağıdaki düğmeye tıkla. Bağlantı 1 saat geçerlidir ve yalnızca bir kez kullanılabilir.</p>
       {_buton(baglanti, "Yeni şifre belirle")}""")
-    metin = f"Merhaba {ad},\n\nŞifreni sıfırlamak için bu bağlantıyı aç (1 saat geçerli):\n{baglanti}\n\nBölüm Uyum Sistemi"
+    metin = f"Merhaba {ad},\n\nŞifreni sıfırlamak için bu bağlantıyı aç (1 saat geçerli):\n{baglanti}\n\nFilizyol"
     return konu, html, metin
 
 
 def rehber_davet_epostasi(ad: str, okul: str, baglanti: str) -> tuple[str, str, str]:
     ad_h, okul_h = _html.escape(ad or ""), _html.escape(okul or "")
-    konu = "Bölüm Uyum Sistemi — rehber öğretmen hesabın hazır"
+    konu = "Filizyol — rehber öğretmen hesabın hazır"
     html = _sablon("Rehber öğretmen hesabın oluşturuldu", f"""
       <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, <b>{okul_h}</b> için rehber öğretmen hesabın oluşturuldu.
       Aşağıdaki düğmeyle şifreni belirleyip öğrenci giriş sayfasından giriş yapabilirsin. Bağlantı 3 gün geçerlidir.</p>
       {_buton(baglanti, "Şifremi belirle")}""")
-    metin = f"Merhaba {ad},\n\n{okul} için rehber öğretmen hesabın oluşturuldu. Şifreni belirlemek için (3 gün geçerli):\n{baglanti}\n\nBölüm Uyum Sistemi"
+    metin = f"Merhaba {ad},\n\n{okul} için rehber öğretmen hesabın oluşturuldu. Şifreni belirlemek için (3 gün geçerli):\n{baglanti}\n\nFilizyol"
     return konu, html, metin
