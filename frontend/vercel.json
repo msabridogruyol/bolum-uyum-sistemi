@@ -1,6 +1,16 @@
 {
   "rewrites": [
-    { "source": "/api/:path*", "destination": "https://bolum-uyum-sistemi.onrender.com/:path*" },
-    { "source": "/((?!api).*)", "destination": "/index.html" }
+    {
+      "source": "/api/eposta-gonder",
+      "destination": "/api/eposta-gonder"
+    },
+    {
+      "source": "/api/:path*",
+      "destination": "https://bolum-uyum-sistemi.onrender.com/:path*"
+    },
+    {
+      "source": "/((?!api).*)",
+      "destination": "/index.html"
+    }
   ]
 }
