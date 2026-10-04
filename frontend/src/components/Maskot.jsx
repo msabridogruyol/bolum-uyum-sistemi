@@ -942,7 +942,41 @@ function Kol({ x1, y1, x2, y2, renk, el }) {
   )
 }
 
-export function Karakter({ cinsiyet, kiyafet, gozGoz, kirp, uyku, konusuyor }) {
+// [2026-10-04] Filiz öğrenci ilerledikçe büyür: 1 Tohum → 2 Filiz → 3 Fidan → 4 Genç Ağaç → 5 Çiçek → 6 Ulu Çınar
+function Filiz({ seviye }) {
+  const sv = Math.max(1, Math.min(6, seviye || 2))
+  if (sv === 1) {
+    return (
+      <g className="msk-filiz">
+        <path d="M60 28 Q60 23 60 19" stroke="#4F772D" strokeWidth="2.2" fill="none" strokeLinecap="round" />
+        <path d="M60 21 Q54 15 50 20 Q55 24 60 21 Z" fill="#90A955" />
+      </g>
+    )
+  }
+  const boy = { 2: 10, 3: 4, 4: -2, 5: -4, 6: -6 }[sv]   // gövdenin tepe noktası (küçük = daha uzun)
+  const altin = sv === 6
+  return (
+    <g className="msk-filiz">
+      <path d={`M60 28 Q60 ${18 - (10 - boy) / 2} 60 ${boy}`} stroke={altin ? '#7A6A1F' : '#4F772D'} strokeWidth={sv >= 4 ? 3 : 2.5} fill="none" strokeLinecap="round" />
+      <path d={`M60 ${boy + 4} Q50 ${boy - 6} 44 ${boy + 2} Q52 ${boy + 8} 60 ${boy + 4} Z`} fill={altin ? '#E9C46A' : '#90A955'} />
+      <path d={`M60 ${boy + 2} Q70 ${boy - 10} 78 ${boy - 2} Q70 ${boy + 6} 60 ${boy + 2} Z`} fill={altin ? '#D4A72C' : '#6A994E'} />
+      {sv >= 3 && <path d="M60 22 Q50 18 46 23 Q53 27 60 22 Z" fill={altin ? '#E9C46A' : '#A7C957'} />}
+      {sv >= 4 && <path d="M60 18 Q69 13 74 18 Q67 22 60 18 Z" fill={altin ? '#D4A72C' : '#7FB069'} />}
+      {sv >= 5 && (
+        <g transform={`translate(60 ${boy - 1})`}>
+          {[0, 72, 144, 216, 288].map((a) => (
+            <ellipse key={a} cx={4.2 * Math.cos((a * Math.PI) / 180)} cy={4.2 * Math.sin((a * Math.PI) / 180)} rx="3.4" ry="2.4"
+              transform={`rotate(${a} ${4.2 * Math.cos((a * Math.PI) / 180)} ${4.2 * Math.sin((a * Math.PI) / 180)})`} fill={altin ? '#FFD23F' : '#FF8FAB'} />
+          ))}
+          <circle r="2.6" fill={altin ? '#FB8500' : '#FFD166'} />
+        </g>
+      )}
+      {altin && <path className="msk-parilti" d={`M74 ${boy - 6} l1.2 3 3 1.2 -3 1.2 -1.2 3 -1.2 -3 -3 -1.2 3 -1.2 Z`} fill="#FFD23F" />}
+    </g>
+  )
+}
+
+export function Karakter({ cinsiyet, kiyafet, gozGoz, kirp, uyku, konusuyor, seviye = 2 }) {
   const kolRenk = KOL_RENK[kiyafet] || '#7FB069'
   const elRenk = kiyafet === 'astronot' ? '#D1D5DB' : TEN
   const sacli = cinsiyet === 'erkek' || cinsiyet === 'kadin'
@@ -1019,11 +1053,7 @@ export function Karakter({ cinsiyet, kiyafet, gozGoz, kirp, uyku, konusuyor }) {
           <Sapka tip={kiyafet} />
           {kiyafet === 'astronot' && <circle cx="60" cy="54" r="33" fill="#BDE0FE" fillOpacity=".25" stroke="#E5E7EB" strokeWidth="3" />}
           {/* filiz (her zaman en üstte) */}
-          <g className="msk-filiz">
-            <path d="M60 28 Q60 18 60 10" stroke="#4F772D" strokeWidth="2.5" fill="none" strokeLinecap="round" />
-            <path d="M60 14 Q50 4 44 12 Q52 18 60 14 Z" fill="#90A955" />
-            <path d="M60 12 Q70 0 78 8 Q70 16 60 12 Z" fill="#6A994E" />
-          </g>
+          <Filiz seviye={seviye} />
         </g>
       </g>
     </svg>
@@ -1049,6 +1079,7 @@ export default function Maskot({ profil, ozet }) {
   const [kucuk, setKucuk] = useState(() => depoOku('maskot_kucuk', '0') === '1')
   const [sessiz, setSessiz] = useState(() => depoOku('maskot_sessiz', '0') === '1')
   const [efektler, setEfektler] = useState([])
+  const [haftalik, setHaftalik] = useState(null)
   const kutu = useRef(null)
   const sonHareket = useRef(Date.now())
   const mesajSirasi = useRef(0)
@@ -1061,6 +1092,15 @@ export default function Maskot({ profil, ozet }) {
   useEffect(() => {
     api.aktifHedefGetir().then((h) => setHedef(h?.bolum_adi || null)).catch(() => setHedef(null)).finally(() => setHedefYuklendi(true))
   }, [konum.pathname])
+
+  // [2026-10-04] haftalık görevler: ilk açılışta çekilir, görev tamamlanınca ana sayfadaki kart olay yayınlar
+  useEffect(() => {
+    api.haftalikGetir().then(setHaftalik).catch(() => {})
+    const dinle = (e) => setHaftalik(e.detail)
+    window.addEventListener('haftalik-guncellendi', dinle)
+    return () => window.removeEventListener('haftalik-guncellendi', dinle)
+  }, [])
+  const seviye = haftalik?.seviye?.no || 1
 
   const oynat = useCallback((ad) => {
     setAnimasyon(ad)
@@ -1080,9 +1120,15 @@ export default function Maskot({ profil, ozet }) {
     if (sayfa) havuz.push(sayfa, sayfa)
     havuz.push(...(KIYAFET_MESAJLARI[kiyafet] || []), ...GENEL_MESAJLAR)
     if (ilkAd) havuz.push(`${ilkAd}, bugün kendin için küçük bir adım atalım mı? 🌱`)
+    if (haftalik) {
+      const kalan = haftalik.toplam - haftalik.tamamlanan
+      if (kalan > 0) havuz.push(`Bu hafta ${kalan} görevin kaldı. Ana sayfada seni bekliyorlar! ✅`, `Bu haftanın görevlerinden biri: “${haftalik.gorevler.find((g) => g.durum !== 'tamamlandi')?.baslik}”`)
+      if (haftalik.seri.guncel >= 2) havuz.push(`🔥 ${haftalik.seri.guncel} haftalık serin var, harika gidiyorsun!`)
+      if (haftalik.seviye.sonraki_ad) havuz.push(`${haftalik.seviye.sonraki_ad} olmama ${haftalik.seviye.sonraki_esik - haftalik.seviye.puan} puan kaldı. Bana yardım eder misin? 🌱`)
+    }
     mesajSirasi.current = (mesajSirasi.current + 1 + Math.floor(Math.random() * 3)) % havuz.length
     return havuz[mesajSirasi.current]
-  }, [konum.pathname, ozet, hedef, kiyafet, ilkAd])
+  }, [konum.pathname, ozet, hedef, kiyafet, ilkAd, haftalik])
 
   const konus = useCallback((metin) => {
     if (sessiz || kucuk) return
@@ -1144,6 +1190,21 @@ export default function Maskot({ profil, ozet }) {
     }
     depoYaz('maskot_biten_katman', String(biten))
   }, [ozet]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  // seviye atlayınca ve haftanın görevleri bitince kutla
+  const oncekiHaftalik = useRef(null)
+  useEffect(() => {
+    if (!haftalik) return
+    const kayitli = Number(depoOku('maskot_seviye', '0'))
+    if (kayitli > 0 && haftalik.seviye.no > kayitli) {
+      window.setTimeout(() => { oynat('kutla'); efektEkle('yildiz', 14); efektEkle('konfeti', 18); konus(`Büyüdüm! Artık bir ${haftalik.seviye.ad}'ım ${haftalik.seviye.ikon} Teşekkürler!`) }, 600)
+    } else if (oncekiHaftalik.current && haftalik.tamamlanan > oncekiHaftalik.current.tamamlanan) {
+      if (haftalik.tamamlanan === haftalik.toplam) { oynat('kutla'); efektEkle('konfeti', 20); konus('Bu haftanın tüm görevleri tamam! 🎉 Pazartesi yenileri gelecek.') }
+      else { oynat('zipla'); efektEkle('kalp', 6); konus(haftalik.tamamlanan === haftalik.seri_esigi ? 'Bu haftaki serin güvende! 🔥' : 'Bir görev daha bitti, süpersin! ✅') }
+    }
+    depoYaz('maskot_seviye', String(haftalik.seviye.no))
+    oncekiHaftalik.current = haftalik
+  }, [haftalik]) // eslint-disable-line react-hooks/exhaustive-deps
 
   // göz kırpma (rastgele aralıklarla, bazen çift)
   useEffect(() => {
@@ -1216,7 +1277,8 @@ export default function Maskot({ profil, ozet }) {
         </div>
       )}
       <div className={`msk-karakter msk-${animasyon}`} onClick={tiklandi} title="Bana tıkla!">
-        <Karakter cinsiyet={cinsiyet} kiyafet={kiyafet} gozGoz={gozGoz} kirp={kirp} uyku={uyku} konusuyor={!!konusuyor} />
+        <Karakter cinsiyet={cinsiyet} kiyafet={kiyafet} gozGoz={gozGoz} kirp={kirp} uyku={uyku} konusuyor={!!konusuyor} seviye={seviye} />
+        {haftalik && <div className="msk-rozet" title={`${haftalik.seviye.ad} · ${haftalik.seviye.puan} puan`}>{haftalik.seviye.no}</div>}
         {animasyon === 'dusun' && <div className="msk-dusunce">💭</div>}
         {uyku && <div className="msk-zzz"><span>z</span><span>z</span><span>Z</span></div>}
         {efektler.map((e) => (
@@ -1266,6 +1328,9 @@ const MASKOT_CSS = `
 .msk-araclar button,.msk-mini{border:1px solid var(--bor,#ddd);background:var(--sur,#fff);border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .msk-mini{position:fixed;top:12px;right:14px;width:42px;height:42px;z-index:60;box-shadow:0 4px 14px rgba(0,0,0,.12);animation:msk-filiz 2.6s ease-in-out infinite}
 .msk-dusunce{position:absolute;top:-6px;left:-6px;font-size:20px;animation:msk-yuksel 2.2s ease-out}
+.msk-rozet{position:absolute;left:2px;bottom:4px;width:18px;height:18px;border-radius:50%;background:var(--gr,#5E8A54);color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--sur,#fff);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.msk-parilti{animation:msk-parilti 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
+@keyframes msk-parilti{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.2)}}
 .msk-zzz{position:absolute;top:4px;right:-4px;font-weight:800;color:var(--pu,#E07A3F)}
 .msk-zzz span{display:inline-block;animation:msk-zzz 2.4s ease-in-out infinite;opacity:0}
 .msk-zzz span:nth-child(2){animation-delay:.6s;font-size:13px}
