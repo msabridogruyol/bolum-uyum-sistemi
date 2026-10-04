@@ -1,74 +1,83 @@
-"""
-Kimlik doğrulama uç noktaları — D1.
-POST /auth/kayit    — yeni öğrenci hesabı
-POST /auth/giris    — email+şifre ile giriş, access+refresh token döner
-POST /auth/yenile   — refresh token ile yeni access token
-"""
-import uuid
-
-from fastapi import APIRouter, Depends, HTTPException, status
-from sqlalchemy.orm import Session
-
-from app.core.database import get_db
-from app.core.security import (
-    sifre_hashle, sifre_dogrula,
-    erisim_tokeni_uret, yenileme_tokeni_uret, token_coz,
-)
-from app.models import Ogrenci
-from app.schemas.auth import OgrenciKayitIstek, GirisIstek, TokenCifti, YenilemeIstek, OgrenciProfil
-
-router = APIRouter()
+"""Kimlik doğrulama request/response şemaları — D1."""
+from pydantic import BaseModel, EmailStr, Field
 
 
-@router.post("/kayit", response_model=OgrenciProfil, status_code=status.HTTP_201_CREATED)
-def kayit_ol(istek: OgrenciKayitIstek, db: Session = Depends(get_db)):
-    mevcut = db.query(Ogrenci).filter(Ogrenci.email == istek.email).first()
-    if mevcut is not None:
-        raise HTTPException(status_code=400, detail="Bu e-posta ile zaten bir hesap var.")
-
-    ogrenci = Ogrenci(
-        ad_soyad=istek.ad_soyad,
-        email=istek.email,
-        sifre_hash=sifre_hashle(istek.sifre),
-    )
-    db.add(ogrenci)
-    db.commit()
-    db.refresh(ogrenci)
-    return OgrenciProfil(id=str(ogrenci.id), ad_soyad=ogrenci.ad_soyad, email=ogrenci.email)
+class OgrenciKayitIstek(BaseModel):
+    ad_soyad: str = Field(min_length=2, max_length=200)
+    email: EmailStr
+    sifre: str = Field(min_length=8, max_length=128)
 
 
-@router.post("/giris", response_model=TokenCifti)
-def giris_yap(istek: GirisIstek, db: Session = Depends(get_db)):
-    hata = HTTPException(status_code=401, detail="E-posta veya şifre hatalı.")
-
-    ogrenci = db.query(Ogrenci).filter(Ogrenci.email == istek.email).first()
-    if ogrenci is None or not sifre_dogrula(istek.sifre, ogrenci.sifre_hash):
-        raise hata
-
-    return TokenCifti(
-        erisim_tokeni=erisim_tokeni_uret(ogrenci.id, "ogrenci"),
-        yenileme_tokeni=yenileme_tokeni_uret(ogrenci.id, "ogrenci"),
-    )
+class GirisIstek(BaseModel):
+    email: EmailStr
+    sifre: str
 
 
-@router.post("/yenile", response_model=TokenCifti)
-def token_yenile(istek: YenilemeIstek, db: Session = Depends(get_db)):
-    hata = HTTPException(status_code=401, detail="Geçersiz yenileme tokeni.")
+class TokenCifti(BaseModel):
+    erisim_tokeni: str
+    yenileme_tokeni: str
+    token_tipi: str = "bearer"
 
-    payload = token_coz(istek.yenileme_tokeni)
-    if payload is None or payload.get("tip") != "refresh":
-        raise hata
 
-    try:
-        ogrenci_id = uuid.UUID(payload["sub"])
-    except (KeyError, ValueError):
-        raise hata
+class YenilemeIstek(BaseModel):
+    yenileme_tokeni: str
 
-    ogrenci = db.get(Ogrenci, ogrenci_id)
-    if ogrenci is None:
-        raise hata
 
-    return TokenCifti(
-        erisim_tokeni=erisim_tokeni_uret(ogrenci.id, "ogrenci"),
-        yenileme_tokeni=yenileme_tokeni_uret(ogrenci.id, "ogrenci"),
-    )
+class OgrenciProfil(BaseModel):
+    id: str
+    ad_soyad: str
+    email: str
+
+    model_config = {"from_attributes": True}
+
+
+# ============================================================================
+# [2026-10-04] KVKK, 2 adımlı doğrulama, şifre sıfırlama
+# ============================================================================
+class KvkkOnayIstek(BaseModel):
+    onaylar: dict[str, bool]
+
+
+class OgrenciKayitIstekV2(OgrenciKayitIstek):
+    kvkk: dict[str, bool] | None = None   # yeni kayıt ekranı gönderir; eski istemciler için isteğe bağlı
+
+
+class GirisIstekV2(GirisIstek):
+    cihaz_tokeni: str | None = None
+
+
+class GirisCevap(BaseModel):
+    """Ya tokenler döner ya da (2 adımlı doğrulama gerekiyorsa) geçici token + maskeli e-posta."""
+    erisim_tokeni: str | None = None
+    yenileme_tokeni: str | None = None
+    token_tipi: str = "bearer"
+    kullanici_tipi: str | None = None          # 'ogrenci' | 'rehber' | yönetici rolü
+    iki_adim_gerekli: bool = False
+    gecici_token: str | None = None
+    maskeli_eposta: str | None = None
+    cihaz_tokeni: str | None = None             # "bu cihazı hatırla" seçildiyse
+
+
+class IkiAdimDogrulaIstek(BaseModel):
+    gecici_token: str
+    kod: str = Field(min_length=4, max_length=12)
+    cihazi_hatirla: bool = False
+
+
+class IkiAdimTekrarIstek(BaseModel):
+    gecici_token: str
+
+
+class SifremiUnuttumIstek(BaseModel):
+    email: EmailStr
+
+
+class SifreSifirlaIstek(BaseModel):
+    token: str = Field(min_length=10, max_length=200)
+    yeni_sifre: str = Field(min_length=8, max_length=128)
+
+
+class TokenBilgisiOut(BaseModel):
+    amac: str
+    ad: str
+    maskeli_eposta: str
