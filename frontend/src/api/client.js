@@ -14,6 +14,20 @@ function tokenlariTemizle(kapsam = 'ogrenci') {
   localStorage.removeItem(`${kapsam}_yenileme_tokeni`)
 }
 
+// [2026-10-04] "Bu cihazı 30 gün hatırla" — sunucunun verdiği rastgele cihaz anahtarı
+function cihazTokeniAl(kapsam) {
+  try { return localStorage.getItem(`${kapsam}_cihaz_tokeni`) || null } catch { return null }
+}
+
+function girisSonucunuKaydet(sonuc, kapsam) {
+  if (!sonuc || !sonuc.erisim_tokeni) return  // 2 adımlı doğrulama bekleniyor
+  const hedef = kapsam === 'ogrenci' && sonuc.kullanici_tipi === 'rehber' ? 'rehber' : kapsam
+  tokenlariKaydet(sonuc.erisim_tokeni, sonuc.yenileme_tokeni, hedef)
+  if (sonuc.cihaz_tokeni) {
+    try { localStorage.setItem(`${kapsam}_cihaz_tokeni`, sonuc.cihaz_tokeni) } catch { /* yoksay */ }
+  }
+}
+
 class ApiHatasi extends Error {
   constructor(status, detail) {
     super(detail || `HTTP ${status}`)
@@ -77,11 +91,25 @@ export const api = {
 
   // --- D1: Auth (öğrenci) ---
   kayitOl: (veri) => post('/auth/kayit', veri),
+  // [2026-10-04] 2 adımlı doğrulama: cevap ya tokenleri ya da { iki_adim_gerekli, gecici_token, maskeli_eposta } getirir.
+  // Rehber öğretmen de bu sayfadan girer; tokenleri 'rehber' kapsamında saklanır.
   girisYap: async (veri) => {
-    const sonuc = await post('/auth/giris', veri)
-    tokenlariKaydet(sonuc.erisim_tokeni, sonuc.yenileme_tokeni, 'ogrenci')
+    const sonuc = await post('/auth/giris', { ...veri, cihaz_tokeni: cihazTokeniAl('ogrenci') })
+    girisSonucunuKaydet(sonuc, 'ogrenci')
     return sonuc
   },
+  ikiAdimDogrula: async (geciciToken, kod, cihaziHatirla) => {
+    const sonuc = await post('/auth/iki-adim/dogrula', { gecici_token: geciciToken, kod, cihazi_hatirla: !!cihaziHatirla })
+    girisSonucunuKaydet(sonuc, 'ogrenci')
+    return sonuc
+  },
+  kodTekrarGonder: (geciciToken) => post('/auth/iki-adim/tekrar', { gecici_token: geciciToken }),
+  sifremiUnuttum: (email) => post('/auth/sifremi-unuttum', { email }),
+  sifreBaglantiBilgisi: (token) => get(`/auth/sifre-sifirla/bilgi?token=${encodeURIComponent(token)}`),
+  sifreSifirla: (token, yeniSifre) => post('/auth/sifre-sifirla', { token, yeni_sifre: yeniSifre }),
+  kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
+  kvkkDurumu: () => get('/ogrenci/kvkk'),
+  kvkkGuncelle: (onaylar) => post('/ogrenci/kvkk', { onaylar }),
   cikisYap: () => tokenlariTemizle('ogrenci'),
   girisYapildiMi: () => !!tokenAl('ogrenci'),
 
@@ -140,10 +168,17 @@ export const api = {
 
   // --- Admin: Auth ---
   adminGirisYap: async (veri) => {
-    const sonuc = await post('/admin/auth/giris', veri)
-    tokenlariKaydet(sonuc.erisim_tokeni, sonuc.yenileme_tokeni, 'admin')
+    const sonuc = await post('/admin/auth/giris', { ...veri, cihaz_tokeni: cihazTokeniAl('admin') })
+    girisSonucunuKaydet(sonuc, 'admin')
     return sonuc
   },
+  adminIkiAdimDogrula: async (geciciToken, kod, cihaziHatirla) => {
+    const sonuc = await post('/admin/auth/iki-adim/dogrula', { gecici_token: geciciToken, kod, cihazi_hatirla: !!cihaziHatirla })
+    girisSonucunuKaydet(sonuc, 'admin')
+    return sonuc
+  },
+  adminKodTekrarGonder: (geciciToken) => post('/admin/auth/iki-adim/tekrar', { gecici_token: geciciToken }),
+  adminSifremiUnuttum: (email) => post('/admin/auth/sifremi-unuttum', { email }),
   adminCikisYap: () => tokenlariTemizle('admin'),
   adminGirisYapildiMi: () => !!tokenAl('admin'),
   adminRolGetir: () => jwtCoz(tokenAl('admin'))?.rol ?? null,
