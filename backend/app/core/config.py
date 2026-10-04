@@ -24,6 +24,21 @@ class Settings(BaseSettings):
     # --- İş kuyruğu (veritabani_taslagi.md Madde 1 — Celery + Redis) ---
     REDIS_URL: str = "redis://localhost:6379/0"
 
+    # --- [2026-10-04] E-posta (doğrulama kodu, şifre sıfırlama, rehber daveti) ---
+    # Render ücretsiz planı SMTP portlarını engellediği için e-posta Vercel'deki
+    # frontend/api/eposta-gonder.js fonksiyonu üzerinden Gmail ile gönderilir.
+    EPOSTA_SERVIS_URL: str = ""        # ör. https://site-adi.vercel.app/api/eposta-gonder
+    EPOSTA_GIZLI_ANAHTAR: str = ""     # Vercel'deki EPOSTA_GIZLI_ANAHTAR ile AYNI uzun rastgele metin
+    # İsteğe bağlı doğrudan SMTP (Render ücretli plan / yerel geliştirme)
+    SMTP_SUNUCU: str = ""
+    SMTP_PORT: int = 465
+    SMTP_KULLANICI: str = ""
+    SMTP_SIFRE: str = ""
+    # E-postadaki bağlantıların açacağı site adresi (ör. https://site-adi.vercel.app)
+    FRONTEND_URL: str = ""
+    # Acil durum anahtarı: "1" ise 2 adımlı doğrulama tamamen atlanır (e-posta çalışmazsa kilitlenmeyi önler)
+    IKI_ADIM_KAPALI: str = ""
+
     # --- Sistem varsayılanları (E8'deki varsayılanlarla birebir aynı;
     #     gerçek değerler sistem_parametreleri tablosunda tutulur, bunlar
     #     yalnızca tablo boşsa kullanılacak "ilk kurulum" değerleridir) ---
