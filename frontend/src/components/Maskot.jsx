@@ -1167,7 +1167,7 @@ export default function Maskot({ profil, ozet }) {
   // ilk açılış: selam + sayfa mesajı
   useEffect(() => {
     const t1 = window.setTimeout(() => oynat('salla'), 900)
-    const t2 = window.setTimeout(() => konus(ilkAd ? `Merhaba ${ilkAd}! Ben Filiz 🌱` : 'Merhaba! Ben Filiz 🌱'), 1100)
+    const t2 = window.setTimeout(() => konus(ilkAd ? `Merhaba ${ilkAd}! Ben Filiz, gelişim koçun 🌱` : 'Merhaba! Ben Filiz, gelişim koçun 🌱'), 1100)
     return () => { window.clearTimeout(t1); window.clearTimeout(t2) }
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -1275,7 +1275,7 @@ export default function Maskot({ profil, ozet }) {
 
   if (kucuk) {
     return (
-      <button className="msk-mini" onClick={() => { kucukDegistir(false); oynat('salla'); setTimeout(() => konus('Geri döndüm! 🌱'), 200) }} title="Filiz'i göster">
+      <button className="msk-mini" onClick={() => { kucukDegistir(false); oynat('salla'); setTimeout(() => konus('Geri döndüm! 🌱'), 200) }} title="Filiz Gelişim Koçu'nu göster">
         <span style={{ fontSize: 22 }}>🌱</span>
         <style>{MASKOT_CSS}</style>
       </button>
@@ -1303,7 +1303,7 @@ export default function Maskot({ profil, ozet }) {
         ))}
       </div>
       {!sohbetAcik && (
-        <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title="Filiz ile sohbet et">💬 Bana sor</button>
+        <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title="Filiz Gelişim Koçu ile sohbet et">💬 Bana sor</button>
       )}
       <div className="msk-araclar">
         <button onClick={sessizDegistir} title={sessiz ? 'Konuşmayı aç' : 'Sessize al'}>{sessiz ? '🔇' : '🔊'}</button>
