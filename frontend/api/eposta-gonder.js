@@ -64,7 +64,7 @@ export default async function handler(req, res) {
 
   try {
     await tasiyiciAl().sendMail({
-      from: { name: 'Bölüm Uyum Sistemi', address: process.env.GMAIL_ADRES },
+      from: { name: 'Filizyol', address: process.env.GMAIL_ADRES },
       to: alici,
       subject: konu,
       text: metin || '',
