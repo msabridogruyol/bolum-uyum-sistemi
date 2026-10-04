@@ -172,7 +172,7 @@ export default function HaftalikGorevler() {
         style={{ marginTop: 10, width: '100%', textAlign: 'center', border: '1px dashed var(--pu)', color: 'var(--pu)', fontWeight: 700 }}
         onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac', { detail: { mesaj: 'Bu hafta neye odaklanmalıyım?' } }))}
       >
-        💬 Bu hafta neye odaklanmalıyım? Filiz'e sor
+        💬 Bu hafta neye odaklanmalıyım? Filiz Gelişim Koçu'na sor
       </button>
 
       {/* son 8 hafta + seviye */}
