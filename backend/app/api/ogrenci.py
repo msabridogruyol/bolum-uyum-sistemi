@@ -11,6 +11,9 @@ from sqlalchemy.orm import Session
 from sqlalchemy import text, func
 
 from app.api.deps import get_mevcut_ogrenci
+from fastapi import Request
+from app.core import hesap_guvenligi_servisi as hg
+from app.schemas.auth import KvkkOnayIstek
 from app.core.database import get_db
 from app.core.security import sifre_hashle, sifre_dogrula
 from datetime import datetime, timedelta, timezone
@@ -718,6 +721,7 @@ GUVENLIK_OLAY_TIPLERI = {
     "sekme_degisti", "sekmeye_geri_donuldu",
     "pencere_odagi_kaybedildi", "pencere_odagi_geri_kazanildi",
     "kamera_izni_reddedildi", "kamera_desteklenmiyor",
+    "kamera_rizasi_verilmedi",  # [2026-10-04] KVKK: öğrenci kamera onayı vermedi
 }
 
 
@@ -770,6 +774,8 @@ def guvenlik_fotografi_kaydet(
     if not istek.foto_base64.startswith("data:image/"):
         raise HTTPException(status_code=400, detail="Geçersiz görsel formatı.")
     _tur_sahipligini_dogrula(db, ogrenci, istek.tur_id)
+    if not hg.onay_var_mi(db, "ogrenci", ogrenci.id, "kamera"):   # [2026-10-04] KVKK
+        raise HTTPException(status_code=403, detail="Kamera için onay vermedin; fotoğraf kaydedilmedi.")
 
     db.add(GuvenlikFotografi(
         ogrenci_id=ogrenci.id, tur_id=istek.tur_id,
@@ -777,3 +783,28 @@ def guvenlik_fotografi_kaydet(
         katman_kod=istek.katman_kod,
     ))
     db.commit()
+
+
+
+# ============================================================================
+# [2026-10-04] KVKK onay durumu — Ayarlar > Gizlilik ve İzinler
+# ============================================================================
+@router.get("/kvkk")
+def kvkk_durumunu_getir(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """guncel=False ise ön yüz zorunlu onay penceresini gösterir (yeni metin sürümü veya eski hesap)."""
+    return hg.kvkk_durumu(db, "ogrenci", ogrenci.id)
+
+
+@router.post("/kvkk")
+def kvkk_onaylarini_guncelle(istek: KvkkOnayIstek, request: Request, db: Session = Depends(get_db),
+                             ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    from app.api.auth import istemci_ip
+    durum = hg.kvkk_durumu(db, "ogrenci", ogrenci.id)
+    try:
+        # Güncel sürüm yoksa tam onay seti (zorunlular dahil) beklenir; varsa yalnızca değişen maddeler gelebilir.
+        hg.kvkk_kaydet(db, "ogrenci", ogrenci.id, istek.onaylar, istemci_ip(request), tam_kayit=not durum["guncel"])
+    except IsKuraliHatasi as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    db.commit()
+    return hg.kvkk_durumu(db, "ogrenci", ogrenci.id)
