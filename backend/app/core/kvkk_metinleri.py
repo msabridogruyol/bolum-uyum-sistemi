@@ -21,7 +21,7 @@ AYDINLATMA_METNI = f"""KİŞİSEL VERİLERİN İŞLENMESİNE İLİŞKİN AYDINLA
 • Kimlik ve iletişim: ad soyad, e-posta adresi.
 • Eğitim bilgileri: okul, sınıf; isteğe bağlı olarak doğum tarihi, cinsiyet, hedef üniversite ve meslek.
 • Değerlendirme verileri: değerler, kişilik, iş ortamı tercihleri ve alan eğilimi sorularına verdiğin cevaplar ve bunlardan hesaplanan sonuçlar, bölüm uyum puanları, hedef bölüm, gelişim planı ilerlemen, haftalık görevlerin ve yansıtma cevapların, deneme sınavı sonuçların.
-• Koçluk sohbetleri: Filiz (yapay zekâ koçluk asistanı) ile yazıştığın mesajlar.
+• Koçluk sohbetleri: Filiz Gelişim Koçu (yapay zekâ koçluk asistanı) ile yazıştığın mesajlar.
 • Görsel kayıt (yalnızca ayrıca onay verirsen): değerlendirme sırasında kimlik doğrulama amacıyla çekilen kamera fotoğrafları.
 • İşlem güvenliği: giriş kayıtları, IP adresi, değerlendirme sırasındaki sekme/tam ekran değişikliği kayıtları.
 
@@ -54,7 +54,7 @@ ONAY_MADDELERI = [
     ("acik_riza_analiz", "Değerlendirme cevaplarımın ve kişilik/ilgi analizimin yapılmasına ve saklanmasına açık rıza veriyorum.",
      "Bölüm önerileri ve koçluk bu analize dayandığı için sistemi kullanmak için gereklidir.", True),
     ("yurt_disi_aktarim", "Verilerimin, yurt dışında sunucuları bulunabilen bulut ve yapay zekâ hizmet sağlayıcılarına aktarılmasına açık rıza veriyorum.",
-     "Sistem bulutta çalıştığı ve Filiz bir yapay zekâ hizmeti kullandığı için gereklidir.", True),
+     "Sistem bulutta çalıştığı ve Filiz Gelişim Koçu bir yapay zekâ hizmeti kullandığı için gereklidir.", True),
     ("veli_beyani", "18 yaşından küçüksem, sistemi velimin bilgisi ve onayıyla kullandığımı beyan ederim.",
      "Reşit olmayan kullanıcılar için veli bilgisi gereklidir.", True),
     ("rehber_paylasim", "Sonuçlarımın ve ilerleme bilgilerimin okulumdaki rehber öğretmenle paylaşılmasına açık rıza veriyorum.",
