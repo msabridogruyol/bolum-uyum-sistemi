@@ -62,7 +62,7 @@ export default function GirisSayfasi() {
       <TemaAnahtari />
       <div className="auth-card" style={sekme === 'kayit' && !ikiAdim ? { maxWidth: 460 } : undefined}>
         <span className="auth-emoji">🌱</span>
-        <div className="auth-logo">Bölüm Uyum Sistemi</div>
+        <div className="auth-logo">Filizyol</div>
         <div className="auth-sub">{ikiAdim ? 'Giriş doğrulaması' : 'Kendi yolunu filizlendir'}</div>
 
         {ikiAdim ? (
