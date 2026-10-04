@@ -6,7 +6,7 @@ const ADIMLAR = [
   {
     ikon: '🌱',
     baslik: 'Hoş geldin!',
-    metin: 'Filizyol, sana en uygun üniversite bölümlerini bulmana ve o bölüme hazırlanmana yardım eder. Ben Filiz, bu yolda sana eşlik edeceğim.',
+    metin: 'Filizyol, sana en uygun üniversite bölümlerini bulmana ve o bölüme hazırlanmana yardım eder. Ben Filiz, gelişim koçun; bu yolda sana eşlik edeceğim.',
     maddeler: ['Doğru ya da yanlış cevap yok', 'Hızlı değil, samimi cevap ver', 'Her katman yaklaşık 4-6 dakika sürer'],
   },
   {
