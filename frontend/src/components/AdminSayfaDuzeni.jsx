@@ -8,7 +8,7 @@ export default function AdminSayfaDuzeni() {
     <div className="app">
       <div className="sb">
         <div className="sb-logo">
-          <div className="nm">Bölüm Uyum Sistemi</div>
+          <div className="nm">Filizyol</div>
           <div className="su">Yönetici Paneli</div>
         </div>
         <div className="sb-user">
