@@ -2,6 +2,7 @@ import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { profilEksikMi } from '../components/AnaSayfaDuzeni'
+import { GizlilikKarti } from '../components/KvkkBilesenleri'
 
 const CINSIYET_SECENEKLERI = [
   { deger: '', etiket: 'Belirtilmedi' },
@@ -306,6 +307,9 @@ export default function ProfilAyarlariSayfasi() {
           </button>
         </form>
       </div>
+
+      {/* --- [2026-10-04] KVKK: isteğe bağlı izinler --- */}
+      <GizlilikKarti />
 
       {/* --- Tanıtım --- */}
       {duzen.tanitimiAc && (
