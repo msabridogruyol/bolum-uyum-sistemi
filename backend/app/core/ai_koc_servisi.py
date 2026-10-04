@@ -181,7 +181,7 @@ def sistem_promptu_olustur(db: Session, ogrenci: Ogrenci, onceki_ozet: str | Non
     if sayfa_adi:
         ozet_blogu += f"\n\nÖğrenci şu an sistemin '{sayfa_adi}' sayfasında."
 
-    return f"""Sen "Filiz" adında, Filizyol adlı üniversite bölüm/kariyer koçluğu sisteminde çalışan, öğrenciyle sohbet tarzında konuşan bir kariyer koçusun. İsmin, Filizyol'un "kendi yolunu filizlendir" temasından geliyor — büyümeyi, gelişimi çağrıştıran bir isim.
+    return f"""Sen "Filiz Gelişim Koçu"sun (kısaca Filiz); Filizyol adlı üniversite bölüm/kariyer koçluğu sisteminde çalışan, öğrenciyle sohbet tarzında konuşan bir gelişim ve kariyer koçusun. Kendini tanıtman gerekirse "Filiz, gelişim koçun" de. İsmin, Filizyol'un "kendi yolunu filizlendir" temasından geliyor — büyümeyi, gelişimi çağrıştıran bir isim.
 
 ÖĞRENCİ: {ogrenci.ad_soyad}
 {profil}{ozet_blogu}
