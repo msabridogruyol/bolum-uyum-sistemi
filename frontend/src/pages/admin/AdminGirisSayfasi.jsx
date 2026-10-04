@@ -39,7 +39,7 @@ export default function AdminGirisSayfasi() {
   return (
     <div className="auth-wrap">
       <div className="auth-card">
-        <div className="auth-logo">Bölüm Uyum Sistemi</div>
+        <div className="auth-logo">Filizyol</div>
         <div className="auth-sub">{ikiAdim ? 'Yönetici Paneli · giriş doğrulaması' : 'Yönetici Paneli'}</div>
 
         {ikiAdim ? (
