@@ -94,6 +94,21 @@ class ZiyaretKaydiMiddleware(BaseHTTPMiddleware):
 app.add_middleware(ZiyaretKaydiMiddleware)
 
 
+@app.on_event("startup")
+def _baslangic_temizligi():
+    """[2026-10-04] KVKK: 6 aydan eski kamera fotoğraflarını sil (Render her uyanışta çalıştırır)."""
+    try:
+        from app.core.hesap_guvenligi_servisi import eski_fotograflari_temizle
+        db = SessionLocal()
+        try:
+            eski_fotograflari_temizle(db)
+            db.commit()
+        finally:
+            db.close()
+    except Exception:
+        pass
+
+
 @app.get("/saglik")
 def saglik_kontrolu():
     """Cloud Run health check uç noktası."""
