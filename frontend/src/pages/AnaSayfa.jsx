@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import HaftalikGorevler from '../components/HaftalikGorevler'
 
 const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
@@ -137,6 +138,9 @@ export default function AnaSayfa() {
           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--gr)' }}>Başla →</span>
         </div>
       )}
+
+      {/* [2026-10-04] Her hafta 3 görev — sistemi düzenli kullanımın merkezi */}
+      <HaftalikGorevler />
 
       <div className="anasayfa-duzen">
         {/* ============ SOL SÜTUN — ana içerik ============ */}
