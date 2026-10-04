@@ -134,7 +134,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
       }}>
         <div style={{ fontWeight: 700, marginBottom: 6, color: 'var(--tl)' }}>📋 Bilmen Gerekenler</div>
         <div>• Bu değerlendirme <b>tam ekran</b> modunda yapılacak — tam ekrandan çıkarsan uyarı alırsın.</div>
-        <div>• <b>Kameran</b>, kimlik doğrulama amacıyla aralıklarla fotoğraf çekecek (izin verirsen).</div>
+        <div>• <b>Kamera</b>: Ayarlar'da kamera iznini verdiysen kimlik doğrulama amacıyla aralıklarla fotoğraf çekilir; vermediysen kamera açılmaz.</div>
         <div>• Sekme değiştirme ve pencere odağı kaybı gibi olaylar kayıt altına alınır.</div>
         <div>• Katmandan erken çıkarsan, o ana kadarki ilerlemen kaybolur — baştan başlaman gerekir.</div>
         <div>• Doğru/yanlış cevap yok — içtenlikle, düşünmeden hızlıca cevapla.</div>
@@ -184,6 +184,11 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   const canvasRef = useRef(null)
   const kameraAktifRef = useRef(false)
   const turIdRef = useRef(null)  // olay/fotoğraf gönderirken en güncel tur_id'yi kullanmak için
+  // [2026-10-04] KVKK: kamera yalnızca öğrenci "kamera" iznini verdiyse açılır (Ayarlar > Gizlilik ve İzinler)
+  const [kameraRizasi, setKameraRizasi] = useState(null)
+  useEffect(() => {
+    api.kvkkDurumu().then((d) => setKameraRizasi(!!d.onaylar?.kamera)).catch(() => setKameraRizasi(false))
+  }, [])
 
   useEffect(() => { turIdRef.current = turId }, [turId])
 
@@ -266,8 +271,15 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   // Kamera kurulumu — izin verilmezse sessizce atlanır, testi bloklamaz
   // ------------------------------------------------------------------
   useEffect(() => {
-    if (!sorular || !basladiMi || tamamlandi) return
+    if (!sorular || !basladiMi || tamamlandi || kameraRizasi === null) return
     let akis = null
+
+    if (!kameraRizasi) {
+      const gonder = () => api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_rizasi_verilmedi', kod).catch(() => {})
+      if (turIdRef.current) gonder()
+      else setTimeout(gonder, 500)
+      return
+    }
 
     if (!navigator.mediaDevices?.getUserMedia) {
       const gonder = () => api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_desteklenmiyor', kod).catch(() => {})
@@ -296,7 +308,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
       akis?.getTracks().forEach((t) => t.stop())
       kameraAktifRef.current = false
     }
-  }, [sorular, basladiMi, tamamlandi, kod])
+  }, [sorular, basladiMi, tamamlandi, kod, kameraRizasi])
 
   const fotografCek = useCallback(() => {
     if (!kameraAktifRef.current || !videoRef.current || !canvasRef.current || !turIdRef.current) return
@@ -386,7 +398,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
       alignItems: 'center', background: 'var(--bg)',
     }}>
       {tamEkranDisinda && <GuvenlikUyariKatmani tamEkranaGeriDon={tamEkranaGec} onErkenBitir={sinavdanCik} />}
-      <KameraOnizleme videoRef={videoRef} />
+      {kameraRizasi && <KameraOnizleme videoRef={videoRef} />}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       <SinavBasligi />
 
