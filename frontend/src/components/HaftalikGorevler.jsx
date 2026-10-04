@@ -166,6 +166,15 @@ export default function HaftalikGorevler() {
         })}
       </div>
 
+      {/* [2026-10-04] Filiz'e bağlantı: haftanın planını sohbetle konuşmak için */}
+      <button
+        className="filiz-oneri"
+        style={{ marginTop: 10, width: '100%', textAlign: 'center', border: '1px dashed var(--pu)', color: 'var(--pu)', fontWeight: 700 }}
+        onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac', { detail: { mesaj: 'Bu hafta neye odaklanmalıyım?' } }))}
+      >
+        💬 Bu hafta neye odaklanmalıyım? Filiz'e sor
+      </button>
+
       {/* son 8 hafta + seviye */}
       <div style={{ display: 'flex', gap: 20, marginTop: 16, paddingTop: 14, borderTop: '1px solid var(--bor)', flexWrap: 'wrap', alignItems: 'flex-end' }}>
         <div style={{ flex: '1 1 220px' }}>
