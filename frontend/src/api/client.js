@@ -133,6 +133,10 @@ export const api = {
   aiKocOturumuBitir: (oturumId) => post(`/koclugu/asistan/oturum/${oturumId}/bitir`, {}),
   aiKocGecmisiGetir: () => get('/koclugu/asistan/gecmis'),
 
+  // --- [2026-10-04] Haftalık görevler + seri + Filiz seviyesi ---
+  haftalikGetir: () => get('/haftalik'),
+  haftalikGorevTamamla: (gorevId, yanit) => post(`/haftalik/gorev/${gorevId}/tamamla`, { yanit: yanit ?? null }),
+
   // --- Admin: Auth ---
   adminGirisYap: async (veri) => {
     const sonuc = await post('/admin/auth/giris', veri)
