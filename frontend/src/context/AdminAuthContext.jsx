@@ -8,13 +8,22 @@ export function AdminAuthProvider({ children }) {
   const [rol, setRol] = useState(api.adminRolGetir())
   const [kendiId, setKendiId] = useState(api.adminIdGetir())
 
-  const girisYap = useCallback(async (email, sifre) => {
-    const sonuc = await api.adminGirisYap({ email, sifre })
-    setGirisYapildi(true)
-    setRol(api.adminRolGetir())
-    setKendiId(api.adminIdGetir())
+  // [2026-10-04] 2 adımlı doğrulama gerekiyorsa sonuc.iki_adim_gerekli=true döner, giriş henüz tamamlanmaz
+  const sonucuIsle = useCallback((sonuc) => {
+    if (sonuc?.erisim_tokeni) {
+      setGirisYapildi(true)
+      setRol(api.adminRolGetir())
+      setKendiId(api.adminIdGetir())
+    }
     return sonuc
   }, [])
+
+  const girisYap = useCallback(async (email, sifre) => sonucuIsle(await api.adminGirisYap({ email, sifre })), [sonucuIsle])
+
+  const ikiAdimDogrula = useCallback(
+    async (geciciToken, kod, hatirla) => sonucuIsle(await api.adminIkiAdimDogrula(geciciToken, kod, hatirla)),
+    [sonucuIsle],
+  )
 
   const cikisYap = useCallback(() => {
     api.adminCikisYap()
@@ -24,7 +33,7 @@ export function AdminAuthProvider({ children }) {
   }, [])
 
   return (
-    <AdminAuthContext.Provider value={{ girisYapildi, rol, kendiId, girisYap, cikisYap }}>
+    <AdminAuthContext.Provider value={{ girisYapildi, rol, kendiId, girisYap, ikiAdimDogrula, cikisYap }}>
       {children}
     </AdminAuthContext.Provider>
   )
