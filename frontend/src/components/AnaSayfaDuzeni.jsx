@@ -57,7 +57,7 @@ export default function AnaSayfaDuzeni() {
       <div className="sb">
         <div className="sb-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
-            <div className="nm">🌱 Bölüm Uyum Sistemi</div>
+            <div className="nm">🌱 Filizyol</div>
             <div className="su">Kendi yolunu filizlendir</div>
           </div>
           <TemaAnahtari sabit={false} />
