@@ -6,6 +6,7 @@ import TemaAnahtari from './TemaAnahtari'
 import TanitimPenceresi from './TanitimPenceresi'
 import Maskot from './Maskot'
 import FilizSohbet from './FilizSohbet'
+import { KvkkOnayPenceresi } from './KvkkBilesenleri'
 
 // [2026-10-03] İlk giriş akışı: tanıtım penceresi → profil (okul + sınıf zorunlu) → ana sayfa
 export const profilEksikMi = (p) => !p || !p.ad_soyad?.trim() || !p.okul?.trim() || !p.sinif?.trim()
@@ -20,11 +21,13 @@ export default function AnaSayfaDuzeni() {
   const [profil, setProfil] = useState(null)
   const [profilYuklendi, setProfilYuklendi] = useState(false)
   const [tanitimAcik, setTanitimAcik] = useState(false)
+  const [kvkkGerekli, setKvkkGerekli] = useState(false) // [2026-10-04] eski hesap veya yeni metin sürümü
   const konum = useLocation()
   const navigate = useNavigate()
 
   useEffect(() => {
     api.durumOzetiGetir().then(setOzet).catch(() => {})
+    api.kvkkDurumu().then((d) => setKvkkGerekli(!d.guncel)).catch(() => {})
     api.profilGetir()
       .then((p) => { setProfil(p); if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
       .catch(() => {})
@@ -43,7 +46,7 @@ export default function AnaSayfaDuzeni() {
 
   // Profil tamamlanmadan diğer sayfalara geçilmez (tanıtım açıkken yönlendirme beklenir)
   const profilSayfasinda = konum.pathname.startsWith('/profil')
-  if (profilYuklendi && profil && !tanitimAcik && profilEksikMi(profil) && !profilSayfasinda) {
+  if (profilYuklendi && profil && !tanitimAcik && !kvkkGerekli && profilEksikMi(profil) && !profilSayfasinda) {
     return <Navigate to="/profil?ilk=1" replace />
   }
 
@@ -137,9 +140,10 @@ export default function AnaSayfaDuzeni() {
       <div className="main">
         <Outlet context={{ profilYenile, tanitimiAc }} />
       </div>
-      {tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
-      {!tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
-      {!tanitimAcik && profil && <FilizSohbet />}
+      {kvkkGerekli && <KvkkOnayPenceresi onTamam={() => setKvkkGerekli(false)} onCikis={cikisYap} />}
+      {!kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
+      {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
+      {!kvkkGerekli && !tanitimAcik && profil && <FilizSohbet />}
     </div>
   )
 }
