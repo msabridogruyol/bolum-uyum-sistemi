@@ -17,6 +17,7 @@ from app.api.admin_gecerlilik_v2 import router as admin_gecerlilik_v2_router
 from app.api.admin_kutup_yukleme import router as admin_kutup_router
 from app.api.ai_koc import router as ai_koc_router
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
+from app.api.haftalik import router as haftalik_router
 
 app = FastAPI(
     title="Bölüm Uyum Sistemi API",
@@ -110,6 +111,7 @@ app.include_router(admin_gecerlilik_v2_router, prefix="/admin", tags=["admin"])
 app.include_router(admin_kutup_router, prefix="/admin", tags=["admin"])
 app.include_router(ai_koc_router, prefix="/koclugu", tags=["koclugu"])
 app.include_router(admin_gelisim_kaynak_router, prefix="/admin", tags=["admin"])
+app.include_router(haftalik_router, prefix="/haftalik", tags=["Haftalık Görevler"])
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
 # yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi,
