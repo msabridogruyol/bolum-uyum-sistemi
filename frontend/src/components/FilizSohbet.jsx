@@ -131,21 +131,21 @@ export default function FilizSohbet() {
   return (
     <>
       {!acik && (
-        <button className="filiz-balon" onClick={() => setAcik(true)} aria-label="Filiz ile konuş">
+        <button className="filiz-balon" onClick={() => setAcik(true)} aria-label="Filiz Gelişim Koçu ile konuş">
           <span style={{ fontSize: 22 }}>🌱</span>
           <span className="filiz-balon-yazi">Filiz'e sor</span>
         </button>
       )}
 
       {acik && (
-        <div className="filiz-panel" role="dialog" aria-label="Filiz ile sohbet">
+        <div className="filiz-panel" role="dialog" aria-label="Filiz Gelişim Koçu ile sohbet">
           <div className="filiz-baslik">
             <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
               <div className="filiz-avatar">🌱</div>
               <div>
-                <div style={{ fontWeight: 800, fontSize: 14.5 }}>Filiz</div>
+                <div style={{ fontWeight: 800, fontSize: 14.5 }}>Filiz Gelişim Koçu</div>
                 <div style={{ fontSize: 11, color: 'var(--tx3)' }}>
-                  {gonderiliyor ? 'yazıyor…' : pasif ? 'şu an çevrimdışı' : 'Kariyer koçun'}
+                  {gonderiliyor ? 'yazıyor…' : pasif ? 'şu an çevrimdışı' : 'çevrimiçi'}
                 </div>
               </div>
             </div>
@@ -171,7 +171,7 @@ export default function FilizSohbet() {
             {hazir && !pasif && mesajlar.length === 0 && (
               <div className="filiz-bos">
                 <div style={{ fontSize: 30 }}>👋</div>
-                <div style={{ fontWeight: 700, marginTop: 6 }}>Merhaba! Ben Filiz.</div>
+                <div style={{ fontWeight: 700, marginTop: 6 }}>Merhaba! Ben Filiz, gelişim koçun.</div>
                 <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 4, lineHeight: 1.5 }}>
                   Sonuçların, hedef bölümün, haftalık görevlerin ya da kafana takılan her şey hakkında konuşabiliriz.
                 </div>
@@ -209,7 +209,7 @@ export default function FilizSohbet() {
           )}
           {durum?.aktif && (
             <div className="filiz-alt">
-              {durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı` : 'Bugünlük mesaj hakkın doldu'} · Filiz bir yapay zekâ asistanıdır, hata yapabilir.
+              {durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı` : 'Bugünlük mesaj hakkın doldu'} · Filiz Gelişim Koçu bir yapay zekâ asistanıdır, hata yapabilir.
             </div>
           )}
         </div>
