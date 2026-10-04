@@ -129,7 +129,7 @@ export default function AnaSayfaDuzeni() {
         <div className="ni" role="button" tabIndex={0} style={{ cursor: 'pointer' }}
           onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))}
           onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new CustomEvent('filiz-ac')) }}>
-          💬 Filiz'e Sor
+          💬 Filiz Gelişim Koçu
         </div>
         <div style={{ flex: 1 }} />
         <div className="ns">Hesap</div>
