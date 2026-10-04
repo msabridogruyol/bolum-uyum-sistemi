@@ -15,7 +15,7 @@ ILETISIM_EPOSTA = "[KVKK BAŞVURU E-POSTA ADRESİ]"
 
 AYDINLATMA_METNI = f"""KİŞİSEL VERİLERİN İŞLENMESİNE İLİŞKİN AYDINLATMA METNİ
 
-{VERI_SORUMLUSU} ("Şirket") olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu sıfatıyla Bölüm Uyum Sistemi'ni ("Sistem") kullanan öğrencilerin kişisel verilerini aşağıda açıklanan şekilde işlemekteyiz.
+{VERI_SORUMLUSU} ("Şirket") olarak, 6698 sayılı Kişisel Verilerin Korunması Kanunu ("KVKK") kapsamında veri sorumlusu sıfatıyla Filizyol bölüm ve kariyer uyum sistemini ("Sistem") kullanan öğrencilerin kişisel verilerini aşağıda açıklanan şekilde işlemekteyiz.
 
 1. İşlenen kişisel veriler
 • Kimlik ve iletişim: ad soyad, e-posta adresi.
