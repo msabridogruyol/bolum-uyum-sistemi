@@ -9,6 +9,7 @@ const OLAY_ETIKET = {
   pencere_odagi_kaybedildi: '⚠️ Pencere odağı kaybedildi',
   pencere_odagi_geri_kazanildi: '↩️ Pencere odağı geri kazanıldı',
   kamera_izni_reddedildi: '🔴 Kamera izni reddedildi',
+  kamera_rizasi_verilmedi: '⚪ Kamera onayı yok (KVKK)',
   kamera_desteklenmiyor: '⚠️ Kamera desteklenmiyor',
 }
 
