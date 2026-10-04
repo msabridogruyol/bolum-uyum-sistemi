@@ -66,7 +66,7 @@ function SinavBasligi() {
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 0 2px' }}>
       <span style={{ fontSize: 20 }}>🌱</span>
       <span style={{ fontFamily: 'var(--fd)', fontSize: 16, fontWeight: 700, color: 'var(--tx)' }}>
-        Bölüm Uyum Sistemi
+        Filizyol
       </span>
     </div>
   )
