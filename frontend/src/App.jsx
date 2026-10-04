@@ -4,6 +4,8 @@ import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext'
 import AnaSayfaDuzeni from './components/AnaSayfaDuzeni'
 import AdminSayfaDuzeni from './components/AdminSayfaDuzeni'
 import GirisSayfasi from './pages/GirisSayfasi'
+import SifremiUnuttumSayfasi from './pages/SifremiUnuttumSayfasi'
+import SifreSifirlaSayfasi from './pages/SifreSifirlaSayfasi'
 import KatmanlarSayfasi from './pages/KatmanlarSayfasi'
 import SoruSayfasi from './pages/SoruSayfasi'
 import SonucSayfasi from './pages/SonucSayfasi'
@@ -44,6 +46,8 @@ function AnaUygulama() {
     <Routes>
       {/* --- Öğrenci --- */}
       <Route path="/giris" element={<GirisSayfasi />} />
+      <Route path="/sifremi-unuttum" element={<SifremiUnuttumSayfasi />} />
+      <Route path="/sifre-sifirla" element={<SifreSifirlaSayfasi />} />
 
       {/* [DÜZELTME] Sınav ekranı bilinçli olarak AnaSayfaDuzeni'nin (kenar
           menüsü) DIŞINDA — sınav sırasında dikkat dağıtıcı hiçbir menü
@@ -87,6 +91,8 @@ function AnaUygulama() {
 
       {/* --- Yönetici --- */}
       <Route path="/admin/giris" element={<AdminGirisSayfasi />} />
+      <Route path="/admin/sifremi-unuttum" element={<SifremiUnuttumSayfasi kapsam="admin" />} />
+      <Route path="/admin/sifre-sifirla" element={<SifreSifirlaSayfasi kapsam="admin" />} />
       <Route
         path="/admin"
         element={
