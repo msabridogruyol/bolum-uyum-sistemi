@@ -129,7 +129,8 @@ export const api = {
   adimDurumuGuncelle: (adimKodu, durum) => post(`/koclugu/hedef/adim/${adimKodu}`, { durum }),
   turKarsilastirmasiGetir: () => get('/koclugu/karsilastirma'),
   aiKocOturumBaslat: () => post('/koclugu/asistan/oturum/baslat', {}),
-  aiKocMesajGonder: (oturumId, mesaj) => post(`/koclugu/asistan/oturum/${oturumId}/mesaj`, { mesaj }),
+  aiKocMesajGonder: (oturumId, mesaj, sayfa) => post(`/koclugu/asistan/oturum/${oturumId}/mesaj`, { mesaj, sayfa: sayfa ?? null }),
+  aiKocDurum: () => get('/koclugu/asistan/durum'),
   aiKocOturumuBitir: (oturumId) => post(`/koclugu/asistan/oturum/${oturumId}/bitir`, {}),
   aiKocGecmisiGetir: () => get('/koclugu/asistan/gecmis'),
 
