@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import TemaAnahtari from './TemaAnahtari'
 import TanitimPenceresi from './TanitimPenceresi'
 import Maskot from './Maskot'
+import FilizSohbet from './FilizSohbet'
 
 // [2026-10-03] İlk giriş akışı: tanıtım penceresi → profil (okul + sınıf zorunlu) → ana sayfa
 export const profilEksikMi = (p) => !p || !p.ad_soyad?.trim() || !p.okul?.trim() || !p.sinif?.trim()
@@ -121,6 +122,12 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🎯 Hedef Bölüm Koçluğu
         </NavLink>
+        {/* [2026-10-04] Filiz sohbet paneli her sayfadan açılır */}
+        <div className="ni" role="button" tabIndex={0} style={{ cursor: 'pointer' }}
+          onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))}
+          onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new CustomEvent('filiz-ac')) }}>
+          💬 Filiz'e Sor
+        </div>
         <div style={{ flex: 1 }} />
         <div className="ns">Hesap</div>
         <NavLink to="/profil" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
@@ -132,6 +139,7 @@ export default function AnaSayfaDuzeni() {
       </div>
       {tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
       {!tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
+      {!tanitimAcik && profil && <FilizSohbet />}
     </div>
   )
 }
