@@ -1,5 +1,5 @@
 """
-Bölüm-Öğrenci Uyum Sistemi — Backend Giriş Noktası
+Filizyol (Bölüm-Öğrenci Uyum Sistemi) — Backend Giriş Noktası
 Kaynak: sistem_genel_anlatim.md Bölüm C, veritabani_taslagi.md Bölüm 4
 """
 from fastapi import FastAPI, Request
@@ -20,7 +20,7 @@ from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
 from app.api.haftalik import router as haftalik_router
 
 app = FastAPI(
-    title="Bölüm Uyum Sistemi API",
+    title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
     version="0.1.0",
 )
