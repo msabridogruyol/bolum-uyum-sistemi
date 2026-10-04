@@ -1080,6 +1080,7 @@ export default function Maskot({ profil, ozet }) {
   const [sessiz, setSessiz] = useState(() => depoOku('maskot_sessiz', '0') === '1')
   const [efektler, setEfektler] = useState([])
   const [haftalik, setHaftalik] = useState(null)
+  const [sohbetAcik, setSohbetAcik] = useState(false)
   const kutu = useRef(null)
   const sonHareket = useRef(Date.now())
   const mesajSirasi = useRef(0)
@@ -1131,9 +1132,23 @@ export default function Maskot({ profil, ozet }) {
   }, [konum.pathname, ozet, hedef, kiyafet, ilkAd, haftalik])
 
   const konus = useCallback((metin) => {
-    if (sessiz || kucuk) return
+    if (sessiz || kucuk || sohbetAcik) return
     setBalon(metin)
-  }, [sessiz, kucuk])
+  }, [sessiz, kucuk, sohbetAcik])
+
+  // [2026-10-04] sohbet paneli: Filiz yazarken düşünür, cevap gelince başını sallar
+  useEffect(() => {
+    const dinle = (e) => {
+      const d = e.detail || {}
+      setSohbetAcik(!!d.acik)
+      if (d.acik) setBalon('')
+      if (d.dusunuyor) setAnimasyon('dusun')
+      else if (d.cevaplandi) oynat('onayla')
+      else setAnimasyon((a) => (a === 'dusun' ? '' : a))
+    }
+    window.addEventListener('filiz-durum', dinle)
+    return () => window.removeEventListener('filiz-durum', dinle)
+  }, [oynat])
 
   // yazı makinesi efekti (konuşurken ağız hareket eder)
   useEffect(() => {
@@ -1287,6 +1302,9 @@ export default function Maskot({ profil, ozet }) {
           </span>
         ))}
       </div>
+      {!sohbetAcik && (
+        <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title="Filiz ile sohbet et">💬 Bana sor</button>
+      )}
       <div className="msk-araclar">
         <button onClick={sessizDegistir} title={sessiz ? 'Konuşmayı aç' : 'Sessize al'}>{sessiz ? '🔇' : '🔊'}</button>
         <button onClick={() => kucukDegistir(true)} title="Küçült">–</button>
@@ -1328,6 +1346,9 @@ const MASKOT_CSS = `
 .msk-araclar button,.msk-mini{border:1px solid var(--bor,#ddd);background:var(--sur,#fff);border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .msk-mini{position:fixed;top:12px;right:14px;width:42px;height:42px;z-index:60;box-shadow:0 4px 14px rgba(0,0,0,.12);animation:msk-filiz 2.6s ease-in-out infinite}
 .msk-dusunce{position:absolute;top:-6px;left:-6px;font-size:20px;animation:msk-yuksel 2.2s ease-out}
+.msk-sor{position:absolute;left:50%;transform:translateX(-50%);bottom:-24px;white-space:nowrap;border:1.5px solid var(--pu,#E8804A);background:var(--sur,#fff);color:var(--pu,#E8804A);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.msk-sor:hover{background:var(--pu,#E8804A);color:#fff}
+@media (max-width:768px){.msk-sor{display:none}}
 .msk-rozet{position:absolute;left:2px;bottom:4px;width:18px;height:18px;border-radius:50%;background:var(--gr,#5E8A54);color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--sur,#fff);box-shadow:0 2px 6px rgba(0,0,0,.15)}
 .msk-parilti{animation:msk-parilti 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:center}
 @keyframes msk-parilti{0%,100%{opacity:.3;transform:scale(.7)}50%{opacity:1;transform:scale(1.2)}}
