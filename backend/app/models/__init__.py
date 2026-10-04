@@ -28,6 +28,7 @@ from app.models.koclugu import (
     GelisimKarsilastirmaYorumu, OgrenciGelisimAksiyonDurumu, OgrenciGelisimAdimDurumu,
     OgrenciKoclukOturumu, OgrenciKoclukMesaji, GelisimKaynakOnerisi,
 )
+from app.models.haftalik import OgrenciHaftalikGorev
 __all__ = [
     "Ogrenci", "AdminKullanici",
     "Katman", "Degisken", "Soru", "SoruSecenegi", "SjtSecenekDegiskenAgirlik",
@@ -44,4 +45,5 @@ __all__ = [
     "OgrenciHedefBolum", "GelisimYorumHavuzu",
     "GelisimKarsilastirmaYorumu", "OgrenciGelisimAksiyonDurumu", "OgrenciGelisimAdimDurumu",
     "OgrenciKoclukOturumu", "OgrenciKoclukMesaji", "GelisimKaynakOnerisi",
+    "OgrenciHaftalikGorev",
 ]
