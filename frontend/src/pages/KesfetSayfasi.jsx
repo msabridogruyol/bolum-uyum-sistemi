@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 
 const ORNEK_ARAMALAR = ['Tıp', 'Bilgisayar Mühendisliği', 'Psikoloji', 'Hukuk', 'İşletme', 'Mimarlık']
@@ -21,6 +21,19 @@ export default function KesfetSayfasi() {
   const [secili, setSecili] = useState(null)
   const [meslekler, setMeslekler] = useState(null)
   const navigate = useNavigate()
+  const [parametreler] = useSearchParams()
+  const hedefBolumId = Number(parametreler.get('bolum')) || null
+
+  // [2026-10-04] Haftalık keşif görevinden gelindiyse: bölümü ara ve doğrudan aç
+  useEffect(() => {
+    const ara = parametreler.get('ara')
+    if (ara) aramaYap(ara)
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  useEffect(() => {
+    if (!hedefBolumId || !sonuclar || secili) return
+    const bulunan = sonuclar.find((s) => s.bolum_id === hedefBolumId)
+    if (bulunan) setSecili(bulunan)
+  }, [sonuclar]) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
     if (!secili) { setMeslekler(null); return }
