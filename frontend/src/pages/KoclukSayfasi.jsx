@@ -3,137 +3,6 @@ import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 
 // ============================================================
-// Filiz — AI Kariyer Koçu (sağ panel widget'ı)
-// ============================================================
-function FilizSohbetWidgeti() {
-  const [oturumId, setOturumId] = useState(null)
-  const [mesajlar, setMesajlar] = useState([])
-  const [girdiMetni, setGirdiMetni] = useState('')
-  const [gonderiliyor, setGonderiliyor] = useState(false)
-  const [durum, setDurum] = useState('yukleniyor') // yukleniyor | hazir | kullanilamiyor
-  const [bilgi, setBilgi] = useState(null)
-  const sonaKaydirRef = useRef(null)
-
-  useEffect(() => {
-    api.aiKocOturumBaslat()
-      .then((veri) => { setOturumId(veri.oturum_id); setDurum('hazir') })
-      .catch(() => setDurum('kullanilamiyor'))
-  }, [])
-
-  useEffect(() => {
-    sonaKaydirRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [mesajlar])
-
-  async function mesajGonder(e) {
-    e.preventDefault()
-    const metin = girdiMetni.trim()
-    if (!metin || gonderiliyor || !oturumId) return
-
-    setMesajlar((m) => [...m, { rol: 'ogrenci', icerik: metin }])
-    setGirdiMetni('')
-    setGonderiliyor(true)
-    setBilgi(null)
-
-    try {
-      const cevap = await api.aiKocMesajGonder(oturumId, metin)
-      setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti }])
-      if (cevap.oturum_kapandi_mi) {
-        setBilgi('Bu sohbet tamamlandı — sayfayı yenileyip yeni bir sohbet başlatabilirsin.')
-      }
-    } catch (err) {
-      setBilgi(err.detail || 'Mesaj gönderilemedi.')
-    } finally {
-      setGonderiliyor(false)
-    }
-  }
-
-  return (
-    <div className="card" style={{ marginBottom: 0, display: 'flex', flexDirection: 'column', height: 560, padding: 0, overflow: 'hidden' }}>
-      {/* Başlık — Filiz'in kimliği */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 10, padding: '14px 16px', borderBottom: '1px solid var(--bor)' }}>
-        <div style={{
-          width: 38, height: 38, borderRadius: '50%', background: 'var(--grl)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 19, flexShrink: 0,
-        }}>
-          🌱
-        </div>
-        <div>
-          <div style={{ fontFamily: 'var(--fd)', fontSize: 14.5, fontWeight: 700 }}>Filiz</div>
-          <div style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 600 }}>Kariyer Koçun</div>
-        </div>
-      </div>
-
-      {durum === 'yukleniyor' && (
-        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--tx3)', fontSize: 12.5 }}>
-          Hazırlanıyor…
-        </div>
-      )}
-
-      {durum === 'kullanilamiyor' && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', textAlign: 'center', padding: 24, gap: 6 }}>
-          <div style={{ fontSize: 24 }}>🌱</div>
-          <div style={{ fontSize: 12.5, color: 'var(--tx3)' }}>Filiz şu anda kullanılamıyor.</div>
-        </div>
-      )}
-
-      {durum === 'hazir' && (
-        <>
-          <div style={{ flex: 1, overflowY: 'auto', padding: '14px 16px', display: 'flex', flexDirection: 'column', gap: 10 }}>
-            {mesajlar.length === 0 && (
-              <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.6, background: 'var(--sur2)', padding: '12px 14px', borderRadius: 14, borderBottomLeftRadius: 4 }}>
-                Merhaba! Ben Filiz 🌱 Hedefin, güçlü yönlerin ya da nereden başlayacağını bilemediğin bir konu hakkında konuşmak ister misin?
-              </div>
-            )}
-            {mesajlar.map((m, i) => (
-              <div
-                key={i}
-                style={{
-                  alignSelf: m.rol === 'ogrenci' ? 'flex-end' : 'flex-start',
-                  maxWidth: '85%',
-                  background: m.rol === 'ogrenci' ? 'var(--pu)' : 'var(--sur2)',
-                  color: m.rol === 'ogrenci' ? '#fff' : 'var(--tx)',
-                  padding: '10px 14px',
-                  borderRadius: 14,
-                  borderBottomRightRadius: m.rol === 'ogrenci' ? 4 : 14,
-                  borderBottomLeftRadius: m.rol === 'asistan' ? 4 : 14,
-                  fontSize: 13,
-                  lineHeight: 1.55,
-                  whiteSpace: 'pre-wrap',
-                }}
-              >
-                {m.icerik}
-              </div>
-            ))}
-            {gonderiliyor && (
-              <div style={{ alignSelf: 'flex-start', color: 'var(--tx3)', fontSize: 12, padding: '2px 14px' }}>
-                Filiz yazıyor…
-              </div>
-            )}
-            <div ref={sonaKaydirRef} />
-          </div>
-
-          {bilgi && <div style={{ fontSize: 11.5, color: 'var(--tx3)', padding: '0 16px 8px' }}>{bilgi}</div>}
-
-          <form onSubmit={mesajGonder} style={{ display: 'flex', gap: 6, padding: '10px 12px', borderTop: '1px solid var(--bor)' }}>
-            <input
-              className="auth-input"
-              style={{ flex: 1, fontSize: 13 }}
-              value={girdiMetni}
-              onChange={(e) => setGirdiMetni(e.target.value)}
-              placeholder="Filiz'e bir şey sor..."
-              disabled={gonderiliyor}
-            />
-            <button className="btn" type="submit" disabled={gonderiliyor || !girdiMetni.trim()} style={{ padding: '10px 14px' }}>
-              ➤
-            </button>
-          </form>
-        </>
-      )}
-    </div>
-  )
-}
-
-// ============================================================
 // Ana sayfa
 // ============================================================
 // [2026-10-03] Kategori etiketleri — grafik, kartlar ve plan AYNI göreli ölçekten gelir
@@ -434,7 +303,8 @@ export default function KoclukSayfasi() {
         <div className="ps">İstediğin bir bölümü hedef seç, kendini onunla karşılaştır ve adım adım gelişim planını takip et. Aynı anda yalnızca 1 aktif hedefin olabilir — odaklanman için.</div>
       </div>
 
-      <div className="yol-duzen">
+      {/* [2026-10-04] Sağdaki Filiz sohbet kutusu kaldırıldı — Filiz'e sağ alttaki maskottan ulaşılıyor */}
+      <div style={{ maxWidth: 980 }}>
         <div>
           {hedef && (
             <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
@@ -564,10 +434,6 @@ export default function KoclukSayfasi() {
           )}
         </div>
 
-        {/* ============ SAĞ SÜTUN — Filiz sohbet widget'ı ============ */}
-        <div className="yan-panel">
-          <FilizSohbetWidgeti />
-        </div>
       </div>
     </div>
   )
