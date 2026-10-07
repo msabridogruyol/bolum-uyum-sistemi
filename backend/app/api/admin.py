@@ -777,9 +777,42 @@ def pipeline_taslagini_onayla(
         {"versiyon": yeni_versiyon, "grup": grup},
     )
     db.execute(text("UPDATE bolum_agirliklari_taslak SET durum = 'onaylandi' WHERE yukleme_grubu = :g"), {"g": grup})
-
-    _audit_yaz(db, admin, "pipeline_taslagi_onaylama", "bolum_agirliklari", grup, f"versiyon {yeni_versiyon} olarak canlıya alındı")
     db.commit()
+
+    # [2026-10-07] Öğrencilerin bölüm uyum skorları tur bitince bir kez hesaplanıp saklanıyor.
+    # Yeni ağırlıklar canlıya alınınca tüm tamamlanmış turlar yeni ağırlıklarla yeniden hesaplanır;
+    # yoksa sıralama eski, koçluk ekranı yeni ağırlıkları kullanır ve ikisi çelişir.
+    yeniden = uyum_skorlarini_yeniden_hesapla(db)
+    _audit_yaz(db, admin, "pipeline_taslagi_onaylama", "bolum_agirliklari", grup,
+               f"versiyon {yeni_versiyon} olarak canlıya alındı; {yeniden} değerlendirme turu yeniden hesaplandı")
+    db.commit()
+
+
+def uyum_skorlarini_yeniden_hesapla(db: Session) -> int:
+    """Tamamlanmış tüm değerlendirme turlarının bölüm uyum skorlarını güncel ağırlıklarla yeniden yazar."""
+    from app.core.skor_motoru import toplam_uyum_hesapla
+    from app.models import OgrenciDegerlendirmeTuru, Ogrenci
+    sayi = 0
+    for tur in db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.durum == "tamamlandi").all():
+        ogrenci = db.get(Ogrenci, tur.ogrenci_id)
+        if ogrenci is None:
+            continue
+        if toplam_uyum_hesapla(db, ogrenci, tur):
+            sayi += 1
+        db.commit()   # her öğrenciden sonra kaydet: biri hata verirse öncekiler kaybolmasın
+    return sayi
+
+
+@router.post("/pipeline/skorlari-yeniden-hesapla")
+def skorlari_yeniden_hesapla(
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_super_admin),
+):
+    """[2026-10-07] Elle tetikleme (ör. onay sırasında zaman aşımı olduysa)."""
+    sayi = uyum_skorlarini_yeniden_hesapla(db)
+    _audit_yaz(db, admin, "uyum_skorlari_yeniden_hesaplama", "ogrenci_bolum_uyum_skorlari", "tumu", f"{sayi} tur")
+    db.commit()
+    return {"yeniden_hesaplanan_tur": sayi}
 
 
 @router.post("/pipeline/taslaklar/{grup}/reddet", status_code=204)
