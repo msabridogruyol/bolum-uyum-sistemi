@@ -348,6 +348,41 @@ def _adim(kod_deg: str, ad: str, grup: str, sira: int, ham: tuple, bolum: str, d
     }
 
 
+AYIRT_ESIGI = 40.0        # [2026-10-07] bölümün bu özellikte bölümler arası yüzdeliği bunun altındaysa odak alanı olmaz
+AYIRT_GUCLU_ESIK = 75.0   # bunun üstündeyse "bölüm bu alanda talepkâr" cümlesi kullanılır
+AYIRT_MIN_BOLUM = 20      # daha az yayındaki bölüm varsa (test/kurulum) ayırt edicilik hesaplanmaz
+
+
+def bolum_ayirt_ediciligi(db: Session, hedef_bolum_id: int, degisken_idler: list[int]) -> dict[int, float] | None:
+    """
+    [2026-10-07] Hedef bölümün her özellikte, yayındaki tüm bölümler arasındaki yüzdeliği (0-100).
+    Karşılaştırma katman içi ölçeklenmiş profillerle yapılır (skor motoruyla aynı ölçek).
+    Örn. Felsefe'de "sayısal eğilim" yüzdeliği düşükse, öğrencinin sayısal puanı ne kadar düşük
+    olursa olsun bu alan Felsefe için odak alanı yapılmaz.
+    """
+    satirlar = (db.query(BolumAgirligi)
+                .join(Bolum, Bolum.id == BolumAgirligi.bolum_id)
+                .filter(Bolum.durum == "yayinda", BolumAgirligi.degisken_id.in_(degisken_idler)).all())
+    en_guncel: dict[tuple[int, int], BolumAgirligi] = {}
+    for r in satirlar:
+        k = (r.bolum_id, r.degisken_id)
+        if k not in en_guncel or r.versiyon > en_guncel[k].versiyon:
+            en_guncel[k] = r
+    bolum_idler = sorted({b for b, _ in en_guncel})
+    if len(bolum_idler) < AYIRT_MIN_BOLUM or hedef_bolum_id not in bolum_idler:
+        return None
+    degiskenler = {d.id: d for d in db.query(Degisken).filter(Degisken.id.in_(degisken_idler)).all()}
+    idler = [d for d in degisken_idler if d in degiskenler]
+    M = np.array([[float(en_guncel[(b, d)].agirlik_degeri) if (b, d) in en_guncel else 50.0 for d in idler] for b in bolum_idler])
+    gruplar: dict[tuple, list[int]] = {}
+    for j, d in enumerate(idler):
+        gruplar.setdefault((degiskenler[d].katman_id, degiskenler[d].dal_id), []).append(j)
+    M = _katman_ici_olcekle(M, list(gruplar.values()))
+    h = bolum_idler.index(hedef_bolum_id)
+    n = len(bolum_idler)
+    return {d: float((M[:, j] < M[h, j]).sum() / (n - 1) * 100) for j, d in enumerate(idler)}
+
+
 def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, gap_satirlari: list[GapSatiri]) -> dict:
     """
     Yol haritası mantığı:
@@ -369,9 +404,14 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
     # uyumu en çok etkileyecek açık en başa gelir.
     from app.models import Katman
     katman_w = {k.id: float(k.normalizasyon_agirligi or 20) for k in db.query(Katman).all()}
+    # [2026-10-07] Öncelik ayrıca bölümün o özellikteki ayırt ediciliğiyle çarpılır; bölüm için belirgin
+    # olmayan özellik (yüzdelik < AYIRT_ESIGI) odak alanı yapılmaz, "sonra odaklanılacak" listesine düşer.
+    ayirt = bolum_ayirt_ediciligi(db, hedef_bolum_id, [s.degisken.id for s in gap_satirlari])
+    def _ayirt(s):
+        return 100.0 if ayirt is None else ayirt.get(s.degisken.id, 50.0)
     gelisim = sorted([s for s in gap_satirlari if _grup(s.kategori) == "gelisim"],
-                     key=lambda s: s.oncelik_skoru * katman_w.get(s.degisken.katman_id, 20.0), reverse=True)
-    icerikli = [s for s in gelisim if s.degisken.kod in ICERIK]
+                     key=lambda s: s.oncelik_skoru * katman_w.get(s.degisken.katman_id, 20.0) * (_ayirt(s) / 100.0), reverse=True)
+    icerikli = [s for s in gelisim if s.degisken.kod in ICERIK and _ayirt(s) >= AYIRT_ESIGI]
     odak = icerikli[:ODAK_ALAN_SAYISI]
     odak_kodlar = {s.degisken.kod for s in odak}
     sonraki = [s for s in gelisim if s.degisken.kod not in odak_kodlar]
@@ -388,7 +428,10 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
         odak_alanlari.append({
             "degisken_id": s.degisken.id, "degisken_kod": s.degisken.kod, "degisken_adi": s.degisken.ad,
             "kategori": s.kategori, "oncelik_sirasi": oncelik_sirasi,
-            "nedir": ic["nedir"], "neden_onemli": ic["gelisim_neden"].replace("{bolum}", bolum_adi),
+            "nedir": ic["nedir"],
+            "neden_onemli": (ic["gelisim_neden"].replace("{bolum}", bolum_adi) if _ayirt(s) >= AYIRT_GUCLU_ESIK else
+                             f"{bolum_adi} için bu alan orta düzeyde önemli. Senin bu alandaki eğilimin bölümün beklentisinin "
+                             f"altında; küçük ve düzenli adımlarla güçlendirmek bölümde işini kolaylaştırır."),
             "durum_tespiti": s.gelisim_karti.durum_tespiti if s.gelisim_karti else None,
         })
         for sira, ham in enumerate(ic["gelisim"], 1):
