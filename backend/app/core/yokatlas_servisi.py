@@ -11,6 +11,7 @@ Kaynak: yokatlas.yok.gov.tr tercih kılavuzu JSON uç noktaları (yokatlas-py k�
 """
 from __future__ import annotations
 
+import logging
 import threading
 from datetime import datetime, timedelta, timezone
 
@@ -23,6 +24,32 @@ YOKATLAS_ONBELLEK_GUN = 7
 MAKS_PROGRAM = 600          # bir bölüm için en fazla bu kadar program satırı saklanır
 _istemci = None
 _kilit = threading.Lock()
+_log = logging.getLogger("yokatlas")
+son_hata: str | None = None   # tanı ekranı için en son hata
+
+
+def baglanti_tani() -> dict:
+    """YÖK Atlas'a bağlantıyı adım adım dener; hangi adımda takıldığını döner (yalnızca teknik tanı için)."""
+    sonuc = {"kutuphane": None, "program_gruplari": None, "ornek_arama": None, "son_hata": son_hata}
+    try:
+        import yokatlas_py  # noqa: F401
+        sonuc["kutuphane"] = "yüklü"
+    except Exception as e:
+        sonuc["kutuphane"] = f"YOK: {type(e).__name__}: {e}"
+        return sonuc
+    try:
+        gruplar = _istemci_al().list_program_groups()
+        sonuc["program_gruplari"] = f"{len(gruplar)} grup alındı"
+    except Exception as e:
+        sonuc["program_gruplari"] = f"HATA: {type(e).__name__}: {str(e)[:400]}"
+        return sonuc
+    try:
+        ids = _program_grubu_idleri("TIP")
+        s = _istemci_al().search({"birim_grup_id": ids}, size=3, smart_search=False) if ids else None
+        sonuc["ornek_arama"] = f"TIP için {s.total_elements} program" if s else "TIP grubu bulunamadı"
+    except Exception as e:
+        sonuc["ornek_arama"] = f"HATA: {type(e).__name__}: {str(e)[:400]}"
+    return sonuc
 
 
 def _normalize(metin: str) -> str:
@@ -106,6 +133,9 @@ def bolum_universiteleri(db: Session, bolum: Bolum) -> dict:
             kayit.veri = veri; kayit.guncellenme = simdi; kayit.hata = None
             db.commit()
         except Exception as e:  # ağ hatası, YÖK Atlas yapı değişikliği vb.
+            global son_hata
+            son_hata = f"{type(e).__name__}: {str(e)[:500]}"
+            _log.warning("YÖK Atlas hatası (%s): %s", bolum.ad, son_hata)
             db.rollback()
             kayit = db.get(YokatlasOnbellek, bolum.id)
             if kayit is None:
