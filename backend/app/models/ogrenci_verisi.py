@@ -100,6 +100,8 @@ class OgrenciCevap(Base):
     tur_id: Mapped[int] = mapped_column(ForeignKey("ogrenci_degerlendirme_turu.id"), nullable=False)
     soru_id: Mapped[int] = mapped_column(ForeignKey("sorular.id"), nullable=False)
     secenek_id: Mapped[int] = mapped_column(ForeignKey("soru_secenekleri.id"), nullable=False)
+    # [2026-10-08] Yalnızca cevap_bicimi='encok_enaz' sorularında dolu — "en az uyan" şık.
+    en_az_secenek_id: Mapped[int | None] = mapped_column(ForeignKey("soru_secenekleri.id"), nullable=True)
     cevap_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
