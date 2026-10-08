@@ -111,6 +111,7 @@ export const api = {
   // --- [2026-10-08] Bölüm bilgi kartı (her sayfada açılır pencere) ---
   bolumBilgi: (bolumId) => get(`/bolumler/${bolumId}/bilgi`),
   bolumUniversiteleri: (bolumId) => get(`/bolumler/${bolumId}/universiteler`),
+  bolumYetkinlik: (bolumId) => get(`/bolumler/${bolumId}/yetkinlik`),
   bolumAdaGore: (ad) => get(`/bolumler/ada-gore?ad=${encodeURIComponent(ad)}`),
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
   kvkkDurumu: () => get('/ogrenci/kvkk'),
