@@ -36,6 +36,7 @@ class SoruOut(BaseModel):
     id: int
     soru_tipi: str
     soru_metni: str
+    cevap_bicimi: str = "tek"  # 'tek' | 'encok_enaz'
     secenekler: list[SecenekOut] = []
 
     model_config = {"from_attributes": True}
@@ -49,7 +50,8 @@ class KatmanBaslatCevap(BaseModel):
 
 class CevapIstek(BaseModel):
     soru_id: int
-    secenek_id: int
+    secenek_id: int                       # tek seçimli soruda seçilen şık; encok_enaz'da EN ÇOK uyan şık
+    en_az_secenek_id: int | None = None   # yalnızca encok_enaz sorularında: EN AZ uyan şık
 
 
 class KatmanSonucSatiri(BaseModel):
@@ -111,6 +113,7 @@ class KesfetSonucOut(BaseModel):
     bolum_id: int
     bolum_adi: str
     kisa_aciklama: str | None
+    detay: dict | None = None  # [2026-10-08] detaylı bölüm tanıtımı (bkz. Bolum.detay)
     toplam_uyum: float | None  # None = öğrenci henüz K1-K4'ü tamamlamadı
     on_cikan_degiskenler: list[OnCikanDegiskenOut]  # [DEĞİŞTİRİLDİ] eski: katman_ortalamalari: dict[str, float]
 
