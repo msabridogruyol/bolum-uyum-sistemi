@@ -122,6 +122,7 @@ def bolumleri_ara(db: Session, ogrenci: Ogrenci, arama_terimi: str, limit: int =
             "bolum_id": bolum.id,
             "bolum_adi": bolum.ad,
             "kisa_aciklama": bolum.kisa_aciklama,
+            "detay": bolum.detay,
             "toplam_uyum": uyum_skorlari.get(bolum.id),  # None -> henüz hesaplanmadı
             "on_cikan_degiskenler": bolum_on_cikan_degiskenler(db, bolum.id),
         })
