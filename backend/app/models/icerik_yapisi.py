@@ -3,7 +3,7 @@
 Kaynak: sistem_genel_anlatim.md B), D2, D3, A6, E4, E5
 """
 from datetime import datetime
-from sqlalchemy import String, Integer, Numeric, Boolean, DateTime, ForeignKey, CheckConstraint, ARRAY
+from sqlalchemy import String, Integer, Numeric, Boolean, DateTime, ForeignKey, CheckConstraint, ARRAY, UniqueConstraint, JSON
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 
@@ -70,6 +70,9 @@ class Soru(Base):
     # skoru hesaplaması, öğrencinin seçtiği seçeneğin secenek_sirasi'nı bununla
     # karşılaştırır.
     beklenen_secenek_sira: Mapped[int | None] = mapped_column(Integer)
+    # [2026-10-08] Cevap biçimi: 'tek' = tek şık seçilir; 'encok_enaz' = öğrenci
+    # hem kendisine EN ÇOK hem EN AZ uyan şıkkı seçer (yalnızca sjt sorularında).
+    cevap_bicimi: Mapped[str] = mapped_column(String, nullable=False, default="tek", server_default="tek")
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
@@ -101,6 +104,9 @@ class Bolum(Base):
     ad: Mapped[str] = mapped_column(String, nullable=False, unique=True)
     osym_puan_turu: Mapped[str | None] = mapped_column(String)
     kisa_aciklama: Mapped[str | None] = mapped_column(String)                       # D5 Katman-2 "Keşfet" için
+    # [2026-10-08] Detaylı tanıtım: ozet, neler_ogrenilir, ornek_dersler, kimler_icin_uygun,
+    # calisma_alanlari, meslekler [{ad, aciklama}], puan_turu, ogrenim_suresi, bilmen_gerekenler
+    detay: Mapped[dict | None] = mapped_column(JSON, nullable=True)
     durum: Mapped[str] = mapped_column(String, nullable=False, default="taslak")
     test_notu: Mapped[str | None] = mapped_column(String)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
@@ -134,6 +140,23 @@ class BolumDalEslesme(Base):
     kaynak1_model_c_dal_id: Mapped[int | None] = mapped_column(ForeignKey("dallar.id"))
     kaynak2_kumeleme_dal_id: Mapped[int | None] = mapped_column(ForeignKey("dallar.id"))
     dogrulama_durumu: Mapped[str] = mapped_column(String, nullable=False, default="gozden_gecirilmeli")
+    # [2026-10-08] Üst alan (dal) içindeki alt alan adı — sonuç ekranında gruplama için.
+    alt_alan: Mapped[str | None] = mapped_column(String, nullable=True)
+
+
+class BolumK5Bag(Base):
+    """
+    [2026-10-08] K5 yeni yapı: bölümün, üst alanındaki iş türlerine (K5 eksen değişkenleri) bağı.
+    bag: 1 = ana, 0.5 = güçlü, 0.25 = biraz. Bölümün K5 uyumu = öğrencinin eksen puanlarının
+    bu bağlarla ağırlıklı ortalaması (bkz. dal_servisi.dal_ici_uyum_hesapla).
+    """
+    __tablename__ = "bolum_k5_baglari"
+    __table_args__ = (UniqueConstraint("bolum_id", "degisken_id", name="uq_bk5_bolum_degisken"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id"), nullable=False)
+    degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
+    bag: Mapped[float] = mapped_column(Numeric(3, 2), nullable=False)
 
 
 class BolumKumelemeSonucu(Base):
@@ -144,3 +167,13 @@ class BolumKumelemeSonucu(Base):
     kume_no: Mapped[int] = mapped_column(Integer, nullable=False)
     silhouette_skoru: Mapped[float | None] = mapped_column(Numeric(5, 4))
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class YokatlasOnbellek(Base):
+    """[2026-10-08] YÖK Atlas'tan çekilen bölüm-üniversite listesinin önbelleği (bkz. core/yokatlas_servisi.py)."""
+    __tablename__ = "yokatlas_onbellek"
+
+    bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id"), primary_key=True)
+    veri: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    guncellenme: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    hata: Mapped[str | None] = mapped_column(String, nullable=True)
