@@ -188,7 +188,7 @@ def katmani_baslat(
 
     soru_out = [
         SoruOut(
-            id=s.id, soru_tipi=s.soru_tipi, soru_metni=s.soru_metni,
+            id=s.id, soru_tipi=s.soru_tipi, soru_metni=s.soru_metni, cevap_bicimi=getattr(s, 'cevap_bicimi', None) or 'tek',
             secenekler=[
                 SecenekOut(id=sec.id, secenek_sirasi=sec.secenek_sirasi, secenek_metni=sec.secenek_metni)
                 for sec in secenekler_by_soru.get(s.id, [])
@@ -209,7 +209,7 @@ def soruyu_cevapla(
     katman = _katman_bul(db, kod)
     tur = aktif_veya_yeni_tur_getir(db, ogrenci)
     try:
-        cevabi_kaydet(db, ogrenci, tur, istek.soru_id, istek.secenek_id)
+        cevabi_kaydet(db, ogrenci, tur, istek.soru_id, istek.secenek_id, istek.en_az_secenek_id)
     except IsKuraliHatasi as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
@@ -324,7 +324,7 @@ def dali_baslat(
 
     soru_out = [
         SoruOut(
-            id=s.id, soru_tipi=s.soru_tipi, soru_metni=s.soru_metni,
+            id=s.id, soru_tipi=s.soru_tipi, soru_metni=s.soru_metni, cevap_bicimi=getattr(s, 'cevap_bicimi', None) or 'tek',
             secenekler=[
                 SecenekOut(id=sec.id, secenek_sirasi=sec.secenek_sirasi, secenek_metni=sec.secenek_metni)
                 for sec in secenekler_by_soru.get(s.id, [])
@@ -344,7 +344,7 @@ def dal_soruyu_cevapla(
 ):
     try:
         tur = son_tur_getir(db, ogrenci)
-        cevabi_kaydet(db, ogrenci, tur, istek.soru_id, istek.secenek_id)
+        cevabi_kaydet(db, ogrenci, tur, istek.soru_id, istek.secenek_id, istek.en_az_secenek_id)
     except IsKuraliHatasi as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
