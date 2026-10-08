@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
+import BolumAdi from '../components/BolumAdi'
 
 // ============================================================
 // Ana sayfa
@@ -310,7 +311,7 @@ export default function KoclukSayfasi() {
             <div className="card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
               <div>
                 <div className="ct" style={{ marginBottom: 4 }}>Şu anki hedefin</div>
-                <div style={{ fontSize: 16, fontWeight: 600 }}>{hedef.bolum_adi}</div>
+                <div style={{ fontSize: 16, fontWeight: 600 }}><BolumAdi id={hedef.bolum_id} ad={hedef.bolum_adi} /></div>
               </div>
               {gelisim && gelisim.length > 0 && (
                 <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', justifyContent: 'flex-end' }}>
@@ -359,7 +360,7 @@ export default function KoclukSayfasi() {
                 {aramaSonuclari.length === 0 && <div className="ps" style={{ margin: 0 }}>Sonuç bulunamadı.</div>}
                 {aramaSonuclari.map((s) => (
                   <div key={s.bolum_id} className="lc" onClick={() => hedefSecmeyeCalis(s.bolum_id)}>
-                    <div className="lb-wrap"><div className="lt">{s.bolum_adi}</div></div>
+                    <div className="lb-wrap"><div className="lt"><BolumAdi id={s.bolum_id} ad={s.bolum_adi} /></div></div>
                     {s.toplam_uyum !== null && s.toplam_uyum !== undefined && <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>}
                   </div>
                 ))}
