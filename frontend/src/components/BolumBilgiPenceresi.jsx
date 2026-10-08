@@ -5,8 +5,56 @@ import { api } from '../api/client'
 const SEKMELER = [
   { kod: 'genel', ad: 'Genel Bakış' },
   { kod: 'meslek', ad: 'Meslekler' },
+  { kod: 'yetkinlik', ad: 'Yetkinlikler' },
   { kod: 'uni', ad: 'Üniversiteler' },
 ]
+
+const SEVIYE_RENK = {
+  'Çok yüksek': 'var(--pu)', 'Yüksek': 'var(--pum)', 'Orta': 'var(--am)', 'Düşük': 'var(--tx3)', 'Çok düşük': 'var(--bor2)',
+}
+const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸' }
+
+function YetkinlikProfili({ bolumId }) {
+  const [veri, setVeri] = useState(null)
+  const [hata, setHata] = useState(null)
+  useEffect(() => {
+    let iptal = false
+    setVeri(null); setHata(null)
+    api.bolumYetkinlik(bolumId).then((v) => { if (!iptal) setVeri(v) }).catch((e) => { if (!iptal) setHata(e.detail || 'Yetkinlik profili alınamadı.') })
+    return () => { iptal = true }
+  }, [bolumId])
+  if (hata) return <div className="ps" style={{ margin: 0 }}>{hata}</div>
+  if (!veri) return <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
+  if (!veri.katmanlar.length) return <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz yetkinlik profili hesaplanmadı.</div>
+  return (
+    <>
+      <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5, lineHeight: 1.55 }}>
+        Her özellik için bu bölümün beklenti düzeyi, {veri.bolum_sayisi} bölümle karşılaştırılarak verilir.
+        Çubuk ne kadar uzunsa bölüm o özelliği diğer bölümlere göre o kadar çok gerektirir.
+      </div>
+      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
+        {Object.entries(SEVIYE_RENK).map(([ad, renk]) => (
+          <span key={ad} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: 'var(--tx2)', fontWeight: 700 }}>
+            <span style={{ width: 10, height: 10, borderRadius: 3, background: renk, display: 'inline-block' }} />{ad}
+          </span>
+        ))}
+      </div>
+      {veri.katmanlar.map((k) => (
+        <Bolum key={k.kod} baslik={`${KATMAN_IKON[k.kod] || ''} ${k.ad}`}>
+          {k.degiskenler.map((d) => (
+            <div key={d.kod} title={d.aciklama || ''} style={{ display: 'grid', gridTemplateColumns: 'minmax(110px, 38%) 1fr auto', gap: 10, alignItems: 'center', padding: '5px 0' }}>
+              <div style={{ fontSize: 13, color: 'var(--tx)', fontWeight: 600, lineHeight: 1.3 }}>{d.ad}</div>
+              <div style={{ height: 9, borderRadius: 99, background: 'var(--sur2)', overflow: 'hidden' }}>
+                <div style={{ width: `${Math.max(3, d.yuzdelik)}%`, height: '100%', borderRadius: 99, background: SEVIYE_RENK[d.seviye] }} />
+              </div>
+              <div style={{ fontSize: 11.5, fontWeight: 800, color: SEVIYE_RENK[d.seviye] === 'var(--bor2)' ? 'var(--tx3)' : SEVIYE_RENK[d.seviye], minWidth: 74, textAlign: 'right' }}>{d.seviye}</div>
+            </div>
+          ))}
+        </Bolum>
+      ))}
+    </>
+  )
+}
 
 const turGrubu = (t) => (t === 'DEVLET' ? 'DEVLET' : (t || '').startsWith('VAKIF') ? 'VAKIF' : 'DIGER')
 const turAdi = (t) => ({ DEVLET: 'Devlet', VAKIF: 'Vakıf', DIGER: t ? t.charAt(0) + t.slice(1).toLocaleLowerCase('tr') : null })[turGrubu(t)]
@@ -213,18 +261,20 @@ function Universiteler({ bolumId }) {
   )
 }
 
-export default function BolumBilgiPenceresi({ secim, onKapat }) {
+// Bölüm içeriği: başlık + sekmeler + içerik. Hem açılır pencerede hem Keşfet sayfasında (gömülü) kullanılır.
+export function BolumBilgiIcerik({ bolumId, ad, baslangicSekme = 'genel', onKapat, gomulu = false, ustEk = null }) {
   const [bilgi, setBilgi] = useState(null)
   const [hata, setHata] = useState(null)
-  const [sekme, setSekme] = useState(secim.sekme || 'genel')
+  const [sekme, setSekme] = useState(baslangicSekme)
 
+  useEffect(() => { setSekme(baslangicSekme) }, [baslangicSekme, bolumId])
   useEffect(() => {
     let iptal = false
-    setBilgi(null); setHata(null); setSekme(secim.sekme || 'genel')
+    setBilgi(null); setHata(null)
     const yukle = async () => {
       try {
-        let id = secim.id
-        if (!id && secim.ad) id = (await api.bolumAdaGore(secim.ad)).bolum_id
+        let id = bolumId
+        if (!id && ad) id = (await api.bolumAdaGore(ad)).bolum_id
         const b = await api.bolumBilgi(id)
         if (!iptal) setBilgi(b)
       } catch (e) {
@@ -233,8 +283,61 @@ export default function BolumBilgiPenceresi({ secim, onKapat }) {
     }
     yukle()
     return () => { iptal = true }
-  }, [secim])
+  }, [bolumId, ad])
 
+  const d = bilgi?.detay
+  const etiket = { fontSize: 11.5, fontWeight: 700, padding: '3px 9px', borderRadius: 999, background: 'var(--sur2)', color: 'var(--tx2)' }
+  return (
+    <>
+      <div style={{ padding: gomulu ? '16px 18px 0' : '16px 18px 0', borderBottom: '1px solid var(--bor)', background: 'var(--sur)', ...(gomulu ? { borderRadius: '16px 16px 0 0', border: '1.5px solid var(--bor)' } : {}) }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start' }}>
+          <div style={{ minWidth: 0 }}>
+            {bilgi?.ust_alan && (
+              <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--tx3)', textTransform: 'uppercase', letterSpacing: 0.3 }}>
+                {bilgi.ust_alan}{bilgi.alt_alan ? ` · ${bilgi.alt_alan}` : ''}
+              </div>
+            )}
+            <div style={{ fontFamily: 'var(--fd)', fontSize: 21, fontWeight: 700, color: 'var(--tx)', lineHeight: 1.25 }}>
+              {bilgi?.ad || ad || 'Bölüm'}
+            </div>
+            {d && (
+              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
+                {d.ogrenim_suresi && <span style={etiket}>⏱ {d.ogrenim_suresi}</span>}
+                {d.puan_turu && <span style={etiket}>📝 {d.puan_turu}</span>}
+              </div>
+            )}
+          </div>
+          {ustEk}
+          {onKapat && (
+            <button onClick={onKapat} aria-label="Kapat" style={{ border: 'none', background: 'var(--sur2)', borderRadius: 10, width: 34, height: 34, fontSize: 18, cursor: 'pointer', color: 'var(--tx)', flexShrink: 0 }}>×</button>
+          )}
+        </div>
+        <div style={{ display: 'flex', gap: 2, marginTop: 12, overflowX: 'auto' }}>
+          {SEKMELER.map((s) => (
+            <button
+              key={s.kod}
+              onClick={() => setSekme(s.kod)}
+              style={{
+                border: 'none', background: 'none', cursor: 'pointer', padding: '9px 12px', fontSize: 13, fontWeight: 800, whiteSpace: 'nowrap',
+                color: sekme === s.kod ? 'var(--pu)' : 'var(--tx2)', borderBottom: `3px solid ${sekme === s.kod ? 'var(--pu)' : 'transparent'}`,
+              }}
+            >{s.ad}</button>
+          ))}
+        </div>
+      </div>
+      <div style={{ padding: 16, ...(gomulu ? { border: '1.5px solid var(--bor)', borderTop: 'none', borderRadius: '0 0 16px 16px', background: 'var(--bg)' } : { overflowY: 'auto', flex: 1, minHeight: 0 }) }}>
+        {hata ? <div className="ps" style={{ margin: 0 }}>{hata}</div>
+          : !bilgi ? <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
+            : sekme === 'genel' ? <GenelBakis bilgi={bilgi} />
+              : sekme === 'meslek' ? <Meslekler detay={d} />
+                : sekme === 'yetkinlik' ? <YetkinlikProfili bolumId={bilgi.bolum_id} />
+                  : <Universiteler bolumId={bilgi.bolum_id} />}
+      </div>
+    </>
+  )
+}
+
+export default function BolumBilgiPenceresi({ secim, onKapat }) {
   useEffect(() => {
     const tus = (e) => { if (e.key === 'Escape') onKapat() }
     window.addEventListener('keydown', tus)
@@ -243,7 +346,6 @@ export default function BolumBilgiPenceresi({ secim, onKapat }) {
     return () => { window.removeEventListener('keydown', tus); document.body.style.overflow = eski }
   }, [onKapat])
 
-  const d = bilgi?.detay
   return (
     <div
       onClick={onKapat}
@@ -257,46 +359,7 @@ export default function BolumBilgiPenceresi({ secim, onKapat }) {
           background: 'var(--bg)', borderRadius: 20, boxShadow: '0 20px 60px rgba(0,0,0,0.3)', overflow: 'hidden',
         }}
       >
-        <div style={{ padding: '16px 18px 0', borderBottom: '1px solid var(--bor)', background: 'var(--sur)' }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', gap: 12, alignItems: 'flex-start' }}>
-            <div style={{ minWidth: 0 }}>
-              {bilgi?.ust_alan && (
-                <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--tx3)', textTransform: 'uppercase', letterSpacing: 0.3 }}>
-                  {bilgi.ust_alan}{bilgi.alt_alan ? ` · ${bilgi.alt_alan}` : ''}
-                </div>
-              )}
-              <div style={{ fontFamily: 'var(--fd)', fontSize: 21, fontWeight: 700, color: 'var(--tx)', lineHeight: 1.25 }}>
-                {bilgi?.ad || secim.ad || 'Bölüm'}
-              </div>
-              {d && (
-                <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
-                  {d.ogrenim_suresi && <span style={{ fontSize: 11.5, fontWeight: 700, padding: '3px 9px', borderRadius: 999, background: 'var(--sur2)', color: 'var(--tx2)' }}>⏱ {d.ogrenim_suresi}</span>}
-                  {d.puan_turu && <span style={{ fontSize: 11.5, fontWeight: 700, padding: '3px 9px', borderRadius: 999, background: 'var(--sur2)', color: 'var(--tx2)' }}>📝 {d.puan_turu}</span>}
-                </div>
-              )}
-            </div>
-            <button onClick={onKapat} aria-label="Kapat" style={{ border: 'none', background: 'var(--sur2)', borderRadius: 10, width: 34, height: 34, fontSize: 18, cursor: 'pointer', color: 'var(--tx)', flexShrink: 0 }}>×</button>
-          </div>
-          <div style={{ display: 'flex', gap: 4, marginTop: 12 }}>
-            {SEKMELER.map((s) => (
-              <button
-                key={s.kod}
-                onClick={() => setSekme(s.kod)}
-                style={{
-                  border: 'none', background: 'none', cursor: 'pointer', padding: '9px 12px', fontSize: 13, fontWeight: 800,
-                  color: sekme === s.kod ? 'var(--pu)' : 'var(--tx2)', borderBottom: `3px solid ${sekme === s.kod ? 'var(--pu)' : 'transparent'}`,
-                }}
-              >{s.ad}</button>
-            ))}
-          </div>
-        </div>
-        <div style={{ padding: 16, overflowY: 'auto' }}>
-          {hata ? <div className="ps" style={{ margin: 0 }}>{hata}</div>
-            : !bilgi ? <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
-              : sekme === 'genel' ? <GenelBakis bilgi={bilgi} />
-                : sekme === 'meslek' ? <Meslekler detay={d} />
-                  : <Universiteler bolumId={bilgi.bolum_id} />}
-        </div>
+        <BolumBilgiIcerik bolumId={secim.id} ad={secim.ad} baslangicSekme={secim.sekme || 'genel'} onKapat={onKapat} />
       </div>
     </div>
   )
