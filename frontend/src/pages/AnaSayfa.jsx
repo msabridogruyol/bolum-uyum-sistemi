@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import HaftalikGorevler from '../components/HaftalikGorevler'
+import BolumAdi from '../components/BolumAdi'
 
 const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
@@ -240,7 +241,7 @@ export default function AnaSayfa() {
                     <div className="ob-top">
                       <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
                       <div className="ob-body">
-                        <div className="ob-name">{s.bolum_adi}</div>
+                        <div className="ob-name"><BolumAdi id={s.bolum_id} ad={s.bolum_adi} /></div>
                         <div className="mini-ilerleme-track" style={{ width: '100%', marginTop: 6 }}>
                           <div className="mini-ilerleme-fill" style={{ width: `${s.toplam_uyum}%`, background: 'var(--pu)' }} />
                         </div>
