@@ -10,3 +10,4 @@ python-jose[cryptography]==3.5.0
 bcrypt==5.0.0
 numpy==2.4.4
 openai
+yokatlas-py==0.7.0
