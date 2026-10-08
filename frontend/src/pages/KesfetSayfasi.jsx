@@ -1,27 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
-import { useBolumBilgi } from '../context/BolumBilgiContext'
+import { BolumBilgiIcerik } from '../components/BolumBilgiPenceresi'
 
 const ORNEK_ARAMALAR = ['Tıp', 'Bilgisayar Mühendisliği', 'Psikoloji', 'Hukuk', 'İşletme', 'Mimarlık']
 
-// [EKLENDİ] on_cikan_degiskenler artık katman adı taşımıyor (yalnızca
-// degisken_kod, degisken_adi, agirlik_degeri) — kod önekinden (D/P/I/A)
-// hangi katmana ait olduğunu çıkarıp renklendirmede kullanıyoruz.
-const ONEK_KATMAN_RENK = { D: 'var(--pu)', P: 'var(--gr)', I: 'var(--am)', A: 'var(--tl, var(--pu))' }
-function katmanRengi(degiskenKod) {
-  const onek = degiskenKod?.[0]
-  return ONEK_KATMAN_RENK[onek] || 'var(--pu)'
-}
-
 export default function KesfetSayfasi() {
-  const bolumBilgi = useBolumBilgi()
   const [sorgu, setSorgu] = useState('')
   const [sonuclar, setSonuclar] = useState(null)
   const [yukleniyor, setYukleniyor] = useState(false)
   const [hata, setHata] = useState(null)
   const [secili, setSecili] = useState(null)
-  const [meslekler, setMeslekler] = useState(null)
   const navigate = useNavigate()
   const [parametreler] = useSearchParams()
   const hedefBolumId = Number(parametreler.get('bolum')) || null
@@ -36,12 +25,6 @@ export default function KesfetSayfasi() {
     const bulunan = sonuclar.find((s) => s.bolum_id === hedefBolumId)
     if (bulunan) setSecili(bulunan)
   }, [sonuclar]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  useEffect(() => {
-    if (!secili) { setMeslekler(null); return }
-    setMeslekler(null)
-    api.bolumOrnekMeslekleriGetir(secili.bolum_id).then(setMeslekler).catch(() => setMeslekler([]))
-  }, [secili])
 
   async function aramaYap(terim) {
     const t = (terim ?? sorgu).trim()
@@ -71,7 +54,7 @@ export default function KesfetSayfasi() {
     <div className={`pg${secili ? ' pg-genis' : ''}`}>
       <div className="ph">
         <div className="pt">Tüm Bölümleri Keşfet</div>
-        <div className="ps">301 bölümün tamamı elinin altında — bir bölüme tıkla, genel profilini ve örnek mesleklerini incele.</div>
+        <div className="ps">301 bölümün tamamı elinin altında — bir bölüme tıkla; tanıtımını, mesleklerini, yetkinlik profilini ve üniversitelerini incele.</div>
       </div>
 
       <form onSubmit={ara} style={{ display: 'flex', gap: 8, marginBottom: sonuclar ? 20 : 14 }}>
@@ -145,178 +128,25 @@ export default function KesfetSayfasi() {
           {secili && (
             <>
               <div style={{ height: 1, background: 'var(--bor)', margin: '20px 0' }} />
-
-              <div className="yol-duzen">
+              <div className="card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: 14, flexWrap: 'wrap', marginBottom: 14 }}>
                 <div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: 4 }}>
-                    <div style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 700, textTransform: 'uppercase' }}>Seçilen Bölüm</div>
-                    {secili.toplam_uyum !== null && (
-                      <div style={{ textAlign: 'right' }}>
-                        <div style={{ fontSize: 11, color: 'var(--tx3)' }}>Senin uyumun</div>
-                        <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--pu)', fontFamily: 'var(--fd)' }}>%{Math.round(secili.toplam_uyum)}</div>
-                      </div>
-                    )}
+                  <div style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 700, textTransform: 'uppercase' }}>Seçilen Bölüm</div>
+                  <div style={{ fontSize: 13, color: 'var(--tx2)', marginTop: 2 }}>
+                    {secili.toplam_uyum !== null ? 'Testine göre bu bölümle uyumun:' : 'Uyumunu görmek için katmanları tamamla.'}
                   </div>
-                  <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>{secili.bolum_adi}</div>
-                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
-                    <button className="btn sec" style={{ fontSize: 12.5, padding: '8px 12px' }} onClick={() => bolumBilgi.ac(secili.bolum_id, secili.bolum_adi, 'meslek')}>💼 Meslekleri incele</button>
-                    <button className="btn sec" style={{ fontSize: 12.5, padding: '8px 12px' }} onClick={() => bolumBilgi.ac(secili.bolum_id, secili.bolum_adi, 'uni')}>🏛 Üniversiteler, kontenjan ve taban puanlar</button>
-                  </div>
-
-                  {secili.detay ? (
-                    <BolumDetayi detay={secili.detay} />
-                  ) : (
-                    <div className="card">
-                      <div className="ct">Bölüm Hakkında</div>
-                      <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.6 }}>
-                        {secili.kisa_aciklama || 'Bu bölüm için henüz açıklama eklenmedi.'}
-                      </div>
-                    </div>
-                  )}
-
-                  {secili.on_cikan_degiskenler?.length > 0 && (
-                    <div className="card">
-                      <div className="ct">Bu Bölümü En Çok Öne Çıkaran Özellikler</div>
-                      <div className="ps" style={{ margin: '0 0 12px', fontSize: 12 }}>
-                        Bu bölümün en yüksek beklenti duyduğu 5 özellik — kendi puanınla karşılaştırma değil, bölümün genel eğilimi.
-                      </div>
-                      {secili.on_cikan_degiskenler.map((d) => (
-                        <div key={d.degisken_kod} className="dr">
-                          <div className="dl">{d.degisken_adi}</div>
-                          <div className="db"><div className="df" style={{ width: `${d.agirlik_degeri}%`, background: katmanRengi(d.degisken_kod) }} /></div>
-                          <div className="ds" style={{ color: katmanRengi(d.degisken_kod) }}>{d.agirlik_degeri}</div>
-                        </div>
-                      ))}
-                    </div>
-                  )}
-
-                  <button className="btn full" onClick={() => navigate(`/koclugu?hedef=${secili.bolum_id}`)}>
-                    Bu Bölümü Hedef Olarak Seç ve Kişisel Karşılaştırmamı Gör →
-                  </button>
                 </div>
-
-                {/* ============ SAĞ PANEL — Örnek Meslekler ============ */}
-                <div className="yan-panel">
-                  <div className="card" style={{ marginBottom: 0 }}>
-                    <div className="ct">Örnek Meslekler</div>
-                    {meslekler === null ? (
-                      <div className="taslak-onizleme">
-                        <div className="taslak-onizleme-icerik">
-                          {[85, 72, 64, 58, 50].map((p, i) => (
-                            <div key={i} className="mini-cubuk-satir">
-                              <div className="iskelet-satir" style={{ width: 100, height: 12 }} />
-                              <div className="mini-cubuk-track"><div className="mini-cubuk-fill" style={{ width: `${p}%`, background: 'var(--pu)' }} /></div>
-                            </div>
-                          ))}
-                        </div>
-                        <div className="taslak-onizleme-overlay">
-                          <div className="to-metin" style={{ fontSize: 11.5 }}>Yükleniyor…</div>
-                        </div>
-                      </div>
-                    ) : meslekler.length === 0 ? (
-                      <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz örnek meslek eşleşmesi yok.</div>
-                    ) : (
-                      <>
-                        <div className="ps" style={{ margin: '0 0 12px', fontSize: 11.5 }}>
-                          Çubuk, mesleğin bu bölümle ne kadar örtüştüğünü gösterir.
-                        </div>
-                        {/* [2026-10-03] Ad üstte, çubuk altta: tüm çubuklar aynı noktadan başlar, ad uzunluğu çubuğu etkilemez */}
-                        {meslekler.map((m, i) => (
-                          <div key={i} style={{ marginBottom: i === meslekler.length - 1 ? 0 : 12 }}>
-                            <div style={{ fontSize: 12, color: 'var(--tx2)', fontWeight: 600, marginBottom: 5, lineHeight: 1.35 }}>
-                              {i + 1}. {m.meslek_adi}
-                            </div>
-                            <div className="mini-cubuk-track" style={{ width: '100%' }}>
-                              <div className="mini-cubuk-fill" style={{ width: `${Math.min(100, Math.round(m.benzerlik_skoru * 100))}%`, background: 'var(--pu)' }} />
-                            </div>
-                          </div>
-                        ))}
-                      </>
-                    )}
-                  </div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>
+                  {secili.toplam_uyum !== null && (
+                    <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--pu)', fontFamily: 'var(--fd)' }}>%{Math.round(secili.toplam_uyum)}</div>
+                  )}
+                  <button className="btn" style={{ fontSize: 13 }} onClick={() => navigate('/koclugu')}>Hedef Olarak Seç →</button>
                 </div>
               </div>
+              <BolumBilgiIcerik gomulu bolumId={secili.bolum_id} ad={secili.bolum_adi} />
             </>
           )}
         </>
       )}
     </div>
-  )
-}
-
-
-// [2026-10-08] Detaylı bölüm tanıtımı (bolumler.detay)
-function MaddeListesi({ maddeler }) {
-  return (
-    <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.65 }}>
-      {maddeler.map((m, i) => <li key={i} style={{ marginBottom: 4 }}>{m}</li>)}
-    </ul>
-  )
-}
-
-function BolumDetayi({ detay }) {
-  const etiket = { fontSize: 12, fontWeight: 700, padding: '5px 11px', borderRadius: 999, background: 'var(--sur2)', color: 'var(--tx2)' }
-  return (
-    <>
-      <div className="card">
-        <div className="ct">Bölüm Hakkında</div>
-        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
-          {detay.ogrenim_suresi && <span style={etiket}>⏱ Süre: {detay.ogrenim_suresi}</span>}
-          {detay.puan_turu && <span style={etiket}>📝 Puan türü: {detay.puan_turu}</span>}
-        </div>
-        <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.65 }}>{detay.ozet}</div>
-      </div>
-
-      {detay.neler_ogrenilir?.length > 0 && (
-        <div className="card">
-          <div className="ct">Bu Bölümde Neler Öğrenilir?</div>
-          <MaddeListesi maddeler={detay.neler_ogrenilir} />
-        </div>
-      )}
-
-      {detay.ornek_dersler?.length > 0 && (
-        <div className="card">
-          <div className="ct">Örnek Dersler</div>
-          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-            {detay.ornek_dersler.map((d, i) => (
-              <span key={i} style={{ fontSize: 12.5, fontWeight: 600, padding: '6px 12px', borderRadius: 10, background: 'var(--pul)', color: 'var(--tx)' }}>{d}</span>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {detay.kimler_icin_uygun?.length > 0 && (
-        <div className="card">
-          <div className="ct">Kimler İçin Uygun?</div>
-          <MaddeListesi maddeler={detay.kimler_icin_uygun} />
-        </div>
-      )}
-
-      {detay.meslekler?.length > 0 && (
-        <div className="card">
-          <div className="ct">Mezunlar Ne İş Yapar?</div>
-          {detay.meslekler.map((m, i) => (
-            <div key={i} style={{ padding: '10px 0', borderTop: i ? '1px solid var(--bor)' : 'none' }}>
-              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--tx)', marginBottom: 3 }}>{m.ad}</div>
-              <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.55 }}>{m.aciklama}</div>
-            </div>
-          ))}
-        </div>
-      )}
-
-      {detay.calisma_alanlari?.length > 0 && (
-        <div className="card">
-          <div className="ct">Nerelerde Çalışılır?</div>
-          <MaddeListesi maddeler={detay.calisma_alanlari} />
-        </div>
-      )}
-
-      {detay.bilmen_gerekenler?.length > 0 && (
-        <div className="card" style={{ background: 'var(--aml)', borderColor: 'var(--am)' }}>
-          <div className="ct" style={{ color: 'var(--am)' }}>Bilmen Gerekenler</div>
-          <MaddeListesi maddeler={detay.bilmen_gerekenler} />
-        </div>
-      )}
-    </>
   )
 }
