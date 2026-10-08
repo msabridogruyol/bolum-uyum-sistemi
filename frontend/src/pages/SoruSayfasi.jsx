@@ -137,6 +137,9 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
         <div>• <b>Kamera</b>: Ayarlar'da kamera iznini verdiysen kimlik doğrulama amacıyla aralıklarla fotoğraf çekilir; vermediysen kamera açılmaz.</div>
         <div>• Sekme değiştirme ve pencere odağı kaybı gibi olaylar kayıt altına alınır.</div>
         <div>• Katmandan erken çıkarsan, o ana kadarki ilerlemen kaybolur — baştan başlaman gerekir.</div>
+        {sorular.some((s) => s.cevap_bicimi === 'encok_enaz') && (
+          <div>• Her soruda <b>iki seçim</b> yapacaksın: önce sana <b>EN ÇOK</b> uyan şıkkı, sonra <b>EN AZ</b> uyan şıkkı seç.</div>
+        )}
         <div>• Doğru/yanlış cevap yok — içtenlikle, düşünmeden hızlıca cevapla.</div>
       </div>
 
@@ -355,16 +358,36 @@ export default function SoruSayfasi({ mod = 'katman' }) {
     navigate('/katmanlar')
   }
 
-  async function secenekSec(secenekId, soruId) {
-    setCevaplar((onceki) => ({ ...onceki, [soruId]: secenekId }))
+  async function cevabiGonder(soruId, secenekId, enAzSecenekId = null) {
     setGonderiliyor(true)
     try {
-      await (dalMi ? api.dalSoruyuCevapla(kod, soruId, secenekId) : api.soruyuCevapla(kod, soruId, secenekId))
+      await (dalMi
+        ? api.dalSoruyuCevapla(kod, soruId, secenekId, enAzSecenekId)
+        : api.soruyuCevapla(kod, soruId, secenekId, enAzSecenekId))
     } catch (e) {
       setHata(e.detail || 'Cevap kaydedilemedi.')
     } finally {
       setGonderiliyor(false)
     }
+  }
+
+  // cevaplar[soruId]: tek seçimli soruda secenek_id;
+  // "en çok / en az" sorusunda { enCok, enAz } nesnesi.
+  async function secenekSec(secenekId, soruId) {
+    const soru = sorular.find((s) => s.id === soruId)
+    if (soru?.cevap_bicimi !== 'encok_enaz') {
+      setCevaplar((onceki) => ({ ...onceki, [soruId]: secenekId }))
+      await cevabiGonder(soruId, secenekId)
+      return
+    }
+    const mevcut = cevaplar[soruId] || {}
+    let yeni
+    if (!mevcut.enCok) yeni = { enCok: secenekId, enAz: null }                       // 1. adım: en çok
+    else if (secenekId === mevcut.enCok) yeni = { enCok: null, enAz: null }          // en çoka tekrar dokunma: sıfırla
+    else if (secenekId === mevcut.enAz) yeni = { enCok: mevcut.enCok, enAz: null }   // en aza tekrar dokunma: geri al
+    else yeni = { enCok: mevcut.enCok, enAz: secenekId }                              // 2. adım: en az (değiştirilebilir)
+    setCevaplar((onceki) => ({ ...onceki, [soruId]: yeni }))
+    if (yeni.enCok && yeni.enAz) await cevabiGonder(soruId, yeni.enCok, yeni.enAz)
   }
 
   async function ileriGit() {
@@ -524,7 +547,12 @@ function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, b
 
 function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecenekSec, onIleriGit, onCik }) {
   const aktifSoru = sorular[aktifIndex]
-  const secilenSecenek = cevaplar[aktifSoru.id]
+  const ikiliMi = aktifSoru.cevap_bicimi === 'encok_enaz'
+  const cevap = cevaplar[aktifSoru.id]
+  const secilenSecenek = ikiliMi ? null : cevap
+  const enCok = ikiliMi ? cevap?.enCok : null
+  const enAz = ikiliMi ? cevap?.enAz : null
+  const cevapTamam = ikiliMi ? !!(enCok && enAz) : !!secilenSecenek
   const ilerlemeYuzde = Math.round((aktifIndex / sorular.length) * 100)
 
   return (
@@ -535,22 +563,50 @@ function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecen
       </div>
       <div className="qtrack" style={{ height: 8 }}><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
       <div className="qtext" style={{ fontSize: 23, minHeight: 100, display: 'flex', alignItems: 'center' }}>{aktifSoru.soru_metni}</div>
+      {ikiliMi && (
+        <div style={{
+          margin: '-4px 0 12px', padding: '10px 14px', borderRadius: 12, fontSize: 14.5, fontWeight: 700,
+          background: !enCok ? 'var(--grl)' : !enAz ? 'var(--rel)' : 'var(--sur2)',
+          color: !enCok ? 'var(--gr)' : !enAz ? 'var(--re)' : 'var(--tx2)',
+        }}>
+          {!enCok
+            ? '1. adım: Sana EN ÇOK uyan şıkkı seç.'
+            : !enAz
+              ? '2. adım: Şimdi sana EN AZ uyan şıkkı seç.'
+              : '✓ Tamam. Değiştirmek için şıklara tekrar dokunabilirsin.'}
+        </div>
+      )}
       <div className="qopts" style={{ gap: 10 }}>
-        {aktifSoru.secenekler.map((sec) => (
-          <button
-            key={sec.id}
-            className={`qopt${secilenSecenek === sec.id ? ' sel' : ''}`}
-            onClick={() => onSecenekSec(sec.id, aktifSoru.id)}
-            disabled={gonderiliyor}
-            style={{ padding: '14px 18px', fontSize: 14.5 }}
-          >
-            {sec.secenek_metni}
-          </button>
-        ))}
+        {aktifSoru.secenekler.map((sec) => {
+          const cokMu = ikiliMi && enCok === sec.id
+          const azMi = ikiliMi && enAz === sec.id
+          return (
+            <button
+              key={sec.id}
+              className={`qopt${secilenSecenek === sec.id || cokMu ? ' sel' : ''}`}
+              onClick={() => onSecenekSec(sec.id, aktifSoru.id)}
+              disabled={gonderiliyor}
+              style={{
+                padding: '14px 18px', fontSize: 14.5, display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left',
+                ...(azMi ? { borderColor: 'var(--re)', background: 'var(--rel)' } : {}),
+              }}
+            >
+              {ikiliMi && (cokMu || azMi) && (
+                <span style={{
+                  flexShrink: 0, fontSize: 11.5, fontWeight: 800, padding: '3px 8px', borderRadius: 8, color: '#fff',
+                  background: cokMu ? 'var(--pu)' : 'var(--re)',
+                }}>
+                  {cokMu ? 'EN ÇOK' : 'EN AZ'}
+                </span>
+              )}
+              <span>{sec.secenek_metni}</span>
+            </button>
+          )
+        })}
       </div>
       <div className="qnav">
         <button className="btn sec" onClick={onCik} style={{ padding: '13px 22px', fontSize: 15 }}>← Katmanlara dön</button>
-        <button className="btn" onClick={onIleriGit} disabled={!secilenSecenek || gonderiliyor} style={{ padding: '13px 26px', fontSize: 15 }}>
+        <button className="btn" onClick={onIleriGit} disabled={!cevapTamam || gonderiliyor} style={{ padding: '13px 26px', fontSize: 15 }}>
           {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla'}
         </button>
       </div>
