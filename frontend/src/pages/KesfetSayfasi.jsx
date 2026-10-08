@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
+import { useBolumBilgi } from '../context/BolumBilgiContext'
 
 const ORNEK_ARAMALAR = ['Tıp', 'Bilgisayar Mühendisliği', 'Psikoloji', 'Hukuk', 'İşletme', 'Mimarlık']
 
@@ -14,6 +15,7 @@ function katmanRengi(degiskenKod) {
 }
 
 export default function KesfetSayfasi() {
+  const bolumBilgi = useBolumBilgi()
   const [sorgu, setSorgu] = useState('')
   const [sonuclar, setSonuclar] = useState(null)
   const [yukleniyor, setYukleniyor] = useState(false)
@@ -155,14 +157,22 @@ export default function KesfetSayfasi() {
                       </div>
                     )}
                   </div>
-                  <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 14 }}>{secili.bolum_adi}</div>
-
-                  <div className="card">
-                    <div className="ct">Bölüm Hakkında</div>
-                    <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.6 }}>
-                      {secili.kisa_aciklama || 'Bu bölüm için henüz açıklama eklenmedi.'}
-                    </div>
+                  <div style={{ fontSize: 20, fontWeight: 700, marginBottom: 10 }}>{secili.bolum_adi}</div>
+                  <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 14 }}>
+                    <button className="btn sec" style={{ fontSize: 12.5, padding: '8px 12px' }} onClick={() => bolumBilgi.ac(secili.bolum_id, secili.bolum_adi, 'meslek')}>💼 Meslekleri incele</button>
+                    <button className="btn sec" style={{ fontSize: 12.5, padding: '8px 12px' }} onClick={() => bolumBilgi.ac(secili.bolum_id, secili.bolum_adi, 'uni')}>🏛 Üniversiteler, kontenjan ve taban puanlar</button>
                   </div>
+
+                  {secili.detay ? (
+                    <BolumDetayi detay={secili.detay} />
+                  ) : (
+                    <div className="card">
+                      <div className="ct">Bölüm Hakkında</div>
+                      <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.6 }}>
+                        {secili.kisa_aciklama || 'Bu bölüm için henüz açıklama eklenmedi.'}
+                      </div>
+                    </div>
+                  )}
 
                   {secili.on_cikan_degiskenler?.length > 0 && (
                     <div className="card">
@@ -231,5 +241,82 @@ export default function KesfetSayfasi() {
         </>
       )}
     </div>
+  )
+}
+
+
+// [2026-10-08] Detaylı bölüm tanıtımı (bolumler.detay)
+function MaddeListesi({ maddeler }) {
+  return (
+    <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.65 }}>
+      {maddeler.map((m, i) => <li key={i} style={{ marginBottom: 4 }}>{m}</li>)}
+    </ul>
+  )
+}
+
+function BolumDetayi({ detay }) {
+  const etiket = { fontSize: 12, fontWeight: 700, padding: '5px 11px', borderRadius: 999, background: 'var(--sur2)', color: 'var(--tx2)' }
+  return (
+    <>
+      <div className="card">
+        <div className="ct">Bölüm Hakkında</div>
+        <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+          {detay.ogrenim_suresi && <span style={etiket}>⏱ Süre: {detay.ogrenim_suresi}</span>}
+          {detay.puan_turu && <span style={etiket}>📝 Puan türü: {detay.puan_turu}</span>}
+        </div>
+        <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.65 }}>{detay.ozet}</div>
+      </div>
+
+      {detay.neler_ogrenilir?.length > 0 && (
+        <div className="card">
+          <div className="ct">Bu Bölümde Neler Öğrenilir?</div>
+          <MaddeListesi maddeler={detay.neler_ogrenilir} />
+        </div>
+      )}
+
+      {detay.ornek_dersler?.length > 0 && (
+        <div className="card">
+          <div className="ct">Örnek Dersler</div>
+          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+            {detay.ornek_dersler.map((d, i) => (
+              <span key={i} style={{ fontSize: 12.5, fontWeight: 600, padding: '6px 12px', borderRadius: 10, background: 'var(--pul)', color: 'var(--tx)' }}>{d}</span>
+            ))}
+          </div>
+        </div>
+      )}
+
+      {detay.kimler_icin_uygun?.length > 0 && (
+        <div className="card">
+          <div className="ct">Kimler İçin Uygun?</div>
+          <MaddeListesi maddeler={detay.kimler_icin_uygun} />
+        </div>
+      )}
+
+      {detay.meslekler?.length > 0 && (
+        <div className="card">
+          <div className="ct">Mezunlar Ne İş Yapar?</div>
+          {detay.meslekler.map((m, i) => (
+            <div key={i} style={{ padding: '10px 0', borderTop: i ? '1px solid var(--bor)' : 'none' }}>
+              <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--tx)', marginBottom: 3 }}>{m.ad}</div>
+              <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.55 }}>{m.aciklama}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {detay.calisma_alanlari?.length > 0 && (
+        <div className="card">
+          <div className="ct">Nerelerde Çalışılır?</div>
+          <MaddeListesi maddeler={detay.calisma_alanlari} />
+        </div>
+      )}
+
+      {detay.bilmen_gerekenler?.length > 0 && (
+        <div className="card" style={{ background: 'var(--aml)', borderColor: 'var(--am)' }}>
+          <div className="ct" style={{ color: 'var(--am)' }}>Bilmen Gerekenler</div>
+          <MaddeListesi maddeler={detay.bilmen_gerekenler} />
+        </div>
+      )}
+    </>
   )
 }
