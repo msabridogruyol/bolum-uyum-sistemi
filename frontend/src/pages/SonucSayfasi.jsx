@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import BolumAdi from '../components/BolumAdi'
 
 export default function SonucSayfasi() {
   const [siralama, setSiralama] = useState(null)
@@ -58,7 +59,7 @@ export default function SonucSayfasi() {
               <div className="ob-top">
                 <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
                 <div className="ob-body">
-                  <div className="ob-name">{s.bolum_adi}</div>
+                  <div className="ob-name"><BolumAdi id={s.bolum_id} ad={s.bolum_adi} /></div>
                 </div>
                 <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>
               </div>
