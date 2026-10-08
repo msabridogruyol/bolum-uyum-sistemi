@@ -107,6 +107,11 @@ export const api = {
   sifremiUnuttum: (email) => post('/auth/sifremi-unuttum', { email }),
   sifreBaglantiBilgisi: (token) => get(`/auth/sifre-sifirla/bilgi?token=${encodeURIComponent(token)}`),
   sifreSifirla: (token, yeniSifre) => post('/auth/sifre-sifirla', { token, yeni_sifre: yeniSifre }),
+
+  // --- [2026-10-08] Bölüm bilgi kartı (her sayfada açılır pencere) ---
+  bolumBilgi: (bolumId) => get(`/bolumler/${bolumId}/bilgi`),
+  bolumUniversiteleri: (bolumId) => get(`/bolumler/${bolumId}/universiteler`),
+  bolumAdaGore: (ad) => get(`/bolumler/ada-gore?ad=${encodeURIComponent(ad)}`),
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
   kvkkDurumu: () => get('/ogrenci/kvkk'),
   kvkkGuncelle: (onaylar) => post('/ogrenci/kvkk', { onaylar }),
@@ -116,8 +121,8 @@ export const api = {
   // --- D2: Katman akışı ---
   katmanlariListele: () => get('/ogrenci/katmanlar'),
   katmaniBaslat: (kod) => post(`/ogrenci/katmanlar/${kod}/basla`),
-  soruyuCevapla: (kod, soruId, secenekId) =>
-    post(`/ogrenci/katmanlar/${kod}/cevap`, { soru_id: soruId, secenek_id: secenekId }),
+  soruyuCevapla: (kod, soruId, secenekId, enAzSecenekId = null) =>
+    post(`/ogrenci/katmanlar/${kod}/cevap`, { soru_id: soruId, secenek_id: secenekId, en_az_secenek_id: enAzSecenekId }),
   katmaniTamamla: (kod) => post(`/ogrenci/katmanlar/${kod}/tamamla`),
 
   // --- Güvenlik/Tutarlılık (sonradan eklendi) ---
@@ -129,8 +134,8 @@ export const api = {
   // --- D3: K5 ---
   k5Durumu: () => get('/ogrenci/k5/durum'),
   daliBaslat: (kod) => post(`/ogrenci/dallar/${kod}/basla`),
-  dalSoruyuCevapla: (kod, soruId, secenekId) =>
-    post(`/ogrenci/dallar/${kod}/cevap`, { soru_id: soruId, secenek_id: secenekId }),
+  dalSoruyuCevapla: (kod, soruId, secenekId, enAzSecenekId = null) =>
+    post(`/ogrenci/dallar/${kod}/cevap`, { soru_id: soruId, secenek_id: secenekId, en_az_secenek_id: enAzSecenekId }),
   daliTamamla: (kod) => post(`/ogrenci/dallar/${kod}/tamamla`),
 
   // --- D5: Sonuç ---
