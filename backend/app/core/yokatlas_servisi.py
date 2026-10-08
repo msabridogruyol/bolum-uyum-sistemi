@@ -74,45 +74,89 @@ def _program_grubu_idleri(bolum_adi: str) -> list[int]:
     return [g.birim_grup_id for g in _istemci_al().list_program_groups() if _normalize(g.birim_grup_adi) == hedef]
 
 
-def _satir(p) -> dict:
-    c = p.current
+def _int(v):
+    try:
+        return int(float(v)) if v not in (None, "") else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _float(v):
+    try:
+        if isinstance(v, str):
+            v = v.strip().replace(".", "").replace(",", ".") if "," in v else v.strip()
+        return float(v) if v not in (None, "") else None
+    except (TypeError, ValueError):
+        return None
+
+
+def _satir(d: dict) -> dict | None:
+    """Ham YÖK Atlas satırını (camelCase sözlük) kendi biçimimize çevirir. Kütüphanenin katı modelleri
+    yerine toleranslı okuma yapılır: beklenmeyen bir değer (ör. KKTC üniversitesi türü) tüm sayfayı düşürmesin."""
+    if not isinstance(d, dict) or d.get("kilavuzKodu") is None:
+        return None
+    yil = _int(d.get("yil")) or 0
+    gecmis = []
+    for k in (1, 2, 3):
+        g = {"yil": yil - k if yil else None, "kontenjan": _int(d.get(f"kontenjan{k}")),
+             "taban_puan": _float(d.get(f"minPuan{k}")), "basari_sirasi": _int(d.get(f"basariSirasi{k}"))}
+        if g["kontenjan"] or g["taban_puan"] or g["basari_sirasi"]:
+            gecmis.append(g)
+    tur = (d.get("universiteTuru") or "").upper()
+    birim_turu = (d.get("birimTuruAdi") or "").upper()
     return {
-        "kilavuz_kodu": p.kilavuz_kodu,
-        "universite": p.universite_adi,
-        "universite_turu": p.universite_turu,
-        "il": p.uni_il_adi or p.il_adi,
-        "fakulte": p.fymk_adi,
-        "program": p.birim_adi,
-        "puan_turu": p.puan_turu,
-        "ogrenim_dili": p.ogrenim_dili_adi,
-        "burs": p.burs_orani_adi,
-        "ogrenim_turu": p.ogrenim_turu_adi,
-        "ogrenim_suresi": p.ogrenim_suresi,
-        "yil": c.year,
-        "kontenjan": c.kontenjan,
-        "yerlesen": c.yerlesen,
-        "taban_puan": c.min_puan,
-        "basari_sirasi": c.basari_sirasi,
-        "gecmis": [
-            {"yil": h.year, "kontenjan": h.kontenjan, "taban_puan": h.min_puan, "basari_sirasi": h.basari_sirasi}
-            for h in p.history if h.kontenjan or h.min_puan or h.basari_sirasi
-        ],
+        "kilavuz_kodu": _int(d.get("kilavuzKodu")),
+        "universite": d.get("universiteAdi") or "",
+        "universite_turu": tur or None,
+        "il": d.get("uniIlAdi") or d.get("ilAdi"),
+        "fakulte": d.get("fymkAdi"),
+        "program": d.get("birimAdi"),
+        "puan_turu": d.get("puanTuru"),
+        "ogrenim_dili": d.get("ogrenimDiliAdi"),
+        "burs": d.get("bursOraniAdi"),
+        "ogrenim_turu": d.get("ogrenimTuruAdi"),
+        "ogrenim_suresi": _int(d.get("ogrenimSuresi")) or (2 if "LISANS" in birim_turu and birim_turu.startswith(("ÖN", "ON")) else None),
+        "yil": yil or None,
+        "kontenjan": _int(d.get("kontenjan")),
+        "yerlesen": _int(d.get("gkY")),
+        "taban_puan": _float(d.get("minPuan")),
+        "basari_sirasi": _int(d.get("basariSirasi")),
+        "gecmis": gecmis,
     }
+
+
+def _ham_ara(istemci, gruplar: list[int], sayfa: int, boyut: int) -> dict:
+    govde = {
+        "filters": {"puanTuru": None, "universiteId": [], "birimGrupId": list(gruplar), "ilKodu": [],
+                    "birimTuruId": None, "universiteTuru": None, "bursOraniId": None, "ogrenimTuruId": None,
+                    "kilavuzKodu": None, "minBasariSirasi": None, "maxBasariSirasi": None},
+        "page": sayfa, "size": boyut, "sortBy": "basariSirasi", "direction": "ASC",
+    }
+    return istemci._http.post_json("/api/tercih-kilavuz/search", json_body=govde)
 
 
 def _yokatlastan_cek(bolum_adi: str) -> dict:
     gruplar = _program_grubu_idleri(bolum_adi)
     if not gruplar:
         return {"eslesme": False, "programlar": [], "yil": None}
-    istemci = _istemci_al(); satirlar = []; yil = None; sayfa = 0
-    while len(satirlar) < MAKS_PROGRAM:
-        s = istemci.search({"birim_grup_id": gruplar}, page=sayfa, size=100, sort_by="basariSirasi",
-                           direction="ASC", smart_search=False)
-        yil = yil or s.yil
-        satirlar += [_satir(p) for p in s.content]
-        if s.last or not s.content:
+    istemci = _istemci_al(); satirlar = []; yil = None; sayfa = 0; boyut = 50
+    while len(satirlar) < MAKS_PROGRAM and sayfa < 30:
+        try:
+            ham = _ham_ara(istemci, gruplar, sayfa, boyut)
+        except Exception:
+            if sayfa == 0 and boyut > 20:   # sayfa boyutu reddedildiyse küçük sayfayla dene
+                boyut = 20
+                continue
+            if satirlar:                    # sonraki sayfada hata: o ana kadar gelenleri kullan
+                break
+            raise
+        icerik = (ham or {}).get("content") or []
+        yil = yil or _int((ham or {}).get("yil"))
+        satirlar += [x for x in (_satir(d) for d in icerik) if x]
+        if (ham or {}).get("last", True) or not icerik:
             break
         sayfa += 1
+    yil = yil or next((s["yil"] for s in satirlar if s.get("yil")), None)
     return {"eslesme": True, "programlar": satirlar, "yil": yil}
 
 
