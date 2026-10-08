@@ -32,14 +32,19 @@ import numpy as np
 from app.models import (
     Ogrenci, Katman, Degisken, Dal, Soru, SoruSecenegi,
     OgrenciDegerlendirmeTuru, OgrenciDegiskenSkoru, OgrenciDalOturumu, OgrenciCevap,
-    OgrenciBolumUyumSkoru, BolumDalEslesme, BolumAgirligi, OgrenciDalUyumSkoru,
+    OgrenciBolumUyumSkoru, BolumDalEslesme, BolumAgirligi, OgrenciDalUyumSkoru, BolumK5Bag,
 )
-from app.core.katman_servisi import IsKuraliHatasi, parametre_oku, likert_puan
+from app.core.katman_servisi import IsKuraliHatasi, parametre_oku, likert_puan, cevaplari_puanla
 from app.core.skor_motoru import _katman_ici_olcekle
 
 DAL_SECIM_UST_N = 15        # dal seçiminde bakılan ilk N bölüm
 IKINCI_DAL_MIN_BOLUM = 4    # ikinci dalın açılması için ilk N'de en az bu kadar bölüm
 K5_GUVEN_STD = 15.0         # öğrencinin K5 puanlarında bu std'ye ulaşınca K5 tam etkili; düz profilde etki 0
+# [2026-10-08] Yeni K5 (17 üst alan): ana alan = 1. sıradaki bölümün alanı (her zaman açılır).
+# İkinci alan: en iyi 3 bölümünün ortalaması ana alanınkine IKINCI_ALAN_FARK puandan yakınsa açılır
+# ve ondan yalnızca ilk IKINCI_ALAN_SORU soru sorulur (toplam K5 en fazla 14 + 6 = 20 soru).
+IKINCI_ALAN_FARK = 10.0
+IKINCI_ALAN_SORU = 6
 
 
 class DalAday:
@@ -141,8 +146,22 @@ def k5_tetikle(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> 
     if mevcut:
         acilan_idler = [o.dal_id for o in mevcut]
     elif sirali:
-        acilan_idler = [sirali[0][0]] + [
-            dal_id for dal_id, liste in sirali[1:max_dal] if len(liste) >= IKINCI_DAL_MIN_BOLUM
+        # [2026-10-08] 'ilk1' kuralı: 1. sıradaki bölümün alanı her zaman açılır (öğrencinin en
+        # uygun bölümü hiçbir zaman K5 dışında kalmaz). Diğer alanlar, en iyi 3 bölümünün
+        # ortalaması ana alanınkine IKINCI_ALAN_FARK puandan yakınsa açılır (en fazla max_dal).
+        def _ust3(liste: list[float]) -> float:
+            en_iyi = sorted(liste, reverse=True)[:3]
+            return sum(en_iyi) / len(en_iyi)
+        ana_id = bolum_dal.get(ust_skorlar[0].bolum_id) if ust_skorlar else None
+        if ana_id is None:
+            ana_id = sirali[0][0]
+        ana_ust3 = _ust3(sayim[ana_id])
+        digerleri = sorted(
+            [(dal_id, _ust3(liste)) for dal_id, liste in sayim.items() if dal_id != ana_id],
+            key=lambda kv: -kv[1],
+        )
+        acilan_idler = [ana_id] + [
+            dal_id for dal_id, ort in digerleri[: max(0, max_dal - 1)] if ana_ust3 - ort <= IKINCI_ALAN_FARK
         ]
         for dal_id in acilan_idler:
             db.add(OgrenciDalOturumu(ogrenci_id=ogrenci.id, tur_id=tur.id, dal_id=dal_id, durum="baslamadi"))
@@ -151,8 +170,7 @@ def k5_tetikle(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> 
         acilan_idler = []
 
     ilgi_idler = [dal_id for dal_id, liste in sirali if dal_id not in acilan_idler and len(liste) >= 2]
-    # açık dallar her zaman puan sırasıyla (en güçlü önce) dönsün
-    acilan_idler = sorted(acilan_idler, key=lambda i: -sum(sayim.get(i, [])))
+    # açık alanlar açılış sırasıyla döner: önce ana alan (1. sıradaki bölümün alanı)
     return {
         "esik": esik,
         "acilan": [_ozet(i) for i in acilan_idler],
@@ -182,6 +200,25 @@ def dal_ici_uyum_hesapla(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDe
     if len(degisken_idler) < 2 or not bolum_idler:
         return 0
 
+    # [2026-10-08] Yeni K5: bölüm–eksen bağları tanımlıysa, bölümün K5 uyumu = öğrencinin eksen
+    # puanlarının bölümün bağlarıyla ağırlıklı ortalaması. (Bağ yoksa eski yöntem çalışır.)
+    baglar: dict[int, dict[int, float]] = {}
+    for b in db.query(BolumK5Bag).filter(
+        BolumK5Bag.bolum_id.in_(bolum_idler), BolumK5Bag.degisken_id.in_(degisken_idler)
+    ).all():
+        baglar.setdefault(b.bolum_id, {})[b.degisken_id] = float(b.bag)
+    if baglar:
+        bolum_idler = [b for b in bolum_idler if b in baglar]
+        ham = np.array([
+            sum(w * puanlar[d] for d, w in baglar[b].items()) / sum(baglar[b].values())
+            for b in bolum_idler
+        ])
+        ogr = np.array([puanlar[d] for d in degisken_idler])
+        z = (ham - ham.mean()) / (ham.std() + 1e-9) if len(ham) > 1 else np.zeros(len(ham))
+        guven = float(min(1.0, ogr.std() / K5_GUVEN_STD))
+        skor = np.clip(50.0 + guven * 15.0 * z, 0.0, 100.0)
+        return _dal_ici_kaydet(db, ogrenci, tur, dal, bolum_idler, skor)
+
     en_guncel: dict[tuple[int, int], tuple[int, float]] = {}
     for a in db.query(BolumAgirligi).filter(
         BolumAgirligi.bolum_id.in_(bolum_idler), BolumAgirligi.degisken_id.in_(degisken_idler)
@@ -202,7 +239,10 @@ def dal_ici_uyum_hesapla(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDe
     z = (ham - ham.mean()) / (ham.std() + 1e-9)
     guven = float(min(1.0, ogr.std() / K5_GUVEN_STD))
     skor = np.clip(50.0 + guven * 15.0 * z, 0.0, 100.0)
+    return _dal_ici_kaydet(db, ogrenci, tur, dal, bolum_idler, skor)
 
+
+def _dal_ici_kaydet(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, dal: Dal, bolum_idler: list[int], skor) -> int:
     db.query(OgrenciDalUyumSkoru).filter(
         OgrenciDalUyumSkoru.ogrenci_id == ogrenci.id,
         OgrenciDalUyumSkoru.tur_id == tur.id,
@@ -246,6 +286,32 @@ def bekleyen_dal_var_mi(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     return False
 
 
+def dal_sorulari(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDegerlendirmeTuru) -> list[Soru]:
+    """
+    [2026-10-08] Bu öğrenciye bu alanda sorulacak sorular (oturum başlatma ve tamamlama aynı listeyi kullanır).
+    Ana alan (öğrencinin ilk açılan alanı): alanın tüm aktif soruları. Diğer açılan alanlar: yalnızca ilk
+    IKINCI_ALAN_SORU soru (soru setleri, ilk sorular kendi içinde dengeli olacak şekilde sıralanmıştır).
+    """
+    dal_degisken_idler = [d.id for d in db.query(Degisken).filter(Degisken.dal_id == dal.id).all()]
+    if not dal_degisken_idler:
+        return []
+    sorular = (
+        db.query(Soru)
+        .filter(Soru.degisken_id.in_(dal_degisken_idler), Soru.aktif_mi.is_(True))
+        .order_by(Soru.id)
+        .all()
+    )
+    ilk_oturum = (
+        db.query(OgrenciDalOturumu)
+        .filter(OgrenciDalOturumu.ogrenci_id == ogrenci.id, OgrenciDalOturumu.tur_id == tur.id)
+        .order_by(OgrenciDalOturumu.id)
+        .first()
+    )
+    if ilk_oturum is not None and ilk_oturum.dal_id != dal.id:
+        sorular = sorular[:IKINCI_ALAN_SORU]
+    return sorular
+
+
 def dal_bul(db: Session, kod: str) -> Dal:
     dal = db.query(Dal).filter(Dal.kod == kod.upper()).first()
     if dal is None:
@@ -272,12 +338,7 @@ def dal_oturumu_baslat(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDege
     if not dal_degiskenleri:
         raise IsKuraliHatasi(f"{dal.kod} için henüz soru tanımlanmamış (admin P6 aşaması tamamlanmamış olabilir).")
 
-    sorular = (
-        db.query(Soru)
-        .filter(Soru.degisken_id.in_([d.id for d in dal_degiskenleri]), Soru.aktif_mi.is_(True))
-        .order_by(Soru.id)
-        .all()
-    )
+    sorular = dal_sorulari(db, ogrenci, dal, tur)
     if not sorular:
         raise IsKuraliHatasi(f"{dal.kod} için aktif soru bulunamadı.")
 
@@ -298,9 +359,7 @@ def dali_tamamla(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDegerlendi
     degisken_idler = [d.id for d in dal_degiskenleri]
     # [DÜZELTME] aktif_mi filtresi eklendi — dal_oturumu_baslat yalnızca aktif
     # soruları soruyor; burada pasif sorular da sayılırsa "cevaplanmadı" hatası çıkar.
-    sorular = {
-        s.id: s for s in db.query(Soru).filter(Soru.degisken_id.in_(degisken_idler), Soru.aktif_mi.is_(True)).all()
-    }
+    sorular = {s.id: s for s in dal_sorulari(db, ogrenci, dal, tur)}
 
     cevaplar = (
         db.query(OgrenciCevap)
@@ -316,15 +375,8 @@ def dali_tamamla(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDegerlendi
     if eksik:
         raise IsKuraliHatasi(f"{len(eksik)} soru henüz cevaplanmadı — dal tamamlanamaz.")
 
-    degisken_puanlari: dict[int, list[float]] = {}
-    for cevap in cevaplar:
-        soru = sorular[cevap.soru_id]
-        if soru.degisken_id is None:
-            continue
-        secenek = db.get(SoruSecenegi, cevap.secenek_id)
-        toplam_secenek = db.query(func.count(SoruSecenegi.id)).filter(SoruSecenegi.soru_id == soru.id).scalar()
-        puan = likert_puan(secenek.secenek_sirasi, toplam_secenek, soru.ters_kodlanmis_mi)
-        degisken_puanlari.setdefault(soru.degisken_id, []).append(puan)
+    # [2026-10-08] K1-K4 ile aynı puanlama (likert / en çok-en az senaryo soruları)
+    degisken_puanlari = cevaplari_puanla(db, sorular, cevaplar)
 
     sonuc: list[tuple[int, float]] = []
     for degisken_id, puanlar in degisken_puanlari.items():
