@@ -8,6 +8,9 @@ const SEKMELER = [
   { kod: 'uni', ad: 'Üniversiteler' },
 ]
 
+const turGrubu = (t) => (t === 'DEVLET' ? 'DEVLET' : (t || '').startsWith('VAKIF') ? 'VAKIF' : 'DIGER')
+const turAdi = (t) => ({ DEVLET: 'Devlet', VAKIF: 'Vakıf', DIGER: t ? t.charAt(0) + t.slice(1).toLocaleLowerCase('tr') : null })[turGrubu(t)]
+
 const sayi = (v, ondalik = 0) =>
   v === null || v === undefined ? '—' : Number(v).toLocaleString('tr-TR', { minimumFractionDigits: ondalik, maximumFractionDigits: ondalik })
 
@@ -141,7 +144,7 @@ function Universiteler({ bolumId }) {
     const q = arama.trim().toLocaleLowerCase('tr')
     const s = programlar.filter((p) =>
       (!il || p.il === il) &&
-      (!tur || (tur === 'DEVLET' ? p.universite_turu === 'DEVLET' : p.universite_turu !== 'DEVLET')) &&
+      (!tur || turGrubu(p.universite_turu) === tur) &&
       (!q || `${p.universite} ${p.program}`.toLocaleLowerCase('tr').includes(q)))
     const anahtar = { basari: (p) => p.basari_sirasi ?? 1e12, kontenjan: (p) => -(p.kontenjan ?? -1), ad: null }[siralama]
     return anahtar ? [...s].sort((a, b) => anahtar(a) - anahtar(b)) : [...s].sort((a, b) => a.universite.localeCompare(b.universite, 'tr'))
@@ -161,9 +164,10 @@ function Universiteler({ bolumId }) {
           {iller.map((x) => <option key={x} value={x}>{x}</option>)}
         </select>
         <select value={tur} onChange={(e) => setTur(e.target.value)} style={secim}>
-          <option value="">Devlet + Vakıf</option>
+          <option value="">Tüm üniversiteler</option>
           <option value="DEVLET">Devlet</option>
           <option value="VAKIF">Vakıf</option>
+          <option value="DIGER">KKTC / yurt dışı</option>
         </select>
         <select value={siralama} onChange={(e) => setSiralama(e.target.value)} style={secim}>
           <option value="basari">Başarı sırasına göre</option>
@@ -181,7 +185,7 @@ function Universiteler({ bolumId }) {
             <div style={{ minWidth: 0 }}>
               <div style={{ fontSize: 13.5, fontWeight: 800, color: 'var(--tx)' }}>{p.universite}</div>
               <div style={{ fontSize: 12, color: 'var(--tx2)', marginTop: 2 }}>
-                {[p.il, p.universite_turu === 'DEVLET' ? 'Devlet' : 'Vakıf', p.program].filter(Boolean).join(' · ')}
+                {[p.il, turAdi(p.universite_turu), p.program].filter(Boolean).join(' · ')}
               </div>
             </div>
             <a
