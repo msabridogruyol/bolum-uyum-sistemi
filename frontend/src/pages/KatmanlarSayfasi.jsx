@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import BolumAdi from '../components/BolumAdi'
 
 const DURUM_ETIKET = { baslamadi: null, devam_ediyor: 'Devam Ediyor', tamamlandi: 'Tamamlandı' }
 const DURUM_RENK = { devam_ediyor: 'bdg-prog', tamamlandi: 'bdg-done' }
@@ -170,7 +171,7 @@ export default function KatmanlarSayfasi() {
                 {hedef && (
                   <div style={{ marginBottom: profil?.hedef_universite || profil?.hedef_meslek_adi ? 10 : 0 }}>
                     <div style={{ fontSize: 10.5, color: 'var(--tx3)', fontWeight: 600 }}>Hedef Bölüm</div>
-                    <div style={{ fontSize: 15, fontWeight: 700 }}>{hedef.bolum_adi}</div>
+                    <div style={{ fontSize: 15, fontWeight: 700 }}><BolumAdi id={hedef.bolum_id} ad={hedef.bolum_adi} /></div>
                   </div>
                 )}
                 {profil?.hedef_universite && (
