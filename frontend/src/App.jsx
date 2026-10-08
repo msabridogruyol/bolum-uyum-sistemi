@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext'
+import { BolumBilgiProvider } from './context/BolumBilgiContext'
 import AnaSayfaDuzeni from './components/AnaSayfaDuzeni'
 import AdminSayfaDuzeni from './components/AdminSayfaDuzeni'
 import GirisSayfasi from './pages/GirisSayfasi'
@@ -124,7 +125,9 @@ export default function App() {
     <AuthProvider>
       <AdminAuthProvider>
         <BrowserRouter>
-          <AnaUygulama />
+          <BolumBilgiProvider>
+            <AnaUygulama />
+          </BolumBilgiProvider>
         </BrowserRouter>
       </AdminAuthProvider>
     </AuthProvider>
