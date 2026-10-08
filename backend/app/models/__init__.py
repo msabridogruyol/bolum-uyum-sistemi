@@ -6,7 +6,7 @@ olması gerekir, bu dosya onu garanti eder.
 from app.models.kimlik import Ogrenci, AdminKullanici
 from app.models.icerik_yapisi import (
     Katman, Degisken, Soru, SoruSecenegi, SjtSecenekDegiskenAgirlik,
-    Bolum, Dal, BolumDalEslesme, BolumKumelemeSonucu,
+    Bolum, Dal, BolumDalEslesme, BolumKumelemeSonucu, BolumK5Bag, YokatlasOnbellek,
 )
 from app.models.meslek_verisi import (
     Meslek, Kategori, AltGrupKategoriEslesme,
@@ -33,7 +33,7 @@ from app.models.hesap_guvenligi import KvkkOnayi, DogrulamaKodu, SifreSifirlamaT
 __all__ = [
     "Ogrenci", "AdminKullanici",
     "Katman", "Degisken", "Soru", "SoruSecenegi", "SjtSecenekDegiskenAgirlik",
-    "Bolum", "Dal", "BolumDalEslesme", "BolumKumelemeSonucu",
+    "Bolum", "Dal", "BolumDalEslesme", "BolumKumelemeSonucu", "BolumK5Bag", "YokatlasOnbellek",
     "Meslek", "Kategori", "AltGrupKategoriEslesme",
     "MeslekBolumEslesmeAday", "MeslekDegiskenSkoru",
     "BolumAgirligi",
