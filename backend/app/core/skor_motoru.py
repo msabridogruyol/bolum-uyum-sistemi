@@ -82,7 +82,14 @@ def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) 
     ana_katman_idler = [k.id for k in ana_katmanlar]
     katman_agirlik = {k.id: float(k.normalizasyon_agirligi or 0) for k in ana_katmanlar}
 
-    degiskenler = db.query(Degisken).filter(Degisken.katman_id.in_(ana_katman_idler)).all()
+    degiskenler = db.query(Degisken).filter(Degisken.katman_id.in_(ana_katman_idler)).order_by(Degisken.id).all()
+    # [2026-10-07] Bölüm eşleşmesine girmeyen değişkenler (varsayılan P4 — kaygı/duygusal hassasiyet).
+    # Doğrulama simülasyonu: yalnızca kaygı puanı değişince ilk 10'daki ~4 bölüm değişiyor, kaygılı
+    # öğrenciler terapi/psikoloji bölümlerine itiliyordu. Kaygı bir mesleki ilgi değildir; öğrencinin
+    # kişilik sonucunda ve koçlukta kullanılmaya devam eder. Parametre: eslesme_disi_degiskenler ("P4,X1").
+    from app.core.katman_servisi import parametre_oku
+    haric = {k.strip() for k in (parametre_oku(db, "eslesme_disi_degiskenler", "P4") or "").split(",") if k.strip()}
+    degiskenler = [d for d in degiskenler if d.kod not in haric]
     if not degiskenler:
         return None
 
@@ -321,7 +328,9 @@ def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     return n
 
 
-K5_SIRALAMA_ETKISI = 0.30  # dal_ici_uyum 50'den her 1 puan sapma → nihai skorda 0.30 puan (en fazla ±15)
+K5_SIRALAMA_ETKISI = 0.50  # dal_ici_uyum 50'den her 1 puan sapma → nihai skorda 0.50 puan (en fazla ±25)
+# [2026-10-08] 0.30 → 0.50: iki aşamalı doğrulama simülasyonunda (K1-K4 + dal soruları) öğrenci tiplerinin
+# ilk 3 doğruluğu %75,5 → %76,5, Finans tipi %34 → %42. 0.70'te en zayıf tip (Spor) bozulduğu için 0.50 seçildi.
 
 
 @dataclass
@@ -336,7 +345,7 @@ def nihai_uyum_haritasi(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     """
     [YENİ 2026-10-03] bolum_id -> öğrenciye GÖSTERİLEN nihai uyum. Sonuç listesi ve Keşfet
     aynı sayıyı göstersin diye tek yerde hesaplanır:
-    nihai = TOPLAM_UYUM + 0.30 × (dal_ici_uyum − 50)  (yalnızca tamamlanan dalların bölümleri için)
+    nihai = TOPLAM_UYUM + 0.50 × (dal_ici_uyum − 50)  (yalnızca tamamlanan dalların bölümleri için)
     """
     from app.models import OgrenciDalUyumSkoru  # döngüsel import olmasın diye burada
 
@@ -363,7 +372,7 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
     kuralı: agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad alfabetik.
 
     [YENİ 2026-10-03] K5: öğrencinin tamamladığı dal(lar)ın bölümleri için
-    nihai skor = TOPLAM_UYUM + 0.30 × (dal_ici_uyum − 50). 50 = nötr (K5 bilgi vermediyse
+    nihai skor = TOPLAM_UYUM + 0.50 × (dal_ici_uyum − 50). 50 = nötr (K5 bilgi vermediyse
     sıralama değişmez); en fazla ±15 puan. Diğer bölümler değişmez.
     Veritabanındaki TOPLAM_UYUM kaydı değiştirilmez; birleştirme okunurken yapılır.
     """
