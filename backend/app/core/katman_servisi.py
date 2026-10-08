@@ -175,10 +175,25 @@ def katman_oturumu_baslat(
     return oturum, aktif_sorular
 
 
-def cevabi_kaydet(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, soru_id: int, secenek_id: int) -> None:
+def cevabi_kaydet(
+    db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, soru_id: int, secenek_id: int,
+    en_az_secenek_id: int | None = None,
+) -> None:
     secenek = db.get(SoruSecenegi, secenek_id)
     if secenek is None or secenek.soru_id != soru_id:
         raise IsKuraliHatasi("Geçersiz seçenek — bu soruya ait değil.")
+    # [2026-10-08] "En çok / en az" biçimi
+    soru = db.get(Soru, soru_id)
+    if soru is not None and (soru.cevap_bicimi or "tek") == "encok_enaz":
+        if en_az_secenek_id is None:
+            raise IsKuraliHatasi("Bu soruda sana en az uyan şıkkı da seçmelisin.")
+        en_az = db.get(SoruSecenegi, en_az_secenek_id)
+        if en_az is None or en_az.soru_id != soru_id:
+            raise IsKuraliHatasi("Geçersiz seçenek — bu soruya ait değil.")
+        if en_az_secenek_id == secenek_id:
+            raise IsKuraliHatasi("'En çok' ve 'en az' aynı şık olamaz.")
+    else:
+        en_az_secenek_id = None
 
     mevcut = (
         db.query(OgrenciCevap)
@@ -191,9 +206,13 @@ def cevabi_kaydet(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, 
     )
     if mevcut is not None:
         mevcut.secenek_id = secenek_id
+        mevcut.en_az_secenek_id = en_az_secenek_id
         mevcut.cevap_zamani = datetime.now(timezone.utc)
     else:
-        db.add(OgrenciCevap(ogrenci_id=ogrenci.id, tur_id=tur.id, soru_id=soru_id, secenek_id=secenek_id))
+        db.add(OgrenciCevap(
+            ogrenci_id=ogrenci.id, tur_id=tur.id, soru_id=soru_id,
+            secenek_id=secenek_id, en_az_secenek_id=en_az_secenek_id,
+        ))
     db.flush()
 
 
@@ -203,6 +222,68 @@ def likert_puan(secenek_sirasi: int, toplam_secenek: int, ters_kodlanmis_mi: boo
         return 50.0
     puan = (secenek_sirasi - 1) / (toplam_secenek - 1) * 100
     return 100 - puan if ters_kodlanmis_mi else puan
+
+
+def cevaplari_puanla(db: Session, sorular: dict, cevaplar: list) -> dict[int, list[float]]:
+    """Cevapları soru tipine göre değişken puanlarına çevirir: {degisken_id: [puan, ...]}.
+    K1-K4 katmanları ve K5 dal soruları aynı kuralla puanlanır (likert / sjt / en çok-en az / kutup)."""
+    degisken_puanlari: dict[int, list[float]] = {}
+
+    for cevap in cevaplar:
+        soru = sorular[cevap.soru_id]
+        secenek = db.get(SoruSecenegi, cevap.secenek_id)
+        toplam_secenek = db.query(func.count(SoruSecenegi.id)).filter(SoruSecenegi.soru_id == soru.id).scalar()
+
+        if soru.soru_tipi == "likert":
+            if soru.degisken_id is None:
+                continue
+            puan = likert_puan(secenek.secenek_sirasi, toplam_secenek, soru.ters_kodlanmis_mi)
+            degisken_puanlari.setdefault(soru.degisken_id, []).append(puan)
+
+        elif soru.soru_tipi == "sjt" and (soru.cevap_bicimi or "tek") == "encok_enaz":
+            # [2026-10-08] En çok / en az: EN ÇOK seçilen şıkkın değişkeni 100,
+            # EN AZ seçilen 0, seçilmeyen şıklar 50. Ağırlık (w) 1'den küçükse
+            # puan 50'ye doğru çekilir: 50 + (puan - 50) × w.
+            if cevap.en_az_secenek_id is None:
+                raise IsKuraliHatasi("Bir soruda 'en az uyan' şık seçilmemiş — katman tamamlanamaz.")
+            soru_secenekleri = db.query(SoruSecenegi).filter(SoruSecenegi.soru_id == soru.id).all()
+            for sec in soru_secenekleri:
+                if sec.id == cevap.secenek_id:
+                    secim_puani = 100.0
+                elif sec.id == cevap.en_az_secenek_id:
+                    secim_puani = 0.0
+                else:
+                    secim_puani = 50.0
+                for a in db.query(SjtSecenekDegiskenAgirlik).filter(SjtSecenekDegiskenAgirlik.secenek_id == sec.id).all():
+                    w = max(0.0, min(1.0, float(a.agirlik)))
+                    degisken_puanlari.setdefault(a.degisken_id, []).append(50.0 + (secim_puani - 50.0) * w)
+
+        elif soru.soru_tipi == "sjt":
+            # [ÇIKARIM] — SJT ağırlığı (0-1 aralığı varsayılıyor) doğrudan
+            # o değişken için 0-100 skalasına ölçeklenip katkı puanı sayılır.
+            agirliklar = (
+                db.query(SjtSecenekDegiskenAgirlik)
+                .filter(SjtSecenekDegiskenAgirlik.secenek_id == cevap.secenek_id)
+                .all()
+            )
+            for a in agirliklar:
+                degisken_puanlari.setdefault(a.degisken_id, []).append(float(a.agirlik) * 100)
+
+        elif soru.soru_tipi == "kutup":
+            # [EKLENDİ] A-mı-B-mi, 4'lü ölçek. secenek_sirasi: 1=Kesinlikle A,
+            # 2=Daha Çok A, 3=Daha Çok B, 4=Kesinlikle B. A ucu puanı bu 4
+            # noktaya göre lineer enterpole edilir (1->100, 4->0); B ucu
+            # puanı bunun tamamlayanıdır (100 - A_puani) — iki uç birbirinin
+            # simetrik zıttı olduğu için bu matematiksel olarak tutarlıdır.
+            if soru.degisken_id is None or soru.b_ucu_degisken_id is None:
+                continue
+            a_puani = (4 - secenek.secenek_sirasi) / 3 * 100
+            b_puani = 100 - a_puani
+            degisken_puanlari.setdefault(soru.degisken_id, []).append(a_puani)
+            degisken_puanlari.setdefault(soru.b_ucu_degisken_id, []).append(b_puani)
+
+        # soru_tipi == "kontrol" -> hiçbir değişkene puan katkısı yapılmaz (kasıtlı)
+    return degisken_puanlari
 
 
 def katmani_tamamla(
@@ -232,45 +313,8 @@ def katmani_tamamla(
     if eksik:
         raise IsKuraliHatasi(f"{len(eksik)} soru henüz cevaplanmadı — katman tamamlanamaz.")
 
-    # değişken_id -> puan listesi
-    degisken_puanlari: dict[int, list[float]] = {}
-
-    for cevap in cevaplar:
-        soru = sorular[cevap.soru_id]
-        secenek = db.get(SoruSecenegi, cevap.secenek_id)
-        toplam_secenek = db.query(func.count(SoruSecenegi.id)).filter(SoruSecenegi.soru_id == soru.id).scalar()
-
-        if soru.soru_tipi == "likert":
-            if soru.degisken_id is None:
-                continue
-            puan = likert_puan(secenek.secenek_sirasi, toplam_secenek, soru.ters_kodlanmis_mi)
-            degisken_puanlari.setdefault(soru.degisken_id, []).append(puan)
-
-        elif soru.soru_tipi == "sjt":
-            # [ÇIKARIM] — SJT ağırlığı (0-1 aralığı varsayılıyor) doğrudan
-            # o değişken için 0-100 skalasına ölçeklenip katkı puanı sayılır.
-            agirliklar = (
-                db.query(SjtSecenekDegiskenAgirlik)
-                .filter(SjtSecenekDegiskenAgirlik.secenek_id == cevap.secenek_id)
-                .all()
-            )
-            for a in agirliklar:
-                degisken_puanlari.setdefault(a.degisken_id, []).append(float(a.agirlik) * 100)
-
-        elif soru.soru_tipi == "kutup":
-            # [EKLENDİ] A-mı-B-mi, 4'lü ölçek. secenek_sirasi: 1=Kesinlikle A,
-            # 2=Daha Çok A, 3=Daha Çok B, 4=Kesinlikle B. A ucu puanı bu 4
-            # noktaya göre lineer enterpole edilir (1->100, 4->0); B ucu
-            # puanı bunun tamamlayanıdır (100 - A_puani) — iki uç birbirinin
-            # simetrik zıttı olduğu için bu matematiksel olarak tutarlıdır.
-            if soru.degisken_id is None or soru.b_ucu_degisken_id is None:
-                continue
-            a_puani = (4 - secenek.secenek_sirasi) / 3 * 100
-            b_puani = 100 - a_puani
-            degisken_puanlari.setdefault(soru.degisken_id, []).append(a_puani)
-            degisken_puanlari.setdefault(soru.b_ucu_degisken_id, []).append(b_puani)
-
-        # soru_tipi == "kontrol" -> hiçbir değişkene puan katkısı yapılmaz (kasıtlı)
+    # değişken_id -> puan listesi (K5 dal soruları da aynı fonksiyonu kullanır)
+    degisken_puanlari = cevaplari_puanla(db, sorular, cevaplar)
 
     sonuc: list[tuple[int, float]] = []
     for degisken_id, puanlar in degisken_puanlari.items():
