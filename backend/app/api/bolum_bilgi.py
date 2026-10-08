@@ -9,7 +9,7 @@ from sqlalchemy.orm import Session
 
 from app.core.database import get_db
 from app.models import Bolum, BolumDalEslesme, Dal
-from app.core.yokatlas_servisi import bolum_universiteleri
+from app.core.yokatlas_servisi import bolum_universiteleri, baglanti_tani
 
 router = APIRouter()
 
@@ -27,6 +27,12 @@ def bolum_ada_gore(ad: str = Query(..., min_length=2), db: Session = Depends(get
     if b is None:
         raise HTTPException(status_code=404, detail="Bölüm bulunamadı.")
     return {"bolum_id": b.id, "ad": b.ad}
+
+
+@router.get("/yokatlas-tani")
+def yokatlas_tani():
+    """Teknik tanı: YÖK Atlas bağlantısının hangi adımda takıldığını gösterir."""
+    return baglanti_tani()
 
 
 @router.get("/{bolum_id}/bilgi")
