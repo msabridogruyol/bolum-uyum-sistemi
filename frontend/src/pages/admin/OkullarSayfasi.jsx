@@ -186,11 +186,18 @@ export default function OkullarSayfasi() {
                   </div>
                 </div>
               ) : (
-                <div className="yp-okul-aksiyon">
-                  <Link to={`/admin/okul/${o.id}`} className="btn">Paneli aç →</Link>
-                  <button className="btn sec" onClick={() => { setForm({ ...o }); setHata(null); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Düzenle</button>
-                  <button className="yp-mini" title="Sil" onClick={() => setSilme({ okul: o, hedef: 0 })}>🗑</button>
-                </div>
+                <>
+                  <div className="yp-okul-kisayol">
+                    <Link to={`/admin/okul/${o.id}?sekme=bilgiler`}>📝 Okul bilgileri</Link>
+                    <Link to={`/admin/okul/${o.id}?sekme=yetkililer`}>👤 Okul yetkilisi ekle</Link>
+                    <Link to={`/admin/okul/${o.id}?sekme=ogrenciler`}>🎒 Öğrenci hesapları</Link>
+                  </div>
+                  <div className="yp-okul-aksiyon">
+                    <Link to={`/admin/okul/${o.id}`} className="btn">Paneli aç →</Link>
+                    <button className="btn sec" onClick={() => { setForm({ ...o }); setHata(null); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Ad / amblem</button>
+                    <button className="yp-mini" title="Sil" onClick={() => setSilme({ okul: o, hedef: 0 })}>🗑</button>
+                  </div>
+                </>
               )}
             </div>
           ))}
