@@ -7,8 +7,8 @@ const ARALIK_ADI = {
   belirgin_ustun: 'Belirgin Üstün', ustun: 'Üstün', beklenti: 'Beklenti',
   altinda: 'Altında', belirgin_altinda: 'Belirgin Altında',
 }
-const TIP_ADI = { kitap: '📖 Kitap', film: '🎬 Film', rol_model: '🌟 Rol Model', psikolojik_yaklasim: '🧠 Psikolojik Yaklaşım', aktivite: '🏃 Aktivite' }
-const TIP_RENK = { kitap: 'var(--pu)', film: 'var(--am)', rol_model: 'var(--gr)', psikolojik_yaklasim: 'var(--tl, var(--pu))', aktivite: 'var(--re, #e05252)' }
+const TIP_ADI = { kitap: '📖 Kitap', film: '🎬 Film', rol_model: '🌟 Rol Model', psikolojik_yaklasim: '🧠 Psikolojik Yaklaşım', aktivite: '🏃 Aktivite', olay: '🗓️ Önemli Olay' }
+const TIP_RENK = { kitap: 'var(--pu)', film: 'var(--am)', rol_model: 'var(--gr)', psikolojik_yaklasim: 'var(--tl, var(--pu))', aktivite: 'var(--re, #e05252)', olay: 'var(--tx2)' }
 
 function DuzenlenebilirMetin({ deger, coklu, onKaydet, stil = {} }) {
   const [duzenleniyor, setDuzenleniyor] = useState(false)
