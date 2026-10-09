@@ -3,6 +3,47 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
 
+// [2026-10-09] "Neden bu bölüm?" — madde madde: örtüşen yönler (sende / bölümde düzeyi + seçtiğin cevaplar),
+// alan sorularındaki iş türü uyumu ve varsa dikkat edilecek nokta.
+function NedenDetay({ d }) {
+  const ortusen = d.ortusen || []
+  if (!ortusen.length && !d.k5 && !d.dikkat) return null
+  return (
+    <div className="neden-kutu">
+      <div className="neden-baslik">Neden bu bölüm?</div>
+      {ortusen.length > 0 && (
+        <ul className="neden-liste">
+          {ortusen.map((x, k) => (
+            <li key={k}>
+              <div className="neden-satir">
+                <span className="neden-ozellik">{x.ozellik}</span>
+                <span className="neden-etiket sen">Sende: {x.sen}</span>
+                <span className="neden-etiket bolum">Bölüm: {x.bolum}</span>
+              </div>
+              {x.kanitlar && x.kanitlar.length > 0 && (
+                <div className="neden-kanit">
+                  Bu yönü öne çıkaran seçimlerin:{' '}
+                  {x.kanitlar.map((m, i) => <q key={i}>{m}</q>)}
+                  {x.kanit_sayisi > x.kanitlar.length && <span className="neden-ek"> +{x.kanit_sayisi - x.kanitlar.length} seçim daha</span>}
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
+      {d.k5 && (
+        <div className={`neden-not ${d.k5.durum === 'uyumlu' ? 'iyi' : 'zayif'}`}>
+          🌻 {d.k5.durum === 'uyumlu'
+            ? <>Alan sorularında <b>{d.k5.is_turu}</b> işlerini öne çıkardın — bu bölümün ana uğraşı.</>
+            : <>Bu bölümün ana uğraşı <b>{d.k5.is_turu}</b>; alan sorularında bu işleri daha az seçtin. Bölüm bilgisine göz atmanı öneririz.</>}
+          {d.k5.kanit && <div className="neden-kanit" style={{ marginTop: 4 }}>Seçimin: <q>{d.k5.kanit}</q></div>}
+        </div>
+      )}
+      {d.dikkat && <div className="neden-not zayif">⚠️ {d.dikkat.metin}</div>}
+    </div>
+  )
+}
+
 export default function SonucSayfasi() {
   const [siralama, setSiralama] = useState(null)
   const [ozet, setOzet] = useState(null)
@@ -18,7 +59,7 @@ export default function SonucSayfasi() {
   if (!siralama || !ozet) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
 
   return (
-    <div className="pg">
+    <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Bölüm Uyum Sonuçların</div>
         <div className="ps">
@@ -53,7 +94,7 @@ export default function SonucSayfasi() {
           </button>
         </>
       ) : (
-        <div className="ob-grid">
+        <div className="ob-grid sonuc-grid">
           {siralama.map((s, i) => (
             <div key={s.bolum_id} className="ob-card">
               <div className="ob-top">
@@ -64,13 +105,13 @@ export default function SonucSayfasi() {
                 </div>
                 <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>
               </div>
-              {s.neden && s.neden.length > 0 && (
+              {s.neden_detay ? (
+                <NedenDetay d={s.neden_detay} />
+              ) : s.neden && s.neden.length > 0 && (
                 <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(127,127,127,0.18)' }}>
                   <div style={{ fontSize: 12, fontWeight: 600, opacity: 0.75, marginBottom: 4 }}>Neden bu bölüm?</div>
                   <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.45 }}>
-                    {s.neden.map((c, k) => (
-                      <li key={k} style={c.startsWith('Dikkat') || c.startsWith('Not') ? { opacity: 0.8 } : undefined}>{c}</li>
-                    ))}
+                    {s.neden.map((c, k) => <li key={k}>{c}</li>)}
                   </ul>
                 </div>
               )}
