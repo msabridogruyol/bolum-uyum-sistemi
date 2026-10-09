@@ -272,6 +272,8 @@ export const api = {
   okulYetkilisiSifreSifirla: (id) => apost(`/yonetim/yetkili/${id}/sifre-sifirla`),
   okulYetkilisiSil: (id) => adel(`/yonetim/yetkili/${id}`),
   okulKayitlari: (okulId, gun = 30) => aget(`/yonetim/okul/${okulId}/kayitlar?gun=${gun}`),
+  okulBilgi: (okulId) => aget(`/yonetim/okul/${okulId}/bilgi`),
+  okulBilgiGuncelle: (okulId, veri) => aput(`/yonetim/okul/${okulId}/bilgi`, veri),
   gelisimKaynakDegiskenleriGetir: (katmanKod) => {
     const p = new URLSearchParams()
     if (katmanKod) p.set('katman_kod', katmanKod)
