@@ -74,6 +74,11 @@ class HesaplamaGirdisi:
     performans: np.ndarray          # (n_bolum, m) — 0-100 ölçekli "uyum performansı"
     agirlikli_varyans: dict[int, float]     # bolum_id -> A4'teki güvenilirlik göstergesi (tie-break için)
     etkin_meslek_sayisi: dict[int, int]     # bolum_id -> A4'teki güvenilirlik göstergesi (tie-break için)
+    # [2026-10-09] "Neden bu bölüm?" açıklaması için
+    degisken_kodlari: list | None = None
+    ogrenci_olcekli: np.ndarray | None = None   # (m,) katman içi ölçekli öğrenci profili (50 ± 15)
+    bolum_olcekli: np.ndarray | None = None     # (n, m) katman içi ölçekli bölüm profilleri
+    bolum_matrisi: np.ndarray | None = None     # (n, m) ham bölüm ağırlıkları (bölümler arası yüzdelik için)
 
 
 def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> HesaplamaGirdisi | None:
@@ -168,6 +173,8 @@ def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) 
         bolum_idler=bolum_idler, bolum_adlari=bolum_adlari, degisken_idler=degisken_idler,
         agirliklar=agirliklar, performans=performans,
         agirlikli_varyans=agirlikli_varyans, etkin_meslek_sayisi=etkin_meslek_sayisi,
+        degisken_kodlari=[d.kod for d in degiskenler], ogrenci_olcekli=ogrenci_olcekli,
+        bolum_olcekli=bolum_olcekli, bolum_matrisi=bolum_matrisi,
     )
 
 
@@ -282,6 +289,42 @@ def _kendall_w(siralamalar: np.ndarray) -> float:
     return float(12 * S / payda)
 
 
+# [2026-10-09] Alan tutarlılığı: K1-K4 çalışma tarzını ölçer, konu alanını değil. Bu yüzden tek başına
+# öne çıkan, kendi alanında desteği olmayan bölümler (ör. hukuk profilli öğrenciye Orkestra Şefliği) listeye
+# girebiliyordu. Her üst alanın gücü = o alandaki en iyi 3 bölümün ortalaması; bir bölümün puanı, alanının
+# gücü en güçlü alanın gerisinde kaldığı ölçüde düşürülür: puan += katsayı × (alan_gücü − en_güçlü_alan).
+# Katsayı parametre tablosundan okunur ('alan_tutarlilik_katsayisi', varsayılan 3; 0 = kapalı).
+ALAN_TUTARLILIK_VARSAYILAN = 3.0
+
+
+def alan_tutarliligi_uygula(db: Session, bolum_idler: list[int], skor: np.ndarray) -> np.ndarray:
+    from app.core.katman_servisi import parametre_oku
+    from app.models import BolumDalEslesme, Dal
+    try:
+        katsayi = float(parametre_oku(db, "alan_tutarlilik_katsayisi", str(ALAN_TUTARLILIK_VARSAYILAN)))
+    except (TypeError, ValueError):
+        katsayi = ALAN_TUTARLILIK_VARSAYILAN
+    if katsayi <= 0 or len(skor) == 0:
+        return skor
+    alan_of = {
+        e.bolum_id: e.dal_id
+        for e, d in db.query(BolumDalEslesme, Dal).join(Dal, Dal.id == BolumDalEslesme.dal_id)
+        .filter(Dal.kod.like("U%")).all()
+    }
+    gruplar: dict[int, list[int]] = {}
+    for i, b in enumerate(bolum_idler):
+        if b in alan_of:
+            gruplar.setdefault(alan_of[b], []).append(i)
+    if len(gruplar) < 2:
+        return skor
+    guc = {a: float(np.sort(skor[ix])[-3:].mean()) for a, ix in gruplar.items()}
+    en_guclu = max(guc.values())
+    yeni = skor.astype(float).copy()
+    for a, ix in gruplar.items():
+        yeni[ix] = yeni[ix] + katsayi * (guc[a] - en_guclu)
+    return np.clip(yeni, 0.0, 100.0)
+
+
 def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> int:
     """
     D4'ün tamamı — girdi hazırlar, 10 yöntemi çalıştırır, min-max normalize
@@ -309,6 +352,7 @@ def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     kendall_w = _kendall_w(siralama_matrisi)
 
     ortalama = np.mean([normalize_skorlar[a] for a in YONTEMLER], axis=0)
+    ortalama = alan_tutarliligi_uygula(db, girdi.bolum_idler, ortalama)
 
     # eski skorları temizle (bu tur için varsa) — tur bazlı, tekrar hesaplama idempotent olsun
     db.query(OgrenciBolumUyumSkoru).filter(
@@ -339,6 +383,7 @@ class SiralamaSatiri:
     toplam_uyum: float
     kendall_w: float | None = None        # admin/test amaçlı; öğrenci API şemasına girmez
     yontem_skorlari: dict | None = None   # admin/test amaçlı; öğrenci API şemasına girmez
+    alan: str | None = None               # [2026-10-09] bölümün üst alanı
 
 
 def nihai_uyum_haritasi(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> dict[int, float]:
@@ -393,10 +438,125 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
                                       kendall_w=float(s.kendall_w) if s.kendall_w is not None else None,
                                       yontem_skorlari=s.yontem_skorlari))
 
+    # [2026-10-09] Alan kısıtı: liste öğrencinin en güçlü alanı + komşu alanlar (+ yakın ikinci alan) ile sınırlanır;
+    # tamamen alakasız alanların bölümleri silinmez, listenin sonuna iner (bkz. alan_komsuluk.py).
+    from app.core.alan_komsuluk import alan_sirasi
+    alan_of = bolum_alan_haritasi(db)
+    grup = alan_sirasi(alan_of, {s.bolum_id: s.toplam_uyum for s in satirlar}) or {}
+    for st in satirlar:
+        st.alan = alan_of.get(st.bolum_id)
     satirlar.sort(key=lambda s: (
+        grup.get(s.alan, 0),
         -s.toplam_uyum,
         varyans.get(s.bolum_id, 0.0),
         -meslek_sayisi.get(s.bolum_id, 0),
         adlar.get(s.bolum_id, ""),
     ))
     return satirlar[:ilk_n]
+
+
+# ============================================================================
+# [2026-10-09] Alan haritası ve "Neden bu bölüm?" açıklamaları
+# ============================================================================
+
+def bolum_alan_haritasi(db: Session) -> dict[int, str]:
+    """bolum_id -> üst alan adı (K5 'U' dalları)."""
+    from app.models import BolumDalEslesme, Dal
+    return {
+        e.bolum_id: d.ad
+        for e, d in db.query(BolumDalEslesme, Dal).join(Dal, Dal.id == BolumDalEslesme.dal_id)
+        .filter(Dal.kod.like("U%")).all()
+    }
+
+
+# Öğrenciye gösterilen kısa adlar (cümle içinde okunacak biçimde)
+KISA_AD = {
+    "D1": "iş güvencesi", "D2": "yüksek gelir hedefi", "D3": "saygınlık", "D4": "anlamlı iş arayışı",
+    "D5": "topluma katkı", "D6": "özerklik", "D7": "estetik ve yaratıcılık",
+    "P1": "insanlarla iletişim", "P2": "iş birliği ve empati", "P3": "disiplin ve titizlik",
+    "P5": "yeniliğe açıklık", "P6": "dinamik ortam tercihi", "P7": "risk alabilme", "P8": "liderlik",
+    "I1": "zaman yönetimi", "I2": "anlaşmazlık çözme", "I3": "baskı altında karar verme", "I4": "etik duyarlılık",
+    "I5": "inisiyatif alma", "I6": "öğrenmeye açıklık", "I7": "stratejik düşünme",
+    "A1": "sayısal düşünme", "A2": "sözel ifade", "A3": "insanlarla çalışma", "A4": "tasarım ve görsel düşünme",
+    "A5": "doğa ve bilim ilgisi", "A6": "fiziksel aktivite", "A7": "planlı ve sistematik çalışma",
+    "A8": "büyük resmi görme", "A9": "girişimcilik ve ikna",
+}
+NEDEN_ORTUSEN_SAYI = 3
+NEDEN_BOLUM_YUZDELIK = 60.0      # bölüm bu özellikte bölümlerin en az %40'ından yüksekse "bölümün aradığı" sayılır
+NEDEN_OGRENCI_ESIK = 55.0        # öğrencinin kendi profilinde ortalamanın üstü (katman içi ölçek)
+NEDEN_DIKKAT_BOLUM = 85.0       # bölüm bu özellikte bölümlerin en üst %15'inde
+NEDEN_DIKKAT_OGRENCI = 40.0     # öğrencinin kendi profilinde belirgin şekilde geride
+NEDEN_DIKKAT_TEKRAR = 3         # aynı dikkat notu bu kadar bölümde çıkıyorsa bölüme özgü değildir → gösterilmez
+
+
+def _liste_metni(adlar: list[str]) -> str:
+    return adlar[0] if len(adlar) == 1 else ", ".join(adlar[:-1]) + " ve " + adlar[-1]
+
+
+def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, bolum_idler: list[int]) -> dict[int, list[str]]:
+    """Her bölüm için 1-3 kısa cümle: örtüşen güçlü yönler, K5 iş türü uyumu, varsa dikkat noktası."""
+    from app.models import BolumK5Bag
+    girdi = girdi_hazirla(db, ogrenci, tur)
+    if girdi is None or girdi.bolum_olcekli is None:
+        return {}
+    satir_of = {b: i for i, b in enumerate(girdi.bolum_idler)}
+    H = girdi.bolum_matrisi
+    n = H.shape[0]
+    yuzdelik = (np.argsort(np.argsort(H, axis=0), axis=0) + 0.5) / n * 100.0
+    o = girdi.ogrenci_olcekli
+    kodlar = girdi.degisken_kodlari
+
+    # K5: bölüm bağları + öğrencinin eksen puanları
+    baglar: dict[int, list[tuple[int, float]]] = {}
+    for b in db.query(BolumK5Bag).filter(BolumK5Bag.bolum_id.in_(bolum_idler)).all():
+        baglar.setdefault(b.bolum_id, []).append((b.degisken_id, float(b.bag)))
+    eksen_idler = {d for l in baglar.values() for d, _ in l}
+    eksen_puan = {
+        s.degisken_id: float(s.puan)
+        for s in db.query(OgrenciDegiskenSkoru).filter(
+            OgrenciDegiskenSkoru.ogrenci_id == ogrenci.id, OgrenciDegiskenSkoru.tur_id == tur.id,
+            OgrenciDegiskenSkoru.degisken_id.in_(eksen_idler or [-1]),
+        ).all()
+    }
+    eksen_ad = {d.id: d.ad for d in db.query(Degisken).filter(Degisken.id.in_(eksen_idler or [-1])).all()}
+
+    sonuc: dict[int, list[str]] = {}
+    dikkat_of: dict[int, int] = {}
+    for bid in bolum_idler:
+        i = satir_of.get(bid)
+        if i is None:
+            continue
+        cumleler = []
+        b = girdi.bolum_olcekli[i]
+        aday = [
+            (float((o[j] - 50) + (b[j] - 50)), j) for j in range(len(kodlar))
+            if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_BOLUM_YUZDELIK and o[j] >= NEDEN_OGRENCI_ESIK
+        ]
+        aday.sort(reverse=True)
+        if aday:
+            adlar = [KISA_AD[kodlar[j]] for _, j in aday[:NEDEN_ORTUSEN_SAYI]]
+            cumleler.append(f"Öne çıkan yönlerin bu bölümün en çok aradığı özelliklerle örtüşüyor: {_liste_metni(adlar)}.")
+        else:
+            cumleler.append("Genel profilin bu bölümün beklentileriyle dengeli biçimde örtüşüyor.")
+        # K5 iş türü
+        bl = [(d, w) for d, w in baglar.get(bid, []) if d in eksen_puan]
+        if bl:
+            d_ana = max(bl, key=lambda x: (x[1], eksen_puan[x[0]]))[0]
+            p = eksen_puan[d_ana]; ad = eksen_ad.get(d_ana, "")
+            if p >= 60:
+                cumleler.append(f"Alan sorularında «{ad}» türü işleri öne çıkardın; bu bölümün ana uğraşı tam olarak bu.")
+            elif p <= 40:
+                cumleler.append(f"Not: Bu bölümün ana uğraşı «{ad}»; alan sorularında bu tür işleri daha az seçtin — bölüm bilgisine göz atmanı öneririz.")
+        # dikkat
+        dikkat = [(float(o[j]), j) for j in range(len(kodlar))
+                  if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_DIKKAT_BOLUM and o[j] <= NEDEN_DIKKAT_OGRENCI]
+        if dikkat:
+            dikkat_of[bid] = min(dikkat)[1]
+        sonuc[bid] = cumleler
+    # dikkat notu: yalnızca bölüme özgüyse (listede az tekrar ediyorsa) eklenir
+    from collections import Counter
+    tekrar = Counter(dikkat_of.values())
+    for bid, j in dikkat_of.items():
+        if tekrar[j] < NEDEN_DIKKAT_TEKRAR and len(sonuc[bid]) < 3:
+            sonuc[bid].append(f"Dikkat: Bu bölüm yüksek düzeyde {KISA_AD[kodlar[j]]} bekliyor; senin cevaplarında bu yön daha geri planda.")
+    return sonuc
