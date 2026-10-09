@@ -1,7 +1,7 @@
 // [2026-10-09] Okul paneli — okul bazlı yönetim: özet istatistik, öğrenci hesapları (toplu açma / şifre / silme),
 // okul yetkilileri ve işlem kayıtları. Süper admin her okulu (ve okulId=0: okul harici) görür; okul yetkilisi yalnızca kendi okulunu.
 import { useCallback, useEffect, useMemo, useState } from 'react'
-import { Link, useParams } from 'react-router-dom'
+import { Link, useParams, useSearchParams } from 'react-router-dom'
 import { api } from '../../api/client'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import TopluYuklemePenceresi from '../../components/yonetim/TopluYuklemePenceresi'
@@ -396,7 +396,9 @@ export default function OkulPaneliSayfasi() {
   const okulId = Number(ham)
   const { rol } = useAdminAuth()
   const superAdmin = rol === 'super_admin'
-  const [sekme, setSekme] = useState('ozet')
+  // ?sekme=bilgiler | yetkililer | ogrenciler | kayitlar — Okullar sayfasındaki kısayollar doğrudan ilgili sekmeyi açar
+  const [params] = useSearchParams()
+  const [sekme, setSekme] = useState(params.get('sekme') || 'ozet')
   const [oz, setOz] = useState(null)
   const [ogrenciler, setOgrenciler] = useState([])
   const [okullar, setOkullar] = useState([])
