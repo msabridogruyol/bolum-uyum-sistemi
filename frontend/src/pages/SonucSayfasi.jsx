@@ -60,9 +60,20 @@ export default function SonucSayfasi() {
                 <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
                 <div className="ob-body">
                   <div className="ob-name"><BolumAdi id={s.bolum_id} ad={s.bolum_adi} /></div>
+                  {s.alan && <div style={{ fontSize: 12, opacity: 0.7, marginTop: 2 }}>{s.alan}</div>}
                 </div>
                 <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>
               </div>
+              {s.neden && s.neden.length > 0 && (
+                <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid rgba(127,127,127,0.18)' }}>
+                  <div style={{ fontSize: 12, fontWeight: 600, opacity: 0.75, marginBottom: 4 }}>Neden bu bölüm?</div>
+                  <ul style={{ margin: 0, paddingLeft: 18, fontSize: 13, lineHeight: 1.45 }}>
+                    {s.neden.map((c, k) => (
+                      <li key={k} style={c.startsWith('Dikkat') || c.startsWith('Not') ? { opacity: 0.8 } : undefined}>{c}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
           ))}
         </div>
