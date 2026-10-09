@@ -269,7 +269,7 @@ class YoneticiEkleIstek(BaseModel):
     ad_soyad: str
     email: str
     sifre: str
-    rol: str  # 'super_admin' | 'icerik_editoru'
+    rol: str = "super_admin"  # [2026-10-09] buradan yalnızca süper admin eklenir
 
 
 class RolGuncelleIstek(BaseModel):
@@ -282,6 +282,10 @@ class YoneticiOut(BaseModel):
     email: str
     rol: str
     olusturulma_zamani: datetime
+    okul_id: int | None = None
+    okul_ad: str | None = None
+    aktif_mi: bool = True
+    son_giris_zamani: datetime | None = None
 
 
 # --- E9 — Audit Log ---
@@ -312,6 +316,8 @@ class OgrenciDetayOut(BaseModel):
     ad_soyad: str
     email: str
     okul: str | None
+    okul_id: int | None = None
+    sinif: str | None = None
     hedef_bolum_adi: str | None
     hedef_bolum_uyum_orani: float | None
     olusturulma_zamani: datetime
