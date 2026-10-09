@@ -3683,3 +3683,252 @@ DETAY: dict[str, dict] = {
         "ipucu": "Yarışmaya ekip olarak katılmak hem işi bölüştürür hem de fikri güçlendirir.",
     },
 }
+
+# ============================ [2026-10-09] EK ADIMLARIN DETAYI ============================
+# gelisim_icerigi._EK_GELISIM ile eklenen adımlar (Maarif Modeli eğilim ve okuryazarlık becerileri; SCCT öz yeterlik).
+_EGER_O_ZAMAN = "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\""
+_IKI_AY = "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5)."
+
+_EK_DETAY = {
+    "P8-G-7": {
+        "nasil": [
+            "Bir kâğıdı ikiye böl: sol sütuna \"Başardığım şey\", sağ sütuna \"Bunu başarmamı sağlayan davranışım\" yaz.",
+            "Son bir yılı düşün: okulda, sporda, evde, arkadaşlıkta başta zorlandığın ama sonunda üstesinden geldiğin 5 durumu sol sütuna yaz. Küçük şeyler de sayılır (ör. korktuğun bir sınavdan iyi not almak).",
+            "Her birinin karşısına senin ne yaptığını yaz: \"Her gün 20 dakika çalıştım\", \"Yardım istedim\", \"Vazgeçmedim, ikinci kez denedim\" gibi.",
+            "Sağ sütunda tekrar eden davranışların altını çiz; bunlar senin güçlü yanların.",
+            "Listeyi telefonunda ya da defterinde sakla; yeni bir sorumluluk almadan önce bir kez oku.",
+        ],
+        "kontrol": [
+            "Listende 5 başarı var.",
+            "Her başarının yanında senin yaptığın somut bir davranış yazılı (\"şanslıydım\" değil).",
+            "Tekrar eden en az 1 güçlü davranışını söyleyebiliyorsun.",
+        ],
+        "ipucu": "\"Ben yapabilirim\" duygusu en çok geçmişte gerçekten yaptıklarını hatırlayınca güçlenir; bu yüzden somut örnekler yaz.",
+    },
+    "P8-G-8": {
+        "nasil": [
+            "Liderliğini beğendiğin bir kişi seç: bir öğretmen, kulüp başkanı, takım kaptanı ya da grup ödevindeki bir arkadaşın.",
+            "Bir hafta boyunca onu gözlemle ve 3 davranışını not et: Gruba nasıl yön veriyor, anlaşmazlıkta ne yapıyor, nasıl karar veriyor?",
+            "Bu davranışlardan sana en uygun olanı seç (ör. \"Herkesin fikrini sırayla soruyor\").",
+            "Ertesi hafta bir grup çalışmasında, sınıfta ya da ailende bu davranışı en az bir kez dene.",
+            "Denedikten sonra 3 cümle yaz: Ne yaptın, insanlar nasıl tepki verdi, bir dahaki sefere neyi farklı yaparsın?",
+        ],
+        "kontrol": [
+            "Gözlem notunda en az 3 davranış var.",
+            "Seçtiğin davranışı en az bir kez gerçekten denedin.",
+            "Denemenin sonucunu ve bir sonraki adımını yazdın.",
+        ],
+        "ipucu": "Birinin bir şeyi başardığını görmek, \"ben de yapabilirim\" duygusunu güçlendirir; özellikle sana benzeyen birini seçersen.",
+    },
+    "P7-G-7": {
+        "nasil": [
+            "Son zamanlarda zorlandığın bir anı hatırla: sınav, yeni bir ortam, bir tartışma ya da başarısız olduğun bir deneme.",
+            "O an kafandan geçen cümleyi olduğu gibi yaz. Örneğin: \"Ben bunu asla beceremem.\"",
+            "Şimdi aynı durumda olan yakın bir arkadaşını düşün. Ona ne söylerdin? Bu cümleyi de yaz. Örneğin: \"İlk denemede zorlanmak normal, geçen sefer de zorlanmıştın ama başardın.\"",
+            "İkinci cümleyi kısa bir hâle getir ve telefon notlarına kaydet.",
+            "Bir sonraki zorlukta bu cümleyi kendine sessizce söyle ve ne hissettiğini not et.",
+        ],
+        "kontrol": [
+            "İki cümle de yazılı: zorlandığında kendine söylediğin ve arkadaşına söyleyeceğin.",
+            "Cesaretlendirici cümlen kolayca hatırlanacak kadar kısa.",
+            "Bir sonraki zorlukta bu cümleyi kullandın ya da kullanacağın anı belirledin.",
+        ],
+        "ipucu": "Kendine bir arkadaşına davrandığın kadar adil davranmak, risk almayı kolaylaştırır.",
+    },
+    "P7-G-8": {
+        "nasil": [
+            "Seni biraz zorlayan ama gerçekten yapmak istediğin bir şeyi seç: sınıfta konuşmak, yeni biriyle tanışmak, bir kulübe katılmak gibi.",
+            "Bunu kolaydan zora 4 basamağa böl. Örneğin: 1) Sınıfta bir soru sor, 2) Bir konuda kısa yorum yap, 3) 1 dakikalık sunum yap, 4) 5 dakikalık sunum yap.",
+            "Her hafta bir basamak çık; bir basamak çok zor gelirse arasına daha küçük bir basamak ekle.",
+            "Her basamaktan sonra 1'den 10'a kadar ne kadar gergin olduğunu yaz; zamanla puanın düştüğünü göreceksin.",
+            _EGER_O_ZAMAN,
+            _IKI_AY,
+        ],
+        "kontrol": [
+            "4 basamağın kolaydan zora yazılı.",
+            "En az 3 basamağı tamamladın.",
+            "Gerginlik puanların kayıtlı ve ilk basamakla son basamağı karşılaştırabiliyorsun.",
+        ],
+        "ipucu": "Basamakları atlamak yerine küçük tutmak daha iyi çalışır; her başarı bir sonrakini kolaylaştırır.",
+    },
+    "I5-G-7": {
+        "nasil": [
+            "Okulda iyileştirilebileceğini düşündüğün bir şey seç: kütüphane saatleri, kantin, kulüp etkinlikleri, geri dönüşüm, ders arası düzeni gibi.",
+            "Sorunu bir cümleyle yaz, sonra 3-4 arkadaşına sorup onların da aynı şeyi düşünüp düşünmediğini öğren.",
+            "Yarım sayfalık bir öneri hazırla: Sorun ne, önerin ne, bunun için ne gerekiyor, kimler yardımcı olabilir?",
+            "Önerini sınıf öğretmenine, rehber öğretmene ya da öğrenci meclisine ilet.",
+            "Cevap ne olursa olsun, ne öğrendiğini 2-3 cümleyle not et.",
+        ],
+        "kontrol": [
+            "Sorun ve önerin yazılı olarak hazır.",
+            "En az 3 arkadaşının fikrini aldın.",
+            "Önerini ilgili kişiye ilettin.",
+        ],
+        "ipucu": "Önerin kabul edilmese bile girişimde bulunmak başlı başına bir beceri; bir dahaki öneri daha kolay gelir.",
+    },
+    "P5-G-7": {
+        "nasil": [
+            "{bolum} ile ilgili merak ettiğin bir konu seç. Örneğin bir tıp adayı için \"Aşılar nasıl geliştirilir?\".",
+            "Bu konu hakkında 5 soru yaz; soruların \"neden\" ya da \"nasıl\" ile başlasın.",
+            "Her sorunun cevabını en az iki farklı kaynakta ara: bir ders kitabı, bir üniversite sayfası, güvenilir bir bilim sitesi ya da bir uzman röportajı.",
+            "Cevapları yan yana yaz. Kaynakların birbirini tutmadığı ya da birinin daha eksik anlattığı noktayı işaretle.",
+            "Son olarak cevabını hâlâ bilmediğin yeni bir soru yaz; merak bir sonraki soruyu doğurur.",
+        ],
+        "kontrol": [
+            "5 sorunun her birinin cevabı yazılı.",
+            "Her soru için en az 2 kaynak kullandın.",
+            "Kaynakların ayrıştığı en az 1 noktayı ve yeni bir soru not ettin.",
+        ],
+        "ipucu": "Bir bilgiye iki kaynaktan bakmak, hem merakını hem de doğruyu yanlıştan ayırma becerini geliştirir.",
+    },
+    "I1-G-7": {
+        "nasil": [
+            "Çalışmaya başlamadan önce tek bir iş seç ve bir kâğıda yaz (ör. \"Matematik 2. ünite 10 soru\").",
+            "Telefonunu başka bir odaya koy ya da tamamen kapat; bilgisayarda gereksiz sekmeleri kapat.",
+            "Bir zamanlayıcıyı 25 dakikaya kur ve süre bitene kadar yalnızca o işle uğraş. Aklına başka bir şey gelirse kâğıdın kenarına yaz ve işine dön.",
+            "Süre bitince 5 dakika ara ver: kalk, su iç, biraz yürü. Sonra yeni bir bloğa başla.",
+            "Her gün kaç blok yaptığını bir takvime çentik atarak işaretle.",
+            _EGER_O_ZAMAN,
+            _IKI_AY,
+        ],
+        "kontrol": [
+            "2 haftalık takviminde her günün blok sayısı işaretli.",
+            "Günlerin çoğunda en az 2 odak bloğu var.",
+            "Blok sırasında telefonu elinin altında tutmadın.",
+        ],
+        "ipucu": "25 dakika uzun gelirse 15 dakikayla başla; önemli olan süre boyunca tek işe bağlı kalmak.",
+    },
+    "A1-G-7": {
+        "nasil": [
+            "İnternette {bolum} ya da bir meslekle ilgili bir iddia bul. Örneğin \"Bu meslek 10 yıl içinde yok olacak\" ya da \"Bu bölüm mezunlarının %90'ı işsiz\".",
+            "Üç şeyi kontrol et: Bunu kim yazmış (uzman mı, reklam mı)? Ne zaman yazılmış? Bir kaynağa, veriye ya da araştırmaya dayanıyor mu?",
+            "Aynı konuyu güvenilir bir kaynakta ara: YÖK Atlas, TÜİK, üniversite sayfaları, meslek örgütleri ya da resmî kurum siteleri.",
+            "İddia doğru mu, kısmen doğru mu, yanlış mı? Kararını gerekçesiyle 2-3 cümleyle yaz.",
+        ],
+        "kontrol": [
+            "İddianın kendisi ve nereden bulduğun yazılı.",
+            "Yazar, tarih ve kaynak bilgilerini kontrol ettin.",
+            "Güvenilir bir kaynağa dayanan bir sonuca vardın.",
+        ],
+        "ipucu": "Çok şaşırtıcı ya da korkutucu iddialar daha çok paylaşılır; tam da bu yüzden ilk kontrol edilmesi gerekenler onlardır.",
+    },
+    "A1-G-8": {
+        "nasil": [
+            "Merak ettiğin bir soru seç. Örneğin \"Son 5 yılda {bolum} kontenjanları nasıl değişti?\" ya da \"Sınıfımızda en çok hangi meslek isteniyor?\".",
+            "Veriyi bul ya da kendin topla: YÖK Atlas, TÜİK ya da sınıfında yapacağın kısa bir anket.",
+            "Veriyi bir tabloya aktar (Excel, Google E-Tablolar ya da kâğıt). Satırlar ve sütunlar net etiketli olsun.",
+            "Verine uygun bir grafik seç: zaman içindeki değişim için çizgi, karşılaştırma için çubuk grafik.",
+            "Grafiğin altına 3 cümle yaz: Ne görüyorsun, en dikkat çekici nokta ne, bu veri neyi söylemiyor?",
+        ],
+        "kontrol": [
+            "Tablon ve grafiğin hazır, eksenler ve başlık etiketli.",
+            "Verinin kaynağı yazılı.",
+            "3 cümlelik yorumunda verinin sınırını da belirttin.",
+        ],
+        "ipucu": "\"Bu veri neyi söylemiyor?\" sorusu iyi bir veri okurunu sıradan bir okurdan ayırır.",
+    },
+    "A4-G-7": {
+        "nasil": [
+            "Bir infografik, reklam afişi ya da haberdeki bir grafik seç ve ekran görüntüsünü al.",
+            "Şu soruları yaz ve cevapla: Göze ilk ne çarpıyor? Hangi renkler, yazı tipleri ve yerleşim kullanılmış? Görsel neyi öne çıkarıyor, neyi küçük ya da gizli bırakıyor?",
+            "Görselin amacını bir cümleyle yaz: bilgi vermek mi, ikna etmek mi, satmak mı?",
+            "Aynı bilgiyi kendin daha açık ya da daha dürüst anlatacak şekilde yeniden tasarla; kâğıt-kalem ya da Canva gibi bir araç kullanabilirsin.",
+            "İki görseli yan yana koy ve neyi değiştirdiğini 2-3 cümleyle açıkla.",
+        ],
+        "kontrol": [
+            "Çözümleme sorularının hepsine cevap yazdın.",
+            "Görselin amacını bir cümleyle belirttin.",
+            "Kendi yeniden tasarımın ve değişikliklerin açıklaması hazır.",
+        ],
+        "ipucu": "Tasarımcılar görsellerle düşünür; bir görseli çözebilmek, onu iyi tasarlamanın ilk adımıdır.",
+    },
+    "I4-G-7": {
+        "nasil": [
+            "Adını ve soyadını bir arama motorunda (tırnak içinde) arat; görsel sonuçlara da bak.",
+            "Kullandığın her sosyal medya hesabını aç ve gizlilik ayarlarına bak: Paylaşımların herkese mi, yalnızca arkadaşlarına mı açık?",
+            "Kendine sor: Bir üniversite, burs komisyonu ya da ileride bir işveren bu hesaplara baksa ne görür, beni nasıl tanır?",
+            "Değiştirmek istediğin en az bir şeyi düzelt: gizlilik ayarı, eski bir paylaşım ya da profil bilgisi.",
+            "Bundan sonra paylaşım yapmadan önce soracağın bir kural yaz. Örneğin: \"5 yıl sonra görsem utanır mıyım?\"",
+        ],
+        "kontrol": [
+            "Adını aratıp sonuçları gözden geçirdin.",
+            "Tüm hesaplarının gizlilik ayarlarını kontrol ettin.",
+            "En az bir şeyi düzelttin ve paylaşım kuralını yazdın.",
+        ],
+        "ipucu": "Dijital izin, yüz yüze tanışmadan önce seni tanıtan ilk izlenimdir; onu sen yönet.",
+    },
+    "I4-G-8": {
+        "nasil": [
+            "Çevrende gördüğün bir sorunu seç: engelli erişimi, okul önündeki trafik güvenliği, yemek israfı, sokak hayvanları gibi.",
+            "Araştır: Bu sorundan hangi kurum sorumlu (belediye, okul, bakanlık)? Bununla ilgili bir kural ya da yasa var mı?",
+            "Vatandaşların ve gençlerin neler yapabileceğini listele: dilekçe, gönüllülük, farkındalık çalışması, belediyeye başvuru (ör. CİMER ya da belediyenin çözüm masası).",
+            "{bolum} mezunlarının bu soruna nasıl katkı sağlayabileceğini düşün ve yaz.",
+            "Hepsini bir sayfalık bir notta topla; istersen rehber öğretmenine ya da sınıf öğretmenine göster.",
+        ],
+        "kontrol": [
+            "Sorun ve sorumlu kurumlar yazılı.",
+            "İlgili bir kural ya da başvuru yolunu buldun.",
+            "Bölümünün bu soruna katkısını en az 2 cümleyle açıkladın.",
+        ],
+        "ipucu": "Bir mesleğin topluma katkısını somut bir sorun üzerinden görmek, o mesleği seçme nedenini de netleştirir.",
+    },
+    "A3-G-7": {
+        "nasil": [
+            "Yakın zamanda biriyle (arkadaş, kardeş, aile) anlaşamadığın bir durumu seç.",
+            "O kişinin yerine geçtiğini düşün ve olayı onun ağzından, \"ben\" diliyle yaz: \"Ben o gün yorgundum ve…\"",
+            "En az 5 cümle yaz: Ne hissetti, neyi önemsedi, senin hangi davranışını nasıl algıladı?",
+            "Yazarken yargılamamaya dikkat et; amacın haklı çıkmak değil, onu anlamak.",
+            "Bitirince kendi bakışınla karşılaştır ve ikinizin de haklı olduğu bir noktayı bul.",
+        ],
+        "kontrol": [
+            "Karşı tarafın bakışından en az 5 cümle yazdın.",
+            "Metinde suçlayan ya da alaycı bir ifade yok.",
+            "İkinizin de haklı olduğu en az bir noktayı buldun.",
+        ],
+        "ipucu": "İnsanlarla çalışan mesleklerde başkasının yerine geçebilmek, en sık kullanılan beceridir.",
+    },
+    "A3-G-8": {
+        "nasil": [
+            "Senden farklı bir hayat yaşamış birini seç: büyükanne ya da büyükbaban, başka bir şehirden ya da ülkeden gelen biri, uzun yıllardır çalışan bir esnaf.",
+            "Önceden 5 soru hazırla. Örneğin: \"Benim yaşımdayken günün nasıl geçerdi?\", \"Hayatta en çok neyi önemsersin?\", \"Gençlere ne tavsiye edersin?\"",
+            "Görüşmede dinlemeye odaklan; araya girmeden, merakla ek sorular sor.",
+            "Görüşmeden sonra seni şaşırtan 3 şeyi ve ortak noktalarınızı yaz.",
+        ],
+        "kontrol": [
+            "Görüşmeyi yaptın ve 5 sorunu sordun.",
+            "Seni şaşırtan 3 şeyi yazdın.",
+            "En az 1 ortak noktanızı not ettin.",
+        ],
+        "ipucu": "Farklı hayatları dinlemek, hem empatini hem de dünyaya bakışını genişletir.",
+    },
+    "A5-G-7": {
+        "nasil": [
+            "Arama motoruna \"{bolum} sürdürülebilirlik\", \"{bolum} iklim\" ya da \"{bolum} çevre\" yazarak araştırmaya başla.",
+            "Bölümünün çevreyle (enerji, su, atık, iklim, biyolojik çeşitlilik) en az 2 bağlantısını bul ve yaz.",
+            "Bu alanda çalışan bir kurum, şirket ya da proje bul. Örneğin bir yenilenebilir enerji projesi ya da bir belediye geri dönüşüm programı.",
+            "Bu proje ya da kurumda {bolum} mezunlarının ne iş yaptığını 2-3 cümleyle yaz.",
+        ],
+        "kontrol": [
+            "Bölümünün çevreyle 2 bağlantısını yazdın.",
+            "Bir örnek kurum ya da proje buldun.",
+            "Bu projede bölüm mezunlarının rolünü açıkladın.",
+        ],
+        "ipucu": "Neredeyse her bölümün çevreyle bir bağlantısı var; bu bağlantı ileride yeni iş alanları da açıyor.",
+    },
+    "A5-G-8": {
+        "nasil": [
+            "Sınıfında ya da evinde bir hafta boyunca atıkları ölçeceğini ailene ya da öğretmenine söyle.",
+            "Atıkları türlerine ayır: kâğıt, plastik, cam, yemek artığı. Her gün sayısını ya da yaklaşık ağırlığını (mutfak tartısıyla) not et.",
+            "Bir haftanın sonunda verileri bir tabloya aktar ve her türün toplamını hesapla.",
+            "En çok atık hangi türden çıkıyor? Bunu azaltmak için gerçekten uygulanabilir 2 öneri yaz.",
+            "Önerilerini sınıfınla ya da ailenle paylaş ve birini uygulamaya koy.",
+        ],
+        "kontrol": [
+            "7 günlük ölçüm tablon dolu.",
+            "Her atık türünün toplamı hesaplı.",
+            "2 öneri yazdın ve en az birini paylaştın.",
+        ],
+        "ipucu": "Ölçmeden yönetemezsin: önce saymak, en etkili değişikliğin nerede olduğunu gösterir.",
+    },
+}
+DETAY.update(_EK_DETAY)
