@@ -47,8 +47,8 @@ function satirlariDondur(hamSatirlar) {
   }).filter((s) => s.bolum_adi && s.degisken_kod && !isNaN(s.agirlik_degeri))
 }
 
-const DURUM_ETIKET = { bekliyor: 'Onay Bekliyor', onaylandi: 'Canlıda', reddedildi: 'Reddedildi' }
-const DURUM_RENK = { bekliyor: 'bdg-prog', onaylandi: 'bdg-done', reddedildi: 'bdg-lock' }
+const DURUM_ETIKET = { bekliyor: 'Onay Bekliyor', onaylandi: 'Canlıda', arsiv: 'Önceki sürüm', reddedildi: 'Reddedildi' }
+const DURUM_RENK = { bekliyor: 'bdg-prog', onaylandi: 'bdg-done', arsiv: 'bdg-lock', reddedildi: 'bdg-lock' }
 
 // ============================================================
 // Meslek Verisi Toplu Yükleme (sonradan eklendi)
