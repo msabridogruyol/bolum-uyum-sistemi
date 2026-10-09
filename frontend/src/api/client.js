@@ -246,6 +246,14 @@ export const api = {
   soruMetniGuncelle: (soruId, soruMetni) => aput(`/admin/sorular-detay/soru/${soruId}`, { soru_metni: soruMetni }),
   secenekMetniGuncelle: (secenekId, secenekMetni) => aput(`/admin/sorular-detay/secenek/${secenekId}`, { secenek_metni: secenekMetni }),
   dallariDetayliListele: () => aget('/admin/sorular-detay/dallar-detay'),
+  // [2026-10-09] Okul markası
+  okulAktif: () => get('/okul/aktif'),
+  okullariListele: () => aget('/admin/okullar'),
+  okulEkle: (veri) => apost('/admin/okullar', veri),
+  okulGuncelle: (id, veri) => aput(`/admin/okullar/${id}`, veri),
+  okulAktifYap: (id) => apost(`/admin/okullar/${id}/aktif-yap`),
+  okulGizle: () => apost('/admin/okullar/gizle'),
+  okulSil: (id) => adel(`/admin/okullar/${id}`),
   gelisimKaynakDegiskenleriGetir: (katmanKod) => {
     const p = new URLSearchParams()
     if (katmanKod) p.set('katman_kod', katmanKod)
