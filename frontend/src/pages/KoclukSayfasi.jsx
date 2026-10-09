@@ -1,8 +1,9 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
-import { useSearchParams } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
 import Sayac from '../components/Sayac'
+import { useBolumBilgi } from '../context/BolumBilgiContext'
 
 // ============================================================
 // Ana sayfa
@@ -15,10 +16,10 @@ const KATEGORI = {
   altinda: { etiket: 'Gelişime açık', renk: 'var(--am)', zemin: 'var(--aml)', grup: 'gelisim' },
   belirgin_altinda: { etiket: 'Öncelikli gelişim', renk: 'var(--re)', zemin: 'var(--rel)', grup: 'gelisim' },
 }
+// [2026-10-09] Sadeleştirildi: yalnızca "Başladım" ve "Yaptım"
 const DURUMLAR = [
-  { kod: 'planlandi', etiket: 'Plana ekledim' },
-  { kod: 'devam_ediyor', etiket: 'Yapıyorum' },
-  { kod: 'tamamlandi', etiket: 'Tamamladım' },
+  { kod: 'devam_ediyor', etiket: '▶ Başladım' },
+  { kod: 'tamamlandi', etiket: '✓ Yaptım' },
 ]
 
 function KategoriRozeti({ kategori }) {
@@ -104,9 +105,10 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
 
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {DURUMLAR.map((d) => (
-          <button key={d.kod} className={adim.durum === d.kod ? 'btn' : 'btn sec'} style={{ fontSize: 11.5, padding: '5px 10px' }}
+          <button key={d.kod} className={adim.durum === d.kod || (vurgulu && d.kod === 'tamamlandi') ? 'btn' : 'btn sec'}
+            style={vurgulu ? { fontSize: 13.5, padding: '9px 18px' } : { fontSize: 11.5, padding: '5px 10px' }}
             onClick={() => onDurum(adim.kod, adim.durum === d.kod ? null : d.kod)}>
-            {adim.durum === d.kod ? '✓ ' : ''}{d.etiket}
+            {d.etiket}
           </button>
         ))}
       </div>
@@ -117,11 +119,11 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
 // ============================================================
 // [2026-10-09] Sayfa başlık başlık sekmelere bölündü:
 //   Özet · Yol Haritası · Güçlü Yönlerin · Bölümle Karşılaştırma · Gelişimin
-// Hedef seçimi/değiştirme üstteki hedef kartının içinden açılır.
+// [2026-10-09] Hedef seçimi/değiştirme yalnızca Ayarlar sayfasında (en fazla 3 değişiklik).
 // ============================================================
 const SEKMELER = [
   { kod: 'ozet', ad: 'Özet', ikon: '🧭' },
-  { kod: 'yol', ad: 'Yol Haritası', ikon: '🗺️' },
+  { kod: 'yol', ad: 'Yol Haritam', ikon: '🗺️' },
   { kod: 'guclu', ad: 'Güçlü Yönlerin', ikon: '💪' },
   { kod: 'karsilastirma', ad: 'Bölümle Karşılaştırma', ikon: '📊' },
   { kod: 'gelisim', ad: 'Gelişimin', ikon: '📈' },
@@ -158,19 +160,17 @@ function IlerlemeCubugu({ ilerleme }) {
   )
 }
 
-function OdakKartlari({ plan }) {
+function OdakSatirlari({ plan }) {
   return (
-    <div className="koc-grid">
+    <div className="koc-odak-liste">
       {plan.odak_alanlari.map((o) => (
-        <div key={o.degisken_kod} className="card" style={{ margin: 0 }}>
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 6, marginBottom: 6 }}>
-            <Cip renk="var(--pu)" zemin="var(--pul)">{o.oncelik_sirasi}. öncelik</Cip>
-            <KategoriRozeti kategori={o.kategori} />
+        <div key={o.degisken_kod} className="koc-odak-satir">
+          <span className="koc-odak-no">{o.oncelik_sirasi}</span>
+          <div style={{ minWidth: 0, flex: 1 }}>
+            <div style={{ fontSize: 13.5, fontWeight: 700 }}>{o.degisken_adi}</div>
+            <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5 }}>{o.neden_onemli}</div>
           </div>
-          <div style={{ fontSize: 14, fontWeight: 700, marginBottom: 4 }}>{o.degisken_adi}</div>
-          <div style={{ fontSize: 11.5, color: 'var(--tx3)', marginBottom: 8 }}>{o.nedir}</div>
-          {o.durum_tespiti && <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginBottom: 8, lineHeight: 1.5 }}>{o.durum_tespiti}</div>}
-          <div style={{ fontSize: 12, lineHeight: 1.5 }}><b>Neden önemli?</b> {o.neden_onemli}</div>
+          <KategoriRozeti kategori={o.kategori} />
         </div>
       ))}
     </div>
@@ -178,8 +178,9 @@ function OdakKartlari({ plan }) {
 }
 
 // ---------------------------------------------------------------- 1) Özet
-function OzetSekmesi({ plan, sayac, onDurum, sekmeyeGit }) {
+function OzetSekmesi({ plan, sayac, sekmeyeGit }) {
   if (!plan) return <div className="bos-durum">Plan hazırlanıyor…</div>
+  const s = plan.siradaki_adim
   return (
     <>
       <div className="koc-ozet-kutular">
@@ -194,19 +195,23 @@ function OzetSekmesi({ plan, sayac, onDurum, sekmeyeGit }) {
         </button>
       </div>
 
-      <Bolum baslik="👉 Sıradaki adımın" alt="Yol haritandaki en öncelikli adım. Tamamladıkça bir sonraki otomatik gelir.">
-        <div className="card" style={{ margin: 0 }}>
-          {plan.odak_alanlari.length > 0 && <div style={{ marginBottom: 14 }}><IlerlemeCubugu ilerleme={plan.ilerleme} /></div>}
-          {plan.siradaki_adim
-            ? <AdimKarti adim={plan.siradaki_adim} onDurum={onDurum} vurgulu />
-            : <div className="ps" style={{ margin: 0 }}>🎉 Yol haritandaki tüm adımları tamamladın! Bir sonraki değerlendirme turunda gelişimini birlikte görelim.</div>}
-          <button className="koc-link" onClick={() => sekmeyeGit('yol')}>Tüm yol haritasını gör →</button>
-        </div>
+      <Bolum baslik="👉 Şimdiki adımın">
+        <button className="card koc-siradaki" onClick={() => sekmeyeGit('yol')}>
+          {s ? (
+            <>
+              <div style={{ minWidth: 0 }}>
+                <div className="koc-siradaki-ust">{s.degisken_adi} · {s.tur_etiket} · ⏱ {s.sure}</div>
+                <div className="koc-siradaki-baslik">{s.baslik}</div>
+              </div>
+              <span className="koc-siradaki-git">Yol haritamda aç →</span>
+            </>
+          ) : <div style={{ fontWeight: 700 }}>🎉 Yol haritandaki tüm adımları tamamladın!</div>}
+        </button>
       </Bolum>
 
       {plan.odak_alanlari.length > 0 ? (
-        <Bolum baslik="🎯 Odak alanların" alt={`${plan.hedef_bolum_adi} için seni en çok ileri taşıyacak ${plan.odak_alanlari.length} alan.`}>
-          <OdakKartlari plan={plan} />
+        <Bolum baslik="🎯 Neden bu adımlar?" alt={`${plan.hedef_bolum_adi} için seni en çok ileri taşıyacak ${plan.odak_alanlari.length} alan üzerine kurulu.`}>
+          <OdakSatirlari plan={plan} />
         </Bolum>
       ) : (
         <div className="card">
@@ -219,39 +224,121 @@ function OzetSekmesi({ plan, sayac, onDurum, sekmeyeGit }) {
   )
 }
 
-// ---------------------------------------------------------------- 2) Yol haritası
+// ---------------------------------------------------------------- 2) Yol haritası — her seferinde TEK adım
+// [2026-10-09] Lise öğrencisi için sade akış: ekranda yalnızca şimdiki adım var. "Yaptım" deyince sıradaki gelir.
+// Üstte noktalı ilerleme yolu, altta sıradaki 2 adımın başlığı ve katlanmış "Tamamladıkların" listesi.
 function YolHaritasiSekmesi({ plan, onDurum }) {
+  const [bitenAcik, setBitenAcik] = useState(false)
   if (!plan) return <div className="bos-durum">Plan hazırlanıyor…</div>
   if (plan.odak_alanlari.length === 0) {
     return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedef için belirgin bir gelişim alanın yok; “Güçlü Yönlerin” sekmesine göz at.</div></div>
   }
+  const tum = plan.asamalar.flatMap((a) => a.adimlar.map((x) => ({ ...x, asama_baslik: a.baslik })))
+  const simdiki = plan.siradaki_adim ? (tum.find((x) => x.kod === plan.siradaki_adim.kod) || plan.siradaki_adim) : null
+  const biten = tum.filter((x) => x.durum === 'tamamlandi')
+  const sirada = tum.filter((x) => x.durum !== 'tamamlandi' && x.kod !== simdiki?.kod).slice(0, 2)
+  const yuzde = tum.length ? Math.round((100 * biten.length) / tum.length) : 0
   return (
     <>
-      <div className="card">
-        <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5 }}>
-          Her odak alanı için 3 aşamada somut adımlar var: önce bu hafta yapabileceğin küçük adımlar, sonra 1–3 ayda oturacak çalışmalar, en sonda kalıcı alışkanlıklar.
+      <div className="card yh-ust">
+        <div className="yh-ust-satir">
+          <div>
+            <div className="yh-sayi"><Sayac deger={biten.length} /><span> / {tum.length} adım</span></div>
+            <div className="yh-alt">Her adımı bitirdiğinde sıradaki açılır. Acele yok — haftada 1-2 adım yeterli.</div>
+          </div>
+          <div className="yh-yuzde">%{yuzde}</div>
         </div>
-        <IlerlemeCubugu ilerleme={plan.ilerleme} />
+        <div className="yh-yol" aria-hidden="true">
+          {tum.map((x) => (
+            <span key={x.kod} title={x.baslik}
+              className={`yh-nokta${x.durum === 'tamamlandi' ? ' bitti' : ''}${x.kod === simdiki?.kod ? ' simdi' : ''}`} />
+          ))}
+        </div>
       </div>
-      {plan.asamalar.map((a) => (
-        <Bolum key={a.kod} baslik={a.baslik} alt={a.alt}
-          sag={<span className="koc-asama-sayac">{a.tamamlanan}/{a.toplam} tamamlandı</span>}>
-          {a.once_oncekine_odaklan && (
-            <div className="koc-ipucu">İpucu: Önce bir önceki aşamanın adımlarına odaklan; bu aşamadaki adımlar onların üzerine kurulu.</div>
+
+      {simdiki ? (
+        <div key={simdiki.kod} className="yh-simdi">
+          <div className="yh-etiket">Şimdiki adımın <span>{simdiki.asama_baslik?.replace(/^\d\. Aşama · /, '')}</span></div>
+          <AdimKarti adim={simdiki} onDurum={onDurum} vurgulu />
+        </div>
+      ) : (
+        <div className="card" style={{ textAlign: 'center', padding: 30 }}>
+          <div style={{ fontSize: 34 }}>🎉</div>
+          <div style={{ fontWeight: 800, marginTop: 6 }}>Yol haritanın tamamını bitirdin!</div>
+          <div className="ps" style={{ margin: '4px 0 0' }}>Bir sonraki değerlendirme turunda gelişimini birlikte görelim.</div>
+        </div>
+      )}
+
+      {sirada.length > 0 && (
+        <div className="yh-sirada">
+          <div className="yh-etiket">Sırada</div>
+          {sirada.map((x, i) => (
+            <div key={x.kod} className="yh-sirada-satir">
+              <span className="yh-sirada-no">{biten.length + 2 + i}</span>
+              <span className="yh-sirada-ad">{x.baslik}</span>
+              <span className="yh-sirada-alan">{x.degisken_adi}</span>
+            </div>
+          ))}
+        </div>
+      )}
+
+      {biten.length > 0 && (
+        <div className="yh-biten">
+          <button className="hg-link" onClick={() => setBitenAcik(!bitenAcik)}>{bitenAcik ? '▴' : '▾'} Tamamladıkların ({biten.length})</button>
+          {bitenAcik && (
+            <div className="yh-biten-liste">
+              {biten.map((x) => (
+                <div key={x.kod} className="yh-biten-satir">
+                  <span className="yh-tik">✓</span>
+                  <span style={{ flex: 1, minWidth: 0 }}>{x.baslik}</span>
+                  <button className="hg-link" onClick={() => onDurum(x.kod, null)} title="Yanlışlıkla işaretlediysen geri al">Geri al</button>
+                </div>
+              ))}
+            </div>
           )}
-          <div className="koc-adim-grid">
-            {a.adimlar.map((adim) => <AdimKarti key={adim.kod} adim={adim} onDurum={onDurum} />)}
-          </div>
-        </Bolum>
-      ))}
-      {plan.sonraki_alanlar.length > 0 && (
-        <Bolum baslik="Sonra odaklanılacak alanlar" alt="Odak alanlarındaki adımları bitirdikçe bunlara geçebilirsin. Bir sonraki değerlendirme turunda öncelikler yeniden hesaplanır.">
-          <div className="card" style={{ margin: 0, display: 'flex', flexWrap: 'wrap', gap: 10 }}>
-            {plan.sonraki_alanlar.map((s) => <span key={s.degisken_id} style={{ display: 'inline-flex', gap: 6, alignItems: 'center', fontSize: 12.5 }}>{s.degisken_adi} <KategoriRozeti kategori={s.kategori} /></span>)}
-          </div>
-        </Bolum>
+        </div>
       )}
     </>
+  )
+}
+
+// [2026-10-09] Hedef kartı: hedef bölüm + kısa bölüm bilgisi. Hedef değişikliği yalnızca Ayarlar'dan.
+function HedefKarti({ hedef, plan }) {
+  const [b, setB] = useState(null)
+  const { ac } = useBolumBilgi()
+  const navigate = useNavigate()
+  useEffect(() => { api.bolumBilgi(hedef.bolum_id).then(setB).catch(() => setB(null)) }, [hedef.bolum_id])
+  const d = b?.detay
+  const ozet = d?.ozet || b?.kisa_aciklama
+  const meslekler = (d?.meslekler || []).slice(0, 3).map((m) => m.ad)
+  const ilerleme = plan && plan.ilerleme.toplam ? plan.ilerleme : null
+  return (
+    <div className="card koc-hedef">
+      <div className="koc-hedef-ust">
+        <div style={{ minWidth: 0, flex: 1 }}>
+          <div className="ct" style={{ marginBottom: 4 }}>🎯 Hedefin</div>
+          <div className="koc-hedef-ad">{hedef.bolum_adi}</div>
+          <div className="koc-hedef-cipler">
+            {b?.ust_alan && <span>{b.ust_alan}</span>}
+            {d?.puan_turu && <span>📝 {d.puan_turu}</span>}
+            {d?.ogrenim_suresi && <span>⏱ {d.ogrenim_suresi}</span>}
+          </div>
+        </div>
+        {ilerleme && (
+          <div className="koc-hedef-ilerleme">
+            <b>{ilerleme.tamamlanan}/{ilerleme.toplam}</b><span>adım tamam</span>
+          </div>
+        )}
+      </div>
+      {ozet && <p className="koc-hedef-ozet">{ozet}</p>}
+      {meslekler.length > 0 && <div className="koc-hedef-meslek"><b>Mezunlar ne iş yapar?</b> {meslekler.join(' · ')}</div>}
+      <div className="koc-hedef-alt">
+        <button className="hg-link" style={{ color: 'var(--pu)' }} onClick={() => ac(hedef.bolum_id, hedef.bolum_adi)}>Bölüm hakkında her şey →</button>
+        <button className="hg-link" onClick={() => navigate('/profil#hedef')}>
+          Hedefini Ayarlar'dan değiştirebilirsin{hedef.kalan_hak != null ? ` · ${hedef.kalan_hak} hak kaldı` : ''}
+        </button>
+      </div>
+    </div>
   )
 }
 
@@ -346,23 +433,22 @@ export default function KoclukSayfasi() {
   const [karsilastirma, setKarsilastirma] = useState(null)
   const [hata, setHata] = useState(null)
   const [kilit, setKilit] = useState(null) // K5 bitmediyse backend 409 döner
-  const [oneriler, setOneriler] = useState([])
-  const [seciciAcik, setSeciciAcik] = useState(false)
-
-  const [sorgu, setSorgu] = useState('')
-  const [aramaSonuclari, setAramaSonuclari] = useState(null)
-  const [onayBekleyenBolum, setOnayBekleyenBolum] = useState(null)
   const [params, setParams] = useSearchParams()
-  const urlIslendi = useRef(false)
+  const navigate = useNavigate()
   const sekme = SEKMELER.some((s) => s.kod === params.get('sekme')) ? params.get('sekme') : 'ozet'
   function sekmeyeGit(kod) {
     const p = new URLSearchParams(params); p.set('sekme', kod); setParams(p, { replace: true })
     window.scrollTo({ top: 0, behavior: 'smooth' })
   }
 
+  // [2026-10-09] Hedef seçimi artık yalnızca Ayarlar'da: eski "?hedef=ID" bağlantıları oraya yönlendirilir
+  useEffect(() => {
+    const id = Number(params.get('hedef'))
+    if (id) navigate(`/profil?hedef=${id}#hedef`, { replace: true })
+  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+
   useEffect(() => {
     api.aktifHedefGetir().then(setHedef).catch(() => setHedef(null))
-    api.siralamaGetir(5).then((l) => setOneriler(Array.isArray(l) ? l : [])).catch(() => setOneriler([]))
   }, [])
 
   const analiziYukle = useCallback(() => {
@@ -374,57 +460,10 @@ export default function KoclukSayfasi() {
 
   useEffect(() => { if (hedef) analiziYukle() }, [hedef, analiziYukle])
 
-  async function hedefSecmeyeCalis(bolumId) {
-    setHata(null)
-    try {
-      const sonuc = await api.hedefSec(bolumId, false)
-      setHedef(sonuc)
-      setAramaSonuclari(null)
-      setSorgu('')
-      setSeciciAcik(false)
-    } catch (err) {
-      if (err.status === 409) setOnayBekleyenBolum(bolumId)
-      else setHata(err.detail || 'Hedef seçilemedi.')
-    }
-  }
-
-  // Keşfet'teki "Bu bölümü hedef olarak seç" butonu /koclugu?hedef=ID ile gelir
-  useEffect(() => {
-    const id = Number(params.get('hedef'))
-    if (!urlIslendi.current && id && hedef !== undefined) {
-      urlIslendi.current = true
-      if (!hedef || hedef.bolum_id !== id) hedefSecmeyeCalis(id)
-      params.delete('hedef'); setParams(params, { replace: true })
-    }
-  }, [params, hedef]) // eslint-disable-line react-hooks/exhaustive-deps
-
-  async function ara(e) {
-    e.preventDefault()
-    if (sorgu.trim().length < 2) return
-    try {
-      setAramaSonuclari(await api.kesfetAra(sorgu.trim(), 8))
-    } catch (err) {
-      setHata(err.detail || 'Arama yapılamadı.')
-    }
-  }
-
-  async function degisikligiOnayla() {
-    try {
-      const sonuc = await api.hedefSec(onayBekleyenBolum, true)
-      setHedef(sonuc)
-      setOnayBekleyenBolum(null)
-      setAramaSonuclari(null)
-      setSorgu('')
-      setSeciciAcik(false)
-    } catch (err) {
-      setHata(err.detail || 'Hedef değiştirilemedi.')
-    }
-  }
-
   async function adimDurumu(kod, durum) {
     try {
       await api.adimDurumuGuncelle(kod, durum)
-      setPlan(await api.gelisimPlaniGetir()) // ilerleme, sıradaki adım ve aşama uyarıları sunucuda yeniden hesaplanır
+      setPlan(await api.gelisimPlaniGetir()) // ilerleme ve sıradaki adım sunucuda yeniden hesaplanır
     } catch (err) {
       setHata(err.detail || 'Durum kaydedilemedi.')
     }
@@ -436,81 +475,21 @@ export default function KoclukSayfasi() {
   ;(gelisim || []).forEach((g) => { sayac[(KATEGORI[g.kategori] || KATEGORI.beklenti).grup] += 1 })
   const veriVar = hedef && gelisim && gelisim.length > 0
 
-  const secici = (
-    <div className="koc-secici">
-      {oneriler.length > 0 && (
-        <>
-          <div className="ps" style={{ margin: '0 0 8px', fontSize: 12 }}>Sana en uygun bölümlerden seç:</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 14 }}>
-            {oneriler.map((o) => (
-              <button key={o.bolum_id} className="btn sec" style={{ fontSize: 12, padding: '6px 10px', opacity: hedef?.bolum_id === o.bolum_id ? 0.5 : 1 }}
-                disabled={hedef?.bolum_id === o.bolum_id} onClick={() => hedefSecmeyeCalis(o.bolum_id)}>
-                {o.bolum_adi} · %{Math.round(o.toplam_uyum)}
-              </button>
-            ))}
-          </div>
-          <div className="ps" style={{ margin: '0 0 8px', fontSize: 12 }}>ya da başka bir bölüm ara:</div>
-        </>
-      )}
-      <form onSubmit={ara} style={{ display: 'flex', gap: 8, marginBottom: aramaSonuclari ? 14 : 0 }}>
-        <input className="auth-input" style={{ flex: 1, margin: 0 }} value={sorgu} onChange={(e) => setSorgu(e.target.value)} placeholder="Bölüm ara..." />
-        <button className="btn sec" type="submit">Ara</button>
-      </form>
-      {aramaSonuclari && (
-        <div className="ll">
-          {aramaSonuclari.length === 0 && <div className="ps" style={{ margin: 0 }}>Sonuç bulunamadı.</div>}
-          {aramaSonuclari.map((s) => (
-            <div key={s.bolum_id} className="lc" onClick={() => hedefSecmeyeCalis(s.bolum_id)}>
-              <div className="lb-wrap"><div className="lt"><BolumAdi id={s.bolum_id} ad={s.bolum_adi} /></div></div>
-              {s.toplam_uyum !== null && s.toplam_uyum !== undefined && <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>}
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  )
-
   return (
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Hedef Bölüm Koçluğu</div>
-        <div className="ps">İstediğin bir bölümü hedef seç, kendini onunla karşılaştır ve adım adım gelişim planını takip et. Aynı anda yalnızca 1 aktif hedefin olabilir — odaklanman için.</div>
+        <div className="ps">Hedef bölümünle kendini karşılaştır ve adım adım ilerle. Her seferinde tek bir adıma odaklan.</div>
       </div>
 
       <div className="koc-kap">
-        {/* --- Hedef kartı (hedef değiştirme bunun içinden açılır) --- */}
-        {hedef ? (
-          <div className="card koc-hedef">
-            <div className="koc-hedef-ust">
-              <div style={{ minWidth: 0 }}>
-                <div className="ct" style={{ marginBottom: 4 }}>🎯 Şu anki hedefin</div>
-                <div className="koc-hedef-ad"><BolumAdi id={hedef.bolum_id} ad={hedef.bolum_adi} /></div>
-                {plan && plan.odak_alanlari.length > 0 && (
-                  <div className="ps" style={{ margin: '6px 0 0', fontSize: 12 }}>
-                    Yol haritası: {plan.ilerleme.tamamlanan}/{plan.ilerleme.toplam} adım tamamlandı
-                  </div>
-                )}
-              </div>
-              <button className="btn sec" onClick={() => setSeciciAcik(!seciciAcik)}>{seciciAcik ? 'Kapat ▲' : 'Hedefi değiştir'}</button>
-            </div>
-            {seciciAcik && <div style={{ borderTop: '1px solid var(--bor)', marginTop: 14, paddingTop: 14 }}>{secici}</div>}
-          </div>
-        ) : (
-          <div className="card">
-            <div className="ct">🎯 Bir hedef bölüm seç</div>
-            <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5 }}>Hedef seçtiğinde seni o bölümle karşılaştırıp adım adım bir gelişim planı hazırlarız.</div>
-            {secici}
-          </div>
-        )}
-
-        {onayBekleyenBolum && (
-          <div className="card" style={{ borderColor: 'var(--am)', background: 'var(--aml)' }}>
-            <div style={{ fontSize: 13, marginBottom: 10 }}>
-              Hedefini değiştirmek üzeresin. Eski hedefindeki ilerlemen silinmez, istersen ileride tekrar seçebilirsin. Devam etmek istiyor musun?
-            </div>
-            <div style={{ display: 'flex', gap: 8 }}>
-              <button className="btn" onClick={degisikligiOnayla}>Evet, değiştir</button>
-              <button className="btn sec" onClick={() => setOnayBekleyenBolum(null)}>Vazgeç</button>
+        {hedef ? <HedefKarti hedef={hedef} plan={plan} /> : (
+          <div className="card koc-hedef-yok">
+            <div style={{ fontSize: 32 }}>🎯</div>
+            <div>
+              <div className="ct" style={{ marginBottom: 4 }}>Önce bir hedef bölüm seç</div>
+              <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5 }}>Hedefini seçtiğinde seni o bölümle karşılaştırıp adım adım bir gelişim planı hazırlarız. Hedef seçimi Ayarlar sayfasında.</div>
+              <button className="btn" onClick={() => navigate('/profil#hedef')}>Hedef bölümümü seç →</button>
             </div>
           </div>
         )}
@@ -527,7 +506,6 @@ export default function KoclukSayfasi() {
           <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedef için henüz karşılaştırılacak veri yok — önce katmanlarını tamamla.</div></div>
         )}
 
-        {/* --- Başlıklar --- */}
         {veriVar && (
           <>
             <div className="koc-sekmeler" role="tablist">
@@ -538,7 +516,7 @@ export default function KoclukSayfasi() {
                 </button>
               ))}
             </div>
-            {sekme === 'ozet' && <OzetSekmesi plan={plan} sayac={sayac} onDurum={adimDurumu} sekmeyeGit={sekmeyeGit} />}
+            {sekme === 'ozet' && <OzetSekmesi plan={plan} sayac={sayac} sekmeyeGit={sekmeyeGit} />}
             {sekme === 'yol' && <YolHaritasiSekmesi plan={plan} onDurum={adimDurumu} />}
             {sekme === 'guclu' && <GucluSekmesi plan={plan} onDurum={adimDurumu} />}
             {sekme === 'karsilastirma' && <KarsilastirmaSekmesi gelisim={gelisim} hedef={hedef} />}
