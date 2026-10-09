@@ -4,8 +4,8 @@ Kaynak: sistem_genel_anlatim.md E8, E3, A7, E9
 """
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Integer, BigInteger, Numeric, Boolean, DateTime, ForeignKey, CheckConstraint, UniqueConstraint
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy import String, Integer, BigInteger, Numeric, Boolean, DateTime, ForeignKey, CheckConstraint, UniqueConstraint, JSON
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 
@@ -78,7 +78,7 @@ class AuditLog(Base):
 
 
 class Okul(Base):
-    """[2026-10-09] Öğrenci sayfalarının solunda gösterilen okul (ad + amblem). Aynı anda tek okul aktif olur."""
+    """[2026-10-09] Okul: ad + amblem (öğrencinin sol menüsü) ve tanıtım bilgileri (rozete tıklayınca açılan pencere)."""
     __tablename__ = "okullar"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
@@ -87,3 +87,13 @@ class Okul(Base):
     logo: Mapped[str | None] = mapped_column(String, nullable=True)   # data URL (png/jpeg/svg), en fazla ~400 KB
     aktif_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    # [2026-10-09] Tanıtım bilgileri — okul yetkilisi ve süper admin düzenler; öğrenci rozetine tıklayınca görür
+    kurulus_yili: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    ogrenci_sayisi: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    tanitim: Mapped[str | None] = mapped_column(String, nullable=True)
+    adres: Mapped[str | None] = mapped_column(String, nullable=True)
+    telefon: Mapped[str | None] = mapped_column(String, nullable=True)
+    eposta: Mapped[str | None] = mapped_column(String, nullable=True)
+    web: Mapped[str | None] = mapped_column(String, nullable=True)
+    kadro: Mapped[list] = mapped_column(JSON().with_variant(JSONB, "postgresql"), nullable=False, default=list)
+    bilgi_guncelleme_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
