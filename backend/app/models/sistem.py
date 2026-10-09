@@ -67,12 +67,14 @@ class AuditLog(Base):
     __tablename__ = "audit_log"
 
     id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
-    admin_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("admin_kullanicilar.id"), nullable=False)
+    admin_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("admin_kullanicilar.id", ondelete="SET NULL"), nullable=True)
     islem: Mapped[str] = mapped_column(String, nullable=False)
     hedef_tablo: Mapped[str] = mapped_column(String, nullable=False)
     hedef_id: Mapped[str] = mapped_column(String, nullable=False)
     gerekce: Mapped[str | None] = mapped_column(String)
     zaman: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    okul_id: Mapped[int | None] = mapped_column(Integer, nullable=True)      # [2026-10-09] okul paneli kayıtları için
+    yapan_ad: Mapped[str | None] = mapped_column(String, nullable=True)     # yönetici silinse de adı kalır
 
 
 class Okul(Base):
