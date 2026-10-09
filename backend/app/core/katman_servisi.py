@@ -224,15 +224,40 @@ def likert_puan(secenek_sirasi: int, toplam_secenek: int, ters_kodlanmis_mi: boo
     return 100 - puan if ters_kodlanmis_mi else puan
 
 
-def cevaplari_puanla(db: Session, sorular: dict, cevaplar: list) -> dict[int, list[float]]:
+def puanlama_onbellegi(db: Session, soru_idler) -> dict:
+    """[2026-10-09] cevaplari_puanla için toplu ön yükleme (çok sayıda cevabı tek tek sorgulamadan puanlamak için).
+    Puanlama kuralları değişmez; yalnızca veritabanı okumaları toplu yapılır."""
+    secenekler = db.query(SoruSecenegi).filter(SoruSecenegi.soru_id.in_(list(soru_idler) or [-1])).all()
+    soru_secenekleri: dict[int, list] = {}
+    for s in secenekler:
+        soru_secenekleri.setdefault(s.soru_id, []).append(s)
+    agirlik: dict[int, list] = {}
+    for a in db.query(SjtSecenekDegiskenAgirlik).filter(SjtSecenekDegiskenAgirlik.secenek_id.in_([s.id for s in secenekler] or [-1])).all():
+        agirlik.setdefault(a.secenek_id, []).append(a)
+    return {"secenek": {s.id: s for s in secenekler}, "soru_secenekleri": soru_secenekleri, "agirlik": agirlik}
+
+
+def cevaplari_puanla(db: Session, sorular: dict, cevaplar: list, onb: dict | None = None) -> dict[int, list[float]]:
     """Cevapları soru tipine göre değişken puanlarına çevirir: {degisken_id: [puan, ...]}.
-    K1-K4 katmanları ve K5 dal soruları aynı kuralla puanlanır (likert / sjt / en çok-en az / kutup)."""
+    K1-K4 katmanları ve K5 dal soruları aynı kuralla puanlanır (likert / sjt / en çok-en az / kutup).
+    onb: puanlama_onbellegi() çıktısı (isteğe bağlı) — verilirse sorgular önbellekten okunur, sonuç aynıdır."""
     degisken_puanlari: dict[int, list[float]] = {}
+
+    def _secenek(sid):
+        return onb["secenek"].get(sid) if onb else db.get(SoruSecenegi, sid)
+
+    def _soru_secenekleri(qid):
+        return onb["soru_secenekleri"].get(qid, []) if onb else db.query(SoruSecenegi).filter(SoruSecenegi.soru_id == qid).all()
+
+    def _agirliklar(sid):
+        return onb["agirlik"].get(sid, []) if onb else (
+            db.query(SjtSecenekDegiskenAgirlik).filter(SjtSecenekDegiskenAgirlik.secenek_id == sid).all())
 
     for cevap in cevaplar:
         soru = sorular[cevap.soru_id]
-        secenek = db.get(SoruSecenegi, cevap.secenek_id)
-        toplam_secenek = db.query(func.count(SoruSecenegi.id)).filter(SoruSecenegi.soru_id == soru.id).scalar()
+        secenek = _secenek(cevap.secenek_id)
+        toplam_secenek = len(onb["soru_secenekleri"].get(soru.id, [])) if onb else \
+            db.query(func.count(SoruSecenegi.id)).filter(SoruSecenegi.soru_id == soru.id).scalar()
 
         if soru.soru_tipi == "likert":
             if soru.degisken_id is None:
@@ -246,7 +271,7 @@ def cevaplari_puanla(db: Session, sorular: dict, cevaplar: list) -> dict[int, li
             # puan 50'ye doğru çekilir: 50 + (puan - 50) × w.
             if cevap.en_az_secenek_id is None:
                 raise IsKuraliHatasi("Bir soruda 'en az uyan' şık seçilmemiş — katman tamamlanamaz.")
-            soru_secenekleri = db.query(SoruSecenegi).filter(SoruSecenegi.soru_id == soru.id).all()
+            soru_secenekleri = _soru_secenekleri(soru.id)
             for sec in soru_secenekleri:
                 if sec.id == cevap.secenek_id:
                     secim_puani = 100.0
@@ -254,18 +279,14 @@ def cevaplari_puanla(db: Session, sorular: dict, cevaplar: list) -> dict[int, li
                     secim_puani = 0.0
                 else:
                     secim_puani = 50.0
-                for a in db.query(SjtSecenekDegiskenAgirlik).filter(SjtSecenekDegiskenAgirlik.secenek_id == sec.id).all():
+                for a in _agirliklar(sec.id):
                     w = max(0.0, min(1.0, float(a.agirlik)))
                     degisken_puanlari.setdefault(a.degisken_id, []).append(50.0 + (secim_puani - 50.0) * w)
 
         elif soru.soru_tipi == "sjt":
             # [ÇIKARIM] — SJT ağırlığı (0-1 aralığı varsayılıyor) doğrudan
             # o değişken için 0-100 skalasına ölçeklenip katkı puanı sayılır.
-            agirliklar = (
-                db.query(SjtSecenekDegiskenAgirlik)
-                .filter(SjtSecenekDegiskenAgirlik.secenek_id == cevap.secenek_id)
-                .all()
-            )
+            agirliklar = _agirliklar(cevap.secenek_id)
             for a in agirliklar:
                 degisken_puanlari.setdefault(a.degisken_id, []).append(float(a.agirlik) * 100)
 
