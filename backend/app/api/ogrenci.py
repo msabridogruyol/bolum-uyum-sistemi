@@ -433,7 +433,8 @@ def bolum_siralamasi_getir(
         nedenler = {}
     return [
         BolumSiralamaSatiri(bolum_id=s.bolum_id, bolum_adi=bolum_adlari.get(s.bolum_id, "?"), toplam_uyum=float(s.toplam_uyum),
-                            alan=s.alan, neden=nedenler.get(s.bolum_id, []))
+                            alan=s.alan, neden=(nedenler.get(s.bolum_id) or {}).get("metinler", []),
+                            neden_detay=nedenler.get(s.bolum_id))
         for s in siralama
     ]
 
