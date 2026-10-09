@@ -559,6 +559,54 @@ ICERIK = {
     },
 }
 
+# ============================ [2026-10-09] EK ADIMLAR ============================
+# Öz yeterlik ve öz güven, merak ve soru sorma, odaklanma, dijital/bilgi/veri/görsel okuryazarlık,
+# kültür ve vatandaşlık okuryazarlığı ile sürdürülebilirlik alanlarında ek adımlar.
+# Kaynak: Türkiye Yüzyılı Maarif Modeli beceri çerçevesi (Eğilimler E1.4, E1.5, E2.3, E3.2, E3.4, E3.8, E3.9;
+# Okuryazarlık becerileri OB1, OB2, OB4, OB5, OB6, OB7, OB8) ve SCCT öz yeterlik kaynakları (Lent ve ark. 1994).
+# Mevcut adımların sırası değişmesin diye her değişkenin listesinin SONUNA eklenir (kodlar G-7, G-8).
+_EK_GELISIM = {
+    "P8": [
+        ("simdi", "Başarı kanıtların", "Son bir yılda zorlanıp yine de başardığın 5 şeyi yaz ve her birinde senin hangi davranışının işe yaradığını belirt. Kendine güven, geçmiş başarılarını fark ettikçe artar.", "yansitma", "30 dk", "5 başarı ve her birinde işe yarayan davranışın yazılı."),
+        ("bu_donem", "Gözlemle, sonra dene", "Liderliğini beğendiğin birini (öğretmen, kulüp başkanı, takım kaptanı) bir hafta gözlemle; yaptığı bir davranışı seç ve ertesi hafta kendin dene.", "deneyim", "2 hafta", "Gözlem notun ve denediğin davranışın sonucu yazılı."),
+    ],
+    "P7": [
+        ("simdi", "Zorlandığında kendine ne diyorsun?", "Son zorlandığın bir anı hatırla ve o an kafandan geçen cümleyi yaz. Sonra aynı durumda bir arkadaşına söyleyeceğin cesaretlendirici cümleyi yanına yaz.", "yansitma", "15 dk", "İki cümle de yazılı ve ikincisini bir sonraki zorlukta kullanmaya karar verdin."),
+        ("bu_donem", "Basamaklı meydan okuma", "Seni biraz zorlayan bir şeyi kolaydan zora 4 basamağa böl (ör. sınıfta soru sormak → kısa yorum yapmak → 1 dakikalık sunum → 5 dakikalık sunum) ve her hafta bir basamak çık.", "aliskanlik", "4 hafta", "4 basamağı yazdın ve en az 3'ünü tamamladın."),
+    ],
+    "I5": [
+        ("bu_donem", "Okula bir öneri sun", "Okulda iyileştirilebilecek bir şey seç (kütüphane saatleri, kulüp etkinliği, geri dönüşüm), kısa bir öneri hazırla ve ilgili öğretmene ya da okul yönetimine sun.", "deneyim", "2-3 hafta", "Önerini yazılı olarak hazırladın ve ilgili kişiye ilettin."),
+    ],
+    "P5": [
+        ("simdi", "Sorgulayan okur", "Hedef bölümünle ilgili merak ettiğin bir konu seç, hakkında 5 \"neden?\" ya da \"nasıl?\" sorusu yaz ve cevapları en az iki farklı kaynaktan ara. Kaynakların birbirini tutmadığı noktayı not et.", "arastirma", "1 saat", "5 soru, cevapları ve kaynakların ayrıştığı en az 1 nokta yazılı."),
+    ],
+    "I1": [
+        ("simdi", "25 dakikalık odak bloğu", "Ders çalışırken 25 dakika boyunca tek bir işe odaklan, telefonu başka odaya koy, sonra 5 dakika ara ver. Her gün en az 2 odak bloğu yap ve kaç blok yaptığını işaretle.", "aliskanlik", "2 hafta", "2 hafta boyunca günlük blok sayını işaretledin ve günlerin çoğunda en az 2 blok var."),
+    ],
+    "A1": [
+        ("simdi", "Bilgiyi doğrula", "İnternette {bolum} ya da meslekle ilgili bir iddia (haber, video, paylaşım) bul. Kimin yazdığını, tarihini ve kaynağını kontrol et; iddiayı güvenilir bir kaynaktan doğrula ya da çürüt.", "arastirma", "45 dk", "İddia, kontrol ettiğin 3 bilgi (yazar, tarih, kaynak) ve vardığın sonuç yazılı."),
+        ("bu_donem", "Veriyle anlat", "Merak ettiğin bir konuda açık bir veri bul (TÜİK, YÖK Atlas, okul verisi), bir tabloya aktar, bir grafik çiz ve grafiğin söylediğini 3 cümleyle yaz.", "proje", "2-3 hafta", "Tablon, grafiğin ve 3 cümlelik yorumun hazır."),
+    ],
+    "A4": [
+        ("bu_donem", "Görseli çözümle", "Bir infografik, reklam afişi ya da veri grafiği seç. Göze ilk ne çarpıyor, hangi renk ve yerleşim seçilmiş, görsel neyi öne çıkarıp neyi gizliyor? Sonra aynı bilgiyi kendi tasarımınla daha açık anlat.", "proje", "1-2 hafta", "Çözümleme notun ve kendi yeniden tasarımın hazır."),
+    ],
+    "I4": [
+        ("simdi", "Dijital izini kontrol et", "Adını bir arama motorunda arat ve sosyal medya hesaplarının kimlere açık olduğunu kontrol et. Bir üniversite ya da işveren bakarsa neyi görür, düşün.", "yansitma", "30 dk", "Hesaplarının gizlilik ayarlarını gözden geçirdin ve değiştirmek istediğin en az 1 şeyi düzelttin."),
+        ("bu_donem", "Bir toplumsal sorunu incele", "Çevrende bir sorunu seç (erişilebilirlik, trafik güvenliği, israf). Sorumlu kurumları, mevcut kuralları ve vatandaşların neler yapabileceğini araştır; {bolum} bu soruna nasıl katkı sağlayabilir, yaz.", "arastirma", "2-3 hafta", "Sorun, sorumlu kurumlar, yapılabilecekler ve bölümünün katkısını içeren 1 sayfalık notun hazır."),
+    ],
+    "A3": [
+        ("simdi", "Öteki tarafın gözünden", "Yakın zamanda biriyle anlaşamadığın bir durumu düşün. O kişinin bakış açısını onun ağzından, \"ben\" diliyle 5 cümleyle yaz.", "yansitma", "20 dk", "Karşı tarafın bakışını yargılamadan 5 cümleyle yazdın."),
+        ("bu_donem", "Farklı bir hayatı dinle", "Senden farklı bir kültürden, kuşaktan ya da yaşam koşulundan biriyle (büyükanne-büyükbaba, başka şehirden gelen bir arkadaş, bir esnaf) konuş; hayatını, değerlerini ve gençliğini sor.", "gorusme", "30-45 dk", "Görüşmeyi yaptın; seni şaşırtan 3 şeyi ve ortak noktalarınızı yazdın."),
+    ],
+    "A5": [
+        ("simdi", "Bölümün sürdürülebilirlik bağlantısı", "{bolum} alanının çevre, enerji, su ya da iklimle nasıl bir ilişkisi olduğunu araştır; bu alanda çalışan bir kurum ya da proje bul.", "arastirma", "45 dk", "Bölümünün çevreyle 2 bağlantısını ve 1 örnek projeyi yazdın."),
+        ("bu_donem", "Okulun atık ölçümü", "Bir hafta boyunca sınıfında ya da evinde çıkan atığı (kâğıt, plastik, yemek) türüne göre say ya da tart. Sonuçları tabloya dök ve azaltmak için uygulanabilir 2 öneri yaz.", "proje", "2 hafta", "1 haftalık ölçüm tablon ve 2 önerin hazır."),
+    ],
+}
+for _kod, _adimlar in _EK_GELISIM.items():
+    ICERIK[_kod]["gelisim"].extend(_adimlar)
+
+
 TUR_ETIKET = {
     "arastirma": "Araştırma", "gorusme": "Görüşme", "deneyim": "Deneyim", "proje": "Proje",
     "aliskanlik": "Alışkanlık", "okuma": "Okuma", "kurs": "Kurs", "yansitma": "Kendini değerlendirme",
