@@ -773,3 +773,66 @@ textarea.md-girdi{resize:vertical;min-height:44px}
 .hg-baslik-kucuk{font-size:11px;font-weight:700;color:var(--tx3);margin-bottom:6px}
 @media (max-width: 980px){.hg-duzen{grid-template-columns:1fr}}
 @media (prefers-reduced-motion: reduce){.hg-halka-dolu,.hg-gecmis{animation:none}}
+
+/* [2026-10-09] Koçluk — hedef kartı (bölüm bilgisi) */
+.koc-hedef-cipler{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.koc-hedef-cipler span{font-size:11.5px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--sur2);color:var(--tx2)}
+.koc-hedef-ilerleme{display:flex;flex-direction:column;align-items:center;justify-content:center;min-width:92px;padding:10px 12px;border-radius:14px;background:var(--grl);color:var(--gr)}
+.koc-hedef-ilerleme b{font-family:var(--fd);font-size:22px;line-height:1}
+.koc-hedef-ilerleme span{font-size:11px;font-weight:700;margin-top:3px}
+.koc-hedef-ozet{font-size:13.5px;color:var(--tx2);line-height:1.6;margin:12px 0 0;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.koc-hedef-meslek{font-size:12.5px;color:var(--tx2);margin-top:8px}
+.koc-hedef-meslek b{color:var(--tx)}
+.koc-hedef-alt{display:flex;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding-top:10px;border-top:1px solid var(--bor)}
+.koc-hedef-yok{display:flex;gap:16px;align-items:flex-start}
+/* Özet: şimdiki adım kısayolu + odak satırları */
+.koc-siradaki{width:100%;display:flex;justify-content:space-between;align-items:center;gap:14px;margin:0;text-align:left;cursor:pointer;font:inherit;color:inherit}
+.koc-siradaki-ust{font-size:11px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.03em}
+.koc-siradaki-baslik{font-size:16px;font-weight:800;color:var(--tx);margin-top:3px}
+.koc-siradaki-git{font-size:13px;font-weight:800;color:var(--pu);white-space:nowrap}
+.koc-odak-liste{display:flex;flex-direction:column;gap:8px}
+.koc-odak-satir{display:flex;gap:12px;align-items:flex-start;padding:12px 14px;border-radius:14px;background:var(--sur);border:1px solid var(--bor)}
+.koc-odak-no{width:24px;height:24px;border-radius:50%;background:var(--pul);color:var(--pu);font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+/* Yol haritası — tek adım */
+.yh-ust{padding:18px 20px}
+.yh-ust-satir{display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.yh-sayi{font-family:var(--fd);font-size:26px;font-weight:700;color:var(--tx);line-height:1}
+.yh-sayi span{font-size:14px;color:var(--tx3)}
+.yh-alt{font-size:12px;color:var(--tx3);margin-top:6px;font-weight:600}
+.yh-yuzde{font-family:var(--fd);font-size:22px;font-weight:700;color:var(--gr)}
+.yh-yol{display:flex;gap:5px;margin-top:14px;flex-wrap:wrap}
+.yh-nokta{flex:1;min-width:10px;max-width:40px;height:8px;border-radius:99px;background:var(--sur2);transition:background .3s}
+.yh-nokta.bitti{background:var(--gr)}
+.yh-nokta.simdi{background:var(--pu);animation:yh-nabiz 1.8s ease-in-out infinite}
+@keyframes yh-nabiz{0%,100%{opacity:1}50%{opacity:.45}}
+.yh-simdi{margin:6px 0 16px;animation:fy-gir .45s cubic-bezier(.2,.7,.2,1) both}
+.yh-simdi .adim-kart{padding:18px 20px}
+.yh-etiket{font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em;margin-bottom:8px}
+.yh-etiket span{margin-left:6px;padding:2px 8px;border-radius:999px;background:var(--sur2);text-transform:none;letter-spacing:0;font-weight:700}
+.yh-sirada{margin-bottom:14px}
+.yh-sirada-satir{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;border:1px dashed var(--bor2);margin-bottom:6px;opacity:.75}
+.yh-sirada-no{width:22px;height:22px;border-radius:50%;background:var(--sur2);color:var(--tx3);font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.yh-sirada-ad{flex:1;font-size:13px;font-weight:700;color:var(--tx2);min-width:0}
+.yh-sirada-alan{font-size:11px;color:var(--tx3);font-weight:600;white-space:nowrap}
+.yh-biten-liste{margin-top:8px;display:flex;flex-direction:column;gap:4px}
+.yh-biten-satir{display:flex;align-items:center;gap:10px;font-size:12.5px;color:var(--tx2);padding:6px 4px}
+.yh-tik{width:18px;height:18px;border-radius:50%;background:var(--gr);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+@media (prefers-reduced-motion: reduce){.yh-nokta.simdi,.yh-simdi{animation:none}}
+
+/* [2026-10-09] Ayarlar — hedef bölümüm */
+.hb-mevcut{display:flex;justify-content:space-between;align-items:center;gap:14px;padding:14px 16px;border-radius:14px;background:var(--bg);border:1px solid var(--bor);flex-wrap:wrap}
+.hb-etiket{font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em}
+.hb-ad{font-size:17px;font-weight:800;margin-top:3px}
+.hb-hak{text-align:right}
+.hb-noktalar{display:flex;gap:5px;justify-content:flex-end}
+.hb-noktalar span{width:12px;height:12px;border-radius:50%;background:var(--sur2);border:1.5px solid var(--bor2)}
+.hb-noktalar span.dolu{background:var(--pu);border-color:var(--pu)}
+.hb-hak-metin{font-size:11.5px;color:var(--tx2);font-weight:700;margin-top:5px}
+.hb-bos{font-size:13px;color:var(--tx2);padding:12px 14px;border-radius:12px;background:var(--bg);border:1px dashed var(--bor2)}
+.hb-tamam{margin-top:10px;font-size:12.5px;font-weight:600;padding:10px 13px;border-radius:10px;background:var(--grl);color:var(--gr)}
+.hb-uyari{margin-top:12px;font-size:12.5px;line-height:1.55;padding:12px 14px;border-radius:12px;background:var(--aml);color:var(--tx)}
+.hb-onay{margin-top:12px;padding:14px;border-radius:14px;background:var(--pul);border:1px solid var(--pum)}
+.hb-oneriler{display:flex;flex-wrap:wrap;gap:6px}
+.hb-oneri{display:inline-flex;gap:8px;align-items:center;padding:7px 12px;border-radius:999px;border:1px solid var(--bor2);background:var(--sur);cursor:pointer;font-family:var(--fn);font-size:12.5px;font-weight:700;color:var(--tx);transition:border-color .15s,transform .15s}
+.hb-oneri:hover{border-color:var(--pu);transform:translateY(-1px)}
+.hb-oneri b{color:var(--pu)}
