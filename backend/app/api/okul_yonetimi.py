@@ -25,6 +25,8 @@ POST   /yonetim/okul/{okul_id}/yetkililer        — (süper admin) okul yetkili
 POST   /yonetim/yetkili/{id}/sifre-sifirla       — (süper admin) yetkiliye yeni geçici şifre
 DELETE /yonetim/yetkili/{id}                     — (süper admin) yetkiliyi sil
 GET    /yonetim/okul/{okul_id}/kayitlar          — okulun işlem kayıtları (yönetim işlemleri + öğrenci giriş/şifre olayları)
+GET    /yonetim/okul/{okul_id}/bilgi             — okul tanıtım bilgileri (kuruluş yılı, öğrenci sayısı, tanıtım, iletişim, kadro)
+PUT    /yonetim/okul/{okul_id}/bilgi             — tanıtım bilgilerini güncelle (okul yetkilisi + süper admin)
 """
 import base64
 import csv
@@ -816,6 +818,7 @@ ISLEM_ETIKET = {
     "okul_yetkilisi_sil": "Okul yetkilisi silindi", "okul_yetkilisi_sifre_sifirla": "Okul yetkilisinin şifresi sıfırlandı",
     "okul_ekle": "Okul eklendi", "okul_guncelle": "Okul bilgisi güncellendi", "okul_sil": "Okul silindi",
     "sifre_belirledi": "Yetkili kendi şifresini belirledi",
+    "okul_bilgi_guncelle": "Okul tanıtım bilgileri güncellendi",
 }
 
 
@@ -839,3 +842,89 @@ def okul_kayitlari(okul_id: int, gun: int = 30, db: Session = Depends(get_db), y
                       "aciklama": r["aciklama"], "yapan": r["ad_soyad"], "ogrenci_id": str(r["id"])})
     kayit.sort(key=lambda x: x["zaman"].timestamp() if x["zaman"] else 0, reverse=True)
     return kayit[:1200]
+
+
+# ----------------------------------------------------------------------------- okul tanıtım bilgileri
+class KadroGirdi(BaseModel):
+    gorev: str
+    ad: str
+    eposta: str | None = None
+    telefon: str | None = None
+
+
+class OkulBilgiIstek(BaseModel):
+    kurulus_yili: int | None = None
+    ogrenci_sayisi: int | None = None
+    tanitim: str | None = None
+    adres: str | None = None
+    telefon: str | None = None
+    eposta: str | None = None
+    web: str | None = None
+    kadro: list[KadroGirdi] = []
+
+
+GOREVLER = ["Okul Müdürü", "Müdür Başyardımcısı", "Müdür Yardımcısı", "Rehber Öğretmen / Psikolojik Danışman",
+            "Psikolog", "Kariyer Danışmanı", "Sınıf Öğretmeni", "Öğretmen", "Okul Sekreteri", "Diğer"]
+
+
+def _bilgi_out(okul: Okul) -> dict:
+    return {"id": okul.id, "ad": okul.ad, "alt_baslik": okul.alt_baslik, "logo": okul.logo,
+            "kurulus_yili": okul.kurulus_yili, "ogrenci_sayisi": okul.ogrenci_sayisi, "tanitim": okul.tanitim,
+            "adres": okul.adres, "telefon": okul.telefon, "eposta": okul.eposta, "web": okul.web,
+            "kadro": okul.kadro or [], "bilgi_guncelleme_zamani": okul.bilgi_guncelleme_zamani, "gorevler": GOREVLER}
+
+
+def _kirp(v: str | None, n: int) -> str | None:
+    v = (v or "").strip()
+    return v[:n] or None
+
+
+@router.get("/okul/{okul_id}/bilgi")
+def okul_bilgi(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    okul = _okul_kapsami(db, yon, okul_id)
+    if okul is None:
+        raise HTTPException(status_code=400, detail="Okul harici grubun tanıtım bilgisi yok.")
+    return _bilgi_out(okul)
+
+
+@router.put("/okul/{okul_id}/bilgi")
+def okul_bilgi_guncelle(okul_id: int, istek: OkulBilgiIstek, db: Session = Depends(get_db),
+                        yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    okul = _okul_kapsami(db, yon, okul_id)
+    if okul is None:
+        raise HTTPException(status_code=400, detail="Okul harici grubun tanıtım bilgisi yok.")
+    yil = simdi().year
+    if istek.kurulus_yili is not None and not (1800 <= istek.kurulus_yili <= yil):
+        raise HTTPException(status_code=400, detail=f"Kuruluş yılı 1800–{yil} arasında olmalı.")
+    if istek.ogrenci_sayisi is not None and not (0 <= istek.ogrenci_sayisi <= 50000):
+        raise HTTPException(status_code=400, detail="Öğrenci sayısı geçersiz.")
+    if len(istek.tanitim or "") > 3000:
+        raise HTTPException(status_code=400, detail="Tanıtım metni en fazla 3000 karakter olabilir.")
+    eposta = _kirp(istek.eposta, 120)
+    if eposta and not _EPOSTA.match(eposta):
+        raise HTTPException(status_code=400, detail="Okulun e-posta adresi geçersiz.")
+    web = _kirp(istek.web, 200)
+    if web and not re.match(r"^https?://", web):
+        web = "https://" + web
+    if len(istek.kadro) > 40:
+        raise HTTPException(status_code=400, detail="Kadroya en fazla 40 kişi eklenebilir.")
+    kadro = []
+    for i, k in enumerate(istek.kadro, start=1):
+        ad, gorev = _kirp(k.ad, 80), _kirp(k.gorev, 60)
+        if not ad and not (k.eposta or "").strip():
+            continue  # boş satır
+        if not ad or not gorev:
+            raise HTTPException(status_code=400, detail=f"Kadro {i}. satır: görev ve ad soyad gerekli.")
+        e = _kirp(k.eposta, 120)
+        if e and not _EPOSTA.match(e):
+            raise HTTPException(status_code=400, detail=f"Kadro {i}. satır ({ad}): e-posta geçersiz.")
+        kadro.append({"gorev": gorev, "ad": ad, "eposta": e, "telefon": _kirp(k.telefon, 30)})
+    okul.kurulus_yili, okul.ogrenci_sayisi = istek.kurulus_yili, istek.ogrenci_sayisi
+    okul.tanitim = _kirp(istek.tanitim, 3000)
+    okul.adres, okul.telefon, okul.eposta, okul.web = _kirp(istek.adres, 300), _kirp(istek.telefon, 30), eposta, web
+    okul.kadro = kadro
+    okul.bilgi_guncelleme_zamani = simdi()
+    denetim_yaz(db, yon, "okul_bilgi_guncelle", "okullar", okul.id, f"{okul.ad}: tanıtım/iletişim, kadroda {len(kadro)} kişi", okul.id)
+    db.commit()
+    db.refresh(okul)
+    return _bilgi_out(okul)
