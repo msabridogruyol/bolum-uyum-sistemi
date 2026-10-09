@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import HaftalikGorevler from '../components/HaftalikGorevler'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
+import Sayac from '../components/Sayac'
 
 const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
@@ -160,7 +161,7 @@ export default function AnaSayfa() {
               {profilSkoru !== null && (
                 <div style={{ textAlign: 'right' }}>
                   <div style={{ fontSize: 10.5, color: 'var(--tx3)', marginBottom: 2 }}>En yüksek uyum</div>
-                  <div style={{ fontFamily: 'var(--fd)', fontSize: 32, fontWeight: 700, color: 'var(--pu)', lineHeight: 1 }}>{profilSkoru}</div>
+                  <div style={{ fontFamily: 'var(--fd)', fontSize: 32, fontWeight: 700, color: 'var(--pu)', lineHeight: 1 }}><Sayac deger={profilSkoru} /></div>
                   <div style={{ fontSize: 10, color: 'var(--tx3)' }}>/ 100</div>
                 </div>
               )}
@@ -212,7 +213,7 @@ export default function AnaSayfa() {
                   }}
                 >
                   <div className="donut-ortasi">
-                    <div className="sayi">{toplamBoyut}</div>
+                    <div className="sayi"><Sayac deger={toplamBoyut} /></div>
                     <div className="etiket">BOYUT</div>
                   </div>
                 </div>
