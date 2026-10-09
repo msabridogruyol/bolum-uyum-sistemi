@@ -35,10 +35,10 @@ export function base64Indir(dosyaAdi, b64, tur = 'application/vnd.openxmlformats
   setTimeout(() => URL.revokeObjectURL(url), 1000)
 }
 
-export function Pencere({ baslik, altBaslik, onKapat, genis, children, alt }) {
+export function Pencere({ baslik, altBaslik, onKapat, genis, sinif, children, alt }) {
   return (
     <div className="yp-ortu" onMouseDown={(e) => { if (e.target === e.currentTarget) onKapat?.() }}>
-      <div className={`yp-pencere${genis ? ' genis' : ''}`} role="dialog" aria-modal="true">
+      <div className={`yp-pencere${genis ? ' genis' : ''}${sinif ? ` ${sinif}` : ''}`} role="dialog" aria-modal="true">
         <div className="yp-baslik">
           <div style={{ minWidth: 0 }}>
             <div className="yp-bt">{baslik}</div>
