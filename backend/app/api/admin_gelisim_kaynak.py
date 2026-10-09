@@ -23,7 +23,7 @@ from app.models import AdminKullanici, Degisken, Katman, GelisimKaynakOnerisi
 router = APIRouter(prefix="/gelisim-kaynak", tags=["admin-gelisim-kaynak"])
 
 ARALIKLAR = ["belirgin_ustun", "ustun", "beklenti", "altinda", "belirgin_altinda"]
-KAYNAK_TIPLERI = ["kitap", "film", "rol_model", "psikolojik_yaklasim", "aktivite"]
+KAYNAK_TIPLERI = ["kitap", "film", "rol_model", "psikolojik_yaklasim", "aktivite", "olay"]   # [2026-10-09] olay = önemli olay / keşif / dönüm noktası
 
 
 class KaynakOut(BaseModel):
