@@ -3,6 +3,7 @@ import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom
 import { api } from '../api/client'
 import { profilEksikMi } from '../components/AnaSayfaDuzeni'
 import { GizlilikKarti } from '../components/KvkkBilesenleri'
+import HedefBolumAyari from '../components/HedefBolumAyari'
 
 const CINSIYET_SECENEKLERI = [
   { deger: '', etiket: 'Belirtilmedi' },
@@ -189,6 +190,9 @@ export default function ProfilAyarlariSayfasi() {
         </label>
       </div>
 
+      {/* [2026-10-09] Hedef bölüm seçimi/değişikliği yalnızca burada (en fazla 3 değişiklik) */}
+      {!ilkGiris && <HedefBolumAyari />}
+
       {/* --- Kişisel Bilgiler --- */}
       <form onSubmit={kaydet} className="profil-form">
         <div className="card">
@@ -275,7 +279,7 @@ export default function ProfilAyarlariSayfasi() {
           </div>
 
           <div className="ps" style={{ margin: '10px 0 0' }}>
-            Bölüm bazlı hedefin ve gelişim takibin için <b>Hedef Bölüm Koçluğu</b> sayfasını kullan — orası sistemin gerçek karşılaştırma motoruna bağlı.
+            Hedef bölümünü yukarıdaki <b>Hedef bölümüm</b> kartından seçersin; gelişim planını <b>Hedef Bölüm Koçluğu</b> sayfasında takip edersin.
           </div>
         </div>
 
