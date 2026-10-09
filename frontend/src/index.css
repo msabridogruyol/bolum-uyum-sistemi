@@ -350,3 +350,30 @@ button,input{font-family:inherit}
 .boyut-satir.acik .ok{transform:rotate(90deg)}
 .boyut-detay{overflow:hidden;max-height:0;transition:max-height .2s ease}
 .boyut-satir.acik .boyut-detay{max-height:200px;margin-top:8px}
+
+/* [2026-10-09] Tıklanabilir bölüm adı — alt çizgi yerine buton hissi */
+.bolum-adi-btn{display:inline-flex;align-items:baseline;gap:6px;cursor:pointer;border-radius:8px;padding:1px 6px;margin:-1px -6px;
+  transition:background .15s ease,color .15s ease,transform .15s ease;transform-origin:left center}
+.bolum-adi-btn:hover,.bolum-adi-btn:focus-visible{background:var(--pul);color:var(--pud);transform:scale(1.03);outline:none}
+.bolum-adi-rozet{display:inline-flex;align-items:center;justify-content:center;width:15px;height:15px;border-radius:50%;
+  background:var(--pul);color:var(--pu);font-size:10px;font-weight:800;font-style:italic;font-family:Georgia,serif;flex-shrink:0;
+  transform:translateY(-1px);transition:background .15s ease,color .15s ease}
+.bolum-adi-btn:hover .bolum-adi-rozet,.bolum-adi-btn:focus-visible .bolum-adi-rozet{background:var(--pu);color:#fff}
+
+/* [2026-10-09] Ana sayfa: üst sıra (profil + güç dağılımı + katman ortalamaları), altta tam genişlik öneriler */
+.anasayfa-ust{display:grid;grid-template-columns:1fr;gap:16px;align-items:stretch}
+.anasayfa-ust > .card{margin-bottom:0}
+@media(min-width:900px){.anasayfa-ust{grid-template-columns:1fr 1fr}.anasayfa-ust > .card:first-child{grid-column:1 / -1}}
+@media(min-width:1280px){.anasayfa-ust{grid-template-columns:1.6fr 1fr 1fr}.anasayfa-ust > .card:first-child{grid-column:auto}}
+.oneri-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.oneri-kart{background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--r16);padding:14px 16px;display:flex;flex-direction:column;gap:10px;
+  cursor:pointer;text-align:left;font:inherit;color:inherit;width:100%;
+  transition:transform .15s ease,box-shadow .15s ease,border-color .15s ease;box-shadow:0 2px 10px rgba(60,50,20,0.04)}
+.oneri-kart:hover,.oneri-kart:focus-visible{transform:translateY(-2px) scale(1.015);border-color:var(--pum);box-shadow:0 8px 22px rgba(60,50,20,0.10);outline:none}
+.oneri-kart .ok-ust{display:flex;align-items:flex-start;gap:12px}
+.oneri-kart .ok-ad{flex:1;font-size:14px;font-weight:700;line-height:1.3;min-width:0}
+.oneri-kart .ok-alan{font-size:11px;color:var(--tx3);margin-top:3px;font-weight:600}
+.oneri-kart .ok-skor{font-family:var(--fd);font-size:20px;font-weight:800;color:var(--pu);white-space:nowrap}
+.oneri-kart .ok-alt{display:flex;align-items:center;gap:10px;margin-top:auto}
+.oneri-kart .ok-detay{font-size:11px;font-weight:700;color:var(--pu);white-space:nowrap;opacity:.75;transition:opacity .15s ease}
+.oneri-kart:hover .ok-detay{opacity:1}
