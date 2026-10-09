@@ -196,15 +196,14 @@ def _site_adresi(origin: str | None) -> str:
 
 
 def _hesap_bul(db: Session, email: str, kapsam: str):
-    """kapsam='ogrenci': öğrenci, yoksa rehber öğretmen (öğrenci giriş sayfası). kapsam='yonetim': yönetim hesapları."""
+    """kapsam='ogrenci': öğrenci. kapsam='yonetim': süper admin ve okul yetkilileri (yönetim giriş sayfası)."""
     email = (email or "").strip().lower()
     if kapsam == "ogrenci":
         o = db.query(Ogrenci).filter(func.lower(Ogrenci.email) == email).first()
         if o:
             return "ogrenci", o
-        a = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email, AdminKullanici.rol == "rehber").first()
-        return ("yonetim", a) if a else (None, None)
-    a = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email, AdminKullanici.rol != "rehber").first()
+        return (None, None)
+    a = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email, AdminKullanici.aktif_mi.is_(True)).first()
     return ("yonetim", a) if a else (None, None)
 
 
@@ -265,6 +264,10 @@ def sifreyi_sifirla(db: Session, token: str, yeni_sifre: str) -> str:
     if h is None:
         raise IsKuraliHatasi("Bu bağlantı geçersiz.")
     h.sifre_hash = sifre_hashle(yeni_sifre)
+    h.sifre_degistirmeli = False   # [2026-10-09] geçici şifre artık geçersiz
+    if k.kullanici_tipi == "ogrenci":
+        from app.core.hesap_yonetimi import olay_yaz
+        olay_yaz(db, h.id, "sifre_degisti", "E-postadaki bağlantıyla yeni şifre belirlendi", "Öğrenci")
     k.kullanilma_zamani = _simdi()
     # aynı kişinin diğer bağlantıları ve hatırlanan cihazları geçersiz olur
     for diger in db.query(SifreSifirlamaTokeni).filter(SifreSifirlamaTokeni.kullanici_tipi == k.kullanici_tipi,
