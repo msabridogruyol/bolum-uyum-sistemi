@@ -563,3 +563,35 @@ button,input{font-family:inherit}
 .yp-pencere.okb-pencere{max-width:900px}
 .okb-pencere .yp-govde{padding:20px 28px 24px}
 .okb-pencere .okb-tanitim{font-size:13.5px;line-height:1.7}
+
+/* ===================== [2026-10-09] Hedef Bölüm Koçluğu — başlık başlık sekmeler ===================== */
+.koc-kap{max-width:1180px}
+.koc-hedef-ust{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.koc-hedef-ad{font-size:18px;font-weight:700}
+.koc-sekmeler{display:flex;gap:6px;margin:18px 0 16px;overflow-x:auto;padding-bottom:2px;position:sticky;top:0;z-index:5;background:var(--bg)}
+.koc-sekmeler button{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--bor);background:var(--sur);color:var(--tx2);font-family:var(--fn);font-size:13px;font-weight:700;padding:9px 14px;border-radius:12px;cursor:pointer;white-space:nowrap;transition:all .12s}
+.koc-sekmeler button:hover{border-color:var(--pum);color:var(--tx);transform:translateY(-1px)}
+.koc-sekmeler button.aktif{background:var(--pu);border-color:var(--pu);color:#fff}
+.koc-cip-sayi{font-size:10.5px;font-weight:800;background:rgba(0,0,0,.08);padding:1px 7px;border-radius:20px}
+.koc-sekmeler button.aktif .koc-cip-sayi{background:rgba(255,255,255,.25)}
+.koc-bolum{margin-bottom:22px}
+.koc-bolum-bas{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;margin-bottom:10px}
+.koc-bolum-baslik{font-family:var(--fd);font-size:16px;font-weight:800;margin:0;color:var(--tx)}
+.koc-bolum-alt{font-size:12.5px;color:var(--tx3);margin-top:3px;line-height:1.5;max-width:820px}
+.koc-asama-sayac{font-size:12px;font-weight:700;color:var(--tx2);background:var(--sur2);padding:4px 10px;border-radius:20px;white-space:nowrap}
+.koc-ipucu{font-size:12px;background:var(--aml);color:var(--tx2);border-radius:10px;padding:8px 10px;margin-bottom:10px}
+.koc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px}
+.koc-adim-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:10px}
+.koc-adim-grid>div{margin-bottom:0!important}
+.koc-ozet-kutular{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:20px}
+.koc-ozet-kutu{display:flex;flex-direction:column;align-items:flex-start;gap:2px;background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--r16);padding:14px 16px;cursor:pointer;font-family:var(--fn);text-align:left;transition:all .12s}
+.koc-ozet-kutu:hover{border-color:var(--pum);transform:translateY(-1px)}
+.koc-ozet-kutu b{font-family:var(--fd);font-size:26px}
+.koc-ozet-kutu span{font-size:12px;color:var(--tx3)}
+.koc-link{border:none;background:none;color:var(--pu);font-weight:700;font-size:12.5px;cursor:pointer;padding:6px 0 0;font-family:var(--fn)}
+.koc-link:hover{text-decoration:underline}
+.koc-katman-cipler{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:16px}
+.koc-katman-cipler button{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--bor);background:var(--sur2);color:var(--tx2);font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:20px;cursor:pointer;font-family:var(--fn)}
+.koc-katman-cipler button.aktif{background:var(--pul);border-color:var(--pu);color:var(--pud)}
+.koc-karsilastirma-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));column-gap:28px}
+@media (max-width:700px){.koc-ozet-kutular{grid-template-columns:1fr 1fr 1fr;gap:6px}.koc-ozet-kutu{padding:10px}.koc-ozet-kutu b{font-size:20px}.koc-adim-grid,.koc-karsilastirma-liste{grid-template-columns:1fr}}
