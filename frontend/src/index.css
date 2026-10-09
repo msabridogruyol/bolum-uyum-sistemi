@@ -79,7 +79,7 @@ button,input{font-family:inherit}
 .ni.locked{opacity:.4;cursor:not-allowed}
 
 .main{flex:1;overflow-y:auto;background:var(--bg)}
-.pg{padding:28px 34px;max-width:940px}
+.pg{padding:28px 34px;max-width:1560px;margin:0 auto;box-sizing:border-box}  /* [2026-10-09] tüm sayfalarda AYNI genişlik: ekranı kullanır, çok geniş ekranda 1560px'de ortalanır */
 .card{background:var(--sur);border:1.5px solid var(--bor);border-radius:var(--r20);padding:22px 24px;margin-bottom:14px;box-shadow:0 2px 14px rgba(60,50,20,0.05)}
 .ct{font-size:10px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--tx3);margin-bottom:14px}
 .ph{margin-bottom:22px}
@@ -278,7 +278,7 @@ button,input{font-family:inherit}
 .iskelet-satir{height:14px;background:var(--sur2);border-radius:6px;margin-bottom:8px}
 
 /* ============ Ana Sayfa — geniş, iki sütunlu düzen ============ */
-.pg.pg-genis{max-width:none}  /* [2026-10-09] geniş sayfalar ekranı tam kullanır */
+.pg.pg-genis{max-width:1560px}  /* eski sınıf — artık .pg ile aynı */
 .anasayfa-duzen{display:grid;grid-template-columns:1fr;gap:20px}
 @media(min-width:960px){.anasayfa-duzen{grid-template-columns:1.7fr 1fr;align-items:start}}
 .yan-panel{display:flex;flex-direction:column;gap:14px}
@@ -565,7 +565,7 @@ button,input{font-family:inherit}
 .okb-pencere .okb-tanitim{font-size:13.5px;line-height:1.7}
 
 /* ===================== [2026-10-09] Hedef Bölüm Koçluğu — başlık başlık sekmeler ===================== */
-.koc-kap{max-width:1180px}
+.koc-kap{max-width:none}
 .koc-hedef-ust{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
 .koc-hedef-ad{font-size:18px;font-weight:700}
 .koc-sekmeler{display:flex;gap:6px;margin:18px 0 16px;overflow-x:auto;padding-bottom:2px;position:sticky;top:0;z-index:5;background:var(--bg)}
@@ -595,3 +595,8 @@ button,input{font-family:inherit}
 .koc-katman-cipler button.aktif{background:var(--pul);border-color:var(--pu);color:var(--pud)}
 .koc-karsilastirma-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));column-gap:28px}
 @media (max-width:700px){.koc-ozet-kutular{grid-template-columns:1fr 1fr 1fr;gap:6px}.koc-ozet-kutu{padding:10px}.koc-ozet-kutu b{font-size:20px}.koc-adim-grid,.koc-karsilastirma-liste{grid-template-columns:1fr}}
+
+/* [2026-10-09] telefon/tablet: sayfa kenar boşluğu */
+@media (max-width:760px){.pg{padding:18px 14px}}
+/* [2026-10-09] Ayarlar: geniş ekranda Kişisel Bilgiler ve Hedeflerin yan yana */
+@media (min-width:1200px){.profil-form{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.profil-form>.card{margin:0}.profil-form>:not(.card){grid-column:1/-1}.profil-form>button{justify-self:start}}
