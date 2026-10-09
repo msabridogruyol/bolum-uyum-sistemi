@@ -126,6 +126,8 @@ class BolumSiralamaSatiri(BaseModel):
     bolum_id: int
     bolum_adi: str
     toplam_uyum: float
+    alan: str | None = None                 # [2026-10-09] bölümün üst alanı
+    neden: list[str] = []                   # [2026-10-09] "Neden bu bölüm?" kısa açıklamaları
 
     model_config = {"from_attributes": True}
 
