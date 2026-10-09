@@ -3,7 +3,7 @@ Tüm ORM modellerini tek yerden erişilebilir kılar — Alembic'in
 autogenerate özelliği için tüm modellerin Base.metadata'ya kayıtlı
 olması gerekir, bu dosya onu garanti eder.
 """
-from app.models.kimlik import Ogrenci, AdminKullanici
+from app.models.kimlik import Ogrenci, AdminKullanici, OgrenciHesapOlayi
 from app.models.icerik_yapisi import (
     Katman, Degisken, Soru, SoruSecenegi, SjtSecenekDegiskenAgirlik,
     Bolum, Dal, BolumDalEslesme, BolumKumelemeSonucu, BolumK5Bag, YokatlasOnbellek,
@@ -31,7 +31,7 @@ from app.models.koclugu import (
 from app.models.haftalik import OgrenciHaftalikGorev
 from app.models.hesap_guvenligi import KvkkOnayi, DogrulamaKodu, SifreSifirlamaTokeni, GuvenilirCihaz
 __all__ = [
-    "Ogrenci", "AdminKullanici",
+    "Ogrenci", "AdminKullanici", "OgrenciHesapOlayi",
     "Katman", "Degisken", "Soru", "SoruSecenegi", "SjtSecenekDegiskenAgirlik",
     "Bolum", "Dal", "BolumDalEslesme", "BolumKumelemeSonucu", "BolumK5Bag", "YokatlasOnbellek",
     "Meslek", "Kategori", "AltGrupKategoriEslesme",
