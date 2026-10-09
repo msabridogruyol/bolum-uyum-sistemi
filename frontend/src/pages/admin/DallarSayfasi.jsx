@@ -60,19 +60,20 @@ function DalKarti({ dal, onDurumGuncelle }) {
   const [degistiriliyor, setDegistiriliyor] = useState(false)
 
   return (
-    <div className="card" style={{ marginBottom: 10 }}>
+    <div className="card" style={{ marginBottom: 10, opacity: dal.kullanimda === false ? 0.55 : 1 }}>
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', gap: 12, flexWrap: 'wrap' }}>
         <div style={{ flex: 1, minWidth: 220 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <span style={{ fontSize: 14.5, fontWeight: 700 }}>{dal.ad}</span>
             <span className="bdg bdg-lock">{dal.kod}</span>
             <span className={`bdg ${bilgi.renk}`}>{bilgi.etiket}</span>
+            {dal.kullanimda === false && <span className="bdg bdg-lock">Kullanım dışı (eski yapı)</span>}
           </div>
           <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5, marginBottom: 8 }}>{bilgi.aciklama}</div>
           <div style={{ display: 'flex', gap: 16, fontSize: 11.5, color: 'var(--tx3)', fontWeight: 600 }}>
             <span>📚 {dal.bolum_sayisi} bölüm</span>
             <span>🧬 {dal.degisken_sayisi} değişken</span>
-            <span>❓ {dal.soru_sayisi} soru</span>
+            <span>❓ {dal.soru_sayisi} aktif soru{dal.pasif_soru_sayisi ? ` (+${dal.pasif_soru_sayisi} pasif)` : ''}</span>
             <span>{dal.coklu_kaynakli_mi ? '✅ Çoklu yöntem doğrulaması var' : '⚠️ Tek yöntemden geldi'}</span>
           </div>
         </div>
@@ -98,6 +99,7 @@ function DalKarti({ dal, onDurumGuncelle }) {
 
 export default function DallarSayfasi() {
   const [dallar, setDallar] = useState(null)
+  const [eskileriGoster, setEskileriGoster] = useState(false)
   const [hata, setHata] = useState(null)
   const [yeniKod, setYeniKod] = useState('')
   const [yeniAd, setYeniAd] = useState('')
@@ -165,8 +167,11 @@ export default function DallarSayfasi() {
 
   if (!dallar) return <div className="pg pg-genis"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
 
-  const gosterilecekler = durumFiltre ? dallar.filter((d) => d.dogrulama_durumu === durumFiltre) : dallar
-  const durumSayilari = DURUMLAR.reduce((acc, du) => ({ ...acc, [du]: dallar.filter((d) => d.dogrulama_durumu === du).length }), {})
+  // [2026-10-09] Varsayılan: yalnızca kullanımdaki alanlar; eski yapıdan kalanlar isteğe bağlı gösterilir
+  const kullanimDisi = dallar.filter((d) => d.kullanimda === false).length
+  const gosterilecekler = (durumFiltre ? dallar.filter((d) => d.dogrulama_durumu === durumFiltre) : dallar)
+    .filter((d) => eskileriGoster || d.kullanimda !== false)
+  const durumSayilari = DURUMLAR.reduce((acc, du) => ({ ...acc, [du]: dallar.filter((d) => d.dogrulama_durumu === du && (eskileriGoster || d.kullanimda !== false)).length }), {})
 
   return (
     <div className="pg pg-genis">
@@ -178,13 +183,18 @@ export default function DallarSayfasi() {
 
       <div style={{ display: 'flex', gap: 10, marginBottom: 16, flexWrap: 'wrap' }}>
         <button className={`btn ${durumFiltre === '' ? '' : 'sec'}`} onClick={() => setDurumFiltre('')}>
-          Tümü ({dallar.length})
+          Tümü ({dallar.length - (eskileriGoster ? 0 : kullanimDisi)})
         </button>
         {DURUMLAR.map((du) => (
           <button key={du} className={`btn ${durumFiltre === du ? '' : 'sec'}`} onClick={() => setDurumFiltre(du)}>
             {DURUM_BILGI[du].etiket} ({durumSayilari[du] || 0})
           </button>
         ))}
+        {kullanimDisi > 0 && (
+          <button className="btn sec" onClick={() => setEskileriGoster((v) => !v)}>
+            {eskileriGoster ? 'Eski yapıyı gizle' : `Eski yapıyı göster (${kullanimDisi})`}
+          </button>
+        )}
       </div>
 
       <div className="card">
@@ -219,7 +229,7 @@ export default function DallarSayfasi() {
       <form onSubmit={dalEkle} className="card" style={{ display: 'flex', gap: 8, alignItems: 'flex-end' }}>
         <div style={{ flex: '0 0 100px' }}>
           <label className="auth-label">Kod</label>
-          <input className="auth-input" value={yeniKod} onChange={(e) => setYeniKod(e.target.value)} placeholder="D09" required />
+          <input className="auth-input" value={yeniKod} onChange={(e) => setYeniKod(e.target.value)} placeholder="U18" required />
         </div>
         <div style={{ flex: 1 }}>
           <label className="auth-label">Ad</label>
