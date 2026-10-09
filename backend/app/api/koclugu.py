@@ -239,7 +239,11 @@ def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(g
             secilen += [k for k in havuz if k.degisken_id == a["degisken_id"] and k.aralik == aralik and k not in secilen]
             if len(secilen) >= ALAN_BASINA:
                 break
+        if not secilen:   # [2026-10-09] aynı yönde kaynak yoksa o özelliğin diğer kaynakları (konu aynı)
+            secilen = [k for k in havuz if k.degisken_id == a["degisken_id"]]
         if secilen:
             sonuc.append({**a, "kaynaklar": [{"id": k.id, "tip": k.kaynak_tipi, "baslik": k.baslik, "aciklama": k.aciklama}
                                              for k in secilen[:ALAN_BASINA]]})
-    return {"hedef_bolum_adi": plan["hedef_bolum_adi"], "alanlar": sonuc}
+    toplam = db.query(GelisimKaynakOnerisi).count()
+    return {"hedef_bolum_adi": plan["hedef_bolum_adi"], "alanlar": sonuc, "havuz_toplam": toplam,
+            "aranan_alanlar": [a["degisken_adi"] for a in alanlar]}
