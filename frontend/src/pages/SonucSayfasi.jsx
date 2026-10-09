@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
+import Sayac from '../components/Sayac'
 
 // [2026-10-09] "Neden bu bölüm?" — madde madde: örtüşen yönler (sende / bölümde düzeyi + seçtiğin cevaplar),
 // alan sorularındaki iş türü uyumu ve varsa dikkat edilecek nokta.
@@ -77,7 +78,7 @@ export default function SonucSayfasi() {
                   <div className="ob-top">
                     <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
                     <div className="ob-body"><div className="iskelet-satir" style={{ width: '65%' }} /></div>
-                    <div className="ob-score">%{genislik}</div>
+                    <div className="ob-score">%<Sayac deger={genislik} /></div>
                   </div>
                 </div>
               ))}
@@ -103,7 +104,7 @@ export default function SonucSayfasi() {
                   <div className="ob-name"><BolumAdi id={s.bolum_id} ad={s.bolum_adi} /></div>
                   {s.alan && <div style={{ fontSize: 12, opacity: 0.7, marginTop: 2 }}>{s.alan}</div>}
                 </div>
-                <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>
+                <div className="ob-score">%<Sayac deger={Math.round(s.toplam_uyum)} /></div>
               </div>
               {s.neden_detay ? (
                 <NedenDetay d={s.neden_detay} />
