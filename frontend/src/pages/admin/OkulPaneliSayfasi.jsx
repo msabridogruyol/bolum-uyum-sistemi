@@ -7,6 +7,7 @@ import { useAdminAuth } from '../../context/AdminAuthContext'
 import TopluYuklemePenceresi from '../../components/yonetim/TopluYuklemePenceresi'
 import OgrenciDetayPenceresi from '../../components/yonetim/OgrenciDetayPenceresi'
 import { DurumRozeti, Pencere, SifreListesi, onceSure, tarih } from '../../components/yonetim/ortak'
+import OkulBilgiKarti from '../../components/OkulBilgiKarti'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -289,6 +290,106 @@ function KayitlarSekmesi({ okulId }) {
   )
 }
 
+// ----------------------------------------------------------------------------- Okul tanıtım bilgileri
+const BOS_KISI = { gorev: 'Rehber Öğretmen / Psikolojik Danışman', ad: '', eposta: '', telefon: '' }
+
+function OkulBilgileriSekmesi({ okulId }) {
+  const [f, setF] = useState(null)
+  const [gorevler, setGorevler] = useState([])
+  const [hata, setHata] = useState(null)
+  const [bilgi, setBilgi] = useState(null)
+  const [bekle, setBekle] = useState(false)
+
+  useEffect(() => {
+    api.okulBilgi(okulId).then((d) => {
+      setGorevler(d.gorevler || [])
+      setF({ ...d, kurulus_yili: d.kurulus_yili ?? '', ogrenci_sayisi: d.ogrenci_sayisi ?? '', kadro: d.kadro?.length ? d.kadro : [{ ...BOS_KISI, gorev: 'Okul Müdürü' }] })
+    }).catch((e) => setHata(e.detail || 'Bilgiler yüklenemedi.'))
+  }, [okulId])
+
+  if (!f) return hata ? <div className="auth-error">{hata}</div> : <div className="bos-durum">Yükleniyor…</div>
+  const alan = (k) => (e) => setF({ ...f, [k]: e.target.value })
+  const kisi = (i, k) => (e) => setF({ ...f, kadro: f.kadro.map((x, j) => (j === i ? { ...x, [k]: e.target.value } : x)) })
+  const kisiSil = (i) => setF({ ...f, kadro: f.kadro.filter((_, j) => j !== i) })
+  const kisiTasi = (i, y) => { const k = [...f.kadro]; [k[i], k[i + y]] = [k[i + y], k[i]]; setF({ ...f, kadro: k }) }
+
+  async function kaydet(e) {
+    e.preventDefault()
+    setBekle(true); setHata(null)
+    try {
+      const d = await api.okulBilgiGuncelle(okulId, {
+        ...f,
+        kurulus_yili: f.kurulus_yili === '' ? null : Number(f.kurulus_yili),
+        ogrenci_sayisi: f.ogrenci_sayisi === '' ? null : Number(f.ogrenci_sayisi),
+      })
+      setF({ ...d, kurulus_yili: d.kurulus_yili ?? '', ogrenci_sayisi: d.ogrenci_sayisi ?? '', kadro: d.kadro?.length ? d.kadro : [] })
+      setBilgi('Kaydedildi. Öğrenciler okul rozetine tıklayınca bu bilgileri görür.'); setTimeout(() => setBilgi(null), 4000)
+    } catch (err) {
+      setHata(err.detail || 'Kaydedilemedi.')
+    } finally { setBekle(false) }
+  }
+
+  return (
+    <div className="okb-duzen">
+      <form onSubmit={kaydet} className="okb-form">
+        {hata && <div className="auth-error">{hata}</div>}
+        {bilgi && <div className="card" style={{ background: 'var(--grl)', borderColor: 'var(--gr)', padding: '10px 14px', fontSize: 12.5 }}>{bilgi}</div>}
+        <div className="card" style={{ margin: 0 }}>
+          <div className="ct">Genel bilgiler</div>
+          <div className="okb-form-iki">
+            <div><label className="auth-label">Kuruluş yılı</label><input className="auth-input" type="number" min={1800} max={new Date().getFullYear()} value={f.kurulus_yili} onChange={alan('kurulus_yili')} placeholder="Örn. 1987" /></div>
+            <div><label className="auth-label">Öğrenci sayısı</label><input className="auth-input" type="number" min={0} value={f.ogrenci_sayisi} onChange={alan('ogrenci_sayisi')} placeholder="Örn. 640" /></div>
+          </div>
+          <label className="auth-label">Kısa tanıtım <span className="yp-ince">({(f.tanitim || '').length}/3000)</span></label>
+          <textarea className="auth-input" rows={5} maxLength={3000} style={{ resize: 'vertical', fontFamily: 'var(--fn)' }} value={f.tanitim || ''} onChange={alan('tanitim')}
+            placeholder="Okulun vizyonu, öne çıkan programları, kulüpleri, başarıları…" />
+        </div>
+
+        <div className="card" style={{ margin: 0 }}>
+          <div className="ct">Kadro (müdür, müdür yardımcıları, rehber öğretmen / psikolojik danışman…)</div>
+          {f.kadro.map((k, i) => (
+            <div key={i} className="okb-kadro-satir">
+              <select className="auth-input" value={gorevler.includes(k.gorev) ? k.gorev : 'Diğer'} onChange={kisi(i, 'gorev')}>
+                {gorevler.map((g) => <option key={g}>{g}</option>)}
+              </select>
+              <input className="auth-input" value={k.ad} onChange={kisi(i, 'ad')} placeholder="Ad Soyad" />
+              <div className="okb-kadro-tus">
+                <button type="button" className="yp-mini" disabled={i === 0} onClick={() => kisiTasi(i, -1)} title="Yukarı">↑</button>
+                <button type="button" className="yp-mini" disabled={i === f.kadro.length - 1} onClick={() => kisiTasi(i, 1)} title="Aşağı">↓</button>
+                <button type="button" className="yp-mini" onClick={() => kisiSil(i)} title="Kaldır">✕</button>
+              </div>
+              <input className="auth-input" type="email" value={k.eposta || ''} onChange={kisi(i, 'eposta')} placeholder="E-posta" />
+              <input className="auth-input" value={k.telefon || ''} onChange={kisi(i, 'telefon')} placeholder="Telefon (isteğe bağlı)" />
+            </div>
+          ))}
+          <button type="button" className="btn sec" onClick={() => setF({ ...f, kadro: [...f.kadro, { ...BOS_KISI }] })}>+ Kişi ekle</button>
+        </div>
+
+        <div className="card" style={{ margin: 0 }}>
+          <div className="ct">İletişim</div>
+          <label className="auth-label">Adres</label>
+          <input className="auth-input" value={f.adres || ''} onChange={alan('adres')} placeholder="Mahalle, cadde, ilçe / il" />
+          <div className="okb-form-iki">
+            <div><label className="auth-label">Telefon</label><input className="auth-input" value={f.telefon || ''} onChange={alan('telefon')} placeholder="0 (212) 000 00 00" /></div>
+            <div><label className="auth-label">E-posta</label><input className="auth-input" type="email" value={f.eposta || ''} onChange={alan('eposta')} placeholder="bilgi@okul.k12.tr" /></div>
+          </div>
+          <label className="auth-label">Web sitesi</label>
+          <input className="auth-input" value={f.web || ''} onChange={alan('web')} placeholder="www.okul.k12.tr" />
+        </div>
+
+        <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+          <button className="btn" type="submit" disabled={bekle}>{bekle ? <span className="spin" /> : 'Kaydet'}</button>
+          {f.bilgi_guncelleme_zamani && <span className="yp-ince">Son güncelleme: {tarih(f.bilgi_guncelleme_zamani)}</span>}
+        </div>
+      </form>
+      <div className="okb-onizleme">
+        <div className="yp-ince" style={{ marginBottom: 6, fontWeight: 700 }}>ÖĞRENCİ BÖYLE GÖRÜR (okul rozetine tıklayınca)</div>
+        <div className="card" style={{ margin: 0 }}><OkulBilgiKarti okul={{ ...f, kurulus_yili: Number(f.kurulus_yili) || null, ogrenci_sayisi: Number(f.ogrenci_sayisi) || null }} /></div>
+      </div>
+    </div>
+  )
+}
+
 // ----------------------------------------------------------------------------- Sayfa
 export default function OkulPaneliSayfasi() {
   const { okulId: ham } = useParams()
@@ -311,7 +412,8 @@ export default function OkulPaneliSayfasi() {
   if (hata) return <div className="pg pg-genis"><div className="auth-error">{hata}</div></div>
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
-  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ...(okulId ? [['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`]] : []), ['kayitlar', 'Kayıtlar']]
+  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`],
+    ...(okulId ? [['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`]] : []), ['kayitlar', 'Kayıtlar']]
   return (
     <div className="pg pg-genis">
       {superAdmin && <Link to="/admin/okullar" className="yp-geri">← Okullar</Link>}
@@ -327,6 +429,7 @@ export default function OkulPaneliSayfasi() {
       </div>
       {sekme === 'ozet' && <OzetSekmesi oz={oz} />}
       {sekme === 'ogrenciler' && <OgrencilerSekmesi okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sekme === 'bilgiler' && <OkulBilgileriSekmesi okulId={okulId} />}
       {sekme === 'yetkililer' && <YetkililerSekmesi okulId={okulId} superAdmin={superAdmin} />}
       {sekme === 'kayitlar' && <KayitlarSekmesi okulId={okulId} />}
     </div>
