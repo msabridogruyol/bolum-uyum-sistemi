@@ -190,7 +190,7 @@ export default function ProfilAyarlariSayfasi() {
       </div>
 
       {/* --- Kişisel Bilgiler --- */}
-      <form onSubmit={kaydet}>
+      <form onSubmit={kaydet} className="profil-form">
         <div className="card">
           <div className="ct">Kişisel Bilgiler</div>
 
