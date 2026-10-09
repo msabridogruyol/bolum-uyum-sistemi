@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { DurumRozeti, Pencere, SifreListesi, onceSure, tarih } from './ortak'
+import CevapAnaliziSekmesi from './CevapAnaliziSekmesi'
 
 // [2026-10-09] Hedef bölüm: öğrenci en fazla 3 kez değiştirebilir; okul yetkilisi / süper admin hedefi değiştirebilir
 // (öğrencinin hakkından düşmez) ya da ek hak verebilir.
@@ -116,7 +117,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
       )}
 
       <div className="yp-sekmeler">
-        {SEKMELER.map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
+        {[...SEKMELER, ...(superAdmin ? [['cevaplar', '🔒 Cevap analizi']] : [])].map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
       </div>
 
       {sekme === 'genel' && (
@@ -188,6 +189,8 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           )}
         </>
       )}
+
+      {sekme === 'cevaplar' && superAdmin && <CevapAnaliziSekmesi ogrenciId={ogrenciId} />}
 
       {sekme === 'kayit' && (
         <div className="yp-zaman-cizelgesi">
