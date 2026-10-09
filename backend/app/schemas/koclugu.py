@@ -71,6 +71,9 @@ class PlanAdimiOut(BaseModel):
     sure: str
     olcut: str
     durum: str | None = None
+    nasil: list[str] = []        # [2026-10-09] "Nasıl yaparsın?" — adım adım
+    kontrol: list[str] = []      # "Nasıl anlarsın?" — kontrol listesi
+    ipucu: str | None = None
 
 
 class PlanAsamasiOut(BaseModel):
