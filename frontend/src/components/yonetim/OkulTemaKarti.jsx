@@ -1,5 +1,5 @@
 // [2026-10-09] Okul rengi seçimi (Okul Paneli → Görünüm). Okul yetkilisi ve süper admin değiştirebilir.
-// Renk; sol menü ayırıcısı, sayfa başlığı çizgisi, aktif menü işareti ve kartların üst çizgisinde kullanılır.
+// Renk; açık menü öğesinin noktası, sayfa başlığı vurgusu, zemin tonu ve içerik panelinin üstündeki hafif ışıltıda kullanılır.
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { useAdminAuth } from '../../context/AdminAuthContext'
@@ -9,20 +9,19 @@ const VARSAYILAN = '#E8804A'
 
 function Onizleme({ renk }) {
   const c = renk || VARSAYILAN
-  const yumusak = `color-mix(in srgb, ${c} 35%, transparent)`
   return (
-    <div className="tm-onizleme" aria-hidden="true">
-      <div className="tm-o-sb" style={{ borderRight: `3px solid ${c}` }}>
-        <div className="tm-o-logo" style={{ borderBottom: `1.5px solid ${yumusak}` }}>Filizyol</div>
-        <div className="tm-o-ni" style={{ borderLeft: `3px solid ${c}` }}>Ana Sayfa</div>
-        <div className="tm-o-ni tm-o-pasif">Bölüm Uyumum</div>
-        <div className="tm-o-ni tm-o-pasif">Keşfet</div>
+    <div className="tm-onizleme" aria-hidden="true" style={{ background: `color-mix(in srgb, ${c} 5%, color-mix(in srgb, var(--sur2) 60%, var(--bg)))` }}>
+      <div className="tm-o-sb">
+        <div className="tm-o-logo">Filizyol</div>
+        <div className="tm-o-ni tm-o-aktif">Ana Sayfa<i style={{ background: c, boxShadow: `0 0 0 3px color-mix(in srgb, ${c} 20%, transparent)` }} /></div>
+        <div className="tm-o-ni">Bölüm Uyumum</div>
+        <div className="tm-o-ni">Keşfet</div>
       </div>
-      <div className="tm-o-main">
+      <div className="tm-o-main" style={{ background: `radial-gradient(ellipse 80% 90px at 20% -20px, color-mix(in srgb, ${c} 14%, transparent), transparent 70%) no-repeat, var(--bg)` }}>
         <div className="tm-o-baslik">Sayfa başlığı</div>
-        <div className="tm-o-cizgi" style={{ background: c }} />
-        <div className="tm-o-kart" style={{ borderTop: `2.5px solid ${yumusak}` }}><span /><span /></div>
-        <div className="tm-o-kart" style={{ borderTop: `2.5px solid ${yumusak}` }}><span /><span /></div>
+        <div className="tm-o-cizgi" style={{ background: `linear-gradient(90deg, ${c}, color-mix(in srgb, ${c} 15%, transparent))` }} />
+        <div className="tm-o-kart"><span /><span /></div>
+        <div className="tm-o-kart"><span /><span /></div>
       </div>
     </div>
   )
@@ -62,8 +61,8 @@ export default function OkulTemaKarti({ okulId }) {
         <div>
           <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--tx)' }}>Okul rengi</div>
           <div className="ps" style={{ marginTop: 4 }}>
-            Seçtiğin renk; sol menüyü sayfadan ayıran çizgide, sayfa başlıklarının altındaki çizgide, açık olan menü işaretinde
-            ve kartların üst çizgisinde kullanılır. Butonlar ve yazılar okunurluk için Filizyol renginde kalır.
+            Seçtiğin renk; açık olan menü öğesinin işaretinde, sayfa başlıklarının altındaki vurguda, zeminin tonunda ve içerik
+            panelinin üstündeki hafif ışıltıda kullanılır. Butonlar ve yazılar okunurluk için Filizyol renginde kalır.
           </div>
 
           <div className="tm-palet">
