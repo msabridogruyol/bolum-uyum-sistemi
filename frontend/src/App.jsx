@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext'
@@ -5,34 +6,41 @@ import { BolumBilgiProvider } from './context/BolumBilgiContext'
 import AnaSayfaDuzeni from './components/AnaSayfaDuzeni'
 import AdminSayfaDuzeni from './components/AdminSayfaDuzeni'
 import GirisSayfasi from './pages/GirisSayfasi'
-import SifremiUnuttumSayfasi from './pages/SifremiUnuttumSayfasi'
-import SifreSifirlaSayfasi from './pages/SifreSifirlaSayfasi'
-import KatmanlarSayfasi from './pages/KatmanlarSayfasi'
-import SoruSayfasi from './pages/SoruSayfasi'
-import SonucSayfasi from './pages/SonucSayfasi'
-import KesfetSayfasi from './pages/KesfetSayfasi'
-import KoclukSayfasi from './pages/KoclukSayfasi'
-import ProfilAyarlariSayfasi from './pages/ProfilAyarlariSayfasi'
-import AnaSayfa from './pages/AnaSayfa'
-import GenelSonuclarSayfasi from './pages/GenelSonuclarSayfasi'
-import KatmanDetaySayfasi from './pages/KatmanDetaySayfasi'
-import K5SonucSayfasi from './pages/K5SonucSayfasi'
-import AdminGirisSayfasi from './pages/admin/AdminGirisSayfasi'
-import KontrolPaneliSayfasi from './pages/admin/KontrolPaneliSayfasi'
-import PipelineDurumuSayfasi from './pages/admin/PipelineDurumuSayfasi'
-import BolumlerSayfasi from './pages/admin/BolumlerSayfasi'
-import DallarSayfasi from './pages/admin/DallarSayfasi'
-import SorularSayfasi from './pages/admin/SorularSayfasi'
-import ParametrelerSayfasi from './pages/admin/ParametrelerSayfasi'
-import AuditLogSayfasi from './pages/admin/AuditLogSayfasi'
-import YoneticilerSayfasi from './pages/admin/YoneticilerSayfasi'
-import SistemHakkindaSayfasi from './pages/admin/SistemHakkindaSayfasi'
-import SoruGecerlilikSayfasi from './pages/admin/SoruGecerlilikSayfasi'
-import GuvenlikSayfasi from './pages/admin/GuvenlikSayfasi'
-import GelisimKaynakSayfasi from './pages/admin/GelisimKaynakSayfasi'
-import OkullarSayfasi from './pages/admin/OkullarSayfasi'
-import OkulPaneliSayfasi from './pages/admin/OkulPaneliSayfasi'
-import MeslekDiliSayfasi from './pages/admin/MeslekDiliSayfasi'
+
+// [2026-10-09] Sayfalar ihtiyaç anında yüklenir (code splitting): öğrenci yönetim panelinin kodunu, yönetici
+// öğrencinin sınav ekranlarını indirmez; ilk açılıştaki dosya boyutu küçülür. Giriş sayfası ilk ekran olduğu için hemen yüklenir.
+const SifremiUnuttumSayfasi = lazy(() => import('./pages/SifremiUnuttumSayfasi'))
+const SifreSifirlaSayfasi = lazy(() => import('./pages/SifreSifirlaSayfasi'))
+const KatmanlarSayfasi = lazy(() => import('./pages/KatmanlarSayfasi'))
+const SoruSayfasi = lazy(() => import('./pages/SoruSayfasi'))
+const SonucSayfasi = lazy(() => import('./pages/SonucSayfasi'))
+const KesfetSayfasi = lazy(() => import('./pages/KesfetSayfasi'))
+const KoclukSayfasi = lazy(() => import('./pages/KoclukSayfasi'))
+const ProfilAyarlariSayfasi = lazy(() => import('./pages/ProfilAyarlariSayfasi'))
+const AnaSayfa = lazy(() => import('./pages/AnaSayfa'))
+const GenelSonuclarSayfasi = lazy(() => import('./pages/GenelSonuclarSayfasi'))
+const KatmanDetaySayfasi = lazy(() => import('./pages/KatmanDetaySayfasi'))
+const K5SonucSayfasi = lazy(() => import('./pages/K5SonucSayfasi'))
+const AdminGirisSayfasi = lazy(() => import('./pages/admin/AdminGirisSayfasi'))
+const KontrolPaneliSayfasi = lazy(() => import('./pages/admin/KontrolPaneliSayfasi'))
+const PipelineDurumuSayfasi = lazy(() => import('./pages/admin/PipelineDurumuSayfasi'))
+const BolumlerSayfasi = lazy(() => import('./pages/admin/BolumlerSayfasi'))
+const DallarSayfasi = lazy(() => import('./pages/admin/DallarSayfasi'))
+const SorularSayfasi = lazy(() => import('./pages/admin/SorularSayfasi'))
+const ParametrelerSayfasi = lazy(() => import('./pages/admin/ParametrelerSayfasi'))
+const AuditLogSayfasi = lazy(() => import('./pages/admin/AuditLogSayfasi'))
+const YoneticilerSayfasi = lazy(() => import('./pages/admin/YoneticilerSayfasi'))
+const SistemHakkindaSayfasi = lazy(() => import('./pages/admin/SistemHakkindaSayfasi'))
+const SoruGecerlilikSayfasi = lazy(() => import('./pages/admin/SoruGecerlilikSayfasi'))
+const GuvenlikSayfasi = lazy(() => import('./pages/admin/GuvenlikSayfasi'))
+const GelisimKaynakSayfasi = lazy(() => import('./pages/admin/GelisimKaynakSayfasi'))
+const OkullarSayfasi = lazy(() => import('./pages/admin/OkullarSayfasi'))
+const OkulPaneliSayfasi = lazy(() => import('./pages/admin/OkulPaneliSayfasi'))
+const MeslekDiliSayfasi = lazy(() => import('./pages/admin/MeslekDiliSayfasi'))
+
+function SayfaYukleniyor() {
+  return <div className="bos-durum" style={{ padding: 40 }}>Yükleniyor…</div>
+}
 
 function OzelRota({ children }) {
   const { girisYapildi } = useAuth()
@@ -46,6 +54,7 @@ function OzelAdminRota({ children }) {
 
 function AnaUygulama() {
   return (
+    <Suspense fallback={<SayfaYukleniyor />}>
     <Routes>
       {/* --- Öğrenci --- */}
       <Route path="/giris" element={<GirisSayfasi />} />
@@ -123,6 +132,7 @@ function AnaUygulama() {
         <Route path="meslek-dili" element={<MeslekDiliSayfasi />} />
       </Route>
     </Routes>
+    </Suspense>
   )
 }
 
