@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
+import { Link } from 'react-router-dom'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { api } from '../../api/client'
 
@@ -14,10 +15,12 @@ function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
   URL.revokeObjectURL(url)
 }
 
+// [2026-10-09] Sistemde 3 rol var: Süper Admin (bu sayfa), Okul Yetkilisi (okulun panelinden), Öğrenci (okulun panelinden).
 export default function YoneticilerSayfasi() {
   const [yoneticiler, setYoneticiler] = useState(null)
   const [hata, setHata] = useState(null)
-  const [form, setForm] = useState({ ad_soyad: '', email: '', sifre: '', rol: 'icerik_editoru' })
+  const [form, setForm] = useState({ ad_soyad: '', email: '', sifre: '' })
+  const [silinecek, setSilinecek] = useState(null)
   const { rol: kendiRol, kendiId } = useAdminAuth()
 
   const yukle = useCallback(() => {
@@ -29,7 +32,7 @@ export default function YoneticilerSayfasi() {
   if (kendiRol !== 'super_admin') {
     return (
       <div className="pg pg-genis">
-        <div className="ph"><div className="pt">Yöneticiler</div></div>
+        <div className="ph"><div className="pt">Süper Adminler</div></div>
         <div className="bos-durum">Bu sayfa yalnızca süper adminlere açık.</div>
       </div>
     )
@@ -38,83 +41,73 @@ export default function YoneticilerSayfasi() {
   async function ekle(e) {
     e.preventDefault()
     try {
-      await api.yoneticiEkle(form)
-      setForm({ ad_soyad: '', email: '', sifre: '', rol: 'icerik_editoru' })
+      await api.yoneticiEkle({ ...form, rol: 'super_admin' })
+      setForm({ ad_soyad: '', email: '', sifre: '' })
+      setHata(null)
       yukle()
     } catch (err) {
       setHata(err.detail || 'Eklenemedi.')
     }
   }
 
-  async function rolDegistir(id, yeniRol) {
-    try {
-      await api.yoneticiRolGuncelle(id, yeniRol)
-      yukle()
-    } catch (err) {
-      setHata(err.detail || 'Rol değiştirilemedi.')
-    }
+  async function sil(id) {
+    try { await api.yoneticiSil(id); setSilinecek(null); yukle() } catch (err) { setHata(err.detail || 'Silinemedi.') }
   }
 
   if (!yoneticiler) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
+  const superler = yoneticiler.filter((y) => y.rol === 'super_admin')
+  const yetkililer = yoneticiler.filter((y) => y.rol === 'okul_yetkilisi')
 
   return (
     <div className="pg pg-genis">
       <div className="ph">
-        <div className="pt">Yöneticiler</div>
-        <div className="ps">Yeni yönetici ekle veya mevcutların rolünü değiştir. Kendi rolünü değiştiremezsin.</div>
+        <div className="pt">Süper Adminler</div>
+        <div className="ps">
+          Süper admin tüm sisteme erişir (içerik, okullar, tüm öğrenciler). Okul yetkilileri ve öğrenci hesapları ilgili okulun
+          panelinden açılır (Okullar → Paneli aç).
+        </div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
-
-      <button
-        className="btn sec"
-        style={{ marginBottom: 14 }}
-        onClick={() => csvDisaAktar(
-          'yoneticiler_disa_aktarim.csv',
-          ['ad_soyad', 'email', 'rol', 'olusturulma_zamani'],
-          yoneticiler.map((y) => [y.ad_soyad, y.email, y.rol, y.olusturulma_zamani]),
-        )}
-        disabled={yoneticiler.length === 0}
-      >
-        ⬇ CSV Dışa Aktar
-      </button>
-      <div className="ps" style={{ marginTop: -8, marginBottom: 14, fontSize: 11 }}>
-        Şifreler asla dışa aktarılmaz — güvenlik nedeniyle toplu yönetici ekleme (içe aktarma) kasıtlı olarak sunulmuyor.
-      </div>
 
       <form onSubmit={ekle} className="card" style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
         <div><label className="auth-label">Ad Soyad</label><input className="auth-input" value={form.ad_soyad} onChange={(e) => setForm((f) => ({ ...f, ad_soyad: e.target.value }))} required /></div>
         <div><label className="auth-label">E-posta</label><input className="auth-input" type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required /></div>
-        <div><label className="auth-label">Şifre</label><input className="auth-input" type="password" value={form.sifre} onChange={(e) => setForm((f) => ({ ...f, sifre: e.target.value }))} required minLength={8} /></div>
-        <div>
-          <label className="auth-label">Rol</label>
-          <select className="auth-input" value={form.rol} onChange={(e) => setForm((f) => ({ ...f, rol: e.target.value }))}>
-            <option value="icerik_editoru">İçerik Editörü</option>
-            <option value="super_admin">Süper Admin</option>
-          </select>
-        </div>
-        <button className="btn" type="submit">Ekle</button>
+        <div><label className="auth-label">Şifre</label><input className="auth-input" type="password" value={form.sifre} onChange={(e) => setForm((f) => ({ ...f, sifre: e.target.value }))} required minLength={8} autoComplete="new-password" /></div>
+        <button className="btn" type="submit">+ Süper admin ekle</button>
       </form>
 
       <div className="ll">
-        {yoneticiler.map((y) => (
+        {superler.map((y) => (
           <div key={y.id} className="lc" style={{ cursor: 'default' }}>
-            <div className="lb-wrap">
-              <div className="lt">{y.ad_soyad}</div>
-              <div className="ld">{y.email}</div>
+            <div className="lb-wrap" style={{ flex: 1 }}>
+              <div className="lt">{y.ad_soyad}{y.id === kendiId && <span className="bdg bdg-prog" style={{ marginLeft: 8 }}>Sen</span>}</div>
+              <div className="ld">{y.email} · son giriş {y.son_giris_zamani ? new Date(y.son_giris_zamani).toLocaleString('tr-TR') : '—'}</div>
             </div>
-            <select
-              className="auth-input"
-              style={{ width: 160 }}
-              value={y.rol}
-              disabled={y.id === kendiId}
-              title={y.id === kendiId ? 'Kendi rolünü değiştiremezsin' : ''}
-              onChange={(e) => rolDegistir(y.id, e.target.value)}
-            >
-              <option value="icerik_editoru">İçerik Editörü</option>
-              <option value="super_admin">Süper Admin</option>
-            </select>
+            {y.id !== kendiId && (silinecek === y.id
+              ? <><button className="btn yp-tehlike" onClick={() => sil(y.id)}>Evet, sil</button><button className="btn sec" onClick={() => setSilinecek(null)}>Vazgeç</button></>
+              : <button className="btn sec" onClick={() => setSilinecek(y.id)}>Sil</button>)}
           </div>
         ))}
+      </div>
+
+      <div className="ct" style={{ marginTop: 22 }}>Okul Yetkilileri ({yetkililer.length})</div>
+      <div className="ps" style={{ marginTop: -6, marginBottom: 10, fontSize: 12 }}>Eklemek, şifre sıfırlamak ve silmek için ilgili okulun panelini açın.</div>
+      <button
+        className="btn sec" style={{ marginBottom: 10 }} disabled={yoneticiler.length === 0}
+        onClick={() => csvDisaAktar('yonetim_hesaplari.csv', ['ad_soyad', 'email', 'rol', 'okul', 'son_giris'],
+          yoneticiler.map((y) => [y.ad_soyad, y.email, y.rol === 'super_admin' ? 'Süper Admin' : 'Okul Yetkilisi', y.okul_ad || '', y.son_giris_zamani || '']))}
+      >⬇ Tüm yönetim hesaplarını CSV indir</button>
+      <div className="ll">
+        {yetkililer.map((y) => (
+          <Link key={y.id} to={`/admin/okul/${y.okul_id}`} className="lc" style={{ textDecoration: 'none', color: 'inherit' }}>
+            <div className="lb-wrap" style={{ flex: 1 }}>
+              <div className="lt">{y.ad_soyad}</div>
+              <div className="ld">{y.email} · {y.okul_ad}</div>
+            </div>
+            <span className="yp-ince">Okul paneli →</span>
+          </Link>
+        ))}
+        {yetkililer.length === 0 && <div className="bos-durum">Henüz okul yetkilisi yok.</div>}
       </div>
     </div>
   )
