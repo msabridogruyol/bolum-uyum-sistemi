@@ -50,15 +50,14 @@ export default function ProfilAyarlariSayfasi() {
     e.preventDefault()
     setHata(null)
     setBasari(null)
-    if (!taslak.okul?.trim() || !taslak.sinif?.trim()) {
-      setHata('Devam etmek için okul ve sınıf bilgisini doldurmalısın.')
+    if (!taslak.sinif?.trim()) {
+      setHata('Devam etmek için sınıfını seçmelisin.')
       return
     }
     setKaydediliyor(true)
     try {
       const guncellenmis = await api.profilGuncelle({
         ad_soyad: taslak.ad_soyad,
-        okul: taslak.okul || null,
         sinif: taslak.sinif || null,
         dogum_tarihi: taslak.dogum_tarihi || null,
         cinsiyet: taslak.cinsiyet || null,
@@ -165,7 +164,7 @@ export default function ProfilAyarlariSayfasi() {
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)' }}>
           <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>👋 Başlamadan önce profilini tamamla</div>
           <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5 }}>
-            Ad soyad, okul ve sınıf bilgilerini doldurup <b>Bilgileri Kaydet</b>'e bas; ardından ana sayfaya geçip ilk katmana başlayabilirsin. Diğer alanlar isteğe bağlı.
+            Ad soyad ve sınıf bilgilerini doldurup <b>Bilgileri Kaydet</b>'e bas; ardından ana sayfaya geçip ilk katmana başlayabilirsin. Diğer alanlar isteğe bağlı.
           </div>
         </div>
       )}
@@ -202,8 +201,11 @@ export default function ProfilAyarlariSayfasi() {
 
           <div style={{ display: 'flex', gap: 10 }}>
             <div className="auth-field" style={{ flex: 1 }}>
-              <label className="auth-label">Okul <span style={{ color: 'var(--re)' }}>*</span></label>
-              <input className="auth-input" value={taslak.okul || ''} onChange={(e) => alanGuncelle('okul', e.target.value)} placeholder="Örn. Atatürk Lisesi" required />
+              <label className="auth-label">Okul</label>
+              {/* [2026-10-09] Okul yönetimden atanır; öğrenci değiştiremez */}
+              <div className="auth-input okul-sabit" title="Okul bilgisi okulun tarafından tanımlanır">
+                {profil?.okul || 'Okul harici (bireysel hesap)'}
+              </div>
             </div>
             <div className="auth-field" style={{ flex: 1 }}>
               <label className="auth-label">Sınıf <span style={{ color: 'var(--re)' }}>*</span></label>
