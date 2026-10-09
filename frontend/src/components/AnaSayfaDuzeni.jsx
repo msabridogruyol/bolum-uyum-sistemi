@@ -131,12 +131,13 @@ export default function AnaSayfaDuzeni() {
           ⚙️ Ayarlar
         </NavLink>
       </div>
-      <div className="main">
+      <div className="main ogrenci-main">
+        {/* [2026-10-09] Maskot ana içerik alanının sağ üstünde, başlık satırında durur (sayfayla birlikte kayar) */}
+        {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
         <Outlet context={{ profilYenile, tanitimiAc }} />
       </div>
       {kvkkGerekli && <KvkkOnayPenceresi onTamam={() => setKvkkGerekli(false)} onCikis={cikisYap} />}
       {!kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
-      {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
       {!kvkkGerekli && !tanitimAcik && profil && <FilizSohbet />}
     </div>
   )
