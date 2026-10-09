@@ -541,6 +541,7 @@ function SoruKarti({ soru, sira, onGuncelle }) {
             <span className="bdg bdg-lock">{{likert:'Likert', sjt:'SJT', kutup:'Kutup', kontrol:'Kontrol'}[soru.soru_tipi] || soru.soru_tipi}</span>
             {soru.degisken_adi && <span className="bdg bdg-lock">{soru.degisken_adi}</span>}
             {soru.ters_kodlanmis_mi && <span className="bdg" style={{ background: 'var(--aml)', color: 'var(--am)' }}>Ters Kodlanmış</span>}
+            {soru.cevap_bicimi === 'encok_enaz' && <span className="bdg" style={{ background: 'var(--tll)', color: 'var(--tl)' }}>En çok / En az</span>}
             <span className={`bdg ${soru.aktif_mi ? 'bdg-done' : 'bdg-lock'}`}>{soru.aktif_mi ? 'Aktif' : 'Pasif'}</span>
           </div>
           <DuzenlenebilirMetin
@@ -603,7 +604,7 @@ export default function SorularSayfasi() {
   const [dalFiltre, setDalFiltre] = useState('')
   const [degiskenFiltre, setDegiskenFiltre] = useState('')
   const [tipFiltre, setTipFiltre] = useState('')
-  const [aktifFiltre, setAktifFiltre] = useState('')
+  const [aktifFiltre, setAktifFiltre] = useState('aktif')  // [2026-10-09] varsayılan: yalnızca kullanımdaki sorular
   const [arama, setArama] = useState('')
   const [aramaGecikmeli, setAramaGecikmeli] = useState('')
   const [sayfa, setSayfa] = useState(1)
@@ -628,7 +629,7 @@ export default function SorularSayfasi() {
 
   // Katman değişince tüm alt filtreleri sıfırla
   useEffect(() => {
-    setDalFiltre(''); setDegiskenFiltre(''); setTipFiltre(''); setAktifFiltre(''); setArama(''); setSayfa(1)
+    setDalFiltre(''); setDegiskenFiltre(''); setTipFiltre(''); setAktifFiltre('aktif'); setArama(''); setSayfa(1)
     setSilmeYazisi('')
   }, [aktifKatman])
 
