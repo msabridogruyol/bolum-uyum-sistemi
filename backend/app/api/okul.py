@@ -35,7 +35,8 @@ class OkulOut(BaseModel):
     alt_baslik: str | None = None
     logo: str | None = None
     aktif_mi: bool                    # amblem bu okulun öğrencilerine gösterilsin mi
-    ogrenci_sayisi: int = 0
+    # [2026-10-09] Listede sistemdeki öğrenci sayısı; tekil cevaplarda okulun girdiği sayı (boş olabilir → None)
+    ogrenci_sayisi: int | None = 0
     yetkili_sayisi: int = 0
 
     model_config = {"from_attributes": True}
