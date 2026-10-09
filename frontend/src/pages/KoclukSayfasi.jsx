@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
+import Sayac from '../components/Sayac'
 
 // ============================================================
 // Ana sayfa
@@ -183,13 +184,13 @@ function OzetSekmesi({ plan, sayac, onDurum, sekmeyeGit }) {
     <>
       <div className="koc-ozet-kutular">
         <button className="koc-ozet-kutu" onClick={() => sekmeyeGit('guclu')}>
-          <b style={{ color: 'var(--gr)' }}>{sayac.guclu}</b><span>güçlü yön</span>
+          <b style={{ color: 'var(--gr)' }}><Sayac deger={sayac.guclu} /></b><span>güçlü yön</span>
         </button>
         <button className="koc-ozet-kutu" onClick={() => sekmeyeGit('karsilastirma')}>
-          <b style={{ color: 'var(--pu)' }}>{sayac.uyumlu}</b><span>bölümle uyumlu</span>
+          <b style={{ color: 'var(--pu)' }}><Sayac deger={sayac.uyumlu} /></b><span>bölümle uyumlu</span>
         </button>
         <button className="koc-ozet-kutu" onClick={() => sekmeyeGit('yol')}>
-          <b style={{ color: 'var(--am)' }}>{sayac.gelisim}</b><span>gelişime açık</span>
+          <b style={{ color: 'var(--am)' }}><Sayac deger={sayac.gelisim} /></b><span>gelişime açık</span>
         </button>
       </div>
 
