@@ -1,24 +1,24 @@
 # -*- coding: utf-8 -*-
 """
-[2026-10-09] Okul markası — öğrenci sayfalarının solunda gösterilen okul adı + amblemi.
+[2026-10-09] Okullar — okul kaydı (ad + amblem) ve öğrencinin sol menüsündeki okul rozeti.
 
-GET    /okul/aktif                    — herkese açık: gösterilen okul (yoksa null)
-GET    /admin/okullar                 — tüm okullar
-POST   /admin/okullar                 — yeni okul
-PUT    /admin/okullar/{id}            — düzenle
-POST   /admin/okullar/{id}/aktif-yap  — gösterilen okul yap (diğerleri pasife alınır)
-POST   /admin/okullar/gizle           — hiçbir okulu gösterme
-DELETE /admin/okullar/{id}            — sil
+GET    /okul/benim                     — öğrenci: kendi okulu (amblemi gösterilecekse), yoksa null
+GET    /okul/aktif                     — (geriye uyum) ilk gösterilen okul
+GET    /admin/okullar                  — süper admin: tüm okullar + öğrenci/okul yetkilisi sayıları
+POST   /admin/okullar                  — yeni okul
+PUT    /admin/okullar/{id}             — düzenle (ad değişirse öğrenci kayıtlarındaki okul adı da güncellenir)
+DELETE /admin/okullar/{id}?hedef_id=   — sil; öğrencisi varsa hedef okula aktarılır (hedef 0 = okul harici)
+Öğrenci ve okul yetkilisi işlemleri okul bazlıdır: bkz. app/api/okul_yonetimi.py (/yonetim/...).
 """
-from datetime import datetime
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_admin
+from app.api.deps import get_mevcut_admin, get_mevcut_ogrenci
 from app.core.database import get_db
-from app.models import AdminKullanici, AuditLog, Okul
+from app.core.hesap_yonetimi import denetim_yaz, simdi
+from app.models import AdminKullanici, Okul, Ogrenci
 
 LOGO_EN_FAZLA = 400_000   # data URL karakter sınırı (~300 KB görsel)
 IZINLI_BASLANGIC = ("data:image/png", "data:image/jpeg", "data:image/jpg", "data:image/webp", "data:image/svg+xml")
@@ -32,7 +32,9 @@ class OkulOut(BaseModel):
     ad: str
     alt_baslik: str | None = None
     logo: str | None = None
-    aktif_mi: bool
+    aktif_mi: bool                    # amblem bu okulun öğrencilerine gösterilsin mi
+    ogrenci_sayisi: int = 0
+    yetkili_sayisi: int = 0
 
     model_config = {"from_attributes": True}
 
@@ -54,25 +56,35 @@ def _logo_dogrula(logo: str | None) -> str | None:
     return logo
 
 
-def _tek_aktif(db: Session, okul_id: int | None):
-    for o in db.query(Okul).filter(Okul.aktif_mi.is_(True)).all():
-        if o.id != okul_id:
-            o.aktif_mi = False
-    db.flush()
+def _okul(db: Session, okul_id: int) -> Okul:
+    okul = db.get(Okul, okul_id)
+    if okul is None:
+        raise HTTPException(status_code=404, detail="Okul bulunamadı.")
+    return okul
 
 
-def _audit(db: Session, admin: AdminKullanici, islem: str, hedef: int | str, not_: str | None = None):
-    db.add(AuditLog(admin_id=admin.id, islem=islem, hedef_tablo="okullar", hedef_id=str(hedef), gerekce=not_))
+@genel_router.get("/benim", response_model=OkulOut | None)
+def benim_okulum(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    if not ogrenci.okul_id:
+        return None
+    okul = db.get(Okul, ogrenci.okul_id)
+    return okul if okul is not None and okul.aktif_mi else None
 
 
 @genel_router.get("/aktif", response_model=OkulOut | None)
 def aktif_okul(db: Session = Depends(get_db)):
-    return db.query(Okul).filter(Okul.aktif_mi.is_(True)).order_by(Okul.id.desc()).first()
+    return db.query(Okul).filter(Okul.aktif_mi.is_(True)).order_by(Okul.id).first()
 
 
 @admin_router.get("", response_model=list[OkulOut])
 def okullari_listele(db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
-    return db.query(Okul).order_by(Okul.aktif_mi.desc(), Okul.ad).all()
+    ogr = dict(db.query(Ogrenci.okul_id, func.count(Ogrenci.id)).filter(Ogrenci.okul_id.isnot(None))
+               .group_by(Ogrenci.okul_id).all())
+    yon = dict(db.query(AdminKullanici.okul_id, func.count(AdminKullanici.id))
+               .filter(AdminKullanici.okul_id.isnot(None)).group_by(AdminKullanici.okul_id).all())
+    return [OkulOut(id=o.id, ad=o.ad, alt_baslik=o.alt_baslik, logo=o.logo, aktif_mi=o.aktif_mi,
+                    ogrenci_sayisi=ogr.get(o.id, 0), yetkili_sayisi=yon.get(o.id, 0))
+            for o in db.query(Okul).order_by(Okul.ad).all()]
 
 
 @admin_router.post("", response_model=OkulOut, status_code=201)
@@ -80,14 +92,11 @@ def okul_ekle(istek: OkulIstek, db: Session = Depends(get_db), admin: AdminKulla
     ad = (istek.ad or "").strip()
     if not ad:
         raise HTTPException(status_code=400, detail="Okul adı boş olamaz.")
-    okul = Okul(ad=ad, alt_baslik=(istek.alt_baslik or "").strip() or None,
-                logo=_logo_dogrula(istek.logo), aktif_mi=False, olusturulma_zamani=datetime.utcnow())
+    okul = Okul(ad=ad, alt_baslik=(istek.alt_baslik or "").strip() or None, logo=_logo_dogrula(istek.logo),
+                aktif_mi=True if istek.aktif_mi is None else istek.aktif_mi, olusturulma_zamani=simdi())
     db.add(okul)
     db.flush()
-    if istek.aktif_mi:
-        _tek_aktif(db, okul.id)
-        okul.aktif_mi = True
-    _audit(db, admin, "okul_ekle", okul.id, ad)
+    denetim_yaz(db, admin, "okul_ekle", "okullar", okul.id, ad, okul.id)
     db.commit()
     db.refresh(okul)
     return okul
@@ -95,51 +104,39 @@ def okul_ekle(istek: OkulIstek, db: Session = Depends(get_db), admin: AdminKulla
 
 @admin_router.put("/{okul_id}", response_model=OkulOut)
 def okul_guncelle(okul_id: int, istek: OkulIstek, db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
-    okul = db.get(Okul, okul_id)
-    if okul is None:
-        raise HTTPException(status_code=404, detail="Okul bulunamadı.")
+    okul = _okul(db, okul_id)
     ad = (istek.ad or "").strip()
     if not ad:
         raise HTTPException(status_code=400, detail="Okul adı boş olamaz.")
     okul.ad = ad
+    db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id).update({Ogrenci.okul: ad}, synchronize_session=False)
     okul.alt_baslik = (istek.alt_baslik or "").strip() or None
     if istek.logo is not None:
         okul.logo = _logo_dogrula(istek.logo)
     if istek.aktif_mi is not None:
-        if istek.aktif_mi:
-            _tek_aktif(db, okul.id)
         okul.aktif_mi = istek.aktif_mi
-    _audit(db, admin, "okul_guncelle", okul.id, ad)
-    db.commit()
-    db.refresh(okul)
-    return okul
-
-
-@admin_router.post("/gizle", status_code=204)
-def okul_gosterme(db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
-    _tek_aktif(db, None)
-    _audit(db, admin, "okul_gizle", "-")
-    db.commit()
-
-
-@admin_router.post("/{okul_id}/aktif-yap", response_model=OkulOut)
-def okul_aktif_yap(okul_id: int, db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
-    okul = db.get(Okul, okul_id)
-    if okul is None:
-        raise HTTPException(status_code=404, detail="Okul bulunamadı.")
-    _tek_aktif(db, okul.id)
-    okul.aktif_mi = True
-    _audit(db, admin, "okul_aktif_yap", okul.id, okul.ad)
+    denetim_yaz(db, admin, "okul_guncelle", "okullar", okul.id, ad, okul.id)
     db.commit()
     db.refresh(okul)
     return okul
 
 
 @admin_router.delete("/{okul_id}", status_code=204)
-def okul_sil(okul_id: int, db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
-    okul = db.get(Okul, okul_id)
-    if okul is None:
-        raise HTTPException(status_code=404, detail="Okul bulunamadı.")
-    _audit(db, admin, "okul_sil", okul.id, okul.ad)
+def okul_sil(okul_id: int, hedef_id: int | None = Query(None), db: Session = Depends(get_db),
+             admin: AdminKullanici = Depends(get_mevcut_admin)):
+    """Okulun öğrencileri hedef okula (0 = okul harici) aktarılır; okul yetkilisi hesapları okulla birlikte silinir."""
+    okul = _okul(db, okul_id)
+    sayi = db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id).count()
+    if sayi:
+        if hedef_id is None or hedef_id == okul_id:
+            raise HTTPException(status_code=409, detail=f"Bu okulda {sayi} öğrenci var; silmeden önce aktarılacakları yeri seçin.")
+        hedef = _okul(db, hedef_id) if hedef_id else None
+        db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id).update(
+            {Ogrenci.okul_id: hedef.id if hedef else None, Ogrenci.okul: hedef.ad if hedef else None}, synchronize_session=False)
+    yoneticiler = db.query(AdminKullanici).filter(AdminKullanici.okul_id == okul.id).all()
+    for y in yoneticiler:
+        db.delete(y)
+    denetim_yaz(db, admin, "okul_sil", "okullar", okul.id,
+                f"{okul.ad} — {sayi} öğrenci aktarıldı, {len(yoneticiler)} okul yetkilisi silindi", okul.id)
     db.delete(okul)
     db.commit()
