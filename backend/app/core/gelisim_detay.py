@@ -6,6 +6,10 @@
 Kısa açıklama ve tek cümlelik ölçüt gelisim_icerigi.py'de durur; bu dosya onları DETAYLANDIRIR.
 "{bolum}" yer tutucusu öğrencinin hedef bölüm adıyla değiştirilir. Bir adımın detayını değiştirmek için
 yalnızca bu dosyayı düzenlemek yeterlidir (veritabanı değişmez).
+
+Kanıt temeli (ayrıntı: docs "Filizyol — Kuramsal Temel ve Kaynakça"): yazılı ve ölçülebilir başarı ölçütü
+(Locke & Latham 2002; Harkin ve ark. 2016), alışkanlık adımlarında "Eğer–o zaman" planı (Gollwitzer & Sheeran 2006)
+ve ~2 aylık alışkanlık süresi (Lally ve ark. 2010), görüşme/deneyim adımları (Brown & Ryan Krane 2000; OECD 2021).
 """
 
 DETAY: dict[str, dict] = {
@@ -437,6 +441,8 @@ DETAY: dict[str, dict] = {
             "Her hafta iki başlık altında yaz: \"Bu alana dair beni heyecanlandıran an\" ve \"Beni sıkan an\". Her birine 2-3 cümle yeter.",
             "4. haftanın sonunda tüm notları oku ve tekrar eden durumların altını çiz.",
             "Fark ettiğin örüntüyü tek cümleyle yaz. Örneğin: \"İnsanlarla çalıştığım anlar beni heyecanlandırıyor, ezber kısmı sıkıyor.\"",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "4 haftanın her biri için yazılmış notların var.",
@@ -591,6 +597,8 @@ DETAY: dict[str, dict] = {
             "Kararı vermeden önce seçenekleri ve artı-eksilerini kendin düşün; kimseye danışmadan kararını ver.",
             "Kararını ve neden öyle karar verdiğini bir cümleyle yaz.",
             "Hafta sonunda sonucu not et: Ne oldu? Kendi kararımı vermek nasıl hissettirdi? Tekrar olsa yine öyle yapar mıydım?",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Kendi verdiğin küçük bir kararı yazdın.",
@@ -635,6 +643,8 @@ DETAY: dict[str, dict] = {
             "Planı defterine ya da telefonuna yaz ve hafta boyunca yaptıklarını işaretle.",
             "Hafta sonunda 3 soruya cevap yaz: Planın ne kadarına uydum? Ne işe yaradı? Gelecek hafta neyi değiştireceğim?",
             "Bunu 4 hafta tekrarla ve son hafta tüm değerlendirmelerini birlikte oku.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Kendi hazırladığın 4 haftalık çalışma planın var.",
@@ -748,6 +758,8 @@ DETAY: dict[str, dict] = {
             "İki hafta boyunca sana güzel gelen tasarımları fotoğrafla: bir uygulama ekranı, bir bina, bir afiş, bir ürün ambalajı.",
             "Her fotoğrafın altına bir cümle yaz: \"Bunu güzel buldum çünkü…\" Örneğin: \"…renkler sade ve yazı kolay okunuyor.\"",
             "İki hafta sonunda notlarını oku ve en çok tekrar eden beğeni nedenini bul.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "En az 10 tasarım örneğinin fotoğrafı var.",
@@ -790,6 +802,8 @@ DETAY: dict[str, dict] = {
             "Daha önce yaptığın yaratıcı işleri bul: çizimler, fotoğraflar, sunumlar, projeler. Kâğıt üzerindekilerin fotoğrafını çek.",
             "Her dosyayı tarih ve kısa adla kaydet. Örneğin: \"2026-10_bolum-posteri\".",
             "Klasöre en az 5 iş ekle ve her ay yeni işlerini eklemek için telefonuna bir hatırlatıcı kur.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "\"Portfolyo\" adlı bir klasörün var.",
@@ -820,6 +834,8 @@ DETAY: dict[str, dict] = {
             "Teneffüste, kantinde ya da ders çıkışında, karşındakinin acelesi yokken yanına git ve cümleni söyle.",
             "Sohbeti uzatmak zorunda değilsin; 2-3 dakika yeterli. Karşındakine bir soru daha sor ve cevabını dinle.",
             "Akşam bir deftere kiminle konuştuğunu ve nasıl hissettiğini bir cümleyle yaz.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bu hafta en az 2 farklı kişiyle kendin başlattığın bir sohbet yaptın.",
@@ -940,6 +956,8 @@ DETAY: dict[str, dict] = {
             "Karşındaki \"evet\" derse kendi fikrini söyle; \"hayır\" derse ne demek istediğini tekrar sor.",
             "Konuşma sırasında telefonu bırak, ona dön ve göz teması kur.",
             "Her denemeden sonra telefonundaki bir nota kiminle konuştuğunu ve konuşmanın nasıl ilerlediğini bir cümleyle yaz.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bu hafta en az 3 konuşmada karşındakini kendi cümlelerinle özetledin.",
@@ -1044,6 +1062,7 @@ DETAY: dict[str, dict] = {
             "Ben-dili kullan: suçlayıcı \"sen\" cümleleri yerine kendi durumunu anlatan \"ben\" cümleleri kur (\"Ben şu an yetişemiyorum\").",
             "Hayır dedikten sonra uzun açıklama yapma ya da özür dilemeye devam etme; gerekçeni bir kez söylemen yeterli.",
             "Deneyimini not et: Ne istendi, ne dedin, karşı taraf nasıl tepki verdi, sen nasıl hissettin?",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Bu ay en az bir isteğe gerekçesini söyleyerek kibarca hayır dedin.",
@@ -1059,6 +1078,8 @@ DETAY: dict[str, dict] = {
             "Sayfanın yanına haftanın günlerini yaz ve her işi bir güne ata; tarihi en yakın olanlarla başla.",
             "Bir güne 3-4'ten fazla iş düşerse bazılarını boş günlere kaydır.",
             "Listeyi her gün göreceğin bir yere as ya da telefonunun fotoğraflarına kaydet; biten işin üstünü çiz.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bu haftanın tüm işlerini içeren bir listen var.",
@@ -1074,6 +1095,8 @@ DETAY: dict[str, dict] = {
             "Telefonunu sessize al ve başka odaya koy ya da ters çevir; zamanlayıcıyı 25 dakikaya kur.",
             "Zil çalana kadar sadece o işe odaklan. Aklına başka bir şey gelirse bir kâğıda yazıp işine dön.",
             "5 dakikalık molada kalk, su iç ya da biraz yürü; sonra ikinci tura başla. Her günün sonunda kaç tur yaptığını bir tabloya işaretle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "5 gün boyunca her gün en az 2 Pomodoro turu yaptın.",
@@ -1089,6 +1112,8 @@ DETAY: dict[str, dict] = {
             "Her akşam 5 dakika ayırıp ertesi günün işlerini kontrol et; yeni gelen görevleri hemen ekle.",
             "Biten işleri işaretle; yapılamayanları yeni bir güne taşı.",
             "Her haftanın sonunda sistemin işe yarayıp yaramadığını düşün ve gerekirse küçük bir değişiklik yap.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "4 hafta boyunca tüm görevlerini aynı sisteme yazdın.",
@@ -1134,6 +1159,7 @@ DETAY: dict[str, dict] = {
             "Kalan işleri ve yeni haftanın ödev ve sınavlarını listeye yaz, her birine bir gün ata.",
             "Yeni hafta için tek bir odak hedefi seç. Örneğin: \"Bu hafta her gün 30 dakika İngilizce.\"",
             "Defterinin bir sayfasına tarihi yazıp her gözden geçirmeyi işaretle; böylece kaç hafta yaptığını görürsün.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "3 ay içinde en az 10 haftalık gözden geçirme yaptın.",
@@ -1179,6 +1205,8 @@ DETAY: dict[str, dict] = {
             "Saniyeleri içinden sayarak bu döngüyü 5 kez tekrarla; toplam yaklaşık 1-2 dakika sürer.",
             "Her gün aynı saatte, örneğin yatmadan önce ya da ders çalışmaya başlamadan, bir kez pratik yap.",
             "Bir takvimde ya da notta her pratik yaptığın günü işaretle; stresli bir anda (sınav öncesi gibi) da kullanmayı dene.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "7 gün boyunca her gün en az bir kez 4-4-6 nefes tekniğini uyguladın.",
@@ -1209,6 +1237,8 @@ DETAY: dict[str, dict] = {
             "Her seferinde en az 20 dakika hareket et; zorlanmadan konuşabileceğin bir tempoyla başla.",
             "Bir tabloya her haftanın 3 kutusunu çiz ve hareket ettiğin günleri işaretle.",
             "Hareketten sonra kendini nasıl hissettiğini tek kelimeyle tabloya ekle (\"rahat\", \"yorgun\", \"enerjik\" gibi).",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "4 hafta boyunca her hafta en az 3 kez 20 dakikalık hareket ettin.",
@@ -1239,6 +1269,7 @@ DETAY: dict[str, dict] = {
             "Bu 30 dakikayı sakin bir işle geçir: kitap okumak, ertesi günün çantasını hazırlamak, hafif müzik dinlemek gibi.",
             "Bir uyku tablosu çiz; her sabah yattığın ve kalktığın saati yaz.",
             "Her haftanın sonunda tabloya bak; kaç gün hedefine uyduğunu say ve gerekirse saati biraz düzenle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "En az 6 hafta boyunca hafta içi aynı saatlerde yatıp kalkmayı sürdürdün.",
@@ -1326,6 +1357,8 @@ DETAY: dict[str, dict] = {
             "Hafta içinde 15-20 dakika ayırıp cevabı araştır; kitap, ansiklopedi ya da güvenilir internet kaynaklarına bak.",
             "Cevabı 2-3 cümleyle sorunun altına yaz ve kullandığın kaynağı ekle.",
             "4 haftanın sonunda listene bak; hangi sorunun seni en çok heyecanlandırdığını işaretle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Listende 4 hafta boyunca yazılmış 4 soru var.",
@@ -1371,6 +1404,7 @@ DETAY: dict[str, dict] = {
             "Her gün aynı zamanda oku; örneğin yatmadan önce 20 dakika.",
             "Bir okuma listesi tut: kitabın adı, bitirdiğin tarih ve kitaptan aklında kalan bir cümle.",
             "Ay sonunda bitiremediysen kendini zorlama; bir sonraki ay kaldığın yerden devam et.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "3 ay içinde 3 kitap okudun.",
@@ -1414,6 +1448,8 @@ DETAY: dict[str, dict] = {
             "Değişikliği en az 3 gün boyunca uygula.",
             "Her gün sonunda 2 soruyu cevapla: \"Kendimi nasıl hissettim?\" ve \"Verimim arttı mı, azaldı mı, aynı mı kaldı?\"",
             "Hafta sonunda gözlemlerini 2-3 cümleyle özetle: değişiklik sana iyi geldi mi, rahatsız etti mi?",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bu hafta rutininde bilinçli bir değişikliği en az 3 gün denedin.",
@@ -1442,6 +1478,8 @@ DETAY: dict[str, dict] = {
             "Her iş için \"Bu olmazsa ne yaparım?\" sorusunu sor ve olası bir aksaklık yaz. Örneğin: \"Grup arkadaşım gelmezse.\"",
             "Her aksaklık için bir yedek plan yaz. Örneğin: \"Onun kısmını önceden paylaşmasını isterim, gerekirse ben sunarım.\"",
             "İş tamamlandığında yedek plana ihtiyaç olup olmadığını ve işe yarayıp yaramadığını kısaca not et.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "4 hafta içinde en az 3 önemli iş için yazılı bir yedek planın vardı.",
@@ -1515,6 +1553,7 @@ DETAY: dict[str, dict] = {
             "Bu zamanı takvimine ya da telefonuna tekrarlayan bir hatırlatıcı olarak ekle.",
             "Bu sürede yalnızca listedeki işleri yap; dikkatini dağıtmamak için telefonunu uzaklaştır.",
             "Her hafta sonunda sabit zamanı kaç gün koruduğunu bir tabloya işaretle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Rutin işler için yazılı bir sabit zaman dilimin var.",
@@ -1529,6 +1568,8 @@ DETAY: dict[str, dict] = {
             "Yapmadan önce bir kâğıda \"Ne olmasını bekliyorum?\" sorusunun cevabını bir cümleyle yaz.",
             "Bu hafta içinde adımı at.",
             "Sonra gerçekte ne olduğunu ve nasıl hissettiğini aynı kâğıda yaz; beklentinle karşılaştır.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bu hafta en az bir küçük risk aldın.",
@@ -1572,6 +1613,8 @@ DETAY: dict[str, dict] = {
             "Bir ay boyunca tüm bilgilere sahip olmadan verdiğin kararları yaz. Örneğin: \"Hangi konuyu önce çalışacağımı seçtim.\"",
             "Kararın sonucu belli olduğunda \"Sonuç\" sütununu doldur.",
             "Her hafta sonunda kararlarına bak ve bir cümle ekle: \"Bu hafta karar verirken neyi fark ettim?\"",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Karar günlüğünde en az 5 karar ve sonucu kayıtlı.",
@@ -1630,6 +1673,7 @@ DETAY: dict[str, dict] = {
             "Her maddenin yanına önemini 1-3 arasında puanla; böylece sadece sayıya değil ağırlığa da bakarsın.",
             "Kararını ver ve listenin altına neden bu kararı verdiğini bir cümleyle yaz.",
             "Sonuç belli olduğunda listene dön ve tahminlerinin ne kadar doğru çıktığını not et.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Bu ay en az 2 kararda yazılı bir artı/eksi listesi kullandın.",
@@ -1750,6 +1794,7 @@ DETAY: dict[str, dict] = {
             "Fikirleri dinlerken aktif dinleme kullan, yani söyleneni kendi cümlelerinle özetle: \"Yani sen ... öneriyorsun.\"",
             "Fikirleri karşılaştır ve ekip önerilerine dayanan bir karar al.",
             "Kararı açıklarken hangi önerilerden yararlandığını söyle; ekibin tepkisini not et.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "En az bir kararı ekibin fikirlerine dayanarak aldın.",
@@ -1765,6 +1810,8 @@ DETAY: dict[str, dict] = {
             "Kutulara şu başlıkları yaz: 1) Önemli ve acil, 2) Önemli ama acil değil, 3) Acil ama önemsiz, 4) Ne önemli ne acil.",
             "Her işi kendine sorarak bir kutuya taşı: \"Bunu yapmazsam hedefime zarar verir mi?\" (önem) ve \"Teslimi 1–2 gün içinde mi?\" (aciliyet). Örneğin: yarınki sınav 1. kutuya girer.",
             "1. kutudaki işlerden başla; 2. kutudakiler için haftada bir zaman ayır, 4. kutudakileri azaltmayı dene.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bu haftanın işlerinin 4 kutuya ayrıldığı bir sayfan var.",
@@ -1795,6 +1842,8 @@ DETAY: dict[str, dict] = {
             "Okuldan sonraki boş zamanında telefona ve diğer işlere geçmeden önce bu 3 işi bitirmeye çalış.",
             "Akşam yaptıklarının yanına tik at; bitmeyen olduysa nedenini tek kelimeyle not et (süre, unuttum, zor geldi).",
             "Her pazar haftanın kaç gün 3 işini de bitirdiğini say ve bir sonraki haftaya not düş.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "4 hafta boyunca her gün için yazılmış bir \"Bugünün 3'ü\" listen var.",
@@ -1840,6 +1889,7 @@ DETAY: dict[str, dict] = {
             "Pomodoro tekniğini dene: 25 dakika tek bir işe odaklan, sonra 5 dakika mola ver. 4 turdan sonra 15–20 dakikalık uzun mola ver.",
             "Her çalışma gününün sonunda toplam odaklı çalışma süreni bir tabloya yaz.",
             "1–2 ayın sonunda ilk haftanın ortalamasıyla son haftanın ortalamasını karşılaştır.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Başlangıç haftası ve sonraki haftalar için odaklı çalışma sürelerini gösteren bir tablon var.",
@@ -1882,6 +1932,8 @@ DETAY: dict[str, dict] = {
             "Bir kâğıda \"sen-dili\" ile söylediğin bir cümle yaz ve ben-diline çevir. Örneğin: \"Sen hep geç kalıyorsun\" yerine \"Beklediğimde endişeleniyorum, çünkü planlarımız kayıyor.\"",
             "Bu hafta gerginleşen bir konuşmada konuşmaya başlamadan önce bir nefes al ve kalıbı kullan.",
             "Her kullanımdan sonra kısa not al: Kime söyledin, ne dedin, karşındaki nasıl tepki verdi?",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bir hafta içinde en az 2 kez ben-dili kullandın.",
@@ -1994,6 +2046,8 @@ DETAY: dict[str, dict] = {
             "Karar anında telefonun saatini başlat; 2 dakika içinde seçeneklerden birini seç ve geri dönme.",
             "Her gün en az bir kararı kısa bir notla kaydet: Karar neydi, süreyi aştın mı?",
             "Hafta sonunda bu kararlardan pişman olduğun var mı, bak; çoğu zaman olmadığını fark edeceksin.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bir hafta boyunca süre sınırıyla verdiğin kararları gösteren bir not listen var.",
@@ -2036,6 +2090,7 @@ DETAY: dict[str, dict] = {
             "Haftada en az 2 gün için 15–30 dakikalık bir oyun zamanı belirle ve takvimine yaz.",
             "Oynarken her hamleden önce kısa bir an dur ve kendine sor: \"Bu hamlenin sonucu ne olabilir?\"",
             "Her oyundan sonra takip tablona tarih ve süreyi yaz; ayın sonunda kaç kez oynadığını say.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "1–2 ay boyunca haftada en az 2 kez oynadığını gösteren bir takip tablon var.",
@@ -2064,6 +2119,7 @@ DETAY: dict[str, dict] = {
             "Bir hafta sonra aynı sayfaya dön ve iki soruyu cevapla: \"Neyi doğru yaptım?\" ve \"Neyi farklı yapardım?\"",
             "2–3 ay boyunca en az 5 kararı bu şekilde değerlendir.",
             "Sonunda tüm değerlendirmelere bakıp sık tekrar eden bir alışkanlığını bir cümleyle yaz.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Karar günlüğünde en az 5 kararın değerlendirmesi var.",
@@ -2147,6 +2203,8 @@ DETAY: dict[str, dict] = {
             "Söz tarihi geldiğinde yanına tik (tuttum) ya da çarpı (tutmadım) koy.",
             "Haftada bir tutamadığın sözlere bak ve nedenini bir kelimeyle yaz: unuttum, zaman, fazla söz.",
             "Ay sonunda tuttuğun sözlerin sayısını toplam sözlere oranla.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "4 hafta boyunca tuttuğun bir söz listesi var.",
@@ -2254,6 +2312,8 @@ DETAY: dict[str, dict] = {
             "İlk hafta ertelediğin küçük işleri bir kâğıda yaz; bu senin başlangıç listen.",
             "Sonraki haftalarda aklına küçük bir iş geldiğinde kendine sor: \"Bu 2 dakikada biter mi?\" Bitecekse hemen yap.",
             "Her hafta sonunda ertelediğin küçük işleri say ve ilk haftayla karşılaştır.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "İlk hafta ve son hafta ertelediğin küçük işlerin sayısını karşılaştırdın.",
@@ -2282,6 +2342,7 @@ DETAY: dict[str, dict] = {
             "Fırsatları bulmak için okul duyurularına, rehberlik servisine ve TÜBİTAK, Teknofest gibi bilinen kurumların sitelerine bak.",
             "Her fırsat için ad, son tarih ve nasıl katılacağını tek satırda yaz.",
             "Her ay listeden en az birini seç ve değerlendir: başvur, katıl ya da derse kaydol.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "3 ay boyunca her ay en az bir fırsat yazdığın bir liste var.",
@@ -2323,6 +2384,8 @@ DETAY: dict[str, dict] = {
             "Eleştiriyi dinlerken sözü kesme; karşındakinin ne söylediğini anlamaya çalış.",
             "Gün içinde 5 dakika ayır ve eleştiriyi yaz; altına \"Bunda haklı olduğu bir kısım var mı?\" sorusunun cevabını ekle.",
             "Uygun bir anda istersen karşındakine dönüp ne düşündüğünü sakin bir şekilde söyle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "En az bir eleştiriye savunmaya geçmeden yanıt verdin.",
@@ -2380,6 +2443,7 @@ DETAY: dict[str, dict] = {
             "Her ay için takvimine bir hatırlatıcı koy ve o kişiye kısa bir soru sor. Örneğin: \"Son bir ayda neyi iyi yaptığımı ve neyi geliştirmem gerektiğini düşünüyorsun?\"",
             "Cevapları bir defterde aylık olarak tarihle birlikte yaz.",
             "Her geri bildirimden bir şey seç ve o ay üzerinde çalış.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "3 ay boyunca her ay alınmış bir geri bildirim notun var.",
@@ -2407,6 +2471,7 @@ DETAY: dict[str, dict] = {
             "Her çalışmayı bitirdiğinde bir kişiye (öğretmen, arkadaş, aile) kısa bir soru sor: \"Bu çalışmada en iyi olan ve geliştirilebilecek bir şey ne?\"",
             "Cevapları bir tabloda tut: tarih, çalışma, kimden, geri bildirim.",
             "Bir sonraki çalışmaya başlamadan önce tabloya bak ve önceki geri bildirimden birini uygula. Bu, geri bildirim döngüsüdür: iste, uygula, tekrar iste.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "En az 3 çalışman için geri bildirim aldığın bir tablon var.",
@@ -2448,6 +2513,8 @@ DETAY: dict[str, dict] = {
             "Haberi oku ve bir cümleyle özetle: Ne oldu, kimi etkiliyor?",
             "Kendine sor: \"Bu haber {bolum} ya da o alanda çalışanlar için ne anlama gelir?\"",
             "Cevabını 2–3 cümleyle defterine yaz ve tarihi ekle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Bu hafta bir ekonomi haberi okudun ve özetini yazdın.",
@@ -2563,6 +2630,8 @@ DETAY: dict[str, dict] = {
             "Takıldığın soruyu 3–4 dakikadan fazla zorlama; yanına yıldız koyup geç, süre bitince çözümüne bak.",
             "Hata defteri tut: Yanlış yaptığın her sorunun kısa bir kopyasını, doğru çözümünü ve hatanın nedenini ayrı bir deftere yaz.",
             "Bir takvim ya da kâğıda 7 kutu çiz; her gün çalıştıktan sonra o günün kutusunu işaretle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "7 günün 7'sinde de takvimdeki kutu işaretli.",
@@ -2666,6 +2735,8 @@ DETAY: dict[str, dict] = {
             "Her gün için sabit bir okuma zamanı belirle (ör. yatmadan önce) ve telefonunu sessize al.",
             "15 sayfayı okuyunca kaldığın sayfaya ayraç koy ve bir kâğıda tarihi ve sayfa aralığını yaz.",
             "Okuduğun bölümden aklında kalan bir cümleyi ya da olayı kısaca not et.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Okuma kâğıdında 7 günün tarih ve sayfa aralıkları yazılı.",
@@ -2696,6 +2767,8 @@ DETAY: dict[str, dict] = {
             "Yazını Türk Dili ve Edebiyatı öğretmenine ya da güvendiğin başka bir öğretmene ver ve kısa bir geri bildirim iste.",
             "Aldığın geri bildirimi yazının altına not et ve bir sonraki yazında en az bir öneriyi uygula.",
             "Tüm yazılarını tek bir dosya ya da klasörde sırayla sakla.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Klasöründe en az 4 yazı var.",
@@ -2741,6 +2814,7 @@ DETAY: dict[str, dict] = {
             "Deftere kelimeyi, anlamını ve onunla kurduğun kendi cümleni yaz.",
             "Her hafta aynı gün 10–15 dakika ayırıp o haftanın kelimelerini tekrar et; anlamı kapatıp hatırlamaya çalış.",
             "Hatırladığın kelimelerin yanına tik koy, hatırlamadıklarını bir sonraki hafta yeniden tekrar et.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Defterinde en az 50 kelime, anlamı ve örnek cümlesiyle yazılı.",
@@ -2900,6 +2974,8 @@ DETAY: dict[str, dict] = {
             "Her gün çevrende bir nesne seç (bardak, ayakkabı, saksı) ve zamanlayıcıyı 10 dakikaya kur.",
             "Önce nesnenin genel şeklini daire, kare gibi basit şekillerle çiz, sonra ayrıntıları ve gölgeleri ekle.",
             "Mükemmel olmasını bekleme; süre bitince çizimi bırak ve köşesine tarihi yaz.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Defterinde tarihli 7 eskiz var.",
@@ -2914,6 +2990,8 @@ DETAY: dict[str, dict] = {
             "Seçeneklerden birini dene: Bir origami modeli (kâğıt katlama), 3D yapboz, tangram ya da Rubik küpü; ücretsiz origami çizimlerini internette bulabilirsin.",
             "Her gün 15–20 dakika ayır; kolay bir modelle başla ve tamamladıkça zorluğu artır.",
             "Bitirdiğin her bulmacanın adını ve sana zor gelen adımı kısaca not et; istersen fotoğrafını çek.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "En az 3 bulmaca ya da origami modeli tamamladın.",
@@ -3133,6 +3211,8 @@ DETAY: dict[str, dict] = {
             "Yavaş başla: İlk 5 dakika ısın, son 5 dakika yavaşlayıp esneme yap; ağrı ya da baş dönmesi olursa dur.",
             "Rahat ayakkabı giy, yanında su bulundur ve yürüyüşü güvenli, aydınlık yerlerde yap.",
             "Bir kâğıda 7 kutu çiz; her gün ne yaptığını ve kaç dakika sürdüğünü kutuya yaz.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "7 kutunun hepsinde etkinlik ve süre yazılı.",
@@ -3190,6 +3270,7 @@ DETAY: dict[str, dict] = {
             "Haftada 3–4 gün çalış ve her hafta mesafeyi ya da süreyi yalnızca biraz artır; yavaş ilerlemek sakatlanmayı önler.",
             "Her antrenmanda tarihi, mesafeyi ve süreyi defterine yaz.",
             "Ağrı, nefes darlığı ya da baş dönmesi olursa dur ve ailenle birlikte doktora danış.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Defterinde 3 aylık düzenli antrenman kayıtları var.",
@@ -3247,6 +3328,8 @@ DETAY: dict[str, dict] = {
             "Ödevin şartlarını (sayfa sayısı, biçim, teslim tarihi) öğretmeninin yönergesinden kontrol edip listeye ekle.",
             "Teslimden önce listeyi baştan sona oku ve tamamladığın her maddenin yanına tik koy; eksik varsa tamamla.",
             "Listeyi sakla; bir sonraki ödevde tekrar kullanabilirsin.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Tüm maddeleri tikli bir kontrol listen var.",
@@ -3262,6 +3345,8 @@ DETAY: dict[str, dict] = {
             "Konuyu çalışırken her adımı numaralandırarak alt alta yaz. Örneğin: \"1. Denklemi düzenle. 2. Katsayıları bul. 3. Diskriminantı hesapla.\"",
             "Her adımın altına kısa bir örnek ekle.",
             "Notunu kullanarak bir soruyu baştan sona çöz; atlanan bir adım varsa notuna ekle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Numaralı adımlarla yazılmış bir konu notun var.",
@@ -3292,6 +3377,8 @@ DETAY: dict[str, dict] = {
             "Örnek: Kitaptaki ya da öğretmeninin çözdüğü bir örneği adım adım incele; sonra kendi başına 5–10 soru çöz.",
             "Tekrar: 1–2 gün sonra özetini 5 dakika gözden geçir ve yanlış yaptığın soruları tekrar çöz.",
             "Bir takvimde şablonu uyguladığın her günü işaretle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "4 hafta boyunca şablonu uyguladığın günler takviminde işaretli.",
@@ -3364,6 +3451,8 @@ DETAY: dict[str, dict] = {
             "Ortadan dışarıya ana dallar çiz ve her dala bir alt başlık yaz (ör. \"Organeller\", \"Hücre zarı\", \"Bölünme\"); her ana dal için farklı renk kullan.",
             "Ana dallardan daha ince dallar çıkar ve her birine 1–3 kelimelik anahtar bilgiler ekle; uzun cümle yazma.",
             "Konuyu çalışırken haritanı yanında tut ve öğrendikçe yeni dallar ekle.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "En az 2 farklı konu için tek sayfalık zihin haritan var.",
@@ -3392,6 +3481,8 @@ DETAY: dict[str, dict] = {
             "Bağlantıyı 2–3 cümleyle yaz: Bu iki konu nasıl birbirine bağlı?",
             "Bu bağlantıyı bir arkadaşına anlat ve ona mantıklı gelip gelmediğini sor.",
             "Her hafta bir yeni bağlantı bulmayı hedefle ve hepsini defterinde \"Bağlantılarım\" başlıklı bir sayfada topla.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu süre bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi çoğu kişide yaklaşık 2 ay sürer; işe yaradıysa en az 8 hafta sürdür ve kaç gün yaptığını haftalık olarak say (ör. 7 günde 5).",
         ],
         "kontrol": [
             "Defterinde en az 3 disiplinler arası bağlantı yazılı.",
@@ -3466,6 +3557,7 @@ DETAY: dict[str, dict] = {
             "Bu hatalardan bir kontrol listesi hazırla: Teslimden önce kontrol edeceğin 5–8 maddeyi alt alta yaz.",
             "Her ödev ve sınav teslimin öncesinde 5 dakika ayırıp listeyi madde madde kontrol et.",
             "Her teslimden sonra bulduğun ve düzelttiğin hataları say ve bir kâğıda tarihiyle yaz.",
+            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Kendi hatalarına göre hazırlanmış bir kontrol listen var.",
