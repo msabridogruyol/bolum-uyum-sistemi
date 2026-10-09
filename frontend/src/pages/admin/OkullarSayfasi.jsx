@@ -1,9 +1,10 @@
-// [2026-10-09] Okullar — öğrenci sayfalarının sol menüsünde gösterilen okul adı + amblemi.
-// Birden fazla okul kaydedilebilir; aynı anda yalnızca biri "gösterilen" olur.
+// [2026-10-09] Okullar (süper admin) — okul kaydı (ad + amblem) ve her okulun paneline geçiş.
+// Öğrenci hesapları, okul yetkilileri, istatistik ve kayıtlar okulun panelinden yönetilir (OkulPaneliSayfasi).
 import { useEffect, useState } from 'react'
+import { Link } from 'react-router-dom'
 import { api } from '../../api/client'
 
-const BOS_FORM = { id: null, ad: '', alt_baslik: 'iş birliğiyle', logo: null, aktif_mi: true }
+const BOS_FORM = { id: null, ad: '', alt_baslik: '', logo: null, aktif_mi: true }
 const LOGO_PIKSEL = 256          // raster amblemler bu boyuta küçültülür
 const SVG_EN_FAZLA = 300_000     // SVG dosyaları olduğu gibi saklanır
 
@@ -55,13 +56,16 @@ function Onizleme({ ad, alt_baslik, logo }) {
 
 export default function OkullarSayfasi() {
   const [okullar, setOkullar] = useState(null)
+  const [haric, setHaric] = useState(0)
   const [form, setForm] = useState(null)          // null = form kapalı
+  const [silme, setSilme] = useState(null)        // { okul, hedef }
   const [hata, setHata] = useState(null)
   const [bilgi, setBilgi] = useState(null)
   const [isleniyor, setIsleniyor] = useState(false)
 
   function yukle() {
     api.okullariListele().then(setOkullar).catch((e) => setHata(e.detail || 'Okullar yüklenemedi.'))
+    api.yonetimOkullar().then((l) => setHaric(l.find((x) => x.id === 0)?.ogrenci_sayisi || 0)).catch(() => {})
   }
   useEffect(yukle, [])
 
@@ -71,12 +75,8 @@ export default function OkullarSayfasi() {
     const dosya = e.target.files?.[0]
     e.target.value = ''
     if (!dosya) return
-    try {
-      const logo = await amblemiHazirla(dosya)
-      setForm((f) => ({ ...f, logo }))
-    } catch (err) {
-      setHata(err.message)
-    }
+    try { setForm((f) => ({ ...f, logo: null })); const logo = await amblemiHazirla(dosya); setForm((f) => ({ ...f, logo })) }
+    catch (err) { setHata(err.message) }
   }
 
   async function kaydet(e) {
@@ -87,59 +87,32 @@ export default function OkullarSayfasi() {
       const veri = { ad: form.ad, alt_baslik: form.alt_baslik, logo: form.logo ?? '', aktif_mi: form.aktif_mi }
       if (form.id) await api.okulGuncelle(form.id, veri)
       else await api.okulEkle(veri)
-      setForm(null)
-      yukle()
-      mesaj('Kaydedildi. Öğrenciler sayfayı yenilediğinde yeni hali görür.')
-    } catch (err) {
-      setHata(err.detail || 'Kaydedilemedi.')
-    } finally {
-      setIsleniyor(false)
-    }
+      setForm(null); yukle(); mesaj('Kaydedildi.')
+    } catch (err) { setHata(err.detail || 'Kaydedilemedi.') } finally { setIsleniyor(false) }
   }
 
-  async function goster(o) {
-    try { await api.okulAktifYap(o.id); yukle(); mesaj(`"${o.ad}" artık öğrenci sayfalarında gösteriliyor.`) }
-    catch (err) { setHata(err.detail || 'İşlem başarısız.') }
+  async function sil() {
+    setIsleniyor(true); setHata(null)
+    try {
+      await api.okulSil(silme.okul.id, silme.okul.ogrenci_sayisi ? Number(silme.hedef) : undefined)
+      setSilme(null); yukle(); mesaj(`"${silme.okul.ad}" silindi.`)
+    } catch (err) { setHata(err.detail || 'Silinemedi.') } finally { setIsleniyor(false) }
   }
-
-  async function hicbiriniGosterme() {
-    try { await api.okulGizle(); yukle(); mesaj('Öğrenci sayfalarında okul gösterilmiyor.') }
-    catch (err) { setHata(err.detail || 'İşlem başarısız.') }
-  }
-
-  async function sil(o) {
-    if (!window.confirm(`"${o.ad}" kalıcı olarak silinsin mi?`)) return
-    try { await api.okulSil(o.id); yukle(); mesaj('Okul silindi.') }
-    catch (err) { setHata(err.detail || 'Silinemedi.') }
-  }
-
-  const gosterilen = okullar?.find((o) => o.aktif_mi)
 
   return (
     <div className="pg pg-genis">
-      <div className="ph">
-        <div className="pt">Okullar</div>
-        <div className="ps">
-          Öğrenci sayfalarının sol menüsünde görünen okul adı ve amblemi. Birden fazla okul kaydedebilirsiniz;
-          aynı anda yalnızca biri gösterilir.
+      <div className="ph" style={{ display: 'flex', alignItems: 'flex-end', gap: 12, flexWrap: 'wrap' }}>
+        <div style={{ flex: 1, minWidth: 260 }}>
+          <div className="pt">Okullar</div>
+          <div className="ps">
+            Her okulun öğrenci hesapları, okul yetkilileri, istatistikleri ve kayıtları kendi panelinden yönetilir.
+            Öğrenciler sol menüde kendi okullarının amblemini görür.
+          </div>
         </div>
+        {!form && <button className="btn" onClick={() => { setForm({ ...BOS_FORM }); setHata(null) }}>+ Yeni Okul</button>}
       </div>
       {hata && <div className="auth-error">{hata}</div>}
       {bilgi && <div className="card" style={{ background: 'var(--grl)', borderColor: 'var(--gr)', padding: '12px 16px', fontSize: 13 }}>{bilgi}</div>}
-
-      <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
-        <div style={{ flex: 1, minWidth: 220 }}>
-          <div className="ct" style={{ marginBottom: 4 }}>Şu an gösterilen</div>
-          <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>
-            {gosterilen ? 'Öğrenciler sol menüde bunu görüyor.' : 'Hiçbir okul gösterilmiyor.'}
-          </div>
-        </div>
-        {gosterilen && <Onizleme {...gosterilen} />}
-        <div style={{ display: 'flex', gap: 8 }}>
-          {!form && <button className="btn" onClick={() => { setForm({ ...BOS_FORM }); setHata(null) }}>+ Yeni Okul</button>}
-          {gosterilen && <button className="btn sec" onClick={hicbiriniGosterme}>Okul gösterme</button>}
-        </div>
-      </div>
 
       {form && (
         <form className="card" onSubmit={kaydet}>
@@ -154,7 +127,7 @@ export default function OkullarSayfasi() {
                      onChange={(e) => setForm({ ...form, alt_baslik: e.target.value })} placeholder="Örn: iş birliğiyle" />
               <label style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 14, fontSize: 13, cursor: 'pointer' }}>
                 <input type="checkbox" checked={!!form.aktif_mi} onChange={(e) => setForm({ ...form, aktif_mi: e.target.checked })} />
-                Öğrenci sayfalarında bu okulu göster
+                Amblemi bu okulun öğrencilerine göster
               </label>
             </div>
             <div>
@@ -169,7 +142,7 @@ export default function OkullarSayfasi() {
               <div style={{ fontSize: 11.5, color: 'var(--tx3)', marginBottom: 12 }}>
                 PNG, JPEG, WEBP veya SVG. Şeffaf arka planlı kare görseller en iyi sonucu verir; büyük görseller otomatik küçültülür.
               </div>
-              <label className="auth-label">Önizleme (sol menüde böyle görünür)</label>
+              <label className="auth-label">Önizleme (öğrencinin sol menüsünde)</label>
               <Onizleme {...form} />
             </div>
           </div>
@@ -180,30 +153,55 @@ export default function OkullarSayfasi() {
         </form>
       )}
 
-      <div className="ct" style={{ marginTop: 20 }}>Kayıtlı Okullar</div>
-      {!okullar ? (
-        <div className="bos-durum">Yükleniyor…</div>
-      ) : okullar.length === 0 ? (
-        <div className="bos-durum">Henüz okul eklenmedi.</div>
-      ) : (
-        <div className="ll">
+      {!okullar ? <div className="bos-durum">Yükleniyor…</div> : (
+        <div className="yp-okul-grid">
           {okullar.map((o) => (
-            <div key={o.id} className="lc" style={{ cursor: 'default' }}>
-              {o.logo
-                ? <img src={o.logo} alt="" className="okul-amblem" />
-                : <div className="okul-amblem okul-amblem-bos">🏫</div>}
-              <div className="lb-wrap" style={{ flex: 1 }}>
-                <div className="lt">{o.ad}</div>
-                <div className="ld">{o.alt_baslik || '—'}</div>
-                {o.aktif_mi && <span className="bdg bdg-done">Gösteriliyor</span>}
+            <div key={o.id} className="yp-okul-kart">
+              <Link to={`/admin/okul/${o.id}`} className="yp-okul-kart-ust">
+                {o.logo ? <img src={o.logo} alt="" className="yp-okul-logo" /> : <div className="yp-okul-logo yp-okul-logo-bos">🏫</div>}
+                <div style={{ minWidth: 0 }}>
+                  <div className="lt">{o.ad}</div>
+                  <div className="yp-ince">{o.alt_baslik || (o.aktif_mi ? 'Amblem gösteriliyor' : 'Amblem gizli')}</div>
+                </div>
+              </Link>
+              <div className="yp-okul-sayilar">
+                <div><b>{o.ogrenci_sayisi}</b><span>öğrenci</span></div>
+                <div><b>{o.yetkili_sayisi}</b><span>okul yetkilisi</span></div>
               </div>
-              <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-                {!o.aktif_mi && <button className="btn" onClick={() => goster(o)}>Göster</button>}
-                <button className="btn sec" onClick={() => { setForm({ ...o }); setHata(null); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Düzenle</button>
-                <button className="btn sec" onClick={() => sil(o)}>Sil</button>
-              </div>
+              {silme?.okul.id === o.id ? (
+                <div className="yp-okul-sil">
+                  {o.ogrenci_sayisi > 0 ? (
+                    <>
+                      <span>{o.ogrenci_sayisi} öğrenci şuraya aktarılsın:</span>
+                      <select className="yp-sec" value={silme.hedef} onChange={(e) => setSilme({ ...silme, hedef: e.target.value })}>
+                        <option value={0}>Okul harici</option>
+                        {okullar.filter((x) => x.id !== o.id).map((x) => <option key={x.id} value={x.id}>{x.ad}</option>)}
+                      </select>
+                    </>
+                  ) : <span>Okul silinsin mi?</span>}
+                  {o.yetkili_sayisi > 0 && <span style={{ color: 'var(--re)' }}>{o.yetkili_sayisi} okul yetkilisi hesabı da silinir.</span>}
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button className="btn yp-tehlike" disabled={isleniyor} onClick={sil}>Sil</button>
+                    <button className="btn sec" onClick={() => setSilme(null)}>Vazgeç</button>
+                  </div>
+                </div>
+              ) : (
+                <div className="yp-okul-aksiyon">
+                  <Link to={`/admin/okul/${o.id}`} className="btn">Paneli aç →</Link>
+                  <button className="btn sec" onClick={() => { setForm({ ...o }); setHata(null); window.scrollTo({ top: 0, behavior: 'smooth' }) }}>Düzenle</button>
+                  <button className="yp-mini" title="Sil" onClick={() => setSilme({ okul: o, hedef: 0 })}>🗑</button>
+                </div>
+              )}
             </div>
           ))}
+          <div className="yp-okul-kart yp-okul-kart-haric">
+            <Link to="/admin/okul/0" className="yp-okul-kart-ust">
+              <div className="yp-okul-logo yp-okul-logo-bos">👤</div>
+              <div><div className="lt">Okul harici öğrenciler</div><div className="yp-ince">Bir okula bağlı olmayan bireysel hesaplar (yalnızca süper admin)</div></div>
+            </Link>
+            <div className="yp-okul-sayilar"><div><b>{haric}</b><span>öğrenci</span></div></div>
+            <div className="yp-okul-aksiyon"><Link to="/admin/okul/0" className="btn">Paneli aç →</Link></div>
+          </div>
         </div>
       )}
     </div>
