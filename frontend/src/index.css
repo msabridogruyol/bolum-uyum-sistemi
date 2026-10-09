@@ -600,3 +600,22 @@ button,input{font-family:inherit}
 @media (max-width:760px){.pg{padding:18px 14px}}
 /* [2026-10-09] Ayarlar: geniş ekranda Kişisel Bilgiler ve Hedeflerin yan yana */
 @media (min-width:1200px){.profil-form{display:grid;grid-template-columns:1fr 1fr;gap:16px;align-items:start}.profil-form>.card{margin:0}.profil-form>:not(.card){grid-column:1/-1}.profil-form>button{justify-self:start}}
+
+/* ===================== [2026-10-09] Koçluk adım kartı: "Nasıl yaparsın?" + "Nasıl anlarsın?" ===================== */
+.adim-kart{border:1px solid var(--bor);background:var(--sur);border-radius:12px;padding:12px;margin-bottom:10px}
+.adim-kart.vurgulu{border:2px solid var(--pu);background:var(--pul)}
+.adim-kart.bitti{opacity:.6}
+.koc-adim-grid{align-items:start}
+.adim-ac{display:inline-flex;align-items:center;gap:6px;border:1.5px dashed var(--pum);background:transparent;color:var(--pu);font-family:var(--fn);font-size:12px;font-weight:700;padding:5px 10px;border-radius:9px;cursor:pointer;margin-bottom:4px}
+.adim-ac:hover{background:var(--pul);border-style:solid}
+.adim-detay{background:var(--sur2);border-radius:10px;padding:10px 12px;margin:6px 0 10px}
+.adim-kart.vurgulu .adim-detay{background:var(--sur)}
+.adim-detay-baslik{font-size:12px;font-weight:800;color:var(--tx);margin:4px 0 6px}
+.adim-detay-baslik span{font-weight:500;color:var(--tx3)}
+.adim-nasil{margin:0 0 10px;padding-left:20px;font-size:12.5px;line-height:1.55;color:var(--tx2)}
+.adim-nasil li{margin-bottom:5px;padding-left:2px}
+.adim-nasil li::marker{font-weight:800;color:var(--pu)}
+.adim-kontrol{list-style:none;margin:0 0 8px;padding:0;font-size:12.5px;line-height:1.5;color:var(--tx2)}
+.adim-kontrol li{position:relative;padding-left:24px;margin-bottom:5px}
+.adim-kontrol li::before{content:'';position:absolute;left:2px;top:2px;width:13px;height:13px;border:2px solid var(--gr);border-radius:4px}
+.adim-ipucu{font-size:12px;color:var(--tx2);background:var(--aml);border-radius:8px;padding:7px 10px;line-height:1.45}
