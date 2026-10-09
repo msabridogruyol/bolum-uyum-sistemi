@@ -148,6 +148,7 @@ export const api = {
   profilGetir: () => get('/ogrenci/profil'),
   profilGuncelle: (veri) => put('/ogrenci/profil', veri),
   sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri),
+  ilkSifreBelirle: (yeniSifre) => post('/ogrenci/profil/ilk-sifre', { yeni_sifre: yeniSifre }),  // [2026-10-09] geçici şifreden sonra
   profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
   meslekAra: (q) => get(`/ogrenci/meslek-ara?q=${encodeURIComponent(q)}`),
   katmanSonucuGetir: (kod) => get(`/ogrenci/katmanlar/${kod}/sonuc`),
@@ -246,14 +247,31 @@ export const api = {
   soruMetniGuncelle: (soruId, soruMetni) => aput(`/admin/sorular-detay/soru/${soruId}`, { soru_metni: soruMetni }),
   secenekMetniGuncelle: (secenekId, secenekMetni) => aput(`/admin/sorular-detay/secenek/${secenekId}`, { secenek_metni: secenekMetni }),
   dallariDetayliListele: () => aget('/admin/sorular-detay/dallar-detay'),
-  // [2026-10-09] Okul markası
-  okulAktif: () => get('/okul/aktif'),
+  // [2026-10-09] Okullar (süper admin) + öğrencinin kendi okul rozeti
+  okulBenim: () => get('/okul/benim'),
   okullariListele: () => aget('/admin/okullar'),
   okulEkle: (veri) => apost('/admin/okullar', veri),
   okulGuncelle: (id, veri) => aput(`/admin/okullar/${id}`, veri),
-  okulAktifYap: (id) => apost(`/admin/okullar/${id}/aktif-yap`),
-  okulGizle: () => apost('/admin/okullar/gizle'),
-  okulSil: (id) => adel(`/admin/okullar/${id}`),
+  okulSil: (id, hedefId) => adel(`/admin/okullar/${id}${hedefId !== undefined && hedefId !== null ? `?hedef_id=${hedefId}` : ''}`),
+  // [2026-10-09] Okul bazlı yönetim (süper admin + okul yetkilisi) — okulId 0 = okul harici
+  yonetimBen: () => aget('/yonetim/ben'),
+  yonetimIlkSifre: (yeniSifre) => apost('/yonetim/ben/ilk-sifre', { yeni_sifre: yeniSifre }),
+  yonetimOkullar: () => aget('/yonetim/okullar'),
+  okulOzeti: (okulId) => aget(`/yonetim/okul/${okulId}/ozet`),
+  okulOgrencileri: (okulId) => aget(`/yonetim/okul/${okulId}/ogrenciler`),
+  yuklemeSablonu: () => aget('/yonetim/sablon'),
+  ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),
+  ogrencileriOlustur: (okulId, ogrenciler) => apost(`/yonetim/okul/${okulId}/ogrenciler`, { ogrenciler }),
+  ogrenciDetayi: (id) => aget(`/yonetim/ogrenci/${id}`),
+  ogrenciDuzenle: (id, veri) => aput(`/yonetim/ogrenci/${id}`, veri),
+  ogrenciOkulDegistir: (id, okulId) => apost(`/yonetim/ogrenci/${id}/okul`, { okul_id: okulId }),
+  ogrenciSifreleriniSifirla: (idler) => apost('/yonetim/ogrenciler/sifre-sifirla', { idler }),
+  ogrencileriSil: (idler) => apost('/yonetim/ogrenciler/sil', { idler }),
+  okulYetkilileri: (okulId) => aget(`/yonetim/okul/${okulId}/yetkililer`),
+  okulYetkilisiEkle: (okulId, veri) => apost(`/yonetim/okul/${okulId}/yetkililer`, veri),
+  okulYetkilisiSifreSifirla: (id) => apost(`/yonetim/yetkili/${id}/sifre-sifirla`),
+  okulYetkilisiSil: (id) => adel(`/yonetim/yetkili/${id}`),
+  okulKayitlari: (okulId, gun = 30) => aget(`/yonetim/okul/${okulId}/kayitlar?gun=${gun}`),
   gelisimKaynakDegiskenleriGetir: (katmanKod) => {
     const p = new URLSearchParams()
     if (katmanKod) p.set('katman_kod', katmanKod)
@@ -297,5 +315,5 @@ export const api = {
   uyumDetayiGetir: (ogrenciId, bolumId) => aget(`/admin/uyum-detay/${ogrenciId}/${bolumId}`),
   yoneticileriListele: () => aget('/admin/yoneticiler'),
   yoneticiEkle: (veri) => apost('/admin/yoneticiler', veri),
-  yoneticiRolGuncelle: (yoneticiId, yeniRol) => aput(`/admin/yoneticiler/${yoneticiId}/rol`, { yeni_rol: yeniRol }),
+  yoneticiSil: (yoneticiId) => adel(`/admin/yoneticiler/${yoneticiId}`),
 }
