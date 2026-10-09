@@ -29,7 +29,7 @@ export default function OkulRozeti() {
         <span className="okul-rozeti-i" aria-hidden="true">i</span>
       </button>
       {acik && (
-        <Pencere baslik="Okulum" onKapat={() => setAcik(false)}>
+        <Pencere baslik="Okulum" sinif="okb-pencere" onKapat={() => setAcik(false)}>
           <OkulBilgiKarti okul={okul} />
         </Pencere>
       )}
