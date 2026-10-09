@@ -18,6 +18,7 @@ from app.models import (
 from app.core.katman_servisi import IsKuraliHatasi
 from app.core.skor_motoru import _katman_ici_olcekle
 from app.core.gelisim_icerigi import ICERIK, TUR_ETIKET, ASAMA_SIRASI, adim_kodu
+from app.core.gelisim_detay import DETAY
 import numpy as np
 
 
@@ -345,6 +346,10 @@ def _adim(kod_deg: str, ad: str, grup: str, sira: int, ham: tuple, bolum: str, d
         "baslik": baslik, "aciklama": aciklama.replace("{bolum}", bolum),
         "tur": tur, "tur_etiket": TUR_ETIKET.get(tur, tur), "sure": sure,
         "olcut": olcut.replace("{bolum}", bolum), "durum": durumlar.get(kod),
+        # [2026-10-09] öğrencinin anlayacağı düzeyde adım adım uygulama + kontrol listesi
+        "nasil": [m.replace("{bolum}", bolum) for m in DETAY.get(kod, {}).get("nasil", [])],
+        "kontrol": [m.replace("{bolum}", bolum) for m in DETAY.get(kod, {}).get("kontrol", [])],
+        "ipucu": (DETAY.get(kod, {}).get("ipucu") or "").replace("{bolum}", bolum) or None,
     }
 
 
