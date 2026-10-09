@@ -25,6 +25,9 @@ POST   /yonetim/okul/{okul_id}/yetkililer        — (süper admin) okul yetkili
 POST   /yonetim/yetkili/{id}/sifre-sifirla       — (süper admin) yetkiliye yeni geçici şifre
 DELETE /yonetim/yetkili/{id}                     — (süper admin) yetkiliyi sil
 GET    /yonetim/okul/{okul_id}/kayitlar          — okulun işlem kayıtları (yönetim işlemleri + öğrenci giriş/şifre olayları)
+PUT    /yonetim/ogrenci/{id}/hedef               — öğrencinin hedef bölümünü değiştir (öğrencinin hakkından düşmez)
+POST   /yonetim/ogrenci/{id}/hedef-hakki         — öğrenciye ek hedef değiştirme hakkı ver
+GET    /yonetim/bolumler                         — hedef seçimi için yayındaki bölümler
 PUT    /yonetim/okul/{okul_id}/tema             — okul rengi (#RRGGBB; boş = Filizyol rengi) — okul yetkilisi + süper admin
 GET    /yonetim/okul/{okul_id}/bilgi             — okul tanıtım bilgileri (kuruluş yılı, öğrenci sayısı, tanıtım, iletişim, kadro)
 PUT    /yonetim/okul/{okul_id}/bilgi             — tanıtım bilgilerini güncelle (okul yetkilisi + süper admin)
@@ -49,6 +52,8 @@ from app.core.hesap_yonetimi import (
     denetim_yaz, gecici_sifre, ogrenciyi_sil, olay_yaz, simdi, yapan_etiketi,
 )
 from app.core.security import sifre_dogrula, sifre_hashle
+from app.core.koclugu_servisi import hedef_sec, hedef_hak_durumu
+from app.core.katman_servisi import IsKuraliHatasi
 from app.models import AdminKullanici, AuditLog, Bolum, Ogrenci, OgrenciHesapOlayi, Okul
 
 router = APIRouter(prefix="/yonetim", tags=["Okul yönetimi"])
@@ -67,6 +72,8 @@ OLAY_ETIKET = {
     "okul_degisti": "Okulu değiştirildi",
     "katman_basladi": "Test bölümüne başladı",
     "katman_bitti": "Test bölümünü tamamladı",
+    "hedef_degisti": "Hedef bölümü değiştirildi (yönetim)",
+    "hedef_hakki": "Hedef değiştirme hakkı verildi",
 }
 
 
@@ -611,7 +618,7 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
     if il and il.get("hedef"):
         uyum = db.execute(text("SELECT toplam_uyum FROM ogrenci_bolum_uyum_skorlari WHERE ogrenci_id = :o AND bolum_id = :b "
                                "ORDER BY tur_id DESC LIMIT 1"), {"o": o.id, "b": il["hedef"]}).scalar()
-        hedef = {"bolum": adlar.get(il["hedef"]), "uyum": round(float(uyum), 1) if uyum is not None else None}
+        hedef = {"bolum": adlar.get(il["hedef"]), "bolum_id": il["hedef"], "uyum": round(float(uyum), 1) if uyum is not None else None}
 
     okul = db.get(Okul, o.okul_id) if o.okul_id else None
     return {
@@ -631,7 +638,7 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
                                                               OgrenciHesapOlayi.olay == "giris").count(),
         },
         "turlar": tur_listesi,
-        "oneriler": oneriler, "sonuc_notu": sonuc_notu, "hedef": hedef,
+        "oneriler": oneriler, "sonuc_notu": sonuc_notu, "hedef": hedef, "hedef_hak": hedef_hak_durumu(o),
         "kayitlar": _ogrenci_kayitlari(db, o, katmanlar),
     }
 
@@ -955,3 +962,51 @@ def okul_tema_guncelle(okul_id: int, istek: TemaIstek, db: Session = Depends(get
     denetim_yaz(db, yon, "okul_tema_guncelle", "okullar", okul.id, f"{okul.ad}: okul rengi {okul.tema_renk or 'varsayılan'}", okul.id)
     db.commit()
     return {"tema_renk": okul.tema_renk}
+
+
+# ----------------------------------------------------------------------------- hedef bölüm yönetimi
+class YonetimHedefIstek(BaseModel):
+    bolum_id: int
+
+
+class HedefHakkiIstek(BaseModel):
+    ek: int = 1
+
+
+@router.put("/ogrenci/{ogrenci_id}/hedef")
+def ogrenci_hedef_degistir(ogrenci_id: str, istek: YonetimHedefIstek, db: Session = Depends(get_db),
+                           yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-09] Okul yetkilisi / süper admin öğrencinin hedef bölümünü değiştirir; öğrencinin hakkından düşmez."""
+    o = _ogrenci_kapsami(db, yon, ogrenci_id)
+    bolum = db.get(Bolum, istek.bolum_id)
+    if bolum is None:
+        raise HTTPException(status_code=404, detail="Bölüm bulunamadı.")
+    try:
+        hedef_sec(db, o, bolum.id, onay=True, yonetici=True)
+    except IsKuraliHatasi as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    olay_yaz(db, o.id, "hedef_degisti", f"Hedef bölüm: {bolum.ad}", yapan_etiketi(yon))
+    denetim_yaz(db, yon, "ogrenci_hedef_degistir", "ogrenciler", o.id, f"{o.ad_soyad}: hedef → {bolum.ad}", o.okul_id)
+    db.commit()
+    return {"hedef": {"bolum": bolum.ad, "bolum_id": bolum.id}, "hedef_hak": hedef_hak_durumu(o)}
+
+
+@router.post("/ogrenci/{ogrenci_id}/hedef-hakki")
+def ogrenci_hedef_hakki_ver(ogrenci_id: str, istek: HedefHakkiIstek, db: Session = Depends(get_db),
+                            yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-09] Öğrenciye ek hedef değiştirme hakkı (1–5)."""
+    o = _ogrenci_kapsami(db, yon, ogrenci_id)
+    if not 1 <= istek.ek <= 5:
+        raise HTTPException(status_code=400, detail="Tek seferde 1 ile 5 arasında hak verilebilir.")
+    o.hedef_degisim_hakki = int(o.hedef_degisim_hakki if o.hedef_degisim_hakki is not None else 3) + istek.ek
+    olay_yaz(db, o.id, "hedef_hakki", f"+{istek.ek} hedef değiştirme hakkı verildi", yapan_etiketi(yon))
+    denetim_yaz(db, yon, "ogrenci_hedef_hakki", "ogrenciler", o.id, f"{o.ad_soyad}: +{istek.ek} hedef değiştirme hakkı", o.okul_id)
+    db.commit()
+    return {"hedef_hak": hedef_hak_durumu(o)}
+
+
+@router.get("/bolumler")
+def yonetim_bolumler(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-09] Hedef bölüm seçimi için yayındaki bölümler (id, ad)."""
+    return [{"id": b.id, "ad": b.ad} for b in db.query(Bolum).filter(Bolum.durum == "yayinda").order_by(Bolum.ad).all()]
