@@ -82,8 +82,8 @@ export default function AnaSayfa() {
 
   return (
     <div className="pg pg-genis">
-      <div className="ph anasayfa-duzen" style={{ alignItems: 'flex-start' }}>
-        <div>
+      <div className="ph anasayfa-baslik">
+        <div className="ab-metin">
           <div className="pt">Merhaba, {ilkAd} 👋</div>
           <div className="ps">
             {ozet.tur_tamamlandi_mi
@@ -93,17 +93,7 @@ export default function AnaSayfa() {
         </div>
 
         {hedefBolumAdi && (
-          <div
-            onClick={() => navigate('/koclugu')}
-            style={{
-              cursor: 'pointer',
-              background: 'linear-gradient(135deg, var(--pu) 0%, #f0a868 100%)',
-              borderRadius: 16,
-              padding: '14px 22px',
-              boxShadow: '0 6px 18px -6px rgba(232, 128, 74, 0.55)',
-              width: '100%',
-            }}
-          >
+          <div className="hedef-kart" onClick={() => navigate('/koclugu')} title="Hedef bölüm koçluğuna git">
             <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.85)', letterSpacing: 0.6, textTransform: 'uppercase' }}>
               🎯 Hedef
             </div>
