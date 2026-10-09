@@ -157,6 +157,7 @@ export const api = {
   // --- Bölüm F: Koçluk ---
   aktifHedefGetir: () => get('/koclugu/hedef'),
   hedefSec: (bolumId, onay = false) => post('/koclugu/hedef', { bolum_id: bolumId, onay }),
+  hedefDurumGetir: () => get('/koclugu/hedef/durum'),
   gelisimAnaliziGetir: () => get('/koclugu/hedef/gelisim'),
   yolHaritasiGetir: () => get('/koclugu/hedef/yol-haritasi'),
   aksiyonDurumuGuncelle: (degiskenId, durum) => post(`/koclugu/hedef/aksiyon/${degiskenId}`, { durum }),
@@ -272,6 +273,9 @@ export const api = {
   okulYetkilisiSifreSifirla: (id) => apost(`/yonetim/yetkili/${id}/sifre-sifirla`),
   okulYetkilisiSil: (id) => adel(`/yonetim/yetkili/${id}`),
   okulKayitlari: (okulId, gun = 30) => aget(`/yonetim/okul/${okulId}/kayitlar?gun=${gun}`),
+  yonetimOgrenciHedef: (ogrenciId, bolumId) => aput(`/yonetim/ogrenci/${ogrenciId}/hedef`, { bolum_id: bolumId }),
+  yonetimHedefHakki: (ogrenciId, ek = 1) => apost(`/yonetim/ogrenci/${ogrenciId}/hedef-hakki`, { ek }),
+  yonetimBolumler: () => aget('/yonetim/bolumler'),
   okulTemaKaydet: (okulId, renk) => aput(`/yonetim/okul/${okulId}/tema`, { renk }),
   // [2026-10-09] Meslek dili sözlüğü — okulId 0 = genel sürüm (süper admin)
   meslekDiliListe: (okulId) => aget(`/yonetim/meslek-dili?okul_id=${okulId}`),
