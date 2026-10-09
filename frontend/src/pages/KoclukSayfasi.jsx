@@ -126,8 +126,70 @@ const SEKMELER = [
   { kod: 'yol', ad: 'Yol Haritam', ikon: '🗺️' },
   { kod: 'guclu', ad: 'Güçlü Yönlerin', ikon: '💪' },
   { kod: 'karsilastirma', ad: 'Bölümle Karşılaştırma', ikon: '📊' },
+  { kod: 'ilham', ad: 'İlham Kaynakları', ikon: '📚' },
   { kod: 'gelisim', ad: 'Gelişimin', ikon: '📈' },
 ]
+
+// [2026-10-09] İlham kaynakları — yönetimdeki "Gelişim Kaynak Havuzu" öğrencinin odak ve güçlü alanlarına göre
+const KAYNAK_TIP = {
+  kitap: { ad: 'Kitap', ikon: '📖', renk: 'var(--pu)', zemin: 'var(--pul)' },
+  film: { ad: 'Film / Belgesel', ikon: '🎬', renk: 'var(--am)', zemin: 'var(--aml)' },
+  rol_model: { ad: 'İlham veren kişi', ikon: '🌟', renk: 'var(--gr)', zemin: 'var(--grl)' },
+  olay: { ad: 'Önemli olay', ikon: '🗓️', renk: 'var(--tl)', zemin: 'var(--tll)' },
+  psikolojik_yaklasim: { ad: 'Yaklaşım', ikon: '🧠', renk: 'var(--tl)', zemin: 'var(--tll)' },
+  aktivite: { ad: 'Aktivite', ikon: '🎯', renk: 'var(--re)', zemin: 'var(--rel)' },
+}
+
+function filizeSor(k, alan) {
+  window.dispatchEvent(new CustomEvent('filiz-ac', { detail: { mesaj: `"${k.baslik}" (${KAYNAK_TIP[k.tip]?.ad || k.tip}) bana ${alan} konusunda nasıl yardımcı olabilir? Nereden başlamalıyım?` } }))
+}
+
+function KaynakKarti({ k, alan }) {
+  const t = KAYNAK_TIP[k.tip] || { ad: k.tip, ikon: '•', renk: 'var(--tx2)', zemin: 'var(--sur2)' }
+  return (
+    <div className="ilham-kart">
+      <span className="ilham-tip" style={{ color: t.renk, background: t.zemin }}>{t.ikon} {t.ad}</span>
+      <div className="ilham-baslik">{k.baslik}</div>
+      <div className="ilham-aciklama">{k.aciklama}</div>
+      <button className="hg-link ilham-sor" onClick={() => filizeSor(k, alan)}>💬 Filiz'e sor</button>
+    </div>
+  )
+}
+
+function IlhamSekmesi({ kaynaklar }) {
+  const [tip, setTip] = useState('')
+  if (!kaynaklar) return <div className="bos-durum">Kaynaklar hazırlanıyor…</div>
+  const tipler = [...new Set(kaynaklar.alanlar.flatMap((a) => a.kaynaklar.map((k) => k.tip)))]
+  const gruplar = [['gelisim', '🌱 Gelişim alanların için'], ['guclu', '💪 Güçlü yönlerini büyütmek için']]
+  return (
+    <>
+      <div className="ps" style={{ margin: '0 0 12px' }}>
+        Senin gelişim ve güçlü alanlarına göre seçilmiş kitaplar, filmler, ilham veren kişiler ve önemli olaylar. Birini seç, merak ettiğini Filiz'e sor.
+      </div>
+      {tipler.length > 1 && (
+        <div className="ca-filtre">
+          <button className={`ca-cip${!tip ? ' aktif' : ''}`} onClick={() => setTip('')}>Tümü</button>
+          {tipler.map((x) => <button key={x} className={`ca-cip${tip === x ? ' aktif' : ''}`} onClick={() => setTip(x)}>{KAYNAK_TIP[x]?.ikon} {KAYNAK_TIP[x]?.ad || x}</button>)}
+        </div>
+      )}
+      {gruplar.map(([g, baslik]) => {
+        const alanlar = kaynaklar.alanlar.filter((a) => a.grup === g)
+          .map((a) => ({ ...a, liste: a.kaynaklar.filter((k) => !tip || k.tip === tip) })).filter((a) => a.liste.length)
+        if (!alanlar.length) return null
+        return (
+          <Bolum key={g} baslik={baslik}>
+            {alanlar.map((a) => (
+              <div key={a.degisken_kod} style={{ marginBottom: 14 }}>
+                <div className="ilham-alan">{a.degisken_adi} <KategoriRozeti kategori={a.kategori} /></div>
+                <div className="ilham-grid">{a.liste.map((k) => <KaynakKarti key={k.id} k={k} alan={a.degisken_adi} />)}</div>
+              </div>
+            ))}
+          </Bolum>
+        )
+      })}
+    </>
+  )
+}
 
 function Bolum({ baslik, alt, children, sag }) {
   return (
@@ -227,7 +289,7 @@ function OzetSekmesi({ plan, sayac, sekmeyeGit }) {
 // ---------------------------------------------------------------- 2) Yol haritası — her seferinde TEK adım
 // [2026-10-09] Lise öğrencisi için sade akış: ekranda yalnızca şimdiki adım var. "Yaptım" deyince sıradaki gelir.
 // Üstte noktalı ilerleme yolu, altta sıradaki 2 adımın başlığı ve katlanmış "Tamamladıkların" listesi.
-function YolHaritasiSekmesi({ plan, onDurum }) {
+function YolHaritasiSekmesi({ plan, onDurum, kaynaklar, sekmeyeGit }) {
   const [bitenAcik, setBitenAcik] = useState(false)
   if (!plan) return <div className="bos-durum">Plan hazırlanıyor…</div>
   if (plan.odak_alanlari.length === 0) {
@@ -260,6 +322,19 @@ function YolHaritasiSekmesi({ plan, onDurum }) {
         <div key={simdiki.kod} className="yh-simdi">
           <div className="yh-etiket">Şimdiki adımın <span>{simdiki.asama_baslik?.replace(/^\d\. Aşama · /, '')}</span></div>
           <AdimKarti adim={simdiki} onDurum={onDurum} vurgulu />
+          {(() => {
+            const alan = kaynaklar?.alanlar.find((a) => a.degisken_kod === simdiki.degisken_kod)
+            if (!alan) return null
+            return (
+              <div className="yh-ilham">
+                <span className="yh-ilham-bas">📚 Bu alanda ilham al:</span>
+                {alan.kaynaklar.slice(0, 2).map((k) => (
+                  <span key={k.id} className="yh-ilham-oge">{KAYNAK_TIP[k.tip]?.ikon} <b>{k.baslik}</b></span>
+                ))}
+                <button className="hg-link" style={{ color: 'var(--pu)' }} onClick={() => sekmeyeGit('ilham')}>Tümünü gör →</button>
+              </div>
+            )
+          })()}
         </div>
       ) : (
         <div className="card" style={{ textAlign: 'center', padding: 30 }}>
@@ -433,6 +508,7 @@ export default function KoclukSayfasi() {
   const [karsilastirma, setKarsilastirma] = useState(null)
   const [hata, setHata] = useState(null)
   const [kilit, setKilit] = useState(null) // K5 bitmediyse backend 409 döner
+  const [kaynaklar, setKaynaklar] = useState(null)
   const [params, setParams] = useSearchParams()
   const navigate = useNavigate()
   const sekme = SEKMELER.some((s) => s.kod === params.get('sekme')) ? params.get('sekme') : 'ozet'
@@ -456,6 +532,7 @@ export default function KoclukSayfasi() {
     api.gelisimAnaliziGetir().then(setGelisim).catch((e) => (e.status === 409 ? setKilit(e.detail) : setHata(e.detail)))
     api.gelisimPlaniGetir().then(setPlan).catch(() => {})
     api.turKarsilastirmasiGetir().then(setKarsilastirma).catch(() => {})
+    api.ilhamKaynaklariGetir().then(setKaynaklar).catch(() => setKaynaklar({ alanlar: [] }))
   }, [])
 
   useEffect(() => { if (hedef) analiziYukle() }, [hedef, analiziYukle])
@@ -509,7 +586,7 @@ export default function KoclukSayfasi() {
         {veriVar && (
           <>
             <div className="koc-sekmeler" role="tablist">
-              {SEKMELER.map((s) => (
+              {SEKMELER.filter((s) => s.kod !== 'ilham' || (kaynaklar && kaynaklar.alanlar.length > 0)).map((s) => (
                 <button key={s.kod} role="tab" aria-selected={sekme === s.kod} className={sekme === s.kod ? 'aktif' : ''} onClick={() => sekmeyeGit(s.kod)}>
                   <span aria-hidden="true">{s.ikon}</span> {s.ad}
                   {s.kod === 'yol' && plan && plan.ilerleme.toplam > 0 && <span className="koc-cip-sayi">{plan.ilerleme.tamamlanan}/{plan.ilerleme.toplam}</span>}
@@ -517,7 +594,8 @@ export default function KoclukSayfasi() {
               ))}
             </div>
             {sekme === 'ozet' && <OzetSekmesi plan={plan} sayac={sayac} sekmeyeGit={sekmeyeGit} />}
-            {sekme === 'yol' && <YolHaritasiSekmesi plan={plan} onDurum={adimDurumu} />}
+            {sekme === 'yol' && <YolHaritasiSekmesi plan={plan} onDurum={adimDurumu} kaynaklar={kaynaklar} sekmeyeGit={sekmeyeGit} />}
+            {sekme === 'ilham' && <IlhamSekmesi kaynaklar={kaynaklar} />}
             {sekme === 'guclu' && <GucluSekmesi plan={plan} onDurum={adimDurumu} />}
             {sekme === 'karsilastirma' && <KarsilastirmaSekmesi gelisim={gelisim} hedef={hedef} />}
             {sekme === 'gelisim' && <GelisimSekmesi karsilastirma={karsilastirma} />}
