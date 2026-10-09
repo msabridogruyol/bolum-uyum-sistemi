@@ -21,6 +21,7 @@ from app.api.haftalik import router as haftalik_router
 from app.api.bolum_bilgi import router as bolum_bilgi_router
 
 from app.api.okul import genel_router as okul_genel_router, admin_router as okul_admin_router
+from app.api.okul_yonetimi import router as okul_yonetimi_router
 app = FastAPI(
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
@@ -57,7 +58,7 @@ def _kullanici_tipini_belirle(request: Request) -> str:
     if not payload:
         return "anonim"
     rol = payload.get("rol")
-    if rol in ("super_admin", "icerik_editoru"):
+    if rol in ("super_admin", "okul_yetkilisi"):
         return "admin"
     if rol == "ogrenci":
         return "ogrenci"
@@ -132,6 +133,7 @@ app.include_router(haftalik_router, prefix="/haftalik", tags=["Haftalık Görevl
 app.include_router(bolum_bilgi_router, prefix="/bolumler", tags=["Bölüm Bilgi Kartı"])
 app.include_router(okul_genel_router)                       # [2026-10-09] GET /okul/aktif
 app.include_router(okul_admin_router, prefix="/admin")      # [2026-10-09] /admin/okullar
+app.include_router(okul_yonetimi_router)
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
 # yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi,
