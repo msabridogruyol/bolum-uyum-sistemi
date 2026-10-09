@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import { Pencere } from './yonetim/ortak'
 import OkulBilgiKarti from './OkulBilgiKarti'
+import { okulRenginiUygula } from '../tema'
 
 export default function OkulRozeti() {
   const [okul, setOkul] = useState(null)
@@ -11,8 +12,8 @@ export default function OkulRozeti() {
 
   useEffect(() => {
     let iptal = false
-    api.okulBenim().then((o) => { if (!iptal) setOkul(o || null) }).catch(() => {})
-    return () => { iptal = true }
+    api.okulBenim().then((o) => { if (!iptal) { setOkul(o || null); okulRenginiUygula(o?.tema_renk) } }).catch(() => {})
+    return () => { iptal = true; okulRenginiUygula(null) }
   }, [])
 
   if (!okul) return null
