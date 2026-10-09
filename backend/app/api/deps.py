@@ -42,11 +42,11 @@ def get_mevcut_admin(
     db: Session = Depends(get_db),
 ) -> AdminKullanici:
     """
-    Herhangi bir admin rolü (super_admin veya icerik_editoru) kabul eder.
-    Yalnızca super_admin gerektiren işlemler için get_mevcut_super_admin kullanın.
+    [2026-10-09] Sistem yönetimi uç noktaları (içerik, pipeline, parametreler...) — YALNIZCA süper admin.
+    Okul yetkilisi bu uç noktalara erişemez; onun uç noktaları get_mevcut_yonetim + okul kapsamı kullanır.
     """
     payload = token_coz(token)
-    if payload is None or payload.get("tip") != "access" or payload.get("rol") not in ("super_admin", "icerik_editoru"):
+    if payload is None or payload.get("tip") != "access" or payload.get("rol") != "super_admin":
         raise _YETKISIZ
 
     try:
@@ -55,9 +55,30 @@ def get_mevcut_admin(
         raise _YETKISIZ
 
     admin = db.get(AdminKullanici, admin_id)
-    if admin is None:
+    if admin is None or admin.rol != "super_admin" or admin.aktif_mi is False:
         raise _YETKISIZ
     return admin
+
+
+YONETIM_ROLLERI = ("super_admin", "okul_yetkilisi")
+
+
+def get_mevcut_yonetim(
+    token: str = Depends(oauth2_scheme),
+    db: Session = Depends(get_db),
+) -> AdminKullanici:
+    """[2026-10-09] Süper admin veya okul yetkilisi. Okul kapsamı uç noktanın içinde ayrıca denetlenir."""
+    payload = token_coz(token)
+    if payload is None or payload.get("tip") != "access" or payload.get("rol") not in YONETIM_ROLLERI:
+        raise _YETKISIZ
+    try:
+        kid = uuid.UUID(payload["sub"])
+    except (KeyError, ValueError):
+        raise _YETKISIZ
+    hesap = db.get(AdminKullanici, kid)
+    if hesap is None or hesap.rol not in YONETIM_ROLLERI or hesap.aktif_mi is False or hesap.rol != payload.get("rol"):
+        raise _YETKISIZ
+    return hesap
 
 
 def get_mevcut_super_admin(
