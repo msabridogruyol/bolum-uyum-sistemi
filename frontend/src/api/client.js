@@ -272,6 +272,7 @@ export const api = {
   okulYetkilisiSifreSifirla: (id) => apost(`/yonetim/yetkili/${id}/sifre-sifirla`),
   okulYetkilisiSil: (id) => adel(`/yonetim/yetkili/${id}`),
   okulKayitlari: (okulId, gun = 30) => aget(`/yonetim/okul/${okulId}/kayitlar?gun=${gun}`),
+  okulTemaKaydet: (okulId, renk) => aput(`/yonetim/okul/${okulId}/tema`, { renk }),
   // [2026-10-09] Meslek dili sözlüğü — okulId 0 = genel sürüm (süper admin)
   meslekDiliListe: (okulId) => aget(`/yonetim/meslek-dili?okul_id=${okulId}`),
   meslekDiliGetir: (okulId, bolumId) => aget(`/yonetim/meslek-dili/${bolumId}?okul_id=${okulId}`),
