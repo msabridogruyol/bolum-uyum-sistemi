@@ -1,15 +1,14 @@
-// [2026-10-09] Sol menüde gösterilen okul adı + amblemi (yönetim panelindeki "Okullar" sayfasından ayarlanır).
+// [2026-10-09] Sol menüde öğrencinin KENDİ okulunun adı + amblemi (okul yönetimden atanır; okul harici öğrencide görünmez).
 import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 
-let onbellek = null   // sayfa geçişlerinde tekrar istek atılmasın
-
 export default function OkulRozeti() {
-  const [okul, setOkul] = useState(onbellek)
+  const [okul, setOkul] = useState(null)
 
   useEffect(() => {
-    if (onbellek) return
-    api.okulAktif().then((o) => { onbellek = o || false; setOkul(onbellek) }).catch(() => {})
+    let iptal = false
+    api.okulBenim().then((o) => { if (!iptal) setOkul(o || null) }).catch(() => {})
+    return () => { iptal = true }
   }, [])
 
   if (!okul) return null
