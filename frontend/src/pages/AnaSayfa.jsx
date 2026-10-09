@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import HaftalikGorevler from '../components/HaftalikGorevler'
-import BolumAdi from '../components/BolumAdi'
+import { useBolumBilgi } from '../context/BolumBilgiContext'
 
 const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
@@ -17,6 +17,7 @@ export default function AnaSayfa() {
   const [hedef, setHedef] = useState(null)
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
+  const { ac: bolumBilgisiAc } = useBolumBilgi()
 
   useEffect(() => {
     api.durumOzetiGetir().then(setOzet).catch(() => {})
@@ -143,9 +144,8 @@ export default function AnaSayfa() {
       {/* [2026-10-04] Her hafta 3 görev — sistemi düzenli kullanımın merkezi */}
       <HaftalikGorevler />
 
-      <div className="anasayfa-duzen">
-        {/* ============ SOL SÜTUN — ana içerik ============ */}
-        <div>
+      {/* [2026-10-09] Üst sıra: profil + güç dağılımı + katman ortalamaları; öneriler altta tam genişlikte */}
+      <div className="anasayfa-ust">
           {/* --- Profil kartı --- */}
           <div className="card">
             <div style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
@@ -194,72 +194,7 @@ export default function AnaSayfa() {
             </div>
           </div>
 
-          {/* --- Önerilen bölümler --- */}
-          <div className="ct" style={{ marginTop: 20 }}>Sana Önerilen Bölümler</div>
-          {!ozet.tur_tamamlandi_mi ? (
-            <>
-              <div className="taslak-onizleme">
-                <div className="taslak-onizleme-icerik" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
-                  {[92, 87, 81, 76, 70, 65, 60, 55, 50, 46, 42, 38].map((genislik, i) => (
-                    <div key={i} className="ob-card" style={{ cursor: 'default' }}>
-                      <div className="ob-top">
-                        <div className="ob-rank">{i + 1}</div>
-                        <div className="ob-body">
-                          <div className="iskelet-satir" style={{ width: '70%', marginBottom: 8 }} />
-                          <div className="mini-ilerleme-track" style={{ width: '100%' }}>
-                            <div className="mini-ilerleme-fill" style={{ width: `${genislik}%`, background: 'var(--pu)' }} />
-                          </div>
-                        </div>
-                        <div className="ob-score">%{genislik}</div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-                <div className="taslak-onizleme-overlay">
-                  <div className="to-ikon">🌱</div>
-                  <div className="to-metin">
-                    Bölüm önerilerin, K1-K4'ün tamamı bitince burada görünecek — şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
-                  </div>
-                </div>
-              </div>
-              <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>
-                {ozet.tamamlanan_katman_sayisi === 0 ? 'Yolculuğuna Başla' : 'Kaldığın Yerden Devam Et'} →
-              </button>
-            </>
-          ) : siralama === null ? (
-            <div className="bos-durum">Yükleniyor…</div>
-          ) : siralama.length === 0 ? (
-            <div className="veri-yok-grafik">
-              <div className="vg-ikon">🌱</div>
-              <div className="vg-metin">Henüz önerilecek bölüm hesaplanmadı.</div>
-            </div>
-          ) : (
-            <>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10 }}>
-                {siralama.map((s, i) => (
-                  <div key={s.bolum_id} className="ob-card" style={{ cursor: 'default' }}>
-                    <div className="ob-top">
-                      <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
-                      <div className="ob-body">
-                        <div className="ob-name"><BolumAdi id={s.bolum_id} ad={s.bolum_adi} /></div>
-                        <div className="mini-ilerleme-track" style={{ width: '100%', marginTop: 6 }}>
-                          <div className="mini-ilerleme-fill" style={{ width: `${s.toplam_uyum}%`, background: 'var(--pu)' }} />
-                        </div>
-                      </div>
-                      <div className="ob-score">%{Math.round(s.toplam_uyum)}</div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-              <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/koclugu')}>
-                Bölüm Karşılaştırmasına Git →
-              </button>
-            </>
-          )}
-        </div>
 
-        {/* ============ SAĞ SÜTUN — yan panel widget'ları ============ */}
-        <div className="yan-panel">
           <div className="card" style={{ marginBottom: 0 }}>
             <div className="ct">Güç Dağılımın</div>
             {tumSonuclar.length === 0 ? (
@@ -346,22 +281,80 @@ export default function AnaSayfa() {
               </div>
             </div>
           </div>
-
-          <div className="card" style={{ marginBottom: 0 }}>
-            <div className="ct">Yolculuk Bilgisi</div>
-            <div className="mini-satir"><span className="mini-ad">Tur</span><span className="mini-deger">#{ozet.tur_no ?? '—'}</span></div>
-            <div className="mini-satir"><span className="mini-ad">Tamamlanan Katman</span><span className="mini-deger">{ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi}</span></div>
-            {ozet.k5_acilan_dal_sayisi > 0 && (
-              <div className="mini-satir"><span className="mini-ad">Derinleşme Dalı</span><span className="mini-deger">{ozet.k5_tamamlanan_dal_sayisi}/{ozet.k5_acilan_dal_sayisi}</span></div>
-            )}
-            {ozet.sonraki_tur_tarihi ? (
-              <div className="mini-satir"><span className="mini-ad">Sonraki Tur</span><span className="mini-deger">{new Date(ozet.sonraki_tur_tarihi).toLocaleDateString('tr-TR')}</span></div>
-            ) : (
-              <div className="mini-satir"><span className="mini-ad">Sonraki Tur</span><span className="mini-deger" style={{ color: 'var(--tx3)' }}>Tur bitince belirlenir</span></div>
-            )}
-          </div>
-        </div>
       </div>
+
+      {/* --- Önerilen bölümler (tam genişlik) --- */}
+      <div className="ct" style={{ marginTop: 22 }}>Sana Önerilen Bölümler</div>
+      {!ozet.tur_tamamlandi_mi ? (
+        <>
+          <div className="taslak-onizleme">
+            <div className="taslak-onizleme-icerik oneri-grid">
+              {[92, 87, 81, 76, 70, 65, 60, 55, 50, 46, 42, 38].map((genislik, i) => (
+                <div key={i} className="ob-card" style={{ cursor: 'default' }}>
+                  <div className="ob-top">
+                    <div className="ob-rank">{i + 1}</div>
+                    <div className="ob-body">
+                      <div className="iskelet-satir" style={{ width: '70%', marginBottom: 8 }} />
+                      <div className="mini-ilerleme-track" style={{ width: '100%' }}>
+                        <div className="mini-ilerleme-fill" style={{ width: `${genislik}%`, background: 'var(--pu)' }} />
+                      </div>
+                    </div>
+                    <div className="ob-score">%{genislik}</div>
+                  </div>
+                </div>
+              ))}
+            </div>
+            <div className="taslak-onizleme-overlay">
+              <div className="to-ikon">🌱</div>
+              <div className="to-metin">
+                Bölüm önerilerin, K1-K4'ün tamamı bitince burada görünecek — şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
+              </div>
+            </div>
+          </div>
+          <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>
+            {ozet.tamamlanan_katman_sayisi === 0 ? 'Yolculuğuna Başla' : 'Kaldığın Yerden Devam Et'} →
+          </button>
+        </>
+      ) : siralama === null ? (
+        <div className="bos-durum">Yükleniyor…</div>
+      ) : siralama.length === 0 ? (
+        <div className="veri-yok-grafik">
+          <div className="vg-ikon">🌱</div>
+          <div className="vg-metin">Henüz önerilecek bölüm hesaplanmadı.</div>
+        </div>
+      ) : (
+        <>
+          <div className="oneri-grid">
+            {siralama.map((s, i) => (
+              <button
+                key={s.bolum_id}
+                type="button"
+                className="oneri-kart"
+                title="Bölüm hakkında bilgi için tıkla"
+                onClick={() => bolumBilgisiAc(s.bolum_id, s.bolum_adi)}
+              >
+                <div className="ok-ust">
+                  <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
+                  <div className="ok-ad">
+                    {s.bolum_adi}
+                    {s.alan && <div className="ok-alan">{s.alan}</div>}
+                  </div>
+                  <div className="ok-skor">%{Math.round(s.toplam_uyum)}</div>
+                </div>
+                <div className="ok-alt">
+                  <div className="mini-ilerleme-track" style={{ flex: 1 }}>
+                    <div className="mini-ilerleme-fill" style={{ width: `${s.toplam_uyum}%`, background: 'var(--pu)' }} />
+                  </div>
+                  <span className="ok-detay">Bölümü incele ›</span>
+                </div>
+              </button>
+            ))}
+          </div>
+          <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/koclugu')}>
+            Bölüm Karşılaştırmasına Git →
+          </button>
+        </>
+      )}
     </div>
   )
 }
