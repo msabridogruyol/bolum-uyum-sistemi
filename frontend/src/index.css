@@ -558,3 +558,8 @@ button,input{font-family:inherit}
 .yp-okul-kisayol{display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--bor);border-bottom:1px solid var(--bor);padding:6px 0}
 .yp-okul-kisayol a{font-size:12.5px;font-weight:600;color:var(--tx2);text-decoration:none;padding:6px 8px;border-radius:8px}
 .yp-okul-kisayol a:hover{background:var(--pul);color:var(--pu)}
+
+/* [2026-10-09] Öğrencinin okul penceresi daha geniş: kadro 3 sütun, tanıtım rahat okunur */
+.yp-pencere.okb-pencere{max-width:900px}
+.okb-pencere .yp-govde{padding:20px 28px 24px}
+.okb-pencere .okb-tanitim{font-size:13.5px;line-height:1.7}
