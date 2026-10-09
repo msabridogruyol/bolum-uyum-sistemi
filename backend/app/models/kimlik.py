@@ -33,6 +33,10 @@ class Ogrenci(Base):
     sube: Mapped[str | None] = mapped_column(String, nullable=True)
     # [2026-10-09] Yönetimden açılan hesaplar geçici şifreyle başlar; ilk girişte öğrenci kendi şifresini belirler.
     sifre_degistirmeli: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    # [2026-10-09] Hedef bölüm değişikliği: öğrenci en fazla hedef_degisim_hakki kez değiştirebilir (ilk seçim sayılmaz).
+    # Hak bitince okul yetkilisi / süper admin ek hak verebilir ya da hedefi kendisi değiştirebilir.
+    hedef_degisim_sayisi: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    hedef_degisim_hakki: Mapped[int] = mapped_column(Integer, nullable=False, default=3)
     son_giris_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     sinif: Mapped[str | None] = mapped_column(String, nullable=True)
     dogum_tarihi: Mapped[date | None] = mapped_column(Date, nullable=True)
