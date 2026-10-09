@@ -48,6 +48,44 @@ def bolum_bilgi(bolum_id: int, db: Session = Depends(get_db)):
     }
 
 
+# [2026-10-09] Bölümde ÖNE ÇIKAN özellikler. Her değişkenin iki ucu vardır; puan yüksekse "yüksek" ucu,
+# iki uçlu (anlamlı karşıtı olan) değişkenlerde puan düşükse "düşük" ucu öne çıkar. Diğer özellikler
+# "düşük" diye etiketlenmez — öğrenciye yanlış mesaj vermesin diye listede gösterilmez.
+# (yüksek uç etiketi, düşük uç etiketi | None)
+KUTUP_ETIKET = {
+    "D1": ("İş güvencesi ve istikrar", None), "D2": ("Yüksek kazanç imkânı", None), "D3": ("Statü ve prestij", None),
+    "D4": ("Anlamlı bir iş yapma", None), "D5": ("Topluma katkı", None), "D6": ("Özerklik ve özgürlük", None),
+    "D7": ("Estetik ve yaratıcılık", None),
+    "P1": ("İnsanlarla iç içe çalışma", "Bağımsız, bireysel çalışma"),
+    "P2": ("Uyum ve işbirliği", "Rekabetçi ortam, görüşünü savunma"),
+    "P3": ("Sorumluluk ve disiplin", None),
+    "P4": ("Duygusal yükle başa çıkabilme", "Sakin, duygusal yükü düşük ortam"),
+    "P5": ("Yeniliğe açıklık", None),
+    "P6": ("Dinamik, değişken iş ortamı", "Rutin, düzenli iş ortamı"),
+    "P7": ("Belirsizlik ve risk alma", None), "P8": ("Liderlik ve yönetme", None),
+    "I1": ("Zaman yönetimi ve önceliklendirme", None), "I2": ("Ekip ve çatışma yönetimi", None),
+    "I3": ("Baskı altında karar verme", None), "I4": ("Etik ve dürüstlük", None), "I5": ("İnisiyatif alma", None),
+    "I6": ("Eleştiriye açıklık", None), "I7": ("Strateji ve iş dünyası bilgisi", None),
+    "A1": ("Sayısal düşünme ve veri", None), "A2": ("Sözel ifade ve dil", None), "A3": ("İnsan odaklı alanlar", None),
+    "A4": ("Tasarım ve uzamsal düşünme", None), "A5": ("Doğa ve laboratuvar", None), "A6": ("Fiziksel aktivite ve hareket", None),
+    # A7/A8 iki ayrı stil değişkeni; düşük uçları birbirinin yüksek ucuyla çakıştığı için yalnızca yüksek uç gösterilir
+    "A7": ("Adım adım, yapılandırılmış çalışma", None),
+    "A8": ("Büyük resmi görme, sezgisel düşünme", None),
+    "A9": ("Girişimcilik ve ikna", None),
+}
+ONEM_COK, ONEM = 80.0, 65.0      # yüzdelik eşikleri (düşük uç için 100 - eşik)
+
+
+def _one_cikan(kod: str, yuzdelik: float) -> dict | None:
+    yuksek, dusuk = KUTUP_ETIKET.get(kod, (None, None))
+    if yuzdelik >= ONEM:
+        return {"etiket": yuksek, "uc": "yuksek", "guc": yuzdelik, "onem": "Çok önemli" if yuzdelik >= ONEM_COK else "Önemli"}
+    if dusuk and yuzdelik <= 100 - ONEM:
+        g = 100 - yuzdelik
+        return {"etiket": dusuk, "uc": "dusuk", "guc": g, "onem": "Çok önemli" if g >= ONEM_COK else "Önemli"}
+    return None
+
+
 def _seviye(yuzdelik: float) -> str:
     if yuzdelik >= 80: return "Çok yüksek"
     if yuzdelik >= 60: return "Yüksek"
@@ -93,8 +131,11 @@ def _yetkinlik_tablosu(db: Session) -> dict:
         for deger, bid in degerler:
             z = (deger - ort) / std
             yuzdelik = round(50.0 * (1.0 + math.erf(z / math.sqrt(2.0))), 1)
+            oc = _one_cikan(d.kod, yuzdelik)
             tablo.setdefault(bid, {}).setdefault(d.katman_id, []).append(
-                {"kod": d.kod, "ad": d.ad, "aciklama": d.aciklama, "yuzdelik": yuzdelik, "seviye": _seviye(yuzdelik)})
+                {"kod": d.kod, "ad": d.ad, "aciklama": d.aciklama, "yuzdelik": yuzdelik, "seviye": _seviye(yuzdelik),
+                 "one_cikan": oc is not None, "etiket": (oc or {}).get("etiket") or d.ad,
+                 "uc": (oc or {}).get("uc"), "guc": round((oc or {}).get("guc", 0.0), 1), "onem": (oc or {}).get("onem")})
     veri = {"tablo": tablo, "katmanlar": {k.id: (k.kod, k.ad, k.sira) for k in katmanlar.values()}, "bolum_sayisi": len(yayinda)}
     _YETKINLIK_ONBELLEK.update(zaman=time.time(), veri=veri)
     return veri
@@ -115,7 +156,9 @@ def bolum_yetkinlik_profili(bolum_id: int, db: Session = Depends(get_db)):
         "bolum_sayisi": v["bolum_sayisi"],
         "katmanlar": [
             {"kod": v["katmanlar"][kid][0], "ad": v["katmanlar"][kid][1],
-             "degiskenler": sorted(satirlar, key=lambda x: -x["yuzdelik"])}
+             "degiskenler": sorted(satirlar, key=lambda x: -x["yuzdelik"]),
+             # [2026-10-09] öğrenciye gösterilen: yalnızca bu bölümde öne çıkanlar, en belirgin olan önce
+             "one_cikanlar": sorted([x for x in satirlar if x["one_cikan"]], key=lambda x: -x["guc"])}
             for kid, satirlar in sorted(gruplar.items(), key=lambda kv: v["katmanlar"][kv[0]][2])
         ],
     }
