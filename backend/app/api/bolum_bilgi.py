@@ -83,11 +83,16 @@ def _yetkinlik_tablosu(db: Session) -> dict:
         n = len(degerler)
         if n == 0:
             continue
+        # [2026-10-08] Seviye, sıra yüzdeliği yerine standart puandan (z) normal dağılım karşılığıyla hesaplanır.
+        # Dengeli özelliklerde sonuç sıra yüzdeliğiyle aynıdır; çarpık özelliklerde (ör. A6 spor: bölümlerin
+        # çoğu "gerekmez" düzeyinde eşit) eşit değerli bölümler arasında yapay sıralama/şişme oluşmaz.
+        import math
         sadece = [x for x, _ in degerler]
-        import bisect
+        ort = sum(sadece) / n
+        std = (sum((x - ort) ** 2 for x in sadece) / n) ** 0.5 or 1.0
         for deger, bid in degerler:
-            alti = bisect.bisect_left(sadece, deger); esit = bisect.bisect_right(sadece, deger) - alti
-            yuzdelik = round(100.0 * (alti + 0.5 * esit) / n, 1)
+            z = (deger - ort) / std
+            yuzdelik = round(50.0 * (1.0 + math.erf(z / math.sqrt(2.0))), 1)
             tablo.setdefault(bid, {}).setdefault(d.katman_id, []).append(
                 {"kod": d.kod, "ad": d.ad, "aciklama": d.aciklama, "yuzdelik": yuzdelik, "seviye": _seviye(yuzdelik)})
     veri = {"tablo": tablo, "katmanlar": {k.id: (k.kod, k.ad, k.sira) for k in katmanlar.values()}, "bolum_sayisi": len(yayinda)}
