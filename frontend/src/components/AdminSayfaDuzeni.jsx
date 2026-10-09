@@ -1,7 +1,9 @@
+import { useEffect } from 'react'
 import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { useAdminAuth } from '../context/AdminAuthContext'
 import { api } from '../api/client'
 import { IlkSifrePenceresi, ROL_ADI } from './yonetim/ortak'
+import { okulRenginiUygula } from '../tema'
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
@@ -10,6 +12,11 @@ export default function AdminSayfaDuzeni() {
   const { cikisYap, rol, ben, benYenile } = useAdminAuth()
   const konum = useLocation()
   const okulYetkilisi = rol === 'okul_yetkilisi'
+  // [2026-10-09] Okul yetkilisinin paneli okulun renginde; süper admin Filizyol renginde
+  useEffect(() => {
+    okulRenginiUygula(okulYetkilisi ? ben?.okul_renk : null)
+    return () => okulRenginiUygula(null)
+  }, [okulYetkilisi, ben?.okul_renk])
 
   if (okulYetkilisi && ben?.okul_id) {
     const okulYolu = `/admin/okul/${ben.okul_id}`
