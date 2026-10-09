@@ -30,8 +30,8 @@ const ADIMLAR = [
   {
     ikon: '📝',
     baslik: 'Önce seni tanıyalım',
-    metin: 'Başlamadan önce profilini doldur: adın, okulun ve sınıfın yeterli. Ardından ana sayfaya geçip ilk katmana başlayabilirsin.',
-    maddeler: ['Okul ve sınıf zorunlu', 'Doğum tarihi ve cinsiyet tamamen isteğe bağlı', 'Bilgilerini Ayarlar\'dan her zaman değiştirebilirsin'],
+    metin: 'Başlamadan önce profilini doldur: adın ve sınıfın yeterli. Ardından ana sayfaya geçip ilk katmana başlayabilirsin.',
+    maddeler: ['Yalnızca ad ve sınıf zorunlu', 'Doğum tarihi ve cinsiyet tamamen isteğe bağlı', 'Bilgilerini Ayarlar\'dan her zaman değiştirebilirsin'],
   },
 ]
 
