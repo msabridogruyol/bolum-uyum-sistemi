@@ -79,15 +79,9 @@ export default function AnaSayfaDuzeni() {
           </div>
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
-        {ozet && (
+        {ozet?.sonraki_tur_tarihi && (
           <div style={{ padding: '10px 18px', borderBottom: '1px solid var(--bor)', fontSize: 11, color: 'var(--tx2)' }}>
-            <div>Katmanlar: <b>{ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi}</b></div>
-            {ozet.k5_acilan_dal_sayisi > 0 && (
-              <div style={{ marginTop: 3 }}>Derinleşme: <b>{ozet.k5_tamamlanan_dal_sayisi}/{ozet.k5_acilan_dal_sayisi}</b> tamamlandı</div>
-            )}
-            {ozet.sonraki_tur_tarihi && (
-              <div style={{ marginTop: 3 }}>Sonraki tur: <b>{new Date(ozet.sonraki_tur_tarihi).toLocaleDateString('tr-TR')}</b></div>
-            )}
+            Sonraki tur: <b>{new Date(ozet.sonraki_tur_tarihi).toLocaleDateString('tr-TR')}</b>
           </div>
         )}
         <div className="ns">Genel</div>
