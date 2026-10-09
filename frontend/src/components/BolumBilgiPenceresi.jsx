@@ -1,10 +1,11 @@
-// [2026-10-08] Bölüm bilgi kartı — açılır pencere. Sekmeler: Genel Bakış · Meslekler · Üniversiteler (YÖK Atlas)
+// [2026-10-08] Bölüm bilgi kartı — açılır pencere. Sekmeler: Genel Bakış · Meslekler · Meslek Dili · Yetkinlikler · Üniversiteler (YÖK Atlas)
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client'
 
 const SEKMELER = [
   { kod: 'genel', ad: 'Genel Bakış' },
   { kod: 'meslek', ad: 'Meslekler' },
+  { kod: 'jargon', ad: 'Meslek Dili' },
   { kod: 'yetkinlik', ad: 'Yetkinlikler' },
   { kod: 'uni', ad: 'Üniversiteler' },
 ]
@@ -173,6 +174,63 @@ function Meslekler({ detay }) {
   )
 }
 
+// [2026-10-09] Meslek dili: sahada kullanılan terimler, anlamları ve gerçek bir cümle içinde kullanımı.
+// "Kendini dene" modunda anlam gizlenir; öğrenci önce tahmin eder, sonra karta dokunup açar.
+function MeslekDili({ terimler }) {
+  const [arama, setArama] = useState('')
+  const [dene, setDene] = useState(false)
+  const [acik, setAcik] = useState({})
+  if (!terimler?.length) return <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz meslek dili eklenmedi.</div>
+  const q = arama.trim().toLocaleLowerCase('tr')
+  const liste = terimler.filter((t) => !q || `${t.terim} ${t.anlam}`.toLocaleLowerCase('tr').includes(q))
+  const secim = { fontSize: 12.5, padding: '7px 10px', borderRadius: 10, border: '1.5px solid var(--bor2)', background: 'var(--sur)', color: 'var(--tx)' }
+  return (
+    <>
+      <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5, lineHeight: 1.55 }}>
+        Bu alanda çalışanların her gün kullandığı kelimeler. Bir mezunla konuşurken ya da staj yaparken bu terimleri tanımak işini kolaylaştırır.
+      </div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
+        <input placeholder="Terim ara…" value={arama} onChange={(e) => setArama(e.target.value)} style={{ ...secim, flex: '1 1 160px' }} />
+        <button
+          onClick={() => { setDene(!dene); setAcik({}) }}
+          style={{ ...secim, cursor: 'pointer', fontWeight: 800, borderColor: dene ? 'var(--pu)' : 'var(--bor2)', color: dene ? 'var(--pu)' : 'var(--tx)' }}
+        >{dene ? '✓ Kendini dene açık' : '🧠 Kendini dene'}</button>
+      </div>
+      {dene && <div className="ps" style={{ margin: '0 0 10px', fontSize: 12 }}>Anlamı tahmin et, sonra görmek için karta dokun.</div>}
+      {liste.map((t, i) => {
+        const gizli = dene && !acik[t.terim]
+        return (
+          <div
+            key={t.terim}
+            onClick={dene ? () => setAcik({ ...acik, [t.terim]: !acik[t.terim] }) : undefined}
+            style={{ border: '1.5px solid var(--bor)', borderRadius: 14, padding: '11px 14px', marginBottom: 8, background: 'var(--sur)', cursor: dene ? 'pointer' : 'default' }}
+          >
+            <div style={{ display: 'flex', gap: 10, alignItems: 'baseline' }}>
+              <span style={{ fontSize: 11, fontWeight: 800, color: 'var(--tx3)', minWidth: 18 }}>{i + 1}</span>
+              <div style={{ minWidth: 0, flex: 1 }}>
+                <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--tx)' }}>{t.terim}</div>
+                {gizli ? (
+                  <div style={{ fontSize: 12.5, color: 'var(--tx3)', marginTop: 4 }}>Anlamı görmek için dokun</div>
+                ) : (
+                  <>
+                    <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.55, marginTop: 3 }}>{t.anlam}</div>
+                    {t.ornek && (
+                      <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5, marginTop: 6, padding: '6px 10px', borderLeft: '3px solid var(--pum)', background: 'var(--pul)', borderRadius: '0 8px 8px 0', fontStyle: 'italic' }}>
+                        “{t.ornek}”
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+            </div>
+          </div>
+        )
+      })}
+      {liste.length === 0 && <div className="ps" style={{ margin: 0 }}>Aramana uyan terim yok.</div>}
+    </>
+  )
+}
+
 function Universiteler({ bolumId }) {
   const [veri, setVeri] = useState(null)
   const [hata, setHata] = useState(null)
@@ -334,6 +392,7 @@ export function BolumBilgiIcerik({ bolumId, ad, baslangicSekme = 'genel', onKapa
           : !bilgi ? <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
             : sekme === 'genel' ? <GenelBakis bilgi={bilgi} />
               : sekme === 'meslek' ? <Meslekler detay={d} />
+                : sekme === 'jargon' ? <MeslekDili terimler={bilgi.jargon} />
                 : sekme === 'yetkinlik' ? <YetkinlikProfili bolumId={bilgi.bolum_id} />
                   : <Universiteler bolumId={bilgi.bolum_id} />}
       </div>
