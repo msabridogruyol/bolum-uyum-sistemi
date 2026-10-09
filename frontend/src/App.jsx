@@ -24,7 +24,6 @@ import BolumlerSayfasi from './pages/admin/BolumlerSayfasi'
 import DallarSayfasi from './pages/admin/DallarSayfasi'
 import SorularSayfasi from './pages/admin/SorularSayfasi'
 import ParametrelerSayfasi from './pages/admin/ParametrelerSayfasi'
-import OgrencilerSayfasi from './pages/admin/OgrencilerSayfasi'
 import AuditLogSayfasi from './pages/admin/AuditLogSayfasi'
 import YoneticilerSayfasi from './pages/admin/YoneticilerSayfasi'
 import SistemHakkindaSayfasi from './pages/admin/SistemHakkindaSayfasi'
@@ -32,6 +31,7 @@ import SoruGecerlilikSayfasi from './pages/admin/SoruGecerlilikSayfasi'
 import GuvenlikSayfasi from './pages/admin/GuvenlikSayfasi'
 import GelisimKaynakSayfasi from './pages/admin/GelisimKaynakSayfasi'
 import OkullarSayfasi from './pages/admin/OkullarSayfasi'
+import OkulPaneliSayfasi from './pages/admin/OkulPaneliSayfasi'
 
 function OzelRota({ children }) {
   const { girisYapildi } = useAuth()
@@ -109,7 +109,8 @@ function AnaUygulama() {
         <Route path="dallar" element={<DallarSayfasi />} />
         <Route path="sorular" element={<SorularSayfasi />} />
         <Route path="parametreler" element={<ParametrelerSayfasi />} />
-        <Route path="ogrenciler" element={<OgrencilerSayfasi />} />
+        {/* [2026-10-09] Öğrenci yönetimi okul bazlı: Okullar → okul paneli */}
+        <Route path="ogrenciler" element={<Navigate to="/admin/okullar" replace />} />
         <Route path="audit-log" element={<AuditLogSayfasi />} />
         <Route path="yoneticiler" element={<YoneticilerSayfasi />} />
         <Route path="sistem-hakkinda" element={<SistemHakkindaSayfasi />} />
@@ -117,6 +118,7 @@ function AnaUygulama() {
         <Route path="guvenlik" element={<GuvenlikSayfasi />} />
         <Route path="gelisim-kaynak" element={<GelisimKaynakSayfasi />} />
         <Route path="okullar" element={<OkullarSayfasi />} />
+        <Route path="okul/:okulId" element={<OkulPaneliSayfasi />} />
       </Route>
     </Routes>
   )
