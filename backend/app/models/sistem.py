@@ -73,3 +73,15 @@ class AuditLog(Base):
     hedef_id: Mapped[str] = mapped_column(String, nullable=False)
     gerekce: Mapped[str | None] = mapped_column(String)
     zaman: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class Okul(Base):
+    """[2026-10-09] Öğrenci sayfalarının solunda gösterilen okul (ad + amblem). Aynı anda tek okul aktif olur."""
+    __tablename__ = "okullar"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    ad: Mapped[str] = mapped_column(String, nullable=False)
+    alt_baslik: Mapped[str | None] = mapped_column(String, nullable=True)
+    logo: Mapped[str | None] = mapped_column(String, nullable=True)   # data URL (png/jpeg/svg), en fazla ~400 KB
+    aktif_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
