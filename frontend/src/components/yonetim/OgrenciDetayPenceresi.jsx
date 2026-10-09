@@ -3,6 +3,38 @@ import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { DurumRozeti, Pencere, SifreListesi, onceSure, tarih } from './ortak'
 
+// [2026-10-09] Hedef bölüm: öğrenci en fazla 3 kez değiştirebilir; okul yetkilisi / süper admin hedefi değiştirebilir
+// (öğrencinin hakkından düşmez) ya da ek hak verebilir.
+function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
+  const [secim, setSecim] = useState(null)   // null = kapalı, '' = açık
+  const [bolumler, setBolumler] = useState(null)
+  const hak = d.hedef_hak || { degisim_sayisi: 0, degisim_hakki: 3, kalan_hak: 3 }
+  function ac() { setSecim(''); if (!bolumler) api.yonetimBolumler().then(setBolumler).catch(() => setBolumler([])) }
+  return (
+    <div>
+      <b>{d.hedef ? `${d.hedef.bolum}${d.hedef.uyum != null ? ` · uyum %${d.hedef.uyum}` : ''}` : 'Seçmedi'}</b>
+      <div className="yp-ince" style={{ marginTop: 3 }}>
+        Değiştirme hakkı: {hak.degisim_sayisi}/{hak.degisim_hakki} kullanıldı{hak.kalan_hak === 0 ? ' — hakkı doldu' : ` · ${hak.kalan_hak} kaldı`}
+      </div>
+      <div style={{ display: 'flex', gap: 6, marginTop: 8, flexWrap: 'wrap', alignItems: 'center' }}>
+        <button className="yp-mini" disabled={bekle} onClick={() => islem(async () => { await api.yonetimHedefHakki(ogrenciId, 1); yenile() })}>+1 değiştirme hakkı ver</button>
+        {secim === null ? (
+          <button className="yp-mini" disabled={bekle} onClick={ac}>Hedefini ben değiştireyim</button>
+        ) : (
+          <>
+            <select className="yp-sec" value={secim} onChange={(e) => setSecim(e.target.value)} disabled={!bolumler}>
+              <option value="">{bolumler ? 'Bölüm seç…' : 'Yükleniyor…'}</option>
+              {(bolumler || []).map((b) => <option key={b.id} value={b.id}>{b.ad}</option>)}
+            </select>
+            <button className="yp-mini" disabled={bekle || !secim} onClick={() => islem(async () => { await api.yonetimOgrenciHedef(ogrenciId, Number(secim)); setSecim(null); yenile() })}>Kaydet</button>
+            <button className="yp-mini" onClick={() => setSecim(null)}>Vazgeç</button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
 const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['kayit', 'Kayıtlar']]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
 
@@ -101,7 +133,9 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
             <div><span>Hesap açılışı</span><b>{tarih(h.olusturulma_zamani)}</b></div>
             <div><span>Son giriş</span><b>{h.son_giris_zamani ? `${tarih(h.son_giris_zamani)} (${onceSure(h.son_giris_zamani)})` : 'Hiç giriş yapmadı'}</b></div>
             <div><span>Şifre</span><b>{h.sifre_degistirmeli ? 'Geçici şifre — henüz kendi şifresini belirlemedi' : 'Kendi şifresini belirledi'}</b></div>
-            <div><span>Hedef bölüm</span><b>{d.hedef ? `${d.hedef.bolum}${d.hedef.uyum != null ? ` · uyum %${d.hedef.uyum}` : ''}` : 'Seçmedi'}</b></div>
+            <div style={{ gridColumn: '1 / -1' }}><span>Hedef bölüm</span>
+              <HedefYonetimi d={d} ogrenciId={ogrenciId} bekle={bekle} islem={islem} yenile={() => { yukle(); onDegisti?.() }} />
+            </div>
             {h.ilgi_alanlari && <div style={{ gridColumn: '1 / -1' }}><span>İlgi alanları</span><b style={{ fontWeight: 500 }}>{h.ilgi_alanlari}</b></div>}
             {superAdmin && (
               <div><span>Okulu</span>
