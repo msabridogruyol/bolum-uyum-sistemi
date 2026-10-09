@@ -32,7 +32,16 @@ def aktif_hedef_getir(db: Session, ogrenci: Ogrenci) -> OgrenciHedefBolum | None
     )
 
 
-def hedef_sec(db: Session, ogrenci: Ogrenci, bolum_id: int, onay: bool = False) -> OgrenciHedefBolum:
+class HedefHakkiBitti(IsKuraliHatasi):
+    """[2026-10-09] Öğrencinin hedef değiştirme hakkı doldu."""
+
+
+def hedef_hak_durumu(ogrenci: Ogrenci) -> dict:
+    sayi, hak = int(ogrenci.hedef_degisim_sayisi or 0), int(ogrenci.hedef_degisim_hakki if ogrenci.hedef_degisim_hakki is not None else 3)
+    return {"degisim_sayisi": sayi, "degisim_hakki": hak, "kalan_hak": max(0, hak - sayi)}
+
+
+def hedef_sec(db: Session, ogrenci: Ogrenci, bolum_id: int, onay: bool = False, yonetici: bool = False) -> OgrenciHedefBolum:
     """
     F8 — Aynı anda yalnızca 1 aktif hedef olabilir (odaklanma ilkesi).
     Zaten aktif bir hedef varsa ve `onay=True` verilmediyse IsKuraliHatasi
@@ -48,6 +57,16 @@ def hedef_sec(db: Session, ogrenci: Ogrenci, bolum_id: int, onay: bool = False) 
     if mevcut_aktif is not None and mevcut_aktif.bolum_id == bolum_id:
         return mevcut_aktif  # zaten bu hedefteyiz, no-op
 
+    # [2026-10-09] İlk seçim serbest; sonraki her değişiklik 1 hak harcar. Yönetici (okul yetkilisi / süper admin)
+    # değişikliği hak harcamaz.
+    if mevcut_aktif is not None and not yonetici:
+        durum = hedef_hak_durumu(ogrenci)
+        if durum["kalan_hak"] <= 0:
+            raise HedefHakkiBitti(
+                f"Hedef bölümünü {durum['degisim_hakki']} kez değiştirdin; değiştirme hakkın doldu. "
+                "Yeniden değiştirmek için rehber öğretmenine başvurabilirsin."
+            )
+
     if mevcut_aktif is not None and not onay:
         raise IsKuraliHatasi(
             f"Zaten aktif bir hedefin var (bolum_id={mevcut_aktif.bolum_id}). "
@@ -55,6 +74,8 @@ def hedef_sec(db: Session, ogrenci: Ogrenci, bolum_id: int, onay: bool = False) 
         )
 
     if mevcut_aktif is not None:
+        if not yonetici:
+            ogrenci.hedef_degisim_sayisi = int(ogrenci.hedef_degisim_sayisi or 0) + 1
         mevcut_aktif.aktif_mi = False
         mevcut_aktif.pasif_zamani = datetime.now(timezone.utc)
 
