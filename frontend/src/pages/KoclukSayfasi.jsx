@@ -159,6 +159,17 @@ function KaynakKarti({ k, alan }) {
 function IlhamSekmesi({ kaynaklar }) {
   const [tip, setTip] = useState('')
   if (!kaynaklar) return <div className="bos-durum">Kaynaklar hazırlanıyor…</div>
+  if (!kaynaklar.alanlar.length) {
+    return (
+      <div className="card" style={{ textAlign: 'center', padding: 30 }}>
+        <div style={{ fontSize: 30 }}>📚</div>
+        <div style={{ fontWeight: 800, margin: '6px 0 4px' }}>Senin alanların için henüz ilham kaynağı eklenmedi</div>
+        <div className="ps" style={{ margin: 0 }}>
+          Kitap, film, ilham veren kişi ve önemli olay önerileri {kaynaklar.aranan_alanlar?.length ? <>şu alanlar için hazırlanacak: <b>{kaynaklar.aranan_alanlar.join(', ')}</b>.</> : 'yakında burada olacak.'}
+        </div>
+      </div>
+    )
+  }
   const tipler = [...new Set(kaynaklar.alanlar.flatMap((a) => a.kaynaklar.map((k) => k.tip)))]
   const gruplar = [['gelisim', '🌱 Gelişim alanların için'], ['guclu', '💪 Güçlü yönlerini büyütmek için']]
   return (
@@ -586,7 +597,7 @@ export default function KoclukSayfasi() {
         {veriVar && (
           <>
             <div className="koc-sekmeler" role="tablist">
-              {SEKMELER.filter((s) => s.kod !== 'ilham' || (kaynaklar && kaynaklar.alanlar.length > 0)).map((s) => (
+              {SEKMELER.map((s) => (
                 <button key={s.kod} role="tab" aria-selected={sekme === s.kod} className={sekme === s.kod ? 'aktif' : ''} onClick={() => sekmeyeGit(s.kod)}>
                   <span aria-hidden="true">{s.ikon}</span> {s.ad}
                   {s.kod === 'yol' && plan && plan.ilerleme.toplam > 0 && <span className="koc-cip-sayi">{plan.ilerleme.tamamlanan}/{plan.ilerleme.toplam}</span>}
