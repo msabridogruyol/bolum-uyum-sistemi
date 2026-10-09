@@ -25,7 +25,7 @@ from app.core.katman_servisi import (
 from app.core.dal_servisi import (
     k5_tetikle, dal_bul, dal_oturumu_baslat, dali_tamamla, bekleyen_dal_var_mi,
 )
-from app.core.skor_motoru import toplam_uyum_hesapla, siralama_getir
+from app.core.skor_motoru import toplam_uyum_hesapla, siralama_getir, neden_aciklamalari
 from app.core.kesfet_servisi import bolumleri_ara
 from app.models import (
     Ogrenci, Katman, OgrenciKatmanOturumu, Degisken, Soru, SoruSecenegi, OgrenciDalOturumu, Bolum,
@@ -427,8 +427,13 @@ def bolum_siralamasi_getir(
 
     siralama = siralama_getir(db, ogrenci, tur, ilk_n=max(1, min(ilk_n, 10)))
     bolum_adlari = {b.id: b.ad for b in db.query(Bolum).all()}
+    try:
+        nedenler = neden_aciklamalari(db, ogrenci, tur, [s.bolum_id for s in siralama])
+    except Exception:  # açıklama üretilemezse liste yine gösterilsin
+        nedenler = {}
     return [
-        BolumSiralamaSatiri(bolum_id=s.bolum_id, bolum_adi=bolum_adlari.get(s.bolum_id, "?"), toplam_uyum=float(s.toplam_uyum))
+        BolumSiralamaSatiri(bolum_id=s.bolum_id, bolum_adi=bolum_adlari.get(s.bolum_id, "?"), toplam_uyum=float(s.toplam_uyum),
+                            alan=s.alan, neden=nedenler.get(s.bolum_id, []))
         for s in siralama
     ]
 
