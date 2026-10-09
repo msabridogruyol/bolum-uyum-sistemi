@@ -722,13 +722,29 @@ def pipeline_taslaklarini_listele(
         """)
     ).mappings().all()
 
+    # [2026-10-09] Yalnızca EN SON onaylanan yükleme canlıdadır (skor motoru en yüksek versiyonu kullanır).
+    # Daha önce onaylanmış yüklemeler "arsiv" olarak döner. Canlı grup, son onay kaydından (audit_log) bulunur;
+    # kayıt yoksa onaylananlar içinde en son yüklenen kabul edilir.
+    son_onay = (
+        db.query(AuditLog.hedef_id)
+        .filter(AuditLog.islem == "pipeline_taslagi_onaylama")
+        .order_by(AuditLog.id.desc())
+        .first()
+    )
+    onaylilar = [str(g["yukleme_grubu"]) for g in gruplar if g["durum"] == "onaylandi"]
+    canli_grup = son_onay[0] if son_onay and son_onay[0] in onaylilar else (onaylilar[0] if onaylilar else None)
+
     sonuc = []
     for g in gruplar:
-        _, ortalama = _bolum_aralik_istatistigi(db, str(g["yukleme_grubu"]))
+        grup_id = str(g["yukleme_grubu"])
+        _, ortalama = _bolum_aralik_istatistigi(db, grup_id)
+        durum = g["durum"]
+        if durum == "onaylandi" and grup_id != canli_grup:
+            durum = "arsiv"
         sonuc.append(PipelineTaslakGrubuOut(
-            yukleme_grubu=str(g["yukleme_grubu"]), yuklenme_zamani=g["yuklenme_zamani"],
+            yukleme_grubu=grup_id, yuklenme_zamani=g["yuklenme_zamani"],
             toplam_satir=g["toplam_satir"], bolum_sayisi=g["bolum_sayisi"],
-            ortalama_aralik=ortalama, durum=g["durum"],
+            ortalama_aralik=ortalama, durum=durum,
         ))
     return sonuc
 
