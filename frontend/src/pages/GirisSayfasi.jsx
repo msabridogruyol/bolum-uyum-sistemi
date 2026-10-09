@@ -52,10 +52,6 @@ export default function GirisSayfasi() {
     }
   }
 
-  const sekmeStili = (aktif) => ({
-    flex: 1, padding: 9, fontSize: 12.5, fontWeight: 700, border: 'none', borderRadius: 11, cursor: 'pointer',
-    fontFamily: 'var(--fd)', background: aktif ? 'var(--pu)' : 'transparent', color: aktif ? '#fff' : 'var(--tx3)',
-  })
 
   return (
     <div className="auth-wrap">
@@ -74,10 +70,7 @@ export default function GirisSayfasi() {
           />
         ) : (
           <>
-            <div style={{ display: 'flex', gap: 4, background: 'var(--sur2)', borderRadius: 14, padding: 4, marginBottom: 22 }}>
-              <button type="button" onClick={() => { setSekme('giris'); setHata(null) }} style={sekmeStili(sekme === 'giris')}>Giriş Yap</button>
-              <button type="button" onClick={() => { setSekme('kayit'); setHata(null) }} style={sekmeStili(sekme === 'kayit')}>Kayıt Ol</button>
-            </div>
+            {/* [2026-10-09] Kendi kendine kayıt kapalı: hesapları okul (okul yetkilisi) veya süper admin açar */}
 
             {hata && <div className="auth-error">{hata}</div>}
 
@@ -113,11 +106,7 @@ export default function GirisSayfasi() {
             </form>
 
             <div className="auth-foot">
-              {sekme === 'giris' ? (
-                <>Hesabın yok mu? <button className="auth-link" onClick={() => setSekme('kayit')}>Kayıt ol</button></>
-              ) : (
-                <>Zaten hesabın var mı? <button className="auth-link" onClick={() => setSekme('giris')}>Giriş yap</button></>
-              )}
+              Hesabını okulun oluşturur. Giriş bilgilerini (e-posta ve geçici şifre) rehber öğretmeninden alabilirsin.
             </div>
           </>
         )}
