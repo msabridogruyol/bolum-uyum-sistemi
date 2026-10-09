@@ -174,13 +174,15 @@ class ProfilOut(BaseModel):
     hedef_meslek_id: int | None
     hedef_meslek_adi: str | None  # join ile doldurulur, hedef_meslek_id NULL ise None
     profil_foto_base64: str | None
+    sube: str | None = None
+    sifre_degistirmeli: bool = False   # [2026-10-09] geçici şifreyle girdiyse yeni şifre belirlemeli
 
     model_config = {"from_attributes": True}
 
 
 class ProfilGuncelleIstek(BaseModel):
     ad_soyad: str | None = None
-    okul: str | None = None
+    okul: str | None = None   # [2026-10-09] yok sayılır — okul yönetimden atanır (eski istemciler için alan duruyor)
     sinif: str | None = None
     dogum_tarihi: date | None = None
     cinsiyet: str | None = None  # 'kadin' | 'erkek' | 'belirtmek_istemiyorum' | 'diger'
