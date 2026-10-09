@@ -5,6 +5,7 @@ import { api } from '../api/client'
 import TemaAnahtari from './TemaAnahtari'
 import TanitimPenceresi from './TanitimPenceresi'
 import Maskot from './Maskot'
+import OkulRozeti from './OkulRozeti'
 import FilizSohbet from './FilizSohbet'
 import { KvkkOnayPenceresi } from './KvkkBilesenleri'
 
@@ -62,6 +63,7 @@ export default function AnaSayfaDuzeni() {
           </div>
           <TemaAnahtari sabit={false} />
         </div>
+        <OkulRozeti />
         <div className="sb-user">
           {profil?.profil_foto_base64 ? (
             <img
