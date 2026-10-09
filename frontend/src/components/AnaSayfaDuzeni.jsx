@@ -8,9 +8,11 @@ import Maskot from './Maskot'
 import OkulRozeti from './OkulRozeti'
 import FilizSohbet from './FilizSohbet'
 import { KvkkOnayPenceresi } from './KvkkBilesenleri'
+import { IlkSifrePenceresi } from './yonetim/ortak'
 
-// [2026-10-03] İlk giriş akışı: tanıtım penceresi → profil (okul + sınıf zorunlu) → ana sayfa
-export const profilEksikMi = (p) => !p || !p.ad_soyad?.trim() || !p.okul?.trim() || !p.sinif?.trim()
+// [2026-10-03] İlk giriş akışı: tanıtım penceresi → profil (ad + sınıf zorunlu) → ana sayfa
+// [2026-10-09] Okul öğrenciden alınmaz; yönetimdeki Okullar sayfasından atanır.
+export const profilEksikMi = (p) => !p || !p.ad_soyad?.trim() || !p.sinif?.trim()
 const tanitimAnahtari = (p) => `tanitim_goruldu_${p?.email || 'misafir'}`
 function tanitimGorulduMu(p) {
   try { return localStorage.getItem(tanitimAnahtari(p)) === '1' } catch { return true }
@@ -47,7 +49,9 @@ export default function AnaSayfaDuzeni() {
 
   // Profil tamamlanmadan diğer sayfalara geçilmez (tanıtım açıkken yönlendirme beklenir)
   const profilSayfasinda = konum.pathname.startsWith('/profil')
-  if (profilYuklendi && profil && !tanitimAcik && !kvkkGerekli && profilEksikMi(profil) && !profilSayfasinda) {
+  // [2026-10-09] Okulun açtığı hesap geçici şifreyle başlar: önce öğrenci kendi şifresini belirler
+  const sifreGerekli = !!profil?.sifre_degistirmeli
+  if (profilYuklendi && profil && !sifreGerekli && !tanitimAcik && !kvkkGerekli && profilEksikMi(profil) && !profilSayfasinda) {
     return <Navigate to="/profil?ilk=1" replace />
   }
 
@@ -138,8 +142,12 @@ export default function AnaSayfaDuzeni() {
         {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
         <Outlet context={{ profilYenile, tanitimiAc }} />
       </div>
-      {kvkkGerekli && <KvkkOnayPenceresi onTamam={() => setKvkkGerekli(false)} onCikis={cikisYap} />}
-      {!kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
+      {sifreGerekli && (
+        <IlkSifrePenceresi kaydet={(s) => api.ilkSifreBelirle(s)} onCikis={cikisYap}
+          onTamam={() => setProfil((p) => ({ ...p, sifre_degistirmeli: false }))} />
+      )}
+      {!sifreGerekli && kvkkGerekli && <KvkkOnayPenceresi onTamam={() => setKvkkGerekli(false)} onCikis={cikisYap} />}
+      {!sifreGerekli && !kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
       {!kvkkGerekli && !tanitimAcik && profil && <FilizSohbet />}
     </div>
   )
