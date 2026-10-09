@@ -2,7 +2,7 @@
 """
 [2026-10-09] Okullar — okul kaydı (ad + amblem) ve öğrencinin sol menüsündeki okul rozeti.
 
-GET    /okul/benim                     — öğrenci: kendi okulu (amblemi gösterilecekse), yoksa null
+GET    /okul/benim                     — öğrenci: kendi okulu + tanıtım bilgileri (amblemi gösterilecekse), yoksa null
 GET    /okul/aktif                     — (geriye uyum) ilk gösterilen okul
 GET    /admin/okullar                  — süper admin: tüm okullar + öğrenci/okul yetkilisi sayıları
 POST   /admin/okullar                  — yeni okul
@@ -10,6 +10,8 @@ PUT    /admin/okullar/{id}             — düzenle (ad değişirse öğrenci ka
 DELETE /admin/okullar/{id}?hedef_id=   — sil; öğrencisi varsa hedef okula aktarılır (hedef 0 = okul harici)
 Öğrenci ve okul yetkilisi işlemleri okul bazlıdır: bkz. app/api/okul_yonetimi.py (/yonetim/...).
 """
+from datetime import datetime
+
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy import func
@@ -39,6 +41,32 @@ class OkulOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
+class KadroKisi(BaseModel):
+    gorev: str
+    ad: str
+    eposta: str | None = None
+    telefon: str | None = None
+
+
+class OkulBilgiOut(BaseModel):
+    """[2026-10-09] Öğrencinin gördüğü okul tanıtım penceresi (ve yönetimdeki düzenleme formu)."""
+    id: int
+    ad: str
+    alt_baslik: str | None = None
+    logo: str | None = None
+    kurulus_yili: int | None = None
+    ogrenci_sayisi: int | None = None
+    tanitim: str | None = None
+    adres: str | None = None
+    telefon: str | None = None
+    eposta: str | None = None
+    web: str | None = None
+    kadro: list[KadroKisi] = []
+    bilgi_guncelleme_zamani: datetime | None = None
+
+    model_config = {"from_attributes": True}
+
+
 class OkulIstek(BaseModel):
     ad: str
     alt_baslik: str | None = None
@@ -63,7 +91,7 @@ def _okul(db: Session, okul_id: int) -> Okul:
     return okul
 
 
-@genel_router.get("/benim", response_model=OkulOut | None)
+@genel_router.get("/benim", response_model=OkulBilgiOut | None)
 def benim_okulum(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     if not ogrenci.okul_id:
         return None
