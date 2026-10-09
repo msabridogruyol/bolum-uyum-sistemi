@@ -56,22 +56,51 @@ function KarsilastirmaSatiri({ g }) {
   )
 }
 
-// Tek bir yol haritası adımı: ne yapacağın, ne kadar sürer, bunu yaptığını nasıl anlarsın + durum
+// Tek bir yol haritası adımı: ne yapacağın, ne kadar sürer + [2026-10-09] adım adım "Nasıl yaparsın?",
+// kontrol listesi olarak "Nasıl anlarsın?" ve ipucu (açılır-kapanır; sıradaki adımda açık gelir) + durum düğmeleri
 function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
   const bitti = adim.durum === 'tamamlandi'
+  const detayVar = (adim.nasil && adim.nasil.length > 0) || (adim.kontrol && adim.kontrol.length > 0)
+  const [acik, setAcik] = useState(vurgulu)
   return (
-    <div style={{
-      border: vurgulu ? '2px solid var(--pu)' : '1px solid var(--bor)', background: vurgulu ? 'var(--pul)' : 'var(--sur)',
-      borderRadius: 12, padding: 12, marginBottom: 10, opacity: bitti && !vurgulu ? 0.6 : 1,
-    }}>
+    <div className={`adim-kart${vurgulu ? ' vurgulu' : ''}${bitti && !vurgulu ? ' bitti' : ''}`}>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
         {alanGoster && <Cip renk="var(--pu)" zemin="var(--pul)">{adim.degisken_adi}</Cip>}
         <Cip>{adim.tur_etiket}</Cip>
         <Cip>⏱ {adim.sure}</Cip>
       </div>
       <div style={{ fontSize: 13.5, fontWeight: 700, marginBottom: 4, textDecoration: bitti ? 'line-through' : 'none' }}>{bitti ? '✓ ' : ''}{adim.baslik}</div>
-      <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5, marginBottom: 6 }}>{adim.aciklama}</div>
-      <div style={{ fontSize: 11.5, color: 'var(--tx3)', marginBottom: 8 }}><b>Nasıl anlarsın?</b> {adim.olcut}</div>
+      <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5, marginBottom: 8 }}>{adim.aciklama}</div>
+
+      {detayVar ? (
+        <>
+          <button type="button" className="adim-ac" aria-expanded={acik} onClick={() => setAcik(!acik)}>
+            <span>{acik ? '▾' : '▸'}</span> {acik ? 'Ayrıntıları gizle' : `Nasıl yaparsın? · ${adim.nasil.length} adım`}
+          </button>
+          {acik ? (
+            <div className="adim-detay">
+              <div className="adim-detay-baslik">🛠️ Nasıl yaparsın?</div>
+              <ol className="adim-nasil">
+                {adim.nasil.map((m, i) => <li key={i}>{m}</li>)}
+              </ol>
+              {adim.kontrol.length > 0 && (
+                <>
+                  <div className="adim-detay-baslik">✅ Nasıl anlarsın? <span>Bunları yapabiliyorsan bu adım tamam:</span></div>
+                  <ul className="adim-kontrol">
+                    {adim.kontrol.map((m, i) => <li key={i}>{m}</li>)}
+                  </ul>
+                </>
+              )}
+              {adim.ipucu && <div className="adim-ipucu">💡 {adim.ipucu}</div>}
+            </div>
+          ) : (
+            <div style={{ fontSize: 11.5, color: 'var(--tx3)', margin: '6px 0 8px' }}><b>Nasıl anlarsın?</b> {adim.olcut}</div>
+          )}
+        </>
+      ) : (
+        <div style={{ fontSize: 11.5, color: 'var(--tx3)', marginBottom: 8 }}><b>Nasıl anlarsın?</b> {adim.olcut}</div>
+      )}
+
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
         {DURUMLAR.map((d) => (
           <button key={d.kod} className={adim.durum === d.kod ? 'btn' : 'btn sec'} style={{ fontSize: 11.5, padding: '5px 10px' }}
