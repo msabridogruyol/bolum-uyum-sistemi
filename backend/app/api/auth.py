@@ -1,6 +1,6 @@
 """
 Kimlik doğrulama uç noktaları — D1.
-POST /auth/kayit                 — yeni öğrenci hesabı (KVKK onaylarıyla)
+POST /auth/kayit                 — [2026-10-09] KAPALI: hesapları süper admin / okul yetkilisi açar
 POST /auth/giris                 — e-posta+şifre; gerekiyorsa 2 adımlı doğrulama başlatır
 POST /auth/iki-adim/dogrula      — e-postaya gelen kodla girişi tamamlar
 POST /auth/iki-adim/tekrar       — yeni kod gönderir
@@ -44,6 +44,14 @@ def _kullanici_tipi(rol: str) -> str:
     return "ogrenci" if rol == "ogrenci" else "yonetim"
 
 
+def _giris_kaydet(db: Session, hesap, rol: str) -> None:
+    """[2026-10-09] Başarılı girişte son giriş zamanı ve (öğrenci için) olay kaydı."""
+    from app.core.hesap_yonetimi import olay_yaz, simdi
+    hesap.son_giris_zamani = simdi()
+    if rol == "ogrenci":
+        olay_yaz(db, hesap.id, "giris", None, "Öğrenci")
+
+
 def giris_sonucu(db: Session, hesap, rol: str, cihaz_tokeni: str | None) -> GirisCevap:
     """Şifre doğrulandıktan sonra: 2 adım gerekiyorsa kod gönder, gerekmiyorsa token ver."""
     tip = _kullanici_tipi(rol)
@@ -56,6 +64,7 @@ def giris_sonucu(db: Session, hesap, rol: str, cihaz_tokeni: str | None) -> Giri
         db.commit()
         return GirisCevap(iki_adim_gerekli=True, maskeli_eposta=hg.maskeli_eposta(hesap.email), kullanici_tipi=rol,
                           gecici_token=_token_uret(str(hesap.id), rol, timedelta(minutes=10), "iki_adim"))
+    _giris_kaydet(db, hesap, rol)
     db.commit()
     return GirisCevap(erisim_tokeni=erisim_tokeni_uret(hesap.id, rol), yenileme_tokeni=yenileme_tokeni_uret(hesap.id, rol),
                       kullanici_tipi=rol)
@@ -85,6 +94,7 @@ def iki_adim_tamamla(db: Session, istek: IkiAdimDogrulaIstek, izinli_roller: set
         db.commit()  # deneme sayısı kaydedilsin
         raise HTTPException(status_code=400, detail=str(e))
     cihaz = hg.cihaz_kaydet(db, tip, hesap.id) if istek.cihazi_hatirla else None
+    _giris_kaydet(db, hesap, rol)
     db.commit()
     return GirisCevap(erisim_tokeni=erisim_tokeni_uret(hesap.id, rol), yenileme_tokeni=yenileme_tokeni_uret(hesap.id, rol),
                       kullanici_tipi=rol, cihaz_tokeni=cihaz)
@@ -106,7 +116,9 @@ def kodu_tekrar_gonder(db: Session, istek: IkiAdimTekrarIstek, izinli_roller: se
 # ----------------------------------------------------------------------------- kayıt / giriş
 @router.post("/kayit", response_model=OgrenciProfil, status_code=status.HTTP_201_CREATED)
 def kayit_ol(istek: OgrenciKayitIstekV2, request: Request, db: Session = Depends(get_db)):
-    email = istek.email.strip()
+    # [2026-10-09] Kendi kendine kayıt kapalı: hesaplar yönetim panelinden (okul bazlı) açılır.
+    raise HTTPException(status_code=403, detail="Hesaplar okulun tarafından oluşturulur. Giriş bilgilerini rehber öğretmeninden alabilirsin.")
+    email = istek.email.strip()  # noqa: eski akış (kapalı)
     mevcut = db.query(Ogrenci).filter(func.lower(Ogrenci.email) == email.lower()).first()
     if mevcut is not None:
         raise HTTPException(status_code=400, detail="Bu e-posta ile zaten bir hesap var.")
@@ -127,30 +139,33 @@ def kayit_ol(istek: OgrenciKayitIstekV2, request: Request, db: Session = Depends
 
 @router.post("/giris", response_model=GirisCevap)
 def giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
-    """Öğrenci ve rehber öğretmenler bu sayfadan giriş yapar."""
+    """Öğrenci girişi. [2026-10-09] Okul yetkilileri ve süper admin yönetim giriş sayfasını kullanır."""
     hata = HTTPException(status_code=401, detail="E-posta veya şifre hatalı.")
     email = istek.email.strip().lower()
 
     ogrenci = db.query(Ogrenci).filter(func.lower(Ogrenci.email) == email).first()
-    if ogrenci is not None and sifre_dogrula(istek.sifre, ogrenci.sifre_hash):
-        return giris_sonucu(db, ogrenci, "ogrenci", istek.cihaz_tokeni)
+    if ogrenci is not None:
+        if sifre_dogrula(istek.sifre, ogrenci.sifre_hash):
+            return giris_sonucu(db, ogrenci, "ogrenci", istek.cihaz_tokeni)
+        from app.core.hesap_yonetimi import olay_yaz
+        olay_yaz(db, ogrenci.id, "giris_hatali", "Yanlış şifre", "Öğrenci")
+        db.commit()
+        raise hata
 
-    rehber = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email, AdminKullanici.rol == "rehber").first()
-    if rehber is not None and sifre_dogrula(istek.sifre, rehber.sifre_hash):
-        if getattr(rehber, "aktif_mi", True) is False:
-            raise HTTPException(status_code=403, detail="Hesabın yönetim tarafından devre dışı bırakılmış.")
-        return giris_sonucu(db, rehber, "rehber", istek.cihaz_tokeni)
+    yonetici = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email).first()
+    if yonetici is not None and sifre_dogrula(istek.sifre, yonetici.sifre_hash):
+        raise HTTPException(status_code=403, detail="Bu bir yönetim hesabı. Lütfen yönetim girişini (/admin/giris) kullan.")
     raise hata
 
 
 @router.post("/iki-adim/dogrula", response_model=GirisCevap)
 def iki_adim_dogrula(istek: IkiAdimDogrulaIstek, db: Session = Depends(get_db)):
-    return iki_adim_tamamla(db, istek, {"ogrenci", "rehber"})
+    return iki_adim_tamamla(db, istek, {"ogrenci"})
 
 
 @router.post("/iki-adim/tekrar", status_code=204)
 def iki_adim_tekrar(istek: IkiAdimTekrarIstek, db: Session = Depends(get_db)):
-    kodu_tekrar_gonder(db, istek, {"ogrenci", "rehber"})
+    kodu_tekrar_gonder(db, istek, {"ogrenci"})
 
 
 @router.post("/yenile", response_model=TokenCifti)
@@ -168,10 +183,6 @@ def token_yenile(istek: YenilemeIstek, db: Session = Depends(get_db)):
     rol = payload.get("rol", "ogrenci")
     if rol == "ogrenci":
         hesap = db.get(Ogrenci, kid)
-    elif rol == "rehber":
-        hesap = db.get(AdminKullanici, kid)
-        if hesap is not None and hesap.rol != "rehber":
-            hesap = None
     else:
         raise hata
     if hesap is None:
