@@ -38,6 +38,7 @@ class OkulOut(BaseModel):
     # [2026-10-09] Listede sistemdeki öğrenci sayısı; tekil cevaplarda okulun girdiği sayı (boş olabilir → None)
     ogrenci_sayisi: int | None = 0
     yetkili_sayisi: int = 0
+    tema_renk: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -64,6 +65,7 @@ class OkulBilgiOut(BaseModel):
     web: str | None = None
     kadro: list[KadroKisi] = []
     bilgi_guncelleme_zamani: datetime | None = None
+    tema_renk: str | None = None      # [2026-10-09] okul rengi — öğrenci arayüzündeki vurgu çizgileri
 
     model_config = {"from_attributes": True}
 
