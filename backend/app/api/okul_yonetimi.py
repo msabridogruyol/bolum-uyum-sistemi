@@ -25,6 +25,7 @@ POST   /yonetim/okul/{okul_id}/yetkililer        — (süper admin) okul yetkili
 POST   /yonetim/yetkili/{id}/sifre-sifirla       — (süper admin) yetkiliye yeni geçici şifre
 DELETE /yonetim/yetkili/{id}                     — (süper admin) yetkiliyi sil
 GET    /yonetim/okul/{okul_id}/kayitlar          — okulun işlem kayıtları (yönetim işlemleri + öğrenci giriş/şifre olayları)
+PUT    /yonetim/okul/{okul_id}/tema             — okul rengi (#RRGGBB; boş = Filizyol rengi) — okul yetkilisi + süper admin
 GET    /yonetim/okul/{okul_id}/bilgi             — okul tanıtım bilgileri (kuruluş yılı, öğrenci sayısı, tanıtım, iletişim, kadro)
 PUT    /yonetim/okul/{okul_id}/bilgi             — tanıtım bilgilerini güncelle (okul yetkilisi + süper admin)
 """
@@ -370,6 +371,7 @@ def ben(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_
     return {"id": str(yon.id), "ad_soyad": yon.ad_soyad, "email": yon.email, "rol": yon.rol,
             "rol_adi": "Süper Admin" if yon.rol == "super_admin" else "Okul Yetkilisi",
             "okul_id": yon.okul_id, "okul_ad": okul.ad if okul else None, "okul_logo": okul.logo if okul else None,
+            "okul_renk": okul.tema_renk if okul else None,
             "sifre_degistirmeli": bool(yon.sifre_degistirmeli)}
 
 
@@ -871,7 +873,8 @@ def _bilgi_out(okul: Okul) -> dict:
     return {"id": okul.id, "ad": okul.ad, "alt_baslik": okul.alt_baslik, "logo": okul.logo,
             "kurulus_yili": okul.kurulus_yili, "ogrenci_sayisi": okul.ogrenci_sayisi, "tanitim": okul.tanitim,
             "adres": okul.adres, "telefon": okul.telefon, "eposta": okul.eposta, "web": okul.web,
-            "kadro": okul.kadro or [], "bilgi_guncelleme_zamani": okul.bilgi_guncelleme_zamani, "gorevler": GOREVLER}
+            "kadro": okul.kadro or [], "bilgi_guncelleme_zamani": okul.bilgi_guncelleme_zamani, "gorevler": GOREVLER,
+            "tema_renk": okul.tema_renk}
 
 
 def _kirp(v: str | None, n: int) -> str | None:
@@ -928,3 +931,27 @@ def okul_bilgi_guncelle(okul_id: int, istek: OkulBilgiIstek, db: Session = Depen
     db.commit()
     db.refresh(okul)
     return _bilgi_out(okul)
+
+
+# ----------------------------------------------------------------------------- okul rengi (görünüm)
+_HEX = re.compile(r"^#[0-9A-Fa-f]{6}$")
+
+
+class TemaIstek(BaseModel):
+    renk: str | None = None          # "#1F3A93" — boş/None = Filizyol'un kendi rengi
+
+
+@router.put("/okul/{okul_id}/tema")
+def okul_tema_guncelle(okul_id: int, istek: TemaIstek, db: Session = Depends(get_db),
+                       yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-09] Okul rengi: öğrenci ve okul paneli arayüzündeki ayırıcı/vurgu çizgilerinin rengi."""
+    okul = _okul_kapsami(db, yon, okul_id)
+    if okul is None:
+        raise HTTPException(status_code=400, detail="Okul harici grubun okul rengi yok.")
+    renk = (istek.renk or "").strip() or None
+    if renk and not _HEX.match(renk):
+        raise HTTPException(status_code=400, detail="Renk #RRGGBB biçiminde olmalı (ör. #1F3A93).")
+    okul.tema_renk = renk.upper() if renk else None
+    denetim_yaz(db, yon, "okul_tema_guncelle", "okullar", okul.id, f"{okul.ad}: okul rengi {okul.tema_renk or 'varsayılan'}", okul.id)
+    db.commit()
+    return {"tema_renk": okul.tema_renk}
