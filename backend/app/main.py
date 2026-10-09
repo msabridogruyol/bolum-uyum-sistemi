@@ -22,6 +22,7 @@ from app.api.bolum_bilgi import router as bolum_bilgi_router
 
 from app.api.okul import genel_router as okul_genel_router, admin_router as okul_admin_router
 from app.api.okul_yonetimi import router as okul_yonetimi_router
+from app.api.meslek_dili import router as meslek_dili_router
 app = FastAPI(
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
@@ -134,6 +135,7 @@ app.include_router(bolum_bilgi_router, prefix="/bolumler", tags=["Bölüm Bilgi 
 app.include_router(okul_genel_router)                       # [2026-10-09] GET /okul/aktif
 app.include_router(okul_admin_router, prefix="/admin")      # [2026-10-09] /admin/okullar
 app.include_router(okul_yonetimi_router)
+app.include_router(meslek_dili_router)
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
 # yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi,
