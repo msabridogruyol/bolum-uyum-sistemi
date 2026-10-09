@@ -1,245 +1,171 @@
 """
-Bölüm F — Koçluk modülü uç noktaları.
-POST /koclugu/hedef              — hedef seç/değiştir (onay akışı, F8)
-GET  /koclugu/hedef               — aktif hedefi getir
-GET  /koclugu/hedef/durum         — aktif hedef + kalan değiştirme hakkı (Ayarlar)
-GET  /koclugu/hedef/kaynaklar     — odak/güçlü alanlara uygun kitap, film, ilham veren kişi, olay, aktivite önerileri
-GET  /koclugu/hedef/gelisim       — gap analizi + gelişim kartları (F2-F3)
-GET  /koclugu/hedef/yol-haritasi  — 3 aşamalı gelişim planı (F4)
-POST /koclugu/hedef/aksiyon       — bir gelişim aksiyonunun durumunu güncelle (F4.2)
-GET  /koclugu/karsilastirma       — tur bazlı önceki/güncel karşılaştırma (F5)
+Koçluk modülü (Bölüm F) — schema.sql BÖLÜM 10
+Kaynak: koclugu_karsilastirma_modulu.md F1, F3, F4.2, F5.3, F8
+
+ÖNEMLİ: OgrenciHedefBolum için "tek aktif hedef" kısıtı burada Python
+tarafında değil, veritabanı seviyesinde bir partial unique index ile
+uygulanır (bkz. bu dosyanın sonundaki Alembic migration notu) — SQLAlchemy
+ORM katmanı bu kısıtı garanti etmez, sadece şemaya yansıtır.
 """
-from fastapi import APIRouter, Depends, HTTPException
-from sqlalchemy.orm import Session
-
-from app.api.deps import get_mevcut_ogrenci
-from app.core.database import get_db
-from app.core.katman_servisi import IsKuraliHatasi, son_tur_getir
-from app.core.koclugu_servisi import (
-    aktif_hedef_getir, hedef_sec, gap_analizi_hesapla, yol_haritasi_olustur,
-    aksiyon_durumu_guncelle, tur_karsilastirmasi_hesapla,
-    gelisim_plani_olustur, adim_durumu_guncelle, HedefHakkiBitti, hedef_hak_durumu,
-)
-from app.core.gelisim_icerigi import ICERIK
-from app.models import Ogrenci, Bolum, Katman, OgrenciGelisimAksiyonDurumu
-from app.core.dal_servisi import bekleyen_dal_var_mi
-from app.schemas.koclugu import (
-    HedefSecIstek, AktifHedefOut, HedefDurumOut, GapSatiriOut, YolHaritasiOut,
-    AksiyonDurumIstek, KarsilastirmaSatiriOut,
-    GelisimPlaniOut, AdimDurumIstek,
-)
-
-router = APIRouter()
+import uuid
+from datetime import datetime
+from sqlalchemy import String, Integer, BigInteger, Boolean, DateTime, ForeignKey, CheckConstraint, UniqueConstraint
+from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.orm import Mapped, mapped_column
+from app.core.database import Base
 
 
-def _hedef_out(db: Session, ogrenci: Ogrenci, hedef) -> AktifHedefOut:
-    bolum = db.get(Bolum, hedef.bolum_id)
-    return AktifHedefOut(bolum_id=hedef.bolum_id, bolum_adi=bolum.ad, secim_zamani=hedef.secim_zamani.isoformat(),
-                         **hedef_hak_durumu(ogrenci))
+class OgrenciHedefBolum(Base):
+    __tablename__ = "ogrenci_hedef_bolum"
+    # NOT: "aynı öğrenci için aynı anda yalnızca 1 aktif_mi=TRUE satır" kısıtı
+    # bir CheckConstraint DEĞİL — PostgreSQL'de yalnızca partial UNIQUE INDEX
+    # ile ifade edilebilir (bkz. schema.sql, F8). Alembic migration'da:
+    #   CREATE UNIQUE INDEX ux_ogrenci_tek_aktif_hedef
+    #       ON ogrenci_hedef_bolum (ogrenci_id) WHERE aktif_mi = TRUE;
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id"), nullable=False)
+    bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id"), nullable=False)
+    secim_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    pasif_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))  # F8 — hedef değişince doldurulur
+    aktif_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 
-@router.post("/hedef", response_model=AktifHedefOut)
-def hedefi_sec(
-    istek: HedefSecIstek,
-    db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
-):
-    try:
-        hedef = hedef_sec(db, ogrenci, istek.bolum_id, onay=istek.onay)
-    except HedefHakkiBitti as e:
-        db.rollback()
-        raise HTTPException(status_code=403, detail=str(e))
-    except IsKuraliHatasi as e:
-        db.rollback()
-        raise HTTPException(status_code=409, detail=str(e))  # 409 — onay gerektiren çakışma
-    db.commit()
-    return _hedef_out(db, ogrenci, hedef)
-
-
-@router.get("/hedef", response_model=AktifHedefOut | None)
-def aktif_hedefi_getir(
-    db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
-):
-    hedef = aktif_hedef_getir(db, ogrenci)
-    if hedef is None:
-        return None
-    return _hedef_out(db, ogrenci, hedef)
-
-
-@router.get("/hedef/durum", response_model=HedefDurumOut)
-def hedef_durumu(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
-    hedef = aktif_hedef_getir(db, ogrenci)
-    return HedefDurumOut(hedef=_hedef_out(db, ogrenci, hedef) if hedef else None, **hedef_hak_durumu(ogrenci))
-
-
-def _gap_satirlarini_hazirla(db: Session, ogrenci: Ogrenci):
-    hedef = aktif_hedef_getir(db, ogrenci)
-    if hedef is None:
-        raise HTTPException(status_code=400, detail="Henüz bir hedef bölümün yok.")
-    try:
-        tur = son_tur_getir(db, ogrenci)
-    except IsKuraliHatasi as e:
-        raise HTTPException(status_code=400, detail=str(e))
-    if tur.durum != "tamamlandi":
-        raise HTTPException(status_code=400, detail="K1-K4 tamamlanmadan gelişim analizi hesaplanamaz.")
-    # [2026-10-03] Sonuç ekranıyla aynı kural: açılan alan (K5) soruları bitmeden koçluk analizi gösterilmez
-    if bekleyen_dal_var_mi(db, ogrenci, tur):
-        raise HTTPException(status_code=409, detail="Koçluk analizinin hazırlanması için önce sana açılan alan (K5) sorularını tamamlamalısın.")
-    satirlar = gap_analizi_hesapla(db, ogrenci, tur, hedef.bolum_id)
-    katmanlar = {k.id: k for k in db.query(Katman).all()}
-    durumlar = {
-        a.degisken_id: a.durum
-        for a in db.query(OgrenciGelisimAksiyonDurumu).filter(
-            OgrenciGelisimAksiyonDurumu.ogrenci_id == ogrenci.id,
-            OgrenciGelisimAksiyonDurumu.hedef_bolum_id == hedef.bolum_id,
-        ).all()
-    }
-    for s in satirlar:
-        k = katmanlar.get(s.degisken.katman_id)
-        s.katman_kod, s.katman_adi = (k.kod, k.ad) if k else (None, None)
-        s.aksiyon_durumu = durumlar.get(s.degisken.id)
-    return satirlar
-
-
-def _gap_satiri_to_out(s) -> GapSatiriOut:
-    kart = s.gelisim_karti
-    return GapSatiriOut(
-        degisken_id=s.degisken.id, degisken_kod=s.degisken.kod, degisken_adi=s.degisken.ad,
-        katman_kod=getattr(s, "katman_kod", None), katman_adi=getattr(s, "katman_adi", None),
-        ogrenci_goreli=round(getattr(s, "ogrenci_goreli", s.ogrenci_puan), 1),
-        bolum_goreli=round(getattr(s, "bolum_goreli", s.bolum_beklenen), 1),
-        aksiyon_durumu=getattr(s, "aksiyon_durumu", None),
-        nedir=ICERIK.get(s.degisken.kod, {}).get("nedir") or s.degisken.aciklama,
-        ogrenci_puan=s.ogrenci_puan, bolum_beklenen=s.bolum_beklenen,
-        gap=round(s.gap, 2), kategori=s.kategori, oncelik_skoru=round(s.oncelik_skoru, 2),
-        durum_tespiti=kart.durum_tespiti if kart else None,
-        aksiyon_onerisi=kart.aksiyon_onerisi if kart else None,
-        kaynak_tipi=kart.kaynak_tipi if kart else None,
-        tahmini_efor=kart.tahmini_efor if kart else None,
+class GelisimYorumHavuzu(Base):
+    """F3 — 31 değişken × 5 gap aralığı = 150 satır. İçerik henüz yazılmadı (Açık Karar #2)."""
+    __tablename__ = "gelisim_yorum_havuzu"
+    __table_args__ = (
+        CheckConstraint(
+            "aralik IN ('belirgin_ustun','ustun','beklenti','altinda','belirgin_altinda')",
+            name="ck_gyh_aralik",
+        ),
+        CheckConstraint(
+            "kaynak_tipi IN ('kurs','proje','okuma','staj_deneyim','aliskanlik') OR kaynak_tipi IS NULL",
+            name="ck_gyh_kaynak_tipi",
+        ),
+        CheckConstraint(
+            "tahmini_efor IN ('kisa','orta','uzun') OR tahmini_efor IS NULL",
+            name="ck_gyh_efor",
+        ),
+        UniqueConstraint("degisken_id", "aralik", name="uq_gyh_degisken_aralik"),
     )
 
-
-@router.get("/hedef/gelisim", response_model=list[GapSatiriOut])
-def gelisim_analizi_getir(
-    db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
-):
-    satirlar = _gap_satirlarini_hazirla(db, ogrenci)
-    return [_gap_satiri_to_out(s) for s in satirlar]
-
-
-@router.get("/hedef/yol-haritasi", response_model=YolHaritasiOut)
-def yol_haritasini_getir(
-    db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
-):
-    satirlar = _gap_satirlarini_hazirla(db, ogrenci)
-    harita = yol_haritasi_olustur(satirlar)
-    return YolHaritasiOut(**{k: [_gap_satiri_to_out(s) for s in v] for k, v in harita.items()})
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
+    aralik: Mapped[str] = mapped_column(String, nullable=False)
+    durum_tespiti: Mapped[str] = mapped_column(String, nullable=False)
+    aksiyon_onerisi: Mapped[str | None] = mapped_column(String)   # yalnızca altında/belirgin_altinda'da dolu
+    kaynak_tipi: Mapped[str | None] = mapped_column(String)
+    tahmini_efor: Mapped[str | None] = mapped_column(String)
 
 
-@router.post("/hedef/aksiyon/{degisken_id}", status_code=204)
-def aksiyon_durumunu_guncelle(
-    degisken_id: int,
-    istek: AksiyonDurumIstek,
-    db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
-):
-    hedef = aktif_hedef_getir(db, ogrenci)
-    if hedef is None:
-        raise HTTPException(status_code=400, detail="Henüz bir hedef bölümün yok.")
-    try:
-        aksiyon_durumu_guncelle(db, ogrenci, hedef.bolum_id, degisken_id, istek.durum)
-    except IsKuraliHatasi as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
-    db.commit()
+class GelisimKarsilastirmaYorumu(Base):
+    """F5.3 — 31 değişken × 5 trend kategorisi = ek 150 satır (Açık Karar #2)."""
+    __tablename__ = "gelisim_karsilastirma_yorumu"
+    __table_args__ = (
+        CheckConstraint(
+            "trend IN ('belirgin_gelisim','gelisim','durgun','gerileme','belirgin_gerileme')",
+            name="ck_gky_trend",
+        ),
+        UniqueConstraint("degisken_id", "trend", name="uq_gky_degisken_trend"),
+    )
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
+    trend: Mapped[str] = mapped_column(String, nullable=False)
+    yorum_metni: Mapped[str] = mapped_column(String, nullable=False)
 
 
-@router.get("/karsilastirma", response_model=list[KarsilastirmaSatiriOut] | None)
-def tur_karsilastirmasini_getir(
-    db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
-):
-    """F5.4 — ilk tur davranışı: en az 2 tamamlanmış tur yoksa null döner (frontend F5'i gizler)."""
-    satirlar = tur_karsilastirmasi_hesapla(db, ogrenci)
-    if satirlar is None:
-        return None
-    return [
-        KarsilastirmaSatiriOut(
-            degisken_id=s.degisken.id, degisken_adi=s.degisken.ad,
-            eski_puan=s.eski_puan, yeni_puan=s.yeni_puan, degisim=round(s.degisim, 2),
-            trend=s.trend, yorum_metni=s.yorum.yorum_metni if s.yorum else None,
-        )
-        for s in satirlar
-    ]
+class OgrenciGelisimAksiyonDurumu(Base):
+    """F4.2 — öğrencinin kendi işaretlediği aksiyon ilerlemesi (öznel sinyal)."""
+    __tablename__ = "ogrenci_gelisim_aksiyon_durumu"
+    __table_args__ = (
+        CheckConstraint("durum IN ('planlandi','devam_ediyor','tamamlandi')", name="ck_ogad_durum"),
+        UniqueConstraint("ogrenci_id", "hedef_bolum_id", "degisken_id", name="uq_ogad_ogrenci_bolum_degisken"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id"), nullable=False)
+    hedef_bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id"), nullable=False)
+    degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
+    durum: Mapped[str] = mapped_column(String, nullable=False, default="planlandi")
+    guncelleme_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
-# ============================= [2026-10-03] Detaylı gelişim planı ============================= #
+class OgrenciGelisimAdimDurumu(Base):
+    """[2026-10-03] Detaylı yol haritasındaki her ADIMIN durumu (adım kodu: 'P3-G-2', bkz. gelisim_icerigi.py)."""
+    __tablename__ = "ogrenci_gelisim_adim_durumu"
+    __table_args__ = (
+        CheckConstraint("durum IN ('planlandi','devam_ediyor','tamamlandi')", name="ck_ogadim_durum"),
+        UniqueConstraint("ogrenci_id", "hedef_bolum_id", "adim_kodu", name="uq_ogadim_ogrenci_bolum_adim"),
+    )
 
-@router.get("/hedef/plan", response_model=GelisimPlaniOut)
-def gelisim_planini_getir(
-    db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
-):
-    """3 odak alan × 3 aşama yol haritası + güçlü yön adımları + sıradaki adım."""
-    satirlar = _gap_satirlarini_hazirla(db, ogrenci)
-    hedef = aktif_hedef_getir(db, ogrenci)
-    return GelisimPlaniOut(**gelisim_plani_olustur(db, ogrenci, hedef.bolum_id, satirlar))
-
-
-@router.post("/hedef/adim/{adim_kodu}", status_code=204)
-def adim_durumunu_guncelle(
-    adim_kodu: str,
-    istek: AdimDurumIstek,
-    db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
-):
-    hedef = aktif_hedef_getir(db, ogrenci)
-    if hedef is None:
-        raise HTTPException(status_code=400, detail="Henüz bir hedef bölümün yok.")
-    try:
-        adim_durumu_guncelle(db, ogrenci, hedef.bolum_id, adim_kodu, istek.durum)
-    except IsKuraliHatasi as e:
-        db.rollback()
-        raise HTTPException(status_code=400, detail=str(e))
-    db.commit()
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id"), nullable=False)
+    hedef_bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id"), nullable=False)
+    adim_kodu: Mapped[str] = mapped_column(String, nullable=False)
+    durum: Mapped[str] = mapped_column(String, nullable=False, default="planlandi")
+    guncelleme_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
-# [2026-10-09] İlham kaynakları: yönetimdeki "Gelişim Kaynak Havuzu" (kitap / film / rol model / psikolojik yaklaşım /
-# aktivite / önemli olay) öğrencinin koçluk planındaki odak (gelişim) ve güçlü yön alanlarına göre seçilir.
-# Önce o özelliğin TAM aralığı (ör. belirgin_altinda), yoksa aynı yöndeki komşu aralık kullanılır.
-KOMSU_ARALIK = {
-    "belirgin_altinda": ["belirgin_altinda", "altinda"], "altinda": ["altinda", "belirgin_altinda"],
-    "belirgin_ustun": ["belirgin_ustun", "ustun"], "ustun": ["ustun", "belirgin_ustun"], "beklenti": ["beklenti"],
-}
-ALAN_BASINA = 4
+# ============================================================================
+# AI Koçluk Asistanı (sonradan eklendi)
+# ============================================================================
+
+class OgrenciKoclukOturumu(Base):
+    __tablename__ = "ogrenci_koclugu_oturumlari"
+    __table_args__ = (
+        CheckConstraint("durum IN ('aktif','tamamlandi')", name="ck_koclugu_oturum_durum"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id"), nullable=False)
+    tur_id: Mapped[int | None] = mapped_column(ForeignKey("ogrenci_degerlendirme_turu.id"))
+    baslama_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    bitis_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
+    durum: Mapped[str] = mapped_column(String, nullable=False, default="aktif")
+    # [NOT] Oturum bitince doldurulur; bir sonraki oturumda ham mesaj
+    # geçmişi yerine bu kısa özet modele verilir (maliyet + kalite kontrolü
+    # için — bkz. app/core/ai_koc_servisi.py)
+    ozet: Mapped[str | None] = mapped_column(String)
 
 
-@router.get("/hedef/kaynaklar")
-def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
-    from app.models import GelisimKaynakOnerisi
-    satirlar = _gap_satirlarini_hazirla(db, ogrenci)
-    hedef = aktif_hedef_getir(db, ogrenci)
-    plan = gelisim_plani_olustur(db, ogrenci, hedef.bolum_id, satirlar)
-    alanlar = [{**{k: o[k] for k in ("degisken_id", "degisken_kod", "degisken_adi", "kategori")}, "grup": "gelisim"}
-               for o in plan["odak_alanlari"]]
-    alanlar += [{**{k: g[k] for k in ("degisken_id", "degisken_kod", "degisken_adi", "kategori")}, "grup": "guclu"}
-                for g in plan["guclu_yonler"]]
-    if not alanlar:
-        return {"alanlar": []}
-    havuz = (db.query(GelisimKaynakOnerisi)
-             .filter(GelisimKaynakOnerisi.degisken_id.in_([a["degisken_id"] for a in alanlar]))
-             .order_by(GelisimKaynakOnerisi.sira, GelisimKaynakOnerisi.id).all())
-    sonuc = []
-    for a in alanlar:
-        secilen = []
-        for aralik in KOMSU_ARALIK.get(a["kategori"], [a["kategori"]]):
-            secilen += [k for k in havuz if k.degisken_id == a["degisken_id"] and k.aralik == aralik and k not in secilen]
-            if len(secilen) >= ALAN_BASINA:
-                break
-        if secilen:
-            sonuc.append({**a, "kaynaklar": [{"id": k.id, "tip": k.kaynak_tipi, "baslik": k.baslik, "aciklama": k.aciklama}
-                                             for k in secilen[:ALAN_BASINA]]})
-    return {"hedef_bolum_adi": plan["hedef_bolum_adi"], "alanlar": sonuc}
+class OgrenciKoclukMesaji(Base):
+    __tablename__ = "ogrenci_koclugu_mesajlari"
+    __table_args__ = (
+        CheckConstraint("rol IN ('ogrenci','asistan')", name="ck_koclugu_mesaj_rol"),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    oturum_id: Mapped[int] = mapped_column(ForeignKey("ogrenci_koclugu_oturumlari.id"), nullable=False)
+    rol: Mapped[str] = mapped_column(String, nullable=False)
+    icerik: Mapped[str] = mapped_column(String, nullable=False)
+    olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class GelisimKaynakOnerisi(Base):
+    """
+    [EKLENDİ — genişletilmiş kaynak havuzu] Bölümden BAĞIMSIZ, genel
+    kitap/film/rol model/psikolojik yaklaşım/aktivite önerileri. Bölüme
+    özel HİÇBİR satır yazılmaz — Filiz (ai_koc_servisi.py) bu genel
+    önerileri öğrencinin hedef bölümüne göre YORUMLAYARAK sunar.
+    """
+    __tablename__ = "gelisim_kaynak_onerileri"
+    __table_args__ = (
+        CheckConstraint(
+            "aralik IN ('belirgin_ustun','ustun','beklenti','altinda','belirgin_altinda')",
+            name="ck_gko_aralik",
+        ),
+        CheckConstraint(
+            "kaynak_tipi IN ('kitap','film','rol_model','psikolojik_yaklasim','aktivite','olay')",
+            name="ck_gko_kaynak_tipi",
+        ),
+    )
+
+    id: Mapped[int] = mapped_column(BigInteger, primary_key=True)
+    degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
+    aralik: Mapped[str] = mapped_column(String, nullable=False)
+    kaynak_tipi: Mapped[str] = mapped_column(String, nullable=False)
+    baslik: Mapped[str] = mapped_column(String, nullable=False)
+    aciklama: Mapped[str] = mapped_column(String, nullable=False)
+    sira: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
