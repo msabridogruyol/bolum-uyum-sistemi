@@ -652,22 +652,63 @@ textarea.md-girdi{resize:vertical;min-height:44px}
 :root{--okul-c:var(--okul, var(--pu));--okul-y:color-mix(in srgb, var(--okul-c) 38%, transparent)}
 [data-theme="dark"]{--okul-c:color-mix(in srgb, var(--okul, var(--pu)) 72%, #fff)}
 
-/* Sol menü ile sayfayı ayıran boydan boya çizgi */
-.sb{border-right:3px solid var(--okul-c)}
-.sb-logo{border-bottom:1.5px solid var(--okul-y)}
-.ni.active{border-left-color:var(--okul-c)}
-.okul-rozeti{border-color:var(--bor);border-left:3px solid var(--okul-c)}
+/* ---------------------------------------------------------------------------
+   [2026-10-09] YENİ NESİL DÜZEN — ayırıcı çizgi yerine katman:
+   sol menü ve zemin aynı yumuşak tonda ("kanvas"); sayfa içeriği köşeleri yuvarlak,
+   hafif gölgeli büyük bir panelde durur. Ayrımı çizgi değil panelin kenarı yapar.
+   --------------------------------------------------------------------------- */
+:root{--kanvas:color-mix(in srgb, var(--okul-c) 5%, color-mix(in srgb, var(--sur2) 60%, var(--bg)))}
+[data-theme="dark"]{--kanvas:color-mix(in srgb, var(--okul-c) 6%, #1A1712)}
+.app{background:var(--kanvas)}
+.sb{background:transparent;border-right:none}
+.sb-logo,.sb-user{border-bottom:none}
+.main{margin:10px 10px 10px 0;border-radius:22px;position:relative;
+  background:radial-gradient(ellipse 70% 260px at 18% -60px, color-mix(in srgb, var(--okul-c) 11%, transparent), transparent 70%) no-repeat, var(--bg);
+  box-shadow:0 0 0 1px var(--bor),0 2px 4px rgba(60,50,20,.04),0 12px 40px rgba(60,50,20,.07)}
+[data-theme="dark"] .main{box-shadow:0 0 0 1px var(--bor),0 12px 40px rgba(0,0,0,.35)}
 
-/* Sayfa başlığının altında kısa vurgu çizgisi */
-.pt::after{content:'';display:block;width:44px;height:3px;border-radius:2px;background:var(--okul-c);margin-top:7px}
+/* Menü: hap biçimli öğeler; açık olan öğe zeminden "yüzen" beyaz bir hap + okul renginde nokta */
+.ni{margin:1px 10px;padding:8px 12px;border-radius:12px;border-left:none;transition:background .18s,color .18s,transform .18s,box-shadow .18s}
+.ni:hover{background:color-mix(in srgb, var(--sur) 70%, transparent);transform:translateX(2px)}
+.ni.active{background:var(--sur);color:var(--tx);border-left:none;box-shadow:0 1px 2px rgba(60,50,20,.06),0 4px 14px rgba(60,50,20,.06)}
+.ni.active::after{content:'';margin-left:auto;width:7px;height:7px;border-radius:50%;flex-shrink:0;background:var(--okul-c);box-shadow:0 0 0 4px color-mix(in srgb, var(--okul-c) 18%, transparent);animation:fy-nabiz 2.4s ease-in-out infinite}
+.okul-rozeti{background:var(--sur);border:1px solid var(--bor);box-shadow:0 1px 2px rgba(60,50,20,.05),0 6px 18px rgba(60,50,20,.05)}
 
-/* Kartlar: tam çerçeve yerine üst çizgi + gölge */
-.card{border:none;border-top:2.5px solid var(--okul-y);box-shadow:0 1px 2px rgba(60,50,20,.05),0 4px 18px rgba(60,50,20,.06)}
-[data-theme="dark"] .card{box-shadow:0 1px 2px rgba(0,0,0,.25),0 4px 18px rgba(0,0,0,.25)}
+/* Sayfa başlığı: altında okul renginde kısa, yumuşak geçişli vurgu */
+.pt::after{content:'';display:block;width:42px;height:4px;border-radius:4px;margin-top:8px;background:linear-gradient(90deg, var(--okul-c), color-mix(in srgb, var(--okul-c) 15%, transparent));transform-origin:left;animation:fy-dol .7s cubic-bezier(.2,.7,.2,1) .15s both}
+
+/* Kartlar: kalın çerçeve yok — saç teli kenar + yumuşak gölge; üzerine gelince hafifçe yükselir */
+.card{border:1px solid color-mix(in srgb, var(--bor) 70%, transparent);box-shadow:0 1px 2px rgba(60,50,20,.04),0 8px 24px rgba(60,50,20,.05);transition:transform .22s cubic-bezier(.2,.7,.2,1),box-shadow .22s}
+.card:hover{transform:translateY(-2px);box-shadow:0 2px 4px rgba(60,50,20,.05),0 14px 34px rgba(60,50,20,.08)}
+[data-theme="dark"] .card{box-shadow:0 1px 2px rgba(0,0,0,.25),0 8px 24px rgba(0,0,0,.25)}
 
 /* Sekmeler: alt çizgi okul renginde */
-.yp-sekmeler{border-bottom-color:var(--okul-y)}
+.yp-sekmeler{border-bottom-color:var(--bor)}
 .yp-sekmeler button.aktif{border-bottom-color:var(--okul-c)}
+
+/* ---------------------------------------------------------------------------
+   HAREKET — sayfa açılışında içerik sırayla belirir, çubuklar dolar, halka grafik çizilir.
+   Hareket azaltma tercihi açık olan kullanıcılarda hepsi kapanır.
+   --------------------------------------------------------------------------- */
+@keyframes fy-gir{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+@keyframes fy-dol{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes fy-nabiz{0%,100%{box-shadow:0 0 0 3px color-mix(in srgb, var(--okul-c) 22%, transparent)}50%{box-shadow:0 0 0 6px color-mix(in srgb, var(--okul-c) 6%, transparent)}}
+@property --donut-a{syntax:'<angle>';inherits:false;initial-value:360deg}
+@keyframes fy-donut{from{--donut-a:0deg}to{--donut-a:360deg}}
+
+.pg>*{animation:fy-gir .5s cubic-bezier(.2,.7,.2,1) both}
+.pg>*:nth-child(2){animation-delay:.05s}.pg>*:nth-child(3){animation-delay:.1s}.pg>*:nth-child(4){animation-delay:.15s}
+.pg>*:nth-child(5){animation-delay:.2s}.pg>*:nth-child(6){animation-delay:.25s}.pg>*:nth-child(n+7){animation-delay:.3s}
+.mini-cubuk-fill,.mini-ilerleme-fill,.df{transform-origin:left;animation:fy-dol .9s cubic-bezier(.2,.7,.2,1) .25s both}
+.donut{-webkit-mask:conic-gradient(#000 var(--donut-a), transparent 0);mask:conic-gradient(#000 var(--donut-a), transparent 0);animation:fy-donut 1.1s cubic-bezier(.3,.7,.2,1) .2s both}
+.btn{transition:background .15s,transform .15s,box-shadow .15s}
+.btn:not(:disabled):hover{transform:translateY(-1px);box-shadow:0 6px 16px color-mix(in srgb, var(--pu) 28%, transparent)}
+
+@media (prefers-reduced-motion: reduce){
+  .pg>*,.mini-cubuk-fill,.mini-ilerleme-fill,.df,.donut,.pt::after,.ni.active::after{animation:none !important}
+  .card:hover,.ni:hover,.btn:hover{transform:none !important}
+}
+@media (max-width: 760px){.main{margin:0;border-radius:0}}
 
 /* Görünüm sekmesi: renk paleti + önizleme */
 .tm-duzen{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
@@ -678,15 +719,16 @@ textarea.md-girdi{resize:vertical;min-height:44px}
 .tm-renk-top{width:100%;height:26px;border-radius:8px;display:block}
 .tm-renk-ad{font-size:11.5px;font-weight:700;line-height:1.2}
 .tm-renk input[type=color]{width:100%;height:26px;border:none;padding:0;border-radius:8px;background:none;cursor:pointer}
-.tm-onizleme{display:flex;height:210px;border:1.5px solid var(--bor);border-radius:14px;overflow:hidden;background:var(--bg)}
-.tm-o-sb{width:120px;background:var(--sur);display:flex;flex-direction:column;gap:2px}
-.tm-o-logo{font-family:var(--fd);font-weight:700;font-size:13px;padding:12px 10px 8px;margin-bottom:6px}
-.tm-o-ni{font-size:11px;font-weight:700;padding:6px 10px;color:var(--pu);background:var(--pul)}
-.tm-o-pasif{border-left:3px solid transparent;color:var(--tx3);background:none}
-.tm-o-main{flex:1;padding:16px 14px;display:flex;flex-direction:column;gap:8px}
+.tm-onizleme{display:flex;gap:6px;height:210px;padding:6px 6px 6px 0;border:1px solid var(--bor);border-radius:14px;overflow:hidden}
+.tm-o-sb{width:118px;display:flex;flex-direction:column;gap:2px;padding-left:6px}
+.tm-o-logo{font-family:var(--fd);font-weight:700;font-size:13px;padding:8px 8px 10px}
+.tm-o-ni{font-size:11px;font-weight:700;padding:6px 8px;border-radius:8px;color:var(--tx3);display:flex;align-items:center}
+.tm-o-aktif{background:var(--sur);color:var(--tx);box-shadow:0 2px 8px rgba(60,50,20,.08)}
+.tm-o-aktif i{margin-left:auto;width:6px;height:6px;border-radius:50%}
+.tm-o-main{flex:1;padding:14px 14px;display:flex;flex-direction:column;gap:8px;border-radius:12px;box-shadow:0 0 0 1px var(--bor),0 6px 18px rgba(60,50,20,.08)}
 .tm-o-baslik{font-family:var(--fd);font-weight:700;font-size:14px;color:var(--tx)}
-.tm-o-cizgi{width:30px;height:3px;border-radius:2px;margin-top:-4px}
-.tm-o-kart{background:var(--sur);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 8px rgba(60,50,20,.06)}
+.tm-o-cizgi{width:30px;height:3.5px;border-radius:3px;margin-top:-4px}
+.tm-o-kart{background:var(--sur);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;border:1px solid var(--bor);box-shadow:0 2px 8px rgba(60,50,20,.05)}
 .tm-o-kart span{display:block;height:6px;border-radius:3px;background:var(--sur2)}
 .tm-o-kart span+span{width:60%}
 @media (max-width: 900px){.tm-duzen{grid-template-columns:1fr}}
