@@ -10,6 +10,7 @@ from app.core.security import token_coz
 from app.models import Ogrenci, AdminKullanici
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/giris")
+oauth2_opsiyonel = OAuth2PasswordBearer(tokenUrl="/auth/giris", auto_error=False)
 
 _YETKISIZ = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -87,3 +88,19 @@ def get_mevcut_super_admin(
     if admin.rol != "super_admin":
         raise HTTPException(status_code=403, detail="Bu işlem yalnızca super_admin rolüne açık.")
     return admin
+
+
+def get_opsiyonel_ogrenci(
+    token: str | None = Depends(oauth2_opsiyonel),
+    db: Session = Depends(get_db),
+) -> Ogrenci | None:
+    """[2026-10-09] Herkese açık uç noktalarda: geçerli öğrenci oturumu varsa öğrenciyi, yoksa None döner (hata vermez)."""
+    if not token:
+        return None
+    payload = token_coz(token)
+    if payload is None or payload.get("tip") != "access" or payload.get("rol") != "ogrenci":
+        return None
+    try:
+        return db.get(Ogrenci, uuid.UUID(payload["sub"]))
+    except (KeyError, ValueError):
+        return None
