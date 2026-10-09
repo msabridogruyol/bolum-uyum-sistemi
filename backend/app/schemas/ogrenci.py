@@ -127,7 +127,8 @@ class BolumSiralamaSatiri(BaseModel):
     bolum_adi: str
     toplam_uyum: float
     alan: str | None = None                 # [2026-10-09] bölümün üst alanı
-    neden: list[str] = []                   # [2026-10-09] "Neden bu bölüm?" kısa açıklamaları
+    neden: list[str] = []                   # [2026-10-09] "Neden bu bölüm?" kısa açıklamaları (düz metin)
+    neden_detay: dict | None = None         # [2026-10-09] yapılandırılmış açıklama: ortusen / k5 / dikkat
 
     model_config = {"from_attributes": True}
 
