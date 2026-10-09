@@ -9,11 +9,12 @@ const SEKMELER = [
   { kod: 'uni', ad: 'Üniversiteler' },
 ]
 
-const SEVIYE_RENK = {
-  'Çok yüksek': 'var(--pu)', 'Yüksek': 'var(--pum)', 'Orta': 'var(--am)', 'Düşük': 'var(--tx3)', 'Çok düşük': 'var(--bor2)',
-}
 const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸' }
+const ONEM_RENK = { 'Çok önemli': 'var(--pu)', 'Önemli': 'var(--pum)' }
 
+// [2026-10-09] Yalnızca bu bölümde ÖNE ÇIKAN özellikler gösterilir. "Düşük" etiketi kullanılmaz:
+// listede olmayan bir özellik "önemsiz" değil, bu bölümü diğerlerinden ayıran bir özellik değil demektir.
+// İki uçlu özelliklerde (ör. rutin ↔ dinamik) hangi uç öne çıkıyorsa o yazılır.
 function YetkinlikProfili({ bolumId }) {
   const [veri, setVeri] = useState(null)
   const [hata, setHata] = useState(null)
@@ -26,32 +27,35 @@ function YetkinlikProfili({ bolumId }) {
   if (hata) return <div className="ps" style={{ margin: 0 }}>{hata}</div>
   if (!veri) return <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
   if (!veri.katmanlar.length) return <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz yetkinlik profili hesaplanmadı.</div>
+  const katmanlar = veri.katmanlar.map((k) => ({ ...k, liste: k.one_cikanlar || k.degiskenler.filter((d) => d.one_cikan) }))
+  const toplam = katmanlar.reduce((t, k) => t + k.liste.length, 0)
   return (
     <>
       <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5, lineHeight: 1.55 }}>
-        Her özellik için bu bölümün beklenti düzeyi, {veri.bolum_sayisi} bölümle karşılaştırılarak verilir.
-        Çubuk ne kadar uzunsa bölüm o özelliği diğer bölümlere göre o kadar çok gerektirir.
+        Bu bölümü {veri.bolum_sayisi} bölüm arasında <b>en çok öne çıkaran {toplam} özellik</b>. Listede olmayan özellikler de değerlidir;
+        yalnızca bu bölümü diğerlerinden belirgin biçimde ayırmazlar.
       </div>
-      <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap', marginBottom: 12 }}>
-        {Object.entries(SEVIYE_RENK).map(([ad, renk]) => (
+      <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
+        {Object.entries(ONEM_RENK).map(([ad, renk]) => (
           <span key={ad} style={{ display: 'inline-flex', alignItems: 'center', gap: 5, fontSize: 11.5, color: 'var(--tx2)', fontWeight: 700 }}>
             <span style={{ width: 10, height: 10, borderRadius: 3, background: renk, display: 'inline-block' }} />{ad}
           </span>
         ))}
       </div>
-      {veri.katmanlar.map((k) => (
+      {katmanlar.filter((k) => k.liste.length).map((k) => (
         <Bolum key={k.kod} baslik={`${KATMAN_IKON[k.kod] || ''} ${k.ad}`}>
-          {k.degiskenler.map((d) => (
-            <div key={d.kod} title={d.aciklama || ''} style={{ display: 'grid', gridTemplateColumns: 'minmax(110px, 38%) 1fr auto', gap: 10, alignItems: 'center', padding: '5px 0' }}>
-              <div style={{ fontSize: 13, color: 'var(--tx)', fontWeight: 600, lineHeight: 1.3 }}>{d.ad}</div>
+          {k.liste.map((d) => (
+            <div key={d.kod} title={d.aciklama || ''} style={{ display: 'grid', gridTemplateColumns: 'minmax(140px, 44%) 1fr auto', gap: 10, alignItems: 'center', padding: '5px 0' }}>
+              <div style={{ fontSize: 13, color: 'var(--tx)', fontWeight: 600, lineHeight: 1.3 }}>{d.etiket}</div>
               <div style={{ height: 9, borderRadius: 99, background: 'var(--sur2)', overflow: 'hidden' }}>
-                <div style={{ width: `${Math.max(3, d.yuzdelik)}%`, height: '100%', borderRadius: 99, background: SEVIYE_RENK[d.seviye] }} />
+                <div style={{ width: `${Math.max(8, d.guc)}%`, height: '100%', borderRadius: 99, background: ONEM_RENK[d.onem] }} />
               </div>
-              <div style={{ fontSize: 11.5, fontWeight: 800, color: SEVIYE_RENK[d.seviye] === 'var(--bor2)' ? 'var(--tx3)' : SEVIYE_RENK[d.seviye], minWidth: 74, textAlign: 'right' }}>{d.seviye}</div>
+              <div style={{ fontSize: 11.5, fontWeight: 800, color: ONEM_RENK[d.onem], minWidth: 74, textAlign: 'right' }}>{d.onem}</div>
             </div>
           ))}
         </Bolum>
       ))}
+      {toplam === 0 && <div className="ps" style={{ margin: 0 }}>Bu bölüm özellik bakımından dengeli; belirgin biçimde öne çıkan bir özellik yok.</div>}
     </>
   )
 }
