@@ -97,6 +97,8 @@ class Okul(Base):
     web: Mapped[str | None] = mapped_column(String, nullable=True)
     kadro: Mapped[list] = mapped_column(JSON().with_variant(JSONB, "postgresql"), nullable=False, default=list)
     bilgi_guncelleme_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # [2026-10-09] Okul rengi (#RRGGBB): sol menü ayırıcısı, başlık çizgileri ve vurgu çizgilerinde kullanılır; boş = Filizyol rengi
+    tema_renk: Mapped[str | None] = mapped_column(String, nullable=True)
 
 
 class MeslekDili(Base):
