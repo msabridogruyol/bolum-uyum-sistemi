@@ -2,6 +2,7 @@
 Bölüm F — Koçluk modülü uç noktaları.
 POST /koclugu/hedef              — hedef seç/değiştir (onay akışı, F8)
 GET  /koclugu/hedef               — aktif hedefi getir
+GET  /koclugu/hedef/durum         — aktif hedef + kalan değiştirme hakkı (Ayarlar)
 GET  /koclugu/hedef/gelisim       — gap analizi + gelişim kartları (F2-F3)
 GET  /koclugu/hedef/yol-haritasi  — 3 aşamalı gelişim planı (F4)
 POST /koclugu/hedef/aksiyon       — bir gelişim aksiyonunun durumunu güncelle (F4.2)
@@ -16,18 +17,24 @@ from app.core.katman_servisi import IsKuraliHatasi, son_tur_getir
 from app.core.koclugu_servisi import (
     aktif_hedef_getir, hedef_sec, gap_analizi_hesapla, yol_haritasi_olustur,
     aksiyon_durumu_guncelle, tur_karsilastirmasi_hesapla,
-    gelisim_plani_olustur, adim_durumu_guncelle,
+    gelisim_plani_olustur, adim_durumu_guncelle, HedefHakkiBitti, hedef_hak_durumu,
 )
 from app.core.gelisim_icerigi import ICERIK
 from app.models import Ogrenci, Bolum, Katman, OgrenciGelisimAksiyonDurumu
 from app.core.dal_servisi import bekleyen_dal_var_mi
 from app.schemas.koclugu import (
-    HedefSecIstek, AktifHedefOut, GapSatiriOut, YolHaritasiOut,
+    HedefSecIstek, AktifHedefOut, HedefDurumOut, GapSatiriOut, YolHaritasiOut,
     AksiyonDurumIstek, KarsilastirmaSatiriOut,
     GelisimPlaniOut, AdimDurumIstek,
 )
 
 router = APIRouter()
+
+
+def _hedef_out(db: Session, ogrenci: Ogrenci, hedef) -> AktifHedefOut:
+    bolum = db.get(Bolum, hedef.bolum_id)
+    return AktifHedefOut(bolum_id=hedef.bolum_id, bolum_adi=bolum.ad, secim_zamani=hedef.secim_zamani.isoformat(),
+                         **hedef_hak_durumu(ogrenci))
 
 
 @router.post("/hedef", response_model=AktifHedefOut)
@@ -38,12 +45,14 @@ def hedefi_sec(
 ):
     try:
         hedef = hedef_sec(db, ogrenci, istek.bolum_id, onay=istek.onay)
+    except HedefHakkiBitti as e:
+        db.rollback()
+        raise HTTPException(status_code=403, detail=str(e))
     except IsKuraliHatasi as e:
         db.rollback()
         raise HTTPException(status_code=409, detail=str(e))  # 409 — onay gerektiren çakışma
     db.commit()
-    bolum = db.get(Bolum, hedef.bolum_id)
-    return AktifHedefOut(bolum_id=hedef.bolum_id, bolum_adi=bolum.ad, secim_zamani=hedef.secim_zamani.isoformat())
+    return _hedef_out(db, ogrenci, hedef)
 
 
 @router.get("/hedef", response_model=AktifHedefOut | None)
@@ -54,8 +63,13 @@ def aktif_hedefi_getir(
     hedef = aktif_hedef_getir(db, ogrenci)
     if hedef is None:
         return None
-    bolum = db.get(Bolum, hedef.bolum_id)
-    return AktifHedefOut(bolum_id=hedef.bolum_id, bolum_adi=bolum.ad, secim_zamani=hedef.secim_zamani.isoformat())
+    return _hedef_out(db, ogrenci, hedef)
+
+
+@router.get("/hedef/durum", response_model=HedefDurumOut)
+def hedef_durumu(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    hedef = aktif_hedef_getir(db, ogrenci)
+    return HedefDurumOut(hedef=_hedef_out(db, ogrenci, hedef) if hedef else None, **hedef_hak_durumu(ogrenci))
 
 
 def _gap_satirlarini_hazirla(db: Session, ogrenci: Ogrenci):
