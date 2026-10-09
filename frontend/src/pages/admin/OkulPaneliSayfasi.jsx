@@ -9,6 +9,7 @@ import OgrenciDetayPenceresi from '../../components/yonetim/OgrenciDetayPenceres
 import { DurumRozeti, Pencere, SifreListesi, onceSure, tarih } from '../../components/yonetim/ortak'
 import OkulBilgiKarti from '../../components/OkulBilgiKarti'
 import MeslekDiliDuzenleyici from '../../components/yonetim/MeslekDiliDuzenleyici'
+import OkulTemaKarti from '../../components/yonetim/OkulTemaKarti'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -397,7 +398,7 @@ export default function OkulPaneliSayfasi() {
   const okulId = Number(ham)
   const { rol } = useAdminAuth()
   const superAdmin = rol === 'super_admin'
-  // ?sekme=bilgiler | yetkililer | ogrenciler | meslekdili | kayitlar — Okullar sayfasındaki kısayollar doğrudan ilgili sekmeyi açar
+  // ?sekme=bilgiler | yetkililer | ogrenciler | meslekdili | gorunum | kayitlar — Okullar sayfasındaki kısayollar doğrudan ilgili sekmeyi açar
   const [params] = useSearchParams()
   const [sekme, setSekme] = useState(params.get('sekme') || 'ozet')
   const [oz, setOz] = useState(null)
@@ -416,7 +417,7 @@ export default function OkulPaneliSayfasi() {
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
   const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`],
-    ...(okulId ? [['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili']] : []), ['kayitlar', 'Kayıtlar']]
+    ...(okulId ? [['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
   return (
     <div className="pg pg-genis">
       {superAdmin && <Link to="/admin/okullar" className="yp-geri">← Okullar</Link>}
@@ -435,6 +436,7 @@ export default function OkulPaneliSayfasi() {
       {sekme === 'bilgiler' && <OkulBilgileriSekmesi okulId={okulId} />}
       {sekme === 'yetkililer' && <YetkililerSekmesi okulId={okulId} superAdmin={superAdmin} />}
       {sekme === 'meslekdili' && okulId > 0 && <MeslekDiliDuzenleyici okulId={okulId} />}
+      {sekme === 'gorunum' && okulId > 0 && <OkulTemaKarti okulId={okulId} />}
       {sekme === 'kayitlar' && <KayitlarSekmesi okulId={okulId} />}
     </div>
   )
