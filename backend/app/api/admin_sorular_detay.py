@@ -51,6 +51,7 @@ class SoruDetayOut(BaseModel):
     soru_metni: str
     ters_kodlanmis_mi: bool
     aktif_mi: bool
+    cevap_bicimi: str = "tek"   # [2026-10-09] 'tek' | 'encok_enaz' (en çok / en az seçimli)
     secenekler: list[SecenekDetayOut]
 
 
@@ -119,8 +120,25 @@ def dal_filtre_listesi(
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
+    # [2026-10-09] Yalnızca kullanımdaki dallar (aktif sorusu veya bölüm eşleşmesi olan) filtrede gösterilir;
+    # eski 8 dallı yapının (D01-D08) pasif kayıtları menüyü kalabalıklaştırmasın.
+    kullanimda = _kullanimdaki_dal_idleri(db)
     dallar = db.query(Dal).order_by(Dal.kod).all()
-    return [DalFiltreOut(kod=d.kod, ad=d.ad) for d in dallar]
+    return [DalFiltreOut(kod=d.kod, ad=d.ad) for d in dallar if d.id in kullanimda]
+
+
+def _kullanimdaki_dal_idleri(db: Session) -> set[int]:
+    """Bölüm eşleşmesi olan ya da en az bir AKTİF sorusu bulunan dallar."""
+    from app.models import BolumDalEslesme
+    idler = {d for (d,) in db.query(BolumDalEslesme.dal_id).distinct().all()}
+    idler |= {d for (d,) in db.query(Degisken.dal_id).join(Soru, Soru.degisken_id == Degisken.id)
+              .filter(Soru.aktif_mi.is_(True), Degisken.dal_id.isnot(None)).distinct().all()}
+    idler |= {d for (d,) in db.query(Degisken.dal_id)
+              .join(SjtSecenekDegiskenAgirlik, SjtSecenekDegiskenAgirlik.degisken_id == Degisken.id)
+              .join(SoruSecenegi, SoruSecenegi.id == SjtSecenekDegiskenAgirlik.secenek_id)
+              .join(Soru, Soru.id == SoruSecenegi.soru_id)
+              .filter(Soru.aktif_mi.is_(True), Degisken.dal_id.isnot(None)).distinct().all()}
+    return idler
 
 
 class DalDetayOut(BaseModel):
@@ -132,6 +150,8 @@ class DalDetayOut(BaseModel):
     degisken_sayisi: int
     soru_sayisi: int
     coklu_kaynakli_mi: bool  # kaynak1 (model) VE kaynak2 (kümeleme) ikisi de dolu mu
+    kullanimda: bool = True  # [2026-10-09] False = eski yapıdan kalan, öğrenciye açılmayan dal
+    pasif_soru_sayisi: int = 0
 
 
 @router.get("/dallar-detay", response_model=list[DalDetayOut])
@@ -160,21 +180,25 @@ def dallari_detayli_listele(
     )
     likert_soru_sayilari: dict[int, int] = {}
     for degisken_id, adet in db.query(Soru.degisken_id, func.count(Soru.id)).filter(
-        Soru.soru_tipi == "likert", Soru.degisken_id.in_(degisken_id_to_dal.keys())
+        Soru.soru_tipi == "likert", Soru.degisken_id.in_(degisken_id_to_dal.keys()), Soru.aktif_mi.is_(True)
     ).group_by(Soru.degisken_id).all():
         dal_id = degisken_id_to_dal[degisken_id]
         likert_soru_sayilari[dal_id] = likert_soru_sayilari.get(dal_id, 0) + adet
 
     sjt_soru_id_by_dal: dict[int, set] = {}
+    pasif_by_dal: dict[int, set] = {}
     sjt_satirlari = (
-        db.query(SoruSecenegi.soru_id, Degisken.dal_id)
+        db.query(SoruSecenegi.soru_id, Degisken.dal_id, Soru.aktif_mi)
         .join(SjtSecenekDegiskenAgirlik, SjtSecenekDegiskenAgirlik.secenek_id == SoruSecenegi.id)
         .join(Degisken, Degisken.id == SjtSecenekDegiskenAgirlik.degisken_id)
+        .join(Soru, Soru.id == SoruSecenegi.soru_id)
         .filter(Degisken.dal_id.isnot(None))
         .all()
     )
-    for soru_id, dal_id in sjt_satirlari:
-        sjt_soru_id_by_dal.setdefault(dal_id, set()).add(soru_id)
+    for soru_id, dal_id, aktif in sjt_satirlari:
+        # [2026-10-09] yalnızca AKTİF sorular sayılır; pasifler ayrıca gösterilir
+        (sjt_soru_id_by_dal if aktif else pasif_by_dal).setdefault(dal_id, set()).add(soru_id)
+    kullanimda = _kullanimdaki_dal_idleri(db)
 
     sonuc = []
     for d in dallar:
@@ -191,7 +215,10 @@ def dallari_detayli_listele(
             degisken_sayisi=degisken_sayilari.get(d.id, 0),
             soru_sayisi=soru_sayisi,
             coklu_kaynakli_mi=coklu_kaynakli,
+            kullanimda=d.id in kullanimda,
+            pasif_soru_sayisi=len(pasif_by_dal.get(d.id, set())),
         ))
+    sonuc.sort(key=lambda x: (not x.kullanimda, x.kod))
     return sonuc
 
 
@@ -336,6 +363,7 @@ def sorulari_detayli_listele(
             soru_tipi=s.soru_tipi, degisken_kod=degisken_kodlari.get(s.degisken_id),
             degisken_adi=degisken_adlari.get(s.degisken_id),
             soru_metni=s.soru_metni, ters_kodlanmis_mi=s.ters_kodlanmis_mi, aktif_mi=s.aktif_mi,
+            cevap_bicimi=getattr(s, "cevap_bicimi", None) or "tek",
             secenekler=secenekler_by_soru.get(s.id, []),
         ))
 
