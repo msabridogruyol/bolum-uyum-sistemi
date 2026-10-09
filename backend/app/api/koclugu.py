@@ -3,6 +3,7 @@ Bölüm F — Koçluk modülü uç noktaları.
 POST /koclugu/hedef              — hedef seç/değiştir (onay akışı, F8)
 GET  /koclugu/hedef               — aktif hedefi getir
 GET  /koclugu/hedef/durum         — aktif hedef + kalan değiştirme hakkı (Ayarlar)
+GET  /koclugu/hedef/kaynaklar     — odak/güçlü alanlara uygun kitap, film, ilham veren kişi, olay, aktivite önerileri
 GET  /koclugu/hedef/gelisim       — gap analizi + gelişim kartları (F2-F3)
 GET  /koclugu/hedef/yol-haritasi  — 3 aşamalı gelişim planı (F4)
 POST /koclugu/hedef/aksiyon       — bir gelişim aksiyonunun durumunu güncelle (F4.2)
@@ -204,3 +205,41 @@ def adim_durumunu_guncelle(
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     db.commit()
+
+
+# [2026-10-09] İlham kaynakları: yönetimdeki "Gelişim Kaynak Havuzu" (kitap / film / rol model / psikolojik yaklaşım /
+# aktivite / önemli olay) öğrencinin koçluk planındaki odak (gelişim) ve güçlü yön alanlarına göre seçilir.
+# Önce o özelliğin TAM aralığı (ör. belirgin_altinda), yoksa aynı yöndeki komşu aralık kullanılır.
+KOMSU_ARALIK = {
+    "belirgin_altinda": ["belirgin_altinda", "altinda"], "altinda": ["altinda", "belirgin_altinda"],
+    "belirgin_ustun": ["belirgin_ustun", "ustun"], "ustun": ["ustun", "belirgin_ustun"], "beklenti": ["beklenti"],
+}
+ALAN_BASINA = 4
+
+
+@router.get("/hedef/kaynaklar")
+def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    from app.models import GelisimKaynakOnerisi
+    satirlar = _gap_satirlarini_hazirla(db, ogrenci)
+    hedef = aktif_hedef_getir(db, ogrenci)
+    plan = gelisim_plani_olustur(db, ogrenci, hedef.bolum_id, satirlar)
+    alanlar = [{**{k: o[k] for k in ("degisken_id", "degisken_kod", "degisken_adi", "kategori")}, "grup": "gelisim"}
+               for o in plan["odak_alanlari"]]
+    alanlar += [{**{k: g[k] for k in ("degisken_id", "degisken_kod", "degisken_adi", "kategori")}, "grup": "guclu"}
+                for g in plan["guclu_yonler"]]
+    if not alanlar:
+        return {"alanlar": []}
+    havuz = (db.query(GelisimKaynakOnerisi)
+             .filter(GelisimKaynakOnerisi.degisken_id.in_([a["degisken_id"] for a in alanlar]))
+             .order_by(GelisimKaynakOnerisi.sira, GelisimKaynakOnerisi.id).all())
+    sonuc = []
+    for a in alanlar:
+        secilen = []
+        for aralik in KOMSU_ARALIK.get(a["kategori"], [a["kategori"]]):
+            secilen += [k for k in havuz if k.degisken_id == a["degisken_id"] and k.aralik == aralik and k not in secilen]
+            if len(secilen) >= ALAN_BASINA:
+                break
+        if secilen:
+            sonuc.append({**a, "kaynaklar": [{"id": k.id, "tip": k.kaynak_tipi, "baslik": k.baslik, "aciklama": k.aciklama}
+                                             for k in secilen[:ALAN_BASINA]]})
+    return {"hedef_bolum_adi": plan["hedef_bolum_adi"], "alanlar": sonuc}
