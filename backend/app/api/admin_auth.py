@@ -3,8 +3,7 @@ Admin kimlik doğrulaması — öğrenciden AYRI bir giriş akışı.
 Kaynak: veritabani_taslagi.md 3.3, sistem_genel_anlatim.md E) bölümü.
 
 NOT: Admin kayıt (self-servis) uç noktası KASITLI OLARAK yok.
-[2026-10-04] 2 adımlı doğrulama + şifremi unuttum eklendi. Rehber öğretmenler bu sayfadan değil,
-öğrenci giriş sayfasından girer.
+[2026-10-04] 2 adımlı doğrulama + şifremi unuttum eklendi. [2026-10-09] Süper admin ve okul yetkilileri bu sayfadan girer.
 """
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import func
@@ -18,7 +17,7 @@ from app.schemas.auth import GirisIstekV2, GirisCevap, IkiAdimDogrulaIstek, IkiA
 from app.api.auth import giris_sonucu, iki_adim_tamamla, kodu_tekrar_gonder, SIFIRLAMA_MESAJI
 
 router = APIRouter()
-YONETIM_ROLLERI = {"super_admin", "icerik_editoru"}
+YONETIM_ROLLERI = {"super_admin", "okul_yetkilisi"}   # [2026-10-09] 3 rol: süper admin / okul yetkilisi / öğrenci
 
 
 @router.post("/giris", response_model=GirisCevap)
@@ -27,6 +26,8 @@ def admin_giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
     admin = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == istek.email.strip().lower()).first()
     if admin is None or admin.rol not in YONETIM_ROLLERI or not sifre_dogrula(istek.sifre, admin.sifre_hash):
         raise hata
+    if admin.aktif_mi is False:
+        raise HTTPException(status_code=403, detail="Hesabın devre dışı bırakılmış.")
     return giris_sonucu(db, admin, admin.rol, istek.cihaz_tokeni)
 
 
