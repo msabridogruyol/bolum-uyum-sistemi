@@ -11,26 +11,11 @@ from app.core.database import get_db
 from app.models import Bolum, BolumDalEslesme, Dal, BolumAgirligi, Degisken, Katman
 from app.core.katman_servisi import parametre_oku
 from app.core.yokatlas_servisi import bolum_universiteleri, baglanti_tani
-import json
-from pathlib import Path
+from app.api.deps import get_opsiyonel_ogrenci
+from app.core.meslek_dili_servisi import etkin_surum
 
 router = APIRouter()
 
-# [2026-10-09] Meslek dili: her bölüm için sahada kullanılan 10 terim {terim, anlam, ornek}.
-# İçerik backend/app/core/meslek_jargonu.json dosyasındadır (anahtar = bölüm adı); düzenlemek için yalnızca o dosya yeterli.
-def _ad_anahtar(ad: str) -> str:
-    return (ad or "").replace("i", "İ").replace("ı", "I").upper().replace(" ", "")
-
-
-_JARGON_YOLU = Path(__file__).resolve().parent.parent / "core" / "meslek_jargonu.json"
-try:
-    _JARGON = {_ad_anahtar(k): v for k, v in json.loads(_JARGON_YOLU.read_text(encoding="utf-8")).items()}
-except (OSError, ValueError):
-    _JARGON = {}
-
-
-def meslek_jargonu(bolum_adi: str) -> list:
-    return _JARGON.get(_ad_anahtar(bolum_adi), [])
 
 
 def _bolum(db: Session, bolum_id: int) -> Bolum:
@@ -55,13 +40,14 @@ def yokatlas_tani():
 
 
 @router.get("/{bolum_id}/bilgi")
-def bolum_bilgi(bolum_id: int, db: Session = Depends(get_db)):
+def bolum_bilgi(bolum_id: int, db: Session = Depends(get_db), ogrenci=Depends(get_opsiyonel_ogrenci)):
     b = _bolum(db, bolum_id)
     e = db.query(BolumDalEslesme).filter(BolumDalEslesme.bolum_id == b.id).first()
     dal = db.get(Dal, e.dal_id) if e else None
     return {
         "bolum_id": b.id, "ad": b.ad, "kisa_aciklama": b.kisa_aciklama, "detay": b.detay,
-        "jargon": meslek_jargonu(b.ad),
+        # Meslek dili: öğrencinin okuluna özel sürüm varsa o, yoksa genel/varsayılan
+        "jargon": etkin_surum(db, b, getattr(ogrenci, "okul_id", None))["terimler"],
         "ust_alan": dal.ad if dal and dal.kod.startswith("U") else None,
         "alt_alan": getattr(e, "alt_alan", None) if e else None,
     }
