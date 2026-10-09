@@ -11,6 +11,17 @@ class AktifHedefOut(BaseModel):
     bolum_id: int
     bolum_adi: str
     secim_zamani: str
+    degisim_sayisi: int = 0
+    degisim_hakki: int = 3
+    kalan_hak: int = 3
+
+
+class HedefDurumOut(BaseModel):
+    """[2026-10-09] Ayarlar sayfası: aktif hedef (yoksa None) + kalan değiştirme hakkı."""
+    hedef: AktifHedefOut | None = None
+    degisim_sayisi: int = 0
+    degisim_hakki: int = 3
+    kalan_hak: int = 3
 
 
 class GapSatiriOut(BaseModel):
