@@ -642,3 +642,51 @@ button,input{font-family:inherit}
 .md-araclar .yp-mini:disabled{opacity:.4;cursor:default}
 textarea.md-girdi{resize:vertical;min-height:44px}
 @media (max-width: 860px){.md-duzen{grid-template-columns:1fr}.md-liste{position:static}.md-liste-kap{max-height:300px}}
+
+/* ============================================================================
+   [2026-10-09] OKUL RENGİ — ayırıcı ve vurgu çizgileri
+   --okul: okulun seçtiği renk (tema.js → okulRenginiUygula). Yoksa Filizyol rengi (--pu).
+   Yalnızca çizgi/vurgu: butonlar ve yazılar okunurluk için Filizyol renklerinde kalır.
+   Kutular tam çerçeve yerine ince bir üst çizgi + hafif gölgeyle ayrılır.
+   ============================================================================ */
+:root{--okul-c:var(--okul, var(--pu));--okul-y:color-mix(in srgb, var(--okul-c) 38%, transparent)}
+[data-theme="dark"]{--okul-c:color-mix(in srgb, var(--okul, var(--pu)) 72%, #fff)}
+
+/* Sol menü ile sayfayı ayıran boydan boya çizgi */
+.sb{border-right:3px solid var(--okul-c)}
+.sb-logo{border-bottom:1.5px solid var(--okul-y)}
+.ni.active{border-left-color:var(--okul-c)}
+.okul-rozeti{border-color:var(--bor);border-left:3px solid var(--okul-c)}
+
+/* Sayfa başlığının altında kısa vurgu çizgisi */
+.pt::after{content:'';display:block;width:44px;height:3px;border-radius:2px;background:var(--okul-c);margin-top:7px}
+
+/* Kartlar: tam çerçeve yerine üst çizgi + gölge */
+.card{border:none;border-top:2.5px solid var(--okul-y);box-shadow:0 1px 2px rgba(60,50,20,.05),0 4px 18px rgba(60,50,20,.06)}
+[data-theme="dark"] .card{box-shadow:0 1px 2px rgba(0,0,0,.25),0 4px 18px rgba(0,0,0,.25)}
+
+/* Sekmeler: alt çizgi okul renginde */
+.yp-sekmeler{border-bottom-color:var(--okul-y)}
+.yp-sekmeler button.aktif{border-bottom-color:var(--okul-c)}
+
+/* Görünüm sekmesi: renk paleti + önizleme */
+.tm-duzen{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:24px;align-items:start}
+.tm-palet{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px;margin:16px 0}
+.tm-renk{display:flex;flex-direction:column;gap:6px;align-items:flex-start;padding:8px;border:1.5px solid var(--bor);border-radius:12px;background:var(--sur);cursor:pointer;font-family:var(--fn);color:var(--tx);text-align:left;position:relative}
+.tm-renk:hover{border-color:var(--bor2)}
+.tm-renk.aktif{border-color:var(--tx);box-shadow:0 0 0 2px var(--sur),0 0 0 4px var(--tx2)}
+.tm-renk-top{width:100%;height:26px;border-radius:8px;display:block}
+.tm-renk-ad{font-size:11.5px;font-weight:700;line-height:1.2}
+.tm-renk input[type=color]{width:100%;height:26px;border:none;padding:0;border-radius:8px;background:none;cursor:pointer}
+.tm-onizleme{display:flex;height:210px;border:1.5px solid var(--bor);border-radius:14px;overflow:hidden;background:var(--bg)}
+.tm-o-sb{width:120px;background:var(--sur);display:flex;flex-direction:column;gap:2px}
+.tm-o-logo{font-family:var(--fd);font-weight:700;font-size:13px;padding:12px 10px 8px;margin-bottom:6px}
+.tm-o-ni{font-size:11px;font-weight:700;padding:6px 10px;color:var(--pu);background:var(--pul)}
+.tm-o-pasif{border-left:3px solid transparent;color:var(--tx3);background:none}
+.tm-o-main{flex:1;padding:16px 14px;display:flex;flex-direction:column;gap:8px}
+.tm-o-baslik{font-family:var(--fd);font-weight:700;font-size:14px;color:var(--tx)}
+.tm-o-cizgi{width:30px;height:3px;border-radius:2px;margin-top:-4px}
+.tm-o-kart{background:var(--sur);border-radius:10px;padding:10px;display:flex;flex-direction:column;gap:6px;box-shadow:0 2px 8px rgba(60,50,20,.06)}
+.tm-o-kart span{display:block;height:6px;border-radius:3px;background:var(--sur2)}
+.tm-o-kart span+span{width:60%}
+@media (max-width: 900px){.tm-duzen{grid-template-columns:1fr}}
