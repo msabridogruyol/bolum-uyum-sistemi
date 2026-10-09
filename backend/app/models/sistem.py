@@ -97,3 +97,18 @@ class Okul(Base):
     web: Mapped[str | None] = mapped_column(String, nullable=True)
     kadro: Mapped[list] = mapped_column(JSON().with_variant(JSONB, "postgresql"), nullable=False, default=list)
     bilgi_guncelleme_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+
+
+class MeslekDili(Base):
+    """[2026-10-09] Bölümün meslek dili (jargon) sözlüğü — düzenlenmiş sürümler.
+    okul_id NULL = genel sürüm (süper admin; tüm okullar), okul_id dolu = o okula özel sürüm (okul yetkilisi).
+    Satır yoksa backend/app/core/meslek_jargonu.json'daki varsayılan içerik gösterilir.
+    terimler: [{"terim": "...", "anlam": "...", "ornek": "..."}]"""
+    __tablename__ = "meslek_dili"
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id", ondelete="CASCADE"), nullable=False)
+    okul_id: Mapped[int | None] = mapped_column(ForeignKey("okullar.id", ondelete="CASCADE"), nullable=True)
+    terimler: Mapped[list] = mapped_column(JSONB, nullable=False, default=list)
+    guncelleyen_ad: Mapped[str | None] = mapped_column(String, nullable=True)
+    guncelleme_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
