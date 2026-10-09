@@ -1314,7 +1314,7 @@ export default function Maskot({ profil, ozet }) {
 }
 
 const MASKOT_CSS = `
-.msk-kap{position:fixed;top:8px;right:14px;width:92px;height:122px;z-index:60;user-select:none}
+.msk-kap{position:absolute;top:14px;right:26px;width:92px;height:122px;z-index:60;user-select:none}
 .msk-kap:hover .msk-araclar{opacity:1}
 .msk-karakter{width:100%;height:100%;cursor:pointer;position:relative;animation:msk-giris .9s ease-out}
 .msk-beden{animation:msk-nefes 3.2s ease-in-out infinite;transform-origin:60px 150px}
@@ -1344,7 +1344,7 @@ const MASKOT_CSS = `
 .msk-balon-kuyruk{position:absolute;right:-8px;top:18px;width:14px;height:14px;background:var(--sur,#fff);border-right:1.5px solid var(--pu,#E07A3F);border-top:1.5px solid var(--pu,#E07A3F);transform:rotate(45deg)}
 .msk-araclar{position:absolute;left:-26px;bottom:6px;display:flex;flex-direction:column;gap:4px;opacity:0;transition:opacity .2s}
 .msk-araclar button,.msk-mini{border:1px solid var(--bor,#ddd);background:var(--sur,#fff);border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
-.msk-mini{position:fixed;top:12px;right:14px;width:42px;height:42px;z-index:60;box-shadow:0 4px 14px rgba(0,0,0,.12);animation:msk-filiz 2.6s ease-in-out infinite}
+.msk-mini{position:absolute;top:18px;right:26px;width:42px;height:42px;z-index:60;box-shadow:0 4px 14px rgba(0,0,0,.12);animation:msk-filiz 2.6s ease-in-out infinite}
 .msk-dusunce{position:absolute;top:-6px;left:-6px;font-size:20px;animation:msk-yuksel 2.2s ease-out}
 .msk-sor{position:absolute;left:50%;transform:translateX(-50%);bottom:-24px;white-space:nowrap;border:1.5px solid var(--pu,#E8804A);background:var(--sur,#fff);color:var(--pu,#E8804A);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.08)}
 .msk-sor:hover{background:var(--pu,#E8804A);color:#fff}
@@ -1380,6 +1380,6 @@ const MASKOT_CSS = `
 @keyframes msk-zzz{0%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(10px,-18px);opacity:0}}
 @keyframes msk-efekt{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:1}100%{transform:translateY(-60px) scale(1.2);opacity:0}}
 @keyframes msk-konfeti{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx,0),70px) rotate(540deg);opacity:0}}
-@media (max-width: 760px){.msk-kap{width:64px;height:86px;top:6px;right:8px}.msk-balon{right:70px;max-width:180px;font-size:11.5px}}
+@media (max-width: 760px){.msk-kap{position:fixed;width:64px;height:86px;top:6px;right:8px}.msk-mini{position:fixed;top:12px;right:14px}.msk-balon{right:70px;max-width:180px;font-size:11.5px}}
 @media (prefers-reduced-motion: reduce){.msk-kap *{animation-duration:0s!important}}
 `
