@@ -524,11 +524,25 @@ def durum_ozetini_getir(
 # NOT (hukuki): dogum_tarihi/cinsiyet KVKK açısından hassas veri sayılabilir,
 # veli onayı akışı ayrıca kurulmalıdır — bu uç noktalar yalnızca teknik alt yapıdır.
 
+def _okul_bagla(db: Session, ogrenci: Ogrenci) -> None:
+    """[2026-10-09] Öğrencinin okulu yönetimden atanır (okul bazlı hesap açma). Burada yalnızca kayıtlı
+    okul adı okullar tablosuyla eşitlenir; okulu olmayan (okul harici) öğrenci okulsuz kalır."""
+    from app.models import Okul
+    okul = db.get(Okul, ogrenci.okul_id) if ogrenci.okul_id else None
+    ad = okul.ad if okul else None
+    if ogrenci.okul != ad:
+        ogrenci.okul = ad
+    if db.is_modified(ogrenci):
+        db.commit()
+        db.refresh(ogrenci)
+
+
 @router.get("/profil", response_model=ProfilOut)
 def profil_getir(
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
+    _okul_bagla(db, ogrenci)
     hedef_meslek_adi = None
     if ogrenci.hedef_meslek_id:
         satir = db.execute(
@@ -548,7 +562,29 @@ def profil_getir(
         hedef_meslek_id=ogrenci.hedef_meslek_id,
         hedef_meslek_adi=hedef_meslek_adi,
         profil_foto_base64=ogrenci.profil_foto_base64,
+        sube=ogrenci.sube,
+        sifre_degistirmeli=bool(ogrenci.sifre_degistirmeli),
     )
+
+
+class IlkSifreIstek(BaseModel):
+    yeni_sifre: str
+
+
+@router.post("/profil/ilk-sifre", status_code=204)
+def ilk_sifre_belirle(istek: IlkSifreIstek, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """[2026-10-09] Yönetimin verdiği geçici şifreyle ilk girişte öğrenci kendi şifresini belirler."""
+    if not ogrenci.sifre_degistirmeli:
+        raise HTTPException(status_code=400, detail="Şifre değiştirme için Ayarlar sayfasını kullan.")
+    if len(istek.yeni_sifre or "") < 8:
+        raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
+    if sifre_dogrula(istek.yeni_sifre, ogrenci.sifre_hash):
+        raise HTTPException(status_code=400, detail="Yeni şifre geçici şifreyle aynı olamaz.")
+    from app.core.hesap_yonetimi import olay_yaz
+    ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
+    ogrenci.sifre_degistirmeli = False
+    olay_yaz(db, ogrenci.id, "sifre_degisti", "İlk girişte kendi şifresini belirledi", "Öğrenci")
+    db.commit()
 
 
 @router.put("/profil", response_model=ProfilOut)
@@ -558,6 +594,8 @@ def profil_guncelle(
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
     veri = istek.model_dump(exclude_unset=True)
+    veri.pop("okul", None)   # [2026-10-09] okul öğrenciden alınmaz; yönetimden atanır
+    veri.pop("email", None)
 
     if "cinsiyet" in veri and veri["cinsiyet"] is not None:
         if veri["cinsiyet"] not in ("kadin", "erkek", "belirtmek_istemiyorum", "diger"):
@@ -590,6 +628,9 @@ def sifre_degistir(
         raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
 
     ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
+    ogrenci.sifre_degistirmeli = False
+    from app.core.hesap_yonetimi import olay_yaz
+    olay_yaz(db, ogrenci.id, "sifre_degisti", "Ayarlar sayfasından şifresini değiştirdi", "Öğrenci")
     db.commit()
     return None
 
