@@ -158,6 +158,7 @@ export const api = {
   aktifHedefGetir: () => get('/koclugu/hedef'),
   hedefSec: (bolumId, onay = false) => post('/koclugu/hedef', { bolum_id: bolumId, onay }),
   hedefDurumGetir: () => get('/koclugu/hedef/durum'),
+  ilhamKaynaklariGetir: () => get('/koclugu/hedef/kaynaklar'),
   gelisimAnaliziGetir: () => get('/koclugu/hedef/gelisim'),
   yolHaritasiGetir: () => get('/koclugu/hedef/yol-haritasi'),
   aksiyonDurumuGuncelle: (degiskenId, durum) => post(`/koclugu/hedef/aksiyon/${degiskenId}`, { durum }),
