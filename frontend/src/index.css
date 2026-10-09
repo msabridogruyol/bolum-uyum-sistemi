@@ -410,3 +410,10 @@ button,input{font-family:inherit}
 .neden-not.iyi{background:var(--grl,#E4EEDE);color:var(--tx)}
 .neden-not.zayif{background:var(--aml,#FBEFD8);color:var(--tx)}
 @media(min-width:1350px){.sonuc-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start}}
+
+/* [2026-10-09] Sol menü — okul adı + amblemi */
+.okul-rozeti{display:flex;align-items:center;gap:11px;margin:12px 14px 4px;padding:10px 12px;border:1.5px solid var(--bor);border-radius:14px;background:var(--bg)}
+.okul-amblem{width:42px;height:42px;object-fit:contain;flex-shrink:0;border-radius:8px}
+.okul-amblem-bos{display:flex;align-items:center;justify-content:center;font-size:22px;background:var(--sur2)}
+.okul-ad{font-size:13px;font-weight:800;line-height:1.25;color:var(--tx);overflow:hidden;text-overflow:ellipsis;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.okul-alt{font-size:10.5px;color:var(--tx3);font-weight:600;margin-top:1px}
