@@ -20,7 +20,7 @@ from app.models.ogrenci_verisi import (
 )
 from app.models.sonuclar import OgrenciBolumUyumSkoru, OgrenciDalUyumSkoru
 from app.models.sistem import (
-    SistemParametresi, KatmanAgirligi, GecerlilikSonucu, Okul,
+    SistemParametresi, KatmanAgirligi, GecerlilikSonucu, Okul, MeslekDili,
     GecerlilikOzeti, AuditLog,
 )
 from app.models.koclugu import (
@@ -41,7 +41,7 @@ __all__ = [
     "OgrenciDalOturumu", "OgrenciDegiskenSkoru", "OgrenciCevap",
     "GuvenlikOlayi", "GuvenlikFotografi",
     "OgrenciBolumUyumSkoru", "OgrenciDalUyumSkoru",
-    "SistemParametresi", "KatmanAgirligi", "GecerlilikSonucu", "Okul",
+    "SistemParametresi", "KatmanAgirligi", "GecerlilikSonucu", "Okul", "MeslekDili",
     "GecerlilikOzeti", "AuditLog",
     "OgrenciHedefBolum", "GelisimYorumHavuzu",
     "GelisimKarsilastirmaYorumu", "OgrenciGelisimAksiyonDurumu", "OgrenciGelisimAdimDurumu",
