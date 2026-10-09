@@ -139,7 +139,7 @@ export default function KesfetSayfasi() {
                   {secili.toplam_uyum !== null && (
                     <div style={{ fontSize: 28, fontWeight: 700, color: 'var(--pu)', fontFamily: 'var(--fd)' }}>%{Math.round(secili.toplam_uyum)}</div>
                   )}
-                  <button className="btn" style={{ fontSize: 13 }} onClick={() => navigate('/koclugu')}>Hedef Olarak Seç →</button>
+                  <button className="btn" style={{ fontSize: 13 }} onClick={() => navigate(`/profil?hedef=${secili.bolum_id}#hedef`)}>Hedef Olarak Seç →</button>
                 </div>
               </div>
               <BolumBilgiIcerik gomulu bolumId={secili.bolum_id} ad={secili.bolum_adi} />
