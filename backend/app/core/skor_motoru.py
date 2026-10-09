@@ -41,11 +41,12 @@ import math
 from dataclasses import dataclass
 
 import numpy as np
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 
 from app.models import (
     Ogrenci, Bolum, Degisken, Katman, BolumAgirligi,
-    OgrenciDegiskenSkoru, OgrenciDegerlendirmeTuru, OgrenciBolumUyumSkoru,
+    OgrenciDegiskenSkoru, OgrenciDegerlendirmeTuru, OgrenciBolumUyumSkoru, Soru,
 )
 
 EPS = 1e-9
@@ -493,8 +494,83 @@ def _liste_metni(adlar: list[str]) -> str:
     return adlar[0] if len(adlar) == 1 else ", ".join(adlar[:-1]) + " ve " + adlar[-1]
 
 
-def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, bolum_idler: list[int]) -> dict[int, list[str]]:
-    """Her bölüm için 1-3 kısa cümle: örtüşen güçlü yönler, K5 iş türü uyumu, varsa dikkat noktası."""
+def _kisalt(metin: str, n: int = 110) -> str:
+    metin = " ".join((metin or "").split())
+    if len(metin) <= n:
+        return metin
+    kes = metin[:n].rsplit(" ", 1)[0]
+    return kes.rstrip(",;:.") + "…"
+
+
+def _cevap_kanitlari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> dict[int, list[str]]:
+    """degisken_id -> öğrencinin o yönü öne çıkaran seçimleri (seçtiği şık metinleri).
+    En çok / en az ve tek seçimli senaryolarda: en çok seçilen şık bu değişkene ≥0,5 ağırlıkla bağlıysa.
+    Likert'te güçlü katılım (ters kodlamaya göre), kutup sorularında belirgin taraf."""
+    from app.models import OgrenciCevap, SoruSecenegi, SjtSecenekDegiskenAgirlik
+    cevaplar = db.query(OgrenciCevap).filter(OgrenciCevap.ogrenci_id == ogrenci.id, OgrenciCevap.tur_id == tur.id).all()
+    if not cevaplar:
+        return {}
+    sorular = {s.id: s for s in db.query(Soru).filter(Soru.id.in_({c.soru_id for c in cevaplar})).all()}
+    secenekler = {x.id: x for x in db.query(SoruSecenegi).filter(SoruSecenegi.id.in_({c.secenek_id for c in cevaplar})).all()}
+    agirliklar: dict[int, list[tuple[int, float]]] = {}
+    for a in db.query(SjtSecenekDegiskenAgirlik).filter(SjtSecenekDegiskenAgirlik.secenek_id.in_(list(secenekler))).all():
+        agirliklar.setdefault(a.secenek_id, []).append((a.degisken_id, float(a.agirlik)))
+    secenek_sayisi = dict(
+        db.query(SoruSecenegi.soru_id, func.count(SoruSecenegi.id))
+        .filter(SoruSecenegi.soru_id.in_(list(sorular))).group_by(SoruSecenegi.soru_id).all()
+    )
+    kanit: dict[int, list[str]] = {}
+
+    def ekle(did, metin):
+        if did is None or not metin:
+            return
+        liste = kanit.setdefault(did, [])
+        if metin not in liste:
+            liste.append(metin)
+
+    for c in sorted(cevaplar, key=lambda x: x.id):
+        soru, sec = sorular.get(c.soru_id), secenekler.get(c.secenek_id)
+        if soru is None or sec is None:
+            continue
+        if soru.soru_tipi == "sjt":
+            for did, w in agirliklar.get(sec.id, []):
+                if w >= 0.5:
+                    ekle(did, _kisalt(sec.secenek_metni))
+        elif soru.soru_tipi == "likert" and soru.degisken_id:
+            n = secenek_sayisi.get(soru.id, 5) or 5
+            sira = sec.secenek_sirasi if not soru.ters_kodlanmis_mi else (n + 1 - sec.secenek_sirasi)
+            if sira >= n - 0.5:   # en güçlü katılım
+                ekle(soru.degisken_id, _kisalt(soru.soru_metni))
+        elif soru.soru_tipi == "kutup":
+            if sec.secenek_sirasi == 1:
+                ekle(soru.degisken_id, _kisalt(sec.secenek_metni))
+            elif sec.secenek_sirasi == 4:
+                ekle(getattr(soru, "b_ucu_degisken_id", None), _kisalt(sec.secenek_metni))
+    return kanit
+
+
+def _buyuk_bas(metin: str) -> str:
+    """Türkçe uyumlu ilk harf büyütme (i → İ)."""
+    if not metin:
+        return metin
+    ilk = {"i": "İ", "ı": "I"}.get(metin[0], metin[0].upper())
+    return ilk + metin[1:]
+
+
+def _seviye_ogrenci(puan: float) -> str:
+    return "Çok güçlü" if puan >= 75 else "Güçlü" if puan >= 62 else "Ortanın üstü" if puan >= 50 else "Orta"
+
+
+def _seviye_bolum(yuzde: float) -> str:
+    return "Çok yüksek" if yuzde >= 85 else "Yüksek" if yuzde >= 70 else "Ortanın üstü"
+
+
+def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, bolum_idler: list[int]) -> dict[int, dict]:
+    """[2026-10-09] Her bölüm için yapılandırılmış "Neden bu bölüm?" açıklaması:
+    {"ortusen": [{"ozellik", "sen", "bolum", "kanitlar": [seçtiğin şıklar], "kanit_sayisi"}],
+     "k5": {"is_turu", "durum": "uyumlu"|"az", "kanit"} | None,
+     "dikkat": {"ozellik", "metin"} | None,
+     "metinler": [düz cümleler — eski istemciler için]}"""
     from app.models import BolumK5Bag
     girdi = girdi_hazirla(db, ogrenci, tur)
     if girdi is None or girdi.bolum_olcekli is None:
@@ -505,58 +581,80 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
     yuzdelik = (np.argsort(np.argsort(H, axis=0), axis=0) + 0.5) / n * 100.0
     o = girdi.ogrenci_olcekli
     kodlar = girdi.degisken_kodlari
+    ham_puan = {
+        s.degisken_id: float(s.puan)
+        for s in db.query(OgrenciDegiskenSkoru).filter(
+            OgrenciDegiskenSkoru.ogrenci_id == ogrenci.id, OgrenciDegiskenSkoru.tur_id == tur.id,
+        ).all()
+    }
+    kanitlar = _cevap_kanitlari(db, ogrenci, tur)
 
     # K5: bölüm bağları + öğrencinin eksen puanları
     baglar: dict[int, list[tuple[int, float]]] = {}
     for b in db.query(BolumK5Bag).filter(BolumK5Bag.bolum_id.in_(bolum_idler)).all():
         baglar.setdefault(b.bolum_id, []).append((b.degisken_id, float(b.bag)))
     eksen_idler = {d for l in baglar.values() for d, _ in l}
-    eksen_puan = {
-        s.degisken_id: float(s.puan)
-        for s in db.query(OgrenciDegiskenSkoru).filter(
-            OgrenciDegiskenSkoru.ogrenci_id == ogrenci.id, OgrenciDegiskenSkoru.tur_id == tur.id,
-            OgrenciDegiskenSkoru.degisken_id.in_(eksen_idler or [-1]),
-        ).all()
-    }
     eksen_ad = {d.id: d.ad for d in db.query(Degisken).filter(Degisken.id.in_(eksen_idler or [-1])).all()}
 
-    sonuc: dict[int, list[str]] = {}
+    sonuc: dict[int, dict] = {}
     dikkat_of: dict[int, int] = {}
     for bid in bolum_idler:
         i = satir_of.get(bid)
         if i is None:
             continue
-        cumleler = []
         b = girdi.bolum_olcekli[i]
         aday = [
             (float((o[j] - 50) + (b[j] - 50)), j) for j in range(len(kodlar))
             if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_BOLUM_YUZDELIK and o[j] >= NEDEN_OGRENCI_ESIK
         ]
         aday.sort(reverse=True)
-        if aday:
-            adlar = [KISA_AD[kodlar[j]] for _, j in aday[:NEDEN_ORTUSEN_SAYI]]
-            cumleler.append(f"Öne çıkan yönlerin bu bölümün en çok aradığı özelliklerle örtüşüyor: {_liste_metni(adlar)}.")
-        else:
-            cumleler.append("Genel profilin bu bölümün beklentileriyle dengeli biçimde örtüşüyor.")
-        # K5 iş türü
-        bl = [(d, w) for d, w in baglar.get(bid, []) if d in eksen_puan]
+        ortusen = []
+        sira_no = bolum_idler.index(bid)
+        for _, j in aday[:NEDEN_ORTUSEN_SAYI]:
+            did = girdi.degisken_idler[j]
+            k = kanitlar.get(did, [])
+            if len(k) > 2:   # aynı yön birçok bölümde çıkınca her kartta farklı örnek seçimler gösterilir
+                kay = (2 * sira_no) % len(k)
+                k = k[kay:] + k[:kay]
+            ortusen.append({
+                "ozellik": _buyuk_bas(KISA_AD[kodlar[j]]),
+                "sen": _seviye_ogrenci(ham_puan.get(did, 50.0)),
+                "bolum": _seviye_bolum(float(yuzdelik[i, j])),
+                "kanitlar": k[:2],
+                "kanit_sayisi": len(k),
+            })
+        k5 = None
+        bl = [(d, w) for d, w in baglar.get(bid, []) if d in ham_puan]
         if bl:
-            d_ana = max(bl, key=lambda x: (x[1], eksen_puan[x[0]]))[0]
-            p = eksen_puan[d_ana]; ad = eksen_ad.get(d_ana, "")
-            if p >= 60:
-                cumleler.append(f"Alan sorularında «{ad}» türü işleri öne çıkardın; bu bölümün ana uğraşı tam olarak bu.")
-            elif p <= 40:
-                cumleler.append(f"Not: Bu bölümün ana uğraşı «{ad}»; alan sorularında bu tür işleri daha az seçtin — bölüm bilgisine göz atmanı öneririz.")
-        # dikkat
+            d_ana = max(bl, key=lambda x: (x[1], ham_puan[x[0]]))[0]
+            p = ham_puan[d_ana]
+            if p >= 60 or p <= 40:
+                k = kanitlar.get(d_ana, [])
+                k5 = {"is_turu": eksen_ad.get(d_ana, ""), "durum": "uyumlu" if p >= 60 else "az",
+                      "kanit": k[0] if (k and p >= 60) else None}
         dikkat = [(float(o[j]), j) for j in range(len(kodlar))
                   if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_DIKKAT_BOLUM and o[j] <= NEDEN_DIKKAT_OGRENCI]
         if dikkat:
             dikkat_of[bid] = min(dikkat)[1]
-        sonuc[bid] = cumleler
+        sonuc[bid] = {"ortusen": ortusen, "k5": k5, "dikkat": None}
+
     # dikkat notu: yalnızca bölüme özgüyse (listede az tekrar ediyorsa) eklenir
     from collections import Counter
     tekrar = Counter(dikkat_of.values())
     for bid, j in dikkat_of.items():
-        if tekrar[j] < NEDEN_DIKKAT_TEKRAR and len(sonuc[bid]) < 3:
-            sonuc[bid].append(f"Dikkat: Bu bölüm yüksek düzeyde {KISA_AD[kodlar[j]]} bekliyor; senin cevaplarında bu yön daha geri planda.")
+        if tekrar[j] < NEDEN_DIKKAT_TEKRAR:
+            sonuc[bid]["dikkat"] = {"ozellik": KISA_AD[kodlar[j]],
+                                    "metin": f"Bu bölüm yüksek düzeyde {KISA_AD[kodlar[j]]} bekliyor; senin cevaplarında bu yön daha geri planda."}
+
+    # eski istemciler için düz cümleler
+    for bid, d in sonuc.items():
+        m = []
+        if d["ortusen"]:
+            m.append("Örtüşen güçlü yönlerin: " + ", ".join(x["ozellik"].lower() for x in d["ortusen"]) + ".")
+        if d["k5"]:
+            m.append(f"Alan sorularında «{d['k5']['is_turu']}» işlerini "
+                     + ("öne çıkardın." if d["k5"]["durum"] == "uyumlu" else "daha az seçtin."))
+        if d["dikkat"]:
+            m.append("Dikkat: " + d["dikkat"]["metin"])
+        d["metinler"] = m
     return sonuc
