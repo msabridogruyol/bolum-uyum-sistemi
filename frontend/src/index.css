@@ -1341,3 +1341,27 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .kt-puan{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--tx2)}
 .kt-puan .kt-yildiz button{font-size:22px}
 @media (max-width:640px){.kt-ozet{grid-template-columns:repeat(2,1fr)}.tk-form-satir{grid-template-columns:1fr}.kt-kayit{flex-wrap:wrap}}
+
+/* [2026-10-10] Alt şerit her zaman ana panelin en altında sabit: içerik kısaysa alta itilir, uzunsa kaydırırken altta kalır */
+.main-icerik{min-height:calc(100% - 48px)}
+.alt-serit{position:sticky;bottom:0;z-index:20;margin:0;padding:12px 32px;min-height:48px;box-sizing:border-box;
+  background:color-mix(in srgb, var(--bg) 94%, transparent);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+@media(max-width:700px){.alt-serit{margin:0;padding:10px 14px}}
+
+/* [2026-10-10] Sistem Hakkında + SSS */
+.sh-adimlar{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:14px}
+.sh-adim{position:relative;background:var(--sur);border:1.5px solid var(--bor);border-radius:18px;padding:16px 16px 14px}
+.sh-adim-no{position:absolute;top:12px;right:14px;font-size:12px;font-weight:800;color:var(--tx3)}
+.sh-adim-ikon{font-size:26px;margin-bottom:6px}
+.sh-adim b{font-family:var(--fd);font-size:15px}
+.sh-adim p{margin:6px 0 0;font-size:13px;line-height:1.5;color:var(--tx2)}
+.sh-bilgi{margin:0;padding-left:18px;display:grid;gap:6px;font-size:14px;line-height:1.5}
+.sh-grup{margin-bottom:12px}
+.sh-grup-ad{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.06em;color:var(--okul-c, var(--pu));margin:10px 0 6px}
+.sh-soru{border:1px solid var(--bor);border-radius:12px;margin-bottom:6px;background:var(--sur)}
+.sh-soru.acik{border-color:color-mix(in srgb, var(--okul-c, var(--pu)) 40%, var(--bor))}
+.sh-soru button{display:flex;justify-content:space-between;align-items:center;gap:10px;width:100%;background:none;border:0;padding:12px 14px;font:inherit;font-size:14.5px;font-weight:700;color:var(--tx);cursor:pointer;text-align:left}
+.sh-ok{font-size:18px;color:var(--tx3);flex:none}
+.sh-cevap{padding:0 14px 14px;font-size:14px;line-height:1.6;color:var(--tx2)}
+@media (max-width:900px){.sh-adimlar{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:520px){.sh-adimlar{grid-template-columns:1fr}}

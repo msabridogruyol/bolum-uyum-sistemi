@@ -146,6 +146,9 @@ export default function AnaSayfaDuzeni() {
           💬 Filiz
         </div>
         <div style={{ flex: 1 }} />
+        <NavLink to="/hakkinda" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          ℹ️ Sistem Hakkında
+        </NavLink>
         <NavLink to="/profil" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           ⚙️ Ayarlar
         </NavLink>
@@ -153,7 +156,7 @@ export default function AnaSayfaDuzeni() {
       <div className="main ogrenci-main">
         {/* [2026-10-09] Maskot ana içerik alanının sağ üstünde, başlık satırında durur (sayfayla birlikte kayar) */}
         {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
-        <Outlet context={{ profilYenile, tanitimiAc }} />
+        <div className="main-icerik"><Outlet context={{ profilYenile, tanitimiAc }} /></div>
         <AltSerit okul={profil?.okul} kisi={profil?.ad_soyad} rol={[profil?.sinif, profil?.sube].filter(Boolean).join(' ') || null} />
       </div>
       {sifreGerekli && (
