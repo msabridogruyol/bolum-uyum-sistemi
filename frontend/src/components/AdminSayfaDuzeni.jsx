@@ -4,6 +4,7 @@ import { useAdminAuth } from '../context/AdminAuthContext'
 import { api } from '../api/client'
 import { IlkSifrePenceresi, ROL_ADI } from './yonetim/ortak'
 import { okulRenginiUygula } from '../tema'
+import AltSerit from './AltSerit'
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
@@ -81,6 +82,7 @@ export default function AdminSayfaDuzeni() {
 
       <div className="main">
         {okulYetkilisi && !ben ? <div className="pg"><div className="bos-durum">Yükleniyor…</div></div> : <Outlet />}
+        <AltSerit okul={ben?.okul_ad || (okulYetkilisi ? null : 'Filizyol Yönetim')} kisi={ben?.ad_soyad} rol={ROL_ADI[rol]} />
       </div>
 
       {ben?.sifre_degistirmeli && (
