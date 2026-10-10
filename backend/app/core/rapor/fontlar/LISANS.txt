@@ -1,0 +1,3 @@
+Liberation Sans yazı tipleri (Red Hat) — SIL Open Font License 1.1 ile dağıtılır.
+https://github.com/liberationfonts/liberation-fonts  ·  https://openfontlicense.org
+PDF raporlarında Türkçe karakterlerin (ç ğ ı İ ö ş ü) doğru basılması için gömülür.

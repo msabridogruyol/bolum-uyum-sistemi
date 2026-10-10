@@ -239,7 +239,7 @@ export default function TestHesaplariSayfasi() {
         </select>
         {form.tip === 'ogrenci' && (
           <select className="yp-sec" value={form.sinif} onChange={(e) => setForm({ ...form, sinif: e.target.value })}>
-            {['9', '10', '11', '12', 'Mezun'].map((s) => <option key={s} value={s}>{s}{s !== 'Mezun' ? '. sınıf' : ''}</option>)}
+            {['9', '10', '11', '12', 'Mezun'].map((s) => <option key={s} value={s}>{s}{s !== 'Mezun' ? '. Sınıf' : ''}</option>)}
           </select>
         )}
         <button className="btn" type="submit" disabled={bekle}>+ Test hesabı aç</button>

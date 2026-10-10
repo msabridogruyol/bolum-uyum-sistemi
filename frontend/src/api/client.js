@@ -72,6 +72,23 @@ async function istek(yol, secenekler = {}, kapsam = 'ogrenci') {
   return govde
 }
 
+// [2026-10-10] Dosya indirme (PDF / Excel raporlar): yetkili istek → blob → tarayıcı indirmesi
+async function dosyaIndir(yol, kapsam = 'ogrenci') {
+  const token = tokenAl(kapsam)
+  const yanit = await fetch(`${TABAN_URL}${yol}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  if (!yanit.ok) {
+    let detay = null
+    try { detay = (await yanit.json()).detail } catch { /* gövde JSON değil */ }
+    throw new ApiHatasi(yanit.status, detay || 'Rapor hazırlanamadı.')
+  }
+  const ad = /filename="([^"]+)"/.exec(yanit.headers.get('Content-Disposition') || '')?.[1] || 'rapor'
+  const url = URL.createObjectURL(await yanit.blob())
+  const a = document.createElement('a')
+  a.href = url; a.download = ad
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 2000)
+}
+
 const get = (yol, kapsam) => istek(yol, { method: 'GET' }, kapsam)
 const post = (yol, gövde, kapsam) => istek(yol, { method: 'POST', body: gövde !== undefined ? JSON.stringify(gövde) : undefined }, kapsam)
 const put = (yol, gövde, kapsam) => istek(yol, { method: 'PUT', body: JSON.stringify(gövde) }, kapsam)
@@ -135,6 +152,10 @@ export const api = {
   // --- Güvenlik/Tutarlılık (sonradan eklendi) ---
   guvenlikOlayiKaydet: (turId, olayTipi, katmanKod) =>
     post('/ogrenci/guvenlik/olay', { tur_id: turId, olay_tipi: olayTipi, katman_kod: katmanKod }),
+  // [2026-10-10] Raporlar
+  raporIndir: (tur, bicim = 'pdf') => dosyaIndir(`/ogrenci/rapor?tur=${tur}&bicim=${bicim}`),
+  ogrenciRaporuIndir: (ogrenciId, tur, bicim = 'pdf') => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/rapor?tur=${tur}&bicim=${bicim}`, 'admin'),
+  okulRaporuIndir: (okulId, bicim = 'pdf') => dosyaIndir(`/yonetim/okul/${okulId}/rapor?bicim=${bicim}`, 'admin'),
   guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),
