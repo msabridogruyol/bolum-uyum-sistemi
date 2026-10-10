@@ -167,7 +167,8 @@ def _ogrenci_profil_ozeti(db: Session, ogrenci: Ogrenci) -> str:
 
 SAYFA_ADLARI = {
     "/": "ana sayfa", "/katmanlar": "değerlendirme katmanları", "/sonuc": "bölüm uyum sonuçları",
-    "/kesfet": "bölüm keşfetme", "/koclugu": "hedef bölüm koçluğu ve yol haritası", "/profil": "profil ayarları",
+    "/kesfet": "bölüm keşfetme", "/bolumler": "sana uygun bölümler", "/bolumler/tum": "tüm bölümleri keşfetme",
+    "/bolumler/karsilastir": "bölüm karşılaştırma", "/bolumler/listem": "favori bölüm listesi", "/profilim": "kişisel profil sonuçları", "/koclugu": "hedef bölüm koçluğu ve yol haritası", "/profil": "profil ayarları",
 }
 
 
@@ -177,7 +178,8 @@ def sistem_promptu_olustur(db: Session, ogrenci: Ogrenci, onceki_ozet: str | Non
     haftalik = _haftalik_ozet_metni(db, ogrenci)
     if haftalik:
         ozet_blogu += f"\n\n{haftalik}"
-    sayfa_adi = SAYFA_ADLARI.get(sayfa or "") or (SAYFA_ADLARI["/sonuc"] if (sayfa or "").startswith("/sonuc") else None)
+    sayfa_adi = SAYFA_ADLARI.get(sayfa or "") or (SAYFA_ADLARI["/sonuc"] if (sayfa or "").startswith("/sonuc") else
+                                                   SAYFA_ADLARI["/profilim"] if (sayfa or "").startswith("/profilim") else None)
     if sayfa_adi:
         ozet_blogu += f"\n\nÖğrenci şu an sistemin '{sayfa_adi}' sayfasında."
 

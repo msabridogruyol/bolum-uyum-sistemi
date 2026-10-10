@@ -112,6 +112,12 @@ export const api = {
   bolumBilgi: (bolumId) => get(`/bolumler/${bolumId}/bilgi`),
   bolumUniversiteleri: (bolumId) => get(`/bolumler/${bolumId}/universiteler`),
   bolumYetkinlik: (bolumId) => get(`/bolumler/${bolumId}/yetkinlik`),
+  // [2026-10-10] Listem (★) · karşılaştırma · gelişimim
+  listemGetir: () => get('/ogrenci/listem'),
+  listeyeEkle: (bolumId) => post(`/ogrenci/listem/${bolumId}`),
+  listedenCikar: (bolumId) => del(`/ogrenci/listem/${bolumId}`),
+  bolumKarsilastir: (idler) => get(`/ogrenci/karsilastir?ids=${idler.join(',')}`),
+  gelisimimGetir: () => get('/koclugu/gelisimim'),
   bolumAdaGore: (ad) => get(`/bolumler/ada-gore?ad=${encodeURIComponent(ad)}`),
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
   kvkkDurumu: () => get('/ogrenci/kvkk'),

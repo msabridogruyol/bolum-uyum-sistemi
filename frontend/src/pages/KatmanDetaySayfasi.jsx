@@ -53,7 +53,7 @@ function BoyutSatiri({ s }) {
   )
 }
 
-export default function KatmanDetaySayfasi() {
+export default function KatmanDetaySayfasi({ gomulu = false }) {
   const { kod } = useParams()
   const navigate = useNavigate()
   const [katman, setKatman] = useState(null)
@@ -104,7 +104,7 @@ export default function KatmanDetaySayfasi() {
 
   return (
     <div className="pg pg-genis">
-      <button className="back" onClick={() => navigate('/sonuc/genel')}>← Genel sonuçlara dön</button>
+      {!gomulu && <button className="back" onClick={() => navigate('/profilim')}>← Profilime dön</button>}
 
       <div className="ph">
         <div className="ph-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
@@ -258,7 +258,7 @@ export default function KatmanDetaySayfasi() {
               <button
                 className="btn full"
                 style={{ marginTop: 16 }}
-                onClick={() => navigate(sonrakiKod ? `/sonuc/${sonrakiKod}` : '/sonuc/genel')}
+                onClick={() => navigate(sonrakiKod ? `/profilim/${sonrakiKod}` : '/profilim')}
               >
                 {sonrakiKod ? `Katman ${sonrakiKod} Sonuçlarına Git →` : 'Genel Sonuçlara Git →'}
               </button>

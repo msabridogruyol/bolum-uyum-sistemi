@@ -247,3 +247,62 @@ def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(g
     toplam = db.query(GelisimKaynakOnerisi).count()
     return {"hedef_bolum_adi": plan["hedef_bolum_adi"], "alanlar": sonuc, "havuz_toplam": toplam,
             "aranan_alanlar": [a["degisken_adi"] for a in alanlar]}
+
+
+# [2026-10-10] Gelişimim: tamamlanan adımların zaman çizelgesi + son 8 haftanın görev serisi + özet sayılar.
+# Hedef değişse de geçmiş adımlar silinmez; her adım hangi hedef bölüm için yapıldığıyla döner.
+@router.get("/gelisimim")
+def gelisimim(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    from datetime import date, timedelta
+    from app.models import OgrenciGelisimAdimDurumu, OgrenciHaftalikGorev, Degisken
+
+    ad_of = {d.kod: d.ad for d in db.query(Degisken).all()}
+    bolum_of = {b.id: b.ad for b in db.query(Bolum).all()}
+
+    def adim_bilgi(kod: str) -> tuple[str, str]:
+        try:
+            dk, grup, sira = kod.split("-")
+            ham = ICERIK[dk]["gelisim" if grup == "G" else "guclu"][int(sira) - 1]
+            return ham[1], ad_of.get(dk, dk)
+        except Exception:
+            return kod, ""
+
+    tamam = (db.query(OgrenciGelisimAdimDurumu)
+             .filter(OgrenciGelisimAdimDurumu.ogrenci_id == ogrenci.id, OgrenciGelisimAdimDurumu.durum == "tamamlandi")
+             .order_by(OgrenciGelisimAdimDurumu.guncelleme_zamani.desc()).all())
+    adimlar = []
+    for a in tamam:
+        baslik, ozellik = adim_bilgi(a.adim_kodu)
+        adimlar.append({"kod": a.adim_kodu, "baslik": baslik, "ozellik": ozellik, "guclu_yon": "-U-" in a.adim_kodu,
+                        "bolum": bolum_of.get(a.hedef_bolum_id), "zaman": a.guncelleme_zamani})
+
+    # Son 8 hafta (Pazartesi başlangıçlı): tamamlanan görev + adım sayısı
+    bugun = date.today()
+    bu_pzt = bugun - timedelta(days=bugun.weekday())
+    haftalar = [bu_pzt - timedelta(weeks=i) for i in range(7, -1, -1)]
+    gorevler = (db.query(OgrenciHaftalikGorev)
+                .filter(OgrenciHaftalikGorev.ogrenci_id == ogrenci.id, OgrenciHaftalikGorev.hafta_baslangic >= haftalar[0]).all())
+    seri = []
+    for h in haftalar:
+        hg = [g for g in gorevler if g.hafta_baslangic == h]
+        adim_say = sum(1 for a in tamam if a.guncelleme_zamani and h <= a.guncelleme_zamani.date() < h + timedelta(days=7))
+        seri.append({"hafta": h.isoformat(), "gorev_tamam": sum(1 for g in hg if g.durum == "tamamlandi"),
+                     "gorev_toplam": len(hg), "adim": adim_say})
+    # Kesintisiz aktif hafta serisi (bu haftadan geriye; bu hafta henüz boşsa geçen haftadan başlar)
+    aktif = [s["gorev_tamam"] + s["adim"] > 0 for s in seri]
+    if aktif and not aktif[-1]:
+        aktif = aktif[:-1]
+    ust_uste = 0
+    for x in reversed(aktif):
+        if not x:
+            break
+        ust_uste += 1
+
+    return {
+        "adimlar": adimlar,
+        "haftalar": seri,
+        "ozet": {"tamamlanan_adim": len(adimlar),
+                 "tamamlanan_gorev": db.query(OgrenciHaftalikGorev).filter(OgrenciHaftalikGorev.ogrenci_id == ogrenci.id,
+                                                                          OgrenciHaftalikGorev.durum == "tamamlandi").count(),
+                 "ust_uste_hafta": ust_uste},
+    }

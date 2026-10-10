@@ -29,13 +29,19 @@ export default function AnaSayfaDuzeni() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.durumOzetiGetir().then(setOzet).catch(() => {})
+    if (konum.pathname.startsWith('/katmanlar')) api.durumOzetiGetir().then(setOzet).catch(() => {})
     api.kvkkDurumu().then((d) => setKvkkGerekli(!d.guncel)).catch(() => {})
     api.profilGetir()
       .then((p) => { setProfil(p); if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
       .catch(() => {})
       .finally(() => setProfilYuklendi(true))
   }, [])
+
+  // [2026-10-10] Test ekranlarından çıkınca özet tazelenir: test bitince "Değerlendirme" menüden kalkar
+  const testte = konum.pathname.startsWith('/katmanlar')
+  useEffect(() => {
+    if (!testte) api.durumOzetiGetir().then(setOzet).catch(() => {})
+  }, [testte])
 
   // Profil sayfası kaydettiğinde menüdeki ad/foto ve zorunlu alan kontrolü hemen güncellensin
   const profilYenile = useCallback((p) => setProfil(p), [])
@@ -56,6 +62,12 @@ export default function AnaSayfaDuzeni() {
   }
 
   const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0] || 'Öğrenci'
+  // Değerlendirme menüde yalnızca bitmemişse (K1-K4 veya açılan K5 dalları) ya da 90 günlük yeni tur zamanı geldiyse görünür
+  const k5Bekliyor = !!ozet && ozet.k5_acilan_dal_sayisi > ozet.k5_tamamlanan_dal_sayisi
+  const yeniTurHazir = !!ozet?.sonraki_tur_tarihi && new Date(ozet.sonraki_tur_tarihi) <= new Date()
+  const degerlendirmeGoster = !ozet || !ozet.tur_tamamlandi_mi || k5Bekliyor || yeniTurHazir
+  const degerlendirmeYuzde = ozet && !ozet.tur_tamamlandi_mi && ozet.toplam_ana_katman_sayisi
+    ? Math.round((ozet.tamamlanan_katman_sayisi / ozet.toplam_ana_katman_sayisi) * 100) : null
 
   return (
     <div className="app">
@@ -90,49 +102,33 @@ export default function AnaSayfaDuzeni() {
             Sonraki tur: <b>{new Date(ozet.sonraki_tur_tarihi).toLocaleDateString('tr-TR')}</b>
           </div>
         )}
-        <div className="ns">Genel</div>
+        {/* [2026-10-10] Sade menü: test bir kez çözülür, menüde yalnızca gerektiğinde görünür.
+            Sonuç sayfaları "Bölümler" ve "Profilim" altında sekmelere toplandı. */}
+        {degerlendirmeGoster && (
+          <NavLink to="/katmanlar" className={({ isActive }) => `ni ni-vurgu${isActive ? ' active' : ''}`}>
+            📝 {ozet?.tur_tamamlandi_mi ? 'Yeni Değerlendirme' : 'Değerlendirme'}
+            {degerlendirmeYuzde !== null && <span className="ni-rozet">%{degerlendirmeYuzde}</span>}
+          </NavLink>
+        )}
         <NavLink to="/" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🏠 Ana Sayfa
         </NavLink>
-        <NavLink to="/katmanlar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🌱 Yol Haritam
-        </NavLink>
-        <div className="ns">Sonuç</div>
-        <NavLink to="/sonuc" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🌟 Bölüm Uyumum
-        </NavLink>
-        <NavLink to="/sonuc/genel" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          📊 Genel Sonuçlar
-        </NavLink>
-        <NavLink to="/sonuc/K1" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🌱 K1 — Değerler
-        </NavLink>
-        <NavLink to="/sonuc/K2" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🌿 K2 — Kişilik
-        </NavLink>
-        <NavLink to="/sonuc/K3" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🍃 K3 — İş Ortamı
-        </NavLink>
-        <NavLink to="/sonuc/K4" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🌸 K4 — Alan Eğilimi
-        </NavLink>
-        <NavLink to="/sonuc/K5" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🌻 K5 — Derinleşme
-        </NavLink>
-        <NavLink to="/kesfet" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🔍 Tüm Bölümleri Keşfet
-        </NavLink>
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🎯 Hedef Bölüm Koçluğu
+          🎯 Koçluğum
+        </NavLink>
+        <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🌟 Bölümler
+        </NavLink>
+        <NavLink to="/profilim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🧭 Profilim
         </NavLink>
         {/* [2026-10-04] Filiz sohbet paneli her sayfadan açılır */}
         <div className="ni" role="button" tabIndex={0} style={{ cursor: 'pointer' }}
           onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))}
           onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new CustomEvent('filiz-ac')) }}>
-          💬 Filiz Gelişim Koçu
+          💬 Filiz
         </div>
         <div style={{ flex: 1 }} />
-        <div className="ns">Hesap</div>
         <NavLink to="/profil" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           ⚙️ Ayarlar
         </NavLink>

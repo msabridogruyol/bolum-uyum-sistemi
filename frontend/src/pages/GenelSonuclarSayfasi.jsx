@@ -5,7 +5,7 @@ import { api } from '../api/client'
 const KATMAN_IKON = { K1: '❤️', K2: '🧠', K3: '💡', K4: '🎯', K5: '🔭' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
 
-export default function GenelSonuclarSayfasi() {
+export default function GenelSonuclarSayfasi({ gomulu = false }) {
   const [katmanlar, setKatmanlar] = useState(null)
   const [katmanSonuclari, setKatmanSonuclari] = useState(null)
   const [k5Durum, setK5Durum] = useState(null)
@@ -63,7 +63,7 @@ export default function GenelSonuclarSayfasi() {
 
   return (
     <div className="pg pg-genis">
-      <div className="ph">
+      <div className="ph" style={gomulu ? { display: 'none' } : undefined}>
         <div className="pt">Genel Sonuçlar</div>
         <div className="ps">
           Tüm katmanların özet profili · {tamamlanan}/{katmanlar.length} katman tamamlandı
@@ -87,7 +87,7 @@ export default function GenelSonuclarSayfasi() {
           const k = katmanlar.find((x) => x.kod === kod)
           const sonuc = katmanSonuclari[kod]
           return (
-            <div key={kod} className="oc" onClick={() => navigate(`/sonuc/${kod}`)}>
+            <div key={kod} className="oc" onClick={() => navigate(`/profilim/${kod}`)}>
               <div className="oi">{KATMAN_IKON[kod]}</div>
               <div className="ol">Katman {i + 1}</div>
               <div className="op" style={{ color: sonuc ? 'var(--gr)' : 'var(--tx3)' }}>
@@ -97,7 +97,7 @@ export default function GenelSonuclarSayfasi() {
             </div>
           )
         })}
-        <div className="oc" onClick={() => navigate('/katmanlar')}>
+        <div className="oc" onClick={() => navigate(k5Durum.acilan.length > 0 && !k5Bekliyor ? '/profilim/K5' : '/katmanlar')}>
           <div className="oi">{KATMAN_IKON.K5}</div>
           <div className="ol">Katman 5</div>
           <div className="op" style={{ color: k5OrtalamaPuan !== null ? 'var(--gr)' : 'var(--tx3)' }}>

@@ -169,3 +169,14 @@ class GelisimKaynakOnerisi(Base):
     baslik: Mapped[str] = mapped_column(String, nullable=False)
     aciklama: Mapped[str] = mapped_column(String, nullable=False)
     sira: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+
+
+class OgrenciFavoriBolum(Base):
+    """[2026-10-10] Öğrencinin "Listem"i — ilgilendiği / aklındaki bölümler (★). Hedeften bağımsızdır."""
+    __tablename__ = "ogrenci_favori_bolumler"
+    __table_args__ = (UniqueConstraint("ogrenci_id", "bolum_id", name="uq_ofb_ogrenci_bolum"),)
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id", ondelete="CASCADE"), nullable=False, index=True)
+    bolum_id: Mapped[int] = mapped_column(ForeignKey("bolumler.id", ondelete="CASCADE"), nullable=False)
+    eklenme_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
