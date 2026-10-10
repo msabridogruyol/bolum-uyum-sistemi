@@ -17,6 +17,10 @@ const ProfilimSayfasi = lazy(() => import('./pages/ProfilimSayfasi'))
 const BolumlerimSayfasi = lazy(() => import('./pages/BolumlerimSayfasi'))
 const KoclukSayfasi = lazy(() => import('./pages/KoclukSayfasi'))
 const KoclarSayfasi = lazy(() => import('./pages/KoclarSayfasi'))
+const KuluplerimSayfasi = lazy(() => import('./pages/KuluplerimSayfasi'))
+const GorevlerimSayfasi = lazy(() => import('./pages/GorevlerimSayfasi'))
+const TakvimSayfasi = lazy(() => import('./pages/TakvimSayfasi'))
+const KutuphanemSayfasi = lazy(() => import('./pages/KutuphanemSayfasi'))
 const ProfilAyarlariSayfasi = lazy(() => import('./pages/ProfilAyarlariSayfasi'))
 const AnaSayfa = lazy(() => import('./pages/AnaSayfa'))
 const AdminGirisSayfasi = lazy(() => import('./pages/admin/AdminGirisSayfasi'))
@@ -38,6 +42,7 @@ const MeslekDiliSayfasi = lazy(() => import('./pages/admin/MeslekDiliSayfasi'))
 const TestHesaplariSayfasi = lazy(() => import('./pages/admin/TestHesaplariSayfasi'))
 const KocYonetimSayfasi = lazy(() => import('./pages/admin/KocYonetimSayfasi'))
 const YokatlasEslesmeSayfasi = lazy(() => import('./pages/admin/YokatlasEslesmeSayfasi'))
+const GenelTakvimSayfasi = lazy(() => import('./pages/admin/GenelTakvimSayfasi'))
 const TestGirisSayfasi = lazy(() => import('./pages/TestGirisSayfasi'))
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
@@ -116,6 +121,11 @@ function AnaUygulama() {
         <Route path="/kesfet" element={<AramaylaYonlendir to="/bolumler/tum" />} />
         <Route path="/koclugu" element={<KoclukSayfasi />} />
         <Route path="/koclar" element={<KoclarSayfasi />} />
+        <Route path="/kulupler" element={<KuluplerimSayfasi />} />
+        <Route path="/profilim/kulup" element={<Navigate to="/kulupler" replace />} />
+        <Route path="/gorevler" element={<GorevlerimSayfasi />} />
+        <Route path="/takvim" element={<TakvimSayfasi />} />
+        <Route path="/kutuphane" element={<KutuphanemSayfasi />} />
         <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
       </Route>
 
@@ -153,6 +163,7 @@ function AnaUygulama() {
         <Route path="test-hesaplari" element={<TestHesaplariSayfasi />} />
         <Route path="koclar" element={<KocYonetimSayfasi />} />
         <Route path="yokatlas" element={<YokatlasEslesmeSayfasi />} />
+        <Route path="takvim" element={<GenelTakvimSayfasi />} />
       </Route>
     </Routes>
     </Suspense>

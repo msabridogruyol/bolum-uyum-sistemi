@@ -7,7 +7,6 @@ import PuanRehberi from '../components/PuanRehberi'
 const GenelSonuclarSayfasi = lazy(() => import('./GenelSonuclarSayfasi'))
 const KatmanDetaySayfasi = lazy(() => import('./KatmanDetaySayfasi'))
 const K5SonucSayfasi = lazy(() => import('./K5SonucSayfasi'))
-const IlgiKulupSekmesi = lazy(() => import('../components/IlgiKulupSekmesi'))
 
 const SEKMELER = [
   { kod: '', ad: 'Genel bakış', ikon: '🧭' },
@@ -16,7 +15,6 @@ const SEKMELER = [
   { kod: 'K3', ad: 'İş ortamı', ikon: '🍃' },
   { kod: 'K4', ad: 'Alan eğilimi', ikon: '🌸' },
   { kod: 'K5', ad: 'Derinleşme', ikon: '🌻' },
-  { kod: 'KULUP', ad: 'İlgi & Kulüpler', ikon: '🎯', etiketsiz: true },
 ]
 
 export default function ProfilimSayfasi() {
@@ -38,15 +36,12 @@ export default function ProfilimSayfasi() {
           </NavLink>
         ))}
       </nav>
-      {k !== 'KULUP' && <>
       <PuanRehberi bolumlu={false} baslik="Güçlü, çok güçlü, gelişime açık ne demek? Profilini nasıl okumalısın?" />
-      </>}
       <div className="gomulu-sayfa" key={k || 'genel'}>
         <Suspense fallback={<div className="bos-durum">Yükleniyor…</div>}>
           {!k && <GenelSonuclarSayfasi gomulu />}
           {['K1', 'K2', 'K3', 'K4'].includes(k) && <KatmanDetaySayfasi gomulu />}
           {k === 'K5' && <K5SonucSayfasi gomulu />}
-          {k === 'KULUP' && <IlgiKulupSekmesi />}
         </Suspense>
       </div>
     </div>
