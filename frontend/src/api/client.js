@@ -153,7 +153,6 @@ export const api = {
   guvenlikOlayiKaydet: (turId, olayTipi, katmanKod) =>
     post('/ogrenci/guvenlik/olay', { tur_id: turId, olay_tipi: olayTipi, katman_kod: katmanKod }),
   // [2026-10-10] Raporlar
-  raporIndir: (tur, bicim = 'pdf') => dosyaIndir(`/ogrenci/rapor?tur=${tur}&bicim=${bicim}`),
   ogrenciRaporuIndir: (ogrenciId, tur, bicim = 'pdf') => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/rapor?tur=${tur}&bicim=${bicim}`, 'admin'),
   okulRaporuIndir: (okulId, bicim = 'pdf') => dosyaIndir(`/yonetim/okul/${okulId}/rapor?bicim=${bicim}`, 'admin'),
   // [2026-10-10] Sınıf düzeyi / şube raporu; tur: ozet | toplu_ogrenci | toplu_veli | toplu_yonetici

@@ -2,7 +2,6 @@
 """
 [2026-10-10] Raporlar (PDF / Excel).
 
-GET /ogrenci/rapor?tur=ogrenci|veli&bicim=pdf|xlsx                      — öğrenci kendi raporu (ve velisine götüreceği rapor)
 GET /yonetim/ogrenci/{id}/rapor?tur=ogrenci|veli|yonetici&bicim=pdf|xlsx — rehber / süper admin (okul kapsamı denetlenir)
 GET /yonetim/okul/{okul_id}/rapor?bicim=pdf|xlsx                          — okul genel raporu
 Her indirme Audit Log'a (yönetim) / hesap olaylarına (öğrenci) yazılır.
@@ -14,9 +13,9 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
+from app.api.deps import get_mevcut_yonetim
 from app.core.database import get_db
-from app.core.hesap_yonetimi import denetim_yaz, olay_yaz
+from app.core.hesap_yonetimi import denetim_yaz
 from app.models import AdminKullanici, Ogrenci
 
 router = APIRouter(tags=["Raporlar"])
@@ -50,15 +49,8 @@ def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str) -> Response:
     return _cevap(icerik, bicim, _dosya_adi(TUR_ADI[tur] if bicim == "pdf" else "Sonuclar", o.ad_soyad, v["tarih"].strftime("%Y%m%d")))
 
 
-@router.get("/ogrenci/rapor")
-def ogrenci_kendi_raporu(tur: str = Query("ogrenci"), bicim: str = Query("pdf"), db: Session = Depends(get_db),
-                         o: Ogrenci = Depends(get_mevcut_ogrenci)):
-    if tur == "yonetici":
-        raise HTTPException(status_code=403, detail="Bu rapor türü yalnızca okul yetkililerine açıktır.")
-    cevap = _ogrenci_dosyasi(db, o, tur, bicim)
-    olay_yaz(db, o.id, "rapor_indirdi", f"{tur} · {bicim}", "Öğrenci")
-    db.commit()
-    return cevap
+# [2026-10-10] Öğrencinin kendi raporunu indirmesi kaldırıldı: raporları yalnızca okul yetkilisi ve süper admin indirir
+# (veli raporu da okul üzerinden verilir).
 
 
 @router.get("/yonetim/ogrenci/{ogrenci_id}/rapor")

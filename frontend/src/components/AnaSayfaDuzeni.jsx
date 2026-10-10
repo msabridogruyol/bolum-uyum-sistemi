@@ -125,7 +125,7 @@ export default function AnaSayfaDuzeni() {
           🧭 Profilim
         </NavLink>
         <NavLink to="/koclar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          👩‍🏫 Uzman Koçlar
+          👩‍🏫 Eğitim Koçları
         </NavLink>
         {/* [2026-10-04] Filiz sohbet paneli her sayfadan açılır */}
         <div className="ni" role="button" tabIndex={0} style={{ cursor: 'pointer' }}

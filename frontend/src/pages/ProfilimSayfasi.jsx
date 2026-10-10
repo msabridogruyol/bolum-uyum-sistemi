@@ -3,8 +3,6 @@
 import { lazy, Suspense } from 'react'
 import { NavLink, Navigate, useParams } from 'react-router-dom'
 import PuanRehberi from '../components/PuanRehberi'
-import RaporDugmeleri from '../components/RaporDugmeleri'
-import { api } from '../api/client'
 
 const GenelSonuclarSayfasi = lazy(() => import('./GenelSonuclarSayfasi'))
 const KatmanDetaySayfasi = lazy(() => import('./KatmanDetaySayfasi'))
@@ -41,11 +39,6 @@ export default function ProfilimSayfasi() {
         ))}
       </nav>
       {k !== 'KULUP' && <>
-      <RaporDugmeleri baslik="Raporum" secenekler={[
-        { anahtar: 'o', ad: 'Öğrenci raporu (PDF)', ikon: '📘', aciklama: 'Profilin, bölüm önerilerin, yol haritan ve SWOT analizin', indir: () => api.raporIndir('ogrenci') },
-        { anahtar: 'v', ad: 'Veli raporu (PDF)', ikon: '👪', aciklama: 'Ailene gösterebileceğin, sade dille hazırlanmış rapor', indir: () => api.raporIndir('veli') },
-        { anahtar: 'x', ad: 'Excel', ikon: '📊', aciklama: 'Tüm özellik puanların ve bölüm önerilerin tablo halinde', indir: () => api.raporIndir('ogrenci', 'xlsx') },
-      ]} />
       <PuanRehberi bolumlu={false} baslik="Güçlü, çok güçlü, gelişime açık ne demek? Profilini nasıl okumalısın?" />
       </>}
       <div className="gomulu-sayfa" key={k || 'genel'}>

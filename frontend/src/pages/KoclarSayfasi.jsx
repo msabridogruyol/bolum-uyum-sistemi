@@ -98,7 +98,7 @@ export default function KoclarSayfasi() {
   return (
     <div className="pg pg-genis">
       <div className="ph">
-        <div className="pt">Uzman Koçlar</div>
+        <div className="pt">Eğitim Koçları</div>
         <div className="ps">Okulunun anlaşmalı eğitim koçlarıyla bölüm seçimi, çalışma planı ya da motivasyon üzerine birebir görüşebilirsin. Talebin önce rehber öğretmenine gider, görüşmeyi birlikte planlarlar.</div>
       </div>
       {mesaj && <div className={mesaj.hata ? 'auth-error' : 'yp-basari'} style={{ marginBottom: 12 }}>{mesaj.metin}</div>}
