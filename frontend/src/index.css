@@ -1184,3 +1184,46 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .ak-sube li.ak-profilsiz span{color:var(--tx3)}
 .ak-sube li.ak-profilsiz span::after{content:" · test yok";font-size:11px}
 @media (max-width:640px){.ak-mod{grid-template-columns:1fr}}
+
+/* [2026-10-10] İlgi testi ve kulüpler */
+.ik-giris{display:flex;gap:14px;align-items:center;background:color-mix(in srgb, var(--okul-c, var(--pu)) 8%, var(--sur));border:1.5px solid color-mix(in srgb, var(--okul-c, var(--pu)) 25%, var(--bor));border-radius:16px;padding:14px 18px;margin-bottom:14px;font-size:14px;line-height:1.5}
+.ik-giris>span{font-size:30px}
+.ik-baslik{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.ik-bt{font-family:var(--fd);font-size:18px;font-weight:800;margin-bottom:2px}
+.ik-sayac{font-weight:800;font-size:15px;color:var(--tx2)}
+.ik-sorular{list-style:none;margin:0 0 16px;padding:0;display:grid;gap:10px}
+.ik-sorular li{border:1.5px solid var(--bor);border-radius:14px;padding:12px 14px;background:var(--sur);transition:border-color .15s}
+.ik-sorular li.cevapli{border-color:color-mix(in srgb, var(--okul-c, var(--pu)) 35%, var(--bor))}
+.ik-soru{font-size:15.5px;font-weight:600;margin-bottom:10px;line-height:1.45}
+.ik-soru span{color:var(--tx3);font-weight:800;margin-right:4px}
+.ik-olcek{display:grid;grid-template-columns:repeat(5,1fr);gap:6px}
+.ik-olcek button{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;border:1.5px solid var(--bor);border-radius:10px;background:var(--sur2);color:var(--tx2);cursor:pointer;font:inherit}
+.ik-olcek button b{font-size:15px}
+.ik-olcek button small{font-size:11px;line-height:1.2;text-align:center}
+.ik-olcek button:hover{border-color:var(--bor2);color:var(--tx)}
+.ik-olcek button.secili{background:var(--okul-c, var(--pu));border-color:var(--okul-c, var(--pu));color:#fff}
+.ik-boyutlar{display:grid;gap:8px;margin-top:12px}
+.ik-boyut{display:grid;grid-template-columns:26px minmax(140px,190px) 1fr 44px;gap:10px;align-items:center;font-size:14px}
+.ik-boyut.ust .ik-ad{font-weight:800}
+.ik-ikon{font-size:18px;text-align:center}
+.ik-cubuk{height:10px;background:var(--sur2);border-radius:6px;overflow:hidden}
+.ik-cubuk div{height:100%;background:var(--okul-c, var(--pu));border-radius:6px}
+.ik-boyut b{text-align:right;font-size:13px}
+.ik-kulupler{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px}
+.ik-kulup{border:1.5px solid var(--bor);border-radius:14px;padding:12px 14px;background:var(--sur);display:grid;gap:6px}
+.ik-kulup-ust{display:flex;align-items:center;gap:8px}
+.ik-kulup-ust b{flex:1;font-size:14.5px}
+.ik-sira{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:12px;font-weight:800;background:var(--sur2);color:var(--tx2)}
+.ik-uyum{font-weight:800;color:var(--okul-c, var(--pu))}
+.ik-ac{font-size:13px;color:var(--tx2)}
+.ik-neden{font-size:12.5px;color:var(--gr);font-weight:600}
+.kl-form{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kl-form .auth-input{margin:0}
+.kl-ilgi{display:inline-flex;gap:4px;align-items:center;margin:3px 4px 3px 0;padding:5px 10px;border-radius:999px;border:1.5px solid var(--bor);background:var(--sur);color:var(--tx2);font:inherit;font-size:12.5px;font-weight:600;cursor:pointer}
+.kl-ilgi.secili{border-color:var(--okul-c, var(--pu));background:color-mix(in srgb, var(--okul-c, var(--pu)) 10%, var(--sur));color:var(--tx)}
+.kl-ilgi sup{font-weight:800;color:var(--okul-c, var(--pu))}
+.kl-pasif td{opacity:.55}
+.kl-sayi{background:none;border:0;padding:0;width:100%;cursor:pointer}
+@media (max-width:640px){.ik-olcek small{display:none}.ik-boyut{grid-template-columns:24px 1fr 60px 40px}.kl-form{grid-template-columns:1fr}}
+.yp-sekmeler-buyuk{flex-wrap:wrap;overflow:visible}
+.yp-sekmeler-buyuk button{padding:10px 14px}
