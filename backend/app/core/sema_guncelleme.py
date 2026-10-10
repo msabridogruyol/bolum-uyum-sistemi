@@ -20,7 +20,7 @@ _SURUMLER = Path(__file__).resolve().parents[2] / "alembic" / "versions"
 OTOMATIK = ["0024_favori_bolum", "0025_test_hesaplari", "0026_guvenlik_olay_tipleri", "0027_gecici_sifre_ogrenci_no",
             "0028_kulupler_ilgi_testi", "0029_egitim_koclari", "0030_okul_subeleri",
             "0031_yetkili_unvan", "0032_takvim_kutuphane",
-            "0033_kutuphane_sayfa"]
+            "0033_kutuphane_sayfa", "0034_koc_okullari"]
 KILIT = 2026101001
 
 

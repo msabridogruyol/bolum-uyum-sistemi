@@ -1,5 +1,5 @@
 // [2026-10-10] Uzman koçlar — okulun anlaşmalı eğitim koçları ve görüşme talepleri.
-// Talep önce rehber öğretmene gider; koçun iletişim bilgisi öğrenciye gösterilmez.
+// Talep Filizyol koordinatörüne gider; koçun iletişim bilgisi öğrenciye gösterilmez.
 import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import { Pencere } from '../components/yonetim/ortak'
@@ -19,7 +19,7 @@ function TalepFormu({ koc, konular, onKapat, onGonderildi }) {
     setBekle(false)
   }
   return (
-    <Pencere baslik={`${koc.ad_soyad} ile görüşme talebi`} altBaslik="Talebin önce rehber öğretmenine iletilir; uygun zamanı birlikte planlarlar." onKapat={onKapat}>
+    <Pencere baslik={`${koc.ad_soyad} ile görüşme talebi`} altBaslik="Talebin Filizyol koordinatörüne iletilir; koçla görüşüp uygun zamanı sana bildiririz." onKapat={onKapat}>
       <form onSubmit={gonder} className="kc-form">
         <label className="auth-label">Talebi kim yapıyor?</label>
         <div className="kc-secim">
@@ -99,7 +99,7 @@ export default function KoclarSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Eğitim Koçları</div>
-        <div className="ps">Okulunun anlaşmalı eğitim koçlarıyla bölüm seçimi, çalışma planı ya da motivasyon üzerine birebir görüşebilirsin. Talebin önce rehber öğretmenine gider, görüşmeyi birlikte planlarlar.</div>
+        <div className="ps">Okulunun anlaşmalı eğitim koçlarıyla bölüm seçimi, çalışma planı ya da motivasyon üzerine birebir görüşebilirsin. Talebin Filizyol koordinatörüne iletilir; görüşme planlanınca tarih ve saati burada ve Takvim'inde görürsün.</div>
       </div>
       {mesaj && <div className={mesaj.hata ? 'auth-error' : 'yp-basari'} style={{ marginBottom: 12 }}>{mesaj.metin}</div>}
 
@@ -113,7 +113,7 @@ export default function KoclarSayfasi() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <b>{t.koc_ad}</b> · {t.konu}{t.talep_eden === 'veli' && <span className="yp-ince"> (veli adına)</span>}
                   {t.randevu_zamani && t.durum === 'onaylandi' && <div className="kc-randevu">📅 {tarihSaat(t.randevu_zamani)}</div>}
-                  {t.ogrenciye_not && <div className="yp-ince">Rehber öğretmenin notu: {t.ogrenciye_not}</div>}
+                  {t.ogrenciye_not && <div className="yp-ince">Koordinatörün notu: {t.ogrenciye_not}</div>}
                   <div className="yp-ince">Gönderildi: {new Date(t.olusturulma_zamani).toLocaleDateString('tr-TR')}</div>
                 </div>
                 {['beklemede', 'onaylandi'].includes(t.durum) && <button className="yp-mini" onClick={() => iptal(t)}>İptal et</button>}
@@ -124,7 +124,7 @@ export default function KoclarSayfasi() {
       )}
 
       {v.koclar.length === 0 ? (
-        <div className="card"><div className="bos-durum">Okulunun henüz anlaşmalı bir koçu yok. Rehber öğretmenine danışabilirsin.</div></div>
+        <div className="card"><div className="bos-durum">Okulunda şu an görüşebileceğin bir eğitim koçu yok. Rehber öğretmenine danışabilirsin.</div></div>
       ) : (
         <>
           <div className="kc-filtre">
@@ -142,7 +142,7 @@ export default function KoclarSayfasi() {
       )}
       {!v.okul_var && <div className="yp-uyari" style={{ marginTop: 12 }}>Hesabın bir okula bağlı olmadığı için görüşme talebi gönderemezsin.</div>}
       {form && <TalepFormu koc={form} konular={v.konular} onKapat={() => setForm(null)}
-        onGonderildi={() => { setForm(null); setMesaj({ metin: 'Talebin rehber öğretmenine iletildi. Durumunu bu sayfadan takip edebilirsin.' }); yukle() }} />}
+        onGonderildi={() => { setForm(null); setMesaj({ metin: 'Talebin iletildi. Durumunu bu sayfadan takip edebilirsin.' }); yukle() }} />}
     </div>
   )
 }
