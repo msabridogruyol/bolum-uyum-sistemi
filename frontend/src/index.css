@@ -1438,3 +1438,11 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .kc-deg{display:flex;flex-direction:column;gap:6px;margin-top:8px;padding:10px 12px;border-radius:12px;background:var(--sur2);border:1px dashed var(--bor2)}
 .kc-deg .auth-input{margin:0}
 .kc-deg-yildiz button{font-size:24px}
+
+/* [2026-10-10] Okul yetkilisi paneli: bölümler sol menüde, sayfada bölüm başlığı */
+.ni-ikon{width:20px;text-align:center;font-size:14px;flex-shrink:0}
+.yp-bolum-baslik{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding-bottom:16px;margin-bottom:18px;border-bottom:1.5px solid var(--bor)}
+.yp-bolum-ikon{width:48px;height:48px;border-radius:14px;background:var(--pul);display:flex;align-items:center;justify-content:center;font-size:24px;flex-shrink:0}
+.yp-bolum-rapor{margin-left:auto}
+.yp-bolum-rapor > *{margin:0}
+@media (max-width:700px){.yp-bolum-rapor{margin-left:0;width:100%}}

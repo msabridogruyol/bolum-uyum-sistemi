@@ -1,5 +1,6 @@
-import { useEffect } from 'react'
-import { NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
+import { Fragment, useEffect } from 'react'
+import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
+import { okulBolumleri } from './yonetim/okulBolumleri'
 import { useAdminAuth } from '../context/AdminAuthContext'
 import { api } from '../api/client'
 import { IlkSifrePenceresi, ROL_ADI } from './yonetim/ortak'
@@ -48,9 +49,21 @@ export default function AdminSayfaDuzeni() {
 
         {okulYetkilisi ? (
           <>
-            <div className="ns">Okulum</div>
-            {ben?.okul_id && <NavLink to={`/admin/okul/${ben.okul_id}`} className={ni}>Okul Paneli</NavLink>}
-            <NavLink to="/admin/sss" className={ni}>Sistem Hakkında & SSS</NavLink>
+            {/* [2026-10-10] Okul paneli bölümleri sol menüde gruplu; sayfada artık sekme çubuğu yok */}
+            {ben?.okul_id && okulBolumleri(ben.okul_id).map((b, i, l) => {
+              const okulYolu = `/admin/okul/${ben.okul_id}`
+              const aktif = konum.pathname === okulYolu && (new URLSearchParams(konum.search).get('sekme') || 'ozet') === b.k
+              return (
+                <Fragment key={b.k}>
+                  {(i === 0 || l[i - 1].grup !== b.grup) && <div className="ns">{b.grup}</div>}
+                  <Link to={b.k === 'ozet' ? okulYolu : `${okulYolu}?sekme=${b.k}`} className={`ni${aktif ? ' active' : ''}`}>
+                    <span className="ni-ikon">{b.ikon}</span>{b.ad}
+                  </Link>
+                </Fragment>
+              )
+            })}
+            <div className="ns">Yardım</div>
+            <NavLink to="/admin/sss" className={ni}><span className="ni-ikon">❓</span>Sistem Hakkında & SSS</NavLink>
           </>
         ) : (
           <>
