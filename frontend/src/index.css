@@ -998,3 +998,16 @@ textarea.md-girdi{resize:vertical;min-height:44px}
 .kr-jargon li small{font-size:11.5px;color:var(--tx3);line-height:1.4}
 .fav-yildiz.secili,.fav-yildiz:hover{color:#E0A100}
 .fav-yildiz.etiketli.secili{border-color:#E0A100;color:#B98500;background:color-mix(in srgb, #E0A100 10%, var(--sur))}
+
+/* [2026-10-10] Test hesapları */
+.test-rozet{display:inline-block;margin-left:6px;font-size:9.5px;font-weight:800;letter-spacing:.05em;padding:1px 6px;border-radius:6px;background:color-mix(in srgb, var(--am) 18%, var(--sur));color:var(--am);vertical-align:middle}
+.th-form{display:flex;flex-direction:column;gap:12px}
+.th-form > label{display:flex;flex-direction:column;gap:5px;font-size:12.5px;font-weight:700;color:var(--tx2)}
+.th-form > label.th-onay{flex-direction:row;align-items:center;gap:8px;font-weight:600;color:var(--tx)}
+.th-form > label.th-onay input{width:16px;height:16px;accent-color:var(--pu)}
+.th-sonuc{margin-top:14px;padding:12px 14px;border-radius:12px;background:var(--grl);border:1.5px solid color-mix(in srgb, var(--gr) 35%, var(--bor));font-size:13px;line-height:1.55}
+.th-sonuc ol{margin:6px 0;padding-left:20px}
+.th-ilerleme{font-size:12.5px;font-weight:700}
+.th-baglanti{display:flex;flex-direction:column;gap:6px;min-width:280px}
+.th-baglanti .auth-input{margin:0;font-size:11.5px;padding:6px 8px}
+a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}

@@ -34,6 +34,8 @@ const GelisimKaynakSayfasi = lazy(() => import('./pages/admin/GelisimKaynakSayfa
 const OkullarSayfasi = lazy(() => import('./pages/admin/OkullarSayfasi'))
 const OkulPaneliSayfasi = lazy(() => import('./pages/admin/OkulPaneliSayfasi'))
 const MeslekDiliSayfasi = lazy(() => import('./pages/admin/MeslekDiliSayfasi'))
+const TestHesaplariSayfasi = lazy(() => import('./pages/admin/TestHesaplariSayfasi'))
+const TestGirisSayfasi = lazy(() => import('./pages/TestGirisSayfasi'))
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
 function EskiKatmanYonlendir() {
@@ -114,6 +116,8 @@ function AnaUygulama() {
       </Route>
 
       {/* --- Yönetici --- */}
+      {/* [2026-10-10] Test hesabı bağlantısı: /test-giris?k=… (öğrenci ya da okul yetkilisi olarak açar) */}
+      <Route path="/test-giris" element={<TestGirisSayfasi />} />
       <Route path="/admin/giris" element={<AdminGirisSayfasi />} />
       <Route path="/admin/sifremi-unuttum" element={<SifremiUnuttumSayfasi kapsam="admin" />} />
       <Route path="/admin/sifre-sifirla" element={<SifreSifirlaSayfasi kapsam="admin" />} />
@@ -142,6 +146,7 @@ function AnaUygulama() {
         <Route path="okullar" element={<OkullarSayfasi />} />
         <Route path="okul/:okulId" element={<OkulPaneliSayfasi />} />
         <Route path="meslek-dili" element={<MeslekDiliSayfasi />} />
+        <Route path="test-hesaplari" element={<TestHesaplariSayfasi />} />
       </Route>
     </Routes>
     </Suspense>

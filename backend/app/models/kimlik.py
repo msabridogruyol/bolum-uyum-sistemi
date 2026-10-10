@@ -46,6 +46,10 @@ class Ogrenci(Base):
     hedef_universite: Mapped[str | None] = mapped_column(String, nullable=True)
     hedef_meslek_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("meslekler.id"), nullable=True)
     profil_foto_base64: Mapped[str | None] = mapped_column(String, nullable=True)
+    # [2026-10-10] Süper adminin açtığı test hesabı: 2 adımlı doğrulama istenmez, giriş bağlantısıyla açılabilir.
+    test_hesabi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    test_giris_anahtari: Mapped[str | None] = mapped_column(String, nullable=True)   # bağlantı anahtarının SHA-256 özeti
+    test_giris_bitis: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class AdminKullanici(Base):
@@ -66,6 +70,10 @@ class AdminKullanici(Base):
     aktif_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
     sifre_degistirmeli: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     son_giris_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # [2026-10-10] Süper adminin açtığı test hesabı: 2 adımlı doğrulama istenmez, giriş bağlantısıyla açılabilir.
+    test_hesabi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    test_giris_anahtari: Mapped[str | None] = mapped_column(String, nullable=True)   # bağlantı anahtarının SHA-256 özeti
+    test_giris_bitis: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class OgrenciHesapOlayi(Base):

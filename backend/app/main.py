@@ -26,6 +26,7 @@ from app.api.okul_yonetimi import router as okul_yonetimi_router
 from app.api.meslek_dili import router as meslek_dili_router
 from app.api.cevap_analizi import router as cevap_analizi_router
 from app.api.listem import router as listem_router
+from app.api.test_hesaplari import router as test_hesaplari_router, giris_router as test_giris_router
 app = FastAPI(
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
@@ -142,6 +143,8 @@ app.include_router(okul_yonetimi_router)
 app.include_router(meslek_dili_router)
 app.include_router(cevap_analizi_router)
 app.include_router(listem_router)                           # [2026-10-10] /ogrenci/listem, /ogrenci/karsilastir
+app.include_router(test_hesaplari_router)                    # [2026-10-10] /yonetim/test-hesaplari (süper admin)
+app.include_router(test_giris_router)                        # [2026-10-10] POST /auth/test-giris
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
 # yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi,
