@@ -1012,7 +1012,8 @@ textarea.md-girdi{resize:vertical;min-height:44px}
 .th-baglanti .auth-input{margin:0;font-size:11.5px;padding:6px 8px}
 a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 
-/* =====================================================   [2026-10-10] Sınav ekranı: tek sütun, büyük yazı, her ekran boyutunda düzgün; güven puanı ve ihlal bildirimi
+/* ============================================================
+   [2026-10-10] Sınav ekranı: tek sütun, büyük yazı, her ekran boyutunda düzgün; güven puanı ve ihlal bildirimi
    ============================================================ */
 .sn-sayfa{width:100%;max-width:920px;margin:0 auto;padding:8px 20px 40px;box-sizing:border-box;display:flex;flex-direction:column;align-items:stretch}
 .sn-sayfa > .qwrap,.sn-sayfa > .bos-durum{margin-left:auto;margin-right:auto}
@@ -1077,7 +1078,7 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
   .sn-ust{margin-top:0}
   .sn-mesaj{padding:0 90px 0 4px}
 }
-=======
+
 /* [2026-10-10] Haftalık görev: ne yapacağın + neden, kart üzerinde görünür (2 satır) */
 .hg-aciklama{font-size:11.5px;line-height:1.45;color:var(--tx3);margin-top:4px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
 
