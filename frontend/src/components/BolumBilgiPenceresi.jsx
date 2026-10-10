@@ -115,7 +115,7 @@ function GenelBakis({ bilgi }) {
   )
 }
 
-function Meslekler({ detay }) {
+function Meslekler({ detay, bolumId }) {
   const [acik, setAcik] = useState(0)
   const liste = detay?.meslekler || []
   if (!liste.length) return <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz meslek bilgisi eklenmedi.</div>
@@ -138,6 +138,9 @@ function Meslekler({ detay }) {
             </button>
             {a && (
               <div style={{ padding: '0 14px 14px', fontSize: 13, color: 'var(--tx2)', lineHeight: 1.6 }}>
+                {m.gunluk_isler?.length >= 3 && bolumId && window.__filizSimulasyon && (
+                  <button className="btn" style={{ margin: '4px 0 8px' }} onClick={() => window.dispatchEvent(new CustomEvent('simulasyon-ac', { detail: { bolumId, meslek: i, ad: m.ad } }))}>🎬 Bir gününü yaşa</button>
+                )}
                 {m.gunluk_isler?.length > 0 && (
                   <>
                     <div style={{ fontWeight: 800, color: 'var(--tx)', margin: '6px 0 4px', fontSize: 12.5 }}>Bir iş gününde neler yapar?</div>
@@ -395,7 +398,7 @@ export function BolumBilgiIcerik({ bolumId, ad, baslangicSekme = 'genel', onKapa
         {hata ? <div className="ps" style={{ margin: 0 }}>{hata}</div>
           : !bilgi ? <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
             : sekme === 'genel' ? <GenelBakis bilgi={bilgi} />
-              : sekme === 'meslek' ? <Meslekler detay={d} />
+              : sekme === 'meslek' ? <Meslekler detay={d} bolumId={bilgi?.bolum_id || bilgi?.id || bolumId} />
                 : sekme === 'jargon' ? <MeslekDili terimler={bilgi.jargon} />
                 : sekme === 'yetkinlik' ? <YetkinlikProfili bolumId={bilgi.bolum_id} />
                   : <Universiteler bolumId={bilgi.bolum_id} />}
