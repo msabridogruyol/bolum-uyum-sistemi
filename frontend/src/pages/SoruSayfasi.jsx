@@ -452,7 +452,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
 
             {/* [2026-10-03] K5 zorunlu: K4 bitince öğrenci önce açılan dallara (Katmanlar sayfasında listelenir) yönlendirilir */}
             {dalMi ? (
-              <button className="btn full" onClick={() => navigate(k5Bekliyor ? '/katmanlar' : '/sonuc')}>
+              <button className="btn full" onClick={() => navigate(k5Bekliyor ? '/katmanlar' : '/bolumler')}>
                 {k5Bekliyor ? 'Sıradaki Alan Sorularına Geç →' : 'Bölüm Sonuçlarımı Gör →'}
               </button>
             ) : (

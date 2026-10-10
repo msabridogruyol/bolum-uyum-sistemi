@@ -6,7 +6,6 @@ import { useBolumBilgi } from '../context/BolumBilgiContext'
 import Sayac from '../components/Sayac'
 import AnaSayfaGrafikleri from '../components/AnaSayfaGrafikleri'
 
-const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
 
 export default function AnaSayfa() {
@@ -17,6 +16,7 @@ export default function AnaSayfa() {
   const [katmanSonuclari, setKatmanSonuclari] = useState(null)
   const [k5Durum, setK5Durum] = useState(null)
   const [hedef, setHedef] = useState(null)
+  const [plan, setPlan] = useState(null)
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
   const { ac: bolumBilgisiAc } = useBolumBilgi()
@@ -26,13 +26,16 @@ export default function AnaSayfa() {
     api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail))
     api.profilGetir().then(setProfil).catch(() => {})
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
-    api.aktifHedefGetir().then(setHedef).catch(() => setHedef(null))
+    api.aktifHedefGetir().then((h) => {
+      setHedef(h)
+      if (h) api.gelisimPlaniGetir().then(setPlan).catch(() => setPlan(null))
+    }).catch(() => setHedef(null))
   }, [])
 
   useEffect(() => {
     if (!ozet) return
     if (ozet.tur_tamamlandi_mi) {
-      api.siralamaGetir(10).then(setSiralama).catch(() => setSiralama([]))
+      api.siralamaGetir(8).then(setSiralama).catch(() => setSiralama([]))
     } else {
       setSiralama([])
     }
@@ -166,26 +169,10 @@ export default function AnaSayfa() {
                   <div style={{ fontSize: 10, color: 'var(--tx3)' }}>/ 100</div>
                 </div>
               )}
-              <button className="btn sec" onClick={() => navigate('/profil')}>Profili Düzenle</button>
+              <button className="btn sec" onClick={() => navigate('/profilim')}>Profilim →</button>
             </div>
 
-            <div style={{ display: 'flex', gap: 8, marginTop: 16, paddingTop: 16, borderTop: '1px solid var(--bor)', flexWrap: 'wrap' }}>
-              {ANA_KATMANLAR.map((kod) => {
-                const k = katmanlar.find((x) => x.kod === kod)
-                const sonuc = katmanSonuclari[kod]
-                return (
-                  <div key={kod} onClick={() => navigate(`/sonuc/${kod}`)} style={{ flex: '1 1 90px', textAlign: 'center', cursor: 'pointer' }}>
-                    <div style={{ fontSize: 18 }}>{KATMAN_IKON[kod]}</div>
-                    <div style={{ fontSize: 9.5, color: 'var(--tx3)', marginTop: 3, fontWeight: 600 }}>{k?.ad?.split('/')[0]?.split('&')[0]?.trim() || kod}</div>
-                    <div style={{ fontSize: 13, fontWeight: 700, marginTop: 1, color: sonuc ? 'var(--gr)' : k?.durum === 'devam_ediyor' ? 'var(--pu)' : 'var(--tx3)' }}>
-                      {sonuc ? `${sonuc.puanOrtalama}%` : k?.durum === 'devam_ediyor' ? 'Devam ediyor' : 'Henüz başlanmadı'}
-                    </div>
-                  </div>
-                )
-              })}
-            </div>
           </div>
-
 
           <div className="card" style={{ marginBottom: 0 }}>
             <div className="ct">Güç Dağılımın</div>
@@ -227,51 +214,42 @@ export default function AnaSayfa() {
             )}
           </div>
 
-          <div className="card" style={{ marginBottom: 0 }}>
-            <div className="ct">Katman Ortalamaların</div>
-
-            {/* Genel tamamlama oranı — ayrı, vurgulu satır */}
-            <div className="mini-cubuk-satir" style={{ marginBottom: 14, paddingBottom: 12, borderBottom: '1px solid var(--bor)' }}>
-              <div className="mini-cubuk-etiket" style={{ width: 78 }}>🎯 Genel</div>
-              <div className="mini-cubuk-track">
-                <div className="mini-cubuk-fill" style={{ width: `${tamamlananYuzde}%`, background: 'var(--pu)' }} />
-              </div>
-              <div className="mini-cubuk-deger" style={{ color: 'var(--pu)' }}>{tamamlananYuzde}%</div>
-            </div>
-
-            {ANA_KATMANLAR.map((kod) => {
-              const sonuc = katmanSonuclari[kod]
-              const k = katmanlar.find((x) => x.kod === kod)
-              const deger = sonuc ? sonuc.puanOrtalama : 0
-              return (
-                <div key={kod} className="mini-cubuk-satir">
-                  <div className="mini-cubuk-etiket">{KATMAN_IKON[kod]} {kod}</div>
-                  <div className="mini-cubuk-track">
-                    <div
-                      className={`mini-cubuk-fill${!sonuc ? ' df-placeholder' : ''}`}
-                      style={{ width: sonuc ? `${deger}%` : '100%', background: sonuc ? 'var(--gr)' : 'transparent' }}
-                    />
-                  </div>
-                  <div className="mini-cubuk-deger" style={{ color: sonuc ? 'var(--gr)' : 'var(--tx3)' }}>
-                    {sonuc ? `${deger}%` : '—'}
-                  </div>
+          {/* [2026-10-10] Koçluk kartı: hedef + şimdiki tek adım (yol haritasının özeti) */}
+          <div className="card as-kocluk" style={{ marginBottom: 0 }}>
+            <div className="ct">🎯 Koçluğum</div>
+            {!ozet.tur_tamamlandi_mi ? (
+              <>
+                <div className="as-k-metin">Koçluk planın değerlendirme bitince hazırlanır.</div>
+                <div className="mini-cubuk-satir" style={{ margin: '12px 0' }}>
+                  <div className="mini-cubuk-track"><div className="mini-cubuk-fill" style={{ width: `${tamamlananYuzde}%`, background: 'var(--pu)' }} /></div>
+                  <div className="mini-cubuk-deger" style={{ color: 'var(--pu)' }}>{tamamlananYuzde}%</div>
                 </div>
-              )
-            })}
-
-            {/* K5 — dal bazlı, farklı mantık */}
-            <div className="mini-cubuk-satir">
-              <div className="mini-cubuk-etiket">🌻 K5</div>
-              <div className="mini-cubuk-track">
-                <div
-                  className={`mini-cubuk-fill${k5OrtalamaPuan === null ? ' df-placeholder' : ''}`}
-                  style={{ width: k5OrtalamaPuan !== null ? `${k5OrtalamaPuan}%` : '100%', background: k5OrtalamaPuan !== null ? 'var(--gr)' : 'transparent' }}
-                />
-              </div>
-              <div className="mini-cubuk-deger" style={{ color: k5OrtalamaPuan !== null ? 'var(--gr)' : 'var(--tx3)', width: k5OrtalamaPuan === null ? 74 : 32, fontSize: k5OrtalamaPuan === null ? 9.5 : 11.5, textAlign: 'right' }}>
-                {k5OrtalamaPuan !== null ? `${k5OrtalamaPuan}%` : 'Henüz kapalı'}
-              </div>
-            </div>
+                <button className="btn full" onClick={() => navigate('/katmanlar')}>{ozet.tamamlanan_katman_sayisi === 0 ? 'Değerlendirmeye başla' : 'Kaldığın yerden devam et'} →</button>
+              </>
+            ) : !hedef ? (
+              <>
+                <div className="as-k-metin">Henüz bir hedef bölümün yok. Sana uygun bölümlerden birini seçince adım adım plan hazırlanır.</div>
+                <button className="btn full" style={{ marginTop: 12 }} onClick={() => navigate('/profil#hedef')}>Hedef bölümünü seç →</button>
+              </>
+            ) : (
+              <>
+                <div className="as-k-hedef">{hedef.bolum_adi}</div>
+                {plan?.ilerleme?.toplam > 0 && (
+                  <div className="mini-cubuk-satir" style={{ margin: '8px 0 10px' }}>
+                    <div className="mini-cubuk-track"><div className="mini-cubuk-fill" style={{ width: `${Math.round((plan.ilerleme.tamamlanan / plan.ilerleme.toplam) * 100)}%`, background: 'var(--gr)' }} /></div>
+                    <div className="mini-cubuk-deger" style={{ color: 'var(--gr)', width: 'auto' }}>{plan.ilerleme.tamamlanan}/{plan.ilerleme.toplam}</div>
+                  </div>
+                )}
+                {plan?.siradaki_adim ? (
+                  <div className="as-k-adim" onClick={() => navigate('/koclugu?sekme=yol')} role="button" tabIndex={0}>
+                    <div className="as-k-etiket">Şimdiki adımın · {plan.siradaki_adim.degisken_adi}</div>
+                    <div className="as-k-baslik">{plan.siradaki_adim.baslik}</div>
+                    {plan.siradaki_adim.sure && <div className="yp-ince">⏱ {plan.siradaki_adim.sure}</div>}
+                  </div>
+                ) : <div className="as-k-metin">{plan ? 'Tüm adımları tamamladın! 🎉' : 'Plan yükleniyor…'}</div>}
+                <button className="hg-link" style={{ marginTop: 10 }} onClick={() => navigate('/koclugu')}>Koçluğuma git →</button>
+              </>
+            )}
           </div>
       </div>
 
@@ -288,77 +266,14 @@ export default function AnaSayfa() {
         </div>
       )}
 
-      {/* --- Önerilen bölümler (tam genişlik) --- */}
-      <div className="ct" style={{ marginTop: 22 }}>Sana Önerilen Bölümler</div>
-      {!ozet.tur_tamamlandi_mi ? (
-        <>
-          <div className="taslak-onizleme">
-            <div className="taslak-onizleme-icerik oneri-grid">
-              {[92, 87, 81, 76, 70, 65, 60, 55, 50, 46, 42, 38].map((genislik, i) => (
-                <div key={i} className="ob-card" style={{ cursor: 'default' }}>
-                  <div className="ob-top">
-                    <div className="ob-rank">{i + 1}</div>
-                    <div className="ob-body">
-                      <div className="iskelet-satir" style={{ width: '70%', marginBottom: 8 }} />
-                      <div className="mini-ilerleme-track" style={{ width: '100%' }}>
-                        <div className="mini-ilerleme-fill" style={{ width: `${genislik}%`, background: 'var(--pu)' }} />
-                      </div>
-                    </div>
-                    <div className="ob-score">%{genislik}</div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="taslak-onizleme-overlay">
-              <div className="to-ikon">🌱</div>
-              <div className="to-metin">
-                Bölüm önerilerin, K1-K4'ün tamamı bitince burada görünecek — şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
-              </div>
-            </div>
-          </div>
-          <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>
-            {ozet.tamamlanan_katman_sayisi === 0 ? 'Yolculuğuna Başla' : 'Kaldığın Yerden Devam Et'} →
-          </button>
-        </>
-      ) : siralama === null ? (
-        <div className="bos-durum">Yükleniyor…</div>
-      ) : siralama.length === 0 ? (
-        <div className="veri-yok-grafik">
-          <div className="vg-ikon">🌱</div>
-          <div className="vg-metin">Henüz önerilecek bölüm hesaplanmadı.</div>
+      {/* [2026-10-10] 10'lu öneri kartları kaldırıldı (grafikteki uyum sıralaması + Bölümler sayfası ile tekrar ediyordu) */}
+      {ozet.tur_tamamlandi_mi && (
+        <div className="as-baglantilar">
+          <button type="button" onClick={() => navigate('/bolumler')}><span>🌟</span><b>Sana uygun bölümler</b><small>Nedenleriyle birlikte</small></button>
+          <button type="button" onClick={() => navigate('/bolumler/karsilastir')}><span>⚖️</span><b>Karşılaştır</b><small>2-3 bölümü yan yana koy</small></button>
+          <button type="button" onClick={() => navigate('/bolumler/tum')}><span>🔍</span><b>Tüm bölümler</b><small>301 bölümü keşfet</small></button>
+          <button type="button" onClick={() => navigate('/profilim')}><span>🧭</span><b>Profilim</b><small>Güçlü yönlerin, katmanların</small></button>
         </div>
-      ) : (
-        <>
-          <div className="oneri-grid">
-            {siralama.map((s, i) => (
-              <button
-                key={s.bolum_id}
-                type="button"
-                className="oneri-kart"
-                title="Bölüm hakkında bilgi için tıkla"
-                onClick={() => bolumBilgisiAc(s.bolum_id, s.bolum_adi)}
-              >
-                <div className="ok-ust">
-                  <div className={`ob-rank${i < 3 ? ' top' : ''}`}>{i + 1}</div>
-                  <div className="ok-ad">
-                    {s.bolum_adi}
-                    {s.alan && <div className="ok-alan">{s.alan}</div>}
-                  </div>
-                  <div className="ok-skor">%{Math.round(s.toplam_uyum)}</div>
-                </div>
-                <div className="ok-alt">
-                  <div className="mini-ilerleme-track" style={{ flex: 1 }}>
-                    <div className="mini-ilerleme-fill" style={{ width: `${s.toplam_uyum}%`, background: 'var(--pu)' }} />
-                  </div>
-                  <span className="ok-detay">Bölümü incele ›</span>
-                </div>
-              </button>
-            ))}
-          </div>
-          <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/koclugu')}>
-            Bölüm Karşılaştırmasına Git →
-          </button>
-        </>
       )}
     </div>
   )

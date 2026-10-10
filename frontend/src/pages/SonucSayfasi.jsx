@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
 import Sayac from '../components/Sayac'
+import FavoriYildiz from '../components/FavoriYildiz'
 
 // [2026-10-09] "Neden bu bölüm?" — madde madde: örtüşen yönler (sende / bölümde düzeyi + seçtiğin cevaplar),
 // alan sorularındaki iş türü uyumu ve varsa dikkat edilecek nokta.
@@ -45,7 +46,7 @@ function NedenDetay({ d }) {
   )
 }
 
-export default function SonucSayfasi() {
+export default function SonucSayfasi({ gomulu = false }) {
   const [siralama, setSiralama] = useState(null)
   const [ozet, setOzet] = useState(null)
   const [hata, setHata] = useState(null)
@@ -61,13 +62,13 @@ export default function SonucSayfasi() {
 
   return (
     <div className="pg pg-genis">
-      <div className="ph">
+      {!gomulu && <div className="ph">
         <div className="pt">Bölüm Uyum Sonuçların</div>
         <div className="ps">
           Şu anki cevaplarına göre en güçlü uyum gösterdiğin bölümler — bu bir kehanet değil, anlık bir
           yansıtma; profilin zamanla değişebilir.
         </div>
-      </div>
+      </div>}
 
       {siralama.length === 0 ? (
         <>
@@ -105,6 +106,7 @@ export default function SonucSayfasi() {
                   {s.alan && <div style={{ fontSize: 12, opacity: 0.7, marginTop: 2 }}>{s.alan}</div>}
                 </div>
                 <div className="ob-score">%<Sayac deger={Math.round(s.toplam_uyum)} /></div>
+                <FavoriYildiz id={s.bolum_id} ad={s.bolum_adi} />
               </div>
               {s.neden_detay ? (
                 <NedenDetay d={s.neden_detay} />

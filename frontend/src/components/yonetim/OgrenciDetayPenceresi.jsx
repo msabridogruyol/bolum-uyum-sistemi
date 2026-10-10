@@ -137,6 +137,18 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
             <div style={{ gridColumn: '1 / -1' }}><span>Hedef bölüm</span>
               <HedefYonetimi d={d} ogrenciId={ogrenciId} bekle={bekle} islem={islem} yenile={() => { yukle(); onDegisti?.() }} />
             </div>
+            {/* [2026-10-10] Öğrencinin ★ Listem'i — görüşmede konuşulacak bölümler */}
+            <div style={{ gridColumn: '1 / -1' }}><span>Listesindeki bölümler (★)</span>
+              {d.listem?.length ? (
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginTop: 4 }}>
+                  {d.listem.map((b) => (
+                    <span key={b.bolum_id} className="yp-etiket-cip" title={b.alt_alan || b.ust_alan || ''}>
+                      ★ {b.bolum_adi}{b.toplam_uyum != null && <b> %{Math.round(b.toplam_uyum)}</b>}
+                    </span>
+                  ))}
+                </div>
+              ) : <b style={{ fontWeight: 500 }} className="yp-ince">Henüz listesine bölüm eklemedi</b>}
+            </div>
             {h.ilgi_alanlari && <div style={{ gridColumn: '1 / -1' }}><span>İlgi alanları</span><b style={{ fontWeight: 500 }}>{h.ilgi_alanlari}</b></div>}
             {superAdmin && (
               <div><span>Okulu</span>

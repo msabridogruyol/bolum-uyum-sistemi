@@ -552,6 +552,16 @@ def _giris_listesi_xlsx(okul: Okul | None, kayitlar: list[dict]) -> str:
                      f"değiştirilir. Bu dosyayı güvenli saklayın; şifreler sistemde tekrar gösterilmez.")
 
 
+def _listem(db: Session, o) -> list[dict]:
+    """[2026-10-10] Öğrencinin ★ Listem'i (rehber öğretmen görüşmede kullanır)."""
+    try:
+        from app.api.listem import favori_listesi
+        return favori_listesi(db, o)
+    except Exception:
+        db.rollback()
+        return []
+
+
 # ----------------------------------------------------------------------------- öğrenci detayı
 @router.get("/ogrenci/{ogrenci_id}")
 def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
@@ -639,6 +649,7 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
         },
         "turlar": tur_listesi,
         "oneriler": oneriler, "sonuc_notu": sonuc_notu, "hedef": hedef, "hedef_hak": hedef_hak_durumu(o),
+        "listem": _listem(db, o),
         "kayitlar": _ogrenci_kayitlari(db, o, katmanlar),
     }
 

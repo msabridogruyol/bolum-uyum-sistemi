@@ -164,7 +164,7 @@ def _kesif_gorevi(db: Session, ogrenci: Ogrenci, hafta: date, haric: set | None 
     else:
         aciklama = "Bölümün profiline ve örnek mesleklerine bak; ilgini çekiyor mu, düşün."
     return {"tur": "kesif", "baslik": f"Keşfet: {ad}", "aciklama": aciklama, "ref_bolum_id": bolum.id,
-            "link": f"/kesfet?bolum={bolum.id}&ara={quote(bolum.ad)}"}
+            "link": f"/bolumler/tum?bolum={bolum.id}&ara={quote(bolum.ad)}"}
 
 
 def _yansitma_gorevi() -> dict:

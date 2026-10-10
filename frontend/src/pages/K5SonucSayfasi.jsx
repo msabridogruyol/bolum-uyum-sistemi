@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
-export default function K5SonucSayfasi() {
+export default function K5SonucSayfasi({ gomulu = false }) {
   const [k5Durum, setK5Durum] = useState(null)
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
@@ -19,7 +19,7 @@ export default function K5SonucSayfasi() {
 
   return (
     <div className="pg pg-genis">
-      <button className="back" onClick={() => navigate('/sonuc/genel')}>← Genel sonuçlara dön</button>
+      {!gomulu && <button className="back" onClick={() => navigate('/profilim')}>← Profilime dön</button>}
 
       <div className="ph">
         <div className="pt">Dal Derinleşme — Sonuçların</div>

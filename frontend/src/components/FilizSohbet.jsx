@@ -14,7 +14,10 @@ const ONERILER_GENEL = [
 ]
 const ONERILER_SAYFA = {
   '/koclugu': ['Yol haritamdaki sıradaki adımı nasıl yaparım?', 'Hedef bölümüme ne kadar uygunum?'],
-  '/kesfet': ['Bir bölümün bana uyup uymadığını nasıl anlarım?'],
+  '/bolumler': ['Önerilen bölümlerin neden bana uygun olduğunu anlatır mısın?'],
+  '/bolumler/tum': ['Bir bölümün bana uyup uymadığını nasıl anlarım?'],
+  '/bolumler/karsilastir': ['İki bölüm arasında nasıl karar veririm?'],
+  '/profilim': ['Güçlü yönlerimi nasıl kullanabilirim?'],
   '/katmanlar': ['Bu testleri neden çözüyorum?'],
 }
 

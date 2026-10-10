@@ -125,7 +125,7 @@ const SEKMELER = [
   { kod: 'ozet', ad: 'Özet', ikon: '🧭' },
   { kod: 'yol', ad: 'Yol Haritam', ikon: '🗺️' },
   { kod: 'guclu', ad: 'Güçlü Yönlerin', ikon: '💪' },
-  { kod: 'karsilastirma', ad: 'Bölümle Karşılaştırma', ikon: '📊' },
+  { kod: 'karsilastirma', ad: 'Sen ve Bölümün', ikon: '📊' },
   { kod: 'ilham', ad: 'İlham Kaynakları', ikon: '📚' },
   { kod: 'gelisim', ad: 'Gelişimin', ikon: '📈' },
 ]
@@ -484,31 +484,81 @@ function KarsilastirmaSekmesi({ gelisim, hedef }) {
 }
 
 // ---------------------------------------------------------------- 5) Turlar arası gelişim
+// [2026-10-10] Gelişimin: yaptıklarının zaman çizelgesi + son 8 hafta + (2. turdan sonra) özellik değişimi
+const AY = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
+const kisaTarih = (t) => { const d = new Date(t); return `${d.getDate()} ${AY[d.getMonth()]}` }
+
 function GelisimSekmesi({ karsilastirma }) {
-  if (!karsilastirma || karsilastirma.length === 0) {
-    return (
-      <div className="card" style={{ textAlign: 'center', padding: 30 }}>
-        <div style={{ fontSize: 30 }}>📈</div>
-        <div style={{ fontWeight: 700, margin: '6px 0 4px' }}>Gelişimin ikinci değerlendirme turunda burada görünecek</div>
-        <div className="ps" style={{ margin: 0 }}>Bir sonraki turu tamamladığında her özelliğindeki değişimi ilk turla karşılaştırıp burada göstereceğiz.</div>
-      </div>
-    )
-  }
+  const [g, setG] = useState(null)
+  useEffect(() => { api.gelisimimGetir().then(setG).catch(() => setG({ adimlar: [], haftalar: [], ozet: null })) }, [])
+  const maks = Math.max(1, ...(g?.haftalar || []).map((h) => h.gorev_tamam + h.adim))
+
   return (
-    <div className="ll">
-      {karsilastirma.map((k) => (
-        <div key={k.degisken_id} className="ob-card">
-          <div className="ob-top">
-            <div className="ob-body">
-              <div className="ob-name">{k.degisken_adi}</div>
-              <div className="ld">{k.eski_puan} → {k.yeni_puan} ({k.degisim > 0 ? '+' : ''}{k.degisim})</div>
-              {k.yorum_metni && <div className="ld" style={{ marginTop: 4 }}>{k.yorum_metni}</div>}
-            </div>
-            <span className="bdg bdg-prog">{k.trend.replaceAll('_', ' ')}</span>
+    <>
+      {g?.ozet && (
+        <div className="gm-ozet">
+          <div><b>{g.ozet.tamamlanan_adim}</b><span>tamamlanan adım</span></div>
+          <div><b>{g.ozet.tamamlanan_gorev}</b><span>haftalık görev</span></div>
+          <div><b>{g.ozet.ust_uste_hafta}</b><span>hafta üst üste aktif{g.ozet.ust_uste_hafta >= 3 ? ' 🔥' : ''}</span></div>
+        </div>
+      )}
+      {g?.haftalar?.length > 0 && (
+        <div className="card">
+          <div className="ct">Son 8 hafta</div>
+          <div className="gm-haftalar" role="img" aria-label="Son 8 haftada tamamlanan görev ve adım sayıları">
+            {g.haftalar.map((h, i) => {
+              const top = h.gorev_tamam + h.adim
+              return (
+                <div key={h.hafta} className="gm-hafta" title={`${kisaTarih(h.hafta)} haftası: ${h.gorev_tamam} görev, ${h.adim} adım`}>
+                  <span className="gm-deger">{top || ''}</span>
+                  <div className="gm-sutun"><div style={{ height: `${(top / maks) * 100}%`, animationDelay: `${i * 50}ms` }} /></div>
+                  <span className="gm-etiket">{i === g.haftalar.length - 1 ? 'Bu hafta' : kisaTarih(h.hafta)}</span>
+                </div>
+              )
+            })}
           </div>
         </div>
-      ))}
-    </div>
+      )}
+      <div className="card">
+        <div className="ct">Yaptıkların</div>
+        {!g ? <div className="bos-durum" style={{ padding: 12 }}>Yükleniyor…</div> : g.adimlar.length === 0 ? (
+          <div className="ps" style={{ margin: 0 }}>Yol haritandaki bir adımı “Yaptım” diye işaretlediğinde burada tarihiyle birikmeye başlar.</div>
+        ) : (
+          <ol className="gm-zaman">
+            {g.adimlar.slice(0, 20).map((a) => (
+              <li key={a.kod + a.zaman}>
+                <span className="gm-tarih">{a.zaman ? kisaTarih(a.zaman) : ''}</span>
+                <span className={`gm-nokta${a.guclu_yon ? ' guclu' : ''}`} />
+                <div><b>{a.baslik}</b><small>{a.ozellik}{a.bolum ? ` · ${a.bolum}` : ''}</small></div>
+              </li>
+            ))}
+          </ol>
+        )}
+      </div>
+      <div className="ct" style={{ marginTop: 18 }}>Değerlendirmeler arası değişim</div>
+      {(!karsilastirma || karsilastirma.length === 0) ? (
+        <div className="card" style={{ textAlign: 'center', padding: 24 }}>
+          <div style={{ fontSize: 26 }}>📈</div>
+          <div style={{ fontWeight: 700, margin: '6px 0 4px' }}>İkinci değerlendirme turunda burada görünecek</div>
+          <div className="ps" style={{ margin: 0 }}>Bir sonraki turu tamamladığında her özelliğindeki değişimi ilk turla karşılaştırıp burada göstereceğiz.</div>
+        </div>
+      ) : (
+        <div className="ll">
+          {karsilastirma.map((k) => (
+            <div key={k.degisken_id} className="ob-card">
+              <div className="ob-top">
+                <div className="ob-body">
+                  <div className="ob-name">{k.degisken_adi}</div>
+                  <div className="ld">{k.eski_puan} → {k.yeni_puan} ({k.degisim > 0 ? '+' : ''}{k.degisim})</div>
+                  {k.yorum_metni && <div className="ld" style={{ marginTop: 4 }}>{k.yorum_metni}</div>}
+                </div>
+                <span className="bdg bdg-prog">{k.trend.replaceAll('_', ' ')}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </>
   )
 }
 
@@ -566,7 +616,7 @@ export default function KoclukSayfasi() {
   return (
     <div className="pg pg-genis">
       <div className="ph">
-        <div className="pt">Hedef Bölüm Koçluğu</div>
+        <div className="pt">Koçluğum</div>
         <div className="ps">Hedef bölümünle kendini karşılaştır ve adım adım ilerle. Her seferinde tek bir adıma odaklan.</div>
       </div>
 

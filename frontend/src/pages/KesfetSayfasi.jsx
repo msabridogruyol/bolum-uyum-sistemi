@@ -2,10 +2,11 @@ import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { BolumBilgiIcerik } from '../components/BolumBilgiPenceresi'
+import FavoriYildiz from '../components/FavoriYildiz'
 
 const ORNEK_ARAMALAR = ['Tıp', 'Bilgisayar Mühendisliği', 'Psikoloji', 'Hukuk', 'İşletme', 'Mimarlık']
 
-export default function KesfetSayfasi() {
+export default function KesfetSayfasi({ gomulu = false }) {
   const [sorgu, setSorgu] = useState('')
   const [sonuclar, setSonuclar] = useState(null)
   const [yukleniyor, setYukleniyor] = useState(false)
@@ -52,10 +53,10 @@ export default function KesfetSayfasi() {
 
   return (
     <div className={`pg${secili ? ' pg-genis' : ''}`}>
-      <div className="ph">
+      {!gomulu && <div className="ph">
         <div className="pt">Tüm Bölümleri Keşfet</div>
         <div className="ps">301 bölümün tamamı elinin altında — bir bölüme tıkla; tanıtımını, mesleklerini, yetkinlik profilini ve üniversitelerini incele.</div>
-      </div>
+      </div>}
 
       <form onSubmit={ara} style={{ display: 'flex', gap: 8, marginBottom: sonuclar ? 20 : 14 }}>
         <input
@@ -64,7 +65,7 @@ export default function KesfetSayfasi() {
           value={sorgu}
           onChange={(e) => setSorgu(e.target.value)}
           placeholder="örn. Tıp, Ekonometri, Hukuk..."
-          autoFocus
+          autoFocus={!gomulu}
         />
         <button className="btn" type="submit" disabled={yukleniyor}>
           {yukleniyor ? <span className="spin" /> : '🔍 Ara'}
@@ -120,6 +121,7 @@ export default function KesfetSayfasi() {
                 <div className="ob-top">
                   <div className="ob-body"><div className="ob-name">{s.bolum_adi}</div></div>
                   <div className="ob-score">{s.toplam_uyum !== null ? `%${Math.round(s.toplam_uyum)}` : '—'}</div>
+                  <FavoriYildiz id={s.bolum_id} ad={s.bolum_adi} />
                 </div>
               </div>
             ))}

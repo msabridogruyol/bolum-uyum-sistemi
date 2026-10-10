@@ -1,5 +1,5 @@
 import { lazy, Suspense } from 'react'
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext'
 import { BolumBilgiProvider } from './context/BolumBilgiContext'
@@ -13,14 +13,11 @@ const SifremiUnuttumSayfasi = lazy(() => import('./pages/SifremiUnuttumSayfasi')
 const SifreSifirlaSayfasi = lazy(() => import('./pages/SifreSifirlaSayfasi'))
 const KatmanlarSayfasi = lazy(() => import('./pages/KatmanlarSayfasi'))
 const SoruSayfasi = lazy(() => import('./pages/SoruSayfasi'))
-const SonucSayfasi = lazy(() => import('./pages/SonucSayfasi'))
-const KesfetSayfasi = lazy(() => import('./pages/KesfetSayfasi'))
+const ProfilimSayfasi = lazy(() => import('./pages/ProfilimSayfasi'))
+const BolumlerimSayfasi = lazy(() => import('./pages/BolumlerimSayfasi'))
 const KoclukSayfasi = lazy(() => import('./pages/KoclukSayfasi'))
 const ProfilAyarlariSayfasi = lazy(() => import('./pages/ProfilAyarlariSayfasi'))
 const AnaSayfa = lazy(() => import('./pages/AnaSayfa'))
-const GenelSonuclarSayfasi = lazy(() => import('./pages/GenelSonuclarSayfasi'))
-const KatmanDetaySayfasi = lazy(() => import('./pages/KatmanDetaySayfasi'))
-const K5SonucSayfasi = lazy(() => import('./pages/K5SonucSayfasi'))
 const AdminGirisSayfasi = lazy(() => import('./pages/admin/AdminGirisSayfasi'))
 const KontrolPaneliSayfasi = lazy(() => import('./pages/admin/KontrolPaneliSayfasi'))
 const PipelineDurumuSayfasi = lazy(() => import('./pages/admin/PipelineDurumuSayfasi'))
@@ -37,6 +34,16 @@ const GelisimKaynakSayfasi = lazy(() => import('./pages/admin/GelisimKaynakSayfa
 const OkullarSayfasi = lazy(() => import('./pages/admin/OkullarSayfasi'))
 const OkulPaneliSayfasi = lazy(() => import('./pages/admin/OkulPaneliSayfasi'))
 const MeslekDiliSayfasi = lazy(() => import('./pages/admin/MeslekDiliSayfasi'))
+
+// [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
+function EskiKatmanYonlendir() {
+  const { kod } = useParams()
+  return <Navigate to={`/profilim/${kod}`} replace />
+}
+function AramaylaYonlendir({ to }) {
+  const { search } = useLocation()
+  return <Navigate to={`${to}${search}`} replace />
+}
 
 function SayfaYukleniyor() {
   return <div className="bos-durum" style={{ padding: 40 }}>Yükleniyor…</div>
@@ -92,11 +99,16 @@ function AnaUygulama() {
         <Route path="/" element={<AnaSayfa />} />
         <Route path="/katmanlar" element={<KatmanlarSayfasi />} />
         <Route path="/k5" element={<Navigate to="/katmanlar" replace />} />
-        <Route path="/sonuc" element={<SonucSayfasi />} />
-        <Route path="/sonuc/genel" element={<GenelSonuclarSayfasi />} />
-        <Route path="/sonuc/K5" element={<K5SonucSayfasi />} />
-        <Route path="/sonuc/:kod" element={<KatmanDetaySayfasi />} />
-        <Route path="/kesfet" element={<KesfetSayfasi />} />
+        {/* [2026-10-10] Yeni menü: Bölümler (sekmeli) ve Profilim (sekmeli) */}
+        <Route path="/bolumler" element={<BolumlerimSayfasi />} />
+        <Route path="/bolumler/:sekme" element={<BolumlerimSayfasi />} />
+        <Route path="/profilim" element={<ProfilimSayfasi />} />
+        <Route path="/profilim/:kod" element={<ProfilimSayfasi />} />
+        {/* Eski adresler (yer imleri, haftalık görev bağlantıları) yeni sayfalara yönlenir */}
+        <Route path="/sonuc" element={<Navigate to="/bolumler" replace />} />
+        <Route path="/sonuc/genel" element={<Navigate to="/profilim" replace />} />
+        <Route path="/sonuc/:kod" element={<EskiKatmanYonlendir />} />
+        <Route path="/kesfet" element={<AramaylaYonlendir to="/bolumler/tum" />} />
         <Route path="/koclugu" element={<KoclukSayfasi />} />
         <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
       </Route>

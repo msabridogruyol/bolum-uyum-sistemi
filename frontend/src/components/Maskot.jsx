@@ -620,11 +620,14 @@ function sayfaMesaji(yol, ozet, hedef) {
     if (biten < toplam) return `${biten}/${toplam} katman tamam, harika gidiyorsun! Sıradaki seni bekliyor.`
     return 'Tüm katmanlar bitti! 🎉 Alan sorularını da tamamlarsan sonuçların hazır.'
   }
-  if (yol.startsWith('/sonuc')) return 'Sonuçların burada! Merak ettiğin bölümü Keşfet\'te de inceleyebilirsin. 🌟'
-  if (yol === '/kesfet') return 'Bir bölüme tıkla, örnek mesleklerine bak. 🔍'
+  if (yol === '/bolumler/tum') return 'Bir bölüme tıkla, örnek mesleklerine bak. Beğendiğini ☆ ile listene ekle! 🔍'
+  if (yol === '/bolumler/karsilastir') return 'Aklındaki 2-3 bölümü yan yana koy, farkları gör. ⚖️'
+  if (yol === '/bolumler/listem') return 'Listendeki bölümler burada. Rehber öğretmenin de görebilir. ⭐'
+  if (yol.startsWith('/bolumler')) return 'Sana uygun bölümler burada! Beğendiğini ☆ ile listene ekle. 🌟'
+  if (yol.startsWith('/profilim')) return 'Bu senin profilin: güçlü yönlerin ve gelişebileceğin alanlar. 🧭'
   if (yol === '/koclugu') return hedef ? `${hedef} hedefin için bugün yol haritandan bir adımı işaretle!` : 'Henüz hedefin yok. Önerilen bölümlerden birini seçmeye ne dersin?'
   if (yol === '/profil') return 'Profilini doldurursan seni daha iyi tanırım. 😊'
-  if (biten === 0) return 'Hazırsan Yol Haritam\'dan ilk katmana başlayalım!'
+  if (biten === 0) return 'Hazırsan Değerlendirme\'den ilk katmana başlayalım!'
   return null
 }
 
