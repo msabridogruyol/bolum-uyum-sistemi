@@ -1,4 +1,4 @@
-import { Fragment, useEffect } from 'react'
+import { Fragment, useEffect, useState } from 'react'
 import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { okulBolumleri } from './yonetim/okulBolumleri'
 import { useAdminAuth } from '../context/AdminAuthContext'
@@ -14,6 +14,11 @@ export default function AdminSayfaDuzeni() {
   const { cikisYap, rol, ben, benYenile } = useAdminAuth()
   const konum = useLocation()
   const okulYetkilisi = rol === 'okul_yetkilisi'
+  // [2026-10-10] Bekleyen kulüp katılma talebi sayısı (menüde Kulüpler'in yanında)
+  const [bekleyenTalep, setBekleyenTalep] = useState(0)
+  useEffect(() => {
+    if (okulYetkilisi && ben?.okul_id) api.kulupTalepleri(ben.okul_id).then((v) => setBekleyenTalep(v.bekleyen || 0)).catch(() => {})
+  }, [okulYetkilisi, ben?.okul_id, konum.pathname, konum.search])
   // [2026-10-09] Okul yetkilisinin paneli okulun renginde; süper admin Filizyol renginde
   useEffect(() => {
     okulRenginiUygula(okulYetkilisi ? ben?.okul_renk : null)
@@ -58,6 +63,7 @@ export default function AdminSayfaDuzeni() {
                   {(i === 0 || l[i - 1].grup !== b.grup) && <div className="ns">{b.grup}</div>}
                   <Link to={b.k === 'ozet' ? okulYolu : `${okulYolu}?sekme=${b.k}`} className={`ni${aktif ? ' active' : ''}`}>
                     <span className="ni-ikon">{b.ikon}</span>{b.ad}
+                    {b.k === 'kulupler' && bekleyenTalep > 0 && <span className="ni-rozet">{bekleyenTalep}</span>}
                   </Link>
                 </Fragment>
               )
@@ -84,6 +90,7 @@ export default function AdminSayfaDuzeni() {
             <NavLink to="/admin/bolumler" className={ni}>Bölümler</NavLink>
             <NavLink to="/admin/yokatlas" className={ni}>YÖK Atlas Eşleştirme</NavLink>
             <NavLink to="/admin/meslek-dili" className={ni}>Meslek Dili Sözlüğü</NavLink>
+            <NavLink to="/admin/konular" className={ni}>Konu Listesi (Net Takibi)</NavLink>
             <NavLink to="/admin/dallar" className={ni}>Dallar (K5)</NavLink>
             <NavLink to="/admin/sorular" className={ni}>Soru Bankası</NavLink>
 

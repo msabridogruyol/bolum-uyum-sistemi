@@ -10,6 +10,7 @@ export const OKUL_BOLUMLERI = [
   { k: 'bilgiler', ad: 'Okul Bilgileri', ikon: '🏫', grup: 'Okul Ayarları', okul: true, aciklama: 'Okulun tanıtım bilgileri' },
   { k: 'yetkililer', ad: 'Okul Yetkilileri', ikon: '🔑', grup: 'Okul Ayarları', okul: true, aciklama: 'Panele erişebilen yetkililer' },
   { k: 'meslekdili', ad: 'Meslek Dili', ikon: '💬', grup: 'Okul Ayarları', okul: true, aciklama: 'Öğrencilere gösterilen meslek ifadelerinin okulunuza özel hâli' },
+  { k: 'konular', ad: 'Konu Listesi', ikon: '📚', grup: 'Okul Ayarları', okul: true, aciklama: 'Öğrencilerin Net Takibi → Konu Takibi ekranında gördüğü konular' },
   { k: 'gorunum', ad: 'Görünüm', ikon: '🎨', grup: 'Okul Ayarları', okul: true, aciklama: 'Logo ve okul rengi' },
   { k: 'kayitlar', ad: 'Kayıtlar', ikon: '🧾', grup: 'Okul Ayarları', aciklama: 'Paneldeki işlemlerin geçmişi' },
 ]

@@ -64,13 +64,15 @@ def yapi(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)
     pt = _puan_turu(db, o)
     b = _hedef_bolum(db, o)
     konu_dersleri = [k for k, v in KONU_DERSLERI.items() if v[0] == "TYT"] + PUAN_TURU_KONU_DERSLERI.get(pt, [])
+    from app.core.konu_servisi import etkin_konular   # [2026-10-10] liste veritabanında (genel + okula özel)
+    liste = etkin_konular(db, o.okul_id)
     return {
         "puan_turu": pt, "puan_turu_ad": PUAN_TURU_AD.get(pt, pt),
         "hedef_bolum": {"id": b.id, "ad": b.ad} if b else None,
         "testler": _test_listesi(PUAN_TURU_TESTLERI[pt]),
         "tum_testler": _test_listesi(list(TESTLER)),
-        "konu_dersleri": [{"kod": k, "oturum": KONU_DERSLERI[k][0], "ad": KONU_DERSLERI[k][1], "konular": KONU_DERSLERI[k][2]}
-                          for k in konu_dersleri],
+        "konu_dersleri": [{"kod": k, "oturum": KONU_DERSLERI[k][0], "ad": KONU_DERSLERI[k][1], "konular": liste.get(k, [])}
+                          for k in konu_dersleri if liste.get(k)],
     }
 
 
@@ -145,7 +147,8 @@ def konular(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogren
 
 @router.put("/konular", status_code=204)
 def konu_guncelle(istek: KonuIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
-    if istek.ders not in KONU_DERSLERI or istek.konu not in KONU_DERSLERI[istek.ders][2] or istek.durum not in KONU_DURUMLARI:
+    from app.core.konu_servisi import etkin_konular
+    if istek.ders not in KONU_DERSLERI or istek.konu not in etkin_konular(db, o.okul_id).get(istek.ders, []) or istek.durum not in KONU_DURUMLARI:
         raise HTTPException(400, "Geçersiz konu ya da durum.")
     if istek.durum == "baslamadi":
         db.execute(text("DELETE FROM ogrenci_konu_takibi WHERE ogrenci_id = :o AND ders = :d AND konu = :k"),

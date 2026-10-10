@@ -121,8 +121,18 @@ def kulupleri_listele(okul_id: int, db: Session = Depends(get_db), yon: AdminKul
             if b in boyut_top:
                 boyut_top[b].append(v)
     toplam_ogr = db.query(Ogrenci).filter(Ogrenci.okul_id == okul_id).count()
+    # [2026-10-10] üyelik ve bekleyen talep sayıları
+    uyelik = {}
+    try:
+        for kid, durum, n in db.execute(text("SELECT kulup_id, durum, count(*) FROM kulup_uyelikleri WHERE kulup_id = ANY(:k) "
+                                             "GROUP BY kulup_id, durum"), {"k": [k["id"] for k in kulupler] or [-1]}).all():
+            uyelik.setdefault(kid, {})[durum] = n
+    except Exception:
+        db.rollback()
     return {
-        "kulupler": [{**k, "ilgi_listesi": ks.etiketler(k["ilgiler"]), "oneri_sayisi": say.get(k["id"], 0)} for k in kulupler],
+        "kulupler": [{**k, "ilgi_listesi": ks.etiketler(k["ilgiler"]), "oneri_sayisi": say.get(k["id"], 0),
+                      "uye_sayisi": uyelik.get(k["id"], {}).get("onaylandi", 0),
+                      "bekleyen_talep": uyelik.get(k["id"], {}).get("bekliyor", 0)} for k in kulupler],
         "boyutlar": ks.boyut_listesi(),
         "test_yapan": len(sonuclar), "ogrenci_sayisi": toplam_ogr,
         "okul_ilgi": sorted([{"kod": b, "ad": ks.BOYUTLAR[b]["ad"], "ikon": ks.BOYUTLAR[b]["ikon"], "ort": round(sum(v) / len(v))}
