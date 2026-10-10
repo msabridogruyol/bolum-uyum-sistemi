@@ -2018,3 +2018,56 @@ tr.od-bos td{color:var(--tx3)}
 .ks-iz div{height:100%;background:var(--kt-izleme, #2a78d6);border-radius:0 4px 4px 0}
 .ks-satir b{text-align:right}
 .yp-tablo th.ks-secili,.yp-tablo td.ks-secili{background:color-mix(in srgb, var(--kt-izleme, #2a78d6) 9%, transparent)}
+
+/* [2026-10-10] Meslek simülasyonu — "Bir günümü yaşa" */
+.ms-pencere{max-width:820px}
+.ms-govde{padding:16px 22px 18px;max-height:calc(100vh - 170px);overflow-y:auto}
+.ms-zaman{display:flex;gap:4px;margin-bottom:14px;overflow-x:auto;padding-bottom:4px}
+.ms-nokta{flex:1;min-width:46px;height:30px;border-radius:8px;background:var(--sur2);display:flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;color:var(--tx3);border:1.5px solid transparent}
+.ms-nokta.karar{background:var(--aml);color:var(--am)}
+.ms-nokta.gecti{background:var(--grl);color:var(--gr)}
+.ms-nokta.simdi{border-color:var(--pu);color:var(--tx);background:var(--pul)}
+.ms-sahne{border:1.5px solid var(--bor);border-radius:16px;padding:18px 20px;background:var(--sur);animation:ms-gir .35s ease-out}
+.ms-sahne.karar{border-color:var(--am);background:color-mix(in srgb, var(--aml) 45%, var(--sur))}
+.ms-sahne.giris,.ms-sahne.cikis{background:color-mix(in srgb, var(--pul) 50%, var(--sur))}
+@keyframes ms-gir{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.ms-saat{display:flex;align-items:center;gap:8px;font-family:var(--fd);font-weight:800;font-size:20px}
+.ms-ikon{font-size:24px}
+.ms-sahne-baslik{font-family:var(--fn);font-size:12px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3);margin-left:4px}
+.ms-metin{font-size:16px;line-height:1.6;margin-top:10px;color:var(--tx)}
+.ms-tepkiler{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-top:16px}
+.ms-tepkiler button{border:1.5px solid var(--bor);background:var(--sur);border-radius:12px;padding:10px 8px;cursor:pointer;font-family:var(--fn);font-size:12.5px;font-weight:700;color:var(--tx2);display:flex;flex-direction:column;align-items:center;gap:4px}
+.ms-tepkiler button.secili{border-color:var(--pu);background:var(--pul);color:var(--tx)}
+.ms-emoji{font-size:26px}
+.ms-secenekler{display:grid;gap:8px;margin-top:14px}
+.ms-soru{font-weight:800;font-size:13px}
+.ms-secenek{text-align:left;border:1.5px solid var(--bor);background:var(--sur);border-radius:12px;padding:10px 14px;cursor:pointer;font-family:var(--fn);font-size:13.5px;line-height:1.5;color:var(--tx)}
+.ms-secenek:disabled{cursor:default;opacity:.65}
+.ms-secenek.secili{opacity:1;border-color:var(--pu);background:var(--pul)}
+.ms-geri{border-radius:12px;padding:12px 14px;background:var(--sur2);font-size:13.5px;line-height:1.6;animation:ms-gir .3s ease-out}
+.ms-geri.iyi{background:var(--grl)}
+.ms-geri.dikkat{background:var(--rel)}
+.ms-geri-ust{font-weight:800;margin-bottom:4px}
+.ms-alt{display:flex;gap:8px;align-items:center;margin-top:14px;flex-wrap:wrap}
+.ms-cipler{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.ms-cip{font-size:12px;font-weight:700;padding:3px 10px;border-radius:999px;background:var(--sur2);color:var(--tx2)}
+.ms-cip.guclu{background:var(--grl);color:var(--gr)}
+.ms-ozet-ust{display:flex;gap:18px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.ms-ozet-baslik{font-size:18px;font-weight:800}
+.ms-ozet-yorum{font-size:14px;line-height:1.6;margin-top:4px;color:var(--tx2)}
+.ms-iki{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ms-kutu{background:var(--sur2);border-radius:12px;padding:12px 14px;font-size:13px;line-height:1.55}
+.ms-kutu.iyi{background:var(--grl)}
+.ms-kutu ul{margin:6px 0 0;padding-left:18px}
+.ms-karar-ozet{margin-top:8px;font-size:12.5px}
+.ms-onerilen{color:var(--am);font-weight:600;margin-top:2px}
+.ms-tanitim{display:flex;gap:14px;align-items:center}
+.ms-tanitim-ikon{font-size:38px}
+.ms-meslekler{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:12px;margin-bottom:12px}
+.ms-meslek{margin:0;display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.ms-meslek-ust{display:flex;justify-content:space-between;gap:8px;width:100%;font-size:14.5px}
+.ms-meslek-ac{font-size:12.5px;color:var(--tx2);line-height:1.5;flex:1}
+.ms-keyif{font-weight:800;font-size:12.5px;white-space:nowrap}
+.ms-gecmis{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--bor);font-size:13px}
+.ms-gecmis:last-child{border-bottom:0}
+@media (max-width:640px){.ms-tepkiler{grid-template-columns:1fr}.ms-iki{grid-template-columns:1fr}.ms-metin{font-size:15px}}

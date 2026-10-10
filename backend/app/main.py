@@ -23,6 +23,7 @@ from fastapi import Depends as _Dep
 from app.core.paketler import ogrenci_modulu, okul_modulu   # [2026-10-10] paket / modül koruması
 from app.api.paket_yonetimi import router as paket_router, ogrenci_router as paket_ogrenci_router
 from app.api.bildirimler import ogrenci_router as bildirim_ogrenci_router, yonetim_router as bildirim_yonetim_router   # [2026-10-10]
+from app.api.simulasyon import ogrenci_router as simulasyon_ogrenci_router, yonetim_router as simulasyon_yonetim_router   # [2026-10-10]
 from app.api.okul_karsilastirma import router as karsilastirma_router   # [2026-10-10] süper admin
 from app.api.tercih import ogrenci_router as tercih_ogrenci_router, yonetim_router as tercih_yonetim_router, mezun_router   # [2026-10-10]
 from app.api.anketler import ogrenci_router as anket_ogrenci_router, yonetim_router as anket_yonetim_router   # [2026-10-10]
@@ -192,6 +193,8 @@ app.include_router(konu_yonetimi_router, dependencies=[_Dep(okul_modulu("net_tak
 app.include_router(bildirim_ogrenci_router)
 app.include_router(bildirim_yonetim_router)
 app.include_router(karsilastirma_router)
+app.include_router(simulasyon_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kocluk"))])
+app.include_router(simulasyon_yonetim_router, dependencies=[_Dep(okul_modulu("kocluk"))])
 app.include_router(tercih_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("tercih"))])
 app.include_router(tercih_yonetim_router, dependencies=[_Dep(okul_modulu("tercih"))])
 app.include_router(mezun_router, dependencies=[_Dep(okul_modulu("mezun_takibi"))])

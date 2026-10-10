@@ -46,6 +46,24 @@ function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
 }
 
 // [2026-10-10] 3. öğe: sekmenin bağlı olduğu modül (okulun paketinde yoksa sekme gizlenir)
+// [2026-10-10] "Bir günümü yaşa" sonuçları — hangi mesleklerin günü öğrenciye keyifli geldi
+function OgrenciSimulasyonlari({ ogrenciId }) {
+  const [v, setV] = useState(null)
+  useEffect(() => { api.ogrenciSimulasyonlari(ogrenciId).then((x) => setV(x.simulasyonlar)).catch(() => setV([])) }, [ogrenciId])
+  if (!v || !v.length) return null
+  return (
+    <div className="yp-kutu" style={{ marginTop: 12 }}>
+      <div className="ct">🎬 Meslek simülasyonları (Bir günümü yaşa)</div>
+      {v.map((g) => (
+        <div key={`${g.bolum_id}-${g.meslek_ad}`} className="ms-gecmis">
+          <span><b>{g.meslek_ad}</b> <span className="yp-ince">{g.bolum_ad}{g.yaklasimlar?.length ? ` · ${g.yaklasimlar.join(', ')}` : ''}</span></span>
+          <span className="ms-keyif" style={{ color: g.keyif >= 70 ? 'var(--gr)' : g.keyif >= 40 ? 'var(--am)' : 'var(--re)' }}>%{g.keyif} keyif</span>
+        </div>
+      ))}
+    </div>
+  )
+}
+
 const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['rehberlik', 'Rehberlik', 'rehberlik'], ['kocluk', 'Koçluk', 'kocluk'], ['netler', 'Netler', 'net_takibi'], ['calisma', 'Çalışma', 'calisma'], ['portfolyo', 'Portfolyo', 'portfolyo'], ['tercih', 'Tercih', 'tercih'], ['akran', 'Benzer akranlar', 'akran'], ['ilgi', 'İlgi & kulüp', 'kulupler'], ['kutuphane', 'Kütüphane', 'kutuphane'], ['kayit', 'Kayıtlar']]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
 
@@ -289,7 +307,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
       )}
 
       {sekme === 'rehberlik' && modulAcik('rehberlik') && <OgrenciRehberlik ogrenciId={ogrenciId} ogrenci={h} />}
-      {sekme === 'kocluk' && <KoclukOzeti k={d.kocluk} />}
+      {sekme === 'kocluk' && <><KoclukOzeti k={d.kocluk} /><OgrenciSimulasyonlari ogrenciId={ogrenciId} /></>}
       {sekme === 'netler' && <NetOzeti n={d.netler} />}
       {sekme === 'calisma' && modulAcik('calisma') && <OgrenciCalisma ogrenciId={ogrenciId} />}
       {sekme === 'tercih' && modulAcik('tercih') && <OgrenciTercih ogrenciId={ogrenciId} />}

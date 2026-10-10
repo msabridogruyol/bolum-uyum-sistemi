@@ -9,6 +9,7 @@ import OkulRozeti from './OkulRozeti'
 import FilizSohbet from './FilizSohbet'
 import AltSerit from './AltSerit'
 import BildirimZili from './BildirimZili'
+import SimulasyonKatmani from './MeslekSimulasyonu'
 import { KvkkOnayPenceresi } from './KvkkBilesenleri'
 import { IlkSifrePenceresi } from './yonetim/ortak'
 import { MODUL_ADI, YOL_MODULU, modulleriYukle, useModuller } from '../yardimci/moduller'
@@ -246,6 +247,7 @@ export default function AnaSayfaDuzeni() {
       {!sifreGerekli && kvkkGerekli && <KvkkOnayPenceresi onTamam={() => setKvkkGerekli(false)} onCikis={cikisYap} />}
       {!sifreGerekli && !kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
       {!kvkkGerekli && !tanitimAcik && profil && acik('filiz') && <FilizSohbet />}
+      {acik('kocluk') && <SimulasyonKatmani />}
     </div>
   )
 }

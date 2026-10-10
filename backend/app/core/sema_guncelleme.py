@@ -21,7 +21,7 @@ OTOMATIK = ["0024_favori_bolum", "0025_test_hesaplari", "0026_guvenlik_olay_tipl
             "0028_kulupler_ilgi_testi", "0029_egitim_koclari", "0030_okul_subeleri",
             "0031_yetkili_unvan", "0032_takvim_kutuphane",
             "0033_kutuphane_sayfa", "0034_koc_okullari",
-            "0035_koc_aracilik", "0036_kocluk_geri_bildirim_olcum", "0037_net_takibi", "0038_mor_renk", "0039_sinav_konulari", "0040_kulup_uyelik_duyuru", "0041_paketler", "0042_rehberlik", "0043_ogrenci_raporlari", "0044_okul_denemeleri", "0045_calisma", "0046_bildirimler", "0047_portfolyo", "0048_anketler", "0049_mezun_tercih", "0050_filiz_ai"]
+            "0035_koc_aracilik", "0036_kocluk_geri_bildirim_olcum", "0037_net_takibi", "0038_mor_renk", "0039_sinav_konulari", "0040_kulup_uyelik_duyuru", "0041_paketler", "0042_rehberlik", "0043_ogrenci_raporlari", "0044_okul_denemeleri", "0045_calisma", "0046_bildirimler", "0047_portfolyo", "0048_anketler", "0049_mezun_tercih", "0050_filiz_ai", "0051_simulasyon"]
 KILIT = 2026101001
 
 
