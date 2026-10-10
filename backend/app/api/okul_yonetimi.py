@@ -487,6 +487,7 @@ def okul_ogrencileri(okul_id: int, db: Session = Depends(get_db), yon: AdminKull
             "biten_katman": x.get("biten", 0), "toplam_katman": x.get("toplam", 4),
             "ilk_bolum": adlar.get(x.get("ilk_bolum")) if x.get("durum") == "tamamlandi" else None,
             "hedef_bolum": adlar.get(x.get("hedef")),
+            "test_hesabi": bool(getattr(o, "test_hesabi", False)),
         })
     return sonuc
 
@@ -763,7 +764,8 @@ def toplu_sil(istek: IdlerIstek, db: Session = Depends(get_db), yon: AdminKullan
 # ----------------------------------------------------------------------------- okul yetkilileri
 def _yetkili_out(y: AdminKullanici) -> dict:
     return {"id": str(y.id), "ad_soyad": y.ad_soyad, "email": y.email, "olusturulma_zamani": y.olusturulma_zamani,
-            "son_giris_zamani": y.son_giris_zamani, "sifre_degistirmeli": bool(y.sifre_degistirmeli), "aktif_mi": y.aktif_mi}
+            "son_giris_zamani": y.son_giris_zamani, "sifre_degistirmeli": bool(y.sifre_degistirmeli), "aktif_mi": y.aktif_mi,
+            "test_hesabi": bool(getattr(y, "test_hesabi", False))}
 
 
 @router.get("/okul/{okul_id}/yetkililer")

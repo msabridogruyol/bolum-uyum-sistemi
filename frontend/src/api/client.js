@@ -275,6 +275,14 @@ export const api = {
   yonetimOgrenciHedef: (ogrenciId, bolumId) => aput(`/yonetim/ogrenci/${ogrenciId}/hedef`, { bolum_id: bolumId }),
   yonetimHedefHakki: (ogrenciId, ek = 1) => apost(`/yonetim/ogrenci/${ogrenciId}/hedef-hakki`, { ek }),
   yonetimBolumler: () => aget('/yonetim/bolumler'),
+  // [2026-10-10] Test hesapları (süper admin)
+  testHesaplari: () => aget('/yonetim/test-hesaplari'),
+  testHesabiAc: (veri) => apost('/yonetim/test-hesaplari', veri),
+  testBaglantiUret: (tip, id, saat) => apost(`/yonetim/test-hesaplari/${tip}/${id}/baglanti`, { saat }),
+  testBaglantiIptal: (tip, id) => adel(`/yonetim/test-hesaplari/${tip}/${id}/baglanti`),
+  testSifreYenile: (tip, id) => apost(`/yonetim/test-hesaplari/${tip}/${id}/sifre`),
+  testSenaryo: (id, ayar) => apost(`/yonetim/test-hesaplari/ogrenci/${id}/senaryo`, ayar),
+  testHesabiSil: (tip, id) => adel(`/yonetim/test-hesaplari/${tip}/${id}`),
   cevapAnalizi: (ogrenciId, turNo) => aget(`/yonetim/ogrenci/${ogrenciId}/cevap-analizi${turNo ? `?tur_no=${turNo}` : ''}`),
   okulTemaKaydet: (okulId, renk) => aput(`/yonetim/okul/${okulId}/tema`, { renk }),
   // [2026-10-09] Meslek dili sözlüğü — okulId 0 = genel sürüm (süper admin)

@@ -166,7 +166,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
               {liste.map((o) => (
                 <tr key={o.id} onClick={() => setDetay(o.id)} className={secili.has(o.id) ? 'secili' : ''}>
                   <td onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={secili.has(o.id)} onChange={() => sec(o.id)} aria-label={`${o.ad_soyad} seç`} /></td>
-                  <td><b>{o.ad_soyad}</b><div className="yp-ince">{o.email}</div></td>
+                  <td><b>{o.ad_soyad}</b>{o.test_hesabi && <span className="test-rozet">TEST</span>}<div className="yp-ince">{o.email}</div></td>
                   <td>{o.sinif_metni || '—'}</td>
                   <td><DurumRozeti kod={o.durum} etiket={o.durum_etiket} /></td>
                   <td className="yp-ince">{onceSure(o.son_giris_zamani)}</td>
@@ -234,7 +234,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
           <tbody>
             {liste.map((y) => (
               <tr key={y.id}>
-                <td><b>{y.ad_soyad}</b></td><td className="yp-ince">{y.email}</td><td className="yp-ince">{onceSure(y.son_giris_zamani)}</td>
+                <td><b>{y.ad_soyad}</b>{y.test_hesabi && <span className="test-rozet">TEST</span>}</td><td className="yp-ince">{y.email}</td><td className="yp-ince">{onceSure(y.son_giris_zamani)}</td>
                 <td>{y.sifre_degistirmeli ? <span className="yp-durum yp-d-amber">Geçici</span> : <span className="yp-durum yp-d-yesil">Belirlendi</span>}</td>
                 {superAdmin && (
                   <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>

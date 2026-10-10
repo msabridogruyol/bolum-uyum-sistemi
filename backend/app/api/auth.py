@@ -55,7 +55,8 @@ def _giris_kaydet(db: Session, hesap, rol: str) -> None:
 def giris_sonucu(db: Session, hesap, rol: str, cihaz_tokeni: str | None) -> GirisCevap:
     """Şifre doğrulandıktan sonra: 2 adım gerekiyorsa kod gönder, gerekmiyorsa token ver."""
     tip = _kullanici_tipi(rol)
-    if hg.iki_adim_aktif_mi(db) and not hg.cihaz_guvenilir_mi(db, tip, hesap.id, cihaz_tokeni):
+    # [2026-10-10] Süper adminin açtığı test hesaplarında 2 adımlı doğrulama istenmez
+    if not getattr(hesap, "test_hesabi", False) and hg.iki_adim_aktif_mi(db) and not hg.cihaz_guvenilir_mi(db, tip, hesap.id, cihaz_tokeni):
         try:
             hg.dogrulama_kodu_gonder(db, tip, hesap.id, hesap.email, hesap.ad_soyad)
         except IsKuraliHatasi as e:
