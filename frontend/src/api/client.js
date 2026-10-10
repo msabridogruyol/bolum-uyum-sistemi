@@ -181,6 +181,7 @@ export const api = {
   kocTalebiIptal: (id) => post(`/ogrenci/koc-talep/${id}/iptal`),
   kocTalebiDegerlendir: (id, veri) => post(`/ogrenci/koc-talep/${id}/degerlendir`, veri),
   kocVarMi: () => get('/ogrenci/koclar/var'),
+  motivasyonGetir: () => get('/ogrenci/motivasyon'),
   yonetimKoclar: () => aget('/yonetim/koclar'),
   kocOkullari: (id, okullar) => aput(`/yonetim/koc/${id}/okullar`, { okullar }),
   kocEkle: (veri) => apost('/yonetim/koclar', veri),

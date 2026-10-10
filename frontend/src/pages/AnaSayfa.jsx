@@ -5,6 +5,7 @@ import HaftalikGorevler from '../components/HaftalikGorevler'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import Sayac from '../components/Sayac'
 import AnaSayfaGrafikleri from '../components/AnaSayfaGrafikleri'
+import BugunPaneli, { Rozetler } from '../components/BugunPaneli'
 
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
 
@@ -17,6 +18,7 @@ export default function AnaSayfa() {
   const [k5Durum, setK5Durum] = useState(null)
   const [hedef, setHedef] = useState(null)
   const [plan, setPlan] = useState(null)
+  const [motivasyon, setMotivasyon] = useState(null)   // [2026-10-10] YKS sayacı, haftalık mesaj, rozetler
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
   const { ac: bolumBilgisiAc } = useBolumBilgi()
@@ -25,10 +27,11 @@ export default function AnaSayfa() {
     api.durumOzetiGetir().then(setOzet).catch(() => {})
     api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail))
     api.profilGetir().then(setProfil).catch(() => {})
+    api.motivasyonGetir().then(setMotivasyon).catch(() => {})
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
     api.aktifHedefGetir().then((h) => {
       setHedef(h)
-      if (h) api.gelisimPlaniGetir().then(setPlan).catch(() => setPlan(null))
+      if (h) api.gelisimPlaniGetir().then(setPlan).catch(() => setPlan(false))   // false = alınamadı (yükleniyor değil)
     }).catch(() => setHedef(null))
   }, [])
 
@@ -113,6 +116,8 @@ export default function AnaSayfa() {
           </div>
         )}
       </div>
+
+      <BugunPaneli ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} motivasyon={motivasyon} />
 
       {yenidenDegerlendirmeHazir && (
         <div
@@ -214,43 +219,8 @@ export default function AnaSayfa() {
             )}
           </div>
 
-          {/* [2026-10-10] Koçluk kartı: hedef + şimdiki tek adım (yol haritasının özeti) */}
-          <div className="card as-kocluk" style={{ marginBottom: 0 }}>
-            <div className="ct">🎯 Koçluğum</div>
-            {!ozet.tur_tamamlandi_mi ? (
-              <>
-                <div className="as-k-metin">Koçluk planın değerlendirme bitince hazırlanır.</div>
-                <div className="mini-cubuk-satir" style={{ margin: '12px 0' }}>
-                  <div className="mini-cubuk-track"><div className="mini-cubuk-fill" style={{ width: `${tamamlananYuzde}%`, background: 'var(--pu)' }} /></div>
-                  <div className="mini-cubuk-deger" style={{ color: 'var(--pu)' }}>{tamamlananYuzde}%</div>
-                </div>
-                <button className="btn full" onClick={() => navigate('/katmanlar')}>{ozet.tamamlanan_katman_sayisi === 0 ? 'Değerlendirmeye başla' : 'Kaldığın yerden devam et'} →</button>
-              </>
-            ) : !hedef ? (
-              <>
-                <div className="as-k-metin">Henüz bir hedef bölümün yok. Sana uygun bölümlerden birini seçince adım adım plan hazırlanır.</div>
-                <button className="btn full" style={{ marginTop: 12 }} onClick={() => navigate('/profil#hedef')}>Hedef bölümünü seç →</button>
-              </>
-            ) : (
-              <>
-                <div className="as-k-hedef">{hedef.bolum_adi}</div>
-                {plan?.ilerleme?.toplam > 0 && (
-                  <div className="mini-cubuk-satir" style={{ margin: '8px 0 10px' }}>
-                    <div className="mini-cubuk-track"><div className="mini-cubuk-fill" style={{ width: `${Math.round((plan.ilerleme.tamamlanan / plan.ilerleme.toplam) * 100)}%`, background: 'var(--gr)' }} /></div>
-                    <div className="mini-cubuk-deger" style={{ color: 'var(--gr)', width: 'auto' }}>{plan.ilerleme.tamamlanan}/{plan.ilerleme.toplam}</div>
-                  </div>
-                )}
-                {plan?.siradaki_adim ? (
-                  <div className="as-k-adim" onClick={() => navigate('/koclugu?sekme=yol')} role="button" tabIndex={0}>
-                    <div className="as-k-etiket">Şimdiki adımın · {plan.siradaki_adim.degisken_adi}</div>
-                    <div className="as-k-baslik">{plan.siradaki_adim.baslik}</div>
-                    {plan.siradaki_adim.sure && <div className="yp-ince">⏱ {plan.siradaki_adim.sure}</div>}
-                  </div>
-                ) : <div className="as-k-metin">{plan ? 'Tüm adımları tamamladın! 🎉' : 'Plan yükleniyor…'}</div>}
-                <button className="hg-link" style={{ marginTop: 10 }} onClick={() => navigate('/koclugu')}>Koçluğuma git →</button>
-              </>
-            )}
-          </div>
+          {/* [2026-10-10] Koçluk kartı yerine rozetler: sıradaki adım artık en üstte "Bugün" panelinde */}
+          <Rozetler motivasyon={motivasyon} />
       </div>
 
       {/* [2026-10-09] Tam genişlikte grafik satırı: katman profili · en güçlü yönler · bölüm uyum sıralaması */}

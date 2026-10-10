@@ -1501,3 +1501,34 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .olcum-bitti-sayilar small{font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase}
 .olcum-bitti-sayilar b{font-size:36px}
 .olcum-not{font-size:11.5px;color:var(--tx3)}
+
+/* [2026-10-10] Ana sayfa "Bugün" paneli + rozetler */
+.bugun-panel{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;margin-bottom:20px}
+.bugun-panel.tek{grid-template-columns:1fr}
+@media(max-width:900px){.bugun-panel{grid-template-columns:1fr}}
+.bugun-adim{position:relative;border-radius:20px;padding:20px 22px;background:linear-gradient(135deg,var(--pul),var(--sur) 70%);border:1.5px solid var(--pu);cursor:pointer;display:flex;flex-direction:column;gap:6px;transition:transform .15s,box-shadow .15s}
+.bugun-adim:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(0,0,0,.07)}
+.bugun-etiket{font-size:11px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--pu)}
+.bugun-ust{font-size:12px;color:var(--tx3);font-weight:600}
+.bugun-baslik{font-size:22px;font-weight:800;line-height:1.25;color:var(--tx)}
+.bugun-alt{font-size:13px;color:var(--tx2);line-height:1.5;max-width:720px}
+.bugun-uyarlama{font-size:12.5px;background:var(--aml);border-radius:10px;padding:7px 10px;max-width:720px}
+.bugun-dugme{align-self:flex-start;margin-top:6px}
+.bugun-yks{border-radius:20px;padding:18px 20px;background:var(--sur);border:1.5px solid var(--bor);display:flex;flex-direction:column;gap:4px}
+.bugun-yks.son{background:linear-gradient(160deg,var(--sur),var(--grl));border-color:var(--gr)}
+.bugun-yks .bugun-etiket{color:var(--gr)}
+.yks-sayi{display:flex;align-items:baseline;gap:8px}
+.yks-sayi b{font-size:48px;font-weight:900;line-height:1;color:var(--tx);font-variant-numeric:tabular-nums}
+.yks-sayi span{font-size:15px;font-weight:700;color:var(--tx2)}
+.yks-alt{font-size:12px;color:var(--tx3);font-weight:600}
+.yks-alt em{font-style:normal;color:var(--am)}
+.yks-mesaj{font-size:13px;line-height:1.5;color:var(--tx);margin-top:8px;padding-top:10px;border-top:1px dashed var(--bor);font-weight:600}
+.rozet-sayi{font-size:12px;color:var(--tx3);font-weight:700;text-transform:none;letter-spacing:0}
+.rozet-izgara{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px}
+.rozet{border-radius:14px;padding:10px 8px;background:var(--sur2);display:grid;justify-items:center;text-align:center;gap:3px;opacity:.75}
+.rozet .rozet-ikon{font-size:22px;filter:grayscale(1);opacity:.55}
+.rozet .rozet-ad{font-size:11.5px;font-weight:700;color:var(--tx2)}
+.rozet .rozet-ipucu{font-size:10px;color:var(--tx3);line-height:1.3}
+.rozet.kazanildi{opacity:1;background:var(--grl)}
+.rozet.kazanildi .rozet-ikon{filter:none;opacity:1}
+.rozet.kazanildi .rozet-ad{color:var(--tx)}

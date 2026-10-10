@@ -17,6 +17,7 @@ from app.api.admin_gecerlilik_v2 import router as admin_gecerlilik_v2_router
 from app.api.admin_kutup_yukleme import router as admin_kutup_router
 from app.api.admin_meslek_yukleme import router as admin_meslek_router
 from app.api.ai_koc import router as ai_koc_router
+from app.api.motivasyon import router as motivasyon_router
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
 from app.api.haftalik import router as haftalik_router
 from app.api.bolum_bilgi import router as bolum_bilgi_router
@@ -171,6 +172,7 @@ app.include_router(takvim_router)                            # [2026-10-10] takv
 app.include_router(takvim_ogrenci_router)
 app.include_router(kutuphane_router)                         # [2026-10-10] öğrenci kütüphanesi
 app.include_router(kutuphane_ogrenci_router)
+app.include_router(motivasyon_router)                       # [2026-10-10] YKS geri sayımı, mesaj, rozetler
 app.include_router(akran_router)                            # [2026-10-10] akran benzerliği, şube dağılımı, aday öğrenci
 app.include_router(test_hesaplari_router)                    # [2026-10-10] /yonetim/test-hesaplari (süper admin)
 app.include_router(test_giris_router)                        # [2026-10-10] POST /auth/test-giris
