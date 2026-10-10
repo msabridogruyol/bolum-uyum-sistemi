@@ -769,6 +769,8 @@ GUVENLIK_OLAY_TIPLERI = {
     "pencere_odagi_kaybedildi", "pencere_odagi_geri_kazanildi",
     "kamera_izni_reddedildi", "kamera_desteklenmiyor",
     "kamera_rizasi_verilmedi",  # [2026-10-04] KVKK: öğrenci kamera onayı vermedi
+    # [2026-10-10] ikinci ekran, ekran görüntüsü tuşu, kopyalama denemesi, sınav sırasında kameranın kapanması
+    "coklu_ekran", "ekran_goruntusu_tusu", "kopyalama", "kamera_kapandi",
 }
 
 
@@ -807,6 +809,14 @@ def guvenlik_olayi_kaydet(
         olay_tipi=istek.olay_tipi, katman_kod=istek.katman_kod,
     ))
     db.commit()
+
+
+@router.get("/guvenlik/durum")
+def guvenlik_durumu(tur_id: int, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """[2026-10-10] Sınav ekranındaki canlı güven puanı ve ihlal özeti."""
+    from app.core.guvenlik_servisi import canli_guven_durumu
+    tur = _tur_sahipligini_dogrula(db, ogrenci, tur_id)
+    return canli_guven_durumu(db, ogrenci, tur)
 
 
 @router.post("/guvenlik/fotograf", status_code=204)

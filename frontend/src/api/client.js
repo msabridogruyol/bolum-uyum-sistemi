@@ -135,6 +135,7 @@ export const api = {
   // --- Güvenlik/Tutarlılık (sonradan eklendi) ---
   guvenlikOlayiKaydet: (turId, olayTipi, katmanKod) =>
     post('/ogrenci/guvenlik/olay', { tur_id: turId, olay_tipi: olayTipi, katman_kod: katmanKod }),
+  guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),
 

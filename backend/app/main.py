@@ -103,6 +103,17 @@ app.add_middleware(ZiyaretKaydiMiddleware)
 
 
 @app.on_event("startup")
+def _sema_guncelle():
+    """[2026-10-10] Son migration'ların SQL'ini otomatik uygula (unutulan SQL sitenin çökmesine yol açmasın)."""
+    try:
+        from app.core.database import engine
+        from app.core.sema_guncelleme import semayi_guncelle
+        semayi_guncelle(engine)
+    except Exception:
+        pass
+
+
+@app.on_event("startup")
 def _baslangic_temizligi():
     """[2026-10-04] KVKK: 6 aydan eski kamera fotoğraflarını sil (Render her uyanışta çalıştırır)."""
     try:
