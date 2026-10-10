@@ -41,6 +41,15 @@ def _uretici(tur: str):
     return {"ogrenci": ogrenci_pdf, "veli": veli_pdf, "yonetici": yonetici_pdf, "sinif_ogretmeni": sinif_ogretmeni_pdf}[tur]
 
 
+def _paket_kontrol(db: Session, yon: AdminKullanici, okul_id, tur: str, netler: bool) -> bool:
+    """[2026-10-10] Toplu ve sınıf öğretmeni raporları 'gelişmiş raporlar' modülü ister; net bölümü 'net takibi' modülü yoksa eklenmez."""
+    from app.core.paketler import MODULLER, okul_modulleri
+    m = okul_modulleri(db, okul_id)
+    if (tur.startswith("toplu_") or tur == "sinif_ogretmeni") and "gelismis_raporlar" not in m and yon.rol != "super_admin":
+        raise HTTPException(status_code=403, detail=f"“{MODULLER['gelismis_raporlar']['ad']}” okulunuzun paketinde yer almıyor.")
+    return netler and "net_takibi" in m
+
+
 def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str, netler: bool = True) -> Response:
     from app.core.rapor.excel import ogrenci_xlsx
     from app.core.rapor.veri import ogrenci_raporu_verisi
@@ -63,6 +72,7 @@ def ogrenci_raporu(ogrenci_id: str, tur: str = Query("yonetici"), bicim: str = Q
                    db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     from app.api.okul_yonetimi import _ogrenci_kapsami
     o = _ogrenci_kapsami(db, yon, ogrenci_id)
+    netler = _paket_kontrol(db, yon, o.okul_id, tur, netler)
     cevap = _ogrenci_dosyasi(db, o, tur, bicim, netler)
     denetim_yaz(db, yon, "rapor_indir", "ogrenciler", o.id, f"{o.ad_soyad}: {tur} raporu ({bicim}{', denemeler' if netler else ''})", o.okul_id)
     db.commit()
@@ -88,6 +98,7 @@ def okul_raporu(okul_id: int, bicim: str = Query("pdf"), sinif: str | None = Que
     if bicim not in MIME:
         raise HTTPException(status_code=400, detail="Geçersiz biçim.")
     okul = _okul_kapsami(db, yon, okul_id)
+    netler = _paket_kontrol(db, yon, okul_id or None, tur, netler)
     sinif = (sinif or "").strip() or None
     sube = ((sube or "").strip().upper() or None) if sinif else None
     kapsam_adi = sube_etiketi(sinif, sube) if sinif else None

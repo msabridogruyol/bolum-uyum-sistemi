@@ -39,6 +39,8 @@ class OkulOut(BaseModel):
     ogrenci_sayisi: int | None = 0
     yetkili_sayisi: int = 0
     tema_renk: str | None = None
+    paket: str | None = None          # [2026-10-10]
+    paket_ad: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -113,8 +115,11 @@ def okullari_listele(db: Session = Depends(get_db), admin: AdminKullanici = Depe
                .group_by(Ogrenci.okul_id).all())
     yon = dict(db.query(AdminKullanici.okul_id, func.count(AdminKullanici.id))
                .filter(AdminKullanici.okul_id.isnot(None)).group_by(AdminKullanici.okul_id).all())
+    from sqlalchemy import text as _t
+    paket_ad = dict(db.execute(_t("SELECT kod, ad FROM paketler")).all())
     return [OkulOut(id=o.id, ad=o.ad, alt_baslik=o.alt_baslik, logo=o.logo, aktif_mi=o.aktif_mi,
-                    ogrenci_sayisi=ogr.get(o.id, 0), yetkili_sayisi=yon.get(o.id, 0))
+                    ogrenci_sayisi=ogr.get(o.id, 0), yetkili_sayisi=yon.get(o.id, 0),
+                    paket=o.paket, paket_ad=paket_ad.get(o.paket, o.paket))
             for o in db.query(Okul).order_by(Okul.ad).all()]
 
 

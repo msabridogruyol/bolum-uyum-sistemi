@@ -151,7 +151,13 @@ def rozetler(db: Session, o: Ogrenci) -> list[dict]:
         ("📈", "Gelişim kanıtı", "Bir tekrar ölçümünde gelişim gösterdin.", artis >= 1, "3 adım sonra açılan ölçümü yap."),
         ("🏅", "10 adım", "10 koçluk adımı tamamladın.", adim >= 10, f"{max(0, 10 - adim)} adım daha."),
     ]
-    return [{"ikon": i, "ad": a, "aciklama": ac, "kazanildi": k, "ipucu": None if k else ip} for i, a, ac, k, ip in tanim]
+    # [2026-10-10] Paket: bağlı modülü okulda kapalı olan rozet (kazanılmadıysa) gösterilmez — kazanılamayacak hedef vermeyelim
+    from app.core.paketler import okul_modulleri
+    acik = set(okul_modulleri(db, o.okul_id))
+    modul = {"İlk adım": "kocluk", "Ritim tuttun": "kocluk", "Kendini tanıyan": "kocluk", "Gelişim kanıtı": "kocluk",
+             "10 adım": "kocluk", "Kitap kurdu": "kutuphane"}
+    return [{"ikon": i, "ad": a, "aciklama": ac, "kazanildi": k, "ipucu": None if k else ip} for i, a, ac, k, ip in tanim
+            if k or modul.get(a) is None or modul[a] in acik]
 
 
 @router.get("/motivasyon")

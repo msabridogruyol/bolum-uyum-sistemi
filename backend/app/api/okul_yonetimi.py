@@ -432,7 +432,13 @@ def ben(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_
             "rol_adi": "Süper Admin" if yon.rol == "super_admin" else "Okul Yetkilisi", "unvan": getattr(yon, "unvan", None),
             "okul_id": yon.okul_id, "okul_ad": okul.ad if okul else None, "okul_logo": okul.logo if okul else None,
             "okul_renk": okul.tema_renk if okul else None,
-            "sifre_degistirmeli": bool(yon.sifre_degistirmeli)}
+            "sifre_degistirmeli": bool(yon.sifre_degistirmeli),
+            "moduller": _moduller(db, yon.okul_id)}   # [2026-10-10] paket: okul yetkilisinin göreceği modüller
+
+
+def _moduller(db: Session, okul_id) -> list[str]:
+    from app.core.paketler import TUMU, okul_modulleri
+    return okul_modulleri(db, okul_id) if okul_id else TUMU[:]
 
 
 @router.post("/ben/ilk-sifre", status_code=204)
@@ -515,6 +521,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
             gunluk[g.isoformat()] = n
     ogretmenler = sube_ogretmenleri(db, okul_id)
     return {
+        "moduller": _moduller(db, okul_id),   # [2026-10-10] paket
         "okul": _okul_basligi(okul),
         "toplam": toplam,
         "giris_yapan": giris_yapan,

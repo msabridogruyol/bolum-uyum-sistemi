@@ -10,6 +10,7 @@ import FilizSohbet from './FilizSohbet'
 import AltSerit from './AltSerit'
 import { KvkkOnayPenceresi } from './KvkkBilesenleri'
 import { IlkSifrePenceresi } from './yonetim/ortak'
+import { MODUL_ADI, YOL_MODULU, modulleriYukle, useModuller } from '../yardimci/moduller'
 
 // [2026-10-03] İlk giriş akışı: tanıtım penceresi → profil (ad + sınıf zorunlu) → ana sayfa
 // [2026-10-09] Okul öğrenciden alınmaz; yönetimdeki Okullar sayfasından atanır.
@@ -17,6 +18,21 @@ export const profilEksikMi = (p) => !p || !p.ad_soyad?.trim() || !p.sinif?.trim(
 const tanitimAnahtari = (p) => `tanitim_goruldu_${p?.email || 'misafir'}`
 function tanitimGorulduMu(p) {
   try { return localStorage.getItem(tanitimAnahtari(p)) === '1' } catch { return true }
+}
+
+function PaketteYok({ ad }) {
+  const navigate = useNavigate()
+  return (
+    <div className="pg">
+      <div className="ph"><div className="pt">{ad}</div><div className="ps">Bu özellik şu an kapalı.</div></div>
+      <div className="card bos-durum" style={{ padding: 32 }}>
+        <div style={{ fontSize: 32, marginBottom: 8 }}>🔒</div>
+        <b>{ad}</b> okulunun Filizyol paketinde yer almıyor.
+        <div className="yp-ince" style={{ marginTop: 6 }}>Bu özelliği kullanmak istersen rehber öğretmenine söyleyebilirsin.</div>
+        <button className="btn" style={{ marginTop: 14 }} onClick={() => navigate('/')}>Ana sayfaya dön</button>
+      </div>
+    </div>
+  )
 }
 
 export default function AnaSayfaDuzeni() {
@@ -29,11 +45,14 @@ export default function AnaSayfaDuzeni() {
   const [kvkkGerekli, setKvkkGerekli] = useState(false) // [2026-10-04] eski hesap veya yeni metin sürümü
   const konum = useLocation()
   const navigate = useNavigate()
+  const acik = useModuller()   // [2026-10-10] okulun paketindeki modüller
+
+  useEffect(() => { modulleriYukle(true) }, [])   // her girişte tazele (okulun paketi değişmiş olabilir)
 
   useEffect(() => {
     if (konum.pathname.startsWith('/katmanlar')) api.durumOzetiGetir().then(setOzet).catch(() => {})
     api.kvkkDurumu().then((d) => setKvkkGerekli(!d.guncel)).catch(() => {})
-    api.kocVarMi().then((d) => setKocVar(!!d.var)).catch(() => {})
+    api.kocVarMi().then((d) => setKocVar(!!d.var)).catch(() => {})   // modül kapalıysa 403 → menüde yok
     api.profilGetir()
       .then((p) => { setProfil(p); if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
       .catch(() => {})
@@ -64,6 +83,10 @@ export default function AnaSayfaDuzeni() {
   if (profilYuklendi && profil && !sifreGerekli && !tanitimAcik && !kvkkGerekli && profilEksikMi(profil) && !profilSayfasinda) {
     return <Navigate to="/profil?ilk=1" replace />
   }
+
+  // [2026-10-10] Paketinde olmayan bir sayfaya adresle gelinirse sayfa yerine bilgi kartı
+  const yolModulu = YOL_MODULU['/' + konum.pathname.split('/')[1]]
+  const kapaliModul = yolModulu && !acik(yolModulu) ? yolModulu : null
 
   const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0] || 'Öğrenci'
   // Değerlendirme menüde yalnızca bitmemişse (K1-K4 veya açılan K5 dalları) ya da 90 günlük yeni tur zamanı geldiyse görünür
@@ -125,33 +148,47 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölümler
         </NavLink>
-        <div className="ns">Gelişim</div>
+        {['kocluk', 'net_takibi', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Gelişim</div>}
+        {acik('kocluk') && (
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🎯 Koçluğum
-        </NavLink>
+            🎯 Koçluğum
+          </NavLink>
+        )}
+        {acik('net_takibi') && (
         <NavLink to="/netlerim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          📈 Net Takibi
-        </NavLink>
+            📈 Net Takibi
+          </NavLink>
+        )}
+        {acik('kocluk') && (
         <NavLink to="/gorevler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          ✅ Görevlerim
-        </NavLink>
+            ✅ Görevlerim
+          </NavLink>
+        )}
+        {acik('kutuphane') && (
         <NavLink to="/kutuphane" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          📚 Kütüphanem
-        </NavLink>
+            📚 Kütüphanem
+          </NavLink>
+        )}
+        {acik('filiz') && (<>
         {/* [2026-10-04] Filiz sohbet paneli her sayfadan açılır */}
         <div className="ni" role="button" tabIndex={0} style={{ cursor: 'pointer' }}
           onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))}
           onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new CustomEvent('filiz-ac')) }}>
           💬 Filiz
         </div>
-        <div className="ns">Okul</div>
+        </>)}
+        {(['takvim', 'kulupler'].some(acik) || (kocVar && acik('egitim_koclari'))) && <div className="ns">Okul</div>}
+        {acik('takvim') && (
         <NavLink to="/takvim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🗓️ Takvim
-        </NavLink>
+            🗓️ Takvim
+          </NavLink>
+        )}
+        {acik('kulupler') && (
         <NavLink to="/kulupler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🎭 Kulüplerim
-        </NavLink>
-        {kocVar && (
+            🎭 Kulüplerim
+          </NavLink>
+        )}
+        {kocVar && acik('egitim_koclari') && (
           <NavLink to="/koclar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             👩‍🏫 Eğitim Koçları
           </NavLink>
@@ -167,7 +204,9 @@ export default function AnaSayfaDuzeni() {
       <div className="main ogrenci-main">
         {/* [2026-10-09] Maskot ana içerik alanının sağ üstünde, başlık satırında durur (sayfayla birlikte kayar) */}
         {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
-        <div className="main-icerik"><Outlet context={{ profilYenile, tanitimiAc }} /></div>
+        <div className="main-icerik">
+          {kapaliModul ? <PaketteYok ad={MODUL_ADI[kapaliModul]} /> : <Outlet context={{ profilYenile, tanitimiAc }} />}
+        </div>
         <AltSerit okul={profil?.okul} kisi={profil?.ad_soyad} rol={[profil?.sinif, profil?.sube].filter(Boolean).join(' ') || null} />
       </div>
       {sifreGerekli && (
@@ -176,7 +215,7 @@ export default function AnaSayfaDuzeni() {
       )}
       {!sifreGerekli && kvkkGerekli && <KvkkOnayPenceresi onTamam={() => setKvkkGerekli(false)} onCikis={cikisYap} />}
       {!sifreGerekli && !kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
-      {!kvkkGerekli && !tanitimAcik && profil && <FilizSohbet />}
+      {!kvkkGerekli && !tanitimAcik && profil && acik('filiz') && <FilizSohbet />}
     </div>
   )
 }

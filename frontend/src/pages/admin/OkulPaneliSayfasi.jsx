@@ -17,6 +17,8 @@ import SiniflarSekmesi from '../../components/yonetim/SiniflarSekmesi'
 import TakvimYonetimi from '../../components/yonetim/TakvimYonetimi'
 import { okulBolumleri } from '../../components/yonetim/okulBolumleri'
 import KonuListesiYonetimi from '../../components/yonetim/KonuListesiYonetimi'
+import OkulPaketKarti from '../../components/yonetim/OkulPaketKarti'
+import { OkulModulleriContext } from '../../yardimci/moduller'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -475,9 +477,10 @@ export default function OkulPaneliSayfasi() {
   if (hata) return <div className="pg pg-genis"><div className="auth-error">{hata}</div></div>
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
-  const bolumler = okulBolumleri(okulId)
+  const bolumler = okulBolumleri(okulId, oz.moduller)   // [2026-10-10] paketteki modüllere göre
   const etiket = (b) => b.k === 'ogrenciler' ? `${b.ad} (${oz.toplam})` : b.k === 'yetkililer' ? `${b.ad} (${oz.yetkili_sayisi})` : b.ad
   const aktifBolum = bolumler.find((b) => b.k === sekme) || bolumler[0]
+  const sk = aktifBolum.k   // pakette olmayan bölüm adresle açılırsa Özet gösterilir
   const raporlar = (
     <RaporSecici etiket="Okul raporu" turler={[
       { k: 'p', ad: 'Okul raporu (PDF)', ikon: '📄', aciklama: 'Tamamlama oranları, sınıflar, alan dağılımı, ortak güçlü yönler, deneme özeti, öğrenci listesi', indir: ({ netler }) => api.okulRaporuIndir(okulId, 'pdf', netler) },
@@ -485,6 +488,7 @@ export default function OkulPaneliSayfasi() {
     ]} />
   )
   return (
+    <OkulModulleriContext.Provider value={oz.moduller || null}>
     <div className="pg pg-genis">
       {superAdmin ? (
         <>
@@ -498,7 +502,7 @@ export default function OkulPaneliSayfasi() {
           </div>
           {raporlar}
           <div className="yp-sekmeler yp-sekmeler-buyuk">
-            {bolumler.map((b) => <button key={b.k} className={sekme === b.k ? 'aktif' : ''} onClick={() => setSekme(b.k)}>{etiket(b)}</button>)}
+            {bolumler.map((b) => <button key={b.k} className={sk === b.k ? 'aktif' : ''} onClick={() => setSekme(b.k)}>{etiket(b)}</button>)}
           </div>
         </>
       ) : (
@@ -506,24 +510,26 @@ export default function OkulPaneliSayfasi() {
         <div className="yp-bolum-baslik">
           <div className="yp-bolum-ikon">{aktifBolum.ikon}</div>
           <div style={{ flex: 1, minWidth: 0 }}>
-            <div className="pt" style={{ margin: 0 }}>{sekme === 'ozet' ? oz.okul.ad : etiket(aktifBolum)}</div>
+            <div className="pt" style={{ margin: 0 }}>{sk === 'ozet' ? oz.okul.ad : etiket(aktifBolum)}</div>
             <div className="ps" style={{ margin: 0 }}>{aktifBolum.aciklama}</div>
           </div>
-          {sekme === 'ozet' && <div className="yp-bolum-rapor">{raporlar}</div>}
+          {sk === 'ozet' && <div className="yp-bolum-rapor">{raporlar}</div>}
         </div>
       )}
-      {sekme === 'ozet' && <OzetSekmesi oz={oz} />}
-      {sekme === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
-      {sekme === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
-      {sekme === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
-      {sekme === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
-      {sekme === 'takvim' && okulId > 0 && <TakvimYonetimi okulId={okulId} />}
-      {sekme === 'bilgiler' && <OkulBilgileriSekmesi okulId={okulId} />}
-      {sekme === 'yetkililer' && <YetkililerSekmesi okulId={okulId} superAdmin={superAdmin} />}
-      {sekme === 'meslekdili' && okulId > 0 && <MeslekDiliDuzenleyici okulId={okulId} />}
-      {sekme === 'gorunum' && okulId > 0 && <OkulTemaKarti okulId={okulId} />}
-      {sekme === 'konular' && okulId > 0 && <KonuListesiYonetimi okulId={okulId} />}
-      {sekme === 'kayitlar' && <KayitlarSekmesi okulId={okulId} />}
+      {sk === 'ozet' && <OzetSekmesi oz={oz} />}
+      {sk === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
+      {sk === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sk === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sk === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
+      {sk === 'takvim' && okulId > 0 && <TakvimYonetimi okulId={okulId} />}
+      {sk === 'bilgiler' && <OkulBilgileriSekmesi okulId={okulId} />}
+      {sk === 'yetkililer' && <YetkililerSekmesi okulId={okulId} superAdmin={superAdmin} />}
+      {sk === 'meslekdili' && okulId > 0 && <MeslekDiliDuzenleyici okulId={okulId} />}
+      {sk === 'gorunum' && okulId > 0 && <OkulTemaKarti okulId={okulId} />}
+      {sk === 'konular' && okulId > 0 && <KonuListesiYonetimi okulId={okulId} />}
+      {sk === 'kayitlar' && <KayitlarSekmesi okulId={okulId} />}
+      {sk === 'paket' && okulId > 0 && <OkulPaketKarti okulId={okulId} superAdmin={superAdmin} onDegisti={yenile} />}
     </div>
+    </OkulModulleriContext.Provider>
   )
 }

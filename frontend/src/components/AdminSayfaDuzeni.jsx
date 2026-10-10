@@ -17,7 +17,7 @@ export default function AdminSayfaDuzeni() {
   // [2026-10-10] Bekleyen kulüp katılma talebi sayısı (menüde Kulüpler'in yanında)
   const [bekleyenTalep, setBekleyenTalep] = useState(0)
   useEffect(() => {
-    if (okulYetkilisi && ben?.okul_id) api.kulupTalepleri(ben.okul_id).then((v) => setBekleyenTalep(v.bekleyen || 0)).catch(() => {})
+    if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('kulupler'))) api.kulupTalepleri(ben.okul_id).then((v) => setBekleyenTalep(v.bekleyen || 0)).catch(() => {})
   }, [okulYetkilisi, ben?.okul_id, konum.pathname, konum.search])
   // [2026-10-09] Okul yetkilisinin paneli okulun renginde; süper admin Filizyol renginde
   useEffect(() => {
@@ -55,7 +55,7 @@ export default function AdminSayfaDuzeni() {
         {okulYetkilisi ? (
           <>
             {/* [2026-10-10] Okul paneli bölümleri sol menüde gruplu; sayfada artık sekme çubuğu yok */}
-            {ben?.okul_id && okulBolumleri(ben.okul_id).map((b, i, l) => {
+            {ben?.okul_id && okulBolumleri(ben.okul_id, ben.moduller).map((b, i, l) => {
               const okulYolu = `/admin/okul/${ben.okul_id}`
               const aktif = konum.pathname === okulYolu && (new URLSearchParams(konum.search).get('sekme') || 'ozet') === b.k
               return (
@@ -84,6 +84,7 @@ export default function AdminSayfaDuzeni() {
             <NavLink to="/admin/test-hesaplari" className={ni}>🧪 Test Hesapları</NavLink>
             <NavLink to="/admin/koclar" className={ni}>Eğitim Koçları</NavLink>
             <NavLink to="/admin/takvim" className={ni}>Genel Takvim</NavLink>
+            <NavLink to="/admin/paketler" className={ni}>📦 Paketler</NavLink>
             <NavLink to="/admin/sss" className={ni}>Okul Yetkilisi SSS</NavLink>
 
             <div className="ns">İçerik Yönetimi</div>

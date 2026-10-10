@@ -6,6 +6,7 @@ import { useBolumBilgi } from '../context/BolumBilgiContext'
 import Sayac from '../components/Sayac'
 import AnaSayfaGrafikleri from '../components/AnaSayfaGrafikleri'
 import BugunPaneli, { Rozetler } from '../components/BugunPaneli'
+import { modulAcikMi, modulleriYukle, useModuller } from '../yardimci/moduller'
 
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
 
@@ -22,6 +23,8 @@ export default function AnaSayfa() {
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
   const { ac: bolumBilgisiAc } = useBolumBilgi()
+  const acik = useModuller()
+  const kocluk = acik('kocluk')
 
   useEffect(() => {
     api.durumOzetiGetir().then(setOzet).catch(() => {})
@@ -31,7 +34,8 @@ export default function AnaSayfa() {
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
     api.aktifHedefGetir().then((h) => {
       setHedef(h)
-      if (h) api.gelisimPlaniGetir().then(setPlan).catch(() => setPlan(false))   // false = alınamadı (yükleniyor değil)
+      // [2026-10-10] Koçluk okulun paketinde yoksa plan istenmez
+      if (h) modulleriYukle().then(() => { if (modulAcikMi('kocluk')) api.gelisimPlaniGetir().then(setPlan).catch(() => setPlan(false)) })   // false = alınamadı (yükleniyor değil)
     }).catch(() => setHedef(null))
   }, [])
 
@@ -101,7 +105,7 @@ export default function AnaSayfa() {
         </div>
 
         {hedefBolumAdi && (
-          <div className="hedef-kart" onClick={() => navigate('/koclugu')} title="Hedef bölüm koçluğuna git">
+          <div className="hedef-kart" onClick={() => navigate(kocluk ? '/koclugu' : '/bolumler')} title={kocluk ? 'Hedef bölüm koçluğuna git' : 'Bölümlerime git'}>
             <div style={{ fontSize: 10, fontWeight: 700, color: 'rgba(255,255,255,0.85)', letterSpacing: 0.6, textTransform: 'uppercase' }}>
               🎯 Hedef
             </div>
@@ -117,7 +121,7 @@ export default function AnaSayfa() {
         )}
       </div>
 
-      <BugunPaneli ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} motivasyon={motivasyon} />
+      <BugunPaneli ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} motivasyon={motivasyon} kocluk={kocluk} />
 
       {yenidenDegerlendirmeHazir && (
         <div
@@ -142,7 +146,7 @@ export default function AnaSayfa() {
       )}
 
       {/* [2026-10-04] Her hafta 3 görev — sistemi düzenli kullanımın merkezi */}
-      <HaftalikGorevler />
+      {kocluk && <HaftalikGorevler />}
 
       {/* [2026-10-09] Üst sıra: profil + güç dağılımı + katman ortalamaları; öneriler altta tam genişlikte */}
       <div className="anasayfa-ust">
@@ -220,7 +224,7 @@ export default function AnaSayfa() {
           </div>
 
           {/* [2026-10-10] Koçluk kartı yerine rozetler: sıradaki adım artık en üstte "Bugün" panelinde */}
-          <Rozetler motivasyon={motivasyon} />
+          <Rozetler kocluk={kocluk} motivasyon={motivasyon} />
       </div>
 
       {/* [2026-10-09] Tam genişlikte grafik satırı: katman profili · en güçlü yönler · bölüm uyum sıralaması */}

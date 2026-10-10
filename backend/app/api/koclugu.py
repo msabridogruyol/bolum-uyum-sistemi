@@ -29,6 +29,8 @@ from app.schemas.koclugu import (
     GelisimPlaniOut, AdimDurumIstek,
 )
 
+from app.core.paketler import ogrenci_modulu as _om   # [2026-10-10] paket koruması
+_KOCLUK = _om("kocluk")
 router = APIRouter()
 
 
@@ -120,7 +122,7 @@ def _gap_satiri_to_out(s) -> GapSatiriOut:
     )
 
 
-@router.get("/hedef/gelisim", response_model=list[GapSatiriOut])
+@router.get("/hedef/gelisim", dependencies=[Depends(_KOCLUK)], response_model=list[GapSatiriOut])
 def gelisim_analizi_getir(
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
@@ -129,7 +131,7 @@ def gelisim_analizi_getir(
     return [_gap_satiri_to_out(s) for s in satirlar]
 
 
-@router.get("/hedef/yol-haritasi", response_model=YolHaritasiOut)
+@router.get("/hedef/yol-haritasi", dependencies=[Depends(_KOCLUK)], response_model=YolHaritasiOut)
 def yol_haritasini_getir(
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
@@ -139,7 +141,7 @@ def yol_haritasini_getir(
     return YolHaritasiOut(**{k: [_gap_satiri_to_out(s) for s in v] for k, v in harita.items()})
 
 
-@router.post("/hedef/aksiyon/{degisken_id}", status_code=204)
+@router.post("/hedef/aksiyon/{degisken_id}", dependencies=[Depends(_KOCLUK)], status_code=204)
 def aksiyon_durumunu_guncelle(
     degisken_id: int,
     istek: AksiyonDurumIstek,
@@ -157,7 +159,7 @@ def aksiyon_durumunu_guncelle(
     db.commit()
 
 
-@router.get("/karsilastirma", response_model=list[KarsilastirmaSatiriOut] | None)
+@router.get("/karsilastirma", dependencies=[Depends(_KOCLUK)], response_model=list[KarsilastirmaSatiriOut] | None)
 def tur_karsilastirmasini_getir(
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
@@ -178,7 +180,7 @@ def tur_karsilastirmasini_getir(
 
 # ============================= [2026-10-03] Detaylı gelişim planı ============================= #
 
-@router.get("/hedef/plan", response_model=GelisimPlaniOut)
+@router.get("/hedef/plan", dependencies=[Depends(_KOCLUK)], response_model=GelisimPlaniOut)
 def gelisim_planini_getir(
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
@@ -189,7 +191,7 @@ def gelisim_planini_getir(
     return GelisimPlaniOut(**gelisim_plani_olustur(db, ogrenci, hedef.bolum_id, satirlar))
 
 
-@router.post("/hedef/adim/{adim_kodu}", status_code=204)
+@router.post("/hedef/adim/{adim_kodu}", dependencies=[Depends(_KOCLUK)], status_code=204)
 def adim_durumunu_guncelle(
     adim_kodu: str,
     istek: AdimDurumIstek,
@@ -211,7 +213,7 @@ def adim_durumunu_guncelle(
 
 
 # [2026-10-10] Alan tekrar ölçümü: ilk değerlendirmedeki aynı sorulardan en fazla 5'i yeniden sorulur.
-@router.get("/hedef/olcum/{degisken_id}")
+@router.get("/hedef/olcum/{degisken_id}", dependencies=[Depends(_KOCLUK)])
 def alan_olcum_sorulari(degisken_id: int, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     from app.core.kocluk_motoru import olcum_sorulari
     try:
@@ -221,7 +223,7 @@ def alan_olcum_sorulari(degisken_id: int, db: Session = Depends(get_db), ogrenci
         raise HTTPException(status_code=400, detail=str(e))
 
 
-@router.post("/hedef/olcum/{degisken_id}")
+@router.post("/hedef/olcum/{degisken_id}", dependencies=[Depends(_KOCLUK)])
 def alan_olcum_kaydet(degisken_id: int, istek: dict, db: Session = Depends(get_db),
                       ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     from app.core.kocluk_motoru import olcum_kaydet
@@ -258,7 +260,7 @@ KOMSU_ARALIK = {
 ALAN_BASINA = 4
 
 
-@router.get("/hedef/kaynaklar")
+@router.get("/hedef/kaynaklar", dependencies=[Depends(_KOCLUK)])
 def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     from app.models import GelisimKaynakOnerisi
     satirlar = _gap_satirlarini_hazirla(db, ogrenci)
@@ -292,7 +294,7 @@ def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(g
 
 # [2026-10-10] Gelişimim: tamamlanan adımların zaman çizelgesi + son 8 haftanın görev serisi + özet sayılar.
 # Hedef değişse de geçmiş adımlar silinmez; her adım hangi hedef bölüm için yapıldığıyla döner.
-@router.get("/gelisimim")
+@router.get("/gelisimim", dependencies=[Depends(_KOCLUK)])
 def gelisimim(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     from datetime import date, timedelta
     from app.models import OgrenciGelisimAdimDurumu, OgrenciHaftalikGorev, Degisken

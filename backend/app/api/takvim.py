@@ -94,7 +94,9 @@ def ogrenci_takvim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcu
         db.rollback()
     try:   # [2026-10-10] kulüp etkinlikleri (üyesi olduğu kulüpler + okulda herkese açık olanlar)
         from app.api.kulup_uyelik import ogrenci_duyurulari
-        for d in ogrenci_duyurulari(db, o, limit=60):
+        from app.core.paketler import okul_modulleri
+        kulup_acik = "kulupler" in okul_modulleri(db, o.okul_id)   # [2026-10-10] paket
+        for d in (ogrenci_duyurulari(db, o, limit=60) if kulup_acik else []):
             if d["tur"] == "etkinlik" and d["tarih"] and d["tarih"] >= bas:
                 sonuc.append({"id": f"kulup-{d['id']}", "baslik": f"{d['kulup']}: {d['baslik']}",
                               "aciklama": " · ".join(x for x in (d.get("yer"), d.get("metin")) if x) or None,
