@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import GecersizTurUyarisi from '../components/GecersizTurUyarisi'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
@@ -70,6 +71,7 @@ export default function SonucSayfasi({ gomulu = false }) {
           yansıtma; profilin zamanla değişebilir.
         </div>
       </div>}
+      {!gomulu && <GecersizTurUyarisi ozet={ozet} />}
 
       {siralama.length === 0 ? (
         <>
