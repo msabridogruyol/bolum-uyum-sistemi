@@ -84,16 +84,21 @@ class DenemeIstek(BaseModel):
     dersler: dict[str, dict[str, int]]   # {"tyt_mat": {"d": 30, "y": 6}}
 
 
-def _deneme_satiri(r) -> dict:
+def _deneme_satiri(r, okul_ort: dict | None = None) -> dict:
+    okul_id = getattr(r, "okul_deneme_id", None)   # [2026-10-10] okulun yüklediği deneme: öğrenci silemez, okul ortalaması gösterilir
     return {"id": r.id, "tarih": r.tarih.isoformat(), "oturum": r.oturum, "ad": r.ad, "dersler": r.dersler,
-            "toplam_net": float(r.toplam_net)}
+            "toplam_net": float(r.toplam_net), "okul_denemesi": bool(okul_id),
+            "okul_ortalama": (okul_ort or {}).get(okul_id) if okul_id else None}
 
 
 @router.get("/denemeler")
 def denemeler(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
-    rows = db.execute(text("SELECT id, tarih, oturum, ad, dersler, toplam_net FROM ogrenci_denemeleri "
+    rows = db.execute(text("SELECT id, tarih, oturum, ad, dersler, toplam_net, okul_deneme_id FROM ogrenci_denemeleri "
                            "WHERE ogrenci_id = :o ORDER BY tarih, id"), {"o": o.id}).all()
-    return {"denemeler": [_deneme_satiri(r) for r in rows]}
+    idler = [r.okul_deneme_id for r in rows if r.okul_deneme_id]
+    ort = dict(db.execute(text("SELECT okul_deneme_id, round(avg(toplam_net), 2) FROM ogrenci_denemeleri "
+                               "WHERE okul_deneme_id = ANY(:i) GROUP BY okul_deneme_id"), {"i": idler}).all()) if idler else {}
+    return {"denemeler": [_deneme_satiri(r, {k: float(v) for k, v in ort.items()}) for r in rows]}
 
 
 @router.post("/denemeler")
@@ -123,6 +128,9 @@ def deneme_ekle(istek: DenemeIstek, db: Session = Depends(get_db), o: Ogrenci = 
 
 @router.delete("/denemeler/{deneme_id}", status_code=204)
 def deneme_sil(deneme_id: int, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+    okul = db.execute(text("SELECT okul_deneme_id FROM ogrenci_denemeleri WHERE id = :i AND ogrenci_id = :o"), {"i": deneme_id, "o": o.id}).first()
+    if okul is not None and okul.okul_deneme_id:
+        raise HTTPException(400, "Okulunun yüklediği deneme silinemez; bir yanlışlık varsa rehber öğretmenine söyle.")
     n = db.execute(text("DELETE FROM ogrenci_denemeleri WHERE id = :i AND ogrenci_id = :o"), {"i": deneme_id, "o": o.id}).rowcount
     db.commit()
     if not n:

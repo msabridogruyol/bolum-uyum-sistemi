@@ -3,6 +3,9 @@
 export const OKUL_BOLUMLERI = [
   { k: 'ozet', ad: 'Özet', ikon: '🏠', grup: 'Genel', aciklama: 'Okulunuzdaki katılım ve sonuçların genel görünümü' },
   { k: 'ogrenciler', ad: 'Öğrenciler', ikon: '👥', grup: 'Öğrenciler', aciklama: 'Öğrenci hesapları, şifreler, sınıf atama ve öğrenci detayları' },
+  { k: 'rehberlik', ad: 'Rehberlik', ikon: '🧭', grup: 'Öğrenciler', modul: 'rehberlik', aciklama: 'Dikkat gerektiren öğrenciler, görüşme kayıtları, randevular ve takipler' },
+  { k: 'anketler', ad: 'Anketler', ikon: '📋', grup: 'Öğrenciler', okul: true, modul: 'anketler', aciklama: 'Okulun anketleri ve tarama formları; yanıtlar ve sonuçlar' },
+  { k: 'denemeler', ad: 'Okul Denemeleri', ikon: '📝', grup: 'Öğrenciler', okul: true, modul: 'okul_denemeleri', aciklama: 'Okulun yaptığı denemelerin sonuçlarını Excel ile yükleyin; şube ve ders ortalamaları' },
   { k: 'siniflar', ad: 'Sınıflar', ikon: '🏷️', grup: 'Öğrenciler', aciklama: 'Şubeler, sınıf öğretmenleri ve şube raporları' },
   { k: 'akran', ad: 'Şube & Akran', ikon: '🤝', grup: 'Öğrenciler', modul: 'akran', aciklama: 'Profili birbirine yakın öğrenciler ve şube dağılımı' },
   { k: 'kulupler', ad: 'Kulüpler', ikon: '🎭', grup: 'Okul Yaşamı', okul: true, modul: 'kulupler', aciklama: 'Okul kulüpleri ve öğrencilerin ilgi testi sonuçları' },
