@@ -32,7 +32,7 @@ SORU_KATEGORILERI = [
         "Okuyabileceğim bir kitap önerir misin?", "İzleyebileceğim bir belgesel önerir misin?",
         "Kütüphanemde neler var?", "Hangi kulübe katılmalıyım?"]},
     {"ad": "Motivasyon ve çalışma", "ikon": "💪", "sorular": [
-        "Sınav kaygısıyla nasıl başa çıkarım?", "Nasıl daha verimli ders çalışırım?",
+        "YKS'ye kaç gün kaldı?", "Sınav kaygısıyla nasıl başa çıkarım?", "Nasıl daha verimli ders çalışırım?",
         "Motivasyonum düştü, ne yapmalıyım?", "Bölüm seçiminde kararsızım, ne yapmalıyım?"]},
     {"ad": "Destek", "ikon": "🤝", "sorular": [
         "Bir eğitim koçuyla nasıl görüşürüm?", "Takvimimde ne var?", "Rehber öğretmenime nasıl ulaşırım?"]},
@@ -456,7 +456,19 @@ def k_kaynak_soru(b: Baglam, m: str) -> str | None:
     return " ".join(parcalar)
 
 
+def k_yks(b: Baglam, m: str) -> str:
+    """[2026-10-10] YKS geri sayımı (Genel Takvim'de resmî tarih yoksa tahmini)."""
+    from app.api.motivasyon import haftalik_mesaj, yks_bilgisi
+    y = yks_bilgisi(b.db, b.o.sinif)
+    if not y:
+        return "Sınıf bilgin profilinde olmadığı için hangi YKS'ye gireceğini hesaplayamadım. Ayarlar'dan sınıfını eklersen geri sayımı gösterebilirim."
+    tah = "" if y["resmi"] else " (ÖSYM henüz açıklamadığı için tahmini tarih)"
+    return (f"{y['ad']}'ye {y['gun']} gün, yani yaklaşık {y['hafta']} hafta var{tah}. {haftalik_mesaj(y)} "
+            "Ana sayfadaki sayaçtan her gün takip edebilirsin.")
+
+
 KONULAR = [
+    (("kac gun", "kac hafta", "yks ne zaman", "ne kadar kaldi", "sinava kac", "geri sayim"), k_yks),
     (("tesekkur", "sagol", "sag ol", "eyvallah", "cok iyi", "super"), k_tesekkur),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
     (("sistem nasil", "nasil calisiyor", "filizyol nedir", "ne ise yarar"), k_sistem),

@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import { KATMAN_BILGI } from '../yardimci/katmanAdlari'
 
 function renkSec(puan) {
   if (puan >= 70) return 'var(--gr)'
@@ -505,10 +506,28 @@ export default function SoruSayfasi({ mod = 'katman' }) {
           <div className="bos-durum">Yükleniyor…</div>
         ) : tamamlandi ? (
           <div className="qwrap" style={{ maxWidth: 640 }}>
-            <div className="ph">
-              <div className="pt">{dalMi ? (dalAdi || kod) : kod} tamamlandı 🎉</div>
-              <div className="ps">{dalMi ? 'Bu alandaki değişken puanların:' : 'Bu katmandaki değişken puanların ve ne anlama geldikleri:'}</div>
+            <div className="ph" style={{ textAlign: 'center' }}>
+              <div style={{ fontSize: 46 }}>{dalMi ? '🌻' : (KATMAN_BILGI[kod]?.ikon || '🎉')}</div>
+              <div className="pt">{dalMi ? (dalAdi || kod) : (KATMAN_BILGI[kod]?.ad || kod)} tamamlandı 🎉</div>
+              {!dalMi && (() => {
+                const n = Number(String(kod).replace(/\D/g, '')) || 0
+                return (
+                  <div className="bitis-yol">
+                    {[1, 2, 3, 4].map((i) => <span key={i} className={i <= n ? 'dolu' : ''}>{i <= n ? '✓' : i}</span>)}
+                    <em>{n >= 4 ? 'Dört bölümü de bitirdin!' : n === 2 ? 'Yarıladın, harika gidiyorsun 💪' : `${4 - n} bölüm kaldı`}</em>
+                  </div>
+                )
+              })()}
             </div>
+            {tamamlandi.sonuclar.length > 0 && (
+              <div className="bitis-one-cikan">
+                <div className="bitis-etiket">✨ Bu bölüm senin hakkında ne söyledi?</div>
+                <div className="bitis-cipler">
+                  {[...tamamlandi.sonuclar].sort((a, b) => b.puan - a.puan).slice(0, 3).map((x) => <span key={x.degisken_id}>{x.degisken_adi}</span>)}
+                </div>
+                <div className="bitis-alt">Bu üç özellik bu bölümde en çok öne çıkanların. Bölüm önerilerin hepsi bitince bunlara göre hesaplanır.</div>
+              </div>
+            )}
 
             {guven && (
               <div className={`sn-sonuc-guven ${guven.guven_puani < guven.esik ? 'kotu' : ''}`}>
@@ -522,11 +541,12 @@ export default function SoruSayfasi({ mod = 'katman' }) {
                 <div className="vg-metin">Bu katman için henüz sonuç hesaplanmadı.</div>
               </div>
             ) : (
-              <div className="card">
+              <details className="card bitis-detay">
+                <summary>Tüm puanlarını ve ne anlama geldiklerini gör</summary>
                 {[...tamamlandi.sonuclar].sort((a, b) => b.puan - a.puan).map((s) => (
                   <DegiskenKarti key={s.degisken_id} s={s} />
                 ))}
-              </div>
+              </details>
             )}
 
             {/* [2026-10-03] K5 zorunlu: K4 bitince öğrenci önce açılan dallara (Katmanlar sayfasında listelenir) yönlendirilir */}
@@ -540,10 +560,13 @@ export default function SoruSayfasi({ mod = 'katman' }) {
                 const n = Number(String(kod).replace(/\D/g, ''))
                 const sonraki = !tamamlandi.tum_katmanlar_tamamlandi_mi && n >= 1 && n < 4 ? `K${n + 1}` : null
                 return sonraki ? (
-                  <button className="btn full" onClick={() => navigate(`/katmanlar/${sonraki}`)}>Sıradaki Katmana Geç: {sonraki} →</button>
+                  <>
+                    <button className="btn full" onClick={() => navigate(`/katmanlar/${sonraki}`)}>Sıradaki bölüme geç: {KATMAN_BILGI[sonraki]?.ad || sonraki} →</button>
+                    <button className="btn sec full" style={{ marginTop: 8 }} onClick={() => navigate('/')}>Şimdilik ara ver — kaldığın yer kayıtlı</button>
+                  </>
                 ) : (
                   <button className="btn full" onClick={() => navigate('/katmanlar')}>
-                    {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Alan Sorularına (K5) Geç →' : 'Katmanlara Dön'}
+                    {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sana özel derinleşme sorularına geç →' : 'Değerlendirmeye dön'}
                   </button>
                 )
               })()
@@ -579,13 +602,6 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   )
 }
 
-const KATMAN_BILGI = {
-  K1: { ikon: '🌱', ad: 'Değerler / Motivasyon' },
-  K2: { ikon: '🌿', ad: 'Kişilik & Çalışma Tarzı' },
-  K3: { ikon: '🍃', ad: 'İş Ortamı & Profesyonel Yetkinlik' },
-  K4: { ikon: '🌸', ad: 'Alan Eğilimi & Bilişsel Stil' },
-  K5: { ikon: '🌻', ad: 'Derinleşme' },
-}
 
 const FILIZLENME_MESAJLARI = [
   'Her cevap, profilini biraz daha netleştiriyor.',
@@ -596,6 +612,22 @@ const FILIZLENME_MESAJLARI = [
 
 function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, baslik, onSecenekSec, onIleriGit, onGeriGit, onCik, guven, kameraDurumu }) {
   const katman = KATMAN_BILGI[kod] || { ikon: '🌻', ad: baslik || kod }
+  // [2026-10-10] Mola: uzun bölümlerde (8+ soru) yarıya gelince bir kez kısa nefes molası önerilir
+  const yari = Math.floor(sorular.length / 2)
+  const [molaGoruldu, setMolaGoruldu] = useState(sorular.length < 8 || aktifIndex > yari)
+  if (!molaGoruldu && aktifIndex === yari) {
+    return (
+      <div className="sn-duzen">
+        <div className="mola-kart">
+          <div style={{ fontSize: 44 }}>🌿</div>
+          <div className="mola-baslik">Yarıyı geçtin!</div>
+          <div className="mola-metin">{yari} soruyu cevapladın, {sorular.length - yari} soru kaldı. İstersen gözlerini birkaç saniye dinlendir, omuzlarını gevşet, derin bir nefes al.</div>
+          <div className="mola-not">Tam ekrandasın; bu ekranda beklemek kayda geçmez.</div>
+          <button className="btn" onClick={() => setMolaGoruldu(true)}>Hazırım, devam →</button>
+        </div>
+      </div>
+    )
+  }
   const mesaj = FILIZLENME_MESAJLARI[aktifIndex % FILIZLENME_MESAJLARI.length]
   const puan = guven?.guven_puani ?? 100
   const esik = guven?.esik ?? 50
