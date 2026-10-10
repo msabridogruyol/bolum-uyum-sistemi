@@ -182,6 +182,9 @@ export const api = {
   kocSil: (id) => adel(`/yonetim/koc/${id}`),
   kocTalepleri: (okulId) => aget(`/yonetim/koc-talepleri${okulId ? `?okul_id=${okulId}` : ''}`),
   kocTalebiGuncelle: (id, veri) => aput(`/yonetim/koc-talep/${id}`, veri),
+  // [2026-10-10] YÖK Atlas eşleştirme (süper admin)
+  yokatlasEslesme: () => aget('/admin/yokatlas/eslesme'),
+  yokatlasEslestir: (bolumId, gruplar) => aput(`/admin/yokatlas/bolum/${bolumId}`, { gruplar }),
   guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),
