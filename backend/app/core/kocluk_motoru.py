@@ -142,7 +142,9 @@ def _olcum_ozeti(liste: list[OgrenciAlanOlcumu], ters: bool) -> dict | None:
 
 
 def plani_zenginlestir(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, plan: dict) -> dict:
-    """gelisim_plani_olustur çıktısına alan türü, kazanım, geri bildirim, uyarlama ve ölçüm durumunu ekler."""
+    """gelisim_plani_olustur çıktısına alan türü, kazanım, geri bildirim, uyarlama ve ölçüm durumunu ekler.
+    Yalnızca okuma yapar; bir hata olursa kayıt noktasına dönülür, çağıranın işlemi bozulmaz."""
+    sp = db.begin_nested()
     try:
         kayitlar = _kayitlar(db, ogrenci, hedef_bolum_id)
         gb = {k.adim_kodu: _gb(k) for k in kayitlar}
@@ -180,8 +182,9 @@ def plani_zenginlestir(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, plan:
         sira = plan.get("siradaki_adim")
         if sira:
             sira["uyarlama"] = uyarlama_metni(kayitlar)
+        sp.commit()
     except Exception:
-        db.rollback()
+        sp.rollback()
     return plan
 
 
@@ -249,8 +252,20 @@ def olcum_kaydet(db: Session, ogrenci: Ogrenci, degisken_id: int, hedef_bolum_id
     from app.core.katman_servisi import IsKuraliHatasi
     tur, baz = _baz_cevaplar(db, ogrenci, degisken_id)
     izinli = {c.soru_id for c in baz} or set(_yedek_sorular(db, degisken_id))
-    yeni = [y for y in yeni if y.get("soru_id") in izinli]
-    if not izinli or len(yeni) < len(izinli):
+    # Girdi doğrulama: liste, en fazla 20 öğe, tam sayı alanlar; her soru TEK kez ve izinli soruların HEPSİ
+    if not isinstance(yeni, list) or len(yeni) > 20:
+        raise IsKuraliHatasi("Geçersiz cevap.")
+    temiz: dict[int, dict] = {}
+    for y in yeni:
+        if not isinstance(y, dict):
+            raise IsKuraliHatasi("Geçersiz cevap.")
+        sid, sec, az = y.get("soru_id"), y.get("secenek_id"), y.get("en_az_secenek_id")
+        if not isinstance(sid, int) or not isinstance(sec, int) or (az is not None and not isinstance(az, int)):
+            raise IsKuraliHatasi("Geçersiz cevap.")
+        if sid in izinli:
+            temiz[sid] = {"soru_id": sid, "secenek_id": sec, "en_az_secenek_id": az}
+    yeni = list(temiz.values())
+    if not izinli or set(temiz) != izinli:
         raise IsKuraliHatasi("Lütfen tüm soruları cevapla.")
     sorular = {s.id: s for s in db.query(Soru).filter(Soru.id.in_(list(izinli))).all()}
     for y in yeni:

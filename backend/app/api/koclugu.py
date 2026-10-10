@@ -214,7 +214,11 @@ def adim_durumunu_guncelle(
 @router.get("/hedef/olcum/{degisken_id}")
 def alan_olcum_sorulari(degisken_id: int, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     from app.core.kocluk_motoru import olcum_sorulari
-    return olcum_sorulari(db, ogrenci, degisken_id)
+    try:
+        return olcum_sorulari(db, ogrenci, degisken_id)
+    except IsKuraliHatasi as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
 
 
 @router.post("/hedef/olcum/{degisken_id}")
@@ -222,6 +226,19 @@ def alan_olcum_kaydet(degisken_id: int, istek: dict, db: Session = Depends(get_d
                       ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     from app.core.kocluk_motoru import olcum_kaydet
     hedef = aktif_hedef_getir(db, ogrenci)
+    if hedef is None:
+        raise HTTPException(status_code=400, detail="Henüz bir hedef bölümün yok.")
+    # Ölçüm yalnızca planındaki bir odak alanında ve 3 adım kuralıyla açıldıysa kaydedilir
+    try:
+        plan = gelisim_plani_olustur(db, ogrenci, hedef.bolum_id, _gap_satirlarini_hazirla(db, ogrenci))
+    except HTTPException:
+        raise
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=400, detail="Planın hesaplanamadı.")
+    odak = next((o for o in plan.get("odak_alanlari", []) if o["degisken_id"] == degisken_id), None)
+    if not odak or not (odak.get("olcum") or {}).get("acik"):
+        raise HTTPException(status_code=400, detail="Bu alanda ölçüm henüz açılmadı.")
     try:
         sonuc = olcum_kaydet(db, ogrenci, degisken_id, hedef.bolum_id if hedef else None, istek.get("cevaplar") or [])
     except IsKuraliHatasi as e:
