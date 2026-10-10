@@ -468,7 +468,7 @@ def k_yks(b: Baglam, m: str) -> str:
 
 
 KONULAR = [
-    (("kac gun", "kac hafta", "yks ne zaman", "ne kadar kaldi", "sinava kac", "geri sayim"), k_yks),
+    (("yks'ye kac", "yksye kac", "yks kac", "yks ne zaman", "yks'ye ne kadar", "sinava kac", "sinava ne kadar", "yks geri sayim"), k_yks),
     (("tesekkur", "sagol", "sag ol", "eyvallah", "cok iyi", "super"), k_tesekkur),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
     (("sistem nasil", "nasil calisiyor", "filizyol nedir", "ne ise yarar"), k_sistem),
