@@ -1,17 +1,17 @@
 # -*- coding: utf-8 -*-
 """
-[2026-10-10] Dışarıdan anlaşmalı eğitim koçları ve görüşme talepleri.
+[2026-10-10] Dışarıdan anlaşmalı eğitim koçları ve görüşme talepleri — YALNIZCA SÜPER ADMİN yönetir.
 
-Akış (öğrenci reşit olmadığı için rehber öğretmen aracıdır):
-  1) Süper admin tüm okullara açık koç ekler (okul_id NULL); okul yetkilisi yalnızca kendi okuluna özel koç ekler.
-  2) Öğrenci (ya da veli adına öğrenci hesabından) koç profilini görür, görüşme talebi bırakır.
-     Öğrenci koçun e-posta / telefonunu GÖRMEZ.
-  3) Talep okulun panelinde görünür; rehber koçla iletişime geçer, durumu (onaylandı / tamamlandı / reddedildi)
-     ve randevu zamanını girer, öğrenciye not yazar. Öğrenci durumu kendi ekranında görür.
+Akış:
+  1) Süper admin koçla anlaşır, koçu ekler ve hangi okullarda çalışacağını okul okul atar.
+     Okul bazında durum: aktif (öğrenciler görür) · onay_bekliyor (okulun onayı bekleniyor, görünmez)
+     · reddedildi (okul istemedi, görünmez; not tutulur).
+  2) Öğrenci yalnızca kendi okulunda "aktif" olan koçları görür, görüşme talebi bırakır. Koçun iletişim bilgisini GÖRMEZ.
+  3) Talepler süper adminin ekranına düşer; durum, randevu zamanı ve öğrenciye not girilir. Okul yetkilileri koç ekranı görmez.
 
 Öğrenci:  GET /ogrenci/koclar · POST /ogrenci/koclar/{id}/talep · POST /ogrenci/koc-talep/{id}/iptal
-Yönetim:  GET/POST /yonetim/koclar · PUT/DELETE /yonetim/koc/{id}
-          GET /yonetim/koc-talepleri?okul_id= · PUT /yonetim/koc-talep/{id}
+Süper admin: GET/POST /yonetim/koclar · PUT/DELETE /yonetim/koc/{id} · PUT /yonetim/koc/{id}/okullar
+             GET /yonetim/koc-talepleri?okul_id= · PUT /yonetim/koc-talep/{id}
 """
 from datetime import datetime, timezone
 
@@ -20,8 +20,8 @@ from pydantic import BaseModel, Field
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
-from app.api.okul_yonetimi import _okul_kapsami, _sinif_metni
+from app.api.deps import get_mevcut_ogrenci, get_mevcut_super_admin
+from app.api.okul_yonetimi import _sinif_metni
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
 from app.models import AdminKullanici, Ogrenci
@@ -34,9 +34,10 @@ KONULAR = [
     "Üniversite tercih danışmanlığı", "Yurt dışında eğitim", "Hedef belirleme ve kişisel gelişim",
 ]
 GORUSME = {"online": "Online", "yuz_yuze": "Yüz yüze", "ikisi": "Online veya yüz yüze"}
-DURUMLAR = {"beklemede": "Rehber öğretmen inceliyor", "onaylandi": "Görüşme planlandı", "tamamlandi": "Görüşme yapıldı",
+DURUMLAR = {"beklemede": "Talebin inceleniyor", "onaylandi": "Görüşme planlandı", "tamamlandi": "Görüşme yapıldı",
             "reddedildi": "Şu an planlanamadı", "iptal": "İptal edildi"}
 ACIK = ("beklemede", "onaylandi")
+OKUL_DURUM = {"aktif": "Aktif", "onay_bekliyor": "Okul onayı bekleniyor", "reddedildi": "Okul reddetti"}
 EN_FAZLA_ACIK = 3
 
 
@@ -75,9 +76,9 @@ def _koc_out(k: dict, alanlar: dict, ozel: bool = False) -> dict:
          "alanlar": _liste(k["alanlar"]), "alan_adlari": [alanlar.get(a, a) for a in _liste(k["alanlar"])],
          "konular": _liste(k["konular"]), "deneyim_yil": k["deneyim_yil"], "gorusme_sekli": k["gorusme_sekli"],
          "gorusme_metni": GORUSME.get(k["gorusme_sekli"], k["gorusme_sekli"]), "ucret_bilgisi": k["ucret_bilgisi"],
-         "okul_ozel": k["okul_id"] is not None, "aktif": k["aktif"]}
+         "aktif": k["aktif"]}
     if ozel:
-        d.update({"eposta": k["eposta"], "telefon": k["telefon"], "okul_id": k["okul_id"]})
+        d.update({"eposta": k["eposta"], "telefon": k["telefon"]})
     return d
 
 
@@ -87,7 +88,8 @@ def ogrenci_koclar(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcu
     alanlar = _alan_adlari(db)
     ilgili = _ogrenci_alanlari(db, o)
     koclar = db.execute(text("""
-        SELECT * FROM egitim_koclari WHERE aktif AND (okul_id IS NULL OR okul_id = :ok) ORDER BY ad_soyad
+        SELECT k.* FROM egitim_koclari k JOIN koc_okullari ko ON ko.koc_id = k.id
+         WHERE k.aktif AND ko.okul_id = :ok AND ko.durum = 'aktif' ORDER BY k.ad_soyad
     """), {"ok": o.okul_id or -1}).mappings().all()
     sonuc = []
     for k in koclar:
@@ -123,8 +125,9 @@ class TalepIstek(BaseModel):
 @ogrenci_router.post("/koclar/{koc_id}/talep", status_code=201)
 def talep_olustur(koc_id: int, istek: TalepIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     if not o.okul_id:
-        raise HTTPException(status_code=400, detail="Görüşme talepleri okulunun rehber öğretmeni üzerinden iletilir; hesabın bir okula bağlı değil.")
-    k = db.execute(text("SELECT id, okul_id, ad_soyad FROM egitim_koclari WHERE id = :k AND aktif AND (okul_id IS NULL OR okul_id = :ok)"),
+        raise HTTPException(status_code=400, detail="Eğitim koçları okul bazında atanır; hesabın bir okula bağlı olmadığı için görüşme talebi gönderemezsin.")
+    k = db.execute(text("""SELECT k.id, k.ad_soyad FROM egitim_koclari k JOIN koc_okullari ko ON ko.koc_id = k.id
+                            WHERE k.id = :k AND k.aktif AND ko.okul_id = :ok AND ko.durum = 'aktif'"""),
                    {"k": koc_id, "ok": o.okul_id}).mappings().first()
     if not k:
         raise HTTPException(status_code=404, detail="Koç bulunamadı.")
@@ -175,62 +178,56 @@ class KocIstek(BaseModel):
     eposta: str | None = Field(default=None, max_length=120)
     telefon: str | None = Field(default=None, max_length=40)
     aktif: bool = True
-    okul_id: int | None = None           # None = tüm okullar (yalnızca süper admin)
 
 
-def _koc_kontrol(db: Session, yon: AdminKullanici, k: dict) -> None:
-    if yon.rol == "okul_yetkilisi" and k["okul_id"] != yon.okul_id:
-        raise HTTPException(status_code=403, detail="Tüm okullara açık koçları yalnızca süper admin düzenleyebilir.")
-
-
-def _degerler(db: Session, yon: AdminKullanici, istek: KocIstek) -> dict:
+def _degerler(db: Session, istek: KocIstek) -> dict:
     alan_kodlari = set(_alan_adlari(db))
     if istek.gorusme_sekli not in GORUSME:
         raise HTTPException(status_code=400, detail="Geçersiz görüşme şekli.")
-    okul_id = yon.okul_id if yon.rol == "okul_yetkilisi" else istek.okul_id
-    if okul_id:
-        _okul_kapsami(db, yon, okul_id)
     t = lambda v: (v or "").strip() or None  # noqa: E731
-    return {"ok": okul_id or None, "ad": istek.ad_soyad.strip(), "un": t(istek.unvan), "ha": t(istek.hakkinda),
+    return {"ad": istek.ad_soyad.strip(), "un": t(istek.unvan), "ha": t(istek.hakkinda),
             "al": ",".join(a for a in dict.fromkeys(istek.alanlar) if a in alan_kodlari),
             "ko": ",".join(k for k in dict.fromkeys(istek.konular) if k in KONULAR),
             "de": istek.deneyim_yil, "gs": istek.gorusme_sekli, "uc": t(istek.ucret_bilgisi),
             "ep": t(istek.eposta), "te": t(istek.telefon), "ak": istek.aktif}
 
 
+def _okul_atamalari(db: Session) -> dict[int, list[dict]]:
+    sonuc: dict[int, list[dict]] = {}
+    for r in db.execute(text("""
+        SELECT ko.koc_id, ko.okul_id, ko.durum, ko.notlar, o.ad FROM koc_okullari ko JOIN okullar o ON o.id = ko.okul_id ORDER BY o.ad
+    """)).mappings().all():
+        sonuc.setdefault(r["koc_id"], []).append({"okul_id": r["okul_id"], "okul_ad": r["ad"], "durum": r["durum"],
+                                                  "durum_adi": OKUL_DURUM.get(r["durum"], r["durum"]), "notlar": r["notlar"]})
+    return sonuc
+
+
 @router.get("/koclar")
-def koclari_listele(okul_id: int | None = None, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
-    if yon.rol == "okul_yetkilisi":
-        okul_id = yon.okul_id
-    q = "SELECT * FROM egitim_koclari"
-    p = {}
-    if okul_id:
-        q += " WHERE okul_id IS NULL OR okul_id = :ok"
-        p["ok"] = okul_id
+def koclari_listele(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
     alanlar = _alan_adlari(db)
-    satirlar = db.execute(text(q + " ORDER BY okul_id NULLS FIRST, ad_soyad"), p).mappings().all()
+    satirlar = db.execute(text("SELECT * FROM egitim_koclari ORDER BY ad_soyad")).mappings().all()
     talep = {r[0]: (r[1], r[2]) for r in db.execute(text(
-        "SELECT koc_id, COUNT(*) FILTER (WHERE durum = 'beklemede'), COUNT(*) FROM koc_gorusme_talepleri"
-        + (" WHERE okul_id = :ok" if okul_id else "") + " GROUP BY koc_id"), p).all()}
-    okullar = {r[0]: r[1] for r in db.execute(text("SELECT id, ad FROM okullar")).all()}
+        "SELECT koc_id, COUNT(*) FILTER (WHERE durum = 'beklemede'), COUNT(*) FROM koc_gorusme_talepleri GROUP BY koc_id")).all()}
+    atama = _okul_atamalari(db)
     return {
-        "koclar": [{**_koc_out(dict(k), alanlar, ozel=True), "okul_ad": okullar.get(k["okul_id"]),
-                    "duzenlenebilir": yon.rol == "super_admin" or k["okul_id"] == yon.okul_id,
+        "koclar": [{**_koc_out(dict(k), alanlar, ozel=True), "okullar": atama.get(k["id"], []),
                     "bekleyen": talep.get(k["id"], (0, 0))[0], "toplam_talep": talep.get(k["id"], (0, 0))[1]} for k in satirlar],
         "alanlar": [{"kod": k, "ad": v} for k, v in alanlar.items()], "konular": KONULAR,
-        "gorusme": [{"kod": k, "ad": v} for k, v in GORUSME.items()], "super": yon.rol == "super_admin",
+        "gorusme": [{"kod": k, "ad": v} for k, v in GORUSME.items()],
+        "okul_durumlari": [{"kod": k, "ad": v} for k, v in OKUL_DURUM.items()],
+        "okullar": [{"id": r[0], "ad": r[1]} for r in db.execute(text("SELECT id, ad FROM okullar ORDER BY ad")).all()],
     }
 
 
 @router.post("/koclar", status_code=201)
-def koc_ekle(istek: KocIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
-    d = _degerler(db, yon, istek)
+def koc_ekle(istek: KocIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
+    d = _degerler(db, istek)
     kid = db.execute(text("""
-        INSERT INTO egitim_koclari (okul_id, ad_soyad, unvan, hakkinda, alanlar, konular, deneyim_yil, gorusme_sekli,
-                                    ucret_bilgisi, eposta, telefon, aktif)
-        VALUES (:ok, :ad, :un, :ha, :al, :ko, :de, :gs, :uc, :ep, :te, :ak) RETURNING id
+        INSERT INTO egitim_koclari (ad_soyad, unvan, hakkinda, alanlar, konular, deneyim_yil, gorusme_sekli,
+                                    ucret_bilgisi, eposta, telefon, aktif, okullar_tasindi)
+        VALUES (:ad, :un, :ha, :al, :ko, :de, :gs, :uc, :ep, :te, :ak, TRUE) RETURNING id
     """), d).scalar()
-    denetim_yaz(db, yon, "koc_ekle", "egitim_koclari", kid, d["ad"], d["ok"])
+    denetim_yaz(db, yon, "koc_ekle", "egitim_koclari", kid, d["ad"])
     db.commit()
     return {"id": kid}
 
@@ -243,38 +240,67 @@ def _koc(db: Session, koc_id: int) -> dict:
 
 
 @router.put("/koc/{koc_id}")
-def koc_duzenle(koc_id: int, istek: KocIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
-    _koc_kontrol(db, yon, _koc(db, koc_id))
-    d = _degerler(db, yon, istek)
+def koc_duzenle(koc_id: int, istek: KocIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
+    _koc(db, koc_id)
+    d = _degerler(db, istek)
     db.execute(text("""
-        UPDATE egitim_koclari SET okul_id = :ok, ad_soyad = :ad, unvan = :un, hakkinda = :ha, alanlar = :al, konular = :ko,
+        UPDATE egitim_koclari SET ad_soyad = :ad, unvan = :un, hakkinda = :ha, alanlar = :al, konular = :ko,
                deneyim_yil = :de, gorusme_sekli = :gs, ucret_bilgisi = :uc, eposta = :ep, telefon = :te, aktif = :ak
          WHERE id = :id
     """), {**d, "id": koc_id})
-    denetim_yaz(db, yon, "koc_duzenle", "egitim_koclari", koc_id, d["ad"], d["ok"])
+    denetim_yaz(db, yon, "koc_duzenle", "egitim_koclari", koc_id, d["ad"])
     db.commit()
     return {"tamam": True}
 
 
-@router.delete("/koc/{koc_id}", status_code=204)
-def koc_sil(koc_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+class OkulAtama(BaseModel):
+    okul_id: int
+    durum: str = "aktif"
+    notlar: str | None = Field(default=None, max_length=300)
+
+
+class OkulAtamaIstek(BaseModel):
+    okullar: list[OkulAtama] = Field(default_factory=list, max_length=500)
+
+
+@router.put("/koc/{koc_id}/okullar")
+def koc_okullari(koc_id: int, istek: OkulAtamaIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
+    """Koçun çalıştığı okullar (listede olmayan okullardan kaldırılır)."""
     k = _koc(db, koc_id)
-    _koc_kontrol(db, yon, k)
+    gecerli = {r[0] for r in db.execute(text("SELECT id FROM okullar")).all()}
+    yeni = {}
+    for a in istek.okullar:
+        if a.okul_id not in gecerli:
+            raise HTTPException(status_code=400, detail="Geçersiz okul.")
+        if a.durum not in OKUL_DURUM:
+            raise HTTPException(status_code=400, detail="Geçersiz durum.")
+        yeni[a.okul_id] = a
+    db.execute(text("DELETE FROM koc_okullari WHERE koc_id = :k"), {"k": koc_id})
+    for a in yeni.values():
+        db.execute(text("""INSERT INTO koc_okullari (koc_id, okul_id, durum, notlar, guncelleme_zamani)
+                           VALUES (:k, :o, :d, :n, now())"""),
+                   {"k": koc_id, "o": a.okul_id, "d": a.durum, "n": (a.notlar or "").strip() or None})
+    ozet = ", ".join(f"{OKUL_DURUM[a.durum].lower()}: {sum(1 for x in yeni.values() if x.durum == a.durum)}" for a in
+                     {x.durum: x for x in yeni.values()}.values())
+    denetim_yaz(db, yon, "koc_okullari", "egitim_koclari", koc_id, f"{k['ad_soyad']} — {len(yeni)} okul ({ozet or 'yok'})")
+    db.commit()
+    return {"okullar": _okul_atamalari(db).get(koc_id, [])}
+
+
+@router.delete("/koc/{koc_id}", status_code=204)
+def koc_sil(koc_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
+    k = _koc(db, koc_id)
     acik = db.execute(text("SELECT COUNT(*) FROM koc_gorusme_talepleri WHERE koc_id = :k AND durum IN ('beklemede','onaylandi')"),
                       {"k": koc_id}).scalar()
     if acik:
         raise HTTPException(status_code=400, detail=f"Bu koçun {acik} açık talebi var. Önce talepleri sonuçlandırın ya da koçu pasif yapın.")
     db.execute(text("DELETE FROM egitim_koclari WHERE id = :k"), {"k": koc_id})
-    denetim_yaz(db, yon, "koc_sil", "egitim_koclari", koc_id, k["ad_soyad"], k["okul_id"])
+    denetim_yaz(db, yon, "koc_sil", "egitim_koclari", koc_id, k["ad_soyad"])
     db.commit()
 
 
 @router.get("/koc-talepleri")
-def talepleri_listele(okul_id: int | None = None, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
-    if yon.rol == "okul_yetkilisi":
-        okul_id = yon.okul_id
-    elif okul_id:
-        _okul_kapsami(db, yon, okul_id)
+def talepleri_listele(okul_id: int | None = None, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
     satirlar = db.execute(text("""
         SELECT t.*, k.ad_soyad AS koc_ad, k.eposta AS koc_eposta, k.telefon AS koc_telefon, s.ad AS okul_ad
           FROM koc_gorusme_talepleri t JOIN egitim_koclari k ON k.id = t.koc_id LEFT JOIN okullar s ON s.id = t.okul_id
@@ -300,12 +326,10 @@ class TalepGuncelleIstek(BaseModel):
 
 @router.put("/koc-talep/{talep_id}")
 def talep_guncelle(talep_id: int, istek: TalepGuncelleIstek, db: Session = Depends(get_db),
-                   yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+                   yon: AdminKullanici = Depends(get_mevcut_super_admin)):
     t = db.execute(text("SELECT okul_id, durum FROM koc_gorusme_talepleri WHERE id = :t"), {"t": talep_id}).mappings().first()
     if not t:
         raise HTTPException(status_code=404, detail="Talep bulunamadı.")
-    if yon.rol == "okul_yetkilisi" and t["okul_id"] != yon.okul_id:
-        raise HTTPException(status_code=403, detail="Bu talep sizin okulunuza ait değil.")
     if istek.durum not in DURUMLAR or istek.durum == "iptal":
         raise HTTPException(status_code=400, detail="Geçersiz durum.")
     if t["durum"] == "iptal":

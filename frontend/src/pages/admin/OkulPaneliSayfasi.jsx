@@ -13,7 +13,6 @@ import MeslekDiliDuzenleyici from '../../components/yonetim/MeslekDiliDuzenleyic
 import OkulTemaKarti from '../../components/yonetim/OkulTemaKarti'
 import AkranSekmesi from '../../components/yonetim/AkranPaneli'
 import KulupYonetimi from '../../components/yonetim/KulupYonetimi'
-import KocYonetimi from '../../components/yonetim/KocYonetimi'
 import SiniflarSekmesi from '../../components/yonetim/SiniflarSekmesi'
 import TakvimYonetimi from '../../components/yonetim/TakvimYonetimi'
 
@@ -473,7 +472,7 @@ export default function OkulPaneliSayfasi() {
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
   const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['siniflar', 'Sınıflar'], ['akran', 'Şube & Akran'],
-    ...(okulId ? [['kulupler', 'Kulüpler'], ['koclar', 'Koçlar'], ['takvim', 'Takvim'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
+    ...(okulId ? [['kulupler', 'Kulüpler'], ['takvim', 'Takvim'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
   return (
     <div className="pg pg-genis">
       {superAdmin && <Link to="/admin/okullar" className="yp-geri">← Okullar</Link>}
@@ -496,7 +495,6 @@ export default function OkulPaneliSayfasi() {
       {sekme === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
-      {sekme === 'koclar' && okulId > 0 && <KocYonetimi okulId={okulId} />}
       {sekme === 'takvim' && okulId > 0 && <TakvimYonetimi okulId={okulId} />}
       {sekme === 'bilgiler' && <OkulBilgileriSekmesi okulId={okulId} />}
       {sekme === 'yetkililer' && <YetkililerSekmesi okulId={okulId} superAdmin={superAdmin} />}

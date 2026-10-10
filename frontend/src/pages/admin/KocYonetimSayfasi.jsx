@@ -6,9 +6,9 @@ export default function KocYonetimSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Eğitim Koçları</div>
-        <div className="ps">Tüm okullara açık ya da tek bir okula özel anlaşmalı koçlar ve öğrencilerin görüşme talepleri. Okul yetkilileri kendi okullarının taleplerini Okul Paneli → Koçlar sekmesinden yönetir.</div>
+        <div className="ps">Anlaşmalı koçları buradan ekler ve her koçu çalışacağı okullara atarsınız (okul reddederse durumunu 'Okul reddetti' yapın). Öğrenci yalnızca okulunda aktif olan koçları görür; tüm görüşme talepleri burada sonuçlandırılır. Okul yetkilileri bu bölümü görmez.</div>
       </div>
-      <KocYonetimi okulId={null} />
+      <KocYonetimi />
     </div>
   )
 }

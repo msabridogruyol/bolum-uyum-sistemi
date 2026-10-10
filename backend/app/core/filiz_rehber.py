@@ -269,7 +269,7 @@ def k_kulup(b: Baglam, m: str) -> str:
 
 def k_koc(b: Baglam, m: str) -> str:
     return ("Eğitim Koçları sayfasında okulunun anlaşmalı koçlarını görebilirsin; ilgilendiğin alana uygun olanlar üstte işaretli. "
-            "Bir koç seçip görüşme talebi bırakırsan talebin rehber öğretmenine gider; görüşme planlanınca tarih ve saat Takvim'inde görünür.")
+            "Bir koç seçip görüşme talebi bırakırsan talebin Filizyol koordinatörüne gider; görüşme planlanınca tarih ve saat Takvim'inde görünür.")
 
 
 def k_takvim(b: Baglam, m: str) -> str:
