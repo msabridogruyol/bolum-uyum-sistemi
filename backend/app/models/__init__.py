@@ -25,7 +25,7 @@ from app.models.sistem import (
 )
 from app.models.koclugu import (
     OgrenciHedefBolum, GelisimYorumHavuzu,
-    GelisimKarsilastirmaYorumu, OgrenciGelisimAksiyonDurumu, OgrenciGelisimAdimDurumu,
+    GelisimKarsilastirmaYorumu, OgrenciGelisimAksiyonDurumu, OgrenciGelisimAdimDurumu, OgrenciAlanOlcumu,
     OgrenciKoclukOturumu, OgrenciKoclukMesaji, GelisimKaynakOnerisi, OgrenciFavoriBolum,
 )
 from app.models.haftalik import OgrenciHaftalikGorev
@@ -44,7 +44,7 @@ __all__ = [
     "SistemParametresi", "KatmanAgirligi", "GecerlilikSonucu", "Okul", "MeslekDili",
     "GecerlilikOzeti", "AuditLog",
     "OgrenciHedefBolum", "GelisimYorumHavuzu",
-    "GelisimKarsilastirmaYorumu", "OgrenciGelisimAksiyonDurumu", "OgrenciGelisimAdimDurumu",
+    "GelisimKarsilastirmaYorumu", "OgrenciGelisimAksiyonDurumu", "OgrenciGelisimAdimDurumu", "OgrenciAlanOlcumu",
     "OgrenciKoclukOturumu", "OgrenciKoclukMesaji", "GelisimKaynakOnerisi", "OgrenciFavoriBolum",
     "OgrenciHaftalikGorev",
     "KvkkOnayi", "DogrulamaKodu", "SifreSifirlamaTokeni", "GuvenilirCihaz",

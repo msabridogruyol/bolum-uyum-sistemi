@@ -9,7 +9,7 @@ ORM katmanı bu kısıtı garanti etmez, sadece şemaya yansıtır.
 """
 import uuid
 from datetime import datetime
-from sqlalchemy import String, Integer, BigInteger, Boolean, DateTime, ForeignKey, CheckConstraint, UniqueConstraint
+from sqlalchemy import JSON, Numeric, String, Integer, BigInteger, Boolean, DateTime, ForeignKey, CheckConstraint, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
@@ -106,6 +106,27 @@ class OgrenciGelisimAdimDurumu(Base):
     adim_kodu: Mapped[str] = mapped_column(String, nullable=False)
     durum: Mapped[str] = mapped_column(String, nullable=False, default="planlandi")
     guncelleme_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    # [2026-10-10] Adım tamamlanırken kısa geri bildirim (kanıt + yansıtma); uyarlama ve okul raporu için
+    ne_yaptim: Mapped[str | None] = mapped_column(String)
+    ne_ogrendim: Mapped[str | None] = mapped_column(String)
+    fayda: Mapped[int | None] = mapped_column(Integer)           # 1-5
+    zorluk: Mapped[str | None] = mapped_column(String)           # kolay | uygun | zor
+
+
+class OgrenciAlanOlcumu(Base):
+    """[2026-10-10] Bir gelişim alanında 3 adım sonrası mini tekrar ölçümü: öğrencinin ilk değerlendirmede
+    cevapladığı AYNI sorular yeniden sorulur; aynı sorular üzerinden önce/sonra puanı karşılaştırılır."""
+    __tablename__ = "ogrenci_alan_olcumleri"
+
+    id: Mapped[int] = mapped_column(BigInteger().with_variant(Integer, "sqlite"), primary_key=True, autoincrement=True)
+    ogrenci_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id", ondelete="CASCADE"), nullable=False)
+    degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
+    hedef_bolum_id: Mapped[int | None] = mapped_column(ForeignKey("bolumler.id"))
+    onceki_puan: Mapped[float] = mapped_column(Numeric(5, 1), nullable=False)
+    yeni_puan: Mapped[float] = mapped_column(Numeric(5, 1), nullable=False)
+    soru_sayisi: Mapped[int] = mapped_column(Integer, nullable=False)
+    cevaplar: Mapped[dict | None] = mapped_column(JSON)
+    olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
 
 
 # ============================================================================

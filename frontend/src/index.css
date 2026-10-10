@@ -1446,3 +1446,58 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .yp-bolum-rapor{margin-left:auto}
 .yp-bolum-rapor > *{margin:0}
 @media (max-width:700px){.yp-bolum-rapor{margin-left:0;width:100%}}
+.yp-kocluk-adim{padding:9px 0;border-bottom:1px solid var(--bor);font-size:13px;display:grid;gap:3px}
+.yp-kocluk-adim:last-child{border-bottom:none}
+
+/* [2026-10-10] Koçluk motoru */
+.adim-kazanim{font-size:12.5px;line-height:1.5;background:var(--grl);color:var(--tx);border-radius:10px;padding:8px 11px;margin:0 0 8px}
+.adim-kazanim span{font-weight:800;color:var(--gr);margin-right:4px}
+.adim-uyarlama{font-size:12.5px;line-height:1.5;background:var(--aml);border-left:3px solid var(--am);border-radius:8px;padding:8px 11px;margin:0 0 8px}
+.alan-turu-rozet{font-size:10.5px;font-weight:700;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-block}
+.koc-alan-turu-not{font-size:11.5px;color:var(--tx3);margin-top:4px;font-style:italic;line-height:1.45}
+.tamamla-form{border:1.5px solid var(--gr);background:var(--sur);border-radius:14px;padding:14px;margin-top:6px;display:grid;gap:8px}
+.tamamla-baslik{font-weight:800;font-size:14px}
+.tamamla-soru{font-size:12px;font-weight:700;color:var(--tx2)}
+.tamamla-fayda{display:flex;gap:6px;flex-wrap:wrap}
+.tamamla-fayda button{border:1.5px solid var(--bor);background:var(--sur2);border-radius:12px;padding:6px 10px;cursor:pointer;display:grid;justify-items:center;min-width:58px;font-family:var(--fn)}
+.tamamla-fayda button span{font-size:20px}
+.tamamla-fayda button small{font-size:10.5px;color:var(--tx3);font-weight:600}
+.tamamla-fayda button.secili,.tamamla-zorluk button.secili{border-color:var(--gr);background:var(--grl)}
+.tamamla-zorluk{display:flex;gap:6px;flex-wrap:wrap}
+.tamamla-zorluk button{border:1.5px solid var(--bor);background:var(--sur2);border-radius:20px;padding:6px 14px;cursor:pointer;font-size:12.5px;font-weight:600;font-family:var(--fn);color:var(--tx)}
+.tamamla-metinler{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.tamamla-metinler label{font-size:12px;font-weight:700;color:var(--tx2);display:grid;gap:4px}
+.tamamla-metinler label span{font-weight:400;color:var(--tx3)}
+.tamamla-metinler input{border:1.5px solid var(--bor);border-radius:10px;padding:8px 10px;font-size:13px;font-family:var(--fn);background:var(--sur);color:var(--tx)}
+.tamamla-dugmeler{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.tamamla-not{font-size:11px;color:var(--tx3)}
+@media (max-width:640px){.tamamla-metinler{grid-template-columns:1fr}}
+.gb-ozet{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0;font-size:11.5px}
+.gb-ozet span{background:var(--sur2);border-radius:20px;padding:2px 8px;color:var(--tx2)}
+.gb-ozet .gb-ogrendim{font-style:italic;background:none;padding:2px 0}
+.olcum-alan{margin:16px 0}
+.olcum-alan .yh-etiket span{font-weight:500;color:var(--tx3);margin-left:6px;text-transform:none;letter-spacing:0}
+.olcum-izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.olcum-kart{border:1.5px solid var(--bor);border-radius:14px;padding:12px;background:var(--sur);display:grid;gap:8px}
+.olcum-kart.acik{border-color:var(--gr);box-shadow:0 0 0 3px var(--grl)}
+.olcum-ust{display:flex;gap:10px;align-items:center}
+.olcum-ikon{font-size:20px}
+.olcum-ad{font-weight:700;font-size:13px}
+.olcum-alt{font-size:11.5px;color:var(--tx3)}
+.olcum-sonuc{display:flex;align-items:baseline;gap:6px;font-size:13px}
+.olcum-sonuc b{font-size:17px}
+.olcum-ok{color:var(--tx3)}
+.olcum-fark{font-size:11.5px;font-weight:800;border-radius:20px;padding:1px 7px}
+.olcum-fark.arti{color:var(--gr);background:var(--grl)}
+.olcum-fark.eksi{color:var(--am);background:var(--aml)}
+.olcum-ilerleme{height:6px;border-radius:6px;background:var(--sur2);overflow:hidden}
+.olcum-ilerleme div{height:100%;background:var(--gr);border-radius:6px}
+.olcum-soru{display:grid;gap:10px}
+.olcum-sayac{font-size:12px;color:var(--tx3);font-weight:700}
+.olcum-metin{font-size:15px;font-weight:700;line-height:1.45}
+.olcum-bitti{text-align:center;display:grid;gap:10px;justify-items:center}
+.olcum-bitti-sayilar{display:flex;align-items:center;gap:18px}
+.olcum-bitti-sayilar div{display:grid}
+.olcum-bitti-sayilar small{font-size:11px;color:var(--tx3);font-weight:700;text-transform:uppercase}
+.olcum-bitti-sayilar b{font-size:36px}
+.olcum-not{font-size:11.5px;color:var(--tx3)}

@@ -755,7 +755,36 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
         "oneriler": oneriler, "sonuc_notu": sonuc_notu, "hedef": hedef, "hedef_hak": hedef_hak_durumu(o),
         "listem": _listem(db, o),
         "kayitlar": _ogrenci_kayitlari(db, o, katmanlar),
+        "kocluk": _kocluk_ozeti(db, o),
     }
+
+
+def _kocluk_ozeti(db: Session, o: Ogrenci) -> dict:
+    """[2026-10-10] Rehber öğretmen için: tamamlanan koçluk adımları + öğrencinin geri bildirimi + alan tekrar ölçümleri."""
+    from app.core.gelisim_icerigi import ICERIK
+    from app.models import Degisken, OgrenciAlanOlcumu, OgrenciGelisimAdimDurumu
+    try:
+        ad = {d.kod: d.ad for d in db.query(Degisken).all()}
+        ad_id = {d.id: d.ad for d in db.query(Degisken).all()}
+        adimlar = []
+        for a in (db.query(OgrenciGelisimAdimDurumu).filter(OgrenciGelisimAdimDurumu.ogrenci_id == o.id,
+                                                            OgrenciGelisimAdimDurumu.durum == "tamamlandi")
+                  .order_by(OgrenciGelisimAdimDurumu.guncelleme_zamani.desc()).limit(60).all()):
+            try:
+                dk, grup, sira = a.adim_kodu.split("-")
+                baslik = ICERIK[dk]["gelisim" if grup == "G" else "guclu"][int(sira) - 1][1]
+            except Exception:
+                dk, baslik = "", a.adim_kodu
+            adimlar.append({"baslik": baslik, "alan": ad.get(dk, dk), "zaman": a.guncelleme_zamani,
+                            "ne_yaptim": a.ne_yaptim, "ne_ogrendim": a.ne_ogrendim, "fayda": a.fayda, "zorluk": a.zorluk})
+        olcumler = [{"alan": ad_id.get(m.degisken_id, ""), "onceki": float(m.onceki_puan), "yeni": float(m.yeni_puan),
+                     "zaman": m.olusturulma_zamani}
+                    for m in db.query(OgrenciAlanOlcumu).filter(OgrenciAlanOlcumu.ogrenci_id == o.id)
+                    .order_by(OgrenciAlanOlcumu.olusturulma_zamani.desc()).all()]
+        return {"adimlar": adimlar, "olcumler": olcumler}
+    except Exception:
+        db.rollback()
+        return {"adimlar": [], "olcumler": []}
 
 
 def _ogrenci_kayitlari(db: Session, o: Ogrenci, katmanlar) -> list[dict]:

@@ -201,10 +201,34 @@ def adim_durumunu_guncelle(
         raise HTTPException(status_code=400, detail="Henüz bir hedef bölümün yok.")
     try:
         adim_durumu_guncelle(db, ogrenci, hedef.bolum_id, adim_kodu, istek.durum)
+        if istek.durum == "tamamlandi":
+            from app.core.kocluk_motoru import geri_bildirim_kaydet
+            geri_bildirim_kaydet(db, ogrenci, hedef.bolum_id, adim_kodu, istek)
     except IsKuraliHatasi as e:
         db.rollback()
         raise HTTPException(status_code=400, detail=str(e))
     db.commit()
+
+
+# [2026-10-10] Alan tekrar ölçümü: ilk değerlendirmedeki aynı sorulardan en fazla 5'i yeniden sorulur.
+@router.get("/hedef/olcum/{degisken_id}")
+def alan_olcum_sorulari(degisken_id: int, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    from app.core.kocluk_motoru import olcum_sorulari
+    return olcum_sorulari(db, ogrenci, degisken_id)
+
+
+@router.post("/hedef/olcum/{degisken_id}")
+def alan_olcum_kaydet(degisken_id: int, istek: dict, db: Session = Depends(get_db),
+                      ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    from app.core.kocluk_motoru import olcum_kaydet
+    hedef = aktif_hedef_getir(db, ogrenci)
+    try:
+        sonuc = olcum_kaydet(db, ogrenci, degisken_id, hedef.bolum_id if hedef else None, istek.get("cevaplar") or [])
+    except IsKuraliHatasi as e:
+        db.rollback()
+        raise HTTPException(status_code=400, detail=str(e))
+    db.commit()
+    return sonuc
 
 
 # [2026-10-09] İlham kaynakları: yönetimdeki "Gelişim Kaynak Havuzu" (kitap / film / rol model / psikolojik yaklaşım /
