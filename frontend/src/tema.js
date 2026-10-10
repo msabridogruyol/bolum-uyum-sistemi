@@ -12,7 +12,7 @@ export const OKUL_PALETI = [
   { ad: 'Kırmızı', renk: '#C62828' },
   { ad: 'Turuncu', renk: '#EA580C' },
   { ad: 'Altın', renk: '#B8860B' },
-  { ad: 'Mor', renk: '#6D28D9' },
+  { ad: 'Mor', renk: '#8E24AA' },   // [2026-10-10] eski #6D28D9 mavimsi görünüyordu
   { ad: 'Antrasit', renk: '#374151' },
 ]
 

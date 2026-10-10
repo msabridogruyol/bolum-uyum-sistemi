@@ -186,6 +186,7 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
                                                           OgrenciGelisimAdimDurumu.durum == "tamamlandi").count(),
     }
     v["swot"] = swot(v)
+    v["netler"] = net_verisi(db, o)   # [2026-10-10] deneme / net takibi
     return v
 
 
@@ -314,6 +315,11 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
             "guven": float(t.guven_skoru) if t is not None and t.guven_skoru is not None else None,
             "son_giris": o.son_giris_zamani, "test": bool(getattr(o, "test_hesabi", False)),
         })
+    # [2026-10-10] Deneme / net özeti ve öğrenci başına son TYT / AYT neti
+    net = okul_net_ozeti(db, [o.id for o in ogrenciler])
+    for o, x in zip(ogrenciler, liste):
+        n = net["ogrenci"].get(o.id) or {}
+        x["son_tyt"], x["son_ayt"], x["deneme"] = n.get("TYT"), n.get("AYT"), n.get("sayi", 0)
     for anahtar in ("en_cok_onerilen", "en_cok_hedeflenen"):
         ozet[anahtar] = [{**x, "bolum": _baslik(x["bolum"])} for x in ozet.get(anahtar, [])]
     return {
@@ -323,4 +329,90 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         "ortak_guclu": [{"ad": r[0], "ortalama": round(float(r[1]), 1)} for r in guclu[:6]],
         "ortak_gelisim": [{"ad": r[0], "ortalama": round(float(r[1]), 1)} for r in list(reversed(guclu))[:6]],
         "gecersiz": gecersiz, "ogrenciler": liste,
+        "net": {k: v for k, v in net.items() if k != "ogrenci"},
     }
+
+
+# ============================================================================= [2026-10-10] deneme / net verisi
+def net_verisi(db: Session, o: Ogrenci) -> dict | None:
+    """Öğrencinin deneme sonuçları, ders ders son/ortalama, konu ilerlemesi ve hedef program kıyası. Hiç veri yoksa None."""
+    from app.core.sinav_yapisi import KONU_DERSLERI, TESTLER
+    try:
+        rows = db.execute(text("SELECT tarih, oturum, ad, dersler, toplam_net FROM ogrenci_denemeleri WHERE ogrenci_id = :o "
+                               "ORDER BY tarih, id"), {"o": o.id}).all()
+        konu = db.execute(text("SELECT ders, durum, count(*) FROM ogrenci_konu_takibi WHERE ogrenci_id = :o GROUP BY ders, durum"),
+                          {"o": o.id}).all()
+    except Exception:
+        db.rollback()
+        return None
+    if not rows and not konu:
+        return None
+    denemeler = [{"tarih": r.tarih, "oturum": r.oturum, "ad": r.ad, "dersler": r.dersler or {}, "toplam": float(r.toplam_net)}
+                 for r in rows]
+    oturumlar = []
+    for ot in ("TYT", "AYT", "YDT"):
+        l = [d for d in denemeler if d["oturum"] == ot]
+        if not l:
+            continue
+        son3 = [d["toplam"] for d in l[-3:]]
+        oturumlar.append({"oturum": ot, "sayi": len(l), "ilk": l[0]["toplam"], "son": l[-1]["toplam"],
+                          "en_iyi": max(d["toplam"] for d in l), "ort3": round(sum(son3) / len(son3), 2),
+                          "degisim": round(l[-1]["toplam"] - l[0]["toplam"], 2), "seri": [(d["tarih"], d["toplam"]) for d in l]})
+    dersler = []
+    for kod, (ot, ad, soru, _) in TESTLER.items():
+        v = [d["dersler"][kod]["net"] for d in denemeler if kod in d["dersler"]]
+        if v:
+            dersler.append({"kod": kod, "oturum": ot, "ad": ad, "soru": soru, "son": v[-1], "onceki": v[-2] if len(v) > 1 else None,
+                            "ort3": round(sum(v[-3:]) / len(v[-3:]), 2)})
+    konu_d: dict[str, dict] = {}
+    for ders, durum, n in konu:
+        x = konu_d.setdefault(ders, {"biten": 0, "calisiyor": 0})
+        if durum in ("bitti", "tekrar"):
+            x["biten"] += n
+        elif durum == "calisiyor":
+            x["calisiyor"] += n
+    konu_ozet = [{"ad": f"{KONU_DERSLERI[k][0]} {KONU_DERSLERI[k][1]}", "biten": x["biten"], "calisiyor": x["calisiyor"],
+                  "toplam": len(KONU_DERSLERI[k][2])} for k, x in konu_d.items() if k in KONU_DERSLERI]
+    kiyas = None
+    if denemeler:
+        try:
+            from app.api.net_takibi import kiyas_hesapla
+            k = kiyas_hesapla(db, o)
+            if k.get("hedef") and k.get("toplam_ben") is not None:
+                kiyas = k
+        except Exception:
+            db.rollback()
+    return {"denemeler": denemeler, "oturumlar": oturumlar, "dersler": dersler, "konu": konu_ozet,
+            "konu_biten": sum(x["biten"] for x in konu_ozet), "konu_calisiyor": sum(x["calisiyor"] for x in konu_ozet),
+            "kiyas": kiyas}
+
+
+def okul_net_ozeti(db: Session, ogrenci_idler: list) -> dict:
+    """Okul / şube raporu için: deneme giren öğrenci sayısı, son TYT/AYT ortalamaları ve öğrenci başına son netler."""
+    from app.core.sinav_yapisi import TESTLER
+    if not ogrenci_idler:
+        return {"ogrenci": {}, "giren": 0}
+    try:
+        rows = db.execute(text("""
+            SELECT DISTINCT ON (ogrenci_id, oturum) ogrenci_id, oturum, toplam_net, dersler, tarih
+              FROM ogrenci_denemeleri WHERE ogrenci_id = ANY(:ids)
+             ORDER BY ogrenci_id, oturum, tarih DESC, id DESC"""), {"ids": list(ogrenci_idler)}).all()
+        sayilar = dict(db.execute(text("SELECT ogrenci_id, count(*) FROM ogrenci_denemeleri WHERE ogrenci_id = ANY(:ids) "
+                                       "GROUP BY ogrenci_id"), {"ids": list(ogrenci_idler)}).all())
+    except Exception:
+        db.rollback()
+        return {"ogrenci": {}, "giren": 0}
+    ogr: dict = {}
+    ders_top: dict[str, list[float]] = {}
+    for r in rows:
+        x = ogr.setdefault(r.ogrenci_id, {"sayi": sayilar.get(r.ogrenci_id, 0)})
+        x[r.oturum] = float(r.toplam_net)
+        for kod, v in (r.dersler or {}).items():
+            ders_top.setdefault(kod, []).append(float(v.get("net", 0)))
+    def ort(ot):
+        v = [x[ot] for x in ogr.values() if ot in x]
+        return (round(sum(v) / len(v), 2), len(v)) if v else (None, 0)
+    return {"ogrenci": ogr, "giren": len(ogr), "toplam_deneme": sum(sayilar.values()),
+            "tyt": ort("TYT"), "ayt": ort("AYT"),
+            "dersler": [{"ad": f"{TESTLER[k][0]} {TESTLER[k][1]}", "soru": TESTLER[k][2], "ort": round(sum(v) / len(v), 2), "n": len(v)}
+                        for k, v in ders_top.items() if k in TESTLER]}

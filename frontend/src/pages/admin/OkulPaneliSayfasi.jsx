@@ -2,7 +2,7 @@
 // okul yetkilileri ve işlem kayıtları. Süper admin her okulu (ve okulId=0: okul harici) görür; okul yetkilisi yalnızca kendi okulunu.
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
-import RaporDugmeleri from '../../components/RaporDugmeleri'
+import RaporSecici from '../../components/RaporSecici'
 import { api } from '../../api/client'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import TopluYuklemePenceresi from '../../components/yonetim/TopluYuklemePenceresi'
@@ -478,9 +478,9 @@ export default function OkulPaneliSayfasi() {
   const etiket = (b) => b.k === 'ogrenciler' ? `${b.ad} (${oz.toplam})` : b.k === 'yetkililer' ? `${b.ad} (${oz.yetkili_sayisi})` : b.ad
   const aktifBolum = bolumler.find((b) => b.k === sekme) || bolumler[0]
   const raporlar = (
-    <RaporDugmeleri baslik="Okul raporu" secenekler={[
-      { anahtar: 'p', ad: 'PDF', ikon: '📄', aciklama: 'Tamamlama oranları, sınıflar, alan dağılımı, ortak güçlü yönler ve öğrenci listesi', indir: () => api.okulRaporuIndir(okulId, 'pdf') },
-      { anahtar: 'x', ad: 'Excel', ikon: '📊', aciklama: 'Özet, sınıflar ve tüm öğrenciler tablo halinde', indir: () => api.okulRaporuIndir(okulId, 'xlsx') },
+    <RaporSecici etiket="Okul raporu" turler={[
+      { k: 'p', ad: 'Okul raporu (PDF)', ikon: '📄', aciklama: 'Tamamlama oranları, sınıflar, alan dağılımı, ortak güçlü yönler, deneme özeti, öğrenci listesi', indir: ({ netler }) => api.okulRaporuIndir(okulId, 'pdf', netler) },
+      { k: 'x', ad: 'Excel', ikon: '📊', aciklama: 'Özet, sınıflar ve tüm öğrenciler (son netlerle) tablo halinde', indir: ({ netler }) => api.okulRaporuIndir(okulId, 'xlsx', netler) },
     ]} />
   )
   return (
