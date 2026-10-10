@@ -286,6 +286,7 @@ class YoneticiOut(BaseModel):
     okul_ad: str | None = None
     aktif_mi: bool = True
     son_giris_zamani: datetime | None = None
+    unvan: str | None = None
 
 
 # --- E9 — Audit Log ---

@@ -14,6 +14,7 @@ import OkulTemaKarti from '../../components/yonetim/OkulTemaKarti'
 import AkranSekmesi from '../../components/yonetim/AkranPaneli'
 import KulupYonetimi from '../../components/yonetim/KulupYonetimi'
 import KocYonetimi from '../../components/yonetim/KocYonetimi'
+import SiniflarSekmesi from '../../components/yonetim/SiniflarSekmesi'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -86,9 +87,10 @@ function OzetSekmesi({ oz }) {
 }
 
 // ----------------------------------------------------------------------------- Öğrenciler
-function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, yenile }) {
+function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, yenile, baslangicFiltre = '' }) {
   const [arama, setArama] = useState('')
-  const [sinif, setSinif] = useState('')
+  // [2026-10-10] Filtre: '' | 's:<sınıf>' (sınıf düzeyi) | 'b:<sınıf>|<şube>' (şube, ör. 12-A)
+  const [sinif, setSinif] = useState(baslangicFiltre)
   const [durum, setDurum] = useState('')
   const [secili, setSecili] = useState(new Set())
   const [yukleme, setYukleme] = useState(false)
@@ -99,11 +101,22 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
   const [bekle, setBekle] = useState(false)
   const [sinifAta, setSinifAta] = useState({ sinif: '', sube: '' })
 
-  const siniflar = useMemo(() => [...new Set(ogrenciler.map((o) => o.sinif).filter(Boolean))], [ogrenciler])
+  const SIRA = ['Aday', '9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun']
+  const siniflar = useMemo(() => {
+    const m = new Map()
+    ogrenciler.forEach((o) => { if (o.sinif) { if (!m.has(o.sinif)) m.set(o.sinif, new Set()); if (o.sube) m.get(o.sinif).add(o.sube) } })
+    return [...m.entries()].sort((a, b) => (SIRA.indexOf(a[0]) + 99) % 99 - (SIRA.indexOf(b[0]) + 99) % 99).map(([k, v]) => [k, [...v].sort()])
+  }, [ogrenciler])
+  const sinifUyar = (o) => {
+    if (!sinif) return true
+    if (sinif.startsWith('s:')) return o.sinif === sinif.slice(2)
+    const [sf, sb] = sinif.slice(2).split('|')
+    return o.sinif === sf && (o.sube || '') === sb
+  }
   const liste = ogrenciler.filter((o) => {
     const a = arama.toLocaleLowerCase('tr')
     return (!a || o.ad_soyad.toLocaleLowerCase('tr').includes(a) || o.email.toLowerCase().includes(a) || (o.ogrenci_no || '').includes(a))
-      && (!sinif || o.sinif === sinif) && (!durum || o.durum === durum)
+      && sinifUyar(o) && (!durum || o.durum === durum)
   })
   const hepsiSecili = liste.length > 0 && liste.every((o) => secili.has(o.id))
 
@@ -128,7 +141,11 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
       <div className="yp-arac">
         <input className="auth-input" style={{ maxWidth: 260 }} placeholder="İsim veya e-posta ara…" value={arama} onChange={(e) => setArama(e.target.value)} />
         <select className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)}>
-          <option value="">Tüm sınıflar</option>{siniflar.map((s) => <option key={s}>{s}</option>)}
+          <option value="">Tüm sınıflar</option>
+          {siniflar.map(([sf, subeler]) => [
+            <option key={sf} value={`s:${sf}`}>{sf}{subeler.length ? ' (tüm şubeler)' : ''}</option>,
+            ...subeler.map((sb) => <option key={`${sf}|${sb}`} value={`b:${sf}|${sb}`}>&nbsp;&nbsp;{sf.replace('. Sınıf', '')}-{sb}</option>),
+          ])}
         </select>
         <select className="yp-sec" value={durum} onChange={(e) => setDurum(e.target.value)}>
           <option value="">Tüm durumlar</option>
@@ -217,15 +234,16 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
 // ----------------------------------------------------------------------------- Okul yetkilileri
 function YetkililerSekmesi({ okulId, superAdmin }) {
   const [liste, setListe] = useState(null)
-  const [form, setForm] = useState({ ad_soyad: '', email: '' })
+  const [form, setForm] = useState({ ad_soyad: '', email: '', unvan: '' })
   const [sifre, setSifre] = useState(null)
+  const [duzen, setDuzen] = useState(null)   // [2026-10-10] { id, ad_soyad, unvan }
   const [silinecek, setSilinecek] = useState(null)
   const [hata, setHata] = useState(null)
   const yukle = useCallback(() => { api.okulYetkilileri(okulId).then(setListe).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [okulId])
   useEffect(yukle, [yukle])
 
   async function islem(fn) { setHata(null); try { await fn() } catch (e) { setHata(e.detail || 'İşlem başarısız.') } }
-  const ekle = (e) => { e.preventDefault(); islem(async () => { const r = await api.okulYetkilisiEkle(okulId, form); setSifre(r); setForm({ ad_soyad: '', email: '' }); yukle() }) }
+  const ekle = (e) => { e.preventDefault(); islem(async () => { const r = await api.okulYetkilisiEkle(okulId, form); setSifre(r); setForm({ ad_soyad: '', email: '', unvan: '' }); yukle() }) }
 
   return (
     <>
@@ -237,6 +255,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
       {superAdmin && (
         <form className="yp-kutu yp-form-satir" style={{ marginBottom: 14 }} onSubmit={ekle}>
           <input className="auth-input" placeholder="Ad Soyad" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
+          <input className="auth-input" placeholder="Görevi / unvanı (isteğe bağlı)" title="ör. Psikolojik Danışman, Rehber Öğretmen" maxLength={60} value={form.unvan} onChange={(e) => setForm({ ...form, unvan: e.target.value })} />
           <input className="auth-input" type="email" placeholder="E-posta" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
           <button className="btn" type="submit">+ Okul yetkilisi ekle</button>
         </form>
@@ -255,7 +274,21 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
           <tbody>
             {liste.map((y) => (
               <tr key={y.id}>
-                <td><b>{y.ad_soyad}</b>{y.test_hesabi && <span className="test-rozet">TEST</span>}</td><td className="yp-ince">{y.email}</td><td className="yp-ince">{onceSure(y.son_giris_zamani)}</td>
+                <td>
+                  {duzen?.id === y.id ? (
+                    <form style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }} onSubmit={(e) => { e.preventDefault(); islem(async () => { await api.okulYetkilisiDuzenle(y.id, { ad_soyad: duzen.ad_soyad, unvan: duzen.unvan }); setDuzen(null); yukle() }) }}>
+                      <input className="yp-sec" value={duzen.ad_soyad} minLength={3} required onChange={(e) => setDuzen({ ...duzen, ad_soyad: e.target.value })} placeholder="Ad soyad" />
+                      <input className="yp-sec" value={duzen.unvan} maxLength={60} onChange={(e) => setDuzen({ ...duzen, unvan: e.target.value })} placeholder="Görevi / unvanı" />
+                      <button className="yp-mini">Kaydet</button><button type="button" className="yp-mini" onClick={() => setDuzen(null)}>İptal</button>
+                    </form>
+                  ) : (
+                    <>
+                      <b>{y.ad_soyad}</b>{y.test_hesabi && <span className="test-rozet">TEST</span>}
+                      <button className="yp-mini" style={{ marginLeft: 6 }} title="Ad / görev düzenle" onClick={() => setDuzen({ id: y.id, ad_soyad: y.ad_soyad, unvan: y.unvan || '' })}>✎</button>
+                      <div className="yp-ince">{y.unvan || 'Görevi belirtilmedi'}</div>
+                    </>
+                  )}
+                </td><td className="yp-ince">{y.email}</td><td className="yp-ince">{onceSure(y.son_giris_zamani)}</td>
                 <td><SifreHucresi gecici={y.gecici_sifre} degistirmeli={y.sifre_degistirmeli} /></td>
                 {superAdmin && (
                   <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
@@ -426,6 +459,7 @@ export default function OkulPaneliSayfasi() {
   const [ogrenciler, setOgrenciler] = useState([])
   const [okullar, setOkullar] = useState([])
   const [hata, setHata] = useState(null)
+  const [ogrFiltre, setOgrFiltre] = useState('')
 
   const yenile = useCallback(() => {
     api.okulOzeti(okulId).then(setOz).catch((e) => setHata(e.detail || 'Okul yüklenemedi.'))
@@ -437,7 +471,7 @@ export default function OkulPaneliSayfasi() {
   if (hata) return <div className="pg pg-genis"><div className="auth-error">{hata}</div></div>
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
-  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['akran', 'Şube & Akran'],
+  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['siniflar', 'Sınıflar'], ['akran', 'Şube & Akran'],
     ...(okulId ? [['kulupler', 'Kulüpler'], ['koclar', 'Koçlar'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
   return (
     <div className="pg pg-genis">
@@ -457,7 +491,8 @@ export default function OkulPaneliSayfasi() {
         {sekmeler.map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
       </div>
       {sekme === 'ozet' && <OzetSekmesi oz={oz} />}
-      {sekme === 'ogrenciler' && <OgrencilerSekmesi okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sekme === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
+      {sekme === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
       {sekme === 'koclar' && okulId > 0 && <KocYonetimi okulId={okulId} />}

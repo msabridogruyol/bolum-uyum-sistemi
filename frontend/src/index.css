@@ -1265,3 +1265,11 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .kc-yt.bekliyor{border-color:color-mix(in srgb, var(--am) 50%, var(--bor))}
 .kc-yt-ust{display:flex;gap:12px;align-items:center;padding:10px 12px;cursor:pointer;font-size:13.5px}
 .kc-yt-govde{border-top:1px solid var(--bor);padding:12px}
+
+/* [2026-10-10] Sınıflar (şube) sekmesi */
+.sn-baslik{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:10px;font-size:15px}
+.sn-ogretmen{background:none;border:1px dashed transparent;border-radius:8px;padding:4px 6px;text-align:left;cursor:pointer;font:inherit;font-size:13px;color:var(--tx)}
+.sn-ogretmen:hover{border-color:var(--bor2)}
+.sn-ogretmen-form{display:flex;gap:6px;flex-wrap:wrap;align-items:center}
+.sn-ogretmen-form .yp-sec{max-width:170px}
+.rapor-dugmeleri.kucuk .rd-dugme{padding:4px 8px;font-size:12px}

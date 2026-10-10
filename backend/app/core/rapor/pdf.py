@@ -388,10 +388,22 @@ def yonetici_pdf(v: dict) -> bytes:
 
 # ============================================================================= okul genel raporu
 def okul_pdf(v: dict) -> bytes:
-    doc, tampon, st = _belge("Okul Genel Raporu", v["okul"], v["tarih"])
     o = v["ozet"]
-    h = [st.p("Okul Genel Raporu", st.baslik), st.p(_e(v["okul"]["ad"]) + " · " + _tarih(v["tarih"]), st.alt)]
+    ks = v.get("kapsam") or {}
+    sube_mi = bool(ks.get("sube"))
+    if sube_mi:
+        baslik = f"{ks['etiket']} Sınıf Raporu"
+    elif ks.get("sinif"):
+        baslik = f"{ks['sinif']} Raporu"
+    else:
+        baslik = "Okul Genel Raporu"
+    doc, tampon, st = _belge(baslik, v["okul"], v["tarih"])
+    alt = _e(v["okul"]["ad"]) + " · " + _tarih(v["tarih"])
+    if (ks.get("ogretmen") or {}).get("ad"):
+        alt += " · Sınıf öğretmeni: " + _e(ks["ogretmen"]["ad"])
+    h = [st.p(baslik, st.baslik), st.p(alt, st.alt)]
     toplam = o.get("toplam") or 0
+    birim = "Sınıfın" if sube_mi else ("Sınıf düzeyinin" if ks.get("sinif") else "Okulun")
 
     def oran(n):
         return f"{n} (%{round(100 * n / toplam) if toplam else 0})"
@@ -405,7 +417,14 @@ def okul_pdf(v: dict) -> bytes:
     h += [kpi, Spacer(1, 6)]
     h.append(st.p("Değerlendirme durumu", st.h2))
     h.append(_cubuklar([(d["etiket"], d["sayi"]) for d in o.get("durumlar", [])], maks=max(1, toplam), renk=st.vurgu))
-    if o.get("siniflar"):
+    subeler = [x for x in o.get("subeler", []) if x["sube"]]
+    if subeler and not sube_mi:
+        h.append(st.p("Şubelere göre", st.h2))
+        h.append(_tablo(st, ["Şube", "Sınıf öğretmeni", "Öğrenci", "Giriş yapan", "Tamamlayan", "Tamamlama"],
+                        [[x["etiket"], (x.get("ogretmen") or {}).get("ad") or "—", str(x["ogrenci"]), str(x["giris_yapan"]),
+                          str(x["tamamlayan"]), f"%{round(100 * x['tamamlayan'] / x['ogrenci']) if x['ogrenci'] else 0}"] for x in subeler],
+                        [22 * mm, 50 * mm, 22 * mm, 28 * mm, 28 * mm, 24 * mm]))
+    if o.get("siniflar") and not ks.get("sinif"):
         h.append(st.p("Sınıflara göre", st.h2))
         h.append(_tablo(st, ["Sınıf", "Öğrenci", "Giriş yapan", "Devam eden", "Tamamlayan", "Tamamlama"],
                         [[s["sinif"], str(s["ogrenci"]), str(s["giris_yapan"]), str(s["devam"]), str(s["tamamlayan"]),
@@ -421,22 +440,37 @@ def okul_pdf(v: dict) -> bytes:
         satir = [[(sol[i]["bolum"] + f" ({sol[i]['sayi']})") if i < len(sol) else "",
                   (sag[i]["bolum"] + f" ({sag[i]['sayi']})") if i < len(sag) else ""] for i in range(max(len(sol), len(sag)))]
         h.append(_tablo(st, ["1. öneri olarak", "Hedef olarak"], satir, [87 * mm, 87 * mm]))
-    if v["katman_ort"]:
+    if v["katman_ort"] and v.get("okul_katman_ort"):
+        okul_ort = {k["kod"]: k["ortalama"] for k in v["okul_katman_ort"]}
+        h.append(st.p("Katman ortalamaları — okul ortalamasıyla karşılaştırma", st.h2))
+        h.append(_tablo(st, ["Katman", "Şube" if sube_mi else "Sınıf düzeyi", "Okul", "Fark"],
+                        [[f"{k['kod']} · {k['ad']}", f"{k['ortalama']:.0f}", f"{okul_ort.get(k['kod'], 0):.0f}",
+                          f"{k['ortalama'] - okul_ort.get(k['kod'], k['ortalama']):+.0f}"] for k in v["katman_ort"]],
+                        [86 * mm, 30 * mm, 30 * mm, 28 * mm]))
+        h.append(st.p("Fark ±5 puandan büyükse grup okul ortalamasından belirgin biçimde ayrışıyor demektir.", st.not_))
+    elif v["katman_ort"]:
         h.append(st.p("Katman ortalamaları (testi tamamlayanlar)", st.h2))
         h.append(_cubuklar([(f"{k['kod']} · {k['ad']}", k["ortalama"]) for k in v["katman_ort"]], renk=st.vurgu))
     if v["ortak_guclu"]:
         satir = [[f"{a['ad']} ({a['ortalama']:.0f})", f"{b['ad']} ({b['ortalama']:.0f})"] for a, b in zip(v["ortak_guclu"], v["ortak_gelisim"])]
         h.append(KeepTogether([
-            st.p("Okulun ortak güçlü yönleri ve gelişim alanları", st.h2),
+            st.p(f"{birim} ortak güçlü yönleri ve gelişim alanları", st.h2),
             _tablo(st, ["En yüksek ortalama", "En düşük ortalama"], satir, [87 * mm, 87 * mm]),
-            st.p("Düşük ortalamalı özellikler okul genelinde planlanacak etkinlikler (kulüp, seminer, proje) için ipucu verir.", st.not_)]))
+            st.p("Düşük ortalamalı özellikler " + ("sınıf rehberlik saatinde" if sube_mi else "okul genelinde")
+                 + " planlanacak etkinlikler (kulüp, seminer, proje) için ipucu verir.", st.not_)]))
     if v["gecersiz"]:
         h.append(st.p(f"Güvenilirlik: {v['gecersiz']} öğrencinin son değerlendirmesi güven eşiğinin altında; yeniden değerlendirme önerilir.", st.govde))
     if v["ogrenciler"]:
         h.append(st.p("Öğrenci listesi", st.h2))
-        h.append(_tablo(st, ["Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven"],
-                        [[x["ad_soyad"] + (" (test)" if x["test"] else ""), x["sinif"], x["durum"], x["ilk_bolum"], x["hedef"],
-                          f"{x['guven']:.0f}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
-                        [38 * mm, 18 * mm, 30 * mm, 38 * mm, 38 * mm, 12 * mm], kucuk=True))
+        if sube_mi:
+            h.append(_tablo(st, ["No", "Ad soyad", "Durum", "1. öneri", "Hedef", "Güven"],
+                            [[x.get("no") or "", x["ad_soyad"] + (" (test)" if x["test"] else ""), x["durum"], x["ilk_bolum"], x["hedef"],
+                              f"{x['guven']:.0f}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
+                            [12 * mm, 38 * mm, 28 * mm, 40 * mm, 40 * mm, 16 * mm], kucuk=True))
+        else:
+            h.append(_tablo(st, ["Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven"],
+                            [[x["ad_soyad"] + (" (test)" if x["test"] else ""), x["sinif"], x["durum"], x["ilk_bolum"], x["hedef"],
+                              f"{x['guven']:.0f}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
+                            [38 * mm, 18 * mm, 30 * mm, 38 * mm, 38 * mm, 12 * mm], kucuk=True))
     doc.build(h)
     return tampon.getvalue()

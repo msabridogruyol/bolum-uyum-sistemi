@@ -156,6 +156,10 @@ export const api = {
   raporIndir: (tur, bicim = 'pdf') => dosyaIndir(`/ogrenci/rapor?tur=${tur}&bicim=${bicim}`),
   ogrenciRaporuIndir: (ogrenciId, tur, bicim = 'pdf') => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/rapor?tur=${tur}&bicim=${bicim}`, 'admin'),
   okulRaporuIndir: (okulId, bicim = 'pdf') => dosyaIndir(`/yonetim/okul/${okulId}/rapor?bicim=${bicim}`, 'admin'),
+  // [2026-10-10] Sınıf düzeyi / şube raporu; tur: ozet | toplu_ogrenci | toplu_veli | toplu_yonetici
+  sinifRaporuIndir: (okulId, sinif, sube, tur = 'ozet', bicim = 'pdf') => dosyaIndir(
+    `/yonetim/okul/${okulId}/rapor?bicim=${bicim}&tur=${tur}&sinif=${encodeURIComponent(sinif)}${sube ? `&sube=${encodeURIComponent(sube)}` : ''}`, 'admin'),
+  subeGuncelle: (okulId, veri) => aput(`/yonetim/okul/${okulId}/sube`, veri),
   // [2026-10-10] Akran eşleştirme, şube dağılımı, aday öğrenci
   ogrenciAkranlari: (id, kapsam = 'okul') => aget(`/yonetim/ogrenci/${id}/akranlar?kapsam=${kapsam}`),
   subeDagilimiOner: (okulId, veri) => apost(`/yonetim/okul/${okulId}/sube-dagilimi`, veri),
@@ -325,6 +329,7 @@ export const api = {
   okulYetkilisiEkle: (okulId, veri) => apost(`/yonetim/okul/${okulId}/yetkililer`, veri),
   okulYetkilisiSifreSifirla: (id) => apost(`/yonetim/yetkili/${id}/sifre-sifirla`),
   okulYetkilisiSil: (id) => adel(`/yonetim/yetkili/${id}`),
+  okulYetkilisiDuzenle: (id, veri) => aput(`/yonetim/yetkili/${id}`, veri),
   okulKayitlari: (okulId, gun = 30) => aget(`/yonetim/okul/${okulId}/kayitlar?gun=${gun}`),
   yonetimOgrenciHedef: (ogrenciId, bolumId) => aput(`/yonetim/ogrenci/${ogrenciId}/hedef`, { bolum_id: bolumId }),
   yonetimHedefHakki: (ogrenciId, ek = 1) => apost(`/yonetim/ogrenci/${ogrenciId}/hedef-hakki`, { ek }),
