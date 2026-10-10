@@ -1813,3 +1813,24 @@ button.yp-kpi{text-align:left;cursor:pointer;font-family:var(--fn);color:var(--t
 .rp-ikon{font-size:30px}
 .rp-ad{font-size:16px;font-weight:800}
 .rp-ac{font-size:12.5px;color:var(--tx2);line-height:1.55;flex:1}
+
+/* [2026-10-10] Okul denemeleri */
+.od-adimlar{display:grid;gap:14px;margin-bottom:12px}
+.od-adim{display:flex;gap:12px;align-items:flex-start}
+.od-no{width:26px;height:26px;border-radius:50%;background:var(--pul);color:var(--pud);font-weight:800;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:13px}
+.od-satir{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:8px}
+.od-secim{display:flex;gap:4px}
+.od-secim button{border:1.5px solid var(--bor);background:var(--sur);border-radius:10px;padding:7px 14px;font-weight:800;font-family:var(--fn);color:var(--tx2);cursor:pointer}
+.od-secim button.secili{color:var(--tx);background:var(--sur2)}
+.od-ozet{display:flex;gap:16px;flex-wrap:wrap;align-items:baseline;padding:10px 12px;background:var(--sur2);border-radius:10px;margin:12px 0 8px;font-size:13px}
+.od-ozet .kirmizi,.od-durum .kirmizi{color:var(--re)}
+.od-durum .yesil{color:var(--gr);font-weight:800}
+.od-tablo-kap{max-height:420px;overflow:auto;border:1px solid var(--bor);border-radius:10px}
+.od-tablo-kap .yp-tablo th{position:sticky;top:0;background:var(--sur);z-index:1}
+.od-tablo-kap .yp-tablo td,.od-tablo-kap .yp-tablo th{white-space:nowrap}
+.od-tablo-kap .od-durum{white-space:normal;min-width:180px}
+tr.od-hatali td{background:color-mix(in srgb, var(--re) 7%, transparent)}
+tr.od-bos td{color:var(--tx3)}
+.od-cubuk-satir{display:grid;grid-template-columns:130px 1fr 52px 34px;gap:10px;align-items:center;font-size:12.5px;padding:4px 0}
+.od-cubuk-satir b{text-align:right}
+.nt-okul-rozet{margin-left:6px;font-size:10.5px;font-weight:700;padding:1px 7px;border-radius:6px;background:var(--pul);color:var(--pud);white-space:nowrap}

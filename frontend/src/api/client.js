@@ -191,6 +191,13 @@ export const api = {
   paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
   okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
   okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
+  // [2026-10-10] Okul denemeleri
+  denemeSablonu: (okulId, oturum, sinif) => aget(`/yonetim/okul/${okulId}/deneme-sablonu?oturum=${oturum}${sinif ? `&sinif=${encodeURIComponent(sinif)}` : ''}`),
+  denemeOnizle: (okulId, v) => apost(`/yonetim/okul/${okulId}/deneme-onizle`, v),
+  okulDenemesiKaydet: (okulId, v) => apost(`/yonetim/okul/${okulId}/okul-denemeleri`, v),
+  okulDenemeleri: (okulId) => aget(`/yonetim/okul/${okulId}/okul-denemeleri`),
+  okulDenemesi: (id) => aget(`/yonetim/okul-deneme/${id}`),
+  okulDenemesiSil: (id) => adel(`/yonetim/okul-deneme/${id}`),
   // [2026-10-10] Rehberlik ve erken uyarı
   erkenUyari: (okulId) => aget(`/yonetim/okul/${okulId}/erken-uyari`),
   riskErtele: (ogrenciId, kural, gun = 14) => apost(`/yonetim/ogrenci/${ogrenciId}/risk-ertele`, { kural, gun }),

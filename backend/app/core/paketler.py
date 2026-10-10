@@ -26,6 +26,7 @@ MODULLER = {
     "kulupler": {"ad": "Kulüpler", "ikon": "🎭", "aciklama": "İlgi testi, kulüp önerileri, katılma talepleri ve kulüp duyuruları"},
     "filiz": {"ad": "Filiz asistanı", "ikon": "💬", "aciklama": "Filiz sohbet asistanı (otomatik rehber / yapay zekâ)"},
     "net_takibi": {"ad": "Net takibi", "ikon": "📈", "aciklama": "Deneme netleri, konu takibi, hedef üniversiteye göre net kıyası"},
+    "okul_denemeleri": {"ad": "Okul denemesi yükleme", "ikon": "🏫", "aciklama": "Okulun yaptığı denemelerin sonuçlarını Excel şablonuyla tek seferde yükleme, şube ve okul ortalamaları (Net takibi ile çalışır)"},
     "akran": {"ad": "Şube ve akran analizi", "ikon": "🤝", "aciklama": "Benzer akranlar, şube dağılımı önerisi, aday öğrenci uyumu"},
     "egitim_koclari": {"ad": "Eğitim koçları", "ikon": "👩‍🏫", "aciklama": "Anlaşmalı eğitim koçlarıyla görüşme talebi"},
     "rehberlik": {"ad": "Rehberlik ve erken uyarı", "ikon": "🧭", "aciklama": "Görüşme kayıtları, randevular, takipler ve dikkat gerektiren öğrenciler listesi"},
@@ -33,6 +34,8 @@ MODULLER = {
     "gelismis_raporlar": {"ad": "Gelişmiş raporlar", "ikon": "🗂️", "aciklama": "Şube toplu raporları ve sınıf öğretmeni raporu"},
 }
 TUMU = list(MODULLER)
+# [2026-10-10] modül → çalışması için gereken modül
+BAGIMLILIK = {"okul_denemeleri": "net_takibi"}
 
 
 def _liste(v) -> list[str]:
@@ -65,6 +68,7 @@ def okul_modulleri(db: Session, okul_id: int | None) -> list[str]:
         return TUMU[:]
     etkin = (set(_liste(r.moduller)) if r.paket else set(TUMU)) | set(_liste(r.modul_ekle))
     etkin -= set(_liste(r.modul_cikar))
+    etkin -= {m for m, gerek in BAGIMLILIK.items() if gerek not in etkin}   # bağlı olduğu modül kapalıysa çalışamaz
     return [m for m in TUMU if m in etkin]
 
 
@@ -115,6 +119,8 @@ def okul_modulu(kod: str):
             elif "gorusme_id" in p:
                 okul_id = db.execute(text("SELECT o.okul_id FROM rehberlik_gorusmeleri g JOIN ogrenciler o ON o.id = g.ogrenci_id "
                                           "WHERE g.id = :i"), {"i": int(p["gorusme_id"])}).scalar()
+            elif "deneme_id" in p:
+                okul_id = db.execute(text("SELECT okul_id FROM okul_denemeleri WHERE id = :i"), {"i": int(p["deneme_id"])}).scalar()
             elif "duyuru_id" in p:
                 okul_id = db.execute(text("SELECT k.okul_id FROM kulup_duyurulari d JOIN okul_kulupleri k ON k.id = d.kulup_id "
                                           "WHERE d.id = :i"), {"i": int(p["duyuru_id"])}).scalar()
