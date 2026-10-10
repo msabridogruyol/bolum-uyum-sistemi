@@ -368,8 +368,8 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
     h.append(st.p("SWOT analizin", st.h2))
     h.append(_swot(st, v["swot"]))
     h.append(Spacer(1, 8))
-    h.append(st.p("Unutma: Sonuçların kesin bir hüküm değil; ilgi ve eğilimlerin lise yıllarında gelişir. Raporu rehber öğretmeninle "
-                  "ve ailenle birlikte konuş, merak ettiğin bölümleri yakından tanı.", st.not_))
+    h.append(st.p("Unutma: Sonuçların karar vermene yardımcı olur; son karar senin ve rehber öğretmeninle birlikte verilir. İlgi ve eğilimlerin "
+                  "lise yıllarında gelişir; raporu ailenle de konuş, merak ettiğin bölümleri yakından tanı.", st.not_))
     doc.build(h)
     return tampon.getvalue()
 

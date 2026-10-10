@@ -18,6 +18,10 @@ import TakvimYonetimi from '../../components/yonetim/TakvimYonetimi'
 import { okulBolumleri } from '../../components/yonetim/okulBolumleri'
 import KonuListesiYonetimi from '../../components/yonetim/KonuListesiYonetimi'
 import OkulPaketKarti from '../../components/yonetim/OkulPaketKarti'
+import RehberlikSekmesi from '../../components/yonetim/Rehberlik'
+import OkulDenemeleri from '../../components/yonetim/OkulDenemeleri'
+import Anketler from '../../components/yonetim/Anketler'
+import { Mezunlar, TercihDonemi } from '../../components/yonetim/TercihMezun'
 import { OkulModulleriContext } from '../../yardimci/moduller'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
@@ -519,6 +523,11 @@ export default function OkulPaneliSayfasi() {
       {sk === 'ozet' && <OzetSekmesi oz={oz} />}
       {sk === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
       {sk === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sk === 'rehberlik' && <RehberlikSekmesi okulId={okulId} ogrenciler={ogrenciler} superAdmin={superAdmin} okullar={okullar} yenileOkul={yenile} />}
+      {sk === 'tercih' && okulId > 0 && <TercihDonemi okulId={okulId} />}
+      {sk === 'mezunlar' && okulId > 0 && <Mezunlar okulId={okulId} />}
+      {sk === 'anketler' && okulId > 0 && <Anketler okulId={okulId} />}
+      {sk === 'denemeler' && okulId > 0 && <OkulDenemeleri okulId={okulId} />}
       {sk === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
       {sk === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
       {sk === 'takvim' && okulId > 0 && <TakvimYonetimi okulId={okulId} />}

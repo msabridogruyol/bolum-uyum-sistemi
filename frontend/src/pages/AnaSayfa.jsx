@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import GecersizTurUyarisi from '../components/GecersizTurUyarisi'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import HaftalikGorevler from '../components/HaftalikGorevler'
@@ -121,6 +122,8 @@ export default function AnaSayfa() {
         )}
       </div>
 
+      <GecersizTurUyarisi ozet={ozet} />
+
       <BugunPaneli ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} motivasyon={motivasyon} kocluk={kocluk} />
 
       {yenidenDegerlendirmeHazir && (
@@ -138,7 +141,7 @@ export default function AnaSayfa() {
               Yeniden değerlendirme zamanın geldi!
             </div>
             <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 2 }}>
-              90 günlük bekleme süresi doldu — profilini tazelemek için tekrar değerlendirilebilirsin.
+              Yeni değerlendirme turun açıldı — profilini tazelemek için tekrar değerlendirilebilirsin.
             </div>
           </div>
           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--gr)' }}>Başla →</span>

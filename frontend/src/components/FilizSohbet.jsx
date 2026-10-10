@@ -195,7 +195,7 @@ export default function FilizSohbet() {
 
           {gorunum === 'sorular' && (
             <div className="filiz-mesajlar">
-              <div className="filiz-sorular-bas">Bir soruya dokun, Filiz hemen cevaplasın.{otomatik ? ' Otomatik rehber modunda bu sorular en iyi sonucu verir.' : ' Kendi cümlelerinle de sorabilirsin.'}</div>
+              <div className="filiz-sorular-bas">Bir soruya dokun, Filiz hemen cevaplasın.{otomatik ? ' Bu sorularla başlamak en hızlı yol.' : ' Kendi cümlelerinle de sorabilirsin.'}</div>
               {(durum?.soru_kategorileri || []).map((k) => (
                 <div key={k.ad} className="filiz-soru-grup">
                   <div className="filiz-soru-grup-ad">{k.ikon} {k.ad}</div>
@@ -236,8 +236,8 @@ export default function FilizSohbet() {
             </div>
           )}
           {gorunum === 'sohbet' && otomatik && (
-            <div className="filiz-oto-serit" title="Gerçek yapay zekâ bağlandığında Filiz serbest sohbet edebilecek.">
-              🤖 <b>Otomatik rehber modu</b> · Yapay zekâ bağlı değil; sonuçlarına dayanan hazır cevaplar verilir.
+            <div className="filiz-oto-serit">
+              🌱 <b>Rehber modu</b> · Cevaplar senin sonuçlarına, hedefine ve görevlerine göre hazırlanır.
             </div>
           )}
           {gorunum === 'sohbet' && (
@@ -307,7 +307,7 @@ export default function FilizSohbet() {
           )}
           {durum?.aktif && (
             <div className="filiz-alt">
-              {otomatik ? '' : (durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı · ` : 'Bugünlük mesaj hakkın doldu · ')}{otomatik ? 'Otomatik rehber: cevaplar sistemdeki sonuçlarına göre hazırlanır.' : 'Filiz Gelişim Koçu bir yapay zekâ asistanıdır, hata yapabilir.'}
+              {otomatik ? '' : (durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı · ` : 'Bugünlük mesaj hakkın doldu · ')}{otomatik ? 'Cevaplar sistemdeki sonuçlarına göre hazırlanır; önemli kararlarını rehber öğretmeninle birlikte ver.' : 'Filiz Gelişim Koçu bir yapay zekâ asistanıdır; önemli kararlarını rehber öğretmeninle birlikte ver.'}
             </div>
           )}
         </div>

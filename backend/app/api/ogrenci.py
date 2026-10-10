@@ -516,7 +516,8 @@ def durum_ozetini_getir(
     k5_tamamlanan = sum(1 for d in dal_oturumlari if d.durum == "tamamlandi")
 
     sonraki_tur_tarihi = None
-    if tur.durum == "tamamlandi" and tur.tamamlanma_zamani:
+    sonuc_gecerli = tur.sonuc_gecerli_mi is not False
+    if tur.durum == "tamamlandi" and tur.tamamlanma_zamani and sonuc_gecerli:
         min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "120"))
         tamamlanma = tur.tamamlanma_zamani
         if tamamlanma.tzinfo is None:
@@ -527,7 +528,7 @@ def durum_ozetini_getir(
         tur_no=tur.tur_no, tur_tamamlandi_mi=(tur.durum == "tamamlandi"),
         tamamlanan_katman_sayisi=tamamlanan_katman, toplam_ana_katman_sayisi=ana_katman_sayisi,
         k5_acilan_dal_sayisi=k5_acilan, k5_tamamlanan_dal_sayisi=k5_tamamlanan,
-        sonraki_tur_tarihi=sonraki_tur_tarihi,
+        sonraki_tur_tarihi=sonraki_tur_tarihi, sonuc_gecerli=sonuc_gecerli,
     )
 
 

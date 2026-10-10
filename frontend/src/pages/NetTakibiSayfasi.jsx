@@ -222,10 +222,10 @@ function DenemelerSekmesi({ yapi, denemeler, kiyas, yenile }) {
                 {[...denemeler].reverse().map((d) => (
                   <tr key={d.id}>
                     <td>{kisaTarih(d.tarih)}</td>
-                    <td><span className="nt-oturum" style={{ color: OTURUM_RENK[d.oturum] }}>{d.oturum}</span> {d.ad || ''}</td>
+                    <td><span className="nt-oturum" style={{ color: OTURUM_RENK[d.oturum] }}>{d.oturum}</span> {d.ad || ''}{d.okul_denemesi && <span className="nt-okul-rozet" title="Okulunun yüklediği deneme">🏫 Okul denemesi</span>}</td>
                     <td className="yp-ince">{Object.entries(d.dersler).map(([k, v]) => `${(yapi.tum_testler.find((t) => t.kod === k) || {}).ad || k} ${n2(v.net)}`).join(' · ')}</td>
-                    <td><b>{n2(d.toplam_net)}</b></td>
-                    <td><button className="hg-link" onClick={() => setSilinecek(d)}>Sil</button></td>
+                    <td><b>{n2(d.toplam_net)}</b>{d.okul_ortalama != null && <div className={`yp-ince ${d.toplam_net >= d.okul_ortalama ? 'arti' : 'eksi'}`} title="Okul ortalaması">okul ort. {n2(d.okul_ortalama)}</div>}</td>
+                    <td>{d.okul_denemesi ? null : <button className="hg-link" onClick={() => setSilinecek(d)}>Sil</button>}</td>
                   </tr>
                 ))}
               </tbody>

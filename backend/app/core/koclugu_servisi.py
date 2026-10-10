@@ -69,8 +69,8 @@ def hedef_sec(db: Session, ogrenci: Ogrenci, bolum_id: int, onay: bool = False, 
 
     if mevcut_aktif is not None and not onay:
         raise IsKuraliHatasi(
-            f"Zaten aktif bir hedefin var (bolum_id={mevcut_aktif.bolum_id}). "
-            f"Değiştirmek için onay=true göndermelisin."
+            "Zaten aktif bir hedef bölümün var. "
+            "Değiştirmek istediğini onaylaman gerekiyor."
         )
 
     if mevcut_aktif is not None:

@@ -273,7 +273,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
             {!sonuc.tamamlandi_mi ? (
               <div className="taslak-onizleme">
                 <div className="taslak-onizleme-icerik">
-                  {['Güçlü Yönün', 'Zayıf Yönün'].map((baslik, i) => (
+                  {['Güçlü Yönün', 'Gelişime Açık Yönün'].map((baslik, i) => (
                     <div key={i} style={{ marginBottom: i === 0 ? 14 : 0 }}>
                       <div style={{ fontSize: 10.5, fontWeight: 700, color: i === 0 ? 'var(--gr)' : 'var(--am)', marginBottom: 5 }}>
                         {i === 0 ? '✓' : '↻'} {baslik}

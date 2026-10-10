@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import GecersizTurUyarisi from '../components/GecersizTurUyarisi'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
@@ -70,6 +71,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
           {genelOrtalama !== null && <> · Genel ortalama puan: <b>{genelOrtalama}</b></>}
         </div>
       </div>
+      {!gomulu && <GecersizTurUyarisi ozet={ozet} />}
 
       {k5Bekliyor && (
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)', marginBottom: 16 }}>
