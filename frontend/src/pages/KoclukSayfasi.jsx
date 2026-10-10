@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import Sayac from '../components/Sayac'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
+import { AlanTuruRozeti, GeriBildirimOzeti, OlcumKarti, OlcumPenceresi, TamamlaFormu } from '../components/kocluk/KoclukMotoru'
 
 // ============================================================
 // Ana sayfa
@@ -80,6 +81,7 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
   const [isaretli, setIsaretli] = useState(() => kontrolOku(adim.kod))
   const [bekle, setBekle] = useState(null)
   const [hata, setHata] = useState(null)
+  const [formAcik, setFormAcik] = useState(false)   // [2026-10-10] "Yaptım" → kısa geri bildirim
   const kontrolSayisi = adim.kontrol?.length || 0
   const hepsiIsaretli = kontrolSayisi > 0 && isaretli.length >= kontrolSayisi
 
@@ -89,10 +91,12 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
     // ilk işaretle adım otomatik "başladım" olur
     if (!basladi && !bitti && yeni.length === 1 && !isaretli.length) durumGonder('devam_ediyor')
   }
-  async function durumGonder(kod) {
+  async function durumGonder(kod, gb) {
+    if (kod === 'tamamlandi' && gb === undefined) { setFormAcik(true); return }
     setBekle(kod); setHata(null)
-    const h = await onDurum(adim.kod, kod)
+    const h = await onDurum(adim.kod, kod, gb)
     if (h) setHata(h)
+    else setFormAcik(false)
     setBekle(null)
   }
 
@@ -106,6 +110,11 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
       </div>
       <div style={{ fontSize: 13.5, fontWeight: 700, marginBottom: 4, textDecoration: bitti ? 'line-through' : 'none' }}>{bitti ? '✓ ' : ''}{adim.baslik}</div>
       <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5, marginBottom: 8 }}>{adim.aciklama}</div>
+      {adim.kazanim && !bitti && (
+        <div className="adim-kazanim"><span>🎁 Sana ne katar?</span> {adim.kazanim}</div>
+      )}
+      {vurgulu && adim.uyarlama && !bitti && <div className="adim-uyarlama">🧭 {adim.uyarlama}</div>}
+      {bitti && <GeriBildirimOzeti gb={adim.geri_bildirim} />}
 
       {detayVar ? (
         <>
@@ -144,6 +153,12 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
         <div style={{ fontSize: 11.5, color: 'var(--tx3)', marginBottom: 8 }}><b>Nasıl anlarsın?</b> {adim.olcut}</div>
       )}
 
+      {formAcik && !bitti ? (
+        <>
+          <TamamlaFormu adim={adim} onKaydet={(gb) => durumGonder('tamamlandi', gb)} onVazgec={() => setFormAcik(false)} />
+          {hata && <div className="auth-error" style={{ marginTop: 6, fontSize: 12 }}>{hata}</div>}
+        </>
+      ) : (
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {bitti ? (
           <button className="btn sec" style={vurgulu ? { fontSize: 13.5, padding: '9px 18px' } : { fontSize: 11.5, padding: '5px 10px' }}
@@ -161,6 +176,7 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
         })}
         {hata && <span className="auth-error" style={{ margin: 0, padding: '4px 10px', fontSize: 12 }}>{hata}</span>}
       </div>
+      )}
     </div>
   )
 }
@@ -323,8 +339,12 @@ function OdakSatirlari({ plan }) {
           <div style={{ minWidth: 0, flex: 1 }}>
             <div style={{ fontSize: 13.5, fontWeight: 700 }}>{o.degisken_adi}</div>
             <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5 }}>{o.neden_onemli}</div>
+            {o.alan_turu_aciklama && <div className="koc-alan-turu-not">{o.alan_turu_aciklama}</div>}
           </div>
-          <KategoriRozeti kategori={o.kategori} />
+          <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
+            <AlanTuruRozeti odak={o} />
+            {o.alan_turu !== 'deger' && <KategoriRozeti kategori={o.kategori} />}
+          </div>
         </div>
       ))}
     </div>
@@ -400,7 +420,7 @@ function OzetSekmesi({ plan, gelisim, sekmeyeGit }) {
 // ---------------------------------------------------------------- 2) Yol haritası — her seferinde TEK adım
 // [2026-10-09] Lise öğrencisi için sade akış: ekranda yalnızca şimdiki adım var. "Yaptım" deyince sıradaki gelir.
 // Üstte noktalı ilerleme yolu, altta sıradaki 2 adımın başlığı ve katlanmış "Tamamladıkların" listesi.
-function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmeyeGit }) {
+function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmeyeGit, onOlc }) {
   const [bitenAcik, setBitenAcik] = useState(false)
   const gorulduAnahtari = `kocluk_karsilastirma_goruldu_${hedefId}`
   const [karsilastirmaGoruldu] = useState(() => { try { return localStorage.getItem(gorulduAnahtari) === '1' } catch { return true } })
@@ -447,8 +467,10 @@ function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmey
             if (!odak && !g) return null
             return (
               <div className="yh-neden">
-                <div className="yh-neden-bas">❓ Bu adım neden? <b>{simdiki.degisken_adi}</b>{g && <KategoriRozeti kategori={g.kategori} />}</div>
+                <div className="yh-neden-bas">❓ Bu adım neden? <b>{simdiki.degisken_adi}</b>
+                  {odak?.alan_turu ? <AlanTuruRozeti odak={odak} /> : g && <KategoriRozeti kategori={g.kategori} />}</div>
                 {odak?.neden_onemli && <div>{odak.neden_onemli}</div>}
+                {odak?.alan_turu_aciklama && <div className="koc-alan-turu-not">{odak.alan_turu_aciklama}</div>}
                 {g && (
                   <div className="yh-neden-cubuk">
                     <div><span>Sen</span><div className="mini-cubuk-track"><div className="mini-cubuk-fill" style={{ width: `${g.ogrenci_goreli ?? g.ogrenci_puan}%`, background: 'var(--pu)' }} /></div></div>
@@ -494,6 +516,15 @@ function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmey
         </div>
       )}
 
+      {plan.odak_alanlari.some((o) => o.olcum) && (
+        <div className="olcum-alan">
+          <div className="yh-etiket">📏 Gelişimini ölç <span>Her 3 adımda bir, aynı sorularla önce / sonra</span></div>
+          <div className="olcum-izgara">
+            {plan.odak_alanlari.filter((o) => o.olcum).map((o) => <OlcumKarti key={o.degisken_id} odak={o} onOlc={onOlc} />)}
+          </div>
+        </div>
+      )}
+
       {biten.length > 0 && (
         <div className="yh-biten">
           <button className="hg-link" onClick={() => setBitenAcik(!bitenAcik)}>{bitenAcik ? '▴' : '▾'} Tamamladıkların ({biten.length})</button>
@@ -502,7 +533,7 @@ function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmey
               {biten.map((x) => (
                 <div key={x.kod} className="yh-biten-satir">
                   <span className="yh-tik">✓</span>
-                  <span style={{ flex: 1, minWidth: 0 }}>{x.baslik}</span>
+                  <span style={{ flex: 1, minWidth: 0 }}>{x.baslik}<GeriBildirimOzeti gb={x.geri_bildirim} /></span>
                   <button className="hg-link" onClick={() => onDurum(x.kod, null)} title="Yanlışlıkla işaretlediysen geri al">Geri al</button>
                 </div>
               ))}
@@ -736,9 +767,10 @@ export default function KoclukSayfasi() {
 
   useEffect(() => { if (hedef) analiziYukle() }, [hedef, analiziYukle])
 
-  async function adimDurumu(kod, durum) {
+  const [olcumAlani, setOlcumAlani] = useState(null)
+  async function adimDurumu(kod, durum, geriBildirim) {
     try {
-      await api.adimDurumuGuncelle(kod, durum)
+      await api.adimDurumuGuncelle(kod, durum, geriBildirim || {})
       setPlan(await api.gelisimPlaniGetir()) // ilerleme ve sıradaki adım sunucuda yeniden hesaplanır
       window.dispatchEvent(new CustomEvent('haftalik-guncellendi'))
       return null
@@ -793,11 +825,13 @@ export default function KoclukSayfasi() {
               ))}
             </div>
             {sekme === 'ozet' && <OzetSekmesi plan={plan} gelisim={gelisim} sekmeyeGit={sekmeyeGit} />}
-            {sekme === 'yol' && <YolHaritasiSekmesi plan={plan} gelisim={gelisim} hedefId={hedef.bolum_id} onDurum={adimDurumu} kaynaklar={kaynaklar} sekmeyeGit={sekmeyeGit} />}
+            {sekme === 'yol' && <YolHaritasiSekmesi plan={plan} gelisim={gelisim} hedefId={hedef.bolum_id} onDurum={adimDurumu} kaynaklar={kaynaklar} sekmeyeGit={sekmeyeGit} onOlc={setOlcumAlani} />}
             {sekme === 'ilham' && <IlhamSekmesi kaynaklar={kaynaklar} />}
             {sekme === 'guclu' && <GucluSekmesi plan={plan} onDurum={adimDurumu} />}
             {sekme === 'karsilastirma' && <KarsilastirmaSekmesi gelisim={gelisim} hedef={hedef} />}
             {sekme === 'gelisim' && <GelisimSekmesi karsilastirma={karsilastirma} />}
+            {olcumAlani && <OlcumPenceresi odak={olcumAlani} onKapat={() => setOlcumAlani(null)}
+              onBitti={() => api.gelisimPlaniGetir().then(setPlan).catch(() => {})} />}
           </>
         )}
       </div>

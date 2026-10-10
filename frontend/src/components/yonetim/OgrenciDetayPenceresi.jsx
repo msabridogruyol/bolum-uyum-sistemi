@@ -40,8 +40,42 @@ function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
   )
 }
 
-const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['akran', 'Benzer akranlar'], ['ilgi', 'İlgi & kulüp'], ['kutuphane', 'Kütüphane'], ['kayit', 'Kayıtlar']]
+const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['kocluk', 'Koçluk'], ['akran', 'Benzer akranlar'], ['ilgi', 'İlgi & kulüp'], ['kutuphane', 'Kütüphane'], ['kayit', 'Kayıtlar']]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
+
+// [2026-10-10] Rehber öğretmen için koçluk özeti: tamamlanan adımlar + öğrencinin kısa geri bildirimi + tekrar ölçümler
+const ZORLUK = { kolay: 'Kolay', uygun: 'Uygun', zor: 'Zor' }
+function KoclukOzeti({ k }) {
+  if (!k || (k.adimlar.length === 0 && k.olcumler.length === 0)) return <div className="bos-durum">Öğrenci henüz koçluk adımı tamamlamadı.</div>
+  return (
+    <>
+      {k.olcumler.length > 0 && (
+        <div className="yp-kutu" style={{ marginBottom: 12 }}>
+          <div className="yp-kb">Tekrar ölçümler <span className="yp-ince" style={{ fontWeight: 500 }}>— aynı sorularla önce / sonra (eğilim göstergesi)</span></div>
+          <table className="yp-tablo">
+            <thead><tr><th>Alan</th><th>Önce</th><th>Sonra</th><th>Fark</th><th>Tarih</th></tr></thead>
+            <tbody>{k.olcumler.map((m, i) => (
+              <tr key={i}><td>{m.alan}</td><td>{Math.round(m.onceki)}</td><td>{Math.round(m.yeni)}</td>
+                <td style={{ fontWeight: 700, color: m.yeni - m.onceki >= 0 ? 'var(--gr)' : 'var(--re)' }}>{m.yeni - m.onceki >= 0 ? '+' : ''}{Math.round(m.yeni - m.onceki)}</td>
+                <td className="yp-ince">{tarih(m.zaman)}</td></tr>
+            ))}</tbody>
+          </table>
+        </div>
+      )}
+      <div className="yp-kutu">
+        <div className="yp-kb">Tamamlanan adımlar ({k.adimlar.length})</div>
+        {k.adimlar.map((a, i) => (
+          <div key={i} className="yp-kocluk-adim">
+            <div><b>{a.baslik}</b> <span className="yp-ince">· {a.alan} · {tarih(a.zaman)}</span></div>
+            {(a.fayda || a.zorluk) && <div className="yp-ince">{a.fayda ? `Fayda ${a.fayda}/5` : ''}{a.fayda && a.zorluk ? ' · ' : ''}{a.zorluk ? ZORLUK[a.zorluk] : ''}</div>}
+            {a.ne_yaptim && <div><span className="yp-ince">Ne yaptı:</span> {a.ne_yaptim}</div>}
+            {a.ne_ogrendim && <div><span className="yp-ince">Ne öğrendi:</span> {a.ne_ogrendim}</div>}
+          </div>
+        ))}
+      </div>
+    </>
+  )
+}
 
 export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, onKapat, onDegisti }) {
   const [d, setD] = useState(null)
@@ -215,6 +249,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
         </>
       )}
 
+      {sekme === 'kocluk' && <KoclukOzeti k={d.kocluk} />}
       {sekme === 'akran' && <AkranListesi ogrenciId={ogrenciId} />}
       {sekme === 'ilgi' && <OgrenciIlgi ogrenciId={ogrenciId} />}
       {sekme === 'kutuphane' && <OgrenciKutuphanesi ogrenciId={ogrenciId} />}

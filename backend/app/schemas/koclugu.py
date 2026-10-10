@@ -85,6 +85,11 @@ class PlanAdimiOut(BaseModel):
     nasil: list[str] = []        # [2026-10-09] "Nasıl yaparsın?" — adım adım
     kontrol: list[str] = []      # "Nasıl anlarsın?" — kontrol listesi
     ipucu: str | None = None
+    # [2026-10-10] Koçluk motoru
+    kazanim: str | None = None              # "Sana ne katar?"
+    alan_turu: str | None = None            # deger | aliskanlik | beceri | egilim
+    geri_bildirim: dict | None = None       # {ne_yaptim, ne_ogrendim, fayda, zorluk}
+    uyarlama: str | None = None             # önceki geri bildirime göre öneri (yalnız sıradaki adımda)
 
 
 class PlanAsamasiOut(BaseModel):
@@ -106,6 +111,10 @@ class OdakAlaniOut(BaseModel):
     nedir: str
     neden_onemli: str
     durum_tespiti: str | None = None
+    alan_turu: str | None = None
+    alan_turu_etiket: str | None = None
+    alan_turu_aciklama: str | None = None
+    olcum: dict | None = None               # {tamamlanan_adim, gereken, acik, son: {onceki, yeni, fark, zaman}}
 
 
 class GucluYonOut(BaseModel):
@@ -142,3 +151,8 @@ class GelisimPlaniOut(BaseModel):
 
 class AdimDurumIstek(BaseModel):
     durum: str | None = None   # 'planlandi' | 'devam_ediyor' | 'tamamlandi' | null (işareti kaldır)
+    # [2026-10-10] Tamamlarken isteğe bağlı kısa geri bildirim
+    ne_yaptim: str | None = None
+    ne_ogrendim: str | None = None
+    fayda: int | None = None
+    zorluk: str | None = None

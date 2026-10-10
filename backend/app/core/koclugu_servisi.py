@@ -489,7 +489,8 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
 
     tum = [x for a in asamalar for x in a["adimlar"]]
     siradaki = next((x for x in tum if x["durum"] != "tamamlandi"), None)
-    return {
+    from app.core.kocluk_motoru import plani_zenginlestir   # [2026-10-10] kazanım, geri bildirim, uyarlama, ölçüm
+    return plani_zenginlestir(db, ogrenci, hedef_bolum_id, {
         "hedef_bolum_adi": bolum_adi,
         "odak_alanlari": odak_alanlari,
         "sonraki_alanlar": [{"degisken_id": s.degisken.id, "degisken_adi": s.degisken.ad, "kategori": s.kategori} for s in sonraki],
@@ -501,4 +502,4 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
             "tamamlanan": sum(1 for x in tum if x["durum"] == "tamamlandi"),
             "devam_eden": sum(1 for x in tum if x["durum"] == "devam_ediyor"),
         },
-    }
+    })
