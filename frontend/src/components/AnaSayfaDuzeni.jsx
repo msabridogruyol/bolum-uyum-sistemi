@@ -153,10 +153,15 @@ export default function AnaSayfaDuzeni() {
             📄 Raporlarım
           </NavLink>
         )}
-        {['kocluk', 'net_takibi', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Gelişim</div>}
+        {['kocluk', 'calisma', 'net_takibi', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Gelişim</div>}
         {acik('kocluk') && (
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             🎯 Koçluğum
+          </NavLink>
+        )}
+        {acik('calisma') && (
+          <NavLink to="/calisma" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            ⏱️ Çalışmam
           </NavLink>
         )}
         {acik('net_takibi') && (

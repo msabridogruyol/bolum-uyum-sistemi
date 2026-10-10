@@ -191,6 +191,12 @@ export const api = {
   paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
   okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
   okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
+  // [2026-10-10] Çalışma programı ve soru takibi
+  calisma: () => get('/ogrenci/calisma'),
+  calismaProgramKaydet: (bloklar) => put('/ogrenci/calisma/program', bloklar).then(() => get('/ogrenci/calisma')),
+  calismaKayitEkle: (v) => post('/ogrenci/calisma/kayit', v),
+  calismaKayitSil: (id) => del(`/ogrenci/calisma/kayit/${id}`),
+  ogrenciCalismaOzeti: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/calisma`),
   // [2026-10-10] Okul denemeleri
   denemeSablonu: (okulId, oturum, sinif) => aget(`/yonetim/okul/${okulId}/deneme-sablonu?oturum=${oturum}${sinif ? `&sinif=${encodeURIComponent(sinif)}` : ''}`),
   denemeOnizle: (okulId, v) => apost(`/yonetim/okul/${okulId}/deneme-onizle`, v),

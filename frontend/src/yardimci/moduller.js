@@ -37,12 +37,12 @@ export function useModuller() {
 // Öğrenci sayfa yolu → gereken modül
 export const YOL_MODULU = {
   '/koclugu': 'kocluk', '/gorevler': 'kocluk', '/netlerim': 'net_takibi', '/kutuphane': 'kutuphane',
-  '/takvim': 'takvim', '/raporlarim': 'ogrenci_raporlari', '/kulupler': 'kulupler', '/koclar': 'egitim_koclari',
+  '/takvim': 'takvim', '/calisma': 'calisma', '/raporlarim': 'ogrenci_raporlari', '/kulupler': 'kulupler', '/koclar': 'egitim_koclari',
 }
 
 export const MODUL_ADI = {
   kocluk: 'Kişisel Koçluk', takvim: 'Takvim', kutuphane: 'Kütüphane', kulupler: 'Kulüpler', filiz: 'Filiz',
-  net_takibi: 'Net Takibi', akran: 'Şube ve Akran Analizi', egitim_koclari: 'Eğitim Koçları', ogrenci_raporlari: 'Raporlarım', rehberlik: 'Rehberlik', gelismis_raporlar: 'Gelişmiş Raporlar',
+  net_takibi: 'Net Takibi', akran: 'Şube ve Akran Analizi', egitim_koclari: 'Eğitim Koçları', ogrenci_raporlari: 'Raporlarım', rehberlik: 'Rehberlik', calisma: 'Çalışmam', gelismis_raporlar: 'Gelişmiş Raporlar',
 }
 
 // Yönetim tarafı: okul panelinde açık okulun modülleri (okul_ozeti.moduller). Sağlayıcı yoksa her şey açık.

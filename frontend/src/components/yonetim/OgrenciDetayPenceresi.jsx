@@ -8,6 +8,7 @@ import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, onceSure, tarih } fro
 import RaporSecici from '../RaporSecici'
 import { useOkulModulleri } from '../../yardimci/moduller'
 import { OgrenciRehberlik } from './Rehberlik'
+import OgrenciCalisma from './OgrenciCalisma'
 import CevapAnaliziSekmesi from './CevapAnaliziSekmesi'
 
 // [2026-10-09] Hedef bölüm: öğrenci en fazla 3 kez değiştirebilir; okul yetkilisi / süper admin hedefi değiştirebilir
@@ -43,7 +44,7 @@ function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
 }
 
 // [2026-10-10] 3. öğe: sekmenin bağlı olduğu modül (okulun paketinde yoksa sekme gizlenir)
-const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['rehberlik', 'Rehberlik', 'rehberlik'], ['kocluk', 'Koçluk', 'kocluk'], ['netler', 'Netler', 'net_takibi'], ['akran', 'Benzer akranlar', 'akran'], ['ilgi', 'İlgi & kulüp', 'kulupler'], ['kutuphane', 'Kütüphane', 'kutuphane'], ['kayit', 'Kayıtlar']]
+const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['rehberlik', 'Rehberlik', 'rehberlik'], ['kocluk', 'Koçluk', 'kocluk'], ['netler', 'Netler', 'net_takibi'], ['calisma', 'Çalışma', 'calisma'], ['akran', 'Benzer akranlar', 'akran'], ['ilgi', 'İlgi & kulüp', 'kulupler'], ['kutuphane', 'Kütüphane', 'kutuphane'], ['kayit', 'Kayıtlar']]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
 
 // [2026-10-10] Rehber öğretmen için koçluk özeti: tamamlanan adımlar + öğrencinin kısa geri bildirimi + tekrar ölçümler
@@ -288,6 +289,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
       {sekme === 'rehberlik' && modulAcik('rehberlik') && <OgrenciRehberlik ogrenciId={ogrenciId} ogrenci={h} />}
       {sekme === 'kocluk' && <KoclukOzeti k={d.kocluk} />}
       {sekme === 'netler' && <NetOzeti n={d.netler} />}
+      {sekme === 'calisma' && modulAcik('calisma') && <OgrenciCalisma ogrenciId={ogrenciId} />}
       {sekme === 'akran' && <AkranListesi ogrenciId={ogrenciId} />}
       {sekme === 'ilgi' && <OgrenciIlgi ogrenciId={ogrenciId} />}
       {sekme === 'kutuphane' && <OgrenciKutuphanesi ogrenciId={ogrenciId} />}

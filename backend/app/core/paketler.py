@@ -25,6 +25,7 @@ MODULLER = {
     "kutuphane": {"ad": "Kütüphanem", "ikon": "📚", "aciklama": "Okuduğu kitaplar, izledikleri ve grafikler"},
     "kulupler": {"ad": "Kulüpler", "ikon": "🎭", "aciklama": "İlgi testi, kulüp önerileri, katılma talepleri ve kulüp duyuruları"},
     "filiz": {"ad": "Filiz asistanı", "ikon": "💬", "aciklama": "Filiz sohbet asistanı (otomatik rehber / yapay zekâ)"},
+    "calisma": {"ad": "Çalışma programı ve soru takibi", "ikon": "⏱️", "aciklama": "Haftalık ders programı, günlük çalışma süresi ve çözülen soru kaydı, ders bazında isabet"},
     "net_takibi": {"ad": "Net takibi", "ikon": "📈", "aciklama": "Deneme netleri, konu takibi, hedef üniversiteye göre net kıyası"},
     "okul_denemeleri": {"ad": "Okul denemesi yükleme", "ikon": "🏫", "aciklama": "Okulun yaptığı denemelerin sonuçlarını Excel şablonuyla tek seferde yükleme, şube ve okul ortalamaları (Net takibi ile çalışır)"},
     "akran": {"ad": "Şube ve akran analizi", "ikon": "🤝", "aciklama": "Benzer akranlar, şube dağılımı önerisi, aday öğrenci uyumu"},
