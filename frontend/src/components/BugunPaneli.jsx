@@ -27,6 +27,8 @@ function SiradakiAdim({ ozet, katmanlar, hedef, plan }) {
     dugme = s.durum === 'devam_ediyor' ? 'Devam et' : 'Adımı aç'; git = '/koclugu?sekme=yol'
   } else if (plan) {
     ust = 'Koçluk'; baslik = '🎉 Yol haritanın tamamını bitirdin'; alt = 'Güçlü yönlerini büyütecek adımlara geçebilirsin.'; dugme = 'Güçlü yönlerim'; git = '/koclugu?sekme=guclu'
+  } else if (plan === false) {
+    ust = 'Koçluk'; baslik = '🎯 Koçluğuna göz at'; alt = 'Planın şu an gösterilemedi; alan soruların bekliyor olabilir.'; dugme = 'Koçluğum'; git = '/koclugu'
   } else return <div className="bugun-adim"><div className="bugun-ust">Yükleniyor…</div></div>
   return (
     <div className="bugun-adim" role="button" tabIndex={0} onClick={() => navigate(git)} onKeyDown={(e) => { if (e.key === 'Enter') navigate(git) }}>

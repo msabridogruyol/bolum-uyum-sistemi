@@ -37,25 +37,35 @@ def _tahmini_yks(yil: int) -> date:
     return ilk_cmt + timedelta(weeks=2)
 
 
+def _yks_tarihi(db: Session, yil: int) -> tuple[date, bool]:
+    """Genel Takvim'de o yılın YKS/TYT kaydı varsa resmî tarih, yoksa tahmini tarih."""
+    try:
+        r = db.execute(text(
+            "SELECT baslangic FROM takvim_etkinlikleri WHERE okul_id IS NULL AND ogrenci_id IS NULL AND tur = 'sinav' "
+            "AND (baslik ILIKE '%YKS%' OR baslik ILIKE '%TYT%') AND EXTRACT(YEAR FROM baslangic) = :y "
+            "ORDER BY baslangic LIMIT 1"), {"y": yil}).first()
+        if r:
+            return r[0], True
+    except Exception:
+        db.rollback()
+    return _tahmini_yks(yil), False
+
+
 def yks_bilgisi(db: Session, sinif: str | None, bugun: date | None = None) -> dict | None:
     bugun = bugun or date.today()
     no = _sinif_no(sinif)
     if no is None or no < 9:
         return None
-    # Bu eğitim yılının YKS'si: Haziran sonuna kadar bu yıl, sonra gelecek yıl
-    bu_yil_yks = bugun.year if bugun <= date(bugun.year, 6, 30) else bugun.year + 1
-    yil = bu_yil_yks + max(0, 12 - min(no, 12))
-    resmi = None
-    try:
-        resmi = db.execute(text(
-            "SELECT baslangic, baslik FROM takvim_etkinlikleri WHERE okul_id IS NULL AND ogrenci_id IS NULL AND tur = 'sinav' "
-            "AND (baslik ILIKE '%YKS%' OR baslik ILIKE '%TYT%') AND EXTRACT(YEAR FROM baslangic) = :y AND baslangic >= :b "
-            "ORDER BY baslangic LIMIT 1"), {"y": yil, "b": bugun}).first()
-    except Exception:
-        db.rollback()
-    tarih = resmi[0] if resmi else _tahmini_yks(yil)
+    # Eğitim yılı Eylül'de başlar: Eylül-Aralık → gelecek yılın YKS'si; Ocak-Ağustos → bu yılın YKS'si.
+    # Yaz aylarında sınıf bilgisi henüz yükseltilmemiş olsa da (11 → 12) yıl doğru çıkar.
+    egitim_yili_yks = bugun.year + 1 if bugun.month >= 9 else bugun.year
+    yil = egitim_yili_yks + max(0, 12 - min(no, 12))
+    tarih, resmi = _yks_tarihi(db, yil)
+    if tarih < bugun:   # o yılın sınavı geçtiyse (ör. Haziran sonu) bir sonraki YKS
+        yil += 1
+        tarih, resmi = _yks_tarihi(db, yil)
     gun = (tarih - bugun).days
-    return {"ad": f"YKS {yil}", "tarih": tarih.isoformat(), "gun": gun, "hafta": gun // 7, "resmi": bool(resmi),
+    return {"ad": f"YKS {yil}", "tarih": tarih.isoformat(), "gun": gun, "hafta": gun // 7, "resmi": resmi,
             "sinif_no": no, "son_sinif": no >= 12}
 
 
