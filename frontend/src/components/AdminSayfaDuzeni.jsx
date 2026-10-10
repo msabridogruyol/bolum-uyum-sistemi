@@ -21,7 +21,7 @@ export default function AdminSayfaDuzeni() {
 
   if (okulYetkilisi && ben?.okul_id) {
     const okulYolu = `/admin/okul/${ben.okul_id}`
-    if (!konum.pathname.startsWith(okulYolu)) return <Navigate to={okulYolu} replace />
+    if (!konum.pathname.startsWith(okulYolu) && konum.pathname !== '/admin/sss') return <Navigate to={okulYolu} replace />
   }
 
   return (
@@ -50,6 +50,7 @@ export default function AdminSayfaDuzeni() {
           <>
             <div className="ns">Okulum</div>
             {ben?.okul_id && <NavLink to={`/admin/okul/${ben.okul_id}`} className={ni}>Okul Paneli</NavLink>}
+            <NavLink to="/admin/sss" className={ni}>Sistem Hakkında & SSS</NavLink>
           </>
         ) : (
           <>
@@ -64,6 +65,7 @@ export default function AdminSayfaDuzeni() {
             <NavLink to="/admin/test-hesaplari" className={ni}>🧪 Test Hesapları</NavLink>
             <NavLink to="/admin/koclar" className={ni}>Eğitim Koçları</NavLink>
             <NavLink to="/admin/takvim" className={ni}>Genel Takvim</NavLink>
+            <NavLink to="/admin/sss" className={ni}>Okul Yetkilisi SSS</NavLink>
 
             <div className="ns">İçerik Yönetimi</div>
             <NavLink to="/admin/bolumler" className={ni}>Bölümler</NavLink>
@@ -84,7 +86,7 @@ export default function AdminSayfaDuzeni() {
       </div>
 
       <div className="main">
-        {okulYetkilisi && !ben ? <div className="pg"><div className="bos-durum">Yükleniyor…</div></div> : <Outlet />}
+        <div className="main-icerik">{okulYetkilisi && !ben ? <div className="pg"><div className="bos-durum">Yükleniyor…</div></div> : <Outlet />}</div>
         <AltSerit okul={ben?.okul_ad || (okulYetkilisi ? null : 'Filizyol Yönetim')} kisi={ben?.ad_soyad} rol={ROL_ADI[rol]} />
       </div>
 

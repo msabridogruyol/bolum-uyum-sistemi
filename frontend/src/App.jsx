@@ -21,6 +21,8 @@ const KuluplerimSayfasi = lazy(() => import('./pages/KuluplerimSayfasi'))
 const GorevlerimSayfasi = lazy(() => import('./pages/GorevlerimSayfasi'))
 const TakvimSayfasi = lazy(() => import('./pages/TakvimSayfasi'))
 const KutuphanemSayfasi = lazy(() => import('./pages/KutuphanemSayfasi'))
+const SistemHakkindaOgrenci = lazy(() => import('./pages/SistemHakkindaOgrenci'))
+const SssSayfasi = lazy(() => import('./pages/admin/SssSayfasi'))
 const ProfilAyarlariSayfasi = lazy(() => import('./pages/ProfilAyarlariSayfasi'))
 const AnaSayfa = lazy(() => import('./pages/AnaSayfa'))
 const AdminGirisSayfasi = lazy(() => import('./pages/admin/AdminGirisSayfasi'))
@@ -126,6 +128,7 @@ function AnaUygulama() {
         <Route path="/gorevler" element={<GorevlerimSayfasi />} />
         <Route path="/takvim" element={<TakvimSayfasi />} />
         <Route path="/kutuphane" element={<KutuphanemSayfasi />} />
+        <Route path="/hakkinda" element={<SistemHakkindaOgrenci />} />
         <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
       </Route>
 
@@ -164,6 +167,7 @@ function AnaUygulama() {
         <Route path="koclar" element={<KocYonetimSayfasi />} />
         <Route path="yokatlas" element={<YokatlasEslesmeSayfasi />} />
         <Route path="takvim" element={<GenelTakvimSayfasi />} />
+        <Route path="sss" element={<SssSayfasi />} />
       </Route>
     </Routes>
     </Suspense>
