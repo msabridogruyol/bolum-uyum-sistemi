@@ -103,6 +103,7 @@ export default function HaftalikGorevler() {
                   <span className="hg-tur">{TUR_ETIKET[g.tur]}</span>
                 </div>
                 <div className="hg-baslik">{g.baslik}</div>
+                {!bitti && g.aciklama && <div className="hg-aciklama">{g.aciklama}</div>}
                 {bitti && g.tur === 'yansitma' && g.yanit?.hedef && <div className="hg-not">Hedefin: “{g.yanit.hedef}”</div>}
                 {!bitti && (
                   <div className="hg-eylem">
