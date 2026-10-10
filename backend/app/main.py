@@ -22,6 +22,7 @@ from app.api.net_takibi import router as net_takibi_router
 from fastapi import Depends as _Dep
 from app.core.paketler import ogrenci_modulu, okul_modulu   # [2026-10-10] paket / modül koruması
 from app.api.paket_yonetimi import router as paket_router, ogrenci_router as paket_ogrenci_router
+from app.api.bildirimler import ogrenci_router as bildirim_ogrenci_router, yonetim_router as bildirim_yonetim_router   # [2026-10-10]
 from app.api.calisma import ogrenci_router as calisma_ogrenci_router, yonetim_router as calisma_yonetim_router   # [2026-10-10]
 from app.api.okul_denemeleri import router as okul_deneme_router   # [2026-10-10] okul denemesi Excel yükleme
 from app.api.rehberlik import router as rehberlik_router   # [2026-10-10] rehberlik görüşmeleri + erken uyarı
@@ -184,6 +185,8 @@ app.include_router(kutuphane_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("
 app.include_router(kulup_uyelik_router, dependencies=[_Dep(okul_modulu("kulupler"))])                      # [2026-10-10] kulüp talepleri, üyeler, duyurular
 app.include_router(kulup_uyelik_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])
 app.include_router(konu_yonetimi_router, dependencies=[_Dep(okul_modulu("net_takibi"))])                     # [2026-10-10] konu listesi yönetimi (süper admin + okul)
+app.include_router(bildirim_ogrenci_router)
+app.include_router(bildirim_yonetim_router)
 app.include_router(calisma_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("calisma"))])
 app.include_router(calisma_yonetim_router, dependencies=[_Dep(okul_modulu("calisma"))])
 app.include_router(okul_deneme_router, dependencies=[_Dep(okul_modulu("okul_denemeleri"))])

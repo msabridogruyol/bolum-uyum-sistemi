@@ -226,6 +226,9 @@ def deneme_kaydet(okul_id: int, istek: KaydetIstek, db: Session = Depends(get_db
                    {"o": s["ogrenci_id"], "t": istek.tarih, "ot": istek.oturum, "ad": istek.ad.strip(), "d": json.dumps(s["dersler"]),
                     "tn": s["toplam_net"], "di": d_id})
     denetim_yaz(db, yon, "okul_deneme_yukle", "okul_denemeleri", d_id, f"{istek.ad} ({istek.oturum}) · {len(gecerli)} öğrenci", okul_id)
+    from app.core.bildirim import bildir   # [2026-10-10] uygulama içi bildirim (e-posta yok: toplu gönderim sınırı)
+    bildir(db, "ogrenci", [s["ogrenci_id"] for s in gecerli], "okul_deneme", f"{istek.ad} sonuçların yüklendi",
+           f"{istek.oturum} netlerin Net Takibi'ne eklendi; okul ortalamasıyla karşılaştırabilirsin.", "/netlerim", okul_id)
     db.commit()
     return {"id": d_id, "kaydedilen": len(gecerli), "atlanan": len(v["satirlar"]) - len(gecerli)}
 

@@ -337,6 +337,11 @@ def gorusme_ekle(ogrenci_id: str, istek: GorusmeIstek, db: Session = Depends(get
         VALUES (:ok, :o, :z, :du, :tu, :ko, :ba, :no, :tt, :ta, :og, :yi, :y) RETURNING id
     """), {**v, "ok": o.okul_id, "o": o.id, "yi": yon.id, "y": yon.ad_soyad}).scalar()
     denetim_yaz(db, yon, "gorusme_ekle", "rehberlik_gorusmeleri", yeni, f"{o.ad_soyad} · {TURLER[v['tu']]} · {DURUMLAR[v['du']]}", o.okul_id)
+    if v["du"] == "planlandi" and v["og"]:   # [2026-10-10] bildirim (+ e-posta): yalnızca zaman, konu ve not yok
+        from app.core.bildirim import bildir
+        z = v["z"].astimezone(TR)
+        bildir(db, "ogrenci", [o.id], "rehberlik_randevu", "Rehber öğretmeninle görüşmen planlandı",
+               f"{z.strftime('%d.%m.%Y %H:%M')} — rehberlik servisinde görüşelim.", "/takvim", o.okul_id, eposta=True)
     db.commit()
     return {"id": yeni}
 

@@ -1872,3 +1872,22 @@ tr.od-bos td{color:var(--tx3)}
 .oc-haftalar>div{display:flex;flex-direction:column;gap:3px;align-items:center}
 .oc-sutun{height:70px;width:22px;display:flex;align-items:flex-end}
 .oc-sutun div{width:100%;background:var(--kt-izleme, #2a78d6);border-radius:4px 4px 0 0}
+
+/* [2026-10-10] Bildirim zili */
+.bz-dugme{position:relative;border:0;background:none;font-size:17px;cursor:pointer;padding:4px 6px;border-radius:8px;line-height:1}
+.bz-dugme:hover{background:var(--sur2)}
+.bz-sayi{position:absolute;top:-3px;right:-3px;min-width:16px;height:16px;border-radius:8px;background:var(--re);color:#fff;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center;padding:0 4px;font-family:var(--fn)}
+.bz-panel{position:fixed;z-index:10060;width:360px;max-width:calc(100vw - 16px);max-height:min(520px,calc(100vh - 80px));display:flex;flex-direction:column;background:var(--sur);border:1px solid var(--bor2);border-radius:16px;box-shadow:0 24px 60px -12px rgba(0,0,0,.3);overflow:hidden}
+.bz-ust{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--bor)}
+.bz-liste{overflow-y:auto;flex:1}
+.bz-bos{padding:28px;text-align:center;color:var(--tx3);font-size:13px}
+.bz-satir{display:flex;gap:10px;align-items:flex-start;width:100%;text-align:left;border:0;border-bottom:1px solid var(--bor);background:none;padding:10px 14px;cursor:pointer;font-family:var(--fn);color:var(--tx)}
+.bz-satir:hover{background:var(--sur2)}
+.bz-satir.yeni{background:color-mix(in srgb, var(--pu) 7%, var(--sur))}
+.bz-ikon{font-size:17px;line-height:1.2}
+.bz-baslik{display:block;font-size:13px;font-weight:700;line-height:1.35}
+.bz-metin{display:block;font-size:12px;color:var(--tx2);line-height:1.45;margin-top:2px}
+.bz-zaman{display:block;font-size:11px;color:var(--tx3);margin-top:3px}
+.bz-nokta{width:8px;height:8px;border-radius:50%;background:var(--pu);flex-shrink:0;margin-top:5px}
+.bz-tercih{display:flex;gap:8px;align-items:flex-start;padding:10px 14px;border-top:1px solid var(--bor);font-size:12px;color:var(--tx2);cursor:pointer}
+.bz-tercih small{display:block;color:var(--tx3)}

@@ -6,6 +6,7 @@ import { api } from '../api/client'
 import { IlkSifrePenceresi, ROL_ADI } from './yonetim/ortak'
 import { okulRenginiUygula } from '../tema'
 import AltSerit from './AltSerit'
+import BildirimZili from './BildirimZili'
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
@@ -53,6 +54,7 @@ export default function AdminSayfaDuzeni() {
             <div className="u-nm" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ben?.ad_soyad || 'Yönetici'}</div>
             <div className="u-id">{ROL_ADI[rol] || rol}</div>
           </div>
+          {(!okulYetkilisi || !ben?.moduller || ben.moduller.includes('bildirimler')) && <BildirimZili kapsam="yonetim" />}
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
 

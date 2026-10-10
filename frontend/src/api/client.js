@@ -191,6 +191,15 @@ export const api = {
   paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
   okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
   okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
+  // [2026-10-10] Bildirimler
+  bildirimler: () => get('/ogrenci/bildirimler'),
+  bildirimOkundu: (idler) => post('/ogrenci/bildirimler/okundu', { idler: idler || null }),
+  bildirimTercihi: () => get('/ogrenci/bildirim-tercihi'),
+  bildirimTercihiKaydet: (eposta) => put('/ogrenci/bildirim-tercihi', { eposta }),
+  yonetimBildirimleri: () => aget('/yonetim/bildirimler'),
+  yonetimBildirimOkundu: (idler) => apost('/yonetim/bildirimler/okundu', { idler: idler || null }),
+  yonetimBildirimTercihi: () => aget('/yonetim/bildirim-tercihi'),
+  yonetimBildirimTercihiKaydet: (eposta) => aput('/yonetim/bildirim-tercihi', { eposta }),
   // [2026-10-10] Çalışma programı ve soru takibi
   calisma: () => get('/ogrenci/calisma'),
   calismaProgramKaydet: (bloklar) => put('/ogrenci/calisma/program', bloklar).then(() => get('/ogrenci/calisma')),

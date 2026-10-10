@@ -20,6 +20,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 
 MODULLER = {
+    "bildirimler": {"ad": "Bildirimler", "ikon": "🔔", "aciklama": "Uygulama içi bildirimler ve önemli olaylarda e-posta (kulüp kararı, rehberlik randevusu, kulüp etkinliği)"},
     "kocluk": {"ad": "Koçluk ve görevler", "ikon": "🎯", "aciklama": "Koçluğum (yol haritası, Sen ve Bölümün, ilham kaynakları, tekrar ölçüm) ve haftalık Görevlerim"},
     "takvim": {"ad": "Takvim", "ikon": "🗓️", "aciklama": "Öğrenci takvimi ve okul etkinlikleri"},
     "kutuphane": {"ad": "Kütüphanem", "ikon": "📚", "aciklama": "Okuduğu kitaplar, izledikleri ve grafikler"},
