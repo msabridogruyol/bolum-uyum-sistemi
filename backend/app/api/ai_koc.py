@@ -53,6 +53,15 @@ class AsistanDurumOut(BaseModel):
     kalan: int
 
 
+def _ai(db: Session, ogrenci: Ogrenci) -> bool:
+    """[2026-10-10] Yapay zekâlı Filiz: API anahtarı tanımlı VE okulun paketinde 'filiz_ai' modülü var.
+    Aksi halde Filiz, öğrencinin verilerine dayanan otomatik rehber modunda çalışır (maliyetsiz)."""
+    if not asistan_aktif_mi():
+        return False
+    from app.core.paketler import okul_modulleri
+    return "filiz_ai" in okul_modulleri(db, ogrenci.okul_id)
+
+
 def _gunluk_limit(db: Session) -> int:
     try:
         return max(1, int(parametre_oku(db, "filiz_gunluk_mesaj_limiti", str(GUNLUK_MESAJ_LIMITI_VARSAYILAN))))
@@ -78,7 +87,7 @@ def _bugun_gonderilen(db: Session, ogrenci: Ogrenci) -> int:
 def asistan_durumu(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     limit, gonderilen = _gunluk_limit(db), _bugun_gonderilen(db, ogrenci)
     from app.core.filiz_rehber import ORNEK_SORULAR, SORU_KATEGORILERI
-    ai = asistan_aktif_mi()
+    ai = _ai(db, ogrenci)
     return AsistanDurumOut(aktif=True, mod="ai" if ai else "otomatik", ornek_sorular=ORNEK_SORULAR[:6],
                            soru_kategorileri=SORU_KATEGORILERI,
                            gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen) if ai else limit)
@@ -150,7 +159,8 @@ def mesaj_gonder(
         return MesajCevap(asistan_yaniti=KRIZ_YANITI, oturum_kapandi_mi=False)
 
     # [2026-10-10] Günlük sınır yapay zekâ maliyeti içindir; otomatik rehber modunda uygulanmaz
-    if asistan_aktif_mi() and _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
+    ai = _ai(db, ogrenci)
+    if ai and _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
         raise HTTPException(status_code=429, detail="Bugünlük mesaj hakkın doldu. Yarın yine konuşalım! 🌱")
 
     onceki_mesajlar = (
@@ -192,7 +202,7 @@ def mesaj_gonder(
 
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, onceki_ozet, istek.sayfa)
 
-    otomatik = not asistan_aktif_mi()
+    otomatik = not ai
     if otomatik:   # [2026-10-10] yapay zekâ bağlı değil: öğrencinin verilerine dayanan otomatik rehber cevabı
         from app.core.filiz_rehber import otomatik_yanit
         yanit = otomatik_yanit(db, ogrenci, metin)
@@ -209,7 +219,7 @@ def mesaj_gonder(
     toplam_mesaj = len(onceki_mesajlar) + 2
     kapandi = False
     if toplam_mesaj >= MAKSIMUM_TUR:
-        _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi + [{"role": "assistant", "content": yanit}])
+        _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi + [{"role": "assistant", "content": yanit}], ai)
         kapandi = True
 
     return MesajCevap(asistan_yaniti=yanit, oturum_kapandi_mi=kapandi, otomatik=otomatik)
@@ -238,11 +248,11 @@ def oturumu_bitir(
         for m in mesajlar
     ]
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, None)
-    _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi)
+    _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi, _ai(db, ogrenci))
 
 
-def _oturumu_kapat_ve_ozetle(db: Session, oturum: OgrenciKoclukOturumu, sistem_promptu: str, mesaj_gecmisi: list[dict]):
-    if not asistan_aktif_mi():   # [2026-10-10] otomatik rehber: konu başlığı özet olarak saklanır
+def _oturumu_kapat_ve_ozetle(db: Session, oturum: OgrenciKoclukOturumu, sistem_promptu: str, mesaj_gecmisi: list[dict], ai: bool = True):
+    if not ai or not asistan_aktif_mi():   # [2026-10-10] otomatik rehber: konu başlığı özet olarak saklanır
         ilk = next((m["content"] for m in mesaj_gecmisi if m["role"] == "user"), "")
         ozet = f"Otomatik rehberle sohbet: \"{ilk[:80]}\"" if ilk else None
     else:
