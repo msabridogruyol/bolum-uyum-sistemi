@@ -16,6 +16,7 @@ const SoruSayfasi = lazy(() => import('./pages/SoruSayfasi'))
 const ProfilimSayfasi = lazy(() => import('./pages/ProfilimSayfasi'))
 const BolumlerimSayfasi = lazy(() => import('./pages/BolumlerimSayfasi'))
 const KoclukSayfasi = lazy(() => import('./pages/KoclukSayfasi'))
+const KoclarSayfasi = lazy(() => import('./pages/KoclarSayfasi'))
 const ProfilAyarlariSayfasi = lazy(() => import('./pages/ProfilAyarlariSayfasi'))
 const AnaSayfa = lazy(() => import('./pages/AnaSayfa'))
 const AdminGirisSayfasi = lazy(() => import('./pages/admin/AdminGirisSayfasi'))
@@ -35,6 +36,7 @@ const OkullarSayfasi = lazy(() => import('./pages/admin/OkullarSayfasi'))
 const OkulPaneliSayfasi = lazy(() => import('./pages/admin/OkulPaneliSayfasi'))
 const MeslekDiliSayfasi = lazy(() => import('./pages/admin/MeslekDiliSayfasi'))
 const TestHesaplariSayfasi = lazy(() => import('./pages/admin/TestHesaplariSayfasi'))
+const KocYonetimSayfasi = lazy(() => import('./pages/admin/KocYonetimSayfasi'))
 const TestGirisSayfasi = lazy(() => import('./pages/TestGirisSayfasi'))
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
@@ -112,6 +114,7 @@ function AnaUygulama() {
         <Route path="/sonuc/:kod" element={<EskiKatmanYonlendir />} />
         <Route path="/kesfet" element={<AramaylaYonlendir to="/bolumler/tum" />} />
         <Route path="/koclugu" element={<KoclukSayfasi />} />
+        <Route path="/koclar" element={<KoclarSayfasi />} />
         <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
       </Route>
 
@@ -147,6 +150,7 @@ function AnaUygulama() {
         <Route path="okul/:okulId" element={<OkulPaneliSayfasi />} />
         <Route path="meslek-dili" element={<MeslekDiliSayfasi />} />
         <Route path="test-hesaplari" element={<TestHesaplariSayfasi />} />
+        <Route path="koclar" element={<KocYonetimSayfasi />} />
       </Route>
     </Routes>
     </Suspense>
