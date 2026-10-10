@@ -28,7 +28,7 @@ from app.core.hesap_yonetimi import denetim_yaz, gecici_sifre, ogrenciyi_sil, ol
 from app.core.katman_servisi import IsKuraliHatasi
 from app.core.security import erisim_tokeni_uret, sifre_hashle, yenileme_tokeni_uret
 from app.core.test_hesabi_servisi import (
-    ASAMA_ADI, anahtar_ozeti, giris_anahtari_uret, ilerleme_ozeti, senaryo_uygula,
+    ASAMA_ADI, anahtar_ozeti, giris_anahtari_uret, ilerleme_ozeti, ilerlemeyi_sifirla, senaryo_uygula,
 )
 from app.models import AdminKullanici, Bolum, Ogrenci, Okul
 
@@ -188,12 +188,37 @@ def senaryo(hesap_id: str, istek: SenaryoIstek, db: Session = Depends(get_db), a
 @router.delete("/{tip}/{hesap_id}", status_code=204)
 def test_hesabi_sil(tip: str, hesap_id: str, db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
     h = _hesap(db, tip, hesap_id)
-    denetim_yaz(db, admin, "test_hesabi_sil", tip, h.id, f"{h.ad_soyad} <{h.email}>", h.okul_id)
-    if tip == "ogrenci":
-        ogrenciyi_sil(db, h)
-    else:
-        db.delete(h)
+    etiket, okul_id, hid = f"{h.ad_soyad} <{h.email}>", h.okul_id, h.id
+    try:
+        if tip == "ogrenci":
+            ilerlemeyi_sifirla(db, h)           # bağlı tüm kayıtlar (CASCADE eksik olsa da) önce temizlenir
+            from sqlalchemy import text
+            with db.begin_nested():
+                db.execute(text("DELETE FROM ogrenci_hesap_olaylari WHERE ogrenci_id = :id"), {"id": h.id})
+            ogrenciyi_sil(db, h)
+        else:
+            _yonetici_baglarini_coz(db, h.id, admin.id)
+            db.delete(h)
+        db.flush()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Test hesabı silinemedi: {type(e).__name__}: {str(e).splitlines()[0][:200]}")
+    denetim_yaz(db, admin, "test_hesabi_sil", tip, hid, etiket, okul_id)
     db.commit()
+
+
+def _yonetici_baglarini_coz(db: Session, silinen_id, yapan_id) -> None:
+    """admin_kullanicilar'a bağlı kayıtlar (audit_log, meslek_dili, parametreler …): bağ NULL yapılır;
+    sütun NULL olamıyorsa kayıt silmeyi yapan süper admine devredilir (kayıt kaybolmaz)."""
+    from sqlalchemy import text
+    baglar = db.execute(text("""
+        SELECT c.conrelid::regclass::text AS tablo, a.attname AS sutun, a.attnotnull AS zorunlu
+        FROM pg_constraint c JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey)
+        WHERE c.contype = 'f' AND c.confrelid = 'admin_kullanicilar'::regclass""")).all()
+    for tablo, sutun, zorunlu in baglar:
+        deger = yapan_id if zorunlu else None
+        with db.begin_nested():
+            db.execute(text(f'UPDATE {tablo} SET "{sutun}" = :d WHERE "{sutun}" = :id'), {"d": deger, "id": silinen_id})
 
 
 # ----------------------------------------------------------------------------- bağlantıyla giriş
