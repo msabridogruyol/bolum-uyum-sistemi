@@ -1691,3 +1691,37 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .kl-ekle{display:flex;gap:8px}
 .kl-ekle .auth-input{flex:1;margin:0}
 .kl-ekle{margin-bottom:12px}
+
+/* [2026-10-10] Kulüp üyeliği ve duyurular */
+.kk-izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:10px}
+.kk-kart{border:1.5px solid var(--bor);border-radius:14px;padding:12px;display:grid;gap:6px;align-content:start;background:var(--sur)}
+.kk-kart.uye{border-color:var(--gr)}
+.kk-ust{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.kk-ust b{font-size:14px}
+.kk-ac{font-size:12.5px;color:var(--tx2);line-height:1.45}
+.kk-durum{font-size:12px;font-weight:800;border-radius:8px;padding:4px 8px;justify-self:start}
+.kk-yanit{font-size:12px;background:var(--sur2);border-radius:8px;padding:6px 8px;line-height:1.45}
+.kk-dugmeler{display:flex;gap:6px;flex-wrap:wrap;margin-top:2px}
+.kk-dugmeler .btn{font-size:12.5px;padding:7px 12px}
+.kk-form{display:grid;gap:6px}
+.kk-form textarea{border:1.5px solid var(--bor);border-radius:10px;padding:8px;font-family:var(--fn);font-size:13px;background:var(--sur);color:var(--tx);resize:vertical}
+.kd-liste{display:grid;gap:8px}
+.kd-satir{display:flex;gap:12px;align-items:flex-start;border:1.5px solid var(--bor);border-radius:12px;padding:10px 12px}
+.kd-satir.etkinlik{border-left:4px solid var(--pu)}
+.kd-tarih{width:44px;min-width:44px;height:44px;border-radius:10px;background:var(--pul);display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1}
+.kd-tarih b{font-size:17px;color:var(--pu)}.kd-tarih span{font-size:10.5px;color:var(--pu);font-weight:700}
+.kd-tarih.duyuru,.kd-satir.duyuru .kd-tarih{background:var(--aml);font-size:18px}
+.kd-ust{display:flex;gap:6px;align-items:center}
+.kd-kulup{font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em}
+.kd-herkese{font-size:10.5px;font-weight:700;background:var(--grl);color:var(--gr);border-radius:20px;padding:1px 7px}
+.kd-baslik{font-weight:800;font-size:14px}
+.kd-metin{font-size:12.5px;color:var(--tx2);line-height:1.5;margin-top:2px;white-space:pre-line}
+.kd-form{display:grid;gap:8px}
+.kd-form .auth-input{margin:0}
+.kd-form-satir{display:flex;gap:8px;flex-wrap:wrap}
+.kd-form-satir label{display:grid;gap:3px;font-size:12px;font-weight:700;color:var(--tx2)}
+.kt-talepler.var{border-color:var(--am);box-shadow:0 0 0 3px var(--aml)}
+.kt-sayi{font-size:11px;font-weight:800;background:var(--am);color:#fff;border-radius:20px;padding:2px 8px;margin-left:6px;text-transform:none;letter-spacing:0}
+.kt-karar{display:grid;gap:6px}
+.kt-karar .auth-input{margin:0;padding:6px 8px;font-size:12.5px}
+.yp-mini.yesil{border-color:var(--gr);color:var(--gr)}

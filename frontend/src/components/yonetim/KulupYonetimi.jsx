@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { Pencere } from './ortak'
+import { DuyurularPenceresi, KatilmaTalepleri, UyelerPenceresi } from './KulupUyelikYonetimi'
 
 const BOS = { ad: '', aciklama: '', ilgiler: [], sorumlu: '', bulusma: '', aktif: true }
 
@@ -49,6 +50,8 @@ export default function KulupYonetimi({ okulId }) {
   const [v, setV] = useState(null)
   const [form, setForm] = useState(null)
   const [liste, setListe] = useState(null)
+  const [uyePen, setUyePen] = useState(null)      // [2026-10-10] üyeler / duyurular pencereleri
+  const [duyuruPen, setDuyuruPen] = useState(null)
   const [bekle, setBekle] = useState(false)
   const [mesaj, setMesaj] = useState(null)
   const yukle = () => api.okulKulupleri(okulId).then(setV).catch((e) => setMesaj({ hata: true, metin: e.detail || 'Yüklenemedi.' }))
@@ -56,7 +59,7 @@ export default function KulupYonetimi({ okulId }) {
   if (!v) return mesaj ? <div className="auth-error">{mesaj.metin}</div> : <div className="bos-durum">Yükleniyor…</div>
 
   const kaydet = async (f) => {
-    const veri = { ...f, id: undefined, ilgi_listesi: undefined, oneri_sayisi: undefined }
+    const veri = { ...f, id: undefined, ilgi_listesi: undefined, oneri_sayisi: undefined, uye_sayisi: undefined, bekleyen_talep: undefined }
     if (f.id) await api.kulupDuzenle(f.id, veri); else await api.kulupEkle(okulId, veri)
     setForm(null); yukle()
   }
@@ -77,6 +80,7 @@ export default function KulupYonetimi({ okulId }) {
 
   return (
     <div style={{ display: 'grid', gap: 16 }}>
+      <KatilmaTalepleri okulId={okulId} onDegisti={yukle} />
       <div className="yp-iki">
         <div className="card" style={{ margin: 0 }}>
           <div className="ct">İlgi testi</div>
@@ -107,7 +111,7 @@ export default function KulupYonetimi({ okulId }) {
           <div className="bos-durum">Henüz kulüp yok. "Hazır listeden ekle" ile lise kulüplerinde yaygın 30 kulübü ekleyip okulunuzda olmayanları silebilirsiniz.</div>
         ) : (
           <table className="yp-tablo">
-            <thead><tr><th>Kulüp</th><th>İlgi alanları</th><th>Danışman · buluşma</th><th style={{ width: '18%' }} title="Bu kulübü ilk 3 önerisinde gören öğrenci sayısı">Önerilen öğrenci</th><th /></tr></thead>
+            <thead><tr><th>Kulüp</th><th>İlgi alanları</th><th>Danışman · buluşma</th><th style={{ width: '18%' }} title="Bu kulübü ilk 3 önerisinde gören öğrenci sayısı">Önerilen öğrenci</th><th>Üyeler</th><th /></tr></thead>
             <tbody>
               {v.kulupler.map((k) => (
                 <tr key={k.id} className={k.aktif ? '' : 'kl-pasif'}>
@@ -119,6 +123,11 @@ export default function KulupYonetimi({ okulId }) {
                       <div className="yp-cubuk"><div style={{ width: `${(100 * k.oneri_sayisi) / enCok}%`, background: 'var(--okul-c, var(--pu))' }} /><span>{k.oneri_sayisi} öğrenci</span></div>
                     </button>) : <span className="yp-ince">—</span>}</td>
                   <td style={{ whiteSpace: 'nowrap' }}>
+                    <button className="yp-mini" onClick={() => setUyePen(k)}>👥 {k.uye_sayisi}</button>
+                    {k.bekleyen_talep > 0 && <span className="kt-sayi" title="Bekleyen katılma talebi">{k.bekleyen_talep} talep</span>}
+                  </td>
+                  <td style={{ whiteSpace: 'nowrap' }}>
+                    <button className="yp-mini" onClick={() => setDuyuruPen(k)}>📣 Duyurular</button>{' '}
                     <button className="yp-mini" onClick={() => setForm({ ...k, ilgiler: k.ilgi_listesi })}>Düzenle</button>{' '}
                     <button className="yp-mini" onClick={() => aktifDegistir(k)}>{k.aktif ? 'Pasif yap' : 'Aktif yap'}</button>{' '}
                     <button className="yp-mini" onClick={() => sil(k)}>Sil</button>
@@ -129,6 +138,8 @@ export default function KulupYonetimi({ okulId }) {
           </table>
         )}
       </div>
+      {uyePen && <UyelerPenceresi kulup={uyePen} onKapat={() => setUyePen(null)} onDegisti={yukle} />}
+      {duyuruPen && <DuyurularPenceresi kulup={duyuruPen} onKapat={() => setDuyuruPen(null)} />}
       {liste && (
         <Pencere baslik={liste.kulup} altBaslik="Bu kulübü ilk 3 önerisinde gören öğrenciler" onKapat={() => setListe(null)}>
           <table className="yp-tablo">

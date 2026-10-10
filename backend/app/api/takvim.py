@@ -92,6 +92,16 @@ def ogrenci_takvim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcu
                           "hedef_sinif": None, "kaynak": "koc", "duzenlenebilir": False})
     except Exception:
         db.rollback()
+    try:   # [2026-10-10] kulüp etkinlikleri (üyesi olduğu kulüpler + okulda herkese açık olanlar)
+        from app.api.kulup_uyelik import ogrenci_duyurulari
+        for d in ogrenci_duyurulari(db, o, limit=60):
+            if d["tur"] == "etkinlik" and d["tarih"] and d["tarih"] >= bas:
+                sonuc.append({"id": f"kulup-{d['id']}", "baslik": f"{d['kulup']}: {d['baslik']}",
+                              "aciklama": " · ".join(x for x in (d.get("yer"), d.get("metin")) if x) or None,
+                              "tur": "okul", "tur_adi": "Kulüp etkinliği", "ikon": "🎭", "baslangic": d["tarih"], "bitis": None,
+                              "saat": d.get("saat"), "link": "/kulupler", "hedef_sinif": None, "kaynak": "kulup", "duzenlenebilir": False})
+    except Exception:
+        db.rollback()
     sonuc.sort(key=lambda x: (x["baslangic"], x["saat"] or ""))
     return {"etkinlikler": sonuc, "turler": [{"kod": k, **v} for k, v in TURLER.items()], "bugun": date.today()}
 
