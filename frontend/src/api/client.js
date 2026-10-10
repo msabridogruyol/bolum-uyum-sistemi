@@ -153,7 +153,6 @@ export const api = {
   guvenlikOlayiKaydet: (turId, olayTipi, katmanKod) =>
     post('/ogrenci/guvenlik/olay', { tur_id: turId, olay_tipi: olayTipi, katman_kod: katmanKod }),
   // [2026-10-10] Raporlar
-  raporIndir: (tur, bicim = 'pdf') => dosyaIndir(`/ogrenci/rapor?tur=${tur}&bicim=${bicim}`),
   ogrenciRaporuIndir: (ogrenciId, tur, bicim = 'pdf') => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/rapor?tur=${tur}&bicim=${bicim}`, 'admin'),
   okulRaporuIndir: (okulId, bicim = 'pdf') => dosyaIndir(`/yonetim/okul/${okulId}/rapor?bicim=${bicim}`, 'admin'),
   // [2026-10-10] Sınıf düzeyi / şube raporu; tur: ozet | toplu_ogrenci | toplu_veli | toplu_yonetici
@@ -189,6 +188,20 @@ export const api = {
   // [2026-10-10] YÖK Atlas eşleştirme (süper admin)
   yokatlasEslesme: () => aget('/admin/yokatlas/eslesme'),
   yokatlasEslestir: (bolumId, gruplar) => aput(`/admin/yokatlas/bolum/${bolumId}`, { gruplar }),
+  // [2026-10-10] Takvim, Kütüphanem, görev geçmişi
+  takvim: () => get('/ogrenci/takvim'),
+  takvimEkle: (veri) => post('/ogrenci/takvim', veri),
+  takvimSil: (id) => del(`/ogrenci/takvim/${id}`),
+  yonetimTakvim: (okulId) => aget(`/yonetim/takvim${okulId ? `?okul_id=${okulId}` : ''}`),
+  yonetimTakvimEkle: (veri) => apost('/yonetim/takvim', veri),
+  yonetimTakvimDuzenle: (id, veri) => aput(`/yonetim/takvim/${id}`, veri),
+  yonetimTakvimSil: (id) => adel(`/yonetim/takvim/${id}`),
+  kutuphane: () => get('/ogrenci/kutuphane'),
+  kutuphaneEkle: (veri) => post('/ogrenci/kutuphane', veri),
+  kutuphaneDuzenle: (id, veri) => put(`/ogrenci/kutuphane/${id}`, veri),
+  kutuphaneSil: (id) => del(`/ogrenci/kutuphane/${id}`),
+  ogrenciKutuphanesi: (id) => aget(`/yonetim/ogrenci/${id}/kutuphane`),
+  haftalikGecmis: () => get('/haftalik/gecmis'),
   guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),

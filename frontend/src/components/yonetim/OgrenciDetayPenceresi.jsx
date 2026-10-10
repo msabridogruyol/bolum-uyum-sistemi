@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { AkranListesi } from './AkranPaneli'
 import { OgrenciIlgi } from './KulupYonetimi'
+import OgrenciKutuphanesi from './OgrenciKutuphanesi'
 import { api } from '../../api/client'
 import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, onceSure, tarih } from './ortak'
 import RaporDugmeleri from '../RaporDugmeleri'
@@ -39,7 +40,7 @@ function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
   )
 }
 
-const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['akran', 'Benzer akranlar'], ['ilgi', 'İlgi & kulüp'], ['kayit', 'Kayıtlar']]
+const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['akran', 'Benzer akranlar'], ['ilgi', 'İlgi & kulüp'], ['kutuphane', 'Kütüphane'], ['kayit', 'Kayıtlar']]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
 
 export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, onKapat, onDegisti }) {
@@ -216,6 +217,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
 
       {sekme === 'akran' && <AkranListesi ogrenciId={ogrenciId} />}
       {sekme === 'ilgi' && <OgrenciIlgi ogrenciId={ogrenciId} />}
+      {sekme === 'kutuphane' && <OgrenciKutuphanesi ogrenciId={ogrenciId} />}
 
       {sekme === 'cevaplar' && superAdmin && <CevapAnaliziSekmesi ogrenciId={ogrenciId} />}
 

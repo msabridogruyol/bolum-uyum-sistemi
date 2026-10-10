@@ -84,7 +84,7 @@ export default function KulupYonetimi({ okulId }) {
             <div className="yp-kpi"><div className="yp-kpi-e">Testi çözen</div><div className="yp-kpi-d">{v.test_yapan}</div><div className="yp-kpi-a">/ {v.ogrenci_sayisi} öğrenci</div></div>
             <div className="yp-kpi"><div className="yp-kpi-e">Aktif kulüp</div><div className="yp-kpi-d">{v.kulupler.filter((k) => k.aktif).length}</div></div>
           </div>
-          <div className="yp-ince">Öğrenciler testi <b>Profilim → İlgi & Kulüpler</b> sekmesinden çözer (20 soru, ~3 dk). Sonuç bölüm önerilerini etkilemez.</div>
+          <div className="yp-ince">Öğrenciler testi <b>Kulüplerim</b> sayfasından çözer (20 soru, ~3 dk). Sonuç bölüm önerilerini etkilemez.</div>
         </div>
         <div className="card" style={{ margin: 0 }}>
           <div className="ct">Okulun ilgi profili (ortalama)</div>
@@ -147,7 +147,7 @@ export function OgrenciIlgi({ ogrenciId }) {
   useEffect(() => { api.ogrenciIlgi(ogrenciId).then(setV).catch(() => setV({ hata: true })) }, [ogrenciId])
   if (!v) return <div className="bos-durum">Yükleniyor…</div>
   if (v.hata) return <div className="auth-error">Yüklenemedi.</div>
-  if (!v.sonuc) return <div className="bos-durum">Öğrenci kısa ilgi testini henüz çözmedi (Profilim → İlgi & Kulüpler).</div>
+  if (!v.sonuc) return <div className="bos-durum">Öğrenci kısa ilgi testini henüz çözmedi (Kulüplerim sayfası).</div>
   const sirali = v.boyutlar.map((b) => ({ ...b, puan: v.sonuc.puanlar[b.kod] ?? 0 })).sort((a, b) => b.puan - a.puan)
   return (
     <div className="yp-iki">
