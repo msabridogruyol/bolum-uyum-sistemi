@@ -11,6 +11,7 @@
 from __future__ import annotations
 
 import random
+import re
 from datetime import date
 
 from sqlalchemy import text
@@ -403,6 +404,58 @@ def k_kutuphane(b: Baglam, m: str) -> str:
             + (f"; {istek} kayıt da listende seni bekliyor" if istek else "") + ". Kütüphanem sayfasındaki grafiklerden gelişimini izleyebilirsin.")
 
 
+# [2026-10-10] İlham Kaynakları → "Filiz'e sor": '"Başlık" (Tip) bana <alan> konusunda ... ' kalıbındaki soruya özel cevap.
+_KAYNAK_SORU = re.compile(r'["“](?P<baslik>[^"”]{2,200})["”]\s*\((?P<tip>[^)]{2,40})\)(?:.*?bana\s+(?P<alan>.+?)\s+konusunda)?', re.S)
+_TIP_ADI = {"kitap": "kitap", "film / belgesel": "film", "film": "film", "belgesel": "film", "ilham veren kisi": "rol_model",
+            "onemli olay": "olay", "yaklasim": "psikolojik_yaklasim", "aktivite": "aktivite"}
+_NASIL_BASLA = {
+    "kitap": ("Günde 15-20 sayfa okumayı hedefle; her bölümün sonunda \"{alan} açısından bu bana ne söylüyor?\" sorusuna 1-2 cümlelik not yaz. "
+              "Kitabı bitirince aklında kalan 3 fikri ve bunları bu hafta nasıl deneyebileceğini yaz."),
+    "film": ("İzlerken {alan} ile ilgili 3 sahneyi not al: karakter ne yaptı, sen olsan ne yapardın? "
+             "Bittikten sonra 5 dakika ayırıp en etkilendiğin anı ve bundan çıkardığın dersi yaz."),
+    "rol_model": ("Bu kişinin hayatına kısaca bak: hangi zorluklarla karşılaştı, hangi kararları verdi? "
+                  "{alan} konusunda ondan öğrenebileceğin bir davranışı seç ve bu hafta küçük bir örneğini kendin dene."),
+    "olay": ("Önce olayın kısa bir özetini oku: ne oldu, kimler hangi kararları verdi? Sonra \"{alan} açısından buradan ne ders çıkarılır?\" "
+             "sorusuna 3 maddelik cevap yaz."),
+    "psikolojik_yaklasim": ("Yaklaşımın temel fikrini kısaca öğren, sonra bir hafta boyunca günlük hayatında bir kez uygula. "
+                            "Hafta sonunda {alan} konusunda neyin değiştiğini kısaca not et."),
+    "aktivite": ("Bu aktiviteyi takvimine bu hafta için tek bir küçük deneme olarak ekle. "
+                 "Yaptıktan sonra nasıl hissettiğini ve {alan} konusunda ne fark ettiğini 2-3 cümleyle yaz."),
+}
+
+
+def k_kaynak_soru(b: Baglam, m: str) -> str | None:
+    r = _KAYNAK_SORU.search(m or "")
+    if not r:
+        return None
+    baslik = r.group("baslik").strip()
+    tip = _TIP_ADI.get(_sade(r.group("tip")).strip())
+    alan = (r.group("alan") or "").strip()
+    aciklama = ""
+    try:
+        from app.models import Degisken, GelisimKaynakOnerisi
+        q = b.db.query(GelisimKaynakOnerisi).filter(GelisimKaynakOnerisi.baslik == baslik)
+        if tip:
+            q = q.filter(GelisimKaynakOnerisi.kaynak_tipi == tip)
+        k = q.order_by(GelisimKaynakOnerisi.sira).first()
+        if k:
+            aciklama = k.aciklama or ""
+            tip = tip or k.kaynak_tipi
+            if not alan:
+                d = b.db.get(Degisken, k.degisken_id)
+                alan = d.ad if d else ""
+    except Exception:
+        b.db.rollback()
+    alan_k = _kucuk(alan) or "bu alan"
+    parcalar = [f"\"{baslik}\" iyi bir seçim."]
+    if aciklama:
+        parcalar.append(aciklama.rstrip(".") + ".")
+    parcalar.append(f"Neden işine yarar: {alan_k} profilinde öne çıkan alanlardan biri; bu kaynak sana o konuda farklı bir bakış ve somut örnekler sunar.")
+    parcalar.append("Nereden başlamalısın: " + _NASIL_BASLA.get(tip or "", _NASIL_BASLA["kitap"]).format(alan=alan_k))
+    parcalar.append("İstersen İlham Kaynakları'ndaki \"Kütüphaneme ekle\" ile listene kaydet; bitirince kısa notunu da yazarsan gelişimini Kütüphanem'deki grafiklerde görürsün.")
+    return " ".join(parcalar)
+
+
 KONULAR = [
     (("tesekkur", "sagol", "sag ol", "eyvallah", "cok iyi", "super"), k_tesekkur),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
@@ -433,6 +486,13 @@ KONULAR = [
 def otomatik_yanit(db: Session, ogrenci: Ogrenci, metin: str) -> str:
     t = _sade(metin)
     b = Baglam(db, ogrenci)
+    if _KAYNAK_SORU.search(metin or ""):
+        try:
+            c = k_kaynak_soru(b, metin)
+            if c:
+                return c
+        except Exception:
+            db.rollback()
     for anahtarlar, f in KONULAR:
         if any(a in t for a in anahtarlar):
             try:
