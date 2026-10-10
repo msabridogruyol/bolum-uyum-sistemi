@@ -45,6 +45,8 @@ class MesajIstek(BaseModel):
 
 class AsistanDurumOut(BaseModel):
     aktif: bool
+    mod: str = "ai"                    # [2026-10-10] ai | otomatik (yapay zekâ bağlı değilken kural tabanlı rehber)
+    ornek_sorular: list[str] = []
     gunluk_limit: int
     bugun_gonderilen: int
     kalan: int
@@ -74,12 +76,16 @@ def _bugun_gonderilen(db: Session, ogrenci: Ogrenci) -> int:
 @router.get("/durum", response_model=AsistanDurumOut)
 def asistan_durumu(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     limit, gonderilen = _gunluk_limit(db), _bugun_gonderilen(db, ogrenci)
-    return AsistanDurumOut(aktif=asistan_aktif_mi(), gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen))
+    from app.core.filiz_rehber import ORNEK_SORULAR
+    ai = asistan_aktif_mi()
+    return AsistanDurumOut(aktif=True, mod="ai" if ai else "otomatik", ornek_sorular=ORNEK_SORULAR[:6],
+                           gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen))
 
 
 class MesajCevap(BaseModel):
     asistan_yaniti: str
     oturum_kapandi_mi: bool = False
+    otomatik: bool = False             # [2026-10-10] cevap kural tabanlı rehberden geldiyse
 
 
 class GecmisOturumOut(BaseModel):
@@ -183,10 +189,15 @@ def mesaj_gonder(
 
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, onceki_ozet, istek.sayfa)
 
-    try:
-        yanit = openai_ile_konus(sistem_promptu, mesaj_gecmisi)
-    except AsistanKullanilamiyorHatasi as e:
-        raise HTTPException(status_code=503, detail=str(e))
+    otomatik = not asistan_aktif_mi()
+    if otomatik:   # [2026-10-10] yapay zekâ bağlı değil: öğrencinin verilerine dayanan otomatik rehber cevabı
+        from app.core.filiz_rehber import otomatik_yanit
+        yanit = otomatik_yanit(db, ogrenci, metin)
+    else:
+        try:
+            yanit = openai_ile_konus(sistem_promptu, mesaj_gecmisi)
+        except AsistanKullanilamiyorHatasi as e:
+            raise HTTPException(status_code=503, detail=str(e))
 
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit))
@@ -198,7 +209,7 @@ def mesaj_gonder(
         _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi + [{"role": "assistant", "content": yanit}])
         kapandi = True
 
-    return MesajCevap(asistan_yaniti=yanit, oturum_kapandi_mi=kapandi)
+    return MesajCevap(asistan_yaniti=yanit, oturum_kapandi_mi=kapandi, otomatik=otomatik)
 
 
 @router.post("/oturum/{oturum_id}/bitir", status_code=204)
@@ -228,7 +239,11 @@ def oturumu_bitir(
 
 
 def _oturumu_kapat_ve_ozetle(db: Session, oturum: OgrenciKoclukOturumu, sistem_promptu: str, mesaj_gecmisi: list[dict]):
-    ozet = oturumu_ozetle(sistem_promptu, mesaj_gecmisi) if mesaj_gecmisi else None
+    if not asistan_aktif_mi():   # [2026-10-10] otomatik rehber: konu başlığı özet olarak saklanır
+        ilk = next((m["content"] for m in mesaj_gecmisi if m["role"] == "user"), "")
+        ozet = f"Otomatik rehberle sohbet: \"{ilk[:80]}\"" if ilk else None
+    else:
+        ozet = oturumu_ozetle(sistem_promptu, mesaj_gecmisi) if mesaj_gecmisi else None
     oturum.durum = "tamamlandi"
     oturum.bitis_zamani = datetime.now(timezone.utc)
     oturum.ozet = ozet
