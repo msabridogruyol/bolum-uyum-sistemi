@@ -145,12 +145,15 @@ function BaglantiHucresi({ tip, h, yenile }) {
   const [bekle, setBekle] = useState(false)
   const tam = baglanti ? `${window.location.origin}${baglanti.yol}` : null
 
+  const [hata, setHata] = useState(null)
   async function uret() {
-    setBekle(true)
-    try { setBaglanti(await api.testBaglantiUret(tip, h.id, saat)); yenile() } finally { setBekle(false) }
+    setBekle(true); setHata(null)
+    try { setBaglanti(await api.testBaglantiUret(tip, h.id, saat)); yenile() }
+    catch (e) { setHata(e.detail || 'Bağlantı üretilemedi.') } finally { setBekle(false) }
   }
   async function iptal() {
-    await api.testBaglantiIptal(tip, h.id); setBaglanti(null); yenile()
+    setHata(null)
+    try { await api.testBaglantiIptal(tip, h.id); setBaglanti(null); yenile() } catch (e) { setHata(e.detail || 'İptal edilemedi.') }
   }
   async function kopyala() {
     try { await navigator.clipboard.writeText(tam); setKopyalandi(true); setTimeout(() => setKopyalandi(false), 1800) } catch { /* izin yok */ }
@@ -176,6 +179,7 @@ function BaglantiHucresi({ tip, h, yenile }) {
       </select>
       <button className="yp-mini" onClick={uret} disabled={bekle}>{h.baglanti_var ? 'Yeni bağlantı' : 'Bağlantı üret'}</button>
       {h.baglanti_var && <span className="yp-ince">aktif · {tarih(h.baglanti_bitis)}'e kadar <button className="hg-link" onClick={iptal}>iptal</button></span>}
+      {hata && <span className="auth-error" style={{ margin: 0, padding: '4px 8px', fontSize: 12 }}>{hata}</span>}
     </div>
   )
 }
@@ -204,12 +208,16 @@ export default function TestHesaplariSayfasi() {
     } catch (err) { setHata(err.detail || 'Hesap açılamadı.') } finally { setBekle(false) }
   }
   async function sifre(tip, h) {
-    const s = await api.testSifreYenile(tip, h.id)
-    setYeni({ ...s, ad_soyad: h.ad_soyad })
+    setHata(null)
+    try {
+      const s = await api.testSifreYenile(tip, h.id)
+      setYeni({ ...s, ad_soyad: h.ad_soyad })
+    } catch (e) { setHata(e.detail || 'Şifre yenilenemedi.') }
   }
   async function sil(tip, h) {
     if (!window.confirm(`${h.ad_soyad} test hesabı ve tüm verisi silinsin mi?`)) return
-    await api.testHesabiSil(tip, h.id); yenile()
+    setHata(null)
+    try { await api.testHesabiSil(tip, h.id); yenile() } catch (e) { setHata(e.detail || 'Test hesabı silinemedi.') }
   }
 
   return (
@@ -247,7 +255,7 @@ export default function TestHesaplariSayfasi() {
           <button className="yp-mini" onClick={() => setYeni(null)}>Tamam</button>
         </div>
       )}
-      {hata && <div className="auth-error">{hata}</div>}
+      {hata && <div className="auth-error" role="alert">{hata}</div>}
       {!d ? <div className="bos-durum">Yükleniyor…</div> : (
         <>
           <div className="ct" style={{ marginTop: 18 }}>Öğrenci test hesapları ({d.ogrenciler.length})</div>
