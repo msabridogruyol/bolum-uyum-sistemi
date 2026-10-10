@@ -1,3 +1,4 @@
+import Kaynakca from '../../components/Kaynakca'
 import { useState } from 'react'
 
 function Bolum({ baslik, ikon, children, varsayilanAcik }) {
@@ -315,6 +316,8 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>3. soru tipi eklendi (Kutup):</b> A-mı-B-mi tarzı, 4'lü ölçekli, iki değişkeni doğrudan karşılaştıran yeni bir soru tipi kuruldu</Madde>
         <Madde><b>Soru geçerlilik testi metodolojisi düzeltildi:</b> adaylar artık yalnızca sorunun kendi değişken ailesiyle sınırlı tutuluyor, negatif ağırlıklı SJT seçenekleri teste dahil edilmiyor, akademik kaynaklara dayalı %70/%80 eşikleri ve rastgele baseline karşılaştırması eklendi</Madde>
       </Bolum>
+
+      <Kaynakca />
     </div>
   )
 }

@@ -5,6 +5,7 @@ import Sayac from '../components/Sayac'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import { AlanTuruRozeti, GeriBildirimOzeti, OlcumKarti, OlcumPenceresi, TamamlaFormu } from '../components/kocluk/KoclukMotoru'
 import { useModuller } from '../yardimci/moduller'
+import { BirGunumSekmesi, BolumunuTani } from '../components/kocluk/BirGunum'
 
 // ============================================================
 // Ana sayfa
@@ -189,6 +190,8 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
 // ============================================================
 const SEKMELER = [
   { kod: 'ozet', ad: 'Özet', ikon: '🧭' },
+  { kod: 'bolum', ad: 'Bölümünü Tanı', ikon: '📘' },
+  { kod: 'gun', ad: 'Bir Günümü Yaşa', ikon: '🎬' },
   { kod: 'karsilastirma', ad: 'Sen ve Bölümün', ikon: '📊' },
   { kod: 'yol', ad: 'Yol Haritam', ikon: '🗺️' },
   { kod: 'guclu', ad: 'Güçlü Yönlerin', ikon: '💪' },
@@ -829,6 +832,8 @@ export default function KoclukSayfasi() {
             {sekme === 'ozet' && <OzetSekmesi plan={plan} gelisim={gelisim} sekmeyeGit={sekmeyeGit} />}
             {sekme === 'yol' && <YolHaritasiSekmesi plan={plan} gelisim={gelisim} hedefId={hedef.bolum_id} onDurum={adimDurumu} kaynaklar={kaynaklar} sekmeyeGit={sekmeyeGit} onOlc={setOlcumAlani} />}
             {sekme === 'ilham' && <IlhamSekmesi kaynaklar={kaynaklar} />}
+            {sekme === 'bolum' && <BolumunuTani hedef={hedef} />}
+            {sekme === 'gun' && <BirGunumSekmesi hedef={hedef} />}
             {sekme === 'guclu' && <GucluSekmesi plan={plan} onDurum={adimDurumu} />}
             {sekme === 'karsilastirma' && <KarsilastirmaSekmesi gelisim={gelisim} hedef={hedef} />}
             {sekme === 'gelisim' && <GelisimSekmesi karsilastirma={karsilastirma} />}
