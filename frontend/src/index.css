@@ -1127,3 +1127,8 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .rd-dugme:hover:not(:disabled){border-color:var(--pum);color:var(--tx);transform:translateY(-1px)}
 .rd-dugme:disabled{opacity:.6;cursor:wait}
 .rapor-dugmeleri.kucuk .rd-dugme{font-size:11.5px;padding:5px 9px}
+/* [2026-10-10] Şifre hücresi */
+.sifre-hucre{display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap}
+.sifre-hucre code{font-size:12px;background:var(--sur2);padding:2px 7px;border-radius:6px;letter-spacing:.03em}
+.sifre-hucre .yp-mini{padding:2px 6px}
+.yp-sinif-ata{display:inline-flex;gap:6px;align-items:center}

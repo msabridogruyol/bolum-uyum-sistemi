@@ -7,7 +7,7 @@ import { api } from '../../api/client'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import TopluYuklemePenceresi from '../../components/yonetim/TopluYuklemePenceresi'
 import OgrenciDetayPenceresi from '../../components/yonetim/OgrenciDetayPenceresi'
-import { DurumRozeti, Pencere, SifreListesi, onceSure, tarih } from '../../components/yonetim/ortak'
+import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, base64Indir, onceSure, tarih } from '../../components/yonetim/ortak'
 import OkulBilgiKarti from '../../components/OkulBilgiKarti'
 import MeslekDiliDuzenleyici from '../../components/yonetim/MeslekDiliDuzenleyici'
 import OkulTemaKarti from '../../components/yonetim/OkulTemaKarti'
@@ -94,11 +94,12 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
   const [silOnay, setSilOnay] = useState(false)
   const [hata, setHata] = useState(null)
   const [bekle, setBekle] = useState(false)
+  const [sinifAta, setSinifAta] = useState({ sinif: '', sube: '' })
 
   const siniflar = useMemo(() => [...new Set(ogrenciler.map((o) => o.sinif).filter(Boolean))], [ogrenciler])
   const liste = ogrenciler.filter((o) => {
     const a = arama.toLocaleLowerCase('tr')
-    return (!a || o.ad_soyad.toLocaleLowerCase('tr').includes(a) || o.email.toLowerCase().includes(a))
+    return (!a || o.ad_soyad.toLocaleLowerCase('tr').includes(a) || o.email.toLowerCase().includes(a) || (o.ogrenci_no || '').includes(a))
       && (!sinif || o.sinif === sinif) && (!durum || o.durum === durum)
   })
   const hepsiSecili = liste.length > 0 && liste.every((o) => secili.has(o.id))
@@ -112,6 +113,11 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
   }
   const sifreSifirla = () => topluIslem(async () => { setSifreler(await api.ogrenciSifreleriniSifirla([...secili])); setSecili(new Set()); yenile() })
   const sil = () => topluIslem(async () => { await api.ogrencileriSil([...secili]); setSecili(new Set()); setSilOnay(false); yenile() })
+  // [2026-10-10] Seçili öğrencilere sınıf / şube ver (rehber öğretmen)
+  const sinifVer = () => topluIslem(async () => {
+    for (const id of secili) await api.ogrenciDuzenle(id, { sinif: sinifAta.sinif || undefined, sube: sinifAta.sube })
+    setSecili(new Set()); yenile()
+  })
 
   return (
     <>
@@ -127,13 +133,22 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
           <option value="devam">Devam ediyor</option><option value="tamamlandi">Testi tamamladı</option>
         </select>
         <div style={{ flex: 1 }} />
-        <button className="btn" onClick={() => setYukleme(true)}>+ Öğrenci hesabı aç</button>
+        <button className="btn sec" disabled={bekle} title="Tüm öğrenciler: ad soyad, no, sınıf, e-posta, şifre (geçiciyse). Düzenleyip geri yükleyebilirsiniz."
+          onClick={() => topluIslem(async () => { const r = await api.girisListesi(okulId); base64Indir(r.dosya_adi, r.icerik_base64) })}>⬇ Giriş listesi (Excel)</button>
+        <button className="btn" onClick={() => setYukleme(true)}>+ Öğrenci ekle / Excel yükle</button>
       </div>
 
       {secili.size > 0 && (
         <div className="yp-secim-cubugu">
           <b>{secili.size} öğrenci seçili</b>
           <button className="btn sec" disabled={bekle} onClick={sifreSifirla}>🔑 Şifrelerini sıfırla</button>
+          <span className="yp-sinif-ata">
+            <select className="yp-sec" value={sinifAta.sinif} onChange={(e) => setSinifAta({ ...sinifAta, sinif: e.target.value })}>
+              <option value="">Sınıf…</option>{['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].map((s) => <option key={s}>{s}</option>)}
+            </select>
+            <input className="auth-input" style={{ width: 64, margin: 0 }} maxLength={2} placeholder="Şube" value={sinifAta.sube} onChange={(e) => setSinifAta({ ...sinifAta, sube: e.target.value.toUpperCase() })} />
+            <button className="btn sec" disabled={bekle || (!sinifAta.sinif && !sinifAta.sube)} onClick={sinifVer}>Sınıfı ata</button>
+          </span>
           {silOnay ? (
             <>
               <span style={{ fontSize: 12, color: 'var(--re)' }}>{secili.size} öğrenci tüm verileriyle kalıcı olarak silinecek.</span>
@@ -160,7 +175,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
             <thead>
               <tr>
                 <th style={{ width: 30 }}><input type="checkbox" checked={hepsiSecili} onChange={hepsiniSec} aria-label="Tümünü seç" /></th>
-                <th>Ad Soyad</th><th>Sınıf</th><th>Durum</th><th>Son giriş</th><th>Öneri / hedef</th>
+                <th>Ad Soyad</th><th>No</th><th>Sınıf</th><th>Şifre</th><th>Durum</th><th>Son giriş</th><th>Öneri / hedef</th>
               </tr>
             </thead>
             <tbody>
@@ -168,7 +183,9 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
                 <tr key={o.id} onClick={() => setDetay(o.id)} className={secili.has(o.id) ? 'secili' : ''}>
                   <td onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={secili.has(o.id)} onChange={() => sec(o.id)} aria-label={`${o.ad_soyad} seç`} /></td>
                   <td><b>{o.ad_soyad}</b>{o.test_hesabi && <span className="test-rozet">TEST</span>}<div className="yp-ince">{o.email}</div></td>
+                  <td className="yp-ince">{o.ogrenci_no || '—'}</td>
                   <td>{o.sinif_metni || '—'}</td>
+                  <td><SifreHucresi gecici={o.gecici_sifre} degistirmeli={o.sifre_degistirmeli} /></td>
                   <td><DurumRozeti kod={o.durum} etiket={o.durum_etiket} /></td>
                   <td className="yp-ince">{onceSure(o.son_giris_zamani)}</td>
                   <td style={{ fontSize: 12 }}>
@@ -223,7 +240,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
       )}
       {sifre && (
         <div className="yp-uyari" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
-          <span><b>{sifre.ad_soyad}</b> için geçici şifre (yalnızca şimdi gösteriliyor):</span>
+          <span><b>{sifre.ad_soyad}</b> için geçici şifre (tabloda da “geçici” olarak görünür; kendi şifresini belirleyince kaybolur):</span>
           <code className="yp-sifre">{sifre.gecici_sifre}</code>
           <span className="yp-ince">Giriş: {sifre.email} · ilk girişte kendi şifresini belirler.</span>
           <button className="yp-mini" onClick={() => setSifre(null)}>Tamam</button>
@@ -236,7 +253,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
             {liste.map((y) => (
               <tr key={y.id}>
                 <td><b>{y.ad_soyad}</b>{y.test_hesabi && <span className="test-rozet">TEST</span>}</td><td className="yp-ince">{y.email}</td><td className="yp-ince">{onceSure(y.son_giris_zamani)}</td>
-                <td>{y.sifre_degistirmeli ? <span className="yp-durum yp-d-amber">Geçici</span> : <span className="yp-durum yp-d-yesil">Belirlendi</span>}</td>
+                <td><SifreHucresi gecici={y.gecici_sifre} degistirmeli={y.sifre_degistirmeli} /></td>
                 {superAdmin && (
                   <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>
                     <button className="yp-mini" onClick={() => islem(async () => setSifre({ ...y, ...(await api.okulYetkilisiSifreSifirla(y.id)) }))}>🔑 Şifre sıfırla</button>{' '}

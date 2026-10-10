@@ -50,6 +50,9 @@ class Ogrenci(Base):
     test_hesabi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     test_giris_anahtari: Mapped[str | None] = mapped_column(String, nullable=True)   # bağlantı anahtarının SHA-256 özeti
     test_giris_bitis: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # [2026-10-10] Geçici şifre (şifreli; kişi kendi şifresini belirleyince silinir) — rehber tabloda görür
+    gecici_sifre_sifreli: Mapped[str | None] = mapped_column(String, nullable=True)
+    ogrenci_no: Mapped[str | None] = mapped_column(String, nullable=True)
 
 
 class AdminKullanici(Base):
@@ -74,6 +77,7 @@ class AdminKullanici(Base):
     test_hesabi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     test_giris_anahtari: Mapped[str | None] = mapped_column(String, nullable=True)   # bağlantı anahtarının SHA-256 özeti
     test_giris_bitis: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    gecici_sifre_sifreli: Mapped[str | None] = mapped_column(String, nullable=True)   # [2026-10-10]
 
 
 class OgrenciHesapOlayi(Base):

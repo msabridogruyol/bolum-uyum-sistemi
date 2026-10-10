@@ -54,6 +54,21 @@ export function Pencere({ baslik, altBaslik, onKapat, genis, sinif, children, al
 }
 
 const DURUM_SINIF = { tamamlandi: 'yp-d-yesil', devam: 'yp-d-mor', baslamadi: 'yp-d-gri', giris_yok: 'yp-d-amber' }
+// [2026-10-10] Şifre hücresi: geçici şifre tabloda görünür (geçici olarak işaretli); kişi kendi şifresini belirleyince 'Belirlendi'
+export function SifreHucresi({ gecici, degistirmeli }) {
+  const [goster, setGoster] = useState(false)
+  if (!degistirmeli) return <span className="yp-durum yp-d-yesil">✓ Kendi şifresi</span>
+  if (!gecici) return <span className="yp-durum yp-d-amber" title="Eski kayıt: geçici şifre saklanmamış. Şifre sıfırlayarak yenisini alın.">Geçici · görünmüyor</span>
+  return (
+    <span className="sifre-hucre" onClick={(e) => e.stopPropagation()}>
+      <code>{goster ? gecici : '••••-••••'}</code>
+      <button type="button" className="yp-mini" onClick={() => setGoster(!goster)} title={goster ? 'Gizle' : 'Göster'}>{goster ? '🙈' : '👁'}</button>
+      {goster && <button type="button" className="yp-mini" title="Kopyala" onClick={() => navigator.clipboard?.writeText(gecici).catch(() => {})}>📋</button>}
+      <span className="yp-durum yp-d-amber">geçici</span>
+    </span>
+  )
+}
+
 export function DurumRozeti({ kod, etiket }) {
   return <span className={`yp-durum ${DURUM_SINIF[kod] || 'yp-d-gri'}`}>{etiket}</span>
 }

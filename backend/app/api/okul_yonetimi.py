@@ -48,6 +48,7 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_yonetim
 from app.core.database import get_db
+from app.core.gizli_metin import coz, sifrele
 from app.core.hesap_yonetimi import (
     denetim_yaz, gecici_sifre, ogrenciyi_sil, olay_yaz, simdi, yapan_etiketi,
 )
@@ -165,7 +166,10 @@ _BASLIK = {
     "soyad": {"soyad", "soyadi", "soyisim"},
     "sinif": {"sinif", "sinifi", "sinifduzeyi", "duzey", "sinifsube", "sinifvesube"},
     "sube": {"sube", "subesi"},
-    "email": {"eposta", "email", "mail", "epostaadresi", "emailadresi", "elektronikposta"},
+    "email": {"eposta", "email", "mail", "epostaadresi", "emailadresi", "elektronikposta", "epostakullaniciadi"},
+    # [2026-10-10] isteğe bağlı: şifre (verilirse geçici şifre olarak kullanılır) ve öğrenci numarası
+    "sifre": {"sifre", "parola", "gecicisifre", "password", "sifresi"},
+    "ogrenci_no": {"ogrencino", "no", "numara", "okulno", "ogrencinumarasi", "okulnumarasi", "numarasi"},
 }
 
 
@@ -224,17 +228,25 @@ def _satirlari_coz(satirlar: list[list]) -> list[dict]:
         if isinstance(sinif_ham, str) and sinif_ham.endswith(".0"):
             sinif_ham = sinif_ham[:-2]
         sinif, sube = sinif_ayir(sinif_ham, al(r, "sube"))
+        ogr_no = al(r, "ogrenci_no")
+        if ogr_no.endswith(".0"):
+            ogr_no = ogr_no[:-2]
+        sifre = al(r, "sifre")
+        if sifre.startswith("("):          # giriş listesindeki "(kendi şifresi)" / "(sıfırlanmalı)" açıklamaları şifre değildir
+            sifre = ""
         sonuc.append({"satir": no, "ad_soyad": re.sub(r"\s+", " ", ad_soyad).strip(), "sinif": sinif, "sube": sube,
-                      "email": al(r, "email").replace(" ", "")})
+                      "email": al(r, "email").replace(" ", ""), "sifre": sifre, "ogrenci_no": ogr_no})
     if len(satirlar) - 1 > EN_FAZLA_SATIR:
         raise HTTPException(status_code=400, detail=f"Tek seferde en fazla {EN_FAZLA_SATIR} öğrenci yüklenebilir.")
     return sonuc
 
 
-def _dogrula(db: Session, satirlar: list[dict]) -> list[dict]:
+def _dogrula(db: Session, satirlar: list[dict], okul_id: int | None = None) -> list[dict]:
+    """[2026-10-10] Aynı okulda zaten kayıtlı e-posta → hata değil, 'güncellenecek' (ad, sınıf, no ve verilirse şifre)."""
     gorulen = Counter(s["email"].lower() for s in satirlar if s["email"])
     for s in satirlar:
         hatalar, uyarilar = [], []
+        s["guncelle"] = None
         if len(s["ad_soyad"]) < 3:
             hatalar.append("Ad soyad eksik")
         if not s["email"]:
@@ -246,7 +258,15 @@ def _dogrula(db: Session, satirlar: list[dict]) -> list[dict]:
         elif s["email"].lower().endswith("@ornek.com"):
             hatalar.append("Şablondaki örnek satır — silin")
         elif _eposta_kullanimda(db, s["email"]):
-            hatalar.append("Bu e-posta ile zaten hesap var")
+            var = db.query(Ogrenci).filter(func.lower(Ogrenci.email) == s["email"].lower()).first()
+            if var is not None and (var.okul_id or 0) == (okul_id or 0):
+                s["guncelle"] = str(var.id)
+                ayni = s.get("sifre") and var.sifre_degistirmeli and coz(var.gecici_sifre_sifreli) == s["sifre"]
+                uyarilar.append("Kayıtlı öğrenci — bilgileri güncellenecek" + (", şifresi değişecek" if s.get("sifre") and not ayni else ""))
+            else:
+                hatalar.append("Bu e-posta başka bir hesapta kullanılıyor")
+        if s.get("sifre") and len(s["sifre"]) < 6:
+            hatalar.append("Şifre en az 6 karakter olmalı")
         if not s["sinif"]:
             uyarilar.append("Sınıf boş — öğrenci ilk girişte seçer")
         elif s["sinif"] not in SINIFLAR:
@@ -345,6 +365,8 @@ class OgrenciSatir(BaseModel):
     email: str
     sinif: str | None = None
     sube: str | None = None
+    sifre: str | None = None        # [2026-10-10] verilirse geçici şifre olarak kullanılır
+    ogrenci_no: str | None = None
 
 
 class TopluOlusturIstek(BaseModel):
@@ -356,6 +378,7 @@ class OgrenciDuzenleIstek(BaseModel):
     email: str | None = None
     sinif: str | None = None
     sube: str | None = None
+    ogrenci_no: str | None = None
 
 
 class IdlerIstek(BaseModel):
@@ -390,6 +413,7 @@ def ben_ilk_sifre(istek: IlkSifreIstek, db: Session = Depends(get_db), yon: Admi
         raise HTTPException(status_code=400, detail="Yeni şifre geçici şifreyle aynı olamaz.")
     yon.sifre_hash = sifre_hashle(istek.yeni_sifre)
     yon.sifre_degistirmeli = False
+    yon.gecici_sifre_sifreli = None   # [2026-10-10]
     denetim_yaz(db, yon, "sifre_belirledi", "admin_kullanicilar", yon.id, "İlk girişte kendi şifresini belirledi", yon.okul_id)
     db.commit()
 
@@ -484,6 +508,7 @@ def okul_ogrencileri(okul_id: int, db: Session = Depends(get_db), yon: AdminKull
             "id": str(o.id), "ad_soyad": o.ad_soyad, "email": o.email, "sinif": o.sinif, "sube": o.sube,
             "sinif_metni": _sinif_metni(o), "olusturulma_zamani": o.olusturulma_zamani, "son_giris_zamani": o.son_giris_zamani,
             "sifre_degistirmeli": bool(o.sifre_degistirmeli), "durum": kod, "durum_etiket": etiket,
+            "gecici_sifre": coz(o.gecici_sifre_sifreli) if o.sifre_degistirmeli else None, "ogrenci_no": o.ogrenci_no,
             "biten_katman": x.get("biten", 0), "toplam_katman": x.get("toplam", 4),
             "ilk_bolum": adlar.get(x.get("ilk_bolum")) if x.get("durum") == "tamamlandi" else None,
             "hedef_bolum": adlar.get(x.get("hedef")),
@@ -496,16 +521,17 @@ def okul_ogrencileri(okul_id: int, db: Session = Depends(get_db), yon: AdminKull
 @router.get("/sablon")
 def sablon(yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     return {"dosya_adi": "ogrenci_yukleme_sablonu.xlsx", "icerik_base64": _xlsx_b64(
-        "Öğrenciler", ["Ad Soyad", "Sınıf", "Şube", "E-posta"],
-        [["Ayşe Yılmaz", 11, "A", "ayse.yilmaz@ornek.com"], ["Mehmet Demir", 12, "B", "mehmet.demir@ornek.com"]],
-        "Örnek satırları silip kendi öğrencilerinizi yazın. Sınıf: 9, 10, 11, 12 veya Mezun. Şube isteğe bağlı.")}
+        "Öğrenciler", ["Ad Soyad", "Öğrenci No", "Sınıf", "Şube", "E-posta", "Şifre"],
+        [["Ayşe Yılmaz", "1234", 11, "A", "ayse.yilmaz@ornek.com", ""], ["Mehmet Demir", "1235", 12, "B", "mehmet.demir@ornek.com", "Filiz2026"]],
+        "Örnek satırları silip kendi öğrencilerinizi yazın. Sınıf: 9, 10, 11, 12 veya Mezun. Şube, öğrenci no ve şifre isteğe bağlı "
+        "(şifre boşsa sistem üretir). Kayıtlı bir e-posta yazarsanız o öğrencinin bilgileri güncellenir.")}
 
 
 @router.post("/okul/{okul_id}/onizle")
 def onizle(okul_id: int, istek: DosyaIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     _okul_kapsami(db, yon, okul_id)
     satirlar = _satirlari_coz(_dosyadan_satirlar(istek.dosya_adi, istek.icerik_base64))
-    return {"satirlar": _dogrula(db, satirlar)}
+    return {"satirlar": _dogrula(db, satirlar, okul_id)}
 
 
 @router.post("/okul/{okul_id}/ogrenciler")
@@ -520,24 +546,38 @@ def toplu_olustur(okul_id: int, istek: TopluOlusturIstek, db: Session = Depends(
     for i, s in enumerate(istek.ogrenciler, start=1):
         sinif, sube = sinif_ayir(s.sinif, s.sube)
         satirlar.append({"satir": i, "ad_soyad": re.sub(r"\s+", " ", s.ad_soyad).strip(), "email": s.email.strip(),
-                         "sinif": sinif, "sube": sube})
-    _dogrula(db, satirlar)
-    olusan, hatali = [], []
+                         "sinif": sinif, "sube": sube, "sifre": (s.sifre or "").strip(), "ogrenci_no": (s.ogrenci_no or "").strip()})
+    _dogrula(db, satirlar, okul_id)
+    olusan, hatali, guncellenen = [], [], 0
     yapan = yapan_etiketi(yon)
     for s in satirlar:
         if s["hata"]:
             hatali.append(s)
             continue
-        sifre = gecici_sifre()
+        if s.get("guncelle"):                          # [2026-10-10] kayıtlı öğrenci: bilgileri ve (verildiyse) şifresi güncellenir
+            o = db.get(Ogrenci, uuid.UUID(s["guncelle"]))
+            o.ad_soyad, o.sinif, o.sube = s["ad_soyad"], s["sinif"] or o.sinif, s["sube"] or o.sube
+            if s.get("ogrenci_no"):
+                o.ogrenci_no = s["ogrenci_no"][:20]
+            if s.get("sifre") and not (o.sifre_degistirmeli and coz(o.gecici_sifre_sifreli) == s["sifre"]):
+                o.sifre_hash = _hizli_hash(s["sifre"])
+                o.sifre_degistirmeli = True
+                o.gecici_sifre_sifreli = sifrele(s["sifre"])
+                olay_yaz(db, o.id, "sifre_sifirlandi", "Toplu yüklemeyle yeni geçici şifre", yapan)
+            olay_yaz(db, o.id, "bilgi_guncellendi", "Toplu yükleme", yapan)
+            guncellenen += 1
+            olusan.append({**s, "id": str(o.id), "gecici_sifre": s.get("sifre") or (coz(o.gecici_sifre_sifreli) if o.sifre_degistirmeli else "(kendi şifresi)")})
+            continue
+        sifre = s.get("sifre") or gecici_sifre()
         o = Ogrenci(ad_soyad=s["ad_soyad"], email=s["email"], sifre_hash=_hizli_hash(sifre), sinif=s["sinif"], sube=s["sube"],
                     okul_id=okul.id if okul else None, okul=okul.ad if okul else None, sifre_degistirmeli=True,
-                    olusturulma_zamani=simdi())
+                    olusturulma_zamani=simdi(), gecici_sifre_sifreli=sifrele(sifre), ogrenci_no=(s.get("ogrenci_no") or None))
         db.add(o)
         db.flush()
         olay_yaz(db, o.id, "hesap_acildi", f"{okul.ad if okul else 'Okul harici'} — toplu hesap açma", yapan)
         olusan.append({**s, "id": str(o.id), "gecici_sifre": sifre})
-    denetim_yaz(db, yon, "ogrenci_toplu_ekle", "ogrenciler", okul_id, f"{len(olusan)} hesap açıldı, {len(hatali)} satır atlandı",
-                okul_id or None)
+    denetim_yaz(db, yon, "ogrenci_toplu_ekle", "ogrenciler", okul_id,
+                f"{len(olusan) - guncellenen} hesap açıldı, {guncellenen} güncellendi, {len(hatali)} satır atlandı", okul_id or None)
     db.commit()
     return {
         "olusturulan": olusan, "hatali": hatali,
@@ -547,10 +587,27 @@ def toplu_olustur(okul_id: int, istek: TopluOlusturIstek, db: Session = Depends(
 
 
 def _giris_listesi_xlsx(okul: Okul | None, kayitlar: list[dict]) -> str:
-    return _xlsx_b64("Giriş Bilgileri", ["Ad Soyad", "Sınıf", "Şube", "E-posta (kullanıcı adı)", "Geçici Şifre"],
-                     [[k["ad_soyad"], k.get("sinif") or "", k.get("sube") or "", k["email"], k["gecici_sifre"]] for k in kayitlar],
+    return _xlsx_b64("Giriş Bilgileri", ["Ad Soyad", "Öğrenci No", "Sınıf", "Şube", "E-posta", "Şifre"],
+                     [[k["ad_soyad"], k.get("ogrenci_no") or "", k.get("sinif") or "", k.get("sube") or "", k["email"], k["gecici_sifre"]]
+                      for k in kayitlar],
                      f"{okul.ad if okul else 'Okul harici'} — giriş adresi: sitenin /giris sayfası. Geçici şifre ilk girişte "
-                     f"değiştirilir. Bu dosyayı güvenli saklayın; şifreler sistemde tekrar gösterilmez.")
+                     f"değiştirilir. Bu dosyayı güvenli saklayın. Bu dosyayı düzenleyip 'Excel ile toplu' ekranından geri yükleyebilirsiniz.")
+
+
+@router.get("/okul/{okul_id}/giris-listesi")
+def giris_listesi(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-10] Okulun tüm öğrencileri: ad soyad · no · sınıf · e-posta · şifre (geçiciyse şifre, değilse 'kendi şifresi').
+    Aynı biçimde geri yüklenebilir (toplu yükleme kayıtlı öğrencileri günceller)."""
+    okul = _okul_kapsami(db, yon, okul_id)
+    ogrenciler = db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id) \
+        .order_by(Ogrenci.sinif, Ogrenci.sube, Ogrenci.ad_soyad).all()
+    kayitlar = [{"ad_soyad": o.ad_soyad, "ogrenci_no": o.ogrenci_no, "sinif": o.sinif, "sube": o.sube, "email": o.email,
+                 "gecici_sifre": (coz(o.gecici_sifre_sifreli) or "(sıfırlanmalı)") if o.sifre_degistirmeli else "(kendi şifresi)"}
+                for o in ogrenciler]
+    denetim_yaz(db, yon, "giris_listesi_indir", "ogrenciler", okul_id, f"{len(kayitlar)} öğrenci", okul_id or None)
+    db.commit()
+    return {"dosya_adi": f"giris_bilgileri_{(okul.ad if okul else 'okul_harici').replace(' ', '_')}_{simdi():%Y%m%d}.xlsx",
+            "icerik_base64": _giris_listesi_xlsx(okul, kayitlar)}
 
 
 def _listem(db: Session, o) -> list[dict]:
@@ -637,6 +694,7 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
                   "sinif_metni": _sinif_metni(o), "okul_id": o.okul_id or 0, "okul_ad": okul.ad if okul else "Okul harici",
                   "olusturulma_zamani": o.olusturulma_zamani, "son_giris_zamani": o.son_giris_zamani,
                   "sifre_degistirmeli": bool(o.sifre_degistirmeli), "durum": kod, "durum_etiket": etiket,
+                  "gecici_sifre": coz(o.gecici_sifre_sifreli) if o.sifre_degistirmeli else None, "ogrenci_no": o.ogrenci_no,
                   "dogum_tarihi": o.dogum_tarihi, "ilgi_alanlari": o.ilgi_alanlari},
         "istatistik": {
             "tur_sayisi": len(turlar),
@@ -698,6 +756,9 @@ def ogrenci_duzenle(ogrenci_id: str, istek: OgrenciDuzenleIstek, db: Session = D
         if (sinif, sube) != (o.sinif, o.sube):
             o.sinif, o.sube = sinif, sube
             degisen.append("sınıf/şube")
+    if istek.ogrenci_no is not None and (istek.ogrenci_no.strip() or None) != o.ogrenci_no:
+        o.ogrenci_no = istek.ogrenci_no.strip()[:20] or None
+        degisen.append("öğrenci no")
     if degisen:
         olay_yaz(db, o.id, "bilgi_guncellendi", ", ".join(degisen), yapan_etiketi(yon))
         denetim_yaz(db, yon, "ogrenci_duzenle", "ogrenciler", o.id, f"{o.ad_soyad}: {', '.join(degisen)}", o.okul_id)
@@ -731,6 +792,7 @@ def toplu_sifre_sifirla(istek: IdlerIstek, db: Session = Depends(get_db), yon: A
         sifre = gecici_sifre()
         o.sifre_hash = _hizli_hash(sifre)
         o.sifre_degistirmeli = True
+        o.gecici_sifre_sifreli = sifrele(sifre)
         db.query(GuvenilirCihaz).filter(GuvenilirCihaz.kullanici_tipi == "ogrenci", GuvenilirCihaz.kullanici_id == o.id).delete()
         olay_yaz(db, o.id, "sifre_sifirlandi", "Yeni geçici şifre verildi", yapan)
         kayitlar.append({"id": str(o.id), "ad_soyad": o.ad_soyad, "email": o.email, "sinif": o.sinif, "sube": o.sube,
@@ -765,6 +827,7 @@ def toplu_sil(istek: IdlerIstek, db: Session = Depends(get_db), yon: AdminKullan
 def _yetkili_out(y: AdminKullanici) -> dict:
     return {"id": str(y.id), "ad_soyad": y.ad_soyad, "email": y.email, "olusturulma_zamani": y.olusturulma_zamani,
             "son_giris_zamani": y.son_giris_zamani, "sifre_degistirmeli": bool(y.sifre_degistirmeli), "aktif_mi": y.aktif_mi,
+            "gecici_sifre": coz(y.gecici_sifre_sifreli) if y.sifre_degistirmeli else None,
             "test_hesabi": bool(getattr(y, "test_hesabi", False))}
 
 
@@ -791,7 +854,7 @@ def yetkili_ekle(okul_id: int, istek: YetkiliEkleIstek, db: Session = Depends(ge
         raise HTTPException(status_code=400, detail="Bu e-posta ile zaten hesap var.")
     sifre = gecici_sifre()
     y = AdminKullanici(ad_soyad=ad, email=email, sifre_hash=sifre_hashle(sifre), rol="okul_yetkilisi", okul_id=okul.id,
-                       aktif_mi=True, sifre_degistirmeli=True, olusturulma_zamani=simdi())
+                       aktif_mi=True, sifre_degistirmeli=True, olusturulma_zamani=simdi(), gecici_sifre_sifreli=sifrele(sifre))
     db.add(y)
     db.flush()
     denetim_yaz(db, yon, "okul_yetkilisi_ekle", "admin_kullanicilar", y.id, f"{ad} <{email}>", okul.id)
@@ -816,6 +879,7 @@ def yetkili_sifre_sifirla(yetkili_id: str, db: Session = Depends(get_db), yon: A
     sifre = gecici_sifre()
     y.sifre_hash = sifre_hashle(sifre)
     y.sifre_degistirmeli = True
+    y.gecici_sifre_sifreli = sifrele(sifre)
     from app.models import GuvenilirCihaz
     db.query(GuvenilirCihaz).filter(GuvenilirCihaz.kullanici_tipi == "yonetim", GuvenilirCihaz.kullanici_id == y.id).delete()
     denetim_yaz(db, yon, "okul_yetkilisi_sifre_sifirla", "admin_kullanicilar", y.id, y.ad_soyad, y.okul_id)
