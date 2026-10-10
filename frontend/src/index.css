@@ -2334,3 +2334,61 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 .kp-yolunda{font-size:13px;color:var(--gr);font-weight:600;padding:8px 0}
 .kp-hizli{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(200px,100%),1fr));gap:6px}
 .kp-guvenlik{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(300px,100%),1fr));column-gap:20px}
+
+/* [2026-10-10] Rapor Merkezi → Tek Bakışta (otb-). Durum renkleri: --ist-iyi / --ist-uyari / --ist-ciddi / --ist-kritik (palet.js DURUM);
+   zeminler yüzeyle karıştırılır (açık zemin), yazı her zaman metin renginde — anlam ikon + etiketle de verilir. */
+.orm-sekmeler{margin-top:0}
+.otb-bolum{margin-top:22px}
+.otb-bolum-ust{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:6px 12px}
+.otb-bolum-ust .ak-link{font-size:13px;margin-bottom:12px}
+.otb-kart-baslik{font-size:15px;font-weight:800;margin:0 0 8px}
+.otb-bulgular{margin:0 0 14px}
+.otb-bulgular ul{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.otb-bulgu{display:flex;gap:10px;align-items:flex-start;padding:8px 10px;border-radius:10px;font-size:13.5px;line-height:1.45;font-weight:600}
+.otb-bulgu-ikon{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;font-weight:900;color:#fff;margin-top:-1px}
+.otb-b-dikkat{background:color-mix(in srgb, var(--ist-kritik) 10%, var(--sur))}
+.otb-b-dikkat .otb-bulgu-ikon{background:var(--ist-kritik)}
+.otb-b-olumlu{background:color-mix(in srgb, var(--ist-iyi) 10%, var(--sur))}
+.otb-b-olumlu .otb-bulgu-ikon{background:#0a7f0a}
+.otb-b-bilgi{background:color-mix(in srgb, var(--ist-k1) 9%, var(--sur))}
+.otb-b-bilgi .otb-bulgu-ikon{background:var(--ist-k1)}
+.otb-tablo-kap{max-height:none}
+.otb-tablo-kap .yp-tablo{min-width:520px}
+.otb-sag{text-align:right!important}
+.otb-sayi{font-variant-numeric:tabular-nums;white-space:nowrap}
+.otb-ad{text-align:left;color:var(--tx)}
+.otb-ad:hover,.otb-ad:focus-visible{color:var(--pu);text-decoration:underline}
+.otb-seviye{display:inline-flex;align-items:center;gap:5px;font-size:11.5px;font-weight:800;padding:2px 9px 2px 3px;border-radius:999px;white-space:nowrap;
+  background:color-mix(in srgb, var(--d) 16%, var(--sur));color:var(--tx);border:1px solid color-mix(in srgb, var(--d) 55%, transparent)}
+.otb-seviye-ikon{width:16px;height:16px;border-radius:50%;display:grid;place-items:center;font-size:9.5px;background:var(--d);color:#fff}
+.otb-s-dusuk .otb-seviye-ikon{color:#2C2717}
+.otb-nedenler{font-size:12px;line-height:1.5;min-width:180px}
+.otb-nedenler span{display:inline-block;margin:1px 4px 1px 0;padding:1px 7px;border-radius:6px;background:var(--sur2);white-space:nowrap}
+.otb-gorusme{font-size:12px;font-weight:700}
+.otb-g-yok{color:var(--re)}
+.otb-g-plan{color:var(--tx2)}
+.otb-akademik{margin:0;display:flex;flex-direction:column;gap:12px}
+.otb-kaynak{display:flex;flex-wrap:wrap;justify-content:space-between;gap:4px 14px;font-size:12.5px;color:var(--tx2)}
+.otb-ikili{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr));gap:12px 16px}
+.otb-sira{min-width:0}
+.otb-sira .otb-tablo-kap .yp-tablo{min-width:340px}
+.otb-alt-baslik{font-size:13px;font-weight:800;margin:0 0 6px;color:var(--tx2)}
+.otb-sira-bos{padding:10px 12px;background:var(--sur2);border-radius:10px}
+.otb-mini-sekme{display:inline-flex;gap:2px;padding:3px;background:var(--sur2);border-radius:10px;margin-bottom:12px}
+.otb-mini-sekme button{border:0;background:none;font:inherit;font-size:12.5px;font-weight:700;padding:5px 14px;border-radius:8px;color:var(--tx2);cursor:pointer}
+.otb-mini-sekme button.aktif{background:var(--sur);color:var(--tx);box-shadow:0 1px 2px rgba(0,0,0,.08)}
+.otb-isi td{position:relative}
+.otb-isi tfoot td{background:var(--sur2);font-weight:800;border-top:1.5px solid var(--bor)}
+.otb-t-iyi{background:color-mix(in srgb, var(--ist-iyi) 24%, var(--sur))}
+.otb-t-iyi_hafif{background:color-mix(in srgb, var(--ist-iyi) 10%, var(--sur))}
+.otb-t-uyari{background:color-mix(in srgb, var(--ist-uyari) 22%, var(--sur))}
+.otb-t-kotu{background:color-mix(in srgb, var(--ist-kritik) 20%, var(--sur))}
+.otb-v-en_iyi{box-shadow:inset 0 0 0 2px var(--ist-iyi);font-weight:800}
+.otb-v-en_kotu{box-shadow:inset 0 0 0 2px var(--ist-kritik);font-weight:800}
+.otb-v-ikon{font-size:10px;margin-right:4px}
+.otb-v-en_iyi .otb-v-ikon{color:#0a7f0a}
+.otb-v-en_kotu .otb-v-ikon{color:var(--re)}
+.otb-lejant{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:11.5px;color:var(--tx2);margin:8px 0 4px}
+.otb-lejant span{display:inline-flex;align-items:center;gap:5px}
+.otb-lejant i{width:14px;height:12px;border-radius:3px;border:1px solid var(--bor)}
+.otb-dipnot{margin-top:20px}

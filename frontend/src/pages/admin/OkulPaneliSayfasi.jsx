@@ -525,7 +525,8 @@ export default function OkulPaneliSayfasi() {
       )}
       {sk === 'ozet' && <OzetSekmesi oz={oz} onIstatistik={okulId > 0 ? () => setSekme('istatistik') : null} />}
       {sk === 'istatistik' && okulId > 0 && <OkulIstatistik okulId={okulId} />}
-      {sk === 'raporlar' && okulId > 0 && <OkulRaporMerkezi okulId={okulId} oz={oz} />}
+      {sk === 'raporlar' && okulId > 0 && <OkulRaporMerkezi okulId={okulId} oz={oz} superAdmin={superAdmin} okullar={okullar} onDegisti={yenile}
+        onRehberlik={bolumler.some((b) => b.k === 'rehberlik') ? () => setSekme('rehberlik') : null} />}
       {sk === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
       {sk === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
       {sk === 'rehberlik' && <RehberlikSekmesi okulId={okulId} ogrenciler={ogrenciler} superAdmin={superAdmin} okullar={okullar} yenileOkul={yenile} />}

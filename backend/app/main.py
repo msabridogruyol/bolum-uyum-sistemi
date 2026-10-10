@@ -45,6 +45,7 @@ from app.api.cevap_analizi import router as cevap_analizi_router
 from app.api.listem import router as listem_router
 from app.api.raporlar import router as raporlar_router
 from app.api.okul_istatistik import router as okul_istatistik_router   # [2026-10-10] okul paneli → İstatistikler
+from app.api.okul_tek_bakista import router as okul_tek_bakista_router   # [2026-10-10] Rapor Merkezi → Tek Bakışta
 from app.api.akran import router as akran_router
 from app.api.takvim import ogrenci_router as takvim_ogrenci_router, router as takvim_router
 from app.api.kutuphane import ogrenci_router as kutuphane_ogrenci_router, router as kutuphane_router
@@ -229,6 +230,7 @@ app.include_router(cevap_analizi_router)
 app.include_router(listem_router)                           # [2026-10-10] /ogrenci/listem, /ogrenci/karsilastir
 app.include_router(raporlar_router)                         # [2026-10-10] PDF / Excel raporlar
 app.include_router(okul_istatistik_router)                  # [2026-10-10] /yonetim/okul/{id}/istatistik (+ /excel)
+app.include_router(okul_tek_bakista_router)                 # [2026-10-10] /yonetim/okul/{id}/tek-bakista (+ /pdf)
 app.include_router(kulup_router, dependencies=[_Dep(okul_modulu("kulupler"))])                            # [2026-10-10] okul kulüpleri
 app.include_router(kulup_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])                    # [2026-10-10] /ogrenci/ilgi-testi
 app.include_router(koc_router)                              # [2026-10-10] anlaşmalı eğitim koçları

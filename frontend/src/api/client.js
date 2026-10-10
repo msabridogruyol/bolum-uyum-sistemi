@@ -467,6 +467,9 @@ export const api = {
   // [2026-10-10] Okul paneli → İstatistikler; f: { sinif, sube, bas, bit } (hepsi isteğe bağlı)
   okulIstatistik: (okulId, f = {}) => aget(`/yonetim/okul/${okulId}/istatistik${istatistikSorgu(f)}`),
   okulIstatistikExcel: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/istatistik/excel${istatistikSorgu(f)}`, 'admin'),
+  // [2026-10-10] Rapor Merkezi → Tek Bakışta (yönetici özeti) ve PDF'i (?sinif=&sube=)
+  okulTekBakista: (okulId, f = {}) => aget(`/yonetim/okul/${okulId}/tek-bakista${istatistikSorgu(f)}`),
+  okulTekBakistaPdf: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/tek-bakista/pdf${istatistikSorgu(f)}`, 'admin'),
   okulOgrencileri: (okulId) => aget(`/yonetim/okul/${okulId}/ogrenciler`),
   yuklemeSablonu: () => aget('/yonetim/sablon'),
   ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),

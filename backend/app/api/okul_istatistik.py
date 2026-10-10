@@ -79,17 +79,15 @@ def _sinif_sira(s: str | None) -> int:
     return SINIFLAR.index(s) if s in SINIFLAR else 98 if s else 99
 
 
-# ============================================================================= veri
-def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, sube: str | None = None,
-                           bas: date | None = None, bit: date | None = None) -> dict:
-    bas, bit = _aralik(bas, bit)
-    moduller = set(okul_modulleri(db, okul_id or None))
+# ============================================================================= ortak yardımcılar
+# (İstatistikler ve Rapor Merkezi → Tek Bakışta [okul_tek_bakista.py] birlikte kullanır)
+def ogrenci_kumesi(db: Session, okul_id: int, sinif: str | None = None, sube: str | None = None) -> dict:
+    """Okulun öğrencileri (test hesapları hariç) ve sınıf / şube filtresi.
+    → {tum, ogr (filtreli), sinif, sube, etiket, secenekler (filtreden bağımsız)}"""
     sinif = (sinif or "").strip() or None
     sube = ((sube or "").strip().upper() or None) if sinif else None
-
     tum = [o for o in db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id).all()
            if not getattr(o, "test_hesabi", False)]
-    # filtre seçenekleri (filtreden bağımsız)
     secenek = defaultdict(set)
     for o in tum:
         if o.sinif:
@@ -97,6 +95,37 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
             if o.sube:
                 secenek[o.sinif].add(o.sube)
     ogr = [o for o in tum if not sinif or (o.sinif == sinif and (not sube or (o.sube or "") == sube))]
+    return {"tum": tum, "ogr": ogr, "sinif": sinif, "sube": sube,
+            "etiket": sube_etiketi(sinif, sube) if sinif else "Tüm okul",
+            "secenekler": [{"sinif": s, "subeler": sorted(b)} for s, b in sorted(secenek.items(), key=lambda kv: _sinif_sira(kv[0]))]}
+
+
+def kocluk_etkinligi(db: Session, ids: list, bas: date, bit: date) -> tuple[set, set]:
+    """(hiç gelişim adımı tamamlayan, aralıkta adım ya da haftalık görev tamamlayan) öğrenci kümeleri."""
+    if not ids:
+        return set(), set()
+    p = {"ids": ids, "bas": bas, "bit": bit}
+    TRG = "(%s AT TIME ZONE 'Europe/Istanbul')::date"
+    adim_ogr, aralikta = set(), set()
+    for r in db.execute(text(f"""
+        SELECT ogrenci_id, count(*) FILTER (WHERE {TRG % 'guncelleme_zamani'} BETWEEN :bas AND :bit) AS ar
+          FROM ogrenci_gelisim_adim_durumu WHERE ogrenci_id = ANY(:ids) AND durum = 'tamamlandi' GROUP BY 1"""), p).all():
+        adim_ogr.add(r.ogrenci_id)
+        if r.ar:
+            aralikta.add(r.ogrenci_id)
+    aralikta |= {r[0] for r in db.execute(text(f"""
+        SELECT DISTINCT ogrenci_id FROM ogrenci_haftalik_gorev WHERE ogrenci_id = ANY(:ids) AND durum = 'tamamlandi'
+           AND {TRG % 'tamamlanma_zamani'} BETWEEN :bas AND :bit"""), p).all()}
+    return adim_ogr, aralikta
+
+
+# ============================================================================= veri
+def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, sube: str | None = None,
+                           bas: date | None = None, bit: date | None = None) -> dict:
+    bas, bit = _aralik(bas, bit)
+    moduller = set(okul_modulleri(db, okul_id or None))
+    kume = ogrenci_kumesi(db, okul_id, sinif, sube)
+    sinif, sube, ogr = kume["sinif"], kume["sube"], kume["ogr"]
     ids = [o.id for o in ogr]
     p = {"ids": ids, "bas": bas, "bit": bit}
     TRG = "(%s AT TIME ZONE 'Europe/Istanbul')::date"   # zaman damgası → İstanbul günü
@@ -161,19 +190,8 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
 
     # ------------------------------------------------------------------ koçluk adımı (huni + KPI)
     kocluk_acik = "kocluk" in moduller
-    adim_ogr, adim_aralik = set(), Counter()
-    gorev_ogr_aralik = set()
-    if kocluk_acik and ids:
-        for r in db.execute(text(f"""
-            SELECT ogrenci_id, count(*) FILTER (WHERE {TRG % 'guncelleme_zamani'} BETWEEN :bas AND :bit) AS ar
-              FROM ogrenci_gelisim_adim_durumu WHERE ogrenci_id = ANY(:ids) AND durum = 'tamamlandi' GROUP BY 1"""), p).all():
-            adim_ogr.add(r.ogrenci_id)
-            if r.ar:
-                adim_aralik[r.ogrenci_id] = r.ar
-        gorev_ogr_aralik = {r[0] for r in db.execute(text(f"""
-            SELECT DISTINCT ogrenci_id FROM ogrenci_haftalik_gorev WHERE ogrenci_id = ANY(:ids) AND durum = 'tamamlandi'
-               AND {TRG % 'tamamlanma_zamani'} BETWEEN :bas AND :bit"""), p).all()}
-    kocluk_aktif = len(set(adim_aralik) | gorev_ogr_aralik)
+    adim_ogr, kocluk_aralik = kocluk_etkinligi(db, ids, bas, bit) if kocluk_acik else (set(), set())
+    kocluk_aktif = len(kocluk_aralik)
 
     toplam = len(ogr)
     giris_yapan = sum(1 for o in ogr if o.son_giris_zamani is not None)
@@ -184,9 +202,8 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
 
     v: dict = {
         "moduller": sorted(moduller),
-        "filtre": {"sinif": sinif, "sube": sube, "etiket": sube_etiketi(sinif, sube) if sinif else "Tüm okul",
-                   "bas": bas.isoformat(), "bit": bit.isoformat(),
-                   "secenekler": [{"sinif": s, "subeler": sorted(b)} for s, b in sorted(secenek.items(), key=lambda kv: _sinif_sira(kv[0]))]},
+        "filtre": {"sinif": sinif, "sube": sube, "etiket": kume["etiket"],
+                   "bas": bas.isoformat(), "bit": bit.isoformat(), "secenekler": kume["secenekler"]},
         "kpi": {
             "ogrenci": toplam, "giris_yapan": giris_yapan, "aktif_7": aktif7, "aralikta_giris": aralikta_giris,
             "teste_baslayan": baslayan, "tamamlayan": tamamlayan, "tamamlama_orani": _yuzde(tamamlayan, toplam),

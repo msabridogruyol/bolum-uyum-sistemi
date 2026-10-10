@@ -2,11 +2,13 @@
 // Yalnızca var olan uç noktalar kullanılır (api/client.js). Paketteki modülü kapalı raporlar gösterilmez;
 // toplu ve sınıf öğretmeni raporları 'gelismis_raporlar' modülüne bağlıdır (backend raporlar._paket_kontrol ile aynı).
 // Sınıflar sekmesindeki şube "Rapor" menüleri ayrıca yerinde durur.
+// [2026-10-10] En üstte iki sekme: "Tek Bakışta" (varsayılan; OkulTekBakista — yönetici özeti, grafik ve tablolar) ve "Rapor İndir" (indirme kartları).
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import { csvIndir } from '../istatistik'
 import { useOkulModulleri } from '../../yardimci/moduller'
 import { base64Indir } from './ortak'
+import OkulTekBakista from './OkulTekBakista'
 
 const GERCEK_SINIF = ['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf']
 const tarihTR = (iso) => (iso ? new Date(`${String(iso).slice(0, 10)}T00:00:00`).toLocaleDateString('tr-TR') : '')
@@ -63,7 +65,25 @@ const kapsamCoz = (d) => {
   return { sinif, sube }
 }
 
-export default function OkulRaporMerkezi({ okulId, oz }) {
+const SEKMELER = [['tek', '👁️ Tek Bakışta'], ['indir', '⬇️ Rapor İndir']]
+
+export default function OkulRaporMerkezi({ okulId, oz, superAdmin, okullar, onDegisti, onRehberlik }) {
+  const [sekme, setSekme] = useState('tek')
+  return (
+    <>
+      <div className="yp-sekmeler orm-sekmeler" role="tablist" aria-label="Rapor Merkezi">
+        {SEKMELER.map(([k, ad]) => (
+          <button key={k} type="button" role="tab" aria-selected={sekme === k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>
+        ))}
+      </div>
+      {sekme === 'tek'
+        ? <OkulTekBakista okulId={okulId} superAdmin={superAdmin} okullar={okullar} onDegisti={onDegisti} onRehberlik={onRehberlik} />
+        : <RaporIndir okulId={okulId} oz={oz} />}
+    </>
+  )
+}
+
+function RaporIndir({ okulId, oz }) {
   const acik = useOkulModulleri()
   const [netler, setNetler] = useState(true)
   const net = acik('net_takibi') && netler
