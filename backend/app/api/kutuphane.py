@@ -45,7 +45,7 @@ def _out(r: dict) -> dict:
 
 def _liste(db: Session, ogrenci_id) -> dict:
     satirlar = db.execute(text("""
-        SELECT id, kategori, alt_tur, baslik, kisi, durum, puan, notlar, tarih, olusturulma_zamani
+        SELECT id, kategori, alt_tur, baslik, kisi, durum, puan, notlar, tarih, sayfa, olusturulma_zamani
           FROM ogrenci_kutuphane WHERE ogrenci_id = :o
          ORDER BY CASE durum WHEN 'devam' THEN 0 WHEN 'bitti' THEN 1 ELSE 2 END, COALESCE(tarih, olusturulma_zamani::date) DESC, id DESC
     """), {"o": ogrenci_id}).mappings().all()
@@ -68,6 +68,7 @@ class KayitIstek(BaseModel):
     puan: int | None = Field(default=None, ge=1, le=5)
     notlar: str | None = Field(default=None, max_length=1500)
     tarih: date | None = None
+    sayfa: int | None = Field(default=None, ge=1, le=5000)   # [2026-10-10] kitaplar için
 
 
 def _degerler(istek: KayitIstek) -> dict:
@@ -79,7 +80,8 @@ def _degerler(istek: KayitIstek) -> dict:
         raise HTTPException(status_code=400, detail="Tarih ileri bir gün olamaz.")
     t = lambda v: (v or "").strip() or None  # noqa: E731
     return {"ka": istek.kategori, "al": t(istek.alt_tur), "ba": istek.baslik.strip(), "ki": t(istek.kisi), "du": istek.durum,
-            "pu": istek.puan if istek.durum != "istek" else None, "no": t(istek.notlar), "ta": istek.tarih}
+            "pu": istek.puan if istek.durum != "istek" else None, "no": t(istek.notlar), "ta": istek.tarih,
+            "sa": istek.sayfa if istek.kategori == "kitap" else None}
 
 
 @ogrenci_router.get("/kutuphane")
@@ -92,8 +94,8 @@ def kayit_ekle(istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = De
     if db.execute(text("SELECT COUNT(*) FROM ogrenci_kutuphane WHERE ogrenci_id = :o"), {"o": o.id}).scalar() >= SINIR:
         raise HTTPException(status_code=400, detail=f"En fazla {SINIR} kayıt eklenebilir.")
     kid = db.execute(text("""
-        INSERT INTO ogrenci_kutuphane (ogrenci_id, kategori, alt_tur, baslik, kisi, durum, puan, notlar, tarih)
-        VALUES (:o, :ka, :al, :ba, :ki, :du, :pu, :no, :ta) RETURNING id
+        INSERT INTO ogrenci_kutuphane (ogrenci_id, kategori, alt_tur, baslik, kisi, durum, puan, notlar, tarih, sayfa)
+        VALUES (:o, :ka, :al, :ba, :ki, :du, :pu, :no, :ta, :sa) RETURNING id
     """), {**_degerler(istek), "o": o.id}).scalar()
     db.commit()
     return {"id": kid}
@@ -103,7 +105,7 @@ def kayit_ekle(istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = De
 def kayit_duzenle(kayit_id: int, istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     n = db.execute(text("""
         UPDATE ogrenci_kutuphane SET kategori = :ka, alt_tur = :al, baslik = :ba, kisi = :ki, durum = :du, puan = :pu,
-               notlar = :no, tarih = :ta, guncelleme_zamani = :z WHERE id = :i AND ogrenci_id = :o
+               notlar = :no, tarih = :ta, sayfa = :sa, guncelleme_zamani = :z WHERE id = :i AND ogrenci_id = :o
     """), {**_degerler(istek), "i": kayit_id, "o": o.id, "z": datetime.now(timezone.utc)}).rowcount
     db.commit()
     if not n:

@@ -103,7 +103,7 @@ function KameraOnizleme({ videoRef }) {
 // ============================================================
 const ONAY_METNI = 'ONAYLIYORUM'
 
-function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, altBaslik, kameraRizasi, onKameraIzni }) {
+function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, altBaslik, kameraRizasi, onKameraIzni, devamBilgisi }) {
   const [yaziliOnay, setYaziliOnay] = useState('')
   const [kurallarOk, setKurallarOk] = useState(false)
   const [kameraBekle, setKameraBekle] = useState(false)
@@ -141,7 +141,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
           <li>Değerlendirme <b>tam ekranda</b> yapılır. Tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşu</b> ve <b>kopyalama</b> denemeleri kayda geçer.</li>
           <li>Her ihlal <b>güven puanını</b> düşürür; puanını ekranın üstünde canlı görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b> ve rehber öğretmenin yeniden yapmanı isteyebilir.</li>
           <li>Ekran kaydı ya da başkasından yardım almak da kurallara aykırıdır; sonuçların <b>yalnızca seni</b> anlatırsa işe yarar.</li>
-          <li>Katmandan erken çıkarsan o oturumdaki cevapların sayılmaz; katmana baştan başlarsın.</li>
+          <li>Ara vermen gerekirse çıkabilirsin: verdiğin cevaplar kaydedilir, döndüğünde <b>kaldığın sorudan</b> devam edersin.</li>
         </ul>
         <div className={`sn-kamera${kameraRizasi ? ' acik' : ''}`}>
           {kameraRizasi ? (
@@ -162,8 +162,13 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
         <label className="auth-label">Başlamak için aşağıya büyük harflerle <b>{ONAY_METNI}</b> yaz:</label>
         <input className="auth-input" value={yaziliOnay} onChange={(e) => setYaziliOnay(e.target.value)} placeholder={ONAY_METNI} autoComplete="off" />
       </div>
+      {devamBilgisi && (
+        <div className="yp-basari" style={{ marginBottom: 10 }}>
+          ✓ Bu bölüme daha önce başlamıştın: <b>{devamBilgisi.cevaplanan}/{devamBilgisi.toplam}</b> sorunun cevabı kayıtlı. Kaldığın yerden devam edeceksin; önceki cevaplarını "← Önceki soru" ile görebilir ve değiştirebilirsin.
+        </div>
+      )}
       <button className="btn full" disabled={!onayGecerli || cikisYapiliyor} onClick={onBasla} style={{ marginTop: 4, fontSize: 16, padding: 15 }}>
-        {cikisYapiliyor ? <span className="spin" /> : 'Değerlendirmeye Başla →'}
+        {cikisYapiliyor ? <span className="spin" /> : devamBilgisi ? `Kaldığın yerden devam et (${devamBilgisi.sira}. soru) →` : 'Değerlendirmeye Başla →'}
       </button>
     </div>
   )
@@ -183,6 +188,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   const [turId, setTurId] = useState(null)
   const [aktifIndex, setAktifIndex] = useState(0)
   const [cevaplar, setCevaplar] = useState({})
+  const [devamBilgisi, setDevamBilgisi] = useState(null)   // [2026-10-10] { cevaplanan, toplam }
   const [gonderiliyor, setGonderiliyor] = useState(false)
   const [hata, setHata] = useState(null)
   const [tamamlandi, setTamamlandi] = useState(null)
@@ -216,6 +222,16 @@ export default function SoruSayfasi({ mod = 'katman' }) {
     setBasladiMi(false)
     ;(dalMi ? api.daliBaslat(kod) : api.katmaniBaslat(kod))
       .then((veri) => {
+        // [2026-10-10] Yarıda bırakılan katman: önceki cevaplar geri yüklenir, ilk cevapsız sorudan devam edilir
+        const onceki = {}
+        const bicim = Object.fromEntries(veri.sorular.map((x) => [x.id, x.cevap_bicimi]))
+        ;(veri.mevcut_cevaplar || []).forEach((c) => {
+          onceki[c.soru_id] = bicim[c.soru_id] === 'encok_enaz' ? { enCok: c.secenek_id, enAz: c.en_az_secenek_id } : c.secenek_id
+        })
+        const ilkBos = veri.sorular.findIndex((x) => !onceki[x.id])
+        setCevaplar(onceki)
+        setDevamBilgisi(Object.keys(onceki).length ? { cevaplanan: Object.keys(onceki).length, toplam: veri.sorular.length, sira: (ilkBos === -1 ? veri.sorular.length : ilkBos + 1) } : null)
+        setAktifIndex(ilkBos === -1 ? Math.max(0, veri.sorular.length - 1) : ilkBos)
         setSorular(veri.sorular)
         setTurId(veri.tur_id ?? null)
         if (dalMi) setDalAdi(veri.dal_adi || null)
@@ -535,7 +551,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
           </div>
         ) : !basladiMi ? (
           <KatmanTanitimEkrani
-            kod={kod} sorular={sorular} onBasla={() => setBasladiMi(true)} cikisYapiliyor={false}
+            kod={kod} sorular={sorular} onBasla={() => setBasladiMi(true)} cikisYapiliyor={false} devamBilgisi={devamBilgisi}
             kameraRizasi={kameraRizasi} onKameraIzni={async () => {
               try { await api.kvkkGuncelle({ kamera: true }); setKameraRizasi(true) } catch { /* izin kaydedilemedi */ }
             }}
