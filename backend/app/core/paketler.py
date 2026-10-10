@@ -27,6 +27,7 @@ MODULLER = {
     "kulupler": {"ad": "Kulüpler", "ikon": "🎭", "aciklama": "İlgi testi, kulüp önerileri, katılma talepleri ve kulüp duyuruları"},
     "filiz": {"ad": "Filiz asistanı", "ikon": "💬", "aciklama": "Filiz sohbet asistanı (otomatik rehber / yapay zekâ)"},
     "calisma": {"ad": "Çalışma programı ve soru takibi", "ikon": "⏱️", "aciklama": "Haftalık ders programı, günlük çalışma süresi ve çözülen soru kaydı, ders bazında isabet"},
+    "portfolyo": {"ad": "e-Portfolyo", "ikon": "🗂️", "aciklama": "Sertifika, yarışma, gönüllülük, proje ve kulüp geçmişi; rehber doğrulaması ve PDF özgeçmiş"},
     "net_takibi": {"ad": "Net takibi", "ikon": "📈", "aciklama": "Deneme netleri, konu takibi, hedef üniversiteye göre net kıyası"},
     "okul_denemeleri": {"ad": "Okul denemesi yükleme", "ikon": "🏫", "aciklama": "Okulun yaptığı denemelerin sonuçlarını Excel şablonuyla tek seferde yükleme, şube ve okul ortalamaları (Net takibi ile çalışır)"},
     "akran": {"ad": "Şube ve akran analizi", "ikon": "🤝", "aciklama": "Benzer akranlar, şube dağılımı önerisi, aday öğrenci uyumu"},
@@ -123,6 +124,9 @@ def okul_modulu(kod: str):
                                           "WHERE g.id = :i"), {"i": int(p["gorusme_id"])}).scalar()
             elif "deneme_id" in p:
                 okul_id = db.execute(text("SELECT okul_id FROM okul_denemeleri WHERE id = :i"), {"i": int(p["deneme_id"])}).scalar()
+            elif "portfolyo_id" in p:
+                okul_id = db.execute(text("SELECT o.okul_id FROM portfolyo_kayitlari k JOIN ogrenciler o ON o.id = k.ogrenci_id "
+                                          "WHERE k.id = :i"), {"i": int(p["portfolyo_id"])}).scalar()
             elif "duyuru_id" in p:
                 okul_id = db.execute(text("SELECT k.okul_id FROM kulup_duyurulari d JOIN okul_kulupleri k ON k.id = d.kulup_id "
                                           "WHERE d.id = :i"), {"i": int(p["duyuru_id"])}).scalar()

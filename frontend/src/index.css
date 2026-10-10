@@ -1891,3 +1891,39 @@ tr.od-bos td{color:var(--tx3)}
 .bz-nokta{width:8px;height:8px;border-radius:50%;background:var(--pu);flex-shrink:0;margin-top:5px}
 .bz-tercih{display:flex;gap:8px;align-items:flex-start;padding:10px 14px;border-top:1px solid var(--bor);font-size:12px;color:var(--tx2);cursor:pointer}
 .bz-tercih small{display:block;color:var(--tx3)}
+
+/* [2026-10-10] e-Portfolyo */
+.pf-ust-satir{display:flex;gap:14px;align-items:stretch;flex-wrap:wrap;margin-bottom:14px}
+.pf-dugmeler{display:flex;flex-direction:column;gap:8px;justify-content:center}
+.pf-duzen{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(280px,1fr);gap:16px;align-items:start}
+@media (max-width:980px){.pf-duzen{grid-template-columns:1fr}}
+.pf-kart{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--bor)}
+.pf-kart:last-child{border-bottom:0}
+.pf-ikon{font-size:22px;width:36px;height:36px;border-radius:10px;background:var(--sur2);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.pf-kart.onayli .pf-ikon{background:var(--grl)}
+.pf-ust{display:flex;gap:8px;align-items:center;flex-wrap:wrap;font-size:14px}
+.pf-rozet{font-size:10.5px;font-weight:700;padding:1px 8px;border-radius:999px;background:var(--sur2);color:var(--tx3)}
+.pf-rozet.onay{background:var(--grl);color:var(--gr)}
+.pf-aciklama{font-size:12.5px;color:var(--tx2);line-height:1.5;margin-top:4px}
+.pf-alt{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-top:6px}
+.yp-mini.pf-onayla{border-color:var(--gr);color:var(--gr)}
+.pf-form .pf-turler{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.pf-turler button{border:1.5px solid var(--bor);background:var(--sur);border-radius:10px;padding:6px 11px;font-size:12.5px;font-weight:600;color:var(--tx2);cursor:pointer;font-family:var(--fn)}
+.pf-turler button.secili{border-color:var(--pu);background:var(--pul);color:var(--tx)}
+.pf-alanlar{display:grid;grid-template-columns:1fr 1fr;gap:10px 14px}
+.pf-alanlar label{display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:700;color:var(--tx2)}
+.pf-alanlar label small{font-weight:500;color:var(--tx3)}
+.pf-alanlar .genis{grid-column:1/-1}
+.pf-belge{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.pf-hakkimda{font-size:13.5px;line-height:1.6;white-space:pre-wrap}
+.pf-cipler{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px;align-items:center}
+.pf-cip{font-size:12px;font-weight:600;padding:3px 10px;border-radius:999px;background:var(--sur2);color:var(--tx2);display:inline-flex;gap:4px;align-items:center}
+.pf-cip.dil{background:var(--pul);color:var(--pud)}
+.pf-cip button{border:0;background:none;cursor:pointer;color:var(--tx3);font-size:14px;line-height:1;padding:0}
+.pf-cip-giris{width:150px;padding:4px 10px !important;font-size:12px !important}
+.pf-alt-baslik{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--tx3);margin:14px 0 4px}
+.pf-dil{display:grid;grid-template-columns:1fr 110px auto;gap:6px;align-items:center;margin-bottom:6px}
+.pf-onay{display:flex;gap:8px;align-items:center;font-size:12.5px;margin-top:12px;color:var(--tx2)}
+.pf-kulup{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px solid var(--bor);font-size:13px}
+.pf-kulup:last-child{border-bottom:0}
+@media (max-width:640px){.pf-alanlar{grid-template-columns:1fr}}

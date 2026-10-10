@@ -191,6 +191,18 @@ export const api = {
   paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
   okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
   okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
+  // [2026-10-10] e-Portfolyo
+  portfolyo: () => get('/ogrenci/portfolyo'),
+  portfolyoProfil: (v) => put('/ogrenci/portfolyo/profil', v),
+  portfolyoKayitEkle: (v) => post('/ogrenci/portfolyo/kayit', v),
+  portfolyoKayitDuzenle: (id, v) => put(`/ogrenci/portfolyo/kayit/${id}`, v),
+  portfolyoKayitSil: (id) => del(`/ogrenci/portfolyo/kayit/${id}`),
+  portfolyoBelge: (id) => dosyaIndir(`/ogrenci/portfolyo/kayit/${id}/belge`),
+  portfolyoPdf: () => dosyaIndir('/ogrenci/portfolyo/pdf'),
+  ogrenciPortfolyosu: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/portfolyo`),
+  ogrenciOzgecmisPdf: (ogrenciId) => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/portfolyo/pdf`, 'admin'),
+  portfolyoDogrula: (id, dogrula) => apost(`/yonetim/portfolyo-kayit/${id}/dogrula`, { dogrula }),
+  portfolyoBelgeYonetim: (id) => dosyaIndir(`/yonetim/portfolyo-kayit/${id}/belge`, 'admin'),
   // [2026-10-10] Bildirimler
   bildirimler: () => get('/ogrenci/bildirimler'),
   bildirimOkundu: (idler) => post('/ogrenci/bildirimler/okundu', { idler: idler || null }),
