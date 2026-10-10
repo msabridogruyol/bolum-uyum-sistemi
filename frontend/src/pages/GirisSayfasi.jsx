@@ -7,7 +7,7 @@ import KodDogrulamaAdimi from '../components/KodDogrulamaAdimi'
 import { KvkkOnayKutulari, AydinlatmaMetniPenceresi, useKvkkMetinleri, zorunlularTamamMi } from '../components/KvkkBilesenleri'
 
 // [2026-10-04] Kayıtta KVKK onayları, girişte 2 adımlı doğrulama, "Şifremi unuttum" bağlantısı.
-// Rehber öğretmenler de bu sayfadan giriş yapar.
+// Rehber öğretmenler (okul yetkilileri) yönetim giriş sayfasını (/admin/giris) kullanır.
 export default function GirisSayfasi() {
   const [sekme, setSekme] = useState('giris') // 'giris' | 'kayit'
   const [adSoyad, setAdSoyad] = useState('')
@@ -107,6 +107,7 @@ export default function GirisSayfasi() {
 
             <div className="auth-foot">
               Hesabını okulun oluşturur. Giriş bilgilerini (e-posta ve geçici şifre) rehber öğretmeninden alabilirsin.
+              {' '}Rehber öğretmensen <Link to="/admin/giris" className="auth-link">yönetim girişini</Link> kullan.
             </div>
           </>
         )}

@@ -50,7 +50,8 @@ export default function AnaSayfaDuzeni() {
   function tanitimiBitir() {
     try { localStorage.setItem(tanitimAnahtari(profil), '1') } catch { /* gizli sekme vb. */ }
     setTanitimAcik(false)
-    if (profilEksikMi(profil)) navigate('/profil?ilk=1')
+    // [2026-10-10] İlk girişte (tanıtımdan sonra) öğrenci her zaman profil sayfasına gelir: bilgilerini kontrol eder, fotoğraf/ilgi alanı ekler
+    navigate('/profil?ilk=1')
   }
 
   // Profil tamamlanmadan diğer sayfalara geçilmez (tanıtım açıkken yönlendirme beklenir)

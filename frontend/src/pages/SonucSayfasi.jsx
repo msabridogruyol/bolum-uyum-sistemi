@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
 import Sayac from '../components/Sayac'
 import FavoriYildiz from '../components/FavoriYildiz'
+import PuanRehberi from '../components/PuanRehberi'
 
 // [2026-10-09] "Neden bu bölüm?" — madde madde: örtüşen yönler (sende / bölümde düzeyi + seçtiğin cevaplar),
 // alan sorularındaki iş türü uyumu ve varsa dikkat edilecek nokta.
@@ -96,6 +97,8 @@ export default function SonucSayfasi({ gomulu = false }) {
           </button>
         </>
       ) : (
+        <>
+        <PuanRehberi baslik="“Sende: Çok güçlü”, “Bölüm: Yüksek” ne demek? Nasıl yorumlanmalı?" />
         <div className="ob-grid sonuc-grid">
           {siralama.map((s, i) => (
             <div key={s.bolum_id} className="ob-card">
@@ -121,6 +124,7 @@ export default function SonucSayfasi({ gomulu = false }) {
             </div>
           ))}
         </div>
+        </>
       )}
     </div>
   )
