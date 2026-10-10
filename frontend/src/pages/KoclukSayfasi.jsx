@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import Sayac from '../components/Sayac'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import { AlanTuruRozeti, GeriBildirimOzeti, OlcumKarti, OlcumPenceresi, TamamlaFormu } from '../components/kocluk/KoclukMotoru'
+import { useModuller } from '../yardimci/moduller'
 
 // ============================================================
 // Ana sayfa
@@ -215,6 +216,7 @@ const KUTUPHANE_KATEGORI = { kitap: 'kitap', film: 'izleme' }
 
 function KaynakKarti({ k, alan, grup, eklendi, onEkle, alanGoster = true }) {
   const t = KAYNAK_TIP[k.tip] || { ad: k.tip, ikon: '•', renk: 'var(--tx2)', zemin: 'var(--sur2)' }
+  const modulAcik = useModuller()   // [2026-10-10] paket: Filiz / Kütüphane kapalıysa düğmeleri yok
   return (
     <div className="ilham-kart">
       <div className="ilham-ust">
@@ -224,8 +226,8 @@ function KaynakKarti({ k, alan, grup, eklendi, onEkle, alanGoster = true }) {
       <div className="ilham-baslik">{k.baslik}</div>
       <div className="ilham-aciklama">{k.aciklama}</div>
       <div className="ilham-islem">
-        <button className="hg-link ilham-sor" onClick={() => filizeSor(k, alan)}>💬 Filiz'e sor</button>
-        {KUTUPHANE_KATEGORI[k.tip] && (eklendi
+        {modulAcik('filiz') && <button className="hg-link ilham-sor" onClick={() => filizeSor(k, alan)}>💬 Filiz'e sor</button>}
+        {KUTUPHANE_KATEGORI[k.tip] && modulAcik('kutuphane') && (eklendi
           ? <span className="ilham-eklendi">✓ Kütüphanende</span>
           : <button className="hg-link" onClick={() => onEkle(k, alan)}>＋ Kütüphaneme ekle</button>)}
       </div>

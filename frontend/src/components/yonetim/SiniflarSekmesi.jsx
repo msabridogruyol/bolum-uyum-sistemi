@@ -78,10 +78,10 @@ export default function SiniflarSekmesi({ okulId, oz, yenile, onOgrenciler }) {
                         <RaporSecici kucuk etiket="Rapor" turler={[
                           { k: 'ozet', ad: 'Sınıf raporu', ikon: '📄', aciklama: `${s.etiket}: durum, alanlar, okul ortalamasıyla karşılaştırma, öğrenci listesi (PDF)`, indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'ozet', 'pdf', netler) },
                           { k: 'excel', ad: 'Sınıf tablosu (Excel)', ikon: '📊', aciklama: `${s.etiket} öğrenci tablosu`, indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'ozet', 'xlsx', netler) },
-                          { k: 'veli', ad: 'Veli (toplu)', ikon: '👪', aciklama: 'Tüm öğrencilerin veli raporları tek PDF\'te', indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'toplu_veli', 'pdf', netler) },
-                          { k: 'ogrenci', ad: 'Öğrenci (toplu)', ikon: '📘', aciklama: 'Tüm öğrencilerin öğrenci raporları tek PDF\'te', indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'toplu_ogrenci', 'pdf', netler) },
-                          { k: 'yonetici', ad: 'Yönetim (toplu)', ikon: '🗂️', aciklama: 'Tüm öğrencilerin ayrıntılı raporları tek PDF\'te', indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'toplu_yonetici', 'pdf', netler) },
-                          { k: 'sinif_ogretmeni', ad: 'Sınıf öğretmeni (toplu)', ikon: '🧑‍🏫', aciklama: 'Her öğrenci için sade rapor tek PDF\'te', indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'toplu_sinif_ogretmeni', 'pdf', netler) },
+                          { k: 'veli', ad: 'Veli (toplu)', modul: 'gelismis_raporlar', ikon: '👪', aciklama: 'Tüm öğrencilerin veli raporları tek PDF\'te', indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'toplu_veli', 'pdf', netler) },
+                          { k: 'ogrenci', ad: 'Öğrenci (toplu)', modul: 'gelismis_raporlar', ikon: '📘', aciklama: 'Tüm öğrencilerin öğrenci raporları tek PDF\'te', indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'toplu_ogrenci', 'pdf', netler) },
+                          { k: 'yonetici', ad: 'Yönetim (toplu)', modul: 'gelismis_raporlar', ikon: '🗂️', aciklama: 'Tüm öğrencilerin ayrıntılı raporları tek PDF\'te', indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'toplu_yonetici', 'pdf', netler) },
+                          { k: 'sinif_ogretmeni', ad: 'Sınıf öğretmeni (toplu)', modul: 'gelismis_raporlar', ikon: '🧑‍🏫', aciklama: 'Her öğrenci için sade rapor tek PDF\'te', indir: ({ netler }) => api.sinifRaporuIndir(okulId, s.sinif, s.sube, 'toplu_sinif_ogretmeni', 'pdf', netler) },
                         ]} />
                       ) : gercekSinif ? (
                         <RaporSecici kucuk etiket="Rapor" turler={[

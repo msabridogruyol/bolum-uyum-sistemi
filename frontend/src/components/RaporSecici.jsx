@@ -2,8 +2,13 @@
 // turler: [{ k, ad, ikon, aciklama, indir: ({ netler }) => Promise }]
 import { useEffect, useRef, useState } from 'react'
 import { createPortal } from 'react-dom'
+import { useOkulModulleri } from '../yardimci/moduller'
 
-export default function RaporSecici({ turler, etiket = 'Rapor al', kucuk = false, varsayilan, hiza = 'sag' }) {
+// [2026-10-10] tur.modul: okulun paketinde o modül yoksa seçenek gösterilmez; Net Takibi yoksa net seçeneği de yok.
+export default function RaporSecici({ turler: tumTurler, etiket = 'Rapor al', kucuk = false, varsayilan, hiza = 'sag' }) {
+  const modulAcik = useOkulModulleri()
+  const turler = tumTurler.filter((t) => modulAcik(t.modul))
+  const netVar = modulAcik('net_takibi')
   const [acik, setAcik] = useState(false)
   const [tur, setTur] = useState(varsayilan || turler[0]?.k)
   const [netler, setNetler] = useState(true)
@@ -34,8 +39,9 @@ export default function RaporSecici({ turler, etiket = 'Rapor al', kucuk = false
   const secili = turler.find((t) => t.k === tur) || turler[0]
   async function indir() {
     setBekle(true); setHata(null)
-    try { await secili.indir({ netler }); setAcik(false) } catch (e) { setHata(e.detail || 'Rapor indirilemedi.') } finally { setBekle(false) }
+    try { await secili.indir({ netler: netler && netVar }); setAcik(false) } catch (e) { setHata(e.detail || 'Rapor indirilemedi.') } finally { setBekle(false) }
   }
+  if (!turler.length) return null
   return (
     <div className={`rs-kap${kucuk ? ' kucuk' : ''}`} ref={kap}>
       <button type="button" className="rd-dugme" aria-expanded={acik} onClick={ac}>📄 {etiket} ▾</button>
@@ -51,10 +57,10 @@ export default function RaporSecici({ turler, etiket = 'Rapor al', kucuk = false
               </label>
             ))}
           </div>
-          <label className="rs-secenek">
+          {netVar && <label className="rs-secenek">
             <input type="checkbox" checked={netler} onChange={(e) => setNetler(e.target.checked)} />
             <span><b>📈 Deneme ve net bilgilerini ekle</b><small>Deneme sonuçları, net gidişatı, hedef üniversiteye göre kıyas ve konu takibi</small></span>
-          </label>
+          </label>}
           {hata && <div className="auth-error" style={{ margin: 0 }}>{hata}</div>}
           <button className="btn" style={{ width: '100%' }} disabled={bekle} onClick={indir}>{bekle ? <span className="spin" /> : `${secili.ikon} ${secili.ad} raporunu indir`}</button>
         </div>,

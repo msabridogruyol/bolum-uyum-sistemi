@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import { useModuller } from '../yardimci/moduller'
 
 // [2026-10-04] Ana sayfadaki "Bu Haftanın Görevleri" kartı.
 // Her hafta 3 görev: yolculuk adımı + keşif + yansıtma. En az 2 görev = seri devam eder.
@@ -19,6 +20,7 @@ function kisaTarih(iso) {
 }
 
 export default function HaftalikGorevler() {
+  const modulAcik = useModuller()
   const [ozet, setOzet] = useState(null)
   const [hata, setHata] = useState(null)
   const [acikYansitma, setAcikYansitma] = useState(false)
@@ -147,9 +149,9 @@ export default function HaftalikGorevler() {
 
       <div className="hg-alt-satir">
         <button className="hg-link" onClick={() => setGecmisAcik((v) => !v)}>{gecmisAcik ? '▴ Gizle' : '▾ Gelişimini gör'}</button>
-        <button className="hg-link" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac', { detail: { mesaj: 'Bu hafta neye odaklanmalıyım?' } }))}>
+        {modulAcik('filiz') && <button className="hg-link" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac', { detail: { mesaj: 'Bu hafta neye odaklanmalıyım?' } }))}>
           💬 Bu hafta neye odaklanmalıyım? Filiz'e sor
-        </button>
+        </button>}
       </div>
 
       {gecmisAcik && (

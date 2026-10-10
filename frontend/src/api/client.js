@@ -182,6 +182,14 @@ export const api = {
   kocTalebiDegerlendir: (id, veri) => post(`/ogrenci/koc-talep/${id}/degerlendir`, veri),
   kocVarMi: () => get('/ogrenci/koclar/var'),
   motivasyonGetir: () => get('/ogrenci/motivasyon'),
+  // [2026-10-10] Paketler
+  ogrenciModulleri: () => get('/ogrenci/moduller'),
+  paketler: () => aget('/yonetim/paketler'),
+  paketEkle: (v) => apost('/yonetim/paketler', v),
+  paketDuzenle: (kod, v) => aput(`/yonetim/paketler/${kod}`, v),
+  paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
+  okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
+  okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
   // [2026-10-10] Net takibi
   netYapi: () => get('/ogrenci/net/yapi'),
   netDenemeler: () => get('/ogrenci/net/denemeler'),

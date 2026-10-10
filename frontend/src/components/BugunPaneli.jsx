@@ -5,7 +5,7 @@ import { KATMAN_BILGI, katmanAdi } from '../yardimci/katmanAdlari'
 const AY = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık']
 const uzunTarih = (t) => { const d = new Date(t); return `${d.getDate()} ${AY[d.getMonth()]} ${d.getFullYear()}` }
 
-function SiradakiAdim({ ozet, katmanlar, hedef, plan }) {
+function SiradakiAdim({ ozet, katmanlar, hedef, plan, kocluk = true }) {
   const navigate = useNavigate()
   let ust, baslik, alt, dugme, git
   const bekleyen = (katmanlar || []).find((k) => !k.kosullu_mu && k.durum !== 'tamamlandi')
@@ -19,6 +19,9 @@ function SiradakiAdim({ ozet, katmanlar, hedef, plan }) {
     ust = 'Değerlendirme'; baslik = '🌻 Sana özel alan soruları'; alt = 'Bölüm önerilerin bu adımdan sonra kesinleşir.'; dugme = 'Devam et'; git = '/katmanlar'
   } else if (!hedef) {
     ust = 'Sonuçların hazır'; baslik = '🎯 Bir hedef bölüm seç'; alt = 'Sana uygun bölümlere bak, birini hedef yapınca adım adım planın hazırlanır.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
+  } else if (!kocluk) {
+    // [2026-10-10] Koçluk okulun paketinde yoksa: hedef bölümü bölüm sayfasında incele
+    ust = 'Hedefin'; baslik = `🎯 ${hedef.bolum_adi || hedef.ad || 'Hedef bölümün'}`; alt = 'Bölüm sayfasında gereken yetkinlikleri ve sana uyumunu inceleyebilirsin.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
   } else if (plan?.siradaki_adim) {
     const s = plan.siradaki_adim
     ust = `Koçluk · ${s.degisken_adi} · ⏱ ${s.sure}`
@@ -55,17 +58,17 @@ function YksSayaci({ yks, mesaj }) {
   )
 }
 
-export default function BugunPaneli({ ozet, katmanlar, hedef, plan, motivasyon }) {
+export default function BugunPaneli({ ozet, katmanlar, hedef, plan, motivasyon, kocluk = true }) {
   const testBitti = !!ozet?.tur_tamamlandi_mi
   return (
     <div className={`bugun-panel${testBitti && motivasyon?.yks ? '' : ' tek'}`}>
-      <SiradakiAdim ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} />
+      <SiradakiAdim ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} kocluk={kocluk} />
       {testBitti && <YksSayaci yks={motivasyon?.yks} mesaj={motivasyon?.mesaj} />}
     </div>
   )
 }
 
-export function Rozetler({ motivasyon }) {
+export function Rozetler({ motivasyon, kocluk = true }) {
   const navigate = useNavigate()
   if (!motivasyon) return null
   const r = motivasyon.rozetler
@@ -81,7 +84,7 @@ export function Rozetler({ motivasyon }) {
           </div>
         ))}
       </div>
-      <button className="hg-link" style={{ marginTop: 8 }} onClick={() => navigate('/koclugu?sekme=yol')}>Yeni rozet için sıradaki adımına git →</button>
+      {kocluk && <button className="hg-link" style={{ marginTop: 8 }} onClick={() => navigate('/koclugu?sekme=yol')}>Yeni rozet için sıradaki adımına git →</button>}
     </div>
   )
 }

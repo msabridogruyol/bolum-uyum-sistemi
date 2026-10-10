@@ -19,6 +19,9 @@ from app.api.admin_meslek_yukleme import router as admin_meslek_router
 from app.api.ai_koc import router as ai_koc_router
 from app.api.motivasyon import router as motivasyon_router
 from app.api.net_takibi import router as net_takibi_router
+from fastapi import Depends as _Dep
+from app.core.paketler import ogrenci_modulu, okul_modulu   # [2026-10-10] paket / modül koruması
+from app.api.paket_yonetimi import router as paket_router, ogrenci_router as paket_ogrenci_router
 from app.api.konu_yonetimi import router as konu_yonetimi_router
 from app.api.kulup_uyelik import ogrenci_router as kulup_uyelik_ogrenci_router, router as kulup_uyelik_router
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
@@ -155,9 +158,9 @@ app.include_router(admin_sorular_detay_router, prefix="/admin", tags=["admin"])
 app.include_router(admin_gecerlilik_v2_router, prefix="/admin", tags=["admin"])
 app.include_router(admin_kutup_router, prefix="/admin", tags=["admin"])
 app.include_router(admin_meslek_router, prefix="/admin", tags=["admin"])   # [2026-10-10] Pipeline sayfasındaki meslek yükleme (önceden kayıtlı değildi → 404)
-app.include_router(ai_koc_router, prefix="/koclugu", tags=["koclugu"])
+app.include_router(ai_koc_router, prefix="/koclugu", tags=["koclugu"], dependencies=[_Dep(ogrenci_modulu("filiz"))])
 app.include_router(admin_gelisim_kaynak_router, prefix="/admin", tags=["admin"])
-app.include_router(haftalik_router, prefix="/haftalik", tags=["Haftalık Görevler"])
+app.include_router(haftalik_router, prefix="/haftalik", tags=["Haftalık Görevler"], dependencies=[_Dep(ogrenci_modulu("kocluk"))])
 app.include_router(bolum_bilgi_router, prefix="/bolumler", tags=["Bölüm Bilgi Kartı"])
 app.include_router(okul_genel_router)                       # [2026-10-09] GET /okul/aktif
 app.include_router(okul_admin_router, prefix="/admin")      # [2026-10-09] /admin/okullar
@@ -166,21 +169,23 @@ app.include_router(meslek_dili_router)
 app.include_router(cevap_analizi_router)
 app.include_router(listem_router)                           # [2026-10-10] /ogrenci/listem, /ogrenci/karsilastir
 app.include_router(raporlar_router)                         # [2026-10-10] PDF / Excel raporlar
-app.include_router(kulup_router)                            # [2026-10-10] okul kulüpleri
-app.include_router(kulup_ogrenci_router)                    # [2026-10-10] /ogrenci/ilgi-testi
+app.include_router(kulup_router, dependencies=[_Dep(okul_modulu("kulupler"))])                            # [2026-10-10] okul kulüpleri
+app.include_router(kulup_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])                    # [2026-10-10] /ogrenci/ilgi-testi
 app.include_router(koc_router)                              # [2026-10-10] anlaşmalı eğitim koçları
-app.include_router(koc_ogrenci_router)                      # [2026-10-10] /ogrenci/koclar
+app.include_router(koc_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("egitim_koclari"))])                      # [2026-10-10] /ogrenci/koclar
 app.include_router(admin_yokatlas_router)                   # [2026-10-10] YÖK Atlas eşleştirme yönetimi
 app.include_router(takvim_router)                            # [2026-10-10] takvim
-app.include_router(takvim_ogrenci_router)
-app.include_router(kutuphane_router)                         # [2026-10-10] öğrenci kütüphanesi
-app.include_router(kutuphane_ogrenci_router)
-app.include_router(kulup_uyelik_router)                      # [2026-10-10] kulüp talepleri, üyeler, duyurular
-app.include_router(kulup_uyelik_ogrenci_router)
-app.include_router(konu_yonetimi_router)                     # [2026-10-10] konu listesi yönetimi (süper admin + okul)
-app.include_router(net_takibi_router)                       # [2026-10-10] deneme, konu takibi, hedef net kıyası
+app.include_router(takvim_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("takvim"))])
+app.include_router(kutuphane_router, dependencies=[_Dep(okul_modulu("kutuphane"))])                         # [2026-10-10] öğrenci kütüphanesi
+app.include_router(kutuphane_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kutuphane"))])
+app.include_router(kulup_uyelik_router, dependencies=[_Dep(okul_modulu("kulupler"))])                      # [2026-10-10] kulüp talepleri, üyeler, duyurular
+app.include_router(kulup_uyelik_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])
+app.include_router(konu_yonetimi_router, dependencies=[_Dep(okul_modulu("net_takibi"))])                     # [2026-10-10] konu listesi yönetimi (süper admin + okul)
+app.include_router(paket_router)                             # [2026-10-10] paketler (süper admin)
+app.include_router(paket_ogrenci_router)
+app.include_router(net_takibi_router, dependencies=[_Dep(ogrenci_modulu("net_takibi"))])                       # [2026-10-10] deneme, konu takibi, hedef net kıyası
 app.include_router(motivasyon_router)                       # [2026-10-10] YKS geri sayımı, mesaj, rozetler
-app.include_router(akran_router)                            # [2026-10-10] akran benzerliği, şube dağılımı, aday öğrenci
+app.include_router(akran_router, dependencies=[_Dep(okul_modulu("akran"))])                            # [2026-10-10] akran benzerliği, şube dağılımı, aday öğrenci
 app.include_router(test_hesaplari_router)                    # [2026-10-10] /yonetim/test-hesaplari (süper admin)
 app.include_router(test_giris_router)                        # [2026-10-10] POST /auth/test-giris
 

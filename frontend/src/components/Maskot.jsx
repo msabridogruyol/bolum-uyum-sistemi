@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { api } from '../api/client'
+import { useModuller } from '../yardimci/moduller'
 
 /*
  * [2026-10-03] Filiz maskotu — sağ üstte duran, hedef bölüme göre kıyafet değiştiren,
@@ -1070,6 +1071,7 @@ const depoOku = (k, v) => { try { return localStorage.getItem(k) ?? v } catch { 
 const depoYaz = (k, v) => { try { localStorage.setItem(k, v) } catch { /* yok */ } }
 
 export default function Maskot({ profil, ozet }) {
+  const filizAcik = useModuller()('filiz')   // [2026-10-10] paket
   const konum = useLocation()
   const [hedef, setHedef] = useState(null)
   const [hedefYuklendi, setHedefYuklendi] = useState(false)
@@ -1305,7 +1307,7 @@ export default function Maskot({ profil, ozet }) {
           </span>
         ))}
       </div>
-      {!sohbetAcik && (
+      {!sohbetAcik && filizAcik && (
         <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title="Filiz Gelişim Koçu ile sohbet et">💬 Bana sor</button>
       )}
       <div className="msk-araclar">

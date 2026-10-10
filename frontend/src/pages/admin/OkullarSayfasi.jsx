@@ -167,6 +167,8 @@ export default function OkullarSayfasi() {
               <div className="yp-okul-sayilar">
                 <div><b>{o.ogrenci_sayisi}</b><span>öğrenci</span></div>
                 <div><b>{o.yetkili_sayisi}</b><span>okul yetkilisi</span></div>
+                {/* [2026-10-10] Paket — tıklayınca okulun Paket bölümü */}
+                <Link to={`/admin/okul/${o.id}?sekme=paket`} className="pk-okul-rozet" title="Paketi değiştir"><b>📦 {o.paket_ad || '—'}</b><span>paket</span></Link>
               </div>
               {silme?.okul.id === o.id ? (
                 <div className="yp-okul-sil">

@@ -6,6 +6,7 @@ import OgrenciKutuphanesi from './OgrenciKutuphanesi'
 import { api } from '../../api/client'
 import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, onceSure, tarih } from './ortak'
 import RaporSecici from '../RaporSecici'
+import { useOkulModulleri } from '../../yardimci/moduller'
 import CevapAnaliziSekmesi from './CevapAnaliziSekmesi'
 
 // [2026-10-09] Hedef bölüm: öğrenci en fazla 3 kez değiştirebilir; okul yetkilisi / süper admin hedefi değiştirebilir
@@ -40,7 +41,8 @@ function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
   )
 }
 
-const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['kocluk', 'Koçluk'], ['netler', 'Netler'], ['akran', 'Benzer akranlar'], ['ilgi', 'İlgi & kulüp'], ['kutuphane', 'Kütüphane'], ['kayit', 'Kayıtlar']]
+// [2026-10-10] 3. öğe: sekmenin bağlı olduğu modül (okulun paketinde yoksa sekme gizlenir)
+const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['kocluk', 'Koçluk', 'kocluk'], ['netler', 'Netler', 'net_takibi'], ['akran', 'Benzer akranlar', 'akran'], ['ilgi', 'İlgi & kulüp', 'kulupler'], ['kutuphane', 'Kütüphane', 'kutuphane'], ['kayit', 'Kayıtlar']]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
 
 // [2026-10-10] Rehber öğretmen için koçluk özeti: tamamlanan adımlar + öğrencinin kısa geri bildirimi + tekrar ölçümler
@@ -110,6 +112,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
   const [d, setD] = useState(null)
   const [hata, setHata] = useState(null)
   const [sekme, setSekme] = useState('genel')
+  const modulAcik = useOkulModulleri()
   const [duzen, setDuzen] = useState(null)
   const [yeniSifre, setYeniSifre] = useState(null)
   const [silOnay, setSilOnay] = useState(false)
@@ -190,12 +193,12 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           { k: 'ogrenci', ad: 'Öğrenci', ikon: '📘', aciklama: 'Öğrenciye verilecek rapor: güçlü yönler, bölümler, yol haritası', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'pdf', netler) },
           { k: 'veli', ad: 'Veli', ikon: '👪', aciklama: 'Sade dil, evde destek önerileri, görüşme soruları', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'veli', 'pdf', netler) },
           { k: 'yonetici', ad: 'Yönetim', ikon: '🗂️', aciklama: 'Tüm ayrıntılar: güven puanı, ihlaller, katman puanları, öneriler, SWOT', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'yonetici', 'pdf', netler) },
-          { k: 'sinif_ogretmeni', ad: 'Sınıf öğretmeni', ikon: '🧑‍🏫', aciklama: 'Katılım, öne çıkanlar, hedef ve denemeler; psikolojik ayrıntı içermez', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'sinif_ogretmeni', 'pdf', netler) },
+          { k: 'sinif_ogretmeni', ad: 'Sınıf öğretmeni', modul: 'gelismis_raporlar', ikon: '🧑‍🏫', aciklama: 'Katılım, öne çıkanlar, hedef ve denemeler; psikolojik ayrıntı içermez', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'sinif_ogretmeni', 'pdf', netler) },
           { k: 'excel', ad: 'Excel', ikon: '📊', aciklama: 'Tüm puanlar, bölümler ve denemeler tablo halinde', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'xlsx', netler) },
         ]} />
       </div>
       <div className="yp-sekmeler">
-        {[...SEKMELER, ...(superAdmin ? [['cevaplar', '🔒 Cevap analizi']] : [])].map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
+        {[...SEKMELER.filter((x) => modulAcik(x[2])), ...(superAdmin ? [['cevaplar', '🔒 Cevap analizi']] : [])].map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
       </div>
 
       {sekme === 'genel' && (

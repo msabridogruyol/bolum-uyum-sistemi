@@ -1725,3 +1725,26 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .kt-karar{display:grid;gap:6px}
 .kt-karar .auth-input{margin:0;padding:6px 8px;font-size:12.5px}
 .yp-mini.yesil{border-color:var(--gr);color:var(--gr)}
+
+/* [2026-10-10] Paketler */
+.pk-paketler{display:flex;gap:8px;flex-wrap:wrap}
+.pk-paket{border:1.5px solid var(--bor);background:var(--sur);border-radius:12px;padding:10px 16px;cursor:pointer;display:flex;flex-direction:column;align-items:flex-start;font-family:var(--fn);color:var(--tx);min-width:120px}
+.pk-paket small{font-size:11px;color:var(--tx3)}
+.pk-paket.secili{border-color:var(--pu);background:var(--pul)}
+.pk-moduller{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:8px}
+.pk-modul{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--bor);border-radius:12px;padding:10px 12px;cursor:pointer;background:var(--sur);opacity:.72}
+.pk-modul.acik{opacity:1;border-color:var(--pum);background:var(--pul)}
+.pk-modul.salt{cursor:default}
+.pk-modul input{margin-top:3px}
+.pk-modul b{display:inline;font-size:13px}
+.pk-modul small{display:block;font-size:11.5px;color:var(--tx2);margin-top:2px;line-height:1.45}
+.pk-isaret{width:18px;font-weight:800;color:var(--pu);flex-shrink:0}
+.pk-modul:not(.acik) .pk-isaret{color:var(--tx3)}
+.pk-fark{display:inline-block;margin-left:6px;font-size:10px;font-weight:700;padding:1px 6px;border-radius:6px;background:var(--aml);color:var(--am)}
+.pk-tablo th.pk-sutun,.pk-tablo td.pk-hucre{text-align:center;width:120px}
+.pk-sutun-ad{font-size:14px;font-weight:800;color:var(--tx)}
+.pk-var{color:var(--gr);font-weight:800;font-size:16px}
+.pk-yok{color:var(--tx3)}
+.yp-okul-sayilar>a.pk-okul-rozet{flex:1;background:var(--pul);border-radius:12px;padding:8px 10px;display:flex;flex-direction:column;text-decoration:none;color:var(--tx)}
+.pk-okul-rozet b{font-size:14px !important;font-family:var(--fn) !important;padding-top:4px}
+.pk-okul-rozet span{font-size:11px;color:var(--tx3)}
