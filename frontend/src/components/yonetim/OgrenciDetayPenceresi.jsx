@@ -2,6 +2,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { DurumRozeti, Pencere, SifreListesi, onceSure, tarih } from './ortak'
+import RaporDugmeleri from '../RaporDugmeleri'
 import CevapAnaliziSekmesi from './CevapAnaliziSekmesi'
 
 // [2026-10-09] Hedef bölüm: öğrenci en fazla 3 kez değiştirebilir; okul yetkilisi / süper admin hedefi değiştirebilir
@@ -116,6 +117,13 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
         </form>
       )}
 
+      {/* [2026-10-10] Rehber öğretmen için raporlar: yönetici · öğrenci · veli (PDF) ve Excel */}
+      <RaporDugmeleri kucuk secenekler={[
+        { anahtar: 'y', ad: 'Yönetici', ikon: '🗂️', aciklama: 'Tüm ayrıntılar: güven puanı, ihlaller, katman puanları, öneriler, hedef, SWOT', indir: () => api.ogrenciRaporuIndir(ogrenciId, 'yonetici') },
+        { anahtar: 'o', ad: 'Öğrenci', ikon: '📘', aciklama: 'Öğrenciye verilecek rapor', indir: () => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci') },
+        { anahtar: 'v', ad: 'Veli', ikon: '👪', aciklama: 'Veliye verilecek sade rapor ve öneriler', indir: () => api.ogrenciRaporuIndir(ogrenciId, 'veli') },
+        { anahtar: 'x', ad: 'Excel', ikon: '📊', aciklama: 'Tüm puanlar tablo halinde', indir: () => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'xlsx') },
+      ]} />
       <div className="yp-sekmeler">
         {[...SEKMELER, ...(superAdmin ? [['cevaplar', '🔒 Cevap analizi']] : [])].map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
       </div>

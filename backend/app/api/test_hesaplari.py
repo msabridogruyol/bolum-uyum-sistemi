@@ -38,6 +38,11 @@ giris_router = APIRouter(tags=["Kimlik Doğrulama"])
 TIPLER = {"ogrenci", "okul_yetkilisi"}
 
 
+def _sinif(s: str | None) -> str:
+    s = (s or "11").strip()
+    return s if not s.isdigit() else f"{s}. Sınıf"
+
+
 class YeniTestIstek(BaseModel):
     tip: str
     ad_soyad: str = Field(min_length=3, max_length=80)
@@ -124,7 +129,7 @@ def test_hesabi_ac(istek: YeniTestIstek, db: Session = Depends(get_db), admin: A
     sifre = gecici_sifre()
     if istek.tip == "ogrenci":
         h = Ogrenci(ad_soyad=ad, email=f"test.ogrenci.{ek}@test.filizyol.app", sifre_hash=sifre_hashle(sifre),
-                    okul_id=okul.id if okul else None, okul=okul.ad if okul else None, sinif=(istek.sinif or "11")[:10],
+                    okul_id=okul.id if okul else None, okul=okul.ad if okul else None, sinif=_sinif(istek.sinif),
                     sifre_degistirmeli=False, test_hesabi=True, olusturulma_zamani=simdi())
         db.add(h); db.flush()
         _kvkk_onayla(db, "ogrenci", h.id)

@@ -2,6 +2,7 @@
 // okul yetkilileri ve işlem kayıtları. Süper admin her okulu (ve okulId=0: okul harici) görür; okul yetkilisi yalnızca kendi okulunu.
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
+import RaporDugmeleri from '../../components/RaporDugmeleri'
 import { api } from '../../api/client'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import TopluYuklemePenceresi from '../../components/yonetim/TopluYuklemePenceresi'
@@ -428,6 +429,10 @@ export default function OkulPaneliSayfasi() {
           <div className="ps" style={{ margin: 0 }}>{oz.okul.alt_baslik || 'Okul paneli'}</div>
         </div>
       </div>
+      <RaporDugmeleri baslik="Okul raporu" secenekler={[
+        { anahtar: 'p', ad: 'PDF', ikon: '📄', aciklama: 'Tamamlama oranları, sınıflar, alan dağılımı, ortak güçlü yönler ve öğrenci listesi', indir: () => api.okulRaporuIndir(okulId, 'pdf') },
+        { anahtar: 'x', ad: 'Excel', ikon: '📊', aciklama: 'Özet, sınıflar ve tüm öğrenciler tablo halinde', indir: () => api.okulRaporuIndir(okulId, 'xlsx') },
+      ]} />
       <div className="yp-sekmeler yp-sekmeler-buyuk">
         {sekmeler.map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
       </div>

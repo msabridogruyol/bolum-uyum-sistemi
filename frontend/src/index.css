@@ -1119,3 +1119,11 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .pr-g2{background:var(--gr);color:#fff}.pr-g1{background:var(--grl);color:var(--gr)}.pr-o{background:var(--sur2);color:var(--tx2)}
 .pr-d{background:var(--aml);color:var(--am)}.pr-b{background:color-mix(in srgb, var(--gr) 14%, var(--sur));color:var(--gr)}
 @media(max-width:600px){.pr-tablo > div{grid-template-columns:1fr}}
+
+/* [2026-10-10] Rapor indirme düğmeleri */
+.rapor-dugmeleri{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 14px}
+.rd-baslik{font-size:12px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-right:4px}
+.rd-dugme{display:inline-flex;align-items:center;gap:6px;border:1.5px solid var(--bor);background:var(--sur);color:var(--tx2);font:inherit;font-size:12.5px;font-weight:700;padding:7px 12px;border-radius:10px;cursor:pointer;transition:all .12s}
+.rd-dugme:hover:not(:disabled){border-color:var(--pum);color:var(--tx);transform:translateY(-1px)}
+.rd-dugme:disabled{opacity:.6;cursor:wait}
+.rapor-dugmeleri.kucuk .rd-dugme{font-size:11.5px;padding:5px 9px}

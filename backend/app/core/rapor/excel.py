@@ -1,0 +1,81 @@
+# -*- coding: utf-8 -*-
+"""[2026-10-10] Excel raporları: öğrenci (tüm puanlar, öneriler, SWOT) ve okul (özet, sınıflar, öğrenciler)."""
+import io
+from datetime import datetime
+
+from openpyxl import Workbook
+from openpyxl.styles import Alignment, Font, PatternFill
+from openpyxl.utils import get_column_letter
+
+BASLIK = Font(bold=True, color="FFFFFF")
+DOLGU = PatternFill("solid", fgColor="E8804A")
+
+
+def _sayfa(wb, ad, basliklar, satirlar, genislik=None, renk="E8804A"):
+    ws = wb.create_sheet(ad[:31])
+    ws.append(basliklar)
+    for c in ws[1]:
+        c.font = BASLIK
+        c.fill = PatternFill("solid", fgColor=renk.lstrip("#"))
+        c.alignment = Alignment(vertical="center", wrap_text=True)
+    for s in satirlar:
+        ws.append([(x.replace(tzinfo=None) if isinstance(x, datetime) and x.tzinfo else x) for x in s])
+    for i, g in enumerate(genislik or [], 1):
+        ws.column_dimensions[get_column_letter(i)].width = g
+    ws.freeze_panes = "A2"
+    return ws
+
+
+def ogrenci_xlsx(v: dict) -> bytes:
+    wb = Workbook()
+    wb.remove(wb.active)
+    renk = v["okul"].get("renk") or "#E8804A"
+    k, tur = v["kisi"], v.get("tur") or {}
+    _sayfa(wb, "Özet", ["Alan", "Değer"], [
+        ["Öğrenci", k["ad_soyad"]], ["E-posta", k["email"]], ["Okul", v["okul"]["ad"]],
+        ["Sınıf / şube", " / ".join(filter(None, [k.get("sinif"), k.get("sube")]))],
+        ["Değerlendirme turu", tur.get("no")], ["Tamamlanma", tur.get("tamamlanma")],
+        ["Güven puanı", tur.get("guven")], ["Geçerli", "Evet" if tur.get("gecerli", True) else "Hayır"],
+        ["Hedef bölüm", (v.get("hedef") or {}).get("ad")], ["Listem", ", ".join(v["listem"])],
+        ["Rapor tarihi", v["tarih"]],
+    ], [24, 60], renk)
+    _sayfa(wb, "Özellik puanları", ["Katman", "Özellik", "Puan", "Düzey", "Durum tespiti", "Öneri"],
+           [[kt["kod"], x["ad"], x["puan"], x["seviye"], x.get("yorum") or "", x.get("oneri") or ""]
+            for kt in v["katmanlar"] for x in kt["ozellikler"]] + [["K5", x["ad"], x["puan"], "", "", ""] for x in v["k5"]],
+           [9, 34, 8, 14, 60, 60], renk)
+    _sayfa(wb, "Bölüm önerileri", ["Sıra", "Bölüm", "Alan", "Uyum %", "Örtüşen özellikler", "Dikkat"],
+           [[b["sira"], b["ad"], b.get("alan"), b["uyum"], ", ".join(b.get("ortusen") or []), b.get("dikkat") or ""] for b in v["bolumler"]],
+           [6, 40, 26, 9, 50, 60], renk)
+    s = v["swot"]
+    n = max(len(s["S"]), len(s["W"]), len(s["O"]), len(s["T"]), 1)
+    _sayfa(wb, "SWOT", ["Güçlü yönler (S)", "Gelişim alanları (W)", "Fırsatlar (O)", "Dikkat edilecekler (T)"],
+           [[(s[x][i] if i < len(s[x]) else "") for x in "SWOT"] for i in range(n)], [45, 45, 45, 45], renk)
+    t = io.BytesIO()
+    wb.save(t)
+    return t.getvalue()
+
+
+def okul_xlsx(v: dict) -> bytes:
+    wb = Workbook()
+    wb.remove(wb.active)
+    renk = v["okul"].get("renk") or "#E8804A"
+    o = v["ozet"]
+    _sayfa(wb, "Özet", ["Gösterge", "Değer"], [
+        ["Okul", v["okul"]["ad"]], ["Öğrenci", o.get("toplam")], ["Giriş yapan", o.get("giris_yapan")],
+        ["Teste başlayan", o.get("teste_baslayan")], ["Tamamlayan", o.get("tamamlayan")], ["Hedef seçen", o.get("hedef_secen")],
+        ["Güven eşiği altında", v["gecersiz"]], ["Rapor tarihi", v["tarih"]],
+    ] + [[f"Katman ortalaması · {k['kod']} {k['ad']}", k["ortalama"]] for k in v["katman_ort"]], [40, 30], renk)
+    _sayfa(wb, "Sınıflar", ["Sınıf", "Öğrenci", "Giriş yapan", "Devam eden", "Tamamlayan"],
+           [[s["sinif"], s["ogrenci"], s["giris_yapan"], s["devam"], s["tamamlayan"]] for s in o.get("siniflar", [])], [18, 10, 12, 12, 12], renk)
+    _sayfa(wb, "Öğrenciler", ["Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven", "Son giriş", "Test hesabı"],
+           [[x["ad_soyad"], x["sinif"], x["durum"], x["ilk_bolum"], x["hedef"], x["guven"], x["son_giris"], "Evet" if x["test"] else ""]
+            for x in v["ogrenciler"]], [28, 10, 22, 34, 34, 8, 18, 10], renk)
+    _sayfa(wb, "Bölüm ve alan", ["Alan (1. öneri)", "Öğrenci", "", "En çok önerilen", "Sayı", "En çok hedeflenen", "Sayı"],
+           [[(v["alanlar"][i]["alan"] if i < len(v["alanlar"]) else ""), (v["alanlar"][i]["sayi"] if i < len(v["alanlar"]) else ""), "",
+             *((o["en_cok_onerilen"][i]["bolum"], o["en_cok_onerilen"][i]["sayi"]) if i < len(o.get("en_cok_onerilen", [])) else ("", "")),
+             *((o["en_cok_hedeflenen"][i]["bolum"], o["en_cok_hedeflenen"][i]["sayi"]) if i < len(o.get("en_cok_hedeflenen", [])) else ("", ""))]
+            for i in range(max(len(v["alanlar"]), len(o.get("en_cok_onerilen", [])), len(o.get("en_cok_hedeflenen", [])), 1))],
+           [30, 9, 3, 36, 7, 36, 7], renk)
+    t = io.BytesIO()
+    wb.save(t)
+    return t.getvalue()
