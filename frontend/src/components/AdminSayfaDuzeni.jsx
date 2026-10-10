@@ -84,6 +84,7 @@ export default function AdminSayfaDuzeni() {
             <NavLink to="/admin/bolumler" className={ni}>Bölümler</NavLink>
             <NavLink to="/admin/yokatlas" className={ni}>YÖK Atlas Eşleştirme</NavLink>
             <NavLink to="/admin/meslek-dili" className={ni}>Meslek Dili Sözlüğü</NavLink>
+            <NavLink to="/admin/konular" className={ni}>Konu Listesi (Net Takibi)</NavLink>
             <NavLink to="/admin/dallar" className={ni}>Dallar (K5)</NavLink>
             <NavLink to="/admin/sorular" className={ni}>Soru Bankası</NavLink>
 

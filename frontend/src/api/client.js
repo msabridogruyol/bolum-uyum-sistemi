@@ -193,6 +193,13 @@ export const api = {
   netHedefKaydet: (kilavuz_kodu) => put('/ogrenci/net/hedef', { kilavuz_kodu }),
   netHedefSil: () => del('/ogrenci/net/hedef'),
   netKiyas: () => get('/ogrenci/net/kiyas'),
+  // [2026-10-10] Konu listesi yönetimi (süper admin: genel; okul: kendi konuları + gizleme)
+  konuListesi: (okulId) => aget(`/yonetim/konular${okulId ? `?okul_id=${okulId}` : ''}`),
+  konuEkle: (ders, ad, okulId) => apost('/yonetim/konular', { ders, ad, okul_id: okulId || null }),
+  konuDuzenle: (id, ad) => aput(`/yonetim/konular/${id}`, { ad }),
+  konuSil: (id) => adel(`/yonetim/konular/${id}`),
+  konuGizle: (id, okulId, gizli) => apost(`/yonetim/konular/${id}/gizle`, { okul_id: okulId, gizli }),
+  konuTasi: (id, yon) => apost(`/yonetim/konular/${id}/tasi`, { yon }),
   yonetimKoclar: () => aget('/yonetim/koclar'),
   kocOkullari: (id, okullar) => aput(`/yonetim/koc/${id}/okullar`, { okullar }),
   kocEkle: (veri) => apost('/yonetim/koclar', veri),

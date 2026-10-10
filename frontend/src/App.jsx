@@ -41,6 +41,7 @@ const GuvenlikSayfasi = lazy(() => import('./pages/admin/GuvenlikSayfasi'))
 const GelisimKaynakSayfasi = lazy(() => import('./pages/admin/GelisimKaynakSayfasi'))
 const OkullarSayfasi = lazy(() => import('./pages/admin/OkullarSayfasi'))
 const OkulPaneliSayfasi = lazy(() => import('./pages/admin/OkulPaneliSayfasi'))
+const KonuListesiSayfasi = lazy(() => import('./pages/admin/KonuListesiSayfasi'))
 const MeslekDiliSayfasi = lazy(() => import('./pages/admin/MeslekDiliSayfasi'))
 const TestHesaplariSayfasi = lazy(() => import('./pages/admin/TestHesaplariSayfasi'))
 const KocYonetimSayfasi = lazy(() => import('./pages/admin/KocYonetimSayfasi'))
@@ -170,6 +171,7 @@ function AnaUygulama() {
         <Route path="yokatlas" element={<YokatlasEslesmeSayfasi />} />
         <Route path="takvim" element={<GenelTakvimSayfasi />} />
         <Route path="sss" element={<SssSayfasi />} />
+        <Route path="konular" element={<KonuListesiSayfasi />} />
       </Route>
     </Routes>
     </Suspense>

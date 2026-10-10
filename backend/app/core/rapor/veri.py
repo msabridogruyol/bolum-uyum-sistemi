@@ -371,8 +371,14 @@ def net_verisi(db: Session, o: Ogrenci) -> dict | None:
             x["biten"] += n
         elif durum == "calisiyor":
             x["calisiyor"] += n
+    try:
+        from app.core.konu_servisi import etkin_konular
+        etkin = etkin_konular(db, o.okul_id)
+    except Exception:
+        db.rollback()
+        etkin = {k: v[2] for k, v in KONU_DERSLERI.items()}
     konu_ozet = [{"ad": f"{KONU_DERSLERI[k][0]} {KONU_DERSLERI[k][1]}", "biten": x["biten"], "calisiyor": x["calisiyor"],
-                  "toplam": len(KONU_DERSLERI[k][2])} for k, x in konu_d.items() if k in KONU_DERSLERI]
+                  "toplam": len(etkin.get(k, []))} for k, x in konu_d.items() if k in KONU_DERSLERI]
     kiyas = None
     if denemeler:
         try:

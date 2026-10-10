@@ -16,6 +16,7 @@ import KulupYonetimi from '../../components/yonetim/KulupYonetimi'
 import SiniflarSekmesi from '../../components/yonetim/SiniflarSekmesi'
 import TakvimYonetimi from '../../components/yonetim/TakvimYonetimi'
 import { okulBolumleri } from '../../components/yonetim/okulBolumleri'
+import KonuListesiYonetimi from '../../components/yonetim/KonuListesiYonetimi'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -521,6 +522,7 @@ export default function OkulPaneliSayfasi() {
       {sekme === 'yetkililer' && <YetkililerSekmesi okulId={okulId} superAdmin={superAdmin} />}
       {sekme === 'meslekdili' && okulId > 0 && <MeslekDiliDuzenleyici okulId={okulId} />}
       {sekme === 'gorunum' && okulId > 0 && <OkulTemaKarti okulId={okulId} />}
+      {sekme === 'konular' && okulId > 0 && <KonuListesiYonetimi okulId={okulId} />}
       {sekme === 'kayitlar' && <KayitlarSekmesi okulId={okulId} />}
     </div>
   )
