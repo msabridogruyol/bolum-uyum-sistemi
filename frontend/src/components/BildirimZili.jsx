@@ -5,7 +5,7 @@ import { createPortal } from 'react-dom'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 
-const IKON = { kulup_karar: '🎭', kulup_duyuru: '📣', kulup_etkinlik: '📅', kulup_talep: '🙋', rehberlik_randevu: '🧭', okul_deneme: '📝' }
+const IKON = { kulup_karar: '🎭', kulup_duyuru: '📣', kulup_etkinlik: '📅', kulup_talep: '🙋', rehberlik_randevu: '🧭', okul_deneme: '📝', anket: '📋' }
 function once(z) {
   const fark = (Date.now() - new Date(z).getTime()) / 60000
   if (fark < 1) return 'şimdi'

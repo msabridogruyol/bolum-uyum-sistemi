@@ -49,6 +49,7 @@ KURALLAR = {
     "net_dususu": "Netlerinde düşüş",
     "gorev_birakti": "Görevleri bıraktı",
     "hedef_yok": "Hedef bölüm seçmedi",
+    "tarama": "Tarama formunda destek ihtiyacı",
 }
 
 
@@ -114,6 +115,13 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
     il = _ilerleme(db, okul_id, ogrenci_id) if ogrenci_id is not None else _ilerleme(db, okul_id)
     netler = _net_dususleri(db, idler) if "net_takibi" in moduller else {}
     gorev = _gorev_birakanlar(db, idler) if "kocluk" in moduller else set()
+    tarama = {}
+    if "anketler" in moduller:   # [2026-10-10] anonim olmayan tarama formlarında destek gerektiren sonuç
+        try:
+            from app.api.anketler import tarama_uyarilari
+            tarama = tarama_uyarilari(db, idler)
+        except Exception:
+            db.rollback()
     ertelenen = {(r.ogrenci_id, r.kural) for r in db.execute(text(
         "SELECT ogrenci_id, kural FROM risk_ertelemeleri WHERE ogrenci_id = ANY(:idler) AND bitis >= CURRENT_DATE"), {"idler": idler}).all()}
     son_gorusme = dict(db.execute(text("""
@@ -144,6 +152,8 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
             r.append(("net_dususu", "yuksek" if yuzde >= 25 else "orta", f"{oturum} son deneme {son} net; önceki ortalama {ort} (−%{yuzde})."))
         if o.id in gorev:
             r.append(("gorev_birakti", "orta", "Önceki haftalarda görev yapıyordu, son 3 haftada hiç tamamlamadı."))
+        for baslik, seviye in tarama.get(o.id, []):
+            r.append(("tarama", "orta", f"{baslik}: {seviye}."))
         if x.get("durum") == "tamamlandi" and not x.get("hedef") and o.sinif in ("12. Sınıf", "Mezun"):
             r.append(("hedef_yok", "dusuk", "Testi bitirdi ama hedef bölüm seçmedi (son sınıf)."))
         r = [t for t in r if (o.id, t[0]) not in ertelenen]

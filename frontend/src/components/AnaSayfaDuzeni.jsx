@@ -47,6 +47,9 @@ export default function AnaSayfaDuzeni() {
   const konum = useLocation()
   const navigate = useNavigate()
   const acik = useModuller()   // [2026-10-10] okulun paketindeki modüller
+  const [bekleyenAnket, setBekleyenAnket] = useState(0)
+  const anketAcik = acik('anketler')
+  useEffect(() => { if (anketAcik) api.anketlerim().then((v) => setBekleyenAnket(v.bekleyen || 0)).catch(() => {}) }, [anketAcik, konum.pathname, konum.search])
 
   useEffect(() => { modulleriYukle(true) }, [])   // her girişte tazele (okulun paketi değişmiş olabilir)
 
@@ -194,10 +197,15 @@ export default function AnaSayfaDuzeni() {
           💬 Filiz
         </div>
         </>)}
-        {(['takvim', 'kulupler'].some(acik) || (kocVar && acik('egitim_koclari'))) && <div className="ns">Okul</div>}
+        {(['takvim', 'kulupler', 'anketler'].some(acik) || (kocVar && acik('egitim_koclari'))) && <div className="ns">Okul</div>}
         {acik('takvim') && (
         <NavLink to="/takvim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             🗓️ Takvim
+          </NavLink>
+        )}
+        {acik('anketler') && (
+          <NavLink to="/anketler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            📋 Anketler{bekleyenAnket > 0 && <span className="ni-rozet">{bekleyenAnket}</span>}
           </NavLink>
         )}
         {acik('kulupler') && (

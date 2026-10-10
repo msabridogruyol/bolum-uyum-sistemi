@@ -199,7 +199,7 @@ function ErkenUyari({ okulId, veri, yenile, ogrenciler, formAc, detayAc }) {
       )}
       <div className="yp-ince" style={{ marginTop: 12, lineHeight: 1.6 }}>
         Liste her açılışta yeniden hesaplanır. Kurallar: hiç giriş yapmama (7+ gün), uzun süre girmeme (14+ gün), yarım kalan test (7+ gün işlem yok), giriş yapıp teste başlamama (14+ gün),
-        net düşüşü (son deneme önceki ortalamanın %15+ altında), görevleri bırakma (önceden yapıp son 3 haftada hiç yapmama), son sınıfta hedef seçmeme. “Gizle” yalnızca bu uyarıları 14 gün gizler; durum sürerse uyarı geri gelir.
+        net düşüşü (son deneme önceki ortalamanın %15+ altında), görevleri bırakma (önceden yapıp son 3 haftada hiç yapmama), son sınıfta hedef seçmeme, isimli tarama formunda destek gerektiren sonuç. “Gizle” yalnızca bu uyarıları 14 gün gizler; durum sürerse uyarı geri gelir.
       </div>
     </>
   )
