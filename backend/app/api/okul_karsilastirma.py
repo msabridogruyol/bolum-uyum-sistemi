@@ -18,6 +18,7 @@ from app.api.deps import get_mevcut_super_admin
 from app.api.okul_yonetimi import _durum, _ilerleme
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
+from app.core.kucuk_grup import DIPNOT, EN_AZ_GRUP, GIZLI_METIN, gizle, yeterli
 from app.core.paketler import okul_modulleri
 from app.models import AdminKullanici, Ogrenci, Okul
 
@@ -43,6 +44,7 @@ def _okul_metrikleri(db: Session, okul: Okul) -> dict:
     sinir = datetime.now(timezone.utc) - timedelta(days=30)
     oran = lambda x: round(100 * x / n) if n else None  # noqa: E731
     moduller = set(okul_modulleri(db, okul.id))
+    r_gizli = False
     m = {
         "ogrenci": n,
         "giris": oran(sum(1 for o in ogr if o.son_giris_zamani is not None)),
@@ -53,26 +55,41 @@ def _okul_metrikleri(db: Session, okul: Okul) -> dict:
     }
     ids = [o.id for o in ogr]
     if ids and "net_takibi" in moduller:
-        v = db.execute(text("""
-            SELECT avg(toplam_net) FROM (
+        v, vn = db.execute(text("""
+            SELECT avg(toplam_net), count(*) FROM (
                 SELECT DISTINCT ON (ogrenci_id) toplam_net FROM ogrenci_denemeleri
                  WHERE ogrenci_id = ANY(:i) AND oturum = 'TYT' AND tarih >= :b ORDER BY ogrenci_id, tarih DESC, id DESC) x
-        """), {"i": ids, "b": date.today() - timedelta(days=90)}).scalar()
-        m["tyt"] = round(float(v), 1) if v is not None else None
+        """), {"i": ids, "b": date.today() - timedelta(days=90)}).one()
+        m["tyt"] = gizle(round(float(v), 1), vn) if v is not None else None   # [2026-10-10] 5'ten az deneme girene dayanıyorsa gizli
+        m["tyt_n"] = vn
     if "rehberlik" in moduller:
         try:
             m["gorusme"] = db.execute(text("SELECT count(*) FROM rehberlik_gorusmeleri WHERE okul_id = :o AND durum = 'yapildi' AND zaman >= now() - interval '90 days'"),
                                       {"o": okul.id}).scalar() or 0
             from app.api.rehberlik import uyarilari_hesapla
-            m["risk"] = sum(1 for s in uyarilari_hesapla(db, okul.id) if s["seviye"] == "yuksek")
+            r = sum(1 for s in uyarilari_hesapla(db, okul.id) if s["seviye"] == "yuksek")
+            r_gizli = not (r == 0 or yeterli(r))
+            m["risk"] = None if r_gizli else r   # [2026-10-10] 1-4 kişilik hücre → "5'ten az öğrenci"
         except Exception:
             db.rollback()
     if "mezun_takibi" in moduller:
         r = db.execute(text("""SELECT yil, count(*) AS n, count(*) FILTER (WHERE durum = 'yerlesti') AS y FROM mezun_yerlesmeleri
                                WHERE okul_id = :o GROUP BY yil ORDER BY yil DESC LIMIT 1"""), {"o": okul.id}).first()
         if r and r.n:
-            m["yerlesme"] = round(100 * r.y / r.n)
+            m["yerlesme"] = gizle(round(100 * r.y / r.n), r.n)   # [2026-10-10] 5'ten az mezun kaydı → gizli
             m["yerlesme_yil"] = r.yil
+            m["yerlesme_n"] = r.n
+    # [2026-10-10] KVKK küçük grup: 5'ten az öğrencili okulun metrikleri gösterilmez (öğrenci sayısı kalır)
+    m["gizli"] = not yeterli(n)
+    gizli = {k for k in ("tyt", "yerlesme") if m.get(k) is None and 0 < (m.get(k + "_n") or 0) < EN_AZ_GRUP}
+    if m["risk"] is None and r_gizli:
+        gizli.add("risk")
+    if m["gizli"]:
+        for k in list(m):
+            if k not in ("ogrenci", "gizli"):
+                m[k] = None
+        gizli = {x["k"] for x in METRIKLER if x["k"] != "ogrenci"}
+    m["gizli_alanlar"] = sorted(gizli)   # arayüz bu hücrelerde "5'ten az öğrenci" yazar
     return m
 
 
@@ -82,7 +99,8 @@ def _veri(db: Session) -> dict:
     for ok in db.query(Okul).order_by(Okul.ad).all():
         okullar.append({"id": ok.id, "ad": ok.ad, "logo": ok.logo, "paket": paket.get(getattr(ok, "paket", None), getattr(ok, "paket", None)),
                         "moduller": okul_modulleri(db, ok.id), **_okul_metrikleri(db, ok)})
-    return {"okullar": okullar, "metrikler": METRIKLER}
+    return {"okullar": okullar, "metrikler": METRIKLER,
+            "kucuk_grup": {"esik": EN_AZ_GRUP, "metin": GIZLI_METIN, "dipnot": DIPNOT}}
 
 
 @router.get("/okul-karsilastirma")
@@ -106,9 +124,11 @@ def karsilastirma_excel(okullar: str | None = Query(None), db: Session = Depends
         c.font = Font(bold=True, color="FFFFFF")
         c.fill = PatternFill("solid", fgColor="2F5D8A")
     for i, o in enumerate(liste, 2):
-        for j, val in enumerate([o["ad"], o["paket"]] + [o.get(m["k"]) for m in METRIKLER], 1):
+        for j, val in enumerate([o["ad"], o["paket"]] + [GIZLI_METIN if m["k"] in (o.get("gizli_alanlar") or []) else o.get(m["k"]) for m in METRIKLER], 1):
             ws.cell(row=i, column=j, value=val)
-    ws.cell(row=len(liste) + 3, column=1, value=f"Filizyol · {date.today().strftime('%d.%m.%Y')} · Boş hücre: modül okulun paketinde yok ya da veri yok.").font = Font(italic=True, color="7A5C00")
+    ws.cell(row=len(liste) + 3, column=1, value=f"Filizyol · {date.today().strftime('%d.%m.%Y')} · Boş hücre: modül okulun paketinde yok, veri yok "
+                                                f"ya da {GIZLI_METIN} içeriyor.").font = Font(italic=True, color="7A5C00")
+    ws.cell(row=len(liste) + 4, column=1, value=DIPNOT).font = Font(italic=True, color="7A5C00")
     for j in range(1, len(kol) + 1):
         ws.column_dimensions[openpyxl.utils.get_column_letter(j)].width = 28 if j == 1 else 16
     b = io.BytesIO()

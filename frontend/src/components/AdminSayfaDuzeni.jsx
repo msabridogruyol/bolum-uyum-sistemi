@@ -107,6 +107,7 @@ export default function AdminSayfaDuzeni() {
             <div className="ns">Sistem</div>
             <NavLink to="/admin/parametreler" className={ni}>Parametreler</NavLink>
             <NavLink to="/admin/soru-gecerlilik" className={ni}>Soru Geçerlilik Testi</NavLink>
+            <NavLink to="/admin/anket-psikometri" className={ni}>Anket Psikometrisi</NavLink>
             <NavLink to="/admin/audit-log" className={ni}>Audit Log</NavLink>
             <NavLink to="/admin/sistem-hakkinda" className={ni}>Sistem Hakkında</NavLink>
             <NavLink to="/admin/kaynakca" className={ni}>📚 Kaynakça</NavLink>

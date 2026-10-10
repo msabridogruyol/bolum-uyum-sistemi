@@ -171,7 +171,7 @@ K1–K4 sonrası öğrenciye hangi derinleşme alanlarının (en fazla 2) açıl
 
 Her değişken için puan aralığına göre öğrenciye gösterilen durum tespiti, öneri, kaynak türü ve tahmini efor cümleleri.
 
-**Nasıl:** 31 değişken × 5 aralık = 155 elle yazılmış satır. Profil ekranında aralık ham puana göre seçilir: ≥80 belirgin üstün, ≥60 üstün, ≥40 beklenti, ≥20 altında, <20 belirgin altında; öneri yalnızca 'altında' aralıklarında yazılıdır, P4'te öneriler bilinçli olarak boş bırakıldı.
+**Nasıl:** 31 değişken × 5 aralık = 155 elle yazılmış satır. Profil ekranında aralık ham puana göre seçilir: ≥75 belirgin üstün, ≥62 üstün, ≥40 beklenti, ≥20 altında, <20 belirgin altında (tek ölçekle uyumlu); öneri yalnızca 'altında' aralıklarında yazılıdır, P4'te öneriler bilinçli olarak boş bırakıldı.
 
 **Dayanak:**
 
@@ -183,7 +183,7 @@ Her değişken için puan aralığına göre öğrenciye gösterilen durum tespi
 
 Puanların 'Çok güçlü / Güçlü / Orta / Gelişime açık' gibi etiketlerle ve 'bu bir not değil, eğilimdir' açıklamasıyla sunulması.
 
-**Nasıl:** Puan Rehberi ve rapor: ≥75 Çok güçlü, 62–74 Güçlü, 40–61 Orta, <40 Gelişime açık; 'Neden bu bölüm' kartında öğrenci ≥75/≥62/≥50 ve bölüm yüzdeliği ≥85 Çok yüksek, ≥70 Yüksek; katman ekranında renk ≥70/≥40 ve 'güçlü' listesi ≥60; raporda güçlü ≥62, gelişim <45. Yorum ilkeleri metni (örüntüye bak, aşırı güçlü yön, sonuçlar değişebilir) elle yazılmıştır.
+**Nasıl:** Tek ölçek (frontend/src/yardimci/seviye.js, backend/app/core/seviye.py): Çok güçlü 75+, Güçlü 62–74, Ortanın üstü 50–61, Orta 40–49, Gelişime açık 40 altı; tüm ekranlar, Puan Rehberi ve raporlar aynı bantları kullanır.
 
 **Dayanak:**
 
@@ -258,7 +258,7 @@ Bölüm profillerinin hesaplandığı meslek havuzu ve İngilizce–Türkçe çe
 
 Her katmanın ve değişkenin toplam uyuma katkı payı.
 
-**Nasıl:** Katman ağırlıkları veritabanındaki katman ayarından (normalizasyon_agirligi) okunur; yerel kurulumda K1–K4 eşit (%25); 0008 göçü 20/20/20/40 atar — canlıdaki değer kontrol edilmeli. Değişken ağırlığı = katman ağırlığı / katmandaki (eşleşmeye giren) değişken sayısı, toplam 1'e normalize.
+**Nasıl:** Katman ağırlıkları katmanlar.normalizasyon_agirligi'nden okunur; K1–K4 eşit %25 (0052 göçü bir kez %25'e çeker). Süper admin Parametreler sayfasından değiştirebilir (toplam 100); değişiklik denetim kaydına yazılır ve uyum skorları yeniden hesaplanır. Değişken ağırlığı = katman ağırlığı / katmandaki (eşleşmeye giren) değişken sayısı, toplam 1'e normalize.
 
 **Dayanak:**
 
@@ -266,7 +266,7 @@ Her katmanın ve değişkenin toplam uyuma katkı payı.
 - [98] Nye ve ark., 2012 — İlgilerin akademik ve iş performansını anlamlı yordadığını gösterir; ilgi temelli katmana görece yüksek ağırlık verilmesine genel (sayısal olmayan) dayanak sağlar.
 - [9] Barrick ve Mount, 1991 — Kişilik boyutlarının performansla ilişkisinin orta düzeyde olduğunu gösterir; kişilik katmanının sıfırdan büyük ama baskın olmayan bir ağırlık almasını destekler.
 
-> Eşit ağırlık seçimi kurum içi tasarım kararıdır; AHP vb. bir ağırlıklandırma çalışmasına dayanmaz. Ağırlık bilgisinin güvenilir olmadığı durumda eşit ağırlıklandırma literatürde savunulan bir varsayımdır. Canlı veritabanındaki değer (%25 ya da 0008 göçünün 20/20/20/40'ı) kontrol edilmelidir.
+> Eşit ağırlık seçimi kurum içi tasarım kararıdır; AHP vb. bir ağırlıklandırma çalışmasına dayanmaz. Ağırlık bilgisinin güvenilir olmadığı durumda eşit ağırlıklandırma literatürde savunulan bir varsayımdır.
 
 ### Katman içi göreli ölçekleme ve performans matrisi
 
@@ -729,7 +729,7 @@ Bölüm/meslek seçimine ne kadar hazır hissedildiğini yoklayan form.
 
 Okul anketleri ve hazır şablonların puanlanması, anonim yanıtların korunması ve küçük grup gizleme.
 
-**Nasıl:** Puan = Likert maddelerin ortalaması (ters madde 6 − cevap), iki eşikle 3 seviye; 5 soru türü (Likert, tek, çoklu, 1–10 puan, açık). EN_AZ = 5: anket en az 5 kişiye gönderilir, anonim sonuçlar 5'ten az yanıtla gösterilmez, 5'ten küçük sınıflar 'Diğer sınıflar'da birleşir (o da <5 ise gizlenir), anonim yanıtta öğrenci kimliği ve şube tutulmaz, zaman damgası gün düzeyinde; yanıt gelmiş anketin soruları/anonimliği değiştirilemez. İsimli taramalarda destek gerektiren sonuç son 120 gün erken uyarıya düşer. Rehberlik memnuniyet anketi: 4 Likert + 1 açık, anonim, puanlamasız.
+**Nasıl:** Puan = Likert maddelerin ortalaması (ters madde 6 − cevap), iki eşikle 3 seviye; 5 soru türü (Likert, tek, çoklu, 1–10 puan, açık). EN_AZ = 5: anket en az 5 kişiye gönderilir, anonim sonuçlar 5'ten az yanıtla gösterilmez, 5'ten küçük sınıflar 'Diğer sınıflar'da birleşir (o da <5 ise gizlenir), anonim yanıtta öğrenci kimliği ve şube tutulmaz, zaman damgası gün düzeyinde; yanıt gelmiş anketin soruları/anonimliği değiştirilemez. İsimli taramalarda destek gerektiren sonuç son 120 gün erken uyarıya düşer. Rehberlik memnuniyet anketi: 4 Likert + 1 açık, anonim, puanlamasız. Süper admin Anket Psikometrisi ekranında tüm okulların yanıtlarından Cronbach alfa (%95 GA), madde-toplam korelasyonu ve madde istatistikleri hesaplanır (n ≥ 30).
 
 **Dayanak:**
 
@@ -880,16 +880,16 @@ Bir öğrencinin sonuçlarını dört farklı kitleye göre dili ve içeriği de
 
 > Güçlü (≥62, en çok 6) ve gelişim (<45, en çok 5) eşikleri, SWOT madde eşleme kuralları ve 6 öneri/4 soru sayıları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. 'Kişisel veri içerir' altbilgisi KVKK'nın genel veri güvenliği yükümlülüğüyle uyumlu bir ürün kararıdır.
 
-### Okul, sınıf ve şube raporları; okul karşılaştırması · _Kurum içi_ · _Okul görünümünde yok_
+### Okul, sınıf ve şube raporları; okul karşılaştırması · _Kurum içi_
 
 Okulun genel durumu, sınıf/şube özetleri (Excel/PDF) ve çok okullu kurumlar için okul karşılaştırması.
 
-**Nasıl:** Okul raporu: katılım, 1. öneriye göre alan dağılımı (ilk 8), katman ortalamaları (şube raporunda okul ortalamasıyla), ortak en güçlü/en zayıf 6 özellik, geçersiz tur sayısı, öğrenci listesi ve son TYT/AYT netleri. Karşılaştırma 9 metrik: öğrenci, giriş yapan %, son 30 günde aktif %, testi tamamlayan %, hedef seçen %, ort. son TYT neti, 90 günde rehberlik görüşmesi, yüksek uyarılı öğrenci, son yıl yerleşme %. Kodda küçük grup gizleme eşiği yalnızca anketlerde var; okul/şube raporlarında yok.
+**Nasıl:** Okul raporu: katılım, 1. öneriye göre alan dağılımı (ilk 8), katman ortalamaları (şube raporunda okul ortalamasıyla), ortak en güçlü/en zayıf 6 özellik, geçersiz tur sayısı, öğrenci listesi ve son TYT/AYT netleri. Karşılaştırma 9 metrik: öğrenci, giriş yapan %, son 30 günde aktif %, testi tamamlayan %, hedef seçen %, ort. son TYT neti, 90 günde rehberlik görüşmesi, yüksek uyarılı öğrenci, son yıl yerleşme %. Kodda küçük grup gizleme eşiği yalnızca anketlerde var; okul/şube raporlarında yok. Toplu PDF/Excel raporlarında ve okul karşılaştırmasında 5'ten az öğrenciye dayanan değerler gizlenir, küçük kalemler 'Diğer' altında birleşir (app/core/kucuk_grup.py).
 
 **Dayanak:**
 
-- [129] Sweeney, 2002 — Küçük grupların kimlik açığa çıkarma riskine karşı asgari grup büyüklüğü fikrini destekler; bu ilke kodda yalnızca anketlerde uygulanıyor, okul/şube raporlarında uygulanmıyor.
-- [124] Seastrom, 2010 — Toplulaştırılmış eğitim verisi raporlarında küçük hücre gizleme (suppression) uygulamalarını tanımlar; okul/şube raporlarında bu tedbirin eksik olduğunu değerlendirmek için ölçüt sağlar.
+- [129] Sweeney, 2002 — Küçük grupların kimlik açığa çıkarma riskine karşı asgari grup büyüklüğü ilkesini sağlar; toplu raporlarda 5'ten az öğrenciye dayanan değerlerin gizlenmesinin dayanağıdır.
+- [124] Seastrom, 2010 — Toplulaştırılmış eğitim verisi raporlarında küçük hücre gizleme uygulamalarını tanımlar; okul, sınıf düzeyi ve şube raporlarındaki gizleme ve 'Diğer' birleştirmesini destekler.
 
 > Okul karşılaştırmasındaki 9 metrik, ilk 8/ilk 6 sınırları ve 30/90 günlük pencereler kurum içi tasarım kararıdır; belirli bir okul performans göstergesi çerçevesine dayanmaz. Kaynaklar küçük hücre gizlemeyi önerir; mevcut kod okul/şube raporlarında gizleme yapmaz (bilinen boşluk).
 
@@ -915,7 +915,7 @@ Okulun hangi modülleri kullanacağını belirleyen paket yapısı ve uygulama i
 - [74] Kizilcec, 2016 — Algoritmik çıktının nasıl üretildiğine dair uygun düzeyde açıklama vermenin kullanıcı güvenini etkilediğini gösterir; SSS ve sistem hakkında metinlerinin gerekçesini destekler.
 - [2] American Educational Research Association, American Psych…, 2014 — Test kullanıcılarına puanların amacı, yorumu ve sınırlılıkları hakkında doğru bilgi verilmesi ilkesini destekler; yanlış bilgilendirme bu ilkeye aykırıdır.
 
-> Kısmi dayanak: şeffaflık ilkesi kaynaklara dayanır, sayfa içerikleri (adım/SSS sayıları) kurum içi karardır. Bu tutarsızlık şeffaflık ilkesiyle çelişir ve metin düzeltilmelidir.
+> Kısmi dayanak: şeffaflık ilkesi kaynaklara dayanır, sayfa içerikleri (adım/SSS sayıları) kurum içi karardır.
 
 ### Test hesapları ve senaryolu sentetik ilerleme · _Kurum içi_ · _Okul görünümünde yok_
 

@@ -46,21 +46,13 @@ router = APIRouter()
 
 def _puan_araligi(puan: float) -> str:
     """
-    Bir puanı 5 aralıktan birine ('belirgin_ustun'...'belirgin_altinda') eşler.
-    NOT: Sınırlar (80/60/40/20) belgede açık şekilde tanımlanmamıştı — F2.1'deki
-    gap kategorilerinin (±15/±5) aralık genişliği mantığına dayanan, buraya
-    özel çıkarılmış bir varsayım. Kalibre edilmesi gerekirse yalnızca bu
-    fonksiyon değişir.
+    Bir puanı 5 yorum aralığından birine ('belirgin_ustun'...'belirgin_altinda') eşler.
+    [2026-10-10] Sınırlar artık app/core/seviye.py'deki ortak düzey bantlarından gelir
+    (75 / 62 / 40; ek olarak 20 yalnızca yorum seçimi için), böylece seçilen yorum
+    ekrandaki "Çok güçlü / Güçlü / Orta / Gelişime açık" etiketiyle çelişmez.
     """
-    if puan >= 80:
-        return "belirgin_ustun"
-    if puan >= 60:
-        return "ustun"
-    if puan >= 40:
-        return "beklenti"
-    if puan >= 20:
-        return "altinda"
-    return "belirgin_altinda"
+    from app.core.seviye import yorum_araligi
+    return yorum_araligi(puan)
 
 
 def _yorumlari_ekle(db: Session, sonuclar: list[KatmanSonucSatiri]) -> list[KatmanSonucSatiri]:

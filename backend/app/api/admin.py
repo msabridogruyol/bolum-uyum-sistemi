@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 import uuid
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import BackgroundTasks, APIRouter, Depends, HTTPException
 from sqlalchemy import text, func
 from sqlalchemy.orm import Session
 
@@ -388,57 +388,75 @@ def pipeline_durumu_getir(
 
 # ===================== E3 — Katmanlar & Ağırlıklar ===================== #
 
+_AGIRLIK_KATMANLARI = ("K1", "K2", "K3", "K4")
+
+
+def _katman_agirliklari_oku(db: Session) -> list[KatmanAgirligiOut]:
+    katmanlar = db.query(Katman).filter(Katman.kod.in_(_AGIRLIK_KATMANLARI)).order_by(Katman.sira, Katman.kod).all()
+    return [KatmanAgirligiOut(katman_kod=k.kod, ad=k.ad, agirlik=float(k.normalizasyon_agirligi or 0)) for k in katmanlar]
+
+
 @router.get("/katman-agirliklari", response_model=list[KatmanAgirligiOut])
 def aktif_katman_agirliklarini_getir(
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
-    satirlar = (
-        db.query(KatmanAgirligi, Katman.kod)
-        .join(Katman, Katman.id == KatmanAgirligi.katman_id)
-        .filter(KatmanAgirligi.aktif_mi.is_(True))
-        .all()
-    )
-    return [
-        KatmanAgirligiOut(katman_kod=kod, agirlik=float(ka.agirlik), versiyon=ka.versiyon, aktif_mi=ka.aktif_mi)
-        for ka, kod in satirlar
-    ]
+    """[2026-10-10] Skor motorunun gerçekten kullandığı katmanlar.normalizasyon_agirligi değerleri (K1–K4).
+    Eski katman_agirliklari tablosu hiçbir hesaplamada okunmadığı için artık kullanılmıyor (silinmedi)."""
+    return _katman_agirliklari_oku(db)
 
 
-@router.post("/katman-agirliklari", response_model=list[KatmanAgirligiOut], status_code=201)
-def yeni_agirlik_versiyonu_olustur(
+@router.put("/katman-agirliklari", response_model=list[KatmanAgirligiOut])
+@router.post("/katman-agirliklari", response_model=list[KatmanAgirligiOut], include_in_schema=False)
+def katman_agirliklarini_guncelle(
     istek: YeniAgirlikVersiyonuIstek,
+    arka_plan: BackgroundTasks,
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_super_admin),
 ):
-    """E3 — yeni bir ağırlık versiyonu ekler, öncekini pasife alır. Toplam %100 olmalı."""
-    toplam = sum(istek.agirliklar.values())
-    if abs(toplam - 100.0) > 0.01:
-        raise HTTPException(status_code=400, detail=f"Ağırlıklar toplamı 100 olmalı, gelen: {toplam}")
-
-    katmanlar = {k.kod: k for k in db.query(Katman).filter(Katman.kod.in_(istek.agirliklar.keys())).all()}
-    eksik = set(istek.agirliklar.keys()) - set(katmanlar.keys())
+    """E3 — K1–K4 ağırlıklarını katmanlar.normalizasyon_agirligi'ne yazar. Dördü de gönderilmeli,
+    her biri 0–100 arası, toplamı 100. Değişiklik tüm öğrencilerin bölüm sıralamasını etkiler."""
+    gelen = {str(k).strip().upper(): v for k, v in istek.agirliklar.items()}
+    bilinmeyen = sorted(set(gelen) - set(_AGIRLIK_KATMANLARI))
+    if bilinmeyen:
+        raise HTTPException(status_code=400, detail=f"Bilinmeyen katman kodu: {', '.join(bilinmeyen)}. Yalnızca K1, K2, K3 ve K4 ağırlığı ayarlanabilir.")
+    eksik = [k for k in _AGIRLIK_KATMANLARI if k not in gelen]
     if eksik:
-        raise HTTPException(status_code=400, detail=f"Bilinmeyen katman kodu: {eksik}")
+        raise HTTPException(status_code=400, detail=f"Dört katmanın ağırlığı birlikte gönderilmeli; eksik: {', '.join(eksik)}.")
+    for kod, deger in gelen.items():
+        if deger is None or deger != deger or deger < 0 or deger > 100:
+            raise HTTPException(status_code=400, detail=f"{kod} ağırlığı 0 ile 100 arasında olmalı (gelen: {deger}).")
+    toplam = round(sum(gelen.values()), 2)
+    if abs(toplam - 100.0) > 0.01:
+        raise HTTPException(status_code=400, detail=f"Ağırlıkların toplamı 100 olmalı; şu an {toplam:g}. Farkı ({100 - toplam:+g}) katmanlara dağıtın.")
 
-    son_versiyon = db.query(KatmanAgirligi.versiyon).order_by(KatmanAgirligi.versiyon.desc()).first()
-    yeni_versiyon_no = (son_versiyon[0] + 1) if son_versiyon else 1
+    katmanlar = {k.kod: k for k in db.query(Katman).filter(Katman.kod.in_(_AGIRLIK_KATMANLARI)).all()}
+    yok = [k for k in _AGIRLIK_KATMANLARI if k not in katmanlar]
+    if yok:
+        raise HTTPException(status_code=400, detail=f"Veritabanında katman bulunamadı: {', '.join(yok)}.")
 
-    # eski versiyonu pasife al
-    db.query(KatmanAgirligi).filter(KatmanAgirligi.aktif_mi.is_(True)).update({"aktif_mi": False})
-
-    yeni_satirlar = []
-    for kod, agirlik in istek.agirliklar.items():
-        satir = KatmanAgirligi(katman_id=katmanlar[kod].id, versiyon=yeni_versiyon_no, agirlik=agirlik, aktif_mi=True)
-        db.add(satir)
-        yeni_satirlar.append((satir, kod))
-
-    _audit_yaz(db, admin, "katman_agirlik_versiyonu", "katman_agirliklari", str(yeni_versiyon_no), str(istek.agirliklar))
+    onceki = {kod: float(katmanlar[kod].normalizasyon_agirligi or 0) for kod in _AGIRLIK_KATMANLARI}
+    for kod in _AGIRLIK_KATMANLARI:
+        katmanlar[kod].normalizasyon_agirligi = round(float(gelen[kod]), 2)
+    yeni = {kod: round(float(gelen[kod]), 2) for kod in _AGIRLIK_KATMANLARI}
+    from app.core.hesap_yonetimi import denetim_yaz
+    denetim_yaz(db, admin, "katman_agirlik_guncelleme", "katmanlar", "K1-K4",
+                f"Katman ağırlıkları değişti: önce {onceki} → sonra {yeni}")
     db.commit()
-    return [
-        KatmanAgirligiOut(katman_kod=kod, agirlik=float(satir.agirlik), versiyon=satir.versiyon, aktif_mi=satir.aktif_mi)
-        for satir, kod in yeni_satirlar
-    ]
+    if onceki != yeni:
+        arka_plan.add_task(_skorlari_arka_planda_hesapla)   # [2026-10-10] kayıtlı uyum skorları yeni ağırlıklarla güncellensin
+    return _katman_agirliklari_oku(db)
+
+
+def _skorlari_arka_planda_hesapla() -> None:
+    from app.core.database import SessionLocal
+    db = SessionLocal()
+    try:
+        uyum_skorlarini_yeniden_hesapla(db)
+    except Exception:
+        db.rollback()
+    finally:
+        db.close()
 
 
 # ===================== E4 — Dallar (K5) ===================== #
@@ -1347,31 +1365,51 @@ def sorulari_toplu_yukle(
 # Soru Silme + Toplu İşlemler (sonradan eklendi)
 # ============================================================================
 
+def _sorulari_sil(db: Session, admin: AdminKullanici, soru_idler: list[int], onay: str | None, islem: str, hedef_id: str):
+    """[2026-10-10] Soru silmenin ortak yolu: öğrenci cevabı varsa onay=SIL zorunlu; cevaplar açıkça silinir
+    (ogrenci_cevaplari → sorular FK'si CASCADE değil); denetim kaydı yazılır."""
+    from app.models import OgrenciCevap
+    from app.core.hesap_yonetimi import denetim_yaz
+
+    cevap_sayisi = int(db.query(func.count(OgrenciCevap.id)).filter(OgrenciCevap.soru_id.in_(soru_idler)).scalar() or 0)
+    if cevap_sayisi and (onay or "").strip().upper() != "SIL":
+        raise HTTPException(
+            status_code=400,
+            detail=(f"Bu işlem {cevap_sayisi} öğrenci cevabını kalıcı siler ({len(soru_idler)} soru); "
+                    "onaylamak için isteğe onay=SIL ekleyin. Cevapları korumak için soruyu silmek yerine pasife alın."),
+        )
+    if cevap_sayisi:
+        db.query(OgrenciCevap).filter(OgrenciCevap.soru_id.in_(soru_idler)).delete(synchronize_session=False)
+    silinen = db.query(Soru).filter(Soru.id.in_(soru_idler)).delete(synchronize_session=False)
+    denetim_yaz(db, admin, islem, "sorular", hedef_id,
+                f"{silinen} soru ve {cevap_sayisi} öğrenci cevabı kalıcı silindi (soru id: {soru_idler[:50]})")
+    db.commit()
+
+
 @router.delete("/sorular/{soru_id}", status_code=204)
 def soru_sil(
     soru_id: int,
+    onay: str | None = None,
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
     soru = db.get(Soru, soru_id)
     if soru is None:
         raise HTTPException(status_code=404, detail="Soru bulunamadı.")
-    _audit_yaz(db, admin, "soru_silme", "sorular", str(soru_id), soru.soru_metni[:100])
-    db.delete(soru)  # soru_secenekleri ve sjt_secenek_degisken_agirlik CASCADE ile silinir
-    db.commit()
+    # soru_secenekleri ve sjt_secenek_degisken_agirlik CASCADE ile silinir
+    _sorulari_sil(db, admin, [soru_id], onay, "soru_silme", str(soru_id))
 
 
 @router.post("/sorular/toplu-sil", status_code=204)
 def sorulari_toplu_sil(
     istek: TopluSoruIdIstek,
+    onay: str | None = None,
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
     if not istek.soru_idler:
         raise HTTPException(status_code=400, detail="Silinecek soru seçilmedi.")
-    silinen = db.query(Soru).filter(Soru.id.in_(istek.soru_idler)).delete(synchronize_session=False)
-    _audit_yaz(db, admin, "soru_toplu_silme", "sorular", "toplu", f"{silinen} soru silindi")
-    db.commit()
+    _sorulari_sil(db, admin, list(istek.soru_idler), istek.onay or onay, "soru_toplu_silme", "toplu")
 
 
 @router.post("/sorular/toplu-aktif", status_code=204)

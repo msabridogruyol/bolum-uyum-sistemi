@@ -2,12 +2,9 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { KATMAN_BILGI } from '../yardimci/katmanAdlari'
+import { seviyeEtiketi, seviyeRengi } from '../yardimci/seviye'
 
-function renkSec(puan) {
-  if (puan >= 70) return 'var(--gr)'
-  if (puan >= 40) return 'var(--pu)'
-  return 'var(--tx3)'
-}
+const renkSec = seviyeRengi   // [2026-10-10] tek kaynak bantlar (yardimci/seviye.js)
 
 function DegiskenKarti({ s }) {
   return (
@@ -15,7 +12,7 @@ function DegiskenKarti({ s }) {
       <div className="dr" style={{ marginBottom: s.durum_tespiti ? 8 : 0 }}>
         <div className="dl">{s.degisken_adi}</div>
         <div className="db"><div className="df" style={{ width: `${s.puan}%`, background: renkSec(s.puan) }} /></div>
-        <div className="ds" style={{ color: renkSec(s.puan) }}>{s.puan}</div>
+        <div className="ds" style={{ color: renkSec(s.puan) }} title={seviyeEtiketi(s.puan)}>{s.puan}</div>
       </div>
       {s.durum_tespiti && (
         <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.6, marginTop: 4 }}>{s.durum_tespiti}</div>

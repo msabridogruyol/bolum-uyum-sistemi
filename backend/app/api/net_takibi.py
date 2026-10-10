@@ -20,6 +20,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_ogrenci
+from app.core.kucuk_grup import EN_AZ_GRUP
 from app.core.database import get_db
 from app.core.sinav_yapisi import (
     KONU_DERSLERI, KONU_DURUMLARI, PUAN_TURU_AD, PUAN_TURU_KONU_DERSLERI, PUAN_TURU_TESTLERI, TESTLER, net_hesapla,
@@ -97,7 +98,8 @@ def denemeler(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogr
                            "WHERE ogrenci_id = :o ORDER BY tarih, id"), {"o": o.id}).all()
     idler = [r.okul_deneme_id for r in rows if r.okul_deneme_id]
     ort = dict(db.execute(text("SELECT okul_deneme_id, round(avg(toplam_net), 2) FROM ogrenci_denemeleri "
-                               "WHERE okul_deneme_id = ANY(:i) GROUP BY okul_deneme_id"), {"i": idler}).all()) if idler else {}
+                               "WHERE okul_deneme_id = ANY(:i) GROUP BY okul_deneme_id HAVING count(*) >= :n"),   # [2026-10-10] KVKK: 5'ten az katılımda okul ortalaması yok
+                          {"i": idler, "n": EN_AZ_GRUP}).all()) if idler else {}
     return {"denemeler": [_deneme_satiri(r, {k: float(v) for k, v in ort.items()}) for r in rows]}
 
 

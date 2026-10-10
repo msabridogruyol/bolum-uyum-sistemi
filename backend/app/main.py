@@ -51,6 +51,7 @@ from app.api.admin_yokatlas import router as admin_yokatlas_router
 from app.api.koclar import ogrenci_router as koc_ogrenci_router, router as koc_router
 from app.api.kulupler import ogrenci_router as kulup_ogrenci_router, router as kulup_router
 from app.api.test_hesaplari import router as test_hesaplari_router, giris_router as test_giris_router
+from app.api.anket_psikometri import router as anket_psikometri_router   # [2026-10-10]
 app = FastAPI(
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
@@ -150,6 +151,36 @@ def _fotograf_temizligi():
         pass
 
 
+def _bekleyen_skor_hesabi():
+    """[2026-10-10] Bir göç katman ağırlıklarını değiştirdiyse (tek_seferlik_gocler'de 'bekleyen_skor_hesabi')
+    tamamlanmış turların uyum skorlarını arka planda yeniden hesapla; işaret önce silinir (tek kez çalışsın)."""
+    import threading
+    from sqlalchemy import text as _t
+    try:
+        db = SessionLocal()
+        try:
+            n = db.execute(_t("DELETE FROM tek_seferlik_gocler WHERE ad = 'bekleyen_skor_hesabi'")).rowcount
+            db.commit()
+        finally:
+            db.close()
+    except Exception:
+        return
+    if not n:
+        return
+
+    def _calis():
+        from app.api.admin import uyum_skorlarini_yeniden_hesapla
+        db2 = SessionLocal()
+        try:
+            uyum_skorlarini_yeniden_hesapla(db2)
+        except Exception:
+            db2.rollback()
+        finally:
+            db2.close()
+
+    threading.Thread(target=_calis, name="skor-yeniden-hesap", daemon=True).start()
+
+
 @app.on_event("startup")
 def _baslangic_temizligi():
     """[2026-10-04] KVKK: 6 aydan eski kamera fotoğraflarını sil.
@@ -158,6 +189,7 @@ def _baslangic_temizligi():
     import time
 
     _fotograf_temizligi()
+    _bekleyen_skor_hesabi()
 
     def _dongu():
         while True:
@@ -229,6 +261,7 @@ app.include_router(net_takibi_router, dependencies=[_Dep(ogrenci_modulu("net_tak
 app.include_router(motivasyon_router)                       # [2026-10-10] YKS geri sayımı, mesaj, rozetler
 app.include_router(akran_router, dependencies=[_Dep(okul_modulu("akran"))])                            # [2026-10-10] akran benzerliği, şube dağılımı, aday öğrenci
 app.include_router(test_hesaplari_router)                    # [2026-10-10] /yonetim/test-hesaplari (süper admin)
+app.include_router(anket_psikometri_router)                  # [2026-10-10] /yonetim/anket-psikometri (süper admin)
 app.include_router(test_giris_router)                        # [2026-10-10] POST /auth/test-giris
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları

@@ -34,7 +34,7 @@ yonetim_router = APIRouter(prefix="/yonetim", tags=["Anketler"])
 ogrenci_router = APIRouter(prefix="/ogrenci", tags=["Anketler"])
 DURUMLAR = {"taslak": "Taslak", "yayinda": "Yayında", "kapandi": "Kapandı"}
 # [2026-10-10] Anonimlik eşiği: en az 5 kişiye gönderilir; anonim anket sonuçları en az 5 yanıtla ve en az 5 kişilik gruplarla gösterilir
-EN_AZ = 5
+from app.core.kucuk_grup import EN_AZ_GRUP as EN_AZ, siniflari_birlestir  # noqa: E402  (ortak küçük grup eşiği = 5)
 SINIF_SIRA = {s: i for i, s in enumerate(["9. Sınıf", "10. Sınıf", "11. Sınıf", "12. Sınıf", "Mezun", "Aday"])}
 
 
@@ -216,10 +216,7 @@ def anket_sil(anket_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
 
 def _kucuk_siniflari_birlestir(siniflar: list) -> dict:
     """Anonim ankette EN_AZ'dan az yanıtlı sınıflar 'Diğer sınıflar' olarak birleşir; birleşik grup da azsa sınıf bilgisi gösterilmez."""
-    say = Counter(siniflar)
-    kucuk = {k for k, n in say.items() if n < EN_AZ}
-    diger = sum(say[k] for k in kucuk)
-    return {k: (k if k not in kucuk else ("Diğer sınıflar" if diger >= EN_AZ else None)) for k in say}
+    return siniflari_birlestir(siniflar, "Diğer sınıflar")
 
 
 def _sonuclar(db: Session, a: dict) -> dict:

@@ -223,6 +223,9 @@ export const api = {
   anketSil: (id) => adel(`/yonetim/anket/${id}`),
   anketSonuclari: (id) => aget(`/yonetim/anket/${id}/sonuclar`),
   anketExcel: (id) => dosyaIndir(`/yonetim/anket/${id}/excel`, 'admin'),
+  // [2026-10-10] Anket şablonu psikometrisi (süper admin)
+  anketPsikometri: () => aget('/yonetim/anket-psikometri'),
+  anketPsikometriExcel: () => dosyaIndir('/yonetim/anket-psikometri/excel', 'admin'),
   anketlerim: () => get('/ogrenci/anketler'),
   anketAc: (id) => get(`/ogrenci/anket/${id}`),
   anketYanitla: (id, cevaplar) => post(`/ogrenci/anket/${id}/yanit`, { cevaplar }),
@@ -396,6 +399,9 @@ export const api = {
   pipelineTaslaginiReddet: (grup) => apost(`/admin/pipeline/taslaklar/${grup}/reddet`),
   parametreleriListele: () => aget('/admin/parametreler'),
   parametreGuncelle: (anahtar, deger) => aput(`/admin/parametreler/${anahtar}`, { deger }),
+  // [2026-10-10] K1–K4 katman ağırlıkları (katmanlar.normalizasyon_agirligi — skor motorunun okuduğu değer)
+  katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
+  katmanAgirliklariniGuncelle: (agirliklar) => aput('/admin/katman-agirliklari', { agirliklar }),
   bolumleriListele: () => aget('/admin/bolumler'),
   bolumDurumDegistir: (bolumId, yeniDurum, gerekce) =>
     apost(`/admin/bolumler/${bolumId}/durum`, { yeni_durum: yeniDurum, gerekce }),
@@ -501,7 +507,9 @@ export const api = {
   gelisimKaynagiSil: (id) => adel(`/admin/gelisim-kaynak/${id}`),
   gecerlilikTestGirdisiGetirV2: () => aget('/admin/gecerlilik-girdisi-v2'),
   kutupSorulariniTopluYukle: (satirlar) => apost('/admin/kutup-sorulari/toplu', { satirlar }),
-  katmaninTumSorulariniSil: (katmanKod) => adel(`/admin/sorular-detay/katman/${katmanKod}`),
+  // [2026-10-10] Katmanı komple silmek açık onay ister (onay=SIL); önce silme özeti (soru/cevap sayısı) alınır
+  katmanSilmeOzeti: (katmanKod) => aget(`/admin/sorular-detay/katman/${katmanKod}/silme-ozeti`),
+  katmaninTumSorulariniSil: (katmanKod) => adel(`/admin/sorular-detay/katman/${katmanKod}?onay=SIL`),
   gecerlilikSonuclariniTemizle: () => adel('/admin/gecerlilik-girdisi-v2/sonuclar'),
   gecerlilikAnaliziniGetir: () => aget('/admin/gecerlilik-girdisi-v2/analiz'),
   sorulariTopluYukle: (satirlar) => apost('/admin/sorular/toplu', { satirlar }),
