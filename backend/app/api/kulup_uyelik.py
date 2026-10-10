@@ -88,6 +88,9 @@ def talep_et(kulup_id: int, istek: TalepIstek, db: Session = Depends(get_db), o:
         INSERT INTO kulup_uyelikleri (kulup_id, ogrenci_id, durum, mesaj) VALUES (:k, :o, 'bekliyor', :m)
         ON CONFLICT (kulup_id, ogrenci_id) DO UPDATE SET durum = 'bekliyor', mesaj = EXCLUDED.mesaj, yanit = NULL,
             talep_zamani = now(), karar_zamani = NULL, karar_veren = NULL"""), {"k": kulup_id, "o": o.id, "m": mesaj})
+    from app.core.bildirim import okul_yetkililerine   # [2026-10-10] bildirim
+    okul_yetkililerine(db, o.okul_id, "kulup_talep", f"Yeni kulüp talebi: {k.ad}", f"{o.ad_soyad} kulübe katılmak istiyor.",
+                       f"/admin/okul/{o.okul_id}?sekme=kulupler")
     db.commit()
     return kulup_durumu(db, o)
 
@@ -154,6 +157,11 @@ def karar_ver(uyelik_id: int, istek: KararIstek, db: Session = Depends(get_db), 
                {"d": yeni, "y": (istek.yanit or "").strip() or None, "v": yon.ad_soyad, "i": r.id})
     o = db.get(Ogrenci, r.ogrenci_id)
     denetim_yaz(db, yon, f"kulup_{istek.karar}", "kulup_uyelikleri", r.id, f"{k.ad}: {o.ad_soyad if o else ''}", k.okul_id)
+    if o is not None:   # [2026-10-10] bildirim (+ e-posta)
+        from app.core.bildirim import bildir
+        baslik = {"onayla": f"Kulüp talebin kabul edildi 🎉 — {k.ad}", "reddet": f"Kulüp talebin kabul edilmedi — {k.ad}",
+                  "cikar": f"Kulüp üyeliğin sona erdi — {k.ad}"}[istek.karar]
+        bildir(db, "ogrenci", [o.id], "kulup_karar", baslik, (istek.yanit or "").strip() or None, "/kulupler", k.okul_id, eposta=True)
     db.commit()
 
 
@@ -201,6 +209,17 @@ def duyuru_ekle(kulup_id: int, istek: DuyuruIstek, db: Session = Depends(get_db)
                     "ta": istek.tarih if istek.tur == "etkinlik" else None, "s": istek.saat if istek.tur == "etkinlik" else None,
                     "y": istek.yer if istek.tur == "etkinlik" else None, "h": istek.herkese, "o": yon.ad_soyad}).first()
     denetim_yaz(db, yon, "kulup_duyuru_ekle", "kulup_duyurulari", r.id, f"{k.ad}: {istek.baslik}", k.okul_id)
+    # [2026-10-10] bildirim: üyelere (herkese açıksa okulun tüm öğrencilerine); etkinlikse üyelere e-posta da
+    from app.core.bildirim import bildir
+    uyeler = [x[0] for x in db.execute(text("SELECT ogrenci_id FROM kulup_uyelikleri WHERE kulup_id = :k AND durum = 'onaylandi'"), {"k": kulup_id}).all()]
+    hepsi = [x[0] for x in db.execute(text("SELECT id FROM ogrenciler WHERE okul_id = :o"), {"o": k.okul_id}).all()] if istek.herkese else []
+    zaman = (f"📅 {istek.tarih.strftime('%d.%m.%Y')}{' ' + istek.saat if istek.saat else ''}{' · ' + istek.yer if istek.yer else ''}"
+             if istek.tur == "etkinlik" and istek.tarih else "")
+    metin = " — ".join(x for x in (zaman, (istek.metin or "").strip()[:300]) if x) or None
+    baslik = f"{k.ad}: {istek.baslik.strip()}"
+    bildir(db, "ogrenci", uyeler, f"kulup_{istek.tur}", baslik, metin, "/kulupler", k.okul_id, eposta=istek.tur == "etkinlik")
+    uye_kume = set(uyeler)
+    bildir(db, "ogrenci", [x for x in hepsi if x not in uye_kume], f"kulup_{istek.tur}", baslik, metin, "/kulupler", k.okul_id)
     db.commit()
     return {"id": r.id}
 
