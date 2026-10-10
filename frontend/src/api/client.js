@@ -191,6 +191,18 @@ export const api = {
   paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
   okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
   okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
+  // [2026-10-10] Tercih dönemi ve mezun takibi
+  tercih: () => get('/ogrenci/tercih'),
+  tercihKaydet: (v) => put('/ogrenci/tercih', v),
+  tercihGonder: () => post('/ogrenci/tercih/gonder'),
+  yerlesmeBildir: (v) => post('/ogrenci/yerlesme', v),
+  okulTercihleri: (okulId) => aget(`/yonetim/okul/${okulId}/tercihler`),
+  ogrenciTercihi: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/tercih`),
+  tercihKarar: (ogrenciId, karar, notu) => apost(`/yonetim/ogrenci/${ogrenciId}/tercih-karar`, { karar, notu: notu || null }),
+  mezunlar: (okulId) => aget(`/yonetim/okul/${okulId}/mezunlar`),
+  mezunEkle: (okulId, v) => apost(`/yonetim/okul/${okulId}/mezunlar`, v),
+  mezunDuzenle: (id, v) => aput(`/yonetim/mezun/${id}`, v),
+  mezunSil: (id) => adel(`/yonetim/mezun/${id}`),
   // [2026-10-10] Anket ve envanterler
   anketSablonlari: () => aget('/yonetim/anket-sablonlari'),
   okulAnketleri: (okulId) => aget(`/yonetim/okul/${okulId}/anketler`),

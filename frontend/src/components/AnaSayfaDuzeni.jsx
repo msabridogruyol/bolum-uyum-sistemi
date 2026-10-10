@@ -153,6 +153,11 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölümler
         </NavLink>
+        {acik('tercih') && ['12. Sınıf', 'Mezun'].includes(profil?.sinif) && (
+          <NavLink to="/tercih" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            🎓 Tercihlerim
+          </NavLink>
+        )}
         {acik('portfolyo') && (
           <NavLink to="/portfolyo" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             🗂️ Portfolyom

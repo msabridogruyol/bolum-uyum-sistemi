@@ -18,6 +18,7 @@ const BolumlerimSayfasi = lazy(() => import('./pages/BolumlerimSayfasi'))
 const KoclukSayfasi = lazy(() => import('./pages/KoclukSayfasi'))
 const KoclarSayfasi = lazy(() => import('./pages/KoclarSayfasi'))
 const KuluplerimSayfasi = lazy(() => import('./pages/KuluplerimSayfasi'))
+const TercihSayfasi = lazy(() => import('./pages/TercihSayfasi'))
 const AnketlerSayfasi = lazy(() => import('./pages/AnketlerSayfasi'))
 const PortfolyoSayfasi = lazy(() => import('./pages/PortfolyoSayfasi'))
 const CalismaSayfasi = lazy(() => import('./pages/CalismaSayfasi'))
@@ -139,6 +140,7 @@ function AnaUygulama() {
         <Route path="/calisma" element={<CalismaSayfasi />} />
         <Route path="/portfolyo" element={<PortfolyoSayfasi />} />
         <Route path="/anketler" element={<AnketlerSayfasi />} />
+        <Route path="/tercih" element={<TercihSayfasi />} />
         <Route path="/raporlarim" element={<RaporlarimSayfasi />} />
         <Route path="/hakkinda" element={<SistemHakkindaOgrenci />} />
         <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
