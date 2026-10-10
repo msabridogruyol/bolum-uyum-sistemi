@@ -71,14 +71,31 @@ def _ogrenci_alanlari(db: Session, o: Ogrenci) -> list[str]:
     return sira
 
 
+UNVAN_ONEKLERI = ("prof.", "doç.", "doc.", "dr.", "uzm.", "psk.", "öğr.", "ogr.", "gör.")
+
+
+def gorunen_ad(k: dict) -> str:
+    """[2026-10-10] Öğrenciye gösterilen ad: elle girilmişse o; yoksa 'Selin A.' (ad + soyadın baş harfi).
+    Amaç: öğrenci koçu adıyla internette bulup doğrudan ulaşmasın; görüşmeler Filizyol üzerinden yürüsün."""
+    if (k.get("gorunen_ad") or "").strip():
+        return k["gorunen_ad"].strip()
+    parca = [p for p in (k.get("ad_soyad") or "").split() if p.lower() not in UNVAN_ONEKLERI]
+    if not parca:
+        return "Eğitim Koçu"
+    if len(parca) == 1:
+        return parca[0]
+    return " ".join(parca[:-1]) + f" {parca[-1][0].upper()}."
+
+
 def _koc_out(k: dict, alanlar: dict, ozel: bool = False) -> dict:
-    d = {"id": k["id"], "ad_soyad": k["ad_soyad"], "unvan": k["unvan"], "hakkinda": k["hakkinda"],
+    d = {"id": k["id"], "ad_soyad": k["ad_soyad"] if ozel else gorunen_ad(k), "gorunen_ad": gorunen_ad(k),
+         "unvan": k["unvan"], "hakkinda": k["hakkinda"],
          "alanlar": _liste(k["alanlar"]), "alan_adlari": [alanlar.get(a, a) for a in _liste(k["alanlar"])],
          "konular": _liste(k["konular"]), "deneyim_yil": k["deneyim_yil"], "gorusme_sekli": k["gorusme_sekli"],
-         "gorusme_metni": GORUSME.get(k["gorusme_sekli"], k["gorusme_sekli"]), "ucret_bilgisi": k["ucret_bilgisi"],
-         "aktif": k["aktif"]}
-    if ozel:
-        d.update({"eposta": k["eposta"], "telefon": k["telefon"]})
+         "gorusme_metni": GORUSME.get(k["gorusme_sekli"], k["gorusme_sekli"]), "aktif": k["aktif"]}
+    if ozel:   # yalnızca süper admin: tam ad, iletişim ve ücret / anlaşma notu
+        d.update({"eposta": k["eposta"], "telefon": k["telefon"], "ucret_bilgisi": k["ucret_bilgisi"],
+                  "gorunen_ad_elle": k.get("gorunen_ad")})
     return d
 
 
@@ -103,14 +120,66 @@ def ogrenci_koclar(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcu
     for x in sonuc:
         x.pop("_sira")
     talepler = db.execute(text("""
-        SELECT t.id, t.koc_id, k.ad_soyad AS koc_ad, t.konu, t.durum, t.randevu_zamani, t.ogrenciye_not, t.tercih_zamani,
-               t.talep_eden, t.olusturulma_zamani, t.guncelleme_zamani
+        SELECT t.id, t.koc_id, k.ad_soyad, k.gorunen_ad, t.konu, t.durum, t.randevu_zamani, t.ogrenciye_not, t.tercih_zamani,
+               t.talep_eden, t.olusturulma_zamani, t.guncelleme_zamani, t.gorusme_linki,
+               t.degerlendirme_puan, t.degerlendirme_yorum
           FROM koc_gorusme_talepleri t JOIN egitim_koclari k ON k.id = t.koc_id
          WHERE t.ogrenci_id = :o ORDER BY t.olusturulma_zamani DESC LIMIT 20
     """), {"o": o.id}).mappings().all()
     return {"koclar": sonuc, "ilgili_alanlar": [alanlar.get(a, a) for a in ilgili], "konular": KONULAR,
-            "talepler": [{**dict(t), "durum_metni": DURUMLAR.get(t["durum"], t["durum"])} for t in talepler],
-            "okul_var": bool(o.okul_id)}
+            "talepler": [_ogrenci_talep(dict(t)) for t in talepler], "okul_var": bool(o.okul_id)}
+
+
+def _bugun_tr():
+    from zoneinfo import ZoneInfo
+    return datetime.now(ZoneInfo("Europe/Istanbul")).date()
+
+
+def _ogrenci_talep(t: dict) -> dict:
+    """Öğrenciye: koçun görünen adı; görüşme bağlantısı yalnızca randevu günü (ve sonrasında 1 gün) görünür."""
+    from zoneinfo import ZoneInfo
+    link, link_bilgi = None, None
+    if t["durum"] == "onaylandi" and t.get("gorusme_linki") and t.get("randevu_zamani"):
+        gun = t["randevu_zamani"].astimezone(ZoneInfo("Europe/Istanbul")).date()
+        fark = (gun - _bugun_tr()).days
+        if fark in (0, -1):
+            link = t["gorusme_linki"]
+        elif fark > 0:
+            link_bilgi = "Görüşme bağlantısı randevu günü burada görünecek."
+    return {"id": t["id"], "koc_id": t["koc_id"], "koc_ad": gorunen_ad(t), "konu": t["konu"], "durum": t["durum"],
+            "durum_metni": DURUMLAR.get(t["durum"], t["durum"]), "randevu_zamani": t["randevu_zamani"],
+            "ogrenciye_not": t["ogrenciye_not"], "tercih_zamani": t["tercih_zamani"], "talep_eden": t["talep_eden"],
+            "olusturulma_zamani": t["olusturulma_zamani"], "guncelleme_zamani": t["guncelleme_zamani"],
+            "gorusme_linki": link, "link_bilgi": link_bilgi,
+            "degerlendirilebilir": t["durum"] == "tamamlandi" and t.get("degerlendirme_puan") is None,
+            "degerlendirme_puan": t.get("degerlendirme_puan"), "degerlendirme_yorum": t.get("degerlendirme_yorum")}
+
+
+@ogrenci_router.get("/koclar/var")
+def koc_var_mi(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """Menüde 'Eğitim Koçları' yalnızca okulunda aktif koç varsa (ya da öğrencinin geçmiş talebi varsa) görünür."""
+    var = bool(o.okul_id) and db.execute(text("""
+        SELECT 1 FROM koc_okullari ko JOIN egitim_koclari k ON k.id = ko.koc_id
+         WHERE ko.okul_id = :ok AND ko.durum = 'aktif' AND k.aktif LIMIT 1"""), {"ok": o.okul_id}).first() is not None
+    talep = db.execute(text("SELECT 1 FROM koc_gorusme_talepleri WHERE ogrenci_id = :o LIMIT 1"), {"o": o.id}).first() is not None
+    return {"var": var or talep}
+
+
+class DegerlendirmeIstek(BaseModel):
+    puan: int = Field(ge=1, le=5)
+    yorum: str | None = Field(default=None, max_length=800)
+
+
+@ogrenci_router.post("/koc-talep/{talep_id}/degerlendir")
+def talep_degerlendir(talep_id: int, istek: DegerlendirmeIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+    n = db.execute(text("""
+        UPDATE koc_gorusme_talepleri SET degerlendirme_puan = :p, degerlendirme_yorum = :y, degerlendirme_zamani = :z
+         WHERE id = :t AND ogrenci_id = :o AND durum = 'tamamlandi' AND degerlendirme_puan IS NULL
+    """), {"t": talep_id, "o": o.id, "p": istek.puan, "y": (istek.yorum or "").strip() or None, "z": _simdi()}).rowcount
+    db.commit()
+    if not n:
+        raise HTTPException(status_code=400, detail="Bu görüşme değerlendirilemez (tamamlanmamış ya da zaten değerlendirilmiş).")
+    return {"tamam": True}
 
 
 class TalepIstek(BaseModel):
@@ -177,6 +246,7 @@ class KocIstek(BaseModel):
     ucret_bilgisi: str | None = Field(default=None, max_length=120)
     eposta: str | None = Field(default=None, max_length=120)
     telefon: str | None = Field(default=None, max_length=40)
+    gorunen_ad: str | None = Field(default=None, max_length=60)
     aktif: bool = True
 
 
@@ -189,7 +259,7 @@ def _degerler(db: Session, istek: KocIstek) -> dict:
             "al": ",".join(a for a in dict.fromkeys(istek.alanlar) if a in alan_kodlari),
             "ko": ",".join(k for k in dict.fromkeys(istek.konular) if k in KONULAR),
             "de": istek.deneyim_yil, "gs": istek.gorusme_sekli, "uc": t(istek.ucret_bilgisi),
-            "ep": t(istek.eposta), "te": t(istek.telefon), "ak": istek.aktif}
+            "ep": t(istek.eposta), "te": t(istek.telefon), "ak": istek.aktif, "ga": t(istek.gorunen_ad)}
 
 
 def _okul_atamalari(db: Session) -> dict[int, list[dict]]:
@@ -206,12 +276,15 @@ def _okul_atamalari(db: Session) -> dict[int, list[dict]]:
 def koclari_listele(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
     alanlar = _alan_adlari(db)
     satirlar = db.execute(text("SELECT * FROM egitim_koclari ORDER BY ad_soyad")).mappings().all()
-    talep = {r[0]: (r[1], r[2]) for r in db.execute(text(
-        "SELECT koc_id, COUNT(*) FILTER (WHERE durum = 'beklemede'), COUNT(*) FROM koc_gorusme_talepleri GROUP BY koc_id")).all()}
+    talep = {r[0]: (r[1], r[2], r[3], r[4]) for r in db.execute(text(
+        "SELECT koc_id, COUNT(*) FILTER (WHERE durum = 'beklemede'), COUNT(*), AVG(degerlendirme_puan), COUNT(degerlendirme_puan) "
+        "FROM koc_gorusme_talepleri GROUP BY koc_id")).all()}
     atama = _okul_atamalari(db)
     return {
         "koclar": [{**_koc_out(dict(k), alanlar, ozel=True), "okullar": atama.get(k["id"], []),
-                    "bekleyen": talep.get(k["id"], (0, 0))[0], "toplam_talep": talep.get(k["id"], (0, 0))[1]} for k in satirlar],
+                    "bekleyen": talep.get(k["id"], (0, 0, None, 0))[0], "toplam_talep": talep.get(k["id"], (0, 0, None, 0))[1],
+                    "ort_puan": round(float(talep[k["id"]][2]), 1) if k["id"] in talep and talep[k["id"]][2] is not None else None,
+                    "puan_sayisi": talep.get(k["id"], (0, 0, None, 0))[3]} for k in satirlar],
         "alanlar": [{"kod": k, "ad": v} for k, v in alanlar.items()], "konular": KONULAR,
         "gorusme": [{"kod": k, "ad": v} for k, v in GORUSME.items()],
         "okul_durumlari": [{"kod": k, "ad": v} for k, v in OKUL_DURUM.items()],
@@ -224,8 +297,8 @@ def koc_ekle(istek: KocIstek, db: Session = Depends(get_db), yon: AdminKullanici
     d = _degerler(db, istek)
     kid = db.execute(text("""
         INSERT INTO egitim_koclari (ad_soyad, unvan, hakkinda, alanlar, konular, deneyim_yil, gorusme_sekli,
-                                    ucret_bilgisi, eposta, telefon, aktif, okullar_tasindi)
-        VALUES (:ad, :un, :ha, :al, :ko, :de, :gs, :uc, :ep, :te, :ak, TRUE) RETURNING id
+                                    ucret_bilgisi, eposta, telefon, aktif, okullar_tasindi, gorunen_ad)
+        VALUES (:ad, :un, :ha, :al, :ko, :de, :gs, :uc, :ep, :te, :ak, TRUE, :ga) RETURNING id
     """), d).scalar()
     denetim_yaz(db, yon, "koc_ekle", "egitim_koclari", kid, d["ad"])
     db.commit()
@@ -245,7 +318,8 @@ def koc_duzenle(koc_id: int, istek: KocIstek, db: Session = Depends(get_db), yon
     d = _degerler(db, istek)
     db.execute(text("""
         UPDATE egitim_koclari SET ad_soyad = :ad, unvan = :un, hakkinda = :ha, alanlar = :al, konular = :ko,
-               deneyim_yil = :de, gorusme_sekli = :gs, ucret_bilgisi = :uc, eposta = :ep, telefon = :te, aktif = :ak
+               deneyim_yil = :de, gorusme_sekli = :gs, ucret_bilgisi = :uc, eposta = :ep, telefon = :te, aktif = :ak,
+               gorunen_ad = :ga
          WHERE id = :id
     """), {**d, "id": koc_id})
     denetim_yaz(db, yon, "koc_duzenle", "egitim_koclari", koc_id, d["ad"])
@@ -320,8 +394,18 @@ def talepleri_listele(okul_id: int | None = None, db: Session = Depends(get_db),
 class TalepGuncelleIstek(BaseModel):
     durum: str
     randevu_zamani: datetime | None = None
+    gorusme_linki: str | None = Field(default=None, max_length=400)
     ogrenciye_not: str | None = Field(default=None, max_length=500)
     ic_not: str | None = Field(default=None, max_length=1000)
+
+
+def _link(v: str | None) -> str | None:
+    v = (v or "").strip()
+    if not v:
+        return None
+    if not v.startswith(("http://", "https://")):
+        v = "https://" + v
+    return v
 
 
 @router.put("/koc-talep/{talep_id}")
@@ -335,9 +419,10 @@ def talep_guncelle(talep_id: int, istek: TalepGuncelleIstek, db: Session = Depen
     if t["durum"] == "iptal":
         raise HTTPException(status_code=400, detail="Öğrenci bu talebi iptal etti.")
     db.execute(text("""
-        UPDATE koc_gorusme_talepleri SET durum = :d, randevu_zamani = :r, ogrenciye_not = :n, ic_not = :i, guncelleme_zamani = :z
+        UPDATE koc_gorusme_talepleri SET durum = :d, randevu_zamani = :r, ogrenciye_not = :n, ic_not = :i, guncelleme_zamani = :z,
+               gorusme_linki = :l
          WHERE id = :t
-    """), {"t": talep_id, "d": istek.durum, "r": istek.randevu_zamani, "n": (istek.ogrenciye_not or "").strip() or None,
+    """), {"t": talep_id, "d": istek.durum, "r": istek.randevu_zamani, "l": _link(istek.gorusme_linki), "n": (istek.ogrenciye_not or "").strip() or None,
            "i": (istek.ic_not or "").strip() or None, "z": _simdi()})
     denetim_yaz(db, yon, "koc_talep_guncelle", "koc_gorusme_talepleri", talep_id, DURUMLAR[istek.durum], t["okul_id"])
     db.commit()
