@@ -184,6 +184,7 @@ export const api = {
   motivasyonGetir: () => get('/ogrenci/motivasyon'),
   // [2026-10-10] Paketler
   ogrenciModulleri: () => get('/ogrenci/moduller'),
+  kendiRaporum: (tur, bicim = 'pdf', netler = true) => dosyaIndir(`/ogrenci/rapor?tur=${tur}&bicim=${bicim}&netler=${netler}`),
   paketler: () => aget('/yonetim/paketler'),
   paketEkle: (v) => apost('/yonetim/paketler', v),
   paketDuzenle: (kod, v) => aput(`/yonetim/paketler/${kod}`, v),
