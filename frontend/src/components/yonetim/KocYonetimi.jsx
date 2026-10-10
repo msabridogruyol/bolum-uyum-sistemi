@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { Pencere, tarih } from './ortak'
 
-const BOS = { ad_soyad: '', unvan: '', hakkinda: '', alanlar: [], konular: [], deneyim_yil: '', gorusme_sekli: 'online', ucret_bilgisi: '', eposta: '', telefon: '', aktif: true }
+const BOS = { ad_soyad: '', gorunen_ad: '', unvan: '', hakkinda: '', alanlar: [], konular: [], deneyim_yil: '', gorusme_sekli: 'online', ucret_bilgisi: '', eposta: '', telefon: '', aktif: true }
 const yerelZaman = (t) => {
   if (!t) return ''
   const d = new Date(t); const p = (n) => String(n).padStart(2, '0')
@@ -30,7 +30,8 @@ function KocFormu({ ilk, meta, onKaydet, onIptal }) {
         <input className="auth-input" maxLength={80} value={f.unvan || ''} onChange={alan('unvan')} placeholder="Unvan (ör. Kariyer koçu, Psikolojik danışman)" />
         <input className="auth-input" type="number" min={0} max={60} value={f.deneyim_yil} onChange={alan('deneyim_yil')} placeholder="Deneyim (yıl)" />
         <select className="auth-input" value={f.gorusme_sekli} onChange={alan('gorusme_sekli')}>{meta.gorusme.map((g) => <option key={g.kod} value={g.kod}>{g.ad}</option>)}</select>
-        <input className="auth-input" maxLength={120} value={f.ucret_bilgisi || ''} onChange={alan('ucret_bilgisi')} placeholder="Ücret bilgisi (ör. Okul anlaşmalı, ücretsiz)" />
+        <input className="auth-input" maxLength={60} value={f.gorunen_ad || ''} onChange={alan('gorunen_ad')} placeholder={`Öğrencinin gördüğü ad (boşsa: ${(f.ad_soyad || 'Ad Soyad').split(' ').filter(Boolean).slice(0, -1).join(' ') || 'Ad'} ${((f.ad_soyad || 'S').trim().split(' ').pop() || 'S')[0]}.)`} title="Öğrenci koçun tam adını görmez; boş bırakırsanız ad + soyadın baş harfi gösterilir." />
+        <input className="auth-input" maxLength={120} value={f.ucret_bilgisi || ''} onChange={alan('ucret_bilgisi')} placeholder="Ücret / anlaşma notu (öğrenci görmez)" />
         <input className="auth-input" type="email" maxLength={120} value={f.eposta || ''} onChange={alan('eposta')} placeholder="E-posta (öğrenci görmez)" />
         <input className="auth-input" maxLength={40} value={f.telefon || ''} onChange={alan('telefon')} placeholder="Telefon (öğrenci görmez)" />
       </div>
@@ -52,7 +53,7 @@ function KocFormu({ ilk, meta, onKaydet, onIptal }) {
 }
 
 function TalepSatiri({ t, durumlar, okulGoster, onKaydedildi }) {
-  const [f, setF] = useState({ durum: t.durum, randevu_zamani: yerelZaman(t.randevu_zamani), ogrenciye_not: t.ogrenciye_not || '', ic_not: t.ic_not || '' })
+  const [f, setF] = useState({ durum: t.durum, randevu_zamani: yerelZaman(t.randevu_zamani), ogrenciye_not: t.ogrenciye_not || '', ic_not: t.ic_not || '', gorusme_linki: t.gorusme_linki || '' })
   const [acik, setAcik] = useState(t.durum === 'beklemede')
   const [bekle, setBekle] = useState(false)
   const [hata, setHata] = useState(null)
@@ -82,6 +83,7 @@ function TalepSatiri({ t, durumlar, okulGoster, onKaydedildi }) {
             <div><span>Tercih ettiği zaman</span><b>{t.tercih_zamani || '—'}</b></div>
             <div><span>Koç iletişim</span><b>{[t.koc_eposta, t.koc_telefon].filter(Boolean).join(' · ') || '—'}</b></div>
             {t.mesaj && <div style={{ gridColumn: '1 / -1' }}><span>Mesajı</span><b style={{ fontWeight: 500 }}>{t.mesaj}</b></div>}
+            {t.degerlendirme_puan && <div style={{ gridColumn: '1 / -1' }}><span>Öğrencinin değerlendirmesi</span><b style={{ fontWeight: 500 }}>{'★'.repeat(t.degerlendirme_puan)}{'☆'.repeat(5 - t.degerlendirme_puan)}{t.degerlendirme_yorum ? ` — “${t.degerlendirme_yorum}”` : ''}</b></div>}
           </div>
           {t.durum === 'iptal' ? <div className="yp-ince">Öğrenci bu talebi iptal etti.</div> : (
             <>
@@ -90,6 +92,7 @@ function TalepSatiri({ t, durumlar, okulGoster, onKaydedildi }) {
                 <input className="auth-input" type="datetime-local" value={f.randevu_zamani} onChange={(e) => setF({ ...f, randevu_zamani: e.target.value })} title="Randevu zamanı" />
                 <input className="auth-input" maxLength={500} value={f.ogrenciye_not} onChange={(e) => setF({ ...f, ogrenciye_not: e.target.value })} placeholder="Öğrenciye not (öğrenci görür)" />
                 <input className="auth-input" maxLength={1000} value={f.ic_not} onChange={(e) => setF({ ...f, ic_not: e.target.value })} placeholder="İç not (yalnızca yönetim görür)" />
+                <input className="auth-input" maxLength={400} value={f.gorusme_linki} onChange={(e) => setF({ ...f, gorusme_linki: e.target.value })} placeholder="Görüşme bağlantısı (kendi Zoom / Meet hesabınızdan) — öğrenci randevu günü görür" style={{ gridColumn: '1 / -1' }} />
               </div>
               {hata && <div className="auth-error" style={{ marginTop: 6 }}>{hata}</div>}
               <button className="btn" style={{ marginTop: 8 }} disabled={bekle} onClick={kaydet}>{bekle ? <span className="spin" /> : 'Kaydet'}</button>
@@ -223,7 +226,7 @@ export default function KocYonetimi() {
                 const n = (d) => k.okullar.filter((o) => o.durum === d).length
                 return (
                   <tr key={k.id} className={k.aktif ? '' : 'kl-pasif'}>
-                    <td><b>{k.ad_soyad}</b>{!k.aktif && <span className="ak-uyari-cip">pasif</span>}<div className="yp-ince">{k.unvan || ''}{k.deneyim_yil != null ? ` · ${k.deneyim_yil} yıl` : ''} · {k.gorusme_metni}</div></td>
+                    <td><b>{k.ad_soyad}</b>{!k.aktif && <span className="ak-uyari-cip">pasif</span>}<div className="yp-ince">Öğrenci görür: <b>{k.gorunen_ad}</b>{k.ort_puan != null && <> · ⭐ {k.ort_puan} ({k.puan_sayisi})</>}</div><div className="yp-ince">{k.unvan || ''}{k.deneyim_yil != null ? ` · ${k.deneyim_yil} yıl` : ''} · {k.gorusme_metni}</div></td>
                     <td>{k.alan_adlari.map((a) => <span key={a} className="ak-cip">{a}</span>)}</td>
                     <td>
                       {k.okullar.length === 0 ? <span className="kc-durum kc-durum-am">Hiçbir okula atanmadı</span> : (
@@ -236,7 +239,7 @@ export default function KocYonetimi() {
                     </td>
                     <td className="yp-ince">{k.eposta || '—'}{k.telefon && <div>{k.telefon}</div>}</td>
                     <td>{k.bekleyen > 0 ? <b style={{ color: 'var(--am)' }}>{k.bekleyen} bekleyen</b> : <span className="yp-ince">{k.toplam_talep || '—'}</span>}</td>
-                    <td style={{ whiteSpace: 'nowrap' }}><button className="yp-mini" onClick={() => setForm(k)}>Düzenle</button>{' '}<button className="yp-mini" onClick={() => sil(k)}>Sil</button></td>
+                    <td style={{ whiteSpace: 'nowrap' }}><button className="yp-mini" onClick={() => setForm({ ...k, gorunen_ad: k.gorunen_ad_elle || '' })}>Düzenle</button>{' '}<button className="yp-mini" onClick={() => sil(k)}>Sil</button></td>
                   </tr>
                 )
               })}

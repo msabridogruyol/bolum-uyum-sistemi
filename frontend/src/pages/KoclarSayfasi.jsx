@@ -48,6 +48,30 @@ function TalepFormu({ koc, konular, onKapat, onGonderildi }) {
   )
 }
 
+// [2026-10-10] Görüşme sonrası değerlendirme (1-5 yıldız + isteğe bağlı yorum); yalnızca Filizyol ekibi görür
+function Degerlendirme({ talep, onBitti }) {
+  const [puan, setPuan] = useState(0)
+  const [yorum, setYorum] = useState('')
+  const [bekle, setBekle] = useState(false)
+  const [hata, setHata] = useState(null)
+  const gonder = async () => {
+    setBekle(true); setHata(null)
+    try { await api.kocTalebiDegerlendir(talep.id, { puan, yorum: yorum || null }); onBitti() } catch (e) { setHata(e.detail || 'Gönderilemedi.') }
+    setBekle(false)
+  }
+  return (
+    <div className="kc-deg">
+      <b>Görüşmen nasıl geçti?</b>
+      <div className="kt-yildiz kc-deg-yildiz">
+        {[1, 2, 3, 4, 5].map((n) => <button key={n} type="button" className={puan >= n ? 'dolu' : ''} onClick={() => setPuan(n)} aria-label={`${n} yıldız`}>★</button>)}
+      </div>
+      <textarea className="auth-input" rows={2} maxLength={800} value={yorum} onChange={(e) => setYorum(e.target.value)} placeholder="İstersen birkaç cümle yaz: sana ne kattı, neyi daha iyi olabilirdi? (yalnızca Filizyol ekibi görür)" />
+      {hata && <div className="auth-error">{hata}</div>}
+      <button className="btn" style={{ alignSelf: 'flex-start', padding: '7px 14px', fontSize: 13 }} disabled={!puan || bekle} onClick={gonder}>{bekle ? <span className="spin" /> : 'Değerlendirmeyi gönder'}</button>
+    </div>
+  )
+}
+
 function KocKarti({ k, acikTalep, onTalep }) {
   const [acik, setAcik] = useState(false)
   return (
@@ -57,6 +81,7 @@ function KocKarti({ k, acikTalep, onTalep }) {
         <div style={{ minWidth: 0 }}>
           <div className="kc-ad">{k.ad_soyad}</div>
           {k.unvan && <div className="kc-unvan">{k.unvan}</div>}
+          <span className="kc-onayli" title="Filizyol ile anlaşmalı, okulun için onaylanmış koç">✓ Filizyol onaylı koç</span>
         </div>
       </div>
       {k.uygun && <div className="kc-uygun">✓ İlgilendiğin alanda: {k.uygun_alanlar.join(', ')}</div>}
@@ -64,7 +89,6 @@ function KocKarti({ k, acikTalep, onTalep }) {
       <div className="kc-bilgi">
         {k.deneyim_yil != null && <span>⏳ {k.deneyim_yil} yıl deneyim</span>}
         <span>💬 {k.gorusme_metni}</span>
-        {k.ucret_bilgisi && <span>🏷 {k.ucret_bilgisi}</span>}
       </div>
       {k.konular.length > 0 && <div className="kc-konular">{k.konular.map((x) => <span key={x}>• {x}</span>)}</div>}
       {k.hakkinda && (
@@ -113,7 +137,11 @@ export default function KoclarSayfasi() {
                 <div style={{ flex: 1, minWidth: 0 }}>
                   <b>{t.koc_ad}</b> · {t.konu}{t.talep_eden === 'veli' && <span className="yp-ince"> (veli adına)</span>}
                   {t.randevu_zamani && t.durum === 'onaylandi' && <div className="kc-randevu">📅 {tarihSaat(t.randevu_zamani)}</div>}
+                  {t.gorusme_linki && <a className="btn kc-katil" href={t.gorusme_linki} target="_blank" rel="noreferrer">🎥 Görüşmeye katıl</a>}
+                  {t.link_bilgi && <div className="yp-ince">🔗 {t.link_bilgi}</div>}
                   {t.ogrenciye_not && <div className="yp-ince">Koordinatörün notu: {t.ogrenciye_not}</div>}
+                  {t.degerlendirilebilir && <Degerlendirme talep={t} onBitti={yukle} />}
+                  {t.degerlendirme_puan && <div className="yp-ince">Değerlendirmen: {'★'.repeat(t.degerlendirme_puan)}{'☆'.repeat(5 - t.degerlendirme_puan)}{t.degerlendirme_yorum ? ` — “${t.degerlendirme_yorum}”` : ''}</div>}
                   <div className="yp-ince">Gönderildi: {new Date(t.olusturulma_zamani).toLocaleDateString('tr-TR')}</div>
                 </div>
                 {['beklemede', 'onaylandi'].includes(t.durum) && <button className="yp-mini" onClick={() => iptal(t)}>İptal et</button>}

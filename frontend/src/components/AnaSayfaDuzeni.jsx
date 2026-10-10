@@ -23,6 +23,7 @@ export default function AnaSayfaDuzeni() {
   const { cikisYap } = useAuth()
   const [ozet, setOzet] = useState(null)
   const [profil, setProfil] = useState(null)
+  const [kocVar, setKocVar] = useState(false)   // [2026-10-10] okulunda aktif koç yoksa menüde gösterilmez
   const [profilYuklendi, setProfilYuklendi] = useState(false)
   const [tanitimAcik, setTanitimAcik] = useState(false)
   const [kvkkGerekli, setKvkkGerekli] = useState(false) // [2026-10-04] eski hesap veya yeni metin sürümü
@@ -32,6 +33,7 @@ export default function AnaSayfaDuzeni() {
   useEffect(() => {
     if (konum.pathname.startsWith('/katmanlar')) api.durumOzetiGetir().then(setOzet).catch(() => {})
     api.kvkkDurumu().then((d) => setKvkkGerekli(!d.guncel)).catch(() => {})
+    api.kocVarMi().then((d) => setKocVar(!!d.var)).catch(() => {})
     api.profilGetir()
       .then((p) => { setProfil(p); if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
       .catch(() => {})
@@ -136,9 +138,11 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/kutuphane" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           📚 Kütüphanem
         </NavLink>
-        <NavLink to="/koclar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          👩‍🏫 Eğitim Koçları
-        </NavLink>
+        {kocVar && (
+          <NavLink to="/koclar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            👩‍🏫 Eğitim Koçları
+          </NavLink>
+        )}
         {/* [2026-10-04] Filiz sohbet paneli her sayfadan açılır */}
         <div className="ni" role="button" tabIndex={0} style={{ cursor: 'pointer' }}
           onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))}

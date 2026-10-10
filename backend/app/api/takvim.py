@@ -20,6 +20,7 @@ from app.api.okul_yonetimi import SINIFLAR, _okul_kapsami
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
 from app.models import AdminKullanici, Ogrenci
+from app.api.koclar import gorunen_ad
 
 ogrenci_router = APIRouter(prefix="/ogrenci", tags=["Öğrenci — Takvim"])
 router = APIRouter(prefix="/yonetim", tags=["Takvim"])
@@ -80,12 +81,12 @@ def ogrenci_takvim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcu
                     duzenlenebilir=bool(r["ogrenci_id"])) for r in satirlar]
     try:   # eğitim koçu randevuları (planlandı)
         for r in db.execute(text("""
-            SELECT t.id, t.randevu_zamani, k.ad_soyad FROM koc_gorusme_talepleri t JOIN egitim_koclari k ON k.id = t.koc_id
+            SELECT t.id, t.randevu_zamani, k.ad_soyad, k.gorunen_ad FROM koc_gorusme_talepleri t JOIN egitim_koclari k ON k.id = t.koc_id
              WHERE t.ogrenci_id = :o AND t.durum = 'onaylandi' AND t.randevu_zamani IS NOT NULL AND t.randevu_zamani >= :bas
         """), {"o": o.id, "bas": bas}).mappings().all():
             z = r["randevu_zamani"]
             z = z.astimezone(ZoneInfo("Europe/Istanbul")) if z.tzinfo else z
-            sonuc.append({"id": f"koc-{r['id']}", "baslik": f"Eğitim koçu görüşmesi: {r['ad_soyad']}", "aciklama": None,
+            sonuc.append({"id": f"koc-{r['id']}", "baslik": f"Eğitim koçu görüşmesi: {gorunen_ad(dict(r))}", "aciklama": None,
                           "tur": "toplanti", "tur_adi": "Koç görüşmesi", "ikon": "👩‍🏫", "baslangic": z.date(), "bitis": None,
                           "saat": z.strftime("%H:%M"), "link": "/koclar",
                           "hedef_sinif": None, "kaynak": "koc", "duzenlenebilir": False})
