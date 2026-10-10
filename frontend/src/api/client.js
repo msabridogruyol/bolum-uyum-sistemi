@@ -190,6 +190,15 @@ export const api = {
   paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
   okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
   okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
+  // [2026-10-10] Rehberlik ve erken uyarı
+  erkenUyari: (okulId) => aget(`/yonetim/okul/${okulId}/erken-uyari`),
+  riskErtele: (ogrenciId, kural, gun = 14) => apost(`/yonetim/ogrenci/${ogrenciId}/risk-ertele`, { kural, gun }),
+  okulGorusmeleri: (okulId, gun = 90) => aget(`/yonetim/okul/${okulId}/gorusmeler?gun=${gun}`),
+  gorusmeExcel: (okulId) => dosyaIndir(`/yonetim/okul/${okulId}/gorusmeler/excel`, 'admin'),
+  ogrenciGorusmeleri: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/gorusmeler`),
+  gorusmeEkle: (ogrenciId, v) => apost(`/yonetim/ogrenci/${ogrenciId}/gorusmeler`, v),
+  gorusmeDuzenle: (id, v) => aput(`/yonetim/gorusme/${id}`, v),
+  gorusmeSil: (id) => adel(`/yonetim/gorusme/${id}`),
   // [2026-10-10] Net takibi
   netYapi: () => get('/ogrenci/net/yapi'),
   netDenemeler: () => get('/ogrenci/net/denemeler'),
