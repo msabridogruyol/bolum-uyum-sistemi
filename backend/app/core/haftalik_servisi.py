@@ -98,7 +98,8 @@ def _yolculuk_gorevi(db: Session, ogrenci: Ogrenci) -> dict | None:
         sonraki = next((k for k in katmanlar if k.id not in biten), None)
         if sonraki is not None:
             kalan = len([k for k in katmanlar if k.id not in biten])
-            return {"tur": "katman", "baslik": f"{sonraki.kod} · {sonraki.ad} katmanını tamamla",
+            from app.core.katman_adlari import katman_adi
+            return {"tur": "katman", "baslik": f"{katman_adi(sonraki.kod, sonraki.ad)} bölümünü tamamla",
                     "aciklama": f"Yaklaşık 5 dakika. Bölüm önerilerin için {kalan} katman kaldı; samimi cevap ver, doğru ya da yanlış yok.",
                     "ref_kod": sonraki.kod, "link": "/katmanlar"}
         return None
@@ -161,6 +162,10 @@ def _kesif_gorevi(db: Session, ogrenci: Ogrenci, hafta: date, haric: set | None 
     if bolum is None:
         return None
     ad = _turkce_baslik(bolum.ad)
+    hedef_on = ""
+    if hedef:   # [2026-10-10] hedefle çelişkili görünmesin: keşif "seçeneklerini açık tut" olarak sunulur
+        hb = db.get(Bolum, hedef.bolum_id)
+        hedef_on = f"Hedefin {_turkce_baslik(hb.ad) if hb else 'belli'}; yine de seçeneklerini tanımak kararını güçlendirir. "
     if bolum.id in sira_bilgisi:
         sira, uyum = sira_bilgisi[bolum.id]
         aciklama = (f"Önerilerinde {sira}. sırada (%{round(uyum)} uyum). Bilgi kartını aç: mezunların ne iş yaptığına "
@@ -168,7 +173,7 @@ def _kesif_gorevi(db: Session, ogrenci: Ogrenci, hafta: date, haric: set | None 
     else:
         aciklama = ("Yeni bir bölüm tanı: bilgi kartını aç, mezunların ne iş yaptığına ve 'Meslek Dili'nden 3 terime bak. "
                     "İlgini çekerse ☆ ile listene ekle.")
-    return {"tur": "kesif", "baslik": f"Keşfet: {ad}", "aciklama": aciklama, "ref_bolum_id": bolum.id,
+    return {"tur": "kesif", "baslik": f"Keşfet: {ad}", "aciklama": hedef_on + aciklama, "ref_bolum_id": bolum.id,
             "link": f"/bolumler/tum?bolum={bolum.id}&ara={quote(bolum.ad)}"}
 
 

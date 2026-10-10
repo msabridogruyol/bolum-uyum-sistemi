@@ -117,38 +117,42 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🏠 Ana Sayfa
         </NavLink>
-        <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🎯 Koçluğum
+        {/* [2026-10-10] Menü 3 grupta: Keşfet (kendini ve bölümleri tanı) · Gelişim (koçluk) · Okul */}
+        <div className="ns">Keşfet</div>
+        <NavLink to="/profilim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🧭 Profilim
         </NavLink>
         <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölümler
         </NavLink>
-        <NavLink to="/profilim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🧭 Profilim
+        <div className="ns">Gelişim</div>
+        <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🎯 Koçluğum
         </NavLink>
         <NavLink to="/gorevler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           ✅ Görevlerim
         </NavLink>
-        <NavLink to="/takvim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🗓️ Takvim
-        </NavLink>
-        <NavLink to="/kulupler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🎯 Kulüplerim
-        </NavLink>
         <NavLink to="/kutuphane" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           📚 Kütüphanem
         </NavLink>
-        {kocVar && (
-          <NavLink to="/koclar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-            👩‍🏫 Eğitim Koçları
-          </NavLink>
-        )}
         {/* [2026-10-04] Filiz sohbet paneli her sayfadan açılır */}
         <div className="ni" role="button" tabIndex={0} style={{ cursor: 'pointer' }}
           onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))}
           onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new CustomEvent('filiz-ac')) }}>
           💬 Filiz
         </div>
+        <div className="ns">Okul</div>
+        <NavLink to="/takvim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🗓️ Takvim
+        </NavLink>
+        <NavLink to="/kulupler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          🎭 Kulüplerim
+        </NavLink>
+        {kocVar && (
+          <NavLink to="/koclar" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            👩‍🏫 Eğitim Koçları
+          </NavLink>
+        )}
         <div style={{ flex: 1 }} />
         <NavLink to="/hakkinda" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           ℹ️ Sistem Hakkında
