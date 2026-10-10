@@ -423,7 +423,7 @@ class YetkiliEkleIstek(BaseModel):
 def ben(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     okul = db.get(Okul, yon.okul_id) if yon.okul_id else None
     return {"id": str(yon.id), "ad_soyad": yon.ad_soyad, "email": yon.email, "rol": yon.rol,
-            "rol_adi": "Süper Admin" if yon.rol == "super_admin" else "Okul Yetkilisi",
+            "rol_adi": "Süper Admin" if yon.rol == "super_admin" else "Rehber Öğretmen",
             "okul_id": yon.okul_id, "okul_ad": okul.ad if okul else None, "okul_logo": okul.logo if okul else None,
             "okul_renk": okul.tema_renk if okul else None,
             "sifre_degistirmeli": bool(yon.sifre_degistirmeli)}
@@ -883,7 +883,7 @@ def yetkili_ekle(okul_id: int, istek: YetkiliEkleIstek, db: Session = Depends(ge
     _super(yon)
     okul = _okul_kapsami(db, yon, okul_id)
     if okul is None:
-        raise HTTPException(status_code=400, detail="Okul yetkilisi bir okula bağlı olmalı.")
+        raise HTTPException(status_code=400, detail="Rehber öğretmen bir okula bağlı olmalı.")
     ad, email = re.sub(r"\s+", " ", istek.ad_soyad).strip(), istek.email.strip()
     if len(ad) < 3:
         raise HTTPException(status_code=400, detail="Ad soyad eksik.")
@@ -907,7 +907,7 @@ def _yetkili(db: Session, yetkili_id: str) -> AdminKullanici:
     except ValueError:
         y = None
     if y is None or y.rol != "okul_yetkilisi":
-        raise HTTPException(status_code=404, detail="Okul yetkilisi bulunamadı.")
+        raise HTTPException(status_code=404, detail="Rehber öğretmen bulunamadı.")
     return y
 
 
@@ -939,8 +939,8 @@ def yetkili_sil(yetkili_id: str, db: Session = Depends(get_db), yon: AdminKullan
 ISLEM_ETIKET = {
     "ogrenci_toplu_ekle": "Öğrenci hesapları açıldı", "ogrenci_sil": "Öğrenci silindi",
     "ogrenci_sifre_sifirla": "Öğrenci şifresi sıfırlandı", "ogrenci_duzenle": "Öğrenci bilgisi düzeltildi",
-    "ogrenci_okul_degistir": "Öğrenci okulu değiştirildi", "okul_yetkilisi_ekle": "Okul yetkilisi eklendi",
-    "okul_yetkilisi_sil": "Okul yetkilisi silindi", "okul_yetkilisi_sifre_sifirla": "Okul yetkilisinin şifresi sıfırlandı",
+    "ogrenci_okul_degistir": "Öğrenci okulu değiştirildi", "okul_yetkilisi_ekle": "Rehber öğretmen eklendi",
+    "okul_yetkilisi_sil": "Rehber öğretmen silindi", "okul_yetkilisi_sifre_sifirla": "Rehber öğretmenin şifresi sıfırlandı",
     "okul_ekle": "Okul eklendi", "okul_guncelle": "Okul bilgisi güncellendi", "okul_sil": "Okul silindi",
     "sifre_belirledi": "Yetkili kendi şifresini belirledi",
     "okul_bilgi_guncelle": "Okul tanıtım bilgileri güncellendi",

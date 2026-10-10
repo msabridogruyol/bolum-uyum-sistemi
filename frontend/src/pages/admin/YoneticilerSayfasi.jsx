@@ -63,7 +63,7 @@ export default function YoneticilerSayfasi() {
       <div className="ph">
         <div className="pt">Süper Adminler</div>
         <div className="ps">
-          Süper admin tüm sisteme erişir (içerik, okullar, tüm öğrenciler). Okul yetkilileri ve öğrenci hesapları ilgili okulun
+          Süper admin tüm sisteme erişir (içerik, okullar, tüm öğrenciler). Rehber öğretmenler ve öğrenci hesapları ilgili okulun
           panelinden açılır (Okullar → Paneli aç).
         </div>
       </div>
@@ -90,12 +90,12 @@ export default function YoneticilerSayfasi() {
         ))}
       </div>
 
-      <div className="ct" style={{ marginTop: 22 }}>Okul Yetkilileri ({yetkililer.length})</div>
+      <div className="ct" style={{ marginTop: 22 }}>Rehber Öğretmenler ({yetkililer.length})</div>
       <div className="ps" style={{ marginTop: -6, marginBottom: 10, fontSize: 12 }}>Eklemek, şifre sıfırlamak ve silmek için ilgili okulun panelini açın.</div>
       <button
         className="btn sec" style={{ marginBottom: 10 }} disabled={yoneticiler.length === 0}
         onClick={() => csvDisaAktar('yonetim_hesaplari.csv', ['ad_soyad', 'email', 'rol', 'okul', 'son_giris'],
-          yoneticiler.map((y) => [y.ad_soyad, y.email, y.rol === 'super_admin' ? 'Süper Admin' : 'Okul Yetkilisi', y.okul_ad || '', y.son_giris_zamani || '']))}
+          yoneticiler.map((y) => [y.ad_soyad, y.email, y.rol === 'super_admin' ? 'Süper Admin' : 'Rehber Öğretmen', y.okul_ad || '', y.son_giris_zamani || '']))}
       >⬇ Tüm yönetim hesaplarını CSV indir</button>
       <div className="ll">
         {yetkililer.map((y) => (
@@ -107,7 +107,7 @@ export default function YoneticilerSayfasi() {
             <span className="yp-ince">Okul paneli →</span>
           </Link>
         ))}
-        {yetkililer.length === 0 && <div className="bos-durum">Henüz okul yetkilisi yok.</div>}
+        {yetkililer.length === 0 && <div className="bos-durum">Henüz rehber öğretmen hesabı yok.</div>}
       </div>
     </div>
   )
