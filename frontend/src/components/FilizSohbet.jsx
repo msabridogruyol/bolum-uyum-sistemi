@@ -108,7 +108,7 @@ export default function FilizSohbet() {
         id = await yeniOturum()                                   // oturum kapanmışsa sessizce yenisini aç
         cevap = await api.aiKocMesajGonder(id, metin, konum.pathname)
       }
-      setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti }])
+      setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti, otomatik: cevap.otomatik }])
       setDurum((d) => (d ? { ...d, kalan: Math.max(0, d.kalan - 1) } : d))
       if (cevap.oturum_kapandi_mi) {
         setOturumId(null)
@@ -151,7 +151,8 @@ export default function FilizSohbet() {
     setOturumId(null)
   }
 
-  const oneriler = [...(ONERILER_SAYFA[konum.pathname] || []), ...ONERILER_GENEL].slice(0, 4)
+  const otomatik = durum?.mod === 'otomatik'   // [2026-10-10] yapay zekâ bağlı değil: kural tabanlı rehber
+  const oneriler = otomatik ? (durum.ornek_sorular || []).slice(0, 5) : [...(ONERILER_SAYFA[konum.pathname] || []), ...ONERILER_GENEL].slice(0, 4)
   const pasif = hazir && durum && !durum.aktif
   const hakBitti = durum?.aktif && durum.kalan <= 0
 
@@ -212,6 +213,11 @@ export default function FilizSohbet() {
               )}
             </div>
           )}
+          {gorunum === 'sohbet' && otomatik && (
+            <div className="filiz-oto-serit" title="Gerçek yapay zekâ bağlandığında Filiz serbest sohbet edebilecek.">
+              🤖 <b>Otomatik rehber modu</b> · Yapay zekâ bağlı değil; sonuçlarına dayanan hazır cevaplar verilir.
+            </div>
+          )}
           {gorunum === 'sohbet' && (
           <div className="filiz-mesajlar">
             {!hazir && <div className="bos-durum" style={{ padding: 20 }}>Filiz hazırlanıyor…</div>}
@@ -244,9 +250,19 @@ export default function FilizSohbet() {
             {mesajlar.map((m, i) => (
               m.rol === 'not'
                 ? <div key={i} className="filiz-not">{m.icerik}</div>
-                : <div key={i} className={`filiz-mesaj ${m.rol === 'ogrenci' ? 'ogrenci' : 'asistan'}`}>{m.icerik}</div>
+                : <div key={i} className={`filiz-mesaj ${m.rol === 'ogrenci' ? 'ogrenci' : 'asistan'}`}>
+                    {m.icerik}
+                    {m.rol === 'asistan' && (m.otomatik || (otomatik && m.otomatik !== false)) && <span className="filiz-oto-etiket">🤖 Otomatik yanıt</span>}
+                  </div>
             ))}
             {gonderiliyor && <div className="filiz-mesaj asistan filiz-yaziyor"><span /><span /><span /></div>}
+            {otomatik && !gonderiliyor && mesajlar.length > 0 && (
+              <div className="filiz-cipler">
+                {(durum.ornek_sorular || []).filter((o) => !mesajlar.some((m) => m.icerik === o)).slice(0, 3).map((o) => (
+                  <button key={o} onClick={() => gonder(o)} disabled={hakBitti}>{o}</button>
+                ))}
+              </div>
+            )}
             <div ref={sonRef} />
           </div>
           )}
@@ -268,7 +284,7 @@ export default function FilizSohbet() {
           )}
           {durum?.aktif && (
             <div className="filiz-alt">
-              {durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı` : 'Bugünlük mesaj hakkın doldu'} · Filiz Gelişim Koçu bir yapay zekâ asistanıdır, hata yapabilir.
+              {durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı` : 'Bugünlük mesaj hakkın doldu'} · {otomatik ? 'Otomatik rehber: cevaplar sistemdeki sonuçlarına göre hazırlanır.' : 'Filiz Gelişim Koçu bir yapay zekâ asistanıdır, hata yapabilir.'}
             </div>
           )}
         </div>
@@ -279,6 +295,11 @@ export default function FilizSohbet() {
 }
 
 const FILIZ_CSS = `
+.filiz-oto-serit{font-size:11.5px;line-height:1.45;color:var(--tx2);background:color-mix(in srgb, var(--tl) 10%, var(--sur));border-bottom:1px solid var(--bor);padding:7px 12px}
+.filiz-oto-etiket{display:block;margin-top:6px;font-size:10.5px;font-weight:700;color:var(--tx3)}
+.filiz-cipler{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px}
+.filiz-cipler button{font:inherit;font-size:12px;padding:5px 10px;border-radius:999px;border:1px solid var(--bor2);background:var(--sur);color:var(--tx2);cursor:pointer;text-align:left}
+.filiz-cipler button:hover{border-color:var(--pu);color:var(--tx)}
 .filiz-gecmis-bas{font-size:12px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;text-align:center}
 .filiz-gecmis-oge{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid var(--bor2);background:var(--sur);border-radius:12px;padding:10px 12px;cursor:pointer;font-family:inherit;color:var(--tx)}
 .filiz-gecmis-oge:hover{border-color:var(--pu);background:var(--pul)}
