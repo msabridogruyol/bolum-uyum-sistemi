@@ -1,0 +1,1558 @@
+{
+ "star": {
+  "baslik": "STAR yöntemi",
+  "aciklama": "Davranışsal sorular ('Bir zaman anlat ki…') geçmişte gerçekten ne yaptığını öğrenmek ister. STAR, cevabını dört adımda düzenlemeni sağlar. Örneğini okuldan, kulüpten, spordan, gönüllü bir işten ya da aileden seçebilirsin; iş deneyimi şart değil.",
+  "ogeler": [
+   {
+    "harf": "S",
+    "ad": "Durum (Situation)",
+    "aciklama": "Ne zaman, nerede, ne oluyordu? Bir-iki cümleyle bağlamı kur."
+   },
+   {
+    "harf": "T",
+    "ad": "Görev (Task)",
+    "aciklama": "Senin sorumluluğun ya da amacın neydi?"
+   },
+   {
+    "harf": "A",
+    "ad": "Eylem (Action)",
+    "aciklama": "Sen ne yaptın? 'Biz' yerine kendi adımlarını anlat; cevabın en uzun kısmı burası olmalı."
+   },
+   {
+    "harf": "R",
+    "ad": "Sonuç (Result)",
+    "aciklama": "Ne oldu, ne öğrendin? Mümkünse somut bir sonuç ve bir dahaki sefere neyi farklı yapacağını söyle."
+   }
+  ]
+ },
+ "kontrol": [
+  {
+   "kod": "dogrudan",
+   "metin": "İlk cümlem soruya doğrudan cevap veriyor.",
+   "tur": "hepsi"
+  },
+  {
+   "kod": "ornek",
+   "metin": "En az bir somut örnek verdim (ne zaman, nerede, ne yaptım).",
+   "tur": "hepsi"
+  },
+  {
+   "kod": "ben",
+   "metin": "Kendi katkımı 'ben' diyerek anlattım.",
+   "tur": "hepsi"
+  },
+  {
+   "kod": "baglanti",
+   "metin": "Cevabımı başvurduğum işe ya da alana bağladım.",
+   "tur": "hepsi"
+  },
+  {
+   "kod": "sure",
+   "metin": "Sesli okuduğumda yaklaşık 1–2 dakika sürüyor; ne çok kısa ne çok uzun.",
+   "tur": "hepsi"
+  },
+  {
+   "kod": "olumlu",
+   "metin": "Kimseyi kötülemeden, olumlu bir dille anlattım.",
+   "tur": "hepsi"
+  },
+  {
+   "kod": "s",
+   "metin": "Durum: bağlamı kısaca anlattım.",
+   "tur": "star"
+  },
+  {
+   "kod": "t",
+   "metin": "Görev: benim sorumluluğumu söyledim.",
+   "tur": "star"
+  },
+  {
+   "kod": "a",
+   "metin": "Eylem: attığım adımları sırayla anlattım.",
+   "tur": "star"
+  },
+  {
+   "kod": "r",
+   "metin": "Sonuç: ne olduğunu ve ne öğrendiğimi söyledim.",
+   "tur": "star"
+  }
+ ],
+ "ipuclari_genel": [
+  "Cevabını önce yaz, sonra sesli oku: yazarken fark etmediğin tekrarları duyarsın.",
+  "Ezberlenmiş gibi görünen cümleler yerine kendi kelimelerini kullan.",
+  "Bilmediğin bir soruda 'Bu konuda deneyimim yok ama şöyle düşünürdüm…' demek dürüst ve güçlü bir cevaptır.",
+  "Mülakat iki yönlüdür: sonunda senin de soru sorma hakkın var."
+ ],
+ "kategoriler": [
+  {
+   "kod": "genel",
+   "ad": "Genel sorular",
+   "ikon": "💬",
+   "aciklama": "Hemen her mülakatta karşına çıkabilecek sorular.",
+   "sorular": [
+    {
+     "id": "g01",
+     "soru": "Bize biraz kendinden bahseder misin?",
+     "neden": "Kendini kısa ve odaklı anlatabiliyor musun, görmek isterler.",
+     "ipuclari": [
+      "Şimdi – geçmiş – gelecek sırası kullan: şu an ne yapıyorsun, seni buraya ne getirdi, neden bu başvuru.",
+      "Hayat hikâyesi değil, başvurduğun yerle ilgili 2–3 öne çıkan nokta seç.",
+      "Bir cümlelik bir ilgi alanı ya da merakla bitir."
+     ]
+    },
+    {
+     "id": "g02",
+     "soru": "Neden bu staja / işe başvurdun?",
+     "neden": "Başvurunun bilinçli mi, rastgele mi olduğunu anlamak isterler.",
+     "ipuclari": [
+      "Kurum ya da iş hakkında öğrendiğin somut bir şeyi söyle.",
+      "Bu işin senin ilgi alanın ya da hedefinle bağlantısını kur.",
+      "Ne öğrenmek istediğini ve ne katabileceğini birlikte anlat."
+     ]
+    },
+    {
+     "id": "g03",
+     "soru": "Güçlü yönlerin neler?",
+     "neden": "Kendini tanıyıp tanımadığını ve bunu kanıtlayıp kanıtlayamadığını görmek isterler.",
+     "ipuclari": [
+      "İşle ilgili iki güçlü yön seç; uzun bir liste yapma.",
+      "Her birini kısa bir örnekle destekle.",
+      "Bu yönün bu işte nasıl işe yarayacağını söyle."
+     ]
+    },
+    {
+     "id": "g04",
+     "soru": "Geliştirmek istediğin bir yönün var mı?",
+     "neden": "Dürüstlüğünü ve kendini geliştirme isteğini görmek isterler.",
+     "ipuclari": [
+      "Gerçek ama işin temelini zedelemeyen bir alan seç.",
+      "Bunun için şu an ne yaptığını anlat.",
+      "'Çok mükemmeliyetçiyim' gibi kalıp cevaplardan kaçın."
+     ]
+    },
+    {
+     "id": "g05",
+     "soru": "Beş yıl sonra kendini nerede görüyorsun?",
+     "neden": "Hedef koyup koymadığını ve bu işin o hedefe uyup uymadığını merak ederler.",
+     "ipuclari": [
+      "Kesin bir unvan yerine öğrenmek ve gelişmek istediğin alanları söyle.",
+      "Bu staj ya da işin o yolda bir adım olduğunu göster.",
+      "Esnek ve gerçekçi ol."
+     ]
+    },
+    {
+     "id": "g06",
+     "soru": "Boş zamanlarında neler yaparsın?",
+     "neden": "Seni bir insan olarak tanımak ve işe yarayacak becerileri yakalamak isterler.",
+     "ipuclari": [
+      "Bir-iki ilgi alanını seç ve sana ne kattığını söyle.",
+      "Takım sporu, gönüllülük, kulüp gibi etkinliklerden çıkan becerileri vurgula.",
+      "Kısa tut."
+     ]
+    },
+    {
+     "id": "g07",
+     "soru": "Kurumumuz hakkında ne biliyorsun?",
+     "neden": "Hazırlık yapıp yapmadığını görmek isterler.",
+     "ipuclari": [
+      "Kurumun ne iş yaptığını bir cümleyle özetle.",
+      "Seni ilgilendiren bir hizmeti, ürünü ya da değeri söyle.",
+      "Bilmediğin konuda uydurma; merak ettiğin bir şeyi soru olarak sor."
+     ]
+    },
+    {
+     "id": "g08",
+     "soru": "Neden seni seçmeliyiz?",
+     "neden": "Kendi değerini sakin ve kanıtlı biçimde anlatabiliyor musun, bakarlar.",
+     "ipuclari": [
+      "İlanda istenen 2–3 özelliği kendi örneklerinle eşleştir.",
+      "Başkalarıyla kıyaslama yapma; kendi katkına odaklan.",
+      "Öğrenmeye açık olduğunu belirterek bitir."
+     ]
+    },
+    {
+     "id": "g09",
+     "soru": "Bir ekipte genellikle nasıl bir rol üstlenirsin?",
+     "neden": "Takım içindeki tarzını anlamak isterler.",
+     "ipuclari": [
+      "Rolünü (düzenleyen, fikir üreten, araştıran vb.) bir örnekle anlat.",
+      "Farklı rollere de uyum sağlayabildiğini göster.",
+      "Ekibin başarısına katkını vurgula."
+     ]
+    },
+    {
+     "id": "g10",
+     "soru": "Baskı altında nasıl çalışırsın?",
+     "neden": "Stres yönetimi ve önceliklendirme becerini ölçerler.",
+     "ipuclari": [
+      "Kullandığın somut bir yöntemi söyle (liste yapmak, işi parçalara bölmek gibi).",
+      "Kısa bir örnek ver: sınav haftası, proje teslimi, maç günü.",
+      "Sakin kalmak için ne yaptığını ekle."
+     ]
+    },
+    {
+     "id": "g11",
+     "soru": "Okulda en sevdiğin ders hangisi ve neden?",
+     "neden": "İlgi alanlarını ve öğrenme biçimini merak ederler.",
+     "ipuclari": [
+      "Dersi söyle ve seni neyin heyecanlandırdığını açıkla.",
+      "O dersten edindiğin bir beceriyi işe bağla.",
+      "Sevmediğin dersleri kötülemeye gerek yok."
+     ]
+    },
+    {
+     "id": "g12",
+     "soru": "Seni en çok ne motive eder?",
+     "neden": "Bu işin seni ayakta tutup tutmayacağını anlamak isterler.",
+     "ipuclari": [
+      "Samimi ol: öğrenmek, insanlara yardım etmek, bir şeyi bitirmek…",
+      "Motivasyonunu gösteren kısa bir örnek ver.",
+      "İşin doğasıyla bağlantı kur."
+     ]
+    },
+    {
+     "id": "g13",
+     "soru": "Zamanını nasıl planlarsın?",
+     "neden": "Sorumluluk ve düzen becerini görmek isterler.",
+     "ipuclari": [
+      "Kullandığın bir araç ya da alışkanlığı söyle (ajanda, liste, telefon takvimi).",
+      "Okul, ev ve diğer işleri nasıl dengelediğine bir örnek ver.",
+      "Bir dersten aldığın notu ekleyebilirsin: neyi daha iyi yapmayı öğrendin?"
+     ]
+    },
+    {
+     "id": "g14",
+     "soru": "Eleştiriye nasıl tepki verirsin?",
+     "neden": "Geri bildirime açık olup olmadığını öğrenmek isterler.",
+     "ipuclari": [
+      "Önce dinlediğini, sonra soru sorduğunu anlat.",
+      "Bir geri bildirimden sonra neyi değiştirdiğine dair örnek ver.",
+      "Savunmacı olmadığını göster."
+     ]
+    },
+    {
+     "id": "g15",
+     "soru": "Bu işte seni en çok zorlayacağını düşündüğün şey nedir?",
+     "neden": "Gerçekçi olup olmadığını ve hazırlığını görmek isterler.",
+     "ipuclari": [
+      "Gerçekçi bir zorluk seç (yeni ortam, erken kalkmak, teknik bir konu).",
+      "Bununla nasıl başa çıkmayı planladığını anlat.",
+      "Olumlu bir cümleyle bitir."
+     ]
+    },
+    {
+     "id": "g16",
+     "soru": "Başarı senin için ne demek?",
+     "neden": "Değerlerini ve beklentilerini anlamak isterler.",
+     "ipuclari": [
+      "Kendi tanımını söyle; yalnızca not ya da para olmak zorunda değil.",
+      "Bu tanıma uyan küçük bir başarı örneği ver.",
+      "İşle ilişkilendir."
+     ]
+    },
+    {
+     "id": "g17",
+     "soru": "Bilmediğin bir konuyla karşılaştığında ne yaparsın?",
+     "neden": "Öğrenme becerini ve yardım isteme rahatlığını ölçerler.",
+     "ipuclari": [
+      "Adımlarını sırala: önce araştırırım, sonra danışırım gibi.",
+      "Kısa bir örnek ver.",
+      "Yardım istemenin doğal olduğunu göster."
+     ]
+    },
+    {
+     "id": "g18",
+     "soru": "Hangi çalışma ortamında daha verimli olursun?",
+     "neden": "Ortama uyumunu görmek isterler.",
+     "ipuclari": [
+      "Tercihini söyle ama farklı ortamlara uyum sağlayabildiğini de belirt.",
+      "Kendi deneyiminden bir örnek ver.",
+      "Başvurduğun yerin ortamıyla bağlantı kur."
+     ]
+    },
+    {
+     "id": "g19",
+     "soru": "Gurur duyduğun bir şeyi anlatır mısın?",
+     "neden": "Neye değer verdiğini ve emeğini nasıl anlattığını görürler.",
+     "ipuclari": [
+      "Somut bir başarıyı seç: proje, yarışma, gönüllülük, bir beceriyi öğrenmek.",
+      "Senin katkını ve emeğini anlat.",
+      "Sana ne öğrettiğini söyle."
+     ]
+    },
+    {
+     "id": "g20",
+     "soru": "Bize sormak istediğin bir soru var mı?",
+     "neden": "İlgini ve hazırlığını gösterme fırsatıdır.",
+     "ipuclari": [
+      "En az bir soru hazırla: ilk hafta ne yapacağım, kimden öğreneceğim gibi.",
+      "Yalnızca ücret ya da izinle ilgili soru sormak yerine işin kendisini de sor.",
+      "Teşekkür ederek bitir."
+     ]
+    },
+    {
+     "id": "g21",
+     "soru": "Daha önce hiç çalışmadın; bu işi yapabileceğini nasıl gösterirsin?",
+     "neden": "Deneyimsiz adayın aktarılabilir becerilerini görmek isterler.",
+     "ipuclari": [
+      "Okul, kulüp, spor, ev sorumlulukları gibi deneyimlerden örnek ver.",
+      "Bu deneyimlerdeki becerileri (dakiklik, sorumluluk, iletişim) işe bağla.",
+      "Öğrenmeye hazır olduğunu söyle."
+     ]
+    },
+    {
+     "id": "g22",
+     "soru": "Arkadaşların seni üç kelimeyle nasıl anlatır?",
+     "neden": "Kendini dışarıdan nasıl gördüğünü merak ederler.",
+     "ipuclari": [
+      "Üç kelime seç ve en az birini kısa bir örnekle destekle.",
+      "İşe yarayacak özellikleri öne çıkar.",
+      "Samimi ol."
+     ]
+    },
+    {
+     "id": "g23",
+     "soru": "Hedeflediğin meslek ya da bölüm hangisi? Bu iş buna nasıl katkı sağlar?",
+     "neden": "Uzun vadeli planınla bu başvurunun ilişkisini görmek isterler.",
+     "ipuclari": [
+      "Hedefini kısaca söyle; henüz kesin değilse bunu da söyleyebilirsin.",
+      "Bu işten öğrenmeyi umduğun 1–2 beceriyi belirt.",
+      "Hedefin değişse bile işe yarayacak becerilere değin."
+     ]
+    },
+    {
+     "id": "g24",
+     "soru": "Kendini bir kelimeyle anlatır mısın?",
+     "neden": "Hızlı düşünme ve öz farkındalığı ölçer.",
+     "ipuclari": [
+      "Bir kelime seç ve neden seçtiğini bir örnekle açıkla.",
+      "İşle bağlantısını kur.",
+      "Kısa tut: üç-dört cümle yeter."
+     ]
+    }
+   ]
+  },
+  {
+   "kod": "davranissal",
+   "ad": "Davranışsal sorular (STAR)",
+   "ikon": "⭐",
+   "aciklama": "'Bir zaman anlat ki…' diye başlayan, geçmişte ne yaptığını soran sorular. STAR yöntemiyle cevapla.",
+   "sorular": [
+    {
+     "id": "d01",
+     "soru": "Bir ekip çalışmasında anlaşmazlık yaşadığın bir zamanı anlatır mısın?",
+     "neden": "Çatışma yönetimi ve iş birliği becerini görmek isterler.",
+     "ipuclari": [
+      "Durumu kısaca kur, kimseyi suçlama.",
+      "Anlaşmazlığı çözmek için senin attığın adımlara odaklan.",
+      "Sonucu ve ekip ilişkisine etkisini söyle."
+     ],
+     "star": true
+    },
+    {
+     "id": "d02",
+     "soru": "Bir hata yaptığın ve bunu düzelttiğin bir zamanı anlat.",
+     "neden": "Sorumluluk alma ve hatadan öğrenme becerini ölçerler.",
+     "ipuclari": [
+      "Gerçek ama ciddi sonuçları olmayan bir hata seç.",
+      "Hatayı fark ettiğinde ne yaptığını ve kime haber verdiğini anlat.",
+      "Ne öğrendiğini ve şimdi neyi farklı yaptığını söyle."
+     ],
+     "star": true
+    },
+    {
+     "id": "d03",
+     "soru": "Zor bir hedefe ulaşmak için çok çalıştığın bir dönemi anlatır mısın?",
+     "neden": "Azim ve planlama becerini görmek isterler.",
+     "ipuclari": [
+      "Hedefi ve neden zor olduğunu kısaca söyle.",
+      "Planını ve engellerle nasıl başa çıktığını anlat.",
+      "Sonucu, ulaşamadıysan bile ne kazandığını söyle."
+     ],
+     "star": true
+    },
+    {
+     "id": "d04",
+     "soru": "Birine yardım etmek için alışılmışın dışında bir şey yaptığın bir zaman oldu mu?",
+     "neden": "Empati ve inisiyatif almayı ölçerler.",
+     "ipuclari": [
+      "Kişinin ihtiyacını ve durumu anlat.",
+      "Senin ne yaptığını ve neden yaptığını açıkla.",
+      "Sonucu ve bunun sana ne hissettirdiğini söyle."
+     ],
+     "star": true
+    },
+    {
+     "id": "d05",
+     "soru": "Aynı anda birden fazla işi yetiştirmen gereken bir zamanı anlat.",
+     "neden": "Önceliklendirme ve zaman yönetimini görmek isterler.",
+     "ipuclari": [
+      "İşleri ve son tarihleri kısaca say.",
+      "Neye göre öncelik verdiğini açıkla.",
+      "Sonucu ve kullandığın yöntemi söyle."
+     ],
+     "star": true
+    },
+    {
+     "id": "d06",
+     "soru": "Bir konuda fikrini savunman gereken bir zamanı anlatır mısın?",
+     "neden": "İletişim ve ikna becerini görmek isterler.",
+     "ipuclari": [
+      "Konuyu ve karşı görüşü saygıyla özetle.",
+      "Fikrini nasıl desteklediğini (veri, örnek, dinleme) anlat.",
+      "Sonuç ne oldu, sen ne öğrendin?"
+     ],
+     "star": true
+    },
+    {
+     "id": "d07",
+     "soru": "Yeni bir şeyi kısa sürede öğrenmek zorunda kaldığın bir zamanı anlat.",
+     "neden": "Öğrenme hızını ve kaynak kullanımını ölçerler.",
+     "ipuclari": [
+      "Neyi ve neden öğrenmen gerektiğini söyle.",
+      "Hangi kaynakları kullandığını ve nasıl çalıştığını anlat.",
+      "Sonucu somut biçimde belirt."
+     ],
+     "star": true
+    },
+    {
+     "id": "d08",
+     "soru": "Bir grupta liderlik ettiğin ya da sorumluluk aldığın bir zamanı anlatır mısın?",
+     "neden": "Liderlik ve sorumluluk becerini görmek isterler.",
+     "ipuclari": [
+      "Grubu ve amacı kısaca tanıt.",
+      "Görev dağılımı, motivasyon ya da organizasyon adımlarını anlat.",
+      "Ekibin sonucunu ve senin öğrendiğini söyle."
+     ],
+     "star": true
+    },
+    {
+     "id": "d09",
+     "soru": "Bir şeyin planladığın gibi gitmediği ve hızlıca uyum sağlaman gereken bir zamanı anlat.",
+     "neden": "Esneklik ve problem çözmeyi ölçerler.",
+     "ipuclari": [
+      "Plan neydi, ne değişti?",
+      "Hangi alternatifi düşündün ve neden onu seçtin?",
+      "Sonucu ve bir dahaki sefere hazırlığını söyle."
+     ],
+     "star": true
+    },
+    {
+     "id": "d10",
+     "soru": "Eleştiri aldığın ve bunu kullandığın bir zamanı anlatır mısın?",
+     "neden": "Geri bildirime açıklığını görmek isterler.",
+     "ipuclari": [
+      "Kimden, ne geri bildirimi aldığını kısaca söyle.",
+      "İlk tepkini ve sonra ne değiştirdiğini anlat.",
+      "Değişikliğin sonucunu belirt."
+     ],
+     "star": true
+    },
+    {
+     "id": "d11",
+     "soru": "Kurallara uymanın zor geldiği ama doğru olanı yaptığın bir zamanı anlat.",
+     "neden": "Dürüstlük ve sorumluluk anlayışını ölçerler.",
+     "ipuclari": [
+      "Durumu ve neden zor olduğunu anlat.",
+      "Ne yaptığını ve neden yaptığını açıkla.",
+      "Sonucu ve sana kattığını söyle."
+     ],
+     "star": true
+    },
+    {
+     "id": "d12",
+     "soru": "Kendi isteğinle başlattığın bir proje ya da etkinliği anlatır mısın?",
+     "neden": "İnisiyatif alma ve girişimciliği görmek isterler.",
+     "ipuclari": [
+      "Fikrin nereden çıktığını söyle.",
+      "Hayata geçirmek için attığın adımları sırala.",
+      "Ne oldu, kimlere faydası oldu, ne öğrendin?"
+     ],
+     "star": true
+    }
+   ]
+  },
+  {
+   "kod": "staj",
+   "ad": "Staj ve yarı zamanlı iş",
+   "ikon": "🎒",
+   "aciklama": "Lise öğrencisi olarak staj ya da yarı zamanlı iş başvurusunda sorulabilecekler.",
+   "sorular": [
+    {
+     "id": "s01",
+     "soru": "Okul ile staj ya da yarı zamanlı işi nasıl dengelersin?",
+     "neden": "Sorumluluklarını yönetip yönetemeyeceğini merak ederler.",
+     "ipuclari": [
+      "Haftalık planını kısaca anlat.",
+      "Okulun öncelikli olduğunu ve bunu nasıl koruyacağını söyle.",
+      "Daha önce iki işi dengelediğin bir örnek ver."
+     ]
+    },
+    {
+     "id": "s02",
+     "soru": "Hangi günlerde ve saatlerde çalışabilirsin?",
+     "neden": "Pratik uygunluğunu öğrenmek isterler.",
+     "ipuclari": [
+      "Net ve dürüst ol; okul saatlerini ve yasal sınırları göz önünde tut.",
+      "Esnek olabileceğin zamanları belirt.",
+      "Değişiklik olursa önceden haber vereceğini söyle."
+     ]
+    },
+    {
+     "id": "s03",
+     "soru": "Bu stajdan ne öğrenmeyi umuyorsun?",
+     "neden": "Hedef odaklı olup olmadığını görmek isterler.",
+     "ipuclari": [
+      "Öğrenmek istediğin 2–3 somut beceri söyle.",
+      "Bunların okulundaki derslerle ya da hedefinle bağlantısını kur.",
+      "Geri bildirime açık olduğunu belirt."
+     ]
+    },
+    {
+     "id": "s04",
+     "soru": "Bir müşteri ya da ziyaretçi sana kaba davranırsa ne yaparsın?",
+     "neden": "Sakin kalma ve doğru kişiye yönlendirme becerini görmek isterler.",
+     "ipuclari": [
+      "Önce sakin kalıp dinleyeceğini söyle.",
+      "Çözebileceğin bir şeyse nasıl çözeceğini, değilse yetkiliye nasıl yönlendireceğini anlat.",
+      "Kendi güvenliğinin de önemli olduğunu unutma."
+     ]
+    },
+    {
+     "id": "s05",
+     "soru": "İşe geç kalacağını anlarsan ne yaparsın?",
+     "neden": "Sorumluluk ve iletişim alışkanlığını görmek isterler.",
+     "ipuclari": [
+      "Hemen haber vereceğini ve tahmini varış saatini söyleyeceğini anlat.",
+      "Geç kalmamak için aldığın önlemleri söyle.",
+      "Kısa tut."
+     ]
+    },
+    {
+     "id": "s06",
+     "soru": "Daha önce hiç para kazandığın ya da sorumluluk aldığın bir iş yaptın mı?",
+     "neden": "Deneyim ve sorumluluk düzeyini anlamak isterler.",
+     "ipuclari": [
+      "Resmî iş olmak zorunda değil: aile işine yardım, gönüllülük, kulüp görevi olabilir.",
+      "Ne yaptığını ve ne öğrendiğini anlat.",
+      "Bu işe nasıl katkı sağlayacağını bağla."
+     ]
+    },
+    {
+     "id": "s07",
+     "soru": "Sana verilen bir görevi anlamazsan ne yaparsın?",
+     "neden": "Soru sorma rahatlığını ve öğrenme biçimini görmek isterler.",
+     "ipuclari": [
+      "Not alıp netleştirici soru soracağını söyle.",
+      "Önce kendin denediğini, takılınca danıştığını anlat.",
+      "Yanlış yapmaktansa sormanın daha iyi olduğunu belirt."
+     ]
+    },
+    {
+     "id": "s08",
+     "soru": "Tekrarlayan, sıkıcı görünen işleri nasıl yaparsın?",
+     "neden": "Sabır ve özen düzeyini ölçerler.",
+     "ipuclari": [
+      "Bu işlerin neden önemli olduğunu anladığını göster.",
+      "Dikkatini korumak için kullandığın yöntemi söyle.",
+      "Kısa bir örnek ver."
+     ]
+    },
+    {
+     "id": "s09",
+     "soru": "Neden bu işi yarı zamanlı yapmak istiyorsun?",
+     "neden": "Motivasyonunu ve devamlılığını merak ederler.",
+     "ipuclari": [
+      "Samimi bir neden söyle: deneyim, sorumluluk, harçlık, öğrenme.",
+      "İşin sana katacaklarını anlat.",
+      "Devamlılık konusunda güven ver."
+     ]
+    },
+    {
+     "id": "s10",
+     "soru": "Ekipte en genç kişi olmak sence nasıl olur?",
+     "neden": "Uyum ve saygı anlayışını görmek isterler.",
+     "ipuclari": [
+      "Öğrenmeye açık olduğunu ve deneyimli kişilerden faydalanmak istediğini söyle.",
+      "Kendi taze bakış açını da katabileceğini belirt.",
+      "Saygılı ve özgüvenli bir dil kullan."
+     ]
+    },
+    {
+     "id": "s11",
+     "soru": "Kendini güvende hissetmediğin bir durumla karşılaşırsan ne yaparsın?",
+     "neden": "İş güvenliği farkındalığını görmek isterler.",
+     "ipuclari": [
+      "İşi durdurup sorumlu kişiye haber vereceğini söyle.",
+      "Kuralları ve talimatları önemsediğini belirt.",
+      "Yaşına uygun olmayan işleri yapmayacağını bildiğini gösterebilirsin."
+     ]
+    },
+    {
+     "id": "s12",
+     "soru": "Bu staj bittikten sonra bizden nasıl bir referans duymak isterdin?",
+     "neden": "Kendi hedeflerini ve iş ahlakını nasıl tanımladığını görürler.",
+     "ipuclari": [
+      "Duymak istediğin 2–3 özelliği söyle (güvenilir, öğrenmeye açık, dakik).",
+      "Bunu sağlamak için ne yapacağını anlat.",
+      "Olumlu bir cümleyle bitir."
+     ]
+    }
+   ]
+  }
+ ],
+ "alanlar": {
+  "U01": [
+   {
+    "id": "u01_1",
+    "soru": "Bir şeyin nasıl çalıştığını merak edip incelediğin bir zamanı anlatır mısın?",
+    "neden": "Merak ve analitik düşünmeyi görmek isterler.",
+    "ipuclari": [
+     "Neyi merak ettiğini ve nasıl incelediğini adım adım anlat.",
+     "Neyi keşfettiğini ve sana ne öğrettiğini söyle."
+    ]
+   },
+   {
+    "id": "u01_2",
+    "soru": "Bir problemi çözerken önce neye bakarsın?",
+    "neden": "Problem çözme yaklaşımını anlamak isterler.",
+    "ipuclari": [
+     "Kullandığın sırayı söyle: problemi tanımlamak, veriyi toplamak, seçenekleri denemek.",
+     "Bir okul ödevi ya da proje örneğiyle destekle."
+    ]
+   },
+   {
+    "id": "u01_3",
+    "soru": "Bir ekip projesinde teknik bir hatayı fark etsen ne yaparsın?",
+    "neden": "Sorumluluk ve iletişim dengesini ölçerler.",
+    "ipuclari": [
+     "Hatayı nasıl doğruladığını ve ekibe nasıl ilettiğini anlat.",
+     "Suçlamadan çözüme odaklandığını göster."
+    ]
+   },
+   {
+    "id": "u01_4",
+    "soru": "Güvenlik kuralları işi yavaşlatıyorsa sence ne yapılmalı?",
+    "neden": "Güvenlik bilincini görmek isterler.",
+    "ipuclari": [
+     "Güvenliğin pazarlık konusu olmadığını açıkça söyle.",
+     "Süreci hızlandırmak için güvenli öneriler getirebileceğini ekle."
+    ]
+   },
+   {
+    "id": "u01_5",
+    "soru": "Matematik ya da fen derslerinde seni en çok zorlayan konuyu nasıl çalıştın?",
+    "neden": "Zorlukla başa çıkma ve öğrenme yöntemini görmek isterler.",
+    "ipuclari": [
+     "Konuyu ve zorluğu dürüstçe söyle.",
+     "Kullandığın yöntemi ve sonucu anlat."
+    ]
+   },
+   {
+    "id": "u01_6",
+    "soru": "Bir tasarım ya da üretim sürecinde maliyet ile kalite çatışırsa nasıl karar verirsin?",
+    "neden": "Denge kurma ve gerekçelendirme becerisini ölçerler.",
+    "ipuclari": [
+     "Önce gereksinimleri ve riskleri netleştireceğini söyle.",
+     "Kararını veriyle ve ilgili kişilere danışarak vereceğini anlat."
+    ]
+   }
+  ],
+  "U02": [
+   {
+    "id": "u02_1",
+    "soru": "Kendi başına öğrendiğin bir teknoloji ya da programlama dili var mı? Nasıl öğrendin?",
+    "neden": "Kendi kendine öğrenme becerisini görmek isterler.",
+    "ipuclari": [
+     "Kaynaklarını ve çalışma düzenini anlat.",
+     "Yaptığın küçük bir proje ya da denemeyle somutlaştır."
+    ]
+   },
+   {
+    "id": "u02_2",
+    "soru": "Kodunda ya da bir uygulamada hata çıktığında nasıl ilerlersin?",
+    "neden": "Hata ayıklama yaklaşımını ölçerler.",
+    "ipuclari": [
+     "Hatayı yeniden üretmek, küçük parçalara bölmek, araştırmak gibi adımlarını sırala.",
+     "Takıldığında nasıl yardım istediğini ekle."
+    ]
+   },
+   {
+    "id": "u02_3",
+    "soru": "Teknik olmayan birine bir teknik konuyu nasıl anlatırsın?",
+    "neden": "İletişim becerisini görmek isterler.",
+    "ipuclari": [
+     "Gündelik hayattan bir benzetme kullan.",
+     "Karşındakinin anlayıp anlamadığını nasıl kontrol ettiğini söyle."
+    ]
+   },
+   {
+    "id": "u02_4",
+    "soru": "Bir kullanıcının kişisel verilerine erişimin olsa bu sorumluluğu nasıl taşırsın?",
+    "neden": "Etik ve veri güvenliği bilincini ölçerler.",
+    "ipuclari": [
+     "Yalnızca gerektiği kadar erişeceğini ve kurallara uyacağını söyle.",
+     "Bir şüphe durumunda yöneticine danışacağını ekle."
+    ]
+   },
+   {
+    "id": "u02_5",
+    "soru": "Bir projede son tarih yaklaşırken her özelliği yetiştiremeyeceğini anlarsan ne yaparsın?",
+    "neden": "Önceliklendirme ve şeffaflığı görmek isterler.",
+    "ipuclari": [
+     "En önemli özellikleri belirleyeceğini anlat.",
+     "Durumu erkenden ekibe ya da yöneticiye bildireceğini söyle."
+    ]
+   },
+   {
+    "id": "u02_6",
+    "soru": "Teknolojideki hızlı değişimi nasıl takip ediyorsun?",
+    "neden": "Sürekli öğrenme alışkanlığını görmek isterler.",
+    "ipuclari": [
+     "Takip ettiğin kaynak türlerini (dokümantasyon, topluluklar, kurslar) söyle.",
+     "Son öğrendiğin bir şeyi örnek ver."
+    ]
+   }
+  ],
+  "U03": [
+   {
+    "id": "u03_1",
+    "soru": "Bir deney ya da gözlemde beklemediğin bir sonuç çıktığında ne yaparsın?",
+    "neden": "Bilimsel tutumu ölçerler.",
+    "ipuclari": [
+     "Önce ölçümü ve yöntemi kontrol edeceğini söyle.",
+     "Beklenmedik sonucun yeni bir soru olabileceğini vurgula."
+    ]
+   },
+   {
+    "id": "u03_2",
+    "soru": "Seni bilime yönelten bir soru ya da konu var mı?",
+    "neden": "Merakını ve motivasyonunu görmek isterler.",
+    "ipuclari": [
+     "Konuyu ve seni neden heyecanlandırdığını anlat.",
+     "O konuyu nasıl araştırdığını ekle."
+    ]
+   },
+   {
+    "id": "u03_3",
+    "soru": "Uzun süren ve hemen sonuç vermeyen bir çalışmada motivasyonunu nasıl korursun?",
+    "neden": "Sabır ve dayanıklılığı ölçerler.",
+    "ipuclari": [
+     "Küçük hedefler koymak gibi bir yöntemini söyle.",
+     "Bir örnekle destekle."
+    ]
+   },
+   {
+    "id": "u03_4",
+    "soru": "Bir verinin güvenilir olup olmadığını nasıl anlarsın?",
+    "neden": "Eleştirel düşünmeyi görmek isterler.",
+    "ipuclari": [
+     "Kaynağa, yönteme ve tekrarlanabilirliğe baktığını söyle.",
+     "İnternetteki bir bilgiyi doğruladığın bir örnek ver."
+    ]
+   },
+   {
+    "id": "u03_5",
+    "soru": "Laboratuvarda güvenlik kurallarına neden uyulur?",
+    "neden": "Güvenlik farkındalığını görmek isterler.",
+    "ipuclari": [
+     "Kurallara uymanın seni ve başkalarını koruduğunu söyle.",
+     "Bildiğin birkaç temel kuralı örnek ver."
+    ]
+   },
+   {
+    "id": "u03_6",
+    "soru": "Bilimsel bir konuyu bir kitleye sunman gerekse nasıl hazırlanırsın?",
+    "neden": "Bilim iletişimi becerisini ölçerler.",
+    "ipuclari": [
+     "Kitleyi tanıyarak dili ayarlayacağını söyle.",
+     "Görsel ve örnek kullanımını anlat."
+    ]
+   }
+  ],
+  "U04": [
+   {
+    "id": "u04_1",
+    "soru": "Sağlık alanında çalışmak istemenin en önemli nedeni nedir?",
+    "neden": "Motivasyonunun gerçekçi olup olmadığını görmek isterler.",
+    "ipuclari": [
+     "Samimi bir neden söyle ve bir deneyimle destekle.",
+     "Zor yanlarını da bildiğini göster."
+    ]
+   },
+   {
+    "id": "u04_2",
+    "soru": "Endişeli ya da canı yanan birine nasıl yaklaşırsın?",
+    "neden": "Empati ve iletişim becerisini ölçerler.",
+    "ipuclari": [
+     "Sakin bir ses tonu, dinlemek ve açıklama yapmak gibi adımları anlat.",
+     "Kendi yetkini aşan durumlarda yetkiliye yönlendireceğini söyle."
+    ]
+   },
+   {
+    "id": "u04_3",
+    "soru": "Gizlilik neden sağlık alanında bu kadar önemlidir?",
+    "neden": "Etik bilincini görmek isterler.",
+    "ipuclari": [
+     "Kişinin mahremiyetinin ve güveninin korunmasını vurgula.",
+     "Gizliliği nasıl koruyacağına bir örnek ver."
+    ]
+   },
+   {
+    "id": "u04_4",
+    "soru": "Yoğun ve yorucu bir günde dikkatini nasıl korursun?",
+    "neden": "Stres ve dikkat yönetimini ölçerler.",
+    "ipuclari": [
+     "Kontrol listesi, mola, ekip desteği gibi yöntemlerini söyle.",
+     "Kendi sağlığını korumanın da önemli olduğunu belirt."
+    ]
+   },
+   {
+    "id": "u04_5",
+    "soru": "Bir ekip arkadaşının hata yaptığını görürsen ne yaparsın?",
+    "neden": "Hasta güvenliği ve ekip iletişimini görmek isterler.",
+    "ipuclari": [
+     "Güvenliği önceleyip hemen ve saygılı biçimde söyleyeceğini anlat.",
+     "Gerekirse sorumlu kişiye bildireceğini ekle."
+    ]
+   },
+   {
+    "id": "u04_6",
+    "soru": "Gönüllü bir sağlık ya da bakım etkinliğinde bulundun mu? Ne öğrendin?",
+    "neden": "Alanı tanıyıp tanımadığını görmek isterler.",
+    "ipuclari": [
+     "Varsa deneyimini kısaca anlat; yoksa alanı nasıl tanımaya çalıştığını söyle.",
+     "Öğrendiğin bir şeyi belirt."
+    ]
+   }
+  ],
+  "U05": [
+   {
+    "id": "u05_1",
+    "soru": "Spor geçmişin sana hangi becerileri kazandırdı?",
+    "neden": "Aktarılabilir becerileri görmek isterler.",
+    "ipuclari": [
+     "Disiplin, takım çalışması, kaybetmeyle baş etme gibi becerileri örnekle anlat.",
+     "Bu becerilerin işe nasıl yansıyacağını söyle."
+    ]
+   },
+   {
+    "id": "u05_2",
+    "soru": "Motivasyonu düşük bir sporcuyu ya da arkadaşını nasıl cesaretlendirirsin?",
+    "neden": "Motive etme ve empati becerisini ölçerler.",
+    "ipuclari": [
+     "Önce dinleyip nedenini anlamaya çalışacağını söyle.",
+     "Küçük, ulaşılabilir hedefler önerdiğini anlat."
+    ]
+   },
+   {
+    "id": "u05_3",
+    "soru": "Sakatlık riski olan bir durumda antrenmanı sürdürmek isteyen birine ne dersin?",
+    "neden": "Sağlık ve güvenlik önceliğini görmek isterler.",
+    "ipuclari": [
+     "Sağlığın önce geldiğini ve bir uzmana danışılması gerektiğini söyle.",
+     "Nasıl ikna edeceğini anlat."
+    ]
+   },
+   {
+    "id": "u05_4",
+    "soru": "Farklı yaş ve seviyelerden insanlarla çalışırken nelere dikkat edersin?",
+    "neden": "Uyum ve iletişimi ölçerler.",
+    "ipuclari": [
+     "Seviyeye uygun dil ve egzersiz seçimini anlat.",
+     "Herkese saygıyla yaklaştığını belirt."
+    ]
+   },
+   {
+    "id": "u05_5",
+    "soru": "Bir maçı ya da yarışmayı kaybettiğin bir zamanı ve sonrasını anlatır mısın?",
+    "neden": "Hayal kırıklığıyla başa çıkmayı görmek isterler.",
+    "ipuclari": [
+     "Kaybı nasıl değerlendirdiğini söyle.",
+     "Sonraki çalışmanda neyi değiştirdiğini anlat."
+    ]
+   },
+   {
+    "id": "u05_6",
+    "soru": "Bilimsel bilgiyi antrenman ya da sağlıklı yaşam önerilerinde neden kullanmalıyız?",
+    "neden": "Kanıta dayalı düşünmeyi ölçerler.",
+    "ipuclari": [
+     "Kulaktan dolma bilgilerin risklerini söyle.",
+     "Güvenilir kaynaklara nasıl ulaştığını anlat."
+    ]
+   }
+  ],
+  "U06": [
+   {
+    "id": "u06_1",
+    "soru": "Birini yargılamadan dinlemek senin için ne demek?",
+    "neden": "Dinleme becerisini ve tutumunu görmek isterler.",
+    "ipuclari": [
+     "Somut davranışlarla tanımla: sözünü kesmemek, tavsiyeye acele etmemek.",
+     "Bir örnek ver."
+    ]
+   },
+   {
+    "id": "u06_2",
+    "soru": "Bu alanda gizlilik ve sınırlar neden önemlidir?",
+    "neden": "Etik farkındalığı ölçerler.",
+    "ipuclari": [
+     "Güvenin korunmasını vurgula.",
+     "Yetkinin dışındaki durumlarda bir uzmana yönlendirmenin önemini söyle."
+    ]
+   },
+   {
+    "id": "u06_3",
+    "soru": "Duygusal olarak yorucu bir durumdan sonra kendine nasıl bakarsın?",
+    "neden": "Öz bakım bilincini görmek isterler.",
+    "ipuclari": [
+     "Kullandığın sağlıklı yöntemleri anlat.",
+     "Destek istemenin profesyonelliğin parçası olduğunu belirt."
+    ]
+   },
+   {
+    "id": "u06_4",
+    "soru": "Farklı bir kültürden ya da yaşam koşulundan gelen biriyle çalışırken nelere dikkat edersin?",
+    "neden": "Kültürel duyarlılığı ölçerler.",
+    "ipuclari": [
+     "Önyargısız ve meraklı bir tutumla dinleyeceğini söyle.",
+     "Saygı ve öğrenme isteğini vurgula."
+    ]
+   },
+   {
+    "id": "u06_5",
+    "soru": "İnsan davranışıyla ilgili seni en çok meraklandıran soru nedir?",
+    "neden": "Alan merakını görmek isterler.",
+    "ipuclari": [
+     "Soruyu ve neden merak ettiğini söyle.",
+     "Bu merakı nasıl beslediğini anlat."
+    ]
+   },
+   {
+    "id": "u06_6",
+    "soru": "Bir arkadaşının zor bir dönemden geçtiğini fark ettiğinde ne yaptın?",
+    "neden": "Empati ve doğru yönlendirmeyi ölçerler.",
+    "ipuclari": [
+     "Nasıl destek olduğunu anlat.",
+     "Gerektiğinde bir yetişkine ya da uzmana yönlendirdiğini söyle."
+    ]
+   }
+  ],
+  "U07": [
+   {
+    "id": "u07_1",
+    "soru": "Bir arkadaşına ya da küçük birine bir konuyu öğrettiğin bir zamanı anlatır mısın?",
+    "neden": "Öğretme becerisini görmek isterler.",
+    "ipuclari": [
+     "Konuyu, kullandığın yöntemi ve karşındakinin tepkisini anlat.",
+     "Neyi farklı yapacağını söyle."
+    ]
+   },
+   {
+    "id": "u07_2",
+    "soru": "Konuyu anlamayan bir öğrenciye nasıl yaklaşırsın?",
+    "neden": "Sabır ve farklılaştırma becerisini ölçerler.",
+    "ipuclari": [
+     "Farklı bir yol denemek: örnek, çizim, oyun gibi.",
+     "Öğrencinin kendini kötü hissetmemesine dikkat ettiğini söyle."
+    ]
+   },
+   {
+    "id": "u07_3",
+    "soru": "Bir sınıfta dikkat dağıldığında ne yaparsın?",
+    "neden": "Sınıf yönetimi anlayışını görmek isterler.",
+    "ipuclari": [
+     "Kısa bir etkinlik, soru ya da mola gibi yöntemleri anlat.",
+     "Olumlu ve saygılı bir dil kullandığını belirt."
+    ]
+   },
+   {
+    "id": "u07_4",
+    "soru": "İyi bir öğretmeni iyi yapan şey nedir? Hayatından bir örnek verir misin?",
+    "neden": "Değerlerini ve rol modellerini anlamak isterler.",
+    "ipuclari": [
+     "Bir öğretmeninin davranışını örnek ver.",
+     "Bu özelliği kendinde nasıl geliştirdiğini söyle."
+    ]
+   },
+   {
+    "id": "u07_5",
+    "soru": "Veliyle ya da aileyle zor bir konuşma yapman gerekse nasıl hazırlanırsın?",
+    "neden": "İletişim ve empatiyi ölçerler.",
+    "ipuclari": [
+     "Önce olumlu gözlemle başlamak, somut örnek vermek, birlikte çözüm aramak.",
+     "Sakin ve saygılı kalacağını belirt."
+    ]
+   },
+   {
+    "id": "u07_6",
+    "soru": "Öğrenmeyi sevdirmek için hangi yöntemleri denemek istersin?",
+    "neden": "Yaratıcılığı görmek isterler.",
+    "ipuclari": [
+     "Bir-iki yöntemi örnekle anlat.",
+     "Neden işe yarayacağını düşündüğünü açıkla."
+    ]
+   }
+  ],
+  "U08": [
+   {
+    "id": "u08_1",
+    "soru": "Son okuduğun ve seni etkileyen bir kitap ya da metin hangisi?",
+    "neden": "Okuma alışkanlığını ve yorum gücünü görmek isterler.",
+    "ipuclari": [
+     "Metni kısaca tanıt ve seni neden etkilediğini anlat.",
+     "Ondan ne öğrendiğini söyle."
+    ]
+   },
+   {
+    "id": "u08_2",
+    "soru": "Bir konuyu araştırırken kaynakları nasıl seçersin?",
+    "neden": "Araştırma ve eleştirel düşünmeyi ölçerler.",
+    "ipuclari": [
+     "Birincil ve güvenilir kaynak tercihini anlat.",
+     "Farklı görüşleri karşılaştırdığını söyle."
+    ]
+   },
+   {
+    "id": "u08_3",
+    "soru": "Yazdığın bir metne eleştiri geldiğinde ne yaparsın?",
+    "neden": "Geri bildirime açıklığı görmek isterler.",
+    "ipuclari": [
+     "Eleştiriyi dinleyip metni nasıl geliştirdiğini anlat.",
+     "Somut bir örnek ver."
+    ]
+   },
+   {
+    "id": "u08_4",
+    "soru": "Geçmişi bilmek bugünü anlamamıza nasıl yardım eder? Bir örnek verir misin?",
+    "neden": "Bağlantı kurma becerisini ölçerler.",
+    "ipuclari": [
+     "Bildiğin bir tarihsel olayla bugün arasında bağ kur.",
+     "Kısa ve açık tut."
+    ]
+   },
+   {
+    "id": "u08_5",
+    "soru": "Farklı bir dili ya da kültürü öğrenirken nelere dikkat edersin?",
+    "neden": "Kültürel farkındalığı görmek isterler.",
+    "ipuclari": [
+     "Dilin kültürle birlikte öğrenildiğini söyle.",
+     "Kendi öğrenme yöntemini anlat."
+    ]
+   },
+   {
+    "id": "u08_6",
+    "soru": "Bu alandaki becerilerinin hangi işlerde işe yarayacağını düşünüyorsun?",
+    "neden": "Alanın iş hayatına bağlantısını görebiliyor musun, bakarlar.",
+    "ipuclari": [
+     "Yazma, araştırma, iletişim gibi becerileri farklı işlerle eşleştir.",
+     "Kendi hedefinle bağla."
+    ]
+   }
+  ],
+  "U09": [
+   {
+    "id": "u09_1",
+    "soru": "Haksızlığa uğradığını düşündüğün bir durumda ne yaptın?",
+    "neden": "Adalet duygusu ve tepki biçimini görmek isterler.",
+    "ipuclari": [
+     "Durumu sakin bir dille anlat.",
+     "Kurallar çerçevesinde nasıl hak aradığını söyle."
+    ]
+   },
+   {
+    "id": "u09_2",
+    "soru": "Bir tartışmada karşı tarafın görüşünü nasıl dinlersin?",
+    "neden": "Dinleme ve argüman kurma becerisini ölçerler.",
+    "ipuclari": [
+     "Karşı görüşü doğru özetleyebildiğini göster.",
+     "Kendi görüşünü kanıtla nasıl desteklediğini anlat."
+    ]
+   },
+   {
+    "id": "u09_3",
+    "soru": "Gizli bir bilgiyi öğrendiğinde bu sorumluluğu nasıl taşırsın?",
+    "neden": "Etik ve güvenilirliği görmek isterler.",
+    "ipuclari": [
+     "Gizliliğe uyacağını açıkça söyle.",
+     "Emin olmadığında yetkiliye danışacağını ekle."
+    ]
+   },
+   {
+    "id": "u09_4",
+    "soru": "Toplumda değişmesini istediğin bir şey var mı? Bunun için ne yapılabilir?",
+    "neden": "Toplumsal farkındalığı ölçerler.",
+    "ipuclari": [
+     "Konuyu seç ve yapıcı, uygulanabilir öneriler sun.",
+     "Farklı tarafların bakışını da düşündüğünü göster."
+    ]
+   },
+   {
+    "id": "u09_5",
+    "soru": "Uzun ve ayrıntılı bir metni okuyup özetlemen gerekse nasıl çalışırsın?",
+    "neden": "Okuma ve analiz becerisini görmek isterler.",
+    "ipuclari": [
+     "Not alma, ana fikri çıkarma gibi adımları anlat.",
+     "Bir örnekle destekle."
+    ]
+   },
+   {
+    "id": "u09_6",
+    "soru": "Kamu hizmetinde çalışmak sence nasıl bir sorumluluktur?",
+    "neden": "Kamu yararı anlayışını ölçerler.",
+    "ipuclari": [
+     "Herkese eşit ve tarafsız hizmeti vurgula.",
+     "Bu sorumluluğu taşımak için hangi özelliklerin gerektiğini söyle."
+    ]
+   }
+  ],
+  "U10": [
+   {
+    "id": "u10_1",
+    "soru": "Para ya da bütçeyle ilgili sorumluluk aldığın bir zamanı anlatır mısın?",
+    "neden": "Sorumluluk ve planlama becerisini görmek isterler.",
+    "ipuclari": [
+     "Kulüp bütçesi, kermes, harçlık planı gibi bir örnek seç.",
+     "Nasıl planladığını ve sonucu anlat."
+    ]
+   },
+   {
+    "id": "u10_2",
+    "soru": "Bir müşterinin ihtiyacını nasıl anlarsın?",
+    "neden": "Müşteri odaklılığı ölçerler.",
+    "ipuclari": [
+     "Soru sorma ve dinleme adımlarını anlat.",
+     "İhtiyaca uygun çözüm önerdiğin bir örnek ver."
+    ]
+   },
+   {
+    "id": "u10_3",
+    "soru": "Bir tabloda ya da raporda hata bulursan ne yaparsın?",
+    "neden": "Dikkat ve dürüstlüğü görmek isterler.",
+    "ipuclari": [
+     "Hatayı doğrulayıp ilgili kişiye nasıl ileteceğini söyle.",
+     "Hatanın kaynağını bulmaya çalışacağını ekle."
+    ]
+   },
+   {
+    "id": "u10_4",
+    "soru": "Ekonomiyle ilgili gündemi takip ediyor musun? Son dikkatini çeken konu neydi?",
+    "neden": "Merak ve takip alışkanlığını ölçerler.",
+    "ipuclari": [
+     "Konuyu kısaca ve tarafsız biçimde anlat.",
+     "Bunu nereden takip ettiğini söyle."
+    ]
+   },
+   {
+    "id": "u10_5",
+    "soru": "Bir satış ya da hedef baskısı altında etik dışı bir şey istenirse ne yaparsın?",
+    "neden": "Etik duruşu görmek isterler.",
+    "ipuclari": [
+     "Kurallara aykırı bir şey yapmayacağını açıkça söyle.",
+     "Alternatif, dürüst bir çözüm önerebileceğini ekle."
+    ]
+   },
+   {
+    "id": "u10_6",
+    "soru": "Bir ekip projesinde fikirler çatıştığında karar vermeye nasıl katkı sağlarsın?",
+    "neden": "Karar verme ve iş birliğini ölçerler.",
+    "ipuclari": [
+     "Seçenekleri artı-eksi biçiminde karşılaştırmayı anlat.",
+     "Ortak hedefi hatırlattığını söyle."
+    ]
+   }
+  ],
+  "U11": [
+   {
+    "id": "u11_1",
+    "soru": "Bir haberin ya da paylaşımın doğru olup olmadığını nasıl kontrol edersin?",
+    "neden": "Doğrulama ve medya okuryazarlığını görmek isterler.",
+    "ipuclari": [
+     "Kaynağı, tarihi ve farklı kaynaklardan teyidi anlat.",
+     "Bir örnek ver."
+    ]
+   },
+   {
+    "id": "u11_2",
+    "soru": "Yaptığın bir içerik, video ya da yazı projesini anlatır mısın?",
+    "neden": "Üretim deneyimini görmek isterler.",
+    "ipuclari": [
+     "Fikirden yayına kadar süreci kısaca anlat.",
+     "Ne öğrendiğini ve neyi geliştireceğini söyle."
+    ]
+   },
+   {
+    "id": "u11_3",
+    "soru": "Bir içerik olumsuz yorumlar alırsa ne yaparsın?",
+    "neden": "Eleştiri yönetimini ölçerler.",
+    "ipuclari": [
+     "Yapıcı eleştirileri ayıklayıp değerlendireceğini söyle.",
+     "Sakin kalıp kurum kurallarına göre yanıt vereceğini anlat."
+    ]
+   },
+   {
+    "id": "u11_4",
+    "soru": "Kısa sürede bir metni ya da sunumu hazırlaman gerekse nasıl çalışırsın?",
+    "neden": "Zaman baskısında üretimi görmek isterler.",
+    "ipuclari": [
+     "Önce ana mesajı belirleyeceğini söyle.",
+     "Taslak, düzeltme ve kontrol adımlarını anlat."
+    ]
+   },
+   {
+    "id": "u11_5",
+    "soru": "Başkasının fotoğrafını ya da eserini kullanırken nelere dikkat edersin?",
+    "neden": "Telif ve etik bilincini ölçerler.",
+    "ipuclari": [
+     "İzin almak ve kaynak göstermek gerektiğini söyle.",
+     "Kişilerin mahremiyetine dikkat ettiğini ekle."
+    ]
+   },
+   {
+    "id": "u11_6",
+    "soru": "Farklı kitlelere aynı mesajı nasıl anlatırsın?",
+    "neden": "Kitleye göre iletişim becerisini görmek isterler.",
+    "ipuclari": [
+     "Dili, kanalı ve örnekleri kitleye göre değiştirdiğini anlat.",
+     "Bir örnek ver."
+    ]
+   }
+  ],
+  "U12": [
+   {
+    "id": "u12_1",
+    "soru": "Portfolyondaki en sevdiğin işi ve yapım sürecini anlatır mısın?",
+    "neden": "Süreç anlatımı ve tasarım düşüncesini görmek isterler.",
+    "ipuclari": [
+     "Fikrin çıkış noktası, denemeler ve son karar sırasını izle.",
+     "Neden bu işi sevdiğini söyle."
+    ]
+   },
+   {
+    "id": "u12_2",
+    "soru": "Tasarımına beklemediğin bir eleştiri geldiğinde ne yaparsın?",
+    "neden": "Geri bildirime açıklığı ölçerler.",
+    "ipuclari": [
+     "Önce dinleyip gerekçesini sorduğunu anlat.",
+     "Tasarımını nasıl geliştirdiğine bir örnek ver."
+    ]
+   },
+   {
+    "id": "u12_3",
+    "soru": "Bir müşterinin ya da öğretmenin istediği ile senin zevkin farklıysa ne yaparsın?",
+    "neden": "Uyum ve iletişim becerisini görmek isterler.",
+    "ipuclari": [
+     "İhtiyacı anlamaya çalışacağını söyle.",
+     "Alternatifler sunarak ortak noktaya ulaşmayı anlat."
+    ]
+   },
+   {
+    "id": "u12_4",
+    "soru": "İlham bulamadığın zamanlarda ne yaparsın?",
+    "neden": "Yaratıcı tıkanmayla başa çıkmayı ölçerler.",
+    "ipuclari": [
+     "Kullandığın yöntemleri (gezi, eskiz, araştırma) söyle.",
+     "Bir örnekle destekle."
+    ]
+   },
+   {
+    "id": "u12_5",
+    "soru": "Teslim tarihine yetişmek ile mükemmel bir iş çıkarmak arasında nasıl denge kurarsın?",
+    "neden": "Zaman yönetimi ve önceliklendirmeyi görmek isterler.",
+    "ipuclari": [
+     "Planlama ve önemli olana odaklanma yöntemini anlat.",
+     "Gerekirse erkenden iletişim kuracağını söyle."
+    ]
+   },
+   {
+    "id": "u12_6",
+    "soru": "Başkasının eserinden esinlenmek ile kopyalamak arasındaki farkı nasıl görüyorsun?",
+    "neden": "Özgünlük ve etik bilincini ölçerler.",
+    "ipuclari": [
+     "Esinlenmeyi kendi yorumunu katmak olarak tanımla.",
+     "Kaynak göstermenin önemini söyle."
+    ]
+   }
+  ],
+  "U13": [
+   {
+    "id": "u13_1",
+    "soru": "Bir performanstan önce heyecanını nasıl yönetirsin?",
+    "neden": "Stres yönetimini görmek isterler.",
+    "ipuclari": [
+     "Kullandığın hazırlık ve nefes gibi yöntemleri anlat.",
+     "Bir sahne deneyiminden örnek ver."
+    ]
+   },
+   {
+    "id": "u13_2",
+    "soru": "Düzenli çalışma (prova) programını nasıl oluşturursun?",
+    "neden": "Disiplin ve planlamayı ölçerler.",
+    "ipuclari": [
+     "Haftalık rutinini ve hedeflerini anlat.",
+     "Okulla nasıl dengelediğini söyle."
+    ]
+   },
+   {
+    "id": "u13_3",
+    "soru": "Bir topluluk ya da grupla çalışırken uyumu nasıl sağlarsın?",
+    "neden": "Ekip çalışmasını görmek isterler.",
+    "ipuclari": [
+     "Dinlemek, rolünü bilmek, provaya hazırlıklı gelmek gibi davranışları söyle.",
+     "Bir örnek ver."
+    ]
+   },
+   {
+    "id": "u13_4",
+    "soru": "Bir seçmede ya da yarışmada beklediğin sonucu alamadığın bir zamanı anlatır mısın?",
+    "neden": "Dayanıklılığı ölçerler.",
+    "ipuclari": [
+     "Duygunu dürüstçe söyle ve sonra ne yaptığını anlat.",
+     "Bu deneyimden ne öğrendiğini belirt."
+    ]
+   },
+   {
+    "id": "u13_5",
+    "soru": "Sahnede bir hata yaptığında ne yaparsın?",
+    "neden": "Soğukkanlılığı görmek isterler.",
+    "ipuclari": [
+     "Performansı sürdürmenin önemini söyle.",
+     "Sonrasında hatayı nasıl çalıştığını anlat."
+    ]
+   },
+   {
+    "id": "u13_6",
+    "soru": "Sanatını bir meslek olarak sürdürmek için neler yapman gerektiğini düşünüyorsun?",
+    "neden": "Gerçekçi bakış ve planlamayı ölçerler.",
+    "ipuclari": [
+     "Eğitim, ağ kurmak, farklı gelir yolları gibi adımları söyle.",
+     "Umutlu ama gerçekçi bir dil kullan."
+    ]
+   }
+  ],
+  "U14": [
+   {
+    "id": "u14_1",
+    "soru": "Yaşadığın şehirde ya da mahallede değiştirmek istediğin bir alan var mı?",
+    "neden": "Gözlem ve tasarım düşüncesini görmek isterler.",
+    "ipuclari": [
+     "Alanı ve sorunu gözlemle anlat.",
+     "Kullanıcıları düşünerek bir öneri getir."
+    ]
+   },
+   {
+    "id": "u14_2",
+    "soru": "Bir tasarımda estetik ile kullanışlılık çatışırsa nasıl karar verirsin?",
+    "neden": "Denge kurmayı ölçerler.",
+    "ipuclari": [
+     "Kullanıcının ihtiyacını önceleyip estetiği bununla birleştirmeyi anlat.",
+     "Bir örnek ver."
+    ]
+   },
+   {
+    "id": "u14_3",
+    "soru": "Uzun süren bir projede motivasyonunu nasıl korursun?",
+    "neden": "Sabır ve planlamayı görmek isterler.",
+    "ipuclari": [
+     "Projeyi aşamalara bölmeyi anlat.",
+     "Her aşamanın sonunda ilerlemeyi nasıl gördüğünü söyle."
+    ]
+   },
+   {
+    "id": "u14_4",
+    "soru": "Bir binayı ya da mekânı tasarlarken kimleri düşünmek gerekir?",
+    "neden": "Kullanıcı ve erişilebilirlik bilincini ölçerler.",
+    "ipuclari": [
+     "Farklı yaş ve ihtiyaçtaki kullanıcıları say.",
+     "Erişilebilirliğin önemini vurgula."
+    ]
+   },
+   {
+    "id": "u14_5",
+    "soru": "El çizimi ya da bir tasarım programıyla yaptığın bir çalışmayı anlatır mısın?",
+    "neden": "Teknik ve ifade becerisini görmek isterler.",
+    "ipuclari": [
+     "Ne yaptığını ve nasıl yaptığını anlat.",
+     "Öğrendiğin bir tekniği belirt."
+    ]
+   },
+   {
+    "id": "u14_6",
+    "soru": "Çevreye duyarlı tasarım sence ne demek?",
+    "neden": "Sürdürülebilirlik farkındalığını ölçerler.",
+    "ipuclari": [
+     "Enerji, malzeme, doğal ışık gibi örnekler ver.",
+     "Kendi görüşünü kısa tut."
+    ]
+   }
+  ],
+  "U15": [
+   {
+    "id": "u15_1",
+    "soru": "Doğayla, hayvanlarla ya da üretimle ilgili bir deneyimin var mı?",
+    "neden": "Alana ilgini ve deneyimini görmek isterler.",
+    "ipuclari": [
+     "Bahçe, hayvan bakımı, aile işi gibi bir deneyimi anlat.",
+     "Ne öğrendiğini söyle."
+    ]
+   },
+   {
+    "id": "u15_2",
+    "soru": "Hava koşulları ya da beklenmedik bir durum planını bozarsa ne yaparsın?",
+    "neden": "Esneklik ve problem çözmeyi ölçerler.",
+    "ipuclari": [
+     "Plan B oluşturmayı anlat.",
+     "Örnekle destekle."
+    ]
+   },
+   {
+    "id": "u15_3",
+    "soru": "Gıda güvenliği ya da hijyen kuralları neden önemlidir?",
+    "neden": "Güvenlik ve sorumluluk bilincini görmek isterler.",
+    "ipuclari": [
+     "İnsan sağlığını korumayı vurgula.",
+     "Bildiğin birkaç temel kuralı söyle."
+    ]
+   },
+   {
+    "id": "u15_4",
+    "soru": "Erken saatlerde ve açık havada çalışmak hakkında ne düşünüyorsun?",
+    "neden": "Çalışma koşullarına hazırlığı ölçerler.",
+    "ipuclari": [
+     "Dürüst ve gerçekçi ol.",
+     "Bu koşullara nasıl uyum sağlayacağını anlat."
+    ]
+   },
+   {
+    "id": "u15_5",
+    "soru": "Çevreyi korumak için günlük hayatında neler yapıyorsun?",
+    "neden": "Çevre bilincini görmek isterler.",
+    "ipuclari": [
+     "Somut alışkanlıklarını söyle.",
+     "Bunları işe nasıl taşıyabileceğini ekle."
+    ]
+   },
+   {
+    "id": "u15_6",
+    "soru": "Bir üreticiye ya da çiftçiye yeni bir yöntemi nasıl anlatırsın?",
+    "neden": "İletişim ve saygıyı ölçerler.",
+    "ipuclari": [
+     "Deneyimine saygı göstererek dinlemeyi anlat.",
+     "Somut faydayı gösteren basit örnekler kullan."
+    ]
+   }
+  ],
+  "U16": [
+   {
+    "id": "u16_1",
+    "soru": "Kurallara ve prosedürlere tam uymak senin için ne ifade ediyor?",
+    "neden": "Disiplin ve güvenlik bilincini görmek isterler.",
+    "ipuclari": [
+     "Güvenliğin ortak bir sorumluluk olduğunu söyle.",
+     "Kurallara uyduğun bir örnek ver."
+    ]
+   },
+   {
+    "id": "u16_2",
+    "soru": "Stresli bir anda soğukkanlı kaldığın bir zamanı anlatır mısın?",
+    "neden": "Baskı altında karar vermeyi ölçerler.",
+    "ipuclari": [
+     "Durumu ve nasıl sakin kaldığını anlat.",
+     "Sonucu söyle."
+    ]
+   },
+   {
+    "id": "u16_3",
+    "soru": "Farklı milletlerden insanlarla çalışırken iletişimi nasıl kurarsın?",
+    "neden": "Kültürlerarası iletişimi görmek isterler.",
+    "ipuclari": [
+     "Yabancı dil çalışmalarını ve açık iletişimi anlat.",
+     "Saygı ve sabrı vurgula."
+    ]
+   },
+   {
+    "id": "u16_4",
+    "soru": "Uzun süre evden uzak kalmak ya da vardiyalı çalışmak hakkında ne düşünüyorsun?",
+    "neden": "Çalışma koşullarına hazırlığı ölçerler.",
+    "ipuclari": [
+     "Gerçekçi ol ve bununla nasıl başa çıkacağını söyle.",
+     "Ailene ve kendine nasıl zaman ayıracağını ekle."
+    ]
+   },
+   {
+    "id": "u16_5",
+    "soru": "Ekip içinde bir güvenlik riski fark etsen ne yaparsın?",
+    "neden": "Güvenlik iletişimini görmek isterler.",
+    "ipuclari": [
+     "Hemen ve açık biçimde bildireceğini söyle.",
+     "Rütbe ya da kıdem fark etmeksizin konuşmanın önemini vurgula."
+    ]
+   },
+   {
+    "id": "u16_6",
+    "soru": "Yolcu ya da müşteri memnuniyeti ile kurallar çatışırsa ne yaparsın?",
+    "neden": "Denge kurmayı ölçerler.",
+    "ipuclari": [
+     "Güvenlik kurallarının önce geldiğini söyle.",
+     "Nazik ve açıklayıcı bir dille anlatacağını ekle."
+    ]
+   }
+  ],
+  "U17": [
+   {
+    "id": "u17_1",
+    "soru": "Bir misafirin şikâyetini nasıl karşılarsın?",
+    "neden": "Müşteri ilişkileri becerisini görmek isterler.",
+    "ipuclari": [
+     "Dinlemek, özür dilemek, çözüm sunmak ve takip etmek adımlarını anlat.",
+     "Yetkini aşan durumda yöneticiye yönlendireceğini söyle."
+    ]
+   },
+   {
+    "id": "u17_2",
+    "soru": "Yoğun bir günde aynı anda birçok kişiye hizmet vermen gerekse ne yaparsın?",
+    "neden": "Önceliklendirme ve sakinliği ölçerler.",
+    "ipuclari": [
+     "Önceliklendirme ve ekip içi iş birliğini anlat.",
+     "Herkese nazik kalmanın önemini belirt."
+    ]
+   },
+   {
+    "id": "u17_3",
+    "soru": "Hafta sonu ve tatil günlerinde çalışmak hakkında ne düşünüyorsun?",
+    "neden": "Sektöre hazırlığı görmek isterler.",
+    "ipuclari": [
+     "Dürüst ve gerçekçi ol.",
+     "Dengeyi nasıl kuracağını söyle."
+    ]
+   },
+   {
+    "id": "u17_4",
+    "soru": "Farklı kültürlerden misafirlerle iletişimde nelere dikkat edersin?",
+    "neden": "Kültürel duyarlılığı ölçerler.",
+    "ipuclari": [
+     "Saygı, sabır ve yabancı dil çabanı anlat.",
+     "Bir örnek ver."
+    ]
+   },
+   {
+    "id": "u17_5",
+    "soru": "Bir misafiri beklediğinden daha mutlu ettiğin bir zamanı anlatır mısın?",
+    "neden": "Hizmet anlayışını görmek isterler.",
+    "ipuclari": [
+     "Küçük ama anlamlı bir jesti anlat.",
+     "Misafirin tepkisini ve senin öğrendiğini söyle."
+    ]
+   },
+   {
+    "id": "u17_6",
+    "soru": "Hijyen ve düzen kuralları turizmde neden önemlidir?",
+    "neden": "Sorumluluk bilincini ölçerler.",
+    "ipuclari": [
+     "Misafir sağlığını ve güvenini vurgula.",
+     "Bildiğin birkaç kuralı örnek ver."
+    ]
+   }
+  ]
+ }
+}

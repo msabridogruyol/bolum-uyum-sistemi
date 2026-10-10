@@ -59,6 +59,8 @@ const AnketPsikometriSayfasi = lazy(() => import('./pages/admin/AnketPsikometriS
 const IstatistiklerSayfasi = lazy(() => import('./pages/admin/IstatistiklerSayfasi'))   // [2026-10-10]
 const RaporMerkeziSayfasi = lazy(() => import('./pages/admin/RaporMerkeziSayfasi'))     // [2026-10-10]
 const TestGirisSayfasi = lazy(() => import('./pages/TestGirisSayfasi'))
+const IsHayatiSayfasi = lazy(() => import('./pages/IsHayatiSayfasi'))                         // [2026-10-10] İş Hayatı
+const IsHayatiVerileriSayfasi = lazy(() => import('./pages/admin/IsHayatiVerileriSayfasi'))   // [2026-10-10]
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
 function EskiKatmanYonlendir() {
@@ -146,6 +148,7 @@ function AnaUygulama() {
         <Route path="/portfolyo" element={<PortfolyoSayfasi />} />
         <Route path="/anketler" element={<AnketlerSayfasi />} />
         <Route path="/tercih" element={<TercihSayfasi />} />
+        <Route path="/is-hayati" element={<IsHayatiSayfasi />} />
         <Route path="/raporlarim" element={<RaporlarimSayfasi />} />
         <Route path="/hakkinda" element={<SistemHakkindaOgrenci />} />
         <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
@@ -186,6 +189,7 @@ function AnaUygulama() {
         <Route path="test-hesaplari" element={<TestHesaplariSayfasi />} />
         <Route path="koclar" element={<KocYonetimSayfasi />} />
         <Route path="yokatlas" element={<YokatlasEslesmeSayfasi />} />
+        <Route path="is-hayati-verileri" element={<IsHayatiVerileriSayfasi />} />
         <Route path="takvim" element={<GenelTakvimSayfasi />} />
         <Route path="sss" element={<SssSayfasi />} />
         <Route path="kaynakca" element={<KaynakcaSayfasi />} />

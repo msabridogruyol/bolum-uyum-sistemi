@@ -39,6 +39,7 @@ MODULLER = {
     "tercih": {"ad": "Tercih dönemi", "ikon": "🎓", "aciklama": "12. sınıf ve mezunlar için tercih listesi hazırlama (güvenli / dengeli / riskli), bölüm uyumu ve rehber onayı"},
     "mezun_takibi": {"ad": "Mezun takibi", "ikon": "🎉", "aciklama": "Mezunların yerleştiği bölümler, hedefle ve Filizyol önerileriyle uyum oranları"},
     "gelismis_raporlar": {"ad": "Gelişmiş raporlar", "ikon": "🗂️", "aciklama": "Şube toplu raporları ve sınıf öğretmeni raporu"},
+    "is_hayati": {"ad": "İş Hayatı", "ikon": "💼", "aciklama": "Bölüm ve mesleklerin iş hayatındaki gerçekleri: mezun istihdamı, iş bulma süresi, kazanç (TÜİK), kamu maaşları, ilk maaşla yaşam giderleri; CV ve mülakat atölyeleri"},
 }
 TUMU = list(MODULLER)
 # [2026-10-10] modül → çalışması için gereken modül

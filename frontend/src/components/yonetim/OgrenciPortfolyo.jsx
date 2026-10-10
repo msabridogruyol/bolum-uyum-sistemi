@@ -2,10 +2,13 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { KayitKarti } from '../../pages/PortfolyoSayfasi'
+import { useOkulModulleri } from '../../yardimci/moduller'
+import OgrenciCv from './OgrenciCv'
 
 export default function OgrenciPortfolyo({ ogrenciId }) {
   const [v, setV] = useState(null)
   const [hata, setHata] = useState(null)
+  const modulAcik = useOkulModulleri()   // [2026-10-10] İş Hayatı → paylaşılan CV
   const yukle = useCallback(() => api.ogrenciPortfolyosu(ogrenciId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')), [ogrenciId])
   useEffect(() => { yukle() }, [yukle])
   if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
@@ -18,6 +21,7 @@ export default function OgrenciPortfolyo({ ogrenciId }) {
         <button className="rd-dugme" onClick={() => api.ogrenciOzgecmisPdf(ogrenciId).catch((e) => setHata(e.detail || 'İndirilemedi.'))}>📄 Özgeçmiş (PDF)</button>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
+      {modulAcik('is_hayati') && <OgrenciCv ogrenciId={ogrenciId} />}
       {v.profil.hakkimda && <div className="yp-kutu" style={{ marginBottom: 10, fontSize: 13, lineHeight: 1.55 }}>{v.profil.hakkimda}</div>}
       {v.kayitlar.length === 0 ? <div className="bos-durum">Öğrenci portfolyosuna henüz kayıt eklememiş.</div>
         : v.kayitlar.map((k) => (

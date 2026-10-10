@@ -318,6 +318,51 @@ export const api = {
   kocTalebiGuncelle: (id, veri) => aput(`/yonetim/koc-talep/${id}`, veri),
   // [2026-10-10] YÖK Atlas eşleştirme (süper admin)
   yokatlasEslesme: () => aget('/admin/yokatlas/eslesme'),
+  // [2026-10-10] İş Hayatı — öğrenci (modül: is_hayati) ve süper admin veri yönetimi
+  isHayatiOzet: () => get('/ogrenci/is-hayati/ozet'),
+  isHayatiBolum: (bolumId) => get(`/ogrenci/is-hayati/bolum/${bolumId}`),
+  isHayatiGiderler: (il) => get(`/ogrenci/is-hayati/giderler${il ? `?il=${encodeURIComponent(il)}` : ''}`),
+  isHayatiGercek: (bolumId) => get(`/ogrenci/is-hayati/gercek/${bolumId}`),   // [2026-10-10] Beklenti ve Gerçek
+  isHayatiGercekKaydet: (bolumId, tahminler) => post(`/ogrenci/is-hayati/gercek/${bolumId}`, { tahminler }),
+  isHayatiYol: (bolumId) => get(`/ogrenci/is-hayati/yol/${bolumId}`),   // [2026-10-10] Mesleğe Giden Yol
+  isHayatiZorGun: (bolumId) => get(`/ogrenci/is-hayati/zor-gun/${bolumId}`),   // [2026-10-10] Zor Günler
+  isHayatiZorGunTur: (bolumId, meslek) => get(`/ogrenci/is-hayati/zor-gun/${bolumId}/tur${meslek ? `?meslek=${encodeURIComponent(meslek)}` : ''}`),
+  isHayatiZorGunKaydet: (v) => post('/ogrenci/is-hayati/zor-gun', v),
+  isHayatiDersler: () => get('/ogrenci/is-hayati/dersler'),   // [2026-10-10] Okulda Öğretilmeyenler
+  isHayatiDersSinav: (kod, cevaplar) => post(`/ogrenci/is-hayati/dersler/${kod}/sinav`, { cevaplar }),
+  isHayatiMulakat: (bolumId) => get(`/ogrenci/is-hayati/mulakat${bolumId ? `?bolum_id=${bolumId}` : ''}`),   // [2026-10-10] Mülakat Pratiği
+  isHayatiMulakatKaydet: (v) => post('/ogrenci/is-hayati/mulakat/pratik', v),
+  isHayatiMulakatGeriBildirim: (id) => post(`/ogrenci/is-hayati/mulakat/pratik/${id}/geri-bildirim`, {}),
+  isHayatiMulakatGecmis: () => get('/ogrenci/is-hayati/mulakat/gecmis'),
+  isHayatiMulakatSil: (id) => del(`/ogrenci/is-hayati/mulakat/pratik/${id}`),
+  // [2026-10-10] İş Hayatı → CV Atölyesi ve Mezunlardan
+  isHayatiCv: () => get('/ogrenci/is-hayati/cv'),
+  isHayatiCvKaydet: (icerik, paylas) => put('/ogrenci/is-hayati/cv', { icerik, paylas }),
+  isHayatiCvSil: () => del('/ogrenci/is-hayati/cv'),
+  isHayatiCvPdf: () => dosyaIndir('/ogrenci/is-hayati/cv/pdf'),
+  isHayatiCvIlanlar: (bolumId) => get(`/ogrenci/is-hayati/cv/ilanlar${bolumId ? `?bolum_id=${bolumId}` : ''}`),
+  isHayatiMezunHikayeleri: (bolumId) => get(`/ogrenci/is-hayati/mezun/hikayeler${bolumId ? `?bolum_id=${bolumId}` : ''}`),
+  isHayatiOgrenciCv: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/is-hayati-cv`),
+  isHayatiOgrenciCvPdf: (ogrenciId) => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/is-hayati-cv/pdf`, 'admin'),
+  isHayatiMezunHikayeleriOkul: (okulId) => aget(`/yonetim/okul/${okulId}/mezun-hikayeleri`),
+  isHayatiMezunHikayesiEkle: (okulId, v) => apost(`/yonetim/okul/${okulId}/mezun-hikayeleri`, v),
+  isHayatiMezunHikayesiDuzenle: (okulId, id, v) => aput(`/yonetim/okul/${okulId}/mezun-hikayeleri/${id}`, v),
+  isHayatiMezunHikayesiSil: (okulId, id) => adel(`/yonetim/okul/${okulId}/mezun-hikayeleri/${id}`),
+  ihVeriOzet: () => aget('/admin/is-hayati/ozet'),
+  ihDosyaOku: (v) => apost('/admin/is-hayati/dosya/oku', v),
+  ihIstihdamOnizle: (v) => apost('/admin/is-hayati/istihdam/onizle', v),
+  ihIstihdamKaydet: (v) => apost('/admin/is-hayati/istihdam/kaydet', v),
+  ihKazancOnizle: (v) => apost('/admin/is-hayati/kazanc/onizle', v),
+  ihKazancKaydet: (v) => apost('/admin/is-hayati/kazanc/kaydet', v),
+  ihYuklemeler: () => aget('/admin/is-hayati/yuklemeler'),
+  ihYuklemeSil: (id) => adel(`/admin/is-hayati/yuklemeler/${id}`),
+  ihKayitlar: (tablo, f = {}) => aget(`/admin/is-hayati/kayit/${tablo}?${new URLSearchParams(Object.entries(f).filter(([, v]) => v !== '' && v != null)).toString()}`),
+  ihKayitEkle: (tablo, veri) => apost(`/admin/is-hayati/kayit/${tablo}`, { veri }),
+  ihKayitDuzenle: (tablo, id, veri) => aput(`/admin/is-hayati/kayit/${tablo}/${id}`, { veri }),
+  ihKayitSil: (tablo, id) => adel(`/admin/is-hayati/kayit/${tablo}/${id}`),
+  ihMeslekIsco: (f = {}) => aget(`/admin/is-hayati/meslek-isco?${new URLSearchParams(Object.entries(f).filter(([, v]) => v !== '' && v != null)).toString()}`),
+  ihMeslekIscoKaydet: (meslekAdi, iscoKodu) => aput('/admin/is-hayati/meslek-isco', { meslek_adi: meslekAdi, isco_kodu: iscoKodu || null }),
+  ihMeslekIscoJson: () => apost('/admin/is-hayati/meslek-isco/json-yukle'),
   yokatlasEslestir: (bolumId, gruplar) => aput(`/admin/yokatlas/bolum/${bolumId}`, { gruplar }),
   // [2026-10-10] Takvim, Kütüphanem, görev geçmişi
   takvim: () => get('/ogrenci/takvim'),

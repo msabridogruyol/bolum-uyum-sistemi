@@ -12,7 +12,7 @@ export const OKUL_BOLUMLERI = [
   { k: 'rehberlik', ad: 'Rehberlik', ikon: '🧭', grup: 'Rehberlik Servisi', modul: 'rehberlik', aciklama: 'Dikkat gerektiren öğrenciler, görüşme kayıtları, randevular ve takipler' },
   { k: 'anketler', ad: 'Anketler', ikon: '📋', grup: 'Rehberlik Servisi', okul: true, modul: 'anketler', aciklama: 'Okulun anketleri ve tarama formları; yanıtlar ve sonuçlar' },
   { k: 'tercih', ad: 'Tercih Dönemi', ikon: '🎓', grup: 'Rehberlik Servisi', okul: true, modul: 'tercih', aciklama: '12. sınıf ve mezunların tercih listeleri; inceleme ve onay' },
-  { k: 'mezunlar', ad: 'Mezunlar', ikon: '🎉', grup: 'Rehberlik Servisi', okul: true, modul: 'mezun_takibi', aciklama: 'Mezunların yerleştiği bölümler ve hedef / öneri uyumu' },
+  { k: 'mezunlar', ad: 'Mezunlar', ikon: '🎉', grup: 'Rehberlik Servisi', okul: true, modul: 'mezun_takibi', aciklama: 'Mezunların yerleştiği bölümler, hedef / öneri uyumu ve öğrencilere gösterilen mezun hikâyeleri' },
   { k: 'kulupler', ad: 'Kulüpler', ikon: '🎭', grup: 'Okul Yaşamı', okul: true, modul: 'kulupler', aciklama: 'Okul kulüpleri ve öğrencilerin ilgi testi sonuçları' },
   { k: 'takvim', ad: 'Takvim', ikon: '📅', grup: 'Okul Yaşamı', okul: true, modul: 'takvim', aciklama: 'Öğrencilerin takviminde görünen okul etkinlikleri' },
   { k: 'bilgiler', ad: 'Okul Bilgileri', ikon: '🏫', grup: 'Okul Ayarları', okul: true, aciklama: 'Okulun tanıtım bilgileri' },

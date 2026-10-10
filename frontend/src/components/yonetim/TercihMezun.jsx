@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { Pencere } from './ortak'
 import { RiskOzeti, TercihTablosu } from '../../pages/TercihSayfasi'
+import MezunHikayeleriYonetim from './MezunHikayeleriYonetim'
 
 const DURUM_RENK = { taslak: 'var(--tx3)', incelemede: 'var(--am)', onaylandi: 'var(--gr)', duzeltme: 'var(--re)' }
 
@@ -127,7 +128,21 @@ function MezunFormu({ v, mevcut, onKapat, onKaydet }) {
 
 const yuzde = (a, b) => (b ? `%${Math.round((100 * a) / b)}` : '—')
 
+// [2026-10-10] Mezunlar bölümü iki alt sekme: yerleşme kayıtları ve (İş Hayatı için) mezun hikâyeleri
 export function Mezunlar({ okulId }) {
+  const [alt, setAlt] = useState('kayitlar')
+  return (
+    <>
+      <div className="yp-sekmeler" role="tablist">
+        <button role="tab" aria-selected={alt === 'kayitlar'} className={alt === 'kayitlar' ? 'aktif' : ''} onClick={() => setAlt('kayitlar')}>🎉 Yerleşme kayıtları</button>
+        <button role="tab" aria-selected={alt === 'hikayeler'} className={alt === 'hikayeler' ? 'aktif' : ''} onClick={() => setAlt('hikayeler')}>💬 Mezun hikâyeleri</button>
+      </div>
+      {alt === 'kayitlar' ? <MezunKayitlari okulId={okulId} /> : <MezunHikayeleriYonetim okulId={okulId} />}
+    </>
+  )
+}
+
+function MezunKayitlari({ okulId }) {
   const [v, setV] = useState(null)
   const [form, setForm] = useState(null)
   const [yil, setYil] = useState('')

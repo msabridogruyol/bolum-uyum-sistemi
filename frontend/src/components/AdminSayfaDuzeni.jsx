@@ -30,6 +30,7 @@ const SUPER_MENU = [
   { grup: 'İçerik', baglantilar: [
     ['/admin/bolumler', '🎓', 'Bölümler'],
     ['/admin/yokatlas', '🔗', 'YÖK Atlas Eşleştirme'],
+    ['/admin/is-hayati-verileri', '💼', 'İş Hayatı Verileri'],
     ['/admin/meslek-dili', '🗣️', 'Meslek Dili Sözlüğü'],
     ['/admin/konular', '📝', 'Konu Listesi (Net Takibi)'],
     ['/admin/dallar', '🌿', 'Dallar (K5)'],

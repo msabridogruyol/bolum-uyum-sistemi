@@ -38,11 +38,12 @@ export function useModuller() {
 export const YOL_MODULU = {
   '/koclugu': 'kocluk', '/gorevler': 'kocluk', '/netlerim': 'net_takibi', '/kutuphane': 'kutuphane',
   '/takvim': 'takvim', '/calisma': 'calisma', '/portfolyo': 'portfolyo', '/anketler': 'anketler', '/tercih': 'tercih', '/raporlarim': 'ogrenci_raporlari', '/kulupler': 'kulupler', '/koclar': 'egitim_koclari',
+  '/is-hayati': 'is_hayati',
 }
 
 export const MODUL_ADI = {
   kocluk: 'Kişisel Koçluk', takvim: 'Takvim', kutuphane: 'Kütüphane', kulupler: 'Kulüpler', filiz: 'Filiz',
-  net_takibi: 'Net Takibi', akran: 'Şube ve Akran Analizi', egitim_koclari: 'Eğitim Koçları', ogrenci_raporlari: 'Raporlarım', rehberlik: 'Rehberlik', calisma: 'Çalışmam', portfolyo: 'Portfolyom', anketler: 'Anketler', tercih: 'Tercihlerim', mezun_takibi: 'Mezun takibi', gelismis_raporlar: 'Gelişmiş Raporlar',
+  net_takibi: 'Net Takibi', akran: 'Şube ve Akran Analizi', egitim_koclari: 'Eğitim Koçları', ogrenci_raporlari: 'Raporlarım', rehberlik: 'Rehberlik', calisma: 'Çalışmam', portfolyo: 'Portfolyom', anketler: 'Anketler', tercih: 'Tercihlerim', mezun_takibi: 'Mezun takibi', gelismis_raporlar: 'Gelişmiş Raporlar', is_hayati: 'İş Hayatı',
 }
 
 // Yönetim tarafı: okul panelinde açık okulun modülleri (okul_ozeti.moduller). Sağlayıcı yoksa her şey açık.

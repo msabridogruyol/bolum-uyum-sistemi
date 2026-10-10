@@ -55,6 +55,8 @@ from app.api.kulupler import ogrenci_router as kulup_ogrenci_router, router as k
 from app.api.test_hesaplari import router as test_hesaplari_router, giris_router as test_giris_router
 from app.api.anket_psikometri import router as anket_psikometri_router   # [2026-10-10]
 from app.api.sistem_istatistik import router as sistem_istatistik_router   # [2026-10-10] süper admin İstatistikler / Rapor Merkezi
+from app.api.is_hayati import router as is_hayati_router, ek_yonetim_routerlari as is_hayati_ek_routerlar   # [2026-10-10] İş Hayatı (öğrenci)
+from app.api.admin_is_hayati import router as admin_is_hayati_router   # [2026-10-10] İş Hayatı Verileri (süper admin)
 app = FastAPI(
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
@@ -269,6 +271,10 @@ app.include_router(test_hesaplari_router)                    # [2026-10-10] /yon
 app.include_router(anket_psikometri_router)                  # [2026-10-10] /yonetim/anket-psikometri (süper admin)
 app.include_router(sistem_istatistik_router)                 # [2026-10-10] /yonetim/istatistik/genel (+ /excel), /istatistik/dikkat, /audit-log/excel
 app.include_router(test_giris_router)                        # [2026-10-10] POST /auth/test-giris
+app.include_router(is_hayati_router, dependencies=[_Dep(ogrenci_modulu("is_hayati"))])   # [2026-10-10] /ogrenci/is-hayati/* (+ is_hayati_*.py alt modülleri)
+app.include_router(admin_is_hayati_router)                   # [2026-10-10] /admin/is-hayati/* (süper admin)
+for _r in is_hayati_ek_routerlar:                            # alt modüllerin yönetim router'ları (kendi prefix + yetkileri)
+    app.include_router(_r)
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
 # yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi,
