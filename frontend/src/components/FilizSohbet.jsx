@@ -38,7 +38,7 @@ export default function FilizSohbet() {
   const girdiRef = useRef(null)
   const bekleyenMesaj = useRef(null)
   // [2026-10-10] Geçmiş sohbetler: liste → okuma → "bu sohbetten devam et"
-  const [gorunum, setGorunum] = useState('sohbet')   // sohbet | gecmis | okuma
+  const [gorunum, setGorunum] = useState('sohbet')   // sohbet | sorular | gecmis | okuma
   const [gecmis, setGecmis] = useState(null)
   const [okunan, setOkunan] = useState(null)
   const baglamRef = useRef(null)
@@ -109,7 +109,7 @@ export default function FilizSohbet() {
         cevap = await api.aiKocMesajGonder(id, metin, konum.pathname)
       }
       setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti, otomatik: cevap.otomatik }])
-      setDurum((d) => (d ? { ...d, kalan: Math.max(0, d.kalan - 1) } : d))
+      setDurum((d) => (d && d.mod !== 'otomatik' ? { ...d, kalan: Math.max(0, d.kalan - 1) } : d))
       if (cevap.oturum_kapandi_mi) {
         setOturumId(null)
         setMesajlar((m) => [...m, { rol: 'not', icerik: 'Bu sohbeti özetledim; kaldığımız yerden yeni bir sohbetle devam edebiliriz.' }])
@@ -179,11 +179,33 @@ export default function FilizSohbet() {
             </div>
             <div style={{ display: 'flex', gap: 4 }}>
               {gorunum !== 'sohbet' && <button className="filiz-ikon-btn" title="Sohbete dön" onClick={() => setGorunum('sohbet')}>←</button>}
-              {gorunum === 'sohbet' && hazir && <button className="filiz-ikon-btn" title="Geçmiş sohbetler" onClick={gecmisiAc}>🕘</button>}
               {gorunum === 'sohbet' && mesajlar.length > 0 && !pasif && <button className="filiz-ikon-btn" title="Yeni sohbet" onClick={sohbetiSifirla}>↺</button>}
               <button className="filiz-ikon-btn" title="Kapat (Esc)" onClick={() => setAcik(false)}>✕</button>
             </div>
           </div>
+
+          {/* [2026-10-10] Sekmeler: Sohbet · Sorabileceklerin · Geçmiş */}
+          {hazir && !pasif && (
+            <div className="filiz-sekmeler" role="tablist">
+              <button role="tab" aria-selected={gorunum === 'sohbet'} className={gorunum === 'sohbet' ? 'aktif' : ''} onClick={() => setGorunum('sohbet')}>💬 Sohbet</button>
+              <button role="tab" aria-selected={gorunum === 'sorular'} className={gorunum === 'sorular' ? 'aktif' : ''} onClick={() => setGorunum('sorular')}>❓ Sorabileceklerin</button>
+              <button role="tab" aria-selected={gorunum === 'gecmis' || gorunum === 'okuma'} className={gorunum === 'gecmis' || gorunum === 'okuma' ? 'aktif' : ''} onClick={gecmisiAc}>🕘 Geçmiş</button>
+            </div>
+          )}
+
+          {gorunum === 'sorular' && (
+            <div className="filiz-mesajlar">
+              <div className="filiz-sorular-bas">Bir soruya dokun, Filiz hemen cevaplasın.{otomatik ? ' Otomatik rehber modunda bu sorular en iyi sonucu verir.' : ' Kendi cümlelerinle de sorabilirsin.'}</div>
+              {(durum?.soru_kategorileri || []).map((k) => (
+                <div key={k.ad} className="filiz-soru-grup">
+                  <div className="filiz-soru-grup-ad">{k.ikon} {k.ad}</div>
+                  {k.sorular.map((q) => (
+                    <button key={q} className="filiz-soru" disabled={hakBitti || gonderiliyor} onClick={() => { setGorunum('sohbet'); gonder(q) }}>{q}<span>→</span></button>
+                  ))}
+                </div>
+              ))}
+            </div>
+          )}
 
           {gorunum === 'gecmis' && (
             <div className="filiz-mesajlar">
@@ -243,6 +265,7 @@ export default function FilizSohbet() {
                   {oneriler.map((o) => (
                     <button key={o} className="filiz-oneri" onClick={() => gonder(o)} disabled={hakBitti}>{o}</button>
                   ))}
+                  {durum?.soru_kategorileri?.length > 0 && <button className="filiz-tum-sorular" onClick={() => setGorunum('sorular')}>❓ Sorabileceğin tüm soruları gör</button>}
                 </div>
               </div>
             )}
@@ -284,7 +307,7 @@ export default function FilizSohbet() {
           )}
           {durum?.aktif && (
             <div className="filiz-alt">
-              {durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı` : 'Bugünlük mesaj hakkın doldu'} · {otomatik ? 'Otomatik rehber: cevaplar sistemdeki sonuçlarına göre hazırlanır.' : 'Filiz Gelişim Koçu bir yapay zekâ asistanıdır, hata yapabilir.'}
+              {otomatik ? '' : (durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı · ` : 'Bugünlük mesaj hakkın doldu · ')}{otomatik ? 'Otomatik rehber: cevaplar sistemdeki sonuçlarına göre hazırlanır.' : 'Filiz Gelişim Koçu bir yapay zekâ asistanıdır, hata yapabilir.'}
             </div>
           )}
         </div>
@@ -295,6 +318,16 @@ export default function FilizSohbet() {
 }
 
 const FILIZ_CSS = `
+.filiz-sekmeler{display:flex;gap:2px;padding:6px 8px 0;border-bottom:1px solid var(--bor);background:var(--sur)}
+.filiz-sekmeler button{flex:1;background:none;border:0;border-bottom:2.5px solid transparent;padding:8px 4px;font:inherit;font-size:12.5px;font-weight:700;color:var(--tx3);cursor:pointer;white-space:nowrap}
+.filiz-sekmeler button.aktif{color:var(--tx);border-bottom-color:var(--pu)}
+.filiz-sorular-bas{font-size:12.5px;color:var(--tx2);line-height:1.5;margin-bottom:6px}
+.filiz-soru-grup{margin-bottom:10px}
+.filiz-soru-grup-ad{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.05em;color:var(--pu);margin:6px 0}
+.filiz-soru{display:flex;justify-content:space-between;align-items:center;gap:8px;width:100%;text-align:left;font:inherit;font-size:13px;padding:9px 12px;margin-bottom:5px;border:1px solid var(--bor);border-radius:12px;background:var(--sur);color:var(--tx);cursor:pointer}
+.filiz-soru:hover{border-color:var(--pu);background:color-mix(in srgb, var(--pu) 6%, var(--sur))}
+.filiz-soru span{color:var(--tx3)}
+.filiz-tum-sorular{background:none;border:0;font:inherit;font-size:12.5px;font-weight:700;color:var(--pu);cursor:pointer;margin-top:4px}
 .filiz-oto-serit{font-size:11.5px;line-height:1.45;color:var(--tx2);background:color-mix(in srgb, var(--tl) 10%, var(--sur));border-bottom:1px solid var(--bor);padding:7px 12px}
 .filiz-oto-etiket{display:block;margin-top:6px;font-size:10.5px;font-weight:700;color:var(--tx3)}
 .filiz-cipler{display:flex;flex-wrap:wrap;gap:6px;margin:4px 0 2px}
