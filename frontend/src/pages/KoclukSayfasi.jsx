@@ -154,7 +154,10 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
       )}
 
       {formAcik && !bitti ? (
-        <TamamlaFormu adim={adim} onKaydet={(gb) => durumGonder('tamamlandi', gb)} onVazgec={() => setFormAcik(false)} />
+        <>
+          <TamamlaFormu adim={adim} onKaydet={(gb) => durumGonder('tamamlandi', gb)} onVazgec={() => setFormAcik(false)} />
+          {hata && <div className="auth-error" style={{ marginTop: 6, fontSize: 12 }}>{hata}</div>}
+        </>
       ) : (
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
         {bitti ? (
