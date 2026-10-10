@@ -2,6 +2,7 @@
 // Sekme içerikleri mevcut sayfaların kendisi (gömülü modda: kendi başlıkları/geri butonları gizli).
 import { lazy, Suspense } from 'react'
 import { NavLink, Navigate, useParams } from 'react-router-dom'
+import PuanRehberi from '../components/PuanRehberi'
 
 const GenelSonuclarSayfasi = lazy(() => import('./GenelSonuclarSayfasi'))
 const KatmanDetaySayfasi = lazy(() => import('./KatmanDetaySayfasi'))
@@ -35,6 +36,7 @@ export default function ProfilimSayfasi() {
           </NavLink>
         ))}
       </nav>
+      <PuanRehberi bolumlu={false} baslik="Güçlü, çok güçlü, gelişime açık ne demek? Profilini nasıl okumalısın?" />
       <div className="gomulu-sayfa" key={k || 'genel'}>
         <Suspense fallback={<div className="bos-durum">Yükleniyor…</div>}>
           {!k && <GenelSonuclarSayfasi gomulu />}

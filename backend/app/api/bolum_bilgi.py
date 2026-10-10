@@ -44,6 +44,15 @@ def bolum_bilgi(bolum_id: int, db: Session = Depends(get_db), ogrenci=Depends(ge
     b = _bolum(db, bolum_id)
     e = db.query(BolumDalEslesme).filter(BolumDalEslesme.bolum_id == b.id).first()
     dal = db.get(Dal, e.dal_id) if e else None
+    # [2026-10-10] Haftalık keşif görevi: öğrenci bu bölümün bilgi kartını açınca tamamlanır
+    # (eskiden örnek meslekler ucuna bağlıydı; o uç artık ekrandan çağrılmıyordu → görev hiç tamamlanmıyordu)
+    if ogrenci is not None and getattr(ogrenci, "__tablename__", "") == "ogrenciler":
+        try:
+            from app.core.haftalik_servisi import kesif_isaretle
+            if kesif_isaretle(db, ogrenci, b.id):
+                db.commit()
+        except Exception:
+            db.rollback()
     return {
         "bolum_id": b.id, "ad": b.ad, "kisa_aciklama": b.kisa_aciklama, "detay": b.detay,
         # Meslek dili: öğrencinin okuluna özel sürüm varsa o, yoksa genel/varsayılan

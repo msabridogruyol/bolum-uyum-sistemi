@@ -97,8 +97,9 @@ def _yolculuk_gorevi(db: Session, ogrenci: Ogrenci) -> dict | None:
         biten = _tamamlanan_katman_idleri(db, ogrenci, tur.id) if tur else set()
         sonraki = next((k for k in katmanlar if k.id not in biten), None)
         if sonraki is not None:
+            kalan = len([k for k in katmanlar if k.id not in biten])
             return {"tur": "katman", "baslik": f"{sonraki.kod} · {sonraki.ad} katmanını tamamla",
-                    "aciklama": "Yaklaşık 5 dakika. Samimi cevap ver, doğru ya da yanlış cevap yok.",
+                    "aciklama": f"Yaklaşık 5 dakika. Bölüm önerilerin için {kalan} katman kaldı; samimi cevap ver, doğru ya da yanlış yok.",
                     "ref_kod": sonraki.kod, "link": "/katmanlar"}
         return None
     if bekleyen_dal_var_mi(db, ogrenci, tur):
@@ -108,8 +109,8 @@ def _yolculuk_gorevi(db: Session, ogrenci: Ogrenci) -> dict | None:
     hedef = aktif_hedef_getir(db, ogrenci)
     if hedef is None:
         return {"tur": "hedef", "baslik": "Önerilen bölümlerinden birini hedef seç",
-                "aciklama": "Hedef seçince sana özel adım adım bir gelişim planı hazırlanır.",
-                "link": "/koclugu"}
+                "aciklama": "Önce Bölümler > Sana uygun listesine bak, ilgini çekeni ☆ ile listene ekle; birini hedef yapınca sana özel adım adım plan hazırlanır.",
+                "link": "/bolumler"}
     try:
         satirlar = gap_analizi_hesapla(db, ogrenci, tur, hedef.bolum_id)
         plan = gelisim_plani_olustur(db, ogrenci, hedef.bolum_id, satirlar)
@@ -120,9 +121,11 @@ def _yolculuk_gorevi(db: Session, ogrenci: Ogrenci) -> dict | None:
         adim = next((a for g in plan.get("guclu_yonler", []) for a in g["adimlar"] if a["durum"] != "tamamlandi"), None)
     if adim is None:
         return None
-    return {"tur": "plan_adimi", "baslik": adim["baslik"],
-            "aciklama": f"{adim['degisken_adi']} · {adim['sure']}. Başarı ölçütü: {adim['olcut']}",
-            "ref_kod": adim["kod"], "ref_bolum_id": hedef.bolum_id, "link": "/koclugu"}
+    neden = next((o.get("neden_onemli") for o in plan.get("odak_alanlari", []) if o.get("degisken_kod") == adim.get("degisken_kod")), None)
+    aciklama = f"{adim['degisken_adi']} · ⏱ {adim['sure']}. "
+    aciklama += (f"Neden: {neden.split('. ')[0].rstrip('.')}." if neden else f"Hedefin {plan.get('hedef_bolum_adi', '')} için bu alanı güçlendiriyorsun.")
+    return {"tur": "plan_adimi", "baslik": adim["baslik"], "aciklama": aciklama[:400],
+            "ref_kod": adim["kod"], "ref_bolum_id": hedef.bolum_id, "link": "/koclugu?sekme=yol"}
 
 
 def _kesif_gorevi(db: Session, ogrenci: Ogrenci, hafta: date, haric: set | None = None) -> dict | None:
@@ -160,16 +163,18 @@ def _kesif_gorevi(db: Session, ogrenci: Ogrenci, hafta: date, haric: set | None 
     ad = _turkce_baslik(bolum.ad)
     if bolum.id in sira_bilgisi:
         sira, uyum = sira_bilgisi[bolum.id]
-        aciklama = f"Önerilerinde {sira}. sırada (%{round(uyum)} uyum). Profiline ve örnek mesleklerine bak."
+        aciklama = (f"Önerilerinde {sira}. sırada (%{round(uyum)} uyum). Bilgi kartını aç: mezunların ne iş yaptığına "
+                    f"ve 'Meslek Dili'nden 3 terime bak. İlgini çekerse ☆ ile listene ekle.")
     else:
-        aciklama = "Bölümün profiline ve örnek mesleklerine bak; ilgini çekiyor mu, düşün."
+        aciklama = ("Yeni bir bölüm tanı: bilgi kartını aç, mezunların ne iş yaptığına ve 'Meslek Dili'nden 3 terime bak. "
+                    "İlgini çekerse ☆ ile listene ekle.")
     return {"tur": "kesif", "baslik": f"Keşfet: {ad}", "aciklama": aciklama, "ref_bolum_id": bolum.id,
             "link": f"/bolumler/tum?bolum={bolum.id}&ara={quote(bolum.ad)}"}
 
 
 def _yansitma_gorevi() -> dict:
     return {"tur": "yansitma", "baslik": "Haftanı 2 dakikada değerlendir",
-            "aciklama": "3 kısa soru: neyi iyi yaptın, nerede zorlandın, gelecek hafta hedefin ne?"}
+            "aciklama": "3 kısa soru: neyi iyi yaptın, nerede zorlandın, gelecek hafta hedefin ne? Cevapların Filiz'in sana önerilerini kişiselleştirir."}
 
 
 def _gorevleri_olustur(db: Session, ogrenci: Ogrenci, hafta: date) -> None:
