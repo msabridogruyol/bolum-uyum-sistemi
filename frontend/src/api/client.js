@@ -158,7 +158,6 @@ export const api = {
   profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
   meslekAra: (q) => get(`/ogrenci/meslek-ara?q=${encodeURIComponent(q)}`),
   katmanSonucuGetir: (kod) => get(`/ogrenci/katmanlar/${kod}/sonuc`),
-  bolumOrnekMeslekleriGetir: (bolumId) => get(`/ogrenci/sonuc/kesfet/${bolumId}/meslekler`),
 
   // --- Bölüm F: Koçluk ---
   aktifHedefGetir: () => get('/koclugu/hedef'),
@@ -166,8 +165,6 @@ export const api = {
   hedefDurumGetir: () => get('/koclugu/hedef/durum'),
   ilhamKaynaklariGetir: () => get('/koclugu/hedef/kaynaklar'),
   gelisimAnaliziGetir: () => get('/koclugu/hedef/gelisim'),
-  yolHaritasiGetir: () => get('/koclugu/hedef/yol-haritasi'),
-  aksiyonDurumuGuncelle: (degiskenId, durum) => post(`/koclugu/hedef/aksiyon/${degiskenId}`, { durum }),
   gelisimPlaniGetir: () => get('/koclugu/hedef/plan'),
   adimDurumuGuncelle: (adimKodu, durum) => post(`/koclugu/hedef/adim/${adimKodu}`, { durum }),
   turKarsilastirmasiGetir: () => get('/koclugu/karsilastirma'),
@@ -175,7 +172,6 @@ export const api = {
   aiKocMesajGonder: (oturumId, mesaj, sayfa) => post(`/koclugu/asistan/oturum/${oturumId}/mesaj`, { mesaj, sayfa: sayfa ?? null }),
   aiKocDurum: () => get('/koclugu/asistan/durum'),
   aiKocOturumuBitir: (oturumId) => post(`/koclugu/asistan/oturum/${oturumId}/bitir`, {}),
-  aiKocGecmisiGetir: () => get('/koclugu/asistan/gecmis'),
 
   // --- [2026-10-04] Haftalık görevler + seri + Filiz seviyesi ---
   haftalikGetir: () => get('/haftalik'),
@@ -202,10 +198,8 @@ export const api = {
   // --- Admin: E1-E9 ---
   kontrolPaneli: () => aget('/admin/kontrol-paneli'),
   kullanimIstatistikleriGetir: () => aget('/admin/kullanim-istatistikleri'),
-  pipelineDurumu: () => aget('/admin/pipeline-durumu'),
   pipelineCiktisiYukle: (satirlar) => apost('/admin/pipeline/yukle', { satirlar }),
   pipelineTaslaklariListele: () => aget('/admin/pipeline/taslaklar'),
-  pipelineTaslakDetayi: (grup) => aget(`/admin/pipeline/taslaklar/${grup}`),
   pipelineTaslaginiOnayla: (grup) => apost(`/admin/pipeline/taslaklar/${grup}/onayla`),
   pipelineTaslaginiReddet: (grup) => apost(`/admin/pipeline/taslaklar/${grup}/reddet`),
   parametreleriListele: () => aget('/admin/parametreler'),
@@ -218,8 +212,6 @@ export const api = {
   bolumAciklamalariniTopluGuncelle: (satirlar) => apost('/admin/bolumler/toplu-aciklama', { satirlar }),
   soruGecerlilikYukle: (sonuclar) => apost('/admin/soru-gecerlilik/yukle', { sonuclar }),
   soruGecerlilikGetir: () => aget('/admin/soru-gecerlilik'),
-  gecerlilikTestGirdisiGetir: () => aget('/admin/sorular/gecerlilik-girdisi'),
-  degiskenleriListele: () => aget('/admin/degiskenler'),
   guvenlikTurlariniListele: (yalnizGecersiz, enAzKritikOlay) => {
     const p = new URLSearchParams()
     if (yalnizGecersiz) p.set('yalniz_gecersiz', 'true')
@@ -311,28 +303,11 @@ export const api = {
   gecerlilikSonuclariniTemizle: () => adel('/admin/gecerlilik-girdisi-v2/sonuclar'),
   gecerlilikAnaliziniGetir: () => aget('/admin/gecerlilik-girdisi-v2/analiz'),
   sorulariTopluYukle: (satirlar) => apost('/admin/sorular/toplu', { satirlar }),
-  soruSil: (id) => adel(`/admin/sorular/${id}`),
-  sorulariTopluSil: (soru_idler) => apost('/admin/sorular/toplu-sil', { soru_idler }),
-  sorulariTopluAktifYap: (soru_idler, aktif_mi) => apost('/admin/sorular/toplu-aktif', { soru_idler, aktif_mi }),
-  katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
-  yeniAgirlikVersiyonu: (agirliklar) => apost('/admin/katman-agirliklari', { agirliklar }),
-  dallariListele: () => aget('/admin/dallar'),
   dalEkle: (veri) => apost('/admin/dallar', veri),
   dalDurumGuncelle: (dalId, yeniDurum) => apost(`/admin/dallar/${dalId}/durum`, { yeni_durum: yeniDurum }),
-  sorulariListele: (katmanKod, aktifMi) => {
-    const parametreler = new URLSearchParams()
-    if (katmanKod) parametreler.set('katman_kod', katmanKod)
-    if (aktifMi !== undefined) parametreler.set('aktif_mi', aktifMi)
-    const sorguMetni = parametreler.toString()
-    return aget(`/admin/sorular${sorguMetni ? `?${sorguMetni}` : ''}`)
-  },
   soruEkle: (veri) => apost('/admin/sorular', veri),
-  soruAktiflikGuncelle: (soruId, aktifMi) => apost(`/admin/sorular/${soruId}/aktiflik`, { aktif_mi: aktifMi }),
   auditLogGetir: (limit = 50) => aget(`/admin/audit-log?limit=${limit}`),
-  ogrencileriListele: (limit = 50) => aget(`/admin/ogrenciler?limit=${limit}`),
-  ogrencileriDetayliListele: (limit = 100) => aget(`/admin/ogrenciler-detay?limit=${limit}`),
   detayliIstatistikleriGetir: () => aget('/admin/istatistikler/detay'),
-  uyumDetayiGetir: (ogrenciId, bolumId) => aget(`/admin/uyum-detay/${ogrenciId}/${bolumId}`),
   yoneticileriListele: () => aget('/admin/yoneticiler'),
   yoneticiEkle: (veri) => apost('/admin/yoneticiler', veri),
   yoneticiSil: (yoneticiId) => adel(`/admin/yoneticiler/${yoneticiId}`),

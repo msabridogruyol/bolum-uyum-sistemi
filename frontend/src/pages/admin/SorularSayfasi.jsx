@@ -20,7 +20,6 @@ const DEGISKENLER = [
   { id: 25, kod: 'I1' }, { id: 26, kod: 'I2' }, { id: 27, kod: 'I3' }, { id: 28, kod: 'I4' },
   { id: 29, kod: 'I5' }, { id: 30, kod: 'I6' }, { id: 31, kod: 'I7' },
 ]
-const DEGISKEN_ID_MAP = Object.fromEntries(DEGISKENLER.map((d) => [d.kod, d.id]))
 
 const BOS_LIKERT_SECENEK = ['Kesinlikle Katılmıyorum', 'Katılmıyorum', 'Kararsızım', 'Katılıyorum', 'Kesinlikle Katılıyorum']
 
@@ -451,22 +450,6 @@ function YeniSoruFormu({ onEklendi }) {
     </div>
   )
 }
-
-// ============================================================
-// Ana sayfa
-// ============================================================
-function csvDisaAktar(dosyaAdi, basliklar, satirlar) {
-  const kacisla = (deger) => `"${String(deger ?? '').replace(/"/g, '""')}"`
-  const icerik = [basliklar.join(','), ...satirlar.map((s) => s.map(kacisla).join(','))].join('\r\n')
-  const blob = new Blob(['\uFEFF' + icerik], { type: 'text/csv;charset=utf-8;' })
-  const url = URL.createObjectURL(blob)
-  const a = document.createElement('a')
-  a.href = url
-  a.download = dosyaAdi
-  a.click()
-  URL.revokeObjectURL(url)
-}
-
 
 // ============================================================
 // Düzenlenebilir metin — tıklayınca input'a döner, blur/enter'da kaydeder
