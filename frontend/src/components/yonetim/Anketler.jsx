@@ -56,7 +56,7 @@ function Duzenleyici({ okulId, kaynak, mevcut, turler, onKapat, onKaydet }) {
         <label><span>Son yanıt tarihi <small>(isteğe bağlı)</small></span><input className="auth-input" type="date" value={f.bitis} onChange={(e) => setF({ ...f, bitis: e.target.value })} /></label>
         <label className="an-anonim">
           <input type="checkbox" checked={f.anonim} disabled={kilitli} onChange={(e) => setF({ ...f, anonim: e.target.checked })} />
-          <span><b>Anonim</b><small>{f.anonim ? 'Yanıtlar öğrenci adıyla eşleştirilmez; sonuçlarda yalnızca sınıf düzeyi görünür.' : 'Yanıtlar öğrenci adıyla görünür; tarama formlarında öğrenci kendi sonucunu görür ve destek gerekenler Erken uyarı listesine düşer.'}</small></span>
+          <span><b>Anonim</b><small>{f.anonim ? 'Yanıtlar öğrenci adıyla eşleştirilmez; sonuçlar en az 5 yanıt gelince ve 5 kişiden küçük sınıflar birleştirilerek görünür.' : 'Yanıtlar öğrenci adıyla görünür; tarama formlarında öğrenci kendi sonucunu görür ve destek gerekenler Erken uyarı listesine düşer.'}</small></span>
         </label>
       </div>
       <div className="an-etiket" style={{ marginTop: 14 }}>Sorular ({f.sorular.length})</div>
@@ -100,9 +100,10 @@ function Sonuclar({ id, onKapat }) {
   const enCok = (l) => Math.max(1, ...l)
   return (
     <Pencere genis baslik={a.baslik} altBaslik={`${a.katilim} / ${a.hedef_sayisi} öğrenci yanıtladı · ${a.anonim ? 'Anonim' : 'İsimli'} · ${hedefMetni(a.hedef)}`} onKapat={onKapat}
-      alt={<><button className="btn sec" style={{ marginRight: 'auto' }} onClick={() => api.anketExcel(id).catch((e) => setHata(e.detail || 'İndirilemedi.'))}>📊 Excel</button><button className="btn" onClick={onKapat}>Kapat</button></>}>
+      alt={<><button className="btn sec" style={{ marginRight: 'auto' }} disabled={v.gizli} onClick={() => api.anketExcel(id).catch((e) => setHata(e.detail || 'İndirilemedi.'))}>📊 Excel</button><button className="btn" onClick={onKapat}>Kapat</button></>}>
       {hata && <div className="auth-error">{hata}</div>}
       {v.toplam === 0 && <div className="bos-durum">Henüz yanıt yok.</div>}
+      {v.gizli && v.toplam > 0 && <div className="bos-durum">🔒 Anonimliği korumak için sonuçlar en az {v.esik} yanıt gelince görünür. Şu an {v.toplam} yanıt var.</div>}
       {env && v.toplam > 0 && (
         <div className="yp-iki" style={{ marginBottom: 14 }}>
           <div className="yp-kutu">
@@ -221,7 +222,8 @@ export default function Anketler({ okulId }) {
               </div>
               <div className="an-islem">
                 {a.katilim > 0 && <button className="yp-mini" onClick={() => setSonuc(a.id)}>📊 Sonuçlar</button>}
-                {a.durum === 'taslak' && <button className="yp-mini pf-onayla" onClick={() => islem(() => api.anketDurum(a.id, 'yayinda'))}>▶ Yayınla</button>}
+                {a.durum === 'taslak' && a.hedef_sayisi < 5 && <span className="yp-ince" title="Anketler en az 5 öğrenciye gönderilir">Hedef 5 kişiden az</span>}
+                {a.durum === 'taslak' && a.hedef_sayisi >= 5 && <button className="yp-mini pf-onayla" onClick={() => islem(() => api.anketDurum(a.id, 'yayinda'))}>▶ Yayınla</button>}
                 {a.durum === 'yayinda' && <button className="yp-mini" onClick={() => islem(() => api.anketDurum(a.id, 'kapandi'))}>■ Kapat</button>}
                 {a.durum === 'kapandi' && <button className="yp-mini" onClick={() => islem(() => api.anketDurum(a.id, 'yayinda'))}>Yeniden aç</button>}
                 <button className="yp-mini" onClick={() => duzenle(a)}>✎ Düzenle</button>

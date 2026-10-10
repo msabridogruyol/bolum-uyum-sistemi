@@ -33,6 +33,8 @@ from app.models import AdminKullanici, Ogrenci
 yonetim_router = APIRouter(prefix="/yonetim", tags=["Anketler"])
 ogrenci_router = APIRouter(prefix="/ogrenci", tags=["Anketler"])
 DURUMLAR = {"taslak": "Taslak", "yayinda": "Yayında", "kapandi": "Kapandı"}
+# [2026-10-10] Anonimlik eşiği: en az 5 kişiye gönderilir; anonim anket sonuçları en az 5 yanıtla ve en az 5 kişilik gruplarla gösterilir
+EN_AZ = 5
 SINIF_SIRA = {s: i for i, s in enumerate(["9. Sınıf", "10. Sınıf", "11. Sınıf", "12. Sınıf", "Mezun", "Aday"])}
 
 
@@ -192,6 +194,8 @@ class DurumIstek(BaseModel):
 def anket_durum(anket_id: int, istek: DurumIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     a = _anket(db, anket_id)
     _okul_kapsami(db, yon, a["okul_id"])
+    if istek.durum == "yayinda" and _hedef_sayisi(db, a) < EN_AZ:
+        raise HTTPException(400, f"Anket en az {EN_AZ} öğrenciye gönderilmelidir; hedef kitleyi genişletin.")
     db.execute(text("UPDATE anketler SET durum = :d WHERE id = :i"), {"d": istek.durum, "i": anket_id})
     if istek.durum == "yayinda" and a["durum"] == "taslak":   # ilk yayında hedef öğrencilere bildirim
         from app.core.bildirim import bildir
@@ -210,11 +214,21 @@ def anket_sil(anket_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
     db.commit()
 
 
+def _kucuk_siniflari_birlestir(siniflar: list) -> dict:
+    """Anonim ankette EN_AZ'dan az yanıtlı sınıflar 'Diğer sınıflar' olarak birleşir; birleşik grup da azsa sınıf bilgisi gösterilmez."""
+    say = Counter(siniflar)
+    kucuk = {k for k, n in say.items() if n < EN_AZ}
+    diger = sum(say[k] for k in kucuk)
+    return {k: (k if k not in kucuk else ("Diğer sınıflar" if diger >= EN_AZ else None)) for k in say}
+
+
 def _sonuclar(db: Session, a: dict) -> dict:
     rows = db.execute(text("""
         SELECT y.cevaplar, y.puan, y.seviye, y.sinif, y.sube, y.olusturulma_zamani, o.ad_soyad, o.id AS oid
           FROM anket_yanitlari y LEFT JOIN ogrenciler o ON o.id = y.ogrenci_id WHERE y.anket_id = :i ORDER BY y.id
     """), {"i": a["id"]}).all()
+    if a["anonim"] and len(rows) < EN_AZ:
+        return {"sorular": [], "toplam": len(rows), "gizli": True, "esik": EN_AZ}
     cev = [_j(r.cevaplar, {}) for r in rows]
     sorular = []
     for s in a["sorular"]:
@@ -236,7 +250,7 @@ def _sonuclar(db: Session, a: dict) -> dict:
         else:
             x["metinler"] = [str(v)[:1000] for v in vals][-200:]
         sorular.append(x)
-    sonuc = {"sorular": sorular, "toplam": len(rows)}
+    sonuc = {"sorular": sorular, "toplam": len(rows), "esik": EN_AZ}
     if a["puanlama"]:
         puanlar = [float(r.puan) for r in rows if r.puan is not None]
         seviye = Counter(r.seviye for r in rows if r.seviye)
@@ -245,9 +259,12 @@ def _sonuclar(db: Session, a: dict) -> dict:
             "seviyeler": [{"kod": s["kod"], "ad": s["ad"], "sayi": seviye.get(s["kod"], 0)} for s in a["puanlama"]["seviyeler"]],
         }
         sinif = defaultdict(list)
+        etiket = _kucuk_siniflari_birlestir([r.sinif or "—" for r in rows]) if a["anonim"] else None
         for r in rows:
             if r.puan is not None:
-                sinif[r.sinif or "—"].append(float(r.puan))
+                k = etiket.get(r.sinif or "—") if etiket is not None else (r.sinif or "—")
+                if k:
+                    sinif[k].append(float(r.puan))
         sonuc["envanter"]["siniflar"] = sorted([{"sinif": k, "sayi": len(v), "ortalama": round(sum(v) / len(v), 2)} for k, v in sinif.items()],
                                                key=lambda x: (SINIF_SIRA.get(x["sinif"], 99), x["sinif"]))
         if not a["anonim"]:
@@ -277,10 +294,18 @@ def anket_excel(anket_id: int, db: Session = Depends(get_db), yon: AdminKullanic
         SELECT y.cevaplar, y.puan, y.seviye, y.sinif, y.sube, y.olusturulma_zamani, o.ad_soyad
           FROM anket_yanitlari y LEFT JOIN ogrenciler o ON o.id = y.ogrenci_id WHERE y.anket_id = :i ORDER BY y.id
     """), {"i": anket_id}).all()
+    etiket = None
+    if a["anonim"]:   # anonimlik: eşik altı dosya yok, tarih yok, küçük sınıflar birleşik, satır sırası karışık
+        if len(rows) < EN_AZ:
+            raise HTTPException(400, f"Anonim anketin sonuçları en az {EN_AZ} yanıt gelince indirilebilir.")
+        import random
+        rows = list(rows)
+        random.shuffle(rows)
+        etiket = _kucuk_siniflari_birlestir([r.sinif or "—" for r in rows])
     wb = openpyxl.Workbook()
     ws = wb.active
     ws.title = "Yanıtlar"
-    kol = ([] if a["anonim"] else ["Öğrenci", "Şube"]) + ["Sınıf", "Tarih"] + [f"{i}. {s['metin'][:60]}" for i, s in enumerate(a["sorular"], 1)]
+    kol = (["Sınıf"] if a["anonim"] else ["Öğrenci", "Şube", "Sınıf", "Tarih"]) + [f"{i}. {s['metin'][:60]}" for i, s in enumerate(a["sorular"], 1)]
     if a["puanlama"]:
         kol += ["Puan (1–5)", "Seviye"]
     for j, k in enumerate(kol, 1):
@@ -294,7 +319,7 @@ def anket_excel(anket_id: int, db: Session = Depends(get_db), yon: AdminKullanic
         for s in a["sorular"]:
             v = c.get(s["id"])
             deger.append(", ".join(v) if isinstance(v, list) else v)
-        satir = ([] if a["anonim"] else [r.ad_soyad, r.sube]) + [r.sinif, r.olusturulma_zamani.date().isoformat()] + deger
+        satir = ([etiket.get(r.sinif or "—") or "—"] if a["anonim"] else [r.ad_soyad, r.sube, r.sinif, r.olusturulma_zamani.date().isoformat()]) + deger
         if a["puanlama"]:
             satir += [float(r.puan) if r.puan is not None else None, sev.get(r.seviye, r.seviye)]
         for j, v in enumerate(satir, 1):
