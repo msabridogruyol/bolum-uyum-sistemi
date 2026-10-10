@@ -1,7 +1,7 @@
 // [2026-10-09] Okul bazlı yönetim ekranlarının ortak parçaları.
 import { useState } from 'react'
 
-export const ROL_ADI = { super_admin: 'Süper Admin', okul_yetkilisi: 'Rehber Öğretmen' }
+export const ROL_ADI = { super_admin: 'Süper Admin', okul_yetkilisi: 'Okul Yetkilisi' }
 
 export function tarih(z, saatli = true) {
   if (!z) return '—'

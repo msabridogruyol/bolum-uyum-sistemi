@@ -105,7 +105,7 @@ export default function OkullarSayfasi() {
         <div style={{ flex: 1, minWidth: 260 }}>
           <div className="pt">Okullar</div>
           <div className="ps">
-            Her okulun öğrenci hesapları, rehber öğretmenleri, istatistikleri ve kayıtları kendi panelinden yönetilir.
+            Her okulun öğrenci hesapları, okul yetkilileri, istatistikleri ve kayıtları kendi panelinden yönetilir.
             Öğrenciler sol menüde kendi okullarının amblemini görür.
           </div>
         </div>
@@ -166,7 +166,7 @@ export default function OkullarSayfasi() {
               </Link>
               <div className="yp-okul-sayilar">
                 <div><b>{o.ogrenci_sayisi}</b><span>öğrenci</span></div>
-                <div><b>{o.yetkili_sayisi}</b><span>rehber öğretmen</span></div>
+                <div><b>{o.yetkili_sayisi}</b><span>okul yetkilisi</span></div>
               </div>
               {silme?.okul.id === o.id ? (
                 <div className="yp-okul-sil">
@@ -179,7 +179,7 @@ export default function OkullarSayfasi() {
                       </select>
                     </>
                   ) : <span>Okul silinsin mi?</span>}
-                  {o.yetkili_sayisi > 0 && <span style={{ color: 'var(--re)' }}>{o.yetkili_sayisi} rehber öğretmen hesabı da silinir.</span>}
+                  {o.yetkili_sayisi > 0 && <span style={{ color: 'var(--re)' }}>{o.yetkili_sayisi} okul yetkilisi hesabı da silinir.</span>}
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn yp-tehlike" disabled={isleniyor} onClick={sil}>Sil</button>
                     <button className="btn sec" onClick={() => setSilme(null)}>Vazgeç</button>
@@ -189,7 +189,7 @@ export default function OkullarSayfasi() {
                 <>
                   <div className="yp-okul-kisayol">
                     <Link to={`/admin/okul/${o.id}?sekme=bilgiler`}>📝 Okul bilgileri</Link>
-                    <Link to={`/admin/okul/${o.id}?sekme=yetkililer`}>👤 Rehber öğretmen ekle</Link>
+                    <Link to={`/admin/okul/${o.id}?sekme=yetkililer`}>👤 Okul yetkilisi ekle</Link>
                     <Link to={`/admin/okul/${o.id}?sekme=ogrenciler`}>🎒 Öğrenci hesapları</Link>
                   </div>
                   <div className="yp-okul-aksiyon">

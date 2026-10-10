@@ -168,6 +168,6 @@ def okul_sil(okul_id: int, hedef_id: int | None = Query(None), db: Session = Dep
     for y in yoneticiler:
         db.delete(y)
     denetim_yaz(db, admin, "okul_sil", "okullar", okul.id,
-                f"{okul.ad} — {sayi} öğrenci aktarıldı, {len(yoneticiler)} rehber öğretmen hesabı silindi", okul.id)
+                f"{okul.ad} — {sayi} öğrenci aktarıldı, {len(yoneticiler)} okul yetkilisi silindi", okul.id)
     db.delete(okul)
     db.commit()

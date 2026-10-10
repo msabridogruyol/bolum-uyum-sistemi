@@ -224,13 +224,13 @@ export default function TestHesaplariSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">🧪 Test Hesapları</div>
-        <div className="ps">Deneme ve tanıtım için öğrenci / rehber öğretmen hesapları. 2 adımlı doğrulama istenmez; süreli giriş bağlantısıyla tek tıkla açılır. Öğrencinin ilerlemesini istediğin aşamaya getirebilirsin.</div>
+        <div className="ps">Deneme ve tanıtım için öğrenci / okul yetkilisi hesapları. 2 adımlı doğrulama istenmez; süreli giriş bağlantısıyla tek tıkla açılır. Öğrencinin ilerlemesini istediğin aşamaya getirebilirsin.</div>
       </div>
 
       <form className="yp-kutu yp-form-satir" style={{ marginBottom: 14 }} onSubmit={ac}>
         <select className="yp-sec" value={form.tip} onChange={(e) => setForm({ ...form, tip: e.target.value })}>
           <option value="ogrenci">Öğrenci</option>
-          <option value="okul_yetkilisi">Rehber öğretmen</option>
+          <option value="okul_yetkilisi">Okul yetkilisi</option>
         </select>
         <input className="auth-input" placeholder="Ad Soyad (örn. Deneme Öğrenci)" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
         <select className="yp-sec" value={form.okul_id} onChange={(e) => setForm({ ...form, okul_id: e.target.value })} required={form.tip === 'okul_yetkilisi'}>
@@ -245,7 +245,7 @@ export default function TestHesaplariSayfasi() {
         <button className="btn" type="submit" disabled={bekle}>+ Test hesabı aç</button>
       </form>
       {form.tip === 'okul_yetkilisi' && (
-        <div className="yp-uyari">Rehber öğretmen test hesabı, seçtiğin okulun <b>gerçek öğrencilerini</b> de görür. Tanıtım için ayrı bir “Demo Okulu” açıp test öğrencilerini oraya koyman önerilir.</div>
+        <div className="yp-uyari">Okul yetkilisi test hesabı, seçtiğin okulun <b>gerçek öğrencilerini</b> de görür. Tanıtım için ayrı bir “Demo Okulu” açıp test öğrencilerini oraya koyman önerilir.</div>
       )}
       {yeni && (
         <div className="yp-uyari" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>
@@ -282,7 +282,7 @@ export default function TestHesaplariSayfasi() {
             </div>
           )}
 
-          <div className="ct" style={{ marginTop: 22 }}>Rehber öğretmen test hesapları ({d.yetkililer.length})</div>
+          <div className="ct" style={{ marginTop: 22 }}>Okul yetkilisi test hesapları ({d.yetkililer.length})</div>
           {d.yetkililer.length === 0 ? <div className="bos-durum">Henüz yok.</div> : (
             <div className="yp-kutu" style={{ padding: 0, overflowX: 'auto' }}>
               <table className="yp-tablo">
@@ -305,7 +305,7 @@ export default function TestHesaplariSayfasi() {
             </div>
           )}
           <div className="yp-ince" style={{ marginTop: 14, lineHeight: 1.6 }}>
-            💡 Rehber öğretmen bağlantısını kendi tarayıcında açarsan süper admin oturumun kapanır — <b>gizli pencerede</b> açman önerilir.
+            💡 Okul yetkilisi bağlantısını kendi tarayıcında açarsan süper admin oturumun kapanır — <b>gizli pencerede</b> açman önerilir.
             Öğrenci bağlantısı yönetim oturumunu etkilemez. Bağlantı üretmek, iptal etmek ve senaryo uygulamak Audit Log'a yazılır.
           </div>
         </>

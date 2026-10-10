@@ -47,7 +47,7 @@ export default function TestGirisSayfasi() {
         ) : onay ? (
           <>
             <div className="ps" style={{ margin: '4px 0 14px', lineHeight: 1.55 }}>
-              <b>{onay.ad_soyad}</b> (rehber öğretmen test hesabı) olarak açılacak. Bu tarayıcıdaki mevcut <b>yönetim oturumunuz kapanır</b>.
+              <b>{onay.ad_soyad}</b> (okul yetkilisi test hesabı) olarak açılacak. Bu tarayıcıdaki mevcut <b>yönetim oturumunuz kapanır</b>.
               Kendi oturumunuzu korumak için bağlantıyı gizli pencerede açabilirsiniz.
             </div>
             <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>

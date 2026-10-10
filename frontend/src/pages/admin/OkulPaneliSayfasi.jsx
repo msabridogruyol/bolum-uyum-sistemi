@@ -247,7 +247,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
   return (
     <>
       <div className="yp-ince" style={{ marginBottom: 12 }}>
-        Rehber öğretmenler (psikolojik danışmanlar) yönetim girişinden (<code>/admin/giris</code>) girer ve yalnızca bu okulun
+        Okul yetkilileri (rehber öğretmen, müdür yardımcısı vb.) yönetim girişinden (<code>/admin/giris</code>) girer ve yalnızca bu okulun
         öğrencilerini görür: hesap açar, şifre sıfırlar, siler, istatistik ve kayıtları inceler.
       </div>
       {hata && <div className="auth-error">{hata}</div>}
@@ -255,7 +255,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
         <form className="yp-kutu yp-form-satir" style={{ marginBottom: 14 }} onSubmit={ekle}>
           <input className="auth-input" placeholder="Ad Soyad" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
           <input className="auth-input" type="email" placeholder="E-posta" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
-          <button className="btn" type="submit">+ Rehber öğretmen ekle</button>
+          <button className="btn" type="submit">+ Okul yetkilisi ekle</button>
         </form>
       )}
       {sifre && (
@@ -456,7 +456,7 @@ export default function OkulPaneliSayfasi() {
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
   const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['siniflar', 'Sınıflar'], ['akran', 'Şube & Akran'],
-    ...(okulId ? [['kulupler', 'Kulüpler'], ['koclar', 'Koçlar'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Rehber Öğretmenler (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
+    ...(okulId ? [['kulupler', 'Kulüpler'], ['koclar', 'Koçlar'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
   return (
     <div className="pg pg-genis">
       {superAdmin && <Link to="/admin/okullar" className="yp-geri">← Okullar</Link>}
