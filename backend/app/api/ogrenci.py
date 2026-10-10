@@ -143,6 +143,17 @@ def katmanlari_listele(
     ]
 
 
+def _mevcut_cevaplar(db: Session, ogrenci: Ogrenci, tur_id: int | None, soru_idler: list[int]) -> list[dict]:
+    """[2026-10-10] Bu turda bu sorulara daha önce verilmiş cevaplar — öğrenci yarıda bıraktığı yerden devam eder."""
+    if not tur_id or not soru_idler:
+        return []
+    from app.models import OgrenciCevap
+    return [{"soru_id": c.soru_id, "secenek_id": c.secenek_id, "en_az_secenek_id": c.en_az_secenek_id}
+            for c in db.query(OgrenciCevap).filter(OgrenciCevap.ogrenci_id == ogrenci.id, OgrenciCevap.tur_id == tur_id,
+                                                   OgrenciCevap.soru_id.in_(soru_idler)).all()]
+
+
+
 @router.post("/katmanlar/{kod}/basla", response_model=KatmanBaslatCevap)
 def katmani_baslat(
     kod: str,
@@ -196,7 +207,8 @@ def katmani_baslat(
         )
         for s in sorular
     ]
-    return KatmanBaslatCevap(tur_id=tur.id, katman_oturum_id=oturum.id, sorular=soru_out)
+    return KatmanBaslatCevap(tur_id=tur.id, katman_oturum_id=oturum.id, sorular=soru_out,
+                             mevcut_cevaplar=_mevcut_cevaplar(db, ogrenci, tur.id, soru_idler))
 
 
 @router.post("/katmanlar/{kod}/cevap", status_code=204)
@@ -332,7 +344,8 @@ def dali_baslat(
         )
         for s in sorular
     ]
-    return DalBaslatCevap(dal_oturum_id=oturum.id, sorular=soru_out, tur_id=tur.id, dal_adi=dal.ad)
+    return DalBaslatCevap(dal_oturum_id=oturum.id, sorular=soru_out, tur_id=tur.id, dal_adi=dal.ad,
+                          mevcut_cevaplar=_mevcut_cevaplar(db, ogrenci, tur.id, [s.id for s in sorular]))
 
 
 @router.post("/dallar/{kod}/cevap", status_code=204)

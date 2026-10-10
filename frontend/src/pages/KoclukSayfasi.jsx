@@ -193,20 +193,37 @@ function filizeSor(k, alan) {
   window.dispatchEvent(new CustomEvent('filiz-ac', { detail: { mesaj: `"${k.baslik}" (${KAYNAK_TIP[k.tip]?.ad || k.tip}) bana ${alan} konusunda nasıl yardımcı olabilir? Nereden başlamalıyım?` } }))
 }
 
-function KaynakKarti({ k, alan }) {
+// [2026-10-10] Kaynaklar türe göre (Kitaplar, Filmler, Kişiler, Olaylar…) geniş ızgarada; istenirse alana göre.
+// Kitap ve filmler tek tıkla Kütüphanem'e "okumak / izlemek istiyorum" olarak eklenir.
+const KUTUPHANE_KATEGORI = { kitap: 'kitap', film: 'izleme' }
+
+function KaynakKarti({ k, alan, grup, eklendi, onEkle, alanGoster = true }) {
   const t = KAYNAK_TIP[k.tip] || { ad: k.tip, ikon: '•', renk: 'var(--tx2)', zemin: 'var(--sur2)' }
   return (
     <div className="ilham-kart">
-      <span className="ilham-tip" style={{ color: t.renk, background: t.zemin }}>{t.ikon} {t.ad}</span>
+      <div className="ilham-ust">
+        <span className="ilham-tip" style={{ color: t.renk, background: t.zemin }}>{t.ikon} {t.ad}</span>
+        {alanGoster && <span className={`ilham-alan-cip ${grup}`} title={grup === 'guclu' ? 'Güçlü yönün' : 'Gelişim alanın'}>{grup === 'guclu' ? '💪' : '🌱'} {alan}</span>}
+      </div>
       <div className="ilham-baslik">{k.baslik}</div>
       <div className="ilham-aciklama">{k.aciklama}</div>
-      <button className="hg-link ilham-sor" onClick={() => filizeSor(k, alan)}>💬 Filiz'e sor</button>
+      <div className="ilham-islem">
+        <button className="hg-link ilham-sor" onClick={() => filizeSor(k, alan)}>💬 Filiz'e sor</button>
+        {KUTUPHANE_KATEGORI[k.tip] && (eklendi
+          ? <span className="ilham-eklendi">✓ Kütüphanende</span>
+          : <button className="hg-link" onClick={() => onEkle(k, alan)}>＋ Kütüphaneme ekle</button>)}
+      </div>
     </div>
   )
 }
 
 function IlhamSekmesi({ kaynaklar }) {
   const [tip, setTip] = useState('')
+  const [gorunum, setGorunum] = useState('tur')
+  const [eklenen, setEklenen] = useState(new Set())
+  useEffect(() => {
+    api.kutuphane().then((v) => setEklenen(new Set(v.kayitlar.map((x) => x.baslik.toLocaleLowerCase('tr-TR'))))).catch(() => {})
+  }, [])
   if (!kaynaklar) return <div className="bos-durum">Kaynaklar hazırlanıyor…</div>
   if (!kaynaklar.alanlar.length) {
     return (
@@ -219,34 +236,65 @@ function IlhamSekmesi({ kaynaklar }) {
       </div>
     )
   }
-  const tipler = [...new Set(kaynaklar.alanlar.flatMap((a) => a.kaynaklar.map((k) => k.tip)))]
-  const gruplar = [['gelisim', '🌱 Gelişim alanların için'], ['guclu', '💪 Güçlü yönlerini büyütmek için']]
+  const ekle = async (k, alan) => {
+    try {
+      await api.kutuphaneEkle({ kategori: KUTUPHANE_KATEGORI[k.tip], baslik: k.baslik, durum: 'istek', notlar: `İlham kaynağı önerisi (${alan})` })
+      setEklenen((s) => new Set([...s, k.baslik.toLocaleLowerCase('tr-TR')]))
+    } catch { /* yoksay */ }
+  }
+  const hepsi = kaynaklar.alanlar.flatMap((a) => a.kaynaklar.map((k) => ({ k, alan: a.degisken_adi, grup: a.grup, kategori: a.kategori })))
+  const tekil = []
+  const gorulen = new Set()
+  hepsi.forEach((x) => { if (!gorulen.has(x.k.id)) { gorulen.add(x.k.id); tekil.push(x) } })
+  const tipler = Object.keys(KAYNAK_TIP).filter((t) => tekil.some((x) => x.k.tip === t))
+  const kart = (x, alanGoster = true) => (
+    <KaynakKarti key={`${x.k.id}-${x.alan}`} k={x.k} alan={x.alan} grup={x.grup} alanGoster={alanGoster}
+      eklendi={eklenen.has(x.k.baslik.toLocaleLowerCase('tr-TR'))} onEkle={ekle} />
+  )
   return (
     <>
-      <div className="ps" style={{ margin: '0 0 12px' }}>
-        Senin gelişim ve güçlü alanlarına göre seçilmiş kitaplar, filmler, ilham veren kişiler ve önemli olaylar. Birini seç, merak ettiğini Filiz'e sor.
-      </div>
-      {tipler.length > 1 && (
-        <div className="ca-filtre">
-          <button className={`ca-cip${!tip ? ' aktif' : ''}`} onClick={() => setTip('')}>Tümü</button>
-          {tipler.map((x) => <button key={x} className={`ca-cip${tip === x ? ' aktif' : ''}`} onClick={() => setTip(x)}>{KAYNAK_TIP[x]?.ikon} {KAYNAK_TIP[x]?.ad || x}</button>)}
+      <div className="ilham-ust-bar">
+        <div className="ps" style={{ margin: 0, flex: 1, minWidth: 260 }}>
+          Gelişim ve güçlü alanlarına göre seçilmiş kitaplar, filmler, ilham veren kişiler ve önemli olaylar. Kitap ve filmleri Kütüphanem'e ekleyebilir, merak ettiğini Filiz'e sorabilirsin.
         </div>
+        <div className="ilham-gorunum" role="tablist">
+          <button className={gorunum === 'tur' ? 'aktif' : ''} onClick={() => setGorunum('tur')}>Türe göre</button>
+          <button className={gorunum === 'alan' ? 'aktif' : ''} onClick={() => setGorunum('alan')}>Alana göre</button>
+        </div>
+      </div>
+      <div className="ilham-ozet">
+        <button className={!tip ? 'aktif' : ''} onClick={() => setTip('')}><b>{tekil.length}</b><span>Tümü</span></button>
+        {tipler.map((t) => (
+          <button key={t} className={tip === t ? 'aktif' : ''} onClick={() => setTip(tip === t ? '' : t)}>
+            <b>{tekil.filter((x) => x.k.tip === t).length}</b><span>{KAYNAK_TIP[t].ikon} {KAYNAK_TIP[t].ad}</span>
+          </button>
+        ))}
+      </div>
+      {gorunum === 'tur' ? (
+        tipler.filter((t) => !tip || t === tip).map((t) => (
+          <section key={t} className="ilham-bolum">
+            <h3>{KAYNAK_TIP[t].ikon} {KAYNAK_TIP[t].ad}<small>{tekil.filter((x) => x.k.tip === t).length}</small></h3>
+            <div className="ilham-grid">{tekil.filter((x) => x.k.tip === t).map((x) => kart(x))}</div>
+          </section>
+        ))
+      ) : (
+        [['gelisim', '🌱 Gelişim alanların için'], ['guclu', '💪 Güçlü yönlerini büyütmek için']].map(([g, baslik]) => {
+          const alanlar = kaynaklar.alanlar.filter((a) => a.grup === g)
+            .map((a) => ({ ...a, liste: a.kaynaklar.filter((k) => !tip || k.tip === tip) })).filter((a) => a.liste.length)
+          if (!alanlar.length) return null
+          return (
+            <section key={g} className="ilham-bolum">
+              <h3>{baslik}</h3>
+              {alanlar.map((a) => (
+                <div key={a.degisken_kod} className="ilham-alan-satir">
+                  <div className="ilham-alan-bas"><b>{a.degisken_adi}</b><KategoriRozeti kategori={a.kategori} /></div>
+                  <div className="ilham-grid">{a.liste.map((k) => kart({ k, alan: a.degisken_adi, grup: a.grup }, false))}</div>
+                </div>
+              ))}
+            </section>
+          )
+        })
       )}
-      {gruplar.map(([g, baslik]) => {
-        const alanlar = kaynaklar.alanlar.filter((a) => a.grup === g)
-          .map((a) => ({ ...a, liste: a.kaynaklar.filter((k) => !tip || k.tip === tip) })).filter((a) => a.liste.length)
-        if (!alanlar.length) return null
-        return (
-          <Bolum key={g} baslik={baslik}>
-            {alanlar.map((a) => (
-              <div key={a.degisken_kod} style={{ marginBottom: 14 }}>
-                <div className="ilham-alan">{a.degisken_adi} <KategoriRozeti kategori={a.kategori} /></div>
-                <div className="ilham-grid">{a.liste.map((k) => <KaynakKarti key={k.id} k={k} alan={a.degisken_adi} />)}</div>
-              </div>
-            ))}
-          </Bolum>
-        )
-      })}
     </>
   )
 }
@@ -514,11 +562,17 @@ function GucluSekmesi({ plan, onDurum }) {
     <>
       <div className="ps" style={{ marginBottom: 14 }}>Bu özelliklerin {plan.hedef_bolum_adi} için avantaj. Aşağıdaki adımlarla onları görünür bir başarıya dönüştürebilirsin.</div>
       {plan.guclu_yonler.map((g) => (
-        <Bolum key={g.degisken_kod} baslik={`✓ ${g.degisken_adi}`} alt={g.neden_onemli} sag={<KategoriRozeti kategori={g.kategori} />}>
-          <div className="koc-adim-grid">
+        <section key={g.degisken_kod} className="koc-yatay">
+          <div className="koc-yatay-sol">
+            <KategoriRozeti kategori={g.kategori} />
+            <h2>✓ {g.degisken_adi}</h2>
+            <p>{g.neden_onemli}</p>
+            <small>{g.adimlar.filter((a) => a.durum === 'tamamlandi').length}/{g.adimlar.length} adım tamamlandı</small>
+          </div>
+          <div className="koc-adim-grid koc-yatay-sag">
             {g.adimlar.map((adim) => <AdimKarti key={adim.kod} adim={adim} onDurum={onDurum} alanGoster={false} />)}
           </div>
-        </Bolum>
+        </section>
       ))}
     </>
   )

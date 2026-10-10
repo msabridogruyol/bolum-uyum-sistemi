@@ -46,6 +46,8 @@ class KatmanBaslatCevap(BaseModel):
     tur_id: int
     katman_oturum_id: int
     sorular: list[SoruOut]
+    # [2026-10-10] Yarıda bırakılan katmana dönüldüğünde önceki cevaplar (kaldığı yerden devam için)
+    mevcut_cevaplar: list[dict] = []
 
 
 class CevapIstek(BaseModel):
@@ -149,6 +151,7 @@ class DalBaslatCevap(BaseModel):
     sorular: list[SoruOut]
     tur_id: int | None = None
     dal_adi: str | None = None
+    mevcut_cevaplar: list[dict] = []   # [2026-10-10] kaldığı yerden devam
 
 
 class DalTamamlamaCevap(BaseModel):

@@ -2,8 +2,9 @@
 // Öğrenci kendisi girer; rehber öğretmeni öğrenci detayında görür.
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client'
+import KutuphaneGrafikleri from '../components/KutuphaneGrafikleri'
 
-const BOS = (kategori) => ({ kategori, alt_tur: '', baslik: '', kisi: '', durum: 'bitti', puan: null, notlar: '', tarih: '' })
+const BOS = (kategori) => ({ kategori, alt_tur: '', baslik: '', kisi: '', durum: 'bitti', puan: null, notlar: '', tarih: '', sayfa: '' })
 
 function Yildiz({ deger, onChange }) {
   return (
@@ -38,14 +39,14 @@ export function KutuphaneListesi({ v, onDuzenle, onSil, salt }) {
                 <div className="kt-baslik"><b>{x.baslik}</b>{x.kisi && <span> · {x.kisi}</span>}</div>
                 <div className="yp-ince">
                   <span className={`kt-durum kt-durum-${x.durum}`}>{x.durum_adi}</span>
-                  {x.alt_tur && ` · ${x.alt_tur}`}{x.tarih && ` · ${new Date(x.tarih).toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`}
+                  {x.alt_tur && ` · ${x.alt_tur}`}{x.sayfa ? ` · ${x.sayfa} sayfa` : ''}{x.tarih && ` · ${new Date(x.tarih).toLocaleDateString('tr-TR', { month: 'long', year: 'numeric' })}`}
                 </div>
                 {x.puan && <Yildiz deger={x.puan} />}
                 {x.notlar && <div className="kt-not">“{x.notlar}”</div>}
               </div>
               {!salt && (
                 <div className="kt-islem">
-                  <button className="yp-mini" onClick={() => onDuzenle({ ...x, alt_tur: x.alt_tur || '', kisi: x.kisi || '', notlar: x.notlar || '', tarih: x.tarih || '' })}>Düzenle</button>
+                  <button className="yp-mini" onClick={() => onDuzenle({ ...x, alt_tur: x.alt_tur || '', kisi: x.kisi || '', notlar: x.notlar || '', tarih: x.tarih || '', sayfa: x.sayfa || '' })}>Düzenle</button>
                   <button className="yp-mini" onClick={() => onSil(x)}>Sil</button>
                 </div>
               )}
@@ -68,7 +69,7 @@ export default function KutuphanemSayfasi() {
 
   const kaydet = async (e) => {
     e.preventDefault(); setBekle(true); setHata(null)
-    const veri = { ...form, alt_tur: form.alt_tur || null, kisi: form.kisi || null, notlar: form.notlar || null, tarih: form.tarih || null }
+    const veri = { ...form, alt_tur: form.alt_tur || null, kisi: form.kisi || null, notlar: form.notlar || null, tarih: form.tarih || null, sayfa: form.sayfa ? Number(form.sayfa) : null }
     try { if (form.id) await api.kutuphaneDuzenle(form.id, veri); else await api.kutuphaneEkle(veri); setForm(null); yukle() }
     catch (er) { setHata(er.detail || 'Kaydedilemedi.') }
     setBekle(false)
@@ -99,6 +100,7 @@ export default function KutuphanemSayfasi() {
             <select className="auth-input" value={form.alt_tur} onChange={(e) => setForm({ ...form, alt_tur: e.target.value })}>
               <option value="">Türü (isteğe bağlı)</option>{k.alt.map((a) => <option key={a}>{a}</option>)}
             </select>
+            {form.kategori === 'kitap' && <input className="auth-input" type="number" min={1} max={5000} value={form.sayfa} onChange={(e) => setForm({ ...form, sayfa: e.target.value })} placeholder="Sayfa sayısı (isteğe bağlı)" />}
             {form.durum !== 'istek' && <input className="auth-input" type="date" max={new Date().toISOString().slice(0, 10)} value={form.tarih} onChange={(e) => setForm({ ...form, tarih: e.target.value })} title="Ne zaman?" />}
           </div>
           {form.durum !== 'istek' && <div className="kt-puan">Ne kadar beğendin? <Yildiz deger={form.puan} onChange={(p) => setForm({ ...form, puan: p })} /></div>}
@@ -110,7 +112,8 @@ export default function KutuphanemSayfasi() {
           </div>
         </form>
       )}
-      <div className="card"><KutuphaneListesi v={v} onDuzenle={setForm} onSil={sil} /></div>
+      <KutuphaneGrafikleri v={v} />
+      <div className="card"><div className="ct">Kayıtlarım</div><KutuphaneListesi v={v} onDuzenle={setForm} onSil={sil} /></div>
     </div>
   )
 }
