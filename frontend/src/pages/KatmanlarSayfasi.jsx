@@ -2,10 +2,11 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
+import { KATMAN_BILGI, katmanAdi } from '../yardimci/katmanAdlari'
 
 const DURUM_ETIKET = { baslamadi: null, devam_ediyor: 'Devam Ediyor', tamamlandi: 'Tamamlandı' }
 const DURUM_RENK = { devam_ediyor: 'bdg-prog', tamamlandi: 'bdg-done' }
-const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸', K5: '🌻' }
+const KATMAN_IKON = Object.fromEntries(Object.entries(KATMAN_BILGI).map(([k, v]) => [k, v.ikon]))
 
 // [DÜZELTME] Önceden "boyut sayısı" (K1:7, K2:8 vb.) öğrenciye gösteriliyordu
 // — bu teknik bir detay, öğrencinin bilmesine gerek yok, kaldırıldı.
@@ -33,6 +34,7 @@ export default function KatmanlarSayfasi() {
   const [hedef, setHedef] = useState(undefined) // undefined=yükleniyor, null=yok
   const [profil, setProfil] = useState(null)
   const [k1Sonuc, setK1Sonuc] = useState(null)
+  const [sonuclar, setSonuclar] = useState({})   // [2026-10-10] biten katmanın öne çıkan özelliği
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
 
@@ -43,12 +45,19 @@ export default function KatmanlarSayfasi() {
     api.profilGetir().then(setProfil).catch(() => {})
     api.katmanSonucuGetir('K1').then(setK1Sonuc).catch(() => setK1Sonuc(null))
   }, [])
+  useEffect(() => {
+    (katmanlar || []).filter((k) => !k.kosullu_mu && k.durum === 'tamamlandi').forEach((k) => {
+      api.katmanSonucuGetir(k.kod).then((r) => {
+        const en = r?.sonuclar?.length ? [...r.sonuclar].sort((a, b) => b.puan - a.puan).slice(0, 2) : []
+        setSonuclar((o) => ({ ...o, [k.kod]: en }))
+      }).catch(() => {})
+    })
+  }, [katmanlar])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
   if (!katmanlar || hedef === undefined) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
 
   const tamamlanan = katmanlar.filter((k) => k.durum === 'tamamlandi').length
-  const devamEden = katmanlar.filter((k) => k.durum === 'devam_ediyor').length
   const profilYuzde = Math.round((tamamlanan / katmanlar.length) * 100)
   const k5AcikMi = k5Durum && (k5Durum.acilan?.length > 0 || k5Durum.ilgi_gosterilen?.length > 0)
 
@@ -61,19 +70,34 @@ export default function KatmanlarSayfasi() {
   return (
     <div className="pg pg-genis">
       <div className="ph">
-        <div className="pt">Yol Haritan</div>
+        <div className="pt">Değerlendirme</div>
         <div className="ps">
-          Katmanları sırayla tamamla; son katman (Alan Eğilimi) sonucuna göre sana özel derinleşme dalları burada, aynı listede açılır.
+          Kendini 4 kısa bölümde tanı; son bölümün sonucuna göre sana özel derinleşme soruları açılır. Her bölüm yaklaşık 5 dakika, istediğin an ara verebilirsin.
         </div>
       </div>
 
       <div className="yol-duzen">
         <div>
-          <div className="sg">
-            <div className="sc"><div className="sl">Toplam Katman</div><div className="sv">{katmanlar.length}</div></div>
-            <div className="sc"><div className="sl">Tamamlanan</div><div className="sv gr">{tamamlanan}</div></div>
-            <div className="sc"><div className="sl">Devam Eden</div><div className="sv pu">{devamEden}</div></div>
-            <div className="sc"><div className="sl">Profil Tamamlama</div><div className="sv">%{profilYuzde}</div></div>
+          {/* [2026-10-10] Yolculuk şeridi: bölümler bir yol üzerinde; biten ✓, sıradaki parlak, kilitli soluk */}
+          <div className="yolculuk card">
+            <div className="yolculuk-ust">
+              <div><b>%{profilYuzde}</b> tamamlandı</div>
+              <div className="yolculuk-mesaj">{profilYuzde === 100 ? 'Hepsini bitirdin, harika! 🎉' : profilYuzde >= 50 ? 'Yarıyı geçtin, az kaldı 💪' : tamamlanan > 0 ? 'Güzel başladın, devam 🌱' : 'İlk adım en önemlisi 🌱'}</div>
+            </div>
+            <div className="yolculuk-serit">
+              {katmanlar.map((k, i) => {
+                const onceki = katmanlar.filter((o) => !o.kosullu_mu && o.sira < k.sira && o.durum !== 'tamamlandi')
+                const kilit = k.durum !== 'tamamlandi' && (k.kosullu_mu ? !(k5Durum?.acilan?.length > 0) : onceki.length > 0)
+                const durum = k.durum === 'tamamlandi' ? 'bitti' : kilit ? 'kilit' : 'simdi'
+                return (
+                  <div key={k.id} className={`yolculuk-durak ${durum}`}>
+                    {i > 0 && <span className={`yolculuk-cizgi${durum !== 'kilit' ? ' dolu' : ''}`} />}
+                    <span className="yolculuk-nokta">{durum === 'bitti' ? '✓' : KATMAN_IKON[k.kod] || k.sira}</span>
+                    <span className="yolculuk-ad">{katmanAdi(k.kod, k.ad)}</span>
+                  </div>
+                )
+              })}
+            </div>
           </div>
 
           <div className="ll">
@@ -88,7 +112,7 @@ export default function KatmanlarSayfasi() {
                 key={k.id}
                 className={`lc${k.durum === 'tamamlandi' ? ' done' : k.durum === 'devam_ediyor' || siradaki ? ' cur' : ''}`}
                 style={kilitli ? { opacity: 0.55, cursor: 'not-allowed' } : undefined}
-                title={kilitli ? (k.kosullu_mu ? 'K1-K4 bitince açılır' : `Önce ${oncekiEksik[0]?.kod} katmanını tamamla`) : undefined}
+                title={kilitli ? (k.kosullu_mu ? 'İlk 4 bölüm bitince açılır' : `Önce ${katmanAdi(oncekiEksik[0]?.kod, oncekiEksik[0]?.ad)} bölümünü tamamla`) : undefined}
                 onClick={() => {
                   if (kilitli) return
                   // [2026-10-03] K5 (koşullu katman) doğrudan başlatılamaz — soruları dallar üzerinden gelir.
@@ -105,16 +129,19 @@ export default function KatmanlarSayfasi() {
                   {k.durum === 'tamamlandi' ? '✓' : kilitli ? '🔒' : KATMAN_IKON[k.kod] || k.sira}
                 </div>
                 <div className="lb-wrap">
-                  <div className="lt">{k.ad}</div>
+                  <div className="lt">{katmanAdi(k.kod, k.ad)}</div>
                   <div className="ld">
-                    {k.kosullu_mu ? 'Koşullu / Dinamik — önceki katmana bağlı' : (KATMAN_ACIKLAMA[k.kod] || `Ağırlık: %${k.normalizasyon_agirligi}`)}
+                    {k.kosullu_mu ? 'Son bölümün sonucuna göre sana özel açılan sorular' : (KATMAN_BILGI[k.kod]?.soru || KATMAN_ACIKLAMA[k.kod] || '')}
                   </div>
+                  {sonuclar[k.kod]?.length > 0 && (
+                    <div className="katman-one-cikan">✨ Öne çıkanın: {sonuclar[k.kod].map((x) => <b key={x.degisken_id}>{x.degisken_adi}</b>)}</div>
+                  )}
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginTop: 6 }}>
                     {DURUM_ETIKET[k.durum] && <span className={`bdg ${DURUM_RENK[k.durum]}`}>{DURUM_ETIKET[k.durum]}</span>}
                     {siradaki && k.durum === 'baslamadi' && <span className="bdg bdg-prog">Sıradaki ▶</span>}
                     {kilitli && (
                       <span style={{ fontSize: 10.5, color: 'var(--tx3)' }}>
-                        🔒 {k.kosullu_mu ? 'K1-K4 bitince açılır' : `Önce ${oncekiEksik[0]?.kod} katmanını tamamla`}
+                        🔒 {k.kosullu_mu ? 'İlk 4 bölüm bitince açılır' : `Önce “${katmanAdi(oncekiEksik[0]?.kod, oncekiEksik[0]?.ad)}” bölümünü tamamla`}
                       </span>
                     )}
                     {k.soru_sayisi > 0 && (
