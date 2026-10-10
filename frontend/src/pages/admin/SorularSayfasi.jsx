@@ -595,6 +595,7 @@ export default function SorularSayfasi() {
   const [hata, setHata] = useState(null)
   const [silmeYazisi, setSilmeYazisi] = useState('')
   const [siliniyor, setSiliniyor] = useState(false)
+  const [silmeOzeti, setSilmeOzeti] = useState(null)  // [2026-10-10] { soru_sayisi, cevap_sayisi, etkilenen_ogrenci_sayisi }
 
   // Arama kutusuna yazarken 400ms bekleyip sorguyu tetikle (her tuş vuruşunda değil)
   useEffect(() => {
@@ -615,6 +616,15 @@ export default function SorularSayfasi() {
     setDalFiltre(''); setDegiskenFiltre(''); setTipFiltre(''); setAktifFiltre('aktif'); setArama(''); setSayfa(1)
     setSilmeYazisi('')
   }, [aktifKatman])
+
+  // [2026-10-10] Silme paneli açılınca kaç soru / kaç öğrenci cevabı silineceğini göster
+  useEffect(() => {
+    if (aktifSekme !== 'sil') { setSilmeOzeti(null); return }
+    let iptal = false
+    setSilmeOzeti(null)
+    api.katmanSilmeOzeti(aktifKatman).then((o) => { if (!iptal) setSilmeOzeti(o) }).catch(() => { if (!iptal) setSilmeOzeti({ hata: true }) })
+    return () => { iptal = true }
+  }, [aktifSekme, aktifKatman])
 
   useEffect(() => { setSayfa(1) }, [dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, aramaGecikmeli])
 
@@ -657,6 +667,7 @@ export default function SorularSayfasi() {
       await api.katmaninTumSorulariniSil(aktifKatman)
       setSilmeYazisi('')
       setSayfa(1)
+      setAktifSekme(null)
       yenidenYukle()
     } catch (err) {
       setHata(err.detail || 'Silme başarısız.')
@@ -758,6 +769,14 @@ export default function SorularSayfasi() {
             öğrenci cevaplarını kalıcı olarak siler</b> — geri alınamaz. Diğer katmanlara dokunmaz.
             Devam etmek için aşağıya <b>{aktifKatman}</b> yazın:
           </div>
+          <div style={{ margin: '0 0 12px', padding: '10px 12px', borderRadius: 8, background: 'var(--sur)', border: '1px solid var(--re)', fontSize: 13 }}>
+            {!silmeOzeti ? 'Silinecek kayıtlar sayılıyor…'
+              : silmeOzeti.hata ? 'Silinecek kayıt sayısı alınamadı.'
+              : silmeOzeti.soru_sayisi === 0 ? <>Bu katmanda silinecek soru yok.</>
+              : <>Silinecek: <b>{silmeOzeti.soru_sayisi} soru</b> ve <b style={{ color: 'var(--re)' }}>{silmeOzeti.cevap_sayisi} öğrenci cevabı</b>
+                  {silmeOzeti.etkilenen_ogrenci_sayisi > 0 && <> ({silmeOzeti.etkilenen_ogrenci_sayisi} öğrenci)</>}.
+                  {silmeOzeti.cevap_sayisi > 0 && <> Bu cevaplar kalıcı silinir; cevapları korumak için soruları silmek yerine pasife alın.</>}</>}
+          </div>
           <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
             <input
               className="auth-input"
@@ -770,7 +789,7 @@ export default function SorularSayfasi() {
             <button
               className="btn"
               style={{ background: 'var(--re)', borderColor: 'var(--re)' }}
-              disabled={silmeYazisi.trim() !== aktifKatman || siliniyor}
+              disabled={silmeYazisi.trim() !== aktifKatman || siliniyor || !silmeOzeti || silmeOzeti.hata || silmeOzeti.soru_sayisi === 0}
               onClick={katmaniSil}
             >
               {siliniyor ? <span className="spin" /> : `Evet, ${aktifKatman}'i Sil`}

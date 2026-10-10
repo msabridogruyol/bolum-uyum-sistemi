@@ -558,7 +558,8 @@ def _buyuk_bas(metin: str) -> str:
 
 
 def _seviye_ogrenci(puan: float) -> str:
-    return "Çok güçlü" if puan >= 75 else "Güçlü" if puan >= 62 else "Ortanın üstü" if puan >= 50 else "Orta"
+    from app.core.seviye import seviye_etiketi   # [2026-10-10] tek kaynak düzey bantları
+    return seviye_etiketi(puan)
 
 
 def _seviye_bolum(yuzde: float) -> str:
@@ -628,10 +629,11 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
         if bl:
             d_ana = max(bl, key=lambda x: (x[1], ham_puan[x[0]]))[0]
             p = ham_puan[d_ana]
-            if p >= 60 or p <= 40:
+            from app.core.seviye import gelisime_acik_mi, guclu_mu   # [2026-10-10] ortak bantlar (62 / 40)
+            if guclu_mu(p) or gelisime_acik_mi(p):
                 k = kanitlar.get(d_ana, [])
-                k5 = {"is_turu": eksen_ad.get(d_ana, ""), "durum": "uyumlu" if p >= 60 else "az",
-                      "kanit": k[0] if (k and p >= 60) else None}
+                k5 = {"is_turu": eksen_ad.get(d_ana, ""), "durum": "uyumlu" if guclu_mu(p) else "az",
+                      "kanit": k[0] if (k and guclu_mu(p)) else None}
         dikkat = [(float(o[j]), j) for j in range(len(kodlar))
                   if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_DIKKAT_BOLUM and o[j] <= NEDEN_DIKKAT_OGRENCI]
         if dikkat:

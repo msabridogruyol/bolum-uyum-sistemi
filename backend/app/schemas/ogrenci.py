@@ -93,6 +93,7 @@ class DurumOzetiOut(BaseModel):
     k5_acilan_dal_sayisi: int
     k5_tamamlanan_dal_sayisi: int
     sonraki_tur_tarihi: str | None          # ISO tarih, tur tamamlandıysa dolu
+    sonuc_gecerli: bool = True              # [2026-10-10] False: güven puanı eşiğin altında; uyarı gösterilir, hemen yeniden değerlendirilebilir
 
 
 # --- D5 Katman 2 — Keşfet ---

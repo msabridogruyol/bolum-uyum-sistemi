@@ -238,7 +238,7 @@ def k_bolum_oner(b: Baglam, m: str) -> str:
     if not ilk:
         return _hedefsiz(b)
     return (f"Değerlendirmene göre sana en uyumlu bölümler: {_liste([f'{a} (%{p})' for a, p in ilk])}. "
-            "Uyum yüzdesi profilinin o bölümde mutlu ve başarılı olanlara ne kadar benzediğini gösterir. "
+            "Uyum yüzdesi, profilinin o bölümün mezunlarının çalıştığı mesleklerin gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir. "
             "Bölümler sayfasında her birinin ne okuttuğunu ve hangi üniversitelerde olduğunu inceleyebilir, Karşılaştır ile yan yana koyabilirsin.")
 
 
@@ -250,7 +250,7 @@ def k_kaynak(b: Baglam, m: str) -> str:
         x = random.choice(k[:3])
         return (f"Sana \"{x['baslik']}\" önerebilirim; {_kucuk(x['alan']) if x['alan'] else 'gelişimin'} alanında işine yarar. {x['aciklama']} "
                 "Koçluğum → İlham Kaynakları'nda daha fazlası var; beğendiklerini tek tıkla Kütüphanem'e ekleyebilirsin.")
-    return ("Senin alanların için ilham kaynakları henüz hazırlanıyor. O zamana kadar ilgini çeken bir kitap ya da belgeseli "
+    return ("İlgini çeken bir kitap ya da belgeseli "
             "Kütüphanem'e ekleyip okuduktan sonra \"ne öğrendim\" notunu yazmayı dene — rehber öğretmeninle konuşurken çok işe yarar.")
 
 
@@ -315,13 +315,13 @@ def k_test(b: Baglam, m: str) -> str:
 
 
 def k_uyum(b: Baglam, m: str) -> str:
-    return ("Uyum yüzdesi, profilinin o bölümde mutlu ve başarılı olan kişilerin özelliklerine ne kadar benzediğini gösterir. "
-            "Bir başarı tahmini değildir ve tek başına karar vermek için kullanılmamalı; ilgini, hayallerini ve ailenle konuştuklarını da hesaba kat.")
+    return ("Uyum yüzdesi, profilinin o bölümün mezunlarının çalıştığı mesleklerin gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir; "
+            "bölümler birbiriyle karşılaştırılarak hesaplanır. Bir başarı tahmini değildir. Karar verirken ilgini, hayallerini ve ailenle konuştuklarını da hesaba kat.")
 
 
 def k_kim(b: Baglam, m: str) -> str:
-    return ("Ben Filiz, bölüm ve meslek yolculuğunda sana eşlik eden rehberinim. 🌱 Şu an otomatik rehber modunda çalışıyorum: "
-            "sistemdeki sonuçlarına göre hazır cevaplar veriyorum. Serbest sohbet edemiyorum ama aşağıdaki gibi sorulara yardımcı olabilirim.")
+    return ("Ben Filiz, bölüm ve meslek yolculuğunda sana eşlik eden rehberinim. 🌱 Sistemdeki sonuçlarına, hedef bölümüne ve "
+            "görevlerine göre sana yol gösteriyorum. \"Sorabileceklerin\" sekmesindeki sorularla başlayabilirsin.")
 
 
 def k_sistem(b: Baglam, m: str) -> str:
@@ -539,5 +539,5 @@ def otomatik_yanit(db: Session, ogrenci: Ogrenci, metin: str) -> str:
                 db.rollback()
                 break
     ornek = random.sample(ORNEK_SORULAR, 3)
-    return ("Bunu tam anlayamadım. 🌱 Şu an otomatik rehber modundayım; sistemdeki sonuçlarına dayanan sorulara cevap verebiliyorum. "
+    return ("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin, görevlerin ve gelişiminle ilgili sorularda sana yardımcı olabilirim. "
             "Örneğin şunları sorabilirsin: " + " · ".join(f"\"{x}\"" for x in ornek))

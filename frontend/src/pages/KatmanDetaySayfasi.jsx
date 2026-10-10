@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import { COK_GUCLU_ESIK, GUCLU_ESIK, gucluMu, seviyeEtiketi, seviyeRengi } from '../yardimci/seviye'
 
 const KATMAN_BOYUT_SAYISI = { K1: 7, K2: 8, K3: 7, K4: 9 }
 const SANIYE_BASINA_SORU_TAHMINI = 25
@@ -10,15 +11,13 @@ function tahminiSureDk(kod) {
   return Math.max(1, Math.round((boyut * SANIYE_BASINA_SORU_TAHMINI) / 60))
 }
 
-const IKINCI_BOLUM_BASLIGI = { K1: 'Diğer Boyutların', K2: 'Gelişim Alanların', K3: 'Gelişim Alanların', K4: 'Gelişim Alanların' }
+// [2026-10-10] İkinci sütunda Orta ve Gelişime açık boyutlar birlikte durur; "Gelişim" başlığı Orta puanları da
+// gelişim alanı gibi gösterdiği için tüm katmanlarda tarafsız başlık kullanılır.
+const IKINCI_BOLUM_BASLIGI = { K1: 'Diğer Boyutların', K2: 'Diğer Boyutların', K3: 'Diğer Boyutların', K4: 'Diğer Boyutların' }
 const SONRAKI_KATMAN = { K1: 'K2', K2: 'K3', K3: 'K4', K4: null }
 const PROFIL_ETIKETI = { K1: 'MOTİVASYON PROFİLİN', K2: 'KİŞİLİK PROFİLİN', K3: 'İŞ ORTAMI PROFİLİN', K4: 'ALAN EĞİLİMİ PROFİLİN' }
 
-function renkSec(puan) {
-  if (puan >= 70) return 'var(--gr)'
-  if (puan >= 40) return 'var(--pu)'
-  return 'var(--tx3)'
-}
+const renkSec = seviyeRengi   // [2026-10-10] tek kaynak bantlar (yardimci/seviye.js)
 
 function BoyutSatiri({ s }) {
   const [acik, setAcik] = useState(false)
@@ -31,7 +30,7 @@ function BoyutSatiri({ s }) {
         <div className="dr" style={{ flex: 1, marginBottom: 0 }}>
           <div className="dl">{s.degisken_adi}</div>
           <div className="db"><div className="df" style={{ width: `${s.puan}%`, background: renkSec(s.puan) }} /></div>
-          <div className="ds" style={{ color: renkSec(s.puan) }}>{s.puan}</div>
+          <div className="ds" style={{ color: renkSec(s.puan) }} title={seviyeEtiketi(s.puan)}>{s.puan}</div>
         </div>
       </div>
       {detayVarMi && (
@@ -93,8 +92,8 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
   if (!katman || !sonuc || hedef === undefined || gelisim === null) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
 
   const siraliSonuclar = [...sonuc.sonuclar].sort((a, b) => b.puan - a.puan)
-  const guclu = siraliSonuclar.filter((s) => s.puan >= 60)
-  const digerleri = siraliSonuclar.filter((s) => s.puan < 60)
+  const guclu = siraliSonuclar.filter((s) => gucluMu(s.puan))
+  const digerleri = siraliSonuclar.filter((s) => !gucluMu(s.puan))
   const enUst4Etiket = siraliSonuclar.slice(0, 4)
   const sonrakiKod = SONRAKI_KATMAN[kod]
 
@@ -189,7 +188,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
               )}
 
               <div className="ps" style={{ marginBottom: 14, fontSize: 12 }}>
-                Bir boyuta tıklayınca detaylı açıklaması açılır. 60 ve üzeri puan alan boyutlar "Güçlü", altındakiler "{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'}" olarak gruplanır.
+                Bir boyuta tıklayınca detaylı açıklaması açılır. {GUCLU_ESIK} ve üzeri puan alan boyutlar "Güçlü" ({COK_GUCLU_ESIK} ve üzeri "Çok güçlü"), altındakiler "{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'}" olarak gruplanır.
               </div>
 
               <div className="two">
@@ -215,7 +214,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
                       ))}
                     </div>
                     <div className="taslak-onizleme-overlay">
-                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz 60+ çıkan bir boyutun yok</div>
+                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz {GUCLU_ESIK}+ çıkan bir boyutun yok</div>
                     </div>
                   </div>
                 )}
@@ -242,7 +241,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
                       ))}
                     </div>
                     <div className="taslak-onizleme-overlay">
-                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz 60 altı çıkan bir boyutun yok</div>
+                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz {GUCLU_ESIK} altı çıkan bir boyutun yok</div>
                     </div>
                   </div>
                 )}
@@ -273,7 +272,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
             {!sonuc.tamamlandi_mi ? (
               <div className="taslak-onizleme">
                 <div className="taslak-onizleme-icerik">
-                  {['Güçlü Yönün', 'Zayıf Yönün'].map((baslik, i) => (
+                  {['Güçlü Yönün', 'Gelişime Açık Yönün'].map((baslik, i) => (
                     <div key={i} style={{ marginBottom: i === 0 ? 14 : 0 }}>
                       <div style={{ fontSize: 10.5, fontWeight: 700, color: i === 0 ? 'var(--gr)' : 'var(--am)', marginBottom: 5 }}>
                         {i === 0 ? '✓' : '↻'} {baslik}
@@ -302,7 +301,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
                 )}
                 {[...digerleri].reverse().slice(0, 2).length > 0 && (
                   <div>
-                    <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--am)', marginBottom: 6 }}>↻ {IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'} Yönlerin</div>
+                    <div style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--am)', marginBottom: 6 }}>↻ Daha Az Öne Çıkan Yönlerin</div>
                     {[...digerleri].reverse().slice(0, 2).map((s) => (
                       <div key={s.degisken_id} style={{ fontSize: 12, color: 'var(--tx2)', marginBottom: 6, lineHeight: 1.5 }}>
                         <b style={{ color: 'var(--tx)' }}>{s.degisken_adi}</b>
