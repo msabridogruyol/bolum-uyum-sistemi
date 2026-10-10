@@ -101,7 +101,7 @@ export default function TopluYuklemePenceresi({ okulId, okulAd, onKapat, onBitti
             <div style={{ display: 'flex', gap: 8, margin: '8px 0' }}>
               <select className="auth-input" value={tekForm.sinif} onChange={(e) => setTekForm({ ...tekForm, sinif: e.target.value })}>
                 <option value="">Sınıf…</option>
-                {['9', '10', '11', '12', 'Mezun'].map((s) => <option key={s} value={s}>{s === 'Mezun' ? s : `${s}. Sınıf`}</option>)}
+                {['Aday', '9', '10', '11', '12', 'Mezun'].map((s) => <option key={s} value={s}>{s === 'Mezun' || s === 'Aday' ? s : `${s}. Sınıf`}</option>)}
               </select>
               <input className="auth-input" style={{ width: 90 }} placeholder="Şube" maxLength={2} value={tekForm.sube} onChange={(e) => setTekForm({ ...tekForm, sube: e.target.value })} />
             </div>

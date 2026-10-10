@@ -1,5 +1,6 @@
 // [2026-10-09] Öğrenci detayı: hesap, ilerleme, sonuç, istatistik, kayıtlar + şifre sıfırla / düzenle / sil
 import { useEffect, useState } from 'react'
+import { AkranListesi } from './AkranPaneli'
 import { api } from '../../api/client'
 import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, onceSure, tarih } from './ortak'
 import RaporDugmeleri from '../RaporDugmeleri'
@@ -37,7 +38,7 @@ function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
   )
 }
 
-const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['kayit', 'Kayıtlar']]
+const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['akran', 'Benzer akranlar'], ['kayit', 'Kayıtlar']]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
 
 export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, onKapat, onDegisti }) {
@@ -106,7 +107,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
             <input className="auth-input" type="email" value={duzen.email} onChange={(e) => setDuzen({ ...duzen, email: e.target.value })} placeholder="E-posta" required />
             <select className="auth-input" value={duzen.sinif} onChange={(e) => setDuzen({ ...duzen, sinif: e.target.value })}>
               <option value="">Sınıf…</option>
-              {['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].map((s) => <option key={s}>{s}</option>)}
+              {['Aday', '9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].map((s) => <option key={s}>{s}</option>)}
             </select>
             <input className="auth-input" style={{ maxWidth: 80 }} value={duzen.sube} maxLength={2} onChange={(e) => setDuzen({ ...duzen, sube: e.target.value })} placeholder="Şube" />
             <input className="auth-input" style={{ maxWidth: 120 }} value={duzen.ogrenci_no} maxLength={20} onChange={(e) => setDuzen({ ...duzen, ogrenci_no: e.target.value })} placeholder="Öğrenci no" />
@@ -211,6 +212,8 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           )}
         </>
       )}
+
+      {sekme === 'akran' && <AkranListesi ogrenciId={ogrenciId} />}
 
       {sekme === 'cevaplar' && superAdmin && <CevapAnaliziSekmesi ogrenciId={ogrenciId} />}
 

@@ -156,6 +156,12 @@ export const api = {
   raporIndir: (tur, bicim = 'pdf') => dosyaIndir(`/ogrenci/rapor?tur=${tur}&bicim=${bicim}`),
   ogrenciRaporuIndir: (ogrenciId, tur, bicim = 'pdf') => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/rapor?tur=${tur}&bicim=${bicim}`, 'admin'),
   okulRaporuIndir: (okulId, bicim = 'pdf') => dosyaIndir(`/yonetim/okul/${okulId}/rapor?bicim=${bicim}`, 'admin'),
+  // [2026-10-10] Akran eşleştirme, şube dağılımı, aday öğrenci
+  ogrenciAkranlari: (id, kapsam = 'okul') => aget(`/yonetim/ogrenci/${id}/akranlar?kapsam=${kapsam}`),
+  subeDagilimiOner: (okulId, veri) => apost(`/yonetim/okul/${okulId}/sube-dagilimi`, veri),
+  subeDagilimiUygula: (okulId, veri) => apost(`/yonetim/okul/${okulId}/sube-dagilimi/uygula`, veri),
+  okulAdaylari: (okulId) => aget(`/yonetim/okul/${okulId}/adaylar`),
+  adayUyumu: (id, sinif) => aget(`/yonetim/ogrenci/${id}/aday-uyumu?sinif=${encodeURIComponent(sinif)}`),
   guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),

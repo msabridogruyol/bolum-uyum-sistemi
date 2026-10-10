@@ -11,6 +11,7 @@ import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, base64Indir, onceSure
 import OkulBilgiKarti from '../../components/OkulBilgiKarti'
 import MeslekDiliDuzenleyici from '../../components/yonetim/MeslekDiliDuzenleyici'
 import OkulTemaKarti from '../../components/yonetim/OkulTemaKarti'
+import AkranSekmesi from '../../components/yonetim/AkranPaneli'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -144,7 +145,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
           <button className="btn sec" disabled={bekle} onClick={sifreSifirla}>🔑 Şifrelerini sıfırla</button>
           <span className="yp-sinif-ata">
             <select className="yp-sec" value={sinifAta.sinif} onChange={(e) => setSinifAta({ ...sinifAta, sinif: e.target.value })}>
-              <option value="">Sınıf…</option>{['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].map((s) => <option key={s}>{s}</option>)}
+              <option value="">Sınıf…</option>{['Aday', '9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].map((s) => <option key={s}>{s}</option>)}
             </select>
             <input className="auth-input" style={{ width: 64, margin: 0 }} maxLength={2} placeholder="Şube" value={sinifAta.sube} onChange={(e) => setSinifAta({ ...sinifAta, sube: e.target.value.toUpperCase() })} />
             <button className="btn sec" disabled={bekle || (!sinifAta.sinif && !sinifAta.sube)} onClick={sinifVer}>Sınıfı ata</button>
@@ -434,7 +435,7 @@ export default function OkulPaneliSayfasi() {
   if (hata) return <div className="pg pg-genis"><div className="auth-error">{hata}</div></div>
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
-  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`],
+  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['akran', 'Şube & Akran'],
     ...(okulId ? [['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
   return (
     <div className="pg pg-genis">
@@ -455,6 +456,7 @@ export default function OkulPaneliSayfasi() {
       </div>
       {sekme === 'ozet' && <OzetSekmesi oz={oz} />}
       {sekme === 'ogrenciler' && <OgrencilerSekmesi okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sekme === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'bilgiler' && <OkulBilgileriSekmesi okulId={okulId} />}
       {sekme === 'yetkililer' && <YetkililerSekmesi okulId={okulId} superAdmin={superAdmin} />}
       {sekme === 'meslekdili' && okulId > 0 && <MeslekDiliDuzenleyici okulId={okulId} />}

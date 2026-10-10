@@ -60,7 +60,7 @@ from app.models import AdminKullanici, AuditLog, Bolum, Ogrenci, OgrenciHesapOla
 router = APIRouter(prefix="/yonetim", tags=["Okul yönetimi"])
 
 EN_FAZLA_SATIR = 2000
-SINIFLAR = ["9. Sınıf", "10. Sınıf", "11. Sınıf", "12. Sınıf", "Mezun"]
+SINIFLAR = ["Aday", "9. Sınıf", "10. Sınıf", "11. Sınıf", "12. Sınıf", "Mezun"]
 _EPOSTA = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]{2,}$")
 
 OLAY_ETIKET = {
@@ -137,6 +137,8 @@ def sinif_ayir(sinif_ham: str | None, sube_ham: str | None = None) -> tuple[str 
         return None, sube
     if "mezun" in s.lower():
         return "Mezun", sube
+    if "aday" in s.lower():          # [2026-10-10] henüz şubesi belli olmayan aday öğrenci
+        return "Aday", None
     m = re.match(r"^\s*(9|10|11|12)\s*(?:\.?\s*s[ıi]n[ıi]f[ıi]?)?\s*[-/ .]?\s*([A-Za-zÇĞİÖŞÜçğıöşü]{1,2})?\s*$", s, re.I)
     if m:
         return f"{m.group(1)}. Sınıf", (sube or (m.group(2).upper() if m.group(2) else None))
