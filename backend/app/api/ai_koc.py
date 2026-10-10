@@ -47,6 +47,7 @@ class AsistanDurumOut(BaseModel):
     aktif: bool
     mod: str = "ai"                    # [2026-10-10] ai | otomatik (yapay zekâ bağlı değilken kural tabanlı rehber)
     ornek_sorular: list[str] = []
+    soru_kategorileri: list[dict] = []   # [2026-10-10] "Sorabileceklerin" sekmesi
     gunluk_limit: int
     bugun_gonderilen: int
     kalan: int
@@ -76,10 +77,11 @@ def _bugun_gonderilen(db: Session, ogrenci: Ogrenci) -> int:
 @router.get("/durum", response_model=AsistanDurumOut)
 def asistan_durumu(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     limit, gonderilen = _gunluk_limit(db), _bugun_gonderilen(db, ogrenci)
-    from app.core.filiz_rehber import ORNEK_SORULAR
+    from app.core.filiz_rehber import ORNEK_SORULAR, SORU_KATEGORILERI
     ai = asistan_aktif_mi()
     return AsistanDurumOut(aktif=True, mod="ai" if ai else "otomatik", ornek_sorular=ORNEK_SORULAR[:6],
-                           gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen))
+                           soru_kategorileri=SORU_KATEGORILERI,
+                           gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen) if ai else limit)
 
 
 class MesajCevap(BaseModel):
@@ -147,7 +149,8 @@ def mesaj_gonder(
         db.commit()
         return MesajCevap(asistan_yaniti=KRIZ_YANITI, oturum_kapandi_mi=False)
 
-    if _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
+    # [2026-10-10] Günlük sınır yapay zekâ maliyeti içindir; otomatik rehber modunda uygulanmaz
+    if asistan_aktif_mi() and _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
         raise HTTPException(status_code=429, detail="Bugünlük mesaj hakkın doldu. Yarın yine konuşalım! 🌱")
 
     onceki_mesajlar = (

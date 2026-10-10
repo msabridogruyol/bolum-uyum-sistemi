@@ -18,16 +18,28 @@ from sqlalchemy.orm import Session
 
 from app.models import Bolum, Ogrenci
 
+# [2026-10-10] "Sorabileceklerin" sekmesi: kategorili örnek sorular. Her soru otomatik rehberde bir konuya eşlenir.
+SORU_KATEGORILERI = [
+    {"ad": "Başlangıç", "ikon": "👋", "sorular": [
+        "Filiz, sen kimsin?", "Sistem nasıl çalışıyor?", "Testi nasıl cevaplamalıyım?", "Değerlendirmede neredeyim?"]},
+    {"ad": "Sonuçlarım", "ikon": "🧭", "sorular": [
+        "Güçlü yönlerim neler?", "Hangi yönlerimi geliştirmeliyim?", "Bana hangi bölümler uygun?", "Uyum yüzdesi ne demek?"]},
+    {"ad": "Hedef ve yol haritası", "ikon": "🎯", "sorular": [
+        "Hedef bölümüm bana uygun mu?", "Hedef bölümüm hakkında bilgi verir misin?", "Yol haritamda sıradaki adım ne?",
+        "Bu hafta neye odaklanmalıyım?", "Hedef bölümümü değiştirebilir miyim?"]},
+    {"ad": "Gelişim", "ikon": "🌱", "sorular": [
+        "Okuyabileceğim bir kitap önerir misin?", "İzleyebileceğim bir belgesel önerir misin?",
+        "Kütüphanemde neler var?", "Hangi kulübe katılmalıyım?"]},
+    {"ad": "Motivasyon ve çalışma", "ikon": "💪", "sorular": [
+        "Sınav kaygısıyla nasıl başa çıkarım?", "Nasıl daha verimli ders çalışırım?",
+        "Motivasyonum düştü, ne yapmalıyım?", "Bölüm seçiminde kararsızım, ne yapmalıyım?"]},
+    {"ad": "Destek", "ikon": "🤝", "sorular": [
+        "Bir eğitim koçuyla nasıl görüşürüm?", "Takvimimde ne var?", "Rehber öğretmenime nasıl ulaşırım?"]},
+]
 ORNEK_SORULAR = [
-    "Bu hafta neye odaklanmalıyım?",
-    "Güçlü yönlerim neler?",
-    "Hangi yönlerimi geliştirmeliyim?",
-    "Hedef bölümüm bana uygun mu?",
-    "Bana hangi bölümler uygun?",
-    "Okuyabileceğim bir kitap önerir misin?",
-    "Sınav kaygısıyla nasıl başa çıkarım?",
-    "Hangi kulübe katılmalıyım?",
-    "Bir eğitim koçuyla nasıl görüşürüm?",
+    "Bu hafta neye odaklanmalıyım?", "Güçlü yönlerim neler?", "Hangi yönlerimi geliştirmeliyim?",
+    "Hedef bölümüm bana uygun mu?", "Bana hangi bölümler uygun?", "Okuyabileceğim bir kitap önerir misin?",
+    "Sınav kaygısıyla nasıl başa çıkarım?", "Hangi kulübe katılmalıyım?", "Bir eğitim koçuyla nasıl görüşürüm?",
 ]
 
 
@@ -289,6 +301,10 @@ def k_takvim(b: Baglam, m: str) -> str:
 
 
 def k_test(b: Baglam, m: str) -> str:
+    if "cevapla" in _sade(m):
+        return ("Doğru ya da yanlış cevap yok. \"Olmak istediğin\" kişiye göre değil, şu anki hâline göre cevap ver; çok düşünmeden ilk "
+                "aklına gelen genelde en doğrusudur. \"En çok / en az\" sorularında önce sana en çok, sonra en az uyan şıkkı seçersin. "
+                "Ara verirsen cevapların kaydedilir, döndüğünde kaldığın yerden devam edersin.")
     d = b.degerlendirme()
     if d["durum"] == "tamamlandi":
         return "Değerlendirmeni tamamladın. Sonuçların Profilim ve Bölümler sayfalarında. Belli bir süre sonra yeni tur açılınca kendindeki değişimi de görebileceksin."
@@ -307,21 +323,109 @@ def k_kim(b: Baglam, m: str) -> str:
             "sistemdeki sonuçlarına göre hazır cevaplar veriyorum. Serbest sohbet edemiyorum ama aşağıdaki gibi sorulara yardımcı olabilirim.")
 
 
+def k_sistem(b: Baglam, m: str) -> str:
+    return ("Filizyol dört adımda ilerler: 1) Değerlendirme — değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların. "
+            "2) Sonuçlar — Profilim'de güçlü yönlerin, Bölümler'de sana en uyumlu bölümler. 3) Hedef — bir bölüm seçersin, "
+            "Koçluğum'da sana özel yol haritası çıkar. 4) Gelişim — haftalık görevler, kulüpler, kütüphanen ve takvimin. "
+            "Ayrıntılar sol menüdeki Sistem Hakkında sayfasında.")
+
+
+def k_adim(b: Baglam, m: str) -> str:
+    adim = b.simdiki_adim()
+    if not adim:
+        return _hedefsiz(b) if not b.plan else "Yol haritandaki tüm adımları tamamlamışsın, tebrikler! 🎉 Güçlü Yönlerin sekmesindeki adımlarla devam edebilirsin."
+    nasil = adim.get("nasil") or []
+    ilk = f" İlk iş olarak: {nasil[0]}" if nasil else ""
+    return (f"Sıradaki adımın \"{adim['baslik']}\" ({adim.get('alan')}, yaklaşık {adim.get('sure') or 'kısa bir süre'}). "
+            f"{adim.get('aciklama') or ''}{ilk} Bitirdiğinde Koçluğum → Yol Haritam'da \"Yaptım\"ı işaretle.").replace("  ", " ")
+
+
+def k_hedef_degis(b: Baglam, m: str) -> str:
+    from app.core.koclugu_servisi import hedef_hak_durumu
+    h = hedef_hak_durumu(b.o)
+    if h["kalan_hak"] > 0:
+        return (f"Evet. Hedefini {h['kalan_hak']} kez daha değiştirebilirsin; bunu Ayarlar sayfasındaki Hedef Bölümüm kartından yaparsın. "
+                "Değiştirmeden önce Bölümler → Karşılaştır ile mevcut hedefini yeni bölümle yan yana koymanı öneririm; yol haritan yeni hedefe göre yeniden hazırlanır.")
+    return ("Hedef değiştirme hakların bitmiş. Gerçekten değiştirmek istiyorsan rehber öğretmenine danış; okulun sana ek hak tanıyabilir.")
+
+
+def k_bolum_bilgi(b: Baglam, m: str) -> str:
+    if not b.hedef:
+        return _hedefsiz(b)
+    bolum = b.db.get(Bolum, b.hedef["id"])
+    d = (bolum.detay if bolum is not None and isinstance(bolum.detay, dict) else {}) or {}
+    ozet = d.get("ozet") or (bolum.kisa_aciklama if bolum is not None else "") or ""
+    meslek = [x.get("ad") for x in (d.get("meslekler") or []) if isinstance(x, dict) and x.get("ad")][:3]
+    sure = d.get("ogrenim_suresi")
+    parca = [f"{b.hedef['ad']}: {ozet}".strip()]
+    if meslek:
+        parca.append(f"Mezunlar örneğin şu işleri yapar: {_liste(meslek)}.")
+    if sure:
+        parca.append(f"Öğrenim süresi: {sure}.")
+    parca.append("Bölüm adına tıklayınca açılan pencerede dersler ve üniversiteler de var.")
+    return " ".join(p for p in parca if p)
+
+
+def k_motivasyon(b: Baglam, m: str) -> str:
+    gorev = next((x for x in b.gorevler() if x.durum != "tamamlandi"), None)
+    kucuk = f" Bugün sadece şunu dene: \"{gorev.baslik}\" — 10 dakikanı alır." if gorev else ""
+    return ("Motivasyonun dalgalanması çok normal; kimse her gün aynı enerjide değildir. Büyük hedefi küçük parçalara bölmek "
+            "işe yarar: bugün yapabileceğin tek ve küçük bir şey seç, bitirince kendini takdir et." + kucuk +
+            " Uzun süredir böyle hissediyorsan rehber öğretmeninle konuşmanı öneririm.")
+
+
+def k_kararsiz(b: Baglam, m: str) -> str:
+    ilk = b.ilk_bolumler(3)
+    ek = f" Sistemin sana en uyumlu bulduğu üç bölüm: {_liste([a for a, _ in ilk])}." if ilk else ""
+    return ("Kararsızlık, seçeneklerini ciddiye aldığını gösterir. Şöyle ilerleyebilirsin: 1) İlgini çeken 2-3 bölümü Listem'e ekle, "
+            "2) Bölümler → Karşılaştır ile yan yana koy, 3) her biri için o mesleği yapan biriyle konuşmaya ya da bir gün izlemeye çalış." + ek +
+            " Karar verirken uyum yüzdesi kadar ilgini ve hayallerini de hesaba kat.")
+
+
+def k_rehber(b: Baglam, m: str) -> str:
+    return ("Rehber öğretmenine okulunda, rehberlik servisinden ulaşabilirsin. Görüşmeye giderken Profilim sayfandaki güçlü yönlerini ve "
+            "hedef bölümünü yanında götürmen konuşmayı kolaylaştırır; rehber öğretmenin sonuçlarını ve raporunu sistemden de görebilir.")
+
+
+def k_kutuphane(b: Baglam, m: str) -> str:
+    try:
+        r = b.db.execute(text("""SELECT kategori, COUNT(*) FILTER (WHERE durum = 'bitti'), COUNT(*) FILTER (WHERE durum = 'istek')
+                                   FROM ogrenci_kutuphane WHERE ogrenci_id = :o GROUP BY kategori"""), {"o": b.o.id}).all()
+    except Exception:
+        b.db.rollback()
+        r = []
+    if not r:
+        return "Kütüphanen henüz boş. Okuduğun bir kitabı ya da izlediğin bir belgeseli Kütüphanem sayfasına ekleyerek başlayabilirsin; birkaç cümlelik \"ne öğrendim\" notu çok değerli olur."
+    ad = {"kitap": "kitap", "izleme": "film / dizi / belgesel", "kurs": "kurs", "etkinlik": "etkinlik"}
+    bitti = [f"{n} {ad.get(k, k)}" for k, n, _ in r if n]
+    istek = sum(x[2] for x in r)
+    return ("Kütüphanende " + (_liste(bitti) + " tamamlanmış" if bitti else "henüz tamamlanmış kayıt yok")
+            + (f"; {istek} kayıt da listende seni bekliyor" if istek else "") + ". Kütüphanem sayfasındaki grafiklerden gelişimini izleyebilirsin.")
+
+
 KONULAR = [
     (("tesekkur", "sagol", "sag ol", "eyvallah", "cok iyi", "super"), k_tesekkur),
-    (("sinav", "kaygi", "stres", "motivasyon", "calisma plan", "nasil calis", "ders calis", "yks", "tyt", "ayt"), k_sinav),
+    (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
+    (("sistem nasil", "nasil calisiyor", "filizyol nedir", "ne ise yarar"), k_sistem),
+    (("motivasyon", "isteksiz", "bikkin", "yoruldum", "canim istemiyor", "hevesim"), k_motivasyon),
+    (("kararsiz", "karar veremiyorum", "emin degilim", "secemiyorum"), k_kararsiz),
+    (("sinav", "kaygi", "stres", "verimli", "ders calis", "nasil calis", "yks", "tyt", "ayt"), k_sinav),
+    (("degistir", "degisebilir", "baska bolum sec"), k_hedef_degis),
+    (("hakkinda bilgi", "ne okutuyor", "bolum hakkinda", "bolumu anlat", "mezunlar"), k_bolum_bilgi),
+    (("siradaki adim", "yol harita", "sonraki adim", "adimim"), k_adim),
     (("bu hafta", "hafta", "gorev", "ne yapay", "nereden basla", "simdi ne", "odaklan"), k_hafta),
+    (("kutuphanem", "kutuphane"), k_kutuphane),
     (("kitap", "film", "belgesel", "dizi", "kaynak", "okuyabil", "izleyebil"), k_kaynak),
     (("kulup", "kulub", "topluluk", "ilgi testi"), k_kulup),
-    (("koc", "gorusme", "randevu", "rehber ogretmen", "danisman"), k_koc),
-    (("takvim", "tarih", "ne zaman", "etkinlik", "randevum"), k_takvim),
+    (("rehber ogretmen", "rehberlik servis", "psikolojik danisman"), k_rehber),
+    (("koc", "gorusme", "randevu"), k_koc),
+    (("takvim", "tarih", "ne zaman", "etkinlik"), k_takvim),
     (("guclu", "iyi oldugum", "yetenek", "avantaj"), k_guclu),
     (("gelistir", "gelisim", "zayif", "eksik", "zorlan"), k_gelisim),
     (("uyum yuzde", "yuzde", "% ", "ne demek"), k_uyum),
     (("hedef", "bana uygun mu", "dogru bolum", "uygun mu"), k_hedef),
     (("hangi bolum", "bolum oner", "uygun bolum", "meslek", "bolumler"), k_bolum_oner),
-    (("test", "degerlendirme", "katman", "soru"), k_test),
-    (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
+    (("test", "degerlendirme", "katman", "soru", "cevaplamali", "neredeyim"), k_test),
     (("merhaba", "selam", "gunaydin", "iyi aksam", "hey", "naber", "nasilsin"), k_selam),
 ]
 
