@@ -53,6 +53,7 @@ function Ozet({ s, onYeniden, onKapat, onBaska }) {
               {k.onerilen && <div className="ms-onerilen">Meslekte beklenen: {k.onerilen}</div>}
             </div>
           ))}
+          <div className="yp-ince" style={{ marginTop: 6 }}>Karar anları kurgusal durumlardır; mesleğin iş tanımı, iş güvenliği ve meslek etiği ilkeleri esas alınarak hazırlanmıştır. Gerçek iş yerinde kurallar kuruma göre değişebilir.</div>
         </div>
       )}
       <div className="ms-iki" style={{ marginTop: 10 }}>

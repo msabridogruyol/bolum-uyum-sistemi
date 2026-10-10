@@ -324,5 +324,25 @@ SENARYOLAR["kurs/etüt öğretmeni"] = SENARYOLAR["lise matematik öğretmeni"]
 SENARYOLAR["kurumsal kimlik tasarımcısı"] = SENARYOLAR["grafik tasarımcı"]
 
 
+# Diğer meslekler (yaklaşık 1000): app/data/meslek_senaryolari.json — aynı biçim, aynı kurallar.
+# Elle yazılan SENARYOLAR öncelikli; JSON yalnızca eksik meslekleri tamamlar.
+def _json_yukle() -> dict:
+    import json
+    from pathlib import Path
+    yol = Path(__file__).resolve().parent.parent / "data" / "meslek_senaryolari.json"
+    try:
+        return json.loads(yol.read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return {}
+
+
+for _ad, _kararlar in _json_yukle().items():
+    SENARYOLAR.setdefault(_ad, _kararlar)
+
+KAYNAK_NOTU = ("Karar anları; mesleklerin günlük iş tanımları, MYK ulusal meslek standartları ve iş sağlığı ve güvenliği "
+               "ilkeleri gibi genel mesleki bilgi esas alınarak hazırlanmış kurgusal durumlardır. Gerçek kişi, kurum veya "
+               "istatistik içermez; rehber öğretmen ve meslek sahipleriyle gözden geçirilmesi önerilir.")
+
+
 def senaryo_bul(meslek_adi: str) -> list[dict]:
     return SENARYOLAR.get((meslek_adi or "").strip().lower(), [])
