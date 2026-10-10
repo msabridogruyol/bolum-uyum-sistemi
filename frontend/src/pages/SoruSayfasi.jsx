@@ -36,6 +36,23 @@ function DegiskenKarti({ s }) {
 // Güvenlik altyapısı — tam ekran zorlama, sekme/odak takibi, periyodik fotoğraf
 // ============================================================
 const FOTOGRAF_ARALIGI_SORU = 4  // her 4 soruda bir fotoğraf çek
+// [2026-10-10] Öğrenciye anında gösterilen ihlal bildirimleri (cezalı olaylar)
+const IHLAL_METNI = {
+  tam_ekrandan_cikti: 'Tam ekrandan çıktın.',
+  sekme_degisti: 'Başka bir sekmeye geçtin.',
+  pencere_odagi_kaybedildi: 'Başka bir pencereye geçtin.',
+  coklu_ekran: 'İkinci bir ekran algılandı.',
+  ekran_goruntusu_tusu: 'Ekran görüntüsü tuşuna bastın.',
+  kopyalama: 'Kopyalama yapılamaz.',
+  kamera_kapandi: 'Kamera kapandı.',
+}
+// [2026-10-10] Soru tipleri ve nasıl cevaplanacakları (tanıtım ekranında ve her sorunun üstünde)
+const SORU_TIPI = {
+  likert: { ad: 'Katılım sorusu', ikon: '📏', kisa: 'Bu ifade seni ne kadar anlatıyor?', uzun: 'Bir ifade okursun ve sana ne kadar uyduğunu seçersin: “Kesinlikle katılmıyorum”dan “Kesinlikle katılıyorum”a kadar. Ortadaki şık “kararsızım” demektir; mümkün olduğunca net olmaya çalış.' },
+  kutup: { ad: 'Tercih sorusu', ikon: '⚖️', kisa: 'İki uçtan hangisine daha yakınsın?', uzun: 'İki farklı tercih verilir. Hangisine ne kadar yakın olduğunu seçersin: “Kesinlikle A” · “Daha çok A” · “Daha çok B” · “Kesinlikle B”. İkisi de iyi olabilir; sana daha yakın olanı seç.' },
+  sjt: { ad: 'Durum sorusu', ikon: '🎬', kisa: 'Sen olsan ne yapardın?', uzun: 'Gerçek hayattan bir durum anlatılır. Sen o durumda olsan en çok ne yapacağını seçersin. “En çok / en az” sorularında önce sana EN ÇOK uyan, sonra EN AZ uyan şıkkı seçersin.' },
+  kontrol: { ad: 'Dikkat sorusu', ikon: '👀', kisa: 'Soruda ne isteniyorsa onu seç.', uzun: 'Arada dikkatli okuduğunu gösteren kısa sorular vardır; soruda istenen şıkkı seçmen yeterli. Bu sorular puanına değil güven puanına etki eder.' },
+}
 
 function GuvenlikUyariKatmani({ tamEkranaGeriDon, onErkenBitir }) {
   return (
@@ -75,13 +92,8 @@ function SinavBasligi() {
 // Sağ üstte, öğrencinin kendini görebildiği canlı kamera önizlemesi
 function KameraOnizleme({ videoRef }) {
   return (
-    <div style={{
-      position: 'fixed', top: 16, right: 16, zIndex: 500,
-      width: 120, height: 90, borderRadius: 12, overflow: 'hidden',
-      border: '2px solid var(--bor2)', boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-      background: 'var(--sur2)',
-    }}>
-      <video ref={videoRef} muted playsInline style={{ width: '100%', height: '100%', objectFit: 'cover', transform: 'scaleX(-1)' }} />
+    <div className="sn-kamera-onizleme" title="Kamera doğrulaması açık">
+      <video ref={videoRef} muted playsInline />
     </div>
   )
 }
@@ -91,72 +103,66 @@ function KameraOnizleme({ videoRef }) {
 // ============================================================
 const ONAY_METNI = 'ONAYLIYORUM'
 
-function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, altBaslik }) {
+function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, altBaslik, kameraRizasi, onKameraIzni }) {
   const [yaziliOnay, setYaziliOnay] = useState('')
+  const [kurallarOk, setKurallarOk] = useState(false)
+  const [kameraBekle, setKameraBekle] = useState(false)
   const katman = KATMAN_BILGI[kod] || { ikon: '🌻', ad: baslik || kod }
 
-  const likertSayisi = sorular.filter((s) => s.soru_tipi === 'likert').length
-  const sjtSayisi = sorular.filter((s) => s.soru_tipi === 'sjt').length
-  const kutupSayisi = sorular.filter((s) => s.soru_tipi === 'kutup').length
-  const tahminiDakika = Math.max(1, Math.ceil((likertSayisi * 15 + kutupSayisi * 20 + sjtSayisi * 30) / 60))
-  const onayGecerli = yaziliOnay.trim() === ONAY_METNI
+  const tipler = ['kutup', 'likert', 'sjt', 'kontrol'].map((t) => ({ t, n: sorular.filter((s) => s.soru_tipi === t).length })).filter((x) => x.n > 0)
+  const say = (t) => sorular.filter((s) => s.soru_tipi === t).length
+  const tahminiDakika = Math.max(1, Math.ceil((say('likert') * 15 + say('kutup') * 20 + say('sjt') * 30 + say('kontrol') * 10) / 60))
+  const onayGecerli = yaziliOnay.trim() === ONAY_METNI && kurallarOk
 
   return (
-    <div className="qwrap" style={{ maxWidth: 620, width: '100%', minHeight: 620 }}>
-      <div style={{ textAlign: 'center', marginBottom: 28 }}>
-        <div style={{ fontSize: 42, marginBottom: 10 }}>{katman.ikon}</div>
-        <div style={{ fontFamily: 'var(--fd)', fontSize: 22, fontWeight: 700 }}>{katman.ad}</div>
-        <div style={{ fontSize: 12.5, color: 'var(--tx3)', fontWeight: 600, marginTop: 3 }}>{altBaslik || `${kod} katmanına başlıyorsun`}</div>
+    <div className="qwrap sn-tanitim">
+      <div style={{ textAlign: 'center', marginBottom: 22 }}>
+        <div style={{ fontSize: 44, marginBottom: 8 }}>{katman.ikon}</div>
+        <div style={{ fontFamily: 'var(--fd)', fontSize: 26, fontWeight: 700 }}>{katman.ad}</div>
+        <div style={{ fontSize: 14, color: 'var(--tx3)', fontWeight: 600, marginTop: 4 }}>{altBaslik || `${kod} katmanına başlıyorsun`} · {sorular.length} soru · ~{tahminiDakika} dk</div>
       </div>
 
-      <div className="sg" style={{ marginBottom: 18 }}>
-        <div className="sc">
-          <div className="sl">Toplam Soru</div>
-          <div className="sv pu">{sorular.length}</div>
+      <div className="sn-bolum">
+        <div className="sn-bolum-bas">🧩 Soru tipleri ve nasıl cevaplanır</div>
+        <div className="sn-tipler">
+          {tipler.map(({ t, n }) => (
+            <div key={t} className="sn-tip">
+              <div className="sn-tip-bas"><span>{SORU_TIPI[t].ikon}</span><b>{SORU_TIPI[t].ad}</b><em>{n} soru</em></div>
+              <div>{SORU_TIPI[t].uzun}</div>
+            </div>
+          ))}
         </div>
-        <div className="sc">
-          <div className="sl">Tahmini Süre</div>
-          <div className="sv pu">~{tahminiDakika} dk</div>
-        </div>
-        <div className="sc">
-          <div className="sl">Soru Tipleri</div>
-          <div className="sv" style={{ fontSize: 14, lineHeight: 1.5 }}>
-            {kutupSayisi > 0 && <div>{kutupSayisi} Tercih Sorusu</div>}
-            {likertSayisi > 0 && <div>{likertSayisi} Likert</div>}
-            {sjtSayisi > 0 && <div>{sjtSayisi} Durum Sorusu</div>}
-          </div>
-        </div>
+        <div className="sn-not">Doğru ya da yanlış cevap yok. Uzun düşünme; sana ilk “evet, bu benim” dedirten şıkkı seç. İstersen <b>önceki soruya dönüp</b> cevabını değiştirebilirsin.</div>
       </div>
 
-      <div style={{
-        background: 'var(--tll)', border: '1.5px solid var(--tl)', borderRadius: 16,
-        padding: '16px 18px', marginBottom: 20, fontSize: 12.5, color: 'var(--tx)', lineHeight: 1.7,
-      }}>
-        <div style={{ fontWeight: 700, marginBottom: 6, color: 'var(--tl)' }}>📋 Bilmen Gerekenler</div>
-        <div>• Bu değerlendirme <b>tam ekran</b> modunda yapılacak — tam ekrandan çıkarsan uyarı alırsın.</div>
-        <div>• <b>Kamera</b>: Ayarlar'da kamera iznini verdiysen kimlik doğrulama amacıyla aralıklarla fotoğraf çekilir; vermediysen kamera açılmaz.</div>
-        <div>• Sekme değiştirme ve pencere odağı kaybı gibi olaylar kayıt altına alınır.</div>
-        <div>• Katmandan erken çıkarsan, o ana kadarki ilerlemen kaybolur — baştan başlaman gerekir.</div>
-        {sorular.some((s) => s.cevap_bicimi === 'encok_enaz') && (
-          <div>• Her soruda <b>iki seçim</b> yapacaksın: önce sana <b>EN ÇOK</b> uyan şıkkı, sonra <b>EN AZ</b> uyan şıkkı seç.</div>
-        )}
-        <div>• Doğru/yanlış cevap yok — içtenlikle, düşünmeden hızlıca cevapla.</div>
+      <div className="sn-bolum sn-kurallar">
+        <div className="sn-bolum-bas">🛡️ Sınav kuralları — lütfen dikkatle oku</div>
+        <ul>
+          <li>Değerlendirme <b>tam ekranda</b> yapılır. Tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşu</b> ve <b>kopyalama</b> denemeleri kayda geçer.</li>
+          <li>Her ihlal <b>güven puanını</b> düşürür; puanını ekranın üstünde canlı görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b> ve rehber öğretmenin yeniden yapmanı isteyebilir.</li>
+          <li>Ekran kaydı ya da başkasından yardım almak da kurallara aykırıdır; sonuçların <b>yalnızca seni</b> anlatırsa işe yarar.</li>
+          <li>Katmandan erken çıkarsan o oturumdaki cevapların sayılmaz; katmana baştan başlarsın.</li>
+        </ul>
+        <div className={`sn-kamera${kameraRizasi ? ' acik' : ''}`}>
+          {kameraRizasi ? (
+            <span>📷 <b>Kamera doğrulaması açık.</b> Kimlik doğrulama için aralıklarla fotoğraf çekilir; fotoğraflar 6 ay sonra silinir.</span>
+          ) : (
+            <>
+              <span>📷 <b>Kamera doğrulaması kapalı.</b> Açarsan sonucun “kimliği doğrulanmış” olarak işaretlenir. Açmak zorunlu değil; açmasan da puanın düşmez.</span>
+              <button className="btn sec" disabled={kameraBekle || kameraRizasi === null} onClick={async () => { setKameraBekle(true); await onKameraIzni(); setKameraBekle(false) }}>
+                {kameraBekle ? <span className="spin" /> : 'Kamerayı aç'}
+              </button>
+            </>
+          )}
+        </div>
+        <label className="sn-onay"><input type="checkbox" checked={kurallarOk} onChange={(e) => setKurallarOk(e.target.checked)} /> Kuralları okudum; ihlal durumunda değerlendirmemin geçersiz sayılabileceğini biliyorum.</label>
       </div>
 
       <div className="auth-field">
-        <label className="auth-label">
-          Devam etmek için aşağıya <b>büyük harflerle tam olarak</b> "{ONAY_METNI}" yazın:
-        </label>
-        <input
-          className="auth-input"
-          value={yaziliOnay}
-          onChange={(e) => setYaziliOnay(e.target.value)}
-          placeholder={ONAY_METNI}
-          autoComplete="off"
-        />
+        <label className="auth-label">Başlamak için aşağıya büyük harflerle <b>{ONAY_METNI}</b> yaz:</label>
+        <input className="auth-input" value={yaziliOnay} onChange={(e) => setYaziliOnay(e.target.value)} placeholder={ONAY_METNI} autoComplete="off" />
       </div>
-
-      <button className="btn full" disabled={!onayGecerli || cikisYapiliyor} onClick={onBasla} style={{ marginTop: 4 }}>
+      <button className="btn full" disabled={!onayGecerli || cikisYapiliyor} onClick={onBasla} style={{ marginTop: 4, fontSize: 16, padding: 15 }}>
         {cikisYapiliyor ? <span className="spin" /> : 'Değerlendirmeye Başla →'}
       </button>
     </div>
@@ -182,6 +188,10 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   const [tamamlandi, setTamamlandi] = useState(null)
   const [tamEkranDisinda, setTamEkranDisinda] = useState(false)
   const [basladiMi, setBasladiMi] = useState(false)  // tanıtım/onay ekranı geçildi mi
+  const [guven, setGuven] = useState(null)           // [2026-10-10] canlı güven puanı {guven_puani, esik, ihlaller}
+  const [uyari, setUyari] = useState(null)           // ihlal bildirimi (6 sn)
+  const [ikinciEkran, setIkinciEkran] = useState(false)
+  const [kameraDurumu, setKameraDurumu] = useState('kapali')  // acik | kapali | reddedildi | yok
 
   const videoRef = useRef(null)
   const canvasRef = useRef(null)
@@ -225,50 +235,81 @@ export default function SoruSayfasi({ mod = 'katman' }) {
     if (sorular && basladiMi && !tamamlandi) tamEkranaGec()
   }, [sorular, basladiMi, tamamlandi, tamEkranaGec])
 
+  // [2026-10-10] Güvenlik olayı: kaydet + canlı güven puanını tazele + cezalı olaylarda öğrenciye anında bildir
+  const olayKaydet = useCallback((tip, bildir = true) => {
+    if (!turIdRef.current) return
+    api.guvenlikOlayiKaydet(turIdRef.current, tip, kod)
+      .then(() => api.guvenlikDurumu(turIdRef.current))
+      .then((d) => {
+        setGuven(d)
+        if (bildir && IHLAL_METNI[tip]) setUyari({ metin: IHLAL_METNI[tip], puan: d.guven_puani, esik: d.esik, zaman: Date.now() })
+      })
+      .catch(() => {})
+  }, [kod])
+
   useEffect(() => {
+    if (!sorular || !basladiMi || tamamlandi) return
+    let odakZamanlayici = null
+    let sonKopya = 0
     function tamEkranDegisti() {
-      // [DÜZELTME] Katman tamamlanınca sistem KENDİSİ tam ekrandan çıkıyor
-      // (ileriGit içinde) — bu kasıtlı çıkış, "kullanıcı izinsiz çıktı"
-      // uyarısını YANLIŞLIKLA tetikliyordu. tamamlandi doluysa görmezden gel.
-      if (tamamlandi) return
       const disinda = !document.fullscreenElement
       setTamEkranDisinda(disinda)
-      if (turIdRef.current) {
-        api.guvenlikOlayiKaydet(
-          turIdRef.current,
-          disinda ? 'tam_ekrandan_cikti' : 'tam_ekrana_geri_donuldu',
-          kod,
-        ).catch(() => {})
-      }
+      olayKaydet(disinda ? 'tam_ekrandan_cikti' : 'tam_ekrana_geri_donuldu')
     }
     function gorunurlukDegisti() {
-      if (tamamlandi || !turIdRef.current) return
-      api.guvenlikOlayiKaydet(
-        turIdRef.current,
-        document.hidden ? 'sekme_degisti' : 'sekmeye_geri_donuldu',
-        kod,
-      ).catch(() => {})
+      olayKaydet(document.hidden ? 'sekme_degisti' : 'sekmeye_geri_donuldu')
     }
     function odakKaybedildi() {
-      if (tamamlandi || !turIdRef.current) return
-      api.guvenlikOlayiKaydet(turIdRef.current, 'pencere_odagi_kaybedildi', kod).catch(() => {})
+      // sekme değişince hem blur hem visibilitychange gelir: çift ceza olmasın diye kısa bekleyip kontrol et
+      clearTimeout(odakZamanlayici)
+      odakZamanlayici = setTimeout(() => { if (!document.hidden) olayKaydet('pencere_odagi_kaybedildi') }, 400)
     }
     function odakKazanildi() {
-      if (tamamlandi || !turIdRef.current) return
-      api.guvenlikOlayiKaydet(turIdRef.current, 'pencere_odagi_geri_kazanildi', kod).catch(() => {})
+      clearTimeout(odakZamanlayici)
+      olayKaydet('pencere_odagi_geri_kazanildi', false)
     }
-
+    function tusBirakildi(e) {
+      if (e.key === 'PrintScreen') olayKaydet('ekran_goruntusu_tusu')
+    }
+    function kopyalama(e) {
+      e.preventDefault()
+      if (Date.now() - sonKopya > 8000) { sonKopya = Date.now(); olayKaydet('kopyalama') }
+    }
+    function sagTik(e) { e.preventDefault() }
+    // İkinci ekran (Chrome/Edge: screen.isExtended). Desteklenmeyen tarayıcıda sessizce atlanır.
+    function ekranKontrol() {
+      if (window.screen?.isExtended) { setIkinciEkran(true); olayKaydet('coklu_ekran') } else setIkinciEkran(false)
+    }
+    ekranKontrol()
+    window.screen?.addEventListener?.('change', ekranKontrol)
     document.addEventListener('fullscreenchange', tamEkranDegisti)
     document.addEventListener('visibilitychange', gorunurlukDegisti)
     window.addEventListener('blur', odakKaybedildi)
     window.addEventListener('focus', odakKazanildi)
+    window.addEventListener('keyup', tusBirakildi)
+    document.addEventListener('copy', kopyalama)
+    document.addEventListener('cut', kopyalama)
+    document.addEventListener('contextmenu', sagTik)
+    if (turIdRef.current) api.guvenlikDurumu(turIdRef.current).then(setGuven).catch(() => {})
     return () => {
+      clearTimeout(odakZamanlayici)
+      window.screen?.removeEventListener?.('change', ekranKontrol)
       document.removeEventListener('fullscreenchange', tamEkranDegisti)
       document.removeEventListener('visibilitychange', gorunurlukDegisti)
       window.removeEventListener('blur', odakKaybedildi)
       window.removeEventListener('focus', odakKazanildi)
+      window.removeEventListener('keyup', tusBirakildi)
+      document.removeEventListener('copy', kopyalama)
+      document.removeEventListener('cut', kopyalama)
+      document.removeEventListener('contextmenu', sagTik)
     }
-  }, [kod, tamamlandi])
+  }, [sorular, basladiMi, tamamlandi, olayKaydet])
+
+  useEffect(() => {
+    if (!uyari) return
+    const z = setTimeout(() => setUyari(null), 6000)
+    return () => clearTimeout(z)
+  }, [uyari])
 
   // ------------------------------------------------------------------
   // Kamera kurulumu — izin verilmezse sessizce atlanır, testi bloklamaz
@@ -298,10 +339,13 @@ export default function SoruSayfasi({ mod = 'katman' }) {
           videoRef.current.srcObject = s
           videoRef.current.play().catch(() => {})
           kameraAktifRef.current = true
+          setKameraDurumu('acik')
+          s.getVideoTracks().forEach((t) => { t.onended = () => { kameraAktifRef.current = false; setKameraDurumu('kapali'); olayKaydet('kamera_kapandi') } })
         }
       })
       .catch(() => {
         kameraAktifRef.current = false
+        setKameraDurumu('reddedildi')
         const gonder = () => api.guvenlikOlayiKaydet(turIdRef.current, 'kamera_izni_reddedildi', kod).catch(() => {})
         if (turIdRef.current) gonder()
         else setTimeout(gonder, 500)
@@ -311,7 +355,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
       akis?.getTracks().forEach((t) => t.stop())
       kameraAktifRef.current = false
     }
-  }, [sorular, basladiMi, tamamlandi, kod, kameraRizasi])
+  }, [sorular, basladiMi, tamamlandi, kod, kameraRizasi, olayKaydet])
 
   const fotografCek = useCallback(() => {
     if (!kameraAktifRef.current || !videoRef.current || !canvasRef.current || !turIdRef.current) return
@@ -390,6 +434,10 @@ export default function SoruSayfasi({ mod = 'katman' }) {
     if (yeni.enCok && yeni.enAz) await cevabiGonder(soruId, yeni.enCok, yeni.enAz)
   }
 
+  function geriGit() {
+    if (aktifIndex > 0) setAktifIndex((i) => i - 1)
+  }
+
   async function ileriGit() {
     if (aktifIndex < sorular.length - 1) {
       setAktifIndex((i) => i + 1)
@@ -421,11 +469,20 @@ export default function SoruSayfasi({ mod = 'katman' }) {
       alignItems: 'center', background: 'var(--bg)',
     }}>
       {tamEkranDisinda && <GuvenlikUyariKatmani tamEkranaGeriDon={tamEkranaGec} onErkenBitir={sinavdanCik} />}
-      {kameraRizasi && <KameraOnizleme videoRef={videoRef} />}
+      {!tamEkranDisinda && ikinciEkran && basladiMi && !tamamlandi && (
+        <div className="sn-ikinci-ekran">🖥️ İkinci bir ekran bağlı görünüyor. Değerlendirme süresince ikinci ekranı çıkar ya da kapat; bu durum kayda geçiyor.</div>
+      )}
+      {uyari && (
+        <div className="sn-uyari" role="alert" key={uyari.zaman}>
+          <b>⚠️ {uyari.metin}</b>
+          <span>Bu durum kayda geçti. Güven puanın: <b>{uyari.puan}</b>/100 · {uyari.esik}'nin altına düşerse değerlendirmen geçersiz sayılabilir.</span>
+        </div>
+      )}
+      {kameraRizasi && basladiMi && !tamamlandi && <KameraOnizleme videoRef={videoRef} />}
       <canvas ref={canvasRef} style={{ display: 'none' }} />
       <SinavBasligi />
 
-      <div className="pg" style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+      <div className="sn-sayfa">
         {hata ? (
           <div className="bos-durum">{hata}</div>
         ) : !sorular ? (
@@ -437,6 +494,12 @@ export default function SoruSayfasi({ mod = 'katman' }) {
               <div className="ps">{dalMi ? 'Bu alandaki değişken puanların:' : 'Bu katmandaki değişken puanların ve ne anlama geldikleri:'}</div>
             </div>
 
+            {guven && (
+              <div className={`sn-sonuc-guven ${guven.guven_puani < guven.esik ? 'kotu' : ''}`}>
+                🛡️ Güven puanın: <b>{guven.guven_puani}</b>/100
+                {guven.ihlaller.length ? <> · {guven.ihlaller.map((i) => `${i.ad} (${i.sayi})`).join(', ')}</> : ' · ihlal yok, teşekkürler!'}
+              </div>
+            )}
             {tamamlandi.sonuclar.length === 0 ? (
               <div className="veri-yok-grafik">
                 <div className="vg-ikon">📊</div>
@@ -473,6 +536,9 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         ) : !basladiMi ? (
           <KatmanTanitimEkrani
             kod={kod} sorular={sorular} onBasla={() => setBasladiMi(true)} cikisYapiliyor={false}
+            kameraRizasi={kameraRizasi} onKameraIzni={async () => {
+              try { await api.kvkkGuncelle({ kamera: true }); setKameraRizasi(true) } catch { /* izin kaydedilemedi */ }
+            }}
             baslik={dalMi ? (dalAdi || 'Alan Soruları') : undefined}
             altBaslik={dalMi ? 'K5 — sana özel alan sorularına başlıyorsun' : undefined}
           />
@@ -486,7 +552,10 @@ export default function SoruSayfasi({ mod = 'katman' }) {
             baslik={dalMi ? (dalAdi || 'Alan Soruları') : undefined}
             onSecenekSec={secenekSec}
             onIleriGit={ileriGit}
+            onGeriGit={geriGit}
             onCik={sinavdanCik}
+            guven={guven}
+            kameraDurumu={kameraRizasi ? kameraDurumu : 'yok'}
           />
         )}
       </div>
@@ -509,43 +578,34 @@ const FILIZLENME_MESAJLARI = [
   'İçtenlikle cevapladığın her soru, daha isabetli bir sonuç demek.',
 ]
 
-function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, baslik, onSecenekSec, onIleriGit, onCik }) {
+function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, baslik, onSecenekSec, onIleriGit, onGeriGit, onCik, guven, kameraDurumu }) {
   const katman = KATMAN_BILGI[kod] || { ikon: '🌻', ad: baslik || kod }
-  const kalanSoru = sorular.length - aktifIndex - 1
   const mesaj = FILIZLENME_MESAJLARI[aktifIndex % FILIZLENME_MESAJLARI.length]
-
+  const puan = guven?.guven_puani ?? 100
+  const esik = guven?.esik ?? 50
+  const puanSinif = puan < esik ? 'kotu' : puan < esik + 20 ? 'orta' : 'iyi'
   return (
-    <div style={{ display: 'flex', gap: 18, alignItems: 'flex-start', flexWrap: 'wrap', justifyContent: 'center', width: '100%' }}>
-      <SoruIcerigi
-        sorular={sorular} aktifIndex={aktifIndex} cevaplar={cevaplar} gonderiliyor={gonderiliyor}
-        kod={kod} onSecenekSec={onSecenekSec} onIleriGit={onIleriGit} onCik={onCik}
-      />
-
-      {/* Sağ panel — katman bilgisi + ilerleme, tek kompakt kart halinde */}
-      <div style={{ width: 220, flexShrink: 0 }}>
-        <div className="card" style={{ textAlign: 'center', padding: '16px 14px', marginBottom: 10 }}>
-          <div style={{ fontSize: 22, marginBottom: 2 }}>{katman.ikon}</div>
-          <div style={{ fontFamily: 'var(--fd)', fontSize: 12.5, fontWeight: 700, lineHeight: 1.3 }}>{katman.ad}</div>
-          <div style={{ fontSize: 10, color: 'var(--tx3)', fontWeight: 600, marginTop: 6, paddingTop: 8, borderTop: '1px solid var(--bor)' }}>
-            <span style={{ fontFamily: 'var(--fd)', fontSize: 20, fontWeight: 700, color: 'var(--pu)' }}>{aktifIndex + 1}</span>
-            {' '}/ {sorular.length} soru · {kalanSoru > 0 ? `${kalanSoru} kaldı` : 'son soru 🎉'}
-          </div>
-        </div>
-
-        <div style={{
-          background: 'var(--grl)', borderRadius: 14, padding: '10px 13px',
-          fontSize: 11.5, color: 'var(--gr)', fontWeight: 600, lineHeight: 1.4,
-          display: 'flex', gap: 6, alignItems: 'flex-start',
-        }}>
-          <span>🌱</span>
-          <span>{mesaj}</span>
+    <div className="sn-duzen">
+      <div className="sn-ust">
+        <div className="sn-katman"><span>{katman.ikon}</span><b>{katman.ad}</b></div>
+        <div className="sn-rozetler">
+          <span className={`sn-guven ${puanSinif}`} title={guven?.ihlaller?.length ? guven.ihlaller.map((i) => `${i.ad}: ${i.sayi}`).join(' · ') : 'İhlal yok'}>
+            🛡️ Güven puanı <b>{puan}</b>
+          </span>
+          <span className={`sn-kamera-rozet ${kameraDurumu}`}>{kameraDurumu === 'acik' ? '📷 Kamera açık' : kameraDurumu === 'yok' ? '📷 Kamera kapalı' : '📷 Kamera kapalı'}</span>
+          <button className="sn-cik" onClick={onCik}>Çık ✕</button>
         </div>
       </div>
+      <SoruIcerigi
+        sorular={sorular} aktifIndex={aktifIndex} cevaplar={cevaplar} gonderiliyor={gonderiliyor}
+        kod={kod} onSecenekSec={onSecenekSec} onIleriGit={onIleriGit} onGeriGit={onGeriGit}
+      />
+      <div className="sn-mesaj">🌱 {mesaj}</div>
     </div>
   )
 }
 
-function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecenekSec, onIleriGit, onCik }) {
+function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, onSecenekSec, onIleriGit, onGeriGit }) {
   const aktifSoru = sorular[aktifIndex]
   const ikiliMi = aktifSoru.cevap_bicimi === 'encok_enaz'
   const cevap = cevaplar[aktifSoru.id]
@@ -553,61 +613,42 @@ function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, onSecen
   const enCok = ikiliMi ? cevap?.enCok : null
   const enAz = ikiliMi ? cevap?.enAz : null
   const cevapTamam = ikiliMi ? !!(enCok && enAz) : !!secilenSecenek
-  const ilerlemeYuzde = Math.round((aktifIndex / sorular.length) * 100)
+  const cevaplanan = sorular.filter((s) => { const c = cevaplar[s.id]; return c && (typeof c !== 'object' || (c.enCok && c.enAz)) }).length
+  const ilerlemeYuzde = Math.round((cevaplanan / sorular.length) * 100)
+  const tip = SORU_TIPI[aktifSoru.soru_tipi]
+  const kutupMu = aktifSoru.soru_tipi === 'kutup' || aktifSoru.soru_tipi === 'likert'
 
   return (
-    <div className="qwrap" style={{ maxWidth: 700, width: '100%', paddingTop: 24, minHeight: 560 }}>
-      <div className="qmeta" style={{ fontSize: 13 }}>
-        <span>Soru {aktifIndex + 1} / {sorular.length}</span>
-        <span>{kod}</span>
+    <div className="qwrap sn-soru">
+      <div className="qmeta sn-meta">
+        <span>Soru <b>{aktifIndex + 1}</b> / {sorular.length}</span>
+        <span>%{ilerlemeYuzde} tamamlandı</span>
       </div>
-      <div className="qtrack" style={{ height: 8 }}><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
-      <div className="qtext" style={{ fontSize: 23, minHeight: 100, display: 'flex', alignItems: 'center' }}>{aktifSoru.soru_metni}</div>
+      <div className="qtrack sn-track"><div className="qfill" style={{ width: `${ilerlemeYuzde}%` }} /></div>
+      {tip && <div className="sn-tip-etiket" title={tip.uzun}>{tip.ikon} {tip.ad} · <span>{ikiliMi ? 'Önce EN ÇOK, sonra EN AZ uyan şıkkı seç.' : tip.kisa}</span></div>}
+      <div className="qtext sn-metin" key={aktifSoru.id}>{aktifSoru.soru_metni}</div>
       {ikiliMi && (
-        <div style={{
-          margin: '-4px 0 12px', padding: '10px 14px', borderRadius: 12, fontSize: 14.5, fontWeight: 700,
-          background: !enCok ? 'var(--grl)' : !enAz ? 'var(--rel)' : 'var(--sur2)',
-          color: !enCok ? 'var(--gr)' : !enAz ? 'var(--re)' : 'var(--tx2)',
-        }}>
-          {!enCok
-            ? '1. adım: Sana EN ÇOK uyan şıkkı seç.'
-            : !enAz
-              ? '2. adım: Şimdi sana EN AZ uyan şıkkı seç.'
-              : '✓ Tamam. Değiştirmek için şıklara tekrar dokunabilirsin.'}
+        <div className={`sn-adim ${!enCok ? 'bir' : !enAz ? 'iki' : 'tamam'}`}>
+          {!enCok ? '1. adım: Sana EN ÇOK uyan şıkkı seç.' : !enAz ? '2. adım: Şimdi sana EN AZ uyan şıkkı seç.' : '✓ Tamam. Değiştirmek için şıklara tekrar dokunabilirsin.'}
         </div>
       )}
-      <div className="qopts" style={{ gap: 10 }}>
+      <div className={`qopts sn-secenekler${kutupMu && aktifSoru.secenekler.length <= 5 ? ' olcek' : ''}`}>
         {aktifSoru.secenekler.map((sec) => {
           const cokMu = ikiliMi && enCok === sec.id
           const azMi = ikiliMi && enAz === sec.id
           return (
-            <button
-              key={sec.id}
-              className={`qopt${secilenSecenek === sec.id || cokMu ? ' sel' : ''}`}
-              onClick={() => onSecenekSec(sec.id, aktifSoru.id)}
-              disabled={gonderiliyor}
-              style={{
-                padding: '14px 18px', fontSize: 14.5, display: 'flex', alignItems: 'center', gap: 10, textAlign: 'left',
-                ...(azMi ? { borderColor: 'var(--re)', background: 'var(--rel)' } : {}),
-              }}
-            >
-              {ikiliMi && (cokMu || azMi) && (
-                <span style={{
-                  flexShrink: 0, fontSize: 11.5, fontWeight: 800, padding: '3px 8px', borderRadius: 8, color: '#fff',
-                  background: cokMu ? 'var(--pu)' : 'var(--re)',
-                }}>
-                  {cokMu ? 'EN ÇOK' : 'EN AZ'}
-                </span>
-              )}
+            <button key={sec.id} className={`qopt sn-secenek${secilenSecenek === sec.id || cokMu ? ' sel' : ''}${azMi ? ' az' : ''}`}
+              onClick={() => onSecenekSec(sec.id, aktifSoru.id)} disabled={gonderiliyor}>
+              {ikiliMi && (cokMu || azMi) && <span className={`sn-isaret ${cokMu ? 'cok' : 'az'}`}>{cokMu ? 'EN ÇOK' : 'EN AZ'}</span>}
               <span>{sec.secenek_metni}</span>
             </button>
           )
         })}
       </div>
-      <div className="qnav">
-        <button className="btn sec" onClick={onCik} style={{ padding: '13px 22px', fontSize: 15 }}>← Katmanlara dön</button>
-        <button className="btn" onClick={onIleriGit} disabled={!cevapTamam || gonderiliyor} style={{ padding: '13px 26px', fontSize: 15 }}>
-          {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla'}
+      <div className="qnav sn-nav">
+        <button className="btn sec" onClick={onGeriGit} disabled={aktifIndex === 0 || gonderiliyor}>← Önceki soru</button>
+        <button className="btn" onClick={onIleriGit} disabled={!cevapTamam || gonderiliyor}>
+          {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla ✓'}
         </button>
       </div>
     </div>
