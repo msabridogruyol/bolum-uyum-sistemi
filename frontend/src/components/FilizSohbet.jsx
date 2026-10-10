@@ -37,6 +37,11 @@ export default function FilizSohbet() {
   const sonRef = useRef(null)
   const girdiRef = useRef(null)
   const bekleyenMesaj = useRef(null)
+  // [2026-10-10] Geçmiş sohbetler: liste → okuma → "bu sohbetten devam et"
+  const [gorunum, setGorunum] = useState('sohbet')   // sohbet | gecmis | okuma
+  const [gecmis, setGecmis] = useState(null)
+  const [okunan, setOkunan] = useState(null)
+  const baglamRef = useRef(null)
 
   // dışarıdan açma isteği
   useEffect(() => {
@@ -96,7 +101,8 @@ export default function FilizSohbet() {
       let id = oturumId || await yeniOturum()
       let cevap
       try {
-        cevap = await api.aiKocMesajGonder(id, metin, konum.pathname)
+        cevap = await api.aiKocMesajGonder(id, metin, konum.pathname, baglamRef.current)
+        baglamRef.current = null
       } catch (e) {
         if (e.status !== 400 || !String(e.detail || '').includes('kapatılmış')) throw e
         id = await yeniOturum()                                   // oturum kapanmışsa sessizce yenisini aç
@@ -118,6 +124,24 @@ export default function FilizSohbet() {
     } finally {
       setGonderiliyor(false)
     }
+  }
+
+  async function gecmisiAc() {
+    setGorunum('gecmis'); setGecmis(null)
+    try { setGecmis(await api.aiKocGecmis()) } catch { setGecmis([]) }
+  }
+  async function sohbetiAc(id) {
+    setGorunum('okuma'); setOkunan(null)
+    try { setOkunan(await api.aiKocGecmisDetay(id)) } catch { setOkunan({ hata: true }) }
+  }
+  async function devamEt() {
+    if (!okunan?.oturum_id) return
+    try { if (oturumId && mesajlar.length) await api.aiKocOturumuBitir(oturumId) } catch { /* kapalı olabilir */ }
+    setOturumId(null)
+    baglamRef.current = okunan.oturum_id
+    const t = new Date(okunan.baslama_zamani).toLocaleDateString('tr-TR')
+    setMesajlar([{ rol: 'not', icerik: `📌 ${t} tarihli sohbetimizden devam ediyoruz. Ne konuştuğumuzu hatırlıyorum; kaldığımız yerden yaz.` }])
+    setGorunum('sohbet')
   }
 
   async function sohbetiSifirla() {
@@ -153,11 +177,42 @@ export default function FilizSohbet() {
               </div>
             </div>
             <div style={{ display: 'flex', gap: 4 }}>
-              {mesajlar.length > 0 && !pasif && <button className="filiz-ikon-btn" title="Yeni sohbet" onClick={sohbetiSifirla}>↺</button>}
+              {gorunum !== 'sohbet' && <button className="filiz-ikon-btn" title="Sohbete dön" onClick={() => setGorunum('sohbet')}>←</button>}
+              {gorunum === 'sohbet' && hazir && <button className="filiz-ikon-btn" title="Geçmiş sohbetler" onClick={gecmisiAc}>🕘</button>}
+              {gorunum === 'sohbet' && mesajlar.length > 0 && !pasif && <button className="filiz-ikon-btn" title="Yeni sohbet" onClick={sohbetiSifirla}>↺</button>}
               <button className="filiz-ikon-btn" title="Kapat (Esc)" onClick={() => setAcik(false)}>✕</button>
             </div>
           </div>
 
+          {gorunum === 'gecmis' && (
+            <div className="filiz-mesajlar">
+              <div className="filiz-gecmis-bas">🕘 Geçmiş sohbetlerin</div>
+              {gecmis === null && <div className="bos-durum" style={{ padding: 20 }}>Yükleniyor…</div>}
+              {gecmis?.length === 0 && <div className="filiz-not">Henüz tamamlanmış bir sohbetin yok. Bir sohbeti “↺ Yeni sohbet” ile bitirdiğinde burada özetiyle saklanır.</div>}
+              {gecmis?.map((g) => (
+                <button key={g.oturum_id} className="filiz-gecmis-oge" onClick={() => sohbetiAc(g.oturum_id)}>
+                  <span className="fg-tarih">{new Date(g.baslama_zamani).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} · {g.mesaj_sayisi} mesaj</span>
+                  <b>{g.baslik || 'Sohbet'}</b>
+                  {g.ozet && <span className="fg-ozet">{g.ozet}</span>}
+                </button>
+              ))}
+            </div>
+          )}
+          {gorunum === 'okuma' && (
+            <div className="filiz-mesajlar">
+              {!okunan && <div className="bos-durum" style={{ padding: 20 }}>Yükleniyor…</div>}
+              {okunan?.hata && <div className="filiz-not">Sohbet açılamadı.</div>}
+              {okunan?.mesajlar && (
+                <>
+                  <div className="filiz-gecmis-bas">{new Date(okunan.baslama_zamani).toLocaleString('tr-TR', { dateStyle: 'long', timeStyle: 'short' })}</div>
+                  {okunan.ozet && <div className="filiz-ozet-kutu"><b>Özet:</b> {okunan.ozet}</div>}
+                  {okunan.mesajlar.map((m, i) => <div key={i} className={`filiz-mesaj ${m.rol === 'ogrenci' ? 'ogrenci' : 'asistan'}`}>{m.icerik}</div>)}
+                  {!pasif && <button className="btn" style={{ alignSelf: 'center', marginTop: 6 }} onClick={devamEt} disabled={hakBitti}>💬 Bu sohbetten devam et</button>}
+                </>
+              )}
+            </div>
+          )}
+          {gorunum === 'sohbet' && (
           <div className="filiz-mesajlar">
             {!hazir && <div className="bos-durum" style={{ padding: 20 }}>Filiz hazırlanıyor…</div>}
 
@@ -194,8 +249,9 @@ export default function FilizSohbet() {
             {gonderiliyor && <div className="filiz-mesaj asistan filiz-yaziyor"><span /><span /><span /></div>}
             <div ref={sonRef} />
           </div>
+          )}
 
-          {!pasif && (
+          {!pasif && gorunum === 'sohbet' && (
             <form className="filiz-girdi" onSubmit={(e) => { e.preventDefault(); gonder() }}>
               <textarea
                 ref={girdiRef}
@@ -223,6 +279,13 @@ export default function FilizSohbet() {
 }
 
 const FILIZ_CSS = `
+.filiz-gecmis-bas{font-size:12px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;text-align:center}
+.filiz-gecmis-oge{display:flex;flex-direction:column;gap:3px;text-align:left;border:1px solid var(--bor2);background:var(--sur);border-radius:12px;padding:10px 12px;cursor:pointer;font-family:inherit;color:var(--tx)}
+.filiz-gecmis-oge:hover{border-color:var(--pu);background:var(--pul)}
+.filiz-gecmis-oge b{font-size:13px;line-height:1.35}
+.fg-tarih{font-size:11px;color:var(--tx3);font-weight:700}
+.fg-ozet{font-size:11.5px;color:var(--tx2);line-height:1.45;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.filiz-ozet-kutu{font-size:12px;line-height:1.5;color:var(--tx2);background:var(--pul);border-radius:10px;padding:8px 10px}
 .filiz-balon{position:fixed;right:16px;bottom:16px;z-index:70;display:none;align-items:center;gap:6px;padding:10px 16px 10px 12px;border-radius:999px;border:none;background:var(--pu);color:#fff;font-weight:800;font-size:13.5px;box-shadow:0 10px 28px -8px rgba(232,128,74,.7);cursor:pointer;animation:filiz-zipla 3s ease-in-out infinite}
 .filiz-panel{position:fixed;top:160px;right:14px;width:370px;height:min(540px,calc(100vh - 176px));z-index:70;display:flex;flex-direction:column;background:var(--sur);border:1px solid var(--bor2);border-radius:18px;box-shadow:0 24px 60px -12px rgba(0,0,0,.28);overflow:hidden;animation:filiz-ac .22s ease-out}
 .filiz-baslik{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--bor);background:var(--pul)}
