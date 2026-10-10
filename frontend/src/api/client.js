@@ -287,6 +287,7 @@ export const api = {
   ogrenciDetayi: (id) => aget(`/yonetim/ogrenci/${id}`),
   ogrenciDuzenle: (id, veri) => aput(`/yonetim/ogrenci/${id}`, veri),
   ogrenciOkulDegistir: (id, okulId) => apost(`/yonetim/ogrenci/${id}/okul`, { okul_id: okulId }),
+  girisListesi: (okulId) => aget(`/yonetim/okul/${okulId}/giris-listesi`),
   ogrenciSifreleriniSifirla: (idler) => apost('/yonetim/ogrenciler/sifre-sifirla', { idler }),
   ogrencileriSil: (idler) => apost('/yonetim/ogrenciler/sil', { idler }),
   okulYetkilileri: (okulId) => aget(`/yonetim/okul/${okulId}/yetkililer`),

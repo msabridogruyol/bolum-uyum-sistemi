@@ -583,6 +583,7 @@ def ilk_sifre_belirle(istek: IlkSifreIstek, db: Session = Depends(get_db), ogren
     from app.core.hesap_yonetimi import olay_yaz
     ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
     ogrenci.sifre_degistirmeli = False
+    ogrenci.gecici_sifre_sifreli = None   # [2026-10-10]
     olay_yaz(db, ogrenci.id, "sifre_degisti", "İlk girişte kendi şifresini belirledi", "Öğrenci")
     db.commit()
 
@@ -629,6 +630,7 @@ def sifre_degistir(
 
     ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
     ogrenci.sifre_degistirmeli = False
+    ogrenci.gecici_sifre_sifreli = None   # [2026-10-10]
     from app.core.hesap_yonetimi import olay_yaz
     olay_yaz(db, ogrenci.id, "sifre_degisti", "Ayarlar sayfasından şifresini değiştirdi", "Öğrenci")
     db.commit()

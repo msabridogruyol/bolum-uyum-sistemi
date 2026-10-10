@@ -265,6 +265,7 @@ def sifreyi_sifirla(db: Session, token: str, yeni_sifre: str) -> str:
         raise IsKuraliHatasi("Bu bağlantı geçersiz.")
     h.sifre_hash = sifre_hashle(yeni_sifre)
     h.sifre_degistirmeli = False   # [2026-10-09] geçici şifre artık geçersiz
+    h.gecici_sifre_sifreli = None  # [2026-10-10]
     if k.kullanici_tipi == "ogrenci":
         from app.core.hesap_yonetimi import olay_yaz
         olay_yaz(db, h.id, "sifre_degisti", "E-postadaki bağlantıyla yeni şifre belirlendi", "Öğrenci")

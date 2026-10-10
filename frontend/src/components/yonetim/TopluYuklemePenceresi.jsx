@@ -41,7 +41,7 @@ export default function TopluYuklemePenceresi({ okulId, okulAd, onKapat, onBitti
   async function olustur(liste) {
     setBekle(true); setHata(null)
     try {
-      const r = await api.ogrencileriOlustur(okulId, liste.map(({ ad_soyad, email, sinif, sube }) => ({ ad_soyad, email, sinif, sube })))
+      const r = await api.ogrencileriOlustur(okulId, liste.map(({ ad_soyad, email, sinif, sube, sifre, ogrenci_no }) => ({ ad_soyad, email, sinif, sube, sifre: sifre || null, ogrenci_no: ogrenci_no || null })))
       if (!r.olusturulan.length) {
         setHata(r.hatali.map((h) => `${h.ad_soyad || h.email}: ${h.hata}`).join(' · ') || 'Hesap açılamadı.')
         return
@@ -120,15 +120,17 @@ export default function TopluYuklemePenceresi({ okulId, okulAd, onKapat, onBitti
           </div>
           <div className="yp-tablo-kap" style={{ maxHeight: 420 }}>
             <table className="yp-tablo">
-              <thead><tr><th>#</th><th>Ad Soyad</th><th>Sınıf</th><th>Şube</th><th>E-posta</th><th>Kontrol</th></tr></thead>
+              <thead><tr><th>#</th><th>Ad Soyad</th><th>No</th><th>Sınıf</th><th>Şube</th><th>E-posta</th><th>Şifre</th><th>Kontrol</th></tr></thead>
               <tbody>
                 {satirlar.map((s) => (
                   <tr key={s.satir} className={s.hata ? 'yp-satir-hata' : ''}>
                     <td className="yp-ince">{s.satir}</td>
-                    <td>{s.ad_soyad || '—'}</td>
+                    <td>{s.ad_soyad || '—'}{s.guncelle && <span className="yp-durum yp-d-mor" style={{ marginLeft: 6 }}>güncelleme</span>}</td>
+                    <td className="yp-ince">{s.ogrenci_no || '—'}</td>
                     <td>{s.sinif || '—'}</td>
                     <td>{s.sube || '—'}</td>
                     <td className="yp-ince">{s.email || '—'}</td>
+                    <td className="yp-ince">{s.sifre ? '••••••' : (s.guncelle ? 'değişmez' : 'otomatik')}</td>
                     <td style={{ fontSize: 11.5 }}>
                       {s.hata ? <span style={{ color: 'var(--re)' }}>✕ {s.hata}</span>
                         : s.uyari ? <span style={{ color: 'var(--am)' }}>⚠ {s.uyari}</span>

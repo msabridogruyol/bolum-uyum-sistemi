@@ -1,7 +1,7 @@
 // [2026-10-09] Öğrenci detayı: hesap, ilerleme, sonuç, istatistik, kayıtlar + şifre sıfırla / düzenle / sil
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
-import { DurumRozeti, Pencere, SifreListesi, onceSure, tarih } from './ortak'
+import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, onceSure, tarih } from './ortak'
 import RaporDugmeleri from '../RaporDugmeleri'
 import CevapAnaliziSekmesi from './CevapAnaliziSekmesi'
 
@@ -83,7 +83,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
       alt={
         <>
           <button className="btn sec" disabled={bekle} onClick={sifreSifirla}>🔑 Şifre sıfırla</button>
-          <button className="btn sec" disabled={bekle} onClick={() => setDuzen({ ad_soyad: h.ad_soyad, email: h.email, sinif: h.sinif || '', sube: h.sube || '' })}>✎ Düzenle</button>
+          <button className="btn sec" disabled={bekle} onClick={() => setDuzen({ ad_soyad: h.ad_soyad, email: h.email, sinif: h.sinif || '', sube: h.sube || '', ogrenci_no: h.ogrenci_no || '' })}>✎ Düzenle</button>
           <div style={{ flex: 1 }} />
           {silOnay ? (
             <>
@@ -109,6 +109,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
               {['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].map((s) => <option key={s}>{s}</option>)}
             </select>
             <input className="auth-input" style={{ maxWidth: 80 }} value={duzen.sube} maxLength={2} onChange={(e) => setDuzen({ ...duzen, sube: e.target.value })} placeholder="Şube" />
+            <input className="auth-input" style={{ maxWidth: 120 }} value={duzen.ogrenci_no} maxLength={20} onChange={(e) => setDuzen({ ...duzen, ogrenci_no: e.target.value })} placeholder="Öğrenci no" />
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 10 }}>
             <button className="btn" type="submit" disabled={bekle}>Kaydet</button>
@@ -141,7 +142,8 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           <div className="yp-bilgi-grid">
             <div><span>Hesap açılışı</span><b>{tarih(h.olusturulma_zamani)}</b></div>
             <div><span>Son giriş</span><b>{h.son_giris_zamani ? `${tarih(h.son_giris_zamani)} (${onceSure(h.son_giris_zamani)})` : 'Hiç giriş yapmadı'}</b></div>
-            <div><span>Şifre</span><b>{h.sifre_degistirmeli ? 'Geçici şifre — henüz kendi şifresini belirlemedi' : 'Kendi şifresini belirledi'}</b></div>
+            <div><span>Şifre</span><b><SifreHucresi gecici={h.gecici_sifre} degistirmeli={h.sifre_degistirmeli} /></b></div>
+            <div><span>Öğrenci no</span><b>{h.ogrenci_no || '—'}</b></div>
             <div style={{ gridColumn: '1 / -1' }}><span>Hedef bölüm</span>
               <HedefYonetimi d={d} ogrenciId={ogrenciId} bekle={bekle} islem={islem} yenile={() => { yukle(); onDegisti?.() }} />
             </div>
