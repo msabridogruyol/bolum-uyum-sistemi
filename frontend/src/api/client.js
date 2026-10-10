@@ -162,6 +162,16 @@ export const api = {
   subeDagilimiUygula: (okulId, veri) => apost(`/yonetim/okul/${okulId}/sube-dagilimi/uygula`, veri),
   okulAdaylari: (okulId) => aget(`/yonetim/okul/${okulId}/adaylar`),
   adayUyumu: (id, sinif) => aget(`/yonetim/ogrenci/${id}/aday-uyumu?sinif=${encodeURIComponent(sinif)}`),
+  // [2026-10-10] İlgi testi ve kulüpler
+  ilgiTesti: () => get('/ogrenci/ilgi-testi'),
+  ilgiTestiGonder: (cevaplar) => post('/ogrenci/ilgi-testi', { cevaplar }),
+  okulKulupleri: (okulId) => aget(`/yonetim/okul/${okulId}/kulupler`),
+  kulupEkle: (okulId, veri) => apost(`/yonetim/okul/${okulId}/kulupler`, veri),
+  hazirKulupleriEkle: (okulId) => apost(`/yonetim/okul/${okulId}/kulupler/hazir`),
+  kulupDuzenle: (id, veri) => aput(`/yonetim/kulup/${id}`, veri),
+  kulupSil: (id) => adel(`/yonetim/kulup/${id}`),
+  kulupOgrencileri: (id) => aget(`/yonetim/kulup/${id}/ogrenciler`),
+  ogrenciIlgi: (id) => aget(`/yonetim/ogrenci/${id}/ilgi`),
   guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),
