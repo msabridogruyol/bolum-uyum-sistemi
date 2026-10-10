@@ -22,6 +22,16 @@ from app.api.net_takibi import router as net_takibi_router
 from fastapi import Depends as _Dep
 from app.core.paketler import ogrenci_modulu, okul_modulu   # [2026-10-10] paket / modül koruması
 from app.api.paket_yonetimi import router as paket_router, ogrenci_router as paket_ogrenci_router
+from app.api.bildirimler import ogrenci_router as bildirim_ogrenci_router, yonetim_router as bildirim_yonetim_router   # [2026-10-10]
+from app.api.simulasyon import ogrenci_router as simulasyon_ogrenci_router, yonetim_router as simulasyon_yonetim_router   # [2026-10-10]
+from app.api.okul_karsilastirma import router as karsilastirma_router   # [2026-10-10] süper admin
+from app.api.kaynakca import router as kaynakca_router                  # [2026-10-10] /yonetim/kaynakca
+from app.api.tercih import ogrenci_router as tercih_ogrenci_router, yonetim_router as tercih_yonetim_router, mezun_router   # [2026-10-10]
+from app.api.anketler import ogrenci_router as anket_ogrenci_router, yonetim_router as anket_yonetim_router   # [2026-10-10]
+from app.api.portfolyo import ogrenci_router as portfolyo_ogrenci_router, yonetim_router as portfolyo_yonetim_router   # [2026-10-10]
+from app.api.calisma import ogrenci_router as calisma_ogrenci_router, yonetim_router as calisma_yonetim_router   # [2026-10-10]
+from app.api.okul_denemeleri import router as okul_deneme_router   # [2026-10-10] okul denemesi Excel yükleme
+from app.api.rehberlik import router as rehberlik_router   # [2026-10-10] rehberlik görüşmeleri + erken uyarı
 from app.api.konu_yonetimi import router as konu_yonetimi_router
 from app.api.kulup_uyelik import ogrenci_router as kulup_uyelik_ogrenci_router, router as kulup_uyelik_router
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
@@ -34,6 +44,8 @@ from app.api.meslek_dili import router as meslek_dili_router
 from app.api.cevap_analizi import router as cevap_analizi_router
 from app.api.listem import router as listem_router
 from app.api.raporlar import router as raporlar_router
+from app.api.okul_istatistik import router as okul_istatistik_router   # [2026-10-10] okul paneli → İstatistikler
+from app.api.okul_tek_bakista import router as okul_tek_bakista_router   # [2026-10-10] Rapor Merkezi → Tek Bakışta
 from app.api.akran import router as akran_router
 from app.api.takvim import ogrenci_router as takvim_ogrenci_router, router as takvim_router
 from app.api.kutuphane import ogrenci_router as kutuphane_ogrenci_router, router as kutuphane_router
@@ -41,6 +53,8 @@ from app.api.admin_yokatlas import router as admin_yokatlas_router
 from app.api.koclar import ogrenci_router as koc_ogrenci_router, router as koc_router
 from app.api.kulupler import ogrenci_router as kulup_ogrenci_router, router as kulup_router
 from app.api.test_hesaplari import router as test_hesaplari_router, giris_router as test_giris_router
+from app.api.anket_psikometri import router as anket_psikometri_router   # [2026-10-10]
+from app.api.sistem_istatistik import router as sistem_istatistik_router   # [2026-10-10] süper admin İstatistikler / Rapor Merkezi
 app = FastAPI(
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
@@ -127,9 +141,7 @@ def _sema_guncelle():
         pass
 
 
-@app.on_event("startup")
-def _baslangic_temizligi():
-    """[2026-10-04] KVKK: 6 aydan eski kamera fotoğraflarını sil (Render her uyanışta çalıştırır)."""
+def _fotograf_temizligi():
     try:
         from app.core.hesap_guvenligi_servisi import eski_fotograflari_temizle
         db = SessionLocal()
@@ -140,6 +152,54 @@ def _baslangic_temizligi():
             db.close()
     except Exception:
         pass
+
+
+def _bekleyen_skor_hesabi():
+    """[2026-10-10] Bir göç katman ağırlıklarını değiştirdiyse (tek_seferlik_gocler'de 'bekleyen_skor_hesabi')
+    tamamlanmış turların uyum skorlarını arka planda yeniden hesapla; işaret önce silinir (tek kez çalışsın)."""
+    import threading
+    from sqlalchemy import text as _t
+    try:
+        db = SessionLocal()
+        try:
+            n = db.execute(_t("DELETE FROM tek_seferlik_gocler WHERE ad = 'bekleyen_skor_hesabi'")).rowcount
+            db.commit()
+        finally:
+            db.close()
+    except Exception:
+        return
+    if not n:
+        return
+
+    def _calis():
+        from app.api.admin import uyum_skorlarini_yeniden_hesapla
+        db2 = SessionLocal()
+        try:
+            uyum_skorlarini_yeniden_hesapla(db2)
+        except Exception:
+            db2.rollback()
+        finally:
+            db2.close()
+
+    threading.Thread(target=_calis, name="skor-yeniden-hesap", daemon=True).start()
+
+
+@app.on_event("startup")
+def _baslangic_temizligi():
+    """[2026-10-04] KVKK: 6 aydan eski kamera fotoğraflarını sil.
+    [2026-10-10] Açılışta ve sunucu açık kaldığı sürece 6 saatte bir çalışır (uzun süre yeniden başlatılmayan sunucuda da süre aşılmasın)."""
+    import threading
+    import time
+
+    _fotograf_temizligi()
+    _bekleyen_skor_hesabi()
+
+    def _dongu():
+        while True:
+            time.sleep(6 * 3600)
+            _fotograf_temizligi()
+
+    threading.Thread(target=_dongu, name="fotograf-temizligi", daemon=True).start()
 
 
 @app.get("/saglik")
@@ -169,6 +229,8 @@ app.include_router(meslek_dili_router)
 app.include_router(cevap_analizi_router)
 app.include_router(listem_router)                           # [2026-10-10] /ogrenci/listem, /ogrenci/karsilastir
 app.include_router(raporlar_router)                         # [2026-10-10] PDF / Excel raporlar
+app.include_router(okul_istatistik_router)                  # [2026-10-10] /yonetim/okul/{id}/istatistik (+ /excel)
+app.include_router(okul_tek_bakista_router)                 # [2026-10-10] /yonetim/okul/{id}/tek-bakista (+ /pdf)
 app.include_router(kulup_router, dependencies=[_Dep(okul_modulu("kulupler"))])                            # [2026-10-10] okul kulüpleri
 app.include_router(kulup_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])                    # [2026-10-10] /ogrenci/ilgi-testi
 app.include_router(koc_router)                              # [2026-10-10] anlaşmalı eğitim koçları
@@ -181,12 +243,31 @@ app.include_router(kutuphane_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("
 app.include_router(kulup_uyelik_router, dependencies=[_Dep(okul_modulu("kulupler"))])                      # [2026-10-10] kulüp talepleri, üyeler, duyurular
 app.include_router(kulup_uyelik_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])
 app.include_router(konu_yonetimi_router, dependencies=[_Dep(okul_modulu("net_takibi"))])                     # [2026-10-10] konu listesi yönetimi (süper admin + okul)
+app.include_router(bildirim_ogrenci_router)
+app.include_router(bildirim_yonetim_router)
+app.include_router(karsilastirma_router)
+app.include_router(kaynakca_router)
+app.include_router(simulasyon_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kocluk"))])
+app.include_router(simulasyon_yonetim_router, dependencies=[_Dep(okul_modulu("kocluk"))])
+app.include_router(tercih_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("tercih"))])
+app.include_router(tercih_yonetim_router, dependencies=[_Dep(okul_modulu("tercih"))])
+app.include_router(mezun_router, dependencies=[_Dep(okul_modulu("mezun_takibi"))])
+app.include_router(anket_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("anketler"))])
+app.include_router(anket_yonetim_router, dependencies=[_Dep(okul_modulu("anketler"))])
+app.include_router(portfolyo_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("portfolyo"))])
+app.include_router(portfolyo_yonetim_router, dependencies=[_Dep(okul_modulu("portfolyo"))])
+app.include_router(calisma_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("calisma"))])
+app.include_router(calisma_yonetim_router, dependencies=[_Dep(okul_modulu("calisma"))])
+app.include_router(okul_deneme_router, dependencies=[_Dep(okul_modulu("okul_denemeleri"))])
+app.include_router(rehberlik_router, dependencies=[_Dep(okul_modulu("rehberlik"))])
 app.include_router(paket_router)                             # [2026-10-10] paketler (süper admin)
 app.include_router(paket_ogrenci_router)
 app.include_router(net_takibi_router, dependencies=[_Dep(ogrenci_modulu("net_takibi"))])                       # [2026-10-10] deneme, konu takibi, hedef net kıyası
 app.include_router(motivasyon_router)                       # [2026-10-10] YKS geri sayımı, mesaj, rozetler
 app.include_router(akran_router, dependencies=[_Dep(okul_modulu("akran"))])                            # [2026-10-10] akran benzerliği, şube dağılımı, aday öğrenci
 app.include_router(test_hesaplari_router)                    # [2026-10-10] /yonetim/test-hesaplari (süper admin)
+app.include_router(anket_psikometri_router)                  # [2026-10-10] /yonetim/anket-psikometri (süper admin)
+app.include_router(sistem_istatistik_router)                 # [2026-10-10] /yonetim/istatistik/genel (+ /excel), /istatistik/dikkat, /audit-log/excel
 app.include_router(test_giris_router)                        # [2026-10-10] POST /auth/test-giris
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
