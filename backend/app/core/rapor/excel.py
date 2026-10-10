@@ -60,16 +60,26 @@ def okul_xlsx(v: dict) -> bytes:
     wb.remove(wb.active)
     renk = v["okul"].get("renk") or "#E8804A"
     o = v["ozet"]
+    ks = v.get("kapsam") or {}
+    kapsam_satir = [["Kapsam", ks.get("etiket")]] if ks.get("sinif") else []
+    if (ks.get("ogretmen") or {}).get("ad"):
+        kapsam_satir.append(["Sınıf öğretmeni", ks["ogretmen"]["ad"]])
+    okul_ort = {k["kod"]: k["ortalama"] for k in v.get("okul_katman_ort") or []}
     _sayfa(wb, "Özet", ["Gösterge", "Değer"], [
-        ["Okul", v["okul"]["ad"]], ["Öğrenci", o.get("toplam")], ["Giriş yapan", o.get("giris_yapan")],
+        ["Okul", v["okul"]["ad"]], *kapsam_satir, ["Öğrenci", o.get("toplam")], ["Giriş yapan", o.get("giris_yapan")],
         ["Teste başlayan", o.get("teste_baslayan")], ["Tamamlayan", o.get("tamamlayan")], ["Hedef seçen", o.get("hedef_secen")],
         ["Güven eşiği altında", v["gecersiz"]], ["Rapor tarihi", v["tarih"]],
-    ] + [[f"Katman ortalaması · {k['kod']} {k['ad']}", k["ortalama"]] for k in v["katman_ort"]], [40, 30], renk)
+    ] + [[f"Katman ortalaması · {k['kod']} {k['ad']}", k["ortalama"]] for k in v["katman_ort"]]
+      + [[f"Okul ortalaması · {k} ", x] for k, x in okul_ort.items()], [40, 30], renk)
+    if o.get("subeler"):
+        _sayfa(wb, "Şubeler", ["Şube", "Sınıf öğretmeni", "Öğrenci", "Giriş yapan", "Devam eden", "Tamamlayan", "Hedef seçen"],
+               [[x["etiket"], (x.get("ogretmen") or {}).get("ad") or "", x["ogrenci"], x["giris_yapan"], x["devam"], x["tamamlayan"],
+                 x.get("hedef_secen", 0)] for x in o["subeler"]], [12, 28, 10, 12, 12, 12, 12], renk)
     _sayfa(wb, "Sınıflar", ["Sınıf", "Öğrenci", "Giriş yapan", "Devam eden", "Tamamlayan"],
            [[s["sinif"], s["ogrenci"], s["giris_yapan"], s["devam"], s["tamamlayan"]] for s in o.get("siniflar", [])], [18, 10, 12, 12, 12], renk)
-    _sayfa(wb, "Öğrenciler", ["Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven", "Son giriş", "Test hesabı"],
-           [[x["ad_soyad"], x["sinif"], x["durum"], x["ilk_bolum"], x["hedef"], x["guven"], x["son_giris"], "Evet" if x["test"] else ""]
-            for x in v["ogrenciler"]], [28, 10, 22, 34, 34, 8, 18, 10], renk)
+    _sayfa(wb, "Öğrenciler", ["No", "Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven", "Son giriş", "Test hesabı"],
+           [[x.get("no") or "", x["ad_soyad"], x["sinif"], x["durum"], x["ilk_bolum"], x["hedef"], x["guven"], x["son_giris"],
+             "Evet" if x["test"] else ""] for x in v["ogrenciler"]], [8, 28, 10, 22, 34, 34, 8, 18, 10], renk)
     _sayfa(wb, "Bölüm ve alan", ["Alan (1. öneri)", "Öğrenci", "", "En çok önerilen", "Sayı", "En çok hedeflenen", "Sayı"],
            [[(v["alanlar"][i]["alan"] if i < len(v["alanlar"]) else ""), (v["alanlar"][i]["sayi"] if i < len(v["alanlar"]) else ""), "",
              *((o["en_cok_onerilen"][i]["bolum"], o["en_cok_onerilen"][i]["sayi"]) if i < len(o.get("en_cok_onerilen", [])) else ("", "")),

@@ -148,6 +148,28 @@ def sinif_ayir(sinif_ham: str | None, sube_ham: str | None = None) -> tuple[str 
     return s[:30], sube
 
 
+def sube_etiketi(sinif: str | None, sube: str | None) -> str:
+    """('12. Sınıf', 'A') → '12-A'; şubesiz → '12. Sınıf'; 'Aday' / 'Mezun' olduğu gibi."""
+    if not sinif:
+        return "Belirtilmedi"
+    if sube and sinif not in ("Mezun", "Aday"):
+        return f"{sinif.replace('. Sınıf', '')}-{sube}"
+    return sinif
+
+
+def sube_ogretmenleri(db: Session, okul_id: int) -> dict:
+    """{(sinif, sube): {"ad", "eposta"}} — sınıf öğretmeni bilgisi (okul_subeleri)."""
+    if not okul_id:
+        return {}
+    try:
+        with db.begin_nested():
+            satir = db.execute(text("SELECT sinif, sube, ogretmen_ad, ogretmen_eposta FROM okul_subeleri WHERE okul_id = :o"),
+                               {"o": okul_id}).all()
+    except Exception:
+        return {}
+    return {(r[0], r[1]): {"ad": r[2], "eposta": r[3]} for r in satir}
+
+
 def _sinif_metni(o: Ogrenci) -> str:
     if not o.sinif:
         return ""
@@ -440,24 +462,33 @@ def _okul_basligi(okul: Okul | None) -> dict:
 
 
 @router.get("/okul/{okul_id}/ozet")
-def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim),
+               sinif: str | None = None, sube: str | None = None):
+    """[2026-10-10] sinif / sube verilirse yalnızca o sınıf düzeyinin / şubenin özeti (sınıf öğretmeni raporu)."""
     okul = _okul_kapsami(db, yon, okul_id)
     kosul, p = _okul_filtresi(okul_id)
     ogrenciler = db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id).all()
+    if sinif:
+        ogrenciler = [o for o in ogrenciler if o.sinif == sinif and (not sube or (o.sube or "") == sube)]
+        kosul += " AND o.sinif = :f_sinif" + (" AND o.sube = :f_sube" if sube else "")
+        p = {**p, "f_sinif": sinif, "f_sube": sube}
     il = _ilerleme(db, okul_id)
     adlar = {b.id: b.ad for b in db.query(Bolum.id, Bolum.ad).all()}
 
     durum_say = Counter()
-    sinif = defaultdict(lambda: {"ogrenci": 0, "tamamlayan": 0, "devam": 0, "giris_yapan": 0})
+    siniflar = defaultdict(lambda: {"ogrenci": 0, "tamamlayan": 0, "devam": 0, "giris_yapan": 0})
+    subeler = defaultdict(lambda: {"ogrenci": 0, "tamamlayan": 0, "devam": 0, "giris_yapan": 0, "hedef_secen": 0})
     ilk_bolum, hedef = Counter(), Counter()
     for o in ogrenciler:
         kod, _ = _durum(o, il.get(o.id))
         durum_say[kod] += 1
         anahtar = o.sinif or "Belirtilmedi"
-        sinif[anahtar]["ogrenci"] += 1
-        sinif[anahtar]["tamamlayan"] += kod == "tamamlandi"
-        sinif[anahtar]["devam"] += kod == "devam"
-        sinif[anahtar]["giris_yapan"] += o.son_giris_zamani is not None
+        for grup in (siniflar[anahtar], subeler[(anahtar, o.sube or "")]):
+            grup["ogrenci"] += 1
+            grup["tamamlayan"] += kod == "tamamlandi"
+            grup["devam"] += kod == "devam"
+            grup["giris_yapan"] += o.son_giris_zamani is not None
+        subeler[(anahtar, o.sube or "")]["hedef_secen"] += bool((il.get(o.id) or {}).get("hedef"))
         x = il.get(o.id) or {}
         if x.get("durum") == "tamamlandi" and x.get("ilk_bolum"):
             ilk_bolum[adlar.get(x["ilk_bolum"], "?")] += 1
@@ -476,6 +507,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
          GROUP BY 1"""), p).all():
         if g.isoformat() in gunluk:
             gunluk[g.isoformat()] = n
+    ogretmenler = sube_ogretmenleri(db, okul_id)
     return {
         "okul": _okul_basligi(okul),
         "toplam": toplam,
@@ -486,7 +518,12 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
         "durumlar": [{"kod": k, "etiket": e, "sayi": durum_say[k]} for k, e in
                      (("giris_yok", "Henüz giriş yapmadı"), ("baslamadi", "Teste başlamadı"),
                       ("devam", "Devam ediyor"), ("tamamlandi", "Testi tamamladı"))],
-        "siniflar": [{"sinif": k, **v} for k, v in sorted(sinif.items(), key=lambda kv: sira.get(kv[0], 99))],
+        "siniflar": [{"sinif": k, **v} for k, v in sorted(siniflar.items(), key=lambda kv: sira.get(kv[0], 99))],
+        "subeler": [{"sinif": k[0], "sube": k[1], "etiket": sube_etiketi(k[0], k[1]), **v,
+                     "ogretmen": ogretmenler.get((k[0], k[1]), {})}
+                    for k, v in sorted(subeler.items(), key=lambda kv: (sira.get(kv[0][0], 99), kv[0][1]))],
+        "kapsam": {"sinif": sinif, "sube": sube, "etiket": sube_etiketi(sinif, sube) if sinif else None,
+                   "ogretmen": ogretmenler.get((sinif, sube or ""), {}) if sinif and sube else {}},
         "en_cok_onerilen": [{"bolum": b, "sayi": n} for b, n in ilk_bolum.most_common(8)],
         "en_cok_hedeflenen": [{"bolum": b, "sayi": n} for b, n in hedef.most_common(8)],
         "gunluk_giris": [{"gun": g, "sayi": n} for g, n in gunluk.items()],
@@ -1089,3 +1126,35 @@ def ogrenci_hedef_hakki_ver(ogrenci_id: str, istek: HedefHakkiIstek, db: Session
 def yonetim_bolumler(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     """[2026-10-09] Hedef bölüm seçimi için yayındaki bölümler (id, ad)."""
     return [{"id": b.id, "ad": b.ad} for b in db.query(Bolum).filter(Bolum.durum == "yayinda").order_by(Bolum.ad).all()]
+
+
+# ----------------------------------------------------------------------------- [2026-10-10] şube / sınıf öğretmeni
+class SubeIstek(BaseModel):
+    sinif: str
+    sube: str
+    ogretmen_ad: str | None = None
+    ogretmen_eposta: str | None = None
+
+
+@router.put("/okul/{okul_id}/sube")
+def sube_guncelle(okul_id: int, istek: SubeIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    _okul_kapsami(db, yon, okul_id)
+    if not okul_id:
+        raise HTTPException(status_code=400, detail="Şube bilgisi okul bazlıdır.")
+    sinif, sube = istek.sinif.strip(), istek.sube.strip().upper()[:3]
+    if sinif not in SINIFLAR or not sube:
+        raise HTTPException(status_code=400, detail="Geçersiz sınıf / şube.")
+    ad = re.sub(r"\s+", " ", istek.ogretmen_ad or "").strip()[:80] or None
+    ep = (istek.ogretmen_eposta or "").strip()[:120] or None
+    if ep and not _EPOSTA.match(ep):
+        raise HTTPException(status_code=400, detail="E-posta geçersiz.")
+    db.execute(text("""
+        INSERT INTO okul_subeleri (okul_id, sinif, sube, ogretmen_ad, ogretmen_eposta, guncelleme_zamani)
+        VALUES (:o, :s, :b, :a, :e, now())
+        ON CONFLICT (okul_id, sinif, sube) DO UPDATE SET ogretmen_ad = EXCLUDED.ogretmen_ad,
+            ogretmen_eposta = EXCLUDED.ogretmen_eposta, guncelleme_zamani = now()
+    """), {"o": okul_id, "s": sinif, "b": sube, "a": ad, "e": ep})
+    denetim_yaz(db, yon, "sube_ogretmeni", "okul_subeleri", f"{okul_id}:{sinif}:{sube}",
+                f"{sube_etiketi(sinif, sube)} sınıf öğretmeni: {ad or '—'}", okul_id)
+    db.commit()
+    return {"tamam": True}

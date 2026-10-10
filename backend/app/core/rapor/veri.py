@@ -246,12 +246,30 @@ def swot(v: dict) -> dict:
 
 
 # ============================================================================= okul
-def okul_raporu_verisi(db: Session, okul_id: int, yonetici) -> dict:
+def _katman_ortalamalari(db: Session, tur_idler: list[int]) -> list[dict]:
+    if not tur_idler:
+        return []
+    satir = db.execute(text("""
+        SELECT k.kod, k.ad, avg(s.puan) FROM ogrenci_degisken_skorlari s
+          JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
+         WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
+         GROUP BY k.kod, k.ad, k.sira ORDER BY k.sira"""), {"t": tur_idler}).all()
+    return [{"kod": r[0], "ad": r[1], "ortalama": round(float(r[2]), 1)} for r in satir]
+
+
+def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = None, sube: str | None = None) -> dict:
+    """[2026-10-10] sinif (ve sube) verilirse sınıf düzeyi / şube raporu: yalnızca o öğrenciler + okul ortalamasıyla karşılaştırma."""
     from app.api.okul_yonetimi import _durum, _ilerleme, okul_ozeti
-    ozet = okul_ozeti(okul_id, db, yonetici)
+    ozet = okul_ozeti(okul_id, db, yonetici, sinif=sinif, sube=sube)
     ogrenciler = db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id) \
         .order_by(Ogrenci.sinif, Ogrenci.sube, Ogrenci.ad_soyad).all()
-    il = _ilerleme(db, okul_id)
+    il_okul = _ilerleme(db, okul_id)
+    if sinif:
+        ogrenciler = [o for o in ogrenciler if o.sinif == sinif and (not sube or (o.sube or "") == sube)]
+        if sube:   # şube listesinde okul numarası sırası daha kullanışlı
+            ogrenciler.sort(key=lambda o: (int(o.ogrenci_no) if (o.ogrenci_no or "").isdigit() else 10**9, o.ad_soyad))
+    secili = {o.id for o in ogrenciler}
+    il = {k: v for k, v in il_okul.items() if k in secili}
     bolum = {b.id: b for b in db.query(Bolum).all()}
     turlar = {t.id: t for t in db.query(OgrenciDegerlendirmeTuru).filter(
         OgrenciDegerlendirmeTuru.id.in_([x["tur_id"] for x in il.values() if x.get("tur_id")] or [-1])).all()}
@@ -269,14 +287,12 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici) -> dict:
     for x in il.values():
         if x.get("durum") == "tamamlandi" and x.get("ilk_bolum"):
             alan[alan_of.get(x["ilk_bolum"], "Diğer")] += 1
-    katman_ort = []
+    katman_ort = _katman_ortalamalari(db, tamam_turlar)
+    okul_katman_ort = []
+    if sinif:
+        okul_katman_ort = _katman_ortalamalari(db, [x["tur_id"] for x in il_okul.values()
+                                                    if x.get("durum") == "tamamlandi" and x.get("tur_id")])
     if tamam_turlar:
-        satir = db.execute(text("""
-            SELECT k.kod, k.ad, avg(s.puan) FROM ogrenci_degisken_skorlari s
-              JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
-             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
-             GROUP BY k.kod, k.ad, k.sira ORDER BY k.sira"""), {"t": tamam_turlar}).all()
-        katman_ort = [{"kod": r[0], "ad": r[1], "ortalama": round(float(r[2]), 1)} for r in satir]
         guclu = db.execute(text("""
             SELECT d.ad, avg(s.puan) AS o FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
              WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL GROUP BY d.ad ORDER BY o DESC"""), {"t": tamam_turlar}).all()
@@ -292,6 +308,7 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici) -> dict:
             gecersiz += 1
         liste.append({
             "ad_soyad": o.ad_soyad, "sinif": " / ".join(filter(None, [o.sinif, o.sube])) or "—", "durum": etiket,
+            "no": o.ogrenci_no or "",
             "ilk_bolum": _baslik(bolum[x["ilk_bolum"]].ad) if x.get("ilk_bolum") in bolum and kod == "tamamlandi" else "",
             "hedef": _baslik(bolum[x["hedef"]].ad) if x.get("hedef") in bolum else "",
             "guven": float(t.guven_skoru) if t is not None and t.guven_skoru is not None else None,
@@ -302,7 +319,7 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici) -> dict:
     return {
         "okul": okul_bilgisi(db, okul_id), "tarih": datetime.now(timezone.utc), "ozet": ozet,
         "alanlar": [{"alan": a, "sayi": n} for a, n in alan.most_common(8)],
-        "katman_ort": katman_ort,
+        "katman_ort": katman_ort, "okul_katman_ort": okul_katman_ort, "kapsam": ozet.get("kapsam") or {},
         "ortak_guclu": [{"ad": r[0], "ortalama": round(float(r[1]), 1)} for r in guclu[:6]],
         "ortak_gelisim": [{"ad": r[0], "ortalama": round(float(r[1]), 1)} for r in list(reversed(guclu))[:6]],
         "gecersiz": gecersiz, "ogrenciler": liste,

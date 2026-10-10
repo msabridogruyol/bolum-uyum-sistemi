@@ -14,6 +14,7 @@ import OkulTemaKarti from '../../components/yonetim/OkulTemaKarti'
 import AkranSekmesi from '../../components/yonetim/AkranPaneli'
 import KulupYonetimi from '../../components/yonetim/KulupYonetimi'
 import KocYonetimi from '../../components/yonetim/KocYonetimi'
+import SiniflarSekmesi from '../../components/yonetim/SiniflarSekmesi'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -86,9 +87,10 @@ function OzetSekmesi({ oz }) {
 }
 
 // ----------------------------------------------------------------------------- Öğrenciler
-function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, yenile }) {
+function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, yenile, baslangicFiltre = '' }) {
   const [arama, setArama] = useState('')
-  const [sinif, setSinif] = useState('')
+  // [2026-10-10] Filtre: '' | 's:<sınıf>' (sınıf düzeyi) | 'b:<sınıf>|<şube>' (şube, ör. 12-A)
+  const [sinif, setSinif] = useState(baslangicFiltre)
   const [durum, setDurum] = useState('')
   const [secili, setSecili] = useState(new Set())
   const [yukleme, setYukleme] = useState(false)
@@ -99,11 +101,22 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
   const [bekle, setBekle] = useState(false)
   const [sinifAta, setSinifAta] = useState({ sinif: '', sube: '' })
 
-  const siniflar = useMemo(() => [...new Set(ogrenciler.map((o) => o.sinif).filter(Boolean))], [ogrenciler])
+  const SIRA = ['Aday', '9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun']
+  const siniflar = useMemo(() => {
+    const m = new Map()
+    ogrenciler.forEach((o) => { if (o.sinif) { if (!m.has(o.sinif)) m.set(o.sinif, new Set()); if (o.sube) m.get(o.sinif).add(o.sube) } })
+    return [...m.entries()].sort((a, b) => (SIRA.indexOf(a[0]) + 99) % 99 - (SIRA.indexOf(b[0]) + 99) % 99).map(([k, v]) => [k, [...v].sort()])
+  }, [ogrenciler])
+  const sinifUyar = (o) => {
+    if (!sinif) return true
+    if (sinif.startsWith('s:')) return o.sinif === sinif.slice(2)
+    const [sf, sb] = sinif.slice(2).split('|')
+    return o.sinif === sf && (o.sube || '') === sb
+  }
   const liste = ogrenciler.filter((o) => {
     const a = arama.toLocaleLowerCase('tr')
     return (!a || o.ad_soyad.toLocaleLowerCase('tr').includes(a) || o.email.toLowerCase().includes(a) || (o.ogrenci_no || '').includes(a))
-      && (!sinif || o.sinif === sinif) && (!durum || o.durum === durum)
+      && sinifUyar(o) && (!durum || o.durum === durum)
   })
   const hepsiSecili = liste.length > 0 && liste.every((o) => secili.has(o.id))
 
@@ -128,7 +141,11 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
       <div className="yp-arac">
         <input className="auth-input" style={{ maxWidth: 260 }} placeholder="İsim veya e-posta ara…" value={arama} onChange={(e) => setArama(e.target.value)} />
         <select className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)}>
-          <option value="">Tüm sınıflar</option>{siniflar.map((s) => <option key={s}>{s}</option>)}
+          <option value="">Tüm sınıflar</option>
+          {siniflar.map(([sf, subeler]) => [
+            <option key={sf} value={`s:${sf}`}>{sf}{subeler.length ? ' (tüm şubeler)' : ''}</option>,
+            ...subeler.map((sb) => <option key={`${sf}|${sb}`} value={`b:${sf}|${sb}`}>&nbsp;&nbsp;{sf.replace('. Sınıf', '')}-{sb}</option>),
+          ])}
         </select>
         <select className="yp-sec" value={durum} onChange={(e) => setDurum(e.target.value)}>
           <option value="">Tüm durumlar</option>
@@ -426,6 +443,7 @@ export default function OkulPaneliSayfasi() {
   const [ogrenciler, setOgrenciler] = useState([])
   const [okullar, setOkullar] = useState([])
   const [hata, setHata] = useState(null)
+  const [ogrFiltre, setOgrFiltre] = useState('')
 
   const yenile = useCallback(() => {
     api.okulOzeti(okulId).then(setOz).catch((e) => setHata(e.detail || 'Okul yüklenemedi.'))
@@ -437,7 +455,7 @@ export default function OkulPaneliSayfasi() {
   if (hata) return <div className="pg pg-genis"><div className="auth-error">{hata}</div></div>
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
-  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['akran', 'Şube & Akran'],
+  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['siniflar', 'Sınıflar'], ['akran', 'Şube & Akran'],
     ...(okulId ? [['kulupler', 'Kulüpler'], ['koclar', 'Koçlar'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
   return (
     <div className="pg pg-genis">
@@ -457,7 +475,8 @@ export default function OkulPaneliSayfasi() {
         {sekmeler.map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
       </div>
       {sekme === 'ozet' && <OzetSekmesi oz={oz} />}
-      {sekme === 'ogrenciler' && <OgrencilerSekmesi okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sekme === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
+      {sekme === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
       {sekme === 'koclar' && okulId > 0 && <KocYonetimi okulId={okulId} />}
