@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import HaftalikGorevler from '../components/HaftalikGorevler'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import Sayac from '../components/Sayac'
+import AnaSayfaGrafikleri from '../components/AnaSayfaGrafikleri'
 
 const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
@@ -273,6 +274,19 @@ export default function AnaSayfa() {
             </div>
           </div>
       </div>
+
+      {/* [2026-10-09] Tam genişlikte grafik satırı: katman profili · en güçlü yönler · bölüm uyum sıralaması */}
+      {tumSonuclar.length > 0 && (
+        <div style={{ marginTop: 20 }}>
+          <AnaSayfaGrafikleri
+            katmanVerisi={[...ANA_KATMANLAR.map((kod) => ({ kod, deger: katmanSonuclari[kod]?.puanOrtalama ?? null })),
+              ...(k5OrtalamaPuan !== null ? [{ kod: 'K5', deger: k5OrtalamaPuan }] : [])]}
+            gucluYonler={[...tumSonuclar].sort((a, b) => b.puan - a.puan).slice(0, 6).map((s) => ({ ad: s.degisken_adi, deger: Math.round(s.puan) }))}
+            siralama={siralama}
+            onBolumAc={bolumBilgisiAc}
+          />
+        </div>
+      )}
 
       {/* --- Önerilen bölümler (tam genişlik) --- */}
       <div className="ct" style={{ marginTop: 22 }}>Sana Önerilen Bölümler</div>
