@@ -10,6 +10,49 @@ import BildirimZili from './BildirimZili'
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
+// [2026-10-10] Süper admin menüsü: [yol, ikon, ad]. Sayfa adları değişmez; yalnızca gruplama.
+const SUPER_MENU = [
+  { grup: 'Genel', baglantilar: [['/admin', '🏠', 'Kontrol Paneli']] },
+  { grup: 'Raporlar ve İstatistikler', baglantilar: [
+    ['/admin/istatistikler', '📊', 'İstatistikler'],
+    ['/admin/raporlar', '📄', 'Rapor Merkezi'],
+    ['/admin/karsilastirma', '⚖️', 'Okul Karşılaştırması'],
+    ['/admin/anket-psikometri', '📐', 'Anket Psikometrisi'],
+  ] },
+  { grup: 'Okullar ve Kullanıcılar', baglantilar: [
+    ['/admin/okullar', '🏫', 'Okullar'],
+    ['/admin/okul/0', '🎒', 'Okul Harici Öğrenciler'],
+    ['/admin/paketler', '📦', 'Paketler'],
+    ['/admin/koclar', '👩‍🏫', 'Eğitim Koçları'],
+    ['/admin/yoneticiler', '🛠️', 'Süper Adminler'],
+    ['/admin/test-hesaplari', '🧪', 'Test Hesapları'],
+  ] },
+  { grup: 'İçerik', baglantilar: [
+    ['/admin/bolumler', '🎓', 'Bölümler'],
+    ['/admin/yokatlas', '🔗', 'YÖK Atlas Eşleştirme'],
+    ['/admin/meslek-dili', '🗣️', 'Meslek Dili Sözlüğü'],
+    ['/admin/konular', '📝', 'Konu Listesi (Net Takibi)'],
+    ['/admin/dallar', '🌿', 'Dallar (K5)'],
+    ['/admin/sorular', '❔', 'Soru Bankası'],
+    ['/admin/gelisim-kaynak', '🌱', 'Gelişim Kaynak Havuzu'],
+    ['/admin/takvim', '🗓️', 'Genel Takvim'],
+  ] },
+  { grup: 'Ölçme ve Kalite', baglantilar: [
+    ['/admin/soru-gecerlilik', '🎯', 'Soru Geçerlilik Testi'],
+    ['/admin/guvenlik', '🛡️', 'Güvenlik / Tutarlılık'],
+    ['/admin/pipeline', '⚙️', 'Pipeline Durumu'],
+  ] },
+  { grup: 'Sistem', baglantilar: [
+    ['/admin/parametreler', '🎛️', 'Parametreler'],
+    ['/admin/audit-log', '📜', 'Audit Log'],
+  ] },
+  { grup: 'Yardım', baglantilar: [
+    ['/admin/sistem-hakkinda', 'ℹ️', 'Sistem Hakkında'],
+    ['/admin/sss', '❓', 'Okul Yetkilisi SSS'],
+    ['/admin/kaynakca', '📚', 'Kaynakça'],
+  ] },
+]
+
 // [2026-10-09] 3 yetki seviyesi: Süper Admin tüm menüyü görür; Okul Yetkilisi yalnızca kendi okulunun panelini.
 export default function AdminSayfaDuzeni() {
   const { cikisYap, rol, ben, benYenile } = useAdminAuth()
@@ -81,38 +124,15 @@ export default function AdminSayfaDuzeni() {
           </>
         ) : (
           <>
-            <div className="ns">Genel</div>
-            <NavLink to="/admin" end className={ni}>Kontrol Paneli</NavLink>
-            <NavLink to="/admin/pipeline" className={ni}>Pipeline Durumu</NavLink>
-
-            <div className="ns">Okullar ve Hesaplar</div>
-            <NavLink to="/admin/okullar" className={ni}>Okullar</NavLink>
-            <NavLink to="/admin/karsilastirma" className={ni}>📊 Okul Karşılaştırması</NavLink>
-            <NavLink to="/admin/okul/0" className={ni}>Okul Harici Öğrenciler</NavLink>
-            <NavLink to="/admin/yoneticiler" className={ni}>Süper Adminler</NavLink>
-            <NavLink to="/admin/test-hesaplari" className={ni}>🧪 Test Hesapları</NavLink>
-            <NavLink to="/admin/koclar" className={ni}>Eğitim Koçları</NavLink>
-            <NavLink to="/admin/takvim" className={ni}>Genel Takvim</NavLink>
-            <NavLink to="/admin/paketler" className={ni}>📦 Paketler</NavLink>
-            <NavLink to="/admin/sss" className={ni}>Okul Yetkilisi SSS</NavLink>
-
-            <div className="ns">İçerik Yönetimi</div>
-            <NavLink to="/admin/bolumler" className={ni}>Bölümler</NavLink>
-            <NavLink to="/admin/yokatlas" className={ni}>YÖK Atlas Eşleştirme</NavLink>
-            <NavLink to="/admin/meslek-dili" className={ni}>Meslek Dili Sözlüğü</NavLink>
-            <NavLink to="/admin/konular" className={ni}>Konu Listesi (Net Takibi)</NavLink>
-            <NavLink to="/admin/dallar" className={ni}>Dallar (K5)</NavLink>
-            <NavLink to="/admin/sorular" className={ni}>Soru Bankası</NavLink>
-
-            <div className="ns">Sistem</div>
-            <NavLink to="/admin/parametreler" className={ni}>Parametreler</NavLink>
-            <NavLink to="/admin/soru-gecerlilik" className={ni}>Soru Geçerlilik Testi</NavLink>
-            <NavLink to="/admin/anket-psikometri" className={ni}>Anket Psikometrisi</NavLink>
-            <NavLink to="/admin/audit-log" className={ni}>Audit Log</NavLink>
-            <NavLink to="/admin/sistem-hakkinda" className={ni}>Sistem Hakkında</NavLink>
-            <NavLink to="/admin/kaynakca" className={ni}>📚 Kaynakça</NavLink>
-            <NavLink to="/admin/guvenlik" className={ni}>Güvenlik / Tutarlılık</NavLink>
-            <NavLink to="/admin/gelisim-kaynak" className={ni}>Gelişim Kaynak Havuzu</NavLink>
+            {/* [2026-10-10] Süper admin menüsü gruplu; her bağlantıda ikon (okul paneliyle tutarlı) */}
+            {SUPER_MENU.map((g) => (
+              <Fragment key={g.grup}>
+                <div className="ns">{g.grup}</div>
+                {g.baglantilar.map(([yol, ikon, ad]) => (
+                  <NavLink key={yol} to={yol} end={yol === '/admin'} className={ni}><span className="ni-ikon">{ikon}</span>{ad}</NavLink>
+                ))}
+              </Fragment>
+            ))}
           </>
         )}
       </div>

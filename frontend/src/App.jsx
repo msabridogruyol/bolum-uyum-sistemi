@@ -56,6 +56,8 @@ const KocYonetimSayfasi = lazy(() => import('./pages/admin/KocYonetimSayfasi'))
 const YokatlasEslesmeSayfasi = lazy(() => import('./pages/admin/YokatlasEslesmeSayfasi'))
 const GenelTakvimSayfasi = lazy(() => import('./pages/admin/GenelTakvimSayfasi'))
 const AnketPsikometriSayfasi = lazy(() => import('./pages/admin/AnketPsikometriSayfasi'))
+const IstatistiklerSayfasi = lazy(() => import('./pages/admin/IstatistiklerSayfasi'))   // [2026-10-10]
+const RaporMerkeziSayfasi = lazy(() => import('./pages/admin/RaporMerkeziSayfasi'))     // [2026-10-10]
 const TestGirisSayfasi = lazy(() => import('./pages/TestGirisSayfasi'))
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
@@ -190,6 +192,8 @@ function AnaUygulama() {
         <Route path="konular" element={<KonuListesiSayfasi />} />
         <Route path="paketler" element={<PaketlerSayfasi />} />
         <Route path="karsilastirma" element={<KarsilastirmaSayfasi />} />
+        <Route path="istatistikler" element={<IstatistiklerSayfasi />} />
+        <Route path="raporlar" element={<RaporMerkeziSayfasi />} />
       </Route>
     </Routes>
     </Suspense>

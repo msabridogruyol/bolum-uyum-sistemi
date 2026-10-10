@@ -89,6 +89,14 @@ async function dosyaIndir(yol, kapsam = 'ogrenci') {
   setTimeout(() => URL.revokeObjectURL(url), 2000)
 }
 
+// [2026-10-10] Okul istatistikleri filtresi → sorgu metni (?sinif=&sube=&bas=&bit=)
+function istatistikSorgu(f = {}) {
+  const q = new URLSearchParams()
+  for (const k of ['sinif', 'sube', 'bas', 'bit']) if (f[k]) q.set(k, f[k])
+  const s = q.toString()
+  return s ? `?${s}` : ''
+}
+
 const get = (yol, kapsam) => istek(yol, { method: 'GET' }, kapsam)
 const post = (yol, gövde, kapsam) => istek(yol, { method: 'POST', body: gövde !== undefined ? JSON.stringify(gövde) : undefined }, kapsam)
 const put = (yol, gövde, kapsam) => istek(yol, { method: 'PUT', body: JSON.stringify(gövde) }, kapsam)
@@ -456,6 +464,9 @@ export const api = {
   yonetimIlkSifre: (yeniSifre) => apost('/yonetim/ben/ilk-sifre', { yeni_sifre: yeniSifre }),
   yonetimOkullar: () => aget('/yonetim/okullar'),
   okulOzeti: (okulId) => aget(`/yonetim/okul/${okulId}/ozet`),
+  // [2026-10-10] Okul paneli → İstatistikler; f: { sinif, sube, bas, bit } (hepsi isteğe bağlı)
+  okulIstatistik: (okulId, f = {}) => aget(`/yonetim/okul/${okulId}/istatistik${istatistikSorgu(f)}`),
+  okulIstatistikExcel: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/istatistik/excel${istatistikSorgu(f)}`, 'admin'),
   okulOgrencileri: (okulId) => aget(`/yonetim/okul/${okulId}/ogrenciler`),
   yuklemeSablonu: () => aget('/yonetim/sablon'),
   ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),
@@ -521,4 +532,9 @@ export const api = {
   yoneticileriListele: () => aget('/admin/yoneticiler'),
   yoneticiEkle: (veri) => apost('/admin/yoneticiler', veri),
   yoneticiSil: (yoneticiId) => adel(`/admin/yoneticiler/${yoneticiId}`),
+  // [2026-10-10] Süper admin İstatistikler / Rapor Merkezi / Kontrol Paneli; f: { donem: '30'|'90'|'yil'|'tum', okul_id, test }
+  sistemIstatistik: (f = {}) => aget(`/yonetim/istatistik/genel?${new URLSearchParams(Object.entries(f).filter(([, v]) => v !== '' && v != null)).toString()}`),
+  sistemIstatistikExcel: (f = {}) => dosyaIndir(`/yonetim/istatistik/genel/excel?${new URLSearchParams(Object.entries(f).filter(([, v]) => v !== '' && v != null)).toString()}`, 'admin'),
+  sistemDikkat: () => aget('/yonetim/istatistik/dikkat'),
+  auditLogExcel: (gun = 90) => dosyaIndir(`/yonetim/audit-log/excel?gun=${gun}`, 'admin'),
 }

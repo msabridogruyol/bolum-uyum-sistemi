@@ -353,6 +353,7 @@ export default function SistemHakkindaSayfasi() {
       </Bolum>
 
       <Bolum ikon="🕓" baslik="12. Son Güncellemeler">
+        <Madde><b>Panel düzeni ve istatistikler:</b> süper admin menüsü gruplandı (Raporlar ve İstatistikler, Okullar ve Kullanıcılar, İçerik, Ölçme ve Kalite, Sistem, Yardım). Yeni İstatistikler (/yonetim/istatistik/genel) ve Rapor Merkezi sayfaları; Kontrol Paneli KPI + dikkat gerektirenler + hızlı bağlantılara sadeleşti. Okul paneline İstatistikler (/yonetim/okul/&#123;id&#125;/istatistik) ve Rapor Merkezi sekmeleri eklendi; grafikler components/istatistik kütüphanesinden</Madde>
         <Madde><b>Tek puan ölçeği:</b> tüm ekran ve raporlarda aynı bantlar — Çok güçlü 75+, Güçlü 62–74, Ortanın üstü 50–61, Orta 40–49, Gelişime açık 40 altı (frontend/src/yardimci/seviye.js, backend/app/core/seviye.py)</Madde>
         <Madde><b>Küçük grup gizleme (5):</b> toplu PDF/Excel raporlarında (okul, sınıf düzeyi, şube), okul karşılaştırmasında ve öğrenciye gösterilen okul deneme ortalamasında 5'ten az öğrenciye dayanan değerler gizlenir (app/core/kucuk_grup.py). Okul yetkilisinin isimli çalışma ekranlarında (Sınıflar, denemeler, mezunlar, akran) uygulanmaz — öğrenciler zaten isimle görünür</Madde>
         <Madde><b>Katman ağırlıkları ekranı:</b> Parametreler sayfasından K1–K4 ağırlıkları (toplam 100) değiştirilebilir; değişiklik denetim kaydına yazılır ve tüm uyum skorları arka planda yeniden hesaplanır. 0052 göçü bir kez K1–K4'ü %25'e çeker (değiştiyse skorlar açılışta yeniden hesaplanır)</Madde>

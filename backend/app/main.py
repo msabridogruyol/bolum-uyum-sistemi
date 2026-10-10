@@ -44,6 +44,7 @@ from app.api.meslek_dili import router as meslek_dili_router
 from app.api.cevap_analizi import router as cevap_analizi_router
 from app.api.listem import router as listem_router
 from app.api.raporlar import router as raporlar_router
+from app.api.okul_istatistik import router as okul_istatistik_router   # [2026-10-10] okul paneli → İstatistikler
 from app.api.akran import router as akran_router
 from app.api.takvim import ogrenci_router as takvim_ogrenci_router, router as takvim_router
 from app.api.kutuphane import ogrenci_router as kutuphane_ogrenci_router, router as kutuphane_router
@@ -52,6 +53,7 @@ from app.api.koclar import ogrenci_router as koc_ogrenci_router, router as koc_r
 from app.api.kulupler import ogrenci_router as kulup_ogrenci_router, router as kulup_router
 from app.api.test_hesaplari import router as test_hesaplari_router, giris_router as test_giris_router
 from app.api.anket_psikometri import router as anket_psikometri_router   # [2026-10-10]
+from app.api.sistem_istatistik import router as sistem_istatistik_router   # [2026-10-10] süper admin İstatistikler / Rapor Merkezi
 app = FastAPI(
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
@@ -226,6 +228,7 @@ app.include_router(meslek_dili_router)
 app.include_router(cevap_analizi_router)
 app.include_router(listem_router)                           # [2026-10-10] /ogrenci/listem, /ogrenci/karsilastir
 app.include_router(raporlar_router)                         # [2026-10-10] PDF / Excel raporlar
+app.include_router(okul_istatistik_router)                  # [2026-10-10] /yonetim/okul/{id}/istatistik (+ /excel)
 app.include_router(kulup_router, dependencies=[_Dep(okul_modulu("kulupler"))])                            # [2026-10-10] okul kulüpleri
 app.include_router(kulup_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])                    # [2026-10-10] /ogrenci/ilgi-testi
 app.include_router(koc_router)                              # [2026-10-10] anlaşmalı eğitim koçları
@@ -262,6 +265,7 @@ app.include_router(motivasyon_router)                       # [2026-10-10] YKS g
 app.include_router(akran_router, dependencies=[_Dep(okul_modulu("akran"))])                            # [2026-10-10] akran benzerliği, şube dağılımı, aday öğrenci
 app.include_router(test_hesaplari_router)                    # [2026-10-10] /yonetim/test-hesaplari (süper admin)
 app.include_router(anket_psikometri_router)                  # [2026-10-10] /yonetim/anket-psikometri (süper admin)
+app.include_router(sistem_istatistik_router)                 # [2026-10-10] /yonetim/istatistik/genel (+ /excel), /istatistik/dikkat, /audit-log/excel
 app.include_router(test_giris_router)                        # [2026-10-10] POST /auth/test-giris
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
