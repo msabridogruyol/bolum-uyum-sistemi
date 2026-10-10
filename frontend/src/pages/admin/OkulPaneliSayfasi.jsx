@@ -234,15 +234,16 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
 // ----------------------------------------------------------------------------- Okul yetkilileri
 function YetkililerSekmesi({ okulId, superAdmin }) {
   const [liste, setListe] = useState(null)
-  const [form, setForm] = useState({ ad_soyad: '', email: '' })
+  const [form, setForm] = useState({ ad_soyad: '', email: '', unvan: '' })
   const [sifre, setSifre] = useState(null)
+  const [duzen, setDuzen] = useState(null)   // [2026-10-10] { id, ad_soyad, unvan }
   const [silinecek, setSilinecek] = useState(null)
   const [hata, setHata] = useState(null)
   const yukle = useCallback(() => { api.okulYetkilileri(okulId).then(setListe).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [okulId])
   useEffect(yukle, [yukle])
 
   async function islem(fn) { setHata(null); try { await fn() } catch (e) { setHata(e.detail || 'İşlem başarısız.') } }
-  const ekle = (e) => { e.preventDefault(); islem(async () => { const r = await api.okulYetkilisiEkle(okulId, form); setSifre(r); setForm({ ad_soyad: '', email: '' }); yukle() }) }
+  const ekle = (e) => { e.preventDefault(); islem(async () => { const r = await api.okulYetkilisiEkle(okulId, form); setSifre(r); setForm({ ad_soyad: '', email: '', unvan: '' }); yukle() }) }
 
   return (
     <>
@@ -254,6 +255,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
       {superAdmin && (
         <form className="yp-kutu yp-form-satir" style={{ marginBottom: 14 }} onSubmit={ekle}>
           <input className="auth-input" placeholder="Ad Soyad" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
+          <input className="auth-input" placeholder="Görevi / unvanı (isteğe bağlı)" title="ör. Psikolojik Danışman, Rehber Öğretmen" maxLength={60} value={form.unvan} onChange={(e) => setForm({ ...form, unvan: e.target.value })} />
           <input className="auth-input" type="email" placeholder="E-posta" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
           <button className="btn" type="submit">+ Okul yetkilisi ekle</button>
         </form>
@@ -272,7 +274,21 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
           <tbody>
             {liste.map((y) => (
               <tr key={y.id}>
-                <td><b>{y.ad_soyad}</b>{y.test_hesabi && <span className="test-rozet">TEST</span>}</td><td className="yp-ince">{y.email}</td><td className="yp-ince">{onceSure(y.son_giris_zamani)}</td>
+                <td>
+                  {duzen?.id === y.id ? (
+                    <form style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }} onSubmit={(e) => { e.preventDefault(); islem(async () => { await api.okulYetkilisiDuzenle(y.id, { ad_soyad: duzen.ad_soyad, unvan: duzen.unvan }); setDuzen(null); yukle() }) }}>
+                      <input className="yp-sec" value={duzen.ad_soyad} minLength={3} required onChange={(e) => setDuzen({ ...duzen, ad_soyad: e.target.value })} placeholder="Ad soyad" />
+                      <input className="yp-sec" value={duzen.unvan} maxLength={60} onChange={(e) => setDuzen({ ...duzen, unvan: e.target.value })} placeholder="Görevi / unvanı" />
+                      <button className="yp-mini">Kaydet</button><button type="button" className="yp-mini" onClick={() => setDuzen(null)}>İptal</button>
+                    </form>
+                  ) : (
+                    <>
+                      <b>{y.ad_soyad}</b>{y.test_hesabi && <span className="test-rozet">TEST</span>}
+                      <button className="yp-mini" style={{ marginLeft: 6 }} title="Ad / görev düzenle" onClick={() => setDuzen({ id: y.id, ad_soyad: y.ad_soyad, unvan: y.unvan || '' })}>✎</button>
+                      <div className="yp-ince">{y.unvan || 'Görevi belirtilmedi'}</div>
+                    </>
+                  )}
+                </td><td className="yp-ince">{y.email}</td><td className="yp-ince">{onceSure(y.son_giris_zamani)}</td>
                 <td><SifreHucresi gecici={y.gecici_sifre} degistirmeli={y.sifre_degistirmeli} /></td>
                 {superAdmin && (
                   <td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>

@@ -286,7 +286,7 @@ def _yonetici_out(db: Session, y: AdminKullanici) -> YoneticiOut:
     okul = db.get(Okul, y.okul_id) if y.okul_id else None
     return YoneticiOut(id=str(y.id), ad_soyad=y.ad_soyad, email=y.email, rol=y.rol, olusturulma_zamani=y.olusturulma_zamani,
                        okul_id=y.okul_id, okul_ad=okul.ad if okul else None, aktif_mi=y.aktif_mi,
-                       son_giris_zamani=y.son_giris_zamani)
+                       son_giris_zamani=y.son_giris_zamani, unvan=getattr(y, "unvan", None))
 
 
 @router.post("/yoneticiler", response_model=YoneticiOut, status_code=201)

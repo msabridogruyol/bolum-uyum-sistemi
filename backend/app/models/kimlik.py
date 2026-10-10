@@ -78,6 +78,7 @@ class AdminKullanici(Base):
     test_giris_anahtari: Mapped[str | None] = mapped_column(String, nullable=True)   # bağlantı anahtarının SHA-256 özeti
     test_giris_bitis: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     gecici_sifre_sifreli: Mapped[str | None] = mapped_column(String, nullable=True)   # [2026-10-10]
+    unvan: Mapped[str | None] = mapped_column(String, nullable=True)   # [2026-10-10] görevi / unvanı (ör. Psikolojik Danışman)
 
 
 class OgrenciHesapOlayi(Base):

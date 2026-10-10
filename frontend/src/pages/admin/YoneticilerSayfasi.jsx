@@ -101,7 +101,7 @@ export default function YoneticilerSayfasi() {
         {yetkililer.map((y) => (
           <Link key={y.id} to={`/admin/okul/${y.okul_id}`} className="lc" style={{ textDecoration: 'none', color: 'inherit' }}>
             <div className="lb-wrap" style={{ flex: 1 }}>
-              <div className="lt">{y.ad_soyad}</div>
+              <div className="lt">{y.ad_soyad}{y.unvan && <span className="yp-ince" style={{ fontWeight: 500 }}> · {y.unvan}</span>}</div>
               <div className="ld">{y.email} · {y.okul_ad}</div>
             </div>
             <span className="yp-ince">Okul paneli →</span>

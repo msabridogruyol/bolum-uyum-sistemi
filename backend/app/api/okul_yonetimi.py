@@ -416,6 +416,12 @@ class OkulAtaIstek(BaseModel):
 class YetkiliEkleIstek(BaseModel):
     ad_soyad: str
     email: str
+    unvan: str | None = None        # [2026-10-10] görevi / unvanı (isteğe bağlı)
+
+
+class YetkiliDuzenleIstek(BaseModel):
+    ad_soyad: str | None = None
+    unvan: str | None = None
 
 
 # ----------------------------------------------------------------------------- oturum sahibi
@@ -423,7 +429,7 @@ class YetkiliEkleIstek(BaseModel):
 def ben(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     okul = db.get(Okul, yon.okul_id) if yon.okul_id else None
     return {"id": str(yon.id), "ad_soyad": yon.ad_soyad, "email": yon.email, "rol": yon.rol,
-            "rol_adi": "Süper Admin" if yon.rol == "super_admin" else "Okul Yetkilisi",
+            "rol_adi": "Süper Admin" if yon.rol == "super_admin" else "Okul Yetkilisi", "unvan": getattr(yon, "unvan", None),
             "okul_id": yon.okul_id, "okul_ad": okul.ad if okul else None, "okul_logo": okul.logo if okul else None,
             "okul_renk": okul.tema_renk if okul else None,
             "sifre_degistirmeli": bool(yon.sifre_degistirmeli)}
@@ -864,7 +870,8 @@ def toplu_sil(istek: IdlerIstek, db: Session = Depends(get_db), yon: AdminKullan
 
 # ----------------------------------------------------------------------------- okul yetkilileri
 def _yetkili_out(y: AdminKullanici) -> dict:
-    return {"id": str(y.id), "ad_soyad": y.ad_soyad, "email": y.email, "olusturulma_zamani": y.olusturulma_zamani,
+    return {"id": str(y.id), "ad_soyad": y.ad_soyad, "email": y.email, "unvan": getattr(y, "unvan", None),
+            "olusturulma_zamani": y.olusturulma_zamani,
             "son_giris_zamani": y.son_giris_zamani, "sifre_degistirmeli": bool(y.sifre_degistirmeli), "aktif_mi": y.aktif_mi,
             "gecici_sifre": coz(y.gecici_sifre_sifreli) if y.sifre_degistirmeli else None,
             "test_hesabi": bool(getattr(y, "test_hesabi", False))}
@@ -893,12 +900,17 @@ def yetkili_ekle(okul_id: int, istek: YetkiliEkleIstek, db: Session = Depends(ge
         raise HTTPException(status_code=400, detail="Bu e-posta ile zaten hesap var.")
     sifre = gecici_sifre()
     y = AdminKullanici(ad_soyad=ad, email=email, sifre_hash=sifre_hashle(sifre), rol="okul_yetkilisi", okul_id=okul.id,
-                       aktif_mi=True, sifre_degistirmeli=True, olusturulma_zamani=simdi(), gecici_sifre_sifreli=sifrele(sifre))
+                       aktif_mi=True, sifre_degistirmeli=True, olusturulma_zamani=simdi(), gecici_sifre_sifreli=sifrele(sifre),
+                       unvan=_unvan(istek.unvan))
     db.add(y)
     db.flush()
     denetim_yaz(db, yon, "okul_yetkilisi_ekle", "admin_kullanicilar", y.id, f"{ad} <{email}>", okul.id)
     db.commit()
     return {**_yetkili_out(y), "gecici_sifre": sifre}
+
+
+def _unvan(v: str | None) -> str | None:
+    return re.sub(r"\s+", " ", v or "").strip()[:60] or None
 
 
 def _yetkili(db: Session, yetkili_id: str) -> AdminKullanici:
@@ -940,7 +952,7 @@ ISLEM_ETIKET = {
     "ogrenci_toplu_ekle": "Öğrenci hesapları açıldı", "ogrenci_sil": "Öğrenci silindi",
     "ogrenci_sifre_sifirla": "Öğrenci şifresi sıfırlandı", "ogrenci_duzenle": "Öğrenci bilgisi düzeltildi",
     "ogrenci_okul_degistir": "Öğrenci okulu değiştirildi", "okul_yetkilisi_ekle": "Okul yetkilisi eklendi",
-    "okul_yetkilisi_sil": "Okul yetkilisi silindi", "okul_yetkilisi_sifre_sifirla": "Okul yetkilisinin şifresi sıfırlandı",
+    "okul_yetkilisi_sil": "Okul yetkilisi silindi", "okul_yetkilisi_duzenle": "Okul yetkilisi bilgisi güncellendi", "okul_yetkilisi_sifre_sifirla": "Okul yetkilisinin şifresi sıfırlandı",
     "okul_ekle": "Okul eklendi", "okul_guncelle": "Okul bilgisi güncellendi", "okul_sil": "Okul silindi",
     "sifre_belirledi": "Yetkili kendi şifresini belirledi",
     "okul_bilgi_guncelle": "Okul tanıtım bilgileri güncellendi",
@@ -1158,3 +1170,22 @@ def sube_guncelle(okul_id: int, istek: SubeIstek, db: Session = Depends(get_db),
                 f"{sube_etiketi(sinif, sube)} sınıf öğretmeni: {ad or '—'}", okul_id)
     db.commit()
     return {"tamam": True}
+
+
+@router.put("/yetkili/{yetkili_id}")
+def yetkili_duzenle(yetkili_id: str, istek: YetkiliDuzenleIstek, db: Session = Depends(get_db),
+                    yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-10] Ad soyad / görev-unvan düzeltme. Süper admin her yetkiliyi, okul yetkilisi kendi okulundakileri düzenler."""
+    y = _yetkili(db, yetkili_id)
+    _okul_kapsami(db, yon, y.okul_id)
+    if istek.ad_soyad is not None:
+        ad = re.sub(r"\s+", " ", istek.ad_soyad).strip()
+        if len(ad) < 3:
+            raise HTTPException(status_code=400, detail="Ad soyad eksik.")
+        y.ad_soyad = ad
+    if istek.unvan is not None:
+        y.unvan = _unvan(istek.unvan)
+    denetim_yaz(db, yon, "okul_yetkilisi_duzenle", "admin_kullanicilar", y.id,
+                f"{y.ad_soyad}{' · ' + y.unvan if y.unvan else ''}", y.okul_id)
+    db.commit()
+    return _yetkili_out(y)
