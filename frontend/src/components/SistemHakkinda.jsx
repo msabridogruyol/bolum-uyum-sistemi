@@ -1,6 +1,5 @@
 // [2026-10-10] Sistem Hakkında + Sıkça Sorulan Sorular — teknik olmayan, kullanıcıya yönelik anlatım.
 // hedef = 'ogrenci' (öğrenci menüsü) | 'yonetim' (okul yetkilisi / süper admin)
-import Kaynakca from './Kaynakca'
 import { useMemo, useState } from 'react'
 
 const OGRENCI = {
@@ -129,7 +128,6 @@ export default function SistemHakkinda({ hedef = 'ogrenci' }) {
           {hedef === 'yonetim' ? 'Sorunuzun cevabını bulamadıysanız sistem yöneticinizle iletişime geçin.' : 'Sorunun cevabını bulamadıysan Filiz\'e sorabilir ya da rehber öğretmenine danışabilirsin.'}
         </div>
       </div>
-      {hedef === 'yonetim' && <Kaynakca />}
     </div>
   )
 }

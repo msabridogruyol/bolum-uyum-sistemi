@@ -32,7 +32,7 @@ export default function AdminSayfaDuzeni() {
 
   if (okulYetkilisi && ben?.okul_id) {
     const okulYolu = `/admin/okul/${ben.okul_id}`
-    if (!konum.pathname.startsWith(okulYolu) && konum.pathname !== '/admin/sss') return <Navigate to={okulYolu} replace />
+    if (!konum.pathname.startsWith(okulYolu) && konum.pathname !== '/admin/sss' && konum.pathname !== '/admin/kaynakca') return <Navigate to={okulYolu} replace />
   }
 
   return (
@@ -77,6 +77,7 @@ export default function AdminSayfaDuzeni() {
             })}
             <div className="ns">Yardım</div>
             <NavLink to="/admin/sss" className={ni}><span className="ni-ikon">❓</span>Sistem Hakkında & SSS</NavLink>
+            <NavLink to="/admin/kaynakca" className={ni}><span className="ni-ikon">📚</span>Kaynakça</NavLink>
           </>
         ) : (
           <>
@@ -108,6 +109,7 @@ export default function AdminSayfaDuzeni() {
             <NavLink to="/admin/soru-gecerlilik" className={ni}>Soru Geçerlilik Testi</NavLink>
             <NavLink to="/admin/audit-log" className={ni}>Audit Log</NavLink>
             <NavLink to="/admin/sistem-hakkinda" className={ni}>Sistem Hakkında</NavLink>
+            <NavLink to="/admin/kaynakca" className={ni}>📚 Kaynakça</NavLink>
             <NavLink to="/admin/guvenlik" className={ni}>Güvenlik / Tutarlılık</NavLink>
             <NavLink to="/admin/gelisim-kaynak" className={ni}>Gelişim Kaynak Havuzu</NavLink>
           </>

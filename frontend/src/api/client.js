@@ -199,6 +199,7 @@ export const api = {
   ogrenciSimulasyonlari: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/simulasyonlar`),
   // [2026-10-10] Okul karşılaştırması (süper admin)
   okulKarsilastirma: () => aget('/yonetim/okul-karsilastirma'),
+  kaynakca: () => aget('/yonetim/kaynakca'),
   okulKarsilastirmaExcel: (idler) => dosyaIndir(`/yonetim/okul-karsilastirma/excel${idler?.length ? `?okullar=${idler.join(',')}` : ''}`, 'admin'),
   // [2026-10-10] Tercih dönemi ve mezun takibi
   tercih: () => get('/ogrenci/tercih'),
