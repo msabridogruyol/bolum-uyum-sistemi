@@ -86,6 +86,7 @@ export default function AdminSayfaDuzeni() {
 
             <div className="ns">Okullar ve Hesaplar</div>
             <NavLink to="/admin/okullar" className={ni}>Okullar</NavLink>
+            <NavLink to="/admin/karsilastirma" className={ni}>📊 Okul Karşılaştırması</NavLink>
             <NavLink to="/admin/okul/0" className={ni}>Okul Harici Öğrenciler</NavLink>
             <NavLink to="/admin/yoneticiler" className={ni}>Süper Adminler</NavLink>
             <NavLink to="/admin/test-hesaplari" className={ni}>🧪 Test Hesapları</NavLink>

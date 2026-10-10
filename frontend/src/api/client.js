@@ -191,6 +191,9 @@ export const api = {
   paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
   okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
   okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
+  // [2026-10-10] Okul karşılaştırması (süper admin)
+  okulKarsilastirma: () => aget('/yonetim/okul-karsilastirma'),
+  okulKarsilastirmaExcel: (idler) => dosyaIndir(`/yonetim/okul-karsilastirma/excel${idler?.length ? `?okullar=${idler.join(',')}` : ''}`, 'admin'),
   // [2026-10-10] Tercih dönemi ve mezun takibi
   tercih: () => get('/ogrenci/tercih'),
   tercihKaydet: (v) => put('/ogrenci/tercih', v),

@@ -2008,3 +2008,13 @@ tr.od-bos td{color:var(--tx3)}
 .tr-islem .yp-mini{padding:3px 7px}
 .tr-karar{display:grid;gap:8px;margin-top:14px;padding-top:12px;border-top:1px solid var(--bor)}
 @media (max-width:640px){.tr-bilgi{grid-template-columns:1fr}}
+
+/* [2026-10-10] Okul karşılaştırması */
+.ks-cubuklar{display:grid;gap:6px}
+.ks-satir{display:grid;grid-template-columns:minmax(140px,240px) 1fr 70px;gap:12px;align-items:center;font-size:13px}
+.ks-ad{color:var(--tx);text-decoration:none;font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.ks-ad:hover{color:var(--pu)}
+.ks-iz{height:16px;background:var(--sur2);border-radius:4px;overflow:hidden}
+.ks-iz div{height:100%;background:var(--kt-izleme, #2a78d6);border-radius:0 4px 4px 0}
+.ks-satir b{text-align:right}
+.yp-tablo th.ks-secili,.yp-tablo td.ks-secili{background:color-mix(in srgb, var(--kt-izleme, #2a78d6) 9%, transparent)}
