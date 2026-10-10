@@ -67,11 +67,68 @@ def _istemci_al():
         return _istemci
 
 
-def _program_grubu_idleri(bolum_adi: str) -> list[int]:
-    """Bölüm adıyla BİREBİR (Türkçe-normalize) aynı adlı YÖK Atlas program gruplarını döner.
-    Benzer adlı başka bir bölümü yanlışlıkla göstermemek için bulanık eşleşme KULLANILMAZ."""
+_ESLESME_SURUMU = 2          # eşleştirme mantığı değişince eski "eşleşme yok" önbellekleri yenilensin
+OZEL_YETENEK_ALANLARI = ("U05", "U12", "U13")   # Spor, Sanat & Tasarım, Müzik & Sahne — çoğu özel yetenekle alır
+
+
+def _anahtar(metin: str) -> str:
+    """Eşleştirme anahtarı: Türkçe-normalize, parantez içi ve noktalama atılır, '&' → 've'."""
+    import re
+    t = _normalize(re.sub(r"\(.*?\)", " ", metin or "").replace("&", " ve "))
+    return " ".join(re.sub(r"[^a-z0-9 ]", " ", t).split())
+
+
+def _kelime_kumesi(metin: str) -> frozenset:
+    return frozenset(w for w in _anahtar(metin).split() if w not in ("ve", "bolumu", "programi"))
+
+
+def grup_listesi() -> list:
+    return list(_istemci_al().list_program_groups())
+
+
+def otomatik_eslesme(bolum_adi: str, gruplar: list) -> list:
+    """1) Birebir aynı ad  2) aynı kelimeler (sıra/noktalama/parantez farkı)  — benzer ama FARKLI bölüm eşleşmesin
+    diye bulanık eşleşme otomatik KULLANILMAZ; o adaylar yönetim ekranında öneri olarak gösterilir."""
     hedef = _normalize(bolum_adi)
-    return [g.birim_grup_id for g in _istemci_al().list_program_groups() if _normalize(g.birim_grup_adi) == hedef]
+    birebir = [g for g in gruplar if _normalize(g.birim_grup_adi) == hedef]
+    if birebir:
+        return birebir
+    k = _anahtar(bolum_adi)
+    anahtar = [g for g in gruplar if _anahtar(g.birim_grup_adi) == k]
+    if anahtar:
+        return anahtar
+    kume = _kelime_kumesi(bolum_adi)
+    return [g for g in gruplar if kume and _kelime_kumesi(g.birim_grup_adi) == kume]
+
+
+def benzer_adaylar(bolum_adi: str, gruplar: list, n: int = 5) -> list[tuple[str, int]]:
+    from difflib import SequenceMatcher
+    a = _anahtar(bolum_adi)
+    ka = _kelime_kumesi(bolum_adi)
+    puanli = []
+    for g in gruplar:
+        b = _anahtar(g.birim_grup_adi)
+        oran = SequenceMatcher(None, a, b).ratio()
+        kb = _kelime_kumesi(g.birim_grup_adi)
+        ortak = len(ka & kb) / max(1, len(ka | kb))
+        icerme = 0.6 if ka and kb and (ka <= kb or kb <= ka) else 0.0   # 'Tezhip' ⊂ 'Tezhip Minyatür ve Ebru'
+        puanli.append((max(oran, ortak, icerme), g.birim_grup_adi))
+    puanli.sort(reverse=True)
+    return [(ad, round(p * 100)) for p, ad in puanli[:n] if p >= 0.55]
+
+
+def _program_grubu_idleri(bolum_adi: str, elle: list[str] | None = None) -> list[int]:
+    """Yönetimin elle seçtiği YÖK Atlas program grupları varsa onlar; yoksa otomatik eşleşme."""
+    gruplar = grup_listesi()
+    if elle:
+        istenen = {_normalize(x) for x in elle}
+        return [g.birim_grup_id for g in gruplar if _normalize(g.birim_grup_adi) in istenen]
+    return [g.birim_grup_id for g in otomatik_eslesme(bolum_adi, gruplar)]
+
+
+def elle_gruplar(bolum: Bolum) -> list[str]:
+    d = bolum.detay if isinstance(bolum.detay, dict) else {}
+    return [x for x in (d.get("yokatlas_gruplari") or []) if isinstance(x, str) and x.strip()]
 
 
 def _int(v):
@@ -135,10 +192,10 @@ def _ham_ara(istemci, gruplar: list[int], sayfa: int, boyut: int) -> dict:
     return istemci._http.post_json("/api/tercih-kilavuz/search", json_body=govde)
 
 
-def _yokatlastan_cek(bolum_adi: str) -> dict:
-    gruplar = _program_grubu_idleri(bolum_adi)
+def _yokatlastan_cek(bolum_adi: str, elle: list[str] | None = None) -> dict:
+    gruplar = _program_grubu_idleri(bolum_adi, elle)
     if not gruplar:
-        return {"eslesme": False, "programlar": [], "yil": None}
+        return {"eslesme": False, "programlar": [], "yil": None, "surum": _ESLESME_SURUMU}
     istemci = _istemci_al(); satirlar = []; yil = None; sayfa = 0; boyut = 50
     while len(satirlar) < MAKS_PROGRAM and sayfa < 30:
         try:
@@ -157,7 +214,7 @@ def _yokatlastan_cek(bolum_adi: str) -> dict:
             break
         sayfa += 1
     yil = yil or next((s["yil"] for s in satirlar if s.get("yil")), None)
-    return {"eslesme": True, "programlar": satirlar, "yil": yil}
+    return {"eslesme": True, "programlar": satirlar, "yil": yil, "surum": _ESLESME_SURUMU}
 
 
 def bolum_universiteleri(db: Session, bolum: Bolum) -> dict:
@@ -166,11 +223,13 @@ def bolum_universiteleri(db: Session, bolum: Bolum) -> dict:
     simdi = datetime.now(timezone.utc)
     taze = kayit is not None and kayit.veri is not None and kayit.guncellenme is not None and \
         (simdi - kayit.guncellenme.replace(tzinfo=kayit.guncellenme.tzinfo or timezone.utc)) < timedelta(days=YOKATLAS_ONBELLEK_GUN)
+    if taze and not (kayit.veri or {}).get("programlar") and (kayit.veri or {}).get("surum") != _ESLESME_SURUMU:
+        taze = False   # eski eşleştirme mantığıyla "bulunamadı" denmiş — yeniden dene
     aktif = (parametre_oku(db, "yokatlas_aktif", "true") or "true").lower() != "false"
 
     if not taze and aktif:
         try:
-            veri = _yokatlastan_cek(bolum.ad)
+            veri = _yokatlastan_cek(bolum.ad, elle_gruplar(bolum))
             if kayit is None:
                 kayit = YokatlasOnbellek(bolum_id=bolum.id)
                 db.add(kayit)
@@ -190,8 +249,25 @@ def bolum_universiteleri(db: Session, bolum: Bolum) -> dict:
     if kayit is None or kayit.veri is None:
         return {"durum": "kapali", "mesaj": "Üniversite bilgileri şu anda gösterilemiyor.", "programlar": [], "yil": None, "kaynak": "YÖK Atlas"}
     v = kayit.veri
-    if not v.get("eslesme"):
-        return {"durum": "eslesme_yok", "mesaj": "Bu bölüm YÖK Atlas'ta tek bir program adıyla yer almıyor (farklı adlarla açılıyor olabilir).",
+    if not v.get("eslesme") or not v.get("programlar"):
+        if _ozel_yetenek_mi(db, bolum):
+            return {"durum": "ozel_yetenek", "programlar": [], "yil": None, "kaynak": "YÖK Atlas",
+                    "mesaj": "Bu bölüm üniversitelerin çoğunda özel yetenek sınavıyla öğrenci alır; bu yüzden ÖSYM tercih "
+                             "kılavuzunda taban puanı ve başarı sırası yer almaz. Başvuru için üniversitelerin özel yetenek "
+                             "sınavı duyurularını (genellikle Haziran–Ağustos) takip et; çoğunda TYT'den baraj puanı istenir."}
+        return {"durum": "eslesme_yok", "mesaj": "Bu bölüm için YÖK Atlas'ta henüz eşleşen bir program bulunamadı. "
+                "Farklı bir adla açılıyor olabilir; rehber öğretmenine sorabilirsin.",
                 "programlar": [], "yil": None, "kaynak": "YÖK Atlas"}
     return {"durum": "tamam", "mesaj": None, "programlar": v.get("programlar", []), "yil": v.get("yil"),
             "guncellenme": kayit.guncellenme.isoformat() if kayit.guncellenme else None, "kaynak": "YÖK Atlas"}
+
+
+def _ozel_yetenek_mi(db: Session, bolum: Bolum) -> bool:
+    from sqlalchemy import text
+    try:
+        kod = db.execute(text("SELECT d.kod FROM bolum_dal_eslesme e JOIN dallar d ON d.id = e.dal_id WHERE e.bolum_id = :b"),
+                         {"b": bolum.id}).scalar()
+    except Exception:
+        db.rollback()
+        return False
+    return kod in OZEL_YETENEK_ALANLARI

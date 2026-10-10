@@ -263,6 +263,7 @@ function Universiteler({ bolumId }) {
 
   if (hata) return <div className="ps" style={{ margin: 0 }}>{hata}</div>
   if (!veri) return <div className="ps" style={{ margin: 0 }}>YÖK Atlas'tan bilgiler alınıyor… (ilk açılışta birkaç saniye sürebilir)</div>
+  if (veri.durum === 'ozel_yetenek') return <div className="yp-uyari" style={{ margin: 0 }}><b>🎨 Özel yetenek sınavıyla öğrenci alan bölüm</b><div style={{ marginTop: 4 }}>{veri.mesaj}</div></div>
   if (veri.durum !== 'tamam') return <div className="ps" style={{ margin: 0 }}>{veri.mesaj}</div>
 
   const secim = { fontSize: 12.5, padding: '7px 9px', borderRadius: 10, border: '1.5px solid var(--bor2)', background: 'var(--sur)', color: 'var(--tx)' }

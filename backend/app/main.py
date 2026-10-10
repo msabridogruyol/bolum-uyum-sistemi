@@ -28,6 +28,7 @@ from app.api.cevap_analizi import router as cevap_analizi_router
 from app.api.listem import router as listem_router
 from app.api.raporlar import router as raporlar_router
 from app.api.akran import router as akran_router
+from app.api.admin_yokatlas import router as admin_yokatlas_router
 from app.api.koclar import ogrenci_router as koc_ogrenci_router, router as koc_router
 from app.api.kulupler import ogrenci_router as kulup_ogrenci_router, router as kulup_router
 from app.api.test_hesaplari import router as test_hesaplari_router, giris_router as test_giris_router
@@ -163,6 +164,7 @@ app.include_router(kulup_router)                            # [2026-10-10] okul 
 app.include_router(kulup_ogrenci_router)                    # [2026-10-10] /ogrenci/ilgi-testi
 app.include_router(koc_router)                              # [2026-10-10] anlaşmalı eğitim koçları
 app.include_router(koc_ogrenci_router)                      # [2026-10-10] /ogrenci/koclar
+app.include_router(admin_yokatlas_router)                   # [2026-10-10] YÖK Atlas eşleştirme yönetimi
 app.include_router(akran_router)                            # [2026-10-10] akran benzerliği, şube dağılımı, aday öğrenci
 app.include_router(test_hesaplari_router)                    # [2026-10-10] /yonetim/test-hesaplari (süper admin)
 app.include_router(test_giris_router)                        # [2026-10-10] POST /auth/test-giris
