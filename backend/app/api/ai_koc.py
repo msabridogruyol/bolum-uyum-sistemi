@@ -40,6 +40,7 @@ class OturumOut(BaseModel):
 class MesajIstek(BaseModel):
     mesaj: str
     sayfa: str | None = None  # [2026-10-04] öğrencinin o an bulunduğu sayfa (bağlam için)
+    baglam_oturum_id: int | None = None  # [2026-10-10] geçmişten "devam et" ile açılan sohbet
 
 
 class AsistanDurumOut(BaseModel):
@@ -85,6 +86,9 @@ class GecmisOturumOut(BaseModel):
     oturum_id: int
     baslama_zamani: datetime
     ozet: str | None
+    bitis_zamani: datetime | None = None
+    baslik: str | None = None        # [2026-10-10] öğrencinin ilk mesajı (liste başlığı)
+    mesaj_sayisi: int = 0
 
 
 @router.post("/oturum/baslat", response_model=OturumOut)
@@ -152,17 +156,30 @@ def mesaj_gonder(
     ]
     mesaj_gecmisi.append({"role": "user", "content": metin})
 
-    onceki_oturum = (
+    # [2026-10-10] Filiz geçmişi hatırlasın: son 3 sohbetin özeti (tarihleriyle); öğrenci geçmişten bir sohbeti
+    # "devam et" ile açtıysa o sohbet en başta verilir.
+    onceki = (
         db.query(OgrenciKoclukOturumu)
         .filter(
             OgrenciKoclukOturumu.ogrenci_id == ogrenci.id,
             OgrenciKoclukOturumu.durum == "tamamlandi",
             OgrenciKoclukOturumu.id != oturum.id,
+            OgrenciKoclukOturumu.ozet.isnot(None),
         )
         .order_by(OgrenciKoclukOturumu.bitis_zamani.desc())
-        .first()
+        .limit(3)
+        .all()
     )
-    onceki_ozet = onceki_oturum.ozet if onceki_oturum else None
+    baglam = None
+    if getattr(istek, "baglam_oturum_id", None):
+        b = db.get(OgrenciKoclukOturumu, istek.baglam_oturum_id)
+        if b is not None and b.ogrenci_id == ogrenci.id and b.id != oturum.id:
+            baglam = b
+            onceki = [b] + [x for x in onceki if x.id != b.id][:2]
+    parcalar = [f"({(x.bitis_zamani or x.baslama_zamani).strftime('%d.%m.%Y')}"
+                + (", öğrencinin devam etmek istediği sohbet" if baglam is not None and x.id == baglam.id else "")
+                + f") {x.ozet}" for x in onceki if x.ozet]
+    onceki_ozet = "\n".join(parcalar) or None
 
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, onceki_ozet, istek.sayfa)
 
@@ -227,10 +244,28 @@ def gecmis_oturumlari_getir(
         db.query(OgrenciKoclukOturumu)
         .filter(OgrenciKoclukOturumu.ogrenci_id == ogrenci.id, OgrenciKoclukOturumu.durum == "tamamlandi")
         .order_by(OgrenciKoclukOturumu.bitis_zamani.desc())
-        .limit(20)
+        .limit(30)
         .all()
     )
-    return [
-        GecmisOturumOut(oturum_id=o.id, baslama_zamani=o.baslama_zamani, ozet=o.ozet)
-        for o in oturumlar
-    ]
+    sonuc = []
+    for o in oturumlar:
+        mesajlar = (db.query(OgrenciKoclukMesaji).filter(OgrenciKoclukMesaji.oturum_id == o.id)
+                    .order_by(OgrenciKoclukMesaji.olusturulma_zamani, OgrenciKoclukMesaji.id).all())
+        if not mesajlar:
+            continue
+        ilk = next((m.icerik for m in mesajlar if m.rol == "ogrenci"), "")
+        sonuc.append(GecmisOturumOut(oturum_id=o.id, baslama_zamani=o.baslama_zamani, bitis_zamani=o.bitis_zamani, ozet=o.ozet,
+                                     baslik=(ilk[:70] + "…") if len(ilk) > 70 else ilk, mesaj_sayisi=len(mesajlar)))
+    return sonuc
+
+
+@router.get("/gecmis/{oturum_id}")
+def gecmis_oturum_detayi(oturum_id: int, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """[2026-10-10] Geçmiş bir sohbetin tüm mesajları (yalnızca kendi sohbetleri)."""
+    o = db.get(OgrenciKoclukOturumu, oturum_id)
+    if o is None or o.ogrenci_id != ogrenci.id:
+        raise HTTPException(status_code=404, detail="Sohbet bulunamadı.")
+    mesajlar = (db.query(OgrenciKoclukMesaji).filter(OgrenciKoclukMesaji.oturum_id == o.id)
+                .order_by(OgrenciKoclukMesaji.olusturulma_zamani, OgrenciKoclukMesaji.id).all())
+    return {"oturum_id": o.id, "baslama_zamani": o.baslama_zamani, "bitis_zamani": o.bitis_zamani, "ozet": o.ozet,
+            "durum": o.durum, "mesajlar": [{"rol": m.rol, "icerik": m.icerik, "zaman": m.olusturulma_zamani} for m in mesajlar]}
