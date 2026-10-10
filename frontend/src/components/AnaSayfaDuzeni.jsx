@@ -8,6 +8,7 @@ import Maskot from './Maskot'
 import OkulRozeti from './OkulRozeti'
 import FilizSohbet from './FilizSohbet'
 import AltSerit from './AltSerit'
+import BildirimZili from './BildirimZili'
 import { KvkkOnayPenceresi } from './KvkkBilesenleri'
 import { IlkSifrePenceresi } from './yonetim/ortak'
 import { MODUL_ADI, YOL_MODULU, modulleriYukle, useModuller } from '../yardimci/moduller'
@@ -46,6 +47,9 @@ export default function AnaSayfaDuzeni() {
   const konum = useLocation()
   const navigate = useNavigate()
   const acik = useModuller()   // [2026-10-10] okulun paketindeki modüller
+  const [bekleyenAnket, setBekleyenAnket] = useState(0)
+  const anketAcik = acik('anketler')
+  useEffect(() => { if (anketAcik) api.anketlerim().then((v) => setBekleyenAnket(v.bekleyen || 0)).catch(() => {}) }, [anketAcik, konum.pathname, konum.search])
 
   useEffect(() => { modulleriYukle(true) }, [])   // her girişte tazele (okulun paketi değişmiş olabilir)
 
@@ -122,6 +126,7 @@ export default function AnaSayfaDuzeni() {
             <div className="u-nm">{ilkAd}</div>
             {ozet?.tur_no && <div className="u-id">Tur {ozet.tur_no}</div>}
           </div>
+          {acik('bildirimler') && <BildirimZili kapsam="ogrenci" />}
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
         {ozet?.sonraki_tur_tarihi && (
@@ -148,10 +153,30 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölümler
         </NavLink>
-        {['kocluk', 'net_takibi', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Gelişim</div>}
+        {acik('tercih') && ['12. Sınıf', 'Mezun'].includes(profil?.sinif) && (
+          <NavLink to="/tercih" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            🎓 Tercihlerim
+          </NavLink>
+        )}
+        {acik('portfolyo') && (
+          <NavLink to="/portfolyo" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            🗂️ Portfolyom
+          </NavLink>
+        )}
+        {acik('ogrenci_raporlari') && (
+          <NavLink to="/raporlarim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            📄 Raporlarım
+          </NavLink>
+        )}
+        {['kocluk', 'calisma', 'net_takibi', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Gelişim</div>}
         {acik('kocluk') && (
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             🎯 Koçluğum
+          </NavLink>
+        )}
+        {acik('calisma') && (
+          <NavLink to="/calisma" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            ⏱️ Çalışmam
           </NavLink>
         )}
         {acik('net_takibi') && (
@@ -177,10 +202,15 @@ export default function AnaSayfaDuzeni() {
           💬 Filiz
         </div>
         </>)}
-        {(['takvim', 'kulupler'].some(acik) || (kocVar && acik('egitim_koclari'))) && <div className="ns">Okul</div>}
+        {(['takvim', 'kulupler', 'anketler'].some(acik) || (kocVar && acik('egitim_koclari'))) && <div className="ns">Okul</div>}
         {acik('takvim') && (
         <NavLink to="/takvim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             🗓️ Takvim
+          </NavLink>
+        )}
+        {acik('anketler') && (
+          <NavLink to="/anketler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            📋 Anketler{bekleyenAnket > 0 && <span className="ni-rozet">{bekleyenAnket}</span>}
           </NavLink>
         )}
         {acik('kulupler') && (
