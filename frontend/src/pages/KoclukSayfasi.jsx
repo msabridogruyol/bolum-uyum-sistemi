@@ -1,7 +1,6 @@
-import { useEffect, useState, useCallback, useRef } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
-import BolumAdi from '../components/BolumAdi'
 import Sayac from '../components/Sayac'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 
@@ -214,22 +213,6 @@ function Bolum({ baslik, alt, children, sag }) {
       </div>
       {children}
     </section>
-  )
-}
-
-function IlerlemeCubugu({ ilerleme }) {
-  const { toplam, tamamlanan, devam_eden: devam } = ilerleme
-  const yuzde = toplam ? Math.round((100 * tamamlanan) / toplam) : 0
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12, marginBottom: 6 }}>
-        <span>Yol haritası ilerlemen{devam ? ` · ${devam} adım devam ediyor` : ''}</span>
-        <span style={{ fontWeight: 700 }}>{tamamlanan} / {toplam} adım · %{yuzde}</span>
-      </div>
-      <div className="mini-cubuk-track" style={{ width: '100%', height: 10 }}>
-        <div className="mini-cubuk-fill" style={{ width: `${yuzde}%`, background: 'var(--gr)' }} />
-      </div>
-    </div>
   )
 }
 

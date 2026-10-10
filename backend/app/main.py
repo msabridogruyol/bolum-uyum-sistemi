@@ -15,6 +15,7 @@ from app.api.admin_guvenlik import router as admin_guvenlik_router
 from app.api.admin_sorular_detay import router as admin_sorular_detay_router
 from app.api.admin_gecerlilik_v2 import router as admin_gecerlilik_v2_router
 from app.api.admin_kutup_yukleme import router as admin_kutup_router
+from app.api.admin_meslek_yukleme import router as admin_meslek_router
 from app.api.ai_koc import router as ai_koc_router
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
 from app.api.haftalik import router as haftalik_router
@@ -130,6 +131,7 @@ app.include_router(admin_guvenlik_router, prefix="/admin", tags=["admin"])
 app.include_router(admin_sorular_detay_router, prefix="/admin", tags=["admin"])
 app.include_router(admin_gecerlilik_v2_router, prefix="/admin", tags=["admin"])
 app.include_router(admin_kutup_router, prefix="/admin", tags=["admin"])
+app.include_router(admin_meslek_router, prefix="/admin", tags=["admin"])   # [2026-10-10] Pipeline sayfasındaki meslek yükleme (önceden kayıtlı değildi → 404)
 app.include_router(ai_koc_router, prefix="/koclugu", tags=["koclugu"])
 app.include_router(admin_gelisim_kaynak_router, prefix="/admin", tags=["admin"])
 app.include_router(haftalik_router, prefix="/haftalik", tags=["Haftalık Görevler"])

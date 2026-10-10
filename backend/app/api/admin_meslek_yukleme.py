@@ -89,12 +89,3 @@ def meslekleri_toplu_yukle(
 
     return TopluMeslekSonuc(yuklenen_sayisi=yeni_sayisi, onceki_sayisi=onceki_sayisi)
 
-
-# ============================================================================
-# NOT — main.py'de, admin_guvenlik ile AYNI yere şunu ekleyin:
-#
-#   from app.api.admin_meslek_yukleme import router as admin_meslek_router
-#   app.include_router(admin_meslek_router, prefix="/admin", tags=["admin"])
-#
-# Dosyayı backend/app/api/admin_meslek_yukleme.py olarak kaydedin.
-# ============================================================================
