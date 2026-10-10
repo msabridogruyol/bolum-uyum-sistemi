@@ -1662,3 +1662,16 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .nh-oneri{background:var(--aml);border-color:transparent;font-size:13px;line-height:1.6}
 .nh-not{font-size:11.5px;color:var(--tx3);line-height:1.5;margin-top:4px}
 .nt-ders-tablo td{vertical-align:middle}
+
+/* [2026-10-10] Seçenekli rapor paneli */
+.rs-kap{position:relative;display:inline-block}
+.rs-panel{position:fixed;z-index:10050;overflow:auto;width:360px;max-width:86vw;background:var(--sur);border:1.5px solid var(--bor);border-radius:16px;box-shadow:0 14px 34px rgba(0,0,0,.14);padding:14px;display:grid;gap:10px;text-align:left}
+.rs-baslik{font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.06em}
+.rs-turler{display:grid;gap:6px}
+.rs-tur{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--bor);border-radius:12px;padding:8px 10px;cursor:pointer}
+.rs-tur input{margin-top:3px}
+.rs-tur.secili{border-color:var(--pu);background:var(--pul)}
+.rs-tur span{display:grid}.rs-tur b{font-size:13px}.rs-tur small,.rs-secenek small{font-size:11.5px;color:var(--tx3);font-weight:400;line-height:1.35}
+.rs-ikon{font-size:18px}
+.rs-secenek{display:flex;gap:8px;align-items:flex-start;background:var(--sur2);border-radius:12px;padding:9px 10px;cursor:pointer}
+.rs-secenek span{display:grid}.rs-secenek b{font-size:12.5px}

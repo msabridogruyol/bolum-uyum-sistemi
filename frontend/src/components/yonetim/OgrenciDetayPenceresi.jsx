@@ -5,7 +5,7 @@ import { OgrenciIlgi } from './KulupYonetimi'
 import OgrenciKutuphanesi from './OgrenciKutuphanesi'
 import { api } from '../../api/client'
 import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, onceSure, tarih } from './ortak'
-import RaporDugmeleri from '../RaporDugmeleri'
+import RaporSecici from '../RaporSecici'
 import CevapAnaliziSekmesi from './CevapAnaliziSekmesi'
 
 // [2026-10-09] Hedef bölüm: öğrenci en fazla 3 kez değiştirebilir; okul yetkilisi / süper admin hedefi değiştirebilir
@@ -184,13 +184,16 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
         </form>
       )}
 
-      {/* [2026-10-10] Rehber öğretmen için raporlar: yönetici · öğrenci · veli (PDF) ve Excel */}
-      <RaporDugmeleri kucuk secenekler={[
-        { anahtar: 'y', ad: 'Yönetici', ikon: '🗂️', aciklama: 'Tüm ayrıntılar: güven puanı, ihlaller, katman puanları, öneriler, hedef, SWOT', indir: () => api.ogrenciRaporuIndir(ogrenciId, 'yonetici') },
-        { anahtar: 'o', ad: 'Öğrenci', ikon: '📘', aciklama: 'Öğrenciye verilecek rapor', indir: () => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci') },
-        { anahtar: 'v', ad: 'Veli', ikon: '👪', aciklama: 'Veliye verilecek sade rapor ve öneriler', indir: () => api.ogrenciRaporuIndir(ogrenciId, 'veli') },
-        { anahtar: 'x', ad: 'Excel', ikon: '📊', aciklama: 'Tüm puanlar tablo halinde', indir: () => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'xlsx') },
-      ]} />
+      {/* [2026-10-10] Seçenekli raporlar: kime + "deneme ve net bilgilerini ekle" */}
+      <div style={{ marginBottom: 12 }}>
+        <RaporSecici etiket="Rapor al" hiza="sol" turler={[
+          { k: 'ogrenci', ad: 'Öğrenci', ikon: '📘', aciklama: 'Öğrenciye verilecek rapor: güçlü yönler, bölümler, yol haritası', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'pdf', netler) },
+          { k: 'veli', ad: 'Veli', ikon: '👪', aciklama: 'Sade dil, evde destek önerileri, görüşme soruları', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'veli', 'pdf', netler) },
+          { k: 'yonetici', ad: 'Yönetim', ikon: '🗂️', aciklama: 'Tüm ayrıntılar: güven puanı, ihlaller, katman puanları, öneriler, SWOT', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'yonetici', 'pdf', netler) },
+          { k: 'sinif_ogretmeni', ad: 'Sınıf öğretmeni', ikon: '🧑‍🏫', aciklama: 'Katılım, öne çıkanlar, hedef ve denemeler; psikolojik ayrıntı içermez', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'sinif_ogretmeni', 'pdf', netler) },
+          { k: 'excel', ad: 'Excel', ikon: '📊', aciklama: 'Tüm puanlar, bölümler ve denemeler tablo halinde', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'xlsx', netler) },
+        ]} />
+      </div>
       <div className="yp-sekmeler">
         {[...SEKMELER, ...(superAdmin ? [['cevaplar', '🔒 Cevap analizi']] : [])].map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
       </div>
