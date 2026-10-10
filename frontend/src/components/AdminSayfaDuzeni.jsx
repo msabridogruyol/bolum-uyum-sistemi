@@ -6,6 +6,7 @@ import { api } from '../api/client'
 import { IlkSifrePenceresi, ROL_ADI } from './yonetim/ortak'
 import { okulRenginiUygula } from '../tema'
 import AltSerit from './AltSerit'
+import BildirimZili from './BildirimZili'
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
@@ -16,6 +17,10 @@ export default function AdminSayfaDuzeni() {
   const okulYetkilisi = rol === 'okul_yetkilisi'
   // [2026-10-10] Bekleyen kulüp katılma talebi sayısı (menüde Kulüpler'in yanında)
   const [bekleyenTalep, setBekleyenTalep] = useState(0)
+  const [riskSayisi, setRiskSayisi] = useState(0)   // [2026-10-10] erken uyarı: yüksek seviyeli öğrenci sayısı
+  useEffect(() => {
+    if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('rehberlik'))) api.erkenUyari(ben.okul_id).then((v) => setRiskSayisi(v.ozet.yuksek || 0)).catch(() => {})
+  }, [okulYetkilisi, ben?.okul_id, ben?.moduller, konum.search])
   useEffect(() => {
     if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('kulupler'))) api.kulupTalepleri(ben.okul_id).then((v) => setBekleyenTalep(v.bekleyen || 0)).catch(() => {})
   }, [okulYetkilisi, ben?.okul_id, konum.pathname, konum.search])
@@ -49,6 +54,7 @@ export default function AdminSayfaDuzeni() {
             <div className="u-nm" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ben?.ad_soyad || 'Yönetici'}</div>
             <div className="u-id">{ROL_ADI[rol] || rol}</div>
           </div>
+          {(!okulYetkilisi || !ben?.moduller || ben.moduller.includes('bildirimler')) && <BildirimZili kapsam="yonetim" />}
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
 
@@ -64,6 +70,7 @@ export default function AdminSayfaDuzeni() {
                   <Link to={b.k === 'ozet' ? okulYolu : `${okulYolu}?sekme=${b.k}`} className={`ni${aktif ? ' active' : ''}`}>
                     <span className="ni-ikon">{b.ikon}</span>{b.ad}
                     {b.k === 'kulupler' && bekleyenTalep > 0 && <span className="ni-rozet">{bekleyenTalep}</span>}
+                    {b.k === 'rehberlik' && riskSayisi > 0 && <span className="ni-rozet" title="Yüksek seviyede uyarısı olan öğrenci">{riskSayisi}</span>}
                   </Link>
                 </Fragment>
               )

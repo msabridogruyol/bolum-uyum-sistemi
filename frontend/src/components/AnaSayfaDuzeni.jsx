@@ -8,6 +8,7 @@ import Maskot from './Maskot'
 import OkulRozeti from './OkulRozeti'
 import FilizSohbet from './FilizSohbet'
 import AltSerit from './AltSerit'
+import BildirimZili from './BildirimZili'
 import { KvkkOnayPenceresi } from './KvkkBilesenleri'
 import { IlkSifrePenceresi } from './yonetim/ortak'
 import { MODUL_ADI, YOL_MODULU, modulleriYukle, useModuller } from '../yardimci/moduller'
@@ -122,6 +123,7 @@ export default function AnaSayfaDuzeni() {
             <div className="u-nm">{ilkAd}</div>
             {ozet?.tur_no && <div className="u-id">Tur {ozet.tur_no}</div>}
           </div>
+          {acik('bildirimler') && <BildirimZili kapsam="ogrenci" />}
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
         {ozet?.sonraki_tur_tarihi && (
@@ -148,10 +150,25 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölümler
         </NavLink>
-        {['kocluk', 'net_takibi', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Gelişim</div>}
+        {acik('portfolyo') && (
+          <NavLink to="/portfolyo" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            🗂️ Portfolyom
+          </NavLink>
+        )}
+        {acik('ogrenci_raporlari') && (
+          <NavLink to="/raporlarim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            📄 Raporlarım
+          </NavLink>
+        )}
+        {['kocluk', 'calisma', 'net_takibi', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Gelişim</div>}
         {acik('kocluk') && (
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             🎯 Koçluğum
+          </NavLink>
+        )}
+        {acik('calisma') && (
+          <NavLink to="/calisma" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            ⏱️ Çalışmam
           </NavLink>
         )}
         {acik('net_takibi') && (
