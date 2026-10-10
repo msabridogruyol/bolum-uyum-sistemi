@@ -202,7 +202,7 @@ export default function Anketler({ okulId }) {
             ))}
             <button className="an-sablon bos" onClick={() => { setDuzen({}); setSecim(false) }}><span className="an-sablon-ikon">✏️</span><b>Boş anket</b><small>Kendi sorularınızı yazın</small></button>
           </div>
-          <div className="yp-ince" style={{ marginTop: 10 }}>Tarama formlarının maddeleri Filizyol için yazılmıştır; tanı koymaz, rehberlik görüşmesine yön vermek içindir.</div>
+          <div className="yp-ince" style={{ marginTop: 10 }}>Tarama formları tanı koymaz; rehberlik görüşmesine yön vermek için kullanılır. Maddeleri okulunuzun ihtiyacına göre düzenleyebilirsiniz.</div>
         </div>
       )}
       {v.anketler.length === 0 && !secim ? <div className="card bos-durum">Henüz anket yok.</div> : (

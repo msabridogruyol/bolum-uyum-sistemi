@@ -28,7 +28,7 @@ function YetkinlikProfili({ bolumId }) {
   }, [bolumId])
   if (hata) return <div className="ps" style={{ margin: 0 }}>{hata}</div>
   if (!veri) return <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
-  if (!veri.katmanlar.length) return <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz yetkinlik profili hesaplanmadı.</div>
+  if (!veri.katmanlar.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün yetkinlik profili şu an gösterilemiyor. Genel Bakış ve Meslekler sekmelerine göz atabilirsin.</div>
   const katmanlar = veri.katmanlar.map((k) => ({ ...k, liste: k.one_cikanlar || k.degiskenler.filter((d) => d.one_cikan) }))
   const toplam = katmanlar.reduce((t, k) => t + k.liste.length, 0)
   return (
@@ -91,7 +91,7 @@ function Bolum({ baslik, children, vurgu }) {
 function GenelBakis({ bilgi }) {
   const d = bilgi.detay
   if (!d) {
-    return <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.6 }}>{bilgi.kisa_aciklama || 'Bu bölüm için henüz açıklama eklenmedi.'}</div>
+    return <div style={{ fontSize: 13.5, color: 'var(--tx2)', lineHeight: 1.6 }}>{bilgi.kisa_aciklama || 'Bu bölümün ayrıntılarını Meslekler ve Üniversiteler sekmelerinde inceleyebilirsin.'}</div>
   }
   return (
     <>
@@ -118,7 +118,7 @@ function GenelBakis({ bilgi }) {
 function Meslekler({ detay, bolumId }) {
   const [acik, setAcik] = useState(0)
   const liste = detay?.meslekler || []
-  if (!liste.length) return <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz meslek bilgisi eklenmedi.</div>
+  if (!liste.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün mezunlarının çalıştığı alanları Genel Bakış sekmesinde bulabilirsin.</div>
   return (
     <>
       <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5 }}>Mezunların sık yöneldiği meslekler. Ayrıntı için bir mesleğe dokun.</div>
@@ -184,7 +184,7 @@ function MeslekDili({ terimler }) {
   const [arama, setArama] = useState('')
   const [dene, setDene] = useState(false)
   const [acik, setAcik] = useState({})
-  if (!terimler?.length) return <div className="ps" style={{ margin: 0 }}>Bu bölüm için henüz meslek dili eklenmedi.</div>
+  if (!terimler?.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün meslek dili şu an gösterilemiyor.</div>
   const q = arama.trim().toLocaleLowerCase('tr')
   const liste = terimler.filter((t) => !q || `${t.terim} ${t.anlam}`.toLocaleLowerCase('tr').includes(q))
   const secim = { fontSize: 12.5, padding: '7px 10px', borderRadius: 10, border: '1.5px solid var(--bor2)', background: 'var(--sur)', color: 'var(--tx)' }

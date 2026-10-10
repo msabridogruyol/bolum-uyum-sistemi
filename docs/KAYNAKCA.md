@@ -1,10 +1,10 @@
-# Filizyol — Kaynakça
+# Filizyol — Kaynakça (iç kullanım)
 
 Sistemde elle hazırlanan her bileşen, ne yaptığı, nasıl hesaplandığı ve dayandığı akademik/resmî kaynaklar.
 
-- Uygulamada: **Okul Paneli → Yardım → Kaynakça** ve **Yönetici Paneli → Sistem → Kaynakça**. Okul yetkilisi "nasıl hesaplanıyor" ayrıntılarını ve doğrulama notlarını görmez.
-- Veri kaynağı: `backend/app/data/kaynakca.json` (bu dosya oradan üretilir).
-- Kaynaklar bileşenin **kuramsal dayanağını** gösterir; Filizyol ölçekleri bu kaynaklardaki ölçeklerin birebir uyarlaması değildir ve ayrıca geçerlik-güvenirlik çalışması gerektirir.
+- Uygulamada: **Yönetici Paneli → Sistem → Kaynakça** (tam görünüm) ve **Okul Paneli → Yardım → Kaynakça** (okul görünümü: iç süreç bileşenleri, "Nasıl" ayrıntıları ve tasarım notları gösterilmez).
+- Veri kaynağı: `backend/app/data/kaynakca.json`; bu dosya `backend/scripts/kaynakca_md_uret.py` ile üretilir.
+- Kaynaklar bileşenin **kuramsal dayanağını** gösterir; Filizyol ölçekleri bu kaynaklardaki ölçeklerin birebir uyarlaması değildir.
 - **Kurum içi** işaretli bileşenlerde eşik, ağırlık ve sayılar ürün tasarımı kararıdır.
 
 Toplam: 68 bileşen, 152 kaynak.
@@ -21,7 +21,6 @@ Toplam: 68 bileşen, 152 kaynak.
 - Tercih ve mezun
 - Okul yönetimi ve raporlar
 - Güvenlik ve veri koruma
-
 - [Tüm kaynaklar (APA 7)](#tüm-kaynaklar-apa-7)
 
 ## Öğrenci değerlendirmesi
@@ -259,7 +258,7 @@ Bölüm profillerinin hesaplandığı meslek havuzu ve İngilizce–Türkçe çe
 
 Her katmanın ve değişkenin toplam uyuma katkı payı.
 
-**Nasıl:** Katman ağırlıkları veritabanındaki katman ayarından (normalizasyon_agirligi) okunur; mevcut kurulumda K1–K4 eşit (%25). Değişken ağırlığı = katman ağırlığı / katmandaki (eşleşmeye giren) değişken sayısı, toplam 1'e normalize. (0008 göçü ilk kurulumda 20/20/20/40 atamıştı.)
+**Nasıl:** Katman ağırlıkları veritabanındaki katman ayarından (normalizasyon_agirligi) okunur; yerel kurulumda K1–K4 eşit (%25); 0008 göçü 20/20/20/40 atar — canlıdaki değer kontrol edilmeli. Değişken ağırlığı = katman ağırlığı / katmandaki (eşleşmeye giren) değişken sayısı, toplam 1'e normalize.
 
 **Dayanak:**
 
@@ -267,7 +266,7 @@ Her katmanın ve değişkenin toplam uyuma katkı payı.
 - [98] Nye ve ark., 2012 — İlgilerin akademik ve iş performansını anlamlı yordadığını gösterir; ilgi temelli katmana görece yüksek ağırlık verilmesine genel (sayısal olmayan) dayanak sağlar.
 - [9] Barrick ve Mount, 1991 — Kişilik boyutlarının performansla ilişkisinin orta düzeyde olduğunu gösterir; kişilik katmanının sıfırdan büyük ama baskın olmayan bir ağırlık almasını destekler.
 
-> Eşit ağırlık seçimi kurum içi tasarım kararıdır; AHP vb. bir ağırlıklandırma çalışmasına dayanmaz. Ağırlık bilgisinin güvenilir olmadığı durumda eşit ağırlıklandırma literatürde savunulan bir varsayımdır. Canlı veritabanındaki değerin %25 olduğu ayrıca kontrol edilmelidir.
+> Eşit ağırlık seçimi kurum içi tasarım kararıdır; AHP vb. bir ağırlıklandırma çalışmasına dayanmaz. Ağırlık bilgisinin güvenilir olmadığı durumda eşit ağırlıklandırma literatürde savunulan bir varsayımdır. Canlı veritabanındaki değer (%25 ya da 0008 göçünün 20/20/20/40'ı) kontrol edilmelidir.
 
 ### Katman içi göreli ölçekleme ve performans matrisi
 
@@ -328,15 +327,15 @@ Duygusal hassasiyet puanının bölüm önerisine katılmaması ve koçlukta ter
 
 > Alan gücü (en iyi 3 ortalaması), alan_tutarlilik_katsayisi = 3, 10 puanlık ikinci alan eşiği ve 17 alanlık elle yazılmış KOMSU tablosu kurum içi tasarım kararlarıdır; Holland altıgeninden esinlenilmiştir, ampirik olarak türetilmiş bir uzaklık matrisi değildir.
 
-### K5 etkisi, eşitlik bozma ve ilk 20 liste · _Kurum içi_
+### K5 etkisi, eşitlik bozma ve ilk 10 liste · _Kurum içi_ · _Okul görünümünde yok_
 
 Alan sorularının nihai uyuma katılması ve gösterilen sıralamanın kuralları.
 
-**Nasıl:** nihai = toplam_uyum + 0,50 × (dal_ici_uyum − 50), en fazla ±25, 0–100 (0,30→0,50 seçimi iki aşamalı doğrulama simülasyonuna dayanır: ilk 3 doğruluğu %75,5→%76,5). Sıralama: alan grubu, nihai uyum azalan, agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad; öğrenciye ilk 20 bölüm gösterilir ve yalnızca K1–K4 tamamlanınca hesaplanır.
+**Nasıl:** nihai = toplam_uyum + 0,50 × (dal_ici_uyum − 50), en fazla ±25, 0–100 (0,30→0,50 seçimi iki aşamalı doğrulama simülasyonuna dayanır: ilk 3 doğruluğu %75,5→%76,5). Sıralama: alan grubu, nihai uyum azalan, agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad; öğrenciye en fazla 10 bölüm gösterilir ve yalnızca K1–K4 tamamlanınca hesaplanır.
 
 **Dayanak:** Akademik dayanak yok.
 
-> K5 katkı katsayısı (0,50), ±25 sınırı, eşitlik bozma sırası ve ilk 20 gösterim kurum içi tasarım kararlarıdır; 0,30→0,50 seçimi yalnızca kurum içi sentetik yanıtlayıcı simülasyonuna (ilk 3 doğruluğu %75,5→%76,5) dayanır, akademik bir kesme noktasına veya yayımlanmış bir puan birleştirme yöntemine dayanmaz. Simülasyondaki küçük kazanç (~1 puan) dış örneklemle doğrulanmamıştır.
+> K5 katkı katsayısı (0,50), ±25 sınırı, eşitlik bozma sırası ve en fazla 10 bölüm gösterimi kurum içi tasarım kararlarıdır; 0,30→0,50 seçimi yalnızca kurum içi sentetik yanıtlayıcı simülasyonuna (ilk 3 doğruluğu %75,5→%76,5) dayanır, akademik bir kesme noktasına veya yayımlanmış bir puan birleştirme yöntemine dayanmaz. Simülasyondaki küçük kazanç (~1 puan) dış örneklemle doğrulanmamıştır.
 
 ### 'Neden bu bölüm?' açıklamaları · _Kurum içi_
 
@@ -350,7 +349,7 @@ Her önerilen bölüm için örtüşen güçlü yönleri, öğrencinin kanıt ce
 
 > Yüzdelik ≥60 / puan ≥55 örtüşme eşikleri, ≥85/≤40 dikkat notu kuralı, 3+ bölümde tekrar eden notun gizlenmesi, K5 ≥60/≤40 ve 110 karakter kısaltması kurum içi tasarım kararlarıdır; akademik bir kesme noktasına dayanmaz.
 
-### Cevap analizi (süper admin) · _Kurum içi_
+### Cevap analizi (süper admin) · _Kurum içi_ · _Okul görünümünde yok_
 
 Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını ve ilk 5 öneriyi hangi özelliklerin yukarı/aşağı çektiğini gösteren inceleme ekranı.
 
@@ -438,7 +437,7 @@ Adımları alan türüne göre çerçeveleyen, adım sonrası geri bildirim alan
 
 > Alan türü çerçeve cümleleri, 600 karakter sınırı ve uyarlama kuralları (14 gün hareketsizlik, fayda ≤2 ya da 'zor' ise küçült, 'kolay' ve fayda ≥4 ise ekle) kurum içi tasarım kararıdır; akademik bir eşiğe dayanmaz.
 
-### Tekrar ölçüm (alan bazında önce/sonra)
+### Tekrar ölçüm (alan bazında önce/sonra) · _Okul görünümünde yok_
 
 Odak alanında belirli sayıda adım bitince aynı sorularla gelişimin yeniden ölçülmesi.
 
@@ -881,7 +880,7 @@ Bir öğrencinin sonuçlarını dört farklı kitleye göre dili ve içeriği de
 
 > Güçlü (≥62, en çok 6) ve gelişim (<45, en çok 5) eşikleri, SWOT madde eşleme kuralları ve 6 öneri/4 soru sayıları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. 'Kişisel veri içerir' altbilgisi KVKK'nın genel veri güvenliği yükümlülüğüyle uyumlu bir ürün kararıdır.
 
-### Okul, sınıf ve şube raporları; okul karşılaştırması · _Kurum içi_
+### Okul, sınıf ve şube raporları; okul karşılaştırması · _Kurum içi_ · _Okul görünümünde yok_
 
 Okulun genel durumu, sınıf/şube özetleri (Excel/PDF) ve çok okullu kurumlar için okul karşılaştırması.
 
@@ -894,7 +893,7 @@ Okulun genel durumu, sınıf/şube özetleri (Excel/PDF) ve çok okullu kurumlar
 
 > Okul karşılaştırmasındaki 9 metrik, ilk 8/ilk 6 sınırları ve 30/90 günlük pencereler kurum içi tasarım kararıdır; belirli bir okul performans göstergesi çerçevesine dayanmaz. Kaynaklar küçük hücre gizlemeyi önerir; mevcut kod okul/şube raporlarında gizleme yapmaz (bilinen boşluk).
 
-### Paketler, modüller ve bildirimler · _Kurum içi_
+### Paketler, modüller ve bildirimler · _Kurum içi_ · _Okul görünümünde yok_
 
 Okulun hangi modülleri kullanacağını belirleyen paket yapısı ve uygulama içi/e-posta bildirimleri.
 
@@ -904,11 +903,11 @@ Okulun hangi modülleri kullanacağını belirleyen paket yapısı ve uygulama i
 
 > Paket/modül yapısı, bağımlılıklar ve günlük 300 e-posta sınırı ürün ve işletim kararlarıdır; akademik dayanak gerektirmez ve aranmamıştır. Gmail ~500 sınırı sağlayıcı kuralıdır, akademik kaynak değildir.
 
-### Sistem Hakkında ve SSS metinleri · _Kurum içi_
+### Sistem Hakkında ve SSS metinleri · _Kurum içi_ · _Okul görünümünde yok_
 
 Öğrenciye, okul yetkilisine ve admine sistemi anlatan sayfalar ve sıkça sorulan sorular.
 
-**Nasıl:** Öğrenci ve okul yetkilisi için adım adım anlatım ve sıkça sorulan sorular; süper admin için 10 bölümlük teknik anlatım (pipeline, uyum hesaplama yöntemleri, soru tipleri, geçerlik eşikleri, güvenlik). Kaynakça sayfası bu dosyadaki bileşen ve kaynakları gösterir.
+**Nasıl:** Öğrenci ve okul yetkilisi için adım adım anlatım ve sıkça sorulan sorular; süper admin için 12 bölümlük teknik anlatım (pipeline, uyum hesaplama yöntemleri, soru tipleri, geçerlik eşikleri, güvenlik). Kaynakça sayfası bu dosyadaki bileşen ve kaynakları gösterir.
 
 **Dayanak:**
 
@@ -918,7 +917,7 @@ Okulun hangi modülleri kullanacağını belirleyen paket yapısı ve uygulama i
 
 > Kısmi dayanak: şeffaflık ilkesi kaynaklara dayanır, sayfa içerikleri (adım/SSS sayıları) kurum içi karardır. Bu tutarsızlık şeffaflık ilkesiyle çelişir ve metin düzeltilmelidir.
 
-### Test hesapları ve senaryolu sentetik ilerleme · _Kurum içi_
+### Test hesapları ve senaryolu sentetik ilerleme · _Kurum içi_ · _Okul görünümünde yok_
 
 Deneme/tanıtım için açılan hesaplarda öğrencinin yerine soruları gerçek akışla cevaplayan senaryo üreticisi.
 
@@ -1308,4 +1307,4 @@ Kimin hangi veriyi görebileceğine dair yapısal kurallar ve kritik işlemlerin
 - Osipow (1987) Career Decision Scale el kitabı — yalnızca ölçeğin kendisi doğrulandı.
 - ÖSYM 2026-YKS ana kılavuz PDF'i — sayfa açılamadı; ÖSYM SSS belgesi kullanıldı.
 - Kaiser & Overfield (2011), Meade (2004), Gibson (2004), Yeager ve ark. (2019), Edwards (1991), Ong & Weiss (2000) — künye ayrıntıları doğrulanamadığı için eklenmedi.
-- Bazı künyelerde DOI veya sayı numarası boş bırakıldı (birincil kaynakta görülemedi). doi.org, Crossref ve bazı resmî siteler çalışma sırasında doğrudan erişilemediği için teyit kütüphane kataloğu, yayıncı sayfası ve kurum kayıtlarından yapıldı.
+- Bazı künyelerde DOI veya sayı numarası boş bırakıldı (birincil kaynakta görülemedi).

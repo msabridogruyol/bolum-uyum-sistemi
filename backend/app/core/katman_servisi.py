@@ -155,7 +155,7 @@ def katman_oturumu_baslat(
         .all()
     )
     if not aktif_sorular:
-        raise IsKuraliHatasi(f"{katman.kod} için aktif soru bulunamadı — admin henüz soru eklememiş olabilir.")
+        raise IsKuraliHatasi(f"{katman.kod} bölümü şu an açılamıyor. Biraz sonra tekrar dene ya da rehber öğretmenine bildir.")
 
     soru_idler = [s.id for s in aktif_sorular]
 

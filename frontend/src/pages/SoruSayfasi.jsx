@@ -413,7 +413,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   function sinavdanCik() {
     const uyari = tamamlandi
       ? null
-      : 'Şu anki katmandan çıkarsan bu oturumdaki ilerlemen kaybolur — kaldığın soruya değil, katmanın başına dönmen gerekir. Yine de çıkmak istiyor musun?'
+      : 'Değerlendirmeden çıkmak istiyor musun? Verdiğin cevaplar kayıtlı; döndüğünde kaldığın sorudan devam edersin.'
     if (uyari && !window.confirm(uyari)) return
     if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
     navigate('/katmanlar')

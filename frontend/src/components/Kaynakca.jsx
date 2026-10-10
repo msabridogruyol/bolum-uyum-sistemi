@@ -58,16 +58,23 @@ export default function Kaynakca() {
       <div className="ph">
         <div className="pt">Kaynakça</div>
         <div className="ps">
-          Filizyol'da elle hazırlanan her bileşen ve dayandığı akademik ya da resmî kaynaklar.
-          {` ${v.bilesenler.length} bileşen · ${v.kaynaklar.length} kaynak · ${kaynakli} bileşen en az bir kaynağa dayanıyor.`}
+          {ayrinti
+            ? `Filizyol'da elle hazırlanan her bileşen ve dayandığı akademik ya da resmî kaynaklar. ${v.bilesenler.length} bileşen · ${v.kaynaklar.length} kaynak · ${kaynakli} bileşen en az bir kaynağa dayanıyor.`
+            : `Filizyol'un değerlendirme, rehberlik ve koçluk bileşenlerinin dayandığı akademik ve resmî kaynaklar. ${v.bilesenler.length} bileşen · ${v.kaynaklar.length} kaynak.`}
         </div>
       </div>
 
-      <div className="card kc-uyari">
-        <b>Nasıl okunmalı?</b> Kaynaklar, ilgili bileşenin <i>kuramsal dayanağını</i> gösterir. Filizyol ölçekleri bu kaynaklardaki
-        ölçeklerin birebir uyarlaması değildir; ayrı bir geçerlik-güvenirlik çalışması gerektirir. Eşik, ağırlık ve sayı gibi ürün kararları
-        <span className="kc-rozet">Kurum içi</span> notuyla ayrıca belirtilmiştir. Meslek simülasyonundaki karar anları kurgusaldır.
-      </div>
+      {ayrinti ? (
+        <div className="card kc-uyari">
+          <b>Nasıl okunmalı? (yalnızca süper admin)</b> Kaynaklar, ilgili bileşenin <i>kuramsal dayanağını</i> gösterir. Filizyol ölçekleri bu kaynaklardaki
+          ölçeklerin birebir uyarlaması değildir; ayrı bir geçerlik-güvenirlik çalışması gerektirir. Eşik, ağırlık ve sayı gibi ürün kararları
+          <span className="kc-rozet">Kurum içi</span> notuyla ayrıca belirtilmiştir. Okul yetkilisi bu notları, "Nasıl" ayrıntılarını ve iç süreç bileşenlerini görmez.
+        </div>
+      ) : (
+        <div className="card kc-uyari">
+          Her bileşenin altında, o bileşenin kuramsal çerçevesini oluşturan kaynaklar yer alır. Bir kaynağa tıklayarak tam künyesini ve bağlantısını görebilirsiniz.
+        </div>
+      )}
 
       <div className="kc-arac">
         <div className="kc-sekmeler" role="tablist">

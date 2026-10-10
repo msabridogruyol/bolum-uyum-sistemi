@@ -250,9 +250,9 @@ function IlhamSekmesi({ kaynaklar }) {
     return (
       <div className="card" style={{ textAlign: 'center', padding: 30 }}>
         <div style={{ fontSize: 30 }}>📚</div>
-        <div style={{ fontWeight: 800, margin: '6px 0 4px' }}>Senin alanların için henüz ilham kaynağı eklenmedi</div>
+        <div style={{ fontWeight: 800, margin: '6px 0 4px' }}>İlham kaynaklarını birlikte keşfedelim</div>
         <div className="ps" style={{ margin: 0 }}>
-          Kitap, film, ilham veren kişi ve önemli olay önerileri {kaynaklar.aranan_alanlar?.length ? <>şu alanlar için hazırlanacak: <b>{kaynaklar.aranan_alanlar.join(', ')}</b>.</> : 'yakında burada olacak.'}
+          {kaynaklar.aranan_alanlar?.length ? <>Odak alanların: <b>{kaynaklar.aranan_alanlar.join(', ')}</b>. </> : null}Bu alanlarda ilgini çeken bir kitap, film ya da belgeseli Kütüphanem'e ekleyerek kendi ilham listeni oluşturabilirsin.
         </div>
       </div>
     )

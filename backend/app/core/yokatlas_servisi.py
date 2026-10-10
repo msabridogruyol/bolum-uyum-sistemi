@@ -255,8 +255,8 @@ def bolum_universiteleri(db: Session, bolum: Bolum) -> dict:
                     "mesaj": "Bu bölüm üniversitelerin çoğunda özel yetenek sınavıyla öğrenci alır; bu yüzden ÖSYM tercih "
                              "kılavuzunda taban puanı ve başarı sırası yer almaz. Başvuru için üniversitelerin özel yetenek "
                              "sınavı duyurularını (genellikle Haziran–Ağustos) takip et; çoğunda TYT'den baraj puanı istenir."}
-        return {"durum": "eslesme_yok", "mesaj": "Bu bölüm için YÖK Atlas'ta henüz eşleşen bir program bulunamadı. "
-                "Farklı bir adla açılıyor olabilir; rehber öğretmenine sorabilirsin.",
+        return {"durum": "eslesme_yok", "mesaj": "Bu bölümün programları YÖK Atlas'ta farklı bir adla yer alıyor olabilir. "
+                "YÖK Atlas'ta bölüm adıyla arayabilir ya da rehber öğretmenine sorabilirsin.",
                 "programlar": [], "yil": None, "kaynak": "YÖK Atlas"}
     return {"durum": "tamam", "mesaj": None, "programlar": v.get("programlar", []), "yil": v.get("yil"),
             "guncellenme": kayit.guncellenme.isoformat() if kayit.guncellenme else None, "kaynak": "YÖK Atlas"}

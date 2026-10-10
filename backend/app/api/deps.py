@@ -86,7 +86,7 @@ def get_mevcut_super_admin(
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ) -> AdminKullanici:
     if admin.rol != "super_admin":
-        raise HTTPException(status_code=403, detail="Bu işlem yalnızca super_admin rolüne açık.")
+        raise HTTPException(status_code=403, detail="Bu işlem yalnızca sistem yöneticisine açık.")
     return admin
 
 

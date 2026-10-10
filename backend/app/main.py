@@ -137,9 +137,7 @@ def _sema_guncelle():
         pass
 
 
-@app.on_event("startup")
-def _baslangic_temizligi():
-    """[2026-10-04] KVKK: 6 aydan eski kamera fotoğraflarını sil (Render her uyanışta çalıştırır)."""
+def _fotograf_temizligi():
     try:
         from app.core.hesap_guvenligi_servisi import eski_fotograflari_temizle
         db = SessionLocal()
@@ -150,6 +148,23 @@ def _baslangic_temizligi():
             db.close()
     except Exception:
         pass
+
+
+@app.on_event("startup")
+def _baslangic_temizligi():
+    """[2026-10-04] KVKK: 6 aydan eski kamera fotoğraflarını sil.
+    [2026-10-10] Açılışta ve sunucu açık kaldığı sürece 6 saatte bir çalışır (uzun süre yeniden başlatılmayan sunucuda da süre aşılmasın)."""
+    import threading
+    import time
+
+    _fotograf_temizligi()
+
+    def _dongu():
+        while True:
+            time.sleep(6 * 3600)
+            _fotograf_temizligi()
+
+    threading.Thread(target=_dongu, name="fotograf-temizligi", daemon=True).start()
 
 
 @app.get("/saglik")
