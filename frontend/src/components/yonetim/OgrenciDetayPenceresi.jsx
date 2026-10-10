@@ -40,7 +40,7 @@ function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
   )
 }
 
-const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['kocluk', 'Koçluk'], ['akran', 'Benzer akranlar'], ['ilgi', 'İlgi & kulüp'], ['kutuphane', 'Kütüphane'], ['kayit', 'Kayıtlar']]
+const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['kocluk', 'Koçluk'], ['netler', 'Netler'], ['akran', 'Benzer akranlar'], ['ilgi', 'İlgi & kulüp'], ['kutuphane', 'Kütüphane'], ['kayit', 'Kayıtlar']]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
 
 // [2026-10-10] Rehber öğretmen için koçluk özeti: tamamlanan adımlar + öğrencinin kısa geri bildirimi + tekrar ölçümler
@@ -72,6 +72,35 @@ function KoclukOzeti({ k }) {
             {a.ne_ogrendim && <div><span className="yp-ince">Ne öğrendi:</span> {a.ne_ogrendim}</div>}
           </div>
         ))}
+      </div>
+    </>
+  )
+}
+
+// [2026-10-10] Net takibi özeti: denemeler, konu ilerlemesi, hedef programa göre kıyas
+function NetOzeti({ n }) {
+  if (!n || n.denemeler.length === 0) return <div className="bos-durum">Öğrenci henüz deneme sonucu girmedi (Net Takibi sayfası).</div>
+  const f = (x) => (x == null ? '—' : Number(x).toLocaleString('tr-TR', { maximumFractionDigits: 2 }))
+  return (
+    <>
+      {n.hedef && (
+        <div className="yp-kutu" style={{ marginBottom: 12 }}>
+          <div className="yp-kb">Hedef: {n.hedef.universite} · {n.hedef.program}</div>
+          <div>Son denemelerin ortalaması <b>{f(n.hedef.toplam_ben)}</b> net · {n.hedef.yil} son yerleşen <b>{f(n.hedef.toplam_hedef)}</b> net
+            {n.hedef.en_buyuk_acik?.length > 0 && <> · en büyük açık: {n.hedef.en_buyuk_acik.map((x) => `${x.ad} (${f(x.fark)})`).join(', ')}</>}</div>
+          <div className="yp-ince">Kaynak: YÖK Atlas Net Sihirbazı (programa yerleşen son öğrencinin netleri).</div>
+        </div>
+      )}
+      <div className="yp-kutu" style={{ marginBottom: 12 }}>
+        <div className="yp-kb">Konu takibi</div>
+        <div>{n.konu_isaretli === 0 ? 'Öğrenci konu takibini henüz kullanmıyor.' : `${n.konu_biten} konuyu bitirdi (${n.konu_isaretli} konu işaretli).`}</div>
+      </div>
+      <div className="yp-kutu">
+        <div className="yp-kb">Denemeler ({n.denemeler.length})</div>
+        <table className="yp-tablo">
+          <thead><tr><th>Tarih</th><th>Oturum</th><th>Deneme</th><th>Toplam net</th></tr></thead>
+          <tbody>{n.denemeler.map((x, i) => <tr key={i}><td>{tarih(x.tarih)}</td><td>{x.oturum}</td><td>{x.ad || '—'}</td><td><b>{f(x.toplam_net)}</b></td></tr>)}</tbody>
+        </table>
       </div>
     </>
   )
@@ -250,6 +279,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
       )}
 
       {sekme === 'kocluk' && <KoclukOzeti k={d.kocluk} />}
+      {sekme === 'netler' && <NetOzeti n={d.netler} />}
       {sekme === 'akran' && <AkranListesi ogrenciId={ogrenciId} />}
       {sekme === 'ilgi' && <OgrenciIlgi ogrenciId={ogrenciId} />}
       {sekme === 'kutuphane' && <OgrenciKutuphanesi ogrenciId={ogrenciId} />}

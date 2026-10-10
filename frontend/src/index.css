@@ -1565,3 +1565,100 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .mola-baslik{font-size:22px;font-weight:800}
 .mola-metin{font-size:14px;color:var(--tx2);line-height:1.6}
 .mola-not{font-size:11.5px;color:var(--tx3)}
+
+/* [2026-10-10] Net Takibi */
+.nt-ust{display:flex;gap:12px;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;margin-bottom:14px}
+.nt-kutular{display:flex;gap:10px;flex-wrap:wrap}
+.nt-kutu{background:var(--sur);border:1.5px solid var(--bor);border-top:4px solid var(--bor);border-radius:14px;padding:10px 14px;display:grid;gap:2px;min-width:150px}
+.nt-kutu span{font-size:12px;color:var(--tx2);font-weight:600}
+.nt-kutu b{font-size:26px;font-family:var(--fd);color:var(--tx);font-variant-numeric:tabular-nums}
+.nt-kutu small{font-size:11px}
+.arti{color:var(--gr);font-weight:700}.eksi{color:var(--re);font-weight:700}
+.nt-oturum{font-size:10.5px;font-weight:800;letter-spacing:.04em}
+.nt-cubuk{height:7px;border-radius:7px;background:var(--sur2);overflow:hidden}
+.nt-cubuk div{height:100%;border-radius:7px}
+.nt-form{display:grid;gap:12px}
+.nt-form-ust{display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end}
+.nt-form-ust label{display:grid;gap:4px;font-size:12px;font-weight:700;color:var(--tx2)}
+.nt-form-ust label span{font-weight:400;color:var(--tx3)}
+.nt-form-ust input{border:1.5px solid var(--bor);border-radius:10px;padding:8px 10px;font-size:13px;font-family:var(--fn);background:var(--sur);color:var(--tx)}
+.nt-secim{display:flex;gap:4px}
+.nt-secim button{border:1.5px solid var(--bor);background:var(--sur2);border-radius:10px;padding:7px 14px;font-weight:700;cursor:pointer;font-family:var(--fn);color:var(--tx2)}
+.nt-secim button.secili{background:var(--pul);border-color:var(--pu);color:var(--pu)}
+.nt-form-tablo{width:100%;border-collapse:collapse;font-size:13px}
+.nt-form-tablo th{font-size:11px;text-transform:uppercase;color:var(--tx3);text-align:left;padding:6px 8px}
+.nt-form-tablo td{padding:5px 8px;border-top:1px solid var(--bor)}
+.nt-form-tablo input{width:70px;border:1.5px solid var(--bor);border-radius:8px;padding:6px 8px;font-size:14px;font-family:var(--fn);background:var(--sur);color:var(--tx)}
+.nt-form-tablo tr.hatali input{border-color:var(--re)}
+.nt-form-tablo tfoot td{font-weight:700}
+.nt-sil-onay{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:10px;padding:10px;background:var(--rel);border-radius:10px;font-size:13px}
+.ng-kap{position:relative}
+.ng-svg{width:100%;height:auto;display:block}
+.ng-izgara{stroke:var(--bor);stroke-width:1}
+.ng-eksen{font-size:11px;fill:var(--tx3)}
+.ng-etiket{font-size:12px;font-weight:800}
+.ng-etiket-hedef{font-size:11px;fill:var(--tx2);font-weight:700}
+.ng-hedef{stroke-width:1.5;stroke-dasharray:5 4;opacity:.75}
+.ng-ipucu{position:absolute;transform:translate(-50%,calc(-100% - 12px));background:var(--sur);border:1.5px solid var(--bor);border-radius:10px;padding:7px 10px;font-size:12px;display:grid;gap:1px;pointer-events:none;box-shadow:0 6px 18px rgba(0,0,0,.1);white-space:nowrap;color:var(--tx)}
+.ng-ipucu span{color:var(--tx2)}
+.ng-lejant{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--tx2);margin-top:6px}
+.ng-lejant i{display:inline-block;width:12px;height:4px;border-radius:3px;margin-right:5px;vertical-align:middle}
+.ng-lejant .ng-lejant-kesik{background:none;border-top:2px dashed var(--tx3);height:0}
+.kt-duzen{display:grid;grid-template-columns:260px minmax(0,1fr);gap:14px;align-items:start}
+@media(max-width:820px){.kt-duzen{grid-template-columns:1fr}}
+.kt-dersler{display:grid;gap:6px}
+.kt-genel{font-size:13px;color:var(--tx2);padding:4px}
+.kt-ders{display:grid;grid-template-columns:1fr auto;gap:4px 8px;align-items:center;text-align:left;border:1.5px solid var(--bor);background:var(--sur);border-radius:12px;padding:8px 10px;cursor:pointer;font-family:var(--fn);color:var(--tx);margin-bottom:5px;width:100%}
+.kt-ders span{font-weight:700;font-size:13px}.kt-ders small{color:var(--tx3);font-size:11.5px;font-weight:700}
+.kt-ders .nt-cubuk{grid-column:1 / -1;height:5px}
+.kt-ders.secili{border-color:var(--pu);background:var(--pul)}
+.kt-liste{display:grid;gap:6px}
+.kt-konu{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;padding:8px 10px;border-radius:12px;border:1.5px solid var(--bor)}
+.kt-konu.d-bitti,.kt-konu.d-tekrar{background:var(--grl);border-color:transparent}
+.kt-konu.d-calisiyor{background:var(--aml);border-color:transparent}
+.kt-konu-ad{font-weight:700;font-size:13px}
+.kt-durumlar{display:flex;gap:4px;flex-wrap:wrap}
+.kt-durumlar button{border:1px solid var(--bor);background:var(--sur);border-radius:20px;padding:3px 10px;font-size:11.5px;cursor:pointer;font-family:var(--fn);color:var(--tx2)}
+.kt-durumlar button.secili{font-weight:800;border-width:1.5px}
+.kt-durumlar button.secili[title="Başlamadım"]{border-color:var(--tx3);color:var(--tx)}
+.kt-durumlar button.secili[title="Çalışıyorum"]{background:var(--am);border-color:var(--am);color:#fff}
+.kt-durumlar button.secili[title="Bitti"]{background:var(--gr);border-color:var(--gr);color:#fff}
+.kt-durumlar button.secili[title="Tekrar"]{background:var(--pu);border-color:var(--pu);color:#fff}
+.nh-liste{display:grid;gap:4px;max-height:420px;overflow:auto}
+.nh-satir{display:flex;justify-content:space-between;align-items:center;gap:10px;text-align:left;border:1.5px solid var(--bor);background:var(--sur);border-radius:12px;padding:8px 12px;cursor:pointer;font-family:var(--fn);color:var(--tx)}
+.nh-satir:hover,.nh-satir.secili{border-color:var(--pu);background:var(--pul)}
+.nh-satir span{display:grid}.nh-satir small{color:var(--tx3);font-size:11.5px}
+.nh-puan{text-align:right;font-weight:800;font-variant-numeric:tabular-nums}
+.nh-hedef{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;background:linear-gradient(135deg,var(--pul),var(--sur));border-color:var(--pu)}
+.nh-etiket{font-size:11px;font-weight:800;color:var(--pu);text-transform:uppercase;letter-spacing:.06em}
+.nh-uni{font-size:18px;font-weight:800}
+.nh-ozet{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-bottom:14px}
+@media(max-width:700px){.nh-ozet{grid-template-columns:1fr}}
+.nh-ozet-kutu{background:var(--sur);border:1.5px solid var(--bor);border-radius:16px;padding:12px 16px;display:grid;gap:2px}
+.nh-ozet-kutu span{font-size:12px;color:var(--tx2);font-weight:600}
+.nh-ozet-kutu b{font-size:28px;font-family:var(--fd);font-variant-numeric:tabular-nums}
+.nh-ozet-kutu small{font-size:11.5px;color:var(--tx3)}
+.nh-ozet-kutu.eksi{border-color:var(--re)}.nh-ozet-kutu.eksi b{color:var(--re)}
+.nh-ozet-kutu.arti{border-color:var(--gr)}.nh-ozet-kutu.arti b{color:var(--gr)}
+.nh-lejant{display:flex;gap:14px;flex-wrap:wrap;font-size:11.5px;color:var(--tx2);margin-bottom:10px}
+.nh-lejant i{display:inline-block;vertical-align:middle;margin-right:5px}
+.nh-l-ben{width:14px;height:8px;border-radius:4px;background:var(--tx3)}
+.nh-l-hedef{width:3px;height:14px;background:var(--tx);border-radius:2px}
+.nh-l-onceki{width:3px;height:14px;background:var(--tx3);border-radius:2px}
+.nh-l-ort{width:0;height:14px;border-left:2px dashed var(--tx2)}
+.nh-satir-kiyas{display:grid;grid-template-columns:200px minmax(0,1fr) 150px;gap:12px;align-items:center;padding:7px 0;border-top:1px solid var(--bor)}
+@media(max-width:700px){.nh-satir-kiyas{grid-template-columns:1fr}}
+.nh-ders{font-size:13px;font-weight:700}
+.nh-iz{position:relative;height:14px;background:var(--sur2);border-radius:8px}
+.nh-ben{position:absolute;left:0;top:0;bottom:0;border-radius:8px}
+.nh-isaret{position:absolute;top:-4px;bottom:-4px;width:3px;margin-left:-1.5px;border-radius:2px}
+.nh-isaret.hedef{background:var(--tx)}
+.nh-isaret.onceki{background:var(--tx3)}
+.nh-isaret.ort{width:0;border-left:2px dashed var(--tx2);margin-left:-1px}
+.nh-sayilar{display:flex;gap:6px;align-items:baseline;font-variant-numeric:tabular-nums}
+.nh-sayilar b{font-size:15px}.nh-sayilar span{color:var(--tx3);font-size:12px}
+.nh-sayilar em{font-style:normal;font-size:12px;border-radius:20px;padding:1px 8px}
+.nh-sayilar em.arti{background:var(--grl)}.nh-sayilar em.eksi{background:var(--rel)}
+.nh-oneri{background:var(--aml);border-color:transparent;font-size:13px;line-height:1.6}
+.nh-not{font-size:11.5px;color:var(--tx3);line-height:1.5;margin-top:4px}
+.nt-ders-tablo td{vertical-align:middle}
