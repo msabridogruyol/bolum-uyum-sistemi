@@ -15,6 +15,7 @@ import AkranSekmesi from '../../components/yonetim/AkranPaneli'
 import KulupYonetimi from '../../components/yonetim/KulupYonetimi'
 import SiniflarSekmesi from '../../components/yonetim/SiniflarSekmesi'
 import TakvimYonetimi from '../../components/yonetim/TakvimYonetimi'
+import { okulBolumleri } from '../../components/yonetim/okulBolumleri'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -453,8 +454,10 @@ export default function OkulPaneliSayfasi() {
   const { rol } = useAdminAuth()
   const superAdmin = rol === 'super_admin'
   // ?sekme=bilgiler | yetkililer | ogrenciler | meslekdili | gorunum | kayitlar — Okullar sayfasındaki kısayollar doğrudan ilgili sekmeyi açar
-  const [params] = useSearchParams()
-  const [sekme, setSekme] = useState(params.get('sekme') || 'ozet')
+  // [2026-10-10] Sekme URL'de tutulur; okul yetkilisinin sol menüsü de aynı ?sekme= değerini kullanır.
+  const [params, setParams] = useSearchParams()
+  const sekme = params.get('sekme') || 'ozet'
+  const setSekme = useCallback((k) => setParams(k === 'ozet' ? {} : { sekme: k }), [setParams])
   const [oz, setOz] = useState(null)
   const [ogrenciler, setOgrenciler] = useState([])
   const [okullar, setOkullar] = useState([])
@@ -471,25 +474,43 @@ export default function OkulPaneliSayfasi() {
   if (hata) return <div className="pg pg-genis"><div className="auth-error">{hata}</div></div>
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
-  const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['siniflar', 'Sınıflar'], ['akran', 'Şube & Akran'],
-    ...(okulId ? [['kulupler', 'Kulüpler'], ['takvim', 'Takvim'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
+  const bolumler = okulBolumleri(okulId)
+  const etiket = (b) => b.k === 'ogrenciler' ? `${b.ad} (${oz.toplam})` : b.k === 'yetkililer' ? `${b.ad} (${oz.yetkili_sayisi})` : b.ad
+  const aktifBolum = bolumler.find((b) => b.k === sekme) || bolumler[0]
+  const raporlar = (
+    <RaporDugmeleri baslik="Okul raporu" secenekler={[
+      { anahtar: 'p', ad: 'PDF', ikon: '📄', aciklama: 'Tamamlama oranları, sınıflar, alan dağılımı, ortak güçlü yönler ve öğrenci listesi', indir: () => api.okulRaporuIndir(okulId, 'pdf') },
+      { anahtar: 'x', ad: 'Excel', ikon: '📊', aciklama: 'Özet, sınıflar ve tüm öğrenciler tablo halinde', indir: () => api.okulRaporuIndir(okulId, 'xlsx') },
+    ]} />
+  )
   return (
     <div className="pg pg-genis">
-      {superAdmin && <Link to="/admin/okullar" className="yp-geri">← Okullar</Link>}
-      <div className="yp-okul-baslik">
-        {oz.okul.logo ? <img src={oz.okul.logo} alt="" className="yp-okul-logo" /> : <div className="yp-okul-logo yp-okul-logo-bos">{okulId ? '🏫' : '👤'}</div>}
-        <div>
-          <div className="pt" style={{ margin: 0 }}>{oz.okul.ad}</div>
-          <div className="ps" style={{ margin: 0 }}>{oz.okul.alt_baslik || 'Okul paneli'}</div>
+      {superAdmin ? (
+        <>
+          <Link to="/admin/okullar" className="yp-geri">← Okullar</Link>
+          <div className="yp-okul-baslik">
+            {oz.okul.logo ? <img src={oz.okul.logo} alt="" className="yp-okul-logo" /> : <div className="yp-okul-logo yp-okul-logo-bos">{okulId ? '🏫' : '👤'}</div>}
+            <div>
+              <div className="pt" style={{ margin: 0 }}>{oz.okul.ad}</div>
+              <div className="ps" style={{ margin: 0 }}>{oz.okul.alt_baslik || 'Okul paneli'}</div>
+            </div>
+          </div>
+          {raporlar}
+          <div className="yp-sekmeler yp-sekmeler-buyuk">
+            {bolumler.map((b) => <button key={b.k} className={sekme === b.k ? 'aktif' : ''} onClick={() => setSekme(b.k)}>{etiket(b)}</button>)}
+          </div>
+        </>
+      ) : (
+        // [2026-10-10] Okul yetkilisi: bölümler sol menüde; burada yalnızca açık bölümün başlığı
+        <div className="yp-bolum-baslik">
+          <div className="yp-bolum-ikon">{aktifBolum.ikon}</div>
+          <div style={{ flex: 1, minWidth: 0 }}>
+            <div className="pt" style={{ margin: 0 }}>{sekme === 'ozet' ? oz.okul.ad : etiket(aktifBolum)}</div>
+            <div className="ps" style={{ margin: 0 }}>{aktifBolum.aciklama}</div>
+          </div>
+          {sekme === 'ozet' && <div className="yp-bolum-rapor">{raporlar}</div>}
         </div>
-      </div>
-      <RaporDugmeleri baslik="Okul raporu" secenekler={[
-        { anahtar: 'p', ad: 'PDF', ikon: '📄', aciklama: 'Tamamlama oranları, sınıflar, alan dağılımı, ortak güçlü yönler ve öğrenci listesi', indir: () => api.okulRaporuIndir(okulId, 'pdf') },
-        { anahtar: 'x', ad: 'Excel', ikon: '📊', aciklama: 'Özet, sınıflar ve tüm öğrenciler tablo halinde', indir: () => api.okulRaporuIndir(okulId, 'xlsx') },
-      ]} />
-      <div className="yp-sekmeler yp-sekmeler-buyuk">
-        {sekmeler.map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
-      </div>
+      )}
       {sekme === 'ozet' && <OzetSekmesi oz={oz} />}
       {sekme === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
       {sekme === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
