@@ -7,6 +7,7 @@ import TanitimPenceresi from './TanitimPenceresi'
 import Maskot from './Maskot'
 import OkulRozeti from './OkulRozeti'
 import FilizSohbet from './FilizSohbet'
+import AltSerit from './AltSerit'
 import { KvkkOnayPenceresi } from './KvkkBilesenleri'
 import { IlkSifrePenceresi } from './yonetim/ortak'
 
@@ -138,6 +139,7 @@ export default function AnaSayfaDuzeni() {
         {/* [2026-10-09] Maskot ana içerik alanının sağ üstünde, başlık satırında durur (sayfayla birlikte kayar) */}
         {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
         <Outlet context={{ profilYenile, tanitimiAc }} />
+        <AltSerit okul={profil?.okul} kisi={profil?.ad_soyad} rol={[profil?.sinif, profil?.sube].filter(Boolean).join(' ') || null} />
       </div>
       {sifreGerekli && (
         <IlkSifrePenceresi kaydet={(s) => api.ilkSifreBelirle(s)} onCikis={cikisYap}

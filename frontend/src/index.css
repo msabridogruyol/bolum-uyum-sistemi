@@ -1132,3 +1132,26 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .sifre-hucre code{font-size:12px;background:var(--sur2);padding:2px 7px;border-radius:6px;letter-spacing:.03em}
 .sifre-hucre .yp-mini{padding:2px 6px}
 .yp-sinif-ata{display:inline-flex;gap:6px;align-items:center}
+
+/* ============================================================
+   [2026-10-10] Okul rengi görsellerde: grafik sütunları, ilerleme çubukları, görev halkası, yol haritası noktaları, gelişim sütunları.
+   Düğmeler ve metinler okunurluk için Filizyol renklerinde kalır. Okul rengi seçilmemişse Filizyol turuncusu kullanılır.
+   ============================================================ */
+.gr-sutun{background:linear-gradient(180deg, color-mix(in srgb, var(--okul-c) 62%, #fff), var(--okul-c))}
+.gr-uyum-sutun{background:color-mix(in srgb, var(--okul-c) 34%, var(--sur2))}
+.gr-uyum-sutun-kap.aktif .gr-uyum-sutun{background:var(--okul-c)}
+.gr-uyum-deger{color:var(--okul-c)}
+.gr-rapor{border-top:3px solid var(--okul-c)}
+.qfill{background:var(--okul-c)}
+.yh-nokta.bitti{background:var(--okul-c)}
+.gm-sutun > div{background:var(--okul-c)}
+.gm-ozet b{color:var(--okul-c)}
+.hedef-kart{background:linear-gradient(135deg, var(--okul-c) 0%, color-mix(in srgb, var(--okul-c) 55%, #f0a868) 100%)}
+.listem-kart.secili,.kr-yuva.dolu{border-color:var(--okul-c)}
+.sayfa-sekmeleri a.aktif{box-shadow:0 3px 10px color-mix(in srgb, var(--pu) 22%, transparent), inset 0 -3px 0 var(--okul-c)}
+.koc-sekmeler button.aktif{box-shadow:inset 0 -3px 0 var(--okul-c)}
+
+/* Sayfa altı şerit */
+.alt-serit{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin:28px 28px 18px;padding:12px 4px 0;border-top:2px solid var(--okul-y, var(--bor));font-size:11.5px;font-weight:600;color:var(--tx3)}
+.alt-serit .as-orta{opacity:.8}
+@media(max-width:700px){.alt-serit{margin:20px 14px 14px;justify-content:center;text-align:center}.alt-serit .as-orta{display:none}}

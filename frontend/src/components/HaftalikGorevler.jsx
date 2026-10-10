@@ -71,7 +71,7 @@ export default function HaftalikGorevler() {
           <div className="hg-halka" title={`${ozet.tamamlanan}/${ozet.toplam} görev tamam`}>
             <svg viewBox="0 0 72 72" width="72" height="72" aria-hidden="true">
               <circle cx="36" cy="36" r={R} fill="none" stroke="var(--sur2)" strokeWidth="7" />
-              <circle cx="36" cy="36" r={R} fill="none" stroke={hepsiBitti ? 'var(--gr)' : 'var(--pu)'} strokeWidth="7" strokeLinecap="round"
+              <circle cx="36" cy="36" r={R} fill="none" stroke={hepsiBitti ? 'var(--gr)' : 'var(--okul-c)'} strokeWidth="7" strokeLinecap="round"
                 strokeDasharray={CEVRE} strokeDashoffset={CEVRE * (1 - oran)} transform="rotate(-90 36 36)" className="hg-halka-dolu" />
             </svg>
             <div className="hg-halka-ic"><b>{ozet.tamamlanan}</b><span>/{ozet.toplam}</span></div>
