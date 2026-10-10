@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import GecersizTurUyarisi from '../components/GecersizTurUyarisi'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import HaftalikGorevler from '../components/HaftalikGorevler'
@@ -7,6 +8,7 @@ import Sayac from '../components/Sayac'
 import AnaSayfaGrafikleri from '../components/AnaSayfaGrafikleri'
 import BugunPaneli, { Rozetler } from '../components/BugunPaneli'
 import { modulAcikMi, modulleriYukle, useModuller } from '../yardimci/moduller'
+import { GRUP_ADLARI, GUCLU_ESIK, ORTA_ESIK, gelisimeAcikMi, gucluMu } from '../yardimci/seviye'
 
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
 
@@ -79,8 +81,9 @@ export default function AnaSayfa() {
   const enYuksek3 = [...tumSonuclar].sort((a, b) => b.puan - a.puan).slice(0, 3)
 
   // Güç dağılımı — güçlü/orta/gelişim sayıları (gerçek puanlardan)
-  const guclu = tumSonuclar.filter((s) => s.puan >= 70).length
-  const gelisimSayisi = tumSonuclar.filter((s) => s.puan < 40).length
+  // [2026-10-10] Eşikler tek kaynaktan (yardimci/seviye.js): Puan Rehberi ve PDF raporuyla aynı
+  const guclu = tumSonuclar.filter((s) => gucluMu(s.puan)).length
+  const gelisimSayisi = tumSonuclar.filter((s) => gelisimeAcikMi(s.puan)).length
   const orta = tumSonuclar.length - guclu - gelisimSayisi
   const toplamBoyut = tumSonuclar.length || 1 // 0'a bölünmeyi önle
 
@@ -121,6 +124,8 @@ export default function AnaSayfa() {
         )}
       </div>
 
+      <GecersizTurUyarisi ozet={ozet} />
+
       <BugunPaneli ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} motivasyon={motivasyon} kocluk={kocluk} />
 
       {yenidenDegerlendirmeHazir && (
@@ -138,7 +143,7 @@ export default function AnaSayfa() {
               Yeniden değerlendirme zamanın geldi!
             </div>
             <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 2 }}>
-              90 günlük bekleme süresi doldu — profilini tazelemek için tekrar değerlendirilebilirsin.
+              Yeni değerlendirme turun açıldı — profilini tazelemek için tekrar değerlendirilebilirsin.
             </div>
           </div>
           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--gr)' }}>Başla →</span>
@@ -193,7 +198,7 @@ export default function AnaSayfa() {
                     <div className="donut-legend">
                       <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--sur2)' }} /><span className="donut-legend-etiket">Güçlü</span></div>
                       <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--sur2)' }} /><span className="donut-legend-etiket">Orta</span></div>
-                      <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--sur2)' }} /><span className="donut-legend-etiket">Gelişim</span></div>
+                      <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--sur2)' }} /><span className="donut-legend-etiket">{GRUP_ADLARI.gelisim}</span></div>
                     </div>
                   </div>
                 </div>
@@ -215,9 +220,9 @@ export default function AnaSayfa() {
                   </div>
                 </div>
                 <div className="donut-legend">
-                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--gr)' }} /><span className="donut-legend-etiket">Güçlü (70+)</span><span className="donut-legend-sayi" style={{ color: 'var(--gr)' }}>{guclu}</span></div>
-                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--pu)' }} /><span className="donut-legend-etiket">Orta (40-69)</span><span className="donut-legend-sayi" style={{ color: 'var(--pu)' }}>{orta}</span></div>
-                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--am)' }} /><span className="donut-legend-etiket">Gelişim (&lt;40)</span><span className="donut-legend-sayi" style={{ color: 'var(--am)' }}>{gelisimSayisi}</span></div>
+                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--gr)' }} /><span className="donut-legend-etiket">{GRUP_ADLARI.guclu} ({GUCLU_ESIK}+)</span><span className="donut-legend-sayi" style={{ color: 'var(--gr)' }}>{guclu}</span></div>
+                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--pu)' }} /><span className="donut-legend-etiket">{GRUP_ADLARI.orta} ({ORTA_ESIK}–{GUCLU_ESIK - 1})</span><span className="donut-legend-sayi" style={{ color: 'var(--pu)' }}>{orta}</span></div>
+                  <div className="donut-legend-satir"><div className="donut-legend-nokta" style={{ background: 'var(--am)' }} /><span className="donut-legend-etiket">{GRUP_ADLARI.gelisim} (&lt;{ORTA_ESIK})</span><span className="donut-legend-sayi" style={{ color: 'var(--am)' }}>{gelisimSayisi}</span></div>
                 </div>
               </div>
             )}

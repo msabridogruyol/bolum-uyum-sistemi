@@ -6,6 +6,7 @@ import { api } from '../api/client'
 import { IlkSifrePenceresi, ROL_ADI } from './yonetim/ortak'
 import { okulRenginiUygula } from '../tema'
 import AltSerit from './AltSerit'
+import BildirimZili from './BildirimZili'
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
@@ -16,6 +17,10 @@ export default function AdminSayfaDuzeni() {
   const okulYetkilisi = rol === 'okul_yetkilisi'
   // [2026-10-10] Bekleyen kulüp katılma talebi sayısı (menüde Kulüpler'in yanında)
   const [bekleyenTalep, setBekleyenTalep] = useState(0)
+  const [riskSayisi, setRiskSayisi] = useState(0)   // [2026-10-10] erken uyarı: yüksek seviyeli öğrenci sayısı
+  useEffect(() => {
+    if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('rehberlik'))) api.erkenUyari(ben.okul_id).then((v) => setRiskSayisi(v.ozet.yuksek || 0)).catch(() => {})
+  }, [okulYetkilisi, ben?.okul_id, ben?.moduller, konum.search])
   useEffect(() => {
     if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('kulupler'))) api.kulupTalepleri(ben.okul_id).then((v) => setBekleyenTalep(v.bekleyen || 0)).catch(() => {})
   }, [okulYetkilisi, ben?.okul_id, konum.pathname, konum.search])
@@ -27,7 +32,7 @@ export default function AdminSayfaDuzeni() {
 
   if (okulYetkilisi && ben?.okul_id) {
     const okulYolu = `/admin/okul/${ben.okul_id}`
-    if (!konum.pathname.startsWith(okulYolu) && konum.pathname !== '/admin/sss') return <Navigate to={okulYolu} replace />
+    if (!konum.pathname.startsWith(okulYolu) && konum.pathname !== '/admin/sss' && konum.pathname !== '/admin/kaynakca') return <Navigate to={okulYolu} replace />
   }
 
   return (
@@ -49,6 +54,7 @@ export default function AdminSayfaDuzeni() {
             <div className="u-nm" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ben?.ad_soyad || 'Yönetici'}</div>
             <div className="u-id">{ROL_ADI[rol] || rol}</div>
           </div>
+          {(!okulYetkilisi || !ben?.moduller || ben.moduller.includes('bildirimler')) && <BildirimZili kapsam="yonetim" />}
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
 
@@ -64,12 +70,14 @@ export default function AdminSayfaDuzeni() {
                   <Link to={b.k === 'ozet' ? okulYolu : `${okulYolu}?sekme=${b.k}`} className={`ni${aktif ? ' active' : ''}`}>
                     <span className="ni-ikon">{b.ikon}</span>{b.ad}
                     {b.k === 'kulupler' && bekleyenTalep > 0 && <span className="ni-rozet">{bekleyenTalep}</span>}
+                    {b.k === 'rehberlik' && riskSayisi > 0 && <span className="ni-rozet" title="Yüksek seviyede uyarısı olan öğrenci">{riskSayisi}</span>}
                   </Link>
                 </Fragment>
               )
             })}
             <div className="ns">Yardım</div>
             <NavLink to="/admin/sss" className={ni}><span className="ni-ikon">❓</span>Sistem Hakkında & SSS</NavLink>
+            <NavLink to="/admin/kaynakca" className={ni}><span className="ni-ikon">📚</span>Kaynakça</NavLink>
           </>
         ) : (
           <>
@@ -79,6 +87,7 @@ export default function AdminSayfaDuzeni() {
 
             <div className="ns">Okullar ve Hesaplar</div>
             <NavLink to="/admin/okullar" className={ni}>Okullar</NavLink>
+            <NavLink to="/admin/karsilastirma" className={ni}>📊 Okul Karşılaştırması</NavLink>
             <NavLink to="/admin/okul/0" className={ni}>Okul Harici Öğrenciler</NavLink>
             <NavLink to="/admin/yoneticiler" className={ni}>Süper Adminler</NavLink>
             <NavLink to="/admin/test-hesaplari" className={ni}>🧪 Test Hesapları</NavLink>
@@ -98,8 +107,10 @@ export default function AdminSayfaDuzeni() {
             <div className="ns">Sistem</div>
             <NavLink to="/admin/parametreler" className={ni}>Parametreler</NavLink>
             <NavLink to="/admin/soru-gecerlilik" className={ni}>Soru Geçerlilik Testi</NavLink>
+            <NavLink to="/admin/anket-psikometri" className={ni}>Anket Psikometrisi</NavLink>
             <NavLink to="/admin/audit-log" className={ni}>Audit Log</NavLink>
             <NavLink to="/admin/sistem-hakkinda" className={ni}>Sistem Hakkında</NavLink>
+            <NavLink to="/admin/kaynakca" className={ni}>📚 Kaynakça</NavLink>
             <NavLink to="/admin/guvenlik" className={ni}>Güvenlik / Tutarlılık</NavLink>
             <NavLink to="/admin/gelisim-kaynak" className={ni}>Gelişim Kaynak Havuzu</NavLink>
           </>

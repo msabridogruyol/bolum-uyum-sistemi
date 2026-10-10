@@ -131,7 +131,8 @@ def karsilastir(ids: str = Query(..., description="virgülle ayrılmış 2-3 bö
         p = ogr_puan.get(x["kod"])
         if p is None:
             return None
-        return p >= 60 if x.get("uc") != "dusuk" else p <= 40
+        from app.core.seviye import gelisime_acik_mi, guclu_mu   # [2026-10-10] ortak bantlar (62 / 40)
+        return guclu_mu(p) if x.get("uc") != "dusuk" else gelisime_acik_mi(p)
 
     sonuc = []
     for bid in idler:

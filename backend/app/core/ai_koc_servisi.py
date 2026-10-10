@@ -208,7 +208,7 @@ def openai_ile_konus(sistem_promptu: str, mesaj_gecmisi: list[dict]) -> str:
     """
     if not _api_anahtari_var_mi():
         raise AsistanKullanilamiyorHatasi(
-            "AI koçluk asistanı henüz aktif değil — OPENAI_API_KEY tanımlanmadı."
+            "Filiz'e şu an ulaşılamıyor, biraz sonra tekrar dene."
         )
 
     try:

@@ -18,12 +18,18 @@ const BolumlerimSayfasi = lazy(() => import('./pages/BolumlerimSayfasi'))
 const KoclukSayfasi = lazy(() => import('./pages/KoclukSayfasi'))
 const KoclarSayfasi = lazy(() => import('./pages/KoclarSayfasi'))
 const KuluplerimSayfasi = lazy(() => import('./pages/KuluplerimSayfasi'))
+const TercihSayfasi = lazy(() => import('./pages/TercihSayfasi'))
+const AnketlerSayfasi = lazy(() => import('./pages/AnketlerSayfasi'))
+const PortfolyoSayfasi = lazy(() => import('./pages/PortfolyoSayfasi'))
+const CalismaSayfasi = lazy(() => import('./pages/CalismaSayfasi'))
+const RaporlarimSayfasi = lazy(() => import('./pages/RaporlarimSayfasi'))
 const GorevlerimSayfasi = lazy(() => import('./pages/GorevlerimSayfasi'))
 const TakvimSayfasi = lazy(() => import('./pages/TakvimSayfasi'))
 const KutuphanemSayfasi = lazy(() => import('./pages/KutuphanemSayfasi'))
 const NetTakibiSayfasi = lazy(() => import('./pages/NetTakibiSayfasi'))
 const SistemHakkindaOgrenci = lazy(() => import('./pages/SistemHakkindaOgrenci'))
 const SssSayfasi = lazy(() => import('./pages/admin/SssSayfasi'))
+const KaynakcaSayfasi = lazy(() => import('./pages/admin/KaynakcaSayfasi'))
 const ProfilAyarlariSayfasi = lazy(() => import('./pages/ProfilAyarlariSayfasi'))
 const AnaSayfa = lazy(() => import('./pages/AnaSayfa'))
 const AdminGirisSayfasi = lazy(() => import('./pages/admin/AdminGirisSayfasi'))
@@ -43,11 +49,13 @@ const OkullarSayfasi = lazy(() => import('./pages/admin/OkullarSayfasi'))
 const OkulPaneliSayfasi = lazy(() => import('./pages/admin/OkulPaneliSayfasi'))
 const KonuListesiSayfasi = lazy(() => import('./pages/admin/KonuListesiSayfasi'))
 const PaketlerSayfasi = lazy(() => import('./pages/admin/PaketlerSayfasi'))
+const KarsilastirmaSayfasi = lazy(() => import('./pages/admin/KarsilastirmaSayfasi'))
 const MeslekDiliSayfasi = lazy(() => import('./pages/admin/MeslekDiliSayfasi'))
 const TestHesaplariSayfasi = lazy(() => import('./pages/admin/TestHesaplariSayfasi'))
 const KocYonetimSayfasi = lazy(() => import('./pages/admin/KocYonetimSayfasi'))
 const YokatlasEslesmeSayfasi = lazy(() => import('./pages/admin/YokatlasEslesmeSayfasi'))
 const GenelTakvimSayfasi = lazy(() => import('./pages/admin/GenelTakvimSayfasi'))
+const AnketPsikometriSayfasi = lazy(() => import('./pages/admin/AnketPsikometriSayfasi'))
 const TestGirisSayfasi = lazy(() => import('./pages/TestGirisSayfasi'))
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
@@ -132,6 +140,11 @@ function AnaUygulama() {
         <Route path="/takvim" element={<TakvimSayfasi />} />
         <Route path="/kutuphane" element={<KutuphanemSayfasi />} />
         <Route path="/netlerim" element={<NetTakibiSayfasi />} />
+        <Route path="/calisma" element={<CalismaSayfasi />} />
+        <Route path="/portfolyo" element={<PortfolyoSayfasi />} />
+        <Route path="/anketler" element={<AnketlerSayfasi />} />
+        <Route path="/tercih" element={<TercihSayfasi />} />
+        <Route path="/raporlarim" element={<RaporlarimSayfasi />} />
         <Route path="/hakkinda" element={<SistemHakkindaOgrenci />} />
         <Route path="/profil" element={<ProfilAyarlariSayfasi />} />
       </Route>
@@ -162,6 +175,7 @@ function AnaUygulama() {
         <Route path="yoneticiler" element={<YoneticilerSayfasi />} />
         <Route path="sistem-hakkinda" element={<SistemHakkindaSayfasi />} />
         <Route path="soru-gecerlilik" element={<SoruGecerlilikSayfasi />} />
+        <Route path="anket-psikometri" element={<AnketPsikometriSayfasi />} />
         <Route path="guvenlik" element={<GuvenlikSayfasi />} />
         <Route path="gelisim-kaynak" element={<GelisimKaynakSayfasi />} />
         <Route path="okullar" element={<OkullarSayfasi />} />
@@ -172,8 +186,10 @@ function AnaUygulama() {
         <Route path="yokatlas" element={<YokatlasEslesmeSayfasi />} />
         <Route path="takvim" element={<GenelTakvimSayfasi />} />
         <Route path="sss" element={<SssSayfasi />} />
+        <Route path="kaynakca" element={<KaynakcaSayfasi />} />
         <Route path="konular" element={<KonuListesiSayfasi />} />
         <Route path="paketler" element={<PaketlerSayfasi />} />
+        <Route path="karsilastirma" element={<KarsilastirmaSayfasi />} />
       </Route>
     </Routes>
     </Suspense>

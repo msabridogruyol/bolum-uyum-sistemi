@@ -4,9 +4,11 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import { tarih } from './ortak'
+import { gelisimeAcikMi, gucluMu } from '../../yardimci/seviye'
 
-const renk = (p) => (p == null ? 'var(--tx3)' : p >= 60 ? 'var(--gr)' : p <= 40 ? 'var(--re)' : 'var(--tx2)')
-const zemin = (p) => (p == null ? 'var(--sur2)' : p >= 60 ? 'var(--grl)' : p <= 40 ? 'var(--rel)' : 'var(--sur2)')
+// [2026-10-10] Eşikler ortak düzey bantlarından (Güçlü 62+, Gelişime açık 40 altı)
+const renk = (p) => (p == null ? 'var(--tx3)' : gucluMu(p) ? 'var(--gr)' : gelisimeAcikMi(p) ? 'var(--re)' : 'var(--tx2)')
+const zemin = (p) => (p == null ? 'var(--sur2)' : gucluMu(p) ? 'var(--grl)' : gelisimeAcikMi(p) ? 'var(--rel)' : 'var(--sur2)')
 const sayi = (v, o = 1) => (v == null ? '—' : Number(v).toLocaleString('tr-TR', { maximumFractionDigits: o }))
 
 function KatkiCip({ k, onTik }) {

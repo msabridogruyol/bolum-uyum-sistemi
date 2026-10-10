@@ -119,7 +119,7 @@ def rehber_davet_epostasi(ad: str, okul: str, baglanti: str) -> tuple[str, str, 
     konu = "Filizyol — rehber öğretmen hesabın hazır"
     html = _sablon("Rehber öğretmen hesabın oluşturuldu", f"""
       <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, <b>{okul_h}</b> için rehber öğretmen hesabın oluşturuldu.
-      Aşağıdaki düğmeyle şifreni belirleyip öğrenci giriş sayfasından giriş yapabilirsin. Bağlantı 3 gün geçerlidir.</p>
+      Aşağıdaki düğmeyle şifreni belirleyip yönetim girişinden (/admin/giris) giriş yapabilirsin. Bağlantı 3 gün geçerlidir.</p>
       {_buton(baglanti, "Şifremi belirle")}""")
     metin = f"Merhaba {ad},\n\n{okul} için rehber öğretmen hesabın oluşturuldu. Şifreni belirlemek için (3 gün geçerli):\n{baglanti}\n\nFilizyol"
     return konu, html, metin
