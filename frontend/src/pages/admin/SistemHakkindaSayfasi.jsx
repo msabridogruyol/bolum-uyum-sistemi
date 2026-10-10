@@ -316,10 +316,10 @@ export default function SistemHakkindaSayfasi() {
           Değerlendirme sırasında, sonucun güvenilirliğini artırmak için çok katmanlı bir izleme sistemi çalışır:
         </p>
         <Madde><b>Tam ekran zorunluluğu:</b> değerlendirme tam ekran modunda yapılır; çıkılırsa uyarı gösterilir ve olay kaydedilir</Madde>
-        <Madde><b>Kamera:</b> yalnızca öğrenci KVKK'da kamera iznini verdiyse ve başlamadan "ONAYLIYORUM" yazdıysa açılır; başlangıçtan kısa süre sonra ve <b>her 4 soruda bir</b> fotoğraf çekilir (yüz tanıma yapılmaz). İzni reddetmek cezasızdır, raporda "kamerasız" görünür. 180 günden eski fotoğraflar uygulama her açıldığında silinir</Madde>
+        <Madde><b>Kamera:</b> yalnızca öğrenci KVKK'da kamera iznini verdiyse ve başlamadan "ONAYLIYORUM" yazdıysa açılır; başlangıçtan kısa süre sonra ve <b>her 4 soruda bir</b> fotoğraf çekilir (yüz tanıma yapılmaz). İzni reddetmek cezasızdır, raporda "kamerasız" görünür. 180 günden eski fotoğraflar açılışta ve sunucu açıkken 6 saatte bir silinir</Madde>
         <Madde><b>Davranış izleme:</b> tam ekrandan çıkma, sekme değiştirme, pencere odağı kaybı, ikinci ekran, ekran görüntüsü tuşu, kopyalama denemesi ve kameranın kapanması zaman damgalı kaydedilir; ihlal öğrenciye anında gösterilir</Madde>
         <Madde><b>Güven Skoru:</b> 0,5 × kontrol soru skoru + 0,5 × olay skoru; olay skoru = max(0, 100 − Σceza). Cezalar: tam ekrandan çıkma 10, sekme 10, odak kaybı 5, ikinci ekran 15, ekran görüntüsü tuşu 10, kopyalama 5, kamera kapandı 5; "geri dönüldü" olayları ve kamera reddi cezasız</Madde>
-        <Madde>Eşik <code>guven_skoru_esigi</code> parametresinden okunur (varsayılan <b>50</b>); altında kalan tur "geçersiz" etiketlenir (silinmez). Bilinen eksik: öğrencinin sonuç ekranı bu etiketi kontrol etmez — geçersiz turun sonuçları öğrenciye yine gösterilir; etiket admin, okul paneli ve raporlarda görünür</Madde>
+        <Madde>Eşik <code>guven_skoru_esigi</code> parametresinden okunur (varsayılan <b>50</b>); altında kalan tur "geçersiz" etiketlenir (silinmez). Geçersiz turda öğrenci sonuçlarını görür; Ana Sayfa ve sonuç ekranlarında "Bu değerlendirme doğrulanamadı" uyarısı çıkar ve yeniden değerlendirme bekleme süresi uygulanmaz (öğrenci hemen yeni tur başlatabilir). Etiket okul paneli, raporlar ve Güvenlik / Tutarlılık ekranında da görünür.</Madde>
         <Madde>Tüm bu veriler admin panelindeki <b>Güvenlik / Tutarlılık</b> sayfasından, tur bazında incelenebilir</Madde>
       </Bolum>
 
@@ -353,6 +353,8 @@ export default function SistemHakkindaSayfasi() {
       </Bolum>
 
       <Bolum ikon="🕓" baslik="12. Son Güncellemeler">
+        <Madde><b>KVKK metni v3:</b> ayrı "rehber öğretmenle paylaşım" onayı kaldırıldı; sonuçların okul yetkililerine gösterilmesi zorunlu analiz rızasının kapsamına alındı (kod zaten her durumda gösteriyordu). Sürüm değiştiği için tüm kullanıcılar bir sonraki girişte yeniden onay verir</Madde>
+        <Madde><b>Geçersiz tur:</b> öğrenciye "doğrulanamadı" uyarısı gösterilir; geçersiz turdan sonra yeniden değerlendirme bekleme süresi uygulanmaz</Madde>
         <Madde><b>ESCO geçişi:</b> meslek veri kaynağı 7.764 kayıtlı eski listeden, AB'nin resmi 3.039 kayıtlı ESCO sınıflandırmasına taşındı — hatalı eşleşmeler büyük ölçüde ortadan kalktı</Madde>
         <Madde><b>K5 yeniden kuruldu (2026-10-08, göç 0013):</b> eski 8 dallık yapı (A1-A9'a göre kümeleme, dal başına 7 değişken) yerine 17 üst alan, alan başına 4-11 iş türü ekseni (toplam 129) ve elle hazırlanmış bölüm–eksen bağları; alan açma kuralı K4 eşiğinden bölüm listesine geçti</Madde>
         <Madde><b>En çok / en az biçimi (0012):</b> SJT sorularında öğrenci en çok ve en az uyan şıkkı seçiyor</Madde>

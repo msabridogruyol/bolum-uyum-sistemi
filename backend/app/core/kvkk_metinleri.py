@@ -7,7 +7,8 @@ Metinde değişiklik yaptığınızda KVKK_SURUM değerini değiştirin (ör. "2
 böylece tüm kullanıcılardan bir sonraki girişte yeniden onay istenir.
 """
 
-KVKK_SURUM = "2026-10-v2"   # [2026-10-10] v2: rehberlik, anketler, tarama formları, portfolyo, tercih, mezun, çalışma, bildirimler
+KVKK_SURUM = "2026-10-v3"   # [2026-10-10] v3: okul yetkililerine gösterim analiz rızasının kapsamına alındı, ayrı "rehber paylaşım" onayı kaldırıldı (kod zaten her durumda gösteriyordu).
+# [2026-10-10] v2: rehberlik, anketler, tarama formları, portfolyo, tercih, mezun, çalışma, bildirimler
 
 VERI_SORUMLUSU = "[VERİ SORUMLUSU — ŞİRKET UNVANI]"
 ADRES = "[ŞİRKET ADRESİ]"
@@ -32,14 +33,14 @@ AYDINLATMA_METNI = f"""KİŞİSEL VERİLERİN İŞLENMESİNE İLİŞKİN AYDINLA
 • İşlem güvenliği: giriş kayıtları, IP adresi, değerlendirme sırasındaki sekme/tam ekran değişikliği kayıtları.
 
 2. İşleme amaçları
-Sana uygun üniversite bölümlerinin belirlenmesi ve sıralanması; hedef bölümüne yönelik kişisel gelişim planı ve haftalık görevlerin hazırlanması; koçluk asistanının sana özel cevap verebilmesi; değerlendirme sonuçlarının güvenilirliğinin sağlanması; çalışma ve deneme takibinin, tercih listesi hazırlığının ve özgeçmiş (portfolyo) oluşturmanın sağlanması; okulunun rehberlik hizmetini yürütebilmesi (görüşme kayıtları, destek gerekebilecek öğrencilerin erken fark edilmesi, anket ve tarama formları, tercih listesinin incelenmesi, mezunların yerleştiği programların takibi); sana bildirim ve e-posta gönderilmesi; hesabının güvenliği (2 adımlı doğrulama, şifre sıfırlama); onay vermen halinde sonuçlarının okulundaki rehber öğretmenle paylaşılması; okulların ve kurumların kendi öğrencileri hakkında toplu (istatistiksel) raporlar alabilmesi; yasal yükümlülüklerin yerine getirilmesi.
+Sana uygun üniversite bölümlerinin belirlenmesi ve sıralanması; hedef bölümüne yönelik kişisel gelişim planı ve haftalık görevlerin hazırlanması; koçluk asistanının sana özel cevap verebilmesi; değerlendirme sonuçlarının güvenilirliğinin sağlanması; çalışma ve deneme takibinin, tercih listesi hazırlığının ve özgeçmiş (portfolyo) oluşturmanın sağlanması; okulunun rehberlik hizmetini yürütebilmesi (görüşme kayıtları, destek gerekebilecek öğrencilerin erken fark edilmesi, anket ve tarama formları, tercih listesinin incelenmesi, mezunların yerleştiği programların takibi); sana bildirim ve e-posta gönderilmesi; hesabının güvenliği (2 adımlı doğrulama, şifre sıfırlama); değerlendirme sonuçlarının ve ilerleme bilgilerinin okulunun yetkili öğretmenlerine (rehber öğretmen dahil) gösterilmesi; okulların ve kurumların kendi öğrencileri hakkında toplu (istatistiksel) raporlar alabilmesi; yasal yükümlülüklerin yerine getirilmesi.
 Tarama formları tanı koymaz ve tek başına seninle ilgili bir karar vermek için kullanılmaz; yalnızca rehber öğretmeninin sana destek olması için yol gösterir.
 
 3. Hukuki sebepler
-Hizmetin sunulması için zorunlu veriler KVKK md. 5/2-(c) (sözleşmenin kurulması ve ifası) ve 5/2-(f) (meşru menfaat); kişilik ve ilgi analizine dayanan değerlendirme sonuçları, isimli tarama formlarının sonuçları, kamera fotoğrafları, rehber öğretmenle paylaşım ve yurt dışına aktarım ise md. 5/1 ve 9 kapsamında AÇIK RIZAN ile işlenir. Okulunun rehber öğretmeninin girdiği görüşme kayıtları ve notları bakımından okulun kendisi veri sorumlusudur; Şirket bu kayıtları okul adına ve okulun talimatıyla saklayan veri işleyen konumundadır.
+Hizmetin sunulması için zorunlu veriler KVKK md. 5/2-(c) (sözleşmenin kurulması ve ifası) ve 5/2-(f) (meşru menfaat); kişilik ve ilgi analizine dayanan değerlendirme sonuçları, isimli tarama formlarının sonuçları, bu sonuçların okulunun yetkili öğretmenlerine gösterilmesi, kamera fotoğrafları ve yurt dışına aktarım ise md. 5/1 ve 9 kapsamında AÇIK RIZAN ile işlenir. Okulunun rehber öğretmeninin girdiği görüşme kayıtları ve notları bakımından okulun kendisi veri sorumlusudur; Şirket bu kayıtları okul adına ve okulun talimatıyla saklayan veri işleyen konumundadır.
 
 4. Aktarım
-Verilerin; Sistem'in barındırıldığı bulut hizmet sağlayıcılarına (veritabanı, sunucu ve web barındırma), e-posta ve bildirim gönderimi için kullanılan e-posta hizmetine ve — okulunun paketinde yapay zekâlı koçluk varsa — koçluk sohbetleri için yapay zekâ hizmet sağlayıcısına (OpenAI) aktarılır. Bu sağlayıcıların sunucuları yurt dışında bulunabilir. Onay vermen halinde değerlendirme sonuçların ve ilerleme bilgilerin okulundaki yetkili rehber öğretmenle paylaşılır. Okulunun yetkilileri; okulun yüklediği deneme sonuçlarını, rehberlik görüşme kayıtlarını, isimli anket ve tarama formu sonuçlarını, portfolyo kayıtlarını (onaylamak için) ve rehbere gönderdiğin tercih listeni görür. Anonim anketlerin sonuçları okula yalnızca en az 5 kişilik gruplar halinde, toplu olarak gösterilir. Okul ve kurum raporlarında yalnızca toplu sayılar kullanılır. Şirket'in yetkili personeli bu verilere yalnızca teknik destek ve güvenlik amacıyla, gerektiği ölçüde ve kayıt altında erişebilir. Yasal zorunluluk halinde yetkili kamu kurumlarıyla paylaşılabilir.
+Verilerin; Sistem'in barındırıldığı bulut hizmet sağlayıcılarına (veritabanı, sunucu ve web barındırma), e-posta ve bildirim gönderimi için kullanılan e-posta hizmetine ve — okulunun paketinde yapay zekâlı koçluk varsa — koçluk sohbetleri için yapay zekâ hizmet sağlayıcısına (OpenAI) aktarılır. Bu sağlayıcıların sunucuları yurt dışında bulunabilir. Değerlendirme sonuçların ve ilerleme bilgilerin okulunun yetkili öğretmenlerine (rehber öğretmen dahil) gösterilir. Okulunun yetkilileri; okulun yüklediği deneme sonuçlarını, rehberlik görüşme kayıtlarını, isimli anket ve tarama formu sonuçlarını, portfolyo kayıtlarını (onaylamak için) ve rehbere gönderdiğin tercih listeni görür. Anonim anketlerin sonuçları okula yalnızca en az 5 kişilik gruplar halinde, toplu olarak gösterilir. Okul ve kurum raporlarında yalnızca toplu sayılar kullanılır. Şirket'in yetkili personeli bu verilere yalnızca teknik destek ve güvenlik amacıyla, gerektiği ölçüde ve kayıt altında erişebilir. Yasal zorunluluk halinde yetkili kamu kurumlarıyla paylaşılabilir.
 
 5. Toplama yöntemi
 Veriler Sistem'e kayıt olurken, profilini doldururken, değerlendirmeleri çözerken ve Sistem'i kullanırken elektronik ortamda toplanır.
@@ -58,14 +59,12 @@ Başvuruların için: {ILETISIM_EPOSTA} — {ADRES}
 ONAY_MADDELERI = [
     ("aydinlatma", "Aydınlatma metnini okudum ve anladım.",
      "Kişisel verilerinin nasıl işlendiğini anlatan metni okuduğunu belirtir.", True),
-    ("acik_riza_analiz", "Değerlendirme cevaplarımın ve kişilik/ilgi analizimin yapılmasına ve saklanmasına açık rıza veriyorum.",
-     "Bölüm önerileri ve koçluk bu analize dayandığı için sistemi kullanmak için gereklidir.", True),
+    ("acik_riza_analiz", "Değerlendirme cevaplarımın ve kişilik/ilgi analizimin yapılmasına, saklanmasına ve sonuçlarımın okulumun yetkili öğretmenleriyle (rehber öğretmen dahil) paylaşılmasına açık rıza veriyorum.",
+     "Bölüm önerileri, koçluk ve okulunun rehberlik hizmeti bu analize dayandığı için sistemi kullanmak için gereklidir.", True),
     ("yurt_disi_aktarim", "Verilerimin, yurt dışında sunucuları bulunabilen bulut ve yapay zekâ hizmet sağlayıcılarına aktarılmasına açık rıza veriyorum.",
      "Sistem bulutta çalıştığı ve Filiz Gelişim Koçu bir yapay zekâ hizmeti kullandığı için gereklidir.", True),
     ("veli_beyani", "18 yaşından küçüksem, sistemi velimin bilgisi ve onayıyla kullandığımı beyan ederim.",
      "Reşit olmayan kullanıcılar için veli bilgisi gereklidir.", True),
-    ("rehber_paylasim", "Sonuçlarımın ve ilerleme bilgilerimin okulumdaki rehber öğretmenle paylaşılmasına açık rıza veriyorum.",
-     "İsteğe bağlı. Vermezsen rehber öğretmenin yalnızca hesabının var olduğunu görür, sonuçlarını göremez.", False),
     ("kamera", "Değerlendirme sırasında kimlik doğrulama amacıyla kameramla fotoğraf çekilmesine açık rıza veriyorum.",
      "İsteğe bağlı. Vermezsen değerlendirmeler kamera kullanılmadan yapılır.", False),
 ]

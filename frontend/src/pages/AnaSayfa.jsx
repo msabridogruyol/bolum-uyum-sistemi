@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import GecersizTurUyarisi from '../components/GecersizTurUyarisi'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import HaftalikGorevler from '../components/HaftalikGorevler'
@@ -120,6 +121,8 @@ export default function AnaSayfa() {
           </div>
         )}
       </div>
+
+      <GecersizTurUyarisi ozet={ozet} />
 
       <BugunPaneli ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} motivasyon={motivasyon} kocluk={kocluk} />
 

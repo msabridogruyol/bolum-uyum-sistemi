@@ -935,7 +935,7 @@ Deneme/tanıtım için açılan hesaplarda öğrencinin yerine soruları gerçek
 
 Öğrenciye gösterilen kişisel veri aydınlatma metni ve girişte istenen rıza/beyan maddeleri.
 
-**Nasıl:** Şablon metin (veri sorumlusu, adres, e-posta köşeli parantezli yer tutucu; hukukçu kontrolü notu), sürüm 2026-10-v2 (değişince herkesten yeniden onay). 7 bölüm: işlenen veriler, amaçlar, hukuki sebepler (md. 5/2-c, 5/2-f, açık rıza), aktarım (yurt dışı bulut ve OpenAI), toplama, saklama (kamera fotoğrafı en geç 6 ay), md. 11 hakları; 18 yaş altı veli bilgisi. 6 onay maddesi, 4'ü zorunlu (aydınlatma, analiz açık rızası, yurt dışı aktarım, veli beyanı), 2'si isteğe bağlı (rehberle paylaşım, kamera). 'rehber_paylasim' rızası kodda başka bir yerde kontrol edilmiyor.
+**Nasıl:** Şablon metin (veri sorumlusu, adres, e-posta köşeli parantezli yer tutucu; hukukçu kontrolü notu), sürüm 2026-10-v2 (değişince herkesten yeniden onay). 7 bölüm: işlenen veriler, amaçlar, hukuki sebepler (md. 5/2-c, 5/2-f, açık rıza), aktarım (yurt dışı bulut ve OpenAI), toplama, saklama (kamera fotoğrafı en geç 6 ay), md. 11 hakları; 18 yaş altı veli bilgisi. 5 onay maddesi, 4'ü zorunlu (aydınlatma, analiz ve okul yetkilileriyle paylaşım açık rızası, yurt dışı aktarım, veli beyanı), 1'i isteğe bağlı (kamera). Metin sürümü 2026-10-v3: sonuçların okul yetkililerine gösterilmesi zorunlu analiz rızasının kapsamındadır; ayrı paylaşım onayı yoktur.
 
 **Dayanak:**
 
@@ -944,7 +944,7 @@ Deneme/tanıtım için açılan hesaplarda öğrencinin yerine soruları gerçek
 - [69] Kişisel Verileri Koruma Kurulu, 2026 — Açık rıza metninin aydınlatma metninden ayrı düzenlenmesi ve ayrı beyan alınması gerektiğini söyler; 6 onay maddesinin aydınlatma teyidinden ayrı tutulmasını doğrudan destekler.
 - [21] Ceza Muhakemesi Kanunu ile Bazı Kanunlarda Değişiklik Yap…, 2024 — KVKK md. 9'u değiştirerek yurt dışına aktarımı yeterlilik kararı/uygun güvence/arızi aktarım düzenine bağlamıştır; yurt dışı bulut ve OpenAI aktarımının yalnızca açık rızaya dayandırılmasının yeniden değerlendirilmesi gerektiğini gösterir.
 
-> Kısmi dayanak: metnin yapısı mevzuata dayanır; sürümleme (2026-10-v2), 6 aylık fotoğraf saklama ifadesi ve maddelerin zorunlu/isteğe bağlı ayrımı kurum içi karardır. Metin yer tutuculu şablondur ve hukukçu kontrolü gerekir. 7499 sonrası yurt dışı aktarımda açık rıza yalnızca arızi aktarım için geçerli bir sebeptir; sürekli bulut aktarımı için standart sözleşme vb. güvence gerekebilir. 'rehber_paylasim' rızasının kodda kontrol edilmemesi açık rıza ilkesine aykırı bir boşluktur. Kodda kamera saklama 180 gün iken metin 'en geç 6 ay' diyor; tutarlı olmalıdır. GDPR md. 22 karşılaştırma için ilgili olsa da sistem Türkiye'de işletildiğinden ana dayanak KVKK'dır.
+> Kısmi dayanak: metnin yapısı mevzuata dayanır; sürümleme (2026-10-v2), 6 aylık fotoğraf saklama ifadesi ve maddelerin zorunlu/isteğe bağlı ayrımı kurum içi karardır. Metin yer tutuculu şablondur ve hukukçu kontrolü gerekir. 7499 sonrası yurt dışı aktarımda açık rıza yalnızca arızi aktarım için geçerli bir sebeptir; sürekli bulut aktarımı için standart sözleşme vb. güvence gerekebilir.GDPR md. 22 karşılaştırma için ilgili olsa da sistem Türkiye'de işletildiğinden ana dayanak KVKK'dır.
 
 ### Hesap güvenliği
 
@@ -965,7 +965,7 @@ Deneme/tanıtım için açılan hesaplarda öğrencinin yerine soruları gerçek
 
 Tam ekran zorunluluğu, sekme/odak/ikinci ekran/ekran görüntüsü/kopyalama takibi ve rızaya bağlı kamera fotoğrafı.
 
-**Nasıl:** İhlaller öğrenciye anında gösterilir ve güven puanına cezaya göre yansır; kamera izni verildiyse her 4 soruda bir fotoğraf (FOTOGRAF_ARALIGI_SORU); başlamadan 'ONAYLIYORUM' yazılı onay; reddetmek cezasız ve raporda 'kamerasız' görünür; 180 günden eski fotoğraflar uygulama her uyandığında silinir; admin turları ve fotoğrafları Güvenlik/Tutarlılık ekranında inceler.
+**Nasıl:** İhlaller öğrenciye anında gösterilir ve güven puanına cezaya göre yansır; kamera izni verildiyse her 4 soruda bir fotoğraf (FOTOGRAF_ARALIGI_SORU); başlamadan 'ONAYLIYORUM' yazılı onay; reddetmek cezasız ve raporda 'kamerasız' görünür; 180 günden eski fotoğraflar açılışta ve sunucu açıkken 6 saatte bir silinir; admin turları ve fotoğrafları Güvenlik/Tutarlılık ekranında inceler.
 
 **Dayanak:**
 
