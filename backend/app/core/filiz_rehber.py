@@ -30,7 +30,7 @@ SORU_KATEGORILERI = [
         "Bu hafta neye odaklanmalıyım?", "Hedef bölümümü değiştirebilir miyim?"]},
     {"ad": "Gelişim", "ikon": "🌱", "sorular": [
         "Okuyabileceğim bir kitap önerir misin?", "İzleyebileceğim bir belgesel önerir misin?",
-        "Kütüphanemde neler var?", "Hangi kulübe katılmalıyım?"]},
+        "Kütüphanemde neler var?", "Hangi kulübe katılmalıyım?", "Netlerim hedefime göre nasıl?"]},
     {"ad": "Motivasyon ve çalışma", "ikon": "💪", "sorular": [
         "YKS'ye kaç gün kaldı?", "Sınav kaygısıyla nasıl başa çıkarım?", "Nasıl daha verimli ders çalışırım?",
         "Motivasyonum düştü, ne yapmalıyım?", "Bölüm seçiminde kararsızım, ne yapmalıyım?"]},
@@ -467,7 +467,33 @@ def k_yks(b: Baglam, m: str) -> str:
             "Ana sayfadaki sayaçtan her gün takip edebilirsin.")
 
 
+def k_net(b: Baglam, m: str) -> str:
+    """[2026-10-10] Net takibi özeti: son denemeler ve hedef programa göre en büyük açık."""
+    from app.api.net_takibi import kiyas_hesapla
+    from sqlalchemy import text as _t
+    sayi = b.db.execute(_t("SELECT count(*) FROM ogrenci_denemeleri WHERE ogrenci_id = :o"), {"o": b.o.id}).scalar() or 0
+    if not sayi:
+        return ("Henüz deneme kaydın yok. Net Takibi sayfasından çözdüğün denemenin doğru / yanlış sayılarını girersen "
+                "netlerini grafikte izler, hedef üniversitene geçen yıl yerleşen öğrenciyle karşılaştırabilirim.")
+    k = kiyas_hesapla(b.db, b.o)
+    h = k.get("hedef")
+    if not h or k.get("toplam_ben") is None or k.get("toplam_hedef") is None:
+        return (f"{sayi} deneme kaydın var. Net Takibi → Hedefe Göre'den hedef üniversiteni seçersen netlerini "
+                "o programa geçen yıl yerleşen son öğrenciyle ders ders karşılaştırırım.")
+    acik = round(k["toplam_hedef"] - k["toplam_ben"], 2)
+    ilk = (k.get("en_buyuk_acik") or [None])[0]
+    if acik <= 0:
+        return (f"Son denemelerinin ortalaması ({k['toplam_ben']}) {h['universite']} {h['program']} programına {k.get('yil')} yılında "
+                "yerleşen son öğrencinin netlerinin üstünde 👏 Bu temponu korumak için deneme ritmini bozma.")
+    return (f"Son denemelerinin ortalaması {k['toplam_ben']} net; {h['universite']} programına {k.get('yil')} yılında yerleşen son "
+            f"öğrenci {k['toplam_hedef']} netle girdi. Aradaki fark {acik} net"
+            + (f" ve en büyük açık {ilk['ad']} dersinde ({ilk['fark']})." if ilk else ".")
+            + " Net Takibi → Konu Takibi'nde bu dersin bitmeyen konularından başlamanı öneririm. "
+              "Unutma: bu netler tek bir kişiye ait ve diploma notu da etkili; yön gösterici bir hedef.")
+
+
 KONULAR = [
+    (("netlerim", "netim ", "denemelerim", "deneme sonuc", "net takib", "kac net", "hedef net"), k_net),
     (("yks'ye kac", "yksye kac", "yks kac", "yks ne zaman", "yks'ye ne kadar", "sinava kac", "sinava ne kadar", "yks geri sayim"), k_yks),
     (("tesekkur", "sagol", "sag ol", "eyvallah", "cok iyi", "super"), k_tesekkur),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),

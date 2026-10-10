@@ -129,6 +129,9 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🎯 Koçluğum
         </NavLink>
+        <NavLink to="/netlerim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          📈 Net Takibi
+        </NavLink>
         <NavLink to="/gorevler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           ✅ Görevlerim
         </NavLink>

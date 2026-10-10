@@ -756,7 +756,28 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
         "listem": _listem(db, o),
         "kayitlar": _ogrenci_kayitlari(db, o, katmanlar),
         "kocluk": _kocluk_ozeti(db, o),
+        "netler": _net_ozeti(db, o),
     }
+
+
+def _net_ozeti(db: Session, o: Ogrenci) -> dict:
+    """[2026-10-10] Rehber öğretmen için: deneme sonuçları, konu ilerlemesi ve hedef programa göre kıyas."""
+    try:
+        from app.api.net_takibi import kiyas_hesapla
+        denemeler = [{"tarih": r.tarih, "oturum": r.oturum, "ad": r.ad, "toplam_net": float(r.toplam_net)}
+                     for r in db.execute(text("SELECT tarih, oturum, ad, toplam_net FROM ogrenci_denemeleri WHERE ogrenci_id = :o "
+                                              "ORDER BY tarih DESC, id DESC LIMIT 30"), {"o": o.id}).all()]
+        konu = db.execute(text("SELECT count(*) FILTER (WHERE durum IN ('bitti','tekrar')), count(*) FROM ogrenci_konu_takibi "
+                               "WHERE ogrenci_id = :o"), {"o": o.id}).first()
+        k = kiyas_hesapla(db, o) if denemeler else None
+        h = (k or {}).get("hedef")
+        return {"denemeler": denemeler, "konu_biten": int(konu[0] or 0), "konu_isaretli": int(konu[1] or 0),
+                "hedef": {"universite": h["universite"], "program": h["program"], "yil": k.get("yil"),
+                          "toplam_ben": k.get("toplam_ben"), "toplam_hedef": k.get("toplam_hedef"),
+                          "en_buyuk_acik": k.get("en_buyuk_acik")} if h else None}
+    except Exception:
+        db.rollback()
+        return {"denemeler": [], "konu_biten": 0, "konu_isaretli": 0, "hedef": None}
 
 
 def _kocluk_ozeti(db: Session, o: Ogrenci) -> dict:
