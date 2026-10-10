@@ -13,6 +13,7 @@ import MeslekDiliDuzenleyici from '../../components/yonetim/MeslekDiliDuzenleyic
 import OkulTemaKarti from '../../components/yonetim/OkulTemaKarti'
 import AkranSekmesi from '../../components/yonetim/AkranPaneli'
 import KulupYonetimi from '../../components/yonetim/KulupYonetimi'
+import KocYonetimi from '../../components/yonetim/KocYonetimi'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -437,7 +438,7 @@ export default function OkulPaneliSayfasi() {
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
 
   const sekmeler = [['ozet', 'Özet'], ['ogrenciler', `Öğrenciler (${oz.toplam})`], ['akran', 'Şube & Akran'],
-    ...(okulId ? [['kulupler', 'Kulüpler'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
+    ...(okulId ? [['kulupler', 'Kulüpler'], ['koclar', 'Koçlar'], ['bilgiler', 'Okul Bilgileri'], ['yetkililer', `Okul Yetkilileri (${oz.yetkili_sayisi})`], ['meslekdili', 'Meslek Dili'], ['gorunum', 'Görünüm']] : []), ['kayitlar', 'Kayıtlar']]
   return (
     <div className="pg pg-genis">
       {superAdmin && <Link to="/admin/okullar" className="yp-geri">← Okullar</Link>}
@@ -459,6 +460,7 @@ export default function OkulPaneliSayfasi() {
       {sekme === 'ogrenciler' && <OgrencilerSekmesi okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
       {sekme === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
+      {sekme === 'koclar' && okulId > 0 && <KocYonetimi okulId={okulId} />}
       {sekme === 'bilgiler' && <OkulBilgileriSekmesi okulId={okulId} />}
       {sekme === 'yetkililer' && <YetkililerSekmesi okulId={okulId} superAdmin={superAdmin} />}
       {sekme === 'meslekdili' && okulId > 0 && <MeslekDiliDuzenleyici okulId={okulId} />}

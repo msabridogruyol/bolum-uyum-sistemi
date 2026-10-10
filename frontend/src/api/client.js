@@ -172,6 +172,16 @@ export const api = {
   kulupSil: (id) => adel(`/yonetim/kulup/${id}`),
   kulupOgrencileri: (id) => aget(`/yonetim/kulup/${id}/ogrenciler`),
   ogrenciIlgi: (id) => aget(`/yonetim/ogrenci/${id}/ilgi`),
+  // [2026-10-10] Anlaşmalı eğitim koçları
+  koclar: () => get('/ogrenci/koclar'),
+  kocTalebi: (kocId, veri) => post(`/ogrenci/koclar/${kocId}/talep`, veri),
+  kocTalebiIptal: (id) => post(`/ogrenci/koc-talep/${id}/iptal`),
+  yonetimKoclar: (okulId) => aget(`/yonetim/koclar${okulId ? `?okul_id=${okulId}` : ''}`),
+  kocEkle: (veri) => apost('/yonetim/koclar', veri),
+  kocDuzenle: (id, veri) => aput(`/yonetim/koc/${id}`, veri),
+  kocSil: (id) => adel(`/yonetim/koc/${id}`),
+  kocTalepleri: (okulId) => aget(`/yonetim/koc-talepleri${okulId ? `?okul_id=${okulId}` : ''}`),
+  kocTalebiGuncelle: (id, veri) => aput(`/yonetim/koc-talep/${id}`, veri),
   guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),
