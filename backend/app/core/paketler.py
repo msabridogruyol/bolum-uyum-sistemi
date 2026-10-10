@@ -28,6 +28,8 @@ MODULLER = {
     "net_takibi": {"ad": "Net takibi", "ikon": "📈", "aciklama": "Deneme netleri, konu takibi, hedef üniversiteye göre net kıyası"},
     "akran": {"ad": "Şube ve akran analizi", "ikon": "🤝", "aciklama": "Benzer akranlar, şube dağılımı önerisi, aday öğrenci uyumu"},
     "egitim_koclari": {"ad": "Eğitim koçları", "ikon": "👩‍🏫", "aciklama": "Anlaşmalı eğitim koçlarıyla görüşme talebi"},
+    "rehberlik": {"ad": "Rehberlik ve erken uyarı", "ikon": "🧭", "aciklama": "Görüşme kayıtları, randevular, takipler ve dikkat gerektiren öğrenciler listesi"},
+    "ogrenci_raporlari": {"ad": "Öğrenci raporları", "ikon": "📄", "aciklama": "Öğrenci kendi raporunu ve velisine göstereceği veli raporunu hesabından indirir (Raporlarım)"},
     "gelismis_raporlar": {"ad": "Gelişmiş raporlar", "ikon": "🗂️", "aciklama": "Şube toplu raporları ve sınıf öğretmeni raporu"},
 }
 TUMU = list(MODULLER)
@@ -110,6 +112,9 @@ def okul_modulu(kod: str):
             elif "uyelik_id" in p:
                 okul_id = db.execute(text("SELECT k.okul_id FROM kulup_uyelikleri u JOIN okul_kulupleri k ON k.id = u.kulup_id "
                                           "WHERE u.id = :i"), {"i": int(p["uyelik_id"])}).scalar()
+            elif "gorusme_id" in p:
+                okul_id = db.execute(text("SELECT o.okul_id FROM rehberlik_gorusmeleri g JOIN ogrenciler o ON o.id = g.ogrenci_id "
+                                          "WHERE g.id = :i"), {"i": int(p["gorusme_id"])}).scalar()
             elif "duyuru_id" in p:
                 okul_id = db.execute(text("SELECT k.okul_id FROM kulup_duyurulari d JOIN okul_kulupleri k ON k.id = d.kulup_id "
                                           "WHERE d.id = :i"), {"i": int(p["duyuru_id"])}).scalar()

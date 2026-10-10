@@ -184,12 +184,22 @@ export const api = {
   motivasyonGetir: () => get('/ogrenci/motivasyon'),
   // [2026-10-10] Paketler
   ogrenciModulleri: () => get('/ogrenci/moduller'),
+  kendiRaporum: (tur, bicim = 'pdf', netler = true) => dosyaIndir(`/ogrenci/rapor?tur=${tur}&bicim=${bicim}&netler=${netler}`),
   paketler: () => aget('/yonetim/paketler'),
   paketEkle: (v) => apost('/yonetim/paketler', v),
   paketDuzenle: (kod, v) => aput(`/yonetim/paketler/${kod}`, v),
   paketSil: (kod) => adel(`/yonetim/paketler/${kod}`),
   okulPaketi: (okulId) => aget(`/yonetim/okul/${okulId}/paket`),
   okulPaketiKaydet: (okulId, v) => aput(`/yonetim/okul/${okulId}/paket`, v),
+  // [2026-10-10] Rehberlik ve erken uyarı
+  erkenUyari: (okulId) => aget(`/yonetim/okul/${okulId}/erken-uyari`),
+  riskErtele: (ogrenciId, kural, gun = 14) => apost(`/yonetim/ogrenci/${ogrenciId}/risk-ertele`, { kural, gun }),
+  okulGorusmeleri: (okulId, gun = 90) => aget(`/yonetim/okul/${okulId}/gorusmeler?gun=${gun}`),
+  gorusmeExcel: (okulId) => dosyaIndir(`/yonetim/okul/${okulId}/gorusmeler/excel`, 'admin'),
+  ogrenciGorusmeleri: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/gorusmeler`),
+  gorusmeEkle: (ogrenciId, v) => apost(`/yonetim/ogrenci/${ogrenciId}/gorusmeler`, v),
+  gorusmeDuzenle: (id, v) => aput(`/yonetim/gorusme/${id}`, v),
+  gorusmeSil: (id) => adel(`/yonetim/gorusme/${id}`),
   // [2026-10-10] Net takibi
   netYapi: () => get('/ogrenci/net/yapi'),
   netDenemeler: () => get('/ogrenci/net/denemeler'),
