@@ -31,7 +31,7 @@ export default function AnaSayfa() {
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
     api.aktifHedefGetir().then((h) => {
       setHedef(h)
-      if (h) api.gelisimPlaniGetir().then(setPlan).catch(() => setPlan(null))
+      if (h) api.gelisimPlaniGetir().then(setPlan).catch(() => setPlan(false))   // false = alınamadı (yükleniyor değil)
     }).catch(() => setHedef(null))
   }, [])
 
