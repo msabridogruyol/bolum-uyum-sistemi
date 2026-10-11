@@ -8,6 +8,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import token_coz
 from app.models import Ogrenci, AdminKullanici
+from app.core.okul_erisim import okul_acik_olmali, hesap_okulu_acik_olmali
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/giris")
 oauth2_opsiyonel = OAuth2PasswordBearer(tokenUrl="/auth/giris", auto_error=False)
@@ -35,6 +36,7 @@ def get_mevcut_ogrenci(
     ogrenci = db.get(Ogrenci, ogrenci_id)
     if ogrenci is None:
         raise _YETKISIZ
+    okul_acik_olmali(db, ogrenci.okul_id)   # [2026-10-11] okulun sistemi kapalıysa 423
     return ogrenci
 
 
@@ -79,6 +81,7 @@ def get_mevcut_yonetim(
     hesap = db.get(AdminKullanici, kid)
     if hesap is None or hesap.rol not in YONETIM_ROLLERI or hesap.aktif_mi is False or hesap.rol != payload.get("rol"):
         raise _YETKISIZ
+    hesap_okulu_acik_olmali(db, hesap, hesap.rol)   # [2026-10-11] okul yetkilisinin okulu kapalıysa 423
     return hesap
 
 

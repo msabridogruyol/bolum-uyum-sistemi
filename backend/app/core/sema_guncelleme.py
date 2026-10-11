@@ -24,6 +24,8 @@ OTOMATIK = ["0024_favori_bolum", "0025_test_hesaplari", "0026_guvenlik_olay_tipl
             "0035_koc_aracilik", "0036_kocluk_geri_bildirim_olcum", "0037_net_takibi", "0038_mor_renk", "0039_sinav_konulari", "0040_kulup_uyelik_duyuru", "0041_paketler", "0042_rehberlik", "0043_ogrenci_raporlari", "0044_okul_denemeleri", "0045_calisma", "0046_bildirimler", "0047_portfolyo", "0048_anketler", "0049_mezun_tercih", "0050_filiz_ai", "0051_simulasyon", "0052_katman_agirliklari", "0053_sayfa_ziyaretleri", "0054_is_hayati", "0055_is_hayati_beklenti", "0056_is_hayati_pratik", "0057_is_hayati_cv_mezun", "0058_ai_etkisi"]
 OTOMATIK += ["0060_hata_kayitlari"]   # [2026-10-11] hata kayıtları + hız sınırı parametreleri (ayrı satır: diğer göç eklemeleriyle çakışmasın)
 OTOMATIK += ["0061_filiz_yonetim_ai"]   # [2026-10-11] Filiz yönetim asistanı: günlük yapay zekâ sayacı
+OTOMATIK += ["0062_performans_indeksleri"]   # [2026-10-11] okul paneli / rehberlik sorguları için tur_id indeksleri
+OTOMATIK += ["0063_okul_erisim"]   # [2026-10-11] okul bazında sistem aç / kapat
 KILIT = 2026101001
 
 

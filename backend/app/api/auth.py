@@ -2,6 +2,8 @@
 Kimlik doğrulama uç noktaları — D1.
 POST /auth/kayit                 — [2026-10-09] KAPALI: hesapları süper admin / okul yetkilisi açar
 POST /auth/giris                 — e-posta+şifre; gerekiyorsa 2 adımlı doğrulama başlatır
+                                   [2026-10-11] Tek giriş ekranı: öğrenci, okul yetkilisi ve süper admin aynı uçtan girer;
+                                   cevaptaki kullanici_tipi (ogrenci | okul_yetkilisi | super_admin) arayüzün nereye gideceğini belirler
 POST /auth/iki-adim/dogrula      — e-postaya gelen kodla girişi tamamlar
 POST /auth/iki-adim/tekrar       — yeni kod gönderir
 POST /auth/yenile                — refresh token ile yeni access token
@@ -24,6 +26,7 @@ from app.core.security import (
 )
 from app.core.katman_servisi import IsKuraliHatasi
 from app.core import hesap_guvenligi_servisi as hg
+from app.core.okul_erisim import hesap_okulu_acik_olmali
 from app.models import Ogrenci, AdminKullanici
 from app.schemas.auth import (
     OgrenciKayitIstekV2, GirisIstekV2, GirisCevap, TokenCifti, YenilemeIstek, OgrenciProfil,
@@ -54,6 +57,7 @@ def _giris_kaydet(db: Session, hesap, rol: str) -> None:
 
 def giris_sonucu(db: Session, hesap, rol: str, cihaz_tokeni: str | None) -> GirisCevap:
     """Şifre doğrulandıktan sonra: 2 adım gerekiyorsa kod gönder, gerekmiyorsa token ver."""
+    hesap_okulu_acik_olmali(db, hesap, rol)   # [2026-10-11] okulun sistemi kapalıysa kod bile gönderilmez
     tip = _kullanici_tipi(rol)
     # [2026-10-10] Süper adminin açtığı test hesaplarında 2 adımlı doğrulama istenmez
     if not getattr(hesap, "test_hesabi", False) and hg.iki_adim_aktif_mi(db) and not hg.cihaz_guvenilir_mi(db, tip, hesap.id, cihaz_tokeni):
@@ -88,6 +92,9 @@ def gecici_tokeni_coz(db: Session, gecici_token: str, izinli_roller: set[str]):
 
 def iki_adim_tamamla(db: Session, istek: IkiAdimDogrulaIstek, izinli_roller: set[str]) -> GirisCevap:
     hesap, rol = gecici_tokeni_coz(db, istek.gecici_token, izinli_roller)
+    hesap_okulu_acik_olmali(db, hesap, rol)   # [2026-10-11] kod beklerken okul kapatılmış olabilir
+    if rol != "ogrenci" and hesap.aktif_mi is False:
+        raise HTTPException(status_code=403, detail="Hesabın devre dışı bırakılmış.")
     tip = _kullanici_tipi(rol)
     try:
         hg.dogrulama_kodunu_kontrol_et(db, tip, hesap.id, istek.kod)
@@ -138,9 +145,12 @@ def kayit_ol(istek: OgrenciKayitIstekV2, request: Request, db: Session = Depends
     return OgrenciProfil(id=str(ogrenci.id), ad_soyad=ogrenci.ad_soyad, email=ogrenci.email)
 
 
+TEK_GIRIS_ROLLERI = {"ogrenci", "okul_yetkilisi", "super_admin"}
+
+
 @router.post("/giris", response_model=GirisCevap)
 def giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
-    """Öğrenci girişi. [2026-10-09] Okul yetkilileri ve süper admin yönetim giriş sayfasını kullanır."""
+    """[2026-10-11] Tek giriş ekranı: öğrenci, okul yetkilisi ve süper admin. Okulu kapalı hesaplar 423 alır."""
     hata = HTTPException(status_code=401, detail="E-posta veya şifre hatalı.")
     email = istek.email.strip().lower()
 
@@ -154,19 +164,21 @@ def giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
         raise hata
 
     yonetici = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email).first()
-    if yonetici is not None and sifre_dogrula(istek.sifre, yonetici.sifre_hash):
-        raise HTTPException(status_code=403, detail="Bu bir yönetim hesabı. Lütfen yönetim girişini (/admin/giris) kullan.")
-    raise hata
+    if yonetici is None or yonetici.rol not in TEK_GIRIS_ROLLERI or not sifre_dogrula(istek.sifre, yonetici.sifre_hash):
+        raise hata
+    if yonetici.aktif_mi is False:
+        raise HTTPException(status_code=403, detail="Hesabın devre dışı bırakılmış.")
+    return giris_sonucu(db, yonetici, yonetici.rol, istek.yonetim_cihaz_tokeni)
 
 
 @router.post("/iki-adim/dogrula", response_model=GirisCevap)
 def iki_adim_dogrula(istek: IkiAdimDogrulaIstek, db: Session = Depends(get_db)):
-    return iki_adim_tamamla(db, istek, {"ogrenci"})
+    return iki_adim_tamamla(db, istek, TEK_GIRIS_ROLLERI)
 
 
 @router.post("/iki-adim/tekrar", status_code=204)
 def iki_adim_tekrar(istek: IkiAdimTekrarIstek, db: Session = Depends(get_db)):
-    kodu_tekrar_gonder(db, istek, {"ogrenci"})
+    kodu_tekrar_gonder(db, istek, TEK_GIRIS_ROLLERI)
 
 
 @router.post("/yenile", response_model=TokenCifti)
@@ -197,7 +209,7 @@ SIFIRLAMA_MESAJI = {"mesaj": "Bu e-posta adresi kayıtlıysa şifre sıfırlama 
 
 @router.post("/sifremi-unuttum")
 def sifremi_unuttum(istek: SifremiUnuttumIstek, request: Request, db: Session = Depends(get_db)):
-    hg.sifirlama_baglantisi_gonder(db, istek.email, "ogrenci", request.headers.get("origin"))
+    hg.sifirlama_baglantisi_gonder(db, istek.email, "tek", request.headers.get("origin"))   # [2026-10-11] okul yetkilisi de
     db.commit()
     return SIFIRLAMA_MESAJI
 

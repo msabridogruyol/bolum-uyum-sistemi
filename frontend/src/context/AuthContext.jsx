@@ -10,7 +10,8 @@ export function AuthProvider({ children }) {
   const [girisYapildi, setGirisYapildi] = useState(api.girisYapildiMi())
 
   const sonucuIsle = useCallback((sonuc) => {
-    if (sonuc?.erisim_tokeni && sonuc.kullanici_tipi !== 'rehber') setGirisYapildi(true)
+    // [2026-10-11] Yönetim hesabı (okul yetkilisi / süper admin) bu ekrandan girerse öğrenci oturumu açılmaz
+    if (sonuc?.erisim_tokeni && !['rehber', 'okul_yetkilisi', 'super_admin'].includes(sonuc.kullanici_tipi)) setGirisYapildi(true)
     return sonuc
   }, [])
 

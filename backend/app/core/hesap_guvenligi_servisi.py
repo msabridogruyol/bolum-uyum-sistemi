@@ -196,13 +196,15 @@ def _site_adresi(origin: str | None) -> str:
 
 
 def _hesap_bul(db: Session, email: str, kapsam: str):
-    """kapsam='ogrenci': öğrenci. kapsam='yonetim': süper admin ve okul yetkilileri (yönetim giriş sayfası)."""
+    """kapsam='ogrenci': öğrenci. kapsam='yonetim': süper admin ve okul yetkilileri (yönetim giriş sayfası).
+    [2026-10-11] kapsam='tek': ana giriş ekranı — önce öğrenci, yoksa yönetim hesabı (okul yetkilileri de oradan girer)."""
     email = (email or "").strip().lower()
-    if kapsam == "ogrenci":
+    if kapsam in ("ogrenci", "tek"):
         o = db.query(Ogrenci).filter(func.lower(Ogrenci.email) == email).first()
         if o:
             return "ogrenci", o
-        return (None, None)
+        if kapsam == "ogrenci":
+            return (None, None)
     a = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email, AdminKullanici.aktif_mi.is_(True)).first()
     return ("yonetim", a) if a else (None, None)
 
@@ -223,7 +225,7 @@ def sifirlama_baglantisi_gonder(db: Session, email: str, kapsam: str, origin: st
     db.add(SifreSifirlamaTokeni(kullanici_tipi=tip, kullanici_id=hesap.id, token_ozeti=_ozet(tok), amac="sifirlama",
                                 son_kullanma=_simdi() + SIFIRLAMA_GECERLILIK, olusturulma_zamani=_simdi()))
     db.flush()
-    yol = "/admin/sifre-sifirla" if kapsam == "yonetim" else "/sifre-sifirla"
+    yol = "/admin/sifre-sifirla" if tip == "yonetim" else "/sifre-sifirla"
     konu, html, metin = ep.sifre_sifirlama_epostasi((hesap.ad_soyad or "").split(" ")[0], f"{_site_adresi(origin)}{yol}?token={tok}")
     ep.eposta_gonder(hesap.email, konu, html, metin)
 

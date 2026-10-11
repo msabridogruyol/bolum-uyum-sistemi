@@ -85,7 +85,7 @@ function OzelRota({ children }) {
 
 function OzelAdminRota({ children }) {
   const { girisYapildi } = useAdminAuth()
-  return girisYapildi ? children : <Navigate to="/admin/giris" replace />
+  return girisYapildi ? children : <Navigate to="/giris" replace />   // [2026-10-11] tek giriş ekranı
 }
 
 function AnaUygulama() {

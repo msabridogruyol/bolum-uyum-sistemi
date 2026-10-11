@@ -114,36 +114,94 @@ def _kullanici_tipini_belirle(request: Request) -> str:
     return "anonim"
 
 
-class ZiyaretKaydiMiddleware(BaseHTTPMiddleware):
-    async def dispatch(self, request: Request, call_next):
-        yanit = await call_next(request)
+import queue as _queue
+import threading as _threading
 
-        yol = request.url.path
-        if yol in _HARIC_YOLLAR or request.method == "OPTIONS":
-            return yanit
+_ZIYARET_KUYRUGU: "_queue.Queue" = _queue.Queue(maxsize=20000)
 
+
+def _ziyaret_yazici():
+    """[2026-10-11] Ziyaret kayıtları arka planda, toplu (2 sn'de bir) yazılır; istek döngüsü veritabanını beklemez."""
+    import time as _t
+    while True:
+        _t.sleep(2)
+        satirlar = []
         try:
-            kullanici_tipi = _kullanici_tipini_belirle(request)
+            while len(satirlar) < 5000:
+                satirlar.append(_ZIYARET_KUYRUGU.get_nowait())
+        except _queue.Empty:
+            pass
+        if not satirlar:
+            continue
+        try:
             db = SessionLocal()
             try:
-                db.execute(
-                    text(
-                        "INSERT INTO sayfa_ziyaretleri (yol, metod, kullanici_tipi, durum_kodu) "
-                        "VALUES (:yol, :metod, :tip, :durum)"
-                    ),
-                    {"yol": yol[:255], "metod": request.method, "tip": kullanici_tipi, "durum": yanit.status_code},
-                )
+                db.execute(text("INSERT INTO sayfa_ziyaretleri (yol, metod, kullanici_tipi, durum_kodu) VALUES (:yol, :metod, :tip, :durum)"), satirlar)
                 db.commit()
             finally:
                 db.close()
         except Exception:
-            # Loglama hiçbir zaman asıl isteği etkilememeli — sessizce geç.
             pass
 
-        return yanit
+
+@app.on_event("startup")
+def _ziyaret_yaziciyi_baslat():
+    # Açılışta başlatılır (çok işçili sunucuda her işçi kendi yazıcısını açar; import anında başlatılsa fork'ta kaybolurdu)
+    _threading.Thread(target=_ziyaret_yazici, name="ziyaret-yazici", daemon=True).start()
+
+
+class ZiyaretKaydiMiddleware:
+    """Saf ASGI ara katmanı: yanıt durum kodunu yakalar, kaydı kuyruğa bırakır (bloklamaz)."""
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or scope.get("method") == "OPTIONS" or scope.get("path") in _HARIC_YOLLAR:
+            return await self.app(scope, receive, send)
+        durum = {"kod": 500}
+
+        async def yakala(mesaj):
+            if mesaj["type"] == "http.response.start":
+                durum["kod"] = mesaj["status"]
+            await send(mesaj)
+        try:
+            await self.app(scope, receive, yakala)
+        finally:
+            try:
+                basliklar = {k.decode("latin-1"): v.decode("latin-1") for k, v in scope.get("headers") or []}
+                yetki = basliklar.get("authorization", "")
+                tip = "anonim"
+                if yetki.startswith("Bearer "):
+                    payload = token_coz(yetki[7:].strip()) or {}
+                    tip = {"super_admin": "admin", "okul_yetkilisi": "admin", "ogrenci": "ogrenci"}.get(payload.get("rol"), "anonim")
+                _ZIYARET_KUYRUGU.put_nowait({"yol": scope.get("path", "")[:255], "metod": scope.get("method"), "tip": tip, "durum": durum["kod"]})
+            except Exception:
+                pass
 
 
 app.add_middleware(ZiyaretKaydiMiddleware)
+
+
+class EsZamanliIstekSiniri:
+    """[2026-10-11] Aynı anda işlenen istek sayısını DB havuzunun altında tutar. Fazlası olay döngüsünde (ucuz) bekler.
+    Neden: bağımlılıklar (get_db → get_mevcut_ogrenci) ile uç nokta farklı iş parçacıklarında çalışır; bağlantıyı tutan istek
+    iş parçacığı beklerken iş parçacıkları da bağlantı bekleyince sunucu kilitleniyordu."""
+    def __init__(self, app, sinir: int):
+        import asyncio
+        self.app = app
+        self.sem = asyncio.Semaphore(sinir)
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or scope.get("path") in _HARIC_YOLLAR:
+            return await self.app(scope, receive, send)
+        async with self.sem:
+            await self.app(scope, receive, send)
+
+
+import os as _os
+from app.core.database import HAVUZ_KAPASITESI as _HAVUZ
+# Sınır, bağlantı havuzunun altında kalmalı (hata kaydı gibi ikinci bağlantı açan işlere pay bırakılır)
+app.add_middleware(EsZamanliIstekSiniri, sinir=max(1, min(int(_os.environ.get("ES_ZAMANLI_ISTEK", "20")), _HAVUZ - 5)))
 
 
 @app.on_event("startup")

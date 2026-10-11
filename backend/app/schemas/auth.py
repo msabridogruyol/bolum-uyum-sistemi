@@ -44,6 +44,8 @@ class OgrenciKayitIstekV2(OgrenciKayitIstek):
 
 class GirisIstekV2(GirisIstek):
     cihaz_tokeni: str | None = None
+    # [2026-10-11] Tek giriş ekranı: aynı tarayıcıda yönetim hesabının "bu cihazı hatırla" anahtarı ayrı saklanır
+    yonetim_cihaz_tokeni: str | None = None
 
 
 class GirisCevap(BaseModel):

@@ -1,13 +1,15 @@
 import { useState } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { api } from '../api/client'
+import { useAdminAuth } from '../context/AdminAuthContext'
+import { api, yonetimHesabiMi, sistemKapaliMesajiAl } from '../api/client'
 import TemaAnahtari from '../components/TemaAnahtari'
 import KodDogrulamaAdimi from '../components/KodDogrulamaAdimi'
 import { KvkkOnayKutulari, AydinlatmaMetniPenceresi, useKvkkMetinleri, zorunlularTamamMi } from '../components/KvkkBilesenleri'
 
 // [2026-10-04] Kayıtta KVKK onayları, girişte 2 adımlı doğrulama, "Şifremi unuttum" bağlantısı.
-// Rehber öğretmenler (okul yetkilileri) yönetim giriş sayfasını (/admin/giris) kullanır.
+// [2026-10-11] Tek giriş ekranı: okul yetkilileri (ve süper admin) de buradan girer; yönetim hesabı yönetim paneline gider.
+// Okulun sistemi kapalıysa sunucunun mesajı gösterilir (açık oturum 423 aldığında da buraya yönlendirilir).
 export default function GirisSayfasi() {
   const [sekme, setSekme] = useState('giris') // 'giris' | 'kayit'
   const [adSoyad, setAdSoyad] = useState('')
@@ -15,17 +17,23 @@ export default function GirisSayfasi() {
   const [sifre, setSifre] = useState('')
   const [onaylar, setOnaylar] = useState({})
   const [metinAcik, setMetinAcik] = useState(false)
-  const [hata, setHata] = useState(null)
+  const [hata, setHata] = useState(() => sistemKapaliMesajiAl())
   const [yukleniyor, setYukleniyor] = useState(false)
   const [ikiAdim, setIkiAdim] = useState(null) // { gecici_token, maskeli_eposta }
 
   const kvkk = useKvkkMetinleri()
   const { girisYap, kayitOl, ikiAdimDogrula } = useAuth()
+  const { oturumuYenile } = useAdminAuth()
   const navigate = useNavigate()
 
   function yonlendir(sonuc) {
     if (sonuc?.iki_adim_gerekli) {
       setIkiAdim({ gecici_token: sonuc.gecici_token, maskeli_eposta: sonuc.maskeli_eposta })
+      return
+    }
+    if (yonetimHesabiMi(sonuc)) {
+      oturumuYenile()
+      navigate('/admin')
       return
     }
     navigate(sonuc?.kullanici_tipi === 'rehber' ? '/rehber' : '/')
@@ -107,7 +115,7 @@ export default function GirisSayfasi() {
 
             <div className="auth-foot">
               Hesabını okulun oluşturur. Giriş bilgilerini (e-posta ve geçici şifre) rehber öğretmeninden alabilirsin.
-              {' '}Rehber öğretmensen <Link to="/admin/giris" className="auth-link">yönetim girişini</Link> kullan.
+              {' '}Okul yetkilileri de bu ekrandan giriş yapar.
             </div>
           </>
         )}
