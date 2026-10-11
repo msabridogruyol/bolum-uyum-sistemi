@@ -48,6 +48,8 @@ from app.api.veli_sunumu import router as veli_sunumu_router   # [2026-10-11] /y
 from app.api.raporlar import router as raporlar_router
 from app.api.okul_istatistik import router as okul_istatistik_router   # [2026-10-10] okul paneli → İstatistikler
 from app.api.okul_tek_bakista import router as okul_tek_bakista_router   # [2026-10-10] Rapor Merkezi → Tek Bakışta
+from app.api.hazir_raporlar import router as hazir_raporlar_router
+from app.api.sozluk import router as sozluk_router
 from app.api.akran import router as akran_router
 from app.api.takvim import ogrenci_router as takvim_ogrenci_router, router as takvim_router
 from app.api.kutuphane import ogrenci_router as kutuphane_ogrenci_router, router as kutuphane_router
@@ -322,6 +324,8 @@ app.include_router(veli_sunumu_router)                      # [2026-10-11] veli 
 app.include_router(raporlar_router)                         # [2026-10-10] PDF / Excel raporlar
 app.include_router(okul_istatistik_router)                  # [2026-10-10] /yonetim/okul/{id}/istatistik (+ /excel)
 app.include_router(okul_tek_bakista_router)                 # [2026-10-10] /yonetim/okul/{id}/tek-bakista (+ /pdf)
+app.include_router(hazir_raporlar_router)                    # [2026-10-11] /yonetim/okul/{id}/hazir-raporlar
+app.include_router(sozluk_router)                            # [2026-10-11] /ogrenci/sozluk/ek (bölüm, meslek, özellik)
 app.include_router(kulup_router, dependencies=[_Dep(okul_modulu("kulupler"))])                            # [2026-10-10] okul kulüpleri
 app.include_router(kulup_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])                    # [2026-10-10] /ogrenci/ilgi-testi
 app.include_router(koc_router)                              # [2026-10-10] anlaşmalı eğitim koçları

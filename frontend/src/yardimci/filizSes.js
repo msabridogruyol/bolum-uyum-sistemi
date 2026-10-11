@@ -3,13 +3,18 @@
 //   Robotik masaüstü sesleri (ör. Windows "Microsoft Tolga/Seda Desktop") kullanılmaz; o cihazda yalnızca efekt sesleri çalar.
 // - Efektler: Web Audio ile üretilen kısa, yumuşak tonlar (dosya yok).
 // - Varsayılan kapalı; tarayıcılar ses için bir kullanıcı tıklaması ister, açma düğmesi bunu sağlar.
+// - [2026-10-11] Ses açıkken Filiz'in TÜM konuşmaları okunur: balon cümleleri, sayfa mesajları ve sohbet panelindeki cevaplar.
 
 const ANAHTAR = 'filiz_ses'
 const DOGAL = /(natural|neural|online|enhanced|premium|geli[sş]mi[sş]|google)/i
 const ROBOTIK = /(desktop|espeak|e-speak|festival|pico)/i
 
 export const sesAcikMi = () => { try { return localStorage.getItem(ANAHTAR) === '1' } catch { return false } }
-export const sesAyarla = (v) => { try { localStorage.setItem(ANAHTAR, v ? '1' : '0') } catch { /* gizli sekme */ } }
+export const sesAyarla = (v) => {
+  try { localStorage.setItem(ANAHTAR, v ? '1' : '0') } catch { /* gizli sekme */ }
+  // [2026-10-11] Filiz balonu ve sohbet panelleri aynı ayarı paylaşır
+  try { window.dispatchEvent(new CustomEvent('filiz-ses', { detail: { acik: !!v } })) } catch { /* yoksay */ }
+}
 
 let ses = undefined   // undefined: aranmadı · null: yok · SpeechSynthesisVoice
 function sesleriAra() {
@@ -41,14 +46,36 @@ export function dogalSesVarMi() {
 }
 
 const temizle = (m) => String(m || '')
+  .replace(/\*\*|__|`|#+\s|^\s*[-•]\s/gm, '')   // markdown işaretleri okunmasın
   .replace(/[\u{1F000}-\u{1FAFF}\u{2600}-\u{27BF}\u{FE0F}\u{200D}]/gu, '')   // emoji
   .replace(/[“”"]/g, '').replace(/\s+/g, ' ').trim()
+
+// [2026-10-11] Tarayıcılar, kullanıcı sayfaya hiç dokunmadan sesli okumaya izin vermez (sayfa yenilenince ilk selam
+// sessiz kalıyordu). Böyle bir durumda son cümle bekletilir ve kullanıcının ilk tıklamasında / tuşunda okunur.
+const EN_UZUN = 600   // uzun sohbet cevapları: ilk ~600 karakter (cümle sonunda kesilir)
+let bekleyen = null
+function etkilesimVarMi() {
+  const ua = typeof navigator !== 'undefined' ? navigator.userActivation : null
+  return ua ? ua.hasBeenActive : true
+}
+if (typeof window !== 'undefined') {
+  const ilkEtkilesim = () => { if (bekleyen) { const m = bekleyen; bekleyen = null; soyle(m) } }
+  window.addEventListener('pointerdown', ilkEtkilesim, true)
+  window.addEventListener('keydown', ilkEtkilesim, true)
+}
+function kisalt(t) {
+  if (t.length <= EN_UZUN) return t
+  const kes = t.slice(0, EN_UZUN)
+  const son = Math.max(kes.lastIndexOf('. '), kes.lastIndexOf('! '), kes.lastIndexOf('? '))
+  return son > 200 ? kes.slice(0, son + 1) : kes
+}
 
 export function soyle(metin) {
   if (!sesAcikMi()) return false
   if (!ses || !window.speechSynthesis) { efekt('konus'); return false }
-  const t = temizle(metin)
+  const t = kisalt(temizle(metin))
   if (!t) return false
+  if (!etkilesimVarMi()) { bekleyen = t; return false }
   window.speechSynthesis.cancel()
   const u = new SpeechSynthesisUtterance(t)
   u.voice = ses

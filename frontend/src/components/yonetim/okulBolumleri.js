@@ -4,7 +4,7 @@ export const OKUL_BOLUMLERI = [
   { k: 'ozet', ad: 'Özet', ikon: '🏠', grup: 'Genel', aciklama: 'Okulunuzdaki katılım ve sonuçların genel görünümü' },
   // [2026-10-10] Raporlar ve istatistikler (ayrıntılı istatistik ekranı + tüm raporlar tek yerde)
   { k: 'istatistik', ad: 'İstatistikler', ikon: '📊', grup: 'Raporlar ve İstatistikler', okul: true, aciklama: 'Katılım, profil, bölüm ve meslek, koçluk, akademik ve rehberlik istatistikleri; sınıf, şube ve tarihe göre' },
-  { k: 'raporlar', ad: 'Rapor Merkezi', ikon: '📄', grup: 'Raporlar ve İstatistikler', okul: true, aciklama: 'Tek bakışta yönetici özeti (bulgular, kritik öğrenciler, sıralamalar, şube karşılaştırması) ve indirilebilir tüm raporlar' },
+  { k: 'raporlar', ad: 'Rapor Merkezi', ikon: '📄', grup: 'Raporlar ve İstatistikler', okul: true, aciklama: 'Hazır raporlar (en çok / en az giriş yapanlar, en yüksek net, en aktifler), tek bakışta yönetici özeti (bulgular, kritik öğrenciler, sıralamalar, şube karşılaştırması) ve indirilebilir tüm raporlar' },
   { k: 'ogrenciler', ad: 'Öğrenciler', ikon: '👥', grup: 'Öğrenciler', aciklama: 'Öğrenci hesapları, şifreler, sınıf atama ve öğrenci detayları' },
   { k: 'siniflar', ad: 'Sınıflar', ikon: '🏷️', grup: 'Öğrenciler', aciklama: 'Şubeler, sınıf öğretmenleri ve şube raporları' },
   { k: 'akran', ad: 'Şube & Akran', ikon: '🤝', grup: 'Öğrenciler', modul: 'akran', aciklama: 'Profili birbirine yakın öğrenciler ve şube dağılımı' },

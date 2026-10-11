@@ -1106,12 +1106,18 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
     window.setTimeout(() => setEfektler((e) => e.filter((x) => !yeni.includes(x))), 1800)
   }, [])
 
-  // sesli: true → cümle sesli okunur (yalnızca kullanıcının bir eylemine karşılık; ara ara gelen sözler sessizdir)
-  const konus = useCallback((icerik, sesli = false) => {
+  // [2026-10-11] Ses açıksa Filiz'in her balon cümlesi okunur (selam, sayfa mesajları, tıklama, ara ara gelen sözler).
+  // İkinci parametre geriye dönük uyumluluk için duruyor; artık etkisi yok.
+  const konus = useCallback((icerik) => {
     if (kucuk || sohbetAcik || !icerik) return
     setBalon(icerik)
-    if (sesli && sesAcik) soyle(typeof icerik === 'string' ? icerik : icerik.metin)
+    if (sesAcik) soyle(typeof icerik === 'string' ? icerik : icerik.metin)
   }, [kucuk, sohbetAcik, sesAcik, setBalon])
+  useEffect(() => {
+    const dinle = (e) => setSesAcik(!!e.detail?.acik)
+    window.addEventListener('filiz-ses', dinle)
+    return () => window.removeEventListener('filiz-ses', dinle)
+  }, [])
 
   // [2026-10-04] sohbet paneli: Filiz yazarken düşünür, cevap gelince başını sallar
   useEffect(() => {

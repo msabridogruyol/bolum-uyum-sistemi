@@ -377,38 +377,105 @@ export const SOZLUK = [
 const _harita = new Map(SOZLUK.map((x) => [x.k, x]))
 export const terimBul = (k) => _harita.get(k)
 
+// ------------------------------------------------------------------ [2026-10-11] Genişletilmiş sözlük
+// Öğrenci sistemde okuduğu hiçbir kelimede takılmasın diye sözlük üç kaynaktan oluşur:
+//  1. SOZLUK (yukarıda) — sistemin kendi terimleri (değerlendirme, net, taban puan…)
+//  2. sozlukGenis.json — bölüm açıklamaları, öğrenci ekranları, sorular ve özellik açıklamalarında geçen ~3.300 terim
+//     (alan terimleri, ders adları, kısaltmalar, resmî/akademik kelimeler). Lise düzeyinde yazıldı ve bağımsız olarak
+//     gözden geçirildi; sayı / maaş / istatistik içermez. Sıkı biçim: [ad, grupNo, tanım, örnek, [yazılışlar]].
+//  3. GET /ogrenci/sozluk/ek — veritabanından 301 bölüm (özet), bölümlerdeki meslekler ve ölçülen özellikler.
+// 2 ve 3 yalnızca sözlük ilk kez kullanıldığında yüklenir (ana paket büyümesin).
+const baslik = (ad) => String(ad || '').toLocaleLowerCase('tr').split(' ')
+  .map((w) => (['ve', 'ile', 'veya'].includes(w) ? w : w.charAt(0).toLocaleUpperCase('tr') + w.slice(1))).join(' ')
+
+export const EK_GRUPLAR = ['Bölümler', 'Meslekler']
+let EK = []
+let _yukleme = null
+let _genisGruplar = []
+const _dinleyiciler = new Set()
+
+export function sozlukYukle() {
+  if (_yukleme) return _yukleme
+  _yukleme = Promise.all([
+    import('./sozlukGenis.json').then((m) => m.default || m).catch(() => null),
+    import('../api/client').then(({ api }) => api.sozlukEk()).catch(() => null),
+  ]).then(([genis, ek]) => {
+    const liste = []
+    if (genis) {
+      _genisGruplar = genis.gruplar
+      genis.terimler.forEach(([ad, g, t, o, es], i) => liste.push({ k: `g${i}`, ad, g: genis.gruplar[g], t, o: o || undefined, es }))
+    }
+    if (ek) {
+      ek.bolumler.forEach((b) => liste.push({ k: `b${b.id}`, ad: baslik(b.ad), g: 'Bölümler', t: b.t, tur: 'bolum', bolumId: b.id, bolumAd: b.ad }))
+      ek.meslekler.forEach((m, i) => liste.push({ k: `m${i}`, ad: m.ad, g: 'Meslekler', t: m.t, tur: 'meslek',
+        bolumler: m.bolumler.map((b) => ({ id: b.id, ad: baslik(b.ad), hamAd: b.ad })) }))
+      ek.ozellikler.forEach((x, i) => liste.push({ k: `o${i}`, ad: x.ad, g: 'Özelliklerin', t: `${x.t.charAt(0).toLocaleUpperCase('tr')}${x.t.slice(1)}.`.replace(/\.\.$/, '.'),
+        tur: 'ozellik', katman: x.katman }))
+    }
+    // Ana sözlükteki bir terimle aynı adı taşıyan ek terim gösterilmez (sistemin kendi tanımı önceliklidir)
+    const ana = new Set(SOZLUK.flatMap((t) => [t.ad, ...(t.es || [])].map(sade)))
+    EK = liste.filter((t) => t.tur === 'bolum' || t.tur === 'meslek' || !ana.has(sade(t.ad)))
+    EK.forEach(hazirla)
+    _dinleyiciler.forEach((f) => f())
+    return EK.length
+  })
+  return _yukleme
+}
+export const sozlukYuklendiMi = () => EK.length > 0
+export function sozlukDinle(f) { _dinleyiciler.add(f); return () => _dinleyiciler.delete(f) }
+export const tumGruplar = () => [...GRUPLAR, ..._genisGruplar.filter((g) => !GRUPLAR.includes(g)), ...EK_GRUPLAR]
+export const tumTerimler = () => [...SOZLUK, ...EK]
+export const toplamTerim = () => SOZLUK.length + EK.length
+
 // ------------------------------------------------------------------ Arama
 const kucuk = (x) => (x || '').toLocaleLowerCase('tr-TR').trim()
 const sade = (x) => kucuk(x).replace(/[^\p{L}\p{N} ]/gu, ' ').replace(/\s+/g, ' ').trim()
+// parantez içi açıklama aramada ayrı ad sayılır: "KPSS (Kamu Personeli Seçme Sınavı)" → "kpss", "kamu personeli…"
+function hazirla(t) {
+  if (t._adlar) return t
+  const ad = sade(t.ad)
+  const parca = /^(.*?)\s*\((.*?)\)\s*$/.exec(t.ad)
+  t._ad = ad
+  t._adlar = [...new Set([ad, ...(parca ? [sade(parca[1]), sade(parca[2])] : []), ...(t.es || []).map(sade)].filter(Boolean))]
+  t._t = sade(t.t)
+  return t
+}
+SOZLUK.forEach((t) => { hazirla(t); t._ana = true })
 
 // Sorguya en uygun terimleri sırayla döndürür: ad/yazılış başta eşleşmesi > içinde geçmesi > tanımda geçmesi
 function puanla(q, t) {
-  const ad = sade(t.ad)
-  const adlar = [ad, ...(t.es || []).map(sade)]
+  const adlar = t._adlar
   let p = 0
   if (adlar.some((a) => a === q)) p = 100
   else if (adlar.some((a) => a.startsWith(q))) p = 80
   else if (adlar.some((a) => a.split(' ').some((w) => w.startsWith(q)))) p = 65
   else if (adlar.some((a) => a.includes(q))) p = 50
   else if (q.length >= 3 && adlar.some((a) => q.startsWith(a) && a.length >= 3)) p = 45   // "taban puanı" → taban puan
-  else if (q.length >= 3 && sade(t.t).includes(q)) p = 20
-  if (p && ad.startsWith(q)) p += 5   // aynı puanda adı eşleşen öne
+  else if (q.length >= 4 && t._t.includes(q)) p = 20
+  if (!p) return 0
+  if (t._ad.startsWith(q)) p += 5               // aynı puanda adı eşleşen öne
+  if (t._ana) p += 2                            // sistemin kendi terimi önce
+  if (t.tur === 'bolum' && p >= 80) p += 1       // bölüm adı tam yazıldıysa bölüm kartı üstte
   return p
 }
 
 export function sozlukAra(sorgu, enFazla = 30) {
   const q = sade(sorgu)
   if (!q) return []
-  return SOZLUK.map((t) => [puanla(q, t), t]).filter((x) => x[0])
-    .sort((a, b) => b[0] - a[0] || a[1].ad.localeCompare(b[1].ad, 'tr')).slice(0, enFazla).map((x) => x[1])
+  return tumTerimler().map((t) => [puanla(q, t), t]).filter((x) => x[0])
+    .sort((a, b) => b[0] - a[0] || a[1].ad.length - b[1].ad.length || a[1].ad.localeCompare(b[1].ad, 'tr')).slice(0, enFazla).map((x) => x[1])
 }
 
 // Filiz sohbeti: "taban puan ne demek?", "ATS nedir", "net ne anlama geliyor" → sözlükteki terim (yoksa null)
+// [2026-10-11] Bölüm ve meslek adları Filiz'e bırakılır (bölüm sorusu genelde "ne iş yapar, nasıl bir bölüm" demektir).
 export function sozlukSorusu(metin) {
-  const m = /^\s*(.{2,40}?)\s*(?:ne demek(?:tir)?|nedir|ne anlama gel\w*|anlamı ne)\s*\??\s*$/iu.exec(metin || '')
+  const m = /^\s*(.{2,60}?)\s*(?:ne demek(?:tir)?|nedir|ne anlama gel\w*|anlamı ne|ne anlama gelir)\s*\??\s*$/iu.exec(metin || '')
   if (!m) return null
   const q = sade(m[1].replace(/['’]?(?:nın|nin|nun|nün|ın|in|un|ün)$/iu, ''))
   let en = null, enPuan = 0
-  for (const t of SOZLUK) { const p = puanla(q, t); if (p > enPuan) { en = t; enPuan = p } }
+  for (const t of tumTerimler()) {
+    if (t.tur === 'bolum' || t.tur === 'meslek') continue
+    const p = puanla(q, t); if (p > enPuan) { en = t; enPuan = p }
+  }
   return enPuan >= 80 ? en : null   // yalnızca güçlü eşleşmede sözlük cevaplar; yoksa soru Filiz'e gider
 }
