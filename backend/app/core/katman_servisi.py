@@ -75,7 +75,8 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
     )
 
     yeni_tur_no = 1
-    if son_tamamlanan is not None:
+    # [2026-10-10] Güven puanı eşiğin altında kalan (geçersiz) turdan sonra bekleme süresi uygulanmaz; öğrenci hemen yeniden değerlendirilebilir.
+    if son_tamamlanan is not None and son_tamamlanan.sonuc_gecerli_mi is not False:
         min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "120"))
         simdi = datetime.now(timezone.utc)
         tamamlanma = son_tamamlanan.tamamlanma_zamani
@@ -155,7 +156,7 @@ def katman_oturumu_baslat(
         .all()
     )
     if not aktif_sorular:
-        raise IsKuraliHatasi(f"{katman.kod} için aktif soru bulunamadı — admin henüz soru eklememiş olabilir.")
+        raise IsKuraliHatasi(f"{katman.kod} bölümü şu an açılamıyor. Biraz sonra tekrar dene ya da rehber öğretmenine bildir.")
 
     soru_idler = [s.id for s in aktif_sorular]
 

@@ -279,7 +279,7 @@ export default function ProfilAyarlariSayfasi() {
           </div>
 
           <div className="ps" style={{ margin: '10px 0 0' }}>
-            Hedef bölümünü yukarıdaki <b>Hedef bölümüm</b> kartından seçersin; gelişim planını <b>Hedef Bölüm Koçluğu</b> sayfasında takip edersin.
+            Hedef bölümünü yukarıdaki <b>Hedef bölümüm</b> kartından seçersin; gelişim planını <b>Koçluğum</b> sayfasında takip edersin.
           </div>
         </div>
 

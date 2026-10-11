@@ -13,13 +13,13 @@ const ADIMLAR = [
     ikon: '🧭',
     baslik: 'Adım adım ilerlersin',
     metin: 'Seni dört katmanda tanıyoruz. Katmanlar sırayla açılır; birini bitirince bir sonrakine geçersin.',
-    maddeler: ['K1 · Değerlerin — neyi önemsersin?', 'K2 · Kişiliğin — nasıl çalışırsın?', 'K3 · İş ortamı — nasıl davranırsın?', 'K4 · Alan eğilimin — neye yatkınsın?', 'K5 · Sana özel alan soruları — K4 sonucuna göre açılır'],
+    maddeler: ['K1 · Değerlerin — neyi önemsersin?', 'K2 · Kişiliğin — nasıl çalışırsın?', 'K3 · İş ortamı — nasıl davranırsın?', 'K4 · Alan eğilimin — neye yatkınsın?', 'K5 · Sana özel alan soruları — ilk dört katmanın sonucuna göre açılır'],
   },
   {
     ikon: '⚖️',
     baslik: 'Uyumun nasıl hesaplanıyor?',
     metin: 'Cevaplarından senin profilini çıkarıyoruz. Her bölümün de, mezunlarının çalıştığı binlerce meslekten türetilmiş bir profili var. İki profili 10 farklı yöntemle karşılaştırıp bir uyum yüzdesi buluyoruz.',
-    maddeler: ['301 bölüm, 3.000\'den fazla meslek', 'Seni başkalarıyla değil, kendi profilinle değerlendiririz', 'Sonuç bir tavsiyedir, kesin karar değil'],
+    maddeler: ['301 bölüm, 3.000\'den fazla meslek', 'Seni başkalarıyla değil, kendi profilinle değerlendiririz', 'Sonuçlar yol gösterir; son kararı sen verirsin'],
   },
   {
     ikon: '🎯',

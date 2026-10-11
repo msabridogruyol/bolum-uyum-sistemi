@@ -7,6 +7,13 @@ from openpyxl import Workbook
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter
 
+from app.core.kucuk_grup import DIPNOT, GIZLI_METIN   # [2026-10-10] KVKK küçük grup gizleme
+
+
+def _gz(x):
+    """Toplu hücre: gizlenen (None) değer → '5'ten az öğrenci'."""
+    return GIZLI_METIN if x is None else x
+
 BASLIK = Font(bold=True, color="FFFFFF")
 DOLGU = PatternFill("solid", fgColor="E8804A")
 
@@ -79,17 +86,19 @@ def okul_xlsx(v: dict, netler: bool = True) -> bytes:
         kapsam_satir.append(["Sınıf öğretmeni", ks["ogretmen"]["ad"]])
     okul_ort = {k["kod"]: k["ortalama"] for k in v.get("okul_katman_ort") or []}
     _sayfa(wb, "Özet", ["Gösterge", "Değer"], [
-        ["Okul", v["okul"]["ad"]], *kapsam_satir, ["Öğrenci", o.get("toplam")], ["Giriş yapan", o.get("giris_yapan")],
-        ["Teste başlayan", o.get("teste_baslayan")], ["Tamamlayan", o.get("tamamlayan")], ["Hedef seçen", o.get("hedef_secen")],
-        ["Güven eşiği altında", v["gecersiz"]], ["Rapor tarihi", v["tarih"]],
+        ["Okul", v["okul"]["ad"]], *kapsam_satir, ["Öğrenci", o.get("toplam")], ["Giriş yapan", _gz(o.get("giris_yapan"))],
+        ["Teste başlayan", _gz(o.get("teste_baslayan"))], ["Tamamlayan", _gz(o.get("tamamlayan"))], ["Hedef seçen", _gz(o.get("hedef_secen"))],
+        ["Güven eşiği altında", _gz(v["gecersiz"])], ["Rapor tarihi", v["tarih"]],
     ] + [[f"Katman ortalaması · {k['kod']} {k['ad']}", k["ortalama"]] for k in v["katman_ort"]]
-      + [[f"Okul ortalaması · {k} ", x] for k, x in okul_ort.items()], [40, 30], renk)
+      + ([["Katman ortalamaları", GIZLI_METIN]] if (v.get("kucuk_grup") or {}).get("profil_gizli") else [])
+      + [[f"Okul ortalaması · {k} ", x] for k, x in okul_ort.items()]
+      + ([["Gizlilik", DIPNOT]] if (v.get("kucuk_grup") or {}).get("uygulandi") else []), [40, 30], renk)
     if o.get("subeler"):
         _sayfa(wb, "Şubeler", ["Şube", "Sınıf öğretmeni", "Öğrenci", "Giriş yapan", "Devam eden", "Tamamlayan", "Hedef seçen"],
-               [[x["etiket"], (x.get("ogretmen") or {}).get("ad") or "", x["ogrenci"], x["giris_yapan"], x["devam"], x["tamamlayan"],
-                 x.get("hedef_secen", 0)] for x in o["subeler"]], [12, 28, 10, 12, 12, 12, 12], renk)
+               [[x["etiket"], (x.get("ogretmen") or {}).get("ad") or "", x["ogrenci"], _gz(x["giris_yapan"]), _gz(x["devam"]), _gz(x["tamamlayan"]),
+                 _gz(x.get("hedef_secen", 0))] for x in o["subeler"]], [12, 28, 10, 12, 12, 12, 12], renk)
     _sayfa(wb, "Sınıflar", ["Sınıf", "Öğrenci", "Giriş yapan", "Devam eden", "Tamamlayan"],
-           [[s["sinif"], s["ogrenci"], s["giris_yapan"], s["devam"], s["tamamlayan"]] for s in o.get("siniflar", [])], [18, 10, 12, 12, 12], renk)
+           [[s["sinif"], s["ogrenci"], _gz(s["giris_yapan"]), _gz(s["devam"]), _gz(s["tamamlayan"])] for s in o.get("siniflar", [])], [18, 10, 12, 12, 12], renk)
     net_bas = ["Deneme", "Son TYT", "Son AYT"] if netler else []
     _sayfa(wb, "Öğrenciler", ["No", "Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven", "Son giriş", "Test hesabı", *net_bas],
            [[x.get("no") or "", x["ad_soyad"], x["sinif"], x["durum"], x["ilk_bolum"], x["hedef"], x["guven"], x["son_giris"],
@@ -98,11 +107,11 @@ def okul_xlsx(v: dict, netler: bool = True) -> bytes:
     nt = v.get("net") or {}
     if netler and nt.get("dersler"):
         _sayfa(wb, "Net özeti", ["Ders", "Soru", "Son deneme ortalaması", "Öğrenci"],
-               [[d["ad"], d["soru"], d["ort"], d["n"]] for d in nt["dersler"]], [34, 8, 22, 10], renk)
+               [[d["ad"], d["soru"], _gz(d["ort"]), d["n"]] for d in nt["dersler"]], [34, 8, 22, 10], renk)
     _sayfa(wb, "Bölüm ve alan", ["Alan (1. öneri)", "Öğrenci", "", "En çok önerilen", "Sayı", "En çok hedeflenen", "Sayı"],
-           [[(v["alanlar"][i]["alan"] if i < len(v["alanlar"]) else ""), (v["alanlar"][i]["sayi"] if i < len(v["alanlar"]) else ""), "",
-             *((o["en_cok_onerilen"][i]["bolum"], o["en_cok_onerilen"][i]["sayi"]) if i < len(o.get("en_cok_onerilen", [])) else ("", "")),
-             *((o["en_cok_hedeflenen"][i]["bolum"], o["en_cok_hedeflenen"][i]["sayi"]) if i < len(o.get("en_cok_hedeflenen", [])) else ("", ""))]
+           [[(v["alanlar"][i]["alan"] if i < len(v["alanlar"]) else ""), (_gz(v["alanlar"][i]["sayi"]) if i < len(v["alanlar"]) else ""), "",
+             *((o["en_cok_onerilen"][i]["bolum"], _gz(o["en_cok_onerilen"][i]["sayi"])) if i < len(o.get("en_cok_onerilen", [])) else ("", "")),
+             *((o["en_cok_hedeflenen"][i]["bolum"], _gz(o["en_cok_hedeflenen"][i]["sayi"])) if i < len(o.get("en_cok_hedeflenen", [])) else ("", ""))]
             for i in range(max(len(v["alanlar"]), len(o.get("en_cok_onerilen", [])), len(o.get("en_cok_hedeflenen", [])), 1))],
            [30, 9, 3, 36, 7, 36, 7], renk)
     t = io.BytesIO()
