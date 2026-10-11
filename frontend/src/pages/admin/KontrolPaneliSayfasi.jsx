@@ -12,8 +12,8 @@ const GUVENLIK_DENETIMI = [
   { baslik: 'SQL enjeksiyonu riski', durum: 'iyi', detay: 'Tüm sorgular parametreli, metin birleştirme yok' },
   { baslik: 'Hassas veri sızıntısı', durum: 'iyi', detay: 'Şifre hash\'i hiçbir yanıtta dönmüyor' },
   { baslik: 'Audit log kapsamı', durum: 'iyi', detay: 'Kritik işlemler (onay, rol, durum değişikliği) kayıt altında' },
-  { baslik: 'Toplu yükleme boyut sınırı', durum: 'dikkat', detay: 'CSV/Excel yüklemelerinde satır sayısı sınırı yok' },
-  { baslik: 'İstek sıklığı sınırlaması', durum: 'dikkat', detay: 'Hiçbir uç noktada rate limiting yok' },
+  { baslik: 'Toplu yükleme boyut sınırı', durum: 'iyi', detay: 'Tablo dosyaları en çok 10 MB / 20.000 satır, görseller 1–2 MB, her istek en çok 25 MB (aşımda 413)' },
+  { baslik: 'İstek sıklığı sınırlaması', durum: 'iyi', detay: 'Giriş/kod/şifre uçları IP başına 20/dk·150/sa, yükleme-rapor 20/dk, genel 300/dk (aşımda 429); süreç içi sayaç — Parametreler\'den ayarlanır' },
 ]
 
 const DURUM_RENK = { iyi: 'var(--gr)', dikkat: 'var(--am)', kritik: 'var(--re)' }

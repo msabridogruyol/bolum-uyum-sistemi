@@ -12,6 +12,7 @@ const SEKMELER = [
   ['isco', '🔗 Meslek – ISCO'],
   ['kamu', '🏛️ Kamu Maaşları'],
   ['asgari', '🧾 Asgari Ücret ve Yaşam Giderleri'],
+  ['ai', '🔭 Yapay zekâ etkisi'],   // [2026-10-11] Gelecekte Bu Meslek
 ]
 const KAZANC_GRUBU = { cok_yuksek: 'Çok yüksek', yuksek: 'Yüksek', orta: 'Orta', dusuk: 'Düşük', cok_dusuk: 'Çok düşük' }
 const DUZEY = { lisans: 'Lisans', onlisans: 'Önlisans' }
@@ -532,6 +533,25 @@ function KamuSekmesi() {
   )
 }
 
+// [2026-10-11] Gelecekte Bu Meslek: meslek_grubu_ai_etkisi (tohum: ILO WP140 Tablo A1; dağılım ve 4 haneli meslekler yalnızca tohumdan gelir)
+const AI_DUZEY = { dusuk: 'Az değişecek (düşük)', orta: 'Kısmen değişecek (orta)', yuksek: 'En çok değişecek (yüksek)', belirsiz: 'Belirsiz' }
+function AiEtkisiSekmesi() {
+  return (
+    <KayitTablosu tablo="meslek_grubu_ai_etkisi" baslik="Meslek grubu – üretken yapay zekâ etkisi"
+      aciklama="Öğrenci İş Hayatı → Gelecekte Bu Meslek sekmesinde görür. Her ISCO kodu için en yeni veri yılı kullanılır; 2 haneli satır yoksa 1 haneli ana grup aranır. Puan yalnızca kaynak bir grup puanı yayımladıysa girilir (ILO WP140 grup puanı yayımlamaz: boş). Düzey, Tablo A1'deki 4 haneli mesleklerin sayımıyla türetilmiştir (bkz. docs/IS_HAYATI.md). Görev/beceri metinleri backend/app/data/ai_etkisi_gruplar.json'dadır."
+      varsayilan={{ duzey: 'belirsiz', veri_yili: new Date().getFullYear() }}
+      kolonlar={[
+        { kod: 'isco_kodu', ad: 'ISCO', tip: 'metin', zorunlu: true, genislik: 60, ipucu: '25' },
+        { kod: 'duzey', ad: 'Düzey', tip: 'secim', secenekler: AI_DUZEY, zorunlu: true, genislik: 170 },
+        { kod: 'puan', ad: 'Puan (0–1)', tip: 'sayi', genislik: 80 },
+        { kod: 'aciklama', ad: 'Açıklama', tip: 'metin' },
+        { kod: 'kaynak', ad: 'Kaynak', tip: 'metin', zorunlu: true },
+        { kod: 'kaynak_bolum', ad: 'Tablo / sayfa', tip: 'metin', genislik: 160 },
+        { kod: 'veri_yili', ad: 'Yıl', tip: 'sayi', zorunlu: true, genislik: 70 },
+      ]} />
+  )
+}
+
 function AsgariSekmesi({ ozet, yenileOzet }) {
   const kalemler = ozet?.gider_kalemleri || {}
   return (
@@ -587,6 +607,7 @@ export default function IsHayatiVerileriSayfasi() {
       {sekme === 'isco' && <IscoSekmesi />}
       {sekme === 'kamu' && <KamuSekmesi />}
       {sekme === 'asgari' && <AsgariSekmesi ozet={ozet} yenileOzet={yenileOzet} />}
+      {sekme === 'ai' && <AiEtkisiSekmesi />}
     </div>
   )
 }

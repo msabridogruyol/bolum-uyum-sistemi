@@ -18,6 +18,7 @@ Amaç: öğrencinin seçtiği bölüm/mesleğin iş hayatındaki gerçeklerini r
 |---|---|
 | `0054_is_hayati` | altyapı (bu belge) — tablolar, ISCO tohumu, asgari ücret tohumu, paket |
 | `0055`, `0056`, `0057` | içerik bileşenleri (diğer ajanlar) — `down_revision` zincirini sırayla sürdürün |
+| `0058_ai_etkisi` | Gelecekte Bu Meslek — `meslek_grubu_ai_etkisi` + ILO WP140 tohumu |
 
 Her yeni göç `app/core/sema_guncelleme.py` → `OTOMATIK` listesine eklenir ve **her açılışta yeniden çalışır**: SQL idempotent olmalı
 (`IF NOT EXISTS`, `ON CONFLICT DO NOTHING`), komutlar `;\n` ile ayrılır, SQL içinde `:ad` biçiminde iki nokta kullanmayın (SQLAlchemy bağ
@@ -95,6 +96,7 @@ Her içerik bileşeni kendi dosyasını açar: `backend/app/api/is_hayati_<konu>
 | `gercek` | Beklenti ve Gerçek | `components/isHayati/BeklentiGercek.jsx` |
 | `maas` | İlk Maaşla Bir Ay | `components/isHayati/IlkMaas.jsx` |
 | `yol` | Mesleğe Giden Yol | `components/isHayati/MeslegeYol.jsx` |
+| `gelecek` | Gelecekte Bu Meslek | `components/isHayati/GelecekteMeslek.jsx` |
 | `zorgun` | Zor Günler | `components/isHayati/ZorGunler.jsx` |
 | `cv` | CV Atölyesi | `components/isHayati/CvAtolyesi.jsx` |
 | `mulakat` | Mülakat Pratiği | `components/isHayati/MulakatPratigi.jsx` |
@@ -151,3 +153,25 @@ Uçlar `app/api/admin_is_hayati.py` (`/admin/is-hayati/*`, yalnız süper admin;
   `is_hayati_dersler.json` (12 ders, kaynak + `son_kontrol`), `is_hayati_mulakat.json` (genel/davranışsal/staj + 17 alan × 6).
 - Bordro örneği tutar uydurmaz: güncel `asgari_ucret` satırından %14 SGK + %1 işsizlik ile hesaplanır, yalnızca tablodaki netle tutarlıysa gösterilir.
 - Filiz geri bildirimi: `ai_koc._ai` kapısı (anahtar + `filiz_ai`), koçla ortak günlük hak, kriz ifadesinde model çağrılmaz, modele gitmeden e-posta/telefon maskelenir.
+
+## Gelecekte Bu Meslek ('gelecek') — göç 0058
+
+- Amaç: yapay zekâ/otomasyonun meslek grupları üzerindeki etkisini korkutmadan anlatmak ("maruz kalma ≠ meslek yok oluyor; çoğunlukla dönüşüm").
+- Kaynak: **ILO Working Paper 140** (Gmyrek vd., 2025, doi 10.54394/HETP0387). Tablo A1 (s. 48–61) 427 dört haneli ISCO-08 mesleğin sınıfı
+  (Maruz değil / Minimal / Gradyan 1–4), ortalama ve SS değerleri; Tablo 5 (s. 38) gradyan tanımları. Satırlar PDF'ten okunup yazarların
+  `Final_Scores_ISCO08_Gmyrek_et_al_2025.xlsx` dosyasıyla (github.com/pgmyrek/2025_genai_scores_isco08) 427/427 karşılaştırıldı.
+  ILO **2 ya da 1 haneli grup puanı yayımlamaz**; grup düzeyi bizim sayım kuralımızdır: grubun 4 haneli mesleklerinin ≥ 1/3'ü Gradyan 3–4 →
+  `yuksek` ("En çok değişecek"); değilse ≥ 1/5'i Gradyan 1–4 → `orta` ("Kısmen değişecek"); aksi hâlde `dusuk` ("Az değişecek"); eşit ağırlık.
+  Sonuç: 40 alt ana grup (ISCO 0 endekste yok) — 7 yüksek (24, 25, 33, 41–44), 8 orta (12, 14, 21, 26, 34, 35, 52, 96), 25 düşük. `puan` NULL.
+- Tablo `meslek_grubu_ai_etkisi` (isco_kodu 1–2 hane, duzey dusuk|orta|yuksek|belirsiz, puan, aciklama, kaynak, kaynak_bolum, veri_yili,
+  dagilim jsonb, meslekler jsonb [{kod, ad, kategori, ort, ss, sayfa}], `UNIQUE(isco_kodu, veri_yili)`); tohum tek seferlik
+  (`0058_ai_etkisi_ilo2025`). Süper admin: İş Hayatı Verileri → "🔭 Yapay zekâ etkisi" (genel `/admin/is-hayati/kayit/meslek_grubu_ai_etkisi`;
+  tablo tanımı `is_hayati_gelecek.py` içinde `admin_is_hayati.TABLOLAR`'a eklenir). dagilim/meslekler yalnızca tohumdan gelir.
+- Nitel içerik `app/data/ai_etkisi_gruplar.json` → `gruplar[kod].degisen_gorevler / deger_kazanan / lisede` (ILO görev puanlarında grubun en çok/
+  en az maruz kalan görevlerine bakılarak genel ifadelerle yazıldı, sayı yok), `olcek`, `uyari` (+ `ek`), `duzey_kurali`, `genel` (WEF Future of
+  Jobs 2025, yalnızca nitel; "Türkiye'ye birebir uymayabilir").
+- Uç `app/api/is_hayati_gelecek.py`: `GET /gelecek/{bolum_id}` → `{bolum, uyari, olcek, duzey_kurali, duzey_adlari, meslekler[{meslek, isco_kodu,
+  isco_guven, grup_kodu, grup_duzeyi}], gruplar[{kod, ad, veri_var, duzey, duzey_ad, sira, puan, aciklama, kaynak, kaynak_bolum, veri_yili, dagilim,
+  meslek_sayisi, ilo_meslekleri[≤8], degisen_gorevler, deger_kazanan, lisede}], genel, kaynaklar, son_kontrol, eslesmeyen, veri_yok}`.
+  Gruplar en çok değişecekten başlayarak sıralanır; her ISCO kodu için en yeni veri yılı; 2 haneli satır yoksa 1 haneli ana grup.
+- Arayüz: renkler durum renkleri değil, `--okul-c`'nin açıktan koyuya sıralı tonları; orta güvenli meslek–ISCO eşleşmesinde yıldız + not.

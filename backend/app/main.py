@@ -43,6 +43,8 @@ from app.api.okul_yonetimi import router as okul_yonetimi_router
 from app.api.meslek_dili import router as meslek_dili_router
 from app.api.cevap_analizi import router as cevap_analizi_router
 from app.api.listem import router as listem_router
+from app.api.karsilastir import router as karsilastir_ogrenci_router   # [2026-10-11] /ogrenci/karsilastir (+ /pdf)
+from app.api.veli_sunumu import router as veli_sunumu_router   # [2026-10-11] /yonetim/okul/{id}/veli-sunumu (.pptx)
 from app.api.raporlar import router as raporlar_router
 from app.api.okul_istatistik import router as okul_istatistik_router   # [2026-10-10] okul paneli → İstatistikler
 from app.api.okul_tek_bakista import router as okul_tek_bakista_router   # [2026-10-10] Rapor Merkezi → Tek Bakışta
@@ -57,11 +59,22 @@ from app.api.anket_psikometri import router as anket_psikometri_router   # [2026
 from app.api.sistem_istatistik import router as sistem_istatistik_router   # [2026-10-10] süper admin İstatistikler / Rapor Merkezi
 from app.api.is_hayati import router as is_hayati_router, ek_yonetim_routerlari as is_hayati_ek_routerlar   # [2026-10-10] İş Hayatı (öğrenci)
 from app.api.admin_is_hayati import router as admin_is_hayati_router   # [2026-10-10] İş Hayatı Verileri (süper admin)
+from app.api.hata_kayitlari import router as hata_kayitlari_router   # [2026-10-11] /istemci-hata + /admin/hata-kayitlari
+from app.core.hata_izleme import HataYakalamaAraKatmani, sentry_baslat   # [2026-10-11] hata izleme
+from app.core.hiz_siniri import HizSiniriAraKatmani                     # [2026-10-11] istek sıklığı sınırı
+from app.core.yukleme_siniri import GovdeBoyutuAraKatmani               # [2026-10-11] gövde boyutu sınırı (25 MB)
+sentry_baslat()   # [2026-10-11] yalnızca SENTRY_DSN tanımlı ve sentry-sdk kuruluysa
 app = FastAPI(
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
     version="0.1.0",
 )
+
+# [2026-10-11] Koruma ara katmanları — CORS'tan ÖNCE eklenir ki CORS en dışta kalsın (429/413/500 yanıtları da CORS başlığı alsın).
+# İstek akışı (dıştan içe): ZiyaretKaydi → CORS → HataYakalama (istek kimliği, 500) → HizSiniri (429) → GovdeBoyutu (413) → uygulama
+app.add_middleware(GovdeBoyutuAraKatmani)
+app.add_middleware(HizSiniriAraKatmani)
+app.add_middleware(HataYakalamaAraKatmani)
 
 # CORS — yalnızca Firebase Hosting domaini (veritabani_taslagi.md 4.5)
 app.add_middleware(
@@ -244,7 +257,9 @@ app.include_router(okul_admin_router, prefix="/admin")      # [2026-10-09] /admi
 app.include_router(okul_yonetimi_router)
 app.include_router(meslek_dili_router)
 app.include_router(cevap_analizi_router)
-app.include_router(listem_router)                           # [2026-10-10] /ogrenci/listem, /ogrenci/karsilastir
+app.include_router(listem_router)                           # [2026-10-10] /ogrenci/listem
+app.include_router(karsilastir_ogrenci_router)              # [2026-10-11] /ogrenci/karsilastir (+ /pdf)
+app.include_router(veli_sunumu_router)                      # [2026-10-11] veli toplantısı sunumu (.pptx)
 app.include_router(raporlar_router)                         # [2026-10-10] PDF / Excel raporlar
 app.include_router(okul_istatistik_router)                  # [2026-10-10] /yonetim/okul/{id}/istatistik (+ /excel)
 app.include_router(okul_tek_bakista_router)                 # [2026-10-10] /yonetim/okul/{id}/tek-bakista (+ /pdf)
@@ -290,6 +305,7 @@ app.include_router(is_hayati_router, dependencies=[_Dep(ogrenci_modulu("is_hayat
 app.include_router(admin_is_hayati_router)                   # [2026-10-10] /admin/is-hayati/* (süper admin)
 for _r in is_hayati_ek_routerlar:                            # alt modüllerin yönetim router'ları (kendi prefix + yetkileri)
     app.include_router(_r)
+app.include_router(hata_kayitlari_router)                    # [2026-10-11] hata kayıtları (süper admin) + /istemci-hata
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
 # yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi,

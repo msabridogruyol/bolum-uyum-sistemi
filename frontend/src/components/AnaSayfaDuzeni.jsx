@@ -11,6 +11,7 @@ import AltSerit from './AltSerit'
 import BildirimZili from './BildirimZili'
 import SimulasyonKatmani from './MeslekSimulasyonu'
 import { KvkkOnayPenceresi } from './KvkkBilesenleri'
+import { MobilUstCubuk, useMobilMenu } from './MobilMenu'
 import { IlkSifrePenceresi } from './yonetim/ortak'
 import { MODUL_ADI, YOL_MODULU, modulleriYukle, useModuller } from '../yardimci/moduller'
 
@@ -48,6 +49,7 @@ export default function AnaSayfaDuzeni() {
   const konum = useLocation()
   const navigate = useNavigate()
   const acik = useModuller()   // [2026-10-10] okulun paketindeki modüller
+  const menu = useMobilMenu()   // [2026-10-11] dar ekranda çekmece menü
   const [bekleyenAnket, setBekleyenAnket] = useState(0)
   const anketAcik = acik('anketler')
   useEffect(() => { if (anketAcik) api.anketlerim().then((v) => setBekleyenAnket(v.bekleyen || 0)).catch(() => {}) }, [anketAcik, konum.pathname, konum.search])
@@ -102,8 +104,10 @@ export default function AnaSayfaDuzeni() {
     ? Math.round((ozet.tamamlanan_katman_sayisi / ozet.toplam_ana_katman_sayisi) * 100) : null
 
   return (
-    <div className="app">
-      <div className="sb">
+    <div className={`app${menu.appSinifi}`}>
+      <MobilUstCubuk menu={menu} baslik={<span className="mobil-baslik-ad">🌱 Filizyol</span>}
+        sag={acik('bildirimler') && <BildirimZili kapsam="ogrenci" />} />
+      <div className="sb" {...menu.cekmeceOzellikleri}>
         <div className="sb-logo" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
           <div>
             <div className="nm">🌱 Filizyol</div>
@@ -127,7 +131,7 @@ export default function AnaSayfaDuzeni() {
             <div className="u-nm">{ilkAd}</div>
             {ozet?.tur_no && <div className="u-id">Tur {ozet.tur_no}</div>}
           </div>
-          {acik('bildirimler') && <BildirimZili kapsam="ogrenci" />}
+          {acik('bildirimler') && !menu.mobil && <BildirimZili kapsam="ogrenci" />}
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
         {ozet?.sonraki_tur_tarihi && (
@@ -153,6 +157,9 @@ export default function AnaSayfaDuzeni() {
         </NavLink>
         <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölümler
+        </NavLink>
+        <NavLink to="/karsilastir" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          ⚖️ Karşılaştır
         </NavLink>
         {acik('is_hayati') && (
           <NavLink to="/is-hayati" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>

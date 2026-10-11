@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client'
 import FavoriYildiz from './FavoriYildiz'
+import { KarsilastirDugmesi } from './KarsilastirSepeti'
 
 const SEKMELER = [
   { kod: 'genel', ad: 'Genel Bakış' },
@@ -375,7 +376,12 @@ export function BolumBilgiIcerik({ bolumId, ad, baslangicSekme = 'genel', onKapa
             )}
           </div>
           {/* [2026-10-10] Öğrenci tarafında ★ Listeme ekle (yönetim ekranlarında gösterilmez) */}
-          {bilgi?.bolum_id && !window.location.pathname.startsWith('/admin') && <FavoriYildiz id={bilgi.bolum_id} ad={bilgi.ad} etiketli />}
+          {bilgi?.bolum_id && !window.location.pathname.startsWith('/admin') && (
+            <div className="ks-pencere-eylem">
+              <FavoriYildiz id={bilgi.bolum_id} ad={bilgi.ad} etiketli />
+              <KarsilastirDugmesi id={bilgi.bolum_id} ad={bilgi.ad} etiketli />   {/* [2026-10-11] */}
+            </div>
+          )}
           {ustEk}
           {onKapat && (
             <button onClick={onKapat} aria-label="Kapat" style={{ border: 'none', background: 'var(--sur2)', borderRadius: 10, width: 34, height: 34, fontSize: 18, cursor: 'pointer', color: 'var(--tx)', flexShrink: 0 }}>×</button>

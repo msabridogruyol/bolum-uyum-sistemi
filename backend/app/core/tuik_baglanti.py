@@ -7,7 +7,7 @@ portaldaki tablonun indirme bağlantısını yapıştırır; dosya burada indiri
 (sütun eşleştirme → önizleme → kaydet) verilir.
 
 Güvenlik (SSRF): yalnızca https ve *.tuik.gov.tr alan adları; her yönlendirme de aynı kurala tabi; çözülen IP
-özel/yerel olamaz; en fazla 25 MB, 30 sn; yalnızca xlsx / xls / csv içeriği.
+özel/yerel olamaz; en fazla 10 MB (yukleme_siniri.TABLO_EN_FAZLA_BAYT — indirilen dosya /dosya/oku sınırını geçmesin), 30 sn; yalnızca xlsx / xls / csv içeriği.
 """
 import base64
 import ipaddress
@@ -19,7 +19,7 @@ import urllib.request
 from datetime import date
 
 IZINLI_ALAN = "tuik.gov.tr"
-EN_FAZLA_BAYT = 25 * 1024 * 1024
+EN_FAZLA_BAYT = 10 * 1024 * 1024   # [2026-10-11] 25 → 10 MB: yukleme_siniri.TABLO_EN_FAZLA_BAYT ile aynı
 ZAMAN_ASIMI = 30
 
 
@@ -82,7 +82,7 @@ def indir(url: str) -> dict:
         with acici.open(istek, timeout=ZAMAN_ASIMI) as y:
             uzunluk = y.headers.get("Content-Length")
             if uzunluk and uzunluk.isdigit() and int(uzunluk) > EN_FAZLA_BAYT:
-                raise BaglantiHatasi("Dosya 25 MB'tan büyük.")
+                raise BaglantiHatasi("Dosya 10 MB'tan büyük.")
             veri = y.read(EN_FAZLA_BAYT + 1)
             ad = _dosya_adi(y.geturl(), y)
     except BaglantiHatasi:
@@ -92,7 +92,7 @@ def indir(url: str) -> dict:
     except (urllib.error.URLError, TimeoutError, OSError):
         raise BaglantiHatasi("TÜİK sunucusuna bağlanılamadı ya da yanıt zaman aşımına uğradı. Dosyayı indirip elle yükleyebilirsiniz.")
     if len(veri) > EN_FAZLA_BAYT:
-        raise BaglantiHatasi("Dosya 25 MB'tan büyük.")
+        raise BaglantiHatasi("Dosya 10 MB'tan büyük.")
     if not veri:
         raise BaglantiHatasi("Bağlantıdan boş dosya geldi.")
     uzanti = _tur_belirle(ad, veri[:4096])

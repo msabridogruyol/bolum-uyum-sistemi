@@ -198,21 +198,31 @@ _BASLIK = {
 
 
 def _dosyadan_satirlar(dosya_adi: str, icerik_b64: str) -> list[list]:
-    try:
-        veri = base64.b64decode(icerik_b64.split(",", 1)[-1])
-    except Exception:
-        raise HTTPException(status_code=400, detail="Dosya okunamadı.")
-    if len(veri) > 5_000_000:
-        raise HTTPException(status_code=400, detail="Dosya çok büyük (en fazla 5 MB).")
+    """[2026-10-11] Tablo dosyası sınırı: en fazla 10 MB ve 20.000 satır (app/core/yukleme_siniri.py) — öğrenci yükleme,
+    okul denemeleri ve İş Hayatı veri dosyaları bu fonksiyondan geçer."""
+    from app.core.yukleme_siniri import TABLO_EN_FAZLA_SATIR, base64_coz, satir_siniri
+    veri = base64_coz(icerik_b64)
     ad = (dosya_adi or "").lower()
     if ad.endswith((".xlsx", ".xlsm")) or veri[:2] == b"PK":
         try:
             import openpyxl
             wb = openpyxl.load_workbook(io.BytesIO(veri), read_only=True, data_only=True)
             ws = wb.worksheets[0]
-            return [[("" if c is None else c) for c in r] for r in ws.iter_rows(values_only=True)]
+            satirlar, dolu, son_dolu = [], 0, 0
+            for r in ws.iter_rows(values_only=True):
+                satir = [("" if c is None else c) for c in r]
+                if any(str(c).strip() for c in satir):
+                    dolu, son_dolu = dolu + 1, len(satirlar)
+                    if dolu > TABLO_EN_FAZLA_SATIR + 1:   # başlık payı; tamamını belleğe almadan kes
+                        satirlar.append(satir)
+                        break
+                elif len(satirlar) - son_dolu > 5000:     # biçimlendirilmiş binlerce boş satır (dosya sonu)
+                    break
+                satirlar.append(satir)
         except Exception:
             raise HTTPException(status_code=400, detail="Excel dosyası açılamadı. .xlsx olarak kaydedip tekrar deneyin.")
+        satir_siniri(len([r for r in satirlar if any(str(c).strip() for c in r)]) - 1)
+        return satirlar
     if ad.endswith(".xls"):
         raise HTTPException(status_code=400, detail="Eski .xls biçimi desteklenmiyor; dosyayı .xlsx olarak kaydedin.")
     for kod in ("utf-8-sig", "cp1254", "latin-1"):
@@ -223,7 +233,9 @@ def _dosyadan_satirlar(dosya_adi: str, icerik_b64: str) -> list[list]:
             continue
     ilk = metin.splitlines()[0] if metin else ""
     ayrac = max([";", ",", "\t"], key=ilk.count)
-    return [r for r in csv.reader(io.StringIO(metin), delimiter=ayrac)]
+    satirlar = [r for r in csv.reader(io.StringIO(metin), delimiter=ayrac)]
+    satir_siniri(len([r for r in satirlar if any(str(c).strip() for c in r)]) - 1)
+    return satirlar
 
 
 def _satirlari_coz(satirlar: list[list]) -> list[dict]:
@@ -590,6 +602,8 @@ def onizle(okul_id: int, istek: DosyaIstek, db: Session = Depends(get_db), yon: 
 def toplu_olustur(okul_id: int, istek: TopluOlusturIstek, db: Session = Depends(get_db),
                   yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     okul = _okul_kapsami(db, yon, okul_id)
+    from app.core.yukleme_siniri import satir_siniri
+    satir_siniri(len(istek.ogrenciler))   # [2026-10-11] en fazla 20.000
     if not istek.ogrenciler:
         raise HTTPException(status_code=400, detail="Oluşturulacak öğrenci yok.")
     if len(istek.ogrenciler) > EN_FAZLA_SATIR:

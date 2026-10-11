@@ -157,3 +157,43 @@ sorunu). Tüm testler SQLite üzerinden geçti; PostgreSQL dialektinde DDL
 head` komutunu kendi ortamınızda çalıştırıp doğrulamanız önemle tavsiye
 edilir.
 
+
+## Koruma, hata izleme ve testler (2026-10-11)
+
+**İstek sıklığı sınırı** (`app/core/hiz_siniri.py`, ek paket yok, süreç içi token bucket; aşımda `429` + `Retry-After` + Türkçe mesaj):
+
+| Kademe | Uçlar | Varsayılan |
+|---|---|---|
+| kimlik | giriş, 2 adımlı kod, şifre sıfırlama / davet kabul, kayıt, test girişi | IP başına 20/dk ve 150/saat |
+| agir | dosya önizleme/yükleme, toplu yüklemeler, PDF / Excel / şablon, Filiz AI mesajı | kişi (yoksa IP) başına 20/dk ve 300/saat |
+| istemci_hata | `POST /istemci-hata` | IP başına 10/dk ve 60/saat |
+| genel | diğer tüm API | kişi (yoksa IP) başına 300/dk |
+
+`/saglik`, `/docs`, `/openapi.json` ve `OPTIONS` muaftır. Değerler Parametreler ekranından (`hiz_siniri_*`; `hiz_siniri = kapali`
+tamamen kapatır) değiştirilir, 60 sn içinde etkinleşir. Sayaçlar her sunucu örneğinde ayrıdır (birden çok Render örneğinde
+etkin sınır ≈ sınır × örnek sayısı; yeniden başlatmada sıfırlanır).
+
+**Yükleme sınırları** (`app/core/yukleme_siniri.py`): her istek gövdesi en çok 25 MB (`413`), tablo dosyaları (öğrenci listesi,
+okul denemeleri, İş Hayatı / TÜİK) en çok 10 MB ve 20.000 satır, JSON satır listesi gelen toplu yüklemeler 20.000 satır
+(pipeline taslağı 100.000), görseller 1–2 MB.
+
+**Hata izleme** (`app/core/hata_izleme.py`, tablo `hata_kayitlari`, göç 0060): yakalanmamış istisnalar ve tarayıcı hataları
+kişisel veriler maskelenerek parmak izine göre gruplanır; her yanıtta `X-Istek-Kimligi` başlığı vardır, 500 yanıtında kullanıcıya
+bu kod gösterilir. Süper admin → Sistem → **Hata Kayıtları**. Yeni hata türünde süper adminlere günde en çok bir bildirim.
+
+**Sentry (isteğe bağlı):** Render'da `SENTRY_DSN` ortam değişkenini tanımlayın ve build komutuna `pip install sentry-sdk`
+ekleyin (requirements.txt'e bilerek eklenmedi). Paket ya da DSN yoksa sessizce atlanır. İsteğe bağlı: `SENTRY_ENVIRONMENT`,
+`SENTRY_TRACES_SAMPLE_RATE` (varsayılan 0). Kişisel veri gönderilmez (`send_default_pii=False`, mesajlar maskelenir).
+
+**Testler:**
+
+```bash
+pip install -r requirements.txt -r requirements-dev.txt
+python -m pytest                       # veritabansız birim testleri + eski test_*.py betikleri (ayrı süreçte)
+# Yetki / hata kaydı testleri PostgreSQL ister (veriler işlem sonunda geri alınır):
+createdb filizyol_test
+DATABASE_URL=postgresql://kullanici:sifre@localhost/filizyol_test python scripts/test_semasi_kur.py
+DATABASE_URL=postgresql://kullanici:sifre@localhost/filizyol_test python -m pytest
+```
+
+GitHub Actions: `.github/workflows/testler.yml` (push / pull request — backend pytest + Postgres servis konteyneri, frontend vite build).

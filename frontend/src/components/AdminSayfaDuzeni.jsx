@@ -7,6 +7,7 @@ import { IlkSifrePenceresi, ROL_ADI } from './yonetim/ortak'
 import { okulRenginiUygula } from '../tema'
 import AltSerit from './AltSerit'
 import BildirimZili from './BildirimZili'
+import { MobilUstCubuk, useMobilMenu } from './MobilMenu'
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
@@ -46,6 +47,7 @@ const SUPER_MENU = [
   { grup: 'Sistem', baglantilar: [
     ['/admin/parametreler', '🎛️', 'Parametreler'],
     ['/admin/audit-log', '📜', 'Audit Log'],
+    ['/admin/hata-kayitlari', '🐞', 'Hata Kayıtları'],
   ] },
   { grup: 'Yardım', baglantilar: [
     ['/admin/sistem-hakkinda', 'ℹ️', 'Sistem Hakkında'],
@@ -59,6 +61,7 @@ export default function AdminSayfaDuzeni() {
   const { cikisYap, rol, ben, benYenile } = useAdminAuth()
   const konum = useLocation()
   const okulYetkilisi = rol === 'okul_yetkilisi'
+  const menu = useMobilMenu()   // [2026-10-11] dar ekranda çekmece menü
   // [2026-10-10] Bekleyen kulüp katılma talebi sayısı (menüde Kulüpler'in yanında)
   const [bekleyenTalep, setBekleyenTalep] = useState(0)
   const [riskSayisi, setRiskSayisi] = useState(0)   // [2026-10-10] erken uyarı: yüksek seviyeli öğrenci sayısı
@@ -79,9 +82,17 @@ export default function AdminSayfaDuzeni() {
     if (!konum.pathname.startsWith(okulYolu) && konum.pathname !== '/admin/sss' && konum.pathname !== '/admin/kaynakca') return <Navigate to={okulYolu} replace />
   }
 
+  const zilVar = !okulYetkilisi || !ben?.moduller || ben.moduller.includes('bildirimler')
   return (
-    <div className="app">
-      <div className="sb">
+    <div className={`app${menu.appSinifi}`}>
+      <MobilUstCubuk menu={menu} sag={zilVar && <BildirimZili kapsam="yonetim" />}
+        baslik={okulYetkilisi ? (
+          <>
+            {ben?.okul_logo ? <img src={ben.okul_logo} alt="" className="mobil-logo" /> : <span aria-hidden="true">🏫</span>}
+            <span className="mobil-baslik-ad">{ben?.okul_ad || 'Okul Paneli'}</span>
+          </>
+        ) : <span className="mobil-baslik-ad">Yönetici Paneli</span>} />
+      <div className="sb" {...menu.cekmeceOzellikleri}>
         <div className="sb-logo">
           <div className="nm">Filizyol</div>
           <div className="su">{okulYetkilisi ? 'Okul Paneli' : 'Yönetici Paneli'}</div>
@@ -98,7 +109,7 @@ export default function AdminSayfaDuzeni() {
             <div className="u-nm" style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>{ben?.ad_soyad || 'Yönetici'}</div>
             <div className="u-id">{ROL_ADI[rol] || rol}</div>
           </div>
-          {(!okulYetkilisi || !ben?.moduller || ben.moduller.includes('bildirimler')) && <BildirimZili kapsam="yonetim" />}
+          {zilVar && !menu.mobil && <BildirimZili kapsam="yonetim" />}
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
 

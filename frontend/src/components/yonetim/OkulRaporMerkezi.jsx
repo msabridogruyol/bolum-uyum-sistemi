@@ -102,6 +102,7 @@ function RaporIndir({ okulId, oz }) {
   const [sube, setSube] = useState('')
   const [toplu, setToplu] = useState('')
   const [istKapsam, setIstKapsam] = useState('')
+  const [veliKapsam, setVeliKapsam] = useState('')   // [2026-10-11] veli toplantısı sunumu: '' (okul) | s:<sınıf> | b:<sınıf>|<şube>
   const [istGun, setIstGun] = useState(90)
   useEffect(() => { setSinif((x) => x || siniflar[0] || ''); setSube((x) => x || (subeler[0] ? `b:${subeler[0].sinif}|${subeler[0].sube}` : '')); setToplu((x) => x || (subeler[0] ? `b:${subeler[0].sinif}|${subeler[0].sube}` : '')) }, [siniflar, subeler])
 
@@ -173,6 +174,19 @@ function RaporIndir({ okulId, oz }) {
           kapsam={subeler.length ? subeSecici(sube, setSube) : kapsamYok}
           dugmeler={[{ ad: '📄 PDF', pasif: !sube, fn: () => sinifRaporu(sube, 'ozet', 'pdf') }, { ad: '📊 Excel', ikincil: true, pasif: !sube, fn: () => sinifRaporu(sube, 'ozet', 'xlsx') }]} />
       </Grup>
+
+      {acik('gelismis_raporlar') && (
+        <Grup baslik="Veli toplantısı" aciklama="Toplantıda perdeye yansıtılacak, düzenlenebilir PowerPoint sunumu. Yalnızca toplu bilgiler yer alır: öğrenci adı, öğrenci bazlı sonuç, uyarı listesi ve net bilgisi içermez.">
+          <RaporKarti ikon="🎤" baslik="Veli toplantısı sunumu (PowerPoint)" aciklama="Filizyol'un velilere sade anlatımı, katılım, öne çıkan ortak özellikler, en çok önerilen alanlar ve bölümler, hedef seçimi, koçluk ve İş Hayatı, velilerin nasıl destek olabileceği, yaklaşan etkinlikler ve rehberlik servisi iletişimi. Her slaytta öğretmen için konuşma notu var."
+            kapsam={<select className="yp-sec" value={veliKapsam} onChange={(e) => setVeliKapsam(e.target.value)} aria-label="Sunum kapsamı">
+              <option value="">Tüm okul</option>
+              {siniflar.map((s) => <option key={s} value={`s:${s}`}>{s} (tüm şubeler)</option>)}
+              {subeler.map((s) => <option key={s.etiket} value={`b:${s.sinif}|${s.sube}`}>{s.etiket} ({s.ogrenci})</option>)}
+            </select>}
+            not="5'ten az öğrenciye dayanan değerler gösterilmez; 5'ten az öğrencili şubede yalnızca genel anlatım slaytları yer alır. Okul rengi ve (PNG/JPEG ise) logosu kullanılır."
+            dugmeler={[{ ad: '📽️ PowerPoint (.pptx)', fn: () => api.veliSunumuIndir(okulId, kapsamCoz(veliKapsam)) }]} />
+        </Grup>
+      )}
 
       {acik('gelismis_raporlar') && (
         <Grup baslik="Toplu öğrenci raporları" aciklama="Seçilen şubedeki (ya da sınıf düzeyindeki) her öğrencinin bireysel raporu, öğrenci numarasına göre sıralı tek PDF'te — veli toplantısı ve sınıf öğretmenleri için. En fazla 80 öğrenci.">

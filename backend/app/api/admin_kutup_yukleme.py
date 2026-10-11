@@ -50,6 +50,8 @@ def kutup_sorularini_toplu_yukle(
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
+    from app.core.yukleme_siniri import TABLO_EN_FAZLA_SATIR, satir_siniri
+    satir_siniri(len(istek.satirlar), TABLO_EN_FAZLA_SATIR)   # [2026-10-11] toplu yükleme satır sınırı
     hatalar: list[str] = []
     eklenen = 0
 

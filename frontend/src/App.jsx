@@ -34,6 +34,7 @@ const ProfilAyarlariSayfasi = lazy(() => import('./pages/ProfilAyarlariSayfasi')
 const AnaSayfa = lazy(() => import('./pages/AnaSayfa'))
 const AdminGirisSayfasi = lazy(() => import('./pages/admin/AdminGirisSayfasi'))
 const KontrolPaneliSayfasi = lazy(() => import('./pages/admin/KontrolPaneliSayfasi'))
+const HataKayitlariSayfasi = lazy(() => import('./pages/admin/HataKayitlariSayfasi'))   // [2026-10-11]
 const PipelineDurumuSayfasi = lazy(() => import('./pages/admin/PipelineDurumuSayfasi'))
 const BolumlerSayfasi = lazy(() => import('./pages/admin/BolumlerSayfasi'))
 const DallarSayfasi = lazy(() => import('./pages/admin/DallarSayfasi'))
@@ -60,6 +61,7 @@ const IstatistiklerSayfasi = lazy(() => import('./pages/admin/IstatistiklerSayfa
 const RaporMerkeziSayfasi = lazy(() => import('./pages/admin/RaporMerkeziSayfasi'))     // [2026-10-10]
 const TestGirisSayfasi = lazy(() => import('./pages/TestGirisSayfasi'))
 const IsHayatiSayfasi = lazy(() => import('./pages/IsHayatiSayfasi'))                         // [2026-10-10] İş Hayatı
+const OgrenciKarsilastirmaSayfasi = lazy(() => import('./pages/KarsilastirmaSayfasi'))     // [2026-10-11] bölüm karşılaştırma (öğrenci)
 const IsHayatiVerileriSayfasi = lazy(() => import('./pages/admin/IsHayatiVerileriSayfasi'))   // [2026-10-10]
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
@@ -129,6 +131,7 @@ function AnaUygulama() {
         {/* [2026-10-10] Yeni menü: Bölümler (sekmeli) ve Profilim (sekmeli) */}
         <Route path="/bolumler" element={<BolumlerimSayfasi />} />
         <Route path="/bolumler/:sekme" element={<BolumlerimSayfasi />} />
+        <Route path="/karsilastir" element={<OgrenciKarsilastirmaSayfasi />} />
         <Route path="/profilim" element={<ProfilimSayfasi />} />
         <Route path="/profilim/:kod" element={<ProfilimSayfasi />} />
         {/* Eski adresler (yer imleri, haftalık görev bağlantıları) yeni sayfalara yönlenir */}
@@ -177,6 +180,7 @@ function AnaUygulama() {
         {/* [2026-10-09] Öğrenci yönetimi okul bazlı: Okullar → okul paneli */}
         <Route path="ogrenciler" element={<Navigate to="/admin/okullar" replace />} />
         <Route path="audit-log" element={<AuditLogSayfasi />} />
+        <Route path="hata-kayitlari" element={<HataKayitlariSayfasi />} />
         <Route path="yoneticiler" element={<YoneticilerSayfasi />} />
         <Route path="sistem-hakkinda" element={<SistemHakkindaSayfasi />} />
         <Route path="soru-gecerlilik" element={<SoruGecerlilikSayfasi />} />

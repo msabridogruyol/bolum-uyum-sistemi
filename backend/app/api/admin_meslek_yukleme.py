@@ -61,6 +61,8 @@ def meslekleri_toplu_yukle(
     ama İKİNCİ bir yeniden yükleme öncesi öğrencilerin hedef meslek seçimleri
     sıfırlanabileceğini unutmayın (aşağıdaki NOT'a bakın).
     """
+    from app.core.yukleme_siniri import TABLO_EN_FAZLA_SATIR, satir_siniri
+    satir_siniri(len(istek.meslekler), TABLO_EN_FAZLA_SATIR)   # [2026-10-11] toplu yükleme satır sınırı
     if not istek.meslekler:
         raise HTTPException(status_code=400, detail="Yüklenecek meslek yok.")
 

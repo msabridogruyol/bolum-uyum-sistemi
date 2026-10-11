@@ -141,7 +141,9 @@ export const api = {
   listemGetir: () => get('/ogrenci/listem'),
   listeyeEkle: (bolumId) => post(`/ogrenci/listem/${bolumId}`),
   listedenCikar: (bolumId) => del(`/ogrenci/listem/${bolumId}`),
-  bolumKarsilastir: (idler) => get(`/ogrenci/karsilastir?ids=${idler.join(',')}`),
+  bolumKarsilastir: (idler) => get(`/ogrenci/karsilastir?bolumler=${idler.join(',')}`),
+  karsilastirVarsayilan: () => get('/ogrenci/karsilastir/varsayilan'),
+  bolumKarsilastirPdf: (idler) => dosyaIndir(`/ogrenci/karsilastir/pdf?bolumler=${idler.join(',')}`),   // [2026-10-11]
   gelisimimGetir: () => get('/koclugu/gelisimim'),
   bolumAdaGore: (ad) => get(`/bolumler/ada-gore?ad=${encodeURIComponent(ad)}`),
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
@@ -325,6 +327,7 @@ export const api = {
   isHayatiGercek: (bolumId) => get(`/ogrenci/is-hayati/gercek/${bolumId}`),   // [2026-10-10] Beklenti ve Gerçek
   isHayatiGercekKaydet: (bolumId, tahminler) => post(`/ogrenci/is-hayati/gercek/${bolumId}`, { tahminler }),
   isHayatiYol: (bolumId) => get(`/ogrenci/is-hayati/yol/${bolumId}`),   // [2026-10-10] Mesleğe Giden Yol
+  isHayatiGelecek: (bolumId) => get(`/ogrenci/is-hayati/gelecek/${bolumId}`),   // [2026-10-11] Gelecekte Bu Meslek (yapay zekâ etkisi)
   isHayatiZorGun: (bolumId) => get(`/ogrenci/is-hayati/zor-gun/${bolumId}`),   // [2026-10-10] Zor Günler
   isHayatiZorGunTur: (bolumId, meslek) => get(`/ogrenci/is-hayati/zor-gun/${bolumId}/tur${meslek ? `?meslek=${encodeURIComponent(meslek)}` : ''}`),
   isHayatiZorGunKaydet: (v) => post('/ogrenci/is-hayati/zor-gun', v),
@@ -518,6 +521,7 @@ export const api = {
   // [2026-10-10] Rapor Merkezi → Tek Bakışta (yönetici özeti) ve PDF'i (?sinif=&sube=)
   okulTekBakista: (okulId, f = {}) => aget(`/yonetim/okul/${okulId}/tek-bakista${istatistikSorgu(f)}`),
   okulTekBakistaPdf: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/tek-bakista/pdf${istatistikSorgu(f)}`, 'admin'),
+  veliSunumuIndir: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/veli-sunumu${istatistikSorgu(f)}`, 'admin'),   // [2026-10-11] .pptx
   okulOgrencileri: (okulId) => aget(`/yonetim/okul/${okulId}/ogrenciler`),
   yuklemeSablonu: () => aget('/yonetim/sablon'),
   ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),

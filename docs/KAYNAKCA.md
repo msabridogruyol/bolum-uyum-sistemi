@@ -7,7 +7,7 @@ Sistemde elle hazırlanan her bileşen, ne yaptığı, nasıl hesaplandığı ve
 - Kaynaklar bileşenin **kuramsal dayanağını** gösterir; Filizyol ölçekleri bu kaynaklardaki ölçeklerin birebir uyarlaması değildir.
 - **Kurum içi** işaretli bileşenlerde eşik, ağırlık ve sayılar ürün tasarımı kararıdır.
 
-Toplam: 69 bileşen, 156 kaynak.
+Toplam: 70 bileşen, 159 kaynak.
 
 ## İçindekiler
 
@@ -622,6 +622,20 @@ CV Atölyesi'nde lise öğrencisine CV'yi anlatan 8 konuluk rehber ve öğrencin
 - [72] Kişisel Verilerin Korunması Kanunu, Kanun No. 6698, 2016 — Rehberde din, sağlık gibi bilgilerin 'özel nitelikli kişisel veri' olduğu (md. 6) ve CV'ye yazılmaması önerisinin dayanağı.
 
 > Biçim ağırlıkları, anahtar kelime ağırlıkları, durak/dolgu sözcük listeleri ve ek budama kuralları ürün tasarımı kararıdır; gerçek ATS'ler şirketten şirkete farklıdır ve öğrenciye 'tahmin' olarak gösterilir. ATS kullanım oranı doğrulanamadığı için hiçbir oran verilmez. Rehberdeki öteki kaynaklar (Harvard, MIT, JMU kariyer merkezleri, Europass, LinkedIn kullanıcı sözleşmesi, İŞKUR) cv_rehberi.json içinde listelenir.
+
+### İş Hayatı · Gelecekte Bu Meslek · _Kurum içi_
+
+Seçili bölümün meslekleri için, ait oldukları ISCO-08 meslek grubunun üretken yapay zekâya maruz kalma düzeyi (Az / Kısmen / En çok değişecek), ILO'nun gruptaki 4 haneli meslekleri sınıflandırma dağılımı, hangi görevlerin değiştiği, hangi becerilerin değer kazandığı ve lisede yapılabilecekler; en üstte 'maruz kalma ≠ meslek yok oluyor' açıklaması.
+
+**Nasıl:** Meslek adı → ISCO-08 alt ana grubu (meslek_isco). Grup düzeyi ILO WP140 Tablo A1'deki 4 haneli mesleklerin sınıflarının sayımıyla türetilir: en az üçte biri Gradyan 3–4 → 'En çok değişecek'; değilse en az beşte biri Gradyan 1–4 → 'Kısmen değişecek'; aksi hâlde 'Az değişecek' (meslekler eşit ağırlıklı, istihdam ağırlığı yok). 40 alt ana grup tohumlanır (göç 0058, meslek_grubu_ai_etkisi; süper admin düzenleyebilir). Görev/beceri/lise metinleri app/data/ai_etkisi_gruplar.json'da, ILO görev puanlarında grubun en çok ve en az maruz kalan görevlerine bakılarak genel ifadelerle yazıldı; sayı içermez. Renkler durum rengi değil, tek tonun sıralı kullanımıdır.
+
+**Dayanak:**
+
+- [157] Gmyrek vd., 2025 (ILO WP140) — Tüm sayısal değerlerin (4 haneli meslek sınıfı, ortalama puan, SS) ve gradyan tanımlarının (Tablo 5) birincil kaynağı; 'maruz kalma iş kaybı değildir' uyarısının dayanağı.
+- [158] Gmyrek vd., 2023 (ILO WP96) — 2023 ilk endeksi; etkinin çoğunlukla işi dönüştürme/destekleme yönünde olacağı bulgusu (yalnızca nitel).
+- [159] WEF, 2025 — 'Dünyada işverenler ne bekliyor?' kutusundaki beceri ve rol eğilimleri (nitel; küresel).
+
+> Grup düzeyi ILO'nun yayımladığı bir değer değil, bu uygulamanın sayım kuralıdır; ILO istihdam ağırlıklı grup puanı yayımlamaz. ILO endeksi Polonya görev tanımları ve küresel uzman görüşüyle kurulmuş genel bir endekstir, teknolojinin benimsenmesini ve yeni işleri hesaba katmaz. Meslek–ISCO eşleşmesi orta güvenliyse öğrenciye not gösterilir. OECD Employment Outlook 2023 doğrulanmadığı için kullanılmadı.
 
 ## Rehberlik ve erken uyarı
 
@@ -1322,6 +1336,12 @@ Kimin hangi veriyi görebileceğine dair yapısal kurallar ve kritik işlemlerin
    - Doğrulama: Çalışma PDF'i (CSU Global kopyası) ve HR Dive haberi (08.11.2018) okundu: ilk taramada ortalama 7,4 saniye; sade düzen ve net başlıklar olumlu, çok sütun ve anahtar kelime doldurma olumsuz. Örneklem büyüklüğü belgede yazmıyor.
 156. LinkedIn. (t.y.). The easy how-to guide to formatting resumes for applicant tracking systems. LinkedIn Premium. <https://premium.linkedin.com/content/premium/global/en_us/index/jobsearch/articles/the-easy-how-to-guide-for-formatting-resumes-for-applicant-tracking-systems>
    - Doğrulama: Sayfa doğrudan okundu (2026-10): standart başlıklar (Summary, Work Experience, Education, Skills), standart yazı tipi, görsel/tablo/metin kutusu olmaması, aşırı anahtar kelime kullanmama.
+157. Gmyrek, P., Berg, J., Kamiński, K., Konopczyński, F., Ładna, A., Nafradi, B., Rosłaniec, K. ve Troszyński, M. (2025). Generative AI and jobs: A refined global index of occupational exposure (ILO Working Paper 140). Uluslararası Çalışma Örgütü. https://doi.org/10.54394/HETP0387
+   - Doğrulama: PDF doğrudan okundu (2026-10; yazarların github.com/pgmyrek/2025_genai_scores_isco08 deposundaki kopya, ILO yayın sayfası 20.05.2025, ISBN 9789220421857 web PDF). Tablo 5 (s. 38) gradyan tanımları; Tablo A1 (s. 48–61) 427 dört haneli ISCO-08 mesleğin kategori, ortalama ve SS değerleri — depodaki Final_Scores_ISCO08_Gmyrek_et_al_2025.xlsx ile 427/427 satır birebir eşleşti. Bölüm 10 (s. 44–45) ve Sonuç (s. 46–47): maruz kalma ≠ iş kaybı, üst sınır tahmini, yeni işler hesaba katılmaz. 2 ya da 1 haneli grup puanı/tablosu yayımlanmıyor.
+158. Gmyrek, P., Berg, J. ve Bescond, D. (2023). Generative AI and jobs: A global analysis of potential effects on job quantity and quality (ILO Working Paper 96). Uluslararası Çalışma Örgütü. <https://www.ilo.org/publications/generative-ai-and-jobs-global-analysis-potential-effects-job-quantity-and>
+   - Doğrulama: HTML sürümü okundu (webapps.ilo.org/static/english/intserv/working-papers/wp096, 2026-10): özet ve sonuçta en önemli etkinin büyük olasılıkla işi tamamlama/destekleme (augmentation) olduğu; büro destek elemanlarının görevlerinde en yüksek maruz kalma. Gruplara göre sayısal tablo metinde verilmiyor (yalnızca şekiller); bu çalışmadan sayı alınmadı.
+159. World Economic Forum (2025). The Future of Jobs Report 2025. Cenevre: WEF. <https://www.weforum.org/reports/the-future-of-jobs-report-2025/digest>
+   - Doğrulama: Özet sayfası doğrudan okundu (2026-10; yayın 7 Ocak 2025): en hızlı önem kazanan beceriler (yapay zekâ ve büyük veri, ağlar ve siber güvenlik, teknoloji okuryazarlığı; analitik ve yaratıcı düşünme, dayanıklılık-esneklik, merak ve yaşam boyu öğrenme), mutlak sayıca en çok büyüyen ve en hızlı küçülen işler. Küresel işveren anketi; Türkiye'ye birebir uymayabilir. Yalnızca nitel düzeyde kullanıldı.
 
 ## Doğrulanamayan ve listeye alınmayan künyeler
 

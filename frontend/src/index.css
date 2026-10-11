@@ -2634,3 +2634,103 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
   .cvr-ilerleme{text-align:left}
   .cvr-alt-gezinti .btn{flex:1;justify-content:center}
 }
+
+/* ============================================================
+   [2026-10-11] TELEFON / DAR EKRAN (≤ 900px): sol menü yerine üst çubuk + soldan kayan çekmece
+   (components/MobilMenu.jsx). Masaüstünde (> 900px) bu kuralların hiçbiri uygulanmaz.
+   ============================================================ */
+@media (max-width: 900px){
+  .app{flex-direction:column;height:100vh;height:100dvh}
+  .mobil-ust{display:flex;align-items:center;gap:6px;flex-shrink:0;height:54px;box-sizing:border-box;padding:0 6px 0 4px;background:var(--kanvas);border-bottom:1px solid var(--bor);position:relative;z-index:90}
+  .mobil-menu-dugme{width:44px;height:44px;border:0;background:none;border-radius:12px;font-size:22px;line-height:1;color:var(--tx);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0}
+  .mobil-menu-dugme:hover,.mobil-menu-dugme[aria-expanded="true"]{background:var(--sur2)}
+  .mobil-menu-dugme:focus-visible{outline:2px solid var(--pu);outline-offset:2px}
+  .mobil-baslik{flex:1;min-width:0;display:flex;align-items:center;gap:8px;font-family:var(--fd);font-size:16px;font-weight:700;color:var(--tx)}
+  .mobil-baslik-ad{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .mobil-logo{width:30px;height:30px;object-fit:contain;border-radius:6px;flex-shrink:0}
+  .mobil-sag{display:flex;align-items:center;flex-shrink:0}
+  .mobil-sag .bz-dugme{min-width:44px;min-height:44px;display:flex;align-items:center;justify-content:center;font-size:19px}
+  /* Çekmece: kapalıyken ekran dışında ve görünmez (Tab ile odak almaz) */
+  .sb{position:fixed;top:0;left:0;bottom:0;z-index:1050;width:min(300px,86vw);min-width:0;box-sizing:border-box;background:var(--kanvas);
+    box-shadow:0 0 40px rgba(0,0,0,.25);transform:translateX(-105%);visibility:hidden;overscroll-behavior:contain;
+    padding-bottom:env(safe-area-inset-bottom);transition:transform .24s cubic-bezier(.2,.7,.2,1),visibility 0s linear .24s}
+  .app.sb-acik .sb{transform:none;visibility:visible;transition:transform .24s cubic-bezier(.2,.7,.2,1)}
+  .sb:focus{outline:none}
+  .sb-ortu{position:fixed;inset:0;z-index:1040;background:rgba(20,16,10,.5);opacity:0;pointer-events:none;transition:opacity .2s}
+  .app.sb-acik .sb-ortu{opacity:1;pointer-events:auto}
+  .app.sb-acik .main{overflow:hidden}
+  .sb .ni{min-height:44px;box-sizing:border-box;font-size:14px}
+  .sb .back{min-height:40px;padding:0 10px;margin-bottom:0}
+  .sb .tema-anahtari-gomulu{width:40px;height:40px}
+  /* İçerik tam genişlikte; yatay taşma sayfayı kaydırmaz */
+  .main{margin:0;border-radius:0;flex:1;min-height:0;min-width:0;overflow-x:hidden}
+}
+@media (prefers-reduced-motion: reduce){.sb,.sb-ortu{transition:none !important}}
+/* [2026-10-11] Geniş tablolar kendi kabında yatay kayar (sayfa kaymaz) */
+.tablo-kap{overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+@media (max-width: 760px){
+  /* Maskot telefonda içerikle birlikte kayar (üst çubuğun altında); başlık ona yer bırakır */
+  .ogrenci-main .pg > .ph,.ogrenci-main .pg > .ph:first-child{padding-right:84px;min-height:96px}
+  .card{min-width:0;padding:16px}
+  /* Kabı olmayan tablolar: tablo kendisi yatay kaydırılır */
+  .pg :not(.yp-tablo-kap):not(.od-tablo-kap):not(.kr-tablo-kap):not(.otb-tablo-kap):not(.tablo-kap) > table.yp-tablo{display:block;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+  /* Dokunma hedefleri ≥ 40px, okunur yazı; iOS'ta odaklanınca yakınlaştırmasın diye form alanları 16px */
+  .yp-sekmeler button,.koc-sekmeler button,.sayfa-sekmeleri a{min-height:40px;box-sizing:border-box}
+  .btn,.yp-sec,select.yp-sec{min-height:40px;box-sizing:border-box}
+  input:not([type="checkbox"]):not([type="radio"]):not([type="range"]),select,textarea{font-size:16px}
+  .ps{font-size:14px}
+  .pt{font-size:21px}
+}
+
+/* [2026-10-11] Bölüm karşılaştırma (/karsilastir) ve karşılaştırma sepeti — KarsilastirmaSayfasi.jsx, KarsilastirSepeti.jsx */
+.ks-dugme-kap{position:relative;display:inline-flex;align-items:center;gap:6px;flex-shrink:0}
+.ks-dugme{display:inline-flex;align-items:center;gap:6px;border:1.5px solid transparent;background:none;color:var(--tx3);cursor:pointer;font:inherit;font-size:13px;font-weight:700;padding:4px 6px;border-radius:10px;filter:grayscale(1);opacity:.7;transition:all .15s}
+.ks-dugme:hover{opacity:1;filter:none}
+.ks-dugme.secili{filter:none;opacity:1;background:color-mix(in srgb, var(--okul-c) 12%, var(--sur));border-color:color-mix(in srgb, var(--okul-c) 45%, var(--bor))}
+.ks-dugme.etiketli{filter:none;opacity:1;border-color:var(--bor);background:var(--sur);padding:6px 11px;color:var(--tx2)}
+.ks-dugme.etiketli.secili{border-color:var(--okul-c);color:var(--tx);background:color-mix(in srgb, var(--okul-c) 10%, var(--sur))}
+.ks-ac{font-size:12.5px;font-weight:800;color:var(--okul-c);text-decoration:none;white-space:nowrap}
+.ks-pencere-eylem{display:flex;flex-wrap:wrap;gap:6px;justify-content:flex-end;align-items:center}
+.ks-cubuk{position:sticky;bottom:60px;z-index:21;display:flex;align-items:center;gap:10px;margin:18px auto 0;max-width:760px;padding:10px 12px;border-radius:16px;background:var(--sur);border:1.5px solid var(--okul-c);box-shadow:0 8px 28px rgba(0,0,0,.14)}
+.ks-cubuk-ikon{font-size:20px;flex-shrink:0}
+.ks-cubuk-liste{display:flex;flex-wrap:wrap;gap:6px;align-items:center;flex:1;min-width:0}
+.ks-cubuk-cip{display:inline-flex;align-items:center;gap:4px;max-width:100%;padding:4px 6px 4px 10px;border-radius:999px;background:color-mix(in srgb, var(--okul-c) 10%, var(--sur));font-size:12.5px;font-weight:700}
+.ks-cubuk-cip span{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:180px}
+.ks-cubuk-cip button{border:none;background:none;cursor:pointer;color:var(--tx3);font-size:16px;line-height:1;padding:0 2px}
+.ks-cubuk-ipucu{font-size:11.5px}
+.ks-cubuk-git{flex-shrink:0}
+@media(max-width:640px){.ks-cubuk{bottom:56px;flex-wrap:wrap}.ks-cubuk-git{width:100%}.ks-cubuk-cip span{max-width:130px}}
+.ks-ara{display:flex;gap:8px;margin-top:12px}
+.ks-ara .auth-input{flex:1;margin:0;min-width:0}
+.ks-ozet{position:relative}
+.ks-ozet-eylem{display:flex;justify-content:flex-end;margin-top:4px}
+.ks-yok{display:inline-flex;flex-direction:column;gap:2px;color:var(--tx3);font-weight:700}
+.ks-yok small{font-size:11.5px;font-weight:600;line-height:1.35}
+.ks-yok .hg-link{align-self:flex-start;margin-top:4px}
+.ks-mini{font-size:11.5px;font-weight:800;color:var(--tx3);margin-bottom:6px}
+.ks-en,.kr-uyum.ks-en b{color:var(--okul-c)}
+.ks-en b{color:var(--okul-c)}
+.ks-en::after,.ks-en-kutu .ks-mini::after{content:' ★ en iyi';font-size:10.5px;font-weight:800;color:var(--okul-c);white-space:nowrap}
+.kr-uyum.ks-en::after{content:'★ en yüksek'}
+.ks-en-kutu .ks-mini{color:var(--okul-c)}
+.ks-dikkat{color:var(--tx2)}
+.kr-liste.duz li.ks-dikkat::before{content:''}
+.ks-yol{margin:0;padding-left:18px;display:flex;flex-direction:column;gap:3px;color:var(--tx2)}
+.ks-yol li::marker{color:var(--okul-c);font-weight:800}
+.ks-gunluk{display:flex;flex-direction:column;gap:10px}
+.ks-gunluk > div{display:flex;flex-direction:column;gap:3px}
+.ks-gunluk small{font-size:11.5px;color:var(--tx3);line-height:1.4}
+.ks-etiketler{display:flex;flex-wrap:wrap;gap:5px}
+.ks-etiketler span{font-size:11.5px;font-weight:700;padding:3px 8px;border-radius:999px;background:var(--sur2);color:var(--tx2)}
+.ks-tablo .kr-bas{border-top:3px solid var(--okul-c)}
+.ks-tablo .kr-etiket{position:sticky;left:0;z-index:1;background:var(--sur)}
+.ks-tablo .kr-bas .kr-etiket{background:var(--sur2)}
+.ks-tablo .kr-satir:nth-child(even):not(.kr-bas) .kr-etiket{background:color-mix(in srgb, var(--sur2) 45%, var(--sur))}
+.ks-kaydir{display:none;text-align:center;margin-top:6px}
+@media(max-width:640px){
+  .ks-tablo{min-width:calc(108px + var(--kr-n) * 172px)}
+  .ks-tablo .kr-satir{grid-template-columns:108px repeat(var(--kr-n),minmax(172px,1fr))}
+  .ks-tablo .kr-etiket{padding:10px 8px;font-size:11.5px}
+  .ks-tablo .kr-hucre{padding:10px;font-size:12.5px}
+  .ks-kaydir{display:block}
+}

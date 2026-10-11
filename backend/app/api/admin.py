@@ -176,6 +176,8 @@ def bolum_aciklamalarini_toplu_guncelle(
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
     """[YENİ] CSV'den toplu bölüm açıklaması güncelleme — ad eşleşmesiyle çalışır."""
+    from app.core.yukleme_siniri import TABLO_EN_FAZLA_SATIR, satir_siniri
+    satir_siniri(len(istek.satirlar), TABLO_EN_FAZLA_SATIR)   # [2026-10-11] toplu yükleme satır sınırı
     bolum_map = {b.ad: b for b in db.query(Bolum).all()}
     guncellenen = 0
     eslesmeyenler = []
@@ -661,6 +663,8 @@ def pipeline_ciktisi_yukle(
     tabloya yükler. CANLI bolum_agirliklari tablosuna DOKUNMAZ — yalnızca
     /onayla çağrıldığında gerçek tabloya yazılır.
     """
+    from app.core.yukleme_siniri import PIPELINE_EN_FAZLA_SATIR, satir_siniri
+    satir_siniri(len(istek.satirlar), PIPELINE_EN_FAZLA_SATIR)   # [2026-10-11] toplu yükleme satır sınırı
     if not istek.satirlar:
         raise HTTPException(status_code=400, detail="Yüklenecek satır yok.")
 
@@ -1179,6 +1183,8 @@ def soru_gecerlilik_sonuclarini_yukle(
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
+    from app.core.yukleme_siniri import TABLO_EN_FAZLA_SATIR, satir_siniri
+    satir_siniri(len(istek.sonuclar), TABLO_EN_FAZLA_SATIR)   # [2026-10-11] toplu yükleme satır sınırı
     if not istek.sonuclar:
         raise HTTPException(status_code=400, detail="Yüklenecek sonuç yok.")
 
@@ -1278,6 +1284,8 @@ def sorulari_toplu_yukle(
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
+    from app.core.yukleme_siniri import TABLO_EN_FAZLA_SATIR, satir_siniri
+    satir_siniri(len(istek.satirlar), TABLO_EN_FAZLA_SATIR)   # [2026-10-11] toplu yükleme satır sınırı
     if not istek.satirlar:
         raise HTTPException(status_code=400, detail="Yüklenecek satır yok.")
 
