@@ -535,27 +535,27 @@ export function kiyafetBul(bolumAdi, meslekAdi) {
 
 // ----------------------------------------------------------------------------- Mesajlar
 const KIYAFET_MESAJLARI = {
-  hukuk: ['Cübbem nasıl? ⚖️ Hukukçular çok okur — bugün bir sayfa fazla oku!', 'Bir avukatın en güçlü silahı iyi kurulmuş bir argümandır.'],
+  hukuk: ['Cübbem nasıl? ⚖️ Hukukçular çok okur — bugün bir sayfa fazla oku!', 'İyi avukat, fikrini sağlam gerekçelerle savunur.'],
   dedektif: ['İpucu: en iyi dedektifler ayrıntıyı kaçırmaz. 🔎', 'Merak et, sor, araştır — adli bilimler böyle başlar.'],
   veteriner: ['Patili dostlar için hazırım! 🐾', 'Biyoloji çalışmak, her canlıya iyi bakmanın ilk adımı.'],
   dis: ['Gülümse! 😁 Diş hekimleri sabırlı ve dikkatlidir.', 'İnce el becerisi pratikle gelişir — bugün bir şey çiz!'],
-  eczaci: ['Kimya bilgisi şifanın formülüdür. 💊', 'Her gün biraz kimya, uzun vadede büyük fark!'],
+  eczaci: ['İlaçların sırrı kimyada saklı. 💊', 'Her gün biraz kimya, uzun vadede büyük fark!'],
   doktor: ['Beyaz önlük yakıştı mı? 🩺', 'Biyoloji ve kimyaya her gün 20 dakika ayır — gerisi gelir.', 'İyi bir sağlıkçı önce iyi bir dinleyicidir.'],
-  yazilimci: ['Kod yazmak bir dil öğrenmek gibi: her gün biraz! 💻', 'Bug değil, öğrenme fırsatı. 🐛➡️🦋'],
-  kuafor: ['Makaslar hazır! ✂️ Güzellik sabır ve dikkat ister.', 'İnsanlara iyi hissettirmek de bir meslek sanatı. 💇'],
-  rehber: ['Yola çıkıyoruz! 🗺️ İyi bir rehber önce iyi bir anlatıcıdır.', 'Bir yabancı dile her gün 15 dakika — rehberliğin anahtarı!'],
+  yazilimci: ['Kod yazmak bir dil öğrenmek gibi: her gün biraz! 💻', 'Hata değil, öğrenme fırsatı. 🐛➡️🦋'],
+  kuafor: ['Makaslar hazır! ✂️ Güzellik sabır ve dikkat ister.', 'İnsanlara iyi hissettirmek de bir sanat. 💇'],
+  rehber: ['Yola çıkıyoruz! 🗺️ İyi bir rehber önce iyi bir anlatıcıdır.', 'Her gün 15 dakika yabancı dil çalış. Rehberliğin anahtarı bu!'],
   analist: ['Veriler konuşur, iyi analist dinler. 📊', 'İstatistik dersine bugün 20 dakika ayıralım mı?', 'Her grafik bir hikâye anlatır — sen hangisini anlatacaksın?'],
-  elektrik: ['Enerjimiz tam! ⚡', 'Fizik formülleri devrelerin dilidir — bir tanesini bugün tekrar et.'],
-  mimar: ['Her büyük yapı küçük bir eskizle başlar. ✏️', 'Bugün çevrendeki bir binayı inceleyip çizmeye ne dersin?'],
+  elektrik: ['Enerjimiz tam! ⚡', 'Fizik formülleri devrelerin dilidir. Bugün birini tekrar et.'],
+  mimar: ['Her büyük yapı küçük bir eskizle başlar. ✏️', 'Bugün çevrendeki bir binaya bakıp onu çizmeye ne dersin?'],
   insaat: ['Baretim hazır! 👷 Sağlam temel, sağlam gelecek.', 'Matematik bir yapının iskeleti gibidir.'],
-  makine: ['Anahtarım elimde! 🔧 Bir şey nasıl çalışır, merak et.', 'Mühendislik problemleri adım adım çözülür — senin gibi!'],
+  makine: ['Anahtarım elimde! 🔧 Bir şey nasıl çalışır, merak et.', 'Mühendislikte her problem adım adım çözülür.'],
   bilimci: ['Deney zamanı! 🧪', 'Bilim insanları cevaptan çok soruyu sever.', 'Bugün bir “neden?” sorusunun cevabını araştır.'],
   ogretmen: ['Öğretmek, iki kez öğrenmektir. 📚', 'Bir konuyu arkadaşına anlatmayı dene — en iyi tekrar budur.'],
   sef: ['Şef şapkası takıldı! 👨‍🍳 Lezzet sabır ister.', 'Her tarif bir deney, her deney bir öğrenme.'],
-  muzisyen: ['Ritim tutuyorum 🎵 Düzenli pratik, en güzel melodi.', 'Her gün 15 dakika enstrüman, bir yılda büyük fark!'],
-  sahne: ['Sahne senin! 🎭', 'Topluluk önünde konuşmak bir kas gibi, çalıştıkça güçlenir.'],
+  muzisyen: ['Ritim tutuyorum 🎵 Düzenli pratik, en güzel melodi.', 'Her gün 15 dakika enstrüman çal. Bir yılda farkı görürsün!'],
+  sahne: ['Sahne senin! 🎭', 'Topluluk önünde konuşmak bir kas gibidir. Çalıştıkça güçlenir.'],
   gazeteci: ['Mikrofon sende! 🎤 Bugün bir haberi iki kaynaktan oku.', 'İyi gazeteci önce iyi soru sorar.'],
-  ressam: ['Paletim hazır! 🎨 Bugün 10 dakika eskiz?', 'Yaratıcılık bir alışkanlıktır, her gün biraz besle.'],
+  ressam: ['Paletim hazır! 🎨 Bugün 10 dakika eskiz?', 'Yaratıcılık bir alışkanlıktır. Onu her gün biraz besle.'],
   sporcu: ['Isınma hareketleri başlasın! 🏃', 'Disiplin, yeteneği yener — hem sporda hem derste.'],
   ciftci: ['Filizler sabırla büyür, sen de öyle. 🌾', 'Doğayı anlamak için önce gözlem yap.'],
   is_insani: ['Kravatımı taktım! 💼 Bugünün hedefi ne?', 'Küçük yatırımlar büyür — zamanına da yatırım yap.'],
@@ -565,10 +565,10 @@ const KIYAFET_MESAJLARI = {
   fizyoterapist: ['Hareket en iyi ilaçtır! 🏋️', 'Anatomi çalışmak, insanı anlamanın ilk adımı.'],
   diyetisyen: ['Dengeli beslen, dengeli düşün! 🍎', 'Biyoloji ve kimya beslenmenin temelidir.'],
   paramedik: ['Hızlı düşün, sakin kal! 🚑', 'İlk yardım bilgisi herkesin süper gücü olabilir.'],
-  finansci: ['Hesaplar tamam! 🧮 Küçük birikimler büyür.', 'Matematik pratiği finansın dilidir.'],
+  finansci: ['Hesaplar tamam! 🧮 Küçük birikimler büyür.', 'Finansın dili matematiktir.'],
   pazarlamaci: ['Fikrini duyur! 📣', 'İyi pazarlamacı önce insanları dinler.'],
   lojistikci: ['Paketler yolda! 📦 Planlama her şeydir.', 'Bugünün işlerini sırala, en verimli rotayı bul.'],
-  diplomat: ['Dünya bir masa, sen de oradasın! 🌍', 'Bir yabancı dil ve güncel bir haber — bugünün görevi.'],
+  diplomat: ['Dünya bir masa, sen de oradasın! 🌍', 'Bugünün görevi: biraz yabancı dil ve bir güncel haber.'],
   otelci: ['Hoş geldiniz! 🛎️ Misafirperverlik bir sanattır.', 'Güler yüz ve düzen, iyi hizmetin anahtarı.'],
   okuloncesi: ['Oyun, çocukların en ciddi işidir! 🧸', 'Sabır ve hayal gücü — en güzel öğretmen çantası.'],
   modaci: ['Mezuram boynumda! 📏 Bugün bir eskiz çiz.', 'Moda, kendini ifade etmenin bir yolu.'],
@@ -584,7 +584,7 @@ const KIYAFET_MESAJLARI = {
   ormanci: ['Bir fidan, bir gelecek! 🌲', 'Doğayı gözlemlemek en iyi derstir.'],
   balikci: ['Denizler bizim! 🐟', 'Su ürünleri biyolojiyle başlar.'],
   bahcivan: ['Çiçekler sabırla açar, sen de öyle! 🌷', 'Bugün bir bitkiyi sula, gelişimini izle.'],
-  petrol: ['Enerji derinlerde! 🛢️', 'Jeoloji ve akışkanlar fiziği petrolcülüğün temelidir.'],
+  petrol: ['Enerji derinlerde! 🛢️', 'Petrolcülüğün temeli jeoloji ve akışkanlar fiziğidir.'],
   madenci: ['Kafa lambası açık! ⛏️ Derinlerde hazineler var.', 'Yer bilimleri ve matematik — madenciliğin temeli.'],
   jeolog: ['Her taş bir hikâye anlatır! 🪨', 'Bugün çevrendeki bir kayaya dikkatle bak.'],
   haritaci: ['Ölçüyoruz, çiziyoruz! 🗺️', 'Geometri haritacının en iyi dostudur.'],
@@ -598,8 +598,8 @@ const KIYAFET_MESAJLARI = {
   akademisyen: ['Kitaplar en sadık dostlardır. 📖', 'Bugün merak ettiğin bir konuda tek bir makale oku.'],
   pilot: ['Kalkışa hazırız! ✈️ Hedefe odaklan.', 'Pilotlar kontrol listesi kullanır — sen de günün listesini yap.'],
   kaptan: ['Rota belirlendi! ⚓', 'Fırtınalı denizler iyi kaptan yetiştirir.'],
-  astronot: ['Hedef: yıldızlar! 🚀', 'Uzaya giden yol fizik ve matematikle döşenir.'],
-  gunluk: ['Bir hedef bölüm seçersen ona göre giyinirim! 👕', 'Koçluk sayfasından bir hedef seçmeye ne dersin?'],
+  astronot: ['Hedef: yıldızlar! 🚀', 'Uzaya giden yol fizik ve matematikten geçer.'],
+  gunluk: ['Bir hedef bölüm seçersen ona göre giyinirim! 👕', 'Koçluğum sayfasından bir hedef seçmeye ne dersin?'],
 }
 const GENEL_MESAJLAR = [
   'Doğru cevap yok, samimi cevap var. 🌱',
@@ -620,14 +620,14 @@ function sayfaMesaji(yol, ozet, hedef) {
   if (yol === '/katmanlar') {
     if (biten === 0) return 'İlk katmanla başlayalım: Değerler! 🌱'
     if (biten < toplam) return `${biten}/${toplam} katman tamam, harika gidiyorsun! Sıradaki seni bekliyor.`
-    return 'Tüm katmanlar bitti! 🎉 Alan sorularını da tamamlarsan sonuçların hazır.'
+    return 'Tüm katmanlar bitti! 🎉 Alan sorularını da bitirince sonuçların hazır.'
   }
   if (yol === '/bolumler/tum') return 'Bir bölüme tıkla, örnek mesleklerine bak. Beğendiğini ☆ ile listene ekle! 🔍'
   if (yol === '/bolumler/karsilastir') return 'Aklındaki 2-3 bölümü yan yana koy, farkları gör. ⚖️'
   if (yol === '/bolumler/listem') return 'Listendeki bölümler burada. Rehber öğretmenin de görebilir. ⭐'
   if (yol.startsWith('/bolumler')) return 'Sana uygun bölümler burada! Beğendiğini ☆ ile listene ekle. 🌟'
   if (yol.startsWith('/profilim')) return 'Bu senin profilin: güçlü yönlerin ve gelişebileceğin alanlar. 🧭'
-  if (yol === '/koclugu') return hedef ? `${hedef} hedefin için bugün yol haritandan bir adımı işaretle!` : 'Henüz hedefin yok. Önerilen bölümlerden birini seçmeye ne dersin?'
+  if (yol === '/koclugu') return hedef ? `Hedefin ${hedef}. Bugün yol haritandan bir adımı işaretle!` : 'Henüz hedefin yok. Önerilen bölümlerden birini seçmeye ne dersin?'
   if (yol === '/profil') return 'Profilini doldurursan seni daha iyi tanırım. 😊'
   if (biten === 0) return 'Hazırsan Değerlendirme\'den ilk katmana başlayalım!'
   return null
@@ -1204,7 +1204,7 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
     efekt('ac', true)
     const dogal = await dogalSesVarMi()
     const m = dogal ? (ad ? `Merhaba ${ad}! Artık beni duyabilirsin 🌱` : 'Artık beni duyabilirsin 🌱')
-      : 'Bu cihazda doğal bir Türkçe ses bulamadım; robotik konuşmak yerine yalnızca küçük sesler çıkaracağım 🎵'
+      : 'Bu cihazda doğal bir Türkçe ses bulamadım. Robot gibi konuşmak yerine sadece küçük sesler çıkaracağım 🎵'
     setBalon(m)
     if (dogal) soyle(m)
   }, [sesAcik, ad, setBalon])

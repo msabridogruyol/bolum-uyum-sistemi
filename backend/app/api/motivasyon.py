@@ -148,7 +148,7 @@ def rozetler(db: Session, o: Ogrenci) -> list[dict]:
         ("🔍", "Kâşif", "5 farklı bölümü keşfettin.", kesif >= 5, f"{max(0, 5 - kesif)} bölüm daha keşfet."),
         ("📖", "Kitap kurdu", "3 kitap bitirdin.", kitap >= 3, f"{max(0, 3 - kitap)} kitap daha bitir ve Kütüphanem'e ekle."),
         ("💡", "Kendini tanıyan", "3 adımda ne öğrendiğini yazdın.", ogrendim >= 3, "Adımları bitirirken 'ne öğrendim' alanını doldur."),
-        ("📈", "Gelişim kanıtı", "Bir tekrar ölçümünde gelişim gösterdin.", artis >= 1, "3 adım sonra açılan ölçümü yap."),
+        ("📈", "Gelişim kanıtı", "Bir tekrar ölçümünde gelişim gösterdin.", artis >= 1, "3 adımı bitirince açılan ölçümü yap."),
         ("🏅", "10 adım", "10 koçluk adımı tamamladın.", adim >= 10, f"{max(0, 10 - adim)} adım daha."),
     ]
     # [2026-10-10] Paket: bağlı modülü okulda kapalı olan rozet (kazanılmadıysa) gösterilmez — kazanılamayacak hedef vermeyelim

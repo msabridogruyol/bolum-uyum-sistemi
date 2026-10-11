@@ -19,9 +19,9 @@ export default function VerilerHakkinda({ kaynaklar = [] }) {
               ))}
             </ul>
           ) : <div style={{ marginBottom: 8 }}>Bu bölüm için henüz resmî veri yüklenmedi.</div>}
-          <div>Değerler resmî kaynaklardan alınır ve <b>veri yılı</b> ile gösterilir. Yanında <b>“tahmini”</b> etiketi olan maaşlar,
-            TÜİK'in meslek grubu ortalamasının o yılki asgari ücrete oranlanıp bugünkü asgari ücretle çarpılmasıyla hesaplanır; gerçek bir
-            teklif değildir. İlk iş maaşı çoğu zaman ortalamanın altındadır; şehir, şirket ve deneyimle çok değişir.</div>
+          <div>Değerler resmî kaynaklardan gelir. Her değerin yanında <b>veri yılı</b> yazar. <b>“tahmini”</b> etiketli maaşları şöyle hesaplıyoruz:
+            Önce TÜİK'in meslek grubu ortalamasının, o yılın asgari ücretinin kaç katı olduğuna bakıyoruz. Sonra bu sayıyı bugünkü asgari ücretle çarpıyoruz.
+            Bu gerçek bir iş teklifi değildir. İlk iş maaşı çoğu zaman ortalamanın altındadır. Şehre, şirkete ve deneyime göre çok değişir.</div>
         </div>
       )}
     </div>

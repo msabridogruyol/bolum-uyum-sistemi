@@ -330,9 +330,9 @@ def dal_oturumu_baslat(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDege
         .first()
     )
     if oturum is None:
-        raise IsKuraliHatasi(f"{dal.kod} senin için açılmamış — K5 eşiğini geçmemiş olabilirsin.")
+        raise IsKuraliHatasi(f"{dal.kod} senin için açılmadı. K5 sonucun bu alanı açmaya yetmemiş olabilir.")
     if oturum.durum == "tamamlandi":
-        raise IsKuraliHatasi(f"{dal.kod} bu tur için zaten tamamlandı.")
+        raise IsKuraliHatasi(f"{dal.kod} alan sorularını bu turda zaten tamamladın.")
 
     dal_degiskenleri = db.query(Degisken).filter(Degisken.dal_id == dal.id).all()
     if not dal_degiskenleri:
@@ -340,7 +340,7 @@ def dal_oturumu_baslat(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDege
 
     sorular = dal_sorulari(db, ogrenci, dal, tur)
     if not sorular:
-        raise IsKuraliHatasi(f"{dal.kod} için aktif soru bulunamadı.")
+        raise IsKuraliHatasi(f"{dal.kod} için şu an soru yok.")
 
     oturum.durum = "devam_ediyor"
     if oturum.baslama_zamani is None:
@@ -373,7 +373,7 @@ def dali_tamamla(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDegerlendi
     cevaplanan = {c.soru_id for c in cevaplar}
     eksik = set(sorular.keys()) - cevaplanan
     if eksik:
-        raise IsKuraliHatasi(f"{len(eksik)} soru henüz cevaplanmadı — dal tamamlanamaz.")
+        raise IsKuraliHatasi(f"{len(eksik)} soruyu henüz cevaplamadın. Bitirmek için hepsini cevapla.")
 
     # [2026-10-08] K1-K4 ile aynı puanlama (likert / en çok-en az senaryo soruları)
     degisken_puanlari = cevaplari_puanla(db, sorular, cevaplar)

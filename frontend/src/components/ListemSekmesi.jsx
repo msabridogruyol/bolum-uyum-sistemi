@@ -15,7 +15,7 @@ export default function ListemSekmesi() {
       <div className="veri-yok-grafik" style={{ padding: '36px 18px' }}>
         <div className="vg-ikon">⭐</div>
         <div className="vg-metin" style={{ maxWidth: 440 }}>
-          Listen henüz boş. İlgini çeken bir bölümü görünce yanındaki <b>☆</b> işaretine dokun; burada toplanır, sonra yan yana karşılaştırırsın.
+          Listen henüz boş. İlgini çeken bir bölüm görünce yanındaki <b>☆</b> işaretine dokun. Bölüm buraya eklenir. Sonra bölümleri yan yana karşılaştırabilirsin.
         </div>
         <div style={{ display: 'flex', gap: 8, marginTop: 14, flexWrap: 'wrap', justifyContent: 'center' }}>
           <button className="btn" onClick={() => navigate('/bolumler')}>Sana uygun bölümler</button>
@@ -58,7 +58,7 @@ export default function ListemSekmesi() {
                     </div>
                     <b>%{Math.round(b.toplam_uyum)}</b>
                   </div>
-                ) : <div className="yp-ince" style={{ marginTop: 6 }}>Uyum, değerlendirme bitince görünür</div>}
+                ) : <div className="yp-ince" style={{ marginTop: 6 }}>Değerlendirmeyi bitirince uyumunu görürsün</div>}
                 <button className="hg-link" style={{ marginTop: 8 }} onClick={() => navigate(`/profil?hedef=${b.bolum_id}#hedef`)}>Hedefim yap →</button>
               </div>
               <FavoriYildiz id={b.bolum_id} ad={b.bolum_adi} />

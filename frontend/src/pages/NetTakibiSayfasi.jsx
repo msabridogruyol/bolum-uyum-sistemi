@@ -107,7 +107,7 @@ function DenemeFormu({ yapi, onKaydet, onVazgec }) {
       .map((t) => [t.kod, { d: Number(f.dersler[t.kod].d || 0), y: Number(f.dersler[t.kod].y || 0) }]))
     if (!Object.keys(dersler).length) return setHata('En az bir dersin doğru/yanlış sayısını gir.')
     setBekle(true)
-    try { await onKaydet({ tarih: f.tarih, oturum: f.oturum, ad: f.ad, dersler }) } catch (er) { setHata(er.detail || 'Kaydedilemedi.') }
+    try { await onKaydet({ tarih: f.tarih, oturum: f.oturum, ad: f.ad, dersler }) } catch (er) { setHata(er.detail || 'Kaydedemedik. Tekrar dene.') }
     setBekle(false)
   }
   return (
@@ -140,13 +140,13 @@ function DenemeFormu({ yapi, onKaydet, onVazgec }) {
         </tbody>
         <tfoot><tr><td colSpan={5}>Toplam net</td><td><b>{n2(toplam)}</b></td></tr></tfoot>
       </table>
-      {testler.some(asim) && <div className="auth-error">Doğru + yanlış, sorudan fazla olamaz.</div>}
+      {testler.some(asim) && <div className="auth-error">Doğru ve yanlış toplamı, soru sayısından fazla olamaz.</div>}
       {hata && <div className="auth-error">{hata}</div>}
       <div style={{ display: 'flex', gap: 8 }}>
         <button className="btn" disabled={bekle || testler.some(asim)}>{bekle ? <span className="spin" /> : 'Kaydet'}</button>
         <button type="button" className="btn sec" onClick={onVazgec}>Vazgeç</button>
       </div>
-      <div className="yp-ince">Net = doğru − yanlış ÷ 4. Boş bıraktığın dersler kaydedilmez.</div>
+      <div className="yp-ince">Net = doğru − yanlış ÷ 4. Yani 4 yanlış, 1 doğruyu götürür. Boş bıraktığın dersleri kaydetmeyiz.</div>
     </form>
   )
 }
@@ -193,14 +193,14 @@ function DenemelerSekmesi({ yapi, denemeler, kiyas, yenile }) {
       {formAcik && <DenemeFormu yapi={yapi} onVazgec={() => setFormAcik(false)} onKaydet={async (v) => { await api.netDenemeEkle(v); setFormAcik(false); yenile() }} />}
 
       {denemeler.length === 0 ? (
-        !formAcik && <div className="card bos-durum">Henüz deneme eklemedin. Çözdüğün ilk denemenin doğru / yanlış sayılarını gir; netlerin burada grafiğe dönüşür.</div>
+        !formAcik && <div className="card bos-durum">Henüz deneme eklemedin. Çözdüğün ilk denemenin doğru ve yanlış sayılarını gir. Netlerin burada grafik olarak görünür.</div>
       ) : (
         <>
           <div className="card"><div className="ct">📈 Netlerin zamanla</div><NetGrafigi denemeler={denemeler} hedefler={hedefler} /></div>
           <div className="card">
             <div className="ct">Ders ders</div>
             <table className="yp-tablo nt-ders-tablo">
-              <thead><tr><th>Ders</th><th>Son</th><th>Değişim</th><th>Son 3 ortalama</th><th style={{ width: '32%' }}>Doluluk</th></tr></thead>
+              <thead><tr><th>Ders</th><th>Son</th><th>Değişim</th><th>Son 3 ortalama</th><th style={{ width: '32%' }}>Net / soru</th></tr></thead>
               <tbody>
                 {dersSatirlari.map((x) => (
                   <tr key={x.kod}>
@@ -276,7 +276,7 @@ function KonularSekmesi({ yapi, durumlar, setDurumlar, baslangicDers }) {
       </div>
       <div className="card" style={{ margin: 0 }}>
         <div className="ct">{aktif.oturum} · {aktif.ad}</div>
-        <div className="yp-ince" style={{ marginBottom: 10 }}>Her konunun durumunu seç. “Bitti” ve “Tekrar” tamamlanmış sayılır.</div>
+        <div className="yp-ince" style={{ marginBottom: 10 }}>Her konu için durumunu seç. “Bitti” ya da “Tekrar” seçtiğin konular bitmiş sayılır.</div>
         <div className="kt-liste">
           {aktif.konular.map((k) => {
             const dur = (durumlar[aktif.kod] || {})[k] || 'baslamadi'
@@ -305,12 +305,12 @@ function HedefSekmesi({ yapi, kiyas, durumlar, yenile, konuyaGit }) {
   const [ara, setAra] = useState('')
   const [secimAcik, setSecimAcik] = useState(false)
   const [bekle, setBekle] = useState(false)
-  useEffect(() => { api.netHedefProgramlar().then(setListe).catch(() => setListe({ durum: 'hata', programlar: [], mesaj: 'Liste yüklenemedi.' })) }, [])
+  useEffect(() => { api.netHedefProgramlar().then(setListe).catch(() => setListe({ durum: 'hata', programlar: [], mesaj: 'Listeyi yükleyemedik. Tekrar dene.' })) }, [])
   const hedef = kiyas?.hedef
   async function sec(p) { setBekle(true); try { await api.netHedefKaydet(p.kilavuz_kodu); setSecimAcik(false); yenile() } finally { setBekle(false) } }
   const filtre = (liste?.programlar || []).filter((p) => !ara || `${p.universite} ${p.program}`.toLocaleLowerCase('tr').includes(ara.toLocaleLowerCase('tr')))
 
-  if (!yapi.hedef_bolum) return <div className="card bos-durum">Önce bir hedef bölüm seç (Ayarlar → Hedef bölüm). Sonra o bölümün üniversitelerinden birini seçip netlerini karşılaştırabilirsin.</div>
+  if (!yapi.hedef_bolum) return <div className="card bos-durum">Önce bir hedef bölüm seç. Bunu Ayarlar → Hedef bölüm kısmından yapabilirsin. Sonra o bölümün üniversitelerinden birini seç ve netlerini karşılaştır.</div>
 
   const secimKutusu = (
     <div className="card">
@@ -360,7 +360,7 @@ function HedefSekmesi({ yapi, kiyas, durumlar, yenile, konuyaGit }) {
           <div className="nh-ozet">
             <div className="nh-ozet-kutu"><span>Senin netin</span><b>{n2(kiyas.toplam_ben)}</b><small>son {Math.min(3, Math.max(...satirlar.map((s) => s.deneme_sayisi)))} deneme ortalaması</small></div>
             <div className="nh-ozet-kutu"><span>{kiyas.yil} son yerleşen</span><b>{n2(kiyas.toplam_hedef)}</b><small>{hedef.universite.split(' (')[0]}</small></div>
-            <div className={`nh-ozet-kutu ${acik > 0 ? 'eksi' : 'arti'}`}><span>{acik > 0 ? 'Kapatman gereken' : 'Hedefin üstündesin'}</span><b>{n2(Math.abs(acik))} net</b><small>{acik > 0 && enBuyuk ? `en büyük açık: ${enBuyuk.ad}` : 'harika, korumaya devam'}</small></div>
+            <div className={`nh-ozet-kutu ${acik > 0 ? 'eksi' : 'arti'}`}><span>{acik > 0 ? 'Kapatman gereken' : 'Hedefin üstündesin'}</span><b>{n2(Math.abs(acik))} net</b><small>{acik > 0 && enBuyuk ? `en büyük fark: ${enBuyuk.ad}` : 'harika, bu düzeyi koru'}</small></div>
           </div>
           <div className="card">
             <div className="ct">Ders ders karşılaştırma</div>
@@ -383,13 +383,13 @@ function HedefSekmesi({ yapi, kiyas, durumlar, yenile, konuyaGit }) {
           </div>
           {enBuyukTest && enBuyukTest.fark < 0 && bitmemis.length > 0 && (
             <div className="card nh-oneri">
-              <b>💡 {enBuyukTest.ad} açığını kapatmak için:</b> bu derste henüz bitirmediğin {bitmemis.length} konu var.
+              <b>💡 {enBuyukTest.ad} dersindeki farkı kapatmak için:</b> bu derste henüz bitirmediğin {bitmemis.length} konu var.
               {' '}Örneğin: {bitmemis.slice(0, 4).map((x) => x.k).join(', ')}{bitmemis.length > 4 ? '…' : ''}
               <button className="hg-link" onClick={() => konuyaGit(bitmemis[0].dk)}>Konu takibinde aç →</button>
             </div>
           )}
           <div className="card">
-            <div className="ct">Yıllara göre bu programa son yerleşen</div>
+            <div className="ct">Bu programa yerleşen son öğrenci (yıllara göre)</div>
             <table className="yp-tablo">
               <thead><tr><th>Yıl</th><th>Taban puan</th><th>TYT netleri</th><th>AYT / YDT netleri</th><th>OBP</th></tr></thead>
               <tbody>
@@ -422,7 +422,7 @@ export default function NetTakibiSayfasi() {
     api.netKiyas().then(setKiyas).catch(() => {})
   }, [])
   useEffect(() => {
-    api.netYapi().then(setYapi).catch((e) => setHata(e.detail || 'Yüklenemedi.'))
+    api.netYapi().then(setYapi).catch((e) => setHata(e.detail || 'Yükleyemedik. Tekrar dene.'))
     api.netKonular().then((r) => setDurumlar(r.durumlar)).catch(() => {})
     yenile()
   }, [yenile])
@@ -434,7 +434,7 @@ export default function NetTakibiSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Net Takibi</div>
-        <div className="ps">Denemelerini kaydet, konularını takip et ve netlerini hedef üniversitene geçen yıl yerleşen öğrenciyle karşılaştır. Alanın: <b>{yapi.puan_turu_ad}</b>{yapi.hedef_bolum ? ` · Hedef: ${yapi.hedef_bolum.ad}` : ''}</div>
+        <div className="ps">Denemelerini kaydet ve konularını takip et. Netlerini, hedef üniversitene geçen yıl yerleşen son öğrencinin netleriyle karşılaştır. Alanın: <b>{yapi.puan_turu_ad}</b>{yapi.hedef_bolum ? ` · Hedef: ${yapi.hedef_bolum.ad}` : ''}</div>
       </div>
       <div className="koc-sekmeler" role="tablist">
         {SEKMELER.map(([k, ad]) => <button key={k} role="tab" aria-selected={sekme === k} className={sekme === k ? 'aktif' : ''} onClick={() => git(k)}>{ad}</button>)}

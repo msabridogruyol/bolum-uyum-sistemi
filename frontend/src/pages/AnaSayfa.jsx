@@ -102,7 +102,7 @@ export default function AnaSayfa() {
           <div className="pt">Merhaba, {ilkAd} 👋</div>
           <div className="ps">
             {ozet.tur_tamamlandi_mi
-              ? 'Tüm katmanlar tamamlandı — işte senin bölüm uyum profilin.'
+              ? 'Tüm katmanları bitirdin. İşte bölüm uyum profilin.'
               : `Yolculuğunun %${tamamlananYuzde}'ini tamamladın.`}
           </div>
         </div>
@@ -143,7 +143,7 @@ export default function AnaSayfa() {
               Yeniden değerlendirme zamanın geldi!
             </div>
             <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 2 }}>
-              Yeni değerlendirme turun açıldı — profilini tazelemek için tekrar değerlendirilebilirsin.
+              Yeni değerlendirme turun açıldı. Profilini güncellemek için değerlendirmeyi yeniden yapabilirsin.
             </div>
           </div>
           <span style={{ fontSize: 13, fontWeight: 700, color: 'var(--gr)' }}>Başla →</span>
@@ -203,7 +203,7 @@ export default function AnaSayfa() {
                   </div>
                 </div>
                 <div className="taslak-onizleme-overlay">
-                  <div className="to-metin" style={{ fontSize: 11.5 }}>Katmanlar tamamlandıkça burada dolacak</div>
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>Katmanları bitirdikçe burası dolacak</div>
                 </div>
               </div>
             ) : (

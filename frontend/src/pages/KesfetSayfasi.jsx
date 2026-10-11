@@ -31,7 +31,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
   async function aramaYap(terim) {
     const t = (terim ?? sorgu).trim()
     if (t.length < 2) {
-      setHata('Arama terimi en az 2 karakter olmalı.')
+      setHata('En az 2 harf yaz.')
       return
     }
     setHata(null)
@@ -41,7 +41,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
     try {
       setSonuclar(await api.kesfetAra(t))
     } catch (err) {
-      setHata(err.detail || 'Arama yapılamadı.')
+      setHata(err.detail || 'Arama yapamadık. Tekrar dene.')
     } finally {
       setYukleniyor(false)
     }
@@ -56,7 +56,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
     <div className={`pg${secili ? ' pg-genis' : ''}`}>
       {!gomulu && <div className="ph">
         <div className="pt">Tüm Bölümleri Keşfet</div>
-        <div className="ps">301 bölümün tamamı elinin altında — bir bölüme tıkla; tanıtımını, mesleklerini, yetkinlik profilini ve üniversitelerini incele.</div>
+        <div className="ps">301 bölümün hepsi burada. Bir bölüme tıkla. Tanıtımını, mesleklerini, yetkinlik profilini ve üniversitelerini incele.</div>
       </div>}
 
       <form onSubmit={ara} style={{ display: 'flex', gap: 8, marginBottom: sonuclar ? 20 : 14 }}>
@@ -95,7 +95,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
           </div>
           <div className="veri-yok-grafik">
             <div className="vg-ikon">🔍</div>
-            <div className="vg-metin">Yukarıdan bir örneğe tıkla ya da yukarıya kendi aramanı yaz.</div>
+            <div className="vg-metin">Yukarıdaki örneklerden birine tıkla ya da kendi aramanı yaz.</div>
           </div>
         </div>
       )}
@@ -103,13 +103,13 @@ export default function KesfetSayfasi({ gomulu = false }) {
       {sonuclar && sonuclar.length === 0 && (
         <div className="veri-yok-grafik">
           <div className="vg-ikon">🌱</div>
-          <div className="vg-metin">"{sorgu}" için sonuç bulunamadı — farklı bir kelimeyle dene.</div>
+          <div className="vg-metin">"{sorgu}" için sonuç yok. Başka bir kelimeyle dene.</div>
         </div>
       )}
 
       {sonuclar && sonuclar.length > 0 && (
         <>
-          <div className="ps" style={{ marginBottom: 12, fontSize: 12 }}>{sonuclar.length} sonuç bulundu — birine tıkla</div>
+          <div className="ps" style={{ marginBottom: 12, fontSize: 12 }}>{sonuclar.length} sonuç var. İncelemek için birine tıkla.</div>
 
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: 10, marginBottom: secili ? 20 : 0 }}>
             {sonuclar.map((s) => (
@@ -136,7 +136,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
                 <div>
                   <div style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 700, textTransform: 'uppercase' }}>Seçilen Bölüm</div>
                   <div style={{ fontSize: 13, color: 'var(--tx2)', marginTop: 2 }}>
-                    {secili.toplam_uyum !== null ? 'Testine göre bu bölümle uyumun:' : 'Uyumunu görmek için katmanları tamamla.'}
+                    {secili.toplam_uyum !== null ? 'Değerlendirmene göre bu bölümle uyumun:' : 'Uyumunu görmek için katmanları tamamla.'}
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>

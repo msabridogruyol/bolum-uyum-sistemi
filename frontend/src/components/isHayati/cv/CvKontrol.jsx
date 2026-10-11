@@ -25,13 +25,13 @@ export default function CvKontrol({ kontrol, degisti, kaydediliyor, onKaydet, ka
           <div style={{ fontWeight: 800, marginBottom: 6 }}>{kontrol.tamam} / {kontrol.toplam} madde tamam{kontrol.sayfa ? ` · ${kontrol.sayfa} sayfa` : ''}</div>
           <div className="qtrack" style={{ marginBottom: 8 }}><div className="qfill" style={{ width: `${kontrol.puan}%`, background: puanRengi(kontrol.puan) }} /></div>
           <div className="yp-ince">
-            {!kayitli ? 'Puan, portfolyondan hazırlanan taslağa göre. Düzenleyip kaydettikçe güncellenir.' : 'Puan son kaydettiğin CV\'ye göre.'}
-            {' '}Puan bir not değil; eksik maddeler CV'ni nasıl güçlendireceğini gösterir.
+            {!kayitli ? 'Puan, portfolyondan hazırlanan taslağa göre hesaplandı. Düzenleyip kaydettikçe değişir.' : 'Puan, son kaydettiğin CV\'ye göre hesaplandı.'}
+            {' '}Bu puan bir not değil. Eksik maddeler, CV'ni nasıl güçlendireceğini gösterir.
           </div>
         </div>
         {degisti && <button className="btn" disabled={kaydediliyor} onClick={onKaydet}>{kaydediliyor ? <span className="spin" /> : 'Kaydet ve yeniden puanla'}</button>}
       </div>
-      {degisti && <div className="yp-uyari">Kaydedilmemiş değişikliklerin var; aşağıdaki puan son kayda göre.</div>}
+      {degisti && <div className="yp-uyari">Kaydetmediğin değişiklikler var. Aşağıdaki puan son kayda göre.</div>}
       <div className="card" style={{ padding: '6px 16px' }}>
         {sirali.map((m) => {
           const d = DURUM[m.durum]
@@ -48,7 +48,7 @@ export default function CvKontrol({ kontrol, degisti, kaydediliyor, onKaydet, ka
                   <div>{m.aciklama}</div>
                   <div className="cva-oneri-metni" style={{ borderColor: d.renk }}><b>{m.durum === 'tamam' ? 'İpucu' : 'Düzeltme önerisi'}:</b> {m.oneri}</div>
                   {onGit && ATS_DE[m.kod] && (
-                    <div className="yp-ince" style={{ marginTop: 6 }}>Başvuru sistemlerinin (ATS) bu maddeyi PDF'inde nasıl gördüğüne de bak (“{ATS_DE[m.kod]}”).{' '}
+                    <div className="yp-ince" style={{ marginTop: 6 }}>Başvuru sistemleri (ATS) bu maddeyi PDF'inde nasıl görüyor, ona da bak (“{ATS_DE[m.kod]}”).{' '}
                       <button type="button" className="hg-link" style={{ fontSize: 11.5, color: 'var(--okul-c)' }} onClick={() => onGit('ats')}>ATS kontrolüne git →</button></div>
                   )}
                 </div>

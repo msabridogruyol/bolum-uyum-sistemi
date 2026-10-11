@@ -78,7 +78,7 @@ export default function TakvimSayfasi() {
         </form>
       )}
       {gruplar.length === 0 ? (
-        <div className="card"><div className="bos-durum">Yaklaşan etkinlik yok. Okulun ve sistem yöneticisi önemli tarihleri ekledikçe burada görünecek.</div></div>
+        <div className="card"><div className="bos-durum">Yaklaşan etkinlik yok. Okulun ve Filizyol önemli tarihleri ekledikçe burada görünecek.</div></div>
       ) : gruplar.map(([ay, liste]) => (
         <div key={ay} className="card">
           <div className="ct">{ay}</div>

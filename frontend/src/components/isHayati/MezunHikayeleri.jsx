@@ -7,8 +7,8 @@ import { api } from '../../api/client'
 const GRUP = { bolum: 'Bu bölümden mezunlar', alan: 'Aynı alandan mezunlar', null: 'Okulunun diğer mezunları' }
 
 const ONERI_METNI = 'Merhaba öğretmenim, Filizyol\'daki İş Hayatı sayfasında "Mezunlardan" diye bir bölüm var. Okulumuzdan mezun olup '
-  + 'çalışan abla ve ağabeylerimizin işlerini kendi ağızlarından okumak, meslek seçerken çok işimize yarar. Okul panelindeki '
-  + 'Mezunlar → Mezun hikâyeleri bölümünden, mezunlarımızın izniyle hikâye eklenebiliyormuş. Tanıdığınız mezunlara sormak ister misiniz?'
+  + 'çalışan abla ve ağabeylerimizin işlerini onlardan okumak, meslek seçerken çok işimize yarar. Okul panelinde '
+  + 'Mezunlar → Mezun hikâyeleri bölümünden, mezunlarımızın izniyle hikâye eklenebiliyormuş. Tanıdığınız mezunlara sorar mısınız?'
 
 function HikayeKarti({ h, sorular }) {
   const [acik, setAcik] = useState(false)
@@ -50,10 +50,10 @@ export default function MezunHikayeleri({ bolum }) {
     return (
       <div className="card" style={{ padding: '26px 22px', textAlign: 'center' }}>
         <div style={{ fontSize: 34 }} aria-hidden="true">🎓</div>
-        <div style={{ fontSize: 16, fontWeight: 800, margin: '6px 0' }}>{v.okul_var ? 'Okulunuz henüz mezun hikâyesi eklemedi' : 'Mezun hikâyeleri okullar içindir'}</div>
+        <div style={{ fontSize: 16, fontWeight: 800, margin: '6px 0' }}>{v.okul_var ? 'Okulun henüz mezun hikâyesi eklemedi' : 'Mezun hikâyeleri yalnızca okullar için'}</div>
         <div className="ps" style={{ margin: '0 auto', maxWidth: 560 }}>
-          Bu bölümde yalnızca okulunun gerçek mezunlarının, kendi izinleriyle paylaştıkları deneyimler yer alır: işlerinde gerçekte ne yaptıkları,
-          bir günleri, keşke lisede bilseydim dedikleri. Uydurma ya da genel hikâye yoktur.
+          Burada yalnızca okulunun gerçek mezunları yer alır. Deneyimlerini kendi izinleriyle paylaşırlar. İşte gerçekte ne yaptıklarını,
+          bir günlerinin nasıl geçtiğini, “keşke lisede bilseydim” dediklerini anlatırlar. Uydurma ya da genel hikâye yoktur.
         </div>
         {v.okul_var && (
           <div className="yp-kutu" style={{ textAlign: 'left', maxWidth: 560, margin: '16px auto 0' }}>
@@ -73,8 +73,8 @@ export default function MezunHikayeleri({ bolum }) {
   return (
     <div>
       <div className="yp-ince" style={{ margin: '0 0 12px', lineHeight: 1.55 }}>
-        Bu anlatılar okulunun gerçek mezunlarına aittir ve okulun, mezunların izniyle paylaşılır. Her biri <b>bir kişinin deneyimidir</b>; aynı meslekte
-        herkesin yaşadığı farklı olabilir.{bolum?.ad && !v.hikayeler.some((h) => h.eslesme === 'bolum') && ` Henüz ${bolum.ad} mezunu bir hikâye yok; diğer mezunların deneyimleri de yol gösterebilir.`}
+        Bunlar okulunun gerçek mezunlarının hikâyeleri. Okulun bunları mezunların izniyle paylaşıyor. Her biri <b>bir kişinin deneyimidir</b>. Aynı meslekte
+        başkalarının yaşadıkları farklı olabilir.{bolum?.ad && !v.hikayeler.some((h) => h.eslesme === 'bolum') && ` Henüz ${bolum.ad} mezunu birinin hikâyesi yok. Diğer mezunların deneyimleri de sana yol gösterebilir.`}
       </div>
       {gruplar.map(({ g, liste }) => (
         <section key={String(g)} style={{ marginBottom: 6 }}>

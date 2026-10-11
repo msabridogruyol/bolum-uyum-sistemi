@@ -106,7 +106,7 @@ function SonucumuBildir({ v, onKaydet }) {
   const [hata, setHata] = useState(null)
   async function kaydet(e) {
     e.preventDefault(); setHata(null)
-    try { await onKaydet({ ...f, siralama: f.siralama === '' ? null : Number(f.siralama), burs: f.burs || null }); setAcik(false) } catch (er) { setHata(er.detail || 'Kaydedilemedi.') }
+    try { await onKaydet({ ...f, siralama: f.siralama === '' ? null : Number(f.siralama), burs: f.burs || null }); setAcik(false) } catch (er) { setHata(er.detail || 'Kaydedemedik. Tekrar dene.') }
   }
   return (
     <div className="card">
@@ -117,7 +117,7 @@ function SonucumuBildir({ v, onKaydet }) {
           <button className="hg-link" onClick={() => setAcik(true)}>Değiştir</button>
         </div>
       ) : !acik ? (
-        <div className="yp-ince">YKS sonuçları açıklandığında nereye yerleştiğini buraya yaz; okulun mezunlarının yolculuğunu böyle takip ediyor. <button className="hg-link" onClick={() => setAcik(true)}>Bildir →</button></div>
+        <div className="yp-ince">YKS sonuçları açıklanınca nereye yerleştiğini buraya yaz. Okulun, mezunlarının nereye gittiğini böyle takip ediyor. <button className="hg-link" onClick={() => setAcik(true)}>Bildir →</button></div>
       ) : (
         <form onSubmit={kaydet}>
           <div className="pf-alanlar">
@@ -154,7 +154,7 @@ export default function TercihSayfasi() {
     setV(x); setListe(x.tercihler.map(({ universite, bolum_ad, bolum_id, tur, burs, sehir, taban_siralama, notlar }) => ({ universite, bolum_ad, bolum_id, tur, burs, sehir, taban_siralama, notlar })))
     setBilgi({ puan_turu: x.liste.puan_turu || '', siralama: x.liste.siralama ?? '', puan: x.liste.puan ?? '' }); setDegisti(false)
   }
-  useEffect(() => { api.tercih().then(yukle).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [])
+  useEffect(() => { api.tercih().then(yukle).catch((e) => setHata(e.detail || 'Yükleyemedik. Tekrar dene.')) }, [])
   if (!v) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
   if (!v.uygun) return <div className="pg"><div className="card bos-durum">Tercih listesi 12. sınıf ve mezun öğrenciler içindir.</div></div>
   const degis = (l) => { setListe(l); setDegisti(true); setMesaj(null) }
@@ -162,10 +162,10 @@ export default function TercihSayfasi() {
     setBekle(true); setHata(null)
     try {
       const r = await api.tercihKaydet({ puan_turu: bilgi.puan_turu || null, siralama: bilgi.siralama === '' ? null : Number(bilgi.siralama), puan: bilgi.puan === '' ? null : Number(bilgi.puan), tercihler: liste })
-      yukle(r); setMesaj(r.onay_dustu ? 'Kaydedildi. Liste değiştiği için rehber onayı kalktı; yeniden gönderebilirsin.' : 'Kaydedildi.')
-    } catch (e) { setHata(e.detail || 'Kaydedilemedi.') } finally { setBekle(false) }
+      yukle(r); setMesaj(r.onay_dustu ? 'Kaydedildi. Listeyi değiştirdiğin için rehber onayı kalktı. Listeyi yeniden gönderebilirsin.' : 'Kaydedildi.')
+    } catch (e) { setHata(e.detail || 'Kaydedemedik. Tekrar dene.') } finally { setBekle(false) }
   }
-  async function gonder() { setHata(null); try { yukle(await api.tercihGonder()); setMesaj('Listen rehber öğretmenine gönderildi.') } catch (e) { setHata(e.detail || 'Gönderilemedi.') } }
+  async function gonder() { setHata(null); try { yukle(await api.tercihGonder()); setMesaj('Listen rehber öğretmenine gönderildi.') } catch (e) { setHata(e.detail || 'Gönderemedik. Tekrar dene.') } }
   // tabloda kaydedilmemiş satırlar için önizleme (risk/uyum sunucudan gelir; yeni satırda boş görünür)
   const gorunum = { ...v, tercihler: liste.map((t, i) => ({ ...(v.tercihler[i] && v.tercihler[i].universite === t.universite && v.tercihler[i].bolum_ad === t.bolum_ad ? v.tercihler[i] : {}), ...t, tur_ad: v.secenekler.turler[t.tur] })) }
   const durum = v.liste.durum
@@ -173,7 +173,7 @@ export default function TercihSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Tercihlerim</div>
-        <div className="ps">YKS tercih listeni hazırla: her programın geçen yılki taban sırasıyla kendi sıranı karşılaştır, Filizyol uyumunu gör ve rehber öğretmenine onaya gönder.</div>
+        <div className="ps">YKS tercih listeni burada hazırla. Kendi sıranı, her programın geçen yılki taban sırasıyla karşılaştır. Filizyol uyumunu gör. Sonra listeni onay için rehber öğretmenine gönder.</div>
       </div>
       {v.tercihler.length > 0 && (
         <div className="tr-durum" style={{ borderColor: DURUM_RENK[durum] }}>
@@ -185,10 +185,10 @@ export default function TercihSayfasi() {
         <div className="ct">Puan ve sıralama bilgin</div>
         <div className="tr-bilgi">
           <label><span>Puan türü</span><select className="auth-input" value={bilgi.puan_turu} onChange={(e) => { setBilgi({ ...bilgi, puan_turu: e.target.value }); setDegisti(true) }}><option value="">—</option>{v.secenekler.puan_turleri.map((p) => <option key={p}>{p}</option>)}</select></label>
-          <label><span>Başarı sıran</span><input className="auth-input" type="number" min="1" value={bilgi.siralama} onChange={(e) => { setBilgi({ ...bilgi, siralama: e.target.value }); setDegisti(true) }} placeholder="Sonuç açıklanınca ya da denemene göre tahmini" /></label>
+          <label><span>Başarı sıran</span><input className="auth-input" type="number" min="1" value={bilgi.siralama} onChange={(e) => { setBilgi({ ...bilgi, siralama: e.target.value }); setDegisti(true) }} placeholder="Sonucundaki sıra ya da denemene göre tahmini sıra" /></label>
           <label><span>Puanın <small>(isteğe bağlı)</small></span><input className="auth-input" type="number" step="0.001" value={bilgi.puan} onChange={(e) => { setBilgi({ ...bilgi, puan: e.target.value }); setDegisti(true) }} /></label>
         </div>
-        <div className="yp-ince" style={{ marginTop: 8 }}>Güvenli: sıran programın geçen yılki taban sırasının %85'inden iyi · Dengeli: %85–110 · Riskli: daha geride. Taban sıraları her yıl değişir; bu bir tahmin değil, yön göstericidir.</div>
+        <div className="yp-ince" style={{ marginTop: 8 }}>Güvenli: Sıran, programın geçen yılki taban sırasının %85'inden daha iyi. Dengeli: %85–110 arası. Riskli: Daha geride. Taban sıraları her yıl değişir. Bu bir tahmin değil, sadece yön gösterir.</div>
       </div>
       <RiskOzeti s={{ ...v.sayilar, toplam: liste.length }} />
       {v.uyarilar.length > 0 && !degisti && <div className="tr-uyarilar">{v.uyarilar.map((u) => <div key={u}>⚠️ {u}</div>)}</div>}
@@ -199,7 +199,7 @@ export default function TercihSayfasi() {
           <span>Tercih listem</span>
           {!form && liste.length < v.sayilar.en_fazla && <button className="btn sec" onClick={() => setForm({})}>+ Tercih ekle</button>}
         </div>
-        {liste.length === 0 ? <div className="bos-durum">Henüz tercih eklemedin. En çok istediğin programdan başla; listenin sonuna güvenli seçenekler koymayı unutma.</div>
+        {liste.length === 0 ? <div className="bos-durum">Henüz tercih eklemedin. En çok istediğin programla başla. Listenin sonuna güvenli seçenekler koymayı unutma.</div>
           : <TercihTablosu v={gorunum} duzenle={(i) => setForm({ i })} sil={(i) => degis(liste.filter((_, j) => j !== i))}
               tasi={(i, d) => { const l = [...liste]; const [x] = l.splice(i, 1); l.splice(i + d, 0, x); degis(l) }} />}
         {hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
@@ -207,7 +207,7 @@ export default function TercihSayfasi() {
         <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap', alignItems: 'center' }}>
           <button className="btn" disabled={!degisti || bekle} onClick={kaydet}>{bekle ? <span className="spin" /> : 'Kaydet'}</button>
           <button className="btn sec" disabled={degisti || !v.tercihler.length || durum === 'incelemede'} onClick={gonder}>📤 Rehberime gönder</button>
-          {degisti && <span className="yp-ince">Kaydedilmemiş değişiklik var.</span>}
+          {degisti && <span className="yp-ince">Kaydetmediğin bir değişiklik var.</span>}
           {durum === 'incelemede' && !degisti && <span className="yp-ince">Rehber öğretmenin inceliyor.</span>}
         </div>
       </div>

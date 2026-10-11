@@ -36,7 +36,7 @@ export function TamamlaFormu({ adim, onKaydet, onVazgec }) {
   }
   return (
     <div className="tamamla-form">
-      <div className="tamamla-baslik">🎉 Harika! Bitirmeden önce 20 saniye: nasıl geçti?</div>
+      <div className="tamamla-baslik">🎉 Harika! Bitirmeden önce 20 saniyeni ayır: nasıl geçti?</div>
       <div className="tamamla-soru">Bu adım sana ne kadar faydalı oldu?</div>
       <div className="tamamla-fayda">
         {FAYDA.map((x) => (
@@ -64,7 +64,7 @@ export function TamamlaFormu({ adim, onKaydet, onVazgec }) {
         <button className="btn sec" disabled={bekle} onClick={() => gonder(true)}>Atla, sadece bitir</button>
         <button className="hg-link" disabled={bekle} onClick={onVazgec}>Vazgeç</button>
       </div>
-      <div className="tamamla-not">Cevapların bir sonraki adımı sana göre ayarlamamıza yardım eder. Rehber öğretmenin de gelişimini buradan takip edebilir.</div>
+      <div className="tamamla-not">Cevaplarına bakarak sonraki adımı sana göre ayarlarız. Rehber öğretmenin de gelişimini buradan takip edebilir.</div>
     </div>
   )
 }
@@ -106,7 +106,7 @@ export function OlcumKarti({ odak, onOlc }) {
       ) : (
         <>
           <div className="olcum-ilerleme"><div style={{ width: `${Math.max(0, Math.min(100, (100 * (o.tamamlanan_adim - (o.gereken - 3))) / 3))}%` }} /></div>
-          <div className="olcum-alt">{kalan} adım sonra yeni ölçüm açılır</div>
+          <div className="olcum-alt">{kalan} adım daha bitirince yeni ölçüm açılır</div>
         </>
       )}
     </div>
@@ -120,7 +120,7 @@ export function OlcumPenceresi({ odak, onKapat, onBitti }) {
   const [sonuc, setSonuc] = useState(null)
   const [hata, setHata] = useState(null)
   const [bekle, setBekle] = useState(false)
-  useEffect(() => { api.alanOlcumSorulari(odak.degisken_id).then(setVeri).catch((e) => setHata(e.detail || 'Sorular yüklenemedi.')) }, [odak.degisken_id])
+  useEffect(() => { api.alanOlcumSorulari(odak.degisken_id).then(setVeri).catch((e) => setHata(e.detail || 'Soruları yükleyemedik. Tekrar dene.')) }, [odak.degisken_id])
 
   const soru = veri?.sorular[i]
   const ikili = soru?.cevap_bicimi === 'encok_enaz'
@@ -141,15 +141,15 @@ export function OlcumPenceresi({ odak, onKapat, onBitti }) {
     try {
       const r = await api.alanOlcumKaydet(odak.degisken_id, veri.sorular.map((s) => ({ soru_id: s.id, secenek_id: cevap[s.id].enCok, en_az_secenek_id: cevap[s.id].enAz || null })))
       setSonuc(r); onBitti?.()
-    } catch (e) { setHata(e.detail || 'Kaydedilemedi.') }
+    } catch (e) { setHata(e.detail || 'Kaydedemedik. Tekrar dene.') }
     setBekle(false)
   }
 
   return (
-    <Pencere baslik={`📏 ${odak.degisken_adi} · gelişimini ölç`} altBaslik="İlk değerlendirmedeki sorulardan birkaçı. Düşünmeden, şu anki hâline göre cevapla." onKapat={onKapat}>
+    <Pencere baslik={`📏 ${odak.degisken_adi} · gelişimini ölç`} altBaslik="Bunlar ilk değerlendirmedeki sorulardan birkaçı. Çok düşünme, şu anki hâline göre cevapla." onKapat={onKapat}>
       {hata && <div className="auth-error">{hata}</div>}
       {!veri && !hata && <div className="bos-durum">Yükleniyor…</div>}
-      {veri && veri.sorular.length === 0 && <div className="bos-durum">Bu alan için ölçüm sorusu bulunamadı.</div>}
+      {veri && veri.sorular.length === 0 && <div className="bos-durum">Bu alan için ölçüm sorusu yok.</div>}
       {sonuc ? (
         <div className="olcum-bitti">
           <div className="olcum-bitti-sayilar">
@@ -158,7 +158,7 @@ export function OlcumPenceresi({ odak, onKapat, onBitti }) {
             <div><small>Şimdi</small><b style={{ color: sonuc.gelisim >= 0 ? 'var(--gr)' : 'var(--am)' }}>{Math.round(sonuc.yeni)}</b></div>
           </div>
           <p>{sonuc.yorum}</p>
-          <p className="olcum-not">Bu kısa ölçüm bir eğilim göstergesidir; kesin bir puan değildir. Bir sonraki tam değerlendirmede daha net göreceğiz.</p>
+          <p className="olcum-not">Bu kısa ölçüm sadece bir eğilim gösterir, kesin bir puan değildir. Bir sonraki tam değerlendirmede daha net göreceğiz.</p>
           <button className="btn" onClick={onKapat}>Tamam</button>
         </div>
       ) : soru && (

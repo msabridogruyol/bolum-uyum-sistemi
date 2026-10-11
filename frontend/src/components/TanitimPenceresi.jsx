@@ -6,31 +6,31 @@ const ADIMLAR = [
   {
     ikon: '🌱',
     baslik: 'Hoş geldin!',
-    metin: 'Filizyol, sana en uygun üniversite bölümlerini bulmana ve o bölüme hazırlanmana yardım eder. Ben Filiz, gelişim koçun; bu yolda sana eşlik edeceğim.',
-    maddeler: ['Doğru ya da yanlış cevap yok', 'Hızlı değil, samimi cevap ver', 'Her katman yaklaşık 4-6 dakika sürer'],
+    metin: 'Filizyol, sana en uygun üniversite bölümlerini bulmana ve o bölüme hazırlanmana yardım eder. Ben Filiz, gelişim koçunum. Bu yolda sana eşlik edeceğim.',
+    maddeler: ['Doğru ya da yanlış cevap yok', 'Hız önemli değil, içten cevap ver', 'Her katman yaklaşık 4-6 dakika sürer'],
   },
   {
     ikon: '🧭',
     baslik: 'Adım adım ilerlersin',
-    metin: 'Seni dört katmanda tanıyoruz. Katmanlar sırayla açılır; birini bitirince bir sonrakine geçersin.',
+    metin: 'Seni dört katmanda tanıyoruz. Katmanlar sırayla açılır. Birini bitirince sonrakine geçersin.',
     maddeler: ['K1 · Değerlerin — neyi önemsersin?', 'K2 · Kişiliğin — nasıl çalışırsın?', 'K3 · İş ortamı — nasıl davranırsın?', 'K4 · Alan eğilimin — neye yatkınsın?', 'K5 · Sana özel alan soruları — ilk dört katmanın sonucuna göre açılır'],
   },
   {
     ikon: '⚖️',
     baslik: 'Uyumun nasıl hesaplanıyor?',
-    metin: 'Cevaplarından senin profilini çıkarıyoruz. Her bölümün de, mezunlarının çalıştığı binlerce meslekten türetilmiş bir profili var. İki profili 10 farklı yöntemle karşılaştırıp bir uyum yüzdesi buluyoruz.',
+    metin: 'Cevaplarından senin profilini çıkarıyoruz. Her bölümün de bir profili var. Bu profil, o bölümün mezunlarının çalıştığı binlerce meslekten çıkarılır. İki profili 10 farklı yöntemle karşılaştırıp bir uyum yüzdesi buluyoruz.',
     maddeler: ['301 bölüm, 3.000\'den fazla meslek', 'Seni başkalarıyla değil, kendi profilinle değerlendiririz', 'Sonuçlar yol gösterir; son kararı sen verirsin'],
   },
   {
     ikon: '🎯',
     baslik: 'Sonra ne olacak?',
-    metin: 'Sonuçların hazır olunca sana en uygun 10 bölümü görürsün. Birini hedef seçersen, o bölüme göre güçlü yönlerini ve gelişim alanlarını gösteririz.',
+    metin: 'Sonuçların hazır olunca sana en uygun 10 bölümü görürsün. Birini hedef seçersen, o bölüm için güçlü yönlerini ve gelişim alanlarını gösteririz.',
     maddeler: ['Tüm bölümleri keşfedebilirsin', 'Hedef bölümün için adım adım yol haritası', 'İlerlemeni işaretleyip takip edebilirsin'],
   },
   {
     ikon: '📝',
     baslik: 'Önce seni tanıyalım',
-    metin: 'Başlamadan önce profilini doldur: adın ve sınıfın yeterli. Ardından ana sayfaya geçip ilk katmana başlayabilirsin.',
+    metin: 'Başlamadan önce profilini doldur. Adın ve sınıfın yeterli. Sonra ana sayfaya geçip ilk katmana başlayabilirsin.',
     maddeler: ['Yalnızca ad ve sınıf zorunlu', 'Doğum tarihi ve cinsiyet tamamen isteğe bağlı', 'Bilgilerini Ayarlar\'dan her zaman değiştirebilirsin'],
   },
 ]

@@ -114,7 +114,7 @@ export default function GirisSayfasi() {
             </form>
 
             <div className="auth-foot">
-              Hesabını okulun oluşturur. Giriş bilgilerini (e-posta ve geçici şifre) rehber öğretmeninden alabilirsin.
+              Hesabını okulun açar. E-postanı ve geçici şifreni rehber öğretmeninden alabilirsin.
               {' '}Okul yetkilileri de bu ekrandan giriş yapar.
             </div>
           </>

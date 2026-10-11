@@ -65,14 +65,14 @@ export default function KutuphaneGrafikleri({ v }) {
     <div className="kg">
       <div className="kg-kutular">
         <Kutu ikon="📖" deger={h.kitap} ad="okunan kitap" alt={h.devam ? `${h.devam} kayıt devam ediyor` : null} />
-        <Kutu ikon="📄" deger={h.sayfa.toLocaleString('tr-TR')} ad="okunan sayfa" alt={h.ortSayfa ? `kitap başına ort. ${h.ortSayfa}` : 'sayfa sayısı girilen kitaplardan'} />
+        <Kutu ikon="📄" deger={h.sayfa.toLocaleString('tr-TR')} ad="okunan sayfa" alt={h.ortSayfa ? `kitap başına ortalama ${h.ortSayfa}` : 'sayfa sayısını yazdığın kitaplardan'} />
         <Kutu ikon="🎬" deger={h.izleme} ad="izlenen film / dizi / belgesel" />
         <Kutu ikon="🏅" deger={h.diger} ad="tamamlanan kurs ve etkinlik" />
         <Kutu ikon="⭐" deger={h.puan} ad="ortalama puanın" alt={h.listede ? `${h.listede} kayıt listende bekliyor` : null} />
       </div>
 
       {h.bosMu ? (
-        <div className="card kg-bos">Bir kaydı "Okudum / İzledim / Tamamladım" olarak eklediğinde grafiklerin burada oluşmaya başlar.</div>
+        <div className="card kg-bos">Bir kaydı "Okudum / İzledim / Tamamladım" olarak eklersen grafiklerin burada görünür.</div>
       ) : (
         <div className="kg-grafikler">
           <div className="card kg-kart kg-genis">

@@ -2779,3 +2779,22 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
   .yonetim-main.filiz-var .pg > .yp-bolum-baslik:first-child .pt{overflow-wrap:anywhere}
   .yonetim-main.filiz-var .main-icerik{padding-bottom:72px}
 }
+
+/* [2026-10-11] Sözlük: metinde terimlerin altı noktalı çizilir (DOM'a dokunmadan, CSS Highlight API), dokununca kutu açılır */
+::highlight(sozluk-terim){text-decoration:underline dotted;text-decoration-thickness:2px;text-decoration-color:var(--pu);text-underline-offset:3px;background-color:color-mix(in srgb,var(--pu) 8%,transparent)}
+.sozluk-kutu{position:fixed;z-index:80;background:var(--sur);border:1.5px solid var(--pu);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:12px 14px;font-size:13.5px;line-height:1.55;color:var(--tx)}
+.sozluk-kutu-ust{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
+.sozluk-kutu-ad{font-weight:800;font-size:14px}
+.sozluk-kutu-kapat{border:0;background:var(--sur2);color:var(--tx2);border-radius:999px;width:28px;height:28px;cursor:pointer;font-size:13px;flex:none}
+.sozluk-kutu-tanim{color:var(--tx)}
+.sozluk-kutu-ornek{margin-top:6px;font-size:12.5px;color:var(--tx2);background:var(--sur2);border-radius:8px;padding:6px 8px}
+.sozluk-kutu-link{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:700;color:var(--pud,var(--pu))}
+.sozluk-arac{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
+.sozluk-arac .auth-input{flex:1;min-width:220px}
+.sozluk-ayar{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
+.sozluk-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.sozluk-terim{margin:0;scroll-margin-top:80px}
+.sozluk-terim.secili{border-color:var(--pu);box-shadow:0 0 0 3px color-mix(in srgb,var(--pu) 25%,transparent)}
+.sozluk-terim-ad{font-weight:800;font-size:15px}
+.sozluk-terim-grup{font-size:11.5px;color:var(--tx3);margin:2px 0 6px}
+.sozluk-terim-tanim{font-size:13.5px;line-height:1.55}

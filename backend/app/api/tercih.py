@@ -110,7 +110,7 @@ def tercih_verisi(db: Session, o: Ogrenci, bolumler: bool = True) -> dict:
 
 def _uygun(o: Ogrenci):
     if o.sinif not in ("12. Sınıf", "Mezun"):
-        raise HTTPException(400, "Tercih listesi 12. sınıf ve mezun öğrenciler içindir.")
+        raise HTTPException(400, "Tercih listesi yalnızca 12. sınıf ve mezun öğrenciler için.")
 
 
 # ============================================================================= öğrenci
@@ -141,7 +141,7 @@ class TercihIstek(BaseModel):
 def tercih_kaydet(istek: TercihIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     _uygun(o)
     if len(istek.tercihler) > EN_FAZLA:
-        raise HTTPException(400, f"En fazla {EN_FAZLA} tercih yapılabilir.")
+        raise HTTPException(400, f"En fazla {EN_FAZLA} tercih yapabilirsin.")
     if istek.puan_turu and istek.puan_turu not in PUAN_TURLERI:
         raise HTTPException(400, "Geçersiz puan türü.")
     mevcut = db.execute(text("SELECT durum FROM tercih_listesi WHERE ogrenci_id = :o"), {"o": o.id}).scalar()
@@ -223,7 +223,7 @@ def _mezun_kaydi_yaz(db: Session, okul_id: int, ogrenci: Ogrenci | None, ad: str
 def yerlesme_bildir(istek: YerlesmeIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     _uygun(o)
     if not o.okul_id:
-        raise HTTPException(400, "Okulu olmayan hesaplar için kaydedilmez.")
+        raise HTTPException(400, "Hesabın bir okula bağlı olmadığı için bu bilgi kaydedilemez.")
     _mezun_kaydi_yaz(db, o.okul_id, o, o.ad_soyad, istek, "ogrenci")
     db.commit()
     return tercih_verisi(db, o, bolumler=False)

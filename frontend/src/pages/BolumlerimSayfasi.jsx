@@ -11,8 +11,8 @@ const ListemSekmesi = lazy(() => import('../components/ListemSekmesi'))
 
 const SEKMELER = [
   { kod: '', ad: 'Sana uygun', ikon: '🌟', alt: 'Değerlendirmene göre en uyumlu 10 bölüm ve nedenleri.' },
-  { kod: 'tum', ad: 'Tüm bölümler', ikon: '🔍', alt: '301 bölümün tamamı — ara, incele, beğendiğini ☆ ile listene ekle.' },
-  { kod: 'karsilastir', ad: 'Karşılaştır', ikon: '⚖️', alt: 'Aklındaki 2-3 bölümü yan yana koy: uyum ve nedenleri, puan ve sıralama, iş hayatı, meslekler, günlük işler.' },
+  { kod: 'tum', ad: 'Tüm bölümler', ikon: '🔍', alt: '301 bölümün hepsi burada. Ara, incele, beğendiğini ☆ ile listene ekle.' },
+  { kod: 'karsilastir', ad: 'Karşılaştır', ikon: '⚖️', alt: 'Aklındaki 2-3 bölümü yan yana koy. Uyumunu ve nedenlerini, puan ve sıralamayı, iş hayatını, meslekleri ve günlük işleri karşılaştır.' },
   { kod: 'listem', ad: 'Listem', ikon: '⭐', alt: 'İlgini çeken bölümler. Rehber öğretmenin de görüşmelerde bu listeyi görür.' },
 ]
 

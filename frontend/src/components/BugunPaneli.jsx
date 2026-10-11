@@ -16,12 +16,12 @@ function SiradakiAdim({ ozet, katmanlar, hedef, plan, kocluk = true }) {
     alt = `${b.soru || ''} ${b.sure || ''} · Yarıda bırakırsan kaldığın yerden devam edersin.`
     dugme = bekleyen.durum === 'devam_ediyor' ? 'Kaldığın yerden devam et' : 'Başla'; git = '/katmanlar'
   } else if (!ozet.tur_tamamlandi_mi) {
-    ust = 'Değerlendirme'; baslik = '🌻 Sana özel alan soruları'; alt = 'Bölüm önerilerin bu adımdan sonra kesinleşir.'; dugme = 'Devam et'; git = '/katmanlar'
+    ust = 'Değerlendirme'; baslik = '🌻 Sana özel alan soruları'; alt = 'Bu adımı bitirince bölüm önerilerin kesinleşir.'; dugme = 'Devam et'; git = '/katmanlar'
   } else if (!hedef) {
-    ust = 'Sonuçların hazır'; baslik = '🎯 Bir hedef bölüm seç'; alt = 'Sana uygun bölümlere bak, birini hedef yapınca adım adım planın hazırlanır.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
+    ust = 'Sonuçların hazır'; baslik = '🎯 Bir hedef bölüm seç'; alt = 'Sana uygun bölümlere bak. Birini hedef seçince adım adım planın hazırlanır.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
   } else if (!kocluk) {
     // [2026-10-10] Koçluk okulun paketinde yoksa: hedef bölümü bölüm sayfasında incele
-    ust = 'Hedefin'; baslik = `🎯 ${hedef.bolum_adi || hedef.ad || 'Hedef bölümün'}`; alt = 'Bölüm sayfasında gereken yetkinlikleri ve sana uyumunu inceleyebilirsin.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
+    ust = 'Hedefin'; baslik = `🎯 ${hedef.bolum_adi || hedef.ad || 'Hedef bölümün'}`; alt = 'Bölüm sayfasında bu bölümün istediği yetkinliklere ve sana ne kadar uyduğuna bakabilirsin.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
   } else if (plan?.siradaki_adim) {
     const s = plan.siradaki_adim
     ust = `Koçluk · ${s.degisken_adi} · ⏱ ${s.sure}`
@@ -31,7 +31,7 @@ function SiradakiAdim({ ozet, katmanlar, hedef, plan, kocluk = true }) {
   } else if (plan) {
     ust = 'Koçluk'; baslik = '🎉 Yol haritanın tamamını bitirdin'; alt = 'Güçlü yönlerini büyütecek adımlara geçebilirsin.'; dugme = 'Güçlü yönlerim'; git = '/koclugu?sekme=guclu'
   } else if (plan === false) {
-    ust = 'Koçluk'; baslik = '🎯 Koçluğuna göz at'; alt = 'Planın şu an gösterilemedi; alan soruların bekliyor olabilir.'; dugme = 'Koçluğum'; git = '/koclugu'
+    ust = 'Koçluk'; baslik = '🎯 Koçluğuna göz at'; alt = 'Planın şu an gösterilemedi. Alan soruların bekliyor olabilir.'; dugme = 'Koçluğum'; git = '/koclugu'
   } else return <div className="bugun-adim"><div className="bugun-ust">Yükleniyor…</div></div>
   return (
     <div className="bugun-adim" role="button" tabIndex={0} onClick={() => navigate(git)} onKeyDown={(e) => { if (e.key === 'Enter') navigate(git) }}>
@@ -52,7 +52,7 @@ function YksSayaci({ yks, mesaj }) {
     <div className={`bugun-yks${sonSinif ? ' son' : ''}`}>
       <div className="bugun-etiket">⏳ {yks.ad}</div>
       <div className="yks-sayi"><b>{yks.gun}</b><span>gün</span></div>
-      <div className="yks-alt">≈ {yks.hafta} hafta · {uzunTarih(yks.tarih)}{!yks.resmi && <em title="ÖSYM henüz açıklamadı; Haziran'ın 3. hafta sonu varsayıldı"> (tahmini)</em>}</div>
+      <div className="yks-alt">≈ {yks.hafta} hafta · {uzunTarih(yks.tarih)}{!yks.resmi && <em title="ÖSYM tarihi henüz açıklamadı. Haziran'ın 3. hafta sonu varsayıldı"> (tahmini)</em>}</div>
       {mesaj && <div className="yks-mesaj">“{mesaj}”</div>}
     </div>
   )

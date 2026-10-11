@@ -6,15 +6,15 @@
 // Alt sınırlar dahil, yüksekten düşüğe. grup: guclu / orta / gelisim (sayım ve renk için).
 export const BANTLAR = [
   { kod: 'cok_guclu', ad: 'Çok güçlü', alt: 75, grup: 'guclu', renk: 'var(--gr)', zemin: 'var(--grl)',
-    aciklama: 'Bu eğilim sende belirgin; farklı sorularda tutarlı olarak öne çıktı.' },
+    aciklama: 'Bu eğilim sende belirgin. Farklı sorularda tutarlı şekilde öne çıktı.' },
   { kod: 'guclu', ad: 'Güçlü', alt: 62, grup: 'guclu', renk: 'var(--gr)', zemin: 'var(--grl)',
     aciklama: 'Çoğu durumda bu yönde tercih yapıyorsun.' },
   { kod: 'ortanin_ustu', ad: 'Ortanın üstü', alt: 50, grup: 'orta', renk: 'var(--pu)', zemin: 'var(--sur2)',
-    aciklama: 'Duruma göre değişiyor, ama bu yöne biraz daha yatkınsın.' },
+    aciklama: 'Duruma göre değişiyor ama bu yöne biraz daha yatkınsın.' },
   { kod: 'orta', ad: 'Orta', alt: 40, grup: 'orta', renk: 'var(--pu)', zemin: 'var(--sur2)',
-    aciklama: 'Duruma göre değişiyor; esnek kullanabildiğin bir alan.' },
+    aciklama: 'Duruma göre değişiyor. Bu alanı esnek kullanabiliyorsun.' },
   { kod: 'gelisime_acik', ad: 'Gelişime açık', alt: 0, grup: 'gelisim', renk: 'var(--am)', zemin: 'var(--aml)',
-    aciklama: 'Şu an daha az tercih ettiğin bir yön; istersen çalışarak güçlenebilir.' },
+    aciklama: 'Bu yönü şu an daha az tercih ediyorsun. İstersen çalışarak güçlendirebilirsin.' },
 ]
 
 const bant = (kod) => BANTLAR.find((b) => b.kod === kod)

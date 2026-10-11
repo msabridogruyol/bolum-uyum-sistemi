@@ -19,7 +19,7 @@ export function BirGunumSekmesi({ hedef }) {
   const [gecmis, setGecmis] = useState([])
   const [hata, setHata] = useState(null)
   const yukle = () => {
-    api.bolumTanit(hedef.bolum_id).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.'))
+    api.bolumTanit(hedef.bolum_id).then(setV).catch((e) => setHata(e.detail || 'Yükleyemedik. Tekrar dene.'))
     api.simulasyonlarim().then((x) => setGecmis(x.simulasyonlar)).catch(() => {})
   }
   useEffect(() => {
@@ -37,8 +37,8 @@ export function BirGunumSekmesi({ hedef }) {
         <div>
           <div className="ct" style={{ marginBottom: 4 }}>Bir günümü yaşa</div>
           <div className="ps" style={{ margin: 0 }}>
-            <b>{v.bolum.ad}</b> mezunlarının çalıştığı mesleklerden birini seç; sabahtan akşama o mesleğin bir gününü yaşa. Her işe tepki ver,
-            karar anlarında ne yapacağını seç. Sonunda bu mesleğin sana ne kadar keyifli geldiğini, kendi güçlü yönlerinle birlikte gör.
+            <b>{v.bolum.ad}</b> mezunlarının yaptığı mesleklerden birini seç. O mesleğin bir gününü sabahtan akşama yaşa. Her işe tepki ver.
+            Karar anlarında ne yapacağını seç. Sonunda bu mesleğin sana ne kadar keyifli geldiğini gör. Kendi güçlü yönlerini de yanında görürsün.
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@ export function BirGunumSekmesi({ hedef }) {
           ))}
         </div>
       )}
-      <div className="yp-ince" style={{ marginTop: 6 }}>Başka bölümlerin mesleklerini denemek için Bölümler sayfasında bir bölüme dokun → Meslekler.</div>
+      <div className="yp-ince" style={{ marginTop: 6 }}>Başka bölümlerin mesleklerini denemek ister misin? Bölümler sayfasında bir bölüme dokun, sonra Meslekler'i aç.</div>
     </>
   )
 }

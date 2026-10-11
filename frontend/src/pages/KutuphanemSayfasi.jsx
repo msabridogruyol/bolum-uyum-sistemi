@@ -82,7 +82,7 @@ export default function KutuphanemSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Kütüphanem</div>
-        <div className="ps">Okuduğun kitapları, izlediğin film ve belgeselleri, aldığın kursları ve katıldığın etkinlikleri kaydet. Neler öğrendiğini birkaç cümleyle not al; rehber öğretmeninle görüşürken ve üniversite başvurularında işine yarar.</div>
+        <div className="ps">Okuduğun kitapları, izlediğin film ve belgeselleri, aldığın kursları ve katıldığın etkinlikleri kaydet. Ne öğrendiğini birkaç cümleyle not al. Bu notlar rehber öğretmeninle konuşurken ve üniversite başvurularında işine yarar.</div>
       </div>
       <div className="kc-filtre">
         {v.kategoriler.map((c) => <button key={c.kod} className="btn sec" style={{ padding: '8px 12px', fontSize: 13 }} onClick={() => setForm(BOS(c.kod))}>+ {c.ikon} {c.tekil}</button>)}

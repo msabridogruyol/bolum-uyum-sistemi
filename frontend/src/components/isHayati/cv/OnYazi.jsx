@@ -11,12 +11,12 @@ const TURLER = {
 
 const PARAGRAFLAR = [
   { kod: 'hitap', ad: 'Hitap', satir: 1,
-    ipucu: { varsayilan: 'İlanda bir isim varsa adıyla hitap et ("Sayın Ayşe Demir,"). Yoksa "Sayın Yetkili," yeterli. "Merhaba arkadaşlar" gibi samimi hitaplardan kaçın.' },
+    ipucu: { varsayilan: 'İlanda bir isim varsa kişiye adıyla seslen ("Sayın Ayşe Demir,"). Yoksa "Sayın Yetkili," yeterli. "Merhaba arkadaşlar" gibi samimi ifadeler kullanma.' },
     ornek: { varsayilan: 'Sayın Yetkili,' } },
   { kod: 'giris', ad: '1. Giriş — kimsin, neye başvuruyorsun?',
     ipucu: {
-      varsayilan: 'Tek paragraf, 2–3 cümle: hangi okulda kaçıncı sınıftasın, hangi ilana/programa başvuruyorsun, ilanı nerede gördün.',
-      burs: 'Hangi bursa başvurduğunu ve kısaca kim olduğunu yaz. Burs veren kurum seni tanımıyor; ilk cümle net olsun.',
+      varsayilan: 'Tek paragraf, 2–3 cümle yaz. Hangi okulda, kaçıncı sınıftasın? Hangi ilana ya da programa başvuruyorsun? İlanı nerede gördün?',
+      burs: 'Hangi bursa başvurduğunu ve kısaca kim olduğunu yaz. Burs veren kurum seni tanımıyor. İlk cümlen net olsun.',
     },
     ornek: {
       varsayilan: '[Okul adı] 11. sınıf öğrencisiyim. Kurumunuzun web sitesinde yayımlanan yaz dönemi gözlem stajı ilanına başvurmak istiyorum.',
@@ -25,19 +25,19 @@ const PARAGRAFLAR = [
     } },
   { kod: 'neden', ad: '2. Neden burası?',
     ipucu: {
-      varsayilan: 'Bu kurumu/ilanı neden seçtin? Kurumu araştırdığını göster: yaptıkları bir işi, değerlerini ya da programın içeriğini an. Her başvuruda bu paragrafı yeniden yaz; kopyala-yapıştır hemen anlaşılır.',
-      yari_zamanli: 'Bu işi neden istediğini dürüstçe ama olumlu yaz: deneyim kazanmak, sorumluluk almak, kendi harçlığını kazanmak. Yerin sana yakın olması ya da saatlerin okulunla uyumlu olması da geçerli bir nedendir.',
-      burs: 'Bursun amacını oku ve kendi hedefinle bağla. Ailenin maddi durumundan söz edeceksen kısa, ölçülü ve gerçek yaz; acındırmak yerine hedefine odaklan.',
+      varsayilan: 'Bu kurumu ya da ilanı neden seçtin? Kurumu araştırdığını göster. Yaptıkları bir işten, değerlerinden ya da programın içeriğinden söz et. Her başvuruda bu paragrafı yeniden yaz. Kopyala-yapıştır yaptığın hemen anlaşılır.',
+      yari_zamanli: 'Bu işi neden istediğini dürüst ama olumlu bir dille yaz. Örneğin deneyim kazanmak, sorumluluk almak ya da kendi harçlığını çıkarmak. İş yerinin sana yakın olması ya da saatlerin okuluna uyması da geçerli bir nedendir.',
+      burs: 'Bursun amacını oku ve kendi hedefinle bağla. Ailenin maddi durumundan söz edeceksen kısa, ölçülü ve doğru yaz. Acındırmaya çalışma; hedefini anlat.',
     },
     ornek: {
-      varsayilan: 'Ekibinizin geliştirdiği eğitim uygulamalarını inceledim; özellikle görme engelli öğrenciler için hazırladığınız sesli içerikler, yazılımın insanlara nasıl dokunabileceğini gösterdi.',
+      varsayilan: 'Ekibinizin geliştirdiği eğitim uygulamalarını inceledim. Görme engelli öğrenciler için hazırladığınız sesli içerikler, yazılımın insanlara nasıl yardım edebileceğini bana gösterdi.',
       burs: 'Mühendislik okuyarak yenilenebilir enerji alanında çalışmak istiyorum. Bursunuzun öncelikle fen alanlarına yönelik olması bu hedefimle örtüşüyor.',
     } },
   { kod: 'katki', ad: '3. Ne getiriyorsun? (kanıtla)',
     ipucu: {
-      varsayilan: 'CV\'ndeki en ilgili 1–2 deneyimi seç ve somut anlat: ne yaptın, sonuç ne oldu (sayıyla). Sıfat sıralama ("çalışkan, dürüst"); bir örnek bu özellikleri zaten gösterir.',
-      yari_zamanli: 'İşte işe yarayacak özelliklerini bir örnekle göster: dakiklik (okul nöbetleri), insanlarla iletişim (okul etkinliğinde misafir karşılama), yoğun tempoda sakin kalma.',
-      burs: 'Akademik başarın, sorumluluk aldığın işler ve topluma katkın: hepsini kısa örneklerle anlat. Burs verenler "bu öğrenciye yatırım yaparsak ne olur?" sorusunun cevabını arar.',
+      varsayilan: 'CV\'ndeki en uygun 1–2 deneyimi seç ve somut anlat. Ne yaptın? Sonuç ne oldu (sayıyla)? "Çalışkan, dürüst" gibi sıfatları art arda yazma. İyi bir örnek bu özellikleri zaten gösterir.',
+      yari_zamanli: 'İşte işine yarayacak özelliklerini bir örnekle göster. Örneğin dakiklik (okul nöbetleri), insanlarla iletişim (okul etkinliğinde misafir karşılama), yoğun tempoda sakin kalma.',
+      burs: 'Ders başarını, sorumluluk aldığın işleri ve topluma katkını kısa örneklerle anlat. Burs verenler şu sorunun cevabını arar: "Bu öğrenciyi desteklersek ne olur?"',
       gonullu: 'Daha önce bir gruba yardım ettiğin, bir şey öğrettiğin ya da düzenli bir sorumluluk aldığın bir örnek ver.',
     },
     ornek: {
@@ -46,15 +46,15 @@ const PARAGRAFLAR = [
     } },
   { kod: 'kapanis', ad: '4. Kapanış — ne zaman uygunsun, teşekkür',
     ipucu: {
-      varsayilan: 'Uygun olduğun tarihleri/saatleri yaz, görüşme için hazır olduğunu belirt ve teşekkür et. Kısa tut.',
-      yari_zamanli: 'Hangi gün ve saatlerde çalışabileceğini net yaz (okul saatlerin ve sınav dönemlerin dahil). 18 yaşından küçüksen velinin onayıyla başvurduğunu da belirtebilirsin.',
+      varsayilan: 'Uygun olduğun tarihleri ya da saatleri yaz. Görüşmeye hazır olduğunu söyle ve teşekkür et. Kısa tut.',
+      yari_zamanli: 'Hangi gün ve saatlerde çalışabileceğini net yaz. Okul saatlerini ve sınav dönemlerini de hesaba kat. 18 yaşından küçüksen velinin onayıyla başvurduğunu da yazabilirsin.',
     },
     ornek: {
       varsayilan: 'Temmuz ve ağustos aylarında programa tam zamanlı katılabilirim. Başvurumu değerlendirdiğiniz için teşekkür eder, görüşme fırsatı için hazır olduğumu belirtmek isterim.',
       yari_zamanli: 'Cumartesi ve pazar günleri 09.00–18.00 arasında çalışabilirim. Velimin bilgisi ve onayıyla başvuruyorum. Değerlendirmeniz için teşekkür ederim.',
     } },
   { kod: 'imza', ad: 'İmza', satir: 2,
-    ipucu: { varsayilan: 'Saygılarımla, altında adın soyadın ve e-postan. Telefonunu yalnızca güvendiğin başvurularda ekle.' },
+    ipucu: { varsayilan: '"Saygılarımla," yaz. Altına adını soyadını ve e-postanı ekle. Telefonunu yalnızca güvendiğin başvurularda ekle.' },
     ornek: { varsayilan: 'Saygılarımla,\n[Ad Soyad]\n[e-posta]' } },
 ]
 
@@ -75,8 +75,8 @@ export default function OnYazi({ onYazi, setOnYazi, ad, eposta }) {
       <div className="card">
         <div className="ct">✉️ Ön yazı ne işe yarar?</div>
         <div className="yp-ince" style={{ lineHeight: 1.6, fontSize: 12.5 }}>
-          CV <b>ne yaptığını</b>, ön yazı <b>neden bu başvuruyu yaptığını</b> anlatır. Yarım sayfayı geçmesin (150–300 kelime). Her başvuruda
-          "Neden burası?" paragrafını yeniden yaz: aynı mektubu herkese göndermek hemen fark edilir.
+          CV <b>ne yaptığını</b> anlatır. Ön yazı ise <b>neden bu başvuruyu yaptığını</b> anlatır. Yarım sayfayı geçmesin (150–300 kelime). Her başvuruda
+          "Neden burası?" paragrafını yeniden yaz. Aynı mektubu herkese gönderirsen bu hemen fark edilir.
         </div>
         <div className="eu-filtre" style={{ marginTop: 12, marginBottom: 0 }} role="radiogroup" aria-label="Başvuru türü">
           {Object.entries(TURLER).map(([k, t]) => <button key={k} className={tur === k ? 'secili' : ''} role="radio" aria-checked={tur === k} onClick={() => setOnYazi({ tur: k, alanlar })}>{t.ikon} {t.ad}</button>)}
@@ -104,12 +104,12 @@ export default function OnYazi({ onYazi, setOnYazi, ad, eposta }) {
               <span>Önizleme · {TURLER[tur].ad}</span>
               <span style={{ color: kelime > 300 ? 'var(--re)' : kelime >= 150 ? 'var(--gr)' : 'var(--tx3)', textTransform: 'none', letterSpacing: 0 }}>{kelime} kelime</span>
             </div>
-            {metin ? <div className="cva-mektup">{metin}</div> : <div className="yp-ince">Soldaki paragrafları doldurdukça mektubun burada oluşur.</div>}
+            {metin ? <div className="cva-mektup">{metin}</div> : <div className="yp-ince">Paragrafları doldurdukça mektubun burada görünür.</div>}
             {/\[[^\]]+\]/.test(metin) && <div className="yp-uyari" style={{ marginTop: 10, marginBottom: 0 }}>Köşeli parantezli yerleri ([Okul adı] gibi) kendi bilgilerinle değiştirmeyi unutma.</div>}
             <div style={{ display: 'flex', gap: 8, marginTop: 12, flexWrap: 'wrap' }}>
               <button className="btn" disabled={!metin} onClick={kopyala}>{kopyalandi ? '✓ Kopyalandı' : '📋 Metni kopyala'}</button>
             </div>
-            <div className="yp-ince" style={{ marginTop: 8 }}>Ön yazın CV'nle birlikte kaydedilir ve yalnızca sende kalır; CV'ni okulla paylaşsan bile ön yazın paylaşılmaz.</div>
+            <div className="yp-ince" style={{ marginTop: 8 }}>Ön yazın CV'nle birlikte kaydedilir ve yalnızca sende kalır. CV'ni okulla paylaşsan bile ön yazın paylaşılmaz.</div>
           </div>
         </div>
       </div>

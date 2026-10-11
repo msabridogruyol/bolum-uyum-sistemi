@@ -8,9 +8,9 @@ import { tl, TahminEtiketi } from './ortak'
 
 const SAYI = (v) => Math.round(Number(v)).toLocaleString('tr-TR')
 const KONUT = [
-  { kod: 'aile', ad: 'Ailemle', ikon: '🏠', not: 'Kira yok; eve katkını “Aileye katkı” satırına yazabilirsin.' },
-  { kod: 'arkadas', ad: 'Ev arkadaşıyla', ikon: '👥', not: '2+1 bir evin kira, aidat ve faturalarını ikiye bölüyoruz.' },
-  { kod: 'tek', ad: 'Tek başıma', ikon: '🔑', not: '1+1 bir evin kira, aidat ve faturaları tamamen senin.' },
+  { kod: 'aile', ad: 'Ailemle', ikon: '🏠', not: 'Kira yok. Eve katkını “Aileye katkı” satırına yazabilirsin.' },
+  { kod: 'arkadas', ad: 'Ev arkadaşıyla', ikon: '👥', not: '2+1 bir evin kirasını, aidatını ve faturalarını ikiye bölüyoruz.' },
+  { kod: 'tek', ad: 'Tek başıma', ikon: '🔑', not: '1+1 bir evin kirasını, aidatını ve faturalarını tek başına ödüyorsun.' },
 ]
 const ULASIM = [
   { kod: 'toplu', ad: 'Toplu taşıma', ikon: '🚌' },
@@ -111,7 +111,7 @@ export default function IlkMaas({ veri, ogrenci }) {
   const gelirBilgi = useMemo(() => {
     if (kaynak === 'meslek') {
       const m = veriliMeslek.find((x) => x.meslek === meslekAd)
-      return m ? { tutar: m.guncel_tahmin_net_tl, tahmin: true, aciklama: `${m.meslek}: “${m.veri_grup_adi || m.grup_adi}” grubunun ortalama kazancı (ilk maaş değil, ortalama)`, kaynak: `${m.kaynak} · TÜİK veri yılı ${m.veri_yili} · ${m.guncel_donem} asgari ücretiyle güncellendi` } : null
+      return m ? { tutar: m.guncel_tahmin_net_tl, tahmin: true, aciklama: `${m.meslek}: “${m.veri_grup_adi || m.grup_adi}” grubunun ortalama kazancı. Bu bir ilk maaş değil, ortalamadır.`, kaynak: `${m.kaynak} · TÜİK veri yılı ${m.veri_yili} · ${m.guncel_donem} asgari ücretiyle güncellendi` } : null
     }
     if (kaynak === 'kamu') {
       const k = (veri.kamu || []).find((x) => String(x.id) === String(kamuId))
@@ -163,7 +163,7 @@ export default function IlkMaas({ veri, ogrenci }) {
             <select className="yp-sec" style={{ width: '100%', maxWidth: 460 }} value={meslekAd} onChange={(e) => setMeslekAd(e.target.value)} aria-label="Meslek seç">
               {meslekler.map((m) => <option key={m.meslek} value={m.meslek} disabled={!m.guncel_tahmin_net_tl}>{m.meslek}{m.guncel_tahmin_net_tl ? ` — ~${SAYI(m.guncel_tahmin_net_tl)} TL (tahmini)` : ' — veri yok'}</option>)}
             </select>
-          ) : <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>📭 Bu bölümün meslekleri için henüz kazanç verisi yok. Asgari ücretle ya da kendi gireceğin bir tutarla hesaplayabilirsin.</div>)}
+          ) : <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>📭 Bu bölümün meslekleri için henüz kazanç verisi yok. Asgari ücretle ya da kendi yazdığın bir tutarla hesaplayabilirsin.</div>)}
           {kaynak === 'kamu' && (
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               <select className="yp-sec" style={{ flex: '1 1 240px' }} value={kamuId} onChange={(e) => setKamuId(e.target.value)} aria-label="Kamu kadrosu">
@@ -184,7 +184,7 @@ export default function IlkMaas({ veri, ogrenci }) {
             <div style={{ marginTop: 8, fontSize: 13 }}>
               <b style={{ fontSize: 18 }}>{tl(gelirBilgi.tutar)}</b>{gelirBilgi.tahmin && <TahminEtiketi />}
               <div className="yp-ince" style={{ marginTop: 2 }}>{gelirBilgi.aciklama}{gelirBilgi.kaynak ? ` · Kaynak: ${gelirBilgi.kaynak}` : ''}</div>
-              {gelirBilgi.tahmin && <div className="yp-ince" style={{ marginTop: 2 }}>İlk iş maaşı çoğu zaman bu ortalamanın altındadır; daha temkinli bir hesap için asgari ücreti de dene.</div>}
+              {gelirBilgi.tahmin && <div className="yp-ince" style={{ marginTop: 2 }}>İlk iş maaşı çoğu zaman bu ortalamanın altındadır. Daha dikkatli bir hesap için asgari ücreti de dene.</div>}
             </div>
           )}
         </div>
@@ -216,8 +216,8 @@ export default function IlkMaas({ veri, ogrenci }) {
         {hata && <div className="auth-error">{hata}</div>}
         {(veriYok || bosSayisi > 0) && (
           <div style={{ fontSize: 12.5, lineHeight: 1.55, background: 'var(--aml)', color: 'var(--tx)', padding: '8px 10px', borderRadius: 10, marginBottom: 10 }}>
-            {veriYok ? '📭 Bu şehir için henüz gider verisi yüklenmedi; kalemler boş geliyor.' : `📝 ${bosSayisi} kalem için veri yok, boş bıraktık.`}{' '}
-            Bu kalemleri <b>rehber öğretmeninle ya da ailenle birlikte doldurun</b> — evdeki faturalar ve market fişleri iyi bir başlangıç.
+            {veriYok ? '📭 Bu şehir için henüz gider verisi yüklenmedi. Bu yüzden kalemler boş.' : `📝 ${bosSayisi} kalem için veri yok, boş bıraktık.`}{' '}
+            Bu kalemleri <b>rehber öğretmeninle ya da ailenle birlikte doldur</b>. Evdeki faturalar ve market fişleri iyi bir başlangıç olur.
           </div>
         )}
         <div style={{ display: 'grid', gap: 6 }}>
@@ -261,10 +261,10 @@ export default function IlkMaas({ veri, ogrenci }) {
             <Selale gelir={gelir} kalemler={doluSatirlar} />
             <div style={{ marginTop: 10, fontSize: 12.5, lineHeight: 1.55, color: 'var(--tx2)', background: 'var(--sur2)', padding: '8px 10px', borderRadius: 10 }}>
               {kalan < 0
-                ? 'Bu düzende ay sonunu getirmek zor görünüyor. Bu çok yaygın bir ilk yıl gerçeği: birçok genç çalışan ilk yıllarda ailesiyle ya da ev arkadaşıyla yaşayarak, toplu taşıma kullanarak ve sosyal harcamaları planlayarak dengeyi kuruyor. Yukarıdaki seçimleri değiştirip farkı gör.'
+                ? 'Bu düzende ay sonunu getirmek zor görünüyor. İlk yıllarda bu çok yaygındır. Birçok genç çalışan ailesiyle ya da ev arkadaşıyla yaşıyor. Toplu taşıma kullanıyor, sosyal harcamalarını planlıyor. Böylece dengeyi kuruyor. Yukarıdaki seçimleri değiştir ve farkı gör.'
                 : bosSayisi > 0
-                  ? `Şimdilik ${tl(kalan)} kalıyor, ama ${bosSayisi} kalem boş. Onları doldurunca tablo değişebilir.`
-                  : 'Dengeyi kurabiliyorsun. Küçük de olsa düzenli birikim, ilk iş değişikliği ya da beklenmedik bir gider için en iyi güvencedir.'}
+                  ? `Şimdilik ${tl(kalan)} kalıyor ama ${bosSayisi} kalem boş. Onları doldurunca sonuç değişebilir.`
+                  : 'Dengeyi kurabiliyorsun. Az da olsa her ay para biriktir. İş değiştirirken ya da beklenmedik bir harcamada en iyi güvencen bu olur.'}
             </div>
           </>
         )}
@@ -284,7 +284,7 @@ export default function IlkMaas({ veri, ogrenci }) {
             {hedefSayi && <div>🎯 <b>{Math.ceil(hedefSayi / ayirmaSayi)} ayda</b> {tl(hedefSayi)} biriktirirsin.</div>}
             <div>📅 1 yılda {tl(ayirmaSayi * 12)}, 3 yılda {tl(ayirmaSayi * 36)} birikir.</div>
             {gelirBilgi && kalan >= 0 && ayirmaSayi > kalan && <div style={{ color: 'var(--re)', fontSize: 12.5 }}>Bu tutar ay sonunda kalan paradan ({tl(kalan)}) fazla.</div>}
-            <div className="yp-ince">Faiz, enflasyon ve maaş artışı hesaba katılmadı; basit toplam.</div>
+            <div className="yp-ince">Bu basit bir toplamdır. Faiz, enflasyon ve maaş artışı hesaba katılmadı.</div>
           </div>
         )}
       </div>

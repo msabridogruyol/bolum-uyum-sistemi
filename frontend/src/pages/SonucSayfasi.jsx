@@ -39,8 +39,8 @@ function NedenDetay({ d }) {
       {d.k5 && (
         <div className={`neden-not ${d.k5.durum === 'uyumlu' ? 'iyi' : 'zayif'}`}>
           🌻 {d.k5.durum === 'uyumlu'
-            ? <>Alan sorularında <b>{d.k5.is_turu}</b> işlerini öne çıkardın — bu bölümün ana uğraşı.</>
-            : <>Bu bölümün ana uğraşı <b>{d.k5.is_turu}</b>; alan sorularında bu işleri daha az seçtin. Bölüm bilgisine göz atmanı öneririz.</>}
+            ? <>Alan sorularında <b>{d.k5.is_turu}</b> işlerini öne çıkardın. Bu bölümde en çok bu işler yapılır.</>
+            : <>Bu bölümde en çok <b>{d.k5.is_turu}</b> işleri yapılır. Sen alan sorularında bu işleri daha az seçtin. Bölüm bilgisine göz atmanı öneririz.</>}
           {d.k5.kanit && <div className="neden-kanit" style={{ marginTop: 4 }}>Seçimin: <q>{d.k5.kanit}</q></div>}
         </div>
       )}
@@ -68,8 +68,8 @@ export default function SonucSayfasi({ gomulu = false }) {
       {!gomulu && <div className="ph">
         <div className="pt">Bölüm Uyum Sonuçların</div>
         <div className="ps">
-          Şu anki cevaplarına göre en güçlü uyum gösterdiğin bölümler — bu bir kehanet değil, anlık bir
-          yansıtma; profilin zamanla değişebilir.
+          Şu anki cevaplarına göre sana en uygun bölümler burada. Bu kesin bir hüküm değil; bugünkü
+          durumunu gösterir. Profilin zamanla değişebilir.
         </div>
       </div>}
       {!gomulu && <GecersizTurUyarisi ozet={ozet} />}
@@ -91,7 +91,7 @@ export default function SonucSayfasi({ gomulu = false }) {
             <div className="taslak-onizleme-overlay">
               <div className="to-ikon">🌟</div>
               <div className="to-metin">
-                Sonuçların, K1-K4'ün tamamı bitince burada görünecek — şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
+                K1–K4'ün hepsini bitirince sonuçların burada görünecek. Şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
               </div>
             </div>
           </div>
@@ -101,7 +101,7 @@ export default function SonucSayfasi({ gomulu = false }) {
         </>
       ) : (
         <>
-        <PuanRehberi baslik="“Sende: Çok güçlü”, “Bölüm: Yüksek” ne demek? Nasıl yorumlanmalı?" />
+        <PuanRehberi baslik="“Sende: Çok güçlü”, “Bölüm: Yüksek” ne demek? Nasıl okumalısın?" />
         <div className="ob-grid sonuc-grid">
           {siralama.map((s, i) => (
             <div key={s.bolum_id} className="ob-card">

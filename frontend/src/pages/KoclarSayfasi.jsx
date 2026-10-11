@@ -15,11 +15,11 @@ function TalepFormu({ koc, konular, onKapat, onGonderildi }) {
   const alan = (k) => (e) => setF({ ...f, [k]: e.target.value })
   const gonder = async (e) => {
     e.preventDefault(); setBekle(true); setHata(null)
-    try { await api.kocTalebi(koc.id, f); onGonderildi() } catch (er) { setHata(er.detail || 'Gönderilemedi.') }
+    try { await api.kocTalebi(koc.id, f); onGonderildi() } catch (er) { setHata(er.detail || 'Gönderemedik. Tekrar dene.') }
     setBekle(false)
   }
   return (
-    <Pencere baslik={`${koc.ad_soyad} ile görüşme talebi`} altBaslik="Talebin Filizyol koordinatörüne iletilir; koçla görüşüp uygun zamanı sana bildiririz." onKapat={onKapat}>
+    <Pencere baslik={`${koc.ad_soyad} ile görüşme talebi`} altBaslik="Talebin Filizyol koordinatörüne gider. Koçla konuşup uygun zamanı sana bildiririz." onKapat={onKapat}>
       <form onSubmit={gonder} className="kc-form">
         <label className="auth-label">Talebi kim yapıyor?</label>
         <div className="kc-secim">
@@ -56,7 +56,7 @@ function Degerlendirme({ talep, onBitti }) {
   const [hata, setHata] = useState(null)
   const gonder = async () => {
     setBekle(true); setHata(null)
-    try { await api.kocTalebiDegerlendir(talep.id, { puan, yorum: yorum || null }); onBitti() } catch (e) { setHata(e.detail || 'Gönderilemedi.') }
+    try { await api.kocTalebiDegerlendir(talep.id, { puan, yorum: yorum || null }); onBitti() } catch (e) { setHata(e.detail || 'Gönderemedik. Tekrar dene.') }
     setBekle(false)
   }
   return (
@@ -65,7 +65,7 @@ function Degerlendirme({ talep, onBitti }) {
       <div className="kt-yildiz kc-deg-yildiz">
         {[1, 2, 3, 4, 5].map((n) => <button key={n} type="button" className={puan >= n ? 'dolu' : ''} onClick={() => setPuan(n)} aria-label={`${n} yıldız`}>★</button>)}
       </div>
-      <textarea className="auth-input" rows={2} maxLength={800} value={yorum} onChange={(e) => setYorum(e.target.value)} placeholder="İstersen birkaç cümle yaz: sana ne kattı, neyi daha iyi olabilirdi? (yalnızca Filizyol ekibi görür)" />
+      <textarea className="auth-input" rows={2} maxLength={800} value={yorum} onChange={(e) => setYorum(e.target.value)} placeholder="İstersen birkaç cümle yaz. Sana ne kattı? Ne daha iyi olabilirdi? Bunu yalnızca Filizyol ekibi görür." />
       {hata && <div className="auth-error">{hata}</div>}
       <button className="btn" style={{ alignSelf: 'flex-start', padding: '7px 14px', fontSize: 13 }} disabled={!puan || bekle} onClick={gonder}>{bekle ? <span className="spin" /> : 'Değerlendirmeyi gönder'}</button>
     </div>
@@ -81,7 +81,7 @@ function KocKarti({ k, acikTalep, onTalep }) {
         <div style={{ minWidth: 0 }}>
           <div className="kc-ad">{k.ad_soyad}</div>
           {k.unvan && <div className="kc-unvan">{k.unvan}</div>}
-          <span className="kc-onayli" title="Filizyol ile anlaşmalı, okulun için onaylanmış koç">✓ Filizyol onaylı koç</span>
+          <span className="kc-onayli" title="Bu koç Filizyol ile anlaşmalı ve okulun için onaylandı">✓ Filizyol onaylı koç</span>
         </div>
       </div>
       {k.uygun && <div className="kc-uygun">✓ İlgilendiğin alanda: {k.uygun_alanlar.join(', ')}</div>}
@@ -108,11 +108,11 @@ export default function KoclarSayfasi() {
   const [form, setForm] = useState(null)
   const [mesaj, setMesaj] = useState(null)
   const [filtre, setFiltre] = useState('hepsi')
-  const yukle = () => api.koclar().then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.'))
+  const yukle = () => api.koclar().then(setV).catch((e) => setHata(e.detail || 'Yükleyemedik. Tekrar dene.'))
   useEffect(() => { yukle() }, [])
   const iptal = async (t) => {
     if (!window.confirm('Bu görüşme talebini iptal etmek istiyor musun?')) return
-    try { await api.kocTalebiIptal(t.id); yukle() } catch (e) { setMesaj({ hata: true, metin: e.detail || 'İptal edilemedi.' }) }
+    try { await api.kocTalebiIptal(t.id); yukle() } catch (e) { setMesaj({ hata: true, metin: e.detail || 'İptal edemedik. Tekrar dene.' }) }
   }
   if (hata) return <div className="pg"><div className="auth-error">{hata}</div></div>
   if (!v) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
@@ -123,7 +123,7 @@ export default function KoclarSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Eğitim Koçları</div>
-        <div className="ps">Okulunun anlaşmalı eğitim koçlarıyla bölüm seçimi, çalışma planı ya da motivasyon üzerine birebir görüşebilirsin. Talebin Filizyol koordinatörüne iletilir; görüşme planlanınca tarih ve saati burada ve Takvim'inde görürsün.</div>
+        <div className="ps">Filizyol ile anlaşmalı, okulun için onaylanmış eğitim koçlarıyla birebir görüşebilirsin. Bölüm seçimi, çalışma planı ya da motivasyon hakkında konuşabilirsin. Talebin Filizyol koordinatörüne gider. Görüşme planlanınca tarihi ve saati burada ve Takvim'inde görürsün.</div>
       </div>
       {mesaj && <div className={mesaj.hata ? 'auth-error' : 'yp-basari'} style={{ marginBottom: 12 }}>{mesaj.metin}</div>}
 
@@ -158,7 +158,7 @@ export default function KoclarSayfasi() {
           <div className="kc-filtre">
             <button className={filtre === 'hepsi' ? 'aktif' : ''} onClick={() => setFiltre('hepsi')}>Tüm koçlar ({v.koclar.length})</button>
             <button className={filtre === 'uygun' ? 'aktif' : ''} onClick={() => setFiltre('uygun')} disabled={!v.ilgili_alanlar.length}
-              title={v.ilgili_alanlar.length ? '' : 'Hedef bölüm seçtiğinde ya da Listem\'e bölüm eklediğinde açılır'}>
+              title={v.ilgili_alanlar.length ? '' : 'Hedef bölüm seçince ya da Listem\'e bölüm ekleyince açılır'}>
               İlgilendiğim alanlar ({v.koclar.filter((k) => k.uygun).length})
             </button>
             {v.ilgili_alanlar.length > 0 && <span className="yp-ince">Hedefin ve Listem'e göre: {v.ilgili_alanlar.slice(0, 4).join(', ')}</span>}
@@ -168,9 +168,9 @@ export default function KoclarSayfasi() {
           </div>
         </>
       )}
-      {!v.okul_var && <div className="yp-uyari" style={{ marginTop: 12 }}>Hesabın bir okula bağlı olmadığı için görüşme talebi gönderemezsin.</div>}
+      {!v.okul_var && <div className="yp-uyari" style={{ marginTop: 12 }}>Hesabın bir okula bağlı değil. Bu yüzden görüşme talebi gönderemezsin.</div>}
       {form && <TalepFormu koc={form} konular={v.konular} onKapat={() => setForm(null)}
-        onGonderildi={() => { setForm(null); setMesaj({ metin: 'Talebin iletildi. Durumunu bu sayfadan takip edebilirsin.' }); yukle() }} />}
+        onGonderildi={() => { setForm(null); setMesaj({ metin: 'Talebin gönderildi. Durumunu bu sayfadan takip edebilirsin.' }); yukle() }} />}
     </div>
   )
 }

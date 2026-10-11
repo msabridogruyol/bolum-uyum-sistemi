@@ -53,7 +53,7 @@ function Ozet({ s, onYeniden, onKapat, onBaska }) {
               {k.onerilen && <div className="ms-onerilen">Meslekte beklenen: {k.onerilen}</div>}
             </div>
           ))}
-          <div className="yp-ince" style={{ marginTop: 6 }}>Karar anları kurgusal durumlardır; mesleğin iş tanımı, iş güvenliği ve meslek etiği ilkeleri esas alınarak hazırlanmıştır. Gerçek iş yerinde kurallar kuruma göre değişebilir.</div>
+          <div className="yp-ince" style={{ marginTop: 6 }}>Karar anları gerçek olaylar değil, örnek durumlardır. Bunları mesleğin iş tanımına, iş güvenliği kurallarına ve meslek etiğine göre hazırladık. Gerçek iş yerlerinde kurallar kurumdan kuruma değişebilir.</div>
         </div>
       )}
       <div className="ms-iki" style={{ marginTop: 10 }}>
@@ -81,7 +81,7 @@ function Simulasyon({ bolumId, meslek, onKapat }) {
   const [bekle, setBekle] = useState(false)
   useEffect(() => {
     setV(null); setI(0); setTepki({}); setKarar({}); setOzet(null)
-    api.simulasyon(bolumId, meslek).then(setV).catch((e) => setHata(e.detail || 'Simülasyon açılamadı.'))
+    api.simulasyon(bolumId, meslek).then(setV).catch((e) => setHata(e.detail || 'Simülasyonu açamadık. Tekrar dene.'))
     return () => sus()
   }, [bolumId, meslek])
   const sahne = v?.sahneler[i]
@@ -106,8 +106,8 @@ function Simulasyon({ bolumId, meslek, onKapat }) {
     setBekle(true); setHata(null)
     try {
       const r = await api.simulasyonKaydet({ bolum_id: bolumId, meslek, tepkiler: tepki, kararlar: karar })
-      efekt('kutla'); setOzet(r); soyle(`Günün bitti. Bu mesleğin keyif puanın yüzde ${r.keyif}.`)
-    } catch (e) { setHata(e.detail || 'Kaydedilemedi.') } finally { setBekle(false) }
+      efekt('kutla'); setOzet(r); soyle(`Günün bitti. Bu meslekteki keyif puanın yüzde ${r.keyif}.`)
+    } catch (e) { setHata(e.detail || 'Kaydedemedik. Tekrar dene.') } finally { setBekle(false) }
   }
   const secilen = sahne.tur === 'karar' && karar[sahne.id] != null ? sahne.secenekler[karar[sahne.id]] : null
   return (
@@ -188,7 +188,7 @@ export default function SimulasyonKatmani() {
         <div className="yp-baslik">
           <div style={{ minWidth: 0 }}>
             <div className="yp-bt">🎬 Bir günümü yaşa{acik.ad ? `: ${acik.ad}` : ''}</div>
-            <div className="yp-ab">Gün boyunca yaptığın işlere tepki ver, karar anlarında seçim yap; sonunda bu mesleğin sana ne kadar uyduğunu gör.</div>
+            <div className="yp-ab">Gün boyunca yaptığın işlere tepki ver. Karar anlarında seçim yap. Sonunda bu mesleğin sana ne kadar uyduğunu gör.</div>
           </div>
           <button className="yp-kapat" onClick={kapat} aria-label="Kapat">×</button>
         </div>

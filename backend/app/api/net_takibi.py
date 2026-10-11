@@ -110,7 +110,7 @@ def deneme_ekle(istek: DenemeIstek, db: Session = Depends(get_db), o: Ogrenci = 
     temiz, toplam = {}, 0.0
     for kod, v in istek.dersler.items():
         if kod not in TESTLER or TESTLER[kod][0] != istek.oturum:
-            raise HTTPException(400, f"Bu oturumda olmayan ders: {kod}")
+            raise HTTPException(400, f"Bu ders bu oturumda yok: {kod}")
         d, y = int(v.get("d", 0) or 0), int(v.get("y", 0) or 0)
         soru = TESTLER[kod][2]
         if d < 0 or y < 0 or d + y > soru:
@@ -132,7 +132,7 @@ def deneme_ekle(istek: DenemeIstek, db: Session = Depends(get_db), o: Ogrenci = 
 def deneme_sil(deneme_id: int, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     okul = db.execute(text("SELECT okul_deneme_id FROM ogrenci_denemeleri WHERE id = :i AND ogrenci_id = :o"), {"i": deneme_id, "o": o.id}).first()
     if okul is not None and okul.okul_deneme_id:
-        raise HTTPException(400, "Okulunun yüklediği deneme silinemez; bir yanlışlık varsa rehber öğretmenine söyle.")
+        raise HTTPException(400, "Okulunun yüklediği denemeyi silemezsin. Bir yanlışlık varsa rehber öğretmenine söyle.")
     n = db.execute(text("DELETE FROM ogrenci_denemeleri WHERE id = :i AND ogrenci_id = :o"), {"i": deneme_id, "o": o.id}).rowcount
     db.commit()
     if not n:

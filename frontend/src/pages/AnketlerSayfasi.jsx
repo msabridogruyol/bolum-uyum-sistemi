@@ -43,7 +43,7 @@ function Yanitla({ id, onBitti, onGeri }) {
       <div className="card" style={{ marginTop: 8 }}>
         <div className="pt" style={{ fontSize: 20 }}>{a.baslik}</div>
         {a.aciklama && <div className="ps" style={{ marginTop: 6 }}>{a.aciklama}</div>}
-        <div className="yp-ince" style={{ marginTop: 8 }}>{a.anonim ? '🔒 Bu anket anonim: cevapların adınla eşleştirilmez.' : '👤 Bu form isimli: cevaplarını rehber öğretmenin görür ve sana daha iyi destek olmak için kullanır.'}</div>
+        <div className="yp-ince" style={{ marginTop: 8 }}>{a.anonim ? '🔒 Bu anket anonim. Cevapların adınla eşleştirilmez.' : '👤 Bu form isimli. Cevaplarını rehber öğretmenin görür. Onları sana daha iyi destek olmak için kullanır.'}</div>
       </div>
       {a.sorular.map((s, i) => (
         <div key={s.id} className="card an-yanit-soru">
@@ -97,7 +97,7 @@ export default function AnketlerSayfasi() {
     <div className="pg">
       <div className="ph">
         <div className="pt">Anketler</div>
-        <div className="ps">Okulunun ve rehber öğretmeninin senin görüşünü almak için gönderdiği anketler.</div>
+        <div className="ps">Okulun ve rehber öğretmenin bu anketlerle senin görüşünü soruyor.</div>
       </div>
       {bekleyen.length === 0 && biten.length === 0 && <div className="card bos-durum">Şu an yanıtlaman gereken bir anket yok. 🎉</div>}
       {bekleyen.length > 0 && (

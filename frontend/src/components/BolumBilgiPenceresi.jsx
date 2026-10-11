@@ -24,19 +24,19 @@ function YetkinlikProfili({ bolumId }) {
   useEffect(() => {
     let iptal = false
     setVeri(null); setHata(null)
-    api.bolumYetkinlik(bolumId).then((v) => { if (!iptal) setVeri(v) }).catch((e) => { if (!iptal) setHata(e.detail || 'Yetkinlik profili alınamadı.') })
+    api.bolumYetkinlik(bolumId).then((v) => { if (!iptal) setVeri(v) }).catch((e) => { if (!iptal) setHata(e.detail || 'Yetkinlik profilini yükleyemedik. Tekrar dene.') })
     return () => { iptal = true }
   }, [bolumId])
   if (hata) return <div className="ps" style={{ margin: 0 }}>{hata}</div>
   if (!veri) return <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
-  if (!veri.katmanlar.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün yetkinlik profili şu an gösterilemiyor. Genel Bakış ve Meslekler sekmelerine göz atabilirsin.</div>
+  if (!veri.katmanlar.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün yetkinlik profilini şu an gösteremiyoruz. Genel Bakış ve Meslekler sekmelerine göz atabilirsin.</div>
   const katmanlar = veri.katmanlar.map((k) => ({ ...k, liste: k.one_cikanlar || k.degiskenler.filter((d) => d.one_cikan) }))
   const toplam = katmanlar.reduce((t, k) => t + k.liste.length, 0)
   return (
     <>
       <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5, lineHeight: 1.55 }}>
-        Bu bölümü {veri.bolum_sayisi} bölüm arasında <b>en çok öne çıkaran {toplam} özellik</b>. Listede olmayan özellikler de değerlidir;
-        yalnızca bu bölümü diğerlerinden belirgin biçimde ayırmazlar.
+        Bunlar, bu bölümü {veri.bolum_sayisi} bölüm arasında <b>en çok öne çıkaran {toplam} özellik</b>. Listede olmayan özellikler de değerlidir.
+        Sadece bu bölümü diğerlerinden açıkça ayırmazlar.
       </div>
       <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap', marginBottom: 12 }}>
         {Object.entries(ONEM_RENK).map(([ad, renk]) => (
@@ -58,7 +58,7 @@ function YetkinlikProfili({ bolumId }) {
           ))}
         </Bolum>
       ))}
-      {toplam === 0 && <div className="ps" style={{ margin: 0 }}>Bu bölüm özellik bakımından dengeli; belirgin biçimde öne çıkan bir özellik yok.</div>}
+      {toplam === 0 && <div className="ps" style={{ margin: 0 }}>Bu bölüm özellikler açısından dengeli. Açıkça öne çıkan bir özellik yok.</div>}
     </>
   )
 }
@@ -122,7 +122,7 @@ function Meslekler({ detay, bolumId }) {
   if (!liste.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün mezunlarının çalıştığı alanları Genel Bakış sekmesinde bulabilirsin.</div>
   return (
     <>
-      <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5 }}>Mezunların sık yöneldiği meslekler. Ayrıntı için bir mesleğe dokun.</div>
+      <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5 }}>Mezunların sık seçtiği meslekler. Ayrıntı için bir mesleğe dokun.</div>
       {liste.map((m, i) => {
         const a = acik === i
         return (
@@ -166,7 +166,7 @@ function Meslekler({ detay, bolumId }) {
                 )}
                 {m.nasil_olunur && (
                   <>
-                    <div style={{ fontWeight: 800, color: 'var(--tx)', margin: '10px 0 4px', fontSize: 12.5 }}>Bu mesleğe nasıl ulaşılır?</div>
+                    <div style={{ fontWeight: 800, color: 'var(--tx)', margin: '10px 0 4px', fontSize: 12.5 }}>Bu mesleğe nasıl girersin?</div>
                     <div>{m.nasil_olunur}</div>
                   </>
                 )}
@@ -185,14 +185,14 @@ function MeslekDili({ terimler }) {
   const [arama, setArama] = useState('')
   const [dene, setDene] = useState(false)
   const [acik, setAcik] = useState({})
-  if (!terimler?.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün meslek dili şu an gösterilemiyor.</div>
+  if (!terimler?.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün meslek dilini şu an gösteremiyoruz.</div>
   const q = arama.trim().toLocaleLowerCase('tr')
   const liste = terimler.filter((t) => !q || `${t.terim} ${t.anlam}`.toLocaleLowerCase('tr').includes(q))
   const secim = { fontSize: 12.5, padding: '7px 10px', borderRadius: 10, border: '1.5px solid var(--bor2)', background: 'var(--sur)', color: 'var(--tx)' }
   return (
     <>
       <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5, lineHeight: 1.55 }}>
-        Bu alanda çalışanların her gün kullandığı kelimeler. Bir mezunla konuşurken ya da staj yaparken bu terimleri tanımak işini kolaylaştırır.
+        Bu alanda çalışanlar bu kelimeleri her gün kullanır. Bir mezunla konuşurken ya da staj yaparken bu terimleri bilmek işini kolaylaştırır.
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 12 }}>
         <input placeholder="Terim ara…" value={arama} onChange={(e) => setArama(e.target.value)} style={{ ...secim, flex: '1 1 160px' }} />
@@ -249,7 +249,7 @@ function Universiteler({ bolumId }) {
     setVeri(null); setHata(null)
     api.bolumUniversiteleri(bolumId)
       .then((v) => { if (!iptal) setVeri(v) })
-      .catch((e) => { if (!iptal) setHata(e.detail || 'Üniversite bilgileri alınamadı.') })
+      .catch((e) => { if (!iptal) setHata(e.detail || 'Üniversite bilgilerini yükleyemedik. Tekrar dene.') })
     return () => { iptal = true }
   }, [bolumId])
 
@@ -266,8 +266,8 @@ function Universiteler({ bolumId }) {
   }, [programlar, il, tur, arama, siralama])
 
   if (hata) return <div className="ps" style={{ margin: 0 }}>{hata}</div>
-  if (!veri) return <div className="ps" style={{ margin: 0 }}>YÖK Atlas'tan bilgiler alınıyor… (ilk açılışta birkaç saniye sürebilir)</div>
-  if (veri.durum === 'ozel_yetenek') return <div className="yp-uyari" style={{ margin: 0 }}><b>🎨 Özel yetenek sınavıyla öğrenci alan bölüm</b><div style={{ marginTop: 4 }}>{veri.mesaj}</div></div>
+  if (!veri) return <div className="ps" style={{ margin: 0 }}>Bilgileri YÖK Atlas'tan alıyoruz… İlk açılışta birkaç saniye sürebilir.</div>
+  if (veri.durum === 'ozel_yetenek') return <div className="yp-uyari" style={{ margin: 0 }}><b>🎨 Bu bölüm öğrenciyi özel yetenek sınavıyla alır</b><div style={{ marginTop: 4 }}>{veri.mesaj}</div></div>
   if (veri.durum !== 'tamam') return <div className="ps" style={{ margin: 0 }}>{veri.mesaj}</div>
 
   const secim = { fontSize: 12.5, padding: '7px 9px', borderRadius: 10, border: '1.5px solid var(--bor2)', background: 'var(--sur)', color: 'var(--tx)' }
@@ -293,7 +293,7 @@ function Universiteler({ bolumId }) {
       </div>
       <div className="ps" style={{ margin: '0 0 10px', fontSize: 12 }}>
         {liste.length} program · {veri.yil ? `${veri.yil} yerleştirme verileri` : 'son yerleştirme verileri'} · Kaynak: YÖK Atlas.
-        {' '}Tercih yapmadan önce güncel bilgiyi ÖSYM kılavuzundan doğrula.
+        {' '}Tercih yapmadan önce güncel bilgiyi ÖSYM kılavuzundan kontrol et.
       </div>
       {liste.map((p) => (
         <div key={p.kilavuz_kodu} style={{ border: '1.5px solid var(--bor)', borderRadius: 14, padding: '11px 13px', marginBottom: 8, background: 'var(--sur)' }}>
@@ -346,7 +346,7 @@ export function BolumBilgiIcerik({ bolumId, ad, baslangicSekme = 'genel', onKapa
         const b = await api.bolumBilgi(id)
         if (!iptal) setBilgi(b)
       } catch (e) {
-        if (!iptal) setHata(e.detail || 'Bölüm bilgisi alınamadı.')
+        if (!iptal) setHata(e.detail || 'Bölüm bilgisini yükleyemedik. Tekrar dene.')
       }
     }
     yukle()

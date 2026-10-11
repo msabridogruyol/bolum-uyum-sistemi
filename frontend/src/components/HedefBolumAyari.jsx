@@ -51,17 +51,17 @@ export default function HedefBolumAyari() {
       await api.hedefSec(onay.bolum_id, true)
       const yeni = await api.hedefDurumGetir()
       setDurum(yeni)
-      setMesaj(hedef ? `Hedefin ${onay.bolum_adi} oldu. Kalan değiştirme hakkın: ${yeni.kalan_hak}.` : `Hedefin ${onay.bolum_adi} oldu. Koçluk planın hazırlanıyor.`)
+      setMesaj(hedef ? `Hedefin ${onay.bolum_adi} oldu. Kalan değiştirme hakkın: ${yeni.kalan_hak}.` : `Hedefin ${onay.bolum_adi} oldu. Koçluk planını hazırlıyoruz.`)
       setOnay(null); setAcik(false); setSonuclar(null); setSorgu('')
     } catch (e) {
-      setHata(e.detail || 'Hedef kaydedilemedi.')
+      setHata(e.detail || 'Hedefini kaydedemedik. Tekrar dene.')
     } finally { setBekle(false) }
   }
 
   async function ara(e) {
     e.preventDefault()
     if (sorgu.trim().length < 2) return
-    try { setSonuclar(await api.kesfetAra(sorgu.trim(), 8)) } catch (err) { setHata(err.detail || 'Arama yapılamadı.') }
+    try { setSonuclar(await api.kesfetAra(sorgu.trim(), 8)) } catch (err) { setHata(err.detail || 'Arama yapamadık. Tekrar dene.') }
   }
 
   if (!durum) return <div className="card" ref={kutu} id="hedef"><div className="bos-durum" style={{ padding: 12 }}>Yükleniyor…</div></div>
@@ -70,7 +70,7 @@ export default function HedefBolumAyari() {
     <div className="card hb-kart" ref={kutu} id="hedef">
       <div className="ct">🎯 Hedef bölümüm</div>
       <div className="ps" style={{ margin: '0 0 14px', fontSize: 12.5 }}>
-        Koçluk planın bu bölüme göre hazırlanır. Odaklanabilmen için hedefini en fazla {durum.degisim_hakki} kez değiştirebilirsin.
+        Koçluk planını bu bölüme göre hazırlarız. Odağını kaybetmemen için hedefini en fazla {durum.degisim_hakki} kez değiştirebilirsin.
       </div>
 
       {hedef ? (
@@ -87,19 +87,19 @@ export default function HedefBolumAyari() {
           </div>
         </div>
       ) : (
-        <div className="hb-bos">Henüz bir hedef bölümün yok. Aşağıdan sana uygun bölümlerden birini seç; ilk seçimin hakkından düşmez.</div>
+        <div className="hb-bos">Henüz bir hedef bölümün yok. Aşağıdan sana uygun bölümlerden birini seç. İlk seçimin, değiştirme hakkından sayılmaz.</div>
       )}
 
       {mesaj && <div className="hb-tamam">{mesaj}</div>}
       {hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
 
       {hakBitti ? (
-        <div className="hb-uyari">Hedefini {durum.degisim_hakki} kez değiştirdin. Yeniden değiştirmek istersen <b>rehber öğretmenine</b> başvur; o senin için değiştirebilir ya da yeni hak tanımlayabilir.</div>
+        <div className="hb-uyari">Hedefini {durum.degisim_hakki} kez değiştirdin. Yeniden değiştirmek istersen <b>rehber öğretmenine</b> başvur. O, hedefini senin için değiştirebilir ya da sana yeni hak verebilir.</div>
       ) : onay ? (
         <div className="hb-onay">
           <div style={{ fontSize: 13.5, lineHeight: 1.55 }}>
             Hedefin <b>{onay.bolum_adi}</b> olsun mu?
-            {hedef && <> Bu değişiklik <b>1 hakkını</b> kullanır (kalan: {durum.kalan_hak} → {durum.kalan_hak - 1}). Eski hedefindeki ilerlemen silinmez.</>}
+            {hedef && <> Bu değişiklik <b>1 hakkını</b> kullanır. Kalan hakkın {durum.kalan_hak} → {durum.kalan_hak - 1} olur. Eski hedefindeki ilerlemen silinmez.</>}
           </div>
           <div style={{ display: 'flex', gap: 8, marginTop: 10, flexWrap: 'wrap' }}>
             <button className="btn" disabled={bekle} onClick={onayla}>{bekle ? <span className="spin" /> : hedef ? 'Evet, değiştir' : 'Hedefim olsun'}</button>
@@ -128,7 +128,7 @@ export default function HedefBolumAyari() {
           </form>
           {sonuclar && (
             <div className="ll" style={{ marginTop: 10 }}>
-              {sonuclar.length === 0 && <div className="ps" style={{ margin: 0 }}>Sonuç bulunamadı.</div>}
+              {sonuclar.length === 0 && <div className="ps" style={{ margin: 0 }}>Sonuç yok. Başka bir kelimeyle ara.</div>}
               {sonuclar.map((s) => (
                 <div key={s.bolum_id} className="lc" onClick={() => sec(s)}>
                   <div className="lb-wrap"><div className="lt">{s.bolum_adi}</div></div>

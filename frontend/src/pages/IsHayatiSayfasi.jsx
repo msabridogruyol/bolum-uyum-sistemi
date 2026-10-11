@@ -41,7 +41,7 @@ function BolumSecici({ ozet, secili, onSec }) {
           )}
         </div>
       </div>
-      {!hizli.length && <div className="yp-ince" style={{ marginTop: 8 }}>Hedef bölüm seçtiğinde ya da değerlendirmeni tamamladığında önerilerin burada hazır gelir.</div>}
+      {!hizli.length && <div className="yp-ince" style={{ marginTop: 8 }}>Hedef bölüm seçince ya da değerlendirmeni bitirince önerilerin burada görünür.</div>}
     </div>
   )
 }
@@ -61,7 +61,7 @@ function KisaSerit({ veri }) {
   if (!i) {
     return (
       <div className="card" style={{ padding: '12px 16px', fontSize: 12.5, color: 'var(--tx2)' }}>
-        📭 Bu bölüm için henüz resmî istihdam verisi yüklenmedi. Sekmelerdeki genel bilgiler yine de işine yarar.
+        📭 Bu bölümün resmî istihdam verisi henüz yüklenmedi. Sekmelerdeki genel bilgiler yine de işine yarar.
       </div>
     )
   }
@@ -115,8 +115,8 @@ export default function IsHayatiSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">İş Hayatı</div>
-        <div className="ps">Bir mesleğin vitrininin arkasını gör: mezunlar ne kadar sürede iş buluyor, ne kazanıyor, ilk maaş neye yetiyor?
-          Gerçekleri bilmek seni korkutmak için değil, yolunu bilerek seçmen için.</div>
+        <div className="ps">Bir mesleğin görünmeyen yüzünü gör. Mezunlar ne kadar sürede iş buluyor? Ne kazanıyor? İlk maaş neye yetiyor?
+          Amaç seni korkutmak değil. Amaç, yolunu bilerek seçmen.</div>
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}

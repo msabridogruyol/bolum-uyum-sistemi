@@ -15,8 +15,8 @@ export default function GecersizTurUyarisi({ ozet }) {
       <div style={{ flex: 1, minWidth: 220 }}>
         <div style={{ fontWeight: 800, color: 'var(--tx)' }}>Bu değerlendirme doğrulanamadı</div>
         <div style={{ fontSize: 13, color: 'var(--tx2)', marginTop: 2 }}>
-          Değerlendirme sırasında sekme değiştirme, tam ekrandan çıkma gibi durumlar oldu. Sonuçlarını görebilirsin;
-          daha doğru öneriler için değerlendirmeyi yeniden yapmanı öneririz.
+          Değerlendirme sırasında sekme değiştirme ya da tam ekrandan çıkma gibi durumlar oldu. Sonuçlarını yine de
+          görebilirsin. Daha doğru öneriler için değerlendirmeyi yeniden yapmanı öneririz.
         </div>
       </div>
       <button className="btn" onClick={() => navigate('/katmanlar')}>Yeniden başla →</button>

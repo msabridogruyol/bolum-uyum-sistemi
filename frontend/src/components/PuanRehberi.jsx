@@ -19,13 +19,13 @@ export default function PuanRehberi({ baslik = 'Bu ifadeler ne demek? Sonuçlar�
             {BANTLAR.map((b) => (
               <div key={b.kod}><b className={SINIF[b.kod]}>{b.ad}</b><span>({bantAraligi(b)}) {b.aciklama}</span></div>
             ))}
-            {bolumlu && <div><b className="pr-b">Bölüm: Yüksek / Çok yüksek</b><span>Bu bölüm bu özelliği, bölümlerin çoğundan daha fazla gerektiriyor.</span></div>}
+            {bolumlu && <div><b className="pr-b">Bölüm: Yüksek / Çok yüksek</b><span>Bu bölüm bu özelliği çoğu bölümden daha çok istiyor.</span></div>}
           </div>
           <p><b>Yorumlarken dikkat:</b></p>
           <ul>
-            <li><b>Örüntüye bak, tek puana değil.</b> Birkaç güçlü özelliğin aynı bölümde buluşması, tek bir yüksek puandan daha anlamlıdır.</li>
-            <li><b>Çok güçlü her zaman “daha iyi” demek değil.</b> Aşırı kullanılan güçlü yön zorlanma alanına dönüşebilir. Örneğin çok yüksek rekabetçilik ekip çalışmasını zorlaştırabilir.</li>
-            <li><b>Sonuçlar değişebilir.</b> Lise yıllarında ilgi ve eğilimler gelişir. Yeniden değerlendirme bu yüzden belirli aralıklarla açılır.</li>
+            <li><b>Tek puana değil, genel tabloya bak.</b> Birkaç güçlü özelliğin aynı bölüme uyması, tek bir yüksek puandan daha önemlidir.</li>
+            <li><b>Çok güçlü her zaman “daha iyi” demek değil.</b> Bir güçlü yön fazla kullanılınca zorluk çıkarabilir. Örneğin çok yüksek rekabetçilik ekip çalışmasını zorlaştırabilir.</li>
+            <li><b>Sonuçlar değişebilir.</b> Lise yıllarında ilgi ve eğilimler gelişir. Bu yüzden yeniden değerlendirme belli aralıklarla açılır.</li>
             <li><b>Kesin hüküm değil, konuşma başlangıcı.</b> Sonuçlarını rehber öğretmeninle ve ailenle birlikte değerlendir.</li>
           </ul>
         </div>

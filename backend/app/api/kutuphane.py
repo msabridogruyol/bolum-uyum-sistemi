@@ -77,7 +77,7 @@ def _degerler(istek: KayitIstek) -> dict:
     if istek.durum not in ("istek", "devam", "bitti"):
         raise HTTPException(status_code=400, detail="Geçersiz durum.")
     if istek.tarih and istek.tarih > date.today():
-        raise HTTPException(status_code=400, detail="Tarih ileri bir gün olamaz.")
+        raise HTTPException(status_code=400, detail="Tarih gelecekte bir gün olamaz.")
     t = lambda v: (v or "").strip() or None  # noqa: E731
     return {"ka": istek.kategori, "al": t(istek.alt_tur), "ba": istek.baslik.strip(), "ki": t(istek.kisi), "du": istek.durum,
             "pu": istek.puan if istek.durum != "istek" else None, "no": t(istek.notlar), "ta": istek.tarih,
@@ -92,7 +92,7 @@ def kutuphanem(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_og
 @ogrenci_router.post("/kutuphane", status_code=201)
 def kayit_ekle(istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     if db.execute(text("SELECT COUNT(*) FROM ogrenci_kutuphane WHERE ogrenci_id = :o"), {"o": o.id}).scalar() >= SINIR:
-        raise HTTPException(status_code=400, detail=f"En fazla {SINIR} kayıt eklenebilir.")
+        raise HTTPException(status_code=400, detail=f"En fazla {SINIR} kayıt ekleyebilirsin.")
     kid = db.execute(text("""
         INSERT INTO ogrenci_kutuphane (ogrenci_id, kategori, alt_tur, baslik, kisi, durum, puan, notlar, tarih, sayfa)
         VALUES (:o, :ka, :al, :ba, :ki, :du, :pu, :no, :ta, :sa) RETURNING id

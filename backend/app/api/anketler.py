@@ -376,7 +376,7 @@ class YanitIstek(BaseModel):
 def anket_yanitla(anket_id: int, istek: YanitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     a = _anket(db, anket_id)
     if a["okul_id"] != o.okul_id or not _hedefte_mi(a, o) or not _ozet(db, a)["acik"]:
-        raise HTTPException(400, "Bu anket şu an yanıtlanamaz.")
+        raise HTTPException(400, "Bu anket şu an yanıta kapalı.")
     if db.execute(text("SELECT 1 FROM anket_katilim WHERE anket_id = :a AND ogrenci_id = :o"), {"a": anket_id, "o": o.id}).first():
         raise HTTPException(400, "Bu anketi zaten yanıtladın.")
     temiz = {}

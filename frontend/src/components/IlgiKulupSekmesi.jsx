@@ -22,7 +22,7 @@ function Test({ sorular, onceki, onBitti, onIptal }) {
       <div className="ik-baslik">
         <div>
           <div className="ik-bt">Kısa ilgi testi</div>
-          <div className="ps" style={{ margin: 0 }}>Her etkinlik için ne kadar hoşlanacağını seç. Doğru ya da yanlış cevap yok; yaklaşık 3 dakika.</div>
+          <div className="ps" style={{ margin: 0 }}>Her etkinlikten ne kadar hoşlanacağını seç. Doğru ya da yanlış cevap yok. Yaklaşık 3 dakika sürer.</div>
         </div>
         <div className="ik-sayac">{sayi}/{sorular.length}</div>
       </div>
@@ -71,11 +71,11 @@ function Sonuc({ v, onYeniden }) {
             </div>
           ))}
         </div>
-        <div className="yp-ince" style={{ marginTop: 10 }}>Bu test bölüm önerilerini değiştirmez. Okulda hangi topluluklarda kendini daha iyi ifade edebileceğini bulmana yardımcı olur.</div>
+        <div className="yp-ince" style={{ marginTop: 10 }}>Bu test bölüm önerilerini değiştirmez. Okulda hangi kulüplerde kendini daha iyi ifade edebileceğini bulmana yardım eder.</div>
       </div>
       <div className="card">
         <div className="ct">{v.okul_kulubu_var ? 'Okulundaki kulüplerden sana önerilenler' : 'Sana uygun kulüp türleri'}</div>
-        {!v.okul_kulubu_var && <div className="yp-uyari" style={{ marginBottom: 12 }}>Okulun kulüp listesini henüz girmedi. Aşağıdakiler lise kulüplerinde yaygın olanlardır; okulunda yoksa rehber öğretmenine kurulmasını önerebilirsin.</div>}
+        {!v.okul_kulubu_var && <div className="yp-uyari" style={{ marginBottom: 12 }}>Okulun kulüp listesini henüz girmedi. Aşağıdakiler liselerde sık görülen kulüpler. Okulunda yoksa rehber öğretmenine kurulmasını önerebilirsin.</div>}
         <div className="ik-kulupler">
           {v.oneriler.map((k, i) => (
             <div key={k.id ?? k.ad} className="ik-kulup">
@@ -104,7 +104,7 @@ export default function IlgiKulupSekmesi() {
         {!v.sonuc && (
           <div className="ik-giris">
             <span aria-hidden="true">🎯</span>
-            <div><b>Hangi kulüp sana göre?</b><div>20 kısa soruyla ilgi alanlarını belirleyelim ve okulundaki kulüplerden sana uygun olanları önerelim.</div></div>
+            <div><b>Hangi kulüp sana göre?</b><div>20 kısa soruyla ilgi alanlarını bulalım. Sonra okulundaki kulüplerden sana uygun olanları önerelim.</div></div>
           </div>
         )}
         <Test sorular={v.sorular} onceki={testte ? v.sonuc?.cevaplar : null} onIptal={v.sonuc ? () => setTestte(false) : null}
