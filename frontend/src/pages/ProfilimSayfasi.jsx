@@ -1,12 +1,13 @@
 // [2026-10-10] Profilim — eskiden menüde 6 ayrı satır olan "Genel Sonuçlar · K1 · K2 · K3 · K4 · K5" tek sayfada sekmeler.
 // Sekme içerikleri mevcut sayfaların kendisi (gömülü modda: kendi başlıkları/geri butonları gizli).
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
+import { tembel } from '../yardimci/tembelYukle'   // [2026-10-11] eski sürüm parçası yüklenemezse sayfayı yeniler
 import { NavLink, Navigate, useParams } from 'react-router-dom'
 import PuanRehberi from '../components/PuanRehberi'
 
-const GenelSonuclarSayfasi = lazy(() => import('./GenelSonuclarSayfasi'))
-const KatmanDetaySayfasi = lazy(() => import('./KatmanDetaySayfasi'))
-const K5SonucSayfasi = lazy(() => import('./K5SonucSayfasi'))
+const GenelSonuclarSayfasi = tembel(() => import('./GenelSonuclarSayfasi'))
+const KatmanDetaySayfasi = tembel(() => import('./KatmanDetaySayfasi'))
+const K5SonucSayfasi = tembel(() => import('./K5SonucSayfasi'))
 
 const SEKMELER = [
   { kod: '', ad: 'Genel bakış', ikon: '🧭' },

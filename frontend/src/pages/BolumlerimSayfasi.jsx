@@ -1,13 +1,14 @@
 // [2026-10-10] Bölümler — "Bölüm Uyumum" + "Tüm Bölümleri Keşfet" + yeni "Karşılaştır" ve "Listem" tek sayfada sekmeler.
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
+import { tembel } from '../yardimci/tembelYukle'   // [2026-10-11] eski sürüm parçası yüklenemezse sayfayı yeniler
 import { NavLink, Navigate, useParams } from 'react-router-dom'
 import { useListem } from '../components/FavoriYildiz'
 import { KarsilastirCubugu } from '../components/KarsilastirSepeti'
 
-const SonucSayfasi = lazy(() => import('./SonucSayfasi'))
-const KesfetSayfasi = lazy(() => import('./KesfetSayfasi'))
-const KarsilastirmaSayfasi = lazy(() => import('./KarsilastirmaSayfasi'))   // [2026-10-11] genişletilmiş karşılaştırma
-const ListemSekmesi = lazy(() => import('../components/ListemSekmesi'))
+const SonucSayfasi = tembel(() => import('./SonucSayfasi'))
+const KesfetSayfasi = tembel(() => import('./KesfetSayfasi'))
+const KarsilastirmaSayfasi = tembel(() => import('./KarsilastirmaSayfasi'))   // [2026-10-11] genişletilmiş karşılaştırma
+const ListemSekmesi = tembel(() => import('../components/ListemSekmesi'))
 
 const SEKMELER = [
   { kod: '', ad: 'Sana uygun', ikon: '🌟', alt: 'Değerlendirmene göre en uyumlu 10 bölüm ve nedenleri.' },

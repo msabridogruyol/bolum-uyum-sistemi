@@ -1,6 +1,7 @@
 // [2026-10-11] React hata sınırı: bir bileşen çökerse tüm sayfa beyaza dönmesin; hata sunucuya bildirilir.
 import { Component } from 'react'
 import { hataBildir } from '../yardimci/hataBildir'
+import { surumHatasiMi, yeniSurumIcinYenile } from '../yardimci/tembelYukle'
 
 export default class HataSiniri extends Component {
   constructor(props) {
@@ -13,13 +14,15 @@ export default class HataSiniri extends Component {
   }
 
   componentDidCatch(hata, bilgi) {
+    // [2026-10-11] Eski sürüm parçası: önce kendiliğinden bir kez yenile (hata kaydı oluşturma); olmazsa aşağıdaki ekran
+    if (surumHatasiMi(hata) && yeniSurumIcinYenile()) return
     hataBildir(hata, 'react', { bilesenYigini: bilgi?.componentStack })
   }
 
   render() {
     if (!this.state.hata) return this.props.children
     // Yeni sürüm yayımlandıktan sonra eski parça dosyası bulunamazsa: sayfayı yenilemek yeter
-    const parca = /dynamically imported module|Loading chunk|Importing a module script failed/i.test(this.state.hata?.message || '')
+    const parca = surumHatasiMi(this.state.hata)
     return (
       <div style={{ minHeight: '60vh', display: 'grid', placeItems: 'center', padding: 24 }}>
         <div className="card" style={{ maxWidth: 460, textAlign: 'center' }}>
