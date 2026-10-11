@@ -5,6 +5,26 @@ import { profilEksikMi } from '../components/AnaSayfaDuzeni'
 import { GizlilikKarti } from '../components/KvkkBilesenleri'
 import HedefBolumAyari from '../components/HedefBolumAyari'
 
+// [2026-10-11] Çevrim içi görünürlük: okulundaki öğrencilerin sağ alttaki listesinde adın görünsün mü
+function CevrimiciAyari() {
+  const [gizli, setGizli] = useState(null)
+  useEffect(() => { api.cevrimiciBuradayim().then((v) => setGizli(!!v.gizli)).catch(() => {}) }, [])
+  if (gizli === null) return null
+  return (
+    <div className="card" style={{ marginTop: 20 }}>
+      <div className="ct">Çevrim İçi Görünürlük</div>
+      <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, cursor: 'pointer', lineHeight: 1.5 }}>
+        <input type="checkbox" checked={!gizli} style={{ marginTop: 3 }}
+          onChange={(e) => { const yeni = !e.target.checked; setGizli(yeni); api.cevrimiciGizlilik(yeni).catch(() => setGizli(!yeni)) }} />
+        <span>
+          Çevrim içiyken okulumdaki öğrencilerin listesinde görüneyim.
+          <span style={{ display: 'block', fontSize: 12, color: 'var(--tx3)' }}>Yalnızca adın, soyadının baş harfi ve sınıfın görünür. Kapatırsan kimsenin listesinde görünmezsin.</span>
+        </span>
+      </label>
+    </div>
+  )
+}
+
 const CINSIYET_SECENEKLERI = [
   { deger: '', etiket: 'Belirtilmedi' },
   { deger: 'kadin', etiket: 'Kadın' },
@@ -289,6 +309,8 @@ export default function ProfilAyarlariSayfasi() {
       </form>
 
       {/* --- Şifre Değiştir --- */}
+      <CevrimiciAyari />
+
       <div className="card" style={{ marginTop: 20 }}>
         <div className="ct">Şifreni Değiştir</div>
         {sifreHata && <div className="auth-error">{sifreHata}</div>}

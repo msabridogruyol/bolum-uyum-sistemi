@@ -365,6 +365,9 @@ app.include_router(admin_is_hayati_router)                   # [2026-10-10] /adm
 for _r in is_hayati_ek_routerlar:                            # alt modüllerin yönetim router'ları (kendi prefix + yetkileri)
     app.include_router(_r)
 app.include_router(hata_kayitlari_router)                    # [2026-10-11] hata kayıtları (süper admin) + /istemci-hata
+from app.api.cevrimici import ogrenci_router as cevrimici_ogrenci_router, yonetim_router as cevrimici_yonetim_router   # [2026-10-11]
+app.include_router(cevrimici_ogrenci_router)                  # [2026-10-11] /ogrenci/cevrimici (buradayım + liste)
+app.include_router(cevrimici_yonetim_router)                  # [2026-10-11] /yonetim/cevrimici
 app.include_router(filiz_yonetim_router)                     # [2026-10-11] Filiz panel asistanı: /yonetim/filiz/ozet, /sor, /sss (kural tabanlı)
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları

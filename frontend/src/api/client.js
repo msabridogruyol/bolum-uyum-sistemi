@@ -529,6 +529,10 @@ export const api = {
   okullariListele: () => aget('/admin/okullar'),
   okulEkle: (veri) => apost('/admin/okullar', veri),
   okulGuncelle: (id, veri) => aput(`/admin/okullar/${id}`, veri),
+  // [2026-10-11] Çevrim içi öğrenciler
+  cevrimiciBuradayim: () => post('/ogrenci/cevrimici'),
+  cevrimiciGizlilik: (gizli) => put('/ogrenci/cevrimici/gizlilik', { gizli }),
+  yonetimCevrimici: (okulId) => aget(`/yonetim/cevrimici${okulId ? `?okul_id=${okulId}` : ''}`),
   okulErisim: (id, acik, mesaj) => aput(`/admin/okullar/${id}/erisim`, { acik, mesaj: mesaj || null }),   // [2026-10-11]
   okulSil: (id, hedefId) => adel(`/admin/okullar/${id}${hedefId !== undefined && hedefId !== null ? `?hedef_id=${hedefId}` : ''}`),
   // [2026-10-09] Okul bazlı yönetim (süper admin + okul yetkilisi) — okulId 0 = okul harici
