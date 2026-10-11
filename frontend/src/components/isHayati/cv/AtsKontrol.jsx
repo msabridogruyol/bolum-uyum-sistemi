@@ -27,7 +27,7 @@ function Madde({ m, acik, onAc, onGit }) {
           <div className="cva-oneri-metni" style={{ borderColor: d.renk }}><b>{m.durum === 'tamam' ? 'Sonuç' : 'Ne yapabilirsin'}:</b> {m.oneri}</div>
           {m.ayrinti?.length > 0 && <div className="yp-ince" style={{ marginTop: 6 }}>{m.ayrinti.join(' · ')}</div>}
           {LISTEDE_DE[m.kod] && (
-            <div className="yp-ince" style={{ marginTop: 6 }}>Kontrol listesinde de var (“{LISTEDE_DE[m.kod]}”) — orada CV içeriğine, burada PDF'ten çıkan metne bakılır.{' '}
+            <div className="yp-ince" style={{ marginTop: 6 }}>Bu madde kontrol listesinde de var (“{LISTEDE_DE[m.kod]}”). Kontrol listesi CV'nin içeriğine bakar. Burada ise PDF'ten çıkan metne bakıyoruz.{' '}
               <button type="button" className="hg-link" style={{ fontSize: 11.5, color: 'var(--okul-c)' }} onClick={() => onGit('kontrol')}>Kontrol listesine git →</button></div>
           )}
         </div>
@@ -55,7 +55,7 @@ function Uyum({ u }) {
         <div style={{ flex: 1, minWidth: 200 }}>
           <div style={{ fontWeight: 800, marginBottom: 6 }}>İlanla tahmini uyum · {u.bulunan.length}/{u.anahtar_sayisi} anahtar kelime CV'nde var</div>
           <div className="qtrack" style={{ marginBottom: 6 }}><div className="qfill" style={{ width: `${u.uyum}%`, background: renk }} /></div>
-          <div className="yp-ince">Zorunlu niteliklerdeki kelimeler 3, tercih edilenler 2, diğerleri 1 puan sayılır. %100 hedef değildir; ilanın tamamı herkese uymaz.</div>
+          <div className="yp-ince">Zorunlu şartlardaki kelimeler 3 puan, tercih edilenler 2 puan, diğerleri 1 puan sayılır. %100 almak zorunda değilsin; hiçbir ilan herkese tam uymaz.</div>
         </div>
       </div>
       <div className="ats-lejant yp-ince">
@@ -72,15 +72,15 @@ function Uyum({ u }) {
         <div className="ats-grup">
           <div className="cvr-alt-baslik">◐ Kısmen</div>
           <div className="cvr-ciplar">{u.kismen.map((x) => <Cip key={x.ifade} x={x} />)}</div>
-          <div className="yp-ince" style={{ marginTop: 4 }}>Kelimeler CV'nde var ama yan yana değil. Gerçekten bu beceriye sahipsen ilandaki ifadeyi aynen kullanabilirsin.</div>
+          <div className="yp-ince" style={{ marginTop: 4 }}>Bu kelimeler CV'nde var ama yan yana değil. Bu beceri sende gerçekten varsa ilandaki ifadeyi aynen kullanabilirsin.</div>
         </div>
       )}
       {u.eksik.length > 0 && (
         <div className="ats-grup">
           <div className="cvr-alt-baslik">CV'nde bulunamayanlar</div>
           <div className="cvr-not uyari" style={{ marginBottom: 8 }}>
-            <b>Bunu CV'ne dürüstçe ekleyebilir misin?</b> Yalnızca gerçekten sahip olduğun becerileri ve yaptığın şeyleri ekle. Sahip olmadığın bir beceriyi
-            yazmak görüşmede ortaya çıkar. Eksik bir şey varsa sorun değil: tercih edilenler zaten herkeste olmaz; zorunlu olanlar için de bir kurs ya da proje hedefi koyabilirsin.
+            <b>Bunu CV'ne dürüstçe ekleyebilir misin?</b> Yalnızca sende gerçekten olan becerileri ve gerçekten yaptığın şeyleri ekle. Sende olmayan bir beceriyi
+            yazarsan bu görüşmede ortaya çıkar. Eksiğin varsa sorun değil. Tercih edilenler zaten herkeste olmaz. Zorunlu olanlar için kendine bir kurs ya da proje hedefi koyabilirsin.
           </div>
           <div className="ats-eksik-liste">
             {u.eksik.map((x) => (
@@ -90,17 +90,17 @@ function Uyum({ u }) {
               </div>
             ))}
           </div>
-          {zorunluEksik.length > 0 && <div className="yp-ince" style={{ marginTop: 6 }}>Not: Bazı kelimeler (ör. yaş, gün, şehir) bir beceri değil, ilanın koşuludur; bunları CV'ye eklemen gerekmez.</div>}
+          {zorunluEksik.length > 0 && <div className="yp-ince" style={{ marginTop: 6 }}>Not: Bazı kelimeler (ör. yaş, gün, şehir) beceri değil, ilanın koşuludur. Bunları CV'ye eklemen gerekmez.</div>}
         </div>
       )}
       <details className="cvr-kaynak" style={{ marginTop: 10 }}>
         <summary>Bu yüzde nasıl hesaplanıyor?</summary>
         <ul>
-          <li>İlan satırlara bölünür; “zorunlu, şart, en az, aranır” → zorunlu, “tercih, tercihen, avantaj, artı” → tercih edilen sayılır (örnek ilanlarda tür hazırdır).</li>
-          <li>Kelimeler küçük harfe çevrilir (İ→i, I→ı); “ve, ile, için” gibi durak sözcükleri ve “deneyim, bilgi, aday” gibi ilan kalıpları atılır.</li>
-          <li>Yaygın ekler basitçe budanır (projelerinde → proje, ekibimize → ekip): mükemmel değildir, bazen iki farklı kelimeyi aynı sanabilir ya da bir eşleşmeyi kaçırabilir.</li>
-          <li>“Ekip çalışması”, “sosyal medya” gibi öbekler birlikte aranır; “takım” ile “ekip” aynı sayılır.</li>
-          <li>Arama, PDF'inden çıkan metinde (yukarıdaki “ATS'nin gördüğü”) yapılır.</li>
+          <li>İlan satırlara bölünür. İçinde “zorunlu, şart, en az, aranır” geçen satırlar zorunlu sayılır. “Tercih, tercihen, avantaj, artı” geçenler tercih edilen sayılır. Örnek ilanlarda bu ayrım önceden yapıldı.</li>
+          <li>Kelimeler küçük harfe çevrilir (İ→i, I→ı). “Ve, ile, için” gibi küçük bağlantı kelimeleri ve “deneyim, bilgi, aday” gibi her ilanda geçen kelimeler çıkarılır.</li>
+          <li>Sık kullanılan ekler basit bir yolla atılır (projelerinde → proje, ekibimize → ekip). Bu yöntem kusursuz değil. Bazen iki farklı kelimeyi aynı sanabilir ya da bir eşleşmeyi kaçırabilir.</li>
+          <li>“Ekip çalışması”, “sosyal medya” gibi kelime grupları birlikte aranır. “Takım” ile “ekip” aynı sayılır.</li>
+          <li>Arama, PDF'inden çıkan metinde yapılır (yukarıdaki “ATS'nin gördüğü metin”).</li>
         </ul>
       </details>
     </div>
@@ -142,18 +142,18 @@ export default function AtsKontrol({ icerik, degisti, bolum, onGit }) {
       <div className="card ats-bilgi">
         <div style={{ fontWeight: 800, fontSize: 15 }}>🤖 Başvuru sistemi CV'ni nasıl görür?</div>
         <div className="yp-ince" style={{ lineHeight: 1.6, fontSize: 12.5, marginTop: 4 }}>
-          Birçok kurum başvuruları ATS denen bir yazılımla toplar: CV'ndeki metni çıkarır, bölümlere ayırır, anahtar kelimelere bakar.
+          Birçok kurum başvuruları ATS denen bir yazılımla toplar. Bu yazılım CV'ndeki metni çıkarır, bölümlere ayırır ve anahtar kelimelere bakar.
           Burada CV'nin PDF'ini aynı şekilde okuyup sana gösteriyoruz.{' '}
           <button type="button" className="hg-link" style={{ fontSize: 12.5, color: 'var(--okul-c)' }} onClick={() => onGit('rehber')}>ATS nedir? →</button>
         </div>
         <div className="cvr-not bilgi" style={{ margin: '10px 0 0' }}>
-          Gerçek ATS'ler şirketten şirkete farklıdır; bu kontrol yaygın ilkelere dayanan bir tahmindir. Amaç yüksek puan değil: CV'nin hem bir yazılım hem de bir insan için kolay okunması.
+          Gerçek ATS'ler şirketten şirkete farklıdır. Bu kontrol, yaygın kurallara dayanan bir tahmindir. Amaç yüksek puan almak değil. Amaç, CV'nin hem yazılım hem de insan için kolay okunması.
         </div>
-        <div className="yp-ince" style={{ marginTop: 8 }}>🔒 Yapıştırdığın ilan ve sonuçlar kaydedilmez; yalnızca bu ekranda kalır.</div>
+        <div className="yp-ince" style={{ marginTop: 8 }}>🔒 Yapıştırdığın ilan ve sonuçlar kaydedilmez. Yalnızca bu ekranda kalır.</div>
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
-      {degisti && <div className="yp-uyari">Kaydedilmemiş değişikliklerin var; kontrol, düzenleyicideki güncel hâliyle yapılır.</div>}
+      {degisti && <div className="yp-uyari">Kaydetmediğin değişiklikler var. Kontrol, CV'nin şu anki hâliyle yapılır.</div>}
 
       <div className="ihz-ara-baslik">1 · Biçim kontrolü</div>
       {!b ? <div className="card bos-durum">{bekle ? <><span className="spin" /> PDF hazırlanıp okunuyor…</> : 'Kontrol yapılamadı.'}</div> : (
@@ -167,7 +167,7 @@ export default function AtsKontrol({ icerik, degisti, bolum, onGit }) {
             </div>
             <button type="button" className="btn sec" disabled={!!bekle} onClick={() => calistir(false)}>{bekle === 'bicim' ? <span className="spin" /> : eskidi ? '↻ Yeniden kontrol et' : '↻ Yenile'}</button>
           </div>
-          {eskidi && <div className="yp-uyari">CV'yi bu kontrolden sonra değiştirdin; sonucu güncellemek için yeniden kontrol et.</div>}
+          {eskidi && <div className="yp-uyari">Bu kontrolden sonra CV'ni değiştirdin. Sonucu güncellemek için yeniden kontrol et.</div>}
           <div className="card" style={{ padding: '6px 16px' }}>
             {b.maddeler.map((m) => (
               <Madde key={m.kod} m={m} onGit={onGit} acik={acik === m.kod || (acik === null && m.kod === ilk)} onAc={() => setAcik(acik === m.kod || (acik === null && m.kod === ilk) ? '' : m.kod)} />
@@ -179,7 +179,7 @@ export default function AtsKontrol({ icerik, degisti, bolum, onGit }) {
               <span className="yp-ince">{metinAcik ? 'Gizle' : 'Göster'}</span>
             </button>
             <div className="yp-ince" style={{ marginTop: 4, lineHeight: 1.5 }}>
-              Renk, kalın yazı ve çizgiler gider; geriye bu düz metin kalır. Bulunan başlıklar (yeşil: tanındı):
+              Renk, kalın yazı ve çizgiler kaybolur. Geriye bu düz metin kalır. Bulunan başlıklar (yeşil olanları sistem tanıdı):
             </div>
             <div className="cvr-ciplar" style={{ gap: 4, marginTop: 4 }}>{b.bolumler.map((x) => <span key={x.baslik} className={`pf-rozet${x.standart ? ' onay' : ''}`} style={{ whiteSpace: 'nowrap' }}>{x.baslik}</span>)}</div>
             {metinAcik && <pre className="ats-metin" aria-label="ATS'nin gördüğü düz metin">{sonuc.ats_metni}</pre>}
@@ -198,7 +198,7 @@ export default function AtsKontrol({ icerik, degisti, bolum, onGit }) {
             <select className="auth-input" value={ilanId} onChange={(e) => setIlanId(e.target.value)} aria-label="Örnek ilan">
               {ilanlar.map((x) => <option key={x.id} value={x.id}>{x.baslik} — {x.tur}{x.ilgili ? ' (bölümünle ilgili)' : ''}</option>)}
             </select>
-            <div className="yp-ince" style={{ marginTop: 4 }}>Örnek ilanlar kurgusaldır; “İlan okuma” sekmesindekilerle aynıdır.</div>
+            <div className="yp-ince" style={{ marginTop: 4 }}>Örnek ilanlar gerçek değildir. “İlan okuma” sekmesindekilerle aynıdır.</div>
           </div>
         ) : (
           <div>

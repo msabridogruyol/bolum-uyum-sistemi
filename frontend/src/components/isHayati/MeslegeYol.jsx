@@ -20,7 +20,7 @@ function Zaman({ adimlar }) {
             <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
               <span style={{ fontWeight: 800, fontSize: 14 }}>{a.baslik}</span>
               {a.sure && <span style={etiket('var(--okul-c)', 'color-mix(in srgb, var(--okul-c) 12%, transparent)')}>⏱ {a.sure}</span>}
-              {!a.zorunlu && <span style={etiket('var(--tx3)', 'var(--sur2)')}>isteğe / yola bağlı</span>}
+              {!a.zorunlu && <span style={etiket('var(--tx3)', 'var(--sur2)')}>isteğe ya da seçtiğin yola bağlı</span>}
             </div>
             <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.55, marginTop: 2 }}>{a.aciklama}</div>
           </div>
@@ -48,19 +48,19 @@ export default function MeslegeYol({ bolum }) {
         <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center', marginBottom: 6 }}>
           {y.alan?.ad && <span style={etiket('var(--tx2)', 'var(--sur2)')}>{y.alan.ad}</span>}
           {y.bolum.ogrenim_suresi && <span style={etiket('var(--tx2)', 'var(--sur2)')}>Öğrenim: {y.bolum.ogrenim_suresi}</span>}
-          {y.regule && <span style={etiket('var(--okul-c)', 'color-mix(in srgb, var(--okul-c) 12%, transparent)')}>⚖️ Kanunla düzenlenmiş meslek yolu</span>}
-          {y.oda_kaydi && <span style={etiket('var(--tx2)', 'var(--sur2)')}>Serbest çalışmada oda kaydı</span>}
+          {y.regule && <span style={etiket('var(--okul-c)', 'color-mix(in srgb, var(--okul-c) 12%, transparent)')}>⚖️ Kuralları kanunla belirlenmiş meslek</span>}
+          {y.oda_kaydi && <span style={etiket('var(--tx2)', 'var(--sur2)')}>Serbest çalışırken meslek odasına kayıt gerekir</span>}
         </div>
         <div style={{ fontSize: 15, fontWeight: 800 }}>🛤️ {y.bolum.ad} mezunları mesleğe nasıl ulaşıyor?</div>
         {y.ozel && <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.6, marginTop: 4 }}>{y.ozel}</div>}
-        {y.temel_bolum && <div className="yp-ince" style={{ marginTop: 4 }}>Yol, {y.temel_bolum} bölümüyle büyük ölçüde aynıdır.</div>}
-        {!y.bolume_ozel_kayit && <div className="yp-ince" style={{ marginTop: 4 }}>Bu bölüm için ayrıntılı bir yol henüz yazılmadı; aşağıda alanının genel yolu var.</div>}
+        {y.temel_bolum && <div className="yp-ince" style={{ marginTop: 4 }}>Bu yol, {y.temel_bolum} bölümünün yoluyla hemen hemen aynı.</div>}
+        {!y.bolume_ozel_kayit && <div className="yp-ince" style={{ marginTop: 4 }}>Bu bölüm için ayrıntılı yol henüz yazılmadı. Aşağıda alanının genel yolunu görebilirsin.</div>}
       </div>
 
       <div className="card" style={{ padding: '16px 18px' }}>
         <div style={{ fontWeight: 800, fontSize: 14, marginBottom: 12 }}>Adım adım yol</div>
         <Zaman adimlar={y.adimlar || []} />
-        <div className="yp-ince">Dolu daireler hemen herkesin geçtiği adımlar, boş daireler seçtiğin yola göre değişen adımlardır.</div>
+        <div className="yp-ince">Dolu daireler: hemen herkesin geçtiği adımlar. Boş daireler: seçtiğin yola göre değişen adımlar.</div>
       </div>
 
       {y.basamaklar?.length > 0 && (
@@ -77,7 +77,7 @@ export default function MeslegeYol({ bolum }) {
               </div>
             ))}
           </div>
-          <div className="yp-ince" style={{ marginTop: 8 }}>Süreler kişiye, şehre ve kuruma göre çok değişir; buradakiler genel bir çerçevedir.</div>
+          <div className="yp-ince" style={{ marginTop: 8 }}>Süreler kişiye, şehre ve kuruma göre çok değişir. Buradakiler yalnızca genel bir fikir verir.</div>
         </div>
       )}
 
@@ -142,7 +142,7 @@ export default function MeslegeYol({ bolum }) {
             </ul>
           </>
         )}
-        Mevzuat ve sınav kuralları değişebilir; tercih yapmadan önce güncel durumu resmî kaynaktan ve rehber öğretmeninden kontrol et.
+        Yasalar ve sınav kuralları değişebilir. Tercih yapmadan önce güncel durumu resmî kaynaktan ve rehber öğretmeninden kontrol et.
       </div>
     </div>
   )

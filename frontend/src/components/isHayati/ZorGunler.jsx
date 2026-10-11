@@ -15,8 +15,8 @@ function Baslangic({ z, onBasla, bekle }) {
         <span className="ihz-buyuk-ikon" aria-hidden="true">🌧️</span>
         <div>
           <div className="ihz-baslik">Her mesleğin zor günleri olur</div>
-          <div className="ihz-metin">Fazla mesai, öfkeli bir müşteri, yapılan bir hata, beklenenden düşük bir zam… Bunları önceden bilmek seni korkutmak için değil:
-            Zor anı tanıyan, onunla başa çıkmanın yolunu da bulur. Bir meslek seç, karşına çıkan durumlarda ne yapacağına karar ver.</div>
+          <div className="ihz-metin">Fazla mesai, öfkeli bir müşteri, yapılan bir hata, beklenenden düşük bir zam… Bunları bilmen seni korkutmak için değil.
+            Zor anı tanıyan kişi, onunla başa çıkmanın yolunu da bulur. Bir meslek seç. Karşına çıkan durumlarda ne yapacağına karar ver.</div>
         </div>
       </div>
       {z.alan_senaryo_sayisi > 0 && (
@@ -119,8 +119,8 @@ function Ozet({ o, onYeniden, onBaska }) {
           </div>
         ))}
       </div>
-      <div className="yp-ince" style={{ marginTop: 8 }}>Durumlar kurgusaldır; gerçek iş yerlerinde kurallar ve koşullar değişebilir. Zor bir anda yalnız olmadığını unutma:
-        yöneticin, ekip arkadaşların ve gerekirse bir uzman en iyi destektir.</div>
+      <div className="yp-ince" style={{ marginTop: 8 }}>Bu durumlar gerçek değil, örnek olarak yazıldı. Gerçek iş yerlerinde kurallar ve koşullar farklı olabilir. Zor bir anda yalnız olmadığını unutma.
+        Yöneticin, ekip arkadaşların ve gerekirse bir uzman sana destek olur.</div>
       <div className="ms-alt">
         <button className="btn sec" onClick={onYeniden}>↻ Yeniden dene</button>
         <button className="btn" onClick={onBaska}>Başka bir meslek seç</button>

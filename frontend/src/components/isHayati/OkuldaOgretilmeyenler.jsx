@@ -7,7 +7,7 @@ import { api } from '../../api/client'
 import { tl } from './ortak'
 
 function BordroOrnegi({ b }) {
-  if (!b) return <div className="yp-ince">Asgari ücret verisi henüz yüklenmediği için örnek gösterilemiyor.</div>
+  if (!b) return <div className="yp-ince">Asgari ücret verisi henüz yüklenmedi. Bu yüzden örneği gösteremiyoruz.</div>
   const satir = (ad, deger, eksi) => (
     <tr><td>{ad}</td><td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>{deger == null ? '—' : `${eksi && deger ? '− ' : ''}${tl(deger)}`}</td></tr>
   )
@@ -23,7 +23,7 @@ function BordroOrnegi({ b }) {
           <tr className="toplam"><td>Net (hesabına yatan)</td><td style={{ textAlign: 'right', whiteSpace: 'nowrap' }}>{tl(b.net)}</td></tr>
         </tbody>
       </table>
-      <div className="yp-ince">Dönem: {b.donem} · Kaynak: {b.kaynak}. Tutarlar küsuratsız gösterilmiştir.</div>
+      <div className="yp-ince">Dönem: {b.donem} · Kaynak: {b.kaynak}. Tutarlar kuruşsuz gösterildi.</div>
     </div>
   )
 }
@@ -59,7 +59,7 @@ function Sinav({ ders, onBitti }) {
       ))}
       {hata && <div className="auth-error">{hata}</div>}
       {sonuc
-        ? <div className="ms-kutu iyi"><b>{sonuc.toplam} sorudan {sonuc.puan} doğru.</b> {sonuc.puan === sonuc.toplam ? 'Harika! 🎉' : 'Açıklamaları okuyup istediğin zaman yeniden deneyebilirsin.'}
+        ? <div className="ms-kutu iyi"><b>{sonuc.toplam} sorudan {sonuc.puan} doğru.</b> {sonuc.puan === sonuc.toplam ? 'Harika! 🎉' : 'Açıklamaları oku. İstediğin zaman yeniden deneyebilirsin.'}
             <button className="yp-mini" style={{ marginLeft: 8 }} onClick={() => { setSonuc(null); setCevap(ders.sinav.map(() => null)) }}>↻ Yeniden dene</button></div>
         : <button className="btn" disabled={bekle || cevap.some((c) => c == null)} onClick={gonder}>{bekle ? <span className="spin" /> : 'Cevaplarımı kontrol et'}</button>}
     </div>
@@ -128,8 +128,8 @@ export default function OkuldaOgretilmeyenler() {
           <span className="ihz-buyuk-ikon" aria-hidden="true">🧰</span>
           <div style={{ flex: 1 }}>
             <div className="ihz-baslik">Okulda öğretilmeyenler</div>
-            <div className="ihz-metin">Maaş bordrosu, sözleşme, izin hakları, profesyonel e-posta… İş hayatına başlamadan bilmen gereken pratik bilgiler,
-              birkaç dakikalık kısa derslerle.</div>
+            <div className="ihz-metin">Maaş bordrosu, sözleşme, izin hakları, iş e-postası… İşe başlamadan önce bilmen gereken pratik bilgiler burada.
+              Her ders birkaç dakika sürer.</div>
             <div className="ihd-ilerleme"><span style={{ width: `${(100 * tamam) / v.dersler.length}%` }} /></div>
             <div className="yp-ince">{tamam} / {v.dersler.length} ders tamamlandı</div>
           </div>

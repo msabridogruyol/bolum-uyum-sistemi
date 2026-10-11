@@ -4,15 +4,15 @@ import { useState } from 'react'
 export const yeniId = () => Math.random().toString(36).slice(2, 12)
 
 const IPUCU = {
-  egitim: 'Okulun ve sınıfın yeter. İstersen öne çıkan bir ders, proje ödevi ya da başarıyı tek maddeyle ekle.',
+  egitim: 'Okulunu ve sınıfını yazman yeter. İstersen öne çıkan bir dersi, proje ödevini ya da başarını tek maddeyle ekle.',
   deneyim: 'Staj, kulüp görevi, takım kaptanlığı, aile işinde yardım… Hepsi deneyimdir.',
   projeler: 'Okul projeleri, kendi yaptığın uygulama, oyun, video, maket…',
   gonulluluk: 'Kaç saat, kaç kişiye ulaştın? Sayı ekle.',
-  oduller: 'Derece ve hangi düzeyde (okul / il / bölge / ulusal) olduğunu yaz.',
-  sertifikalar: 'Kursun adı, veren kurum, tarih. Doğrulama bağlantısı portfolyonda kalsın.',
-  beceriler: 'Somut beceriler: araçlar (Excel, Canva, Python), diller dışındaki yetkinlikler (sunum yapma, tablo hazırlama).',
-  diller: 'A1–C2 seviyesiyle yaz. "İyi derecede" belirsizdir.',
-  ilgi: 'Kısa tut (3–5 tane). Mülakatta sohbet açar: "satranç (okul takımı)", "belgesel fotoğrafçılığı".',
+  oduller: 'Dereceni ve hangi düzeyde aldığını yaz (okul / il / bölge / ulusal).',
+  sertifikalar: 'Kursun adını, veren kurumu ve tarihi yaz. Belgeyi doğrulayan bağlantı portfolyonda kalsın.',
+  beceriler: 'Somut beceriler yaz: kullandığın araçlar (Excel, Canva, Python) ve dil dışındaki yetkinlikler (sunum yapma, tablo hazırlama).',
+  diller: 'A1–C2 seviyesiyle yaz. "İyi derecede" demek net değildir.',
+  ilgi: 'Kısa tut (3–5 tane). Mülakatta sohbet konusu olur: "satranç (okul takımı)", "belgesel fotoğrafçılığı".',
 }
 const ORNEK_MADDE = 'ör.\nOkul gazetesinin 4 sayısının sayfa düzenini hazırladım.\n6 kişilik ekibe Canva kullanmayı öğrettim.'
 
@@ -39,10 +39,10 @@ function Oge({ o, onDegis, onSil, onYukari, onAsagi }) {
           <label className="genis"><span>Başlık</span><input className="auth-input" maxLength={140} value={o.baslik} onChange={s('baslik')} placeholder="ör. Robotik takımı yazılım sorumlusu" /></label>
           <label><span>Kurum / yer</span><input className="auth-input" maxLength={120} value={o.kurum} onChange={s('kurum')} /></label>
           <label><span>Dönem <small>(ör. Eylül 2024 – Haziran 2025)</small></span><input className="auth-input" maxLength={60} value={o.donem} onChange={s('donem')} /></label>
-          <label className="genis"><span>Ne yaptın? <small>Her satır bir madde · eylem fiiliyle bitir · mümkünse sayı ver</small></span>
+          <label className="genis"><span>Ne yaptın? <small>Her satıra bir madde yaz · cümleyi bir eylemle bitir · mümkünse sayı ver</small></span>
             <textarea className="auth-input" rows={3} maxLength={900} value={o.aciklama} onChange={s('aciklama')} placeholder={ORNEK_MADDE} />
           </label>
-          {o.portfolyo_id && <div className="genis yp-ince">Portfolyondan geldi. {o.onayli ? 'Başlığı ya da kurumu değiştirirsen "Okul onaylı" işareti kalkar.' : 'Rehber öğretmenin portfolyoda onaylarsa CV\'de "Okul onaylı" görünür.'}</div>}
+          {o.portfolyo_id && <div className="genis yp-ince">Portfolyondan geldi. {o.onayli ? 'Başlığı ya da kurumu değiştirirsen "Okul onaylı" işareti kalkar.' : 'Rehber öğretmenin bunu portfolyoda onaylarsa CV\'de "Okul onaylı" yazar.'}</div>}
           <div className="genis"><button type="button" className="hg-link" style={{ color: 'var(--re)' }} onClick={onSil}>Bu öğeyi sil</button></div>
         </div>
       )}
@@ -137,7 +137,7 @@ export default function CvDuzenleyici({ icerik, setIcerik, sabitler, oneriler })
   const kisisel = (alan) => (e) => setIcerik({ ...icerik, kisisel: { ...k, [alan]: e.target.value } })
   const bolumTasi = (i, yon) => { const a = [...icerik.bolumler]; const j = i + yon; if (j < 0 || j >= a.length) return; [a[i], a[j]] = [a[j], a[i]]; setIcerik({ ...icerik, bolumler: a }) }
   const beceriOneri = [
-    { baslik: '💪 Güçlü yönlerinden (Filizyol değerlendirmen) — eklemeden önce bir deneyiminle destekleyebildiğinden emin ol', liste: oneriler.gucluler || [] },
+    { baslik: '💪 Güçlü yönlerin (Filizyol değerlendirmenden) — eklemeden önce bunu bir deneyiminle gösterebileceğinden emin ol', liste: oneriler.gucluler || [] },
     { baslik: '🗂️ Portfolyondaki yeteneklerin', liste: (oneriler.yetenekler || []).map((ad) => ({ ad })) },
   ]
   return (
@@ -153,10 +153,10 @@ export default function CvDuzenleyici({ icerik, setIcerik, sabitler, oneriler })
           <button type="button" className="hg-link" onClick={() => setNeden(!neden)} aria-expanded={neden}>ℹ️ TC kimlik no, doğum tarihi, fotoğraf neden yok? {neden ? '▴' : '▾'}</button>
           {neden && (
             <div className="yp-ince" style={{ lineHeight: 1.6, marginTop: 6 }}>
-              CV'ni pek çok kişi görür ve kolayca çoğaltılır. <b>TC kimlik numarası</b> kimlik hırsızlığında kullanılabilir; <b>doğum tarihi, fotoğraf, medeni durum,
-              din, sağlık bilgisi</b> ise işle ilgili değildir ve bilinçli ya da bilinçsiz ayrımcılığa yol açabilir. Bu bilgileri işveren gerçekten
-              gerektiğinde (ör. işe girişte sigorta kaydı) ayrıca ister. <b>Telefon numaranı</b> da yalnızca güvendiğin başvurularda, başvuru formunda ya da
-              ön yazında paylaş; 18 yaşından küçüksen velinle konuşarak karar ver.
+              CV'ni pek çok kişi görür ve kolayca kopyalanır. <b>TC kimlik numaran</b> kimlik hırsızlığında kullanılabilir. <b>Doğum tarihi, fotoğraf, medeni durum,
+              din ve sağlık bilgisi</b> ise işle ilgili değildir. Bu bilgiler, bilerek ya da bilmeden ayrımcılık yapılmasına yol açabilir. İşveren bunlara gerçekten
+              ihtiyaç duyarsa (ör. işe girişte sigorta kaydı) ayrıca ister. <b>Telefon numaranı</b> da yalnızca güvendiğin başvurularda paylaş: başvuru formunda ya da
+              ön yazında. 18 yaşından küçüksen bu kararı velinle konuşarak ver.
             </div>
           )}
         </div>
@@ -166,7 +166,7 @@ export default function CvDuzenleyici({ icerik, setIcerik, sabitler, oneriler })
         <div className="ct">✍️ Kısa profil</div>
         <textarea className="auth-input" rows={3} maxLength={700} value={icerik.profil} onChange={(e) => setIcerik({ ...icerik, profil: e.target.value })}
           placeholder="ör. 11. sınıf öğrencisiyim; okul robotik takımında 2 yıldır yazılım sorumlusuyum. Yaz döneminde yazılım alanında gözlem stajı arıyorum." />
-        <div className="cva-sayac"><span className="yp-ince">2–3 cümle: kimsin · neyi kanıtladın · ne arıyorsun. Sıfat ("çalışkan, dürüst") yerine yaptığın bir şey.</span>
+        <div className="cva-sayac"><span className="yp-ince">2–3 cümle yaz: Kimsin? Ne yaptın? Ne arıyorsun? "Çalışkan, dürüst" gibi sıfatlar yerine yaptığın bir şeyi anlat.</span>
           <span className="yp-ince" style={{ color: (icerik.profil || '').length > 450 ? 'var(--re)' : undefined }}>{(icerik.profil || '').length}/450</span></div>
       </div>
 

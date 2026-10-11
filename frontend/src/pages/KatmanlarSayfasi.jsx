@@ -19,10 +19,10 @@ function tahminiSureDk(soruSayisi) {
 }
 
 const KATMAN_ACIKLAMA = {
-  K1: 'Kariyerinde neye değer verdiğini keşfeder',
-  K2: 'Kişilik yapını ve çalışma tarzını ölçer',
-  K3: 'İş ortamındaki profesyonel yetkinliklerini değerlendirir',
-  K4: 'Hangi alanlara doğal bir eğilimin olduğunu belirler',
+  K1: 'Bir işte neye değer verdiğini gösterir',
+  K2: 'Kişiliğini ve çalışma tarzını gösterir',
+  K3: 'İş ortamındaki yetkinliklerini gösterir',
+  K4: 'Hangi alanlara yatkın olduğunu gösterir',
 }
 
 const DURUM_YUZDE = { tamamlandi: 100, devam_ediyor: 50, baslamadi: 0 }
@@ -72,7 +72,7 @@ export default function KatmanlarSayfasi() {
       <div className="ph">
         <div className="pt">Değerlendirme</div>
         <div className="ps">
-          Kendini 4 kısa bölümde tanı; son bölümün sonucuna göre sana özel derinleşme soruları açılır. Her bölüm yaklaşık 5 dakika, istediğin an ara verebilirsin.
+          Kendini 4 kısa bölümde tanı. Son bölümün sonucuna göre sana özel derinleşme soruları açılır. Her bölüm yaklaşık 5 dakika sürer. İstediğin an ara verebilirsin.
         </div>
       </div>
 
@@ -185,7 +185,7 @@ export default function KatmanlarSayfasi() {
 
           {!k5AcikMi && tamamlanan === katmanlar.length && (
             <div className="bos-durum" style={{ marginTop: 14 }}>
-              Şu an sana özel açılmış bir derinleşme dalı yok; bölüm önerilerin ilk dört bölümün sonuçlarına göre hazırlanır.
+              Şu an sana özel açılmış bir derinleşme dalı yok. Bölüm önerilerin ilk dört bölümün sonuçlarına göre hazırlanır.
             </div>
           )}
         </div>
@@ -220,7 +220,7 @@ export default function KatmanlarSayfasi() {
             ) : (
               <div>
                 <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.6, marginBottom: 12 }}>
-                  Henüz bir hedef belirlemedin. Bir bölüm, üniversite veya meslek hedeflemek yolculuğunu daha anlamlı kılabilir.
+                  Henüz bir hedef seçmedin. Bir bölüm, üniversite ya da meslek hedefi seçmek yolunu netleştirebilir.
                 </div>
                 <button className="btn" style={{ width: '100%' }} onClick={() => navigate('/koclugu')}>Hedef Belirle</button>
               </div>
@@ -232,18 +232,18 @@ export default function KatmanlarSayfasi() {
             {enGucluDeger ? (
               <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.65 }}>
                 Değerler katmanına göre senin için en önemli şey: <b style={{ color: 'var(--tx)' }}>{enGucluDeger.degisken_adi}</b>.
-                {' '}Bu yolculuğu tamamlamak, sana bunu sağlayacak bölümleri bulman için.
+                {' '}Değerlendirmeyi bitirince bunu sağlayabilecek bölümleri bulabilirsin.
               </div>
             ) : (
               <div className="taslak-onizleme">
                 <div className="taslak-onizleme-icerik">
                   <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.65 }}>
                     Değerler katmanına göre senin için en önemli şey: <b>Anlam / yaşam amacı</b>.
-                    {' '}Bu yolculuğu tamamlamak, sana bunu sağlayacak bölümleri bulman için.
+                    {' '}Değerlendirmeyi bitirince bunu sağlayabilecek bölümleri bulabilirsin.
                   </div>
                 </div>
                 <div className="taslak-onizleme-overlay">
-                  <div className="to-metin" style={{ fontSize: 11.5 }}>K1'i tamamlayınca gerçek motivasyonun burada görünecek</div>
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>K1'i bitirince seni motive eden şey burada görünecek</div>
                 </div>
               </div>
             )}

@@ -154,12 +154,12 @@ def _liste(adlar: list[str]) -> str:
 def _hedefsiz(b: Baglam) -> str:
     d = b.degerlendirme()
     if d["durum"] == "yok":
-        return "Önce değerlendirmeye başlaman gerekiyor. Sol menüdeki 📝 Değerlendirme'den K1 (Değerler) ile başlayabilirsin; sonuçların çıkınca sana çok daha net şeyler söyleyebilirim."
+        return "Önce değerlendirmeye başlaman gerekiyor. Sol menüden 📝 Değerlendirme'yi aç ve K1 (Değerler) ile başla. Sonuçların çıkınca sana daha net şeyler söyleyebilirim."
     if d["durum"] != "tamamlandi":
-        return f"Değerlendirmenin {d['biten']}/{d['toplam']} bölümünü tamamladın. Kalanları bitirince güçlü yönlerin ve sana uygun bölümler ortaya çıkacak — o zaman birlikte daha çok konuşabiliriz."
+        return f"Değerlendirmenin {d['biten']}/{d['toplam']} bölümünü bitirdin. Kalanları da bitir. O zaman güçlü yönlerini ve sana uygun bölümleri görürsün, daha çok konuşabiliriz."
     ilk = b.ilk_bolumler()
-    ek = f" Sistemin sana en uyumlu bulduğu bölümler: {_liste([f'{a} (%{p})' for a, p in ilk])}." if ilk else ""
-    return "Henüz bir hedef bölüm seçmemişsin." + ek + " Bölümler sayfasında bunları inceleyip birini hedef seçersen sana özel bir yol haritası hazırlanır."
+    ek = f" Sana en uyumlu bölümler: {_liste([f'{a} (%{p})' for a, p in ilk])}." if ilk else ""
+    return "Henüz bir hedef bölüm seçmemişsin." + ek + " Bunlara Bölümler sayfasında bak. Birini hedef seçersen sana özel bir yol haritan olur."
 
 
 def k_selam(b: Baglam, m: str) -> str:
@@ -174,7 +174,7 @@ def k_selam(b: Baglam, m: str) -> str:
 
 def k_tesekkur(b: Baglam, m: str) -> str:
     return random.choice(["Rica ederim! 🌱 Başka merak ettiğin bir şey olursa buradayım.",
-                          "Ne demek, her zaman! Küçük adımlar büyük farklar yaratır, devam et. 💪"])
+                          "Ne demek! Küçük adımlar büyük fark yaratır. Devam et! 💪"])
 
 
 def k_hafta(b: Baglam, m: str) -> str:
@@ -184,13 +184,13 @@ def k_hafta(b: Baglam, m: str) -> str:
     if bekleyen:
         parca.append(f"Bu hafta seni bekleyen {len(bekleyen)} görev var: {_liste([x.baslik for x in bekleyen])}.")
     elif g:
-        parca.append("Bu haftanın görevlerinin hepsini tamamlamışsın, harika! 🎉")
+        parca.append("Bu haftanın tüm görevlerini bitirmişsin, harika! 🎉")
     adim = b.simdiki_adim()
     if adim:
         parca.append(f"Yol haritanda sıradaki adım \"{adim['baslik']}\" ({adim.get('alan')}). {adim.get('aciklama') or ''}".strip())
     if not parca:
         return _hedefsiz(b)
-    return " ".join(parca) + " Haftada 1-2 adım yeterli; acele etme. Görevlerim sayfasından ilerleyebilirsin."
+    return " ".join(parca) + " Haftada 1-2 adım yeterli, acele etme. Görevlerim sayfasından devam edebilirsin."
 
 
 def k_guclu(b: Baglam, m: str) -> str:
@@ -198,11 +198,11 @@ def k_guclu(b: Baglam, m: str) -> str:
         return _hedefsiz(b)
     g = b.plan.get("guclu_yonler", [])
     if not g:
-        return f"{b.hedef['ad']} için belirgin biçimde öne çıkan bir güçlü yönün şu an görünmüyor; bu kötü bir şey değil, birçok özelliğin bölümün beklediği düzeyde. Profilim sayfasında tüm özelliklerini görebilirsin."
+        return f"{b.hedef['ad']} için şu an çok öne çıkan bir güçlü yönün görünmüyor. Bu kötü değil: birçok özelliğin bölümün beklediği düzeyde. Tüm özelliklerini Profilim sayfasında görebilirsin."
     ilk = g[0]
-    return (f"{b.hedef['ad']} açısından en güçlü yönlerin: {_liste([x['degisken_adi'] for x in g[:3]])}. "
+    return (f"{b.hedef['ad']} için en güçlü yönlerin: {_liste([x['degisken_adi'] for x in g[:3]])}. "
             f"Örneğin {_kucuk(ilk['degisken_adi'])}: {ilk.get('neden_onemli') or ''} "
-            "Koçluğum → Güçlü Yönlerin sekmesinde bunları görünür bir başarıya çevirecek adımlar var.").replace("  ", " ")
+            "Koçluğum → Güçlü Yönlerin sekmesinde bunları başarıya çevirecek adımlar var.").replace("  ", " ")
 
 
 def k_gelisim(b: Baglam, m: str) -> str:
@@ -213,10 +213,10 @@ def k_gelisim(b: Baglam, m: str) -> str:
         return f"Harika haber: {b.hedef['ad']} için öncelikli bir gelişim alanın görünmüyor. Güçlü yönlerini büyütmeye odaklanabilirsin."
     ilk = o[0]
     adim = b.simdiki_adim()
-    return (f"{b.hedef['ad']} için odaklanman önerilen alanlar: {_liste([x['degisken_adi'] for x in o[:3]])}. "
-            f"En öncelikli olan {_kucuk(ilk['degisken_adi'])}. "
-            + (f"Başlamak için şu adımı deneyebilirsin: \"{adim['baslik']}\". " if adim else "")
-            + "Gelişime açık olmak eksik olmak demek değil; bunlar biraz emekle büyüyebilecek yönlerin.")
+    return (f"{b.hedef['ad']} için odaklanmanı önerdiğim alanlar: {_liste([x['degisken_adi'] for x in o[:3]])}. "
+            f"En önemlisi {_kucuk(ilk['degisken_adi'])}. "
+            + (f"Şu adımla başlayabilirsin: \"{adim['baslik']}\". " if adim else "")
+            + "Gelişime açık olmak eksik olmak demek değil. Bunlar biraz emekle büyüyebilecek yönlerin.")
 
 
 def k_hedef(b: Baglam, m: str) -> str:
@@ -226,11 +226,11 @@ def k_hedef(b: Baglam, m: str) -> str:
     sira = next((i for i, (a, _) in enumerate(ilk, 1) if a == b.hedef["ad"]), None)
     uyum = next((p for a, p in ilk if a == b.hedef["ad"]), None)
     if sira:
-        return (f"Hedefin {b.hedef['ad']}, sana en uyumlu bölümler arasında {sira}. sırada (%{uyum} uyum). "
-                "Bu iyi bir eşleşme. Koçluğum → Sen ve Bölümün sekmesinde hangi yönlerde bölümle örtüştüğünü ayrıntılı görebilirsin.")
-    return (f"Hedefin {b.hedef['ad']}, ilk 10 önerin arasında değil — ama bu \"yapamazsın\" demek değil. Bazı özelliklerin bölümün "
-            "beklentisinden farklı; yol haritan tam olarak bu farkları kapatmak için hazırlandı. İstersen öne çıkan diğer bölümlere de "
-            "Bölümler sayfasından göz at; karar her zaman senin.")
+        return (f"Hedefin {b.hedef['ad']}. Sana en uyumlu bölümler arasında {sira}. sırada (%{uyum} uyum). "
+                "Bu iyi bir eşleşme. Bölüme hangi yönlerde uyduğunu Koçluğum → Sen ve Bölümün sekmesinde görebilirsin.")
+    return (f"Hedefin {b.hedef['ad']}, ilk 10 önerin arasında değil. Ama bu \"yapamazsın\" demek değil. Bazı özelliklerin bölümün "
+            "beklediğinden farklı. Yol haritan tam da bu farkları kapatmak için var. İstersen Bölümler sayfasında öne çıkan diğer "
+            "bölümlere de bak. Karar her zaman senin.")
 
 
 def k_bolum_oner(b: Baglam, m: str) -> str:
@@ -238,8 +238,8 @@ def k_bolum_oner(b: Baglam, m: str) -> str:
     if not ilk:
         return _hedefsiz(b)
     return (f"Değerlendirmene göre sana en uyumlu bölümler: {_liste([f'{a} (%{p})' for a, p in ilk])}. "
-            "Uyum yüzdesi, profilinin o bölümün mezunlarının çalıştığı mesleklerin gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir. "
-            "Bölümler sayfasında her birinin ne okuttuğunu ve hangi üniversitelerde olduğunu inceleyebilir, Karşılaştır ile yan yana koyabilirsin.")
+            "Her bölümün mezunları belli mesleklerde çalışır. Uyum yüzdesi, bu mesleklerin istediği özelliklerin sende ne kadar olduğunu gösterir. "
+            "Bölümler sayfasında her bölümün derslerine ve üniversitelerine bakabilirsin. Karşılaştır ile bölümleri yan yana da koyabilirsin.")
 
 
 def k_kaynak(b: Baglam, m: str) -> str:
@@ -248,19 +248,19 @@ def k_kaynak(b: Baglam, m: str) -> str:
     k = b.kaynak(tip)
     if k:
         x = random.choice(k[:3])
-        return (f"Sana \"{x['baslik']}\" önerebilirim; {_kucuk(x['alan']) if x['alan'] else 'gelişimin'} alanında işine yarar. {x['aciklama']} "
-                "Koçluğum → İlham Kaynakları'nda daha fazlası var; beğendiklerini tek tıkla Kütüphanem'e ekleyebilirsin.")
-    return ("İlgini çeken bir kitap ya da belgeseli "
-            "Kütüphanem'e ekleyip okuduktan sonra \"ne öğrendim\" notunu yazmayı dene — rehber öğretmeninle konuşurken çok işe yarar.")
+        return (f"Sana \"{x['baslik']}\" önerebilirim. Bu kaynak {_kucuk(x['alan']) if x['alan'] else 'gelişimin'} alanında işine yarar. {x['aciklama']} "
+                "Daha fazlası Koçluğum → İlham Kaynakları'nda. Beğendiklerini tek tıkla Kütüphanem'e ekleyebilirsin.")
+    return ("İlgini çeken bir kitabı ya da belgeseli Kütüphanem'e ekle. Bitirince kısa bir \"ne öğrendim\" notu yaz. "
+            "Bu not, rehber öğretmeninle konuşurken çok işe yarar.")
 
 
 def k_sinav(b: Baglam, m: str) -> str:
     return random.choice([
-        "Sınav kaygısı çok yaygın ve tamamen normal. İşe yarayan birkaç şey: çalışmayı 25-30 dakikalık bloklara bölmek, her bloktan sonra kısa mola, "
-        "deneme sınavlarını gerçek sınav koşullarında çözmek ve uykunu düzenli tutmak. Kaygı günlük hayatını zorlaştırıyorsa rehber öğretmeninle "
-        "ya da Eğitim Koçları sayfasındaki bir koçla görüşmeni öneririm.",
-        "Düzenli ve küçük adımlar, son dakikadaki büyük çabadan daha etkilidir. Haftalık bir plan yap, her gün aynı saatte kısa bir tekrar ekle ve "
-        "yaptıklarını Takvim'ine not al. Motivasyonun düştüğünde neden bu hedefi istediğini hatırlamak iyi gelir. Desteğe ihtiyacın olursa Eğitim Koçları sayfasından görüşme talebi bırakabilirsin.",
+        "Sınav kaygısı çok yaygın ve tamamen normal. Şunlar işe yarar: 25-30 dakika çalış, sonra kısa bir mola ver. "
+        "Denemeleri gerçek sınav gibi, süre tutarak çöz. Uykunu düzenli tut. Kaygı günlük hayatını zorlaştırıyorsa rehber öğretmeninle konuş. "
+        "Eğitim Koçları sayfasındaki bir koçla da görüşebilirsin.",
+        "Her gün küçük adımlar atmak, son dakikadaki büyük çabadan daha etkilidir. Haftalık bir plan yap. Her gün aynı saatte kısa bir tekrar ekle. "
+        "Yaptıklarını Takvim'ine not al. Motivasyonun düşünce bu hedefi neden istediğini hatırla. Desteğe ihtiyacın olursa Eğitim Koçları sayfasından görüşme talebi bırakabilirsin.",
     ])
 
 
@@ -269,7 +269,7 @@ def k_kulup(b: Baglam, m: str) -> str:
         from app.core import kulup_servisi as ks
         s = ks.ilgi_sonucu(b.db, b.o.id)
         if not s:
-            return "Kulüplerim sayfasındaki 20 soruluk kısa ilgi testini çözersen okulundaki kulüplerden sana en uygun olanları önerebilirim. Yaklaşık 3 dakika sürüyor."
+            return "Kulüplerim sayfasında 20 soruluk kısa bir ilgi testi var, yaklaşık 3 dakika sürüyor. Testi çözersen okulundaki kulüplerden sana en uygun olanları önerebilirim."
         kulupler = ks.okul_kulupleri(b.db, b.o.okul_id) or ks.hazir_liste()
         on = ks.oneriler(s["puanlar"], kulupler, n=3)
         adlar = [f"{x['ad']} (%{x['uyum']})" for x in on]
@@ -281,8 +281,8 @@ def k_kulup(b: Baglam, m: str) -> str:
 
 
 def k_koc(b: Baglam, m: str) -> str:
-    return ("Eğitim Koçları sayfasında okulunun anlaşmalı koçlarını görebilirsin; ilgilendiğin alana uygun olanlar üstte işaretli. "
-            "Bir koç seçip görüşme talebi bırakırsan talebin Filizyol koordinatörüne gider; görüşme planlanınca tarih ve saat Takvim'inde görünür.")
+    return ("Okulunun anlaşmalı koçlarını Eğitim Koçları sayfasında görebilirsin. İlgi alanına uygun olanlar üstte işaretli. "
+            "Bir koç seç ve görüşme talebi bırak. Talebin Filizyol koordinatörüne gider. Görüşme planlanınca tarih ve saati Takvim'inde görürsün.")
 
 
 def k_takvim(b: Baglam, m: str) -> str:
@@ -303,31 +303,31 @@ def k_takvim(b: Baglam, m: str) -> str:
 
 def k_test(b: Baglam, m: str) -> str:
     if "cevapla" in _sade(m):
-        return ("Doğru ya da yanlış cevap yok. \"Olmak istediğin\" kişiye göre değil, şu anki hâline göre cevap ver; çok düşünmeden ilk "
-                "aklına gelen genelde en doğrusudur. \"En çok / en az\" sorularında önce sana en çok, sonra en az uyan şıkkı seçersin. "
-                "Ara verirsen cevapların kaydedilir, döndüğünde kaldığın yerden devam edersin.")
+        return ("Doğru ya da yanlış cevap yok. \"Olmak istediğin\" kişiye göre değil, şu anki hâline göre cevap ver. Çok düşünme; ilk "
+                "aklına gelen genelde en doğrusudur. \"En çok / en az\" sorularında önce sana en çok uyan şıkkı, sonra en az uyanı seç. "
+                "Ara verirsen cevapların kaydedilir. Döndüğünde kaldığın yerden devam edersin.")
     d = b.degerlendirme()
     if d["durum"] == "tamamlandi":
-        return "Değerlendirmeni tamamladın. Sonuçların Profilim ve Bölümler sayfalarında. Belli bir süre sonra yeni tur açılınca kendindeki değişimi de görebileceksin."
+        return "Değerlendirmeni tamamladın. Sonuçların Profilim ve Bölümler sayfalarında. Bir süre sonra yeni tur açılınca kendindeki değişimi de görebileceksin."
     if d["durum"] == "yok":
-        return "Değerlendirmeye henüz başlamadın. Doğru ya da yanlış cevap yok; içinden geldiği gibi cevaplaman en doğru sonucu verir. Ara verirsen cevapların kaydedilir."
-    return f"Değerlendirmenin {d['biten']}/{d['toplam']} bölümünü bitirdin. Ara verdiğinde cevapların kaydedilir; döndüğünde kaldığın sorudan devam edersin."
+        return "Değerlendirmeye henüz başlamadın. Doğru ya da yanlış cevap yok. İçinden geldiği gibi cevap ver; en doğru sonuç böyle çıkar. Ara verirsen cevapların kaydedilir."
+    return f"Değerlendirmenin {d['biten']}/{d['toplam']} bölümünü bitirdin. Ara verdiğinde cevapların kaydedilir. Döndüğünde kaldığın sorudan devam edersin."
 
 
 def k_uyum(b: Baglam, m: str) -> str:
-    return ("Uyum yüzdesi, profilinin o bölümün mezunlarının çalıştığı mesleklerin gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir; "
-            "bölümler birbiriyle karşılaştırılarak hesaplanır. Bir başarı tahmini değildir. Karar verirken ilgini, hayallerini ve ailenle konuştuklarını da hesaba kat.")
+    return ("Her bölümün mezunları belli mesleklerde çalışır. Uyum yüzdesi, bu mesleklerin istediği özelliklerin sende ne kadar olduğunu gösterir. "
+            "Sistem bunu bölümleri birbiriyle karşılaştırarak hesaplar. Bu bir başarı tahmini değildir. Karar verirken ilgini, hayallerini ve ailenle konuştuklarını da düşün.")
 
 
 def k_kim(b: Baglam, m: str) -> str:
-    return ("Ben Filiz, bölüm ve meslek yolculuğunda sana eşlik eden rehberinim. 🌱 Sistemdeki sonuçlarına, hedef bölümüne ve "
-            "görevlerine göre sana yol gösteriyorum. \"Sorabileceklerin\" sekmesindeki sorularla başlayabilirsin.")
+    return ("Ben Filiz! 🌱 Bölüm ve meslek seçerken yanındayım. Sonuçlarına, hedef bölümüne ve "
+            "görevlerine bakarak sana yol gösteriyorum. \"Sorabileceklerin\" sekmesindeki sorularla başlayabilirsin.")
 
 
 def k_sistem(b: Baglam, m: str) -> str:
     return ("Filizyol dört adımda ilerler: 1) Değerlendirme — değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların. "
-            "2) Sonuçlar — Profilim'de güçlü yönlerin, Bölümler'de sana en uyumlu bölümler. 3) Hedef — bir bölüm seçersin, "
-            "Koçluğum'da sana özel yol haritası çıkar. 4) Gelişim — haftalık görevler, kulüpler, kütüphanen ve takvimin. "
+            "2) Sonuçlar — Profilim'de güçlü yönlerin, Bölümler'de sana en uyumlu bölümler. 3) Hedef — bir bölüm seçersin. "
+            "Koçluğum'da sana özel bir yol haritası çıkar. 4) Gelişim — haftalık görevler, kulüpler, kütüphanen ve takvimin. "
             "Ayrıntılar sol menüdeki Sistem Hakkında sayfasında.")
 
 
@@ -336,18 +336,18 @@ def k_adim(b: Baglam, m: str) -> str:
     if not adim:
         return _hedefsiz(b) if not b.plan else "Yol haritandaki tüm adımları tamamlamışsın, tebrikler! 🎉 Güçlü Yönlerin sekmesindeki adımlarla devam edebilirsin."
     nasil = adim.get("nasil") or []
-    ilk = f" İlk iş olarak: {nasil[0]}" if nasil else ""
+    ilk = f" Önce şunu yap: {nasil[0]}" if nasil else ""
     return (f"Sıradaki adımın \"{adim['baslik']}\" ({adim.get('alan')}, yaklaşık {adim.get('sure') or 'kısa bir süre'}). "
-            f"{adim.get('aciklama') or ''}{ilk} Bitirdiğinde Koçluğum → Yol Haritam'da \"Yaptım\"ı işaretle.").replace("  ", " ")
+            f"{adim.get('aciklama') or ''}{ilk} Bitirince Koçluğum → Yol Haritam'da \"Yaptım\"ı işaretle.").replace("  ", " ")
 
 
 def k_hedef_degis(b: Baglam, m: str) -> str:
     from app.core.koclugu_servisi import hedef_hak_durumu
     h = hedef_hak_durumu(b.o)
     if h["kalan_hak"] > 0:
-        return (f"Evet. Hedefini {h['kalan_hak']} kez daha değiştirebilirsin; bunu Ayarlar sayfasındaki Hedef Bölümüm kartından yaparsın. "
-                "Değiştirmeden önce Bölümler → Karşılaştır ile mevcut hedefini yeni bölümle yan yana koymanı öneririm; yol haritan yeni hedefe göre yeniden hazırlanır.")
-    return ("Hedef değiştirme hakların bitmiş. Gerçekten değiştirmek istiyorsan rehber öğretmenine danış; okulun sana ek hak tanıyabilir.")
+        return (f"Evet. Hedefini {h['kalan_hak']} kez daha değiştirebilirsin. Bunu Ayarlar sayfasındaki Hedef Bölümüm kartından yaparsın. "
+                "Değiştirmeden önce Bölümler → Karşılaştır'da şimdiki hedefini yeni bölümle yan yana koy. Hedefi değiştirince yol haritan yeni hedefe göre baştan hazırlanır.")
+    return ("Hedef değiştirme hakların bitmiş. Yine de değiştirmek istiyorsan rehber öğretmenine danış. Okulun sana ek hak verebilir.")
 
 
 def k_bolum_bilgi(b: Baglam, m: str) -> str:
@@ -363,29 +363,29 @@ def k_bolum_bilgi(b: Baglam, m: str) -> str:
         parca.append(f"Mezunlar örneğin şu işleri yapar: {_liste(meslek)}.")
     if sure:
         parca.append(f"Öğrenim süresi: {sure}.")
-    parca.append("Bölüm adına tıklayınca açılan pencerede dersler ve üniversiteler de var.")
+    parca.append("Bölüm adına tıkla; açılan pencerede dersleri ve üniversiteleri de görürsün.")
     return " ".join(p for p in parca if p)
 
 
 def k_motivasyon(b: Baglam, m: str) -> str:
     gorev = next((x for x in b.gorevler() if x.durum != "tamamlandi"), None)
     kucuk = f" Bugün sadece şunu dene: \"{gorev.baslik}\" — 10 dakikanı alır." if gorev else ""
-    return ("Motivasyonun dalgalanması çok normal; kimse her gün aynı enerjide değildir. Büyük hedefi küçük parçalara bölmek "
-            "işe yarar: bugün yapabileceğin tek ve küçük bir şey seç, bitirince kendini takdir et." + kucuk +
-            " Uzun süredir böyle hissediyorsan rehber öğretmeninle konuşmanı öneririm.")
+    return ("Motivasyonun inip çıkması çok normal. Kimse her gün aynı enerjide değildir. Büyük hedefi küçük parçalara böl. "
+            "Bugün yapabileceğin tek ve küçük bir şey seç. Bitirince kendini tebrik et." + kucuk +
+            " Uzun süredir böyle hissediyorsan rehber öğretmeninle konuş.")
 
 
 def k_kararsiz(b: Baglam, m: str) -> str:
     ilk = b.ilk_bolumler(3)
-    ek = f" Sistemin sana en uyumlu bulduğu üç bölüm: {_liste([a for a, _ in ilk])}." if ilk else ""
+    ek = f" Sana en uyumlu üç bölüm: {_liste([a for a, _ in ilk])}." if ilk else ""
     return ("Kararsızlık, seçeneklerini ciddiye aldığını gösterir. Şöyle ilerleyebilirsin: 1) İlgini çeken 2-3 bölümü Listem'e ekle, "
-            "2) Bölümler → Karşılaştır ile yan yana koy, 3) her biri için o mesleği yapan biriyle konuşmaya ya da bir gün izlemeye çalış." + ek +
-            " Karar verirken uyum yüzdesi kadar ilgini ve hayallerini de hesaba kat.")
+            "2) Bölümler → Karşılaştır ile yan yana koy, 3) her bölüm için o mesleği yapan biriyle konuş, mümkünse onu bir gün işinde izle." + ek +
+            " Karar verirken uyum yüzdesi kadar ilgini ve hayallerini de düşün.")
 
 
 def k_rehber(b: Baglam, m: str) -> str:
-    return ("Rehber öğretmenine okulunda, rehberlik servisinden ulaşabilirsin. Görüşmeye giderken Profilim sayfandaki güçlü yönlerini ve "
-            "hedef bölümünü yanında götürmen konuşmayı kolaylaştırır; rehber öğretmenin sonuçlarını ve raporunu sistemden de görebilir.")
+    return ("Rehber öğretmenine okulundaki rehberlik servisinden ulaşabilirsin. Görüşmeye giderken Profilim'deki güçlü yönlerini ve "
+            "hedef bölümünü yanına al; bu, konuşmayı kolaylaştırır. Rehber öğretmenin sonuçlarını ve raporunu sistemden de görebilir.")
 
 
 def k_kutuphane(b: Baglam, m: str) -> str:
@@ -396,12 +396,12 @@ def k_kutuphane(b: Baglam, m: str) -> str:
         b.db.rollback()
         r = []
     if not r:
-        return "Kütüphanen henüz boş. Okuduğun bir kitabı ya da izlediğin bir belgeseli Kütüphanem sayfasına ekleyerek başlayabilirsin; birkaç cümlelik \"ne öğrendim\" notu çok değerli olur."
+        return "Kütüphanen henüz boş. Okuduğun bir kitabı ya da izlediğin bir belgeseli Kütüphanem sayfasına ekleyerek başla. Birkaç cümlelik bir \"ne öğrendim\" notu da çok işe yarar."
     ad = {"kitap": "kitap", "izleme": "film / dizi / belgesel", "kurs": "kurs", "etkinlik": "etkinlik"}
     bitti = [f"{n} {ad.get(k, k)}" for k, n, _ in r if n]
     istek = sum(x[2] for x in r)
     return ("Kütüphanende " + (_liste(bitti) + " tamamlanmış" if bitti else "henüz tamamlanmış kayıt yok")
-            + (f"; {istek} kayıt da listende seni bekliyor" if istek else "") + ". Kütüphanem sayfasındaki grafiklerden gelişimini izleyebilirsin.")
+            + (f". Listende seni bekleyen {istek} kayıt daha var" if istek else "") + ". Gelişimini Kütüphanem sayfasındaki grafiklerden izleyebilirsin.")
 
 
 # [2026-10-10] İlham Kaynakları → "Filiz'e sor": '"Başlık" (Tip) bana <alan> konusunda ... ' kalıbındaki soruya özel cevap.
@@ -409,18 +409,18 @@ _KAYNAK_SORU = re.compile(r'["“](?P<baslik>[^"”]{2,200})["”]\s*\((?P<tip>[
 _TIP_ADI = {"kitap": "kitap", "film / belgesel": "film", "film": "film", "belgesel": "film", "ilham veren kisi": "rol_model",
             "onemli olay": "olay", "yaklasim": "psikolojik_yaklasim", "aktivite": "aktivite"}
 _NASIL_BASLA = {
-    "kitap": ("Günde 15-20 sayfa okumayı hedefle; her bölümün sonunda \"{alan} açısından bu bana ne söylüyor?\" sorusuna 1-2 cümlelik not yaz. "
-              "Kitabı bitirince aklında kalan 3 fikri ve bunları bu hafta nasıl deneyebileceğini yaz."),
+    "kitap": ("Günde 15-20 sayfa oku. Her bölümün sonunda kendine sor: \"{alan} açısından bu bana ne söylüyor?\" Cevabını 1-2 cümleyle not al. "
+              "Kitap bitince aklında kalan 3 fikri yaz. Bunları bu hafta nasıl deneyebileceğini de yaz."),
     "film": ("İzlerken {alan} ile ilgili 3 sahneyi not al: karakter ne yaptı, sen olsan ne yapardın? "
-             "Bittikten sonra 5 dakika ayırıp en etkilendiğin anı ve bundan çıkardığın dersi yaz."),
+             "Bitince 5 dakika ayır. En çok etkilendiğin anı ve ondan çıkardığın dersi yaz."),
     "rol_model": ("Bu kişinin hayatına kısaca bak: hangi zorluklarla karşılaştı, hangi kararları verdi? "
-                  "{alan} konusunda ondan öğrenebileceğin bir davranışı seç ve bu hafta küçük bir örneğini kendin dene."),
-    "olay": ("Önce olayın kısa bir özetini oku: ne oldu, kimler hangi kararları verdi? Sonra \"{alan} açısından buradan ne ders çıkarılır?\" "
-             "sorusuna 3 maddelik cevap yaz."),
-    "psikolojik_yaklasim": ("Yaklaşımın temel fikrini kısaca öğren, sonra bir hafta boyunca günlük hayatında bir kez uygula. "
+                  "{alan} konusunda ondan öğrenebileceğin bir davranış seç. Bu hafta onu küçük bir şekilde kendin dene."),
+    "olay": ("Önce olayın kısa bir özetini oku: ne oldu, kimler hangi kararları verdi? Sonra kendine sor: \"{alan} açısından buradan ne ders "
+             "çıkarırım?\" Cevabını 3 madde olarak yaz."),
+    "psikolojik_yaklasim": ("Önce yaklaşımın ana fikrini öğren. Sonra bu hafta günlük hayatında bir kez uygula. "
                             "Hafta sonunda {alan} konusunda neyin değiştiğini kısaca not et."),
-    "aktivite": ("Bu aktiviteyi takvimine bu hafta için tek bir küçük deneme olarak ekle. "
-                 "Yaptıktan sonra nasıl hissettiğini ve {alan} konusunda ne fark ettiğini 2-3 cümleyle yaz."),
+    "aktivite": ("Bu aktiviteyi bu hafta için küçük bir deneme olarak takvimine ekle. "
+                 "Yaptıktan sonra 2-3 cümle yaz: Nasıl hissettin? {alan} konusunda ne fark ettin?"),
 }
 
 
@@ -450,9 +450,9 @@ def k_kaynak_soru(b: Baglam, m: str) -> str | None:
     parcalar = [f"\"{baslik}\" iyi bir seçim."]
     if aciklama:
         parcalar.append(aciklama.rstrip(".") + ".")
-    parcalar.append(f"Neden işine yarar: {alan_k} profilinde öne çıkan alanlardan biri; bu kaynak sana o konuda farklı bir bakış ve somut örnekler sunar.")
-    parcalar.append("Nereden başlamalısın: " + _NASIL_BASLA.get(tip or "", _NASIL_BASLA["kitap"]).format(alan=alan_k))
-    parcalar.append("İstersen İlham Kaynakları'ndaki \"Kütüphaneme ekle\" ile listene kaydet; bitirince kısa notunu da yazarsan gelişimini Kütüphanem'deki grafiklerde görürsün.")
+    parcalar.append(f"Neden işine yarar: {alan_k}, profilinde öne çıkan alanlardan biri. Bu kaynak sana bu konuda yeni bir bakış ve somut örnekler verir.")
+    parcalar.append("Nasıl başlarsın: " + _NASIL_BASLA.get(tip or "", _NASIL_BASLA["kitap"]).format(alan=alan_k))
+    parcalar.append("İstersen İlham Kaynakları'ndaki \"Kütüphaneme ekle\" ile listene kaydet. Bitirince kısa bir not yaz. Gelişimini Kütüphanem'deki grafiklerde görürsün.")
     return " ".join(parcalar)
 
 
@@ -461,8 +461,8 @@ def k_yks(b: Baglam, m: str) -> str:
     from app.api.motivasyon import haftalik_mesaj, yks_bilgisi
     y = yks_bilgisi(b.db, b.o.sinif)
     if not y:
-        return "Sınıf bilgin profilinde olmadığı için hangi YKS'ye gireceğini hesaplayamadım. Ayarlar'dan sınıfını eklersen geri sayımı gösterebilirim."
-    tah = "" if y["resmi"] else " (ÖSYM henüz açıklamadığı için tahmini tarih)"
+        return "Profilinde sınıf bilgin yok, bu yüzden hangi YKS'ye gireceğini hesaplayamadım. Ayarlar'dan sınıfını eklersen geri sayımı gösterebilirim."
+    tah = "" if y["resmi"] else " (ÖSYM tarihi henüz açıklamadı, bu bir tahmin)"
     return (f"{y['ad']}'ye {y['gun']} gün, yani yaklaşık {y['hafta']} hafta var{tah}. {haftalik_mesaj(y)} "
             "Ana sayfadaki sayaçtan her gün takip edebilirsin.")
 
@@ -473,23 +473,23 @@ def k_net(b: Baglam, m: str) -> str:
     from sqlalchemy import text as _t
     sayi = b.db.execute(_t("SELECT count(*) FROM ogrenci_denemeleri WHERE ogrenci_id = :o"), {"o": b.o.id}).scalar() or 0
     if not sayi:
-        return ("Henüz deneme kaydın yok. Net Takibi sayfasından çözdüğün denemenin doğru / yanlış sayılarını girersen "
-                "netlerini grafikte izler, hedef üniversitene geçen yıl yerleşen öğrenciyle karşılaştırabilirim.")
+        return ("Henüz deneme kaydın yok. Çözdüğün denemenin doğru ve yanlış sayılarını Net Takibi sayfasına gir. "
+                "Netlerini grafikte izleyebilirsin. Ben de onları hedef üniversitene geçen yıl yerleşen öğrenciyle karşılaştırırım.")
     k = kiyas_hesapla(b.db, b.o)
     h = k.get("hedef")
     if not h or k.get("toplam_ben") is None or k.get("toplam_hedef") is None:
-        return (f"{sayi} deneme kaydın var. Net Takibi → Hedefe Göre'den hedef üniversiteni seçersen netlerini "
-                "o programa geçen yıl yerleşen son öğrenciyle ders ders karşılaştırırım.")
+        return (f"{sayi} deneme kaydın var. Net Takibi → Hedefe Göre'den hedef üniversiteni seç. O zaman netlerini, "
+                "bu programa geçen yıl yerleşen son öğrenciyle ders ders karşılaştırırım.")
     acik = round(k["toplam_hedef"] - k["toplam_ben"], 2)
     ilk = (k.get("en_buyuk_acik") or [None])[0]
     if acik <= 0:
-        return (f"Son denemelerinin ortalaması ({k['toplam_ben']}) {h['universite']} {h['program']} programına {k.get('yil')} yılında "
-                "yerleşen son öğrencinin netlerinin üstünde 👏 Bu temponu korumak için deneme ritmini bozma.")
-    return (f"Son denemelerinin ortalaması {k['toplam_ben']} net; {h['universite']} programına {k.get('yil')} yılında yerleşen son "
-            f"öğrenci {k['toplam_hedef']} netle girdi. Aradaki fark {acik} net"
-            + (f" ve en büyük açık {ilk['ad']} dersinde ({ilk['fark']})." if ilk else ".")
-            + " Net Takibi → Konu Takibi'nde bu dersin bitmeyen konularından başlamanı öneririm. "
-              "Unutma: bu netler tek bir kişiye ait ve diploma notu da etkili; yön gösterici bir hedef.")
+        return (f"Son denemelerinin ortalaması {k['toplam_ben']} net. Bu, {k.get('yil')} yılında {h['universite']} {h['program']} programına "
+                "yerleşen son öğrencinin netinden yüksek 👏 Bu tempoyu korumak için düzenli deneme çözmeye devam et.")
+    return (f"Son denemelerinin ortalaması {k['toplam_ben']} net. {k.get('yil')} yılında {h['universite']} programına yerleşen son "
+            f"öğrenci {k['toplam_hedef']} netle girdi. Aradaki fark {acik} net."
+            + (f" En büyük açık {ilk['ad']} dersinde ({ilk['fark']})." if ilk else "")
+            + " Net Takibi → Konu Takibi'nde bu dersin bitmemiş konularından başla."
+              " Unutma: bu netler tek bir kişiye ait. Yerleşmede diploma notu da etkili. Bu netleri yol gösteren bir hedef olarak düşün.")
 
 
 KONULAR = [
@@ -544,5 +544,5 @@ def otomatik_yanit(db: Session, ogrenci: Ogrenci, metin: str) -> str:
                 db.rollback()
                 break
     ornek = random.sample(ORNEK_SORULAR, 3)
-    return ("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin, görevlerin ve gelişiminle ilgili sorularda sana yardımcı olabilirim. "
-            "Örneğin şunları sorabilirsin: " + " · ".join(f"\"{x}\"" for x in ornek))
+    return ("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin, görevlerin ve gelişiminle ilgili sorularda yardım edebilirim. "
+            "Mesela şunları sorabilirsin: " + " · ".join(f"\"{x}\"" for x in ornek))

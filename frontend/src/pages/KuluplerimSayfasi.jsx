@@ -35,7 +35,7 @@ function Duyurular({ liste }) {
           </div>
         ))}
       </div>
-      <div className="yp-ince" style={{ marginTop: 8 }}>Etkinlikler Takvim'ine de eklenir.</div>
+      <div className="yp-ince" style={{ marginTop: 8 }}>Etkinlikler Takvim sayfana da eklenir.</div>
     </div>
   )
 }
@@ -80,7 +80,7 @@ function KulupKarti({ k, onDegisti }) {
 
 function KuluplerSekmesi({ v, setV, testeGit }) {
   if (!v.kulupler.length) {
-    return <div className="card bos-durum">Okulun henüz kulüp listesini girmedi. Bu arada <button className="hg-link" onClick={testeGit}>ilgi testini çözerek</button> sana uygun kulüp türlerini görebilirsin.</div>
+    return <div className="card bos-durum">Okulun henüz kulüp listesini girmedi. Bu arada <button className="hg-link" onClick={testeGit}>ilgi testini çöz</button> ve sana uygun kulüp türlerini gör.</div>
   }
   const uyeler = v.kulupler.filter((k) => k.uyelik?.durum === 'onaylandi')
   const digerleri = [...v.kulupler.filter((k) => k.uyelik?.durum !== 'onaylandi')].sort((a, b) => (b.uyum ?? -1) - (a.uyum ?? -1))
@@ -96,8 +96,8 @@ function KuluplerSekmesi({ v, setV, testeGit }) {
       )}
       <div className="card">
         <div className="ct">🏫 Okulundaki kulüpler</div>
-        {testYok && <div className="yp-uyari" style={{ marginBottom: 10 }}>İlgi testini çözersen kulüpler sana uygunluğuna göre sıralanır. <button className="hg-link" onClick={testeGit}>Teste git →</button></div>}
-        <div className="yp-ince" style={{ marginBottom: 10 }}>Katılmak istediğin kulübe talep gönder; rehber öğretmenin onaylayınca üye olursun ve kulübün duyurularını görürsün. Aynı anda en fazla {v.maks_aktif} kulüp.</div>
+        {testYok && <div className="yp-uyari" style={{ marginBottom: 10 }}>İlgi testini çözersen kulüpler sana en uygun olandan başlayarak sıralanır. <button className="hg-link" onClick={testeGit}>Teste git →</button></div>}
+        <div className="yp-ince" style={{ marginBottom: 10 }}>Katılmak istediğin kulübe talep gönder. Rehber öğretmenin onaylayınca üye olursun ve kulübün duyurularını görürsün. Aynı anda en fazla {v.maks_aktif} kulübe üye olabilirsin.</div>
         <div className="kk-izgara">{digerleri.map((k) => <KulupKarti key={k.id} k={k} onDegisti={setV} />)}</div>
       </div>
     </>
@@ -117,7 +117,7 @@ export default function KuluplerimSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Kulüplerim</div>
-        <div className="ps">Okulundaki kulüplere katılma talebi gönder, kulüp duyurularını ve etkinliklerini takip et; ilgi testinle sana uygun olanları bul.</div>
+        <div className="ps">Okulundaki kulüplere katılma talebi gönder. Kulüp duyurularını ve etkinliklerini takip et. İlgi testiyle sana uygun kulüpleri bul.</div>
       </div>
       <div className="koc-sekmeler" role="tablist">
         <button role="tab" aria-selected={sekme === 'kulupler'} className={sekme === 'kulupler' ? 'aktif' : ''} onClick={() => git('kulupler')}>

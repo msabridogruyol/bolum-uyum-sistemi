@@ -101,7 +101,7 @@ export function KvkkOnayPenceresi({ onTamam, onCikis }) {
         <div style={{ fontSize: 34, textAlign: 'center', marginBottom: 6 }}>🔒</div>
         <div style={{ fontSize: 18, fontWeight: 700, textAlign: 'center', marginBottom: 8 }}>Kişisel verilerin ve izinlerin</div>
         <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.6, textAlign: 'center', marginBottom: 16 }}>
-          Devam etmeden önce verilerinin nasıl kullanıldığını onaylaman gerekiyor. İsteğe bağlı izinleri sonra Ayarlar'dan değiştirebilirsin.
+          Devam etmeden önce verilerinin nasıl kullanılacağını onaylaman gerekiyor. İsteğe bağlı izinleri sonra Ayarlar'dan değiştirebilirsin.
         </div>
         {hata && <div className="auth-error">{hata}</div>}
         <KvkkOnayKutulari maddeler={metinler.maddeler} onaylar={onaylar} setOnaylar={setOnaylar} metniAc={() => setMetinAcik(true)} />
@@ -143,7 +143,7 @@ export function GizlilikKarti() {
     <div className="card" style={{ marginTop: 20 }}>
       <div className="ct">Gizlilik ve İzinler</div>
       <div className="ps" style={{ margin: '0 0 12px', fontSize: 12 }}>
-        Zorunlu onayların verildi ({durum.surum}).{' '}
+        Zorunlu onayları verdin (sürüm: {durum.surum}).{' '}
         <button type="button" className="auth-link" style={{ padding: 0 }} onClick={() => setMetinAcik(true)}>Aydınlatma metnini oku</button>
       </div>
       {mesaj && (
@@ -151,7 +151,7 @@ export function GizlilikKarti() {
       )}
       <KvkkOnayKutulari maddeler={metinler.maddeler} onaylar={durum.onaylar} setOnaylar={degistir} sadeceIstegeBagli />
       <div className="ps" style={{ marginTop: 12, fontSize: 11.5, color: 'var(--tx3)' }}>
-        Zorunlu onaylarını geri çekmek veya hesabını sildirmek istersen aydınlatma metnindeki adrese başvurabilirsin.
+        Zorunlu onaylarını geri çekmek ya da hesabını sildirmek istersen aydınlatma metnindeki adrese başvurabilirsin.
       </div>
       {metinAcik && <AydinlatmaMetniPenceresi metin={metinler.aydinlatma_metni} onKapat={() => setMetinAcik(false)} />}
     </div>

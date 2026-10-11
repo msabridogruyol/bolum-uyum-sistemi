@@ -9,7 +9,7 @@ export default function BolumAdi({ id, ad, className, style }) {
     <span
       role="button"
       tabIndex={0}
-      title="Bölüm hakkında bilgi için tıkla"
+      title="Bölüm hakkında bilgi almak için tıkla"
       className={`bolum-adi-btn${className ? ' ' + className : ''}`}
       onClick={(e) => { e.stopPropagation(); ac(id, ad) }}
       onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); ac(id, ad) } }}

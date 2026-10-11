@@ -20,9 +20,9 @@ const KATEGORI = {
 }
 // [2026-10-10] Özet kutularındaki üç grubun ne anlama geldiği (öğrenci dilinde)
 const GRUP_ACIKLAMA = {
-  guclu: { ad: 'güçlü yön', metin: 'Bölümün beklediğinden daha güçlü olduğun özellikler. Bu bölümde sana avantaj sağlar; “Güçlü Yönlerin” sekmesinde nasıl büyüteceğini görürsün.' },
-  uyumlu: { ad: 'bölümle uyumlu', metin: 'Bölümün beklediği düzeyde olduğun özellikler. Şimdilik ekstra çalışma gerekmez; korumak yeterli.' },
-  gelisim: { ad: 'gelişime açık', metin: 'Bölümün senden beklediği düzeyin altında kaldığın özellikler. Eksiklik değil, büyüme alanı: yol haritan tam olarak bunlar üzerine kurulu.' },
+  guclu: { ad: 'güçlü yön', metin: 'Bu özelliklerde bölümün beklediğinden daha güçlüsün. Bu bölümde sana avantaj sağlar. Onları nasıl büyüteceğini “Güçlü Yönlerin” sekmesinde görürsün.' },
+  uyumlu: { ad: 'bölümle uyumlu', metin: 'Bu özelliklerde bölümün beklediği düzeydesin. Şimdilik ek çalışma gerekmez. Bu düzeyi koruman yeterli.' },
+  gelisim: { ad: 'gelişime açık', metin: 'Bu özelliklerde bölümün beklediği düzeyin altındasın. Bunlar eksiklik değil, büyüyebileceğin alanlar. Yol haritan tam da bunlar için hazırlandı.' },
 }
 // [2026-10-09] Sadeleştirildi: yalnızca "Başladım" ve "Yaptım"
 const DURUMLAR = [
@@ -131,7 +131,7 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
               </ol>
               {kontrolSayisi > 0 && (
                 <>
-                  <div className="adim-detay-baslik">✅ Nasıl anlarsın? <span>Yaptıklarını işaretle — hepsi tamamsa bu adım bitti:</span></div>
+                  <div className="adim-detay-baslik">✅ Nasıl anlarsın? <span>Yaptıklarını işaretle. Hepsi tamamsa bu adım bitti:</span></div>
                   <ul className="adim-kontrol tiklanir">
                     {adim.kontrol.map((m, i) => (
                       <li key={i}>
@@ -142,7 +142,7 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
                       </li>
                     ))}
                   </ul>
-                  {!bitti && <div className="adim-kontrol-durum">{hepsiIsaretli ? '🎉 Hepsini işaretledin — aşağıdan “Yaptım”a bas.' : `${Math.min(isaretli.length, kontrolSayisi)} / ${kontrolSayisi} işaretlendi`}</div>}
+                  {!bitti && <div className="adim-kontrol-durum">{hepsiIsaretli ? '🎉 Hepsini işaretledin. Şimdi aşağıdaki “Yaptım” düğmesine bas.' : `${Math.min(isaretli.length, kontrolSayisi)} / ${kontrolSayisi} işaretlendi`}</div>}
                 </>
               )}
               {adim.ipucu && <div className="adim-ipucu">💡 {adim.ipucu}</div>}
@@ -252,7 +252,7 @@ function IlhamSekmesi({ kaynaklar }) {
         <div style={{ fontSize: 30 }}>📚</div>
         <div style={{ fontWeight: 800, margin: '6px 0 4px' }}>İlham kaynaklarını birlikte keşfedelim</div>
         <div className="ps" style={{ margin: 0 }}>
-          {kaynaklar.aranan_alanlar?.length ? <>Odak alanların: <b>{kaynaklar.aranan_alanlar.join(', ')}</b>. </> : null}Bu alanlarda ilgini çeken bir kitap, film ya da belgeseli Kütüphanem'e ekleyerek kendi ilham listeni oluşturabilirsin.
+          {kaynaklar.aranan_alanlar?.length ? <>Odak alanların: <b>{kaynaklar.aranan_alanlar.join(', ')}</b>. </> : null}Bu alanlarda ilgini çeken kitap, film ya da belgeselleri Kütüphanem'e ekle. Böylece kendi ilham listeni kurarsın.
         </div>
       </div>
     )
@@ -276,7 +276,7 @@ function IlhamSekmesi({ kaynaklar }) {
     <>
       <div className="ilham-ust-bar">
         <div className="ps" style={{ margin: 0, flex: 1, minWidth: 260 }}>
-          Gelişim ve güçlü alanlarına göre seçilmiş kitaplar, filmler, ilham veren kişiler ve önemli olaylar. Kitap ve filmleri Kütüphanem'e ekleyebilir, merak ettiğini Filiz'e sorabilirsin.
+          Burada gelişim alanlarına ve güçlü yönlerine göre seçilmiş kitaplar, filmler, ilham veren kişiler ve önemli olaylar var. Kitap ve filmleri Kütüphanem'e ekleyebilirsin. Merak ettiğini Filiz'e sor.
         </div>
         <div className="ilham-gorunum" role="tablist">
           <button className={gorunum === 'tur' ? 'aktif' : ''} onClick={() => setGorunum('tur')}>Türe göre</button>
@@ -389,18 +389,18 @@ function OzetSekmesi({ plan, gelisim, sekmeyeGit }) {
         </div>
       )}
       <div className="koc-ozet-not">
-        Bu sayılar, <b>senin</b> özelliklerini <b>{plan.hedef_bolum_adi}</b> bölümünün beklediği düzeyle karşılaştırır. Bir kutuya dokunarak hangi özellikler olduğunu gör.
+        Bu sayılar, <b>senin</b> özelliklerini <b>{plan.hedef_bolum_adi}</b> bölümünün beklediği düzeyle karşılaştırır. Hangi özellikler olduğunu görmek için bir kutuya dokun.
       </div>
 
       {plan.odak_alanlari.length > 0 ? (
-        <Bolum baslik="🎯 Neden bu adımlar?" alt={`${plan.hedef_bolum_adi} için seni en çok ileri taşıyacak ${plan.odak_alanlari.length} alan üzerine kurulu.`}
+        <Bolum baslik="🎯 Neden bu adımlar?" alt={`Bu adımları, ${plan.hedef_bolum_adi} için seni en çok ileri taşıyacak ${plan.odak_alanlari.length} alana göre seçtik.`}
           sag={<button className="hg-link" onClick={() => sekmeyeGit('karsilastirma')}>Karşılaştırmayı gör →</button>}>
           <OdakSatirlari plan={plan} />
         </Bolum>
       ) : (
         <div className="card">
           <div className="ps" style={{ margin: 0 }}>
-            Harika — {plan.hedef_bolum_adi} için belirgin bir gelişim alanın görünmüyor. “Güçlü Yönlerin” sekmesindeki adımlarla bu avantajını büyütebilirsin.
+            Harika! {plan.hedef_bolum_adi} için belirgin bir gelişim alanın görünmüyor. Bu avantajı büyütmek için “Güçlü Yönlerin” sekmesindeki adımlara bak.
           </div>
         </div>
       )}
@@ -431,7 +431,7 @@ function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmey
   const [karsilastirmaGoruldu] = useState(() => { try { return localStorage.getItem(gorulduAnahtari) === '1' } catch { return true } })
   if (!plan) return <div className="bos-durum">Plan hazırlanıyor…</div>
   if (plan.odak_alanlari.length === 0) {
-    return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedef için belirgin bir gelişim alanın yok; “Güçlü Yönlerin” sekmesine göz at.</div></div>
+    return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedef için belirgin bir gelişim alanın yok. “Güçlü Yönlerin” sekmesine göz at.</div></div>
   }
   const tum = plan.asamalar.flatMap((a) => a.adimlar.map((x) => ({ ...x, asama_baslik: a.baslik })))
   const simdiki = plan.siradaki_adim ? (tum.find((x) => x.kod === plan.siradaki_adim.kod) || plan.siradaki_adim) : null
@@ -444,7 +444,7 @@ function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmey
         <div className="yh-ust-satir">
           <div>
             <div className="yh-sayi"><Sayac deger={biten.length} /><span> / {tum.length} adım</span></div>
-            <div className="yh-alt">Her adımı bitirdiğinde sıradaki açılır. Acele yok — haftada 1-2 adım yeterli.</div>
+            <div className="yh-alt">Bir adımı bitirince sıradaki açılır. Acele etme, haftada 1-2 adım yeterli.</div>
           </div>
           <div className="yh-yuzde">%{yuzde}</div>
         </div>
@@ -459,7 +459,7 @@ function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmey
       {!karsilastirmaGoruldu && (
         <div className="yh-once">
           <span>📊</span>
-          <div><b>Önce neden bu adımları yaptığını gör.</b> Bu yol haritası, seni {plan.hedef_bolum_adi} bölümünün beklentileriyle karşılaştırarak hazırlandı.</div>
+          <div><b>Önce neden bu adımları yaptığını gör.</b> Bu yol haritasını, seni {plan.hedef_bolum_adi} bölümünün beklentileriyle karşılaştırarak hazırladık.</div>
           <button className="btn sec" onClick={() => sekmeyeGit('karsilastirma')}>Sen ve Bölümün →</button>
         </div>
       )}
@@ -523,7 +523,7 @@ function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmey
 
       {plan.odak_alanlari.some((o) => o.olcum) && (
         <div className="olcum-alan">
-          <div className="yh-etiket">📏 Gelişimini ölç <span>Her 3 adımda bir, aynı sorularla önce / sonra</span></div>
+          <div className="yh-etiket">📏 Gelişimini ölç <span>Her 3 adımda bir aynı soruları cevapla, öncesiyle sonrasını gör</span></div>
           <div className="olcum-izgara">
             {plan.odak_alanlari.filter((o) => o.olcum).map((o) => <OlcumKarti key={o.degisken_id} odak={o} onOlc={onOlc} />)}
           </div>
@@ -583,7 +583,7 @@ function HedefKarti({ hedef, plan }) {
       <div className="koc-hedef-alt">
         <button className="hg-link" style={{ color: 'var(--pu)' }} onClick={() => ac(hedef.bolum_id, hedef.bolum_adi)}>Bölüm hakkında her şey →</button>
         <button className="hg-link" onClick={() => navigate('/profil#hedef')}>
-          Hedefini Ayarlar'dan değiştirebilirsin{hedef.kalan_hak != null ? ` · ${hedef.kalan_hak} hak kaldı` : ''}
+          Hedefini Ayarlar'dan değiştirebilirsin{hedef.kalan_hak != null ? ` · ${hedef.kalan_hak} değiştirme hakkın kaldı` : ''}
         </button>
       </div>
     </div>
@@ -593,10 +593,10 @@ function HedefKarti({ hedef, plan }) {
 // ---------------------------------------------------------------- 3) Güçlü yönler
 function GucluSekmesi({ plan, onDurum }) {
   if (!plan) return <div className="bos-durum">Plan hazırlanıyor…</div>
-  if (!plan.guclu_yonler.length) return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefe göre öne çıkan güçlü yönün henüz yok. Katmanları yeniden değerlendirdiğinde güncellenir.</div></div>
+  if (!plan.guclu_yonler.length) return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefe göre henüz öne çıkan bir güçlü yönün yok. Katmanları yeniden tamamladığında burası güncellenir.</div></div>
   return (
     <>
-      <div className="ps" style={{ marginBottom: 14 }}>Bu özelliklerin {plan.hedef_bolum_adi} için avantaj. Aşağıdaki adımlarla onları görünür bir başarıya dönüştürebilirsin.</div>
+      <div className="ps" style={{ marginBottom: 14 }}>Bu özelliklerin {plan.hedef_bolum_adi} için bir avantaj. Aşağıdaki adımlarla onları gösterebileceğin bir başarıya çevirebilirsin.</div>
       {plan.guclu_yonler.map((g) => (
         <section key={g.degisken_kod} className="koc-yatay">
           <div className="koc-yatay-sol">
@@ -633,12 +633,12 @@ function KarsilastirmaSekmesi({ gelisim, hedef }) {
         <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
       </div>
       <div className="ps" style={{ margin: '0 0 14px', fontSize: 11.5 }}>
-        Her katmanda, özelliklerinin kendi içindeki ağırlığı bölümün beklentisiyle karşılaştırılır. Çubuklar aynı ölçekte; etiket farkın yönünü gösterir. Açıklama için özelliğin adına dokun.
+        Her katmanda bir özelliğinin, diğer özelliklerine göre ne kadar öne çıktığına bakıyoruz. Bunu bölümün beklentisiyle karşılaştırıyoruz. İki çubuk aynı ölçekte. Etiket, senin özelliğinin bölümün beklentisinin üstünde mi altında mı olduğunu gösterir. Açıklama için özelliğin adına dokun.
       </div>
       <div className="koc-etiket-rehber">
         <span><b style={{ color: 'var(--gr)' }}>Güçlü / Belirgin güçlü</b> bölümün beklediğinin üstündesin</span>
         <span><b style={{ color: 'var(--pu)' }}>Uyumlu</b> beklenen düzeydesin</span>
-        <span><b style={{ color: 'var(--am)' }}>Gelişime açık / Öncelikli</b> yol haritan bunlar için</span>
+        <span><b style={{ color: 'var(--am)' }}>Gelişime açık / Öncelikli</b> yol haritan bunlar için hazırlandı</span>
       </div>
       <div className="koc-katman-cipler">
         {sira.map((kod) => {
@@ -696,7 +696,7 @@ function GelisimSekmesi({ karsilastirma }) {
       <div className="card">
         <div className="ct">Yaptıkların</div>
         {!g ? <div className="bos-durum" style={{ padding: 12 }}>Yükleniyor…</div> : g.adimlar.length === 0 ? (
-          <div className="ps" style={{ margin: 0 }}>Yol haritandaki bir adımı “Yaptım” diye işaretlediğinde burada tarihiyle birikmeye başlar.</div>
+          <div className="ps" style={{ margin: 0 }}>Yol haritandaki bir adımı “Yaptım” diye işaretle. Yaptıkların tarihiyle birlikte burada listelenir.</div>
         ) : (
           <ol className="gm-zaman">
             {g.adimlar.slice(0, 20).map((a) => (
@@ -714,7 +714,7 @@ function GelisimSekmesi({ karsilastirma }) {
         <div className="card" style={{ textAlign: 'center', padding: 24 }}>
           <div style={{ fontSize: 26 }}>📈</div>
           <div style={{ fontWeight: 700, margin: '6px 0 4px' }}>İkinci değerlendirme turunda burada görünecek</div>
-          <div className="ps" style={{ margin: 0 }}>Bir sonraki turu tamamladığında her özelliğindeki değişimi ilk turla karşılaştırıp burada göstereceğiz.</div>
+          <div className="ps" style={{ margin: 0 }}>Bir sonraki turu tamamla. O zaman her özelliğindeki değişimi ilk turla karşılaştırıp burada gösteririz.</div>
         </div>
       ) : (
         <div className="ll">
@@ -780,7 +780,7 @@ export default function KoclukSayfasi() {
       window.dispatchEvent(new CustomEvent('haftalik-guncellendi'))
       return null
     } catch (err) {
-      return err.detail || 'Kaydedilemedi, internet bağlantını kontrol edip tekrar dene.'
+      return err.detail || 'Kaydedemedik. İnternet bağlantını kontrol et ve tekrar dene.'
     }
   }
 
@@ -801,7 +801,7 @@ export default function KoclukSayfasi() {
             <div style={{ fontSize: 32 }}>🎯</div>
             <div>
               <div className="ct" style={{ marginBottom: 4 }}>Önce bir hedef bölüm seç</div>
-              <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5 }}>Hedefini seçtiğinde seni o bölümle karşılaştırıp adım adım bir gelişim planı hazırlarız. Hedef seçimi Ayarlar sayfasında.</div>
+              <div className="ps" style={{ margin: '0 0 12px', fontSize: 12.5 }}>Hedefini seçince seni o bölümle karşılaştırırız. Sonra sana adım adım bir gelişim planı hazırlarız. Hedefini Ayarlar sayfasından seçebilirsin.</div>
               <button className="btn" onClick={() => navigate('/profil#hedef')}>Hedef bölümümü seç →</button>
             </div>
           </div>
@@ -816,7 +816,7 @@ export default function KoclukSayfasi() {
         )}
 
         {hedef && gelisim && gelisim.length === 0 && (
-          <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedef için henüz karşılaştırılacak veri yok — önce katmanlarını tamamla.</div></div>
+          <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefle karşılaştırma yapmak için henüz veri yok. Önce katmanlarını tamamla.</div></div>
         )}
 
         {veriVar && (

@@ -50,7 +50,7 @@ def hedef_sec(db: Session, ogrenci: Ogrenci, bolum_id: int, onay: bool = False, 
     """
     bolum = db.get(Bolum, bolum_id)
     if bolum is None or bolum.durum != "yayinda":
-        raise IsKuraliHatasi("Bu bölüm hedef olarak seçilemez — yayında değil veya mevcut değil.")
+        raise IsKuraliHatasi("Bu bölüm hedef olarak seçilemez. Bölüm şu an listede yok.")
 
     mevcut_aktif = aktif_hedef_getir(db, ogrenci)
 
@@ -63,14 +63,14 @@ def hedef_sec(db: Session, ogrenci: Ogrenci, bolum_id: int, onay: bool = False, 
         durum = hedef_hak_durumu(ogrenci)
         if durum["kalan_hak"] <= 0:
             raise HedefHakkiBitti(
-                f"Hedef bölümünü {durum['degisim_hakki']} kez değiştirdin; değiştirme hakkın doldu. "
-                "Yeniden değiştirmek için rehber öğretmenine başvurabilirsin."
+                f"Hedef bölümünü {durum['degisim_hakki']} kez değiştirdin ve değiştirme hakkın doldu. "
+                "Yeniden değiştirmek istersen rehber öğretmenine başvur."
             )
 
     if mevcut_aktif is not None and not onay:
         raise IsKuraliHatasi(
-            "Zaten aktif bir hedef bölümün var. "
-            "Değiştirmek istediğini onaylaman gerekiyor."
+            "Zaten bir hedef bölümün var. "
+            "Değiştirmek istiyorsan bunu onaylaman gerekiyor."
         )
 
     if mevcut_aktif is not None:
@@ -456,8 +456,8 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
             "kategori": s.kategori, "oncelik_sirasi": oncelik_sirasi,
             "nedir": ic["nedir"],
             "neden_onemli": (ic["gelisim_neden"].replace("{bolum}", bolum_adi) if _ayirt(s) >= AYIRT_GUCLU_ESIK else
-                             f"{bolum_adi} için bu alan orta düzeyde önemli. Senin bu alandaki eğilimin bölümün beklentisinin "
-                             f"altında; küçük ve düzenli adımlarla güçlendirmek bölümde işini kolaylaştırır."),
+                             f"{bolum_adi} için bu alan orta düzeyde önemli. Senin bu alandaki eğilimin, bölümün beklediğinin "
+                             f"altında. Küçük ve düzenli adımlarla güçlendirirsen bölümde işin kolaylaşır."),
             "durum_tespiti": s.gelisim_karti.durum_tespiti if s.gelisim_karti else None,
         })
         for sira, ham in enumerate(ic["gelisim"], 1):

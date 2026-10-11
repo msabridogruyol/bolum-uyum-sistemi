@@ -5,36 +5,36 @@ import { api } from '../api/client'
 
 const OGRENCI = {
   baslik: 'Sistem Hakkında',
-  giris: 'Filizyol, sana en uygun üniversite bölümlerini ve meslekleri keşfetmen için hazırlanmış bir kariyer koçluğu sistemidir. Seni bir sınavla ölçmez; kim olduğunu, neyi sevdiğini ve nasıl çalışmaktan hoşlandığını anlamaya çalışır, sonra bunu bölümlerin gerektirdikleriyle karşılaştırır.',
+  giris: 'Filizyol bir kariyer koçluğu sistemidir. Sana en uygun üniversite bölümlerini ve meslekleri keşfetmene yardım eder. Seni bir sınavla ölçmez. Kim olduğunu, neyi sevdiğini ve nasıl çalışmayı sevdiğini anlamaya çalışır. Sonra bunu bölümlerin istedikleriyle karşılaştırır.',
   adimlar: [
-    { ikon: '📝', baslik: 'Değerlendirme', metin: 'Dört bölümlük soruları çözersin: değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların. Gerekirse beşinci bölümde seçtiğin alanı derinleştirirsin.' },
-    { ikon: '🧭', baslik: 'Profilim ve Bölümler', metin: 'Güçlü yönlerini ve sana en uyumlu bölümleri yüzde uyumla görürsün. Her bölümün ne okuttuğunu, hangi üniversitelerde olduğunu inceleyebilirsin.' },
-    { ikon: '🎯', baslik: 'Hedef ve Koçluğum', metin: 'Bir hedef bölüm seçersin. Kendinle bölümü karşılaştırır, sana özel yol haritasındaki adımları tamamlarsın.' },
+    { ikon: '📝', baslik: 'Değerlendirme', metin: 'Dört bölüm soru cevaplarsın: değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların. Gerekirse beşinci bölümde seçtiğin alanı daha derinden incelersin.' },
+    { ikon: '🧭', baslik: 'Profilim ve Bölümler', metin: 'Güçlü yönlerini ve sana en uygun bölümleri görürsün. Her bölümün yanında uyum yüzdesi yazar. Bölümde neler okutulduğuna ve hangi üniversitelerde olduğuna bakabilirsin.' },
+    { ikon: '🎯', baslik: 'Hedef ve Koçluğum', metin: 'Bir hedef bölüm seçersin. Kendini bu bölümle karşılaştırırsın. Sonra sana özel yol haritasındaki adımları tamamlarsın.' },
     { ikon: '🌱', baslik: 'Gelişim', metin: 'Haftalık görevler, takvim, kulüp önerileri, kütüphanen, Filiz ve eğitim koçlarıyla yolculuğun devam eder.' },
   ],
   bilmen: [
     'Doğru ya da yanlış cevap yoktur. En doğru sonuç, içinden geldiği gibi cevap verdiğinde çıkar.',
-    'Sonuçlar sana yol gösterir; son kararı sen, ailen ve öğretmenlerinle birlikte verirsin.',
-    'Sistem sınav puanı tahmini yapmaz. Üniversite taban puanları YÖK Atlas verilerinden gösterilir.',
-    'Bilgilerini sen ve okulunun yetkili öğretmenleri görür; diğer öğrenciler göremez.',
+    'Sonuçlar sana yol gösterir. Son kararı sen, ailen ve öğretmenlerinle birlikte verirsin.',
+    'Sistem sınav puanı tahmini yapmaz. Üniversitelerin taban puanları YÖK Atlas verilerinden alınır.',
+    'Bilgilerini sen ve okulundaki yetkili öğretmenler görür. Diğer öğrenciler göremez.',
   ],
   sss: [
-    ['Değerlendirme', 'Testi bir oturumda bitirmem gerekiyor mu?', 'Hayır. Her bölüm ayrıdır; bir bölümü bitirip ara verebilirsin. Bir bölümün ortasında çıkarsan verdiğin cevaplar kaydedilir ve döndüğünde kaldığın yerden devam edersin.'],
-    ['Değerlendirme', 'Doğru cevap var mı? Nasıl cevaplamalıyım?', 'Doğru cevap yoktur. "Olmak istediğin" kişiye göre değil, şu anki hâline göre cevap ver. Çok düşünmeden, ilk aklına gelene göre seçmek genellikle en doğru sonucu verir.'],
-    ['Değerlendirme', 'Neden kamera izni isteniyor?', 'Kamera isteğe bağlıdır; yalnızca Ayarlar → Gizlilik ve İzinler\'den izin verirsen açılır. Açarsan değerlendirme sırasında testi senin çözdüğünü doğrulamak için aralıklarla fotoğraf çekilir (video kaydı yapılmaz) ve fotoğraflar en geç 6 ay içinde silinir. Kamerayı açmasan da puanın düşmez. Sekme değiştirmek, tam ekrandan çıkmak gibi durumlar ise "güven puanını" düşürür; güven puanı çok düşerse sonuçların geçersiz sayılabilir.'],
-    ['Değerlendirme', 'Testi tekrar çözebilir miyim?', 'Evet. İlgi ve kişilik zamanla değişebildiği için belli bir süre sonra yeni değerlendirme turu açılır. Tarihi sol menüde "Sonraki tur" olarak görürsün. Böylece kendindeki değişimi de izleyebilirsin.'],
-    ['Sonuçlar', '"%85 uyum" ne demek?', 'Profilinin, o bölümün mezunlarının çalıştığı mesleklerin gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir; bölümleri birbiriyle karşılaştırarak hesaplanır. Bir başarı tahmini ya da "bu bölümü kazanırsın" anlamına gelmez.'],
-    ['Sonuçlar', 'Güçlü, çok güçlü, gelişime açık ne anlama geliyor?', 'Her özellik 0–100 arasında puanlanır. "Çok güçlü" ve "güçlü" seni öne çıkaran yönlerin, "gelişime açık" ise üzerinde çalışarak ilerletebileceğin yönlerindir. Gelişime açık olmak "kötü" demek değildir.'],
-    ['Sonuçlar', 'Raporumu nasıl alabilirim?', 'Değerlendirmeni tamamladıktan sonra sol menüdeki Raporlarım sayfasından kendi raporunu, velin için hazırlanmış raporu ve sonuçlarının Excel tablosunu indirebilirsin. Bu sayfayı menünde göremiyorsan rehber öğretmenine başvurabilirsin.'],
-    ['Hedef ve koçluk', 'Hedef bölümümü değiştirebilir miyim?', 'Evet, belirli sayıda değiştirme hakkın vardır. Hakkın biterse okulunun yetkili öğretmeni sana ek hak tanıyabilir.'],
-    ['Hedef ve koçluk', 'Yol haritasındaki adımları nasıl tamamlarım?', 'Her adımın altında ne yapacağın ve "Nasıl anlarsın?" kontrol listesi vardır. Başladığında "Başladım"ı, bitirdiğinde "Tamamladım"ı işaretle. İlerlemen Koçluğum sayfasında görünür.'],
-    ['Hedef ve koçluk', 'Filiz kimdir?', 'Filiz, sorularını yanıtlayan gelişim koçundur. Sonuçlarına, hedef bölümüne ve görevlerine göre sana yol gösterir; bölümler, meslekler ve çalışma alışkanlıkları hakkında soru sorabilirsin. Önemli kararlarını rehber öğretmeninle ve ailenle birlikte ver.'],
-    ['Hedef ve koçluk', 'Eğitim koçuyla nasıl görüşürüm?', 'Eğitim Koçları sayfasından bir koç seçip görüşme talebi bırakırsın. Talebin Filizyol koordinatörüne gider; görüşme planlanınca tarih ve saati hem o sayfada hem Takvim\'inde görürsün.'],
-    ['Diğer', 'Kulüp önerileri ve ilgi testi bölüm sonucumu etkiler mi?', 'Hayır. Kısa ilgi testi yalnızca sana uygun kulüpleri önermek içindir; bölüm önerilerin değişmez.'],
-    ['Diğer', 'Kütüphanem ne işe yarar?', 'Okuduğun kitapları, izlediğin belgeselleri, aldığın kursları ve katıldığın etkinlikleri burada biriktirirsin. Rehber öğretmeninle görüşürken ve ileride üniversite başvurularında kendini anlatmak için çok işe yarar.'],
+    ['Değerlendirme', 'Değerlendirmeyi tek seferde bitirmem gerekiyor mu?', 'Hayır. Her bölüm ayrıdır. Bir bölümü bitirip ara verebilirsin. Bir bölümün ortasında çıkarsan da cevapların kayıtlı kalır. Döndüğünde kaldığın yerden devam edersin.'],
+    ['Değerlendirme', 'Doğru cevap var mı? Nasıl cevaplamalıyım?', 'Doğru cevap yoktur. "Olmak istediğin" kişiye göre değil, şu anki hâline göre cevap ver. Çok düşünme. İlk aklına gelen şık genellikle en doğru sonucu verir.'],
+    ['Değerlendirme', 'Neden kamera izni isteniyor?', 'Kamera isteğe bağlıdır. Yalnızca Ayarlar → Gizlilik ve İzinler\'den izin verirsen açılır. Açarsan değerlendirme sırasında ara ara fotoğrafın çekilir. Böylece soruları senin cevapladığın doğrulanır. Video kaydı yapılmaz. Fotoğraflar en geç 6 ay içinde silinir. Kamerayı açmasan da puanın düşmez. Sekme değiştirmek ya da tam ekrandan çıkmak gibi durumlar ise "güven puanını" düşürür. Güven puanın çok düşerse sonuçların geçersiz sayılabilir.'],
+    ['Değerlendirme', 'Değerlendirmeyi tekrar yapabilir miyim?', 'Evet. İlgi ve kişilik zamanla değişebilir. Bu yüzden belli bir süre sonra yeni değerlendirme turu açılır. Tarihini sol menüde "Sonraki tur" olarak görürsün. Böylece kendindeki değişimi de izleyebilirsin.'],
+    ['Sonuçlar', '"%85 uyum" ne demek?', 'Bir bölümün mezunları belli mesleklerde çalışır ve bu meslekler bazı özellikler ister. Uyum yüzdesi, senin profilinin bu özelliklerle ne kadar örtüştüğünü gösterir. Hesaplanırken bölümler birbiriyle karşılaştırılır. Bu bir başarı tahmini değildir; "bu bölümü kazanırsın" anlamına gelmez.'],
+    ['Sonuçlar', 'Güçlü, çok güçlü, gelişime açık ne anlama geliyor?', 'Her özellik 0–100 arasında puanlanır. "Çok güçlü" ve "güçlü", seni öne çıkaran yönlerin. "Gelişime açık" ise çalışarak ilerletebileceğin yönlerin. Gelişime açık olmak "kötü" demek değildir.'],
+    ['Sonuçlar', 'Raporumu nasıl alabilirim?', 'Değerlendirmeni bitirince sol menüden Raporlarım sayfasını aç. Oradan üç şey indirebilirsin: kendi raporun, velin için hazırlanan rapor ve sonuçlarının Excel tablosu. Bu sayfayı menüde göremiyorsan rehber öğretmenine sor.'],
+    ['Hedef ve koçluk', 'Hedef bölümümü değiştirebilir miyim?', 'Evet, belli sayıda değiştirme hakkın vardır. Hakkın biterse okulundaki yetkili öğretmen sana ek hak verebilir.'],
+    ['Hedef ve koçluk', 'Yol haritasındaki adımları nasıl tamamlarım?', 'Her adımın altında ne yapacağın yazar. Bir de "Nasıl anlarsın?" kontrol listesi vardır. Başlayınca "Başladım"ı, bitirince "Tamamladım"ı işaretle. İlerlemen Koçluğum sayfasında görünür.'],
+    ['Hedef ve koçluk', 'Filiz kimdir?', 'Filiz, sorularını cevaplayan gelişim koçundur. Sonuçlarına, hedef bölümüne ve görevlerine göre sana yol gösterir. Ona bölümler, meslekler ve çalışma alışkanlıkları hakkında soru sorabilirsin. Önemli kararlarını yine de rehber öğretmeninle ve ailenle birlikte ver.'],
+    ['Hedef ve koçluk', 'Eğitim koçuyla nasıl görüşürüm?', 'Eğitim Koçları sayfasından bir koç seçip görüşme talebi bırakırsın. Talebin Filizyol koordinatörüne gider. Görüşme planlanınca tarihini ve saatini hem o sayfada hem Takvim\'inde görürsün.'],
+    ['Diğer', 'Kulüp önerileri ve ilgi testi bölüm sonucumu etkiler mi?', 'Hayır. Kısa ilgi testi yalnızca sana uygun kulüpleri önermek içindir. Bölüm önerilerin değişmez.'],
+    ['Diğer', 'Kütüphanem ne işe yarar?', 'Okuduğun kitapları, izlediğin belgeselleri, aldığın kursları ve katıldığın etkinlikleri burada toplarsın. Bu liste, kendini anlatman gerektiğinde çok işe yarar: rehber öğretmeninle görüşürken ya da ileride üniversite başvurularında.'],
     ['Diğer', 'Takvimde neler görünür?', 'Sınav ve tercih dönemleri gibi önemli tarihler, okulunun etkinlikleri, eğitim koçu görüşmelerin ve kendi eklediğin notlar.'],
-    ['Hesap', 'Şifremi unuttum, ne yapmalıyım?', 'Giriş ekranındaki "Şifremi unuttum" bağlantısını kullan ya da okulunun yetkili öğretmenine başvur; şifreni sıfırlayabilir.'],
-    ['Hesap', 'Bilgilerimi kimler görebilir?', 'Sonuçlarını, kütüphaneni ve diğer kayıtlarını sen ve okulunun yetkili öğretmenleri görür. Diğer öğrenciler senin bilgilerini göremez. Haftalık görevlerdeki yansıtma cevaplarını yalnızca sen görürsün. Ayrıntılar Ayarlar\'daki Aydınlatma Metni\'nde.'],
+    ['Hesap', 'Şifremi unuttum, ne yapmalıyım?', 'Giriş ekranındaki "Şifremi unuttum" bağlantısını kullan. Ya da okulundaki yetkili öğretmene söyle; o da şifreni sıfırlayabilir.'],
+    ['Hesap', 'Bilgilerimi kimler görebilir?', 'Sonuçlarını, kütüphaneni ve diğer kayıtlarını sen ve okulundaki yetkili öğretmenler görür. Diğer öğrenciler senin bilgilerini göremez. Haftalık görevlerdeki yansıtma cevaplarını yalnızca sen görürsün. Ayrıntılar Ayarlar\'daki Aydınlatma Metni\'nde.'],
   ],
 }
 
@@ -95,7 +95,7 @@ export default function SistemHakkinda({ hedef = 'ogrenci' }) {
         ))}
       </div>
       <div className="card">
-        <div className="ct">Bilmeniz gerekenler</div>
+        <div className="ct">{hedef === 'yonetim' ? 'Bilmeniz gerekenler' : 'Bilmen gerekenler'}</div>
         <ul className="sh-bilgi">{v.bilmen.map((b) => <li key={b}>{b}</li>)}</ul>
       </div>
       <div className="card">

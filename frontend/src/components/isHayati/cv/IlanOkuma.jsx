@@ -26,7 +26,7 @@ function Ilan({ ilan, kategoriler, onGeri }) {
         <div className="yp-ince">{ilan.isveren} · {ilan.tur}</div>
         <div className="yp-ince" style={{ margin: '12px 0 8px', lineHeight: 1.55 }}>
           Her satır için seç: <b style={{ color: RENK.zorunlu }}>Zorunlu</b> (yoksa elenirsin) · <b style={{ color: RENK.tercih }}>Tercih</b> (artı puan) ·
-          {' '}<b style={{ color: RENK.gizli }}>Satır arası</b> (açıkça yazmasa da işin temposu, saatleri, sorumluluğu hakkında ipucu) · <b>Bilgi</b> (nitelik değil).
+          {' '}<b style={{ color: RENK.gizli }}>Satır arası</b> (açıkça yazmaz ama işin temposu, saatleri ya da sorumluluğu hakkında ipucu verir) · <b>Bilgi</b> (senden beklenen bir özellik değil).
         </div>
         {ilan.satirlar.map((s, i) => {
           const sec = isaret[i]
@@ -78,9 +78,9 @@ export default function IlanOkuma({ bolum }) {
       <div className="card">
         <div className="ct">🔎 İlan okumayı öğren</div>
         <div className="yp-ince" style={{ lineHeight: 1.6, fontSize: 12.5 }}>
-          Bir ilanı doğru okumak, hem doğru yere başvurmanı hem de CV'ni ilana göre uyarlamanı sağlar. "Zorunlu" nitelikleri karşılamıyorsan başvurma;
-          "tercih edilen"ler eksikse yine de başvurabilirsin. Satır aralarındaki ifadeler ("dinamik ekip", "esnek saatler") kötü bir şey anlatmaz, işin
-          gerçek temposunu anlatır: sana uyup uymadığını düşün.
+          İlanı doğru okursan doğru yere başvurursun. CV'ni de ilana göre düzenleyebilirsin. "Zorunlu" şartları karşılamıyorsan başvurma.
+          "Tercih edilen"ler eksikse yine de başvurabilirsin. Satır aralarındaki ifadeler ("dinamik ekip", "esnek saatler") kötü bir şey demek değildir.
+          İşin gerçek temposunu anlatır. Bu tempo sana uyar mı, düşün.
         </div>
         <div className="cva-ornek-etiket" style={{ marginTop: 10 }}>{v.not}</div>
       </div>

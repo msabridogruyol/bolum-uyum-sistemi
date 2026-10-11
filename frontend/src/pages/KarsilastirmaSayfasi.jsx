@@ -142,7 +142,7 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
         api.bolumUniversiteleri(b.bolum_id).then((u) => !iptal && setUni((m) => ({ ...m, [b.bolum_id]: uniOzeti(u) })))
           .catch(() => !iptal && setUni((m) => ({ ...m, [b.bolum_id]: { durum: 'hata' } })))
       })
-    }).catch((e) => { if (!iptal) setHata(e.detail || 'Karşılaştırma yapılamadı.') })
+    }).catch((e) => { if (!iptal) setHata(e.detail || 'Karşılaştırmayı yapamadık. Tekrar dene.') })
     return () => { iptal = true }
   }, [anahtar]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -173,14 +173,14 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
           <div className="mini-ilerleme-track"><div className="mini-ilerleme-fill" style={{ width: `${b.toplam_uyum}%`, background: 'var(--okul-c)' }} /></div>
           {b.sira && <small className="yp-ince">{b.sira}. sırada · {veri.toplam_bolum} bölüm içinde</small>}
         </div>
-      )), 'nihai uyum ve öneri sıran')
+      )), 'genel uyumun ve öneri sıran')
     if (veri.sonuc_var) {
       satir('neden', 'Neden bu bölüm', (b) => (b.neden.length || b.dikkat ? (
         <ul className="kr-liste duz">
           {b.neden.map((x) => <li key={x}>{x}</li>)}
           {b.dikkat && <li className="ks-dikkat">⚠️ {b.dikkat}</li>}
         </ul>
-      ) : <Yok neden="Açıklama üretilemedi" />))
+      ) : <Yok neden="Açıklama hazırlayamadık" />))
     }
     const ortEn = enIyi(ortusme)
     satir('guclu', 'Güçlü yönlerinle örtüşen', (b) => (
@@ -227,7 +227,7 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
       const istVar = kol.some((b) => b.istihdam)   // hiçbir bölümde veri yoksa yalnızca ilk satır (açıklamalı)
       if (istVar) satir('isbulma', 'İş bulma süresi', (b) => (ist(b, 'is_bulma_suresi_ay') == null ? <Yok /> : (
         <span className={vurgu(ist(b, 'is_bulma_suresi_ay'), sEn)}><b>{sayi(ist(b, 'is_bulma_suresi_ay'), 1)} ay</b></span>
-      )), 'ortalama; kısa olan vurgulanır')
+      )), 'ortalama · en kısası vurgulu')
       if (istVar) satir('alanuyum', 'Alanında çalışan', (b) => (ist(b, 'alan_uyum_orani') == null ? <Yok /> : (
         <span className={vurgu(ist(b, 'alan_uyum_orani'), aEn)}><b>%{sayi(ist(b, 'alan_uyum_orani'))}</b></span>
       )))
@@ -235,7 +235,7 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
       satir('yol', 'Mesleğe giden yol', (b) => (b.yol ? (
         <>
           <ol className="ks-yol">{b.yol.adimlar.map((x) => <li key={x}>{x}</li>)}</ol>
-          {(b.yol.regule || b.yol.oda_kaydi) && <div className="ks-mini">{b.yol.regule ? 'Düzenlenmiş meslek' : ''}{b.yol.regule && b.yol.oda_kaydi ? ' · ' : ''}{b.yol.oda_kaydi ? 'Oda kaydı gerekebilir' : ''}</div>}
+          {(b.yol.regule || b.yol.oda_kaydi) && <div className="ks-mini">{b.yol.regule ? 'Yasayla düzenlenen meslek' : ''}{b.yol.regule && b.yol.oda_kaydi ? ' · ' : ''}{b.yol.oda_kaydi ? 'Oda kaydı gerekebilir' : ''}</div>}
           {b.yol.ozel && <small className="yp-ince">{b.yol.ozel}</small>}
         </>
       ) : <Yok neden="Yol bilgisi yok" />), 'zorunlu adımlar')
@@ -284,9 +284,9 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
           <div className="kr-ozet ks-ozet">
             {uyEn != null && <div>🎯 Uyumun en yüksek: <b>{kol.find((b) => b.toplam_uyum === uyEn)?.bolum_adi}</b> (%{Math.round(uyEn)})</div>}
             {veri.profil_var && ortEn != null && ortEn > 0 && <div>💪 Güçlü yönlerinle en çok örtüşen: <b>{kol.find((b) => ortusme(b) === ortEn)?.bolum_adi}</b></div>}
-            <div className="yp-ince">Vurgulu hücreler o satırdaki en yüksek (iş bulma süresinde en kısa) değerdir. Karar verirken yalnızca yüzdeye değil, meslekler ve günlük işlere de bak; sonuçlar karar desteğidir.</div>
+            <div className="yp-ince">Vurgulu kutular o satırdaki en yüksek değeri gösterir. İş bulma süresinde ise en kısa süre vurgulanır. Karar verirken sadece yüzdeye bakma. Mesleklere ve günlük işlere de bak. Bu sonuçlar karar vermene yardım eder, kararı senin yerine vermez.</div>
             <div className="ks-ozet-eylem">
-              <button type="button" className="btn sec" disabled={pdf} onClick={async () => { setPdf(true); try { await api.bolumKarsilastirPdf(idler) } catch (e) { setHata(e.detail || 'PDF hazırlanamadı.') } finally { setPdf(false) } }}>
+              <button type="button" className="btn sec" disabled={pdf} onClick={async () => { setPdf(true); try { await api.bolumKarsilastirPdf(idler) } catch (e) { setHata(e.detail || 'PDF dosyasını hazırlayamadık. Tekrar dene.') } finally { setPdf(false) } }}>
                 {pdf ? <span className="spin" /> : '📄 PDF indir'}
               </button>
             </div>
@@ -336,7 +336,7 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">⚖️ Bölüm karşılaştır</div>
-        <div className="ps">Aklındaki 2–3 bölümü yan yana koy: uyumun, neden uygun olduğu, puan ve sıralama, iş hayatı, meslekler ve günlük işler.</div>
+        <div className="ps">Aklındaki 2–3 bölümü yan yana koy. Uyumunu ve nedenlerini, puan ve sıralamayı, iş hayatını, meslekleri ve günlük işleri karşılaştır.</div>
       </div>
       {govde}
     </div>

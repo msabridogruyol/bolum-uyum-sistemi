@@ -60,7 +60,7 @@ export default function CvAtolyesi({ bolum }) {
 
   async function kaydet(yeniPaylas = paylas, govde = icerik) {
     setBekle(true); setHata(null)
-    try { yukle(await api.isHayatiCvKaydet(govde, yeniPaylas)); setMesaj(yeniPaylas !== paylas ? (yeniPaylas ? 'CV\'n okulunla paylaşıldı.' : 'Paylaşım kapatıldı; okulun artık CV\'ni göremez.') : 'Kaydedildi.') } catch (e) { setHata(e.detail || 'Kaydedilemedi.') } finally { setBekle(false) }
+    try { yukle(await api.isHayatiCvKaydet(govde, yeniPaylas)); setMesaj(yeniPaylas !== paylas ? (yeniPaylas ? 'CV\'n okulunla paylaşıldı.' : 'Paylaşımı kapattın. Okulun artık CV\'ni göremez.') : 'Kaydedildi.') } catch (e) { setHata(e.detail || 'Kaydedemedik. Tekrar dene.') } finally { setBekle(false) }
   }
   async function pdf() {
     setHata(null)
@@ -83,7 +83,7 @@ export default function CvAtolyesi({ bolum }) {
         <div style={{ flex: 1, minWidth: 220 }}>
           <div style={{ fontWeight: 800, fontSize: 15 }}>📄 {v.cv ? 'CV\'n' : 'CV taslağın hazır'}</div>
           <div className="yp-ince" style={{ lineHeight: 1.55, marginTop: 2 }}>
-            {v.cv ? `Son kayıt: ${new Date(v.cv.guncelleme).toLocaleString('tr-TR', { dateStyle: 'medium', timeStyle: 'short' })}.` : 'Portfolyondaki kayıtlardan otomatik dolduruldu; düzenleyip kaydet.'}
+            {v.cv ? `Son kayıt: ${new Date(v.cv.guncelleme).toLocaleString('tr-TR', { dateStyle: 'medium', timeStyle: 'short' })}.` : 'Portfolyondaki kayıtlarla otomatik dolduruldu. Düzenle ve kaydet.'}
             {' '}Portfolyonda {v.oneriler.portfolyo_kayit} kayıt, {v.oneriler.portfolyo_onayli} okul onaylı · <Link to="/portfolyo" className="hg-link" style={{ fontSize: 11.5 }}>Portfolyoma git →</Link>
           </div>
         </div>
@@ -98,8 +98,8 @@ export default function CvAtolyesi({ bolum }) {
 
       <label className="cva-paylas">
         <input type="checkbox" checked={paylas} disabled={bekle} onChange={(e) => kaydet(e.target.checked)} />
-        <span><b>CV'mi okulumla paylaş</b> — işaretlersen rehber öğretmenin ve okul yetkililerin CV'ni öğrenci detayında görebilir (ön yazın paylaşılmaz).
-          İşaretlemezsen CV'n yalnızca sende kalır. İstediğin zaman kapatabilirsin.</span>
+        <span><b>CV'mi okulumla paylaş</b> — işaretlersen rehber öğretmenin ve okul yetkililerin CV'ni senin öğrenci sayfanda görebilir. Ön yazın paylaşılmaz.
+          İşaretlemezsen CV'n yalnızca sende kalır. Paylaşımı istediğin zaman kapatabilirsin.</span>
       </label>
       {hata && <div className="auth-error">{hata}</div>}
       {mesaj && <div className="cva-mesaj" role="status">{mesaj}</div>}
@@ -113,7 +113,7 @@ export default function CvAtolyesi({ bolum }) {
         <div className="cva-duzen">
           <div>
             <div className="cva-arac">
-              <button type="button" className="hg-link" onClick={() => { const [yeni, n] = portfolyodanEkle(icerik, v.taslak); if (n) setIcerik(yeni); setMesaj(n ? `Portfolyondan ${n} yeni kayıt eklendi.` : 'Portfolyonda CV\'ye eklenmemiş yeni kayıt yok.') }}>↻ Portfolyodaki yeni kayıtları ekle</button>
+              <button type="button" className="hg-link" onClick={() => { const [yeni, n] = portfolyodanEkle(icerik, v.taslak); if (n) setIcerik(yeni); setMesaj(n ? `Portfolyondan ${n} yeni kayıt eklendi.` : 'Portfolyonda CV\'ye eklenecek yeni kayıt yok.') }}>↻ Portfolyodaki yeni kayıtları ekle</button>
               {sifirOnay
                 ? <span className="yp-ince">Tüm düzenlemelerin silinecek. <button type="button" className="hg-link" style={{ color: 'var(--re)' }} onClick={sifirla}>Evet, baştan oluştur</button> · <button type="button" className="hg-link" onClick={() => setSifirOnay(false)}>Vazgeç</button></span>
                 : v.cv && <button type="button" className="hg-link" onClick={() => setSifirOnay(true)}>Baştan oluştur</button>}
@@ -125,7 +125,7 @@ export default function CvAtolyesi({ bolum }) {
           <div className="cva-yapiskan cva-masaustu">
             <div className="ct" style={{ marginBottom: 8 }}>Önizleme</div>
             <CvOnizleme icerik={icerik} kucuk />
-            <div className="yp-ince" style={{ marginTop: 8, lineHeight: 1.5 }}>PDF sade ve tek sayfa olacak şekilde hazırlanır: tablo ve görsel yok, böylece başvuru sistemleri (ATS) metni doğru okur.{' '}
+            <div className="yp-ince" style={{ marginTop: 8, lineHeight: 1.5 }}>PDF sade ve tek sayfa olarak hazırlanır. İçinde tablo ve görsel olmaz. Böylece başvuru sistemleri (ATS) metni doğru okur.{' '}
               <button type="button" className="hg-link" style={{ fontSize: 11.5, color: 'var(--okul-c)' }} onClick={() => git('ats')}>ATS'nin gördüğünü göster →</button></div>
           </div>
         </div>

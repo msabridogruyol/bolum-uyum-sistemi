@@ -42,7 +42,7 @@ function KayitFormu({ turler, mevcut, onKaydet, onVazgec }) {
   return (
     <form className="card pf-form" onSubmit={kaydet}>
       <div className="ct">{mevcut ? 'Kaydı düzenle' : 'Yeni kayıt'}</div>
-      {mevcut?.dogrulandi && <div className="yp-uyari" style={{ marginBottom: 10 }}>Bu kayıt okul tarafından onaylandı. Değiştirirsen onay kalkar; rehber öğretmenin yeniden onaylaması gerekir.</div>}
+      {mevcut?.dogrulandi && <div className="yp-uyari" style={{ marginBottom: 10 }}>Okulun bu kaydı onayladı. Değiştirirsen onay kalkar. Rehber öğretmenin kaydı yeniden onaylamalı.</div>}
       <div className="pf-turler" role="radiogroup" aria-label="Tür">
         {turler.map((t) => <button type="button" key={t.kod} className={f.tur === t.kod ? 'secili' : ''} onClick={() => setF({ ...f, tur: t.kod })}>{t.ikon} {t.ad}</button>)}
       </div>
@@ -50,17 +50,17 @@ function KayitFormu({ turler, mevcut, onKaydet, onVazgec }) {
         <label className="genis"><span>Başlık</span><input className="auth-input" required minLength={2} maxLength={140} value={f.baslik} onChange={s('baslik')} placeholder={f.tur === 'yarisma' ? 'ör. TÜBİTAK 2204-A Lise Araştırma Projeleri' : f.tur === 'sertifika' ? 'ör. Python ile Veri Analizi' : ''} /></label>
         <label className="genis"><span>Kurum / kuruluş <small>(isteğe bağlı)</small></span><input className="auth-input" maxLength={120} value={f.kurum} onChange={s('kurum')} /></label>
         <label><span>Başlangıç</span><input className="auth-input" type="date" value={f.baslangic} onChange={s('baslangic')} /></label>
-        <label><span>Bitiş <small>(boşsa devam ediyor)</small></span><input className="auth-input" type="date" value={f.bitis} onChange={s('bitis')} /></label>
+        <label><span>Bitiş <small>(boş bırakırsan “devam ediyor” sayılır)</small></span><input className="auth-input" type="date" value={f.bitis} onChange={s('bitis')} /></label>
         {f.tur === 'yarisma' && <label><span>Derece / sonuç</span><input className="auth-input" maxLength={80} value={f.derece} onChange={s('derece')} placeholder="ör. Bölge 2.si, Finalist" /></label>}
         {f.tur === 'gonullu' && <label><span>Toplam saat</span><input className="auth-input" type="number" min="0" max="5000" value={f.saat} onChange={s('saat')} /></label>}
         <label className="genis"><span>Açıklama <small>(ne yaptın, ne öğrendin?)</small></span><textarea className="auth-input" rows={3} maxLength={1000} value={f.aciklama} onChange={s('aciklama')} /></label>
-        <label className="genis"><span>Bağlantı <small>(sertifika doğrulama adresi, proje sayfası…)</small></span><input className="auth-input" maxLength={400} value={f.link} onChange={s('link')} placeholder="https://…" /></label>
+        <label className="genis"><span>Bağlantı <small>(ör. sertifikanın doğrulama adresi, proje sayfası)</small></span><input className="auth-input" maxLength={400} value={f.link} onChange={s('link')} placeholder="https://…" /></label>
         <div className="genis pf-belge">
-          <label className="btn sec" style={{ cursor: 'pointer' }}>📎 {mevcut?.belge_var || belge ? 'Belgeyi değiştir' : 'Belge ekle'} (PDF / görsel, en çok 1 MB)<input type="file" hidden accept=".pdf,.png,.jpg,.jpeg,.webp" onChange={sec} /></label>
+          <label className="btn sec" style={{ cursor: 'pointer' }}>📎 {mevcut?.belge_var || belge ? 'Belgeyi değiştir' : 'Belge ekle'} (PDF ya da görsel, en fazla 1 MB)<input type="file" hidden accept=".pdf,.png,.jpg,.jpeg,.webp" onChange={sec} /></label>
           {belge && <span className="yp-ince">{belge.ad}</span>}
           {!belge && mevcut?.belge_var && belge !== '' && <button type="button" className="hg-link" onClick={() => setBelge('')}>Belgeyi kaldır</button>}
           {belge === '' && <span className="yp-ince">Belge kaldırılacak</span>}
-          <span className="yp-ince">Belge, rehber öğretmeninin kaydı onaylamasını kolaylaştırır.</span>
+          <span className="yp-ince">Belge eklersen rehber öğretmenin kaydı daha kolay onaylar.</span>
         </div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
@@ -109,7 +109,7 @@ function Profil({ v, setV }) {
     return (
       <div className="card">
         <div className="ct" style={{ display: 'flex', justifyContent: 'space-between' }}>👤 Hakkımda <button className="hg-link" onClick={() => { setF(p); setDuzen(true) }}>✎ Düzenle</button></div>
-        {p.hakkimda ? <div className="pf-hakkimda">{p.hakkimda}</div> : <div className="yp-ince">Kendini 2-3 cümleyle anlat: neye ilgi duyuyorsun, neler yapmaktan hoşlanıyorsun, hangi alanda ilerlemek istiyorsun?</div>}
+        {p.hakkimda ? <div className="pf-hakkimda">{p.hakkimda}</div> : <div className="yp-ince">Kendini 2–3 cümleyle anlat. Neye ilgi duyuyorsun? Ne yapmayı seviyorsun? Hangi alanda ilerlemek istiyorsun?</div>}
         {(p.yetenekler.length > 0 || p.diller.length > 0) && (
           <div className="pf-cipler">
             {p.diller.map((d) => <span key={d.dil} className="pf-cip dil">🌐 {d.dil} · {d.seviye}</span>)}
@@ -161,7 +161,7 @@ export default function PortfolyoSayfasi() {
       <div className="ph" style={{ display: 'flex', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', alignItems: 'flex-start' }}>
         <div>
           <div className="pt">Portfolyom</div>
-          <div className="ps">Sertifikalarını, yarışmalarını, gönüllü çalışmalarını ve projelerini bir yerde topla. Rehber öğretmenin onayladıkça özgeçmişinde “Okul onaylı” olarak görünür.</div>
+          <div className="ps">Sertifikalarını, yarışmalarını, gönüllü çalışmalarını ve projelerini bir yerde topla. Rehber öğretmenin bir kaydı onaylayınca o kayıt özgeçmişinde “Okul onaylı” olarak görünür.</div>
         </div>
       </div>
       <div className="pf-ust-satir">
@@ -183,7 +183,7 @@ export default function PortfolyoSayfasi() {
         <div>
           {gruplar.length === 0 && !form && (
             <div className="card bos-durum" style={{ padding: 28 }}>
-              🗂️ Henüz kayıt yok. Bir kurs sertifikası, katıldığın bir yarışma ya da gönüllü bir çalışmayla başla.
+              🗂️ Henüz kayıt yok. İlk olarak bir kurs sertifikası, katıldığın bir yarışma ya da bir gönüllü çalışma ekleyebilirsin.
               <div style={{ marginTop: 12 }}><button className="btn" onClick={() => setForm({})}>+ İlk kaydını ekle</button></div>
             </div>
           )}
@@ -205,7 +205,7 @@ export default function PortfolyoSayfasi() {
           <Profil v={v} setV={setV} />
           <div className="card">
             <div className="ct">🎭 Okul kulüplerim</div>
-            {v.kulupler.length === 0 ? <div className="yp-ince">Onaylanan kulüp üyeliklerin burada ve özgeçmişinde kendiliğinden görünür.</div>
+            {v.kulupler.length === 0 ? <div className="yp-ince">Rehber öğretmenin kulüp üyeliğini onaylayınca kulüp burada ve özgeçmişinde kendiliğinden görünür.</div>
               : v.kulupler.map((k) => <div key={k.ad} className="pf-kulup"><b>{k.ad}</b><span className="yp-ince">{ayYil(k.baslangic)}’dan beri</span></div>)}
           </div>
         </div>

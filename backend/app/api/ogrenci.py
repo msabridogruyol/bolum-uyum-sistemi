@@ -239,7 +239,7 @@ def katmani_tamamla_uc_nokta(
         .first()
     )
     if oturum is None:
-        raise HTTPException(status_code=400, detail="Bu katman için henüz başlanmış bir oturum yok.")
+        raise HTTPException(status_code=400, detail="Bu katmana henüz başlamadın.")
 
     try:
         sonuclar = katmani_tamamla(db, ogrenci, katman, tur, oturum)
@@ -378,7 +378,7 @@ def dali_tamamla_uc_nokta(
         .first()
     )
     if oturum is None:
-        raise HTTPException(status_code=400, detail="Bu dal için henüz başlanmış bir oturum yok.")
+        raise HTTPException(status_code=400, detail="Bu alan sorularına henüz başlamadın.")
 
     try:
         sonuclar = dali_tamamla(db, ogrenci, dal, tur, oturum)
@@ -427,7 +427,7 @@ def bolum_siralamasi_getir(
     if bekleyen_dal_var_mi(db, ogrenci, tur):
         raise HTTPException(
             status_code=409,
-            detail="Sonuçlarının hazırlanması için önce sana açılan alan (K5) sorularını tamamlamalısın.",
+            detail="Sonuçlarını görmek için önce sana açılan alan (K5) sorularını tamamla.",
         )
 
     siralama = siralama_getir(db, ogrenci, tur, ilk_n=max(1, min(ilk_n, 10)))
@@ -460,7 +460,7 @@ def bolumleri_kesfet(
     toplam_uyum alanı, profil tamamlanana kadar null döner.
     """
     if not q or len(q.strip()) < 2:
-        raise HTTPException(status_code=400, detail="Arama terimi en az 2 karakter olmalı.")
+        raise HTTPException(status_code=400, detail="Aramak için en az 2 harf yaz.")
     sonuclar = bolumleri_ara(db, ogrenci, q.strip(), limit=limit)
     return [KesfetSonucOut(**s) for s in sonuclar]
 
@@ -581,11 +581,11 @@ class IlkSifreIstek(BaseModel):
 def ilk_sifre_belirle(istek: IlkSifreIstek, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     """[2026-10-09] Yönetimin verdiği geçici şifreyle ilk girişte öğrenci kendi şifresini belirler."""
     if not ogrenci.sifre_degistirmeli:
-        raise HTTPException(status_code=400, detail="Şifre değiştirme için Ayarlar sayfasını kullan.")
+        raise HTTPException(status_code=400, detail="Şifreni değiştirmek için Ayarlar sayfasını kullan.")
     if len(istek.yeni_sifre or "") < 8:
         raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
     if sifre_dogrula(istek.yeni_sifre, ogrenci.sifre_hash):
-        raise HTTPException(status_code=400, detail="Yeni şifre geçici şifreyle aynı olamaz.")
+        raise HTTPException(status_code=400, detail="Yeni şifren geçici şifreyle aynı olamaz.")
     from app.core.hesap_yonetimi import olay_yaz
     ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
     ogrenci.sifre_degistirmeli = False
@@ -606,14 +606,14 @@ def profil_guncelle(
 
     if "cinsiyet" in veri and veri["cinsiyet"] is not None:
         if veri["cinsiyet"] not in ("kadin", "erkek", "belirtmek_istemiyorum", "diger"):
-            raise HTTPException(status_code=400, detail="Geçersiz cinsiyet değeri.")
+            raise HTTPException(status_code=400, detail="Seçtiğin cinsiyet değeri geçerli değil.")
 
     if "hedef_meslek_id" in veri and veri["hedef_meslek_id"] is not None:
         var_mi = db.execute(
             text("SELECT 1 FROM meslekler WHERE id = :id"), {"id": veri["hedef_meslek_id"]}
         ).first()
         if not var_mi:
-            raise HTTPException(status_code=400, detail="Geçersiz meslek seçimi.")
+            raise HTTPException(status_code=400, detail="Seçtiğin meslek bulunamadı.")
 
     for alan, deger in veri.items():
         setattr(ogrenci, alan, deger)
@@ -630,7 +630,7 @@ def sifre_degistir(
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
     if not sifre_dogrula(istek.eski_sifre, ogrenci.sifre_hash):
-        raise HTTPException(status_code=400, detail="Mevcut şifre yanlış.")
+        raise HTTPException(status_code=400, detail="Şu anki şifren yanlış.")
     if len(istek.yeni_sifre) < 8:
         raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
 
@@ -651,9 +651,9 @@ def profil_fotografi_guncelle(
 ):
     # Basit boyut koruması — çok büyük base64 string'leri reddet (~2MB sınırı)
     if len(istek.foto_base64) > 2_800_000:
-        raise HTTPException(status_code=400, detail="Fotoğraf çok büyük (maks. ~2MB).")
+        raise HTTPException(status_code=400, detail="Fotoğraf çok büyük. En fazla yaklaşık 2 MB olabilir.")
     if not istek.foto_base64.startswith("data:image/"):
-        raise HTTPException(status_code=400, detail="Geçersiz görsel formatı.")
+        raise HTTPException(status_code=400, detail="Bu görsel biçimi desteklenmiyor.")
 
     ogrenci.profil_foto_base64 = istek.foto_base64
     db.commit()
@@ -668,7 +668,7 @@ def meslek_ara(
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
     if len(q.strip()) < 2:
-        raise HTTPException(status_code=400, detail="Arama terimi en az 2 karakter olmalı.")
+        raise HTTPException(status_code=400, detail="Aramak için en az 2 harf yaz.")
     satirlar = db.execute(
         text("SELECT id, ad FROM meslekler WHERE ad ILIKE :q ORDER BY ad LIMIT 15"),
         {"q": f"%{q.strip()}%"},
@@ -835,12 +835,12 @@ def guvenlik_fotografi_kaydet(
 ):
     """Periyodik kimlik doğrulama fotoğrafı — profil_foto_base64 ile aynı boyut/format kontrolü."""
     if len(istek.foto_base64) > 1_500_000:  # tek kare için fazlasıyla yeterli
-        raise HTTPException(status_code=400, detail="Fotoğraf çok büyük (maks ~1MB).")
+        raise HTTPException(status_code=400, detail="Fotoğraf çok büyük. En fazla yaklaşık 1 MB olabilir.")
     if not istek.foto_base64.startswith("data:image/"):
-        raise HTTPException(status_code=400, detail="Geçersiz görsel formatı.")
+        raise HTTPException(status_code=400, detail="Bu görsel biçimi desteklenmiyor.")
     _tur_sahipligini_dogrula(db, ogrenci, istek.tur_id)
     if not hg.onay_var_mi(db, "ogrenci", ogrenci.id, "kamera"):   # [2026-10-04] KVKK
-        raise HTTPException(status_code=403, detail="Kamera için onay vermedin; fotoğraf kaydedilmedi.")
+        raise HTTPException(status_code=403, detail="Kamera için onay vermedin. Bu yüzden fotoğraf kaydedilmedi.")
 
     db.add(GuvenlikFotografi(
         ogrenci_id=ogrenci.id, tur_id=istek.tur_id,

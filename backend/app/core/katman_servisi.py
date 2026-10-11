@@ -43,7 +43,7 @@ def son_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlendirmeTuru:
         .first()
     )
     if tur is None:
-        raise IsKuraliHatasi("Henüz bir değerlendirme turun yok — önce K1-K4'ü tamamlamalısın.")
+        raise IsKuraliHatasi("Henüz bir değerlendirme turun yok. Önce K1-K4'ü tamamla.")
     return tur
 
 
@@ -147,7 +147,7 @@ def katman_oturumu_baslat(
         return oturum, sirali
 
     if oturum is not None and oturum.durum == "tamamlandi":
-        raise IsKuraliHatasi(f"{katman.kod} bu tur için zaten tamamlandı.")
+        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
 
     aktif_sorular = (
         db.query(Soru)
@@ -182,7 +182,7 @@ def cevabi_kaydet(
 ) -> None:
     secenek = db.get(SoruSecenegi, secenek_id)
     if secenek is None or secenek.soru_id != soru_id:
-        raise IsKuraliHatasi("Geçersiz seçenek — bu soruya ait değil.")
+        raise IsKuraliHatasi("Bu seçenek bu soruya ait değil.")
     # [2026-10-08] "En çok / en az" biçimi
     soru = db.get(Soru, soru_id)
     if soru is not None and (soru.cevap_bicimi or "tek") == "encok_enaz":
@@ -190,7 +190,7 @@ def cevabi_kaydet(
             raise IsKuraliHatasi("Bu soruda sana en az uyan şıkkı da seçmelisin.")
         en_az = db.get(SoruSecenegi, en_az_secenek_id)
         if en_az is None or en_az.soru_id != soru_id:
-            raise IsKuraliHatasi("Geçersiz seçenek — bu soruya ait değil.")
+            raise IsKuraliHatasi("Bu seçenek bu soruya ait değil.")
         if en_az_secenek_id == secenek_id:
             raise IsKuraliHatasi("'En çok' ve 'en az' aynı şık olamaz.")
     else:
@@ -271,7 +271,7 @@ def cevaplari_puanla(db: Session, sorular: dict, cevaplar: list, onb: dict | Non
             # EN AZ seçilen 0, seçilmeyen şıklar 50. Ağırlık (w) 1'den küçükse
             # puan 50'ye doğru çekilir: 50 + (puan - 50) × w.
             if cevap.en_az_secenek_id is None:
-                raise IsKuraliHatasi("Bir soruda 'en az uyan' şık seçilmemiş — katman tamamlanamaz.")
+                raise IsKuraliHatasi("Bir soruda 'en az uyan' şıkkı seçmedin. Katmanı bitirmek için onu da seç.")
             soru_secenekleri = _soru_secenekleri(soru.id)
             for sec in soru_secenekleri:
                 if sec.id == cevap.secenek_id:
@@ -333,7 +333,7 @@ def katmani_tamamla(
     cevaplanan_soru_idler = {c.soru_id for c in cevaplar}
     eksik = set(soru_idler) - cevaplanan_soru_idler
     if eksik:
-        raise IsKuraliHatasi(f"{len(eksik)} soru henüz cevaplanmadı — katman tamamlanamaz.")
+        raise IsKuraliHatasi(f"{len(eksik)} soruyu henüz cevaplamadın. Katmanı bitirmek için hepsini cevapla.")
 
     # değişken_id -> puan listesi (K5 dal soruları da aynı fonksiyonu kullanır)
     degisken_puanlari = cevaplari_puanla(db, sorular, cevaplar)

@@ -14,8 +14,8 @@ const ONERILER_GENEL = [
 ]
 const ONERILER_SAYFA = {
   '/koclugu': ['Yol haritamdaki sıradaki adımı nasıl yaparım?', 'Hedef bölümüme ne kadar uygunum?'],
-  '/bolumler': ['Önerilen bölümlerin neden bana uygun olduğunu anlatır mısın?'],
-  '/bolumler/tum': ['Bir bölümün bana uyup uymadığını nasıl anlarım?'],
+  '/bolumler': ['Önerilen bölümler neden bana uygun?'],
+  '/bolumler/tum': ['Bir bölüm bana uygun mu, nasıl anlarım?'],
   '/bolumler/karsilastir': ['İki bölüm arasında nasıl karar veririm?'],
   '/profilim': ['Güçlü yönlerimi nasıl kullanabilirim?'],
   '/katmanlar': ['Bu testleri neden çözüyorum?'],
@@ -112,13 +112,13 @@ export default function FilizSohbet() {
       setDurum((d) => (d && d.mod !== 'otomatik' ? { ...d, kalan: Math.max(0, d.kalan - 1) } : d))
       if (cevap.oturum_kapandi_mi) {
         setOturumId(null)
-        setMesajlar((m) => [...m, { rol: 'not', icerik: 'Bu sohbeti özetledim; kaldığımız yerden yeni bir sohbetle devam edebiliriz.' }])
+        setMesajlar((m) => [...m, { rol: 'not', icerik: 'Bu sohbeti özetledim. Yeni bir sohbette kaldığımız yerden devam edebiliriz.' }])
       }
       durumYayinla({ acik: true, dusunuyor: false, cevaplandi: true })
     } catch (e) {
       const not = e.status === 429 ? e.detail
         : e.status === 503 ? (e.detail || "Filiz'e şu an ulaşılamıyor.")
-        : 'Mesaj gönderilemedi, bağlantını kontrol edip tekrar dene.'
+        : 'Mesaj gönderilemedi. Bağlantını kontrol et ve tekrar dene.'
       setMesajlar((m) => [...m, { rol: 'not', icerik: not }])
       if (e.status === 429) setDurum((d) => (d ? { ...d, kalan: 0 } : d))
     } finally {
@@ -140,7 +140,7 @@ export default function FilizSohbet() {
     setOturumId(null)
     baglamRef.current = okunan.oturum_id
     const t = new Date(okunan.baslama_zamani).toLocaleDateString('tr-TR')
-    setMesajlar([{ rol: 'not', icerik: `📌 ${t} tarihli sohbetimizden devam ediyoruz. Ne konuştuğumuzu hatırlıyorum; kaldığımız yerden yaz.` }])
+    setMesajlar([{ rol: 'not', icerik: `📌 ${t} tarihli sohbetimize devam ediyoruz. Ne konuştuğumuzu hatırlıyorum, sen yazmaya devam et.` }])
     setGorunum('sohbet')
   }
 
@@ -195,7 +195,7 @@ export default function FilizSohbet() {
             <div className="filiz-mesajlar">
               <div className="filiz-gecmis-bas">🕘 Geçmiş sohbetlerin</div>
               {gecmis === null && <div className="bos-durum" style={{ padding: 20 }}>Yükleniyor…</div>}
-              {gecmis?.length === 0 && <div className="filiz-not">Henüz tamamlanmış bir sohbetin yok. Bir sohbeti “↺ Yeni sohbet” ile bitirdiğinde burada özetiyle saklanır.</div>}
+              {gecmis?.length === 0 && <div className="filiz-not">Henüz bitmiş bir sohbetin yok. Bir sohbeti “↺ Yeni sohbet” ile bitirince özetini burada görürsün.</div>}
               {gecmis?.map((g) => (
                 <button key={g.oturum_id} className="filiz-gecmis-oge" onClick={() => sohbetiAc(g.oturum_id)}>
                   <span className="fg-tarih">{new Date(g.baslama_zamani).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })} · {g.mesaj_sayisi} mesaj</span>
@@ -221,7 +221,7 @@ export default function FilizSohbet() {
           )}
           {gorunum === 'sohbet' && otomatik && (
             <div className="filiz-oto-serit">
-              🌱 <b>Rehber modu</b> · Cevaplar senin sonuçlarına, hedefine ve görevlerine göre hazırlanır.
+              🌱 <b>Rehber modu</b> · Filiz, cevapları senin sonuçlarına, hedefine ve görevlerine göre hazırlar.
             </div>
           )}
           {gorunum === 'sohbet' && (
@@ -233,7 +233,7 @@ export default function FilizSohbet() {
                 <div style={{ fontSize: 34 }}>😴</div>
                 <div style={{ fontWeight: 700, marginTop: 6 }}>Filiz şu an dinleniyor</div>
                 <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 4, lineHeight: 1.5 }}>
-                  Sohbet özelliği okulun tarafından etkinleştirildiğinde burada seninle konuşabilecek. O zamana kadar haftalık görevlerin ana sayfada seni bekliyor.
+                  Okulun sohbeti açınca Filiz burada seninle konuşabilecek. O zamana kadar haftalık görevlerin ana sayfada seni bekliyor.
                 </div>
               </div>
             )}
@@ -243,7 +243,7 @@ export default function FilizSohbet() {
                 <div style={{ fontSize: 30 }}>👋</div>
                 <div style={{ fontWeight: 700, marginTop: 6 }}>Merhaba! Ben Filiz, gelişim koçun.</div>
                 <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 4, lineHeight: 1.5 }}>
-                  Sonuçların, hedef bölümün, haftalık görevlerin ya da kafana takılan her şey hakkında konuşabiliriz.
+                  Sonuçlarını, hedef bölümünü, haftalık görevlerini ya da kafana takılan her şeyi konuşabiliriz.
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 14, width: '100%' }}>
                   {oneriler.map((o) => (
@@ -291,7 +291,7 @@ export default function FilizSohbet() {
           )}
           {durum?.aktif && (
             <div className="filiz-alt">
-              {otomatik ? '' : (durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı · ` : 'Bugünlük mesaj hakkın doldu · ')}{otomatik ? 'Cevaplar sistemdeki sonuçlarına göre hazırlanır; önemli kararlarını rehber öğretmeninle birlikte ver.' : 'Filiz Gelişim Koçu bir yapay zekâ asistanıdır; önemli kararlarını rehber öğretmeninle birlikte ver.'}
+              {otomatik ? '' : (durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı · ` : 'Bugünlük mesaj hakkın doldu · ')}{otomatik ? 'Cevaplar, sistemdeki sonuçlarına göre hazırlanır. Önemli kararları rehber öğretmeninle birlikte ver.' : 'Filiz Gelişim Koçu bir yapay zekâ asistanıdır. Önemli kararları rehber öğretmeninle birlikte ver.'}
             </div>
           )}
         </FilizCerceve>

@@ -65,7 +65,7 @@ function UyumSiralamasi({ siralama, onTik }) {
           </button>
         ))}
       </div>
-      <div className="gr-not">Ölçek %{min}–100 · çubuğun üzerine gel, tıklayınca bölümü aç</div>
+      <div className="gr-not">Ölçek %{min}–100 · Ayrıntı için çubuğun üzerine gel, bölümü açmak için dokun</div>
     </>
   )
 }

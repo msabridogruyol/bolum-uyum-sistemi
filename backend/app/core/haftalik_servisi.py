@@ -100,7 +100,7 @@ def _yolculuk_gorevi(db: Session, ogrenci: Ogrenci) -> dict | None:
             kalan = len([k for k in katmanlar if k.id not in biten])
             from app.core.katman_adlari import katman_adi
             return {"tur": "katman", "baslik": f"{katman_adi(sonraki.kod, sonraki.ad)} bölümünü tamamla",
-                    "aciklama": f"Yaklaşık 5 dakika. Bölüm önerilerin için {kalan} katman kaldı; samimi cevap ver, doğru ya da yanlış yok.",
+                    "aciklama": f"Yaklaşık 5 dakika sürer. Bölüm önerilerin için {kalan} katman kaldı. Samimi cevap ver; doğru ya da yanlış cevap yok.",
                     "ref_kod": sonraki.kod, "link": "/katmanlar"}
         return None
     if bekleyen_dal_var_mi(db, ogrenci, tur):
@@ -110,7 +110,7 @@ def _yolculuk_gorevi(db: Session, ogrenci: Ogrenci) -> dict | None:
     hedef = aktif_hedef_getir(db, ogrenci)
     if hedef is None:
         return {"tur": "hedef", "baslik": "Önerilen bölümlerinden birini hedef seç",
-                "aciklama": "Önce Bölümler > Sana uygun listesine bak, ilgini çekeni ☆ ile listene ekle; birini hedef yapınca sana özel adım adım plan hazırlanır.",
+                "aciklama": "Önce Bölümler > Sana uygun listesine bak. İlgini çekenleri ☆ ile listene ekle. Birini hedef seçince sana özel, adım adım bir plan hazırlanır.",
                 "link": "/bolumler"}
     try:
         satirlar = gap_analizi_hesapla(db, ogrenci, tur, hedef.bolum_id)
@@ -165,13 +165,13 @@ def _kesif_gorevi(db: Session, ogrenci: Ogrenci, hafta: date, haric: set | None 
     hedef_on = ""
     if hedef:   # [2026-10-10] hedefle çelişkili görünmesin: keşif "seçeneklerini açık tut" olarak sunulur
         hb = db.get(Bolum, hedef.bolum_id)
-        hedef_on = f"Hedefin {_turkce_baslik(hb.ad) if hb else 'belli'}; yine de seçeneklerini tanımak kararını güçlendirir. "
+        hedef_on = f"Hedefin {_turkce_baslik(hb.ad) if hb else 'belli'}; yine de başka seçenekleri tanımak kararını güçlendirir. "
     if bolum.id in sira_bilgisi:
         sira, uyum = sira_bilgisi[bolum.id]
-        aciklama = (f"Önerilerinde {sira}. sırada (%{round(uyum)} uyum). Bilgi kartını aç: mezunların ne iş yaptığına "
+        aciklama = (f"Önerilerinde {sira}. sırada (%{round(uyum)} uyum). Bilgi kartını aç. Mezunların ne iş yaptığına "
                     f"ve 'Meslek Dili'nden 3 terime bak. İlgini çekerse ☆ ile listene ekle.")
     else:
-        aciklama = ("Yeni bir bölüm tanı: bilgi kartını aç, mezunların ne iş yaptığına ve 'Meslek Dili'nden 3 terime bak. "
+        aciklama = ("Yeni bir bölüm tanı. Bilgi kartını aç. Mezunların ne iş yaptığına ve 'Meslek Dili'nden 3 terime bak. "
                     "İlgini çekerse ☆ ile listene ekle.")
     return {"tur": "kesif", "baslik": f"Keşfet: {ad}", "aciklama": hedef_on + aciklama, "ref_bolum_id": bolum.id,
             "link": f"/bolumler/tum?bolum={bolum.id}&ara={quote(bolum.ad)}"}
@@ -179,7 +179,7 @@ def _kesif_gorevi(db: Session, ogrenci: Ogrenci, hafta: date, haric: set | None 
 
 def _yansitma_gorevi() -> dict:
     return {"tur": "yansitma", "baslik": "Haftanı 2 dakikada değerlendir",
-            "aciklama": "3 kısa soru: neyi iyi yaptın, nerede zorlandın, gelecek hafta hedefin ne? Cevapların Filiz'in sana önerilerini kişiselleştirir."}
+            "aciklama": "3 kısa soru: neyi iyi yaptın, nerede zorlandın, gelecek hafta hedefin ne? Filiz, cevaplarına bakarak önerilerini sana uygun hale getirir."}
 
 
 def _gorevleri_olustur(db: Session, ogrenci: Ogrenci, hafta: date) -> None:
@@ -250,7 +250,7 @@ def gorevi_tamamla(db: Session, ogrenci: Ogrenci, gorev_id: int, yanit: dict | N
     if g is None or g.ogrenci_id != ogrenci.id:
         raise IsKuraliHatasi("Görev bulunamadı.")
     if g.hafta_baslangic != hafta_baslangici(bugun or bugun_tr()):
-        raise IsKuraliHatasi("Yalnızca bu haftanın görevleri işaretlenebilir.")
+        raise IsKuraliHatasi("Yalnızca bu haftanın görevlerini işaretleyebilirsin.")
     if g.durum == "tamamlandi":
         return g
     if g.tur in ("katman", "k5", "hedef"):

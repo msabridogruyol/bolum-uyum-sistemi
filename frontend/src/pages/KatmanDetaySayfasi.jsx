@@ -188,7 +188,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
               )}
 
               <div className="ps" style={{ marginBottom: 14, fontSize: 12 }}>
-                Bir boyuta tıklayınca detaylı açıklaması açılır. {GUCLU_ESIK} ve üzeri puan alan boyutlar "Güçlü" ({COK_GUCLU_ESIK} ve üzeri "Çok güçlü"), altındakiler "{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'}" olarak gruplanır.
+                Bir boyuta dokununca açıklaması açılır. {GUCLU_ESIK} ve üzeri puanlar "Güçlü" grubunda yer alır; {COK_GUCLU_ESIK} ve üzeri "Çok güçlü" sayılır. Daha düşük puanlar "{IKINCI_BOLUM_BASLIGI[kod] || 'Diğer'}" grubunda durur.
               </div>
 
               <div className="two">
@@ -214,7 +214,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
                       ))}
                     </div>
                     <div className="taslak-onizleme-overlay">
-                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz {GUCLU_ESIK}+ çıkan bir boyutun yok</div>
+                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz {GUCLU_ESIK} ve üzeri puan alan bir boyutun yok</div>
                     </div>
                   </div>
                 )}
@@ -241,7 +241,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
                       ))}
                     </div>
                     <div className="taslak-onizleme-overlay">
-                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz {GUCLU_ESIK} altı çıkan bir boyutun yok</div>
+                      <div className="to-metin" style={{ fontSize: 11.5 }}>Henüz {GUCLU_ESIK} altında puan alan bir boyutun yok</div>
                     </div>
                   </div>
                 )}
@@ -283,7 +283,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
                   ))}
                 </div>
                 <div className="taslak-onizleme-overlay">
-                  <div className="to-metin" style={{ fontSize: 11.5 }}>Katmanı tamamlayınca gerçek yorumların burada görünecek</div>
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>Katmanı bitirince sana özel yorumlar burada görünecek</div>
                 </div>
               </div>
             ) : (

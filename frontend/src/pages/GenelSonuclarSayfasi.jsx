@@ -77,7 +77,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)', marginBottom: 16 }}>
           <div className="ct">Bir adım kaldı: Alan Soruları (K5)</div>
           <div className="ps" style={{ margin: '0 0 12px' }}>
-            K4 sonuçlarına göre sana özel alan sorusu seti açıldı. Bölüm önerilerin bu soruları tamamladıktan sonra hazırlanacak.
+            K4 sonuçlarına göre sana özel alan soruları açıldı. Bu soruları bitirince bölüm önerilerin hazırlanacak.
           </div>
           <button className="btn" onClick={() => navigate('/katmanlar')}>K5'e Devam Et →</button>
         </div>
@@ -143,7 +143,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
             <div className="taslak-onizleme-overlay">
               <div className="to-ikon">📊</div>
               <div className="to-metin">
-                Öne çıkan boyutların, güçlerin ve gelişim alanların, K1-K4'ün tamamı bitince burada görünecek — şu an {tamamlanan}/{katmanlar.length} katman tamamlandı.
+                K1–K4'ün hepsini bitirince öne çıkan boyutların, güçlerin ve gelişim alanların burada görünecek. Şu an {tamamlanan}/{katmanlar.length} katman tamamlandı.
               </div>
             </div>
           </div>

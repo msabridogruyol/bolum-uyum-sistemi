@@ -68,7 +68,7 @@ function KayitFormu({ v, varsayilan, onKaydet }) {
     try {
       await onKaydet({ tarih: f.tarih, ders: f.ders, sure_dk: Number(f.sure_dk) || 0, soru: Number(f.soru) || 0, dogru: sayi(f.dogru), yanlis: sayi(f.yanlis), konu: f.konu || null })
       setF({ ...bos, ders: f.ders, tarih: f.tarih })
-    } catch (er) { setHata(er.detail || 'Kaydedilemedi.') } finally { setBekle(false) }
+    } catch (er) { setHata(er.detail || 'Kaydedemedik. Tekrar dene.') } finally { setBekle(false) }
   }
   const konular = v.konular[f.ders] || []
   const enEski = new Date(Date.now() - 14 * 86400000).toISOString().slice(0, 10)
@@ -112,14 +112,14 @@ function BugunSekmesi({ v, setV }) {
       <div className="yp-kpi-grid" style={{ marginBottom: 14 }}>
         <div className="yp-kpi"><div className="yp-kpi-e">Bu hafta</div><div className="yp-kpi-d">{saatMetni(oz.bu_hafta.dk)}</div>{oz.bu_hafta.plan_dk > 0 && <div className="yp-kpi-a">Programın: {saatMetni(oz.bu_hafta.plan_dk)} · %{oz.bu_hafta.uyum}</div>}</div>
         <div className="yp-kpi"><div className="yp-kpi-e">Bu hafta soru</div><div className="yp-kpi-d">{oz.bu_hafta.soru}</div><div className="yp-kpi-a">{oz.bu_hafta.gun} gün çalıştın</div></div>
-        <div className="yp-kpi"><div className="yp-kpi-e">Seri</div><div className="yp-kpi-d">{oz.seri > 0 ? `🔥 ${oz.seri}` : '—'}</div><div className="yp-kpi-a">{oz.seri > 0 ? 'gün üst üste' : 'Bugün bir kayıt gir, seri başlasın'}</div></div>
+        <div className="yp-kpi"><div className="yp-kpi-e">Seri</div><div className="yp-kpi-d">{oz.seri > 0 ? `🔥 ${oz.seri}` : '—'}</div><div className="yp-kpi-a">{oz.seri > 0 ? 'gün üst üste' : 'Bugün bir kayıt gir, serin başlasın'}</div></div>
         <div className="yp-kpi"><div className="yp-kpi-e">Son 28 gün</div><div className="yp-kpi-d">{oz.son_28_gun.soru}</div><div className="yp-kpi-a">soru · {saatMetni(oz.son_28_gun.dk)}</div></div>
       </div>
       <div className="cl-iki">
         <div>
           <div className="card">
             <div className="ct">📅 Bugünün programı · {['Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'][bugunGun()]}</div>
-            {bugunku.length === 0 ? <div className="yp-ince">Bugün için programında blok yok. <b>Haftalık program</b> sekmesinden ekleyebilirsin.</div> : bugunku.map((b) => (
+            {bugunku.length === 0 ? <div className="yp-ince">Bugün için programında çalışma bloğu yok. <b>Haftalık program</b> sekmesinden ekleyebilirsin.</div> : bugunku.map((b) => (
               <div key={b.id} className={`cl-blok-satir${yapildi(b) ? ' tamam' : ''}`}>
                 <span className="cl-saat">{b.baslangic}</span>
                 <span style={{ flex: 1 }}><b>{ad(b.ders)}</b> <span className="yp-ince">{saatMetni(b.sure_dk)}{b.notlar ? ` · ${b.notlar}` : ''}</span></span>
@@ -177,12 +177,12 @@ function ProgramSekmesi({ v, setV }) {
   }
   async function kaydet() {
     setBekle(true); setHata(null)
-    try { setV(await api.calismaProgramKaydet(bloklar)); setDegisti(false); setKaydedildi(true) } catch (e) { setHata(e.detail || 'Kaydedilemedi.') } finally { setBekle(false) }
+    try { setV(await api.calismaProgramKaydet(bloklar)); setDegisti(false); setKaydedildi(true) } catch (e) { setHata(e.detail || 'Kaydedemedik. Tekrar dene.') } finally { setBekle(false) }
   }
   return (
     <>
       <div className="cl-program-ust">
-        <div className="yp-ince">Her hafta tekrar eden ders programın. Okul sonrası gerçekçi bloklar koy; Bugün sekmesinde o günün blokları seni bekler.</div>
+        <div className="yp-ince">Bu, her hafta tekrar eden ders programın. Okuldan sonrası için yapabileceğin kadar blok koy. O günün bloklarını Bugün sekmesinde görürsün.</div>
         <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
           <span className="yp-ince">Haftalık toplam <b>{saatMetni(toplam)}</b></span>
           <button className="btn" disabled={!degisti || bekle} onClick={kaydet}>{bekle ? <span className="spin" /> : 'Programı kaydet'}</button>
@@ -232,7 +232,7 @@ function IstatistikSekmesi({ v }) {
       <div className="card"><div className="ct">⏱️ Haftalık çalışma süren</div><HaftaGrafigi haftalar={oz.haftalar} plan={oz.bu_hafta.plan_dk} /></div>
       <div className="card">
         <div className="ct">Ders ders · son 28 gün</div>
-        {oz.dersler.length === 0 ? <div className="yp-ince">Kayıt girdikçe burada ders ders soru sayın ve isabetin görünür.</div> : (
+        {oz.dersler.length === 0 ? <div className="yp-ince">Kayıt girdikçe her dersteki soru sayını ve isabetini burada görürsün.</div> : (
           <table className="yp-tablo">
             <thead><tr><th>Ders</th><th>Süre</th><th style={{ width: '34%' }}>Çözülen soru</th><th>İsabet</th></tr></thead>
             <tbody>
@@ -241,13 +241,13 @@ function IstatistikSekmesi({ v }) {
                   <td>{d.ad}</td>
                   <td>{saatMetni(d.dk)}</td>
                   <td><div className="cl-soru"><div className="nt-cubuk" style={{ flex: 1 }}><div style={{ width: `${(100 * d.soru) / enCok}%`, background: RENK }} /></div><b>{d.soru}</b></div></td>
-                  <td>{d.isabet != null ? <><b>%{d.isabet}</b> <span className="yp-ince">({d.dogru}D {d.yanlis}Y)</span></> : <span className="yp-ince" title="Doğru / yanlış girilen en az 10 soru gerekir">—</span>}</td>
+                  <td>{d.isabet != null ? <><b>%{d.isabet}</b> <span className="yp-ince">({d.dogru}D {d.yanlis}Y)</span></> : <span className="yp-ince" title="Doğru ve yanlış sayısını girdiğin en az 10 soru gerekir">—</span>}</td>
                 </tr>
               ))}
             </tbody>
           </table>
         )}
-        <div className="yp-ince" style={{ marginTop: 8 }}>İsabet, doğru ve yanlışını girdiğin sorulardan hesaplanır (en az 10 soru). Boş bıraktıkların dahil edilmez.</div>
+        <div className="yp-ince" style={{ marginTop: 8 }}>İsabet, doğru cevaplarının oranıdır. Bunu doğru ve yanlış sayısını girdiğin sorulardan hesaplarız. En az 10 soru gerekir. Boş bıraktığın sorular hesaba girmez.</div>
       </div>
     </>
   )
@@ -258,14 +258,14 @@ export default function CalismaSayfasi() {
   const [v, setV] = useState(null)
   const [hata, setHata] = useState(null)
   const sekme = params.get('sekme') || 'bugun'
-  useEffect(() => { api.calisma().then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [])
+  useEffect(() => { api.calisma().then(setV).catch((e) => setHata(e.detail || 'Yükleyemedik. Tekrar dene.')) }, [])
   const git = (k) => setParams(k === 'bugun' ? {} : { sekme: k }, { replace: true })
   const SEKMELER = useMemo(() => [['bugun', '✍️ Bugün'], ['program', '📅 Haftalık program'], ['istatistik', '📊 İstatistik']], [])
   return (
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Çalışmam</div>
-        <div className="ps">Haftalık programını yap, her gün ne kadar çalıştığını ve kaç soru çözdüğünü kaydet; hangi derste ne kadar isabetli olduğunu gör.</div>
+        <div className="ps">Haftalık programını yap. Her gün ne kadar çalıştığını ve kaç soru çözdüğünü kaydet. Hangi derste ne kadar doğru yaptığını gör.</div>
       </div>
       <div className="koc-sekmeler" role="tablist">
         {SEKMELER.map(([k, ad]) => <button key={k} role="tab" aria-selected={sekme === k} className={sekme === k ? 'aktif' : ''} onClick={() => git(k)}>{ad}</button>)}

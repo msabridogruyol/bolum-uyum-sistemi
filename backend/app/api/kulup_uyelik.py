@@ -99,7 +99,7 @@ def talep_et(kulup_id: int, istek: TalepIstek, db: Session = Depends(get_db), o:
 def talep_geri_cek(kulup_id: int, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     r = db.execute(text("SELECT durum FROM kulup_uyelikleri WHERE kulup_id = :k AND ogrenci_id = :o"), {"k": kulup_id, "o": o.id}).first()
     if r is None or r.durum not in ("bekliyor", "onaylandi"):
-        raise HTTPException(400, "Geri çekilecek bir talep ya da üyelik yok.")
+        raise HTTPException(400, "Geri çekebileceğin bir talep ya da üyelik yok.")
     if r.durum == "bekliyor":
         db.execute(text("DELETE FROM kulup_uyelikleri WHERE kulup_id = :k AND ogrenci_id = :o"), {"k": kulup_id, "o": o.id})
     else:

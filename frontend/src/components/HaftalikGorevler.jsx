@@ -86,7 +86,7 @@ export default function HaftalikGorevler() {
               <span title={`${seviye.puan} puan`} className="hg-rozet hg-filiz">{seviye.ikon} Seviye {seviye.no}</span>
             </div>
             <div className="hg-durum">
-              {hepsiBitti ? '🎉 Hepsi tamam! Yenileri Pazartesi.' : seriyeKalan > 0 ? `Seri için ${seriyeKalan} görev daha.` : 'Serin güvende ✓'}
+              {hepsiBitti ? '🎉 Hepsi tamam! Yeni görevler Pazartesi gelir.' : seriyeKalan > 0 ? `Serini sürdürmek için ${seriyeKalan} görev daha yap.` : 'Serin güvende ✓'}
             </div>
           </div>
         </div>

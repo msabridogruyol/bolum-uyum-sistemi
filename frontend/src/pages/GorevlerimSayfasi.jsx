@@ -24,7 +24,7 @@ export default function GorevlerimSayfasi() {
       <div className="card">
         <div className="ct">Önceki haftalar</div>
         {!g ? <div className="bos-durum">Yükleniyor…</div> : g.haftalar.length === 0 ? (
-          <div className="bos-durum">Henüz önceki hafta yok. Bu haftanın görevlerini tamamladıkça burada birikecek.</div>
+          <div className="bos-durum">Henüz önceki hafta yok. Hafta bittikçe görevlerin burada birikecek.</div>
         ) : g.haftalar.map((h) => (
           <div key={h.hafta} className="gv-hafta">
             <button className="gv-hafta-b" onClick={() => setAcik(acik === h.hafta ? null : h.hafta)}>

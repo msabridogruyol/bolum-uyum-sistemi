@@ -24,7 +24,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
       <div className="ph">
         <div className="pt">Dal Derinleşme — Sonuçların</div>
         <div className="ps">
-          İlk dört katmanın sonuçlarına göre sana en yakın alanlar burada, kendi sonuçlarıyla listelenir.
+          İlk dört katmanın sonuçlarına göre sana en yakın alanları burada görürsün. Her alanın sonucu yanında yazar.
         </div>
       </div>
 
@@ -49,7 +49,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
               <div className="taslak-onizleme-overlay">
                 <div className="to-ikon">🌻</div>
                 <div className="to-metin">
-                  İlk dört katmanı tamamladığında sana özel açılan alanlar ve sonuçları burada görünecek.
+                  İlk dört katmanı bitirince sana özel açılan alanlar ve sonuçları burada görünecek.
                 </div>
               </div>
             </div>
@@ -103,7 +103,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
                   </div>
                 </div>
                 <div className="taslak-onizleme-overlay">
-                  <div className="to-metin" style={{ fontSize: 11.5 }}>Bir dal açılınca gerçek yorumların burada görünecek</div>
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>Bir dal açılınca sana özel yorumlar burada görünecek</div>
                 </div>
               </div>
             ) : (

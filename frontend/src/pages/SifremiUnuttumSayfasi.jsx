@@ -30,7 +30,7 @@ export default function SifremiUnuttumSayfasi({ kapsam = 'ogrenci' }) {
       <div className="auth-card">
         <span className="auth-emoji">🔑</span>
         <div className="auth-logo">Şifremi unuttum</div>
-        <div className="auth-sub">E-posta adresini yaz, sana şifre sıfırlama bağlantısı gönderelim.</div>
+        <div className="auth-sub">E-posta adresini yaz. Sana şifre sıfırlama bağlantısı gönderelim.</div>
         {mesaj ? (
           <div className="auth-error" style={{ background: 'var(--grl)', color: 'var(--gr)', lineHeight: 1.55 }}>{mesaj}</div>
         ) : (

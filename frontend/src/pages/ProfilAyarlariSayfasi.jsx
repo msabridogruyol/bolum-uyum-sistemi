@@ -87,7 +87,7 @@ export default function ProfilAyarlariSayfasi() {
     try {
       setMeslekSonuclari(await api.meslekAra(mesleklAramaMetni.trim()))
     } catch (err) {
-      setHata(err.detail || 'Meslek araması yapılamadı.')
+      setHata(err.detail || 'Meslek aranamadı.')
     }
   }
 
@@ -101,7 +101,7 @@ export default function ProfilAyarlariSayfasi() {
     const dosya = e.target.files?.[0]
     if (!dosya) return
     if (dosya.size > 2_000_000) {
-      setHata('Fotoğraf çok büyük — en fazla 2MB olmalı.')
+      setHata('Fotoğraf çok büyük. En fazla 2 MB olabilir.')
       return
     }
     setFotoYukleniyor(true)
@@ -134,7 +134,7 @@ export default function ProfilAyarlariSayfasi() {
       return
     }
     if (yeniSifre !== yeniSifreTekrar) {
-      setSifreHata('Yeni şifreler birbiriyle uyuşmuyor.')
+      setSifreHata('Yazdığın iki yeni şifre aynı değil.')
       return
     }
     setSifreKaydediliyor(true)
@@ -165,7 +165,7 @@ export default function ProfilAyarlariSayfasi() {
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)' }}>
           <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>👋 Başlamadan önce profilini tamamla</div>
           <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5 }}>
-            Ad soyad ve sınıf bilgilerini doldurup <b>Bilgileri Kaydet</b>'e bas; ardından ana sayfaya geçip ilk katmana başlayabilirsin. Diğer alanlar isteğe bağlı.
+            Ad soyadını ve sınıfını yaz, sonra <b>Kaydet</b> düğmesine bas. Ardından ana sayfadan ilk katmana başlayabilirsin. Diğer alanları doldurmak zorunda değilsin.
           </div>
         </div>
       )}
@@ -207,8 +207,8 @@ export default function ProfilAyarlariSayfasi() {
             <div className="auth-field" style={{ flex: 1 }}>
               <label className="auth-label">Okul</label>
               {/* [2026-10-09] Okul yönetimden atanır; öğrenci değiştiremez */}
-              <div className="auth-input okul-sabit" title="Okul bilgisi okulun tarafından tanımlanır">
-                {profil?.okul || 'Okul harici (bireysel hesap)'}
+              <div className="auth-input okul-sabit" title="Okul bilgisini okulun girer, sen değiştiremezsin.">
+                {profil?.okul || 'Okula bağlı değil (bireysel hesap)'}
               </div>
             </div>
             <div className="auth-field" style={{ flex: 1 }}>
@@ -222,11 +222,11 @@ export default function ProfilAyarlariSayfasi() {
 
           <div style={{ display: 'flex', gap: 10 }}>
             <div className="auth-field" style={{ flex: 1 }}>
-              <label className="auth-label">Doğum Tarihi <span style={{ color: 'var(--tx3)', fontWeight: 500 }}>(opsiyonel)</span></label>
+              <label className="auth-label">Doğum Tarihi <span style={{ color: 'var(--tx3)', fontWeight: 500 }}>(isteğe bağlı)</span></label>
               <input className="auth-input" type="date" value={taslak.dogum_tarihi || ''} onChange={(e) => alanGuncelle('dogum_tarihi', e.target.value)} />
             </div>
             <div className="auth-field" style={{ flex: 1 }}>
-              <label className="auth-label">Cinsiyet <span style={{ color: 'var(--tx3)', fontWeight: 500 }}>(opsiyonel)</span></label>
+              <label className="auth-label">Cinsiyet <span style={{ color: 'var(--tx3)', fontWeight: 500 }}>(isteğe bağlı)</span></label>
               <select className="auth-input" value={taslak.cinsiyet || ''} onChange={(e) => alanGuncelle('cinsiyet', e.target.value)}>
                 {CINSIYET_SECENEKLERI.map((c) => <option key={c.deger} value={c.deger}>{c.etiket}</option>)}
               </select>
@@ -250,7 +250,7 @@ export default function ProfilAyarlariSayfasi() {
           <div className="ct">Hedeflerin</div>
 
           <div className="auth-field">
-            <label className="auth-label">Hedef Üniversite <span style={{ color: 'var(--tx3)', fontWeight: 500 }}>(opsiyonel)</span></label>
+            <label className="auth-label">Hedef Üniversite <span style={{ color: 'var(--tx3)', fontWeight: 500 }}>(isteğe bağlı)</span></label>
             <input className="auth-input" value={taslak.hedef_universite || ''} onChange={(e) => alanGuncelle('hedef_universite', e.target.value)} placeholder="Örn. Boğaziçi Üniversitesi" />
           </div>
 
@@ -279,7 +279,7 @@ export default function ProfilAyarlariSayfasi() {
           </div>
 
           <div className="ps" style={{ margin: '10px 0 0' }}>
-            Hedef bölümünü yukarıdaki <b>Hedef bölümüm</b> kartından seçersin; gelişim planını <b>Koçluğum</b> sayfasında takip edersin.
+            Hedef bölümünü yukarıdaki <b>Hedef bölümüm</b> kartından seç. Gelişim planını <b>Koçluğum</b> sayfasından takip et.
           </div>
         </div>
 
@@ -295,7 +295,7 @@ export default function ProfilAyarlariSayfasi() {
         {sifreBasari && <div style={{ background: 'var(--grl)', color: 'var(--gr)', fontSize: 12.5, fontWeight: 600, padding: '10px 13px', borderRadius: 8, marginBottom: 14 }}>Şifren güncellendi.</div>}
         <form onSubmit={sifreyiDegistir}>
           <div className="auth-field">
-            <label className="auth-label">Mevcut Şifre</label>
+            <label className="auth-label">Şu Anki Şifren</label>
             <input className="auth-input" type="password" value={eskiSifre} onChange={(e) => setEskiSifre(e.target.value)} required />
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
@@ -322,7 +322,7 @@ export default function ProfilAyarlariSayfasi() {
         <div className="card" style={{ marginTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
           <div>
             <div className="ct" style={{ marginBottom: 2 }}>Sistem Tanıtımı</div>
-            <div className="ps" style={{ margin: 0, fontSize: 12 }}>Sistemin nasıl çalıştığını anlatan kısa tanıtımı yeniden izle.</div>
+            <div className="ps" style={{ margin: 0, fontSize: 12 }}>Sistemin nasıl çalıştığını anlatan kısa tanıtımı tekrar izle.</div>
           </div>
           <button className="btn sec" type="button" onClick={duzen.tanitimiAc}>Tanıtımı Göster</button>
         </div>
@@ -330,7 +330,7 @@ export default function ProfilAyarlariSayfasi() {
 
       {/* --- Hukuki not --- */}
       <div className="ps" style={{ marginTop: 16, color: 'var(--tx3)', fontSize: 11.5 }}>
-        Doğum tarihi ve cinsiyet bilgisi tamamen opsiyoneldir, doldurmak zorunda değilsin.
+        Doğum tarihi ve cinsiyet isteğe bağlı. Doldurmak zorunda değilsin.
       </div>
     </div>
   )

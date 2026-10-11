@@ -26,7 +26,7 @@ export default function ProfilimSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Profilim</div>
-        <div className="ps">Değerlendirmene göre değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların — güçlü yönlerin ve gelişebileceğin alanlarla.</div>
+        <div className="ps">Değerlendirmene göre değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların burada. Güçlü yönlerini ve gelişebileceğin alanları da görürsün.</div>
       </div>
       <nav className="sayfa-sekmeleri" aria-label="Profil bölümleri">
         {SEKMELER.map((s) => (

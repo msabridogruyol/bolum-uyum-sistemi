@@ -57,7 +57,7 @@ export default function KodDogrulamaAdimi({ maskeliEposta, onDogrula, onTekrarGo
         </div>
         <label style={{ display: 'flex', gap: 8, alignItems: 'center', fontSize: 12, color: 'var(--tx2)', marginBottom: 14, cursor: 'pointer' }}>
           <input type="checkbox" checked={hatirla} onChange={(e) => setHatirla(e.target.checked)} style={{ accentColor: 'var(--pu)' }} />
-          Bu cihazı 30 gün hatırla (ortak kullanılan bilgisayarda işaretleme)
+          Bu cihazı 30 gün hatırla (ortak kullanılan bir bilgisayardaysan işaretleme)
         </label>
         <button className="btn full" type="submit" disabled={yukleniyor || kod.replace(/\D/g, '').length !== 6}>
           {yukleniyor ? <span className="spin" /> : 'Doğrula ve giriş yap'}

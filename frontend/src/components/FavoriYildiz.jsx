@@ -38,7 +38,7 @@ export async function listemDegistir(bolumId, ad) {
     return null
   } catch (e) {
     liste = onceki; yay()
-    return e.detail || 'Listen güncellenemedi.'
+    return e.detail || 'Listeni güncelleyemedik. Tekrar dene.'
   }
 }
 

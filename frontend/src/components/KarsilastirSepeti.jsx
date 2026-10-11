@@ -46,7 +46,7 @@ export function KarsilastirDugmesi({ id, ad, etiketli = false }) {
     e.stopPropagation(); e.preventDefault()
     if (!sepetDegistir(id, ad)) { setUyari(true); setTimeout(() => setUyari(false), 3000) }
   }
-  const baslik = uyari ? `En fazla ${SEPET_SINIRI} bölüm karşılaştırılabilir — birini çıkar.` : secili ? 'Karşılaştırmadan çıkar' : 'Karşılaştırmaya ekle'
+  const baslik = uyari ? `En fazla ${SEPET_SINIRI} bölüm karşılaştırabilirsin. Önce birini çıkar.` : secili ? 'Karşılaştırmadan çıkar' : 'Karşılaştırmaya ekle'
   return (
     <span className="ks-dugme-kap">
       <button type="button" className={`ks-dugme${secili ? ' secili' : ''}${etiketli ? ' etiketli' : ''}`} onClick={tikla}

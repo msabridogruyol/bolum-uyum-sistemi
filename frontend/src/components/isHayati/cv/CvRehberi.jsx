@@ -119,7 +119,7 @@ export default function CvRehberi({ onGit }) {
         <div style={{ flex: 1, minWidth: 220 }}>
           <div style={{ fontWeight: 800, fontSize: 16 }}>📚 CV'ye yeni misin? Buradan başla.</div>
           <div className="yp-ince" style={{ lineHeight: 1.6, marginTop: 4, fontSize: 12.5 }}>
-            {v.konular.length} kısa konu: CV nedir, nasıl yazılır, başvuru sistemleri (ATS) onu nasıl okur. Her konunun sonunda 2–3 soruluk mini sınav var.
+            {v.konular.length} kısa konu var: CV nedir, nasıl yazılır, başvuru sistemleri (ATS) onu nasıl okur? Her konunun sonunda 2–3 soruluk mini sınav var.
             Hazır olduğunda <button type="button" className="hg-link" style={{ color: 'var(--okul-c)', fontSize: 12.5 }} onClick={() => onGit('olustur')}>CV'ni oluştur →</button>
           </div>
         </div>
@@ -149,7 +149,7 @@ export default function CvRehberi({ onGit }) {
               {ac_ && (
                 <div className="cvr-govde">
                   {k.bloklar.map((b, j) => <Blok key={j} b={b} />)}
-                  {k.kod === 'ats' && <div className="cvr-not iyi">Kendi CV'nin bir ATS'ye nasıl göründüğünü görmek ister misin? <button type="button" className="hg-link" style={{ color: 'var(--okul-c)', fontSize: 12.5 }} onClick={() => onGit('ats')}>ATS kontrolünü dene →</button></div>}
+                  {k.kod === 'ats' && <div className="cvr-not iyi">Kendi CV'n bir ATS'de nasıl görünüyor, bakmak ister misin? <button type="button" className="hg-link" style={{ color: 'var(--okul-c)', fontSize: 12.5 }} onClick={() => onGit('ats')}>ATS kontrolünü dene →</button></div>}
                   <MiniSinav key={k.kod} sorular={k.sinav} onBitti={(n) => setDurum({ ...durum, okunan: { ...(durum.okunan || {}), [k.kod]: true }, sinav: { ...(durum.sinav || {}), [k.kod]: n } })} />
                   <details className="cvr-kaynak">
                     <summary>Kaynaklar · son kontrol: {v.son_kontrol}</summary>
@@ -171,7 +171,7 @@ export default function CvRehberi({ onGit }) {
           )
         })}
       </div>
-      <div className="yp-ince" style={{ marginTop: 10, lineHeight: 1.5 }}>Örneklerdeki kişi, okul ve kurumlar kurgusaldır. İçerik son kontrol: {v.son_kontrol}.</div>
+      <div className="yp-ince" style={{ marginTop: 10, lineHeight: 1.5 }}>Örneklerdeki kişi, okul ve kurumlar gerçek değildir. İçeriğin son kontrolü: {v.son_kontrol}.</div>
     </div>
   )
 }

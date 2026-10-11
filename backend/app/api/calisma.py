@@ -120,7 +120,7 @@ def program_kaydet(bloklar: list[ProgramBlok], db: Session = Depends(get_db), o:
         raise HTTPException(400, "Haftalık programda en fazla 80 blok olabilir.")
     for b in bloklar:
         if not re.fullmatch(r"([01]\d|2[0-3]):[0-5]\d", b.baslangic):
-            raise HTTPException(400, "Saat SS:DD biçiminde olmalı.")
+            raise HTTPException(400, "Saati SS:DD biçiminde yaz (ör. 14:30).")
         if b.ders not in DERSLER:
             raise HTTPException(400, "Geçersiz ders.")
     db.execute(text("DELETE FROM calisma_programi WHERE ogrenci_id = :o"), {"o": o.id})
@@ -146,13 +146,13 @@ def kayit_ekle(istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = De
     if istek.ders not in DERSLER:
         raise HTTPException(400, "Geçersiz ders.")
     if istek.tarih > date.today() or istek.tarih < date.today() - timedelta(days=14):
-        raise HTTPException(400, "Kayıt en çok 14 gün geriye girilebilir.")
+        raise HTTPException(400, "En fazla 14 gün öncesine kayıt girebilirsin.")
     if not istek.sure_dk and not istek.soru:
         raise HTTPException(400, "Süre ya da soru sayısından en az birini gir.")
     if (istek.dogru or 0) + (istek.yanlis or 0) > istek.soru:
         raise HTTPException(400, "Doğru + yanlış, çözülen soru sayısını geçemez.")
     if db.execute(text("SELECT count(*) FROM calisma_kayitlari WHERE ogrenci_id = :o AND tarih = :t"), {"o": o.id, "t": istek.tarih}).scalar() >= 30:
-        raise HTTPException(400, "Bir gün için en fazla 30 kayıt girilebilir.")
+        raise HTTPException(400, "Bir güne en fazla 30 kayıt girebilirsin.")
     db.execute(text("""
         INSERT INTO calisma_kayitlari (ogrenci_id, tarih, ders, sure_dk, soru, dogru, yanlis, konu)
         VALUES (:o, :t, :d, :s, :q, :dg, :y, :k)

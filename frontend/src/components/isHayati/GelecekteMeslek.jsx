@@ -77,18 +77,18 @@ function GrupKarti({ g, meslekler, olcek }) {
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, margin: '10px 0 4px' }}>
         {meslekler.map((m) => (
           <span key={m.meslek} style={etiket('var(--tx)', 'var(--sur2)')}>
-            {m.meslek}{m.isco_guven === 'orta' && <span title="Bu meslek, meslek grubuna orta güvenle eşlendi" style={{ color: 'var(--tx3)' }}> *</span>}
+            {m.meslek}{m.isco_guven === 'orta' && <span title="Bu mesleği bir meslek grubuna koyarken tam emin olamadık" style={{ color: 'var(--tx3)' }}> *</span>}
           </span>
         ))}
       </div>
       {ortaGuven.length > 0 && (
-        <div className="yp-ince" style={{ marginBottom: 6 }}>* Bu meslek(ler) meslek grubuna adı ve bölüm bağlamıyla <b>orta güvenle</b> eşlendi; grup bilgisi yaklaşık bir yol göstericidir.</div>
+        <div className="yp-ince" style={{ marginBottom: 6 }}>* Bu meslekleri adına ve bölüme bakarak bir gruba koyduk. Bu eşleşmeden <b>tam emin değiliz</b>. Grup bilgisini yaklaşık bir fikir olarak düşün.</div>
       )}
 
       {g.veri_var && (
         <div style={{ margin: '10px 0 14px' }}>
           <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginBottom: 6 }}>
-            ILO, bu gruptaki <b>{g.meslek_sayisi}</b> mesleği tek tek sınıflandırdı. Dağılım (soldan sağa: en az → en çok maruz kalan):
+            ILO, bu gruptaki <b>{g.meslek_sayisi}</b> mesleğe tek tek baktı. Soldan sağa: yapay zekânın en az yapabildiği işlerden en çok yapabildiği işlere doğru.
           </div>
           <Dagilim dagilim={g.dagilim} olcek={olcek} />
         </div>
@@ -104,7 +104,7 @@ function GrupKarti({ g, meslekler, olcek }) {
         <div style={{ borderTop: '1px solid var(--bor)', marginTop: 14 }}>
           <button onClick={() => setAcik(!acik)} aria-expanded={acik}
             style={{ all: 'unset', cursor: 'pointer', display: 'flex', width: '100%', padding: '8px 0', fontSize: 12.5, fontWeight: 700, gap: 8 }}>
-            ILO tablosundaki meslekler (en çok maruz kalandan başlayarak)<span style={{ marginLeft: 'auto', color: 'var(--tx3)' }}>{acik ? '▴' : '▾'}</span>
+            ILO tablosundaki meslekler (yapay zekânın en çok yapabildiğinden başlayarak)<span style={{ marginLeft: 'auto', color: 'var(--tx3)' }}>{acik ? '▴' : '▾'}</span>
           </button>
           {acik && (
             <div className="yp-tablo-kap">
@@ -120,7 +120,7 @@ function GrupKarti({ g, meslekler, olcek }) {
                 </tbody>
               </table>
               <div className="yp-ince" style={{ margin: '6px 0' }}>
-                Ortalama puan: mesleğin görevlerinin üretken yapay zekâ ile yapılabilme potansiyelinin ortalaması (0–1). {g.meslek_sayisi > g.ilo_meslekleri.length && `Grubun ${g.meslek_sayisi} mesleğinden ilk ${g.ilo_meslekleri.length} tanesi gösteriliyor.`}
+                Ortalama puan: Mesleğin görevlerinin ne kadarının üretken yapay zekâ ile yapılabileceğini gösterir (0–1 arası). {g.meslek_sayisi > g.ilo_meslekleri.length && `Grubun ${g.meslek_sayisi} mesleğinden ilk ${g.ilo_meslekleri.length} tanesi gösteriliyor.`}
               </div>
             </div>
           )}
@@ -172,12 +172,12 @@ export default function GelecekteMeslek({ bolum }) {
           {['dusuk', 'orta', 'yuksek'].map((d) => <DuzeyOlcer key={d} duzey={d} ad={v.duzey_adlari?.[d]} />)}
         </div>
         <div className="yp-ince" style={{ marginTop: 6 }}>
-          Ölçek, işin ne kadar <b>değişeceğini</b> gösterir; iyi ya da kötü anlamına gelmez. Çok değişecek mesleklerde yeni araçları iyi kullanan kişiler öne çıkabilir.
+          Bu ölçek, işin ne kadar <b>değişeceğini</b> gösterir. İyi ya da kötü demek değildir. Çok değişecek mesleklerde yeni araçları iyi kullananlar öne çıkabilir.
         </div>
       </div>
 
       {v.gruplar.length === 0 && (
-        <div className="bos-durum">Bu bölümün meslekleri henüz bir meslek grubuyla eşlenmedi.</div>
+        <div className="bos-durum">Bu bölümün meslekleri henüz bir meslek grubuna yerleştirilmedi.</div>
       )}
       {v.veri_yok && v.gruplar.length > 0 && (
         <div className="bos-durum">Bu bölümün meslek grupları için yapay zekâ etkisi verisi henüz yüklenmedi.</div>
@@ -186,7 +186,7 @@ export default function GelecekteMeslek({ bolum }) {
       {v.gruplar.map((g) => <GrupKarti key={g.kod} g={g} meslekler={grupMeslekleri(g.kod)} olcek={v.olcek} />)}
 
       {v.eslesmeyen?.length > 0 && (
-        <div className="yp-ince" style={{ marginBottom: 12 }}>Meslek grubu henüz belirlenmemiş meslekler: {v.eslesmeyen.join(', ')}.</div>
+        <div className="yp-ince" style={{ marginBottom: 12 }}>Henüz bir gruba yerleştirilmemiş meslekler: {v.eslesmeyen.join(', ')}.</div>
       )}
 
       {v.genel?.maddeler?.length > 0 && (
@@ -200,8 +200,8 @@ export default function GelecekteMeslek({ bolum }) {
       )}
 
       <div className="yp-ince" style={{ lineHeight: 1.6, marginTop: 4 }}>
-        <b>Nasıl hesaplandı?</b> ILO, 2025 endeksinde her mesleği görevlerinin yapay zekâya maruz kalma puanlarına göre “maruz değil”,
-        “minimal” ya da artan dört gradyandan birine yerleştirir. {v.duzey_kurali}
+        <b>Nasıl hesaplandı?</b> ILO, 2025 çalışmasında her mesleğin görevlerine puan verdi. Bu puanlar, görevlerin ne kadarının yapay zekâyla yapılabileceğini gösterir.
+        Puana göre her meslek “maruz değil”, “minimal” ya da giderek artan dört dereceden birine konur. {v.duzey_kurali}
         {v.kaynaklar?.length > 0 && (
           <ul style={{ margin: '4px 0 6px', paddingLeft: 18 }}>
             {v.kaynaklar.map((k, i) => (
@@ -210,7 +210,7 @@ export default function GelecekteMeslek({ bolum }) {
           </ul>
         )}
         {v.son_kontrol && `Son kontrol: ${new Date(v.son_kontrol).toLocaleDateString('tr-TR')}. `}
-        Bu bilgiler küresel çalışmalara dayanır; Türkiye'de teknolojinin ne hızla kullanılacağı sektöre ve işyerine göre değişebilir.
+        Bu bilgiler dünya çapındaki çalışmalara dayanır. Türkiye'de bu teknolojinin ne kadar hızlı kullanılacağı sektöre ve işyerine göre değişebilir.
       </div>
     </div>
   )

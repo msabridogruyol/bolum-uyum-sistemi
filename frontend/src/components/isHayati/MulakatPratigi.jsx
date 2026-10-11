@@ -12,7 +12,7 @@ function Star({ star }) {
   if (!star) return null
   return (
     <details className="ihm-star">
-      <summary>⭐ {star.baslik}: davranışsal sorularda cevabını nasıl kurarsın?</summary>
+      <summary>⭐ {star.baslik}: Davranışsal sorulara nasıl cevap verirsin?</summary>
       <div className="ihz-metin" style={{ margin: '6px 0 8px' }}>{star.aciklama}</div>
       <div className="ihm-star-ogeler">
         {star.ogeler.map((o) => (
@@ -63,7 +63,7 @@ function Pratik({ soru, v, onKapat, onKaydedildi }) {
         <span className="yp-ince" style={{ marginLeft: 'auto' }}>{adim === 'yaz' ? '1. Cevapla' : adim === 'kontrol' ? '2. Kontrol et' : '3. Geliştir'}</span>
       </div>
       <div className="ihm-soru">🎤 {soru.soru}</div>
-      {soru.neden && <div className="yp-ince" style={{ marginTop: 4 }}>Neden sorulur? {soru.neden}</div>}
+      {soru.neden && <div className="yp-ince" style={{ marginTop: 4 }}>Bu soru neden sorulur? {soru.neden}</div>}
 
       {adim === 'yaz' && (
         <>
@@ -72,7 +72,7 @@ function Pratik({ soru, v, onKapat, onKaydedildi }) {
             onChange={(e) => { if (!baslangic.current) baslangic.current = Date.now(); setCevap(e.target.value) }} />
           <div className="ihm-sayac">
             <span>{kelime(cevap)} kelime</span><span>⏱ {sure(sn)}</span>
-            <span className="yp-ince" style={{ marginLeft: 'auto' }}>Ad, telefon, adres gibi kişisel bilgiler yazmana gerek yok.</span>
+            <span className="yp-ince" style={{ marginLeft: 'auto' }}>Adını, telefonunu, adresini yazmana gerek yok.</span>
           </div>
           <div className="ms-alt">
             <span style={{ marginRight: 'auto' }} />
@@ -86,7 +86,7 @@ function Pratik({ soru, v, onKapat, onKaydedildi }) {
       {adim === 'kontrol' && (
         <>
           <div className="ihz-ara-baslik">✅ Kendi kendine kontrol listesi</div>
-          <div className="yp-ince" style={{ marginBottom: 6 }}>Cevabını sesli oku ve doğru olanları işaretle. Puan yok; bu liste yalnızca senin için.</div>
+          <div className="yp-ince" style={{ marginBottom: 6 }}>Cevabını sesli oku. Cevabına uyan maddeleri işaretle. Puan yok; bu liste yalnızca senin için.</div>
           <div className="ihm-kontrol">
             {kontrol.map((k) => (
               <label key={k.kod} className={isaret.includes(k.kod) ? 'secili' : ''}>
@@ -121,14 +121,14 @@ function Pratik({ soru, v, onKapat, onKaydedildi }) {
           {ai?.acik && !gb && !kayit?.kriz && (
             <div className="ihm-filiz">
               <button className="btn" disabled={bekle || ai.kalan <= 0} onClick={filiz}>{bekle ? <span className="spin" /> : '🌱 Filiz\'den geri bildirim al'}</button>
-              <span className="yp-ince">{ai.kalan > 0 ? `Bugün kalan hakkın: ${ai.kalan}` : 'Bugünlük hakkın doldu, yarın yine deneyebilirsin.'}</span>
+              <span className="yp-ince">{ai.kalan > 0 ? `Bugün kalan hakkın: ${ai.kalan}` : 'Bugünlük hakkın doldu. Yarın yine deneyebilirsin.'}</span>
             </div>
           )}
           {gb && (
             <div className={`ihm-filiz-cevap${gb.kriz ? ' kriz' : ''}`}>
               <b>{gb.kriz ? '💚 Filiz' : '🌱 Filiz\'in geri bildirimi'}</b>
               <div style={{ whiteSpace: 'pre-line', marginTop: 4 }}>{gb.geri_bildirim}</div>
-              {!gb.kriz && <div className="yp-ince" style={{ marginTop: 6 }}>Yapay zekâ geri bildirimi yalnızca cevabının yapısı hakkındadır; puan değildir.</div>}
+              {!gb.kriz && <div className="yp-ince" style={{ marginTop: 6 }}>Bu yapay zekâ geri bildirimi yalnızca cevabını nasıl kurduğuna bakar. Puan vermez.</div>}
             </div>
           )}
           {hata && <div className="auth-error">{hata}</div>}
@@ -201,8 +201,8 @@ export default function MulakatPratigi({ bolum }) {
           <span className="ihz-buyuk-ikon" aria-hidden="true">🎤</span>
           <div style={{ flex: 1 }}>
             <div className="ihz-baslik">Mülakat pratiği</div>
-            <div className="ihz-metin">Bir soru seç, cevabını yaz, sonra kendi kontrol listenle gözden geçir. Burada doğru ya da yanlış cevap yok;
-              amaç cevabını açık ve örnekli kurmayı alışkanlık hâline getirmek.</div>
+            <div className="ihz-metin">Bir soru seç ve cevabını yaz. Sonra kontrol listesiyle cevabına bak. Burada doğru ya da yanlış cevap yok.
+              Amaç, açık ve örnekli cevap vermeyi alışkanlık hâline getirmen.</div>
             <div className="yp-ince" style={{ marginTop: 4 }}>🔒 {v.gizlilik}</div>
           </div>
           {toplamPratik > 0 && <button className="yp-mini" onClick={() => setGecmis(true)}>Geçmişim ({toplamPratik})</button>}

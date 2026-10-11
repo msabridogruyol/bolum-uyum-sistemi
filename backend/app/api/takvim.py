@@ -133,7 +133,7 @@ def kisisel_sil(etkinlik_id: int, db: Session = Depends(get_db), o: Ogrenci = De
     n = db.execute(text("DELETE FROM takvim_etkinlikleri WHERE id = :i AND ogrenci_id = :o"), {"i": etkinlik_id, "o": o.id}).rowcount
     db.commit()
     if not n:
-        raise HTTPException(status_code=404, detail="Bulunamadı.")
+        raise HTTPException(status_code=404, detail="Not bulunamadı.")
 
 
 # ============================================================================= yönetim

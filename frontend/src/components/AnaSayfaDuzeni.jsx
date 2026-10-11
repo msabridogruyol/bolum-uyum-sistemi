@@ -3,6 +3,7 @@ import { NavLink, Outlet, Navigate, useLocation, useNavigate } from 'react-route
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
 import TemaAnahtari from './TemaAnahtari'
+import SozlukKatmani from './SozlukKatmani'   // [2026-10-11] zor kelimeye dokununca anlamı
 import TanitimPenceresi from './TanitimPenceresi'
 import Maskot from './Maskot'
 import OkulRozeti from './OkulRozeti'
@@ -237,6 +238,9 @@ export default function AnaSayfaDuzeni() {
           </NavLink>
         )}
         <div style={{ flex: 1 }} />
+        <NavLink to="/sozluk" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          📖 Sözlük
+        </NavLink>
         <NavLink to="/hakkinda" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           ℹ️ Sistem Hakkında
         </NavLink>
@@ -260,6 +264,7 @@ export default function AnaSayfaDuzeni() {
       {!sifreGerekli && !kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
       {!kvkkGerekli && !tanitimAcik && profil && acik('filiz') && <FilizSohbet />}
       {acik('kocluk') && <SimulasyonKatmani />}
+      <SozlukKatmani />
     </div>
   )
 }
