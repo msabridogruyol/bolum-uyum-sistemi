@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useModuller } from '../yardimci/moduller'
+import RaporGrafikleri from '../components/RaporGrafikleri'
 
 const RAPORLAR = [
   { tur: 'ogrenci', bicim: 'pdf', ikon: '📘', ad: 'Benim raporum', aciklama: 'Güçlü yönlerin, sana uyan bölümler, hedef bölümün ve yol haritan. Kendin okuyabilir ya da rehber öğretmeninle konuşurken kullanabilirsin.' },
@@ -57,6 +58,7 @@ export default function RaporlarimSayfasi() {
           <div className="yp-ince" style={{ marginTop: 14, lineHeight: 1.6 }}>
             Rapor, indirdiğin andaki sonuçlarını gösterir. İçinde kişisel bilgilerin var. Bu yüzden yalnızca velinle ve rehber öğretmeninle paylaş.
           </div>
+          <RaporGrafikleri netAcik={acik('net_takibi')} />
         </>
       )}
     </div>

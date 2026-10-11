@@ -160,9 +160,7 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🌟 Bölümler
         </NavLink>
-        <NavLink to="/karsilastir" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          ⚖️ Karşılaştır
-        </NavLink>
+        {/* [2026-10-11] "Karşılaştır" menüden kaldırıldı: Bölümler sayfasındaki "Karşılaştır" sekmesinde (/bolumler/karsilastir) */}
         {acik('is_hayati') && (
           <NavLink to="/is-hayati" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             💼 İş Hayatı

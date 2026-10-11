@@ -1520,7 +1520,7 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .olcum-bitti-sayilar b{font-size:36px}
 .olcum-not{font-size:11.5px;color:var(--tx3)}
 
-/* [2026-10-10] Ana sayfa "Bugün" paneli + rozetler */
+/* [2026-10-10] Ana sayfa "Bugün" paneli */
 .bugun-panel{display:grid;grid-template-columns:minmax(0,1.7fr) minmax(0,1fr);gap:16px;margin-bottom:20px}
 .bugun-panel.tek{grid-template-columns:1fr}
 @media(max-width:900px){.bugun-panel{grid-template-columns:1fr}}
@@ -1541,15 +1541,6 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .yks-alt{font-size:12px;color:var(--tx3);font-weight:600}
 .yks-alt em{font-style:normal;color:var(--am)}
 .yks-mesaj{font-size:13px;line-height:1.5;color:var(--tx);margin-top:8px;padding-top:10px;border-top:1px dashed var(--bor);font-weight:600}
-.rozet-sayi{font-size:12px;color:var(--tx3);font-weight:700;text-transform:none;letter-spacing:0}
-.rozet-izgara{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px;margin-top:6px}
-.rozet{border-radius:14px;padding:10px 8px;background:var(--sur2);display:grid;justify-items:center;text-align:center;gap:3px;opacity:.75}
-.rozet .rozet-ikon{font-size:22px;filter:grayscale(1);opacity:.55}
-.rozet .rozet-ad{font-size:11.5px;font-weight:700;color:var(--tx2)}
-.rozet .rozet-ipucu{font-size:10px;color:var(--tx3);line-height:1.3}
-.rozet.kazanildi{opacity:1;background:var(--grl)}
-.rozet.kazanildi .rozet-ikon{filter:none;opacity:1}
-.rozet.kazanildi .rozet-ad{color:var(--tx)}
 
 /* [2026-10-10] Değerlendirme: yolculuk şeridi, bitiş ekranı, mola */
 .yolculuk{padding:18px 20px}
@@ -1826,6 +1817,22 @@ button.yp-kpi{text-align:left;cursor:pointer;font-family:var(--fn);color:var(--t
 @media (max-width:640px){.gf-form{grid-template-columns:1fr}}
 
 /* [2026-10-10] Raporlarım */
+.rg-izgara{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px}
+.rg-yigin{display:flex;gap:2px;height:22px;border-radius:8px;overflow:hidden;background:var(--sur2);margin:4px 0 14px}
+.rg-yigin span{display:block;height:100%}
+.rg-lejant{display:flex;flex-direction:column;gap:9px}
+.rg-lejant.yatay{flex-direction:row;flex-wrap:wrap;gap:6px 16px;margin-bottom:6px}
+.rg-lejant-satir{display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--tx2)}
+.rg-lejant-satir b{color:var(--tx);font-size:13px}
+.rg-lejant-ad{flex:1}
+.rg-lejant.yatay .rg-lejant-ad{flex:none;font-weight:700}
+.rg-nokta{width:10px;height:10px;border-radius:3px;flex:none}
+.rg-yuzde{font-size:11.5px;color:var(--tx3);min-width:34px;text-align:right}
+.rg-cizgi{width:100%;height:auto;display:block;overflow:visible}
+.rg-eksen-cizgi{stroke:var(--bor);stroke-dasharray:3 3}
+@media(min-width:900px){.rg-izgara.dort{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.rg-izgara.dort .rg-cizgi{max-height:220px}
+.rg-eksen{font-size:9px;fill:var(--tx3)}
 .rp-izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px;margin-bottom:14px}
 .rp-kart{margin:0;display:flex;flex-direction:column;gap:8px;align-items:flex-start}
 .rp-ikon{font-size:30px}

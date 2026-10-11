@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-[2026-10-10] Motivasyon: YKS geri sayımı, haftalık kısa motivasyon mesajı ve rozetler (11-12. sınıf öğrencisine göre).
+[2026-10-10] Motivasyon: YKS geri sayımı, haftalık kısa motivasyon mesajı (rozetler 2026-10-11'de kaldırıldı) (11-12. sınıf öğrencisine göre).
 
 - YKS tarihi: Genel Takvim'de (süper admin) "sınav" türünde, başlığında YKS/TYT geçen kayıt varsa o kullanılır (resmî).
   Yoksa Haziran'ın 3. cumartesisi TAHMİNİ tarih olarak gösterilir ve öğrenciye "tahmini" diye belirtilir.
@@ -119,49 +119,7 @@ def haftalik_mesaj(yks: dict | None, bugun: date | None = None) -> str:
     return liste[bugun.isocalendar()[1] % len(liste)]
 
 
-# ----------------------------------------------------------------------------- rozetler
-def _say(db: Session, sql: str, **p) -> int:
-    try:
-        return int(db.execute(text(sql), p).scalar() or 0)
-    except Exception:
-        db.rollback()
-        return 0
-
-
-def rozetler(db: Session, o: Ogrenci) -> list[dict]:
-    oid = o.id
-    test = _say(db, "SELECT count(*) FROM ogrenci_degerlendirme_turu WHERE ogrenci_id = :o AND durum = 'tamamlandi'", o=oid)
-    hedef = _say(db, "SELECT count(*) FROM ogrenci_hedef_bolum WHERE ogrenci_id = :o", o=oid)
-    adim = _say(db, "SELECT count(*) FROM ogrenci_gelisim_adim_durumu WHERE ogrenci_id = :o AND durum = 'tamamlandi'", o=oid)
-    ogrendim = _say(db, "SELECT count(*) FROM ogrenci_gelisim_adim_durumu WHERE ogrenci_id = :o AND coalesce(ne_ogrendim,'') <> ''", o=oid)
-    kesif = _say(db, "SELECT count(*) FROM ogrenci_haftalik_gorev WHERE ogrenci_id = :o AND tur = 'kesif' AND durum = 'tamamlandi'", o=oid)
-    gorev_hafta = _say(db, "SELECT count(DISTINCT hafta_baslangic) FROM ogrenci_haftalik_gorev WHERE ogrenci_id = :o "
-                           "AND durum = 'tamamlandi' AND hafta_baslangic >= :b", o=oid, b=date.today() - timedelta(weeks=4))
-    kitap = _say(db, "SELECT count(*) FROM ogrenci_kutuphane WHERE ogrenci_id = :o AND kategori = 'kitap' AND durum = 'bitti'", o=oid)
-    artis = _say(db, "SELECT count(*) FROM ogrenci_alan_olcumleri a JOIN degiskenler d ON d.id = a.degisken_id WHERE a.ogrenci_id = :o "
-                     "AND (CASE WHEN d.ters_yonlu THEN a.onceki_puan - a.yeni_puan ELSE a.yeni_puan - a.onceki_puan END) >= 5", o=oid)
-    tanim = [
-        ("🧭", "Yolu çizdin", "Değerlendirmeni tamamladın.", test >= 1, "Değerlendirmeni bitir."),
-        ("🎯", "Hedef koydun", "Bir hedef bölüm seçtin.", hedef >= 1, "Önerilerinden birini hedef seç."),
-        ("👣", "İlk adım", "Yol haritandan ilk adımı attın.", adim >= 1, "Koçluğum'daki ilk adımı tamamla."),
-        ("🔥", "Ritim tuttun", "Son 4 haftanın 3'ünde görev tamamladın.", gorev_hafta >= 3, "3 hafta görev tamamla."),
-        ("🔍", "Kâşif", "5 farklı bölümü keşfettin.", kesif >= 5, f"{max(0, 5 - kesif)} bölüm daha keşfet."),
-        ("📖", "Kitap kurdu", "3 kitap bitirdin.", kitap >= 3, f"{max(0, 3 - kitap)} kitap daha bitir ve Kütüphanem'e ekle."),
-        ("💡", "Kendini tanıyan", "3 adımda ne öğrendiğini yazdın.", ogrendim >= 3, "Adımları bitirirken 'ne öğrendim' alanını doldur."),
-        ("📈", "Gelişim kanıtı", "Bir tekrar ölçümünde gelişim gösterdin.", artis >= 1, "3 adımı bitirince açılan ölçümü yap."),
-        ("🏅", "10 adım", "10 koçluk adımı tamamladın.", adim >= 10, f"{max(0, 10 - adim)} adım daha."),
-    ]
-    # [2026-10-10] Paket: bağlı modülü okulda kapalı olan rozet (kazanılmadıysa) gösterilmez — kazanılamayacak hedef vermeyelim
-    from app.core.paketler import okul_modulleri
-    acik = set(okul_modulleri(db, o.okul_id))
-    modul = {"İlk adım": "kocluk", "Ritim tuttun": "kocluk", "Kendini tanıyan": "kocluk", "Gelişim kanıtı": "kocluk",
-             "10 adım": "kocluk", "Kitap kurdu": "kutuphane"}
-    return [{"ikon": i, "ad": a, "aciklama": ac, "kazanildi": k, "ipucu": None if k else ip} for i, a, ac, k, ip in tanim
-            if k or modul.get(a) is None or modul[a] in acik]
-
-
 @router.get("/motivasyon")
 def motivasyon(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     yks = yks_bilgisi(db, o.sinif)
-    r = rozetler(db, o)
-    return {"yks": yks, "mesaj": haftalik_mesaj(yks), "rozetler": r, "kazanilan": sum(1 for x in r if x["kazanildi"])}
+    return {"yks": yks, "mesaj": haftalik_mesaj(yks)}

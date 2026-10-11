@@ -354,7 +354,7 @@ app.include_router(rehberlik_router, dependencies=[_Dep(okul_modulu("rehberlik")
 app.include_router(paket_router)                             # [2026-10-10] paketler (süper admin)
 app.include_router(paket_ogrenci_router)
 app.include_router(net_takibi_router, dependencies=[_Dep(ogrenci_modulu("net_takibi"))])                       # [2026-10-10] deneme, konu takibi, hedef net kıyası
-app.include_router(motivasyon_router)                       # [2026-10-10] YKS geri sayımı, mesaj, rozetler
+app.include_router(motivasyon_router)                       # [2026-10-10] YKS geri sayımı, mesaj
 app.include_router(akran_router, dependencies=[_Dep(okul_modulu("akran"))])                            # [2026-10-10] akran benzerliği, şube dağılımı, aday öğrenci
 app.include_router(test_hesaplari_router)                    # [2026-10-10] /yonetim/test-hesaplari (süper admin)
 app.include_router(anket_psikometri_router)                  # [2026-10-10] /yonetim/anket-psikometri (süper admin)

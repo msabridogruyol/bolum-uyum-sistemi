@@ -29,7 +29,7 @@ function KatmanSutunlari({ veriler }) {
   )
 }
 
-function YatayCubuklar({ satirlar, renk }) {
+export function YatayCubuklar({ satirlar, renk }) {
   return (
     <div className="gr-yatay">
       {satirlar.map((s, i) => (

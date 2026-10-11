@@ -3,7 +3,7 @@
 [2026-10-10] Paketler ve modüller.
 
 - Çekirdek (her pakette): değerlendirme, sonuçlar ve bölüm önerileri, Bölümler / Listem, profil, hedef bölüm seçimi,
-  okul paneli (öğrenciler, sınıflar, okul ayarları), temel raporlar, YKS sayacı ve rozetler.
+  okul paneli (öğrenciler, sınıflar, okul ayarları), temel raporlar, YKS sayacı.
 - Modüller paketlere göre açılır; okul için ayrıca tek tek eklenip çıkarılabilir:
   etkin = paketin modülleri ∪ modul_ekle − modul_cikar.
 - Okul harici öğrenciler (okul_id yok) tüm modülleri görür.

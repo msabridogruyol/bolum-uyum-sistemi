@@ -64,7 +64,17 @@ function jwtCoz(token) {
   }
 }
 
-async function istek(yol, secenekler = {}, kapsam = 'ogrenci') {
+// [2026-10-11] Sunucunun önündeki ağ katmanı (Render/Cloudflare) bazen isteği uygulamaya ulaştırmadan
+// "Just a moment..." doğrulama sayfası (HTML) ya da "servis hazırlanıyor" sayfası döndürür. Bu yanıtlar JSON değildir.
+// Cloudflare doğrulama sayfası isteğin sunucuya HİÇ ulaşmadığını gösterir → her yöntem için güvenle tekrar denenir;
+// diğer HTML sayfaları yalnızca GET'te tekrar denenir. Kullanıcıya ham HTML yerine anlaşılır bir mesaj gösterilir.
+const GECICI_MESAJ = 'Sunucuya şu anda ulaşılamadı. Birkaç saniye sonra sayfayı yenileyip tekrar dene.'
+const TEKRAR_BEKLE = [1200, 3000]
+const htmlMi = (metin) => typeof metin === 'string' && /^\s*(<!doctype html|<html)/i.test(metin)
+const cfDogrulamaMi = (yanit, metin) => yanit.headers.get('cf-mitigated') === 'challenge' || (typeof metin === 'string' && metin.includes('_cf_chl_opt'))
+const bekle = (ms) => new Promise((r) => setTimeout(r, ms))
+
+async function istek(yol, secenekler = {}, kapsam = 'ogrenci', deneme = 0) {
   const token = tokenAl(kapsam)
   const headers = { 'Content-Type': 'application/json', ...secenekler.headers }
   if (token) headers['Authorization'] = `Bearer ${token}`
@@ -83,8 +93,20 @@ async function istek(yol, secenekler = {}, kapsam = 'ogrenci') {
     }
   }
 
+  if (htmlMi(govde)) {
+    const yontem = (secenekler.method || 'GET').toUpperCase()
+    if (deneme < TEKRAR_BEKLE.length && (yontem === 'GET' || cfDogrulamaMi(yanit, govde))) {
+      await bekle(TEKRAR_BEKLE[deneme])
+      return istek(yol, secenekler, kapsam, deneme + 1)
+    }
+    const hata = new ApiHatasi(yanit.ok ? 503 : yanit.status, GECICI_MESAJ)
+    hata.gecici = true
+    throw hata
+  }
+
   if (!yanit.ok) {
-    const detay = govde && typeof govde === 'object' ? govde.detail : govde
+    let detay = govde && typeof govde === 'object' ? govde.detail : govde
+    if (typeof detay === 'string' && detay.length > 400) detay = GECICI_MESAJ   // beklenmeyen uzun düz metin (proxy sayfası vb.)
     if (yanit.status === 423) sistemKapaliIsle(detay, !!token)
     throw new ApiHatasi(yanit.status, detay)
   }
@@ -97,7 +119,7 @@ async function dosyaIndir(yol, kapsam = 'ogrenci') {
   const yanit = await fetch(`${TABAN_URL}${yol}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
   if (!yanit.ok) {
     let detay = null
-    try { detay = (await yanit.json()).detail } catch { /* gövde JSON değil */ }
+    try { detay = (await yanit.json()).detail } catch { detay = GECICI_MESAJ /* gövde JSON değil (ağ katmanı sayfası) */ }
     if (yanit.status === 423) sistemKapaliIsle(detay, !!token)
     throw new ApiHatasi(yanit.status, detay || 'Rapor hazırlanamadı.')
   }

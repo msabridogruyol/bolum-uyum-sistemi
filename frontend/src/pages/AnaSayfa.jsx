@@ -19,7 +19,7 @@ export default function AnaSayfa() {
   const [k5Durum, setK5Durum] = useState(null)
   const [hedef, setHedef] = useState(null)
   const [plan, setPlan] = useState(null)
-  const [motivasyon, setMotivasyon] = useState(null)   // [2026-10-10] YKS sayacı, haftalık mesaj, rozetler
+  const [motivasyon, setMotivasyon] = useState(null)   // [2026-10-10] YKS sayacı, haftalık mesaj
   const [hata, setHata] = useState(null)
   const navigate = useNavigate()
   const { ac: bolumBilgisiAc } = useBolumBilgi()
