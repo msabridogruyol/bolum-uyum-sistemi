@@ -53,6 +53,9 @@ class Ogrenci(Base):
     # [2026-10-10] Geçici şifre (şifreli; kişi kendi şifresini belirleyince silinir) — rehber tabloda görür
     gecici_sifre_sifreli: Mapped[str | None] = mapped_column(String, nullable=True)
     ogrenci_no: Mapped[str | None] = mapped_column(String, nullable=True)
+    # [2026-10-11] (0064) Çevrim içi: son "buradayım" sinyali ve listede görünmeme tercihi
+    son_gorulme: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    cevrimici_gizli: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default='false', default=False)
 
 
 class AdminKullanici(Base):

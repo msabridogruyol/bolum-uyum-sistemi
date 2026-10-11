@@ -26,6 +26,7 @@ OTOMATIK += ["0060_hata_kayitlari"]   # [2026-10-11] hata kayıtları + hız sı
 OTOMATIK += ["0061_filiz_yonetim_ai"]   # [2026-10-11] Filiz yönetim asistanı: günlük yapay zekâ sayacı
 OTOMATIK += ["0062_performans_indeksleri"]   # [2026-10-11] okul paneli / rehberlik sorguları için tur_id indeksleri
 OTOMATIK += ["0063_okul_erisim"]   # [2026-10-11] okul bazında sistem aç / kapat
+OTOMATIK += ["0064_cevrimici"]   # [2026-10-11] çevrim içi öğrenciler (son görülme + gizlilik)
 KILIT = 2026101001
 
 

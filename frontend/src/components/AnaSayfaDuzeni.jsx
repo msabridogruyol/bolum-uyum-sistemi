@@ -3,7 +3,8 @@ import { NavLink, Outlet, Navigate, useLocation, useNavigate } from 'react-route
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
 import TemaAnahtari from './TemaAnahtari'
-import SozlukKatmani from './SozlukKatmani'   // [2026-10-11] zor kelimeye dokununca anlamı
+import SozlukKatmani from './SozlukKatmani'
+import CevrimiciPanel from './CevrimiciPanel'   // [2026-10-11] sağ altta çevrim içi öğrenciler   // [2026-10-11] zor kelimeye dokununca anlamı
 import TanitimPenceresi from './TanitimPenceresi'
 import Maskot from './Maskot'
 import OkulRozeti from './OkulRozeti'
@@ -265,6 +266,7 @@ export default function AnaSayfaDuzeni() {
       {!kvkkGerekli && !tanitimAcik && profil && acik('filiz') && <FilizSohbet />}
       {acik('kocluk') && <SimulasyonKatmani />}
       <SozlukKatmani />
+      {profil && !kvkkGerekli && <CevrimiciPanel kapsam="ogrenci" />}
     </div>
   )
 }

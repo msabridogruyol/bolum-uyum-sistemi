@@ -10,6 +10,7 @@ import BildirimZili from './BildirimZili'
 import { MobilUstCubuk, useMobilMenu } from './MobilMenu'
 import MaskotYonetim from './MaskotYonetim'
 import FilizYonetimSohbet from './FilizYonetimSohbet'
+import CevrimiciPanel from './CevrimiciPanel'   // [2026-10-11] sağ altta çevrim içi öğrenciler
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
@@ -160,6 +161,10 @@ export default function AdminSayfaDuzeni() {
       </div>
 
       {filizVar && <FilizYonetimSohbet rol={rol} okulId={ben.okul_id} moduller={ben.moduller} />}
+      {/* [2026-10-11] Çevrim içi öğrenciler: yetkili kendi okulunu; süper admin açık okul panelini ya da okul başına sayıları görür */}
+      {ben && !ben.sifre_degistirmeli && (
+        <CevrimiciPanel kapsam="yonetim" okulId={okulYetkilisi ? ben.okul_id : (Number(/^\/admin\/okul\/(\d+)/.exec(konum.pathname)?.[1]) || null)} />
+      )}
       {ben?.sifre_degistirmeli && (
         <IlkSifrePenceresi rolMetni="yönetim hesabı" kaydet={(s) => api.yonetimIlkSifre(s)} onTamam={benYenile} onCikis={cikisYap} />
       )}
