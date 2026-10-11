@@ -1,4 +1,5 @@
-import { lazy, Suspense } from 'react'
+import { Suspense } from 'react'
+import { tembel } from './yardimci/tembelYukle'   // [2026-10-11] eski sürüm parçası yüklenemezse sayfayı yeniler
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext'
@@ -9,61 +10,61 @@ import GirisSayfasi from './pages/GirisSayfasi'
 
 // [2026-10-09] Sayfalar ihtiyaç anında yüklenir (code splitting): öğrenci yönetim panelinin kodunu, yönetici
 // öğrencinin sınav ekranlarını indirmez; ilk açılıştaki dosya boyutu küçülür. Giriş sayfası ilk ekran olduğu için hemen yüklenir.
-const SifremiUnuttumSayfasi = lazy(() => import('./pages/SifremiUnuttumSayfasi'))
-const SifreSifirlaSayfasi = lazy(() => import('./pages/SifreSifirlaSayfasi'))
-const KatmanlarSayfasi = lazy(() => import('./pages/KatmanlarSayfasi'))
-const SoruSayfasi = lazy(() => import('./pages/SoruSayfasi'))
-const ProfilimSayfasi = lazy(() => import('./pages/ProfilimSayfasi'))
-const BolumlerimSayfasi = lazy(() => import('./pages/BolumlerimSayfasi'))
-const KoclukSayfasi = lazy(() => import('./pages/KoclukSayfasi'))
-const KoclarSayfasi = lazy(() => import('./pages/KoclarSayfasi'))
-const KuluplerimSayfasi = lazy(() => import('./pages/KuluplerimSayfasi'))
-const TercihSayfasi = lazy(() => import('./pages/TercihSayfasi'))
-const AnketlerSayfasi = lazy(() => import('./pages/AnketlerSayfasi'))
-const PortfolyoSayfasi = lazy(() => import('./pages/PortfolyoSayfasi'))
-const CalismaSayfasi = lazy(() => import('./pages/CalismaSayfasi'))
-const RaporlarimSayfasi = lazy(() => import('./pages/RaporlarimSayfasi'))
-const GorevlerimSayfasi = lazy(() => import('./pages/GorevlerimSayfasi'))
-const TakvimSayfasi = lazy(() => import('./pages/TakvimSayfasi'))
-const KutuphanemSayfasi = lazy(() => import('./pages/KutuphanemSayfasi'))
-const NetTakibiSayfasi = lazy(() => import('./pages/NetTakibiSayfasi'))
-const SistemHakkindaOgrenci = lazy(() => import('./pages/SistemHakkindaOgrenci'))
-const SozlukSayfasi = lazy(() => import('./pages/SozlukSayfasi'))   // [2026-10-11]
-const SssSayfasi = lazy(() => import('./pages/admin/SssSayfasi'))
-const KaynakcaSayfasi = lazy(() => import('./pages/admin/KaynakcaSayfasi'))
-const ProfilAyarlariSayfasi = lazy(() => import('./pages/ProfilAyarlariSayfasi'))
-const AnaSayfa = lazy(() => import('./pages/AnaSayfa'))
-const AdminGirisSayfasi = lazy(() => import('./pages/admin/AdminGirisSayfasi'))
-const KontrolPaneliSayfasi = lazy(() => import('./pages/admin/KontrolPaneliSayfasi'))
-const HataKayitlariSayfasi = lazy(() => import('./pages/admin/HataKayitlariSayfasi'))   // [2026-10-11]
-const PipelineDurumuSayfasi = lazy(() => import('./pages/admin/PipelineDurumuSayfasi'))
-const BolumlerSayfasi = lazy(() => import('./pages/admin/BolumlerSayfasi'))
-const DallarSayfasi = lazy(() => import('./pages/admin/DallarSayfasi'))
-const SorularSayfasi = lazy(() => import('./pages/admin/SorularSayfasi'))
-const ParametrelerSayfasi = lazy(() => import('./pages/admin/ParametrelerSayfasi'))
-const AuditLogSayfasi = lazy(() => import('./pages/admin/AuditLogSayfasi'))
-const YoneticilerSayfasi = lazy(() => import('./pages/admin/YoneticilerSayfasi'))
-const SistemHakkindaSayfasi = lazy(() => import('./pages/admin/SistemHakkindaSayfasi'))
-const SoruGecerlilikSayfasi = lazy(() => import('./pages/admin/SoruGecerlilikSayfasi'))
-const GuvenlikSayfasi = lazy(() => import('./pages/admin/GuvenlikSayfasi'))
-const GelisimKaynakSayfasi = lazy(() => import('./pages/admin/GelisimKaynakSayfasi'))
-const OkullarSayfasi = lazy(() => import('./pages/admin/OkullarSayfasi'))
-const OkulPaneliSayfasi = lazy(() => import('./pages/admin/OkulPaneliSayfasi'))
-const KonuListesiSayfasi = lazy(() => import('./pages/admin/KonuListesiSayfasi'))
-const PaketlerSayfasi = lazy(() => import('./pages/admin/PaketlerSayfasi'))
-const KarsilastirmaSayfasi = lazy(() => import('./pages/admin/KarsilastirmaSayfasi'))
-const MeslekDiliSayfasi = lazy(() => import('./pages/admin/MeslekDiliSayfasi'))
-const TestHesaplariSayfasi = lazy(() => import('./pages/admin/TestHesaplariSayfasi'))
-const KocYonetimSayfasi = lazy(() => import('./pages/admin/KocYonetimSayfasi'))
-const YokatlasEslesmeSayfasi = lazy(() => import('./pages/admin/YokatlasEslesmeSayfasi'))
-const GenelTakvimSayfasi = lazy(() => import('./pages/admin/GenelTakvimSayfasi'))
-const AnketPsikometriSayfasi = lazy(() => import('./pages/admin/AnketPsikometriSayfasi'))
-const IstatistiklerSayfasi = lazy(() => import('./pages/admin/IstatistiklerSayfasi'))   // [2026-10-10]
-const RaporMerkeziSayfasi = lazy(() => import('./pages/admin/RaporMerkeziSayfasi'))     // [2026-10-10]
-const TestGirisSayfasi = lazy(() => import('./pages/TestGirisSayfasi'))
-const IsHayatiSayfasi = lazy(() => import('./pages/IsHayatiSayfasi'))                         // [2026-10-10] İş Hayatı
-const OgrenciKarsilastirmaSayfasi = lazy(() => import('./pages/KarsilastirmaSayfasi'))     // [2026-10-11] bölüm karşılaştırma (öğrenci)
-const IsHayatiVerileriSayfasi = lazy(() => import('./pages/admin/IsHayatiVerileriSayfasi'))   // [2026-10-10]
+const SifremiUnuttumSayfasi = tembel(() => import('./pages/SifremiUnuttumSayfasi'))
+const SifreSifirlaSayfasi = tembel(() => import('./pages/SifreSifirlaSayfasi'))
+const KatmanlarSayfasi = tembel(() => import('./pages/KatmanlarSayfasi'))
+const SoruSayfasi = tembel(() => import('./pages/SoruSayfasi'))
+const ProfilimSayfasi = tembel(() => import('./pages/ProfilimSayfasi'))
+const BolumlerimSayfasi = tembel(() => import('./pages/BolumlerimSayfasi'))
+const KoclukSayfasi = tembel(() => import('./pages/KoclukSayfasi'))
+const KoclarSayfasi = tembel(() => import('./pages/KoclarSayfasi'))
+const KuluplerimSayfasi = tembel(() => import('./pages/KuluplerimSayfasi'))
+const TercihSayfasi = tembel(() => import('./pages/TercihSayfasi'))
+const AnketlerSayfasi = tembel(() => import('./pages/AnketlerSayfasi'))
+const PortfolyoSayfasi = tembel(() => import('./pages/PortfolyoSayfasi'))
+const CalismaSayfasi = tembel(() => import('./pages/CalismaSayfasi'))
+const RaporlarimSayfasi = tembel(() => import('./pages/RaporlarimSayfasi'))
+const GorevlerimSayfasi = tembel(() => import('./pages/GorevlerimSayfasi'))
+const TakvimSayfasi = tembel(() => import('./pages/TakvimSayfasi'))
+const KutuphanemSayfasi = tembel(() => import('./pages/KutuphanemSayfasi'))
+const NetTakibiSayfasi = tembel(() => import('./pages/NetTakibiSayfasi'))
+const SistemHakkindaOgrenci = tembel(() => import('./pages/SistemHakkindaOgrenci'))
+const SozlukSayfasi = tembel(() => import('./pages/SozlukSayfasi'))   // [2026-10-11]
+const SssSayfasi = tembel(() => import('./pages/admin/SssSayfasi'))
+const KaynakcaSayfasi = tembel(() => import('./pages/admin/KaynakcaSayfasi'))
+const ProfilAyarlariSayfasi = tembel(() => import('./pages/ProfilAyarlariSayfasi'))
+const AnaSayfa = tembel(() => import('./pages/AnaSayfa'))
+const AdminGirisSayfasi = tembel(() => import('./pages/admin/AdminGirisSayfasi'))
+const KontrolPaneliSayfasi = tembel(() => import('./pages/admin/KontrolPaneliSayfasi'))
+const HataKayitlariSayfasi = tembel(() => import('./pages/admin/HataKayitlariSayfasi'))   // [2026-10-11]
+const PipelineDurumuSayfasi = tembel(() => import('./pages/admin/PipelineDurumuSayfasi'))
+const BolumlerSayfasi = tembel(() => import('./pages/admin/BolumlerSayfasi'))
+const DallarSayfasi = tembel(() => import('./pages/admin/DallarSayfasi'))
+const SorularSayfasi = tembel(() => import('./pages/admin/SorularSayfasi'))
+const ParametrelerSayfasi = tembel(() => import('./pages/admin/ParametrelerSayfasi'))
+const AuditLogSayfasi = tembel(() => import('./pages/admin/AuditLogSayfasi'))
+const YoneticilerSayfasi = tembel(() => import('./pages/admin/YoneticilerSayfasi'))
+const SistemHakkindaSayfasi = tembel(() => import('./pages/admin/SistemHakkindaSayfasi'))
+const SoruGecerlilikSayfasi = tembel(() => import('./pages/admin/SoruGecerlilikSayfasi'))
+const GuvenlikSayfasi = tembel(() => import('./pages/admin/GuvenlikSayfasi'))
+const GelisimKaynakSayfasi = tembel(() => import('./pages/admin/GelisimKaynakSayfasi'))
+const OkullarSayfasi = tembel(() => import('./pages/admin/OkullarSayfasi'))
+const OkulPaneliSayfasi = tembel(() => import('./pages/admin/OkulPaneliSayfasi'))
+const KonuListesiSayfasi = tembel(() => import('./pages/admin/KonuListesiSayfasi'))
+const PaketlerSayfasi = tembel(() => import('./pages/admin/PaketlerSayfasi'))
+const KarsilastirmaSayfasi = tembel(() => import('./pages/admin/KarsilastirmaSayfasi'))
+const MeslekDiliSayfasi = tembel(() => import('./pages/admin/MeslekDiliSayfasi'))
+const TestHesaplariSayfasi = tembel(() => import('./pages/admin/TestHesaplariSayfasi'))
+const KocYonetimSayfasi = tembel(() => import('./pages/admin/KocYonetimSayfasi'))
+const YokatlasEslesmeSayfasi = tembel(() => import('./pages/admin/YokatlasEslesmeSayfasi'))
+const GenelTakvimSayfasi = tembel(() => import('./pages/admin/GenelTakvimSayfasi'))
+const AnketPsikometriSayfasi = tembel(() => import('./pages/admin/AnketPsikometriSayfasi'))
+const IstatistiklerSayfasi = tembel(() => import('./pages/admin/IstatistiklerSayfasi'))   // [2026-10-10]
+const RaporMerkeziSayfasi = tembel(() => import('./pages/admin/RaporMerkeziSayfasi'))     // [2026-10-10]
+const TestGirisSayfasi = tembel(() => import('./pages/TestGirisSayfasi'))
+const IsHayatiSayfasi = tembel(() => import('./pages/IsHayatiSayfasi'))                         // [2026-10-10] İş Hayatı
+const OgrenciKarsilastirmaSayfasi = tembel(() => import('./pages/KarsilastirmaSayfasi'))     // [2026-10-11] bölüm karşılaştırma (öğrenci)
+const IsHayatiVerileriSayfasi = tembel(() => import('./pages/admin/IsHayatiVerileriSayfasi'))   // [2026-10-10]
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
 function EskiKatmanYonlendir() {
