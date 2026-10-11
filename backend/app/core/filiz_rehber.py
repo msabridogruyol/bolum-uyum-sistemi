@@ -522,6 +522,11 @@ KONULAR = [
 
 
 def otomatik_yanit(db: Session, ogrenci: Ogrenci, metin: str) -> str:
+    # [2026-10-11] Hiyerarşi koruması: başka bir öğrenciyi hedefleyen soruya sabit cevap (yapay zekâ moduyla aynı)
+    from app.core.filiz_gizlilik import ogrenci_dizini, ogrenci_hiyerarsi_yaniti
+    ret = ogrenci_hiyerarsi_yaniti(metin, ogrenci_dizini(db, ogrenci), ogrenci.ad_soyad)
+    if ret:
+        return ret
     t = _sade(metin)
     b = Baglam(db, ogrenci)
     if _KAYNAK_SORU.search(metin or ""):

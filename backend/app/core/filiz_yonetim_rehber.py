@@ -1,10 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-[2026-10-11] Filiz — yönetim paneli asistanı (okul yetkilisi ve süper admin). TAMAMEN KURAL TABANLI.
+[2026-10-11] Filiz — yönetim paneli asistanının KURAL TABANLI rehber modu (okul yetkilisi ve süper admin).
 
-KVKK / ürün kararı: bu modül yapay zekâ servisine (ai_koc_servisi, OpenAI vb.) HİÇBİR veri göndermez ve soruları
-kaydetmez. Cevaplar yalnızca (1) aşağıdaki SSS ve sayfa dizini, (2) niyet kalıpları, (3) sayısal panel özeti
-(filiz_ozeti) üzerinden üretilir. Özet ve cevaplarda öğrenci adı YOKTUR — yalnızca sayılar (ekranı başkaları görebilir).
+Bu modül yapay zekâ servisine HİÇBİR veri göndermez ve soruları kaydetmez. Cevaplar yalnızca (1) aşağıdaki SSS ve sayfa
+dizini, (2) niyet kalıpları, (3) sayısal panel özeti (filiz_ozeti) üzerinden üretilir. Özet ve cevaplarda öğrenci adı
+YOKTUR — yalnızca sayılar (ekranı başkaları görebilir). Yapay zekâ modu, kişiye özel soruların yerel cevabı ve maskeleme
+app/core/filiz_yonetim_ai.py'dedir; o modül yapay zekâ kapalıyken / hata verince buradaki yanitla()'ya düşer.
 
 Tek kaynak: okul yetkilisi SSS'i (YONETIM_SSS) burada durur; Sistem Hakkında & SSS sayfası onu GET /yonetim/filiz/sss
 ile okur (frontend'de ikinci kopya yoktur).
@@ -45,7 +46,7 @@ YONETIM_SSS: list[tuple[str, str, str, str | None]] = [
     ('Diğer', 'Eğitim koçları nasıl çalışır?', 'Eğitim koçlarıyla anlaşmayı ve okullara atamayı sistem yöneticisi (Filizyol) yapar; öğrencilerin görüşme taleplerini de o yönetir. Okulunuzda çalışmasını istemediğiniz bir koç olursa sistem yöneticisine bildirmeniz yeterli. Öğrenciler koçların iletişim bilgilerini görmez.', None),
     ('Diğer', 'Takvime ne eklemeliyim?', 'Veli toplantıları, üniversite gezileri, kulüp günleri, deneme sınavları gibi okul etkinliklerini. İsterseniz yalnızca belirli bir sınıf düzeyine gösterebilirsiniz. Sınav ve tercih dönemleri gibi genel tarihler sistem yöneticisi tarafından eklenir.', 'takvim'),
     ('Diğer', 'Okulumuzun rengi ve logosu nasıl değişir?', 'Renk, Okul Paneli → Görünüm sekmesinden seçilir; öğrenci ekranlarında, grafiklerde ve raporlarda kullanılır. Logoyu değiştirmek için sistem yöneticisine başvurun.', 'gorunum'),
-    ('Diğer', 'Filiz panelde ne yapar?', 'Filiz, panelin sağ üstündeki asistandır. Açılışta günün en önemli 1–3 konusunu (ör. görüşme bekleyen yüksek uyarılı öğrenci sayısı, bekleyen kulüp talebi, incelemedeki tercih listesi, yaklaşan takvim etkinliği, yeni anket yanıtları) yalnızca sayılarla söyler ve ilgili sayfaya götürür; Filiz\'e tıklayınca sıradaki konuya geçer. "Bana sor" ile "rapor nereden alırım", "şifre sıfırla", "bugün ne var" gibi sorular sorabilirsiniz; cevaplar bu SSS\'ten ve kural tabanlı eşleştirmeden gelir. Filiz panelde yapay zekâ kullanmaz, öğrenci verisini hiçbir dış servise göndermez, sorularınızı kaydetmez ve balonda öğrenci adı göstermez. Küçültmek için Filiz\'in üzerine gelip "–" düğmesine basın; ses varsayılan olarak kapalıdır. Filiz, okulunuzun paketinde Filiz modülü açıksa görünür.', None),
+    ('Diğer', 'Filiz panelde ne yapar?', 'Filiz, panelin sağ üstündeki asistandır. Açılışta günün en önemli 1–3 konusunu (ör. görüşme bekleyen yüksek uyarılı öğrenci sayısı, bekleyen kulüp talebi, incelemedeki tercih listesi, yaklaşan takvim etkinliği, yeni anket yanıtları) yalnızca sayılarla söyler ve ilgili sayfaya götürür; Filiz\'e tıklayınca sıradaki konuya geçer. "Bana sor" ile "rapor nereden alırım", "şifre sıfırla", "bugün ne var" gibi sorular sorabilirsiniz. Okulunuzun paketinde Filiz yapay zekâ modülü varsa cevapları yapay zekâ asistanı hazırlar (başlıkta "Yapay zekâ asistanı"); yoksa cevaplar bu SSS\'ten ve kural tabanlı eşleştirmeden gelir ("Rehber modu"). Belirli bir öğrenciyi (ad, e-posta, numara) ya da öğrenci listesini sorarsanız soru yapay zekâya gönderilmez: Filiz yalnızca kendi okulunuzun öğrencileri arasında arar, kısa özet ve öğrenci detayına bağlantı verir. Yapay zekâya giden sorularda öğrenci adları, e-posta, telefon, TC kimlik ve öğrenci numaraları önceden gizlenir; sorularınız kaydedilmez, yalnızca günlük soru sayısı tutulur. Balonda öğrenci adı gösterilmez. Küçültmek için Filiz\'in üzerine gelip "–" düğmesine basın; ses varsayılan olarak kapalıdır. Filiz, okulunuzun paketinde Filiz modülü açıksa görünür.', None),
 ]
 
 # Süper admin: Sistem Hakkında sayfasının bölüm dizini (sayfadaki numaralı başlıklar; bağlantı #sh-N bölümü açar)

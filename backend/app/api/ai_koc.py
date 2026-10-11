@@ -158,8 +158,19 @@ def mesaj_gonder(
         db.commit()
         return MesajCevap(asistan_yaniti=KRIZ_YANITI, oturum_kapandi_mi=False)
 
-    # [2026-10-10] Günlük sınır yapay zekâ maliyeti içindir; otomatik rehber modunda uygulanmaz
+    # [2026-10-11] Hiyerarşi koruması (yapay zekâ ve otomatik rehber): başka bir öğrenciyi hedefleyen soru (okuldaki başka
+    # bir öğrencinin adı, "arkadaşımın puanı", "en yüksek net kimde", okul/sınıf ortalaması) modele GİTMEZ; sabit cevap.
+    from app.core.filiz_gizlilik import ogrenci_dizini, ogrenci_hiyerarsi_yaniti, ogrenci_metni_maskele
+    dizin = ogrenci_dizini(db, ogrenci)
     ai = _ai(db, ogrenci)
+    ret = ogrenci_hiyerarsi_yaniti(metin, dizin, ogrenci.ad_soyad)
+    if ret:
+        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
+        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=ret))
+        db.commit()
+        return MesajCevap(asistan_yaniti=ret, oturum_kapandi_mi=False, otomatik=not ai)
+
+    # [2026-10-10] Günlük sınır yapay zekâ maliyeti içindir; otomatik rehber modunda uygulanmaz
     if ai and _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
         raise HTTPException(status_code=429, detail="Bugünlük mesaj hakkın doldu. Yarın yine konuşalım! 🌱")
 
@@ -169,11 +180,12 @@ def mesaj_gonder(
         .order_by(OgrenciKoclukMesaji.olusturulma_zamani, OgrenciKoclukMesaji.id)
         .all()
     )
+    # [2026-10-11] Modele giden metinlerde e-posta / telefon / TC ve okul arkadaşlarının adları maskelenir (kendi adı korunur)
     mesaj_gecmisi = [
-        {"role": "user" if m.rol == "ogrenci" else "assistant", "content": m.icerik}
+        {"role": "user" if m.rol == "ogrenci" else "assistant", "content": ogrenci_metni_maskele(dizin, m.icerik, ogrenci.ad_soyad)}
         for m in onceki_mesajlar
     ]
-    mesaj_gecmisi.append({"role": "user", "content": metin})
+    mesaj_gecmisi.append({"role": "user", "content": ogrenci_metni_maskele(dizin, metin, ogrenci.ad_soyad)})
 
     # [2026-10-10] Filiz geçmişi hatırlasın: son 3 sohbetin özeti (tarihleriyle); öğrenci geçmişten bir sohbeti
     # "devam et" ile açtıysa o sohbet en başta verilir.
@@ -198,7 +210,7 @@ def mesaj_gonder(
     parcalar = [f"({(x.bitis_zamani or x.baslama_zamani).strftime('%d.%m.%Y')}"
                 + (", öğrencinin devam etmek istediği sohbet" if baglam is not None and x.id == baglam.id else "")
                 + f") {x.ozet}" for x in onceki if x.ozet]
-    onceki_ozet = "\n".join(parcalar) or None
+    onceki_ozet = ogrenci_metni_maskele(dizin, "\n".join(parcalar), ogrenci.ad_soyad) or None
 
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, onceki_ozet, istek.sayfa)
 
@@ -211,6 +223,8 @@ def mesaj_gonder(
             yanit = openai_ile_konus(sistem_promptu, mesaj_gecmisi)
         except AsistanKullanilamiyorHatasi as e:
             raise HTTPException(status_code=503, detail=str(e))
+        from app.core.filiz_gizlilik import ad_normalize
+        yanit = dizin.maskele(yanit, haric=ad_normalize(ogrenci.ad_soyad))   # son kontrol: yanıtta başka öğrenci adı olmasın
 
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit))
@@ -243,8 +257,10 @@ def oturumu_bitir(
         .order_by(OgrenciKoclukMesaji.olusturulma_zamani)
         .all()
     )
+    from app.core.filiz_gizlilik import ogrenci_dizini, ogrenci_metni_maskele
+    dizin = ogrenci_dizini(db, ogrenci)
     mesaj_gecmisi = [
-        {"role": "user" if m.rol == "ogrenci" else "assistant", "content": m.icerik}
+        {"role": "user" if m.rol == "ogrenci" else "assistant", "content": ogrenci_metni_maskele(dizin, m.icerik, ogrenci.ad_soyad)}
         for m in mesajlar
     ]
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, None)

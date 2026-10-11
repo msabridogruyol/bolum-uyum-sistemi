@@ -79,15 +79,13 @@ def test_yanit_baglantilari_rol_bazli():
 
 def test_filiz_sss_maddesi_var():
     assert any(s == "Filiz panelde ne yapar?" for _, s, _, _ in R.YONETIM_SSS)
-    assert "yapay zekâ kullanmaz" in R.yanitla(None, OKUL, "Filiz sen kimsin?")["metin"]
+    assert "Rehber modu" in R.yanitla(None, OKUL, "Filiz sen kimsin?")["metin"]
 
 
-def test_yapay_zeka_servisi_kullanilmaz():
-    """KVKK ürün kararı: panel asistanı yapay zekâ servisine veri göndermez."""
-    from app.api import filiz_yonetim
-    for m in (R, filiz_yonetim):
-        kaynak = inspect.getsource(m)
-        assert "ai_koc_servisi" not in kaynak.replace("ai_koc_servisi, OpenAI", "") and "openai" not in kaynak.lower().replace("openai vb.", "")
+def test_rehber_modulu_yapay_zeka_servisi_kullanmaz():
+    """Kural tabanlı rehber yapay zekâ servisine veri göndermez (yapay zekâ modu ayrı modülde: filiz_yonetim_ai)."""
+    kaynak = inspect.getsource(R)
+    assert "ai_koc_servisi" not in kaynak and "openai" not in kaynak.lower()
 
 
 # ----------------------------------------------------------------------------- uç noktalar (PostgreSQL)

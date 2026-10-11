@@ -3,7 +3,7 @@
 
 Kademeler (varsayılanlar; sistem_parametreleri'nden değiştirilebilir, 60 sn'de bir yeniden okunur):
   kimlik       — giriş, 2 adımlı kod, şifre sıfırlama/davet kabul, kayıt, test girişi: IP başına 20/dk ve 150/saat
-  agir         — dosya yükleme / önizleme, toplu yükleme, PDF / Excel üretimi, Filiz AI mesajı: kişi (yoksa IP) başına 20/dk ve 300/saat
+  agir         — dosya yükleme / önizleme, toplu yükleme, PDF / Excel üretimi, Filiz AI mesajı (öğrenci + yönetim): kişi (yoksa IP) başına 20/dk ve 300/saat
   istemci_hata — POST /istemci-hata (kimliksiz): IP başına 10/dk ve 60/saat
   genel        — diğer tüm API: kişi (yoksa IP) başına 300/dk
   muaf         — OPTIONS, /saglik, /docs, /openapi.json, /redoc, /favicon.ico
@@ -58,6 +58,7 @@ _AGIR = [                                                                       
     re.compile(r"^/admin/(sorular/toplu|pipeline/yukle|kutup-sorulari/toplu|meslekler/toplu-yukle|"
                r"bolumler/toplu-aciklama|soru-gecerlilik/yukle)/?$"),
     re.compile(r"^/koclugu/asistan/oturum/[^/]+/mesaj/?$"),                             # Filiz AI (dış API maliyeti)
+    re.compile(r"^/yonetim/filiz/sor/?$"),                                              # [2026-10-11] Filiz yönetim asistanı (AI modu)
 ]
 
 

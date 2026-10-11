@@ -80,6 +80,12 @@ def maskele(metin: str) -> str:
     return metin
 
 
+def _ad_maskele(db: Session, o: Ogrenci, metin: str) -> str:
+    """[2026-10-11] Okul arkadaşlarının adları da modele gitmesin (kendi adı korunur)."""
+    from app.core.filiz_gizlilik import ad_normalize, ogrenci_dizini
+    return ogrenci_dizini(db, o).maskele(metin, haric=ad_normalize(o.ad_soyad))
+
+
 def mulakat_istemi(soru: dict, kategori_adi: str) -> str:
     star = "Bu davranışsal bir sorudur: cevapta STAR öğelerinin (Durum, Görev, Eylem, Sonuç) hangilerinin net olduğunu, hangilerinin eksik kaldığını söyle." \
         if soru.get("kategori") == "davranissal" or soru.get("star") else \
@@ -167,7 +173,7 @@ def geri_bildirim(pratik_id: int, db: Session = Depends(get_db), o: Ogrenci = De
     kat_adlari = {k["kod"]: k["ad"] for k in ihp.veri(DOSYA).get("kategoriler") or []}
     kat_adi = kat_adlari.get(soru.get("kategori"), "Alanına özgü soru")
     try:
-        yanit = openai_ile_konus(mulakat_istemi(soru, kat_adi), [{"role": "user", "content": "Öğrencinin cevabı:\n\"\"\"\n" + maskele(p.cevap) + "\n\"\"\""}])
+        yanit = openai_ile_konus(mulakat_istemi(soru, kat_adi), [{"role": "user", "content": "Öğrencinin cevabı:\n\"\"\"\n" + _ad_maskele(db, o, maskele(p.cevap)) + "\n\"\"\""}])
     except AsistanKullanilamiyorHatasi as e:
         raise HTTPException(503, str(e))
     yanit = (yanit or "").strip()

@@ -593,7 +593,7 @@ export const api = {
   sistemDikkat: () => aget('/yonetim/istatistik/dikkat'),
   // [2026-10-11] Filiz yönetim paneli asistanı (kural tabanlı; yapay zekâ yok)
   filizYonetimOzet: () => aget('/yonetim/filiz/ozet'),
-  filizYonetimSor: (metin) => apost('/yonetim/filiz/sor', { metin }),
+  filizYonetimSor: (metin, gecmis = []) => apost('/yonetim/filiz/sor', { metin, gecmis }),
   filizYonetimSss: () => aget('/yonetim/filiz/sss'),
   auditLogExcel: (gun = 90) => dosyaIndir(`/yonetim/audit-log/excel?gun=${gun}`, 'admin'),
 }

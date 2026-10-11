@@ -5,8 +5,9 @@ import { okulBolumleri } from './yonetim/okulBolumleri'
 import { FILIZ_CSS, FilizAcDugmesi, FilizCerceve, durumYayinla } from './FilizSohbet'
 
 // [2026-10-11] Filiz — yönetim paneli asistanı sohbeti ("Bana sor"). Öğrenci sohbetinin görsel parçalarını kullanır.
-// KURAL TABANLI: POST /yonetim/filiz/sor (SSS + niyet bağlantıları + "bugün ne var" özeti). Yapay zekâ servisine hiçbir
-// veri gitmez, sorular sunucuda kaydedilmez; sohbet yalnızca bu sekmede (bellekte) durur.
+// POST /yonetim/filiz/sor → { mod: 'ai' | 'rehber', ... }. Yapay zekâ modu (okulda 'filiz_ai' + anahtar) yoksa ya da hata
+// verirse kural tabanlı rehber cevap verir. Belirli öğrenci / öğrenci listesi soruları sunucuda YEREL cevaplanır (yapay
+// zekâya gitmez). Sohbet yalnızca bu sekmede (bellekte) durur; son birkaç mesaj bağlam için gönderilir, sunucuda saklanmaz.
 // Açma: maskottaki "💬 Bana sor" (masaüstü), sağ alttaki "Filiz'e sor" (telefon) ya da window 'filiz-ac' olayı.
 
 /** Okul yetkilisi: paketinde kapalı bölüme giden bağlantıyı gösterme (tek kaynak: okulBolumleri.js). */
@@ -21,6 +22,8 @@ export default function FilizYonetimSohbet({ rol, okulId, moduller }) {
   const git = useNavigate()
   const [acik, setAcik] = useState(false)
   const [oneriler, setOneriler] = useState([])
+  const [mod, setMod] = useState(null)            // 'ai' | 'rehber'
+  const [aydinlatma, setAydinlatma] = useState('')
   const [mesajlar, setMesajlar] = useState([])   // { rol: 'kullanici'|'filiz'|'not', metin, cevap? }
   const [girdi, setGirdi] = useState('')
   const [gonderiliyor, setGonderiliyor] = useState(false)
@@ -35,9 +38,9 @@ export default function FilizYonetimSohbet({ rol, okulId, moduller }) {
   }, []) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
-    if (!acik || oneriler.length) return
-    api.filizYonetimOzet().then((v) => setOneriler(v.oneriler || [])).catch(() => {})
-  }, [acik, oneriler.length])
+    if (!acik || mod) return
+    api.filizYonetimOzet().then((v) => { setOneriler(v.oneriler || []); setMod(v.mod || 'rehber'); setAydinlatma(v.aydinlatma || '') }).catch(() => {})
+  }, [acik, mod])
 
   useEffect(() => { durumYayinla({ acik, dusunuyor: gonderiliyor }) }, [acik, gonderiliyor])
   useEffect(() => { sonRef.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [mesajlar, gonderiliyor, acik])
@@ -53,10 +56,12 @@ export default function FilizYonetimSohbet({ rol, okulId, moduller }) {
     const metin = (metinParam ?? girdi).trim()
     if (!metin || gonderiliyor) return
     setGirdi('')
+    const gecmis = mesajlar.filter((x) => x.rol === 'kullanici' || x.rol === 'filiz').slice(-6).map((x) => ({ rol: x.rol, metin: String(x.metin || '').slice(0, 2000) }))
     setMesajlar((l) => [...l, { rol: 'kullanici', metin }])
     setGonderiliyor(true)
     try {
-      const c = await api.filizYonetimSor(metin)
+      const c = await api.filizYonetimSor(metin, gecmis)
+      if (c.mod) setMod(c.mod)
       setMesajlar((l) => [...l, { rol: 'filiz', metin: c.metin, cevap: c }])
       durumYayinla({ acik: true, dusunuyor: false, cevaplandi: true })
     } catch (e) {
@@ -81,10 +86,10 @@ export default function FilizYonetimSohbet({ rol, okulId, moduller }) {
       {!acik && <FilizAcDugmesi onClick={() => setAcik(true)} aria="Filiz Panel Asistanı'na sor" />}
       {acik && (
         <FilizCerceve baslik={baslik} ariaLabel="Filiz Panel Asistanı" onKapat={() => setAcik(false)}
-          durum={gonderiliyor ? 'arıyor…' : 'kural tabanlı · yapay zekâ yok'}
+          durum={gonderiliyor ? 'düşünüyor…' : <span className={`fy-mod fy-mod-${mod || 'rehber'}`}>{mod === 'ai' ? '✨ Yapay zekâ asistanı' : '📘 Rehber modu'}</span>}
           araclar={mesajlar.length > 0 && <button className="filiz-ikon-btn" title="Temizle" onClick={() => setMesajlar([])}>↺</button>}>
           <div className="filiz-oto-serit">
-            🔒 Cevaplar SSS ve panel sayılarından hazırlanır. Sorularınız kaydedilmez, öğrenci verisi hiçbir dış servise gönderilmez.
+            🔒 {aydinlatma || 'Sorularınız kaydedilmez. Belirli bir öğrenciyle ilgili sorular yalnızca yetkiniz dahilinde, sistem içinde cevaplanır.'}
           </div>
           <div className="filiz-mesajlar">
             {mesajlar.length === 0 && (
@@ -104,7 +109,19 @@ export default function FilizYonetimSohbet({ rol, okulId, moduller }) {
                 : x.rol === 'kullanici' ? <div key={i} className="filiz-mesaj ogrenci">{x.metin}</div>
                   : (
                     <div key={i} className="filiz-mesaj asistan fy-cevap">
-                      <div>{x.metin}</div>
+                      <div className={x.cevap?.tur === 'ai' ? 'fy-ai-metin' : undefined}>{x.metin}</div>
+                      {x.cevap?.ogrenciler?.length > 0 && (
+                        <ul className="fy-ogrenciler">
+                          {x.cevap.ogrenciler.map((o) => (
+                            <li key={o.id}>
+                              <b>{o.ad_soyad}</b>
+                              <span>{o.bilgi}</span>
+                              <Bag b={o.baglanti} />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                      {x.cevap?.not && <div className="fy-not">{x.cevap.not}</div>}
                       {x.cevap?.bulgular?.length > 0 && (
                         <ul className="fy-bulgular">
                           {x.cevap.bulgular.filter((b) => !b.baglanti || gec(b.baglanti)).map((b) => (
@@ -149,6 +166,13 @@ export default function FilizYonetimSohbet({ rol, okulId, moduller }) {
 }
 
 const FY_CSS = `
+.fy-mod{font-weight:700}
+.fy-mod-ai{color:var(--pu)}
+.fy-ai-metin{white-space:pre-line}
+.fy-not{font-size:11.5px;color:var(--tx3)}
+.fy-ogrenciler{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+.fy-ogrenciler li{display:flex;flex-direction:column;gap:4px;background:var(--sur);border:1px solid var(--bor);border-radius:10px;padding:7px 10px;font-size:12.5px;line-height:1.45}
+.fy-ogrenciler li span{color:var(--tx2)}
 .fy-cevap{max-width:92%;display:flex;flex-direction:column;gap:8px;white-space:normal}
 .fy-baglar{display:flex;flex-wrap:wrap;gap:6px}
 .fy-bag{border:1.5px solid var(--pu);background:var(--sur);color:var(--pu);border-radius:999px;padding:4px 11px;font:inherit;font-size:12px;font-weight:800;cursor:pointer;align-self:flex-start}

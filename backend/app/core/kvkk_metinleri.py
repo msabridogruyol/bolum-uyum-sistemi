@@ -72,3 +72,22 @@ ONAY_MADDELERI = [
 ]
 ZORUNLU_KODLAR = {k for k, _b, _a, z in ONAY_MADDELERI if z}
 TUM_KODLAR = {k for k, *_ in ONAY_MADDELERI}
+
+
+# [2026-10-11] Yönetim paneli (okul yetkilisi / süper admin) — Filiz yapay zekâ asistanı bilgilendirmesi.
+# Yönetim hesapları için ayrı bir KVKK onay akışı yoktur; bu metin Filiz yönetim sohbetinde (GET /yonetim/filiz/ozet →
+# "aydinlatma") ve Sistem Hakkında & SSS'teki "Filiz panelde ne yapar?" maddesinde gösterilir. Öğrenci aydınlatma metni
+# DEĞİŞMEDİ (KVKK_SURUM artırılmadı): yönetim tarafında yapay zekâ hizmet sağlayıcısına öğrencilere ait kişisel veri
+# aktarılmaz — öğrenci adları, e-posta, telefon, TC kimlik ve öğrenci numaraları gönderimden önce gizlenir, belirli bir
+# öğrenciye ya da öğrenci listesine yönelik sorular yapay zekâya hiç gönderilmez; bağlamda yalnızca toplu sayılar bulunur.
+YONETIM_FILIZ_AI_AYDINLATMA = (
+    "Yapay zekâ asistanı açıkken yazdığınız sorular ve bu sohbetteki son birkaç mesaj, cevap üretilmesi için yapay zekâ hizmet "
+    "sağlayıcısına (OpenAI; sunucuları yurt dışında bulunabilir) aktarılır. Gönderimden önce öğrenci adları, e-posta, telefon, "
+    "TC kimlik ve öğrenci numaraları gizlenir; belirli bir öğrenciyi ya da öğrenci listesini soran sorular hiç gönderilmez, "
+    "sistem içinde ve yalnızca yetkiniz dahilindeki öğrenciler arasında cevaplanır. Sorularınız kaydedilmez; yalnızca günlük "
+    "soru sayınız tutulur. Lütfen sorularınıza başka kişilere ait kişisel veri yazmayın."
+)
+YONETIM_FILIZ_REHBER_AYDINLATMA = (
+    "Rehber modu: cevaplar SSS'ten, panel sayılarından ve yetkiniz dahilindeki öğrenci kayıtlarından sistem içinde hazırlanır. "
+    "Sorularınız kaydedilmez ve hiçbir dış servise gönderilmez."
+)

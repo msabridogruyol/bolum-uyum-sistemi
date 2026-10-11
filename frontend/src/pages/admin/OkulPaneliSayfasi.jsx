@@ -98,14 +98,16 @@ function OzetSekmesi({ oz, onIstatistik }) {
 }
 
 // ----------------------------------------------------------------------------- Öğrenciler
-function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, yenile, baslangicFiltre = '' }) {
+function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, yenile, baslangicFiltre = '', acikOgrenci = null, onDetayKapat }) {
   const [arama, setArama] = useState('')
   // [2026-10-10] Filtre: '' | 's:<sınıf>' (sınıf düzeyi) | 'b:<sınıf>|<şube>' (şube, ör. 12-A)
   const [sinif, setSinif] = useState(baslangicFiltre)
   const [durum, setDurum] = useState('')
   const [secili, setSecili] = useState(new Set())
   const [yukleme, setYukleme] = useState(false)
-  const [detay, setDetay] = useState(null)
+  const [detay, setDetay] = useState(acikOgrenci)
+  // [2026-10-11] Derin bağlantı: ?sekme=ogrenciler&ogrenci=<id> (Filiz yönetim asistanının "Öğrenci detayı" bağlantısı)
+  useEffect(() => { if (acikOgrenci) setDetay(acikOgrenci) }, [acikOgrenci])
   const [sifreler, setSifreler] = useState(null)
   const [silOnay, setSilOnay] = useState(false)
   const [hata, setHata] = useState(null)
@@ -231,7 +233,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
       )}
 
       {yukleme && <TopluYuklemePenceresi okulId={okulId} okulAd={okulAd} onKapat={() => setYukleme(false)} onBitti={yenile} />}
-      {detay && <OgrenciDetayPenceresi ogrenciId={detay} superAdmin={superAdmin} okullar={okullar} onKapat={() => setDetay(null)} onDegisti={yenile} />}
+      {detay && <OgrenciDetayPenceresi ogrenciId={detay} superAdmin={superAdmin} okullar={okullar} onKapat={() => { setDetay(null); onDetayKapat?.() }} onDegisti={yenile} />}
       {sifreler && (
         <Pencere genis baslik={`${sifreler.kayitlar.length} öğrencinin şifresi sıfırlandı`} onKapat={() => setSifreler(null)}
           alt={<button className="btn" onClick={() => setSifreler(null)}>Kapat</button>}>
@@ -468,6 +470,8 @@ export default function OkulPaneliSayfasi() {
   const [params, setParams] = useSearchParams()
   const sekme = params.get('sekme') || 'ozet'
   const setSekme = useCallback((k) => setParams(k === 'ozet' ? {} : { sekme: k }), [setParams])
+  const acikOgrenci = sekme === 'ogrenciler' ? params.get('ogrenci') : null
+  const ogrenciDetayKapat = useCallback(() => { if (params.get('ogrenci')) setParams({ sekme: 'ogrenciler' }, { replace: true }) }, [params, setParams])
   const [oz, setOz] = useState(null)
   const [ogrenciler, setOgrenciler] = useState([])
   const [okullar, setOkullar] = useState([])
@@ -528,7 +532,7 @@ export default function OkulPaneliSayfasi() {
       {sk === 'raporlar' && okulId > 0 && <OkulRaporMerkezi okulId={okulId} oz={oz} superAdmin={superAdmin} okullar={okullar} onDegisti={yenile}
         onRehberlik={bolumler.some((b) => b.k === 'rehberlik') ? () => setSekme('rehberlik') : null} />}
       {sk === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
-      {sk === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sk === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} acikOgrenci={acikOgrenci} onDetayKapat={ogrenciDetayKapat} />}
       {sk === 'rehberlik' && <RehberlikSekmesi okulId={okulId} ogrenciler={ogrenciler} superAdmin={superAdmin} okullar={okullar} yenileOkul={yenile} />}
       {sk === 'tercih' && okulId > 0 && <TercihDonemi okulId={okulId} />}
       {sk === 'mezunlar' && okulId > 0 && <Mezunlar okulId={okulId} />}
