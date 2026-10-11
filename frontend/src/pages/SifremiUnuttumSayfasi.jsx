@@ -9,7 +9,7 @@ export default function SifremiUnuttumSayfasi({ kapsam = 'ogrenci' }) {
   const [mesaj, setMesaj] = useState(null)
   const [hata, setHata] = useState(null)
   const [yukleniyor, setYukleniyor] = useState(false)
-  const girisYolu = kapsam === 'admin' ? '/admin/giris' : '/giris'
+  const girisYolu = '/giris'   // [2026-10-11] tek giriş ekranı (okul yetkilisi ve süper admin de buradan girer)
 
   async function gonder(e) {
     e.preventDefault()

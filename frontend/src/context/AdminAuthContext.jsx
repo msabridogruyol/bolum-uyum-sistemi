@@ -23,6 +23,8 @@ export function AdminAuthProvider({ children }) {
   }, [])
 
   const girisYap = useCallback(async (email, sifre) => sonucuIsle(await api.adminGirisYap({ email, sifre })), [sonucuIsle])
+  // [2026-10-11] Ana giriş ekranından (öğrencilerle aynı) giren yönetim hesabı: tokenler zaten kaydedildi, durumu tazele
+  const oturumuYenile = useCallback(() => sonucuIsle({ erisim_tokeni: api.tokenAl('admin') }), [sonucuIsle])
 
   const ikiAdimDogrula = useCallback(
     async (geciciToken, kod, hatirla) => sonucuIsle(await api.adminIkiAdimDogrula(geciciToken, kod, hatirla)),
@@ -38,7 +40,7 @@ export function AdminAuthProvider({ children }) {
   }, [])
 
   return (
-    <AdminAuthContext.Provider value={{ girisYapildi, rol, kendiId, ben, benYenile, girisYap, ikiAdimDogrula, cikisYap }}>
+    <AdminAuthContext.Provider value={{ girisYapildi, rol, kendiId, ben, benYenile, girisYap, ikiAdimDogrula, cikisYap, oturumuYenile }}>
       {children}
     </AdminAuthContext.Provider>
   )

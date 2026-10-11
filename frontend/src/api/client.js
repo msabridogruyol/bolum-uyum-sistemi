@@ -19,13 +19,31 @@ function cihazTokeniAl(kapsam) {
   try { return localStorage.getItem(`${kapsam}_cihaz_tokeni`) || null } catch { return null }
 }
 
+// [2026-10-11] Tek giriş ekranı: okul yetkilisi ve süper admin de /auth/giris'ten girer; tokenleri 'admin' kapsamında saklanır
+const YONETIM_TIPLERI = ['okul_yetkilisi', 'super_admin']
+export const yonetimHesabiMi = (sonuc) => YONETIM_TIPLERI.includes(sonuc?.kullanici_tipi)
+
 function girisSonucunuKaydet(sonuc, kapsam) {
   if (!sonuc || !sonuc.erisim_tokeni) return  // 2 adımlı doğrulama bekleniyor
-  const hedef = kapsam === 'ogrenci' && sonuc.kullanici_tipi === 'rehber' ? 'rehber' : kapsam
+  const yonetim = kapsam === 'ogrenci' && yonetimHesabiMi(sonuc)
+  const hedef = yonetim ? 'admin' : kapsam === 'ogrenci' && sonuc.kullanici_tipi === 'rehber' ? 'rehber' : kapsam
   tokenlariKaydet(sonuc.erisim_tokeni, sonuc.yenileme_tokeni, hedef)
   if (sonuc.cihaz_tokeni) {
-    try { localStorage.setItem(`${kapsam}_cihaz_tokeni`, sonuc.cihaz_tokeni) } catch { /* yoksay */ }
+    try { localStorage.setItem(`${yonetim ? 'admin' : kapsam}_cihaz_tokeni`, sonuc.cihaz_tokeni) } catch { /* yoksay */ }
   }
+}
+
+// [2026-10-11] Okulun sistemi süper admin tarafından kapatıldıysa sunucu 423 döner: oturum kapanır,
+// giriş ekranında mesaj gösterilir (giriş isteğinin kendisi 423 alırsa yalnızca hata olarak gösterilir).
+const KAPALI_ANAHTAR = 'sistem_kapali_mesaji'
+function sistemKapaliIsle(mesaj, oturumVardi) {
+  if (!oturumVardi) return
+  for (const k of ['ogrenci', 'admin']) tokenlariTemizle(k)
+  try { sessionStorage.setItem(KAPALI_ANAHTAR, mesaj || 'Sisteminiz şu anda kapalıdır.') } catch { /* yoksay */ }
+  if (!window.location.pathname.startsWith('/giris')) window.location.assign('/giris')
+}
+export function sistemKapaliMesajiAl() {
+  try { const m = sessionStorage.getItem(KAPALI_ANAHTAR); sessionStorage.removeItem(KAPALI_ANAHTAR); return m } catch { return null }
 }
 
 class ApiHatasi extends Error {
@@ -67,6 +85,7 @@ async function istek(yol, secenekler = {}, kapsam = 'ogrenci') {
 
   if (!yanit.ok) {
     const detay = govde && typeof govde === 'object' ? govde.detail : govde
+    if (yanit.status === 423) sistemKapaliIsle(detay, !!token)
     throw new ApiHatasi(yanit.status, detay)
   }
   return govde
@@ -79,6 +98,7 @@ async function dosyaIndir(yol, kapsam = 'ogrenci') {
   if (!yanit.ok) {
     let detay = null
     try { detay = (await yanit.json()).detail } catch { /* gövde JSON değil */ }
+    if (yanit.status === 423) sistemKapaliIsle(detay, !!token)
     throw new ApiHatasi(yanit.status, detay || 'Rapor hazırlanamadı.')
   }
   const ad = /filename="([^"]+)"/.exec(yanit.headers.get('Content-Disposition') || '')?.[1] || 'rapor'
@@ -119,7 +139,7 @@ export const api = {
   // [2026-10-04] 2 adımlı doğrulama: cevap ya tokenleri ya da { iki_adim_gerekli, gecici_token, maskeli_eposta } getirir.
   // Rehber öğretmen de bu sayfadan girer; tokenleri 'rehber' kapsamında saklanır.
   girisYap: async (veri) => {
-    const sonuc = await post('/auth/giris', { ...veri, cihaz_tokeni: cihazTokeniAl('ogrenci') })
+    const sonuc = await post('/auth/giris', { ...veri, cihaz_tokeni: cihazTokeniAl('ogrenci'), yonetim_cihaz_tokeni: cihazTokeniAl('admin') })
     girisSonucunuKaydet(sonuc, 'ogrenci')
     return sonuc
   },
@@ -509,6 +529,7 @@ export const api = {
   okullariListele: () => aget('/admin/okullar'),
   okulEkle: (veri) => apost('/admin/okullar', veri),
   okulGuncelle: (id, veri) => aput(`/admin/okullar/${id}`, veri),
+  okulErisim: (id, acik, mesaj) => aput(`/admin/okullar/${id}/erisim`, { acik, mesaj: mesaj || null }),   // [2026-10-11]
   okulSil: (id, hedefId) => adel(`/admin/okullar/${id}${hedefId !== undefined && hedefId !== null ? `?hedef_id=${hedefId}` : ''}`),
   // [2026-10-09] Okul bazlı yönetim (süper admin + okul yetkilisi) — okulId 0 = okul harici
   yonetimBen: () => aget('/yonetim/ben'),

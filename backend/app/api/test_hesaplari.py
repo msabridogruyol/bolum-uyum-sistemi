@@ -239,6 +239,8 @@ def test_giris(istek: TestGirisIstek, db: Session = Depends(get_db)):
     if o is None and h.aktif_mi is False:
         raise hata
     rol = "ogrenci" if o is not None else h.rol
+    from app.core.okul_erisim import hesap_okulu_acik_olmali
+    hesap_okulu_acik_olmali(db, h, rol)   # [2026-10-11] okulun sistemi kapalıysa test girişi de yapılamaz
     h.son_giris_zamani = simdi()
     if o is not None:
         olay_yaz(db, o.id, "giris", "Test bağlantısıyla", "Test")

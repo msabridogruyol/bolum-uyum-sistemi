@@ -7,6 +7,7 @@ GET    /okul/aktif                     — (geriye uyum) ilk gösterilen okul
 GET    /admin/okullar                  — süper admin: tüm okullar + öğrenci/okul yetkilisi sayıları
 POST   /admin/okullar                  — yeni okul
 PUT    /admin/okullar/{id}             — düzenle (ad değişirse öğrenci kayıtlarındaki okul adı da güncellenir)
+PUT    /admin/okullar/{id}/erisim      — [2026-10-11] okulun sistemini aç / kapat (+ isteğe bağlı kapalı mesajı)
 DELETE /admin/okullar/{id}?hedef_id=   — sil; öğrencisi varsa hedef okula aktarılır (hedef 0 = okul harici)
 Öğrenci ve okul yetkilisi işlemleri okul bazlıdır: bkz. app/api/okul_yonetimi.py (/yonetim/...).
 """
@@ -41,8 +42,16 @@ class OkulOut(BaseModel):
     tema_renk: str | None = None
     paket: str | None = None          # [2026-10-10]
     paket_ad: str | None = None
+    erisim_acik: bool = True          # [2026-10-11] okulun sistemi açık mı (kapalıysa giriş yapılamaz)
+    kapali_mesaji: str | None = None
+    erisim_guncelleme_zamani: datetime | None = None
 
     model_config = {"from_attributes": True}
+
+
+class ErisimIstek(BaseModel):
+    acik: bool
+    mesaj: str | None = None          # boş → varsayılan "Sisteminiz şu anda kapalıdır…"
 
 
 class KadroKisi(BaseModel):
@@ -119,7 +128,9 @@ def okullari_listele(db: Session = Depends(get_db), admin: AdminKullanici = Depe
     paket_ad = dict(db.execute(_t("SELECT kod, ad FROM paketler")).all())
     return [OkulOut(id=o.id, ad=o.ad, alt_baslik=o.alt_baslik, logo=o.logo, aktif_mi=o.aktif_mi,
                     ogrenci_sayisi=ogr.get(o.id, 0), yetkili_sayisi=yon.get(o.id, 0),
-                    paket=o.paket, paket_ad=paket_ad.get(o.paket, o.paket))
+                    paket=o.paket, paket_ad=paket_ad.get(o.paket, o.paket),
+                    erisim_acik=o.erisim_acik is not False, kapali_mesaji=o.kapali_mesaji,
+                    erisim_guncelleme_zamani=o.erisim_guncelleme_zamani)
             for o in db.query(Okul).order_by(Okul.ad).all()]
 
 
@@ -152,6 +163,25 @@ def okul_guncelle(okul_id: int, istek: OkulIstek, db: Session = Depends(get_db),
     if istek.aktif_mi is not None:
         okul.aktif_mi = istek.aktif_mi
     denetim_yaz(db, admin, "okul_guncelle", "okullar", okul.id, ad, okul.id)
+    db.commit()
+    db.refresh(okul)
+    return okul
+
+
+@admin_router.put("/{okul_id}/erisim", response_model=OkulOut)
+def okul_erisimi(okul_id: int, istek: ErisimIstek, db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
+    """[2026-10-11] Süper admin: okulun sistemini aç / kapat. Kapalıyken o okulun öğrencileri ve yetkilileri giriş yapamaz,
+    açık oturumları bir sonraki işlemde "Sisteminiz şu anda kapalıdır" uyarısıyla sonlanır."""
+    from app.core.okul_erisim import MESAJ_EN_FAZLA
+    okul = _okul(db, okul_id)
+    mesaj = (istek.mesaj or "").strip() or None
+    if mesaj and len(mesaj) > MESAJ_EN_FAZLA:
+        raise HTTPException(status_code=400, detail=f"Mesaj en fazla {MESAJ_EN_FAZLA} karakter olabilir.")
+    okul.erisim_acik = bool(istek.acik)
+    okul.kapali_mesaji = None if istek.acik else mesaj
+    okul.erisim_guncelleme_zamani = simdi()
+    denetim_yaz(db, admin, "okul_sistemi_ac" if istek.acik else "okul_sistemi_kapat", "okullar", okul.id,
+                okul.ad if istek.acik else f"{okul.ad} — {mesaj or 'varsayılan mesaj'}", okul.id)
     db.commit()
     db.refresh(okul)
     return okul

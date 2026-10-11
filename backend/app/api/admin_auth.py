@@ -4,6 +4,7 @@ Kaynak: veritabani_taslagi.md 3.3, sistem_genel_anlatim.md E) bölümü.
 
 NOT: Admin kayıt (self-servis) uç noktası KASITLI OLARAK yok.
 [2026-10-04] 2 adımlı doğrulama + şifremi unuttum eklendi. [2026-10-09] Süper admin ve okul yetkilileri bu sayfadan girer.
+[2026-10-11] Okul yetkilileri artık ana giriş ekranından (/auth/giris) girer; bu sayfa yalnızca süper admin içindir.
 """
 from fastapi import APIRouter, Depends, HTTPException, Request
 from sqlalchemy import func
@@ -28,6 +29,9 @@ def admin_giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
         raise hata
     if admin.aktif_mi is False:
         raise HTTPException(status_code=403, detail="Hesabın devre dışı bırakılmış.")
+    if admin.rol == "okul_yetkilisi":
+        # [2026-10-11] Okul yetkilileri öğrencilerle aynı giriş ekranını kullanır (/giris)
+        raise HTTPException(status_code=403, detail="Okul yetkilileri ana giriş ekranından giriş yapar. Lütfen giriş sayfasına dönün.")
     return giris_sonucu(db, admin, admin.rol, istek.cihaz_tokeni)
 
 

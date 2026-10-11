@@ -1131,11 +1131,15 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
   useEffect(() => {
     if (!balon) { setYazilan(''); return undefined }
     const metin = balon.metin || ''
+    // [2026-10-11] Harf grubu (grapheme) olarak yazılır: emoji yarıya bölünüp "�" görünmesin
+    const parcalar = typeof Intl !== 'undefined' && Intl.Segmenter
+      ? Array.from(new Intl.Segmenter('tr', { granularity: 'grapheme' }).segment(metin), (x) => x.segment)
+      : Array.from(metin)
     let i = 0
     const t = window.setInterval(() => {
       i += 1
-      setYazilan(metin.slice(0, i))
-      if (i >= metin.length) window.clearInterval(t)
+      setYazilan(parcalar.slice(0, i).join(''))
+      if (i >= parcalar.length) window.clearInterval(t)
     }, 28)
     const kapat = window.setTimeout(() => setBalon(null), Math.max(balon.baglanti ? 9000 : 5500, metin.length * 90))
     return () => { window.clearInterval(t); window.clearTimeout(kapat) }

@@ -13,7 +13,7 @@ export default function SifreSifirlaSayfasi({ kapsam = 'ogrenci' }) {
   const [sifre2, setSifre2] = useState('')
   const [tamam, setTamam] = useState(false)
   const [yukleniyor, setYukleniyor] = useState(false)
-  const girisYolu = kapsam === 'admin' ? '/admin/giris' : '/giris'
+  const girisYolu = '/giris'   // [2026-10-11] tek giriş ekranı (okul yetkilisi ve süper admin de buradan girer)
 
   useEffect(() => {
     if (!token) { setHata('Bağlantı eksik. E-postadaki bağlantıyı tam olarak açtığından emin ol.'); return }

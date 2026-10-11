@@ -261,7 +261,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
   return (
     <>
       <div className="yp-ince" style={{ marginBottom: 12 }}>
-        Okul yetkilileri (rehber öğretmen, müdür yardımcısı vb.) yönetim girişinden (<code>/admin/giris</code>) girer ve yalnızca bu okulun
+        Okul yetkilileri (rehber öğretmen, müdür yardımcısı vb.) öğrencilerle aynı giriş ekranından (<code>/giris</code>) girer ve yalnızca bu okulun
         öğrencilerini görür: hesap açar, şifre sıfırlar, siler, istatistik ve kayıtları inceler.
       </div>
       {hata && <div className="auth-error">{hata}</div>}

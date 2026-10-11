@@ -446,6 +446,14 @@ button,input{font-family:inherit}
 .yp-okul-aksiyon .btn{text-decoration:none}
 .yp-okul-aksiyon .yp-mini{margin-left:auto}
 .yp-okul-sil{display:flex;flex-direction:column;gap:8px;font-size:12.5px;background:var(--rel);border-radius:12px;padding:10px}
+/* [2026-10-11] Okul sistemi aç / kapat */
+.yp-okul-erisim{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+.yp-okul-erisim .btn{padding:6px 12px;font-size:12px}
+.yp-erisim-rozet{font-size:12px;font-weight:700;padding:4px 10px;border-radius:999px}
+.yp-erisim-rozet.acik{background:var(--grl);color:var(--gr)}
+.yp-erisim-rozet.kapali{background:var(--rel);color:var(--re)}
+.yp-erisim-mesaj{font-style:italic}
+.yp-okul-kart.yp-okul-kapali{border-color:var(--re)}
 @media (max-width:700px){.yp-zc-satir{grid-template-columns:1fr}.yp-cubuk-satir{grid-template-columns:1fr}}
 
 /* ===================== [2026-10-09] Okul tanıtım penceresi (öğrenci) + düzenleme (yönetim) ===================== */

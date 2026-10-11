@@ -69,7 +69,7 @@ export default function AdminGirisSayfasi() {
               </button>
             </form>
             <div className="auth-foot">
-              Rehber öğretmenler (okul yetkilileri) ve yöneticiler bu sayfadan girer. Öğrenciysen <Link to="/giris" className="auth-link">öğrenci girişini</Link> kullan.
+              Bu sayfa sistem yöneticisi içindir. Öğrenciler ve okul yetkilileri <Link to="/giris" className="auth-link">ana giriş ekranını</Link> kullanır.
             </div>
           </>
         )}

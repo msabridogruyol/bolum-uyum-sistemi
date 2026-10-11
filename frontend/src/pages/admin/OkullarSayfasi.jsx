@@ -59,6 +59,7 @@ export default function OkullarSayfasi() {
   const [haric, setHaric] = useState(0)
   const [form, setForm] = useState(null)          // null = form kapalı
   const [silme, setSilme] = useState(null)        // { okul, hedef }
+  const [kapatma, setKapatma] = useState(null)    // [2026-10-11] { okul, mesaj } — sistemi kapatma onayı
   const [hata, setHata] = useState(null)
   const [bilgi, setBilgi] = useState(null)
   const [isleniyor, setIsleniyor] = useState(false)
@@ -89,6 +90,16 @@ export default function OkullarSayfasi() {
       else await api.okulEkle(veri)
       setForm(null); yukle(); mesaj('Kaydedildi.')
     } catch (err) { setHata(err.detail || 'Kaydedilemedi.') } finally { setIsleniyor(false) }
+  }
+
+  // [2026-10-11] Okulun sistemini aç / kapat: kapalıyken o okulun öğrencileri ve yetkilileri giriş yapamaz
+  async function erisimDegistir(okul, acik, mesajMetni) {
+    setIsleniyor(true); setHata(null)
+    try {
+      await api.okulErisim(okul.id, acik, mesajMetni)
+      setKapatma(null); yukle()
+      mesaj(acik ? `"${okul.ad}" için sistem açıldı.` : `"${okul.ad}" için sistem kapatıldı. Açık oturumlar bir sonraki işlemde sonlanır.`)
+    } catch (err) { setHata(err.detail || 'Değiştirilemedi.') } finally { setIsleniyor(false) }
   }
 
   async function sil() {
@@ -156,7 +167,7 @@ export default function OkullarSayfasi() {
       {!okullar ? <div className="bos-durum">Yükleniyor…</div> : (
         <div className="yp-okul-grid">
           {okullar.map((o) => (
-            <div key={o.id} className="yp-okul-kart">
+            <div key={o.id} className={`yp-okul-kart${o.erisim_acik === false ? ' yp-okul-kapali' : ''}`}>
               <Link to={`/admin/okul/${o.id}`} className="yp-okul-kart-ust">
                 {o.logo ? <img src={o.logo} alt="" className="yp-okul-logo" /> : <div className="yp-okul-logo yp-okul-logo-bos">🏫</div>}
                 <div style={{ minWidth: 0 }}>
@@ -170,6 +181,31 @@ export default function OkullarSayfasi() {
                 {/* [2026-10-10] Paket — tıklayınca okulun Paket bölümü */}
                 <Link to={`/admin/okul/${o.id}?sekme=paket`} className="pk-okul-rozet" title="Paketi değiştir"><b>📦 {o.paket_ad || '—'}</b><span>paket</span></Link>
               </div>
+              {/* [2026-10-11] Sistem erişimi: açık / kapalı */}
+              <div className="yp-okul-erisim">
+                <span className={`yp-erisim-rozet ${o.erisim_acik === false ? 'kapali' : 'acik'}`}>
+                  {o.erisim_acik === false ? '🔒 Sistem kapalı' : '🟢 Sistem açık'}
+                </span>
+                {o.erisim_acik === false
+                  ? <button className="btn sec" disabled={isleniyor} onClick={() => erisimDegistir(o, true)}>Sistemi aç</button>
+                  : kapatma?.okul.id !== o.id && <button className="btn sec" onClick={() => setKapatma({ okul: o, mesaj: '' })}>Sistemi kapat</button>}
+              </div>
+              {o.erisim_acik === false && (
+                <div className="yp-ince yp-erisim-mesaj">Gösterilen mesaj: “{o.kapali_mesaji || 'Sisteminiz şu anda kapalıdır. Ayrıntılı bilgi için okulunuzla iletişime geçebilirsiniz.'}”</div>
+              )}
+              {kapatma?.okul.id === o.id && (
+                <div className="yp-okul-sil">
+                  <span>Sistem kapatılınca bu okulun <b>{o.ogrenci_sayisi}</b> öğrencisi ve <b>{o.yetkili_sayisi}</b> okul yetkilisi giriş yapamaz; açık oturumlar bir sonraki işlemde sonlanır. Veriler silinmez.</span>
+                  <label className="auth-label" style={{ marginTop: 6 }}>Girişte gösterilecek mesaj (isteğe bağlı)</label>
+                  <textarea className="auth-input" rows={2} maxLength={300} value={kapatma.mesaj} style={{ width: '100%' }}
+                            placeholder="Boş bırakılırsa: Sisteminiz şu anda kapalıdır. Ayrıntılı bilgi için okulunuzla iletişime geçebilirsiniz."
+                            onChange={(e) => setKapatma({ ...kapatma, mesaj: e.target.value })} />
+                  <div style={{ display: 'flex', gap: 6 }}>
+                    <button className="btn yp-tehlike" disabled={isleniyor} onClick={() => erisimDegistir(o, false, kapatma.mesaj)}>Sistemi kapat</button>
+                    <button className="btn sec" onClick={() => setKapatma(null)}>Vazgeç</button>
+                  </div>
+                </div>
+              )}
               {silme?.okul.id === o.id ? (
                 <div className="yp-okul-sil">
                   {o.ogrenci_sayisi > 0 ? (

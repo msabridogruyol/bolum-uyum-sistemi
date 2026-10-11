@@ -101,6 +101,10 @@ class Okul(Base):
     tema_renk: Mapped[str | None] = mapped_column(String, nullable=True)
     # [2026-10-10] Paket (0041): paket kodu; okula özel modül farkları JSONB (modul_ekle / modul_cikar) yalnızca SQL ile okunur
     paket: Mapped[str] = mapped_column(String, nullable=False, server_default='tam', default='tam')
+    # [2026-10-11] (0063) Okulun sistemi açık mı: kapalıysa o okulun öğrencileri ve yetkilileri giriş yapamaz
+    erisim_acik: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default='true', default=True)
+    kapali_mesaji: Mapped[str | None] = mapped_column(String, nullable=True)
+    erisim_guncelleme_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
 
 
 class MeslekDili(Base):

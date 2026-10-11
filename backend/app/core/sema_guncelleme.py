@@ -25,6 +25,7 @@ OTOMATIK = ["0024_favori_bolum", "0025_test_hesaplari", "0026_guvenlik_olay_tipl
 OTOMATIK += ["0060_hata_kayitlari"]   # [2026-10-11] hata kayıtları + hız sınırı parametreleri (ayrı satır: diğer göç eklemeleriyle çakışmasın)
 OTOMATIK += ["0061_filiz_yonetim_ai"]   # [2026-10-11] Filiz yönetim asistanı: günlük yapay zekâ sayacı
 OTOMATIK += ["0062_performans_indeksleri"]   # [2026-10-11] okul paneli / rehberlik sorguları için tur_id indeksleri
+OTOMATIK += ["0063_okul_erisim"]   # [2026-10-11] okul bazında sistem aç / kapat
 KILIT = 2026101001
 
 
