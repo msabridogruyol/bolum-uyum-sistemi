@@ -22,6 +22,7 @@ import RehberlikSekmesi from '../../components/yonetim/Rehberlik'
 import OkulDenemeleri from '../../components/yonetim/OkulDenemeleri'
 import OkulIstatistik from '../../components/yonetim/OkulIstatistik'
 import OkulRaporMerkezi from '../../components/yonetim/OkulRaporMerkezi'
+import HazirRaporlar from '../../components/yonetim/HazirRaporlar'   // [2026-10-11]
 import Anketler from '../../components/yonetim/Anketler'
 import { Mezunlar, TercihDonemi } from '../../components/yonetim/TercihMezun'
 import { OkulModulleriContext } from '../../yardimci/moduller'
@@ -32,7 +33,7 @@ function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
 }
 
 // ----------------------------------------------------------------------------- Özet
-function OzetSekmesi({ oz, onIstatistik }) {
+function OzetSekmesi({ oz, onIstatistik, okulId, onRaporlar }) {
   const enCokGiris = Math.max(1, ...oz.gunluk_giris.map((g) => g.sayi))
   return (
     <>
@@ -65,6 +66,9 @@ function OzetSekmesi({ oz, onIstatistik }) {
           </div>
         </div>
       </div>
+
+      {/* [2026-10-11] Hazır raporlar: en çok / en az giriş, en yüksek net… doğrudan ana sayfada */}
+      {okulId > 0 && <div style={{ marginTop: 14 }}><HazirRaporlar okulId={okulId} kompakt onTumu={onRaporlar} /></div>}
 
       <div className="card" style={{ marginTop: 14 }}>
         <div className="ct">Sınıflara göre</div>
@@ -527,7 +531,7 @@ export default function OkulPaneliSayfasi() {
           {sk === 'ozet' && <div className="yp-bolum-rapor">{raporlar}</div>}
         </div>
       )}
-      {sk === 'ozet' && <OzetSekmesi oz={oz} onIstatistik={okulId > 0 ? () => setSekme('istatistik') : null} />}
+      {sk === 'ozet' && <OzetSekmesi oz={oz} okulId={okulId} onRaporlar={bolumler.some((b) => b.k === 'raporlar') ? () => setSekme('raporlar') : null} onIstatistik={okulId > 0 ? () => setSekme('istatistik') : null} />}
       {sk === 'istatistik' && okulId > 0 && <OkulIstatistik okulId={okulId} />}
       {sk === 'raporlar' && okulId > 0 && <OkulRaporMerkezi okulId={okulId} oz={oz} superAdmin={superAdmin} okullar={okullar} onDegisti={yenile}
         onRehberlik={bolumler.some((b) => b.k === 'rehberlik') ? () => setSekme('rehberlik') : null} />}

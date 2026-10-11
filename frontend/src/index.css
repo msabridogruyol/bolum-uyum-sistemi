@@ -2860,3 +2860,38 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 .su-kapat{flex:none;border:none;background:none;color:var(--tx3);font-size:14px;cursor:pointer;padding:4px}
 @keyframes su-gel{from{opacity:0;transform:translate(-50%,-8px)}to{opacity:1;transform:translate(-50%,0)}}
 @media(max-width:600px){.su-serit{left:10px;right:10px;top:8px;transform:none;max-width:none;flex-wrap:wrap;animation:none}.su-metin{flex-basis:calc(100% - 60px)}.su-yenile{margin-left:28px}}
+
+/* [2026-10-11] Okul yetkilisi — hazır raporlar */
+.hr-ust{display:flex;align-items:flex-start;gap:12px;flex-wrap:wrap;margin-bottom:12px}
+.hr-ozet{font-size:12.5px;color:var(--tx2);margin-top:4px;line-height:1.5}
+.hr-uyari{color:var(--am)}
+.hr-filtre{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.hr-filtre select{padding:7px 10px;border:1px solid var(--bor);border-radius:10px;background:var(--sur);color:var(--tx);font-size:13px}
+.hr-izgara{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.hr-izgara.kompakt{grid-template-columns:repeat(auto-fill,minmax(260px,1fr))}
+.hr-kart{margin:0;padding:14px 16px;display:flex;flex-direction:column;gap:8px}
+.hr-bas{display:flex;gap:10px;align-items:flex-start}
+.hr-ikon{font-size:20px;line-height:1}
+.hr-baslik{font-size:14px;font-weight:800;color:var(--tx)}
+.hr-aciklama{font-size:11.5px;color:var(--tx3);line-height:1.4;margin-top:2px}
+.hr-csv{flex:none;border:1px solid var(--bor);background:var(--sur);color:var(--tx2);border-radius:8px;font-size:11.5px;font-weight:700;padding:4px 8px;cursor:pointer}
+.hr-csv:hover{border-color:var(--pu);color:var(--pu)}
+.hr-bos{font-size:12.5px;color:var(--tx3);padding:10px 0}
+.hr-liste{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.hr-liste li{display:grid;grid-template-columns:22px minmax(0,1fr) auto auto;gap:4px 8px;align-items:center;padding:6px 0;border-top:1px dashed var(--bor)}
+.hr-liste li:first-child{border-top:0}
+.hr-sira{font-size:11.5px;font-weight:800;color:var(--tx3);text-align:center}
+.hr-ad{border:0;background:none;padding:0;text-align:left;font-size:13px;font-weight:700;color:var(--tx);cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.hr-ad:hover{color:var(--pu);text-decoration:underline}
+.hr-sinif{font-size:11.5px;color:var(--tx3)}
+.hr-deger{font-size:12px;color:var(--tx2);text-align:right;white-space:nowrap}
+.hr-deger b{color:var(--tx);font-size:13px}
+.hr-ek{grid-column:2 / -1;font-size:11px;color:var(--tx3);margin-top:-2px}
+
+/* [2026-10-11] Genişletilmiş sözlük: bölüm / meslek kartları */
+.sz-devam{border:0;background:none;color:var(--pu);font-weight:700;font-size:12px;cursor:pointer;padding:0 0 0 6px}
+.sz-git{margin-top:8px;border:1px solid var(--pu);background:var(--sur);color:var(--pu);border-radius:999px;padding:4px 12px;font-size:12px;font-weight:800;cursor:pointer}
+.sz-git:hover{background:var(--pu);color:#fff}
+.sz-bolumler{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:11.5px;color:var(--tx3)}
+.sz-bolumler button{border:1px solid var(--bor);background:var(--sur);color:var(--tx2);border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer}
+.sz-bolumler button:hover{border-color:var(--pu);color:var(--pu)}

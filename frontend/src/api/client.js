@@ -363,6 +363,8 @@ export const api = {
   gorusmeEkle: (ogrenciId, v) => apost(`/yonetim/ogrenci/${ogrenciId}/gorusmeler`, v),
   gorusmeDuzenle: (id, v) => aput(`/yonetim/gorusme/${id}`, v),
   gorusmeSil: (id) => adel(`/yonetim/gorusme/${id}`),
+  // [2026-10-11] Sistem sözlüğü — veritabanından bölüm, meslek ve özellik açıklamaları
+  sozlukEk: () => get('/ogrenci/sozluk/ek'),
   // [2026-10-10] Net takibi
   netYapi: () => get('/ogrenci/net/yapi'),
   netDenemeler: () => get('/ogrenci/net/denemeler'),
@@ -605,6 +607,11 @@ export const api = {
   okulIstatistik: (okulId, f = {}) => aget(`/yonetim/okul/${okulId}/istatistik${istatistikSorgu(f)}`),
   okulIstatistikExcel: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/istatistik/excel${istatistikSorgu(f)}`, 'admin'),
   // [2026-10-10] Rapor Merkezi → Tek Bakışta (yönetici özeti) ve PDF'i (?sinif=&sube=)
+  // [2026-10-11] Hazır raporlar (en çok / en az giren, en yüksek net…) — f: { gun, sinif, sube, adet }
+  hazirRaporlar: (okulId, f = {}) => {
+    const q = new URLSearchParams(Object.entries(f).filter(([, x]) => x !== '' && x != null).map(([k, x]) => [k, String(x)]))
+    return aget(`/yonetim/okul/${okulId}/hazir-raporlar?${q}`)
+  },
   okulTekBakista: (okulId, f = {}) => aget(`/yonetim/okul/${okulId}/tek-bakista${istatistikSorgu(f)}`),
   okulTekBakistaPdf: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/tek-bakista/pdf${istatistikSorgu(f)}`, 'admin'),
   veliSunumuIndir: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/veli-sunumu${istatistikSorgu(f)}`, 'admin'),   // [2026-10-11] .pptx
