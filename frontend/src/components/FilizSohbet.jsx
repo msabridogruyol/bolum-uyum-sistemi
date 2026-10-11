@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { api } from '../api/client'
+import SozlukArama from './SozlukArama'          // [2026-10-11] Filiz panelinde Sözlük sekmesi
+import { sozlukSorusu } from '../yardimci/sozluk'
 
 // [2026-10-04] Filiz sohbet paneli — tüm sayfalarda açılabilir.
 // Açma yolları: maskotun altındaki "💬 Bana sor" (masaüstü), sağ alttaki baloncuk (telefon),
@@ -38,7 +40,8 @@ export default function FilizSohbet() {
   const girdiRef = useRef(null)
   const bekleyenMesaj = useRef(null)
   // [2026-10-10] Geçmiş sohbetler: liste → okuma → "bu sohbetten devam et"
-  const [gorunum, setGorunum] = useState('sohbet')   // sohbet | sorular | gecmis | okuma
+  const [gorunum, setGorunum] = useState('sohbet')   // sohbet | sorular | gecmis | okuma | sozluk
+  const [sozlukKelime, setSozlukKelime] = useState('')
   const [gecmis, setGecmis] = useState(null)
   const [okunan, setOkunan] = useState(null)
   const baglamRef = useRef(null)
@@ -47,6 +50,7 @@ export default function FilizSohbet() {
   useEffect(() => {
     const ac = (e) => {
       setAcik(true)
+      if (e.detail?.sekme === 'sozluk') { setGorunum('sozluk'); setSozlukKelime(e.detail.kelime || '') }
       if (e.detail?.mesaj) bekleyenMesaj.current = e.detail.mesaj
     }
     window.addEventListener('filiz-ac', ac)
@@ -96,6 +100,12 @@ export default function FilizSohbet() {
     if (!metin || gonderiliyor) return
     setGirdi('')
     setMesajlar((m) => [...m, { rol: 'ogrenci', icerik: metin }])
+    // [2026-10-11] "taban puan ne demek?" gibi sorular sözlükten cevaplanır (mesaj hakkından düşmez)
+    const terim = sozlukSorusu(metin)
+    if (terim) {
+      setMesajlar((m) => [...m, { rol: 'asistan', sozluk: terim, icerik: `📖 ${terim.ad}: ${terim.t}${terim.o ? `\n\nÖrnek: ${terim.o}` : ''}` }])
+      return
+    }
     setGonderiliyor(true)
     try {
       let id = oturumId || await yeniOturum()
@@ -169,11 +179,18 @@ export default function FilizSohbet() {
           </>}>
 
           {/* [2026-10-10] Sekmeler: Sohbet · Sorabileceklerin · Geçmiş */}
-          {hazir && !pasif && (
+          {hazir && (
             <div className="filiz-sekmeler" role="tablist">
               <button role="tab" aria-selected={gorunum === 'sohbet'} className={gorunum === 'sohbet' ? 'aktif' : ''} onClick={() => setGorunum('sohbet')}>💬 Sohbet</button>
-              <button role="tab" aria-selected={gorunum === 'sorular'} className={gorunum === 'sorular' ? 'aktif' : ''} onClick={() => setGorunum('sorular')}>❓ Sorabileceklerin</button>
-              <button role="tab" aria-selected={gorunum === 'gecmis' || gorunum === 'okuma'} className={gorunum === 'gecmis' || gorunum === 'okuma' ? 'aktif' : ''} onClick={gecmisiAc}>🕘 Geçmiş</button>
+              {!pasif && <button role="tab" aria-selected={gorunum === 'sorular'} className={gorunum === 'sorular' ? 'aktif' : ''} onClick={() => setGorunum('sorular')}>❓ Sorular</button>}
+              {!pasif && <button role="tab" aria-selected={gorunum === 'gecmis' || gorunum === 'okuma'} className={gorunum === 'gecmis' || gorunum === 'okuma' ? 'aktif' : ''} onClick={gecmisiAc}>🕘 Geçmiş</button>}
+              <button role="tab" aria-selected={gorunum === 'sozluk'} className={gorunum === 'sozluk' ? 'aktif' : ''} onClick={() => setGorunum('sozluk')}>📖 Sözlük</button>
+            </div>
+          )}
+
+          {gorunum === 'sozluk' && (
+            <div className="filiz-mesajlar">
+              <SozlukArama baslangic={sozlukKelime} kompakt onSayfayaGit={() => setAcik(false)} />
             </div>
           )}
 
@@ -259,7 +276,8 @@ export default function FilizSohbet() {
                 ? <div key={i} className="filiz-not">{m.icerik}</div>
                 : <div key={i} className={`filiz-mesaj ${m.rol === 'ogrenci' ? 'ogrenci' : 'asistan'}`}>
                     {m.icerik}
-                    {m.rol === 'asistan' && (m.otomatik || (otomatik && m.otomatik !== false)) && <span className="filiz-oto-etiket">🤖 Otomatik yanıt</span>}
+                    {m.rol === 'asistan' && m.sozluk && <button className="filiz-oto-etiket" style={{ border: 0, cursor: 'pointer' }} onClick={() => { setSozlukKelime(m.sozluk.ad); setGorunum('sozluk') }}>📖 Sözlükten · benzer kelimeler</button>}
+                    {m.rol === 'asistan' && !m.sozluk && (m.otomatik || (otomatik && m.otomatik !== false)) && <span className="filiz-oto-etiket">🤖 Otomatik yanıt</span>}
                   </div>
             ))}
             {gonderiliyor && <div className="filiz-mesaj asistan filiz-yaziyor"><span /><span /><span /></div>}

@@ -2780,24 +2780,35 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
   .yonetim-main.filiz-var .main-icerik{padding-bottom:72px}
 }
 
-/* [2026-10-11] Sözlük: metinde terimlerin altı noktalı çizilir (DOM'a dokunmadan, CSS Highlight API), dokununca kutu açılır */
-::highlight(sozluk-terim){text-decoration:underline dotted;text-decoration-thickness:2px;text-decoration-color:var(--pu);text-underline-offset:3px;background-color:color-mix(in srgb,var(--pu) 8%,transparent)}
-.sozluk-kutu{position:fixed;z-index:80;background:var(--sur);border:1.5px solid var(--pu);border-radius:14px;box-shadow:0 10px 30px rgba(0,0,0,.18);padding:12px 14px;font-size:13.5px;line-height:1.55;color:var(--tx)}
-.sozluk-kutu-ust{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px}
-.sozluk-kutu-ad{font-weight:800;font-size:14px}
-.sozluk-kutu-kapat{border:0;background:var(--sur2);color:var(--tx2);border-radius:999px;width:28px;height:28px;cursor:pointer;font-size:13px;flex:none}
-.sozluk-kutu-tanim{color:var(--tx)}
-.sozluk-kutu-ornek{margin-top:6px;font-size:12.5px;color:var(--tx2);background:var(--sur2);border-radius:8px;padding:6px 8px}
-.sozluk-kutu-link{display:inline-block;margin-top:8px;font-size:12.5px;font-weight:700;color:var(--pud,var(--pu))}
-.sozluk-arac{display:flex;flex-wrap:wrap;gap:12px;align-items:center}
-.sozluk-arac .auth-input{flex:1;min-width:220px}
-.sozluk-ayar{display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer}
-.sozluk-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
-.sozluk-terim{margin:0;scroll-margin-top:80px}
-.sozluk-terim.secili{border-color:var(--pu);box-shadow:0 0 0 3px color-mix(in srgb,var(--pu) 25%,transparent)}
-.sozluk-terim-ad{font-weight:800;font-size:15px}
-.sozluk-terim-grup{font-size:11.5px;color:var(--tx3);margin:2px 0 6px}
-.sozluk-terim-tanim{font-size:13.5px;line-height:1.55}
+/* [2026-10-11] Sistem sözlüğü (arama) — Filiz paneli sekmesi, küçük pencere ve /sozluk sayfası */
+.sz{display:flex;flex-direction:column;gap:10px}
+.sz-arama{display:flex;align-items:center;gap:8px;border:1.5px solid var(--bor2);background:var(--sur);border-radius:12px;padding:8px 10px}
+.sz-arama:focus-within{border-color:var(--pu)}
+.sz-arama input{flex:1;min-width:0;border:0;outline:0;background:transparent;font:inherit;font-size:14px;color:var(--tx)}
+.sz-arama.buyuk{padding:12px 14px}.sz-arama.buyuk input{font-size:16px}
+.sz-temizle{border:0;background:var(--sur2);color:var(--tx2);border-radius:999px;width:26px;height:26px;cursor:pointer;flex:none}
+.sz-oneri-bas{font-size:11.5px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px}
+.sz-cipler{display:flex;flex-wrap:wrap;gap:6px}
+.sz-cipler button{border:1px solid var(--bor);background:var(--sur2);border-radius:999px;padding:5px 11px;font:inherit;font-size:12.5px;font-weight:600;color:var(--tx);cursor:pointer}
+.sz-not{font-size:12px;color:var(--tx3);margin-top:10px;line-height:1.45}
+.sz-bos{font-size:13px;color:var(--tx2);padding:6px 2px;line-height:1.5}
+.sz-sonuclar{display:flex;flex-direction:column;gap:8px}
+.sz-kart{border:1px solid var(--bor);background:var(--sur);border-radius:12px;padding:10px 12px}
+.sz-kart.buyuk{border-color:var(--pu);background:var(--pul)}
+.sz-ad{font-weight:800;font-size:14.5px}
+.sz-grup{font-size:11px;color:var(--tx3);margin:1px 0 5px}
+.sz-tanim{font-size:13.5px;line-height:1.55;color:var(--tx)}
+.sz-ornek{margin-top:7px;font-size:12.5px;line-height:1.5;color:var(--tx2);background:var(--sur2);border-radius:8px;padding:6px 9px}
+.sz-tumu{font-size:12.5px;font-weight:700;color:var(--pud,var(--pu));align-self:flex-start}
+.sz-liste{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.sz-liste .sz-kart{padding:14px 16px}
+.sz-sayfa-arama{padding:12px}
+.sz-pencere{position:fixed;right:16px;top:160px;width:360px;max-height:min(560px,calc(100vh - 180px));z-index:75;display:flex;flex-direction:column;background:var(--sur);border:1px solid var(--bor2);border-radius:18px;box-shadow:0 24px 60px -12px rgba(0,0,0,.28);overflow:hidden}
+.sz-pencere-ust{display:flex;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--bor);background:var(--pul);font-size:14px}
+.sz-pencere-icerik{overflow:auto;padding:12px}
+@media (max-width: 760px){
+  .sz-pencere{top:auto;left:8px;right:8px;bottom:8px;width:auto;max-height:75vh}
+}
 
 /* [2026-10-11] Çevrim içi öğrenciler — sağ alt */
 .cv-kap{position:fixed;right:20px;bottom:58px;z-index:60;display:flex;flex-direction:column;align-items:flex-end;gap:8px;pointer-events:none}

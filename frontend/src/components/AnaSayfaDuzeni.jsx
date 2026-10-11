@@ -3,7 +3,7 @@ import { NavLink, Outlet, Navigate, useLocation, useNavigate } from 'react-route
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
 import TemaAnahtari from './TemaAnahtari'
-import SozlukKatmani from './SozlukKatmani'
+import SozlukPenceresi from './SozlukPenceresi'   // [2026-10-11] Filiz'in yanından açılan sistem sözlüğü (arama)
 import CevrimiciPanel from './CevrimiciPanel'   // [2026-10-11] sağ altta çevrim içi öğrenciler   // [2026-10-11] zor kelimeye dokununca anlamı
 import TanitimPenceresi from './TanitimPenceresi'
 import Maskot from './Maskot'
@@ -265,7 +265,7 @@ export default function AnaSayfaDuzeni() {
       {!sifreGerekli && !kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
       {!kvkkGerekli && !tanitimAcik && profil && acik('filiz') && <FilizSohbet />}
       {acik('kocluk') && <SimulasyonKatmani />}
-      <SozlukKatmani />
+      <SozlukPenceresi filizVar={!kvkkGerekli && !tanitimAcik && !!profil && acik('filiz')} />
       {profil && !kvkkGerekli && <CevrimiciPanel kapsam="ogrenci" />}
     </div>
   )

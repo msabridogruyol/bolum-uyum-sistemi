@@ -1214,7 +1214,7 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
 }
 
 /** Maskotun görünümü: karakter + balon + efektler + araçlar. Öğrenci ve yönetim aynı bileşeni kullanır. */
-export function MaskotGorunum({ m, cinsiyet, kiyafet, seviye, rozet, onTikla, sorGoster, sorBaslik, miniBaslik, onBaglanti, sinif = '' }) {
+export function MaskotGorunum({ m, cinsiyet, kiyafet, seviye, rozet, onTikla, sorGoster, sorBaslik, miniBaslik, onBaglanti, sinif = '', sozlukGoster = false }) {
   if (m.kucuk) {
     return (
       <button className={`msk-mini ${sinif}`} onClick={() => { m.kucukDegistir(false); m.oynat('salla'); setTimeout(() => m.setBalon('Geri döndüm! 🌱'), 200) }} title={miniBaslik} aria-label={miniBaslik}>
@@ -1249,8 +1249,12 @@ export function MaskotGorunum({ m, cinsiyet, kiyafet, seviye, rozet, onTikla, so
           </span>
         ))}
       </div>
-      {!m.sohbetAcik && sorGoster && (
-        <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title={sorBaslik}>💬 Bana sor</button>
+      {!m.sohbetAcik && (sorGoster || sozlukGoster) && (
+        <div className="msk-sor-grup">
+          {sorGoster && <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title={sorBaslik}>💬 Bana sor</button>}
+          {/* [2026-10-11] Sistem sözlüğü: Filiz panelinin Sözlük sekmesi (Filiz yoksa küçük sözlük penceresi) */}
+          {sozlukGoster && <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('sozluk-ac'))} title="Bir kelimenin anlamını ara">📖 Sözlük</button>}
+        </div>
       )}
       <div className="msk-araclar">
         <button onClick={m.sesDegistir} title={m.sesAcik ? 'Sesi kapat' : 'Sesi aç'} aria-pressed={m.sesAcik}>{m.sesAcik ? '🔊' : '🔇'}</button>
@@ -1367,7 +1371,7 @@ export default function Maskot({ profil, ozet }) {
     <MaskotGorunum m={m} cinsiyet={cinsiyet} kiyafet={kiyafet} seviye={seviye}
       rozet={haftalik && <div className="msk-rozet" title={`${haftalik.seviye.ad} · ${haftalik.seviye.puan} puan`}>{haftalik.seviye.no}</div>}
       onTikla={() => { m.tepki(); konus(mesajSec(), true) }}
-      sorGoster={filizAcik} sorBaslik="Filiz Gelişim Koçu ile sohbet et" miniBaslik="Filiz Gelişim Koçu'nu göster" />
+      sorGoster={filizAcik} sozlukGoster sorBaslik="Filiz Gelişim Koçu ile sohbet et" miniBaslik="Filiz Gelişim Koçu'nu göster" />
   )
 }
 
@@ -1407,7 +1411,7 @@ const MASKOT_CSS = `
 .msk-araclar button,.msk-mini{border:1px solid var(--bor,#ddd);background:var(--sur,#fff);border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
 .msk-mini{position:absolute;top:18px;right:26px;width:42px;height:42px;z-index:60;box-shadow:0 4px 14px rgba(0,0,0,.12);animation:msk-filiz 2.6s ease-in-out infinite}
 .msk-dusunce{position:absolute;top:-6px;left:-6px;font-size:20px;animation:msk-yuksel 2.2s ease-out}
-.msk-sor{position:absolute;left:50%;transform:translateX(-50%);bottom:-24px;white-space:nowrap;border:1.5px solid var(--pu,#E8804A);background:var(--sur,#fff);color:var(--pu,#E8804A);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.msk-sor-grup{position:absolute;left:50%;transform:translateX(-50%);bottom:-24px;display:flex;gap:4px;white-space:nowrap}.msk-sor-grup .msk-sor{position:static;transform:none}.msk-sor{position:absolute;left:50%;transform:translateX(-50%);bottom:-24px;white-space:nowrap;border:1.5px solid var(--pu,#E8804A);background:var(--sur,#fff);color:var(--pu,#E8804A);border-radius:999px;padding:3px 10px;font-size:11px;font-weight:800;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.08)}
 .msk-sor:hover{background:var(--pu,#E8804A);color:#fff}
 @media (max-width:768px){.msk-sor{display:none}}
 .msk-rozet{position:absolute;left:2px;bottom:4px;width:18px;height:18px;border-radius:50%;background:var(--gr,#5E8A54);color:#fff;font-size:10.5px;font-weight:800;display:flex;align-items:center;justify-content:center;border:2px solid var(--sur,#fff);box-shadow:0 2px 6px rgba(0,0,0,.15)}
