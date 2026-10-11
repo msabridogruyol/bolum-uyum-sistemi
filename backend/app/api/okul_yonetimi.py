@@ -170,6 +170,11 @@ def sube_ogretmenleri(db: Session, okul_id: int) -> dict:
     return {(r[0], r[1]): {"ad": r[2], "eposta": r[3]} for r in satir}
 
 
+def _aktiflik(db: Session, ogrenci_id) -> dict:
+    from app.core.aktiflik import aktiflik_ozeti
+    return aktiflik_ozeti(db, ogrenci_id, 30)
+
+
 def _sinif_metni(o: Ogrenci) -> str:
     if not o.sinif:
         return ""
@@ -522,13 +527,14 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
     toplam = len(ogrenciler)
     giris_yapan = sum(1 for o in ogrenciler if o.son_giris_zamani is not None)
     sira = {s: i for i, s in enumerate(SINIFLAR)}
-    bugun = simdi().date()
+    from app.core.aktiflik import bugun_tr
+    bugun = bugun_tr()   # [2026-10-11] Türkiye saatiyle gün
     gunluk = {(bugun - timedelta(days=i)).isoformat(): 0 for i in range(13, -1, -1)}
     for g, n in db.execute(text(f"""
-        SELECT (e.zaman AT TIME ZONE 'Europe/Istanbul')::date AS gun, count(DISTINCT e.ogrenci_id)
-          FROM ogrenci_hesap_olaylari e JOIN ogrenciler o ON o.id = e.ogrenci_id
-         WHERE e.olay = 'giris' AND e.zaman >= now() - interval '14 days' AND {kosul}
-         GROUP BY 1"""), p).all():
+        SELECT e.gun, count(DISTINCT e.ogrenci_id)
+          FROM ogrenci_aktif_gunler e JOIN ogrenciler o ON o.id = e.ogrenci_id
+         WHERE e.gun >= CAST(:gbas AS date) AND {kosul}
+         GROUP BY 1"""), {**p, "gbas": bugun - timedelta(days=13)}).all():   # [2026-10-11] giriş yerine günlük aktiflik
         if g.isoformat() in gunluk:
             gunluk[g.isoformat()] = n
     ogretmenler = sube_ogretmenleri(db, okul_id)
@@ -762,6 +768,7 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
                   "sifre_degistirmeli": bool(o.sifre_degistirmeli), "durum": kod, "durum_etiket": etiket,
                   "gecici_sifre": coz(o.gecici_sifre_sifreli) if o.sifre_degistirmeli else None, "ogrenci_no": o.ogrenci_no,
                   "dogum_tarihi": o.dogum_tarihi, "ilgi_alanlari": o.ilgi_alanlari},
+        "aktiflik": _aktiflik(db, o.id),   # [2026-10-11] son 30 gün: aktif gün, son aktif, seri, takvim
         "istatistik": {
             "tur_sayisi": len(turlar),
             "biten_katman": (il or {}).get("biten", 0), "toplam_katman": (il or {}).get("toplam", 4),

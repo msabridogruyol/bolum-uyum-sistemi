@@ -5,8 +5,8 @@
 GET /yonetim/okul/{okul_id}/hazir-raporlar?gun=30&sinif=&sube=&adet=10
 
 Listeler (her biri en fazla `adet` öğrenci; öğrenci adı, sınıf-şube, değer):
-  en_cok_giris     — dönemde en çok giriş yapan          (ogrenci_hesap_olaylari 'giris')
-  en_az_giris      — dönemde en az giriş yapan / hiç girmeyen (0 giriş dahil; son girişi en eski olan önde)
+  en_aktif         — dönemde sistemi en çok gün açan     (ogrenci_aktif_gunler; ek bilgi: giriş sayısı)
+  en_az_aktif      — dönemde en az gün açan / hiç açmayan (0 dahil; son aktif günü en eski olan önde)
   en_yuksek_net    — son TYT toplam neti en yüksek         (net_takibi modülü)
   en_cok_yukselen  — ilk ve son TYT denemesi arasındaki net artışı en yüksek (en az 2 TYT; net_takibi)
   en_cok_calisma   — dönemde en çok çalışma süresi kaydeden (calisma modülü)
@@ -15,12 +15,13 @@ Listeler (her biri en fazla `adet` öğrenci; öğrenci adı, sınıf-şube, de�
 Kapsam / yetki: okul_yonetimi._okul_kapsami — okul yetkilisi yalnızca kendi okulu; süper admin herhangi bir okul.
 Test hesapları sayılmaz (okul_istatistik.ogrenci_kumesi). Paket modülü kapalı listeler dönmez.
 Etik: kişilik / değer / ilgi puanına göre sıralama YAPILMAZ; yalnızca katılım ve deneme neti.
-Not: "giriş" başarılı oturum açma sayısıdır; "beni hatırla" ile açık kalan oturumda geçen günler sayılmaz.
+[2026-10-11] Aktif gün: öğrencinin sistemi açtığı her gün bir kez sayılır ("beni hatırla" ile açık kalan oturumlar dahil).
+Giriş: şifreyle yapılan başarılı oturum açma sayısı (ek bilgi).
 Performans: liste başına tek toplu SQL.
 """
 from __future__ import annotations
 
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import text
@@ -29,6 +30,7 @@ from sqlalchemy.orm import Session
 from app.api.deps import get_mevcut_yonetim
 from app.api.okul_istatistik import ogrenci_kumesi
 from app.api.okul_yonetimi import _okul_kapsami, _sinif_metni
+from app.core.aktiflik import bugun_tr
 from app.core.database import get_db
 from app.core.paketler import okul_modulleri
 from app.models import AdminKullanici
@@ -59,7 +61,8 @@ def hazir_raporlar(okul_id: int, gun: int = Query(30), sinif: str | None = None,
     moduller = set(okul_modulleri(db, okul_id or None))
     simdi = datetime.now(timezone.utc)
     bas = simdi - timedelta(days=gun)
-    p = {"ids": ids, "bas": bas}
+    bugun = bugun_tr()
+    p = {"ids": ids, "bas": bas, "gbas": bugun - timedelta(days=gun - 1)}
     listeler: list[dict] = []
 
     def say(sql: str) -> dict[str, float]:
@@ -67,20 +70,25 @@ def hazir_raporlar(okul_id: int, gun: int = Query(30), sinif: str | None = None,
             return {}
         return {str(r[0]): r[1] for r in db.execute(text(sql), p).all()}
 
-    # --- katılım ---------------------------------------------------------------------------------------------------
+    # --- katılım: günlük aktiflik (öğrencinin sistemi açtığı günler) + giriş sayısı -------------------------------
     giris = say("SELECT ogrenci_id, count(*) FROM ogrenci_hesap_olaylari "
                 "WHERE ogrenci_id = ANY(CAST(:ids AS uuid[])) AND olay = 'giris' AND zaman >= :bas GROUP BY 1")
-    cok = sorted((o for o in ogr if giris.get(str(o.id))),
-                 key=lambda o: (-giris[str(o.id)], -(o.son_giris_zamani or bas).timestamp()))[:adet]
-    listeler.append({"kod": "en_cok_giris", "ikon": "🔥", "baslik": "En çok giriş yapanlar", "birim": "giriş",
-                     "aciklama": f"Son {gun} günde sisteme en çok giriş yapan öğrenciler",
-                     "satirlar": [_satir(o, giris[str(o.id)], f"son giriş {_tarih(o.son_giris_zamani)}") for o in cok],
-                     "bos": "Bu dönemde giriş yapan öğrenci yok."})
-    az = sorted(ogr, key=lambda o: (giris.get(str(o.id), 0), (o.son_giris_zamani or datetime.min.replace(tzinfo=timezone.utc)).timestamp()))[:adet]
-    listeler.append({"kod": "en_az_giris", "ikon": "💤", "baslik": "En az giriş yapanlar", "birim": "giriş",
-                     "aciklama": f"Son {gun} günde en az giriş yapan ya da hiç girmeyen öğrenciler (önce en uzun süredir girmeyen)",
-                     "satirlar": [_satir(o, giris.get(str(o.id), 0),
-                                         f"son giriş {_tarih(o.son_giris_zamani)}" if o.son_giris_zamani else "hiç giriş yapmadı") for o in az],
+    aktif = say("SELECT ogrenci_id, count(*) FROM ogrenci_aktif_gunler "
+                "WHERE ogrenci_id = ANY(CAST(:ids AS uuid[])) AND gun >= CAST(:gbas AS date) GROUP BY 1") if ids else {}
+    son_aktif = {str(r[0]): r[1] for r in db.execute(text(
+        "SELECT ogrenci_id, max(gun) FROM ogrenci_aktif_gunler WHERE ogrenci_id = ANY(CAST(:ids AS uuid[])) GROUP BY 1"), p).all()} if ids else {}
+    sa = lambda o: son_aktif.get(str(o.id))
+    sa_metin = lambda o: f"son aktif {sa(o).strftime('%d.%m.%Y')}" if sa(o) else "hiç açmadı"
+    cok = sorted((o for o in ogr if aktif.get(str(o.id))),
+                 key=lambda o: (-aktif[str(o.id)], -giris.get(str(o.id), 0), -(sa(o) or bugun).toordinal()))[:adet]
+    listeler.append({"kod": "en_aktif", "ikon": "🔥", "baslik": "En aktif öğrenciler", "birim": "gün",
+                     "aciklama": f"Son {gun} günde sistemi en çok gün açan öğrenciler (her gün bir kez sayılır)",
+                     "satirlar": [_satir(o, aktif[str(o.id)], f"{sa_metin(o)} · {giris.get(str(o.id), 0)} giriş") for o in cok],
+                     "bos": "Bu dönemde sistemi açan öğrenci yok."})
+    az = sorted(ogr, key=lambda o: (aktif.get(str(o.id), 0), (sa(o) or date.min).toordinal()))[:adet]
+    listeler.append({"kod": "en_az_aktif", "ikon": "💤", "baslik": "En az aktif öğrenciler", "birim": "gün",
+                     "aciklama": f"Son {gun} günde sistemi en az gün açan ya da hiç açmayan öğrenciler (önce en uzun süredir açmayan)",
+                     "satirlar": [_satir(o, aktif.get(str(o.id), 0), sa_metin(o)) for o in az],
                      "bos": "Öğrenci yok."})
 
     # --- deneme neti (TYT) -------------------------------------------------------------------------------------------
@@ -126,8 +134,10 @@ def hazir_raporlar(okul_id: int, gun: int = Query(30), sinif: str | None = None,
                          "satirlar": [_satir(harita[i], top[i], f"{adim.get(i, 0)} adım · {gorev.get(i, 0)} görev") for i in en],
                          "bos": "Bu dönemde tamamlanan adım ya da görev yok."})
 
-    hic = sum(1 for o in ogr if not o.son_giris_zamani)
-    uzun = sum(1 for o in ogr if o.son_giris_zamani and o.son_giris_zamani < simdi - timedelta(days=14))
+    hic = sum(1 for o in ogr if not o.son_giris_zamani and not sa(o))
+    uzun = sum(1 for o in ogr if sa(o) and sa(o) < bugun - timedelta(days=14))
+    bugun_aktif = sum(1 for o in ogr if sa(o) == bugun)
     return {"gun": gun, "donemler": list(DONEMLER), "kapsam": k["etiket"], "secenekler": k["secenekler"],
-            "ogrenci_sayisi": len(ogr), "hic_girmeyen": hic, "girmeyen_14_gun": uzun,
+            "ogrenci_sayisi": len(ogr), "hic_girmeyen": hic, "girmeyen_14_gun": uzun, "bugun_aktif": bugun_aktif,
+            "donemde_aktif": sum(1 for o in ogr if aktif.get(str(o.id))),
             "donemde_giris_yapan": sum(1 for o in ogr if giris.get(str(o.id))), "listeler": listeler}

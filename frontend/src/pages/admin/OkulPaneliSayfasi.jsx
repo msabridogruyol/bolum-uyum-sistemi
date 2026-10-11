@@ -55,7 +55,7 @@ function OzetSekmesi({ oz, onIstatistik, okulId, onRaporlar }) {
           ))}
         </div>
         <div className="card" style={{ margin: 0 }}>
-          <div className="ct">Son 14 gün — giriş yapan öğrenci</div>
+          <div className="ct">Son 14 gün — sistemi açan öğrenci</div>
           <div className="yp-gunluk">
             {oz.gunluk_giris.map((g) => (
               <div key={g.gun} title={`${new Date(g.gun).toLocaleDateString('tr-TR')}: ${g.sayi} öğrenci`}>

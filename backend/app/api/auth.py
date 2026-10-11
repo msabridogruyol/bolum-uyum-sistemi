@@ -53,6 +53,8 @@ def _giris_kaydet(db: Session, hesap, rol: str) -> None:
     hesap.son_giris_zamani = simdi()
     if rol == "ogrenci":
         olay_yaz(db, hesap.id, "giris", None, "Öğrenci")
+        from app.core.aktiflik import gune_isle
+        gune_isle(db, hesap.id)   # [2026-10-11] günlük aktiflik
 
 
 def giris_sonucu(db: Session, hesap, rol: str, cihaz_tokeni: str | None) -> GirisCevap:

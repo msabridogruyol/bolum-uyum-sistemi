@@ -21,6 +21,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
+from app.core.aktiflik import gune_isle
 from app.core.database import get_db
 from app.models import AdminKullanici, Ogrenci
 
@@ -65,6 +66,7 @@ def buradayim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogr
     simdi = _simdi()
     if o.son_gorulme is None or (simdi - o.son_gorulme).total_seconds() >= YAZMA_SN:
         db.execute(text("UPDATE ogrenciler SET son_gorulme = :s WHERE id = :i"), {"s": simdi, "i": o.id})
+        gune_isle(db, o.id)   # [2026-10-11] günün ilk açılışı işaretlenir (beni hatırla ile açık kalan oturumlar da sayılır)
         db.commit()
     if not o.okul_id:
         return {"gizli": bool(o.cevrimici_gizli), "toplam": 0, "sinifim": [], "digerleri": [], "kesildi": False}

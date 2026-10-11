@@ -1,5 +1,5 @@
 // [2026-10-11] Okul yetkilisi — hazır raporlar: indirmeye gerek kalmadan ekranda görülen öğrenci listeleri.
-// En çok / en az giriş yapanlar, en yüksek TYT neti, netini en çok artıranlar, en çok çalışma kaydedenler,
+// En aktif / en az aktif öğrenciler (günlük aktiflik), en yüksek TYT neti, netini en çok artıranlar, en çok çalışma kaydedenler,
 // koçluk ve görevlerde en aktifler. Veri: GET /yonetim/okul/{id}/hazir-raporlar (app/api/hazir_raporlar.py).
 // kompakt: okul ana sayfası (Özet) için ilk 5 satır, dönem seçimi; tam: Raporlar sayfası (10 satır + sınıf filtresi + CSV).
 // İsme tıklayınca öğrencinin detay penceresi açılır (Öğrenciler sekmesi derin bağlantısı).
@@ -65,9 +65,9 @@ export default function HazirRaporlar({ okulId, kompakt = false, onTumu }) {
           <div className="ct" style={{ margin: 0 }}>📋 Hazır raporlar</div>
           {v && (
             <div className="hr-ozet">
-              {v.kapsam} · {v.ogrenci_sayisi} öğrenci · {DONEM_AD[v.gun]} içinde <b>{v.donemde_giris_yapan}</b> öğrenci giriş yaptı
-              {v.hic_girmeyen > 0 && <> · <b className="hr-uyari">{v.hic_girmeyen}</b> öğrenci hiç giriş yapmadı</>}
-              {v.girmeyen_14_gun > 0 && <> · <b>{v.girmeyen_14_gun}</b> öğrenci 14 günden uzun süredir girmiyor</>}
+              {v.kapsam} · {v.ogrenci_sayisi} öğrenci · bugün <b>{v.bugun_aktif}</b> öğrenci sistemi açtı · {DONEM_AD[v.gun]} içinde <b>{v.donemde_aktif}</b> öğrenci aktif
+              {v.hic_girmeyen > 0 && <> · <b className="hr-uyari">{v.hic_girmeyen}</b> öğrenci sistemi hiç açmadı</>}
+              {v.girmeyen_14_gun > 0 && <> · <b>{v.girmeyen_14_gun}</b> öğrenci 14 günden uzun süredir açmıyor</>}
             </div>
           )}
         </div>
@@ -101,7 +101,7 @@ export default function HazirRaporlar({ okulId, kompakt = false, onTumu }) {
       )}
       {v && !kompakt && (
         <div className="yp-ince" style={{ marginTop: 10, lineHeight: 1.6 }}>
-          Giriş sayısı, sisteme şifreyle yapılan başarılı girişlerdir; "beni hatırla" ile açık kalan oturumlar ayrıca sayılmaz.
+          Aktif gün: öğrencinin sistemi açtığı her gün bir kez sayılır ("beni hatırla" ile açık kalan oturumlar dahil). Giriş: şifreyle yapılan oturum açma sayısı.
           Sıralamalar yalnızca katılım ve deneme netine göre yapılır; kişilik, değer ve ilgi sonuçları sıralamada kullanılmaz.
           Test hesapları hariçtir.
         </div>
