@@ -2895,3 +2895,8 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 .sz-bolumler{display:flex;flex-wrap:wrap;gap:6px;align-items:center;margin-top:8px;font-size:11.5px;color:var(--tx3)}
 .sz-bolumler button{border:1px solid var(--bor);background:var(--sur);color:var(--tx2);border-radius:999px;padding:3px 10px;font-size:11.5px;font-weight:700;cursor:pointer}
 .sz-bolumler button:hover{border-color:var(--pu);color:var(--pu)}
+
+/* [2026-10-11] Öğrenci detayı — son 30 gün aktiflik şeridi */
+.ak-serit{display:grid;grid-template-columns:repeat(30,minmax(0,1fr));gap:3px;margin-top:6px;max-width:520px}
+.ak-serit span{aspect-ratio:1;border-radius:4px;background:var(--sur);border:1px solid var(--bor2);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:800;color:#fff}
+.ak-serit span.aktif{background:var(--gr);border-color:var(--gr)}

@@ -236,6 +236,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           <div className="yp-bilgi-grid">
             <div><span>Hesap açılışı</span><b>{tarih(h.olusturulma_zamani)}</b></div>
             <div><span>Son giriş</span><b>{h.son_giris_zamani ? `${tarih(h.son_giris_zamani)} (${onceSure(h.son_giris_zamani)})` : 'Hiç giriş yapmadı'}</b></div>
+            {d.aktiflik && <AktiflikSeridi a={d.aktiflik} />}
             <div><span>Şifre</span><b><SifreHucresi gecici={h.gecici_sifre} degistirmeli={h.sifre_degistirmeli} /></b></div>
             <div><span>Öğrenci no</span><b>{h.ogrenci_no || '—'}</b></div>
             <div style={{ gridColumn: '1 / -1' }}><span>Hedef bölüm</span>
@@ -329,5 +330,21 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
         </div>
       )}
     </Pencere>
+  )
+}
+
+// [2026-10-11] Günlük aktiflik: son 30 gün, sistemi açtığı günler işaretli (✓). Her gün bir kez sayılır.
+function AktiflikSeridi({ a }) {
+  const gunAdi = (iso) => new Date(`${iso}T00:00:00`).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', weekday: 'short' })
+  return (
+    <div style={{ gridColumn: '1 / -1' }}>
+      <span>Son {a.gun} gün aktiflik</span>
+      <b>{a.aktif_gun} gün aktif{a.seri > 1 ? ` · ${a.seri} gündür üst üste` : ''}{a.son_aktif ? ` · son aktif ${gunAdi(a.son_aktif)}` : ' · sistemi hiç açmadı'}</b>
+      <div className="ak-serit" role="img" aria-label={`Son ${a.gun} günde ${a.aktif_gun} gün aktif`}>
+        {a.takvim.map((g) => (
+          <span key={g.gun} className={g.aktif ? 'aktif' : ''} title={`${gunAdi(g.gun)}: ${g.aktif ? 'sistemi açtı' : 'açmadı'}`}>{g.aktif ? '✓' : ''}</span>
+        ))}
+      </div>
+    </div>
   )
 }
