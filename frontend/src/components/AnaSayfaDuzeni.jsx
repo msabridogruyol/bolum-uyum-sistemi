@@ -5,7 +5,8 @@ import { api } from '../api/client'
 import TemaAnahtari from './TemaAnahtari'
 import SozlukPenceresi from './SozlukPenceresi'   // [2026-10-11] Filiz'in yanından açılan sistem sözlüğü (arama)
 import CevrimiciPanel from './CevrimiciPanel'   // [2026-10-11] sağ altta çevrim içi öğrenciler   // [2026-10-11] zor kelimeye dokununca anlamı
-import TanitimPenceresi from './TanitimPenceresi'
+import TanitimTuru from './TanitimTuru'   // [2026-10-11] menüleri tek tek tanıtan tur (eski 5 adımlı pencerenin yerine)
+import AcilisAmblemi, { acilisGosterilsinMi } from './AcilisAmblemi'   // [2026-10-11] açılışta parlayan amblem
 import Maskot from './Maskot'
 import OkulRozeti from './OkulRozeti'
 import FilizSohbet from './FilizSohbet'
@@ -47,6 +48,8 @@ export default function AnaSayfaDuzeni() {
   const [kocVar, setKocVar] = useState(false)   // [2026-10-10] okulunda aktif koç yoksa menüde gösterilmez
   const [profilYuklendi, setProfilYuklendi] = useState(false)
   const [tanitimAcik, setTanitimAcik] = useState(false)
+  const [turTekrar, setTurTekrar] = useState(false)   // Ayarlar'dan yeniden başlatıldıysa bitince profil sayfasına gidilmez
+  const [acilis, setAcilis] = useState(acilisGosterilsinMi)
   const [kvkkGerekli, setKvkkGerekli] = useState(false) // [2026-10-04] eski hesap veya yeni metin sürümü
   const konum = useLocation()
   const navigate = useNavigate()
@@ -76,13 +79,19 @@ export default function AnaSayfaDuzeni() {
 
   // Profil sayfası kaydettiğinde menüdeki ad/foto ve zorunlu alan kontrolü hemen güncellensin
   const profilYenile = useCallback((p) => setProfil(p), [])
-  const tanitimiAc = useCallback(() => setTanitimAcik(true), [])
+  const tanitimiAc = useCallback(() => { setTurTekrar(true); setTanitimAcik(true) }, [])
+  useEffect(() => {   // [2026-10-11] 'tur-baslat' olayı (TanitimTuru.turuBaslat)
+    window.addEventListener('tur-baslat', tanitimiAc)
+    return () => window.removeEventListener('tur-baslat', tanitimiAc)
+  }, [tanitimiAc])
+  const acilisBitti = useCallback(() => setAcilis(false), [])
 
   function tanitimiBitir() {
     try { localStorage.setItem(tanitimAnahtari(profil), '1') } catch { /* gizli sekme vb. */ }
     setTanitimAcik(false)
     // [2026-10-10] İlk girişte (tanıtımdan sonra) öğrenci her zaman profil sayfasına gelir: bilgilerini kontrol eder, fotoğraf/ilgi alanı ekler
-    navigate('/profil?ilk=1')
+    if (!turTekrar) navigate('/profil?ilk=1')
+    setTurTekrar(false)
   }
 
   // Profil tamamlanmadan diğer sayfalara geçilmez (tanıtım açıkken yönlendirme beklenir)
@@ -210,6 +219,7 @@ export default function AnaSayfaDuzeni() {
         {acik('filiz') && (<>
         {/* [2026-10-04] Filiz sohbet paneli her sayfadan açılır */}
         <div className="ni" role="button" tabIndex={0} style={{ cursor: 'pointer' }}
+          data-tur="filiz"
           onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))}
           onKeyDown={(e) => { if (e.key === 'Enter') window.dispatchEvent(new CustomEvent('filiz-ac')) }}>
           💬 Filiz
@@ -260,7 +270,8 @@ export default function AnaSayfaDuzeni() {
           onTamam={() => setProfil((p) => ({ ...p, sifre_degistirmeli: false }))} />
       )}
       {!sifreGerekli && kvkkGerekli && <KvkkOnayPenceresi onTamam={() => setKvkkGerekli(false)} onCikis={cikisYap} />}
-      {!sifreGerekli && !kvkkGerekli && tanitimAcik && <TanitimPenceresi onBitir={tanitimiBitir} />}
+      {!sifreGerekli && !kvkkGerekli && tanitimAcik && !acilis && <TanitimTuru kapsam="ogrenci" onBitir={tanitimiBitir} />}
+      {acilis && profilYuklendi && <AcilisAmblemi ad={profil?.ad_soyad?.trim().split(/\s+/)[0]} okulAd={profil?.okul} onBitti={acilisBitti} />}
       {!kvkkGerekli && !tanitimAcik && profil && acik('filiz') && <FilizSohbet />}
       {acik('kocluk') && <SimulasyonKatmani />}
       <SozlukPenceresi filizVar={!kvkkGerekli && !tanitimAcik && !!profil && acik('filiz')} />

@@ -2974,3 +2974,68 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 @keyframes yk-parilti{0%{background-position:100% 0}100%{background-position:-120% 0}}
 @keyframes yk-gec{to{opacity:1}}
 @media (prefers-reduced-motion: reduce){.bos-durum.yukleniyor::before{animation:none}}
+
+/* [2026-10-11] Açılış amblemi — büyük, parlayan Filizyol amblemi + "Hoş geldin" */
+.acilis{position:fixed;inset:0;z-index:4000;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  background:radial-gradient(ellipse 60% 50% at 50% 42%, color-mix(in srgb, var(--okul-c) 22%, var(--bg)), var(--bg) 70%);cursor:pointer;
+  animation:acilis-gel .35s ease-out both;transition:opacity .35s, transform .35s}
+.acilis.cikiyor{opacity:0;transform:scale(1.04)}
+.acilis-amblem{position:relative;width:168px;height:168px;display:flex;align-items:center;justify-content:center;margin-bottom:10px}
+.acilis-filiz{position:relative;z-index:2;font-size:76px;line-height:1;width:132px;height:132px;border-radius:50%;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 35% 30%, #fff, color-mix(in srgb, var(--okul-c) 18%, #fff) 60%, color-mix(in srgb, var(--okul-c) 35%, #fff));
+  box-shadow:0 0 0 4px color-mix(in srgb, var(--okul-c) 55%, transparent), 0 0 40px 8px color-mix(in srgb, var(--okul-c) 45%, transparent), 0 18px 40px -12px rgba(0,0,0,.25);
+  animation:acilis-zipla .9s cubic-bezier(.2,.9,.3,1.3) .1s both, acilis-parla 1.8s ease-in-out .9s infinite}
+.acilis-isilti{position:absolute;inset:-30px;border-radius:50%;z-index:1;
+  background:conic-gradient(from 0deg, transparent 0 20%, color-mix(in srgb, var(--okul-c) 40%, transparent) 25%, transparent 30% 55%, color-mix(in srgb, #FFD23F 55%, transparent) 60%, transparent 66% 100%);
+  filter:blur(6px);animation:acilis-don 3s linear infinite}
+.acilis-halka{position:absolute;inset:0;border-radius:50%;border:2px solid color-mix(in srgb, var(--okul-c) 50%, transparent);animation:acilis-dalga 2.2s ease-out infinite}
+.acilis-halka.h2{animation-delay:.7s}.acilis-halka.h3{animation-delay:1.4s}
+.acilis-hos{font-family:var(--fd);font-size:clamp(26px,5vw,40px);font-weight:800;color:var(--tx);animation:acilis-yuksel .6s ease-out .35s both;text-align:center;padding:0 16px}
+.acilis-marka{font-size:15px;font-weight:800;color:var(--okul-c);animation:acilis-yuksel .6s ease-out .5s both}
+.acilis-marka span{color:var(--tx3);font-weight:600}
+.acilis-okul{display:flex;align-items:center;gap:8px;margin-top:6px;font-size:13px;font-weight:700;color:var(--tx2);animation:acilis-yuksel .6s ease-out .65s both}
+.acilis-okul img{width:28px;height:28px;object-fit:contain;border-radius:6px}
+.acilis-gec{position:absolute;bottom:28px;font-size:11.5px;color:var(--tx3);font-weight:600;animation:acilis-yuksel .6s ease-out 1s both}
+@keyframes acilis-gel{from{opacity:0}to{opacity:1}}
+@keyframes acilis-zipla{0%{transform:scale(.3) rotate(-12deg);opacity:0}100%{transform:scale(1) rotate(0);opacity:1}}
+@keyframes acilis-parla{0%,100%{filter:brightness(1)}50%{filter:brightness(1.12) drop-shadow(0 0 18px color-mix(in srgb, var(--okul-c) 70%, transparent))}}
+@keyframes acilis-don{to{transform:rotate(360deg)}}
+@keyframes acilis-dalga{0%{transform:scale(.85);opacity:.9}100%{transform:scale(1.55);opacity:0}}
+@keyframes acilis-yuksel{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+@media (prefers-reduced-motion: reduce){.acilis,.acilis *{animation:none!important}}
+
+/* [2026-10-11] Tanıtım turu */
+.tt{position:fixed;inset:0;z-index:3500}
+.tt-perde{position:absolute;inset:0;background:rgba(20,16,10,.58)}
+.tt-isik{position:fixed;border-radius:12px;box-shadow:0 0 0 9999px rgba(20,16,10,.58), 0 0 0 3px var(--okul-c), 0 0 24px 6px color-mix(in srgb, var(--okul-c) 55%, transparent);
+  transition:top .28s cubic-bezier(.2,.7,.2,1), left .28s, width .28s, height .28s;pointer-events:none}
+.tt-balon{position:fixed;width:min(340px,calc(100vw - 32px));background:var(--sur);color:var(--tx);border-radius:18px;padding:16px 18px 14px;
+  border-top:3px solid var(--okul-c);box-shadow:0 24px 60px -18px rgba(0,0,0,.45);transition:top .28s cubic-bezier(.2,.7,.2,1), left .28s}
+.tt-balon.ortada{top:50%;left:50%;transform:translate(-50%,-50%);width:min(440px,calc(100vw - 32px))}
+.tt-ok{position:absolute;left:-8px;top:76px;width:16px;height:16px;background:var(--sur);transform:rotate(45deg);border-radius:3px}
+.tt-ust{display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;min-height:20px}
+.tt-sayac{font-size:11px;font-weight:800;color:var(--tx3);letter-spacing:.04em}
+.tt-atla{border:0;background:none;color:var(--tx3);font-size:12px;font-weight:700;cursor:pointer;padding:2px 4px}
+.tt-atla:hover{color:var(--pu)}
+.tt-baslik{font-size:17px;font-weight:800;margin-bottom:4px}
+.tt-metin{font-size:13.5px;color:var(--tx2);line-height:1.55}
+.tt-maddeler{list-style:none;margin:10px 0 0;padding:10px 12px;background:var(--sur2);border-radius:12px;font-size:12.5px;color:var(--tx2);display:flex;flex-direction:column;gap:4px}
+.tt-noktalar{display:flex;flex-wrap:wrap;gap:4px;justify-content:center;margin:12px 0 10px}
+.tt-noktalar i{width:6px;height:6px;border-radius:3px;background:var(--bor2);display:block;transition:all .2s}
+.tt-noktalar i.gecti{background:color-mix(in srgb, var(--okul-c) 45%, var(--bor2))}
+.tt-noktalar i.aktif{width:16px;background:var(--okul-c)}
+.tt-dugmeler{display:flex;gap:8px;justify-content:flex-end}
+.tt-dugmeler .btn{padding:8px 16px}
+
+/* [2026-10-11] Menüde düğme olarak duran bağlantı (Tanıtımı başlat) */
+.ni.ni-btn{width:calc(100% - 20px);border:0;background:none;text-align:left;font:inherit;cursor:pointer}
+
+/* [2026-10-11] Hakkında — geliştirici kartı */
+.gl-kart{display:flex;gap:16px;align-items:center;margin-top:18px}
+.gl-amblem{flex:none;width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:28px;
+  background:radial-gradient(circle at 35% 30%, #fff, color-mix(in srgb, var(--okul-c) 22%, #fff));box-shadow:0 0 0 3px color-mix(in srgb, var(--okul-c) 45%, transparent), 0 0 18px color-mix(in srgb, var(--okul-c) 35%, transparent)}
+.gl-ust{font-size:11px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tx3)}
+.gl-metin{font-size:14px;color:var(--tx2);margin-top:2px;line-height:1.5}
+.gl-metin b{color:var(--tx)}
+.gl-iletisim{font-size:13px;color:var(--tx2);margin-top:4px}
+.gl-iletisim a{color:var(--pu);font-weight:700}

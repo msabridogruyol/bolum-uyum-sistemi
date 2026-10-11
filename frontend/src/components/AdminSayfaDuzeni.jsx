@@ -1,4 +1,6 @@
-import { Fragment, useEffect, useState } from 'react'
+import { Fragment, useCallback, useEffect, useState } from 'react'
+import TanitimTuru, { turuBaslat } from './TanitimTuru'   // [2026-10-11] menü tanıtım turu
+import AcilisAmblemi, { acilisGosterilsinMi } from './AcilisAmblemi'   // [2026-10-11] açılış amblemi
 import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { okulBolumleri } from './yonetim/okulBolumleri'
 import { useAdminAuth } from '../context/AdminAuthContext'
@@ -74,6 +76,24 @@ export default function AdminSayfaDuzeni() {
   useEffect(() => {
     if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('kulupler'))) api.kulupTalepleri(ben.okul_id).then((v) => setBekleyenTalep(v.bekleyen || 0)).catch(() => {})
   }, [okulYetkilisi, ben?.okul_id, konum.pathname, konum.search])
+  // [2026-10-11] Açılış amblemi (oturumda bir kez) + ilk girişte menü tanıtım turu (rol ve pakete göre menüden üretilir)
+  const [acilis, setAcilis] = useState(acilisGosterilsinMi)
+  const [turAcik, setTurAcik] = useState(false)
+  const turAnahtari = ben ? `tur_goruldu_yonetim_${ben.id || ben.email || ben.ad_soyad}` : null
+  useEffect(() => {
+    if (!turAnahtari || ben?.sifre_degistirmeli) return
+    try { if (localStorage.getItem(turAnahtari) !== '1') setTurAcik(true) } catch { /* gizli sekme */ }
+  }, [turAnahtari, ben?.sifre_degistirmeli])
+  useEffect(() => {
+    const ac = () => setTurAcik(true)
+    window.addEventListener('tur-baslat', ac)
+    return () => window.removeEventListener('tur-baslat', ac)
+  }, [])
+  const turuBitir = useCallback(() => {
+    try { if (turAnahtari) localStorage.setItem(turAnahtari, '1') } catch { /* yoksay */ }
+    setTurAcik(false)
+  }, [turAnahtari])
+  const acilisBitti = useCallback(() => setAcilis(false), [])
   // [2026-10-09] Okul yetkilisinin paneli okulun renginde; süper admin Filizyol renginde
   useEffect(() => {
     okulRenginiUygula(okulYetkilisi ? ben?.okul_renk : null)
@@ -138,6 +158,7 @@ export default function AdminSayfaDuzeni() {
             <div className="ns">Yardım</div>
             <NavLink to="/admin/sss" className={ni}><span className="ni-ikon">❓</span>Sistem Hakkında & SSS</NavLink>
             <NavLink to="/admin/kaynakca" className={ni}><span className="ni-ikon">📚</span>Kaynakça</NavLink>
+            <button type="button" className="ni ni-btn" onClick={turuBaslat}><span className="ni-ikon">🎬</span>Tanıtımı başlat</button>
           </>
         ) : (
           <>
@@ -150,6 +171,7 @@ export default function AdminSayfaDuzeni() {
                 ))}
               </Fragment>
             ))}
+            <button type="button" className="ni ni-btn" onClick={turuBaslat}><span className="ni-ikon">🎬</span>Tanıtımı başlat</button>
           </>
         )}
       </div>
@@ -161,6 +183,8 @@ export default function AdminSayfaDuzeni() {
       </div>
 
       {filizVar && <FilizYonetimSohbet rol={rol} okulId={ben.okul_id} moduller={ben.moduller} />}
+      {acilis && ben && <AcilisAmblemi ad={(ben.ad_soyad || '').trim().split(/\s+/)[0]} okulAd={okulYetkilisi ? ben.okul_ad : null} okulLogo={okulYetkilisi ? ben.okul_logo : null} onBitti={acilisBitti} />}
+      {turAcik && !acilis && ben && !ben.sifre_degistirmeli && <TanitimTuru kapsam={okulYetkilisi ? 'yonetim' : 'super'} onBitir={turuBitir} />}
       {/* [2026-10-11] Çevrim içi öğrenciler: yetkili kendi okulunu; süper admin açık okul panelini ya da okul başına sayıları görür */}
       {ben && !ben.sifre_degistirmeli && (
         <CevrimiciPanel kapsam="yonetim" okulId={okulYetkilisi ? ben.okul_id : (Number(/^\/admin\/okul\/(\d+)/.exec(konum.pathname)?.[1]) || null)} />
