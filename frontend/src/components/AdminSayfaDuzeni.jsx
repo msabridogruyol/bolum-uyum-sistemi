@@ -8,6 +8,8 @@ import { okulRenginiUygula } from '../tema'
 import AltSerit from './AltSerit'
 import BildirimZili from './BildirimZili'
 import { MobilUstCubuk, useMobilMenu } from './MobilMenu'
+import MaskotYonetim from './MaskotYonetim'
+import FilizYonetimSohbet from './FilizYonetimSohbet'
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
 
@@ -83,6 +85,8 @@ export default function AdminSayfaDuzeni() {
   }
 
   const zilVar = !okulYetkilisi || !ben?.moduller || ben.moduller.includes('bildirimler')
+  // [2026-10-11] Filiz panel asistanı: süper adminde her zaman; okul yetkilisinde paketinde 'filiz' modülü açıksa
+  const filizVar = !!ben && !ben.sifre_degistirmeli && (!okulYetkilisi || (ben.okul_id && (!ben.moduller || ben.moduller.includes('filiz'))))
   return (
     <div className={`app${menu.appSinifi}`}>
       <MobilUstCubuk menu={menu} sag={zilVar && <BildirimZili kapsam="yonetim" />}
@@ -149,11 +153,13 @@ export default function AdminSayfaDuzeni() {
         )}
       </div>
 
-      <div className="main">
+      <div className={`main yonetim-main${filizVar ? ' filiz-var' : ''}`}>
+        {filizVar && <MaskotYonetim rol={rol} ad={ben.ad_soyad} okulId={ben.okul_id} moduller={ben.moduller} />}
         <div className="main-icerik">{okulYetkilisi && !ben ? <div className="pg"><div className="bos-durum">Yükleniyor…</div></div> : <Outlet />}</div>
         <AltSerit okul={ben?.okul_ad || (okulYetkilisi ? null : 'Filizyol Yönetim')} kisi={ben?.ad_soyad} rol={ROL_ADI[rol]} />
       </div>
 
+      {filizVar && <FilizYonetimSohbet rol={rol} okulId={ben.okul_id} moduller={ben.moduller} />}
       {ben?.sifre_degistirmeli && (
         <IlkSifrePenceresi rolMetni="yönetim hesabı" kaydet={(s) => api.yonetimIlkSifre(s)} onTamam={benYenile} onCikis={cikisYap} />
       )}

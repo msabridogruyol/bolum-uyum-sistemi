@@ -21,7 +21,7 @@ const ONERILER_SAYFA = {
   '/katmanlar': ['Bu testleri neden çözüyorum?'],
 }
 
-function durumYayinla(detay) {
+export function durumYayinla(detay) {
   window.dispatchEvent(new CustomEvent('filiz-durum', { detail: detay }))
 }
 
@@ -158,31 +158,15 @@ export default function FilizSohbet() {
 
   return (
     <>
-      {!acik && (
-        <button className="filiz-balon" onClick={() => setAcik(true)} aria-label="Filiz Gelişim Koçu ile konuş">
-          <span style={{ fontSize: 22 }}>🌱</span>
-          <span className="filiz-balon-yazi">Filiz'e sor</span>
-        </button>
-      )}
+      {!acik && <FilizAcDugmesi onClick={() => setAcik(true)} aria="Filiz Gelişim Koçu ile konuş" />}
 
       {acik && (
-        <div className="filiz-panel" role="dialog" aria-label="Filiz Gelişim Koçu ile sohbet">
-          <div className="filiz-baslik">
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-              <div className="filiz-avatar">🌱</div>
-              <div>
-                <div style={{ fontWeight: 800, fontSize: 14.5 }}>Filiz Gelişim Koçu</div>
-                <div style={{ fontSize: 11, color: 'var(--tx3)' }}>
-                  {gonderiliyor ? 'yazıyor…' : pasif ? 'şu an çevrimdışı' : 'çevrimiçi'}
-                </div>
-              </div>
-            </div>
-            <div style={{ display: 'flex', gap: 4 }}>
-              {gorunum !== 'sohbet' && <button className="filiz-ikon-btn" title="Sohbete dön" onClick={() => setGorunum('sohbet')}>←</button>}
-              {gorunum === 'sohbet' && mesajlar.length > 0 && !pasif && <button className="filiz-ikon-btn" title="Yeni sohbet" onClick={sohbetiSifirla}>↺</button>}
-              <button className="filiz-ikon-btn" title="Kapat (Esc)" onClick={() => setAcik(false)}>✕</button>
-            </div>
-          </div>
+        <FilizCerceve baslik="Filiz Gelişim Koçu" ariaLabel="Filiz Gelişim Koçu ile sohbet" onKapat={() => setAcik(false)}
+          durum={gonderiliyor ? 'yazıyor…' : pasif ? 'şu an çevrimdışı' : 'çevrimiçi'}
+          araclar={<>
+            {gorunum !== 'sohbet' && <button className="filiz-ikon-btn" title="Sohbete dön" onClick={() => setGorunum('sohbet')}>←</button>}
+            {gorunum === 'sohbet' && mesajlar.length > 0 && !pasif && <button className="filiz-ikon-btn" title="Yeni sohbet" onClick={sohbetiSifirla}>↺</button>}
+          </>}>
 
           {/* [2026-10-10] Sekmeler: Sohbet · Sorabileceklerin · Geçmiş */}
           {hazir && !pasif && (
@@ -310,14 +294,45 @@ export default function FilizSohbet() {
               {otomatik ? '' : (durum.kalan > 0 ? `Bugün ${durum.kalan} mesaj hakkın kaldı · ` : 'Bugünlük mesaj hakkın doldu · ')}{otomatik ? 'Cevaplar sistemdeki sonuçlarına göre hazırlanır; önemli kararlarını rehber öğretmeninle birlikte ver.' : 'Filiz Gelişim Koçu bir yapay zekâ asistanıdır; önemli kararlarını rehber öğretmeninle birlikte ver.'}
             </div>
           )}
-        </div>
+        </FilizCerceve>
       )}
       <style>{FILIZ_CSS}</style>
     </>
   )
 }
 
-const FILIZ_CSS = `
+// [2026-10-11] Görsel parçalar — öğrenci sohbeti ve yönetim paneli asistanı (FilizYonetimSohbet.jsx) ortak kullanır.
+export function FilizAcDugmesi({ onClick, aria, yazi = "Filiz'e sor" }) {
+  return (
+    <button className="filiz-balon" onClick={onClick} aria-label={aria}>
+      <span style={{ fontSize: 22 }}>🌱</span>
+      <span className="filiz-balon-yazi">{yazi}</span>
+    </button>
+  )
+}
+
+export function FilizCerceve({ baslik, durum, araclar, onKapat, ariaLabel, children }) {
+  return (
+    <div className="filiz-panel" role="dialog" aria-label={ariaLabel}>
+      <div className="filiz-baslik">
+        <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+          <div className="filiz-avatar">🌱</div>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: 14.5 }}>{baslik}</div>
+            <div style={{ fontSize: 11, color: 'var(--tx3)' }}>{durum}</div>
+          </div>
+        </div>
+        <div style={{ display: 'flex', gap: 4 }}>
+          {araclar}
+          <button className="filiz-ikon-btn" title="Kapat (Esc)" aria-label="Kapat" onClick={onKapat}>✕</button>
+        </div>
+      </div>
+      {children}
+    </div>
+  )
+}
+
+export const FILIZ_CSS = `
 .filiz-sekmeler{display:flex;gap:2px;padding:6px 8px 0;border-bottom:1px solid var(--bor);background:var(--sur)}
 .filiz-sekmeler button{flex:1;background:none;border:0;border-bottom:2.5px solid transparent;padding:8px 4px;font:inherit;font-size:12.5px;font-weight:700;color:var(--tx3);cursor:pointer;white-space:nowrap}
 .filiz-sekmeler button.aktif{color:var(--tx);border-bottom-color:var(--pu)}

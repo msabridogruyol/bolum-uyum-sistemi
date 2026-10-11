@@ -591,5 +591,9 @@ export const api = {
   sistemIstatistik: (f = {}) => aget(`/yonetim/istatistik/genel?${new URLSearchParams(Object.entries(f).filter(([, v]) => v !== '' && v != null)).toString()}`),
   sistemIstatistikExcel: (f = {}) => dosyaIndir(`/yonetim/istatistik/genel/excel?${new URLSearchParams(Object.entries(f).filter(([, v]) => v !== '' && v != null)).toString()}`, 'admin'),
   sistemDikkat: () => aget('/yonetim/istatistik/dikkat'),
+  // [2026-10-11] Filiz yönetim paneli asistanı (kural tabanlı; yapay zekâ yok)
+  filizYonetimOzet: () => aget('/yonetim/filiz/ozet'),
+  filizYonetimSor: (metin) => apost('/yonetim/filiz/sor', { metin }),
+  filizYonetimSss: () => aget('/yonetim/filiz/sss'),
   auditLogExcel: (gun = 90) => dosyaIndir(`/yonetim/audit-log/excel?gun=${gun}`, 'admin'),
 }

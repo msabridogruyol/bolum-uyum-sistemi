@@ -1,6 +1,7 @@
 // [2026-10-10] Sistem Hakkında + Sıkça Sorulan Sorular — teknik olmayan, kullanıcıya yönelik anlatım.
 // hedef = 'ogrenci' (öğrenci menüsü) | 'yonetim' (okul yetkilisi / süper admin)
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
+import { api } from '../api/client'
 
 const OGRENCI = {
   baslik: 'Sistem Hakkında',
@@ -51,41 +52,31 @@ const YONETIM = {
     'Öğrencilere ait veriler kişisel veridir; raporları yalnızca öğrenci, veli ve okulun yetkili personeliyle paylaşın.',
     'Güven puanı düşük sonuçları öğrenciyle konuşarak değerlendirin; gerekirse yeni bir değerlendirme planlayın.',
   ],
-  sss: [
-    ['Hesaplar', 'Öğrencileri sisteme nasıl eklerim?', 'Okul Paneli → Öğrenciler → "Öğrenci ekle / Excel yükle". Şablonu indirip ad soyad, e-posta, sınıf (ör. 12-A) ve isteğe bağlı öğrenci numarası ile şifreyi doldurun. Yüklemeden önce önizleme gösterilir; hatalı satırlar işaretlenir.'],
-    ['Hesaplar', 'Öğrencilerin şifrelerini nasıl dağıtırım?', 'Geçici şifreler Öğrenciler tablosunda "geçici" etiketiyle görünür. "Giriş listesi (Excel)" ile tüm listeyi indirip sınıflara dağıtabilirsiniz. Öğrenci kendi şifresini belirleyince geçici şifre listeden kalkar.'],
-    ['Hesaplar', 'Öğrenci şifresini unuttu.', 'Öğrenciyi seçip "Şifrelerini sıfırla" deyin; yeni geçici şifre tabloda görünür. Öğrenci giriş ekranındaki "Şifremi unuttum" bağlantısını da kullanabilir.'],
-    ['Hesaplar', 'Okulumuza birden fazla yetkili eklenebilir mi?', 'Evet. Yeni yetkili hesabı sistem yöneticisi (Filizyol) tarafından açılır; ad soyad, görev / unvan ve e-posta bilgisini iletmeniz yeterli. Okulunuzun yetkilileri Okul Yetkilileri sekmesinde listelenir. Tüm okul yetkilileri aynı yetkiye sahiptir.'],
-    ['Sonuçlar', 'Bir öğrencinin sonuçlarını nerede görürüm?', 'Öğrenciler listesinde öğrencinin adına tıklayın. Açılan pencerede test ilerlemesi, sonuçlar, koçluk ilerlemesi, netler, benzer akranlar, ilgi ve kulüp sonuçları, kütüphanesi ve tüm işlem kayıtları yer alır (okulunuzun paketindeki modüllere göre).'],
-    ['Sonuçlar', 'Güven puanı nedir, düşükse ne yapmalıyım?', 'Değerlendirme sırasında sekme değiştirme, tam ekrandan çıkma, kamerayı kapatma gibi durumlar ve tutarlılık kontrolleri güven puanını belirler. Puan düşükse öğrenciyle konuşun; sonuçları dikkatle yorumlayın ve gerekirse yeniden değerlendirme planlayın.'],
-    ['Raporlar', 'Hangi raporları alabilirim?', 'Öğrenci bazında: yönetim (ayrıntılı), öğrenci, veli ve sınıf öğretmeni raporu (PDF) ile Excel. Şube bazında: sınıf raporu, Excel tablosu ve şubedeki tüm öğrencilerin veli / öğrenci / yönetim / sınıf öğretmeni raporları tek dosyada. Ayrıca sınıf düzeyi ve okul genel raporu. Toplu ve sınıf öğretmeni raporları Gelişmiş raporlar modülüyle gelir. Okulunuzun paketinde Öğrenci raporları modülü varsa öğrenciler de Raporlarım sayfasından kendi öğrenci ve veli raporlarını indirebilir.'],
-    ['Raporlar', 'İstatistikler ekranında neler var?', 'Raporlar ve İstatistikler → İstatistikler: katılım (haftalık giriş ve tamamlama, değerlendirme hunisi, şubelere göre durum), profil (katman ortalamaları, en güçlü ve en az öne çıkan özellikler, şube × katman, puan dağılımı), bölüm ve meslek, koçluk, akademik ve rehberlik göstergeleri. Sınıf düzeyi, şube ve tarih aralığına göre süzebilir, her grafiği tablo olarak görüp CSV, tümünü Excel olarak indirebilirsiniz. Paketinizde olmayan modüllerin istatistikleri görünmez; test hesapları sayılmaz.'],
-    ['Raporlar', 'Rapor Merkezi ne işe yarar?', 'İki sekmesi var. Tek Bakışta: öne çıkan bulgular, temel göstergeler, kritik öğrenciler, deneme sıralamaları, ısı renkli şube karşılaştırması ve grafikler; sınıf ve şubeye göre süzülür, "Yönetici özeti" PDF\'i olarak indirilir. Rapor İndir: okulunuzun indirebileceği tüm raporları tek yerde toplar: okul genel, sınıf düzeyi ve şube raporları (PDF / Excel), toplu veli / öğrenci / yönetim / sınıf öğretmeni PDF\'leri (Gelişmiş raporlar modülüyle), istatistikler Excel\'i ve paketinize göre deneme, anket, rehberlik görüşmesi, tercih ve mezun tabloları. Şube raporları Sınıflar sekmesinde de alınabilir.'],
-    ['Raporlar', 'Veli toplantısı için en pratik yol nedir?', 'Sınıflar sekmesinde ilgili şubenin "Rapor" menüsündeki "Veli (toplu)" seçeneği, şubedeki tüm öğrencilerin veli raporlarını öğrenci numarasına göre sıralı olarak tek PDF\'te verir.'],
-    ['Sınıflar', 'Sınıf öğretmenini nereye yazarım?', 'Sınıflar sekmesinde her şubenin satırındaki "Sınıf öğretmeni ekle" alanına. Bu bilgi şube raporlarında görünür.'],
-    ['Sınıflar', 'Şube dağılımı ve akran benzerliği nasıl kullanılmalı?', 'Şube & Akran sekmesi öğrencilerin profillerine göre öneri sunar. "Dengeli dağıt" her şubede farklı profillerin bulunmasını sağlar; "Benzerleri grupla" proje ve etüt grupları içindir. Öneriler karar destek amaçlıdır ve öğrencilere gösterilmez.'],
-    ['Sınıflar', 'Aday öğrenci nedir?', 'Okula kayıt için gelen öğrencileri sınıfı "Aday" olarak ekleyebilirsiniz. Aday testi çözünce hangi şubenin profiline daha yakın olduğunu görür, tek tıkla şubeye atayabilirsiniz.'],
-    ['Diğer', 'Kulüp listesini nasıl oluştururum?', 'Kulüpler sekmesinde "Hazır listeden ekle" ile yaygın lise kulüplerini ekleyip okulunuzda olmayanları silebilir ya da pasif yapabilirsiniz. Öğrenciler kısa ilgi testini çözdükçe her kulübe kaç öğrencinin uygun olduğunu görürsünüz.'],
-    ['Diğer', 'Eğitim koçları nasıl çalışır?', 'Eğitim koçlarıyla anlaşmayı ve okullara atamayı sistem yöneticisi (Filizyol) yapar; öğrencilerin görüşme taleplerini de o yönetir. Okulunuzda çalışmasını istemediğiniz bir koç olursa sistem yöneticisine bildirmeniz yeterli. Öğrenciler koçların iletişim bilgilerini görmez.'],
-    ['Diğer', 'Takvime ne eklemeliyim?', 'Veli toplantıları, üniversite gezileri, kulüp günleri, deneme sınavları gibi okul etkinliklerini. İsterseniz yalnızca belirli bir sınıf düzeyine gösterebilirsiniz. Sınav ve tercih dönemleri gibi genel tarihler sistem yöneticisi tarafından eklenir.'],
-    ['Diğer', 'Okulumuzun rengi ve logosu nasıl değişir?', 'Renk, Okul Paneli → Görünüm sekmesinden seçilir; öğrenci ekranlarında, grafiklerde ve raporlarda kullanılır. Logoyu değiştirmek için sistem yöneticisine başvurun.'],
-  ],
+  // [2026-10-11] SSS'in tek kaynağı sunucuda: backend/app/core/filiz_yonetim_rehber.py (YONETIM_SSS) — Filiz de aynı listeden
+  // cevaplar. Sayfa açılınca GET /yonetim/filiz/sss ile yüklenir.
+  sss: null,
 }
 
 export default function SistemHakkinda({ hedef = 'ogrenci' }) {
   const v = hedef === 'yonetim' ? YONETIM : OGRENCI
   const [ara, setAra] = useState('')
   const [acik, setAcik] = useState(null)
+  const [uzakSss, setUzakSss] = useState(null)
+  useEffect(() => {
+    if (hedef !== 'yonetim') return
+    api.filizYonetimSss().then((r) => setUzakSss(r.sss.map((x) => [x.grup, x.soru, x.cevap]))).catch(() => setUzakSss([]))
+  }, [hedef])
+  const sss = v.sss || uzakSss
   const gruplar = useMemo(() => {
     const q = ara.trim().toLocaleLowerCase('tr-TR')
     const m = new Map()
-    v.sss.forEach(([g, s, c], i) => {
+    ;(sss || []).forEach(([g, s, c], i) => {
       if (q && !`${s} ${c}`.toLocaleLowerCase('tr-TR').includes(q)) return
       if (!m.has(g)) m.set(g, [])
       m.get(g).push({ i, s, c })
     })
     return [...m.entries()]
-  }, [v, ara])
+  }, [sss, ara])
 
   return (
     <div className="pg pg-genis">
@@ -112,7 +103,8 @@ export default function SistemHakkinda({ hedef = 'ogrenci' }) {
           <div className="ct" style={{ margin: 0, marginRight: 'auto' }}>Sıkça sorulan sorular</div>
           <input className="yp-sec" style={{ minWidth: 220 }} value={ara} onChange={(e) => setAra(e.target.value)} placeholder="Soru ara…" />
         </div>
-        {gruplar.length === 0 && <div className="bos-durum">Aramana uygun soru bulunamadı.</div>}
+        {sss === null && <div className="bos-durum">Yükleniyor…</div>}
+        {sss !== null && gruplar.length === 0 && <div className="bos-durum">{sss.length ? 'Aramana uygun soru bulunamadı.' : 'Sorular yüklenemedi.'}</div>}
         {gruplar.map(([g, liste]) => (
           <div key={g} className="sh-grup">
             <div className="sh-grup-ad">{g}</div>

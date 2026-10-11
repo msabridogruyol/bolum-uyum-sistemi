@@ -60,6 +60,7 @@ from app.api.sistem_istatistik import router as sistem_istatistik_router   # [20
 from app.api.is_hayati import router as is_hayati_router, ek_yonetim_routerlari as is_hayati_ek_routerlar   # [2026-10-10] İş Hayatı (öğrenci)
 from app.api.admin_is_hayati import router as admin_is_hayati_router   # [2026-10-10] İş Hayatı Verileri (süper admin)
 from app.api.hata_kayitlari import router as hata_kayitlari_router   # [2026-10-11] /istemci-hata + /admin/hata-kayitlari
+from app.api.filiz_yonetim import router as filiz_yonetim_router   # [2026-10-11] /yonetim/filiz/* (panel asistanı)
 from app.core.hata_izleme import HataYakalamaAraKatmani, sentry_baslat   # [2026-10-11] hata izleme
 from app.core.hiz_siniri import HizSiniriAraKatmani                     # [2026-10-11] istek sıklığı sınırı
 from app.core.yukleme_siniri import GovdeBoyutuAraKatmani               # [2026-10-11] gövde boyutu sınırı (25 MB)
@@ -306,6 +307,7 @@ app.include_router(admin_is_hayati_router)                   # [2026-10-10] /adm
 for _r in is_hayati_ek_routerlar:                            # alt modüllerin yönetim router'ları (kendi prefix + yetkileri)
     app.include_router(_r)
 app.include_router(hata_kayitlari_router)                    # [2026-10-11] hata kayıtları (süper admin) + /istemci-hata
+app.include_router(filiz_yonetim_router)                     # [2026-10-11] Filiz panel asistanı: /yonetim/filiz/ozet, /sor, /sss (kural tabanlı)
 
 # ÖNEMLİ (C madde 6 — API response ayrımı): /ogrenci/* uç noktaları
 # yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi,

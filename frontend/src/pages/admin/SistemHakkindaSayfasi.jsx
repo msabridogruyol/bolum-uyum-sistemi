@@ -1,9 +1,20 @@
-import { useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
+import { useLocation } from 'react-router-dom'
 
+// [2026-10-11] Her bölümün bağlantısı #sh-N (N = başlıktaki numara); Filiz bu bağlantıyla doğrudan ilgili bölümü açar.
 function Bolum({ baslik, ikon, children, varsayilanAcik }) {
-  const [acik, setAcik] = useState(!!varsayilanAcik)
+  const { hash } = useLocation()
+  const no = parseInt(baslik, 10)
+  const hedef = `#sh-${no}`
+  const [acik, setAcik] = useState(!!varsayilanAcik || hash === hedef)
+  const kutu = useRef(null)
+  useEffect(() => {
+    if (hash !== hedef) return
+    setAcik(true)
+    window.setTimeout(() => kutu.current?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 60)
+  }, [hash, hedef])
   return (
-    <div className="card" style={{ cursor: 'pointer' }} onClick={() => setAcik((a) => !a)}>
+    <div className="card" id={`sh-${no}`} ref={kutu} style={{ cursor: 'pointer', scrollMarginTop: 12 }} onClick={() => setAcik((a) => !a)}>
       <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: acik ? 14 : 0 }}>
         <span style={{ fontSize: 20 }}>{ikon}</span>
         <div className="ct" style={{ marginBottom: 0, flex: 1 }}>{baslik}</div>
@@ -353,6 +364,7 @@ export default function SistemHakkindaSayfasi() {
       </Bolum>
 
       <Bolum ikon="🕓" baslik="12. Son Güncellemeler">
+        <Madde><b>Filiz yönetim panelinde (2026-10-11):</b> öğrenci maskotu Filiz artık okul yetkilisi ("rehber öğretmen" kıyafeti; okulun paketinde <code>filiz</code> modülü açıksa) ve süper admin ("analist" kıyafeti; her zaman) panellerinin sağ üstünde. Karakter, animasyonlar, ses ve küçültme öğrencidekiyle ortak (Maskot.jsx → <code>useMaskot</code> + <code>MaskotGorunum</code>); cinsiyet nötr, seviye rozeti yok, küçültme tercihi <code>maskot_kucuk_yonetim</code>. Açılışta selam + günün en önemli 1–3 bulgusu (GET /yonetim/filiz/ozet — okul: görüşmesiz yüksek uyarı, yarıda kalan, incelemedeki tercih, bekleyen kulüp talebi, 7 gün içindeki takvim etkinliği, yeni anket yanıtı, hiç giriş yapmayan; süper admin: yeni / açık hata grupları, TÜİK güncelleme hatırlatması, Kontrol Paneli dikkat maddeleri ve pipeline taslağı), tıklayınca sıradaki; her bulguda "Göster →". Balonda öğrenci adı yok, yalnızca sayılar. "Bana sor" (POST /yonetim/filiz/sor) TAMAMEN KURAL TABANLI: Türkçe normalize + kök eşleştirme ile SSS (tek kaynak backend/app/core/filiz_yonetim_rehber.py; SSS sayfası GET /yonetim/filiz/sss ile okur) ve süper adminde bu sayfanın bölüm başlıkları (#sh-N), niyet kalıplarıyla doğrudan sayfa bağlantıları, "bugün ne var" ile özet. Yapay zekâ servisine veri gönderilmez, sorular kaydedilmez. Test: backend/tests/test_filiz_yonetim.py</Madde>
         <Madde><b>CV Atölyesi: CV Rehberi ve ATS kontrolü (2026-10-11):</b> alt sekme sırası CV Rehberi → CV oluştur → Kontrol listesi → ATS kontrolü → Ön yazı → İlan okuma; kayıtlı CV'si olmayan öğrenci Rehber'le karşılanır. Rehber: 8 konu (CV nedir, ne zaman lazım, türler, bölümler ve iyi/kötü örnekler, eylem fiilleri, yapılmaması gerekenler/KVKK, ATS ve efsaneler, başvuru/takip), her konuda 2–3 soruluk mini sınav ve doğrulanmış kaynaklar (backend/app/data/cv_rehberi.json, GET /ogrenci/is-hayati/cv/rehber). ATS kontrolü (POST /ogrenci/is-hayati/cv/ats, app/core/ats.py, test: backend/test_ats.py): sistemin ürettiği PDF pypdf ile ayrıştırılır, "ATS'nin gördüğü" düz metin gösterilir, 6 biçim maddesi (/100); örnek ya da yapıştırılan ilanla Türkçe normalize + hafif kök bulma ile anahtar kelime uyumu (zorunlu 3, tercih 2, diğer 1 ağırlık) ve bölüm önerisi. İlan metni ve sonuç kaydedilmez. Bu kontrol CV PDF'indeki madde işaretinin metne denetim karakteri (\x7f) olarak çıktığını gösterdi; düzeltildi. PDF dosya adı Ad_Soyad_CV.pdf oldu</Madde>
         <Madde><b>İş Hayatı modülü (is_hayati, Tam pakette):</b> öğrenci sayfası /is-hayati — Beklenti ve Gerçek, İlk Maaşla Bir Ay, Mesleğe Giden Yol (301 bölüm; 53 regüle meslek kaynaklı), Zor Günler (685 senaryo), CV Atölyesi (PDF, kontrol listesi, ön yazı, örnek ilan okuma), Mülakat Pratiği (150 soru; Filiz AI açıksa geri bildirim), Okulda Öğretilmeyenler (12 ders), Mezunlardan (yalnızca okulun eklediği, mezun rızalı gerçek hikâyeler). Veriler: süper admin → İş Hayatı Verileri (TÜİK istihdam göstergeleri ve Kazanç Yapısı yükleme, meslek–ISCO eşleştirmesi, kamu maaşları, asgari ücret, yaşam giderleri). Göçler 0054–0057; KVKK metni v4 (CV ve mezun hikâyeleri)</Madde>
         <Madde><b>Panel düzeni ve istatistikler:</b> süper admin menüsü gruplandı (Raporlar ve İstatistikler, Okullar ve Kullanıcılar, İçerik, Ölçme ve Kalite, Sistem, Yardım). Yeni İstatistikler (/yonetim/istatistik/genel) ve Rapor Merkezi sayfaları; Kontrol Paneli KPI + dikkat gerektirenler + hızlı bağlantılara sadeleşti. Okul paneline İstatistikler (/yonetim/okul/&#123;id&#125;/istatistik) ve Rapor Merkezi sekmeleri eklendi; grafikler components/istatistik kütüphanesinden</Madde>
