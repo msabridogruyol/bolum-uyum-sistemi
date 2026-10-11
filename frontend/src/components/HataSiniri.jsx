@@ -28,12 +28,12 @@ export default class HataSiniri extends Component {
         <div className="card" style={{ maxWidth: 460, textAlign: 'center' }}>
           <div style={{ fontSize: 34, marginBottom: 6 }}>🌱</div>
           <div className="lt" style={{ marginBottom: 6 }}>
-            {parca ? 'Uygulama güncellendi' : 'Bir şeyler ters gitti'}
+            {parca ? 'Uygulama güncellendi' : 'Sayfa şu anda açılamadı'}
           </div>
           <div className="ld" style={{ marginBottom: 16 }}>
             {parca
               ? 'Yeni sürümü yüklemek için sayfayı yenileyin.'
-              : 'Bu ekran beklenmedik bir hatayla karşılaştı. Sorun kaydedildi; sayfayı yenileyerek devam edebilirsiniz.'}
+              : 'Sistemde kısa süreli bir çalışma olabilir. Sayfayı yenileyin ya da birkaç dakika sonra tekrar deneyin. Sorun bize otomatik iletildi.'}
           </div>
           <div style={{ display: 'flex', gap: 8, justifyContent: 'center', flexWrap: 'wrap' }}>
             <button className="btn" onClick={() => window.location.reload()}>Sayfayı yenile</button>

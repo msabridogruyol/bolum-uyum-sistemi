@@ -249,7 +249,8 @@ _GECERLI_KIMLIK = re.compile(r"^[A-Za-z0-9_-]{8,64}$")
 
 def genel_500_govdesi(istek_kimligi: str) -> bytes:
     return json.dumps({
-        "detail": f"Beklenmeyen bir hata oluştu; sorun kaydedildi. Tekrar dener misiniz? Sürerse destek ekibine şu kodu iletin: {istek_kimligi}",
+        # [2026-10-11] Kullanıcıya kod gösterilmez; istek kimliği yalnızca ayrı alanda/başlıkta (Hata Kayıtları ile eşleştirmek için)
+        "detail": "Sunucuda kısa süreli bir çalışma var. Sayfayı yenileyin ya da birkaç dakika sonra tekrar deneyin.",
         "istek_kimligi": istek_kimligi,
     }, ensure_ascii=False).encode("utf-8")
 

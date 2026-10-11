@@ -78,7 +78,7 @@ def test_ara_katman_500_genel_mesaj_ve_istek_kimligi(monkeypatch):
     assert r.status_code == 500
     kimlik = r.headers["x-istek-kimligi"]
     assert kimlik and r.json()["istek_kimligi"] == kimlik
-    assert "Beklenmeyen bir hata" in r.json()["detail"] and kimlik in r.json()["detail"]
+    assert "Sayfayı yenileyin" in r.json()["detail"] and kimlik not in r.json()["detail"]   # kullanıcıya kod gösterilmez
     assert "ali@x.com" not in r.text                 # ayrıntı kullanıcıya sızmaz
     assert yakalanan and yakalanan[0]["istisna_turu"] == "ValueError" and yakalanan[0]["istek_kimligi"] == kimlik
     assert yakalanan[0]["durum_kodu"] == 500 and yakalanan[0]["yol"] == "/patla"

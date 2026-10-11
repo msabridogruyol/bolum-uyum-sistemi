@@ -48,7 +48,7 @@ export function sistemKapaliMesajiAl() {
 
 class ApiHatasi extends Error {
   constructor(status, detail) {
-    super(detail || `HTTP ${status}`)
+    super(typeof detail === 'string' && detail ? detail : 'Bir sorun oluştu. Sayfayı yenileyip tekrar deneyin.')
     this.status = status
     this.detail = detail
   }
@@ -64,27 +64,62 @@ function jwtCoz(token) {
   }
 }
 
-// [2026-10-11] Sunucunun önündeki ağ katmanı (Render/Cloudflare) bazen isteği uygulamaya ulaştırmadan
-// "Just a moment..." doğrulama sayfası (HTML) ya da "servis hazırlanıyor" sayfası döndürür. Bu yanıtlar JSON değildir.
-// Cloudflare doğrulama sayfası isteğin sunucuya HİÇ ulaşmadığını gösterir → her yöntem için güvenle tekrar denenir;
-// diğer HTML sayfaları yalnızca GET'te tekrar denenir. Kullanıcıya ham HTML yerine anlaşılır bir mesaj gösterilir.
-const GECICI_MESAJ = 'Sunucuya şu anda ulaşılamadı. Birkaç saniye sonra sayfayı yenileyip tekrar dene.'
+// [2026-10-11] Kullanıcıya hiçbir zaman kod, HTML ya da teknik ayrıntı gösterilmez.
+// Sunucu hatası (5xx), bağlantı kopması ve ağ katmanı sayfaları (Render/Cloudflare "Just a moment...", "servis hazırlanıyor")
+// tek tip mesaja çevrilir ve ekranın üstündeki uyarı şeridi (SunucuUyarisi) açılır; ilk başarılı istekte kapanır.
+// Tekrar deneme: GET'te 2 kez; Cloudflare doğrulama sayfasında istek sunucuya HİÇ ulaşmadığı için her yöntemde.
+export const SUNUCU_MESAJI = 'Sunucuda kısa süreli bir çalışma var. Sayfayı yenileyin ya da birkaç dakika sonra tekrar deneyin.'
+const GENEL_MESAJ = 'Bir sorun oluştu. Sayfayı yenileyip tekrar deneyin.'
+const FORM_MESAJI = 'Girilen bilgilerden bazıları eksik ya da hatalı. Kontrol edip tekrar deneyin.'
 const TEKRAR_BEKLE = [1200, 3000]
 const htmlMi = (metin) => typeof metin === 'string' && /^\s*(<!doctype html|<html)/i.test(metin)
 const cfDogrulamaMi = (yanit, metin) => yanit.headers.get('cf-mitigated') === 'challenge' || (typeof metin === 'string' && metin.includes('_cf_chl_opt'))
 const bekle = (ms) => new Promise((r) => setTimeout(r, ms))
 
+let sunucuSorunlu = false
+let sonSorun = 0
+const KAPANMA_SN = 15   // başka istekler başarılı olsa da şerit son sorundan en az bu kadar açık kalır (yanıp sönmesin)
+function sunucuDurumu(sorunlu) {
+  if (sorunlu) sonSorun = Date.now()
+  else if (Date.now() - sonSorun < KAPANMA_SN * 1000) return
+  if (sorunlu === sunucuSorunlu) return
+  sunucuSorunlu = sorunlu
+  try { window.dispatchEvent(new CustomEvent('sunucu-durumu', { detail: { sorunlu } })) } catch { /* yoksay */ }
+}
+function geciciHata(status) {
+  sunucuDurumu(true)
+  const h = new ApiHatasi(status, SUNUCU_MESAJI)
+  h.gecici = true
+  return h
+}
+// Sunucunun 4xx mesajları kullanıcı için yazılmış Türkçe metinlerdir; yine de kod/teknik içerik görünmesin
+function dostMesaj(status, detay) {
+  if (Array.isArray(detay) || (status === 422 && typeof detay !== 'string')) return FORM_MESAJI   // doğrulama hata listesi
+  if (typeof detay !== 'string' || !detay.trim()) return GENEL_MESAJ
+  if (detay.length > 400 || /traceback|exception|sqlalchemy|psycopg|<\/?[a-z]+[\s>]/i.test(detay)) return GENEL_MESAJ
+  return detay
+}
+
 async function istek(yol, secenekler = {}, kapsam = 'ogrenci', deneme = 0) {
   const token = tokenAl(kapsam)
   const headers = { 'Content-Type': 'application/json', ...secenekler.headers }
   if (token) headers['Authorization'] = `Bearer ${token}`
+  const yontem = (secenekler.method || 'GET').toUpperCase()
 
-  const yanit = await fetch(`${TABAN_URL}${yol}`, { ...secenekler, headers })
+  let yanit
+  try {
+    yanit = await fetch(`${TABAN_URL}${yol}`, { ...secenekler, headers })
+  } catch (e) {
+    if (e?.name === 'AbortError') throw e
+    // Bağlantı kurulamadı (internet kesik, sunucu yeniden başlıyor)
+    if (yontem === 'GET' && deneme < TEKRAR_BEKLE.length) { await bekle(TEKRAR_BEKLE[deneme]); return istek(yol, secenekler, kapsam, deneme + 1) }
+    throw geciciHata(0)
+  }
 
-  if (yanit.status === 204) return null
+  if (yanit.status === 204) { sunucuDurumu(false); return null }
 
   let govde = null
-  const metin = await yanit.text()
+  const metin = await yanit.text().catch(() => '')
   if (metin) {
     try {
       govde = JSON.parse(metin)
@@ -93,22 +128,19 @@ async function istek(yol, secenekler = {}, kapsam = 'ogrenci', deneme = 0) {
     }
   }
 
-  if (htmlMi(govde)) {
-    const yontem = (secenekler.method || 'GET').toUpperCase()
-    if (deneme < TEKRAR_BEKLE.length && (yontem === 'GET' || cfDogrulamaMi(yanit, govde))) {
-      await bekle(TEKRAR_BEKLE[deneme])
-      return istek(yol, secenekler, kapsam, deneme + 1)
-    }
-    const hata = new ApiHatasi(yanit.ok ? 503 : yanit.status, GECICI_MESAJ)
-    hata.gecici = true
-    throw hata
+  const html = htmlMi(govde)
+  if (html || yanit.status >= 500) {
+    const tekrar = deneme < TEKRAR_BEKLE.length && (
+      (html && cfDogrulamaMi(yanit, govde)) || (yontem === 'GET' && (html || [502, 503, 504].includes(yanit.status))))
+    if (tekrar) { await bekle(TEKRAR_BEKLE[deneme]); return istek(yol, secenekler, kapsam, deneme + 1) }
+    throw geciciHata(yanit.ok ? 503 : yanit.status)
   }
 
+  sunucuDurumu(false)
   if (!yanit.ok) {
-    let detay = govde && typeof govde === 'object' ? govde.detail : govde
-    if (typeof detay === 'string' && detay.length > 400) detay = GECICI_MESAJ   // beklenmeyen uzun düz metin (proxy sayfası vb.)
-    if (yanit.status === 423) sistemKapaliIsle(detay, !!token)
-    throw new ApiHatasi(yanit.status, detay)
+    const ham = govde && typeof govde === 'object' ? govde.detail : govde
+    if (yanit.status === 423) sistemKapaliIsle(typeof ham === 'string' ? ham : null, !!token)
+    throw new ApiHatasi(yanit.status, dostMesaj(yanit.status, ham))
   }
   return govde
 }
@@ -116,13 +148,20 @@ async function istek(yol, secenekler = {}, kapsam = 'ogrenci', deneme = 0) {
 // [2026-10-10] Dosya indirme (PDF / Excel raporlar): yetkili istek → blob → tarayıcı indirmesi
 async function dosyaIndir(yol, kapsam = 'ogrenci') {
   const token = tokenAl(kapsam)
-  const yanit = await fetch(`${TABAN_URL}${yol}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
-  if (!yanit.ok) {
-    let detay = null
-    try { detay = (await yanit.json()).detail } catch { detay = GECICI_MESAJ /* gövde JSON değil (ağ katmanı sayfası) */ }
-    if (yanit.status === 423) sistemKapaliIsle(detay, !!token)
-    throw new ApiHatasi(yanit.status, detay || 'Rapor hazırlanamadı.')
+  let yanit
+  try {
+    yanit = await fetch(`${TABAN_URL}${yol}`, { headers: token ? { Authorization: `Bearer ${token}` } : {} })
+  } catch {
+    throw geciciHata(0)
   }
+  if (!yanit.ok) {
+    if (yanit.status >= 500) throw geciciHata(yanit.status)
+    let detay = null
+    try { detay = (await yanit.json()).detail } catch { throw geciciHata(503) /* gövde JSON değil (ağ katmanı sayfası) */ }
+    if (yanit.status === 423) sistemKapaliIsle(detay, !!token)
+    throw new ApiHatasi(yanit.status, detay ? dostMesaj(yanit.status, detay) : 'Rapor hazırlanamadı.')
+  }
+  sunucuDurumu(false)
   const ad = /filename="([^"]+)"/.exec(yanit.headers.get('Content-Disposition') || '')?.[1] || 'rapor'
   const url = URL.createObjectURL(await yanit.blob())
   const a = document.createElement('a')
