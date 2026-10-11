@@ -1,5 +1,9 @@
 // [2026-10-10] "Güçlü / çok güçlü" ve diğer düzey ifadelerinin nasıl okunacağı — öğrenci ve veli dilinde, açılır kapanır.
 import { useState } from 'react'
+import { BANTLAR, bantAraligi } from '../yardimci/seviye'
+
+// Bantlar ve açıklamalar yardimci/seviye.js'ten gelir (tüm ekranlar ve PDF raporu aynı ölçeği kullanır).
+const SINIF = { cok_guclu: 'pr-g2', guclu: 'pr-g1', ortanin_ustu: 'pr-o', orta: 'pr-o', gelisime_acik: 'pr-d' }
 
 export default function PuanRehberi({ baslik = 'Bu ifadeler ne demek? Sonuçlarını nasıl okumalısın?', bolumlu = true }) {
   const [acik, setAcik] = useState(false)
@@ -12,10 +16,9 @@ export default function PuanRehberi({ baslik = 'Bu ifadeler ne demek? Sonuçlar�
         <div className="pr-govde">
           <p><b>Bu bir not değil, eğilimdir.</b> Puanların, cevaplarına göre bir özelliğe ne kadar yatkın olduğunu gösterir. Yüksek ya da düşük olmak tek başına iyi veya kötü değildir.</p>
           <div className="pr-tablo">
-            <div><b className="pr-g2">Çok güçlü</b><span>(75 ve üzeri) Bu eğilim sende belirgin; farklı sorularda tutarlı olarak öne çıktı.</span></div>
-            <div><b className="pr-g1">Güçlü</b><span>(62–74) Çoğu durumda bu yönde tercih yapıyorsun.</span></div>
-            <div><b className="pr-o">Ortanın üstü / Orta</b><span>(40–61) Duruma göre değişiyor; esnek kullanabildiğin bir alan.</span></div>
-            <div><b className="pr-d">Gelişime açık</b><span>(40'ın altı) Şu an daha az tercih ettiğin bir yön; istersen çalışarak güçlenebilir.</span></div>
+            {BANTLAR.map((b) => (
+              <div key={b.kod}><b className={SINIF[b.kod]}>{b.ad}</b><span>({bantAraligi(b)}) {b.aciklama}</span></div>
+            ))}
             {bolumlu && <div><b className="pr-b">Bölüm: Yüksek / Çok yüksek</b><span>Bu bölüm bu özelliği, bölümlerin çoğundan daha fazla gerektiriyor.</span></div>}
           </div>
           <p><b>Yorumlarken dikkat:</b></p>

@@ -95,14 +95,14 @@ class PipelineDurumuOut(BaseModel):
 # --- E3 — Katmanlar & Ağırlıklar ---
 
 class KatmanAgirligiOut(BaseModel):
+    """[2026-10-10] Kaynak: katmanlar.normalizasyon_agirligi (skor motorunun okuduğu değer)."""
     katman_kod: str
+    ad: str
     agirlik: float
-    versiyon: int
-    aktif_mi: bool
 
 
 class YeniAgirlikVersiyonuIstek(BaseModel):
-    agirliklar: dict[str, float]  # {'K1': 20, 'K2': 15, 'K3': 25, 'K4': 40}
+    agirliklar: dict[str, float]  # {'K1': 25, 'K2': 25, 'K3': 25, 'K4': 25} — toplam 100
 
 
 # --- E4 — Dallar ---
@@ -173,6 +173,7 @@ class TopluSoruSonuc(BaseModel):
 
 class TopluSoruIdIstek(BaseModel):
     soru_idler: list[int]
+    onay: str | None = None  # [2026-10-10] öğrenci cevabı olan sorular siliniyorsa "SIL"
 
 
 class TopluAktifIstek(BaseModel):

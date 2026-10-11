@@ -1,0 +1,4745 @@
+{
+ "_aciklama": "Mesleğe Giden Yol (İş Hayatı → 'yol' sekmesi). Anahtar: bolumler.ad (büyük harf). Birleştirme sırası: alanlar[alan] (alan 'sablon' içeriyorsa sablonlar[...]) → sablonlar[bolum.sablon] → bölüm kaydı. '{SURE}' çalışma anında bolumler.detay.ogrenim_suresi ile doldurulur. regule=true kayıtların yasal/sınav bilgisi resmî ya da resmî metni aktaran kaynaktan kontrol edildi (son_kontrol). Sayı/maaş içermez; yasal süreler dışındaki dönemler nitel ve 'genellikle' dilindedir.",
+ "son_kontrol": "2026-10-10",
+ "alanlar": {
+  "U01": {
+   "ad": "Mühendislik",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Stajlar",
+     "aciklama": "Mühendislik programlarının çoğunda zorunlu yaz stajları vardır; staj yerini erken aramak iş bulmayı kolaylaştırır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "İlk iş: genellikle 'mühendis adayı / junior mühendis'",
+     "aciklama": "İlk yıllarda deneyimli bir mühendisin yanında sahada ya da projede öğrenirsin.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Meslek odası kaydı (serbest çalışacaksan)",
+     "aciklama": "Serbest çalışan ya da imza yetkisi gereken işler için TMMOB'a bağlı ilgili odaya kayıt gerekir (6235 sayılı Kanun). Kamuda ve birçok özel şirkette çalışırken zorunlu olmayabilir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk 2–3 yıl",
+     "aciklama": "Proje/saha mühendisi, ar-ge ya da üretimde yardımcı rol; çok öğrenme, sınırlı sorumluluk."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Kendi işinden ya da küçük bir ekipten sorumlu olma; uzmanlaşma alanı netleşir."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "genellikle 8+ yıl",
+     "aciklama": "Proje/bölüm yöneticiliği, kıdemli uzmanlık, danışmanlık ya da kendi firması."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Ağır matematik ve fizik dersleri, özellikle ilk iki yıl.",
+     "nasil": "Düzenli çalışma grubu kurmak ve konuyu biriktirmeden çalışmak çoğu öğrenciye yetiyor."
+    },
+    {
+     "zor": "Sahada uzun ve düzensiz mesai olabilir (inşaat, üretim, maden gibi).",
+     "nasil": "Ofis ağırlıklı alt alanlar (tasarım, planlama, ar-ge) de var; staj sırasında hangisinin sana uyduğunu dene."
+    },
+    {
+     "zor": "Mezun sayısı yüksek dallarda ilk iş için rekabet var.",
+     "nasil": "Proje, staj ve yabancı dil ile ayrışmak; ilk iş için şehir esnekliği."
+    }
+   ],
+   "neden_seviyor": [
+    "Yaptığın şeyin somut sonucunu görmek (çalışan bir makine, ayakta bir bina).",
+    "Problemi çözmenin verdiği tatmin.",
+    "Birçok sektöre açılan esnek bir diploma."
+   ],
+   "hazirlik": [
+    "Matematik ve fizikte temeli sağlam tut; TYT/AYT dışında problem çözme alışkanlığı kazan.",
+    "Bir robotik, TEKNOFEST ya da bilim kulübü projesine katıl.",
+    "Basit bir programlama dili (Python gibi) öğrenmek hemen her mühendislikte işe yarar.",
+    "İngilizce okumaya başla; teknik kaynakların çoğu İngilizce."
+   ]
+  },
+  "U02": {
+   "ad": "Bilişim & Yazılım",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Staj ve kendi projelerin",
+     "aciklama": "Bu alanda diploma kadar, yaptığın projeler (GitHub, uygulama, yarışma) de işverenin baktığı şeydir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "İlk iş: genellikle 'junior geliştirici / analist'",
+     "aciklama": "İlk işte kod incelemesi, ekip çalışması ve iş süreçlerini öğrenirsin.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Sertifikalar (isteğe bağlı)",
+     "aciklama": "Bulut, güvenlik ya da veri alanında tanınmış sertifikalar bazı işlerde avantaj sağlar; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk 1–3 yıl",
+     "aciklama": "Junior geliştirici/analist; mentorla çalışma, küçük görevler."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–6. yıl",
+     "aciklama": "Bağımsız iş çıkaran geliştirici; bir teknolojide uzmanlaşma."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "genellikle 6+ yıl",
+     "aciklama": "Kıdemli/lider geliştirici, mimar ya da ekip yöneticisi; bazıları kendi girişimini kurar."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Teknoloji çok hızlı değişir; öğrenme hiç bitmez.",
+     "nasil": "Bunu seven için bu bir avantaj: her yıl yeni bir şey öğrenmek bu işin doğası."
+    },
+    {
+     "zor": "Giriş seviyesi pozisyonlarda rekabet yüksek olabilir.",
+     "nasil": "Üniversitede staj + gerçek bir proje portföyü; açık kaynak katkıları."
+    },
+    {
+     "zor": "Uzun süre ekran başında oturmak, teslim tarihi baskısı.",
+     "nasil": "Düzenli mola, hareket ve iyi ekip planlaması; birçok şirket esnek/uzaktan çalışma sunuyor."
+    }
+   ],
+   "neden_seviyor": [
+    "Bir fikri kısa sürede çalışan bir ürüne dönüştürebilmek.",
+    "Uzaktan ve uluslararası çalışma olanakları.",
+    "Sürekli öğrenmeye açık, yaratıcı problem çözme."
+   ],
+   "hazirlik": [
+    "Ücretsiz kaynaklarla bir programlama dili öğren ve küçük bir proje bitir.",
+    "Matematikte özellikle mantık, fonksiyonlar ve olasılık konularını sağlam tut.",
+    "İngilizce okuma becerini geliştir.",
+    "Bilişim olimpiyatı, hackathon ya da okulun bilişim kulübüne katıl."
+   ]
+  },
+  "U03": {
+   "ad": "Temel Bilimler",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Laboratuvar/araştırma deneyimi",
+     "aciklama": "Lisans sırasında bir hocanın projesinde ya da TÜBİTAK destekli çalışmada yer almak sonraki adımlar için önemlidir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans / doktora (araştırmacı olmak için genellikle gerekir)",
+     "aciklama": "Akademi ve ar-ge yolunda lisansüstü eğitim genellikle beklenir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Alternatif: öğretmenlik ya da sektör",
+     "aciklama": "Öğretmenlik için Millî Eğitim Akademisi yolu (bkz. öğretmenlik bölümleri), sektörde veri, kalite, laboratuvar gibi işler de seçenektir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Araştırma görevlisi, laboratuvar uzmanı, veri/kalite uzmanı ya da lisansüstü öğrenci."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle doktora sonrası ya da 4–8. yıl",
+     "aciklama": "Bağımsız araştırmacı, ar-ge uzmanı, sorumlu uzman."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Öğretim üyeliği, ar-ge yöneticiliği, proje yürütücülüğü."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Mesleğe doğrudan bağlanan iş sayısı sınırlı; yol uzun olabilir.",
+     "nasil": "Programlama, istatistik ve yabancı dil eklemek seçenekleri ciddi biçimde artırır."
+    },
+    {
+     "zor": "Akademik kariyer uzun ve belirsizdir.",
+     "nasil": "Lisansüstü sırasında sektörle bağlantı kurmak, iki yolu birden açık tutar."
+    }
+   ],
+   "neden_seviyor": [
+    "Doğanın nasıl işlediğini gerçekten anlamak.",
+    "Yeni bir şeyi ilk keşfeden olma ihtimali.",
+    "Analitik düşünme her alanda karşılık bulur."
+   ],
+   "hazirlik": [
+    "İlgilendiğin dersin olimpiyat ya da proje yarışmalarına (TÜBİTAK lise projeleri) katıl.",
+    "Basit veri analizi ve programlama öğren.",
+    "Bilim insanlarının yazdığı popüler bilim kitaplarını oku."
+   ]
+  },
+  "U04": {
+   "ad": "Sağlık & Rehabilitasyon",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Klinik uygulama / staj",
+     "aciklama": "Sağlık programlarında hastane ve klinik uygulamaları eğitimin büyük bir parçasıdır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Diploma tescili ve unvan",
+     "aciklama": "Sağlık meslekleri kanunla düzenlenir; meslek unvanı ilgili lisans diplomasıyla kazanılır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Hastane, klinik ya da merkezde görev; nöbet ve vardiya olabilir."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 4–10. yıl",
+     "aciklama": "Belirli bir alanda deneyim ve sertifikalar; sorumlu uzman."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Birim sorumluluğu, eğitimcilik, akademi ya da kendi merkezi (mevzuatın izin verdiği ölçüde)."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Vardiya, nöbet ve duygusal yük.",
+     "nasil": "Ekip desteği, düzenli uyku ve meslek dışı hobiler; birçok sağlık çalışanı bunu yıllar içinde dengelemeyi öğreniyor."
+    },
+    {
+     "zor": "Hata payı düşük, sorumluluk yüksek.",
+     "nasil": "İyi eğitim ve protokollere bağlılık; sorumluluk zamanla güven veriyor."
+    }
+   ],
+   "neden_seviyor": [
+    "Bir insanın hayatında doğrudan fark yaratmak.",
+    "Mesleğin her yerde ve her zaman gerekli olması.",
+    "Ekip içinde anlamlı bir iş."
+   ],
+   "hazirlik": [
+    "Biyoloji ve kimyayı sağlam tut.",
+    "Gönüllü sağlık/yaşlı bakım etkinliklerinde ya da ilk yardım kursunda yer al.",
+    "Uzun süre çalışmaya ve stres yönetimine dair alışkanlık geliştir."
+   ]
+  },
+  "U05": {
+   "ad": "Spor Bilimleri",
+   "adimlar": [
+    {
+     "baslik": "YKS + özel yetenek sınavı",
+     "aciklama": "Spor bilimleri programlarının çoğu YKS'nin yanında üniversitenin özel yetenek sınavıyla öğrenci alır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Antrenörlük ve diğer belgeler",
+     "aciklama": "Antrenör olarak çalışmak için genellikle ilgili spor federasyonunun kademeli antrenör belgeleri gerekir; ayrıntı branşa göre değişir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Yardımcı antrenör, spor salonu/tesis çalışanı, kulüplerde görev."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Baş antrenör, tesis/etkinlik sorumlusu, uzman eğitmen."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Kulüp/federasyon yöneticiliği, kendi tesisi ya da akademi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Akşam ve hafta sonu çalışma yaygın.",
+     "nasil": "Kendi programını kurabildiğin bağımsız eğitmenlik zamanla esneklik sağlar."
+    },
+    {
+     "zor": "Gelir düzeni işe göre çok değişebilir.",
+     "nasil": "Birden fazla belge ve branş, ek gelir kapıları açar."
+    }
+   ],
+   "neden_seviyor": [
+    "Hareketli bir iş ve sağlıklı yaşamı yaygınlaştırmak.",
+    "Sporcuların gelişimini görmek."
+   ],
+   "hazirlik": [
+    "Bir branşta düzenli spor yap ve lisanslı sporcu olmayı düşün.",
+    "Özel yetenek sınavlarının içeriğini erken öğren.",
+    "Temel anatomi ve beslenme bilgisi edin."
+   ]
+  },
+  "U06": {
+   "ad": "Psikoloji & Sosyal Hizmet",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Uygulama / staj",
+     "aciklama": "Kurumlarda gözetimli uygulama, mesleki becerinin temelidir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Uzmanlaşma eğitimleri",
+     "aciklama": "Test, terapi yaklaşımı ya da alan sertifikaları genellikle mezuniyetten sonra alınır.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Kurumlarda (kamu, STK, özel merkez) uzman yardımcısı ya da uzman."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 4–10. yıl",
+     "aciklama": "Bir alanda uzmanlaşma, süpervizyon alma ve verme."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Birim/proje sorumluluğu, eğitmenlik, akademi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Başkalarının zor hikâyelerini dinlemek duygusal olarak yorar.",
+     "nasil": "Süpervizyon ve kişisel sınırlar bu mesleğin parçası; deneyimliler bunu öğrenilebilir buluyor."
+    },
+    {
+     "zor": "Uzmanlaşma için ek eğitim, zaman ve masraf gerekebilir.",
+     "nasil": "Kamuda ya da kurumlarda çalışırken eğitime adım adım devam etmek mümkün."
+    }
+   ],
+   "neden_seviyor": [
+    "İnsanların hayatına doğrudan dokunmak.",
+    "İnsan davranışını anlamanın kendi hayatına da katkısı."
+   ],
+   "hazirlik": [
+    "Gönüllülük (yaşlı, çocuk, engelli destek projeleri).",
+    "Empati kadar sınır koymayı da öğren.",
+    "İstatistiğe ve bilimsel okumaya önyargısız yaklaş."
+   ]
+  },
+  "U07": {
+   "ad": "Eğitim",
+   "sablon": "ogretmenlik"
+  },
+  "U08": {
+   "ad": "Dil, Edebiyat, Tarih & Beşeri Bilimler",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Yabancı dil ve dijital beceriler",
+     "aciklama": "Bu alandaki mezunların iş seçenekleri, ek bir dil ve dijital/veri becerisiyle belirgin şekilde genişler.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Öğretmenlik (istersen)",
+     "aciklama": "Öğretmenliğe kaynak programlardan mezunsan Millî Eğitim Akademisi yoluna başvurabilirsin; hangi bölümlerin kaynak olduğu MEB listesinden kontrol edilmelidir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Yayıncılık, kültür kurumları, eğitim, kamu, içerik ve araştırma işleri."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Editör, uzman, araştırmacı, proje koordinatörü."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Yönetici, akademisyen, bağımsız yazar/çevirmen/danışman."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Doğrudan 'bu bölümün mesleği' olan iş sayısı az.",
+     "nasil": "Bölümü bir temel olarak görüp yanına dil, veri ya da dijital beceri eklemek yaygın ve işe yarayan bir yol."
+    },
+    {
+     "zor": "Akademik kariyer uzun ve rekabetli.",
+     "nasil": "Yüksek lisans sırasında yayın, proje ve dil ile hazırlanmak."
+    }
+   ],
+   "neden_seviyor": [
+    "Okumak, yazmak, düşünmek ve tartışmak işin kendisi.",
+    "Kültüre ve topluma derin bir bakış."
+   ],
+   "hazirlik": [
+    "Çok oku, düzenli yaz (blog, okul dergisi).",
+    "Bir yabancı dili ciddiye al.",
+    "Münazara ya da edebiyat kulübüne katıl."
+   ]
+  },
+  "U09": {
+   "ad": "Hukuk, Siyaset & Kamu",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Staj ve kurum deneyimi",
+     "aciklama": "Kamu kurumları, belediyeler, STK'lar ve uluslararası kuruluşlarda staj ileride en çok işe yarayan deneyimdir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "KPSS ve kuruma özel sınavlar",
+     "aciklama": "Kamu yönetimi alanında mezunların önemli bir kısmı KPSS A grubu ve kurumların uzman yardımcılığı sınavlarıyla ilerler.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Uzman yardımcısı, memur, araştırmacı, özel sektörde idari roller."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Uzman, şube müdürü adayı, proje/politika uzmanı."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Yönetici, danışman, akademisyen."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Kamu sınavları uzun hazırlık ister ve rekabetlidir.",
+     "nasil": "Lisans sırasında düzenli çalışma; sınava paralel başka bir iş/staj ile risk dağıtma."
+    },
+    {
+     "zor": "Özel sektörde 'tam karşılığı olan' meslek sınırlı olabilir.",
+     "nasil": "Dil, veri analizi ve yazma becerisi ile farklı sektörlere açılmak."
+    }
+   ],
+   "neden_seviyor": [
+    "Topluma yön veren kararların içinde olmak.",
+    "Gündemi, siyaseti ve dünyayı anlamak."
+   ],
+   "hazirlik": [
+    "Münazara, model BM (MUN) ve okul meclisi deneyimi.",
+    "Gazete/analiz okuma alışkanlığı.",
+    "Bir yabancı dil."
+   ]
+  },
+  "U10": {
+   "ad": "İşletme, Ekonomi & Finans",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Staj",
+     "aciklama": "Banka, denetim, şirket ve kamu kurumlarında staj; mezuniyetten önce en az bir deneyim iş bulmayı kolaylaştırır.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Mesleki sınav/lisanslar (alana göre)",
+     "aciklama": "Bazı işler için ek lisans gerekir: mali müşavirlik (SMMM), sermaye piyasası lisansları (SPK), aktüerlik, bağımsız denetçilik gibi.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk 1–3 yıl",
+     "aciklama": "Uzman yardımcısı, management trainee, analist, satış/operasyon rolleri."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Uzman, yönetici yardımcısı, takım lideri."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "genellikle 8+ yıl",
+     "aciklama": "Müdür, direktör, danışman ya da kendi işi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Mezun sayısı çok; diploma tek başına ayırt edici değil.",
+     "nasil": "Staj, yabancı dil, Excel/veri becerisi ve bir alanda (finans, pazarlama, İK…) erken odaklanma."
+    },
+    {
+     "zor": "Hedef baskısı ve yoğun dönemler (ay/yıl sonu kapanışları, satış hedefleri).",
+     "nasil": "İyi zaman yönetimi; yoğunluğu daha az olan alt alanlar da var."
+    }
+   ],
+   "neden_seviyor": [
+    "Hemen her sektörde iş bulabilme esnekliği.",
+    "Para, piyasa ve şirketlerin nasıl işlediğini anlamak.",
+    "Girişimcilik için iyi bir temel."
+   ],
+   "hazirlik": [
+    "Matematik ve temel ekonomi okuryazarlığı.",
+    "Excel/tablolama programlarını öğren.",
+    "Okulda bir etkinlik, kermes ya da kulüp bütçesi yönet."
+   ]
+  },
+  "U11": {
+   "ad": "Medya & İletişim",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Portfolyo",
+     "aciklama": "Bu alanda en önemli belge, yaptığın işlerin dosyasıdır (haber, video, kampanya, sosyal medya içerikleri).",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Staj ve serbest işler",
+     "aciklama": "Ajans, yayın kuruluşu ve markalarda staj; okul yıllarında serbest işler.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Muhabir, içerik üreticisi, asistan, ajansta junior rol."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Editör, proje/hesap yöneticisi, yapımcı, kreatif."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Yayın/kreatif direktör, ajans yöneticisi ya da bağımsız üretici."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Sektör hızla dönüşüyor, iş güvencesi değişken.",
+     "nasil": "Dijital beceriler (video, veri, sosyal medya analizi) ve geniş bir ağ."
+    },
+    {
+     "zor": "Teslim saatleri ve düzensiz mesai.",
+     "nasil": "Planlama becerisi; bazı kurumsal iletişim rolleri daha düzenli çalışır."
+    }
+   ],
+   "neden_seviyor": [
+    "Yaratıcı üretim ve geniş kitlelere ulaşma.",
+    "Her gün farklı bir konu."
+   ],
+   "hazirlik": [
+    "Okul gazetesi, podcast ya da video kanalı gibi bir şey üret.",
+    "Türkçeyi iyi kullan; düzenli yaz.",
+    "Telefonla bile olsa çekim ve kurgu dene."
+   ]
+  },
+  "U12": {
+   "ad": "Sanat & Tasarım",
+   "adimlar": [
+    {
+     "baslik": "Özel yetenek sınavı (çoğu programda)",
+     "aciklama": "Güzel sanatlar ve tasarım programları genellikle özel yetenek sınavıyla öğrenci alır; bazıları YKS puanıyla.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Portfolyo",
+     "aciklama": "İşverenin ya da müşterinin baktığı asıl şey işlerindir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Staj, sergi, yarışma",
+     "aciklama": "Atölye/ofis stajları, sergiler ve tasarım yarışmaları görünürlük sağlar.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Asistan tasarımcı, atölye çalışanı, serbest işler."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Tasarımcı, kendi müşteri çevresi, ürün/koleksiyon sorumluluğu."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Sanat/tasarım direktörü, kendi stüdyosu, akademisyen."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Gelir başlangıçta düzensiz olabilir.",
+     "nasil": "Serbest işi bir ana işle birlikte yürütmek yaygın; fiyatlandırmayı öğrenmek gelir dengesini artırır."
+    },
+    {
+     "zor": "Eleştiriye açık olmak ve sürekli üretmek gerekir.",
+     "nasil": "Düzenli üretim alışkanlığı ve bir topluluk/ağ."
+    }
+   ],
+   "neden_seviyor": [
+    "Hayal ettiğini somut bir esere dönüştürmek.",
+    "Kendi tarzını kurabilmek."
+   ],
+   "hazirlik": [
+    "Her gün çiz/üret; bir eskiz defteri tut.",
+    "Özel yetenek sınavına hazırlık atölyelerine bak.",
+    "Sergiler, müzeler ve tasarım dergileri."
+   ]
+  },
+  "U13": {
+   "ad": "Müzik & Sahne Sanatları",
+   "adimlar": [
+    {
+     "baslik": "Özel yetenek sınavı",
+     "aciklama": "Müzik ve sahne programları genellikle özel yetenek sınavıyla öğrenci alır; konservatuvarların bir kısmı daha erken yaşta da öğrenci kabul eder.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Sahne deneyimi",
+     "aciklama": "Konserler, oyunlar, festivaller ve topluluklarla düzenli sahne deneyimi.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Kadro sınavları (istersen)",
+     "aciklama": "Devlet tiyatroları, opera-bale, orkestralar gibi kurumların kendi seçme sınavları vardır.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Topluluklarda sanatçı, ders veren eğitmen, yardımcı rol."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–10. yıl",
+     "aciklama": "Solist/başrol, kendi projeleri, ders verme."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Yönetmen, şef, sanat yönetmeni, akademisyen."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Düzenli gelir ve kadro bulmak zor olabilir.",
+     "nasil": "Ders vermek, kayıt/teknik işler ve projelerle gelir çeşitlendirmek yaygın."
+    },
+    {
+     "zor": "Günlerce süren çalışma ve sahne kaygısı.",
+     "nasil": "Disiplinli çalışma rutini ve sahneye alışmak; zamanla kolaylaşır."
+    }
+   ],
+   "neden_seviyor": [
+    "Seyirciyle kurulan bağ.",
+    "Sanatını yaşayarak üretmek."
+   ],
+   "hazirlik": [
+    "Düzenli enstrüman/ses/beden çalışması.",
+    "Okul korosu, tiyatro kulübü ya da bir topluluk.",
+    "Özel yetenek sınav içeriklerini erken öğren."
+   ]
+  },
+  "U14": {
+   "ad": "Mimarlık & Planlama",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Stajlar",
+     "aciklama": "Ofis ve şantiye stajları programların parçasıdır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Meslek odası kaydı",
+     "aciklama": "Proje müellifi olarak serbest çalışmak için TMMOB'a bağlı ilgili odaya (Mimarlar, İç Mimarlar, Peyzaj Mimarları, Şehir Plancıları Odası) kayıt gerekir (6235 sayılı Kanun).",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk 2–4 yıl",
+     "aciklama": "Ofiste çizim, detay ve proje desteği; şantiye deneyimi."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 4–10. yıl",
+     "aciklama": "Proje sorumlusu, kendi projelerini yürütme."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Ofis ortağı/kurucusu, proje yöneticisi, akademisyen."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Teslim haftalarında uykusuz geceler (öğrencilikte de).",
+     "nasil": "Zaman planı ve ekip çalışması; deneyimle bu yoğunluk yönetilebilir hale geliyor."
+    },
+    {
+     "zor": "İlk yıllarda düşük sorumluluk ve tekrar eden işler.",
+     "nasil": "Yarışmalara katılmak ve portfolyoyu geliştirmek fark yaratır."
+    }
+   ],
+   "neden_seviyor": [
+    "Çizdiğin şeyin gerçek bir yapıya dönüşmesi.",
+    "Sanat ve tekniğin birleştiği bir iş."
+   ],
+   "hazirlik": [
+    "Serbest el çizimi ve perspektif.",
+    "Bir 3D modelleme programını denemek.",
+    "Yaşadığın şehri gözlem defteriyle incele."
+   ]
+  },
+  "U15": {
+   "ad": "Tarım, Hayvancılık, Gıda & Çevre",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Uygulama ve staj",
+     "aciklama": "Arazi, işletme, laboratuvar ve fabrika stajları.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Ziraat/orman/gıda odası ve yetki belgeleri (işe göre)",
+     "aciklama": "Bazı işler (ör. reçeteli zirai ilaç önerisi, serbest danışmanlık) için ilgili oda kaydı ve yetki belgeleri gerekir; ayrıntı işe göre değişir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Saha/üretim/kalite uzmanı, tarım danışmanı, laboratuvar."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Üretim/kalite sorumlusu, proje uzmanı."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "İşletme yöneticisi, kendi işletmesi, akademisyen."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "İşlerin bir kısmı kırsalda ya da sahada.",
+     "nasil": "Bunu seven için açık havada çalışmak avantaj; şehirde ar-ge, kalite ve ticaret işleri de var."
+    },
+    {
+     "zor": "Mevsime ve hava koşullarına bağlı yoğunluk.",
+     "nasil": "Planlama ve teknolojiyle (sensör, akıllı tarım) bu yük azalıyor."
+    }
+   ],
+   "neden_seviyor": [
+    "Gıda ve doğa gibi temel bir ihtiyaca katkı.",
+    "Teknolojinin hızla girdiği yenilenen bir alan."
+   ],
+   "hazirlik": [
+    "Biyoloji ve kimya.",
+    "Bir bahçe/sera ya da çevre projesi.",
+    "Bölgendeki tarım/gıda işletmelerini ziyaret et."
+   ]
+  },
+  "U16": {
+   "ad": "Ulaştırma: Havacılık & Denizcilik",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Sağlık ve yeterlik şartları",
+     "aciklama": "Uçuş, kule ve gemi personeli gibi işler sağlık sertifikası ve otoritenin (SHGM / Ulaştırma ve Altyapı Bakanlığı) lisans ya da yeterlik sınavlarını gerektirir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Staj",
+     "aciklama": "Havalimanı, havayolu, liman ve denizcilik işletmelerinde staj.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Operasyon, yer hizmetleri, planlama ya da lisanslı personel adaylığı."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Uzman, şef, lisansı yükseltilmiş personel."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Müdür, kaptan, kıdemli yönetici."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Vardiyalı, gece ve bayram çalışması yaygın.",
+     "nasil": "Vardiya düzeni çoğu zaman uzun izin dönemleri de getirir."
+    },
+    {
+     "zor": "Sektör ekonomik krizlerden hızlı etkilenir.",
+     "nasil": "Yabancı dil ve uluslararası belgeler, başka ülkelerde de çalışmayı mümkün kılar."
+    }
+   ],
+   "neden_seviyor": [
+    "Uluslararası ve hareketli bir iş ortamı.",
+    "Disiplinli, net kuralları olan bir meslek."
+   ],
+   "hazirlik": [
+    "İngilizceye ağırlık ver; sektörün ortak dili.",
+    "Sağlık şartlarını (göz, işitme vb.) erken öğren.",
+    "Matematik ve fizik."
+   ]
+  },
+  "U17": {
+   "ad": "Turizm & Hizmet",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Staj ve sezon deneyimi",
+     "aciklama": "Otel, restoran, acenta stajları; birçok program uzun süreli işletme stajı içerir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Yabancı dil",
+     "aciklama": "Turizmde ikinci, hatta üçüncü dil kariyeri hızlandırır.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Departman çalışanı (ön büro, mutfak, servis, operasyon)."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Departman şefi/müdür yardımcısı."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Departman/işletme müdürü, kendi işletmesi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Sezonluk iş, uzun mesai, hafta sonu ve bayram çalışması.",
+     "nasil": "Kış sezonu, şehir otelleri ve kurumsal zincirlerde daha düzenli işler bulunuyor."
+    },
+    {
+     "zor": "Müşteri memnuniyeti baskısı.",
+     "nasil": "İletişim becerisi zamanla güçlü bir avantaja dönüşüyor."
+    }
+   ],
+   "neden_seviyor": [
+    "İnsanlarla ve farklı kültürlerle sürekli temas.",
+    "Hızlı yükselme imkânı olan, hareketli bir sektör."
+   ],
+   "hazirlik": [
+    "Bir yabancı dili konuşabilir düzeye getir.",
+    "Yaz döneminde bir hizmet işinde çalışmayı dene.",
+    "İletişim ve sabır."
+   ]
+  }
+ },
+ "sablonlar": {
+  "ogretmenlik": {
+   "baslik": "Öğretmenlik (7528 sayılı Kanun ve Millî Eğitim Akademisi)",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Okul deneyimi / öğretmenlik uygulaması",
+     "aciklama": "Lisansın son yıllarında okullarda gözetimli uygulama yapılır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "MEB-AGS (ve alanına göre ÖABT)",
+     "aciklama": "Devlet okullarında öğretmen olmak için ÖSYM'nin yaptığı Millî Eğitim Akademisi Giriş Sınavına girilir; alan sınavı (ÖABT) da puanı etkiler. Bu sistem MEB'e öğretmen alımında KPSS'nin yerini aldı.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Millî Eğitim Akademisi hazırlık eğitimi",
+     "aciklama": "Kanuna göre dört dönem (bazı programlar için üç dönem) süren teorik + uygulamalı eğitim; teorikte en az 60, uygulamada en az 70 puan gerekir. 2026 grubu için eğitim yaklaşık 40 haftaya yayılıyor.",
+     "zorunlu": true,
+     "sure": "4 dönem (bazı programlarda 3)"
+    },
+    {
+     "baslik": "Sözleşmeli öğretmen olarak atama",
+     "aciklama": "Hazırlık eğitimini başaranlar başarı puanı ve tercihlerine göre sözleşmeli öğretmen olarak istihdam edilir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Özel okullar",
+     "aciklama": "Özel okullar kendi seçim süreçleriyle öğretmen alır; güncel şartları okuldan ve MEB'den kontrol et.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Sözleşmeli/aday öğretmen; sınıf yönetimi ve müfredatı tanıma."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle yıllar içinde",
+     "aciklama": "Kadrolu öğretmen; kariyer basamakları (uzman öğretmen, başöğretmen) Öğretmenlik Mesleği Kanunu ve yönetmeliklerle düzenlenir."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Zümre/okul yöneticiliği, eğitimcilerin eğitimi, akademi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Sınav + hazırlık eğitimiyle yol, mezuniyetten sonra yaklaşık bir yıl daha uzar ve kontenjana bağlıdır.",
+     "nasil": "Lisans sırasında alan bilgisini güçlü tutmak AGS/ÖABT'de doğrudan işe yarar; özel kurumlar ve eğitim teknolojileri de seçenek."
+    },
+    {
+     "zor": "Kalabalık sınıflar ve ilk yıllarda atandığın yer seçme şansının az olması.",
+     "nasil": "Deneyimli öğretmenlerin çoğu bu dönemi 'mesleği en hızlı öğrendikleri yıllar' olarak anlatıyor."
+    }
+   ],
+   "neden_seviyor": [
+    "Bir çocuğun 'anladım!' dediği an.",
+    "Toplumda kalıcı bir iz bırakmak.",
+    "Okul takvimine bağlı düzenli çalışma yılı."
+   ],
+   "hazirlik": [
+    "Küçüklere ders anlatmayı dene (akran öğretimi, gönüllü etüt).",
+    "Alan dersinde temeli sağlam tut.",
+    "Sabır ve iletişim becerisi geliştir."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "7528 sayılı Öğretmenlik Mesleği Kanunu (RG 18.10.2024, sayı 32696)",
+     "url": "https://www.alomaliye.com/2024/10/18/ogretmenlik-meslegi-kanunu/",
+     "tarih": "2024-10-18"
+    },
+    {
+     "ad": "MEB: Öğretmenlik Mesleğine Hazırlık Eğitimi Yönetmeliği Resmî Gazete'de yayımlandı (17.03.2026)",
+     "url": "https://www.meb.gov.tr/milli-egitim-bakanligi-ogretmenlik-meslegine-hazirlik-egitimi-yonetmeligi-resmi-gazetede-yayimlandi/haber/40146/tr",
+     "tarih": "2026-03-17"
+    },
+    {
+     "ad": "Euronews: 2026 MEB-AGS sonuçları — 4 dönemlik hazırlık eğitimi (26.08.2026)",
+     "url": "https://tr.euronews.com/2026/08/26/2026-meb-ags-sonuclari-aciklandi-ogretmen-aliminda-kpss-yerine-gelen-sistem-nasil-isliyor",
+     "tarih": "2026-08-26"
+    }
+   ]
+  },
+  "saglik_meslek": {
+   "baslik": "Sağlık meslek mensubu (1219 sayılı Kanun Ek Madde 13)",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Klinik uygulamalar",
+     "aciklama": "Hastane ve kliniklerde gözetimli uygulamalar eğitimin zorunlu parçasıdır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Diploma ve meslek unvanı",
+     "aciklama": "Unvan, ilgili lisans programından mezuniyetle kazanılır (1219 sayılı Kanun Ek Madde 13). Görev ve yetkiler Sağlık Bakanlığı yönetmeliğiyle belirlenir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Sertifikalı uzmanlaşma / yüksek lisans",
+     "aciklama": "Belirli tedavi yöntemleri ya da alt alanlar için ek sertifika ve lisansüstü eğitim yaygındır.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "kaynaklar": [
+    {
+     "ad": "6225 sayılı Kanun ile 1219 sayılı Kanuna eklenen Ek Madde 13 (sağlık meslek mensupları; RG 26.04.2011)",
+     "url": "https://www.memurlar.net/haber/194351/saglikla-ilgili-26-unvanin-gorev-tanimlari-yururluge-girdi.html",
+     "tarih": "2011-04-26"
+    },
+    {
+     "ad": "1219 sayılı Tababet ve Şuabatı San'atlarının Tarzı İcrasına Dair Kanun (mevzuat.gov.tr)",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1219&MevzuatTur=1&MevzuatTertip=3",
+     "tarih": null
+    }
+   ]
+  },
+  "tmmob": {
+   "baslik": "Mühendislik / mimarlık oda kaydı (6235 sayılı Kanun)",
+   "kaynaklar": [
+    {
+     "ad": "6235 sayılı Türk Mühendis ve Mimar Odaları Birliği Kanunu",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=6235&MevzuatTur=1&MevzuatTertip=4",
+     "tarih": null
+    }
+   ]
+  },
+  "smmm": {
+   "baslik": "Serbest Muhasebeci Mali Müşavirlik (3568 sayılı Kanun)",
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Derslerin yanında yaz stajları, kulüpler ve projeler ilk işi bulmada belirleyici olur.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Staja giriş sınavı",
+     "aciklama": "SMMM stajına başlamak için staja giriş sınavından en az 60 puan almak gerekir (Staj Yönetmeliği m.7).",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "3 yıl staj",
+     "aciklama": "SMMM adayları için staj süresi 3 yıldır (Staj Yönetmeliği m.8).",
+     "zorunlu": false,
+     "sure": "3 yıl"
+    },
+    {
+     "baslik": "SMMM yeterlik sınavı ve ruhsat",
+     "aciklama": "Staj sonrası SMMM sınavını başarmak gerekir; 24.02.2025 değişikliğiyle sınav hakkı süresi yeni başlayanlar için 2 yıla indi.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Alternatif: şirketlerde muhasebe/finans, denetim firmaları, KPSS",
+     "aciklama": "SMMM olmadan da muhasebe, finans ve denetim işlerinde çalışmak mümkündür.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "kaynaklar": [
+    {
+     "ad": "TÜRMOB: SMMM ve SM Staj Yönetmeliği (2025 metni; m.7 staja başlama, m.8 staj süresi)",
+     "url": "https://www.turmob.org.tr/Arsiv/FCKEditor/userfiles/file/YONETMELIKLER_3MART2025/4-Staj-2025.pdf",
+     "tarih": "2025-03-03"
+    },
+    {
+     "ad": "TESMER: Sınav Yönetmeliği değişikliği (RG 24.02.2025, sayı 32823) açıklamaları",
+     "url": "https://www.tesmer.org.tr/wp-content/uploads/2025/10/Sinav-Yonetmeligi-Degisikligi-Hakkinda-Aciklamalar-ve-Uygulama-Degisiklikleri.pdf",
+     "tarih": "2025-02-24"
+    }
+   ]
+  }
+ },
+ "bolumler": {
+  "ACİL YARDIM VE AFET YÖNETİMİ": {
+   "alan": "U04",
+   "ozel": "112 acil sağlık hizmetleri, AFAD ve afet yönetimi birimlerinde çalışılır; kamu kadroları genellikle KPSS iledir. Sahada vardiyalı çalışma yaygındır.",
+   "regule": false
+  },
+  "ADLİ BİLİMLER": {
+   "alan": "U03",
+   "ozel": "Adli tıp ve kriminal laboratuvarlarında çalışmak için genellikle kurum sınavları ve lisansüstü eğitim gerekir; kadrolar sınırlıdır.",
+   "regule": false
+  },
+  "ADLİ BİLİŞİM MÜHENDİSLİĞİ": {
+   "alan": "U02",
+   "ozel": "Dijital delil inceleme, siber olay müdahalesi; emniyet ve adli kurumlarda kadrolar KPSS/kurum sınavlarıyla alınır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "AKSESUAR TASARIMI": {
+   "alan": "U12",
+   "ozel": "Moda markaları ve atölyelerde tasarım/üretim; kendi markasını kurmak da yaygındır.",
+   "regule": false
+  },
+  "AKTÜERYA BİLİMLERİ": {
+   "alan": "U10",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Aktüerya lisansı",
+     "aciklama": "Olasılık, istatistik, finans matematiği ağırlıklı.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Aktüerlik sınavları",
+     "aciklama": "Aktüer unvanı için Aktüerler Yönetmeliğine göre yapılan aktüerlik sınavlarını (temel ve ileri düzey modüller) başarmak ve mesleki deneyim şartını sağlamak gerekir; sınavlar dönemsel olarak duyurulur.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Sigorta, emeklilik ve risk alanında ilk iş",
+     "aciklama": "Mezunlar genellikle sigorta ve bireysel emeklilik şirketlerinde aktüer yardımcısı olarak başlar.",
+     "zorunlu": true,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Aktüer yardımcısı, risk/veri analisti."
+    },
+    {
+     "ad": "Orta",
+     "donem": "sınavlar tamamlandıkça",
+     "aciklama": "Aktüer; ürün fiyatlama, rezerv."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Sorumlu aktüer, risk yöneticisi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Sınavlar zor ve yıllara yayılır.",
+     "nasil": "İşe başlayınca şirketler çoğu zaman hazırlığı destekler; modüller tek tek geçilir."
+    },
+    {
+     "zor": "Mesleğin dar bir sektörde yoğunlaşması.",
+     "nasil": "Veri bilimi ve finans becerileri başka sektörlere de taşınır."
+    }
+   ],
+   "neden_seviyor": [
+    "Matematiği doğrudan gerçek hayattaki riskleri ölçmek için kullanmak.",
+    "Az sayıda uzman olduğu için aranan bir meslek."
+   ],
+   "hazirlik": [
+    "Olasılık ve istatistik.",
+    "Excel ve bir programlama dili.",
+    "Matematik olimpiyatı/proje deneyimi."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "Aktüerler Yönetmeliği ve TSB 2025 Aktüerlik Sınavları duyuruları",
+     "url": "https://alomaliye.com/2007/08/15/aktuerler-yonetmeligi/",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "ANTRENÖRLÜK EĞİTİMİ": {
+   "alan": "U05",
+   "ozel": "Bir branşta antrenör olmak için genellikle ilgili spor federasyonunun kademeli antrenör belgeleri de gerekir; kulüpler ve okullar başlıca işverenlerdir.",
+   "regule": false
+  },
+  "ANTROPOLOJİ": {
+   "alan": "U08",
+   "ozel": "Akademi, müzeler, saha araştırmaları ve kullanıcı araştırması (UX) gibi alanlar; yüksek lisans sık tercih edilir.",
+   "regule": false
+  },
+  "ANİMASYON VE OYUN TASARIMI": {
+   "alan": "U12",
+   "ozel": "Animasyon ve oyun stüdyoları; showreel ve bitmiş projeler en önemli referanstır.",
+   "regule": false
+  },
+  "ARKEOLOJİ": {
+   "alan": "U08",
+   "ozel": "Kazılar, müzeler ve koruma kurulları; kazı sezonları yaz aylarında yoğunlaşır. Kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "ASTRONOMİ VE UZAY BİLİMLERİ": {
+   "alan": "U03",
+   "ozel": "Gözlemevleri ve akademi başlıca yoldur; mezunların önemli bir kısmı yazılım, veri ve uzay sanayisine yönelir.",
+   "regule": false
+  },
+  "AVRUPA BİRLİĞİ İLİŞKİLERİ": {
+   "alan": "U09",
+   "ozel": "Kamu kurumlarının AB birimleri, proje ofisleri ve uluslararası kuruluşlar; AB proje yazımı değerli bir beceridir.",
+   "regule": false
+  },
+  "AYAKKABI TASARIMI VE ÜRETİMİ": {
+   "alan": "U12",
+   "ozel": "Ayakkabı üreticileri ve atölyeler; sektör belirli bölgelerde yoğunlaşır.",
+   "regule": false
+  },
+  "AĞAÇ İŞLERİ ENDÜSTRİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Mobilya ve ahşap ürünleri üretiminde tasarım, üretim planlama ve kalite işleri ağırlıklıdır; sektör bazı illerde yoğunlaşır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "AİLE VE TÜKETİCİ BİLİMLERİ": {
+   "alan": "U06",
+   "ozel": "Aile danışmanlığı programları, tüketici hakları ve sosyal hizmet kurumlarında çalışılır; kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "BAHÇE BİTKİLERİ": {
+   "alan": "U15",
+   "ozel": "Meyve, sebze ve süs bitkisi üretimi, fidancılık ve seracılık; ziraat mühendisi olarak çalışılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BALIKÇILIK TEKNOLOJİSİ MÜHENDİSLİĞİ": {
+   "alan": "U15",
+   "ozel": "Su ürünleri işleme, avcılık teknolojileri ve yetiştiricilik işletmeleri.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BANKACILIK VE FİNANS": {
+   "alan": "U10",
+   "ozel": "Bankaların uzman yardımcılığı/MT programları; SPK lisansları bazı görevlerde avantaj ya da şarttır.",
+   "regule": false
+  },
+  "BANKACILIK VE SİGORTACILIK": {
+   "alan": "U10",
+   "ozel": "Bankalar ve sigorta şirketleri; sigorta aracılığı için ayrıca levha/belge süreçleri vardır.",
+   "regule": false
+  },
+  "BASIM TEKNOLOJİLERİ": {
+   "alan": "U12",
+   "ozel": "Matbaa ve ambalaj sektöründe üretim, kalite ve baskı öncesi hazırlık.",
+   "regule": false
+  },
+  "BASIN VE YAYIN": {
+   "alan": "U11",
+   "ozel": "Gazete, haber siteleri ve yayın kuruluşları; dijital habercilik becerileri önemlidir.",
+   "regule": false
+  },
+  "BASKI SANATLARI": {
+   "alan": "U12",
+   "ozel": "Sanatçı olarak üretim, atölyeler, eğitim ve akademi.",
+   "regule": false
+  },
+  "BESLENME VE DİYETETİK": {
+   "alan": "U04",
+   "ozel": "Diyetisyen unvanı bu lisansla kazanılır; hastane, toplu beslenme, spor ve kendi danışmanlık ofisi başlıca yollardır.",
+   "sablon": "saglik_meslek",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "BESTECİLİK VE ORKESTRA ŞEFLİĞİ": {
+   "alan": "U13",
+   "ozel": "Beste, düzenleme, film/oyun müziği ve şeflik; konservatuvar eğitimi uzun ve yoğundur.",
+   "regule": false
+  },
+  "BİLEŞİK SANATLAR": {
+   "alan": "U12",
+   "ozel": "Disiplinlerarası sanat üretimi, sergiler ve kültür kurumları.",
+   "regule": false
+  },
+  "BİLGİ GÜVENLİĞİ MÜHENDİSLİĞİ": {
+   "alan": "U02",
+   "ozel": "Güvenlik operasyon merkezleri, sızma testi ve güvenlik danışmanlığı; sektörde tanınmış sertifikalar avantaj sağlar.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BİLGİ VE BELGE YÖNETİMİ": {
+   "alan": "U08",
+   "ozel": "Arşiv, kütüphane ve kurumların belge yönetimi birimleri; dijital arşivleme becerisi değerlidir.",
+   "regule": false
+  },
+  "BİLGİSAYAR BİLİMLERİ": {
+   "alan": "U02",
+   "ozel": "Algoritma ve kuramsal temeli güçlü bir program; yazılım geliştirme, veri ve akademi yollarına açılır.",
+   "regule": false
+  },
+  "BİLGİSAYAR MÜHENDİSLİĞİ": {
+   "alan": "U02",
+   "ozel": "Yazılım, sistem, ağ, gömülü sistemler ve yapay zekâ gibi geniş bir alanda çalışılabilir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BİLGİSAYAR VE ÖĞRETİM TEKNOLOJİLERİ ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Bilişim teknolojileri öğretmenliğinin yanında eğitim teknolojisi şirketlerinde içerik ve öğretim tasarımı da seçenektir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "BİLİM TARİHİ": {
+   "alan": "U08",
+   "ozel": "Akademi, yayıncılık ve müzecilik; lisansüstü eğitim genellikle beklenir.",
+   "regule": false
+  },
+  "BİLİŞİM SİSTEMLERİ MÜHENDİSLİĞİ": {
+   "alan": "U02",
+   "ozel": "Kurumların bilgi sistemleri, ERP ve iş analizi ağırlıklı roller.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BİTKİ KORUMA": {
+   "alan": "U15",
+   "ozel": "Zirai ilaç firmaları ve danışmanlık; reçete yazma gibi işler için ilgili yetki belgeleri gerekir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BİTKİSEL ÜRETİM VE TEKNOLOJİLERİ": {
+   "alan": "U15",
+   "ozel": "Bitkisel üretim işletmeleri, tohum ve tarım teknolojisi firmaları.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BİYOKİMYA": {
+   "alan": "U03",
+   "ozel": "Laboratuvar, ilaç ve gıda sektörü; tıbbi laboratuvarlarda çalışma koşulları ayrıca mevzuata bağlıdır.",
+   "regule": false
+  },
+  "BİYOLOJİ": {
+   "alan": "U03",
+   "ozel": "Laboratuvar, çevre, eğitim ve ar-ge; öğretmenlik için Millî Eğitim Akademisi yolu, araştırma için lisansüstü.",
+   "regule": false
+  },
+  "BİYOLOJİ ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Lise biyoloji öğretmenliği; özel okullar ve dershaneler de işverendir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "BİYOMEDİKAL MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Hastanelerde tıbbi cihaz yönetimi, cihaz firmalarında satış-sonrası destek ve ar-ge en yaygın başlangıç yollarıdır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BİYOMÜHENDİSLİK": {
+   "alan": "U01",
+   "ozel": "Ar-ge ve laboratuvar ağırlıklı bir alan olduğu için yüksek lisans genellikle kariyeri hızlandırır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BİYOSİSTEM MÜHENDİSLİĞİ": {
+   "alan": "U15",
+   "ozel": "Tarım makineleri, sulama ve tarımsal yapılar; tarım teknolojileri firmaları.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "BİYOTEKNOLOJİ": {
+   "alan": "U03",
+   "ozel": "Biyoteknoloji şirketleri ve ar-ge laboratuvarları; yüksek lisans genellikle beklenir.",
+   "regule": false
+  },
+  "CAM": {
+   "alan": "U12",
+   "ozel": "Cam sanatı atölyeleri, tasarım ve endüstriyel cam üretimi.",
+   "regule": false
+  },
+  "CAZ VE POPÜLER MÜZİK": {
+   "alan": "U13",
+   "ozel": "Sahne müzisyenliği, stüdyo, ders verme ve prodüksiyon.",
+   "regule": false
+  },
+  "CEVHER HAZIRLAMA MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Maden işletmelerinde zenginleştirme tesislerinde çalışılır; işler çoğunlukla maden bölgelerindedir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "COĞRAFYA": {
+   "alan": "U08",
+   "ozel": "Coğrafi bilgi sistemleri (CBS), planlama, öğretmenlik ve kamu kurumları; CBS becerisi iş seçeneklerini artırır.",
+   "regule": false
+  },
+  "COĞRAFYA ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Lise coğrafya öğretmenliği; atama kontenjanları yıldan yıla değişir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "DENİZ ULAŞTIRMA İŞLETME MÜHENDİSLİĞİ": {
+   "alan": "U16",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans + deniz stajları",
+     "aciklama": "Programlar STCW müfredatına göre yürütülür; örneğin bir programda üçer aylık iki yaz stajı ve altı aylık açık deniz stajı vardır (toplam süre okula göre değişir).",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Yeterlik sınavı",
+     "aciklama": "Ulaştırma ve Altyapı Bakanlığına bağlı birimlerin yaptığı yeterlik sınavlarını geçerek 'Uzakyol Vardiya Zabiti' olunur; sağlık şartları ve zorunlu eğitim sertifikaları gerekir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Ehliyet yükseltme",
+     "aciklama": "Denizde geçen hizmet süresi ve sınavlarla birinci zabit ve uzakyol kaptanlığına kadar yükselinir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Vardiya zabiti (güverte)."
+    },
+    {
+     "ad": "Orta",
+     "donem": "deniz hizmeti biriktikçe",
+     "aciklama": "Birinci zabit."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Kaptan; ya da karada liman, filo ve denizcilik şirketi yöneticiliği."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Aylarca denizde, ailenden uzakta kalmak.",
+     "nasil": "Seferler arası uzun izinler; birçok denizci bir süre sonra karada yöneticiliğe geçiyor."
+    },
+    {
+     "zor": "Fiziksel ve psikolojik dayanıklılık ister.",
+     "nasil": "Gemi içi ekip kültürü ve düzenli rutin."
+    }
+   ],
+   "neden_seviyor": [
+    "Dünyayı görmek.",
+    "Uluslararası geçerli bir meslek ve sorumluluk."
+   ],
+   "hazirlik": [
+    "İngilizce.",
+    "Yüzme ve temel sağlık şartları.",
+    "Matematik ve fizik."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "İTÜ (KKTC) Deniz Ulaştırma İşletme Mühendisliği: Uzakyol Vardiya Zabiti yeterliği, GASM sınavları, STCW",
+     "url": "https://kktc.itu.edu.tr/index.php/tr/mtme",
+     "tarih": null
+    },
+    {
+     "ad": "Ulaştırma ve Altyapı Bakanlığı — Gemiadamları ve Kılavuz Kaptanlar Yönetmeliği",
+     "url": "https://denizcilik.uab.gov.tr/",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "DENİZCİLİK İŞLETMELERİ YÖNETİMİ": {
+   "alan": "U16",
+   "ozel": "Liman, armatör ve denizcilik şirketlerinde karada yönetim işleri; gemide çalışma yetkisi vermez.",
+   "regule": false
+  },
+  "DERİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Deri ve tabaklama sanayisinde üretim ve kalite işleri; sektör belirli sanayi bölgelerinde toplanır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "DOĞA KORUMA VE BİYOÇEŞİTLİLİK YÖNETİMİ": {
+   "alan": "U15",
+   "ozel": "Milli parklar, koruma kurumları ve STK'lar; kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "DRAMA VE OYUNCULUK": {
+   "alan": "U13",
+   "ozel": "Tiyatro, dizi/film ve drama eğitmenliği; ajans ve seçmeler önemli bir yoldur.",
+   "regule": false
+  },
+  "DRAMA YAZARLIĞI VE DRAMATURJİ": {
+   "alan": "U13",
+   "ozel": "Tiyatro, dizi ve film için yazarlık ve dramaturji.",
+   "regule": false
+  },
+  "DİJİTAL MEDYA VE PAZARLAMA": {
+   "alan": "U11",
+   "ozel": "Ajanslar ve markalarda dijital pazarlama, sosyal medya ve performans pazarlaması.",
+   "regule": false
+  },
+  "DİJİTAL OYUN TASARIMI": {
+   "alan": "U02",
+   "ozel": "Oyun stüdyolarında tasarımcı, seviye tasarımcısı ya da geliştirici; bitmiş oyun projeleri en önemli referanstır.",
+   "regule": false
+  },
+  "DİL VE EDEBİYAT": {
+   "alan": "U08",
+   "ozel": "Öğretmenlik, yayıncılık, editörlük, çeviri ve içerik üretimi; ikinci bir dil ve yazma portfolyosu önemlidir.",
+   "regule": false
+  },
+  "DİL VE KONUŞMA TERAPİSİ": {
+   "alan": "U04",
+   "ozel": "Dil ve konuşma terapisti unvanı bu lisansla (ya da ilgili yüksek lisansla) kazanılır; rehabilitasyon merkezleri ve hastanelerde çalışılır.",
+   "sablon": "saglik_meslek",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "DİL ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Yabancı dil öğretmenliğinde puana YDS/e-YDS de katılır; özel okullar ve dil kursları da önemli işverenlerdir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "DİŞ HEKİMLİĞİ": {
+   "alan": "U04",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Diş hekimliği fakültesi",
+     "aciklama": "Son yıllarda klinikte hasta tedavi ederek uygulama yapılır.",
+     "zorunlu": true,
+     "sure": "5 yıl"
+    },
+    {
+     "baslik": "Diploma tescili",
+     "aciklama": "Mezuniyetle diş hekimi unvanı kazanılır; diploma Sağlık Bakanlığınca tescil edilir (1219 sayılı Kanun).",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Çalışma seçenekleri",
+     "aciklama": "Kamuda (ağız ve diş sağlığı merkezleri), özel klinikte ya da kendi muayenehanende çalışabilirsin.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "DUS (Diş Hekimliğinde Uzmanlık Sınavı) — isteğe bağlı",
+     "aciklama": "Ortodonti, cerrahi, pedodonti gibi dallarda uzman olmak için DUS ile uzmanlık eğitimine yerleşilir; süre dala göre birkaç yıldır.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Kamu ya da özel klinikte diş hekimi; el becerisi ve hız kazanma."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 4–10. yıl",
+     "aciklama": "Kendi hasta çevresi; uzman ya da sertifikalı alanlar (implant, estetik)."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Kendi kliniği, klinik ortaklığı ya da akademi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Muayenehane açmak ciddi bir yatırım ister.",
+     "nasil": "Çoğu hekim önce bir klinikte çalışıp deneyim ve birikim kazanıyor."
+    },
+    {
+     "zor": "Saatlerce eğilerek ince işlem yapmak bedeni yorar.",
+     "nasil": "Ergonomik çalışma, düzenli egzersiz; bunlar fakültede de öğretiliyor."
+    }
+   ],
+   "neden_seviyor": [
+    "El becerisini ve bilimi birleştiren bir iş.",
+    "Sonucu hemen görülen tedaviler.",
+    "Kendi çalışma düzenini kurabilmek."
+   ],
+   "hazirlik": [
+    "Biyoloji ve kimya.",
+    "El becerisi gerektiren hobiler (maket, çizim, enstrüman).",
+    "Bir diş kliniğinde gözlem."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "1219 sayılı Tababet ve Şuabatı San'atlarının Tarzı İcrasına Dair Kanun (mevzuat.gov.tr)",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1219&MevzuatTur=1&MevzuatTertip=3",
+     "tarih": null
+    },
+    {
+     "ad": "Tıpta ve Diş Hekimliğinde Uzmanlık Eğitimi Yönetmeliği (Resmî Gazete 03.09.2022)",
+     "url": "https://www.memurlar.net/haber/1039878/tipta-ve-dis-hekimliginde-uzmanlik-egitimi-yonetmeligi-resmi-gazete-de.html",
+     "tarih": "2022-09-03"
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "EBELİK": {
+   "alan": "U04",
+   "ozel": "Ebe olarak doğumhane, kadın doğum servisleri ve birinci basamakta çalışılır; vardiya ve nöbet yaygındır.",
+   "sablon": "saglik_meslek",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "ECZACILIK": {
+   "alan": "U04",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Eczacılık fakültesi",
+     "aciklama": "Eczane, hastane ve endüstri stajları programın parçasıdır.",
+     "zorunlu": true,
+     "sure": "5 yıl"
+    },
+    {
+     "baslik": "Diploma tescili ve eczacı unvanı",
+     "aciklama": "Eczacılık mesleği 6197 sayılı Eczacılar ve Eczaneler Hakkında Kanun ile düzenlenir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Eczane açmak (istersen)",
+     "aciklama": "Serbest eczane açmak ruhsata bağlıdır ve yer, nüfus ve sıralama kriterleri kanun ve yönetmelikle belirlenir; yeni mezunlar genellikle önce yardımcı ya da mesul eczacı olarak çalışır.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Alternatifler",
+     "aciklama": "Hastane eczacılığı (kamuda KPSS), ilaç endüstrisi (ar-ge, kalite, ruhsat, tıbbi tanıtım), akademi.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "EUS (Eczacılıkta Uzmanlık Sınavı) — isteğe bağlı",
+     "aciklama": "Uzmanlık için ÖSYM'nin yaptığı EUS ile uzmanlık eğitimine yerleşilir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Yardımcı/ikinci eczacı, hastane eczacısı ya da endüstride uzman."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–10. yıl",
+     "aciklama": "Eczane sahibi ya da mesul eczacı; endüstride yönetici yardımcılığı."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Eczane işletmeciliği, endüstride yöneticilik, akademi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Eczane açmak istediğin yerde ve zamanda mümkün olmayabilir.",
+     "nasil": "Endüstri ve hastane eczacılığı ciddi alternatifler; birçok eczacı bu alanlarda kariyer yapıyor."
+    },
+    {
+     "zor": "Eczane işletmek ticari sorumluluk da ister (stok, personel, nöbet).",
+     "nasil": "Fakültede ve yardımcı eczacılıkta işletmeyi öğrenmek bu yükü azaltır."
+    }
+   ],
+   "neden_seviyor": [
+    "İlaç bilimine hâkim olup hastaya doğru kullanımı öğretmek.",
+    "Endüstri, hastane, eczane ve akademi arasında geniş seçenek."
+   ],
+   "hazirlik": [
+    "Kimya ve biyoloji.",
+    "Bir eczanede gözlem günü.",
+    "İnsanlarla açık ve sabırlı iletişim."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "6197 sayılı Eczacılar ve Eczaneler Hakkında Kanun",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=6197&MevzuatTur=1&MevzuatTertip=3",
+     "tarih": null
+    },
+    {
+     "ad": "1219 sayılı Tababet ve Şuabatı San'atlarının Tarzı İcrasına Dair Kanun (mevzuat.gov.tr)",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1219&MevzuatTur=1&MevzuatTertip=3",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "EGZERSİZ VE SPOR BİLİMLERİ": {
+   "alan": "U05",
+   "ozel": "Egzersiz uzmanı, performans analisti ve sağlıklı yaşam programlarında çalışılır.",
+   "regule": false
+  },
+  "EKONOMETRİ": {
+   "alan": "U10",
+   "ozel": "Veri analizi, araştırma, bankacılık ve kamuda ekonomik analiz; istatistik yazılımları ve programlama önemlidir.",
+   "regule": false
+  },
+  "EKONOMİ": {
+   "alan": "U10",
+   "ozel": "Bankacılık, finans, araştırma ve kamu (uzman yardımcılığı sınavları); veri becerisi ayırt edicidir.",
+   "regule": false
+  },
+  "EKONOMİ VE FİNANS": {
+   "alan": "U10",
+   "ozel": "Finans kurumları, şirketlerin finans birimleri ve araştırma; SPK lisansları bazı görevlerde gerekir.",
+   "regule": false
+  },
+  "EL SANATLARI": {
+   "alan": "U12",
+   "ozel": "Atölyeler, kültür kurumları, eğitim ve kendi işini kurma.",
+   "regule": false
+  },
+  "ELEKTRONİK TİCARET VE YÖNETİMİ": {
+   "alan": "U10",
+   "ozel": "E-ticaret şirketleri, pazaryeri yönetimi, dijital pazarlama; kendi online işini kurmak da yaygın bir yoldur.",
+   "regule": false
+  },
+  "ELEKTRİK VE ELEKTRONİK MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Enerji, savunma, telekom ve gömülü sistemler gibi çok farklı sektörlere açılır; serbest elektrik projeleri için oda kaydı ve yetki belgeleri gerekir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ENDÜSTRİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Üretimden lojistiğe, bankacılıktan danışmanlığa geniş bir yelpazede süreç iyileştirme ve planlama işleri yapılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ENDÜSTRİYEL TASARIM": {
+   "alan": "U12",
+   "ozel": "Ürün tasarımı ofisleri ve üreticiler; portfolyo ve 3D modelleme becerisi belirleyicidir.",
+   "regule": false
+  },
+  "ENDÜSTRİYEL TASARIM MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Ürün tasarımı ile mühendislik hesaplarını birleştirir; portfolyo ve CAD becerisi işe girişte belirleyicidir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ENERJİ SİSTEMLERİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Yenilenebilir enerji, enerji verimliliği ve santral projelerinde çalışılır; enerji yöneticiliği gibi ek belgeler avantaj sağlar.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ENERJİ YÖNETİMİ": {
+   "alan": "U10",
+   "ozel": "Enerji şirketleri, piyasa işlemleri ve enerji verimliliği danışmanlığı.",
+   "regule": false
+  },
+  "ERGOTERAPİ": {
+   "alan": "U04",
+   "ozel": "Ergoterapist unvanı bu lisansla kazanılır; rehabilitasyon merkezleri, hastaneler ve özel eğitim kurumlarında çalışılır.",
+   "sablon": "saglik_meslek",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "FELSEFE": {
+   "alan": "U08",
+   "ozel": "Akademi, yayıncılık ve öğretmenlik (kaynak program şartlarını kontrol et); eleştirel düşünme her alanda karşılık bulur.",
+   "regule": false
+  },
+  "FELSEFE GRUBU ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Felsefe, psikoloji ve sosyoloji derslerini okutur; kontenjan sınırlı olabilir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "FEN BİLGİSİ ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Ortaokul fen bilimleri öğretmenliği.",
+   "son_kontrol": "2026-10-10"
+  },
+  "FOTONİK": {
+   "alan": "U01",
+   "ozel": "Lazer, optik haberleşme ve sensör teknolojilerinde ar-ge ağırlıklı işler; yüksek lisans sık tercih edilir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "FOTOĞRAF VE VİDEO": {
+   "alan": "U12",
+   "ozel": "Serbest fotoğrafçılık, ajanslar ve medya; portfolyo ve ekipman yatırımı önemlidir.",
+   "regule": false
+  },
+  "FİLM TASARIMI VE YAZARLIĞI": {
+   "alan": "U11",
+   "ozel": "Senaryo yazarlığı, dizi/film yapım şirketleri; tamamlanmış senaryolar ve kısa filmler en önemli referanstır.",
+   "regule": false
+  },
+  "FİLM TASARIMI VE YÖNETMENLİĞİ": {
+   "alan": "U11",
+   "ozel": "Set asistanlığından başlayıp yönetmenliğe uzanan uzun bir yol; kısa filmler ve festivaller görünürlük sağlar.",
+   "regule": false
+  },
+  "FİLM YAPIMI VE YAYINCILIK": {
+   "alan": "U11",
+   "ozel": "Yapım şirketleri, televizyon ve dijital platformlar; set deneyimi ilk işi getirir.",
+   "regule": false
+  },
+  "FİNANS VE BANKACILIK": {
+   "alan": "U10",
+   "ozel": "Bankalar, aracı kurumlar ve şirket finansı; SPK lisansları bazı görevlerde gerekir.",
+   "regule": false
+  },
+  "FİZYOTERAPİ VE REHABİLİTASYON": {
+   "alan": "U04",
+   "ozel": "Fizyoterapist unvanı bu lisansla kazanılır; hastane, rehabilitasyon merkezi ve spor kulüplerinde çalışılır.",
+   "sablon": "saglik_meslek",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "FİZİK": {
+   "alan": "U03",
+   "ozel": "Akademi, ar-ge, eğitim ve veri/yazılım; medikal fizikçi olmak için ilgili yüksek lisans gerekir (1219 s. Kanun Ek Madde 13).",
+   "regule": false,
+   "kaynaklar": [
+    {
+     "ad": "6225 sayılı Kanun ile 1219 sayılı Kanuna eklenen Ek Madde 13 (medikal fizikçi tanımı)",
+     "url": "https://www.memurlar.net/haber/194351/saglikla-ilgili-26-unvanin-gorev-tanimlari-yururluge-girdi.html",
+     "tarih": "2011-04-26"
+    }
+   ],
+   "son_kontrol": "2026-10-10"
+  },
+  "FİZİK MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Ar-ge, ölçüm ve malzeme teknolojilerinde çalışılır; medikal fizikçi olmak için ayrıca ilgili yüksek lisans gerekir (1219 s. Kanun Ek Madde 13).",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true,
+   "kaynaklar": [
+    {
+     "ad": "6225 sayılı Kanun ile 1219 sayılı Kanuna eklenen Ek Madde 13 (medikal fizikçi tanımı)",
+     "url": "https://www.memurlar.net/haber/194351/saglikla-ilgili-26-unvanin-gorev-tanimlari-yururluge-girdi.html",
+     "tarih": "2011-04-26"
+    }
+   ],
+   "son_kontrol": "2026-10-10"
+  },
+  "FİZİK ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Lise fizik öğretmenliği; özel kurumlarda da talep vardır.",
+   "son_kontrol": "2026-10-10"
+  },
+  "GASTRONOMİ VE MUTFAK SANATLARI": {
+   "alan": "U17",
+   "ozel": "Restoran mutfaklarında komiden başlayan bir yol; ürün geliştirme ve kendi işletmesi de seçenek. Mutfakta uzun ve ayakta çalışma olağandır.",
+   "regule": false
+  },
+  "GAYRİMENKUL GELİŞTİRME VE YÖNETİMİ": {
+   "alan": "U10",
+   "ozel": "Gayrimenkul şirketleri, değerleme ve proje geliştirme; değerleme uzmanlığı için SPK lisansı gerekir.",
+   "regule": false
+  },
+  "GAZETECİLİK": {
+   "alan": "U11",
+   "ozel": "Haber kuruluşları ve dijital medya; muhabirlikten başlayan bir yol. Basın kartı ayrı bir başvuru sürecine tabidir.",
+   "regule": false
+  },
+  "GELENEKSEL TÜRK SANATLARI": {
+   "alan": "U12",
+   "ozel": "Atölyeler, restorasyon ve eğitim; usta-çırak ilişkisi önemlidir.",
+   "regule": false
+  },
+  "GEMİ MAKİNELERİ İŞLETME MÜHENDİSLİĞİ": {
+   "alan": "U16",
+   "ozel": "Makine dairesinde çalışılır: yeterlik sınavıyla 'Uzakyol Vardiya Mühendisi' olunur ve hizmet süresiyle başmühendisliğe kadar yükselinir.",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans + deniz stajları",
+     "aciklama": "Programlar STCW müfredatına göre yürütülür; örneğin bir programda üçer aylık iki yaz stajı ve altı aylık açık deniz stajı vardır (toplam süre okula göre değişir).",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Yeterlik sınavı",
+     "aciklama": "Ulaştırma ve Altyapı Bakanlığına bağlı birimlerin yaptığı yeterlik sınavlarını geçerek 'Uzakyol Vardiya Zabiti' olunur; sağlık şartları ve zorunlu eğitim sertifikaları gerekir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Ehliyet yükseltme",
+     "aciklama": "Denizde geçen hizmet süresi ve sınavlarla birinci zabit ve uzakyol kaptanlığına kadar yükselinir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Vardiya zabiti (güverte)."
+    },
+    {
+     "ad": "Orta",
+     "donem": "deniz hizmeti biriktikçe",
+     "aciklama": "Birinci zabit."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Kaptan; ya da karada liman, filo ve denizcilik şirketi yöneticiliği."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Aylarca denizde, ailenden uzakta kalmak.",
+     "nasil": "Seferler arası uzun izinler; birçok denizci bir süre sonra karada yöneticiliğe geçiyor."
+    },
+    {
+     "zor": "Fiziksel ve psikolojik dayanıklılık ister.",
+     "nasil": "Gemi içi ekip kültürü ve düzenli rutin."
+    }
+   ],
+   "neden_seviyor": [
+    "Dünyayı görmek.",
+    "Uluslararası geçerli bir meslek ve sorumluluk."
+   ],
+   "hazirlik": [
+    "İngilizce.",
+    "Yüzme ve temel sağlık şartları.",
+    "Matematik ve fizik."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "İTÜ (KKTC) Deniz Ulaştırma İşletme Mühendisliği: Uzakyol Vardiya Zabiti yeterliği, GASM sınavları, STCW",
+     "url": "https://kktc.itu.edu.tr/index.php/tr/mtme",
+     "tarih": null
+    },
+    {
+     "ad": "Ulaştırma ve Altyapı Bakanlığı — Gemiadamları ve Kılavuz Kaptanlar Yönetmeliği",
+     "url": "https://denizcilik.uab.gov.tr/",
+     "tarih": null
+    }
+   ],
+   "temel_bolum": "DENİZ ULAŞTIRMA İŞLETME MÜHENDİSLİĞİ",
+   "son_kontrol": "2026-10-10"
+  },
+  "GEMİ VE YAT TASARIMI": {
+   "alan": "U01",
+   "ozel": "Tersaneler ve yat tasarım ofislerinde çalışılır; işler kıyı şehirlerinde yoğunlaşır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "GEMİ İNŞAATI VE GEMİ MAKİNELERİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Tersane, klas kuruluşu ve denizcilik şirketlerinde tasarım, inşa ve denetim işleri yapılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "GENETİK VE BİYOMÜHENDİSLİK": {
+   "alan": "U01",
+   "ozel": "Laboratuvar ve ar-ge ağırlıklıdır; genetik tanı merkezleri ve biyoteknoloji şirketlerinde iş bulmak için yüksek lisans genellikle avantajdır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "GERONTOLOJİ": {
+   "alan": "U04",
+   "ozel": "Yaşlı bakım kurumları, belediyeler ve sosyal hizmet birimlerinde çalışılır; kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "GIDA MÜHENDİSLİĞİ": {
+   "alan": "U15",
+   "ozel": "Gıda fabrikalarında üretim, kalite ve ar-ge; gıda denetimi kamu kadroları KPSS iledir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "GRAFİK TASARIMI": {
+   "alan": "U12",
+   "ozel": "Ajanslar, markalar ve serbest tasarım; portfolyo ve dijital araç becerisi belirleyicidir.",
+   "regule": false
+  },
+  "GÖRSEL SANATLAR": {
+   "alan": "U12",
+   "ozel": "Sanat üretimi, sergiler, eğitim; öğretmenlik için kaynak program şartlarını kontrol et.",
+   "regule": false
+  },
+  "GÖRSEL SANATLAR ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Görsel sanatlar öğretmenliği; özel yetenek sınavıyla girilir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "GÖRSEL İLETİŞİM TASARIMI": {
+   "alan": "U12",
+   "ozel": "Grafik, arayüz ve hareketli grafik tasarımı; ajans ve teknoloji şirketleri.",
+   "regule": false
+  },
+  "GÜMRÜK İŞLETME": {
+   "alan": "U10",
+   "ozel": "Gümrük müşavirliği firmaları ve dış ticaret şirketleri; gümrük müşavirliği için ayrıca sınav ve staj süreçleri vardır.",
+   "regule": false
+  },
+  "GÜVERTE": {
+   "alan": "U16",
+   "ozel": "Önlisans programıdır: deniz stajı ve Bakanlığın yeterlik sınavıyla vardiya zabiti belgesi alınabilir; yetki sınırları lisans mezunlarından farklı olabilir.",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans + deniz stajları",
+     "aciklama": "Programlar STCW müfredatına göre yürütülür; örneğin bir programda üçer aylık iki yaz stajı ve altı aylık açık deniz stajı vardır (toplam süre okula göre değişir).",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Yeterlik sınavı",
+     "aciklama": "Ulaştırma ve Altyapı Bakanlığına bağlı birimlerin yaptığı yeterlik sınavlarını geçerek 'Uzakyol Vardiya Zabiti' olunur; sağlık şartları ve zorunlu eğitim sertifikaları gerekir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Ehliyet yükseltme",
+     "aciklama": "Denizde geçen hizmet süresi ve sınavlarla birinci zabit ve uzakyol kaptanlığına kadar yükselinir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Vardiya zabiti (güverte)."
+    },
+    {
+     "ad": "Orta",
+     "donem": "deniz hizmeti biriktikçe",
+     "aciklama": "Birinci zabit."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Kaptan; ya da karada liman, filo ve denizcilik şirketi yöneticiliği."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Aylarca denizde, ailenden uzakta kalmak.",
+     "nasil": "Seferler arası uzun izinler; birçok denizci bir süre sonra karada yöneticiliğe geçiyor."
+    },
+    {
+     "zor": "Fiziksel ve psikolojik dayanıklılık ister.",
+     "nasil": "Gemi içi ekip kültürü ve düzenli rutin."
+    }
+   ],
+   "neden_seviyor": [
+    "Dünyayı görmek.",
+    "Uluslararası geçerli bir meslek ve sorumluluk."
+   ],
+   "hazirlik": [
+    "İngilizce.",
+    "Yüzme ve temel sağlık şartları.",
+    "Matematik ve fizik."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "İTÜ (KKTC) Deniz Ulaştırma İşletme Mühendisliği: Uzakyol Vardiya Zabiti yeterliği, GASM sınavları, STCW",
+     "url": "https://kktc.itu.edu.tr/index.php/tr/mtme",
+     "tarih": null
+    },
+    {
+     "ad": "Ulaştırma ve Altyapı Bakanlığı — Gemiadamları ve Kılavuz Kaptanlar Yönetmeliği",
+     "url": "https://denizcilik.uab.gov.tr/",
+     "tarih": null
+    }
+   ],
+   "temel_bolum": "DENİZ ULAŞTIRMA İŞLETME MÜHENDİSLİĞİ",
+   "son_kontrol": "2026-10-10"
+  },
+  "GİRİŞİMCİLİK": {
+   "alan": "U10",
+   "ozel": "Kendi işini kurmanın yanında start-up'larda ve şirketlerin yeni iş birimlerinde çalışılır.",
+   "regule": false
+  },
+  "HALI TASARIMI": {
+   "alan": "U12",
+   "ozel": "Halı üreticilerinde desen tasarımı; dijital tasarım programları önemlidir.",
+   "regule": false
+  },
+  "HALI, KİLİM VE GELENEKSEL KUMAŞ DESENLERİ": {
+   "alan": "U12",
+   "ozel": "Halı ve tekstil sektöründe desen tasarımı, restorasyon ve kültür kurumları.",
+   "regule": false
+  },
+  "HALKBİLİMİ": {
+   "alan": "U08",
+   "ozel": "Kültür kurumları, müzeler ve araştırma; yüksek lisans sık tercih edilir.",
+   "regule": false
+  },
+  "HALKLA İLİŞKİLER VE REKLAMCILIK": {
+   "alan": "U11",
+   "ozel": "Ajanslar ve kurumların iletişim birimleri; portfolyo ve staj belirleyicidir.",
+   "regule": false
+  },
+  "HARİTA MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Kadastro, tapu, belediye ve özel ölçüm firmalarında çalışılır; lisanslı harita kadastro bürosu açmak ayrı bir lisans sürecine tabidir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "HASSAS TARIM VE TARIMSAL ROBOTLAR": {
+   "alan": "U15",
+   "ozel": "Akıllı tarım, sensör ve otonom tarım teknolojileri firmaları; yeni bir alan.",
+   "regule": false
+  },
+  "HAT SANATI": {
+   "alan": "U12",
+   "ozel": "Sanat üretimi, eğitim ve restorasyon; icazet geleneği önemlidir.",
+   "regule": false
+  },
+  "HAVA TRAFİK KONTROLÜ": {
+   "alan": "U16",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Simülatör, radar ve havacılık mevzuatı ağırlıklı program.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Kurum seçme sınavları",
+     "aciklama": "Hava seyrüsefer hizmeti veren kurumun (Türkiye'de DHMİ) seçme süreçlerini geçmek gerekir; ilanlarda genellikle yabancı dil ve yetenek testleri yer alır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans ve sağlık sertifikası",
+     "aciklama": "Hava trafik kontrolörü lisansı SHY-ATCO yönetmeliğine göre verilir; geçerli sağlık sertifikası şarttır. Kurumda ünite eğitimi alınır.",
+     "zorunlu": true,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Stajyer/asistan kontrolör; ünite eğitimi."
+    },
+    {
+     "ad": "Orta",
+     "donem": "yetki alındıkça",
+     "aciklama": "Lisanslı kontrolör; farklı ünitelerde derecelendirme."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Eğitmen kontrolör, vardiya amiri, yönetici."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Yüksek dikkat ve sorumluluk; vardiyalı çalışma.",
+     "nasil": "Kurallı mola ve vardiya düzeni; ekip içinde çalışılır."
+    },
+    {
+     "zor": "Alım sayısı kurumun ihtiyacına göre sınırlı.",
+     "nasil": "İyi İngilizce ve alternatif havacılık operasyon işleri."
+    }
+   ],
+   "neden_seviyor": [
+    "Gökyüzündeki trafiği güvenle yönetmenin tatmini.",
+    "Takım içinde net görev ve yüksek profesyonellik."
+   ],
+   "hazirlik": [
+    "İngilizce konuşma ve dinleme.",
+    "Çoklu görev ve dikkat oyunları, satranç gibi strateji etkinlikleri.",
+    "Sağlık şartlarını erken öğren."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "Hava Trafik Kontrolörü Lisans ve Derecelendirme Yönetmeliği (SHY-ATCO)",
+     "url": "https://www.lexpera.com.tr/mevzuat/yonetmelikler/hava-trafik-kontroloru-lisans-ve-derecelendirme-yonetmeligi-shy-atco-shy-atco",
+     "tarih": null
+    },
+    {
+     "ad": "Sivil Havacılık Genel Müdürlüğü (SHGM) mevzuatı",
+     "url": "https://web.shgm.gov.tr/",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "HAVACILIK ELEKTRİK VE ELEKTRONİĞİ": {
+   "alan": "U01",
+   "ozel": "Uçak elektrik-elektronik sistemlerinin bakımına yöneliktir; uçağı onaylayabilmek için SHGM'nin SHY-66 kapsamındaki bakım personeli lisansı (B2 kategorisi gibi) modül sınavları ve deneyimle alınır.",
+   "regule": true,
+   "kaynaklar": [
+    {
+     "ad": "Hava Aracı Bakım Personeli Lisans Yönetmeliği (SHY-66) ve SHT-66 talimatı",
+     "url": "https://www.alomaliye.com/2013/10/30/hava-araci-bakim-personeli-lisans-yonetmeligi-shy-66/",
+     "tarih": null
+    },
+    {
+     "ad": "Sivil Havacılık Genel Müdürlüğü (SHGM) mevzuatı",
+     "url": "https://web.shgm.gov.tr/",
+     "tarih": null
+    }
+   ],
+   "son_kontrol": "2026-10-10"
+  },
+  "HAVACILIK VE UZAY MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Savunma ve havacılık şirketleri, bakım kuruluşları ve ar-ge merkezlerinde çalışılır; İngilizce ve proje deneyimi belirleyicidir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "HAVACILIK YÖNETİMİ": {
+   "alan": "U16",
+   "ozel": "Havayolu ve havalimanı işletmelerinde yönetim ve operasyon; uçuş lisansı vermez.",
+   "regule": false
+  },
+  "HAYVANSAL ÜRETİM VE TEKNOLOJİLERİ": {
+   "alan": "U15",
+   "ozel": "Hayvancılık işletmeleri, yem sanayisi ve danışmanlık.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "HEMŞİRELİK": {
+   "alan": "U04",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Hemşirelik lisansı",
+     "aciklama": "Hastanede uzun süreli klinik uygulamalar zorunludur.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Hemşire unvanı",
+     "aciklama": "Meslek 6283 sayılı Hemşirelik Kanunuyla düzenlenir; unvan lisans diplomasıyla kazanılır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Sertifikalı alanlar ve yüksek lisans",
+     "aciklama": "Yoğun bakım, acil, diyaliz gibi alanlarda sertifika programları; yöneticilik ve akademi için yüksek lisans.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Serviste hemşire; vardiya ve nöbetler."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–10. yıl",
+     "aciklama": "Sertifikalı/uzman hemşire, sorumlu hemşire."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Başhemşire, eğitim hemşiresi, akademisyen."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Vardiyalı çalışma, gece nöbetleri ve fiziksel yük.",
+     "nasil": "Ekip içi dayanışma ve düzenli dinlenme; deneyimle birlikte gündüz ağırlıklı birimlere geçiş mümkün."
+    },
+    {
+     "zor": "Hasta ve yakınlarıyla duygusal yoğunluk.",
+     "nasil": "İletişim eğitimi ve meslektaş desteği."
+    }
+   ],
+   "neden_seviyor": [
+    "Hastanın iyileşmesine en yakından tanık olmak.",
+    "Yurt içinde ve dışında her zaman ihtiyaç duyulan bir meslek."
+   ],
+   "hazirlik": [
+    "Biyoloji ve kimya.",
+    "İlk yardım kursu.",
+    "Gönüllü bakım etkinlikleri."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "6283 sayılı Hemşirelik Kanunu",
+     "url": "https://www.alomaliye.com/1954/03/02/6283-sayili-hemsirelik-kanunu/",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "HEYKEL": {
+   "alan": "U12",
+   "ozel": "Sanat üretimi, kamusal sanat projeleri, atölyeler ve eğitim.",
+   "regule": false
+  },
+  "HUKUK": {
+   "alan": "U09",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Hukuk fakültesi",
+     "aciklama": "Yoğun okuma ve ezber; dördüncü yılda meslek seçimine yönelik dersler.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "HMGS (Hukuk Mesleklerine Giriş Sınavı)",
+     "aciklama": "24.10.2019'dan sonra yükseköğretime kaydolup 31.03.2024'ten sonra mezun olanlar için avukatlık stajı, noterlik stajı ve hâkim/savcı yardımcılığı sınavına girebilmenin şartıdır; başarı puanı 100 üzerinden 70'tir. Yılda genellikle iki kez yapılır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Avukatlık stajı ve baro kaydı",
+     "aciklama": "Staj süresi bir yıldır (Avukatlık Kanunu m.15): bir bölümü adliyede, bir bölümü avukat yanında. Sonra baroya kayıt olunur.",
+     "zorunlu": false,
+     "sure": "1 yıl"
+    },
+    {
+     "baslik": "Ya da hâkim/savcı yardımcılığı",
+     "aciklama": "Hâkim ve savcı yardımcılığı sınavını kazananlar 3 yıllık yardımcılık döneminden geçer (7413 sayılı Kanun).",
+     "zorunlu": false,
+     "sure": "3 yıl"
+    },
+    {
+     "baslik": "Diğer yollar",
+     "aciklama": "Noterlik, kamu kurumlarında hukuk müşavirliği/uzmanlık (KPSS), şirket hukuk birimleri, akademi.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "staj ve ilk yıllar",
+     "aciklama": "Stajyer avukat, genç avukat ya da hâkim/savcı yardımcısı."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–10. yıl",
+     "aciklama": "Kendi dosyalarını yöneten avukat, kıdemli avukat ya da hâkim/savcı."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Büro ortağı/sahibi, şirket hukuk direktörü, yüksek yargı."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Mezuniyetten sonra HMGS ve staj nedeniyle kazanmaya başlamak gecikebilir.",
+     "nasil": "Fakülte boyunca düzenli çalışmak HMGS'yi kolaylaştırır; staj sırasında ağ kurmak ilk işi getirir."
+    },
+    {
+     "zor": "Mezun sayısı yüksek; serbest avukatlıkta ilk yıllar zorlu olabilir.",
+     "nasil": "Bir alanda (iş hukuku, ceza, ticaret, bilişim…) uzmanlaşmak ve yabancı dil fark yaratır."
+    },
+    {
+     "zor": "Yoğun okuma, süreli işler ve stres.",
+     "nasil": "İyi zaman yönetimi ve büro içi iş bölümü."
+    }
+   ],
+   "neden_seviyor": [
+    "Haklının hakkını savunmak.",
+    "Sözle ve yazıyla ikna etme gücü.",
+    "Hem kamu hem özel sektörde geniş seçenek."
+   ],
+   "hazirlik": [
+    "Çok oku ve düzenli yaz; Türkçe ifade gücün en önemli aracın olacak.",
+    "Münazara ve model mahkeme etkinlikleri.",
+    "Bir adliye duruşmasını izlemek (duruşmalar genellikle açıktır)."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "1136 sayılı Avukatlık Kanunu (m.3 mesleğe kabul, m.15 staj süresi)",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1136&MevzuatTur=1&MevzuatTertip=5",
+     "tarih": null
+    },
+    {
+     "ad": "Hukuk Mesleklerine Giriş Sınavı ve İdari Yargı Ön Sınavı Yönetmeliği (RG 08.05.2024) — özet ve 2026 sınav tarihleri",
+     "url": "https://kadimhukuk.com.tr/?p=22243",
+     "tarih": "2024-05-08"
+    },
+    {
+     "ad": "7413 sayılı Kanun — hâkim ve savcı yardımcılığı (RG 28.06.2022, sayı 31880)",
+     "url": "https://www.alomaliye.com/2022/06/28/7413-sayili-kanun/",
+     "tarih": "2022-06-28"
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "HİDROJEOLOJİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Yeraltı suyu araştırma, sondaj ve su yönetimi işleri; saha çalışması yoğundur.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "HİDROLİK VE SU KAYNAKLARI MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Baraj, sulama ve kentsel su altyapısı projelerinde çalışılır; kamu kurumları önemli işverenlerdendir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "JEOFİZİK MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Deprem, maden ve enerji aramalarında saha ve veri işleme ağırlıklı çalışılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "JEOLOJİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Zemin etüdü, maden arama ve afet çalışmalarında görev alınır; saha işleri çoktur.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "KAMU YÖNETİMİ": {
+   "alan": "U09",
+   "ozel": "KPSS A grubu, kaymakamlık ve kurumların uzman yardımcılığı sınavları başlıca yollardır; özel sektörde idari işler.",
+   "regule": false
+  },
+  "KANATLI HAYVAN YETİŞTİRİCİLİĞİ": {
+   "alan": "U15",
+   "ozel": "Tavuk ve kanatlı işletmelerinde teknik personel; önlisans programıdır.",
+   "regule": false
+  },
+  "KARŞILAŞTIRMALI EDEBİYAT": {
+   "alan": "U08",
+   "ozel": "Yayıncılık, çeviri, editörlük ve akademi; birden fazla dil önemli bir avantajdır.",
+   "regule": false
+  },
+  "KENTSEL TASARIM VE PEYZAJ MİMARLIĞI": {
+   "alan": "U14",
+   "ozel": "Belediyeler, peyzaj ve kentsel tasarım ofisleri; serbest çalışmak için ilgili odaya kayıt gerekir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "KONTROL VE OTOMASYON MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Fabrika otomasyonu, robotik ve enerji sistemlerinde çalışılır; PLC ve programlama becerisi aranır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "KURGU, SES VE GÖRÜNTÜ YÖNETİMİ": {
+   "alan": "U11",
+   "ozel": "Kurgu, ses ve görüntü teknisyenliği; teknik beceri ve showreel (iş örneği derlemesi) önemlidir.",
+   "regule": false
+  },
+  "KUYUMCULUK VE MÜCEVHER TASARIMI": {
+   "alan": "U12",
+   "ozel": "Kuyum atölyeleri ve mücevher markaları; tasarım ve üretim becerisi birlikte aranır.",
+   "regule": false
+  },
+  "KÜLTÜR VARLIKLARINI KORUMA VE ONARIM": {
+   "alan": "U12",
+   "ozel": "Müzeler, restorasyon firmaları ve koruma kurulları; kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "KÜLTÜR VE İLETİŞİM BİLİMLERİ": {
+   "alan": "U08",
+   "ozel": "Kültür kurumları, medya ve kurumsal iletişim alanları.",
+   "regule": false
+  },
+  "KÜRESEL SİYASET VE ULUSLARARASI İLİŞKİLER": {
+   "alan": "U09",
+   "ozel": "Dışişleri ve diğer kurumların sınavları, uluslararası kuruluşlar, düşünce kuruluşları; ileri düzey yabancı dil şarttır.",
+   "regule": false
+  },
+  "KİMYA": {
+   "alan": "U03",
+   "ozel": "Kalite kontrol, ar-ge ve analiz laboratuvarları; sanayide 'kimyager' olarak çalışılır.",
+   "regule": false
+  },
+  "KİMYA MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Kimya, ilaç, gıda, enerji ve boya gibi süreç endüstrilerinde üretim, proses ve ar-ge işleri yapılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "KİMYA ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Lise kimya öğretmenliği.",
+   "son_kontrol": "2026-10-10"
+  },
+  "KİMYA-BİYOLOJİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Biyoproses, ilaç ve gıda endüstrisinde çalışılır; ar-ge için yüksek lisans sık tercih edilir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "LOJİSTİK YÖNETİMİ": {
+   "alan": "U10",
+   "ozel": "Lojistik firmaları, depo ve tedarik zinciri yönetimi; yabancı dil ve Excel/ERP becerisi aranır.",
+   "regule": false
+  },
+  "LİDERLİK": {
+   "alan": "U10",
+   "ozel": "İşletme yönetimi, insan kaynakları ve kurumsal gelişim rolleri; yeni bir programdır.",
+   "regule": false
+  },
+  "MADEN MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Maden sahalarında üretim, planlama ve iş güvenliği işleri; işler genellikle şehir dışında ve vardiyalıdır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "MAKİNE MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Otomotiv, enerji, savunma, iklimlendirme ve imalat gibi çok geniş bir alana açılır; tesisat projeleri için oda kaydı ve yetki belgeleri gerekir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "MALZEME BİLİMİ VE MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Metal, polimer, seramik ve kompozit üreticilerinde kalite, üretim ve ar-ge işleri yapılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "MALZEME BİLİMİ VE NANOTEKNOLOJİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Ar-ge yoğun bir alan; sektörde iş için laboratuvar deneyimi ve çoğu zaman yüksek lisans önemlidir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "MALİYE": {
+   "alan": "U10",
+   "ozel": "Kamu maliyesi (vergi müfettiş yardımcılığı vb. sınavlar), muhasebe ve SMMM yolu.",
+   "regule": false
+  },
+  "MATEMATİK": {
+   "alan": "U03",
+   "ozel": "Akademi ve öğretmenliğin yanında finans, veri, aktüerya ve yazılıma geçiş yaygındır.",
+   "regule": false
+  },
+  "MATEMATİK MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Modelleme, optimizasyon ve yazılım ağırlıklıdır; finans ve veri alanlarına da geçilebilir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "MATEMATİK VE BİLGİSAYAR BİLİMLERİ": {
+   "alan": "U03",
+   "ozel": "Matematik temeli üzerine yazılım ve veri becerisi; sektöre geçiş görece kolaydır.",
+   "regule": false
+  },
+  "MATEMATİK ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Lise matematik öğretmenliği; özel kurumlarda yoğun talep vardır.",
+   "son_kontrol": "2026-10-10"
+  },
+  "MEDYA VE İLETİŞİM": {
+   "alan": "U11",
+   "ozel": "Medya kuruluşları, kurumsal iletişim ve içerik üretimi.",
+   "regule": false
+  },
+  "MEKATRONİK MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Robotik, otomasyon ve akıllı ürünlerde mekanik-elektronik-yazılımı birlikte kullanırsın.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "METALURJİ VE MALZEME MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Demir-çelik, döküm, otomotiv yan sanayi ve savunma sanayisinde üretim ve kalite işleri.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "MODA TASARIMI": {
+   "alan": "U12",
+   "ozel": "Moda markaları, hazır giyim üreticileri ve kendi markası; koleksiyon portfolyosu belirleyicidir.",
+   "regule": false
+  },
+  "MODERN DANS": {
+   "alan": "U13",
+   "ozel": "Dans toplulukları, koreografi ve eğitim; fiziksel kariyer süresi göz önünde tutulmalı.",
+   "regule": false
+  },
+  "MOLEKÜLER BİYOLOJİ VE GENETİK": {
+   "alan": "U03",
+   "ozel": "Genetik tanı ve araştırma laboratuvarları, biyoteknoloji; kariyer için lisansüstü eğitim sık gerekir.",
+   "regule": false
+  },
+  "MOLEKÜLER BİYOTEKNOLOJİ": {
+   "alan": "U03",
+   "ozel": "Biyoteknoloji ar-gesi ve ilaç sektörü; yüksek lisans genellikle beklenir.",
+   "regule": false
+  },
+  "MUHASEBE VE DENETİM": {
+   "alan": "U10",
+   "ozel": "SMMM olmanın en doğrudan yolu; denetim firmaları ve şirket muhasebe birimleri de başlıca işverenlerdir.",
+   "sablon": "smmm",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "MUHASEBE VE FİNANS YÖNETİMİ": {
+   "alan": "U10",
+   "ozel": "Muhasebe ve finans birimleri; SMMM yolu açıktır.",
+   "sablon": "smmm",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "MÜTERCİM VE TERCÜMANLIK": {
+   "alan": "U08",
+   "ozel": "Çeviri büroları, yayınevleri, kurumlar ve serbest çevirmenlik; noter onaylı (yeminli) çeviri için notere yemin süreci vardır.",
+   "regule": false
+  },
+  "MÜZECİLİK": {
+   "alan": "U08",
+   "ozel": "Müzeler ve kültür kurumları; kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "MÜZİK": {
+   "alan": "U13",
+   "ozel": "Sahne, eğitim, stüdyo ve kurum toplulukları.",
+   "regule": false
+  },
+  "MÜZİK SES VE PERFORMANS": {
+   "alan": "U13",
+   "ozel": "Sahne performansı, stüdyo kayıtları ve ses eğitmenliği.",
+   "regule": false
+  },
+  "MÜZİK TEKNOLOJİSİ": {
+   "alan": "U13",
+   "ozel": "Ses mühendisliği, stüdyo, yayın ve oyun/film ses tasarımı.",
+   "regule": false
+  },
+  "MÜZİK TEORİSİ": {
+   "alan": "U13",
+   "ozel": "Müzik eğitimi, akademi ve düzenleme.",
+   "regule": false
+  },
+  "MÜZİK ÇALGI": {
+   "alan": "U13",
+   "ozel": "Orkestralar ve topluluklar, ders verme; kurum kadroları kendi sınavlarıyla alınır.",
+   "regule": false
+  },
+  "MÜZİK ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Müzik öğretmenliği; özel yetenek sınavıyla girilir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "MÜZİKOLOJİ": {
+   "alan": "U13",
+   "ozel": "Akademi, arşivler, yayın ve kültür kurumları.",
+   "regule": false
+  },
+  "MİMARLIK": {
+   "alan": "U14",
+   "ozel": "Mimarlık ofisleri, inşaat şirketleri, belediyeler; serbest proje müellifi olmak için Mimarlar Odasına kayıt gerekir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "NANOBİLİM VE NANOTEKNOLOJİ": {
+   "alan": "U03",
+   "ozel": "Ar-ge ve akademi ağırlıklı; sektörde iş için lisansüstü ve laboratuvar deneyimi önemlidir.",
+   "regule": false
+  },
+  "NANOTEKNOLOJİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Ar-ge ve akademi ağırlıklı yeni bir alan; sektördeki iş sayısı sınırlı olabildiği için yüksek lisans ve laboratuvar deneyimi önemlidir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "NÜKLEER ENERJİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Nükleer santral projeleri, radyasyon güvenliği ve düzenleyici kurumlarda çalışılır; işveren sayısı sınırlıdır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ODYOLOJİ": {
+   "alan": "U04",
+   "ozel": "Odyolog unvanı bu lisansla kazanılır; hastane, işitme cihazı merkezleri ve rehabilitasyonda çalışılır.",
+   "sablon": "saglik_meslek",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "OKUL ÖNCESİ ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Anaokulu ve kreşler; özel sektörde de çok sayıda kurum vardır.",
+   "son_kontrol": "2026-10-10"
+  },
+  "OPTİK VE AKUSTİK MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Optik cihaz, akustik tasarım ve gürültü kontrolü alanlarında çalışılır; niş bir alandır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ORGANİK TARIM İŞLETMECİLİĞİ": {
+   "alan": "U15",
+   "ozel": "Organik üretim işletmeleri, sertifikasyon kuruluşları ve tarım danışmanlığı.",
+   "regule": false
+  },
+  "ORKESTRA VE KORO ŞEFLİĞİ": {
+   "alan": "U13",
+   "ozel": "Orkestra ve korolar, eğitim kurumları; şeflik deneyimle olgunlaşan bir yoldur.",
+   "regule": false
+  },
+  "ORMAN ENDÜSTRİSİ MÜHENDİSLİĞİ": {
+   "alan": "U15",
+   "ozel": "Mobilya, kağıt ve ahşap ürünleri sanayisi.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ORMAN MÜHENDİSLİĞİ": {
+   "alan": "U15",
+   "ozel": "Orman Genel Müdürlüğü gibi kamu kurumları (KPSS) ve serbest ormancılık büroları.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ORTEZ VE PROTEZ": {
+   "alan": "U04",
+   "ozel": "Ortez-protez merkezlerinde ve hastanelerde çalışılır; bu alandaki unvan ve yetkilerin güncel tanımını Sağlık Bakanlığı mevzuatından kontrol et.",
+   "sablon": "saglik_meslek",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "OTEL YÖNETİCİLİĞİ": {
+   "alan": "U17",
+   "ozel": "Otellerin departmanlarında başlayıp yöneticiliğe uzanan yol; yabancı dil kritik.",
+   "regule": false
+  },
+  "OTOMOTİV MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Otomotiv üreticileri ve yan sanayide tasarım, test ve üretim işleri; elektrikli araçlar alanı büyüyor.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "OYUNCULUK": {
+   "alan": "U13",
+   "ozel": "Tiyatro, dizi/film; devlet ve şehir tiyatroları kendi sınavlarıyla sanatçı alır.",
+   "regule": false
+  },
+  "PAZARLAMA": {
+   "alan": "U10",
+   "ozel": "Marka, ürün, satış ve dijital pazarlama rolleri; veri analizi ve dijital beceriler fark yaratır.",
+   "regule": false
+  },
+  "PAZARLAMA İLETİŞİMİ": {
+   "alan": "U11",
+   "ozel": "Marka iletişimi, reklam ve dijital kampanyalar.",
+   "regule": false
+  },
+  "PERFÜZYON": {
+   "alan": "U04",
+   "ozel": "Perfüzyonist unvanı bu lisansla kazanılır; açık kalp ameliyatlarında kalp-akciğer makinesini yöneten ekip üyesidir. İşler büyük hastanelerde yoğunlaşır.",
+   "sablon": "saglik_meslek",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "PETROL VE DOĞALGAZ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Sondaj ve üretim sahalarında, çoğu zaman uzak bölgelerde ya da yurt dışında rotasyonlu çalışılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "PEYZAJ MİMARLIĞI": {
+   "alan": "U14",
+   "ozel": "Belediyeler, peyzaj ofisleri ve uygulama firmaları; serbest çalışmak için Peyzaj Mimarları Odasına kayıt gerekir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "PLASTİK SANATLAR VE RESİM": {
+   "alan": "U12",
+   "ozel": "Sanat üretimi, sergiler, galeriler ve eğitim.",
+   "regule": false
+  },
+  "POLİMER MALZEME MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Plastik, kauçuk ve ambalaj sanayisinde üretim, kalite ve ar-ge işleri.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "POLİTİKA VE EKONOMİ": {
+   "alan": "U09",
+   "ozel": "Politika analizi, araştırma kuruluşları, kamu ve finans; veri analizi becerisi avantaj sağlar.",
+   "regule": false
+  },
+  "PSİKOLOJİ": {
+   "alan": "U06",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Psikoloji lisansı",
+     "aciklama": "Araştırma yöntemleri ve istatistik programın temelidir; uygulama stajları yapılır.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Psikolog olarak çalışmak",
+     "aciklama": "Lisans mezunları psikolog olarak kurumlarda (kamu, okul, STK, insan kaynakları, araştırma) çalışabilir; test uygulamaları için ilgili test eğitimleri gerekir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Klinik psikolog olmak için lisansüstü",
+     "aciklama": "1219 sayılı Kanun Ek Madde 13'e göre klinik psikolog unvanı, psikoloji lisansının ardından klinik psikoloji yüksek lisansı (ve kanundaki tanıma göre doktora) ile kazanılır. Terapi yapmak isteyenler genellikle bu yolu ve ek süpervizyonlu eğitimleri seçer.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Kurumlarda psikolog, araştırma asistanı, İK uzman yardımcısı; ya da lisansüstü öğrenci."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 4–10. yıl",
+     "aciklama": "Klinik/kurum psikoloğu, belirli bir terapi yaklaşımında sertifikalı uzman."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Süpervizör, eğitmen, kendi danışmanlık merkezi (mevzuat izin verdiği ölçüde), akademi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Klinik alanda çalışmak lisansla bitmiyor; yüksek lisans girişleri rekabetli ve ek eğitimler masraflı.",
+     "nasil": "Lisansta araştırma deneyimi ve iyi not ortalaması; kurum, İK ve araştırma gibi klinik dışı yollar da güçlü seçenekler."
+    },
+    {
+     "zor": "Başkalarının acısıyla çalışmanın duygusal yükü.",
+     "nasil": "Süpervizyon ve kendi terapisi bu mesleğin olağan parçası."
+    }
+   ],
+   "neden_seviyor": [
+    "İnsan zihnini bilimsel olarak anlamak.",
+    "Bir insanın hayatında kalıcı değişime eşlik etmek."
+   ],
+   "hazirlik": [
+    "Biyoloji ve matematik/istatistik temeli.",
+    "Psikolojiye dair bilimsel ve popüler okumalar.",
+    "Akran dinleyiciliği ya da gönüllülük."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "6225 sayılı Kanun ile 1219 sayılı Kanuna eklenen Ek Madde 13 (sağlık meslek mensupları; RG 26.04.2011)",
+     "url": "https://www.memurlar.net/haber/194351/saglikla-ilgili-26-unvanin-gorev-tanimlari-yururluge-girdi.html",
+     "tarih": "2011-04-26"
+    },
+    {
+     "ad": "1219 sayılı Tababet ve Şuabatı San'atlarının Tarzı İcrasına Dair Kanun (mevzuat.gov.tr)",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1219&MevzuatTur=1&MevzuatTertip=3",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "PSİKOLOJİK DANIŞMANLIK VE REHBERLİK ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Okullarda rehber öğretmen (psikolojik danışman); rehberlik araştırma merkezleri ve özel kurumlar da seçenektir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "PİLOTAJ": {
+   "alan": "U16",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "Sağlık şartı (en baştan)",
+     "aciklama": "Pilotaj programlarına kayıt için genellikle SHGM yetkili havacılık tıp merkezinden alınmış birinci sınıf (Class-1) sağlık sertifikası gerekir. Önce bunu kontrol et.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Pilotaj lisansı + uçuş eğitimi",
+     "aciklama": "Teorik dersler ve simülatör/uçak ile uçuş saatleri; program ICAO/EASA standartlarına göre yürütülür.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "SHGM lisansları",
+     "aciklama": "Mezunlar SHGM'den ATPL(A) — ilk aşamada genellikle 'frozen ATPL' — lisansına hak kazanır; lisanslar sağlık sertifikasının geçerliliğine bağlıdır.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Havayolu seçimi ve tip eğitimi",
+     "aciklama": "Havayolu şirketleri kendi seçim sınavlarını yapar; işe alınan pilot belirli bir uçak tipi için tip eğitimi alır.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "İkinci pilot (yardımcı pilot)."
+    },
+    {
+     "ad": "Orta",
+     "donem": "uçuş saati biriktikçe",
+     "aciklama": "Kıdemli ikinci pilot; kaptanlık için uçuş saati ve şirket şartları."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Kaptan pilot, eğitmen pilot, uçuş operasyon yöneticisi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Sağlık sertifikası her yıl yenilenir; sağlık sorunu kariyeri durdurabilir.",
+     "nasil": "Sağlıklı yaşam alışkanlıkları; bazı pilotlar ikinci bir uzmanlık (eğitmenlik, operasyon) geliştiriyor."
+    },
+    {
+     "zor": "Düzensiz uyku, uzun süre evden uzak kalmak.",
+     "nasil": "Planlanmış dinlenme süreleri kurallarla korunur; birçok pilot bu düzene alışıyor."
+    },
+    {
+     "zor": "Sektör krizlerden etkilenir; işe alımlar dönemsel.",
+     "nasil": "İngilizce ve uluslararası geçerli lisanslar başka ülkelerde de iş kapısı açar."
+    }
+   ],
+   "neden_seviyor": [
+    "Uçmanın kendisi.",
+    "Net kuralları olan, ekip odaklı, uluslararası bir meslek."
+   ],
+   "hazirlik": [
+    "Göz, işitme ve genel sağlık durumunu erkenden bir havacılık tıp merkezinde öğren.",
+    "İngilizceyi akıcı konuşur hale getir.",
+    "Fizik ve matematik; stres altında sakin karar verme alışkanlığı."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "Özyeğin Üniv. Pilotaj Lisans Programı bilgileri (SHGM ATPL, Class-1 sağlık sertifikası)",
+     "url": "https://www.ozyegin.edu.tr/sites/default/files/upload/AkreditasyonveKaliteGuvencesi/pilotaj_lisans_programina_iliskin_bilgiler.pdf",
+     "tarih": null
+    },
+    {
+     "ad": "Sivil Havacılık Genel Müdürlüğü (SHGM) mevzuatı",
+     "url": "https://web.shgm.gov.tr/",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "RADYO, TELEVİZYON VE SİNEMA": {
+   "alan": "U11",
+   "ozel": "Yayın kuruluşları, yapım şirketleri ve dijital platformlar; set ve stüdyo deneyimi önemlidir.",
+   "regule": false
+  },
+  "RAYLI SİSTEMLER MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Demiryolu, metro ve tramvay işletmeleri ile araç üreticilerinde çalışılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "REHBERLİK VE PSİKOLOJİK DANIŞMANLIK": {
+   "alan": "U06",
+   "ozel": "Okullarda rehber öğretmen (psikolojik danışman) olmak için öğretmenlik yolu geçerlidir; rehberlik araştırma merkezleri ve özel kurumlar da seçenektir.",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "son_kontrol": "2026-10-10"
+  },
+  "REKLAMCILIK": {
+   "alan": "U11",
+   "ozel": "Reklam ajanslarında metin yazarlığı, sanat yönetmenliği ve müşteri ilişkileri.",
+   "regule": false
+  },
+  "REKREASYON YÖNETİMİ": {
+   "alan": "U05",
+   "ozel": "Otel animasyonu, belediye ve spor tesislerinde etkinlik ve boş zaman programları yönetilir.",
+   "regule": false
+  },
+  "RESİM": {
+   "alan": "U12",
+   "ozel": "Sanat üretimi, sergiler, illüstrasyon ve eğitim.",
+   "regule": false
+  },
+  "RESİM ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Resim/görsel sanatlar öğretmenliği; özel yetenek sınavıyla girilir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "SAHNE DEKORU VE KOSTÜMÜ": {
+   "alan": "U13",
+   "ozel": "Tiyatro, opera, dizi/film setleri ve etkinlik prodüksiyonu.",
+   "regule": false
+  },
+  "SAHNE SANATLARI": {
+   "alan": "U13",
+   "ozel": "Tiyatro, sahne prodüksiyonu ve eğitim.",
+   "regule": false
+  },
+  "SAHNE TASARIMI": {
+   "alan": "U13",
+   "ozel": "Tiyatro, konser ve etkinlik prodüksiyonlarında sahne ve ışık tasarımı.",
+   "regule": false
+  },
+  "SAHNE VE GÖSTERİ SANATLARI YÖNETİMİ": {
+   "alan": "U13",
+   "ozel": "Kültür kurumları, festivaller ve prodüksiyon şirketlerinde yönetim.",
+   "regule": false
+  },
+  "SANAT TARİHİ": {
+   "alan": "U08",
+   "ozel": "Müzeler, galeriler, koruma kurulları, rehberlik ve akademi.",
+   "regule": false
+  },
+  "SANAT VE KÜLTÜR YÖNETİMİ": {
+   "alan": "U12",
+   "ozel": "Müzeler, galeriler, festivaller ve kültür kurumlarında yönetim ve proje koordinasyonu.",
+   "regule": false
+  },
+  "SAÇ VE GÜZELLİK UYGULAMALARI": {
+   "alan": "U17",
+   "ozel": "Kuaför ve güzellik salonları; kendi işyerini açmak için ilgili mevzuattaki belge şartlarını kontrol et. Önlisans programıdır.",
+   "regule": false
+  },
+  "SAĞLIK YÖNETİMİ": {
+   "alan": "U04",
+   "ozel": "Hastanelerde idari birimler, kalite ve hasta hakları; doğrudan tedavi yapılmaz. Kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "SERAMİK VE CAM": {
+   "alan": "U12",
+   "ozel": "Seramik ve cam atölyeleri, endüstriyel üretim ve sanat.",
+   "regule": false
+  },
+  "SERMAYE PİYASASI": {
+   "alan": "U10",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans eğitimi",
+     "aciklama": "Finans, ekonomi ve piyasa işlemleri ağırlıklı.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "SPK lisansları",
+     "aciklama": "Aracı kurum ve portföy yönetimi gibi kurumlarda birçok görev için Sermaye Piyasası Kurulunun lisanslama düzenlemesine göre ilgili lisansı (sınavla) almak gerekir (Tebliğ VII-128.7).",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Kamuda çalışmak istersen KPSS",
+     "aciklama": "Kamu kurumlarına giriş genellikle KPSS (ve bazı kurumlarda ek sınav/mülakat) ile olur. Özel sektörde KPSS gerekmez.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "kaynaklar": [
+    {
+     "ad": "SPK Tebliğ VII-128.7: Sermaye piyasasında lisanslama ve sicil tutma esasları",
+     "url": "https://alomaliye.com/2014/08/14/sermaye-piyasasinda-faaliyette-bulunanlar-icin-lisanslama-ve-sicil-tutmaya-iliskin-esaslar-hakkinda-teblig-vii-128-7/",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "SES SANATLARI TASARIMI": {
+   "alan": "U13",
+   "ozel": "Film, oyun, reklam ve yayın için ses tasarımı.",
+   "regule": false
+  },
+  "SEYAHAT İŞLETMECİLİĞİ VE TURİZM REHBERLİĞİ": {
+   "alan": "U17",
+   "ozel": "Hem acenta işletmeciliği hem rehberlik; rehber olmak için 6326 sayılı Kanundaki ruhsat şartları geçerlidir.",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Turizm rehberliği lisansı",
+     "aciklama": "Tarih, sanat tarihi, arkeoloji ve uygulama gezileri ağırlıklı.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Yabancı dil belgesi",
+     "aciklama": "Yabancı dilde rehberlik için son beş yıl içinde YDS'den en az 75 puan ya da denk belge gerekir (6326 sayılı Kanun m.3).",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Uygulama gezisi + sınav ve ruhsatname",
+     "aciklama": "Bakanlığın düzenlediği uygulama gezisini ve sonundaki sınavı başaranlar ruhsatname ve çalışma kartı alır. Yabancı dil şartını sağlamayanlar Türkçe rehber olabilir.",
+     "zorunlu": true,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk sezonlar",
+     "aciklama": "Bölgesel/ülkesel rehber; acentalarla ilk turlar."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Kendi müşteri çevresi, özel temalı turlar, ikinci dil."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Tur operatörlüğü, eğitmenlik, kendi acentası."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Sezona ve turizmdeki dalgalanmalara bağlı gelir.",
+     "nasil": "Birden fazla dil ve kış sezonu için kültür turları geliri dengeler."
+    },
+    {
+     "zor": "Uzun yürüyüşler, sürekli yolda olmak.",
+     "nasil": "Bunu seven için en büyük artı; kondisyon ve planlama önemli."
+    }
+   ],
+   "neden_seviyor": [
+    "Tarihi ve kültürü anlatarak yaşatmak.",
+    "Her hafta yeni insanlar ve yerler."
+   ],
+   "hazirlik": [
+    "Bir yabancı dili ileri düzeye taşı.",
+    "Tarih ve coğrafya okumaları; yaşadığın şehrin tarihini öğren.",
+    "Topluluk önünde konuşma pratiği."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "6326 sayılı Turist Rehberliği Meslek Kanunu — 7500 sayılı Kanunla değişiklikler (RG 27.04.2024, sayı 32529)",
+     "url": "https://www.alomaliye.com/2024/04/27/7500-turist-rehberligi-meslek-kanunu/",
+     "tarih": "2024-04-27"
+    }
+   ],
+   "temel_bolum": "TURİZM REHBERLİĞİ",
+   "son_kontrol": "2026-10-10"
+  },
+  "SINIF ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "İlkokul sınıf öğretmenliği; ilk yıllarda kırsal okullara atanma olasılığı yüksektir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "SOSYAL BİLGİLER ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Ortaokul sosyal bilgiler öğretmenliği.",
+   "son_kontrol": "2026-10-10"
+  },
+  "SOSYAL HİZMET": {
+   "alan": "U06",
+   "ozel": "Sosyal çalışmacı olarak aile ve sosyal hizmetler kurumları, hastaneler, belediyeler ve STK'larda çalışılır; kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "SOSYOLOJİ": {
+   "alan": "U08",
+   "ozel": "Araştırma şirketleri, sosyal hizmet kurumları, belediyeler ve STK'lar; veri analizi becerisi iş seçeneklerini artırır.",
+   "regule": false
+  },
+  "SPOR YÖNETİCİLİĞİ": {
+   "alan": "U05",
+   "ozel": "Kulüp, federasyon, belediye ve spor pazarlama şirketlerinde idari işler.",
+   "regule": false
+  },
+  "SPOR ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Beden eğitimi ve spor öğretmenliği; özel yetenek sınavıyla girilir.",
+   "son_kontrol": "2026-10-10"
+  },
+  "SU BİLİMLERİ VE MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Su kaynakları yönetimi, arıtma ve iklim uyum projelerinde çalışılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "SU ÜRÜNLERİ MÜHENDİSLİĞİ": {
+   "alan": "U15",
+   "ozel": "Balık çiftlikleri, işleme tesisleri ve kamu kurumları.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "SÜT TEKNOLOJİSİ": {
+   "alan": "U15",
+   "ozel": "Süt işleme tesislerinde üretim ve kalite.",
+   "regule": false
+  },
+  "SİBER GÜVENLİK MÜHENDİSLİĞİ": {
+   "alan": "U02",
+   "ozel": "Kamu ve özel sektörde güvenlik analisti, sızma testi uzmanı; CTF yarışmaları ve sertifikalar giriş için etkilidir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "SİGORTACILIK VE AKTÜERYA BİLİMLERİ": {
+   "alan": "U10",
+   "ozel": "Sigorta şirketlerinde teknik işler; aktüer olmak için aktüerlik sınavları gerekir.",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Aktüerya lisansı",
+     "aciklama": "Olasılık, istatistik, finans matematiği ağırlıklı.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Aktüerlik sınavları",
+     "aciklama": "Aktüer unvanı için Aktüerler Yönetmeliğine göre yapılan aktüerlik sınavlarını (temel ve ileri düzey modüller) başarmak ve mesleki deneyim şartını sağlamak gerekir; sınavlar dönemsel olarak duyurulur.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Sigorta, emeklilik ve risk alanında ilk iş",
+     "aciklama": "Mezunlar genellikle sigorta ve bireysel emeklilik şirketlerinde aktüer yardımcısı olarak başlar.",
+     "zorunlu": true,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Aktüer yardımcısı, risk/veri analisti."
+    },
+    {
+     "ad": "Orta",
+     "donem": "sınavlar tamamlandıkça",
+     "aciklama": "Aktüer; ürün fiyatlama, rezerv."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Sorumlu aktüer, risk yöneticisi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Sınavlar zor ve yıllara yayılır.",
+     "nasil": "İşe başlayınca şirketler çoğu zaman hazırlığı destekler; modüller tek tek geçilir."
+    },
+    {
+     "zor": "Mesleğin dar bir sektörde yoğunlaşması.",
+     "nasil": "Veri bilimi ve finans becerileri başka sektörlere de taşınır."
+    }
+   ],
+   "neden_seviyor": [
+    "Matematiği doğrudan gerçek hayattaki riskleri ölçmek için kullanmak.",
+    "Az sayıda uzman olduğu için aranan bir meslek."
+   ],
+   "hazirlik": [
+    "Olasılık ve istatistik.",
+    "Excel ve bir programlama dili.",
+    "Matematik olimpiyatı/proje deneyimi."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "Aktüerler Yönetmeliği ve TSB 2025 Aktüerlik Sınavları duyuruları",
+     "url": "https://alomaliye.com/2007/08/15/aktuerler-yonetmeligi/",
+     "tarih": null
+    }
+   ],
+   "temel_bolum": "AKTÜERYA BİLİMLERİ",
+   "son_kontrol": "2026-10-10"
+  },
+  "SİGORTACILIK VE RİSK YÖNETİMİ": {
+   "alan": "U10",
+   "ozel": "Sigorta şirketleri ve acenteler, risk yönetimi birimleri; aracılık için ayrıca belge/levha süreçleri vardır.",
+   "regule": false
+  },
+  "SİNEMA VE DİJİTAL MEDYA": {
+   "alan": "U11",
+   "ozel": "Dijital içerik, video prodüksiyon ve sinema; kendi kanalı/kısa filmleri olanlar öne çıkar.",
+   "regule": false
+  },
+  "SİVİL HAVA ULAŞTIRMA İŞLETMECİLİĞİ": {
+   "alan": "U16",
+   "ozel": "Havayolu, yer hizmetleri ve havalimanı operasyonları; vardiyalı çalışma yaygındır.",
+   "regule": false
+  },
+  "SİYASET BİLİMİ VE KAMU YÖNETİMİ": {
+   "alan": "U09",
+   "ozel": "Kamu sınavları (KPSS A, uzman yardımcılığı), araştırma ve özel sektörde idari işler.",
+   "regule": false
+  },
+  "SİYASET BİLİMİ VE ULUSLARARASI İLİŞKİLER": {
+   "alan": "U09",
+   "ozel": "Dışişleri ve kamu sınavları, uluslararası kuruluşlar ve medya; yabancı dil belirleyicidir.",
+   "regule": false
+  },
+  "TAKI TASARIMI VE İMALATI": {
+   "alan": "U12",
+   "ozel": "Takı atölyeleri, markalar ve kendi işini kurma.",
+   "regule": false
+  },
+  "TARIM EKONOMİSİ": {
+   "alan": "U15",
+   "ozel": "Tarım işletmeleri, kooperatifler, bankaların tarım kredileri ve kamu.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TARIM MAKİNELERİ VE TEKNOLOJİLERİ MÜHENDİSLİĞİ": {
+   "alan": "U15",
+   "ozel": "Tarım makineleri üreticileri ve bayileri, tarım teknolojisi firmaları.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TARIM TİCARETİ VE İŞLETMECİLİĞİ": {
+   "alan": "U15",
+   "ozel": "Tarım ürünleri ticareti, tedarik zinciri ve kooperatifler.",
+   "regule": false
+  },
+  "TARIMSAL BİYOTEKNOLOJİ": {
+   "alan": "U15",
+   "ozel": "Tohum ıslahı, bitki biyoteknolojisi ar-gesi; yüksek lisans sık tercih edilir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TARIMSAL GENETİK MÜHENDİSLİĞİ": {
+   "alan": "U15",
+   "ozel": "Islah, tohum ve hayvan genetiği; ar-ge ağırlıklıdır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TARIMSAL YAPILAR VE SULAMA": {
+   "alan": "U15",
+   "ozel": "Sulama projeleri, DSİ gibi kamu kurumları ve proje firmaları.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TARLA BİTKİLERİ": {
+   "alan": "U15",
+   "ozel": "Tahıl, yem ve endüstri bitkileri üretimi; tohum firmaları ve danışmanlık.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TARİH": {
+   "alan": "U08",
+   "ozel": "Öğretmenlik, arşivler, müzeler ve akademi; arşiv dilleri (Osmanlıca gibi) değerli bir uzmanlıktır.",
+   "regule": false
+  },
+  "TARİH ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Lise tarih öğretmenliği.",
+   "son_kontrol": "2026-10-10"
+  },
+  "TEKNOLOJİ GİRİŞİMCİLİĞİ": {
+   "alan": "U10",
+   "ozel": "Teknoloji girişimleri, kuluçka merkezleri ve ürün yönetimi rolleri.",
+   "regule": false
+  },
+  "TEKSTİL MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Tekstil ve hazır giyim üretiminde planlama, kalite ve ar-ge; sektör belirli sanayi şehirlerinde yoğunlaşır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TEKSTİL TASARIMI": {
+   "alan": "U12",
+   "ozel": "Tekstil üreticilerinde desen ve kumaş tasarımı.",
+   "regule": false
+  },
+  "TEKSTİL VE MODA TASARIMI": {
+   "alan": "U12",
+   "ozel": "Hazır giyim ve moda markaları; tasarım ve üretim bilgisi birlikte aranır.",
+   "regule": false
+  },
+  "TELEVİZYON HABERCİLİĞİ VE PROGRAMCILIĞI": {
+   "alan": "U11",
+   "ozel": "Televizyon kanallarında muhabirlik, editörlük ve program yapımı.",
+   "regule": false
+  },
+  "TEZHİP-MİNYATÜR VE EBRU": {
+   "alan": "U12",
+   "ozel": "Geleneksel sanat üretimi, restorasyon ve eğitim.",
+   "regule": false
+  },
+  "TIP": {
+   "alan": "U04",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Tıp fakültesi",
+     "aciklama": "Son yıl 'intörnlük' denen, hastanede sorumluluk alarak geçen uygulama yılıdır.",
+     "zorunlu": true,
+     "sure": "6 yıl"
+    },
+    {
+     "baslik": "Diploma tescili",
+     "aciklama": "Mezuniyetle tabip (pratisyen hekim) unvanı kazanılır; diploma Sağlık Bakanlığınca tescil edilir (1219 sayılı Kanun).",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Devlet hizmet yükümlülüğü (uygulandığı dönemlerde)",
+     "aciklama": "Mezuniyet ve uzmanlık sonrasında devlet hizmet yükümlülüğü uygulanabilir; süresi bölgeye göre değişir ve düzenlemeler dönem dönem değişir. Güncel durumu Sağlık Bakanlığından kontrol et.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "TUS (Tıpta Uzmanlık Sınavı)",
+     "aciklama": "Uzman hekim olmak için ÖSYM'nin yılda iki kez yaptığı TUS ile uzmanlık eğitimine yerleşilir. Yükümlülük bitmeden de ana dal için TUS'a girilebilir.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Uzmanlık eğitimi (asistanlık)",
+     "aciklama": "Dala göre genellikle 3–5 yıl sürer; süreler 1219 sayılı Kanunun ekindeki çizelgede yazılıdır. Sonunda uzmanlık sınavı/tezi vardır. Yan dal için ayrıca YDUS.",
+     "zorunlu": false,
+     "sure": "dala göre genellikle 3–5 yıl"
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "mezuniyet sonrası",
+     "aciklama": "Pratisyen hekim ya da TUS'a hazırlanan/asistan hekim; nöbetler yoğun."
+    },
+    {
+     "ad": "Orta",
+     "donem": "uzmanlık sonrası ilk yıllar",
+     "aciklama": "Uzman hekim; zorunlu hizmet dönemi olabilir."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Kıdemli uzman, yan dal uzmanı, öğretim üyesi, klinik şefi ya da muayenehane."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Yol uzun: 6 yıl fakülte + TUS + birkaç yıl uzmanlık; yani 30'lu yaşlara kadar eğitim sürebilir.",
+     "nasil": "Hekimlerin çoğu bunu 'her aşamanın kendi tatmini var' diye anlatıyor; asistanlık da maaşlı bir çalışma dönemidir."
+    },
+    {
+     "zor": "Nöbetler, yoğun hasta sayısı ve zaman zaman şiddet riski.",
+     "nasil": "Ekip dayanışması, nöbet sonrası dinlenme hakları ve kendine bakım alışkanlıkları; bazı dallar daha az nöbetlidir."
+    },
+    {
+     "zor": "TUS rekabeti yüksek.",
+     "nasil": "Fakülte boyunca düzenli çalışmak TUS hazırlığının yarısıdır."
+    }
+   ],
+   "neden_seviyor": [
+    "Bir hayatı doğrudan kurtarabilmek.",
+    "Toplumda saygın, her yerde ihtiyaç duyulan bir meslek.",
+    "Ömür boyu öğrenen bir bilim insanı olmak."
+   ],
+   "hazirlik": [
+    "Biyoloji ve kimyayı derinlemesine öğren; sayısal puan rekabetini erken düşün.",
+    "Bir hastane gönüllülüğü, ilk yardım kursu ya da bir hekimle 'meslek gölgesi' (gözlem) günü.",
+    "Uzun soluklu çalışmaya ve uyku düzenine dair alışkanlık geliştir."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "1219 sayılı Tababet ve Şuabatı San'atlarının Tarzı İcrasına Dair Kanun (mevzuat.gov.tr)",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1219&MevzuatTur=1&MevzuatTertip=3",
+     "tarih": null
+    },
+    {
+     "ad": "Tıpta ve Diş Hekimliğinde Uzmanlık Eğitimi Yönetmeliği (Resmî Gazete 03.09.2022)",
+     "url": "https://www.memurlar.net/haber/1039878/tipta-ve-dis-hekimliginde-uzmanlik-egitimi-yonetmeligi-resmi-gazete-de.html",
+     "tarih": "2022-09-03"
+    },
+    {
+     "ad": "ÖSYM 2026-TUS 1. Dönem Kılavuzu",
+     "url": "https://dokuman.osym.gov.tr/pdfdokuman/2026/TUSDONEM-1/tkilavuz_07052026.pdf",
+     "tarih": "2026"
+    },
+    {
+     "ad": "3359 sayılı Sağlık Hizmetleri Temel Kanunu — devlet hizmet yükümlülüğü (5371 sayılı Kanunla eklenen hükümler)",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=3359&MevzuatTur=1&MevzuatTertip=5",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "TIP MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Tıbbi cihaz ve görüntüleme teknolojilerinde çalışılır; mezunlar hekim değildir, hasta tedavi etmez.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TOHUM BİLİMİ VE TEKNOLOJİSİ": {
+   "alan": "U15",
+   "ozel": "Tohum şirketleri, ıslah ve sertifikasyon.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TOPRAK BİLİMİ VE BİTKİ BESLEME": {
+   "alan": "U15",
+   "ozel": "Gübre firmaları, toprak analiz laboratuvarları ve danışmanlık.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "TURİZM REHBERLİĞİ": {
+   "alan": "U17",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Turizm rehberliği lisansı",
+     "aciklama": "Tarih, sanat tarihi, arkeoloji ve uygulama gezileri ağırlıklı.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "Yabancı dil belgesi",
+     "aciklama": "Yabancı dilde rehberlik için son beş yıl içinde YDS'den en az 75 puan ya da denk belge gerekir (6326 sayılı Kanun m.3).",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Uygulama gezisi + sınav ve ruhsatname",
+     "aciklama": "Bakanlığın düzenlediği uygulama gezisini ve sonundaki sınavı başaranlar ruhsatname ve çalışma kartı alır. Yabancı dil şartını sağlamayanlar Türkçe rehber olabilir.",
+     "zorunlu": true,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk sezonlar",
+     "aciklama": "Bölgesel/ülkesel rehber; acentalarla ilk turlar."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Kendi müşteri çevresi, özel temalı turlar, ikinci dil."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Tur operatörlüğü, eğitmenlik, kendi acentası."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Sezona ve turizmdeki dalgalanmalara bağlı gelir.",
+     "nasil": "Birden fazla dil ve kış sezonu için kültür turları geliri dengeler."
+    },
+    {
+     "zor": "Uzun yürüyüşler, sürekli yolda olmak.",
+     "nasil": "Bunu seven için en büyük artı; kondisyon ve planlama önemli."
+    }
+   ],
+   "neden_seviyor": [
+    "Tarihi ve kültürü anlatarak yaşatmak.",
+    "Her hafta yeni insanlar ve yerler."
+   ],
+   "hazirlik": [
+    "Bir yabancı dili ileri düzeye taşı.",
+    "Tarih ve coğrafya okumaları; yaşadığın şehrin tarihini öğren.",
+    "Topluluk önünde konuşma pratiği."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "6326 sayılı Turist Rehberliği Meslek Kanunu — 7500 sayılı Kanunla değişiklikler (RG 27.04.2024, sayı 32529)",
+     "url": "https://www.alomaliye.com/2024/04/27/7500-turist-rehberligi-meslek-kanunu/",
+     "tarih": "2024-04-27"
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "TURİZM VE KONAKLAMA İŞLETMECİLİĞİ": {
+   "alan": "U17",
+   "ozel": "Otel ve konaklama işletmeleri; sezon ve şehir otelleri arasında seçenek.",
+   "regule": false
+  },
+  "TURİZM İŞLETMECİLİĞİ": {
+   "alan": "U17",
+   "ozel": "Otel, acenta ve tur operatörleri; staj ve yabancı dil belirleyicidir.",
+   "regule": false
+  },
+  "TÜRK HALK OYUNLARI": {
+   "alan": "U13",
+   "ozel": "Halk oyunları toplulukları, eğitmenlik ve kültür kurumları.",
+   "regule": false
+  },
+  "TÜRK HALKBİLİMİ": {
+   "alan": "U08",
+   "ozel": "Kültür kurumları, araştırma ve yayıncılık; yüksek lisans sık tercih edilir.",
+   "regule": false
+  },
+  "TİYATRO": {
+   "alan": "U13",
+   "ozel": "Tiyatro toplulukları, eğitim ve sahne prodüksiyonu.",
+   "regule": false
+  },
+  "TİYATRO ELEŞTİRMENLİĞİ VE DRAMATURJİ": {
+   "alan": "U13",
+   "ozel": "Dramaturji, eleştiri, yayıncılık ve akademi.",
+   "regule": false
+  },
+  "ULAŞTIRMA VE TRAFİK MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Belediyeler, ulaşım planlama firmaları ve kamu kurumlarında trafik ve ulaşım projeleri.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ULUSLARARASI EKONOMİK İLİŞKİLER": {
+   "alan": "U10",
+   "ozel": "Dış ticaret, uluslararası şirketler ve kamu kurumları; yabancı dil şarttır.",
+   "regule": false
+  },
+  "ULUSLARARASI FİNANS": {
+   "alan": "U10",
+   "ozel": "Finans kurumları ve uluslararası şirketlerin hazine birimleri; SPK lisansları ve yabancı dil önemlidir.",
+   "regule": false
+  },
+  "ULUSLARARASI GİRİŞİMCİLİK": {
+   "alan": "U10",
+   "ozel": "İhracat, uluslararası pazarlama ve kendi işini kurma; yabancı dil kritik.",
+   "regule": false
+  },
+  "ULUSLARARASI HUKUK": {
+   "alan": "U09",
+   "ozel": "Hukuk fakültesi değildir: avukat, hâkim ya da savcı olmak için hukuk fakültesi mezuniyeti, HMGS ve staj gerekir. Uluslararası kuruluşlar ve araştırma için genellikle yüksek lisans ve ileri dil beklenir.",
+   "regule": false,
+   "kaynaklar": [
+    {
+     "ad": "1136 sayılı Avukatlık Kanunu (m.3 mesleğe kabul, m.15 staj süresi)",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1136&MevzuatTur=1&MevzuatTertip=5",
+     "tarih": null
+    },
+    {
+     "ad": "Hukuk Mesleklerine Giriş Sınavı ve İdari Yargı Ön Sınavı Yönetmeliği (RG 08.05.2024) — özet ve 2026 sınav tarihleri",
+     "url": "https://kadimhukuk.com.tr/?p=22243",
+     "tarih": "2024-05-08"
+    }
+   ],
+   "son_kontrol": "2026-10-10"
+  },
+  "ULUSLARARASI TİCARET VE LOJİSTİK": {
+   "alan": "U10",
+   "ozel": "Dış ticaret firmaları, gümrük ve lojistik şirketleri.",
+   "regule": false
+  },
+  "ULUSLARARASI İLİŞKİLER": {
+   "alan": "U09",
+   "ozel": "Dışişleri ve diğer kurumların sınavları, uluslararası şirketler, STK'lar; iki yabancı dil fark yaratır.",
+   "regule": false
+  },
+  "ULUSLARARASI İŞLETMECİLİK VE TİCARET": {
+   "alan": "U10",
+   "ozel": "Uluslararası şirketler, ihracat departmanları; iki dil avantaj sağlar.",
+   "regule": false
+  },
+  "UZAY BİLİMLERİ VE TEKNOLOJİLERİ": {
+   "alan": "U03",
+   "ozel": "Uydu verisi, uzay teknolojileri ar-gesi; yazılım ve veri becerisi iş seçeneklerini artırır.",
+   "regule": false
+  },
+  "UZAY MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Uydu ve uzay sistemleri ar-gesi; işverenler sınırlı ve büyük ölçüde savunma/uzay kuruluşlarıdır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "UÇAK BAKIM VE ONARIM": {
+   "alan": "U16",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Lisans/önlisans eğitimi",
+     "aciklama": "Atölye ve hangar uygulamaları ağırlıklı.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "SHY-66 bakım personeli lisansı",
+     "aciklama": "Uçağı uçuşa elverişli olarak onaylayabilmek için SHGM'nin SHY-66 kapsamındaki modül sınavları ve deneyim şartı tamamlanarak lisans (ör. B1/B2 kategorileri) alınır.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Onaylı bakım kuruluşunda çalışma",
+     "aciklama": "Mezunlar önce teknisyen olarak çalışıp deneyim biriktirir.",
+     "zorunlu": true,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Teknisyen; deneyim ve modül sınavları."
+    },
+    {
+     "ad": "Orta",
+     "donem": "lisans alındıktan sonra",
+     "aciklama": "Lisanslı bakım personeli; tip yetkileri."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Vardiya/hangar şefi, kalite ve planlama yöneticisi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Gece vardiyaları ve hangar koşulları.",
+     "nasil": "Vardiya sistemi uzun izinler de sağlar; tecrübeyle planlama/kalite rollerine geçiş."
+    },
+    {
+     "zor": "Lisans süreci uzun (sınavlar + deneyim).",
+     "nasil": "Okul sırasında modül sınavlarına başlamak süreci kısaltabilir."
+    }
+   ],
+   "neden_seviyor": [
+    "Uçuş güvenliğinin asıl sorumlularından olmak.",
+    "Elle çalışıp teknik problem çözmek."
+   ],
+   "hazirlik": [
+    "Fizik ve İngilizce (bakım dokümanları İngilizce).",
+    "Elektronik/mekanik hobiler.",
+    "Titizlik ve kontrol listesiyle çalışma alışkanlığı."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "Hava Aracı Bakım Personeli Lisans Yönetmeliği (SHY-66) ve SHT-66 talimatı",
+     "url": "https://www.alomaliye.com/2013/10/30/hava-araci-bakim-personeli-lisans-yonetmeligi-shy-66/",
+     "tarih": null
+    },
+    {
+     "ad": "Sivil Havacılık Genel Müdürlüğü (SHGM) mevzuatı",
+     "url": "https://web.shgm.gov.tr/",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "UÇAK MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Uçak tasarımı, bakım mühendisliği ve savunma sanayisinde çalışılır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "VERİ BİLİMİ VE ANALİTİĞİ": {
+   "alan": "U02",
+   "ozel": "Veri analisti/bilimcisi rolleri; istatistik, programlama ve iş alanı bilgisi birlikte aranır.",
+   "regule": false
+  },
+  "VETERİNERLİK": {
+   "alan": "U04",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Veteriner fakültesi",
+     "aciklama": "Klinik, çiftlik ve laboratuvar uygulamaları eğitimin büyük bölümünü oluşturur.",
+     "zorunlu": true,
+     "sure": "5 yıl"
+    },
+    {
+     "baslik": "Diploma ve oda kaydı",
+     "aciklama": "Meslek 6343 sayılı Kanunla düzenlenir; serbest çalışan veteriner hekimler bölgelerindeki veteriner hekimleri odasına kayıt olur.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "Çalışma seçenekleri",
+     "aciklama": "Pet kliniği, çiftlik hayvanları, gıda güvenliği/denetim (kamuda KPSS), ilaç ve yem sektörü, akademi.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "Klinikte ya da kamuda veteriner hekim; nöbet ve saha işleri."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–10. yıl",
+     "aciklama": "Belirli bir hayvan türünde ya da alanda uzmanlaşma."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "Kendi kliniği, kamuda yöneticilik, akademi."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Hayvan sahipleriyle zor konuşmalar ve duygusal yük.",
+     "nasil": "İletişim becerisi ve ekip desteği; hekimler bunu meslekte öğrenilen bir beceri olarak anlatıyor."
+    },
+    {
+     "zor": "Çiftlik hayvanları alanında saha koşulları zorlu olabilir.",
+     "nasil": "Pet, gıda güvenliği ve laboratuvar gibi farklı yollar da var."
+    }
+   ],
+   "neden_seviyor": [
+    "Hayvanlara iyilik yapmak.",
+    "Halk sağlığına (gıda güvenliği, zoonozlar) katkı."
+   ],
+   "hazirlik": [
+    "Biyoloji ve kimya.",
+    "Bir veteriner kliniğinde ya da barınakta gönüllülük.",
+    "Hayvanlarla sakin ve güvenli çalışmayı öğren."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "6343 sayılı Veteriner Hekimliği Mesleğinin İcrasına, Türk Veteriner Hekimleri Birliği ile Odalarının Teşekkül Tarzına ve Göreceği İşlere Dair Kanun",
+     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=6343&MevzuatTur=1&MevzuatTertip=3",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "YABAN HAYATI EKOLOJİSİ VE YÖNETİMİ": {
+   "alan": "U15",
+   "ozel": "Doğa koruma kurumları ve milli parklar; kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "YAPAY ZEKA MÜHENDİSLİĞİ": {
+   "alan": "U02",
+   "ozel": "Makine öğrenmesi mühendisi, veri bilimci; yeni bir alan olduğu için proje portfolyosu ve matematik temeli belirleyicidir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "YAPAY ZEKA VE MAKİNE ÖĞRENMESİ": {
+   "alan": "U02",
+   "ozel": "Makine öğrenmesi ve veri rolleri; araştırma tarafı için yüksek lisans sık tercih edilir.",
+   "regule": false
+  },
+  "YAPAY ZEKA VE VERİ MÜHENDİSLİĞİ": {
+   "alan": "U02",
+   "ozel": "Veri altyapısı (veri mühendisliği) ve yapay zekâ uygulamaları; bulut ve veritabanı becerisi aranır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "YAZILIM MÜHENDİSLİĞİ": {
+   "alan": "U02",
+   "ozel": "Web, mobil ve kurumsal yazılım geliştirme; iyi bir GitHub/proje geçmişi işe girişi hızlandırır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "YENİ MEDYA VE GAZETECİLİK": {
+   "alan": "U11",
+   "ozel": "Dijital haber, veri gazeteciliği ve sosyal medya editörlüğü.",
+   "regule": false
+  },
+  "YENİ MEDYA VE İLETİŞİM": {
+   "alan": "U11",
+   "ozel": "Dijital iletişim, sosyal medya yönetimi ve içerik stratejisi.",
+   "regule": false
+  },
+  "YEREL YÖNETİMLER": {
+   "alan": "U09",
+   "ozel": "Belediyeler ve il özel idareleri başlıca işverenlerdir; kadrolar KPSS iledir.",
+   "regule": false
+  },
+  "YÖNETİM BİLİŞİM SİSTEMLERİ": {
+   "alan": "U10",
+   "ozel": "İş analistliği, ERP danışmanlığı, veri ve proje yönetimi; teknik ve iş becerilerini birleştirir.",
+   "regule": false
+  },
+  "YİYECEK VE İÇECEK İŞLETMECİLİĞİ": {
+   "alan": "U17",
+   "ozel": "Restoran, otel yiyecek-içecek departmanları ve toplu beslenme işletmeleri.",
+   "regule": false
+  },
+  "ZOOTEKNİ": {
+   "alan": "U15",
+   "ozel": "Hayvancılık işletmeleri, yem sanayisi ve ıslah çalışmaları.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ÇALGI TEKNOLOJİLERİ": {
+   "alan": "U13",
+   "ozel": "Çalgı yapımı ve onarımı atölyeleri; usta-çırak deneyimi önemlidir.",
+   "regule": false
+  },
+  "ÇALIŞMA EKONOMİSİ VE ENDÜSTRİ İLİŞKİLERİ": {
+   "alan": "U10",
+   "ozel": "İnsan kaynakları, sendikalar, SGK ve iş müfettişliği gibi kamu sınavları; iş güvenliği uzmanlığı da bazı mezunların yoludur.",
+   "regule": false
+  },
+  "ÇEVRE MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Arıtma tesisleri, çevre danışmanlık firmaları, belediyeler ve sanayide çevre yönetimi işleri; çevre görevlisi gibi belgeler avantaj sağlar.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ÇOCUK GELİŞİMİ": {
+   "alan": "U06",
+   "ozel": "Hastanelerin çocuk birimleri, kreşler, özel eğitim ve rehabilitasyon merkezlerinde çocuk gelişimci olarak çalışılır; kamu kadroları KPSS iledir.",
+   "regule": false
+  },
+  "ÇİNİ TASARIMI VE ONARIMI": {
+   "alan": "U12",
+   "ozel": "Çini atölyeleri, restorasyon ve kültür kurumları.",
+   "regule": false
+  },
+  "ÇİZGİ FİLM VE ANİMASYON": {
+   "alan": "U12",
+   "ozel": "Animasyon stüdyoları, reklam ve oyun sektörü; showreel belirleyicidir.",
+   "regule": false
+  },
+  "ÖZEL EĞİTİM ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Özel eğitim okulları, kaynaştırma sınıfları ve rehabilitasyon merkezleri; ihtiyacın sürekli olduğu bir alan.",
+   "son_kontrol": "2026-10-10"
+  },
+  "İKLİM BİLİMİ VE METEOROLOJİ MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Meteoroloji kurumları, havacılık ve iklim/enerji danışmanlığı başlıca alanlardır; kamu kadroları KPSS iledir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "İKTİSAT": {
+   "alan": "U10",
+   "ozel": "Bankacılık, finans, araştırma ve kamu sınavları (uzman yardımcılığı, müfettişlik); SMMM yolu da açıktır.",
+   "regule": false
+  },
+  "İLAHİYAT": {
+   "alan": "U08",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "İlahiyat lisansı",
+     "aciklama": "Arapça hazırlık sınıfı olan programlar vardır.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Diyanet'te din görevlisi olmak",
+     "aciklama": "İmam-hatip, vaiz, Kur'an kursu öğreticisi gibi kadrolar için genellikle KPSS ve DHBT puanıyla Diyanet İşleri Başkanlığının sözlü sınavına girilir; 2026 yılında da aday din görevlisi alım sınavı duyurulmuştur.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Din Kültürü ve Ahlak Bilgisi öğretmenliği",
+     "aciklama": "Öğretmenlik için Millî Eğitim Akademisi yolu geçerlidir; ilahiyat mezunlarının hangi şartla başvurabileceğini güncel MEB kaynak program listesinden kontrol et.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "kaynaklar": [
+    {
+     "ad": "Diyanet İşleri Başkanlığı: 2026 Yılı Aday Din Görevlisi Alım Sınavı duyurusu",
+     "url": "https://insankaynaklari.diyanet.gov.tr/",
+     "tarih": null
+    },
+    {
+     "ad": "7528 sayılı Öğretmenlik Mesleği Kanunu (RG 18.10.2024, sayı 32696)",
+     "url": "https://www.alomaliye.com/2024/10/18/ogretmenlik-meslegi-kanunu/",
+     "tarih": "2024-10-18"
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "İLETİŞİM BİLİMLERİ": {
+   "alan": "U11",
+   "ozel": "Medya, kurumsal iletişim ve araştırma; akademi için lisansüstü.",
+   "regule": false
+  },
+  "İLETİŞİM TASARIMI VE YÖNETİMİ": {
+   "alan": "U11",
+   "ozel": "Görsel iletişim, kurumsal kimlik ve iletişim yönetimi.",
+   "regule": false
+  },
+  "İLKÖĞRETİM MATEMATİK ÖĞRETMENLİĞİ": {
+   "alan": "U07",
+   "sablon": "ogretmenlik",
+   "regule": true,
+   "ozel": "Ortaokul matematik öğretmenliği.",
+   "son_kontrol": "2026-10-10"
+  },
+  "İMALAT MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Üretim hatlarının tasarımı, CNC/otomasyon ve kalite işleri ağırlıklıdır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "İNSAN KAYNAKLARI YÖNETİMİ": {
+   "alan": "U10",
+   "ozel": "Şirketlerin İK birimleri ve danışmanlık firmaları; iş hukuku ve veri becerisi değerlidir.",
+   "regule": false
+  },
+  "İNŞAAT MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Şantiye, proje ofisi, yapı denetim ve kamu kurumlarında çalışılır; şantiyede ilk yıllar yoğun ve şehir dışı olabilir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "İSLAM BİLİMLERİ": {
+   "alan": "U08",
+   "ozel": "İlahiyat programıyla büyük ölçüde örtüşür; Diyanet ve eğitim yolları benzerdir.",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "İlahiyat lisansı",
+     "aciklama": "Arapça hazırlık sınıfı olan programlar vardır.",
+     "zorunlu": true,
+     "sure": "{SURE}"
+    },
+    {
+     "baslik": "Diyanet'te din görevlisi olmak",
+     "aciklama": "İmam-hatip, vaiz, Kur'an kursu öğreticisi gibi kadrolar için genellikle KPSS ve DHBT puanıyla Diyanet İşleri Başkanlığının sözlü sınavına girilir; 2026 yılında da aday din görevlisi alım sınavı duyurulmuştur.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Din Kültürü ve Ahlak Bilgisi öğretmenliği",
+     "aciklama": "Öğretmenlik için Millî Eğitim Akademisi yolu geçerlidir; ilahiyat mezunlarının hangi şartla başvurabileceğini güncel MEB kaynak program listesinden kontrol et.",
+     "zorunlu": false,
+     "sure": null
+    },
+    {
+     "baslik": "Yüksek lisans (isteğe bağlı)",
+     "aciklama": "Araştırma, akademi ya da uzmanlaşma için tercih edilir; zorunlu değildir.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "kaynaklar": [
+    {
+     "ad": "Diyanet İşleri Başkanlığı: 2026 Yılı Aday Din Görevlisi Alım Sınavı duyurusu",
+     "url": "https://insankaynaklari.diyanet.gov.tr/",
+     "tarih": null
+    },
+    {
+     "ad": "7528 sayılı Öğretmenlik Mesleği Kanunu (RG 18.10.2024, sayı 32696)",
+     "url": "https://www.alomaliye.com/2024/10/18/ogretmenlik-meslegi-kanunu/",
+     "tarih": "2024-10-18"
+    }
+   ],
+   "temel_bolum": "İLAHİYAT",
+   "son_kontrol": "2026-10-10"
+  },
+  "İSLAM İKTİSADI VE FİNANS": {
+   "alan": "U10",
+   "ozel": "Katılım bankaları ve faizsiz finans kurumları; SPK lisansları bazı görevlerde gerekir.",
+   "regule": false
+  },
+  "İSTATİSTİK": {
+   "alan": "U03",
+   "ozel": "Veri analizi, araştırma şirketleri, bankacılık ve kamuda (TÜİK gibi) istatistikçi; programlama becerisi çok değerlidir.",
+   "regule": false
+  },
+  "İÇ MİMARLIK VE ÇEVRE TASARIMI": {
+   "alan": "U14",
+   "ozel": "İç mimarlık ofisleri, mobilya ve uygulama firmaları; serbest çalışmak için İç Mimarlar Odasına kayıt gerekir.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "İŞ SAĞLIĞI VE GÜVENLİĞİ": {
+   "alan": "U04",
+   "regule": true,
+   "adimlar": [
+    {
+     "baslik": "YKS ve tercih",
+     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "İSG lisansı",
+     "aciklama": "İşyeri uygulamaları ve risk değerlendirme ağırlıklı.",
+     "zorunlu": true,
+     "sure": "4 yıl"
+    },
+    {
+     "baslik": "C sınıfı iş güvenliği uzmanlığı belgesi",
+     "aciklama": "Üniversitelerin İSG lisans programını bitirenler C sınıfı belge için başvurabilir (yönetmelik m.8/c-3); Bakanlığın yaptığı sınavda 100 üzerinden en az 70 almak gerekir.",
+     "zorunlu": true,
+     "sure": null
+    },
+    {
+     "baslik": "B ve A sınıfına yükselme",
+     "aciklama": "B sınıfına geçiş, mühendis/mimar/teknik eleman olan C sınıfı uzmanlar için en az 3 yıl fiili görevle; A sınıfı için B sınıfında en az 4 yıl görev gerekir (m.8). Ayrıntılar için güncel yönetmeliği kontrol et.",
+     "zorunlu": false,
+     "sure": null
+    }
+   ],
+   "basamaklar": [
+    {
+     "ad": "Giriş",
+     "donem": "ilk yıllar",
+     "aciklama": "C sınıfı uzman; az tehlikeli işyerleri."
+    },
+    {
+     "ad": "Orta",
+     "donem": "genellikle 3–8. yıl",
+     "aciklama": "Daha tehlikeli işyerlerinde görev, OSGB'de sorumluluk."
+    },
+    {
+     "ad": "Kıdemli",
+     "donem": "uzun vadede",
+     "aciklama": "İSG yöneticisi, kendi OSGB'si, eğitmenlik."
+    }
+   ],
+   "zorlayanlar": [
+    {
+     "zor": "Kurallara uymayanları ikna etmek her zaman kolay değil.",
+     "nasil": "İletişim ve eğitim becerisi bu işin yarısı; uzmanlar zamanla saygınlık kazandığını anlatıyor."
+    },
+    {
+     "zor": "Belge sınıfına göre çalışılabilecek işyerleri sınırlı.",
+     "nasil": "Deneyim biriktirip sınıf yükseltmek."
+    }
+   ],
+   "neden_seviyor": [
+    "İnsanların işten sağ salim eve dönmesini sağlamak.",
+    "Her sektörde ihtiyaç duyulan bir uzmanlık."
+   ],
+   "hazirlik": [
+    "Fizik, kimya ve biyoloji temeli.",
+    "Okulun acil durum/tahliye tatbikatlarında gönüllü görev.",
+    "Düzenli ve kontrol listesiyle çalışma alışkanlığı."
+   ],
+   "kaynaklar": [
+    {
+     "ad": "İş Güvenliği Uzmanlarının Görev, Yetki, Sorumluluk ve Eğitimleri Hakkında Yönetmelik (m.8 belge sınıfları)",
+     "url": "https://isg.erciyes.edu.tr/Dosya/MainContent/3a281e40-deaa-4816-8011-8037ba49607f.pdf",
+     "tarih": null
+    }
+   ],
+   "duzey": "tam",
+   "son_kontrol": "2026-10-10"
+  },
+  "İŞLETME": {
+   "alan": "U10",
+   "ozel": "En geniş seçenekli bölümlerden; finans, pazarlama, İK, operasyon ya da SMMM yolu. Erken bir alan seçip staj yapmak belirleyici.",
+   "regule": false
+  },
+  "İŞLETME MÜHENDİSLİĞİ": {
+   "alan": "U01",
+   "ozel": "Mühendislik ile işletme yönetimini birleştirir; planlama, tedarik zinciri ve danışmanlık rollerine uygundur.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  },
+  "ŞEHİR VE BÖLGE PLANLAMA": {
+   "alan": "U14",
+   "ozel": "Belediyeler, bakanlıklar ve planlama büroları; plan müellifi olarak çalışmak için Şehir Plancıları Odası kaydı ve deneyim şartları vardır.",
+   "sablon": "tmmob",
+   "regule": false,
+   "oda_kaydi": true
+  }
+ }
+}

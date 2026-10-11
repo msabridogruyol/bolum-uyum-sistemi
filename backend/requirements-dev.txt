@@ -1,0 +1,3 @@
+# [2026-10-11] Yalnızca test / CI için (üretim imajına girmez): pip install -r requirements.txt -r requirements-dev.txt
+pytest>=8.3
+httpx>=0.27      # fastapi.testclient.TestClient

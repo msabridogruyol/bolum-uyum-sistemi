@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { api } from '../api/client'
 import { useModuller } from '../yardimci/moduller'
+import { dogalSesVarMi, efekt, sesAcikMi, sesAyarla, soyle, sus } from '../yardimci/filizSes'
 
 /*
  * [2026-10-03] Filiz maskotu — sağ üstte duran, hedef bölüme göre kıyafet değiştiren,
@@ -1082,7 +1083,8 @@ export default function Maskot({ profil, ozet }) {
   const [balon, setBalon] = useState('')
   const [yazilan, setYazilan] = useState('')
   const [kucuk, setKucuk] = useState(() => depoOku('maskot_kucuk', '0') === '1')
-  const [sessiz, setSessiz] = useState(() => depoOku('maskot_sessiz', '0') === '1')
+  // [2026-10-10] 🔊 artık gerçek sesi açar / kapatır (varsayılan kapalı); konuşma balonları her zaman görünür
+  const [sesAcik, setSesAcik] = useState(sesAcikMi)
   const [efektler, setEfektler] = useState([])
   const [haftalik, setHaftalik] = useState(null)
   const [sohbetAcik, setSohbetAcik] = useState(false)
@@ -1136,10 +1138,12 @@ export default function Maskot({ profil, ozet }) {
     return havuz[mesajSirasi.current]
   }, [konum.pathname, ozet, hedef, kiyafet, ilkAd, haftalik])
 
-  const konus = useCallback((metin) => {
-    if (sessiz || kucuk || sohbetAcik) return
+  // sesli: true → cümle sesli okunur (yalnızca öğrencinin bir eylemine karşılık; ara ara gelen sözler sessizdir)
+  const konus = useCallback((metin, sesli = false) => {
+    if (kucuk || sohbetAcik) return
     setBalon(metin)
-  }, [sessiz, kucuk, sohbetAcik])
+    if (sesli && sesAcik) soyle(metin)
+  }, [kucuk, sohbetAcik, sesAcik])
 
   // [2026-10-04] sohbet paneli: Filiz yazarken düşünür, cevap gelince başını sallar
   useEffect(() => {
@@ -1206,7 +1210,7 @@ export default function Maskot({ profil, ozet }) {
     if (biten == null) return
     const kayitli = Number(depoOku('maskot_biten_katman', '-1'))
     if (kayitli >= 0 && biten > kayitli) {
-      window.setTimeout(() => { oynat('kutla'); efektEkle('konfeti', 18); konus(`Bir katman daha bitti! ${biten}/${ozet.toplam_ana_katman_sayisi} 🎉`) }, 1800)
+      window.setTimeout(() => { oynat('kutla'); efekt('kutla'); efektEkle('konfeti', 18); konus(`Bir katman daha bitti! ${biten}/${ozet.toplam_ana_katman_sayisi} 🎉`, true) }, 1800)
     }
     depoYaz('maskot_biten_katman', String(biten))
   }, [ozet]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -1217,10 +1221,10 @@ export default function Maskot({ profil, ozet }) {
     if (!haftalik) return
     const kayitli = Number(depoOku('maskot_seviye', '0'))
     if (kayitli > 0 && haftalik.seviye.no > kayitli) {
-      window.setTimeout(() => { oynat('kutla'); efektEkle('yildiz', 14); efektEkle('konfeti', 18); konus(`Büyüdüm! Artık bir ${haftalik.seviye.ad}'ım ${haftalik.seviye.ikon} Teşekkürler!`) }, 600)
+      window.setTimeout(() => { oynat('kutla'); efektEkle('yildiz', 14); efektEkle('konfeti', 18); efekt('kutla'); konus(`Büyüdüm! Artık bir ${haftalik.seviye.ad}'ım ${haftalik.seviye.ikon} Teşekkürler!`, true) }, 600)
     } else if (oncekiHaftalik.current && haftalik.tamamlanan > oncekiHaftalik.current.tamamlanan) {
-      if (haftalik.tamamlanan === haftalik.toplam) { oynat('kutla'); efektEkle('konfeti', 20); konus('Bu haftanın tüm görevleri tamam! 🎉 Pazartesi yenileri gelecek.') }
-      else { oynat('zipla'); efektEkle('kalp', 6); konus(haftalik.tamamlanan === haftalik.seri_esigi ? 'Bu haftaki serin güvende! 🔥' : 'Bir görev daha bitti, süpersin! ✅') }
+      if (haftalik.tamamlanan === haftalik.toplam) { oynat('kutla'); efekt('kutla'); efektEkle('konfeti', 20); konus('Bu haftanın tüm görevleri tamam! 🎉 Pazartesi yenileri gelecek.', true) }
+      else { oynat('zipla'); efekt('zipla'); efektEkle('kalp', 6); konus(haftalik.tamamlanan === haftalik.seri_esigi ? 'Bu haftaki serin güvende! 🔥' : 'Bir görev daha bitti, süpersin! ✅', true) }
     }
     depoYaz('maskot_seviye', String(haftalik.seviye.no))
     oncekiHaftalik.current = haftalik
@@ -1245,7 +1249,7 @@ export default function Maskot({ profil, ozet }) {
   useEffect(() => {
     const hareket = (e) => {
       sonHareket.current = Date.now()
-      if (uyku) { setUyku(false); oynat('zipla'); konus('Uyumuyordum, sadece gözlerimi dinlendiriyordum 😅') }
+      if (uyku) { setUyku(false); oynat('zipla'); efekt('uyan'); konus('Uyumuyordum, sadece gözlerimi dinlendiriyordum 😅') }
       const r = kutu.current?.getBoundingClientRect()
       if (!r) return
       const dx = e.clientX - (r.left + r.width / 2)
@@ -1272,11 +1276,22 @@ export default function Maskot({ profil, ozet }) {
     const secim = ['zipla', 'don', 'dans', 'salla', 'kutla'][Math.floor(Math.random() * 5)]
     oynat(secim)
     efektEkle(secim === 'kutla' ? 'konfeti' : 'kalp', secim === 'kutla' ? 16 : 5)
-    if (!sessiz) setBalon(mesajSec())
+    efekt(secim === 'kutla' ? 'kutla' : secim === 'zipla' ? 'zipla' : secim === 'don' ? 'don' : 'kalp')
+    konus(mesajSec(), true)
   }
 
-  function kucukDegistir(v) { setKucuk(v); depoYaz('maskot_kucuk', v ? '1' : '0'); if (v) setBalon('') }
-  function sessizDegistir() { const v = !sessiz; setSessiz(v); depoYaz('maskot_sessiz', v ? '1' : '0'); setBalon(v ? '' : 'Tekrar konuşabilirim! 🗣️') }
+  function kucukDegistir(v) { setKucuk(v); depoYaz('maskot_kucuk', v ? '1' : '0'); if (v) { setBalon(''); sus() } }
+  async function sesDegistir() {
+    const v = !sesAcik
+    sesAyarla(v); setSesAcik(v)
+    if (!v) { sus(); setBalon('Sesimi kapattım 🤫'); return }
+    efekt('ac', true)
+    const dogal = await dogalSesVarMi()
+    const m = dogal ? (ilkAd ? `Merhaba ${ilkAd}! Artık beni duyabilirsin 🌱` : 'Artık beni duyabilirsin 🌱')
+      : 'Bu cihazda doğal bir Türkçe ses bulamadım; robotik konuşmak yerine yalnızca küçük sesler çıkaracağım 🎵'
+    setBalon(m)
+    if (dogal) soyle(m)
+  }
 
   if (kucuk) {
     return (
@@ -1311,7 +1326,7 @@ export default function Maskot({ profil, ozet }) {
         <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title="Filiz Gelişim Koçu ile sohbet et">💬 Bana sor</button>
       )}
       <div className="msk-araclar">
-        <button onClick={sessizDegistir} title={sessiz ? 'Konuşmayı aç' : 'Sessize al'}>{sessiz ? '🔇' : '🔊'}</button>
+        <button onClick={sesDegistir} title={sesAcik ? 'Sesi kapat' : 'Sesi aç'} aria-pressed={sesAcik}>{sesAcik ? '🔊' : '🔇'}</button>
         <button onClick={() => kucukDegistir(true)} title="Küçült">–</button>
       </div>
     </div>
@@ -1385,6 +1400,6 @@ const MASKOT_CSS = `
 @keyframes msk-zzz{0%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(10px,-18px);opacity:0}}
 @keyframes msk-efekt{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:1}100%{transform:translateY(-60px) scale(1.2);opacity:0}}
 @keyframes msk-konfeti{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx,0),70px) rotate(540deg);opacity:0}}
-@media (max-width: 760px){.msk-kap{position:fixed;width:64px;height:86px;top:6px;right:8px}.msk-mini{position:fixed;top:12px;right:14px}.msk-balon{right:70px;max-width:180px;font-size:11.5px}}
+@media (max-width: 760px){.msk-kap{position:absolute;width:64px;height:86px;top:8px;right:8px}.msk-mini{position:absolute;top:12px;right:14px}.msk-balon{right:70px;max-width:180px;font-size:11.5px}}
 @media (prefers-reduced-motion: reduce){.msk-kap *{animation-duration:0s!important}}
 `
