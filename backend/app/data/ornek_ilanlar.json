@@ -1,0 +1,155 @@
+{
+  "aciklama": "İş Hayatı → CV Atölyesi → İlan okuma egzersizi. TÜM İLANLAR KURGUSALDIR: gerçek bir şirkete ait değildir, işveren adı bilerek verilmez. 'dogru' alanı: zorunlu | tercih | gizli | bilgi. 'anahtarlar': seçili bölüm adında geçerse ilan öne alınır (Türkçe küçük harf).",
+  "kategoriler": {
+    "zorunlu": {"ad": "Zorunlu nitelik", "aciklama": "Bu yoksa başvurun büyük olasılıkla elenir."},
+    "tercih": {"ad": "Tercih edilen", "aciklama": "Artı puandır; yoksa yine de başvurabilirsin."},
+    "gizli": {"ad": "Satır arası beklenti", "aciklama": "Açıkça yazmasa da işin temposu, saatleri ya da sorumluluğu hakkında ipucu verir."},
+    "bilgi": {"ad": "Genel bilgi", "aciklama": "Pozisyonu, yeri, süreyi anlatan bilgi; nitelik değil."}
+  },
+  "ilanlar": [
+    {
+      "id": "kafe",
+      "baslik": "Yarı Zamanlı Ekip Üyesi (Hafta Sonu)",
+      "isveren": "Örnek ilan — bir kafe zinciri şubesi",
+      "tur": "Yarı zamanlı iş",
+      "anahtarlar": [],
+      "satirlar": [
+        {"metin": "Şubemizde hafta sonları çalışacak ekip arkadaşları arıyoruz.", "dogru": "bilgi", "aciklama": "Pozisyonun ne olduğunu ve zamanını anlatır."},
+        {"metin": "En az 18 yaşını doldurmuş olmak.", "dogru": "zorunlu", "aciklama": "Yaş şartı kesin bir eleme ölçütüdür. 18 yaşından küçüklerin çalışabileceği işler ve saatler yasayla sınırlıdır; ilan 18+ diyorsa başvurma."},
+        {"metin": "Hızlı tempoya ayak uydurabilen, dinamik ekibimize uyum sağlayacak.", "dogru": "gizli", "aciklama": "Yoğun saatlerde (öğle, hafta sonu) sürekli ayakta ve hızlı çalışacağını söylüyor. Kötü bir şey değil; ama 'sakin bir iş' beklentisiyle başvurma."},
+        {"metin": "Vardiyalı çalışmaya ve değişken saatlere uyum sağlayabilen.", "dogru": "gizli", "aciklama": "Programın haftadan haftaya değişebilir; sabah açılış ya da akşam kapanış vardiyası gelebilir. Okul ve sınav dönemini önceden konuşmak gerekir."},
+        {"metin": "Müşteri ile iletişimi güçlü, güler yüzlü.", "dogru": "zorunlu", "aciklama": "Hizmet işlerinde temel beklentidir. Mülakatta bunu bir örnekle (okulda bir etkinlikte misafir karşılamak gibi) göster."},
+        {"metin": "Benzer bir alanda deneyimi olan.", "dogru": "tercih", "aciklama": "Deneyim artıdır ama giriş seviyesi işlerde çoğu zaman eğitim verilir; deneyimin yoksa yine başvurabilirsin."},
+        {"metin": "Hijyen eğitimi almış olmak tercih sebebidir.", "dogru": "tercih", "aciklama": "Gıda işlerinde hijyen eğitimi bir avantajdır; işe başlarken işveren de aldırabilir."},
+        {"metin": "Yemek ve ulaşım desteği sağlanır.", "dogru": "bilgi", "aciklama": "Yan haklar. Ücret, sigorta ve çalışma saatleri yazmıyorsa mülakatta sorman tamamen normaldir."}
+      ],
+      "notlar": ["İlanda ücret ve sigorta bilgisi yok: bunları sormak hakkındır; çalışan herkesin sigortalı olması gerekir.", "'Dinamik', 'hızlı tempo' gibi sözcükler bir uyarı değil, işin temposunu anlatır. Sana uyup uymadığını düşün."]
+    },
+    {
+      "id": "yazilim",
+      "baslik": "Yaz Dönemi Gözlem Stajyeri — Yazılım Ekibi",
+      "isveren": "Örnek ilan — orta ölçekli bir yazılım şirketi",
+      "tur": "Staj (yaz dönemi)",
+      "anahtarlar": ["bilgisayar", "yazılım", "bilişim", "yapay zeka", "veri", "matematik", "istatistik", "elektronik", "yönetim bilişim"],
+      "satirlar": [
+        {"metin": "Lise 10–12. sınıf öğrencileri için 4 haftalık yaz gözlem programı.", "dogru": "bilgi", "aciklama": "Kimin başvurabileceğini ve süreyi anlatır."},
+        {"metin": "Temel düzeyde bir programlama dili (Python, JavaScript vb.) bilgisi.", "dogru": "zorunlu", "aciklama": "Kesin şart. Okulda ya da çevrim içi bir kursta yazdığın küçük bir proje bunu kanıtlamanın en iyi yolu."},
+        {"metin": "Kendi yaptığı bir projeyi (GitHub bağlantısı, uygulama, oyun) paylaşabilmek tercih sebebidir.", "dogru": "tercih", "aciklama": "Somut bir ürün, sertifikadan daha ikna edicidir. CV'ne bağlantı eklemeyi unutma."},
+        {"metin": "Merak eden, soru sormaktan çekinmeyen.", "dogru": "zorunlu", "aciklama": "Gözlem stajında en önemli beceri öğrenme isteğidir. Mülakatta merak ettiğin bir konuyu nasıl araştırdığını anlat."},
+        {"metin": "Kendi başına araştırıp çözüm bulabilen.", "dogru": "gizli", "aciklama": "Ekip yoğun olabilir; sana her adımı tek tek anlatacak biri her zaman olmayabilir. Takıldığında önce kendin araştırman, sonra sorman beklenir."},
+        {"metin": "İngilizce teknik dokümanları okuyabilecek düzeyde.", "dogru": "tercih", "aciklama": "Yazılımda kaynakların çoğu İngilizcedir. Akıcı konuşman gerekmez; okuyup anlayabilmen yeter."},
+        {"metin": "Program sonunda küçük bir sunum yapılacaktır.", "dogru": "gizli", "aciklama": "Topluluk önünde konuşma becerisi de beklenir. Okulda yaptığın sunumlar burada işe yarar."},
+        {"metin": "Program ücretsizdir; katılım belgesi verilir.", "dogru": "bilgi", "aciklama": "Gözlem programlarında ücret ödenmeyebilir; ama iş yaptırılan, üretim yapılan bir 'staj' ücretsiz ve sigortasız olmamalı. Farkı sormaktan çekinme."}
+      ],
+      "notlar": ["Gözlem programı ile iş yaptırılan staj farklıdır: gerçek iş yapıyorsan sigorta ve ücret sorulmalıdır.", "Zorunlu nitelik 'temel' düzeydedir — 'uzman' olmanı beklemiyorlar."]
+    },
+    {
+      "id": "sosyal_medya",
+      "baslik": "Gönüllü Sosyal Medya ve İçerik Asistanı",
+      "isveren": "Örnek ilan — bir hayvan hakları derneği",
+      "tur": "Gönüllülük",
+      "anahtarlar": ["iletişim", "gazetecilik", "halkla ilişkiler", "reklam", "medya", "radyo", "sinema", "grafik", "görsel", "türk dili", "edebiyat", "yeni medya"],
+      "satirlar": [
+        {"metin": "Derneğimizin sosyal medya hesapları için haftada 3–4 saat ayırabilecek gönüllüler arıyoruz.", "dogru": "bilgi", "aciklama": "Zaman beklentisi açıkça yazılmış; bu iyi bir ilan özelliğidir."},
+        {"metin": "Türkçeyi yazım kurallarına uygun ve akıcı kullanabilen.", "dogru": "zorunlu", "aciklama": "İçerik işinde yazım hatası doğrudan kurumun itibarını etkiler. CV'nin yazım hatasız olması da bunun ilk kanıtıdır."},
+        {"metin": "Canva vb. bir tasarım aracını kullanabilen.", "dogru": "tercih", "aciklama": "Kolay öğrenilen bir araçtır; bilmiyorsan başvurmadan önce birkaç örnek tasarım hazırlamak seni öne çıkarır."},
+        {"metin": "Kısa sürede içerik üretebilen, gündemi takip eden.", "dogru": "gizli", "aciklama": "Bazen aynı gün içinde paylaşım istenebilir; bir haber ya da acil sahiplendirme ilanı beklemez."},
+        {"metin": "Sorumluluk alabilen ve verdiği sözü tutan.", "dogru": "zorunlu", "aciklama": "Gönüllülükte de güvenilirlik esastır. Söz verdiğin saatleri gerçekten ayırabilecek misin, önce bunu düşün."},
+        {"metin": "Fotoğraf ya da video çekmeye ilgi duyan.", "dogru": "tercih", "aciklama": "Artı bir ilgi alanı; zorunlu değil."},
+        {"metin": "Uzaktan çalışma; ayda bir yüz yüze toplantı.", "dogru": "bilgi", "aciklama": "Çalışma biçimini anlatır. Uzaktan çalışmak kendi zamanını yönetmeyi gerektirir."},
+        {"metin": "Kurumun değerlerini benimseyen.", "dogru": "gizli", "aciklama": "Derneğin bakış açısıyla uyumlu içerik üretmen beklenir. Başvurmadan önce paylaşımlarına göz at."}
+      ],
+      "notlar": ["Gönüllülük de CV'de deneyimdir: kaç içerik ürettiğini, hesabın takipçi artışını sayıyla yazabilirsin.", "18 yaşından küçüksen gönüllülük için velinin onayı istenebilir."]
+    },
+    {
+      "id": "cocuk_atolyesi",
+      "baslik": "Çocuk Atölyesi Gönüllüsü (Hafta Sonu)",
+      "isveren": "Örnek ilan — bir ilçe kütüphanesinin çocuk bölümü",
+      "tur": "Gönüllülük",
+      "anahtarlar": ["öğretmenliği", "öğretmenlik", "psikoloji", "çocuk gelişimi", "sosyal hizmet", "okul öncesi", "rehberlik", "psikolojik danışmanlık", "sosyoloji"],
+      "satirlar": [
+        {"metin": "7–10 yaş grubu için cumartesi okuma ve oyun atölyelerinde görev alacak gönüllüler.", "dogru": "bilgi", "aciklama": "Görev, yaş grubu ve zaman."},
+        {"metin": "Çocuklarla iletişim kurmaktan keyif alan, sabırlı.", "dogru": "zorunlu", "aciklama": "Bu görevin temel şartı. Daha önce kardeşine, akrabana ya da bir etkinlikte çocuklara yardım ettiysen örnek olarak anlat."},
+        {"metin": "Düzenli katılım: en az 2 ay boyunca her cumartesi.", "dogru": "zorunlu", "aciklama": "Çocuklar tanıdık yüzlere alışır; ara ara gelmek işe yaramaz. Sınav takvimini düşünerek başvur."},
+        {"metin": "Beklenmedik durumlara hızlı uyum sağlayabilen.", "dogru": "gizli", "aciklama": "Plan her zaman tutmaz: bir çocuk ağlayabilir, etkinlik erken bitebilir. Esnek olman ve sakin kalman beklenir."},
+        {"metin": "Drama, resim ya da müzik etkinliği yürütebilmek tercih sebebidir.", "dogru": "tercih", "aciklama": "Ek bir beceri; yoksa da gönüllü olabilirsin."},
+        {"metin": "Atölye sonrası alanın toparlanmasına yardım edilecektir.", "dogru": "gizli", "aciklama": "Gönüllülük yalnızca 'eğlenceli kısım' değildir; malzeme toplama, temizlik gibi işler de vardır."},
+        {"metin": "Başlamadan önce kısa bir oryantasyon eğitimi verilir.", "dogru": "bilgi", "aciklama": "Seni hazırlayacaklarını söylüyor; deneyimin olmaması sorun değil."},
+        {"metin": "18 yaşından küçük gönüllüler için veli izin formu gereklidir.", "dogru": "zorunlu", "aciklama": "Resmî bir şarttır; formu tamamlamadan başlayamazsın."}
+      ],
+      "notlar": ["Düzenli katılım şartı bir eleme ölçütüdür; söz veremeyeceksen başka bir gönüllülük ara.", "Bu tür deneyimi CV'ne 'kaç atölye, kaç çocuk' gibi sayılarla yazabilirsin."]
+    },
+    {
+      "id": "ofis",
+      "baslik": "Yaz Dönemi Ofis Stajyeri — Muhasebe ve Finans",
+      "isveren": "Örnek ilan — bir mali müşavirlik bürosu",
+      "tur": "Staj (yaz dönemi)",
+      "anahtarlar": ["işletme", "iktisat", "ekonomi", "muhasebe", "finans", "bankacılık", "maliye", "uluslararası ticaret", "aktüerya", "sigortacılık", "lojistik"],
+      "satirlar": [
+        {"metin": "Temmuz–ağustos aylarında, hafta içi 09.00–14.00 arası.", "dogru": "bilgi", "aciklama": "Saat ve dönem açık; bu ilanın güvenilirliğini artırır."},
+        {"metin": "Bilgisayarda temel ofis programlarını (Excel, Word) kullanabilen.", "dogru": "zorunlu", "aciklama": "Temel tablo işlemleri (toplama, sıralama, filtreleme) beklenir. Bilmiyorsan birkaç saatlik ücretsiz bir eğitimle öğrenebilirsin."},
+        {"metin": "Dikkatli ve detaylara önem veren.", "dogru": "zorunlu", "aciklama": "Muhasebede bir rakam hatası büyük sorun yaratır. CV'ndeki tarih ve yazım tutarlılığı bu özelliğin ilk kanıtıdır."},
+        {"metin": "Gizlilik ilkesine uyan.", "dogru": "gizli", "aciklama": "Müşterilerin mali bilgilerini göreceksin; ofiste gördüğünü dışarıda konuşmaman, ekran görüntüsü almaman beklenir."},
+        {"metin": "Rutin işlerde sabırlı.", "dogru": "gizli", "aciklama": "İşin bir kısmı tekrar eden işlerdir: belge tarama, dosyalama, veri girişi. Bu, mesleği tanımanın gerçek bir parçasıdır."},
+        {"metin": "Ticaret / muhasebe alanında eğitim görüyor olmak tercih sebebidir.", "dogru": "tercih", "aciklama": "Alan öğrencisi değilsen de başvurabilirsin; ilgini anlatman önemli."},
+        {"metin": "Düzgün ve işe uygun kıyafet.", "dogru": "gizli", "aciklama": "Ofis ortamında müşteri karşılanır; resmi olmasa da derli toplu giyinmen beklenir."},
+        {"metin": "Staj süresince sigorta yapılır ve aylık ücret ödenir.", "dogru": "bilgi", "aciklama": "İyi bir ilan örneği: ücret ve sigorta açıkça yazılmış."}
+      ],
+      "notlar": ["Saat, ücret ve sigortanın açıkça yazılması güven veren bir ilan işaretidir.", "Satır arası beklentiler (gizlilik, rutin iş) mesleğin gerçek yüzünü gösterir."]
+    },
+    {
+      "id": "saglik",
+      "baslik": "Hasta Danışma ve Yönlendirme Gönüllüsü",
+      "isveren": "Örnek ilan — bir sağlık kuruluşunun gönüllü programı",
+      "tur": "Gönüllülük",
+      "anahtarlar": ["tıp", "hemşirelik", "ebelik", "eczacılık", "diş hekimliği", "fizyoterapi", "beslenme", "sağlık", "biyoloji", "odyoloji", "dil ve konuşma", "ergoterapi", "acil yardım"],
+      "satirlar": [
+        {"metin": "Giriş katında hastalara ve yakınlarına yön göstermek, sıra ve bilgi masasında yardımcı olmak.", "dogru": "bilgi", "aciklama": "Görevin ne olduğunu net anlatır: tıbbi bir iş değil, karşılama ve yönlendirme."},
+        {"metin": "16 yaşını doldurmuş olmak; veli izin belgesi.", "dogru": "zorunlu", "aciklama": "Yaş ve veli izni kesin şarttır."},
+        {"metin": "Sakin, nazik ve sabırlı iletişim.", "dogru": "zorunlu", "aciklama": "Hastane ortamında insanlar endişeli ve yorgundur; ses tonun ve sabrın görevin kendisidir."},
+        {"metin": "Uzun süre ayakta kalabilen.", "dogru": "gizli", "aciklama": "Görev fiziksel olarak yorucu olabilir. Sağlık mesleklerinin önemli bir kısmında da durum böyledir."},
+        {"metin": "Zor duygusal durumlarla karşılaşmaya hazır.", "dogru": "gizli", "aciklama": "Üzgün ya da öfkeli insanlarla karşılaşabilirsin. Bu, sağlık alanını seçmeden önce kendini tanımak için değerli bir deneyimdir."},
+        {"metin": "Hasta bilgilerinin gizliliğine kesinlikle uyulmalıdır.", "dogru": "zorunlu", "aciklama": "Sağlık verisi özel nitelikli kişisel veridir. Gördüğün hiçbir hasta bilgisini paylaşamazsın."},
+        {"metin": "İkinci bir dil (İngilizce, Arapça vb.) bilmek tercih sebebidir.", "dogru": "tercih", "aciklama": "Farklı dil konuşan hastalara yardım edebilmek büyük artıdır."},
+        {"metin": "Program haftada bir yarım gündür; okul dönemine göre planlanır.", "dogru": "bilgi", "aciklama": "Zaman beklentisi makul ve açık."}
+      ],
+      "notlar": ["Gönüllüler tıbbi işlem yapmaz; bunu isteyen bir ilan güvenilir değildir.", "Bu deneyim, sağlık mesleklerinin 'zor günler' tarafını erken görmeni sağlar."]
+    },
+    {
+      "id": "uretim",
+      "baslik": "Teknik Gözlem Stajı — Üretim ve Bakım Atölyesi",
+      "isveren": "Örnek ilan — bir makine parçası üreticisi",
+      "tur": "Staj (yaz dönemi)",
+      "anahtarlar": ["makine", "elektrik", "elektronik", "endüstri", "mekatronik", "otomotiv", "inşaat", "metalurji", "malzeme", "enerji", "kimya mühendisliği", "uçak", "mühendisliği"],
+      "satirlar": [
+        {"metin": "Mühendislik alanına ilgi duyan lise öğrencileri için 3 haftalık gözlem programı.", "dogru": "bilgi", "aciklama": "Kimin için ve ne kadar süre."},
+        {"metin": "İş güvenliği kurallarına eksiksiz uyacak.", "dogru": "zorunlu", "aciklama": "Atölyede kurallar pazarlık konusu değildir: baret, gözlük, iş ayakkabısı. İlk gün iş güvenliği eğitimi alırsın."},
+        {"metin": "Sabah 08.00'de vardiya başlangıcında hazır olabilen.", "dogru": "gizli", "aciklama": "Üretim erken başlar; dakiklik bu işin kültürünün parçasıdır. Geç kalmak burada ofise göre çok daha fazla fark edilir."},
+        {"metin": "Gürültülü ve sıcak ortamda çalışmaya uyum sağlayabilen.", "dogru": "gizli", "aciklama": "Fabrika ortamı serin bir ofis değildir. Mühendislik mesleklerinin bir kısmı sahada geçer; bunu görmek kararını netleştirir."},
+        {"metin": "Matematik ve fizik derslerine ilgili.", "dogru": "tercih", "aciklama": "Notlarından çok merakın önemlidir; bir robotik ya da proje kulübü deneyimi bunu iyi gösterir."},
+        {"metin": "Teknik çizim ya da 3B tasarım programı bilgisi artıdır.", "dogru": "tercih", "aciklama": "Ek beceri; bilmen beklenmez."},
+        {"metin": "Ekip içinde talimatlara dikkatle uyabilen.", "dogru": "zorunlu", "aciklama": "Makinelerin çevresinde 'kendi bildiğini yapmak' tehlikelidir. Önce dinlemek, emin değilsen sormak gerekir."},
+        {"metin": "Servis ve öğle yemeği sağlanır.", "dogru": "bilgi", "aciklama": "Yan haklar."}
+      ],
+      "notlar": ["18 yaşından küçükler tehlikeli işlerde çalıştırılamaz; gözlem programında da makine kullanman beklenmemelidir.", "'Sıcak, gürültülü ortam' bir eleştiri değil, mesleğin gerçeğidir."]
+    },
+    {
+      "id": "mimarlik",
+      "baslik": "Yaz Gözlem Programı — Mimarlık ve İç Mimarlık Ofisi",
+      "isveren": "Örnek ilan — küçük bir mimarlık ofisi",
+      "tur": "Staj (yaz dönemi)",
+      "anahtarlar": ["mimarlık", "iç mimarlık", "peyzaj", "şehir ve bölge planlama", "endüstriyel tasarım", "tasarım", "resim", "heykel", "harita", "geomatik"],
+      "satirlar": [
+        {"metin": "Lise son sınıf öğrencilerine yönelik 2 haftalık ofis ve şantiye gözlemi.", "dogru": "bilgi", "aciklama": "Programın süresi ve içeriği."},
+        {"metin": "Çizim yapmayı seven; bir eskiz defteri ya da çizim örnekleri paylaşabilen.", "dogru": "zorunlu", "aciklama": "Burada 'portfolyo' kısa bir çizim dosyası demektir. Mükemmel olması gerekmez; ilgini göstermesi yeter."},
+        {"metin": "Proje teslim dönemlerinde ekibe destek olabilecek.", "dogru": "gizli", "aciklama": "Teslim haftalarında tempo artar ve mesai uzayabilir. Bu mesleğin bilinen bir gerçeğidir."},
+        {"metin": "Geri bildirime açık.", "dogru": "gizli", "aciklama": "Tasarım işinde çizimin sık sık eleştirilir ve değiştirilir. Bunu kişisel almamak önemli bir beceridir."},
+        {"metin": "Şantiye ziyaretlerinde uygun ayakkabı ve kıyafet.", "dogru": "zorunlu", "aciklama": "Güvenlik şartı; şantiyede spor ayakkabı bile yetmeyebilir, sana söylenen kurala uy."},
+        {"metin": "Bir 3B modelleme programını denemiş olmak tercih sebebidir.", "dogru": "tercih", "aciklama": "Ek beceri; ücretsiz sürümleriyle evde deneyebilirsin."},
+        {"metin": "Ofis içi küçük işlerde (maket malzemesi hazırlama, arşiv) yardımcı olunacaktır.", "dogru": "gizli", "aciklama": "İşin her anı yaratıcı değildir; maket kesmek, arşiv düzenlemek de mesleğin parçasıdır."},
+        {"metin": "Program sonunda katılım belgesi verilir.", "dogru": "bilgi", "aciklama": "Belgeni portfolyona ekleyip okul onayı isteyebilirsin."}
+      ],
+      "notlar": ["'Teslim dönemi' ifadesi, bu meslekte dönemsel yoğunluğun normal olduğunu gösterir.", "Eleştiriye açık olmak tasarım alanlarında temel beklentidir."]
+    }
+  ]
+}

@@ -1,0 +1,4710 @@
+{
+ "aciklama": "Gelecekte Bu Meslek: ISCO-08 alt ana gruplarının üretken yapay zekâya (GenAI) maruz kalma düzeyi + nitel içerik. Sayılar YALNIZCA ILO Working Paper 140 Tablo A1'den (4 haneli meslek: kategori, ortalama, SS) alınır; 2 haneli grup düzeyi bu sınıflandırmaların sayımıyla türetilir (kural: 'duzey_kurali'). Nitel metinler (degisen_gorevler, deger_kazanan, lisede) ILO görev puanlarında grubun en çok/en az maruz kalan görevlerine bakılarak genel ifadelerle yazıldı; sayı içermez.",
+ "son_kontrol": "2026-10-11",
+ "kaynak": {
+  "kisa": "ILO Working Paper 140 (Gmyrek vd., 2025)",
+  "atif": "Gmyrek, P., Berg, J., Kamiński, K., Konopczyński, F., Ładna, A., Nafradi, B., Rosłaniec, K. ve Troszyński, M. (2025). Generative AI and Jobs: A Refined Global Index of Occupational Exposure. ILO Working Paper 140. Cenevre: Uluslararası Çalışma Örgütü. https://doi.org/10.54394/HETP0387",
+  "url": "https://doi.org/10.54394/HETP0387",
+  "veri_yili": 2025,
+  "yontem": "Tablo A1 (PDF s. 48–61) pdftotext ile okundu; 427 meslek satırının tamamı yazarların yayımladığı Final_Scores_ISCO08_Gmyrek_et_al_2025.xlsx (github.com/pgmyrek/2025_genai_scores_isco08) ile kategori, ortalama ve SS bakımından birebir karşılaştırıldı (0 fark). İki satıra sarılan meslek adları xlsx'ten tamamlandı. Silahlı kuvvetler (ISCO 0) endekste yok."
+ },
+ "olcek": {
+  "g4": {
+   "ad": "Gradyan 4",
+   "tanim": "μ ≥ 0,6 ve μ − σ ≥ 0,5",
+   "yorum": "Görevlerin çoğu yüksek ve tutarlı biçimde maruz (en yüksek maruz kalma, düşük görev çeşitliliği)."
+  },
+  "g3": {
+   "ad": "Gradyan 3",
+   "tanim": "0,5 ≤ μ < 0,6 ve μ + σ ≥ 0,5",
+   "yorum": "Görevlerin önemli bir kısmı maruz; bazı görevler daha az etkileniyor."
+  },
+  "g2": {
+   "ad": "Gradyan 2",
+   "tanim": "0,4 ≤ μ < 0,5 ve μ + σ ≥ 0,5",
+   "yorum": "Orta düzey maruz kalma; maruz kalan ve kalmayan görevler karışık."
+  },
+  "g1": {
+   "ad": "Gradyan 1",
+   "tanim": "μ < 0,4 ve μ + σ ≥ 0,5",
+   "yorum": "Meslek genelinde düşük maruz kalma; bazı görevler yüksek olsa da meslek büyük ölçüde insan işi görevlere dayanıyor."
+  },
+  "minimal": {
+   "ad": "Minimal maruz kalma",
+   "tanim": "μ < 0,5 ve μ + σ > 0,4",
+   "yorum": "Bazı görevlerde etkileşim olabilir ama mesleğin doğası belirgin biçimde değişmez."
+  },
+  "maruz_degil": {
+   "ad": "Maruz değil",
+   "tanim": "Yukarıdaki koşulların hiçbiri",
+   "yorum": "Görevlerin çoğu bugünkü üretken yapay zekâdan görece etkilenmiyor."
+  },
+  "kaynak_bolum": "Tablo 5, s. 38"
+ },
+ "duzey_kurali": "Grup düzeyini ILO değil Filizyol hesaplar: grubun ILO tablosundaki mesleklerinin en az üçte biri Gradyan 3–4'teyse “En çok değişecek”; değilse en az beşte biri herhangi bir gradyandaysa (1–4) “Kısmen değişecek”; aksi hâlde “Az değişecek”. Her meslek eşit sayılır (çalışan sayısına göre ağırlık yok).",
+ "uyari": {
+  "metin": "Maruz kalma, mesleğin yok olacağı anlamına gelmez. ILO'ya göre bu puanlar bir mesleğin görevlerinin ne kadarının bugünkü üretken yapay zekâ ile yapılabileceğini gösterir; teknolojinin gerçekten kullanılıp kullanılmayacağını, yeni doğacak işleri ve çalışanların yeni araçlarla nasıl uyum sağlayacağını göstermez. Çoğu meslekte beklenen, işin yok olması değil dönüşmesidir: bazı görevler yapay zekâya kayar, insan becerisi gerektiren görevlerin önemi artar.",
+  "dayanak": "ILO WP140, Bölüm 10 (s. 44–45) ve Sonuç (s. 46–47); ILO WP96 (2023), Özet ve Sonuç",
+  "ek": [
+   "ILO'ya göre bugünkü üretken yapay zekâ ile tamamen otomatikleşebilecek görevlerden oluşan meslek çok azdır; neredeyse her meslekte insan katkısı gerektiren görevler vardır (WP140, s. 44).",
+   "Yine de ILO, yapay zekâ kullanımının sağladığı verimlilik nedeniyle daha yüksek gradyanlardaki bazı mesleklerde daha az çalışana ihtiyaç duyulabileceğini de not ediyor. Bu yüzden yeni araçlarla çalışmayı öğrenmek ve insan becerilerini güçlendirmek önemli (WP140, s. 44).",
+   "Endeks, yeni doğacak işleri ve gelecekteki teknolojik gelişmeleri hesaba katmaz; 2025 başındaki durumun bir fotoğrafıdır (WP140, s. 45)."
+  ]
+ },
+ "genel": {
+  "kisa": "Dünya Ekonomik Forumu, Future of Jobs Report 2025",
+  "url": "https://www.weforum.org/reports/the-future-of-jobs-report-2025/digest",
+  "not": "Küresel işveren anketi; Türkiye'deki duruma birebir uymayabilir.",
+  "maddeler": [
+   "İşverenler, 2025–2030 döneminde en hızlı önem kazanacak becerilerin başına yapay zekâ ve büyük veri, ağlar ve siber güvenlik ile teknoloji okuryazarlığını koyuyor.",
+   "Analitik düşünme en çok aranan temel beceri; yaratıcı düşünme, dayanıklılık-esneklik-çeviklik ile merak ve yaşam boyu öğrenme de önem kazanmaya devam ediyor.",
+   "Mutlak sayıca en çok büyümesi beklenen işler arasında tarım çalışanları, teslimat şoförleri, inşaat çalışanları, satış elemanları ile hemşirelik ve bakım gibi bakım ekonomisi işleri var.",
+   "En hızlı küçülmesi beklenen işler arasında posta memurları, banka gişe görevlileri ve veri giriş elemanları sayılıyor."
+  ]
+ },
+ "gruplar": {
+  "11": {
+   "ad": "Üst düzey yöneticiler, üst düzey kamu görevlileri ve kanun yapıcılar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 5,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 3,
+    "maruz_degil": 2
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — minimal maruz kalma: 3; maruz değil: 2.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 51–56 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "1112",
+     "ad": "Senior Government Officials",
+     "kategori": "minimal",
+     "ort": 0.38,
+     "ss": 0.08,
+     "sayfa": 51
+    },
+    {
+     "kod": "1120",
+     "ad": "Managing Directors and Chief Executives",
+     "kategori": "minimal",
+     "ort": 0.38,
+     "ss": 0.06,
+     "sayfa": 51
+    },
+    {
+     "kod": "1114",
+     "ad": "Senior Officials of Special-interest Organizations",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.06,
+     "sayfa": 51
+    },
+    {
+     "kod": "1111",
+     "ad": "Legislators",
+     "kategori": "maruz_degil",
+     "ort": 0.31,
+     "ss": 0.04,
+     "sayfa": 55
+    },
+    {
+     "kod": "1113",
+     "ad": "Traditional Chiefs and Heads of Villages",
+     "kategori": "maruz_degil",
+     "ort": 0.23,
+     "ss": 0.1,
+     "sayfa": 56
+    }
+   ],
+   "degisen_gorevler": [
+    "Raporları, brifingleri ve belgeleri gözden geçirme, özetleme",
+    "Kurumun performansını hedeflere göre izleme ve değerlendirme"
+   ],
+   "deger_kazanan": [
+    "Strateji kurma ve zor kararların sorumluluğunu alma",
+    "İnsanları ikna etme, uzlaştırma, temsil etme",
+    "Etik ve hukuki yargı"
+   ],
+   "lisede": [
+    "Öğrenci meclisi, kulüp başkanlığı gibi sorumluluk alan görevlere talip ol",
+    "Münazara ve Model BM gibi etkinliklerde farklı görüşleri dinleyip uzlaşma kurmayı dene"
+   ]
+  },
+  "12": {
+   "ad": "İdari ve ticari müdürler",
+   "duzey": "orta",
+   "meslek_sayisi": 7,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 2,
+    "g1": 0,
+    "minimal": 4,
+    "maruz_degil": 1
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 7 meslek — Gradyan 1–2: 2; minimal maruz kalma: 4; maruz değil: 1.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 50–55 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "1219",
+     "ad": "Business Services and Administration Managers Not Elsewhere Classified",
+     "kategori": "g2",
+     "ort": 0.42,
+     "ss": 0.1,
+     "sayfa": 50
+    },
+    {
+     "kod": "1221",
+     "ad": "Sales and Marketing Managers",
+     "kategori": "g2",
+     "ort": 0.41,
+     "ss": 0.09,
+     "sayfa": 50
+    },
+    {
+     "kod": "1223",
+     "ad": "Research and Development Managers",
+     "kategori": "minimal",
+     "ort": 0.4,
+     "ss": 0.06,
+     "sayfa": 51
+    },
+    {
+     "kod": "1222",
+     "ad": "Advertising and Public Relations Managers",
+     "kategori": "minimal",
+     "ort": 0.39,
+     "ss": 0.05,
+     "sayfa": 51
+    },
+    {
+     "kod": "1211",
+     "ad": "Finance Managers",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.04,
+     "sayfa": 52
+    },
+    {
+     "kod": "1212",
+     "ad": "Human Resource Managers",
+     "kategori": "minimal",
+     "ort": 0.36,
+     "ss": 0.05,
+     "sayfa": 52
+    },
+    {
+     "kod": "1213",
+     "ad": "Policy and Planning Managers",
+     "kategori": "maruz_degil",
+     "ort": 0.36,
+     "ss": 0.04,
+     "sayfa": 55
+    }
+   ],
+   "degisen_gorevler": [
+    "Bütçe, finans ve yönetim raporlarının hazırlanması",
+    "Fiyat listeleri, kampanya planları ve yazılı yönergelerin taslağı"
+   ],
+   "deger_kazanan": [
+    "Ekip kurma, çalışan seçme ve geliştirme",
+    "Belirsizlikte karar verme ve önceliklendirme",
+    "Müzakere ve paydaşlarla ilişki"
+   ],
+   "lisede": [
+    "Okul etkinliği ya da kulüp için küçük bir bütçe ve plan hazırla",
+    "Grup projelerinde görev dağıtma ve takip etme sorumluluğunu üstlen"
+   ]
+  },
+  "13": {
+   "ad": "Üretim ve uzmanlaşmış hizmet müdürleri",
+   "duzey": "dusuk",
+   "meslek_sayisi": 14,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 2,
+    "g1": 0,
+    "minimal": 11,
+    "maruz_degil": 1
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 14 meslek — Gradyan 1–2: 2; minimal maruz kalma: 11; maruz değil: 1.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 49–56 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "1346",
+     "ad": "Financial and Insurance Services Branch managers",
+     "kategori": "g2",
+     "ort": 0.47,
+     "ss": 0.12,
+     "sayfa": 49
+    },
+    {
+     "kod": "1330",
+     "ad": "Information and Communications Technology Service Managers",
+     "kategori": "g2",
+     "ort": 0.44,
+     "ss": 0.07,
+     "sayfa": 50
+    },
+    {
+     "kod": "1321",
+     "ad": "Manufacturing Managers",
+     "kategori": "minimal",
+     "ort": 0.38,
+     "ss": 0.11,
+     "sayfa": 51
+    },
+    {
+     "kod": "1324",
+     "ad": "Supply, Distribution and Related Managers",
+     "kategori": "minimal",
+     "ort": 0.38,
+     "ss": 0.05,
+     "sayfa": 51
+    },
+    {
+     "kod": "1349",
+     "ad": "Professional Services Managers Not Elsewhere Classified",
+     "kategori": "minimal",
+     "ort": 0.38,
+     "ss": 0.07,
+     "sayfa": 51
+    },
+    {
+     "kod": "1344",
+     "ad": "Social Welfare Managers",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.07,
+     "sayfa": 52
+    },
+    {
+     "kod": "1342",
+     "ad": "Health Service Managers",
+     "kategori": "minimal",
+     "ort": 0.36,
+     "ss": 0.05,
+     "sayfa": 52
+    },
+    {
+     "kod": "1345",
+     "ad": "Education Managers",
+     "kategori": "minimal",
+     "ort": 0.36,
+     "ss": 0.1,
+     "sayfa": 52
+    },
+    {
+     "kod": "1322",
+     "ad": "Mining Managers",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.11,
+     "sayfa": 52
+    },
+    {
+     "kod": "1323",
+     "ad": "Construction Managers",
+     "kategori": "minimal",
+     "ort": 0.34,
+     "ss": 0.06,
+     "sayfa": 53
+    },
+    {
+     "kod": "1343",
+     "ad": "Aged Care Service Managers",
+     "kategori": "minimal",
+     "ort": 0.34,
+     "ss": 0.09,
+     "sayfa": 53
+    },
+    {
+     "kod": "1341",
+     "ad": "Child Care Service Managers",
+     "kategori": "minimal",
+     "ort": 0.3,
+     "ss": 0.15,
+     "sayfa": 54
+    },
+    {
+     "kod": "1311",
+     "ad": "Agricultural and Forestry Production Managers",
+     "kategori": "minimal",
+     "ort": 0.27,
+     "ss": 0.13,
+     "sayfa": 54
+    },
+    {
+     "kod": "1312",
+     "ad": "Aquaculture and Fisheries Production Managers",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.08,
+     "sayfa": 56
+    }
+   ],
+   "degisen_gorevler": [
+    "Kayıt, hesap ve bütçe takibi; rapor hazırlama",
+    "Başvuru ve dosyaların ön incelemesi (ör. finans/sigorta hizmetlerinde)"
+   ],
+   "deger_kazanan": [
+    "Sahadaki işi koordine etme ve sorunları yerinde çözme",
+    "İş güvenliği ve kalite için sorumluluk",
+    "Ekip yönetimi ve iletişim"
+   ],
+   "lisede": [
+    "Bir okul etkinliğinin lojistiğini (malzeme, zaman, kişi) planla",
+    "Elektronik tablo kullanmayı öğren; sonra bu verilerle karar vermeyi tartış"
+   ]
+  },
+  "14": {
+   "ad": "Otel, perakende ve diğer hizmet müdürleri",
+   "duzey": "orta",
+   "meslek_sayisi": 4,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 1,
+    "g1": 1,
+    "minimal": 2,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 4 meslek — Gradyan 1–2: 2; minimal maruz kalma: 2.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 50–53 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "1420",
+     "ad": "Retail and Wholesale Trade Managers",
+     "kategori": "g2",
+     "ort": 0.44,
+     "ss": 0.15,
+     "sayfa": 50
+    },
+    {
+     "kod": "1411",
+     "ad": "Hotel Managers",
+     "kategori": "g1",
+     "ort": 0.37,
+     "ss": 0.13,
+     "sayfa": 50
+    },
+    {
+     "kod": "1412",
+     "ad": "Restaurant Managers",
+     "kategori": "minimal",
+     "ort": 0.36,
+     "ss": 0.12,
+     "sayfa": 52
+    },
+    {
+     "kod": "1431",
+     "ad": "Sports, Recreation and Cultural Centre Managers",
+     "kategori": "minimal",
+     "ort": 0.32,
+     "ss": 0.1,
+     "sayfa": 53
+    }
+   ],
+   "degisen_gorevler": [
+    "Stok ve satış kayıtlarının tutulması",
+    "Tanıtım metinleri ve müşteriye bilgi verme",
+    "Müşteri memnuniyetinin ölçülmesi"
+   ],
+   "deger_kazanan": [
+    "Misafir ve müşteriyle yüz yüze ilişki",
+    "Ekibi sahada yönetme, kriz anında sakin kalma",
+    "Mekânın güvenliği ve düzeni için sorumluluk"
+   ],
+   "lisede": [
+    "Okul kantini, kermes ya da etkinlikte müşteri karşılama ve düzen işlerinde görev al",
+    "Yabancı dil konuşma pratiğini artır"
+   ]
+  },
+  "21": {
+   "ad": "Bilim ve mühendislik profesyonel meslek mensupları",
+   "duzey": "orta",
+   "meslek_sayisi": 24,
+   "dagilim": {
+    "g4": 0,
+    "g3": 2,
+    "g2": 5,
+    "g1": 1,
+    "minimal": 10,
+    "maruz_degil": 6
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 24 meslek — Gradyan 3–4: 2; Gradyan 1–2: 6; minimal maruz kalma: 10; maruz değil: 6.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–55 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "2120",
+     "ad": "Mathematicians, Actuaries and Statisticians",
+     "kategori": "g3",
+     "ort": 0.56,
+     "ss": 0.09,
+     "sayfa": 48
+    },
+    {
+     "kod": "2112",
+     "ad": "Meteorologists",
+     "kategori": "g3",
+     "ort": 0.54,
+     "ss": 0.13,
+     "sayfa": 49
+    },
+    {
+     "kod": "2166",
+     "ad": "Graphic and Multimedia Designers",
+     "kategori": "g2",
+     "ort": 0.49,
+     "ss": 0.09,
+     "sayfa": 49
+    },
+    {
+     "kod": "2153",
+     "ad": "Telecommunications Engineers",
+     "kategori": "g2",
+     "ort": 0.48,
+     "ss": 0.12,
+     "sayfa": 49
+    },
+    {
+     "kod": "2165",
+     "ad": "Cartographers and Surveyors",
+     "kategori": "g2",
+     "ort": 0.44,
+     "ss": 0.12,
+     "sayfa": 50
+    },
+    {
+     "kod": "2152",
+     "ad": "Electronics Engineers",
+     "kategori": "g2",
+     "ort": 0.42,
+     "ss": 0.13,
+     "sayfa": 50
+    },
+    {
+     "kod": "2131",
+     "ad": "Biologists, Botanists, Zoologists and Related Professionals",
+     "kategori": "g2",
+     "ort": 0.4,
+     "ss": 0.1,
+     "sayfa": 50
+    },
+    {
+     "kod": "2111",
+     "ad": "Physicists and Astronomers",
+     "kategori": "g1",
+     "ort": 0.38,
+     "ss": 0.14,
+     "sayfa": 50
+    },
+    {
+     "kod": "2164",
+     "ad": "Town and Traffic Planners",
+     "kategori": "minimal",
+     "ort": 0.41,
+     "ss": 0.06,
+     "sayfa": 51
+    },
+    {
+     "kod": "2113",
+     "ad": "Chemists",
+     "kategori": "minimal",
+     "ort": 0.39,
+     "ss": 0.1,
+     "sayfa": 51
+    },
+    {
+     "kod": "2133",
+     "ad": "Environmental Protection Professionals",
+     "kategori": "minimal",
+     "ort": 0.38,
+     "ss": 0.04,
+     "sayfa": 51
+    },
+    {
+     "kod": "2143",
+     "ad": "Environmental Engineers",
+     "kategori": "minimal",
+     "ort": 0.38,
+     "ss": 0.07,
+     "sayfa": 51
+    },
+    {
+     "kod": "2141",
+     "ad": "Industrial and Production Engineers",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.07,
+     "sayfa": 52
+    },
+    {
+     "kod": "2161",
+     "ad": "Building Architects",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.08,
+     "sayfa": 52
+    },
+    {
+     "kod": "2162",
+     "ad": "Landscape Architects",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.08,
+     "sayfa": 52
+    },
+    {
+     "kod": "2114",
+     "ad": "Geologists and geophysicists",
+     "kategori": "minimal",
+     "ort": 0.36,
+     "ss": 0.1,
+     "sayfa": 52
+    },
+    {
+     "kod": "2145",
+     "ad": "Chemical Engineers",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.12,
+     "sayfa": 52
+    },
+    {
+     "kod": "2163",
+     "ad": "Product and Garment Designers",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.09,
+     "sayfa": 53
+    },
+    {
+     "kod": "2144",
+     "ad": "Mechanical Engineers",
+     "kategori": "maruz_degil",
+     "ort": 0.32,
+     "ss": 0.07,
+     "sayfa": 55
+    },
+    {
+     "kod": "2151",
+     "ad": "Electrical Engineers",
+     "kategori": "maruz_degil",
+     "ort": 0.31,
+     "ss": 0.08,
+     "sayfa": 55
+    },
+    {
+     "kod": "2142",
+     "ad": "Civil Engineers",
+     "kategori": "maruz_degil",
+     "ort": 0.3,
+     "ss": 0.06,
+     "sayfa": 55
+    },
+    {
+     "kod": "2149",
+     "ad": "Engineering Professionals Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.3,
+     "ss": 0.08,
+     "sayfa": 55
+    },
+    {
+     "kod": "2132",
+     "ad": "Farming, Forestry and Fisheries Advisers",
+     "kategori": "maruz_degil",
+     "ort": 0.29,
+     "ss": 0.1,
+     "sayfa": 55
+    },
+    {
+     "kod": "2146",
+     "ad": "Mining Engineers, Metallurgists and Related Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.29,
+     "ss": 0.05,
+     "sayfa": 55
+    }
+   ],
+   "degisen_gorevler": [
+    "Veri analizi, modelleme ve tahmin hazırlama",
+    "Anket ve ölçüm tasarlama, sonuçları raporlama",
+    "Teknik belge ve hesapların ilk taslağı"
+   ],
+   "deger_kazanan": [
+    "Sonuçları sorgulama ve doğrulama (yapay zekânın hatasını fark etme)",
+    "Sahada, laboratuvarda deney ve uygulama",
+    "Problemi doğru tanımlama ve yaratıcı çözüm"
+   ],
+   "lisede": [
+    "Matematik ve fen derslerinde 'neden böyle?' sorusunu sor; yalnızca sonuca değil yönteme odaklan",
+    "Bilim fuarı ya da TÜBİTAK projelerinde veri topla ve yorumla",
+    "Temel düzeyde programlama ya da veri analizi dene"
+   ]
+  },
+  "22": {
+   "ad": "Sağlık profesyonel meslek mensupları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 15,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 5,
+    "maruz_degil": 10
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 15 meslek — minimal maruz kalma: 5; maruz değil: 10.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 51–59 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "2265",
+     "ad": "Dieticians and Nutritionists",
+     "kategori": "minimal",
+     "ort": 0.41,
+     "ss": 0.07,
+     "sayfa": 51
+    },
+    {
+     "kod": "2262",
+     "ad": "Pharmacists",
+     "kategori": "minimal",
+     "ort": 0.33,
+     "ss": 0.09,
+     "sayfa": 53
+    },
+    {
+     "kod": "2230",
+     "ad": "Traditional and Complementary Medicine Professionals",
+     "kategori": "minimal",
+     "ort": 0.32,
+     "ss": 0.11,
+     "sayfa": 53
+    },
+    {
+     "kod": "2222",
+     "ad": "Midwifery Professionals",
+     "kategori": "minimal",
+     "ort": 0.3,
+     "ss": 0.15,
+     "sayfa": 54
+    },
+    {
+     "kod": "2264",
+     "ad": "Physiotherapists",
+     "kategori": "minimal",
+     "ort": 0.28,
+     "ss": 0.14,
+     "sayfa": 54
+    },
+    {
+     "kod": "2211",
+     "ad": "Generalist Medical Practitioners",
+     "kategori": "maruz_degil",
+     "ort": 0.29,
+     "ss": 0.1,
+     "sayfa": 55
+    },
+    {
+     "kod": "2263",
+     "ad": "Environmental and Occupational Health and Hygiene Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.28,
+     "ss": 0.05,
+     "sayfa": 55
+    },
+    {
+     "kod": "2212",
+     "ad": "Specialist Medical Practitioners",
+     "kategori": "maruz_degil",
+     "ort": 0.27,
+     "ss": 0.12,
+     "sayfa": 55
+    },
+    {
+     "kod": "2221",
+     "ad": "Nursing Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.25,
+     "ss": 0.13,
+     "sayfa": 56
+    },
+    {
+     "kod": "2266",
+     "ad": "Audiologists and Speech Therapists",
+     "kategori": "maruz_degil",
+     "ort": 0.24,
+     "ss": 0.04,
+     "sayfa": 56
+    },
+    {
+     "kod": "2267",
+     "ad": "Optometrists and Ophthalmic Opticians",
+     "kategori": "maruz_degil",
+     "ort": 0.24,
+     "ss": 0.07,
+     "sayfa": 56
+    },
+    {
+     "kod": "2240",
+     "ad": "Paramedical Practitioners",
+     "kategori": "maruz_degil",
+     "ort": 0.23,
+     "ss": 0.13,
+     "sayfa": 56
+    },
+    {
+     "kod": "2269",
+     "ad": "Health Professionals Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.08,
+     "sayfa": 57
+    },
+    {
+     "kod": "2261",
+     "ad": "Dentists",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.06,
+     "sayfa": 59
+    },
+    {
+     "kod": "2250",
+     "ad": "Veterinarians",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.05,
+     "sayfa": 59
+    }
+   ],
+   "degisen_gorevler": [
+    "Hasta kayıtlarının tutulması ve resmî bildirimler",
+    "Bilimsel bilgiyi tarama, özetleme ve raporlama"
+   ],
+   "deger_kazanan": [
+    "Muayene, tedavi, ameliyat gibi el becerisi ve dokunma gerektiren işler",
+    "Empati, hastayla iletişim ve güven",
+    "Klinik yargı ve etik karar"
+   ],
+   "lisede": [
+    "Biyoloji ve kimyada temeli sağlam kur",
+    "Gönüllü sağlık, ilk yardım ya da yaşlı/çocuk bakımı etkinliklerine katıl",
+    "Dinleme ve empati becerini geliştir (akran destek, rehberlik çalışmaları)"
+   ]
+  },
+  "23": {
+   "ad": "Eğitim profesyonel meslek mensupları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 12,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 1,
+    "g1": 1,
+    "minimal": 6,
+    "maruz_degil": 4
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 12 meslek — Gradyan 1–2: 2; minimal maruz kalma: 6; maruz değil: 4.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 49–57 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "2356",
+     "ad": "Information Technology Trainers",
+     "kategori": "g2",
+     "ort": 0.47,
+     "ss": 0.1,
+     "sayfa": 49
+    },
+    {
+     "kod": "2351",
+     "ad": "Education Methods Specialists",
+     "kategori": "g1",
+     "ort": 0.39,
+     "ss": 0.11,
+     "sayfa": 50
+    },
+    {
+     "kod": "2310",
+     "ad": "University and Higher Education Teachers",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.12,
+     "sayfa": 52
+    },
+    {
+     "kod": "2320",
+     "ad": "Vocational Education Teachers",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.12,
+     "sayfa": 53
+    },
+    {
+     "kod": "2354",
+     "ad": "Other Music Teachers",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.09,
+     "sayfa": 53
+    },
+    {
+     "kod": "2355",
+     "ad": "Other Arts Teachers",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.1,
+     "sayfa": 53
+    },
+    {
+     "kod": "2353",
+     "ad": "Other Language Teachers",
+     "kategori": "minimal",
+     "ort": 0.34,
+     "ss": 0.11,
+     "sayfa": 53
+    },
+    {
+     "kod": "2359",
+     "ad": "Teaching Professionals Not Elsewhere Classified",
+     "kategori": "minimal",
+     "ort": 0.33,
+     "ss": 0.1,
+     "sayfa": 53
+    },
+    {
+     "kod": "2330",
+     "ad": "Secondary Education Teachers",
+     "kategori": "maruz_degil",
+     "ort": 0.3,
+     "ss": 0.07,
+     "sayfa": 55
+    },
+    {
+     "kod": "2352",
+     "ad": "Special Needs Teachers",
+     "kategori": "maruz_degil",
+     "ort": 0.28,
+     "ss": 0.1,
+     "sayfa": 55
+    },
+    {
+     "kod": "2341",
+     "ad": "Primary School Teachers",
+     "kategori": "maruz_degil",
+     "ort": 0.26,
+     "ss": 0.09,
+     "sayfa": 55
+    },
+    {
+     "kod": "2342",
+     "ad": "Early Childhood Educators",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.05,
+     "sayfa": 57
+    }
+   ],
+   "degisen_gorevler": [
+    "Not, devam ve öğrenci kayıtlarının hazırlanması",
+    "Ders materyali, müfredat ve ölçme araçlarının taslağı"
+   ],
+   "deger_kazanan": [
+    "Öğrenciyle ilişki kurma, motive etme, sınıf yönetimi",
+    "Bireysel farklılıkları görüp öğretimi uyarlama",
+    "Çocuğun gelişimine eşlik etme ve rehberlik"
+   ],
+   "lisede": [
+    "Arkadaşlarına ya da küçüklere konu anlatmayı dene (akran öğretimi)",
+    "Kulüp ya da yaz okulunda gönüllü eğitmenlik yap",
+    "Yapay zekâ araçlarını öğrenmeye yardımcı olarak nasıl kullanabileceğini, sınırlarıyla birlikte keşfet"
+   ]
+  },
+  "24": {
+   "ad": "İş ve yönetim profesyonel meslek mensupları",
+   "duzey": "yuksek",
+   "meslek_sayisi": 11,
+   "dagilim": {
+    "g4": 1,
+    "g3": 5,
+    "g2": 4,
+    "g1": 0,
+    "minimal": 1,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 11 meslek — Gradyan 3–4: 6; Gradyan 1–2: 4; minimal maruz kalma: 1.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–51 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "2413",
+     "ad": "Financial Analysts",
+     "kategori": "g4",
+     "ort": 0.62,
+     "ss": 0.06,
+     "sayfa": 48
+    },
+    {
+     "kod": "2412",
+     "ad": "Financial and Investment Advisers",
+     "kategori": "g3",
+     "ort": 0.57,
+     "ss": 0.11,
+     "sayfa": 48
+    },
+    {
+     "kod": "2431",
+     "ad": "Advertising and Marketing Professionals",
+     "kategori": "g3",
+     "ort": 0.55,
+     "ss": 0.09,
+     "sayfa": 48
+    },
+    {
+     "kod": "2411",
+     "ad": "Accountants",
+     "kategori": "g3",
+     "ort": 0.51,
+     "ss": 0.08,
+     "sayfa": 49
+    },
+    {
+     "kod": "2434",
+     "ad": "Information and Communications Technology Sales Professionals",
+     "kategori": "g3",
+     "ort": 0.51,
+     "ss": 0.09,
+     "sayfa": 49
+    },
+    {
+     "kod": "2433",
+     "ad": "Technical and Medical Sales Professionals (excluding ICT)",
+     "kategori": "g3",
+     "ort": 0.5,
+     "ss": 0.1,
+     "sayfa": 49
+    },
+    {
+     "kod": "2421",
+     "ad": "Management and Organization Analysts",
+     "kategori": "g2",
+     "ort": 0.46,
+     "ss": 0.1,
+     "sayfa": 49
+    },
+    {
+     "kod": "2423",
+     "ad": "Personnel and Careers Professionals",
+     "kategori": "g2",
+     "ort": 0.45,
+     "ss": 0.07,
+     "sayfa": 50
+    },
+    {
+     "kod": "2432",
+     "ad": "Public Relations Professionals",
+     "kategori": "g2",
+     "ort": 0.43,
+     "ss": 0.09,
+     "sayfa": 50
+    },
+    {
+     "kod": "2424",
+     "ad": "Training and Staff Development Professionals",
+     "kategori": "g2",
+     "ort": 0.41,
+     "ss": 0.09,
+     "sayfa": 50
+    },
+    {
+     "kod": "2422",
+     "ad": "Policy Administration Professionals",
+     "kategori": "minimal",
+     "ort": 0.42,
+     "ss": 0.06,
+     "sayfa": 51
+    }
+   ],
+   "degisen_gorevler": [
+    "Finansal tablo, rapor ve analizlerin hazırlanması",
+    "Reklam metni ve pazarlama içeriği yazma",
+    "Pazar ve rakip bilgisinin derlenmesi"
+   ],
+   "deger_kazanan": [
+    "Müşteri ve paydaşlarla ilişki, ikna ve müzakere",
+    "Kurumu, insanları ve bağlamı anlayarak karar önerme",
+    "Etik ve mevzuata uygunluk değerlendirmesi"
+   ],
+   "lisede": [
+    "Ekonomi, matematik ve yazılı anlatımı birlikte güçlendir",
+    "Okul gazetesi, sosyal medya ya da kermes gibi projelerde tanıtım ve bütçe işini üstlen",
+    "Elektronik tablo ve temel finans okuryazarlığı öğren"
+   ]
+  },
+  "25": {
+   "ad": "Bilgi ve iletişim teknolojisi profesyonel meslek mensupları",
+   "duzey": "yuksek",
+   "meslek_sayisi": 9,
+   "dagilim": {
+    "g4": 1,
+    "g3": 6,
+    "g2": 2,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 9 meslek — Gradyan 3–4: 7; Gradyan 1–2: 2.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–49 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "2513",
+     "ad": "Web and Multimedia Developers",
+     "kategori": "g4",
+     "ort": 0.6,
+     "ss": 0.08,
+     "sayfa": 48
+    },
+    {
+     "kod": "2514",
+     "ad": "Applications Programmers",
+     "kategori": "g3",
+     "ort": 0.57,
+     "ss": 0.08,
+     "sayfa": 48
+    },
+    {
+     "kod": "2521",
+     "ad": "Database Designers and Administrators",
+     "kategori": "g3",
+     "ort": 0.57,
+     "ss": 0.08,
+     "sayfa": 48
+    },
+    {
+     "kod": "2522",
+     "ad": "Systems Aministrators",
+     "kategori": "g3",
+     "ort": 0.57,
+     "ss": 0.05,
+     "sayfa": 48
+    },
+    {
+     "kod": "2519",
+     "ad": "Software and Applications Developers and Analysts Not Elsewhere Classified",
+     "kategori": "g3",
+     "ort": 0.55,
+     "ss": 0.16,
+     "sayfa": 48
+    },
+    {
+     "kod": "2512",
+     "ad": "Software Developers",
+     "kategori": "g3",
+     "ort": 0.53,
+     "ss": 0.07,
+     "sayfa": 49
+    },
+    {
+     "kod": "2523",
+     "ad": "Computer Network Professionals",
+     "kategori": "g3",
+     "ort": 0.52,
+     "ss": 0.06,
+     "sayfa": 49
+    },
+    {
+     "kod": "2511",
+     "ad": "Systems Analysts",
+     "kategori": "g2",
+     "ort": 0.49,
+     "ss": 0.05,
+     "sayfa": 49
+    },
+    {
+     "kod": "2529",
+     "ad": "Database and Network Professionals Not Elsewhere Classified",
+     "kategori": "g2",
+     "ort": 0.49,
+     "ss": 0.06,
+     "sayfa": 49
+    }
+   ],
+   "degisen_gorevler": [
+    "Belirtilen şartlara göre kod yazma ve bakım",
+    "Test planı, test betiği ve dokümantasyon hazırlama",
+    "Veritabanı tasarımı ve rutin geliştirme işleri"
+   ],
+   "deger_kazanan": [
+    "Kullanıcının gerçek ihtiyacını anlama ve doğru problemi seçme",
+    "Sistemi bütün olarak tasarlama, güvenlik ve doğrulama",
+    "Yapay zekânın ürettiği kodu okuyup sorgulama"
+   ],
+   "lisede": [
+    "Programlamayı temelden öğren; hazır kodu kopyalamak yerine nasıl çalıştığını anla",
+    "Okulun ya da bir derneğin gerçek bir küçük problemine uygulama/web sayfası yap",
+    "Bilişim olimpiyatı, robotik ya da yazılım kulübüne katıl"
+   ]
+  },
+  "26": {
+   "ad": "Hukuk, sosyal ve kültürel profesyonel meslek mensupları",
+   "duzey": "orta",
+   "meslek_sayisi": 21,
+   "dagilim": {
+    "g4": 0,
+    "g3": 5,
+    "g2": 4,
+    "g1": 1,
+    "minimal": 4,
+    "maruz_degil": 7
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 21 meslek — Gradyan 3–4: 5; Gradyan 1–2: 5; minimal maruz kalma: 4; maruz değil: 7.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–59 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "2643",
+     "ad": "Translators, Interpreters and Other Linguists",
+     "kategori": "g3",
+     "ort": 0.59,
+     "ss": 0.11,
+     "sayfa": 48
+    },
+    {
+     "kod": "2622",
+     "ad": "Librarians and Related Information Professionals",
+     "kategori": "g3",
+     "ort": 0.55,
+     "ss": 0.04,
+     "sayfa": 48
+    },
+    {
+     "kod": "2631",
+     "ad": "Economists",
+     "kategori": "g3",
+     "ort": 0.55,
+     "ss": 0.08,
+     "sayfa": 49
+    },
+    {
+     "kod": "2641",
+     "ad": "Authors and Related Writers",
+     "kategori": "g3",
+     "ort": 0.55,
+     "ss": 0.09,
+     "sayfa": 49
+    },
+    {
+     "kod": "2642",
+     "ad": "Journalists",
+     "kategori": "g3",
+     "ort": 0.54,
+     "ss": 0.1,
+     "sayfa": 49
+    },
+    {
+     "kod": "2632",
+     "ad": "Sociologists, Anthropologists and Related Professionals",
+     "kategori": "g2",
+     "ort": 0.48,
+     "ss": 0.12,
+     "sayfa": 49
+    },
+    {
+     "kod": "2621",
+     "ad": "Archivists and Curators",
+     "kategori": "g2",
+     "ort": 0.47,
+     "ss": 0.11,
+     "sayfa": 49
+    },
+    {
+     "kod": "2633",
+     "ad": "Philosophers, Historians and Political Scientists",
+     "kategori": "g2",
+     "ort": 0.47,
+     "ss": 0.06,
+     "sayfa": 49
+    },
+    {
+     "kod": "2656",
+     "ad": "Announcers on Radio, Television and Other Media",
+     "kategori": "g2",
+     "ort": 0.47,
+     "ss": 0.12,
+     "sayfa": 49
+    },
+    {
+     "kod": "2634",
+     "ad": "Psychologists",
+     "kategori": "g1",
+     "ort": 0.39,
+     "ss": 0.14,
+     "sayfa": 50
+    },
+    {
+     "kod": "2619",
+     "ad": "Legal Professionals Not Elsewhere Classified",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.09,
+     "sayfa": 52
+    },
+    {
+     "kod": "2654",
+     "ad": "Film, Stage and Related Directors and Producers",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.07,
+     "sayfa": 52
+    },
+    {
+     "kod": "2611",
+     "ad": "Lawyers",
+     "kategori": "minimal",
+     "ort": 0.36,
+     "ss": 0.09,
+     "sayfa": 52
+    },
+    {
+     "kod": "2655",
+     "ad": "Actors",
+     "kategori": "minimal",
+     "ort": 0.31,
+     "ss": 0.15,
+     "sayfa": 53
+    },
+    {
+     "kod": "2612",
+     "ad": "Judges",
+     "kategori": "maruz_degil",
+     "ort": 0.31,
+     "ss": 0.08,
+     "sayfa": 55
+    },
+    {
+     "kod": "2635",
+     "ad": "Social Work and Counselling Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.28,
+     "ss": 0.1,
+     "sayfa": 55
+    },
+    {
+     "kod": "2652",
+     "ad": "Musicians, Singers and Composers",
+     "kategori": "maruz_degil",
+     "ort": 0.28,
+     "ss": 0.09,
+     "sayfa": 55
+    },
+    {
+     "kod": "2651",
+     "ad": "Visual Artists",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.04,
+     "sayfa": 57
+    },
+    {
+     "kod": "2653",
+     "ad": "Dancers and Choreographers",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.1,
+     "sayfa": 57
+    },
+    {
+     "kod": "2636",
+     "ad": "Religious Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.12,
+     "sayfa": 58
+    },
+    {
+     "kod": "2659",
+     "ad": "Creative and Performing Artists Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.06,
+     "sayfa": 59
+    }
+   ],
+   "degisen_gorevler": [
+    "Çeviri, düzelti ve metin revizyonu",
+    "Araştırma, arşiv ve kayıt düzenleme",
+    "Haber ve içerik metinlerinin taslağı"
+   ],
+   "deger_kazanan": [
+    "Hukuki, toplumsal ve kültürel bağlamı yorumlama",
+    "Özgün yaratıcılık, sahne ve performans",
+    "İnsanlarla birebir çalışma (danışmanlık, sosyal hizmet, din hizmetleri)"
+   ],
+   "lisede": [
+    "Çok okuyup çok yaz; okul gazetesi, edebiyat ya da tiyatro kulübünde üret",
+    "Münazara ile görüş kurmayı ve kaynak göstermeyi öğren",
+    "Yabancı dili kültürüyle birlikte öğren; çeviri araçlarının hatalarını fark etmeye çalış"
+   ]
+  },
+  "31": {
+   "ad": "Bilim ve mühendislikle ilgili yardımcı profesyonel meslek mensupları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 25,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 1,
+    "minimal": 6,
+    "maruz_degil": 18
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 25 meslek — Gradyan 1–2: 1; minimal maruz kalma: 6; maruz değil: 18.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 50–57 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "3141",
+     "ad": "Life Science Technicians (excluding Medical)",
+     "kategori": "g1",
+     "ort": 0.38,
+     "ss": 0.18,
+     "sayfa": 50
+    },
+    {
+     "kod": "3114",
+     "ad": "Electronics Engineering Technicians",
+     "kategori": "minimal",
+     "ort": 0.38,
+     "ss": 0.11,
+     "sayfa": 51
+    },
+    {
+     "kod": "3118",
+     "ad": "Draughtspersons",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.11,
+     "sayfa": 53
+    },
+    {
+     "kod": "3122",
+     "ad": "Manufacturing Supervisors",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.13,
+     "sayfa": 53
+    },
+    {
+     "kod": "3155",
+     "ad": "Air Traffic Safety Electronics Technicians",
+     "kategori": "minimal",
+     "ort": 0.34,
+     "ss": 0.1,
+     "sayfa": 53
+    },
+    {
+     "kod": "3135",
+     "ad": "Metal Production Process Controllers",
+     "kategori": "minimal",
+     "ort": 0.31,
+     "ss": 0.13,
+     "sayfa": 54
+    },
+    {
+     "kod": "3154",
+     "ad": "Air Traffic Controllers",
+     "kategori": "minimal",
+     "ort": 0.31,
+     "ss": 0.09,
+     "sayfa": 54
+    },
+    {
+     "kod": "3116",
+     "ad": "Chemical Engineering Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.32,
+     "ss": 0.02,
+     "sayfa": 55
+    },
+    {
+     "kod": "3121",
+     "ad": "Mining Supervisors",
+     "kategori": "maruz_degil",
+     "ort": 0.29,
+     "ss": 0.08,
+     "sayfa": 55
+    },
+    {
+     "kod": "3133",
+     "ad": "Chemical Processing Plant Controllers",
+     "kategori": "maruz_degil",
+     "ort": 0.29,
+     "ss": 0.1,
+     "sayfa": 55
+    },
+    {
+     "kod": "3134",
+     "ad": "Petroleum and Natural Gas Refining Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.29,
+     "ss": 0.11,
+     "sayfa": 55
+    },
+    {
+     "kod": "3152",
+     "ad": "Ships' Deck Officers and Pilots",
+     "kategori": "maruz_degil",
+     "ort": 0.29,
+     "ss": 0.11,
+     "sayfa": 55
+    },
+    {
+     "kod": "3112",
+     "ad": "Civil Engineering Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.28,
+     "ss": 0.07,
+     "sayfa": 55
+    },
+    {
+     "kod": "3117",
+     "ad": "Mining and metallurgical technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.28,
+     "ss": 0.06,
+     "sayfa": 55
+    },
+    {
+     "kod": "3123",
+     "ad": "Construction Supervisors",
+     "kategori": "maruz_degil",
+     "ort": 0.28,
+     "ss": 0.06,
+     "sayfa": 55
+    },
+    {
+     "kod": "3131",
+     "ad": "Power Production Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.28,
+     "ss": 0.11,
+     "sayfa": 55
+    },
+    {
+     "kod": "3113",
+     "ad": "Electrical Engineering Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.27,
+     "ss": 0.05,
+     "sayfa": 55
+    },
+    {
+     "kod": "3132",
+     "ad": "Incinerator and Water Treatment Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.27,
+     "ss": 0.09,
+     "sayfa": 55
+    },
+    {
+     "kod": "3153",
+     "ad": "Aircraft Pilots and Related Associate Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.27,
+     "ss": 0.05,
+     "sayfa": 55
+    },
+    {
+     "kod": "3111",
+     "ad": "Chemical and Physical Science Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.26,
+     "ss": 0.09,
+     "sayfa": 55
+    },
+    {
+     "kod": "3115",
+     "ad": "Mechanical Engineering Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.26,
+     "ss": 0.08,
+     "sayfa": 55
+    },
+    {
+     "kod": "3119",
+     "ad": "Physical and Engineering Science Technicians Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.26,
+     "ss": 0.05,
+     "sayfa": 56
+    },
+    {
+     "kod": "3142",
+     "ad": "Agricultural Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.26,
+     "ss": 0.09,
+     "sayfa": 56
+    },
+    {
+     "kod": "3151",
+     "ad": "Ships' Engineers",
+     "kategori": "maruz_degil",
+     "ort": 0.23,
+     "ss": 0.05,
+     "sayfa": 56
+    },
+    {
+     "kod": "3143",
+     "ad": "Forestry Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.07,
+     "sayfa": 57
+    }
+   ],
+   "degisen_gorevler": [
+    "Test sonuçlarını hesaplama, kaydetme ve raporlama",
+    "Maliyet tahmini, kayıt ve teknik çizim hazırlığı"
+   ],
+   "deger_kazanan": [
+    "Ekipman, cihaz ve sahada uygulamalı çalışma",
+    "Arıza tespiti ve pratik problem çözme",
+    "İş güvenliği ve kalite sorumluluğu"
+   ],
+   "lisede": [
+    "Laboratuvar, atölye ve robotik çalışmalarında aktif ol",
+    "Fizik ve matematiği gerçek cihazlarla ilişkilendir (ölçme, deney)",
+    "Teknik resim ya da çizim programlarını tanı"
+   ]
+  },
+  "32": {
+   "ad": "Sağlıkla ilgili yardımcı profesyonel meslek mensupları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 17,
+   "dagilim": {
+    "g4": 0,
+    "g3": 1,
+    "g2": 0,
+    "g1": 1,
+    "minimal": 4,
+    "maruz_degil": 11
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 17 meslek — Gradyan 3–4: 1; Gradyan 1–2: 1; minimal maruz kalma: 4; maruz değil: 11.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 49–59 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "3252",
+     "ad": "Medical Records and Health Information Technicians",
+     "kategori": "g3",
+     "ort": 0.52,
+     "ss": 0.1,
+     "sayfa": 49
+    },
+    {
+     "kod": "3256",
+     "ad": "Medical Assistants",
+     "kategori": "g1",
+     "ort": 0.35,
+     "ss": 0.23,
+     "sayfa": 51
+    },
+    {
+     "kod": "3212",
+     "ad": "Medical and Pathology Laboratory Technicians",
+     "kategori": "minimal",
+     "ort": 0.31,
+     "ss": 0.16,
+     "sayfa": 54
+    },
+    {
+     "kod": "3213",
+     "ad": "Pharmaceutical Technicians and Assistants",
+     "kategori": "minimal",
+     "ort": 0.3,
+     "ss": 0.12,
+     "sayfa": 54
+    },
+    {
+     "kod": "3259",
+     "ad": "Health Associate Professionals Not Elsewhere Classified",
+     "kategori": "minimal",
+     "ort": 0.3,
+     "ss": 0.15,
+     "sayfa": 54
+    },
+    {
+     "kod": "3221",
+     "ad": "Nursing Associate Professionals",
+     "kategori": "minimal",
+     "ort": 0.22,
+     "ss": 0.21,
+     "sayfa": 55
+    },
+    {
+     "kod": "3254",
+     "ad": "Dispensing Opticians",
+     "kategori": "maruz_degil",
+     "ort": 0.24,
+     "ss": 0.07,
+     "sayfa": 56
+    },
+    {
+     "kod": "3257",
+     "ad": "Environmental and Occupational Health Inspectors and Associates",
+     "kategori": "maruz_degil",
+     "ort": 0.24,
+     "ss": 0.04,
+     "sayfa": 56
+    },
+    {
+     "kod": "3211",
+     "ad": "Medical Imaging and Therapeutic Equipment Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.03,
+     "sayfa": 56
+    },
+    {
+     "kod": "3253",
+     "ad": "Community Health Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.08,
+     "sayfa": 56
+    },
+    {
+     "kod": "3258",
+     "ad": "Ambulance Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.17,
+     "sayfa": 56
+    },
+    {
+     "kod": "3222",
+     "ad": "Midwifery Associate Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.07,
+     "sayfa": 57
+    },
+    {
+     "kod": "3230",
+     "ad": "Traditional and Complementary Medicine Associate Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.11,
+     "sayfa": 57
+    },
+    {
+     "kod": "3214",
+     "ad": "Medical and Dental Prosthetic Technicians",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.05,
+     "sayfa": 57
+    },
+    {
+     "kod": "3255",
+     "ad": "Physiotherapy Technicians and Assistants",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.07,
+     "sayfa": 58
+    },
+    {
+     "kod": "3251",
+     "ad": "Dental Assistants and Therapists",
+     "kategori": "maruz_degil",
+     "ort": 0.16,
+     "ss": 0.1,
+     "sayfa": 58
+    },
+    {
+     "kod": "3240",
+     "ad": "Veterinary Technicians and Assistants",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.02,
+     "sayfa": 59
+    }
+   ],
+   "degisen_gorevler": [
+    "Hasta ve laboratuvar verilerinin kayda girilmesi",
+    "Randevu, faturalama ve belge hazırlama"
+   ],
+   "deger_kazanan": [
+    "Hastaya doğrudan bakım, el becerisi",
+    "Acil durumda soğukkanlılık ve hızlı karar",
+    "Hasta ve yakınlarıyla iletişim"
+   ],
+   "lisede": [
+    "İlk yardım eğitimi al",
+    "Biyoloji ve kimya derslerinde temeli sağlam tut",
+    "Gönüllü bakım ya da sağlık etkinliklerinde bulun"
+   ]
+  },
+  "33": {
+   "ad": "İş ve yönetimle ilgili yardımcı profesyonel meslek mensupları",
+   "duzey": "yuksek",
+   "meslek_sayisi": 24,
+   "dagilim": {
+    "g4": 2,
+    "g3": 6,
+    "g2": 10,
+    "g1": 0,
+    "minimal": 5,
+    "maruz_degil": 1
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 24 meslek — Gradyan 3–4: 8; Gradyan 1–2: 10; minimal maruz kalma: 5; maruz değil: 1.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–56 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "3311",
+     "ad": "Securities and Finance Dealers and Brokers",
+     "kategori": "g4",
+     "ort": 0.63,
+     "ss": 0.04,
+     "sayfa": 48
+    },
+    {
+     "kod": "3312",
+     "ad": "Credit and Loans Officers",
+     "kategori": "g4",
+     "ort": 0.6,
+     "ss": 0.04,
+     "sayfa": 48
+    },
+    {
+     "kod": "3314",
+     "ad": "Statistical, Mathematical and Related Associate Professionals",
+     "kategori": "g3",
+     "ort": 0.57,
+     "ss": 0.1,
+     "sayfa": 48
+    },
+    {
+     "kod": "3331",
+     "ad": "Clearing and Forwarding Aents",
+     "kategori": "g3",
+     "ort": 0.57,
+     "ss": 0.09,
+     "sayfa": 48
+    },
+    {
+     "kod": "3342",
+     "ad": "Legal Secretaries",
+     "kategori": "g3",
+     "ort": 0.55,
+     "ss": 0.13,
+     "sayfa": 49
+    },
+    {
+     "kod": "3343",
+     "ad": "Administrative and Executive Secretaries",
+     "kategori": "g3",
+     "ort": 0.54,
+     "ss": 0.14,
+     "sayfa": 49
+    },
+    {
+     "kod": "3321",
+     "ad": "Insurance Representatives",
+     "kategori": "g3",
+     "ort": 0.53,
+     "ss": 0.12,
+     "sayfa": 49
+    },
+    {
+     "kod": "3344",
+     "ad": "Medical Secretaries",
+     "kategori": "g3",
+     "ort": 0.53,
+     "ss": 0.11,
+     "sayfa": 49
+    },
+    {
+     "kod": "3313",
+     "ad": "Accounting Associate Professionals",
+     "kategori": "g2",
+     "ort": 0.49,
+     "ss": 0.13,
+     "sayfa": 49
+    },
+    {
+     "kod": "3322",
+     "ad": "Commercial Sales Representatives",
+     "kategori": "g2",
+     "ort": 0.49,
+     "ss": 0.08,
+     "sayfa": 49
+    },
+    {
+     "kod": "3352",
+     "ad": "Government Tax and Excise Officials",
+     "kategori": "g2",
+     "ort": 0.49,
+     "ss": 0.12,
+     "sayfa": 49
+    },
+    {
+     "kod": "3332",
+     "ad": "Conference and Event Planners",
+     "kategori": "g2",
+     "ort": 0.48,
+     "ss": 0.14,
+     "sayfa": 49
+    },
+    {
+     "kod": "3315",
+     "ad": "Valuers and Loss Assessors",
+     "kategori": "g2",
+     "ort": 0.45,
+     "ss": 0.19,
+     "sayfa": 50
+    },
+    {
+     "kod": "3353",
+     "ad": "Government Social Benefits Officials",
+     "kategori": "g2",
+     "ort": 0.45,
+     "ss": 0.07,
+     "sayfa": 50
+    },
+    {
+     "kod": "3324",
+     "ad": "Trade Brokers",
+     "kategori": "g2",
+     "ort": 0.44,
+     "ss": 0.1,
+     "sayfa": 50
+    },
+    {
+     "kod": "3339",
+     "ad": "Business Services Agents Not Elsewhere Classified",
+     "kategori": "g2",
+     "ort": 0.44,
+     "ss": 0.12,
+     "sayfa": 50
+    },
+    {
+     "kod": "3341",
+     "ad": "Office Supervisors",
+     "kategori": "g2",
+     "ort": 0.43,
+     "ss": 0.11,
+     "sayfa": 50
+    },
+    {
+     "kod": "3354",
+     "ad": "Government Licensing Officials",
+     "kategori": "g2",
+     "ort": 0.43,
+     "ss": 0.07,
+     "sayfa": 50
+    },
+    {
+     "kod": "3323",
+     "ad": "Buyers",
+     "kategori": "minimal",
+     "ort": 0.39,
+     "ss": 0.08,
+     "sayfa": 51
+    },
+    {
+     "kod": "3333",
+     "ad": "Employment agents and contractors",
+     "kategori": "minimal",
+     "ort": 0.39,
+     "ss": 0.09,
+     "sayfa": 51
+    },
+    {
+     "kod": "3359",
+     "ad": "Government Regulatory AssociatePprofessionals Not Elsewhere Classified",
+     "kategori": "minimal",
+     "ort": 0.36,
+     "ss": 0.1,
+     "sayfa": 52
+    },
+    {
+     "kod": "3334",
+     "ad": "Real Estate Agents and Property Managers",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.09,
+     "sayfa": 53
+    },
+    {
+     "kod": "3351",
+     "ad": "Customs and Border Inspectors",
+     "kategori": "minimal",
+     "ort": 0.32,
+     "ss": 0.14,
+     "sayfa": 53
+    },
+    {
+     "kod": "3355",
+     "ad": "Police Inspectors and Detectives",
+     "kategori": "maruz_degil",
+     "ort": 0.23,
+     "ss": 0.07,
+     "sayfa": 56
+    }
+   ],
+   "degisen_gorevler": [
+    "Toplantı ve randevu planlama, yazışma",
+    "İstatistik ve muhasebe sonuçlarının sunuma hazırlanması",
+    "Değerleme, sigorta ve kredi dosyalarının raporlanması"
+   ],
+   "deger_kazanan": [
+    "Müşteriyle güven ilişkisi ve müzakere",
+    "Sahada denetim, inceleme ve yerinde karar",
+    "Kuralları yorumlama ve istisnaları yönetme"
+   ],
+   "lisede": [
+    "Elektronik tablo ve sunum araçlarını iyi öğren, sonra bunları bir amaç için kullan",
+    "Okul etkinliklerinde organizasyon ve iletişim görevleri al",
+    "Ekonomi ve temel hukuk konularını takip et"
+   ]
+  },
+  "34": {
+   "ad": "Hukuk, sosyal, kültürel ve ilgili yardımcı profesyonel meslek mensupları",
+   "duzey": "orta",
+   "meslek_sayisi": 10,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 3,
+    "minimal": 3,
+    "maruz_degil": 4
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 10 meslek — Gradyan 1–2: 3; minimal maruz kalma: 3; maruz değil: 4.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 50–60 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "3411",
+     "ad": "Legal and Related Associate Professionals",
+     "kategori": "g1",
+     "ort": 0.39,
+     "ss": 0.14,
+     "sayfa": 50
+    },
+    {
+     "kod": "3431",
+     "ad": "Photographers",
+     "kategori": "g1",
+     "ort": 0.39,
+     "ss": 0.12,
+     "sayfa": 50
+    },
+    {
+     "kod": "3433",
+     "ad": "Gallery, Museum and Library Technicians",
+     "kategori": "g1",
+     "ort": 0.37,
+     "ss": 0.2,
+     "sayfa": 51
+    },
+    {
+     "kod": "3422",
+     "ad": "Sports Coaches, Instructors and Officials",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.12,
+     "sayfa": 52
+    },
+    {
+     "kod": "3432",
+     "ad": "Interior Designers and Decorators",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.08,
+     "sayfa": 52
+    },
+    {
+     "kod": "3412",
+     "ad": "Social Work Associate Professionals",
+     "kategori": "minimal",
+     "ort": 0.33,
+     "ss": 0.13,
+     "sayfa": 53
+    },
+    {
+     "kod": "3423",
+     "ad": "Fitness and Recreation Instructors and Programme Leaders",
+     "kategori": "maruz_degil",
+     "ort": 0.25,
+     "ss": 0.07,
+     "sayfa": 56
+    },
+    {
+     "kod": "3434",
+     "ad": "Chefs",
+     "kategori": "maruz_degil",
+     "ort": 0.25,
+     "ss": 0.06,
+     "sayfa": 56
+    },
+    {
+     "kod": "3421",
+     "ad": "Athletes and Sports Players",
+     "kategori": "maruz_degil",
+     "ort": 0.23,
+     "ss": 0.11,
+     "sayfa": 56
+    },
+    {
+     "kod": "3413",
+     "ad": "Religious Associate Professionals",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.07,
+     "sayfa": 60
+    }
+   ],
+   "degisen_gorevler": [
+    "Veri girişi, katalog ve kayıt düzenleme",
+    "Belge hazırlama (ör. hukuk büroları), sonuç ve skor derleme"
+   ],
+   "deger_kazanan": [
+    "Spor, sanat, aşçılık gibi bedensel ve yaratıcı performans",
+    "İnsanlarla birebir çalışma (sosyal hizmet, koçluk)",
+    "Estetik yargı ve özgünlük"
+   ],
+   "lisede": [
+    "Spor, müzik, fotoğraf, mutfak gibi bir alanda düzenli pratik yap",
+    "Kulüp ya da takımda sorumluluk al; başkalarına antrenman/atölye vermeyi dene",
+    "Portfolyo oluşturmaya başla"
+   ]
+  },
+  "35": {
+   "ad": "Bilgi ve iletişim teknisyenleri",
+   "duzey": "orta",
+   "meslek_sayisi": 6,
+   "dagilim": {
+    "g4": 0,
+    "g3": 1,
+    "g2": 3,
+    "g1": 0,
+    "minimal": 2,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 6 meslek — Gradyan 3–4: 1; Gradyan 1–2: 3; minimal maruz kalma: 2.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 49–53 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "3514",
+     "ad": "Web Technicians",
+     "kategori": "g3",
+     "ort": 0.53,
+     "ss": 0.12,
+     "sayfa": 49
+    },
+    {
+     "kod": "3512",
+     "ad": "Information and Communications Technology User Support Technicians",
+     "kategori": "g2",
+     "ort": 0.47,
+     "ss": 0.19,
+     "sayfa": 49
+    },
+    {
+     "kod": "3511",
+     "ad": "Information and Communications Technology Operations Technicians",
+     "kategori": "g2",
+     "ort": 0.43,
+     "ss": 0.13,
+     "sayfa": 50
+    },
+    {
+     "kod": "3513",
+     "ad": "Computer Network and Systems Technicians",
+     "kategori": "g2",
+     "ort": 0.43,
+     "ss": 0.08,
+     "sayfa": 50
+    },
+    {
+     "kod": "3522",
+     "ad": "Telecommunications Engineering Technicians",
+     "kategori": "minimal",
+     "ort": 0.45,
+     "ss": 0.04,
+     "sayfa": 51
+    },
+    {
+     "kod": "3521",
+     "ad": "Broadcasting and Audio-visual Technicians",
+     "kategori": "minimal",
+     "ort": 0.35,
+     "ss": 0.11,
+     "sayfa": 53
+    }
+   ],
+   "degisen_gorevler": [
+    "Web sayfası oluşturma ve düzenleme",
+    "Kullanıcı sorularını yanıtlama, kılavuzlardan çözüm bulma",
+    "Çıktıların düzenlenip iletilmesi"
+   ],
+   "deger_kazanan": [
+    "Donanım kurulumu ve arızayı yerinde giderme",
+    "Kullanıcıya sabırla yardım etme",
+    "Ağ ve güvenlik konusunda dikkat ve sorumluluk"
+   ],
+   "lisede": [
+    "Bilgisayar donanımını tanı; kurulum ve onarımda deneyim kazan",
+    "Okulda teknik destek ya da yayın/ses ekiplerinde görev al",
+    "Temel ağ ve siber güvenlik konularını öğren"
+   ]
+  },
+  "41": {
+   "ad": "Genel ve klavye kullanan büro elemanları",
+   "duzey": "yuksek",
+   "meslek_sayisi": 4,
+   "dagilim": {
+    "g4": 3,
+    "g3": 1,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 4 meslek — Gradyan 3–4: 4.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "4132",
+     "ad": "Data Entry Clerks",
+     "kategori": "g4",
+     "ort": 0.7,
+     "ss": 0.03,
+     "sayfa": 48
+    },
+    {
+     "kod": "4131",
+     "ad": "Typists and Word Processing Operators",
+     "kategori": "g4",
+     "ort": 0.65,
+     "ss": 0.05,
+     "sayfa": 48
+    },
+    {
+     "kod": "4110",
+     "ad": "General Office Clerks",
+     "kategori": "g4",
+     "ort": 0.6,
+     "ss": 0.1,
+     "sayfa": 48
+    },
+    {
+     "kod": "4120",
+     "ad": "Secretaries (general)",
+     "kategori": "g3",
+     "ort": 0.58,
+     "ss": 0.1,
+     "sayfa": 48
+    }
+   ],
+   "degisen_gorevler": [
+    "Veri girişi, metin yazma, düzelti ve biçimlendirme",
+    "Toplantı ve randevu organize etme",
+    "Belge kaydı ve sınıflandırma"
+   ],
+   "deger_kazanan": [
+    "İnsanlarla iletişim ve kurum içi koordinasyon",
+    "Hataları ve tutarsızlıkları fark etme",
+    "Yeni dijital araçlara hızla uyum sağlama"
+   ],
+   "lisede": [
+    "Klavye ve ofis programlarını iyi öğren, ama yalnızca buna yaslanma: iletişim ve organizasyon becerini de geliştir",
+    "Bir alanda uzmanlaşmayı düşün (ör. muhasebe, insan kaynakları, sağlık yönetimi)",
+    "Yapay zekâ araçlarıyla nasıl verimli ve dikkatli çalışılacağını keşfet"
+   ]
+  },
+  "42": {
+   "ad": "Müşteri hizmetleri elemanları",
+   "duzey": "yuksek",
+   "meslek_sayisi": 12,
+   "dagilim": {
+    "g4": 0,
+    "g3": 8,
+    "g2": 4,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 12 meslek — Gradyan 3–4: 8; Gradyan 1–2: 4.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–50 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "4211",
+     "ad": "Bank Tellers and Related Clerks",
+     "kategori": "g3",
+     "ort": 0.58,
+     "ss": 0.09,
+     "sayfa": 48
+    },
+    {
+     "kod": "4222",
+     "ad": "Contact Centre Information Clerks",
+     "kategori": "g3",
+     "ort": 0.58,
+     "ss": 0.06,
+     "sayfa": 48
+    },
+    {
+     "kod": "4225",
+     "ad": "Inquiry Clerks",
+     "kategori": "g3",
+     "ort": 0.57,
+     "ss": 0.09,
+     "sayfa": 48
+    },
+    {
+     "kod": "4226",
+     "ad": "Receptionists (general)",
+     "kategori": "g3",
+     "ort": 0.57,
+     "ss": 0.17,
+     "sayfa": 48
+    },
+    {
+     "kod": "4221",
+     "ad": "Travel Consultants and Clerks",
+     "kategori": "g3",
+     "ort": 0.56,
+     "ss": 0.07,
+     "sayfa": 48
+    },
+    {
+     "kod": "4227",
+     "ad": "Survey and Market Research Interviewers",
+     "kategori": "g3",
+     "ort": 0.55,
+     "ss": 0.16,
+     "sayfa": 49
+    },
+    {
+     "kod": "4223",
+     "ad": "Telephone Switchboard Operators",
+     "kategori": "g3",
+     "ort": 0.54,
+     "ss": 0.15,
+     "sayfa": 49
+    },
+    {
+     "kod": "4224",
+     "ad": "Hotel Receptionists",
+     "kategori": "g3",
+     "ort": 0.51,
+     "ss": 0.07,
+     "sayfa": 49
+    },
+    {
+     "kod": "4213",
+     "ad": "Pawnbrokers and Money-lenders",
+     "kategori": "g2",
+     "ort": 0.48,
+     "ss": 0.06,
+     "sayfa": 49
+    },
+    {
+     "kod": "4212",
+     "ad": "Bookmakers, Croupiers and Related Gaming Workers",
+     "kategori": "g2",
+     "ort": 0.45,
+     "ss": 0.19,
+     "sayfa": 50
+    },
+    {
+     "kod": "4214",
+     "ad": "Debt Collectors and Related Workers",
+     "kategori": "g2",
+     "ort": 0.43,
+     "ss": 0.07,
+     "sayfa": 50
+    },
+    {
+     "kod": "4229",
+     "ad": "Client Information Workers Not Elsewhere Classified",
+     "kategori": "g2",
+     "ort": 0.42,
+     "ss": 0.13,
+     "sayfa": 50
+    }
+   ],
+   "degisen_gorevler": [
+    "Randevu alma, bilgi ve broşür verme",
+    "Anket sorularını sorma ve yanıtları kaydetme",
+    "Sık sorulan sorulara yanıt verme"
+   ],
+   "deger_kazanan": [
+    "Zor ya da duygusal durumdaki insanlarla sakin iletişim",
+    "Sorunun özünü anlayıp çözüm bulma",
+    "Güven veren, nazik ve dikkatli hizmet"
+   ],
+   "lisede": [
+    "Etkinliklerde karşılama ve bilgilendirme görevlerinde bulun",
+    "Yabancı dil konuşma pratiğini artır",
+    "Gönüllü çalışmalarda farklı insanlarla iletişim deneyimi kazan"
+   ]
+  },
+  "43": {
+   "ad": "Sayısal ve malzeme kayıt elemanları",
+   "duzey": "yuksek",
+   "meslek_sayisi": 6,
+   "dagilim": {
+    "g4": 3,
+    "g3": 1,
+    "g2": 1,
+    "g1": 0,
+    "minimal": 1,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 6 meslek — Gradyan 3–4: 4; Gradyan 1–2: 1; minimal maruz kalma: 1.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–52 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "4311",
+     "ad": "Accounting and Bookkeeping Clerks",
+     "kategori": "g4",
+     "ort": 0.64,
+     "ss": 0.07,
+     "sayfa": 48
+    },
+    {
+     "kod": "4312",
+     "ad": "Statistical, Finance and Insurance Clerks",
+     "kategori": "g4",
+     "ort": 0.64,
+     "ss": 0.02,
+     "sayfa": 48
+    },
+    {
+     "kod": "4313",
+     "ad": "Payroll Clerks",
+     "kategori": "g4",
+     "ort": 0.61,
+     "ss": 0.08,
+     "sayfa": 48
+    },
+    {
+     "kod": "4323",
+     "ad": "Transport Clerks",
+     "kategori": "g3",
+     "ort": 0.5,
+     "ss": 0.1,
+     "sayfa": 49
+    },
+    {
+     "kod": "4322",
+     "ad": "Production Clerks",
+     "kategori": "g2",
+     "ort": 0.44,
+     "ss": 0.06,
+     "sayfa": 50
+    },
+    {
+     "kod": "4321",
+     "ad": "Stock Clerks",
+     "kategori": "minimal",
+     "ort": 0.37,
+     "ss": 0.06,
+     "sayfa": 52
+    }
+   ],
+   "degisen_gorevler": [
+    "Fatura, hesap ve bordro hesaplamaları",
+    "Muhasebe yazılımına kayıt ve analiz",
+    "Sigorta ve finans işlemlerinin işlenmesi"
+   ],
+   "deger_kazanan": [
+    "Sayısal tutarsızlıkları sorgulama ve denetim",
+    "Depo, stok ve sevkiyatta yerinde kontrol",
+    "Mevzuatı yorumlama ve danışmanlık"
+   ],
+   "lisede": [
+    "Matematik ve temel muhasebe/finans okuryazarlığını güçlendir",
+    "Okul kermesi ya da kulüp bütçesinde kayıt tutmayı dene",
+    "Bu alanda düşünüyorsan, daha ileri uzmanlık (ör. mali müşavirlik, denetim) yollarını araştır"
+   ]
+  },
+  "44": {
+   "ad": "Diğer büro hizmetleri elemanları",
+   "duzey": "yuksek",
+   "meslek_sayisi": 7,
+   "dagilim": {
+    "g4": 2,
+    "g3": 2,
+    "g2": 2,
+    "g1": 1,
+    "minimal": 0,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 7 meslek — Gradyan 3–4: 4; Gradyan 1–2: 3.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–51 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "4419",
+     "ad": "Clerical Support Workers Not Elsewhere Classified",
+     "kategori": "g4",
+     "ort": 0.63,
+     "ss": 0.03,
+     "sayfa": 48
+    },
+    {
+     "kod": "4416",
+     "ad": "Personnel Clerks",
+     "kategori": "g4",
+     "ort": 0.6,
+     "ss": 0.09,
+     "sayfa": 48
+    },
+    {
+     "kod": "4414",
+     "ad": "Scribes and Related Workers",
+     "kategori": "g3",
+     "ort": 0.58,
+     "ss": 0.08,
+     "sayfa": 48
+    },
+    {
+     "kod": "4413",
+     "ad": "Coding, Proofreading and Related Clerks",
+     "kategori": "g3",
+     "ort": 0.51,
+     "ss": 0.2,
+     "sayfa": 49
+    },
+    {
+     "kod": "4411",
+     "ad": "Library Clerks",
+     "kategori": "g2",
+     "ort": 0.46,
+     "ss": 0.18,
+     "sayfa": 49
+    },
+    {
+     "kod": "4412",
+     "ad": "Mail Carriers and Sorting Clerks",
+     "kategori": "g2",
+     "ort": 0.41,
+     "ss": 0.15,
+     "sayfa": 50
+    },
+    {
+     "kod": "4415",
+     "ad": "Filing and Copying Clerks",
+     "kategori": "g1",
+     "ort": 0.37,
+     "ss": 0.17,
+     "sayfa": 51
+    }
+   ],
+   "degisen_gorevler": [
+    "Bilgileri kodlama ve sınıflandırma",
+    "Metinleri düzelti, karşılaştırma",
+    "Personel ve arşiv kayıtlarını saklama, bulma"
+   ],
+   "deger_kazanan": [
+    "Başkalarına birebir yardım ve rehberlik",
+    "Dikkat ve doğruluk sorumluluğu",
+    "Dijital arşiv ve yeni sistemlere uyum"
+   ],
+   "lisede": [
+    "Okul kütüphanesinde ya da arşiv işlerinde gönüllü çalış",
+    "Ofis programlarını ve dijital düzenlemeyi öğren",
+    "İletişim ve insanlara yardım etme becerini geliştir"
+   ]
+  },
+  "51": {
+   "ad": "Kişisel hizmet çalışanları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 17,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 5,
+    "maruz_degil": 12
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 17 meslek — minimal maruz kalma: 5; maruz değil: 12.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 53–59 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "5113",
+     "ad": "Travel Guides",
+     "kategori": "minimal",
+     "ort": 0.32,
+     "ss": 0.11,
+     "sayfa": 53
+    },
+    {
+     "kod": "5161",
+     "ad": "Astrologers, Fortune-tellers and Related Workers",
+     "kategori": "minimal",
+     "ort": 0.3,
+     "ss": 0.16,
+     "sayfa": 54
+    },
+    {
+     "kod": "5131",
+     "ad": "Waiters",
+     "kategori": "minimal",
+     "ort": 0.28,
+     "ss": 0.16,
+     "sayfa": 54
+    },
+    {
+     "kod": "5153",
+     "ad": "Building Caretakers",
+     "kategori": "minimal",
+     "ort": 0.27,
+     "ss": 0.16,
+     "sayfa": 54
+    },
+    {
+     "kod": "5112",
+     "ad": "Transport Conductors",
+     "kategori": "minimal",
+     "ort": 0.25,
+     "ss": 0.17,
+     "sayfa": 54
+    },
+    {
+     "kod": "5132",
+     "ad": "Bartenders",
+     "kategori": "maruz_degil",
+     "ort": 0.26,
+     "ss": 0.12,
+     "sayfa": 56
+    },
+    {
+     "kod": "5111",
+     "ad": "Travel Attendants and Travel Stewards",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.1,
+     "sayfa": 56
+    },
+    {
+     "kod": "5151",
+     "ad": "Cleaning and Housekeeping Supervisors in Offices, Hotels and Other Establishments",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.1,
+     "sayfa": 56
+    },
+    {
+     "kod": "5162",
+     "ad": "Companions and Valets",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.05,
+     "sayfa": 56
+    },
+    {
+     "kod": "5169",
+     "ad": "Personal Services Workers Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.07,
+     "sayfa": 57
+    },
+    {
+     "kod": "5152",
+     "ad": "Domestic Housekeepers",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.1,
+     "sayfa": 57
+    },
+    {
+     "kod": "5165",
+     "ad": "Driving Instructors",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.03,
+     "sayfa": 57
+    },
+    {
+     "kod": "5120",
+     "ad": "Cooks",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.06,
+     "sayfa": 57
+    },
+    {
+     "kod": "5142",
+     "ad": "Beauticians and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.19,
+     "sayfa": 58
+    },
+    {
+     "kod": "5141",
+     "ad": "Hairdressers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.18,
+     "sayfa": 58
+    },
+    {
+     "kod": "5163",
+     "ad": "Undertakers and Embalmers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.17,
+     "sayfa": 58
+    },
+    {
+     "kod": "5164",
+     "ad": "Pet Groomers and Animal Care Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.06,
+     "sayfa": 59
+    }
+   ],
+   "degisen_gorevler": [
+    "Randevu ve ödeme işleri",
+    "Yolcuya ya da müşteriye bilgi verme"
+   ],
+   "deger_kazanan": [
+    "El becerisi (kuaförlük, güzellik, aşçılık vb.)",
+    "Müşteriyle yüz yüze ilişki ve güven",
+    "Estetik ve özen"
+   ],
+   "lisede": [
+    "Mesleki eğitim ve beceri kurslarını araştır",
+    "Hobi olarak el becerisi gerektiren bir uğraşla düzenli pratik yap",
+    "Müşteri ilişkisi deneyimi kazanacağın görevler al"
+   ]
+  },
+  "52": {
+   "ad": "Satış çalışanları",
+   "duzey": "orta",
+   "meslek_sayisi": 12,
+   "dagilim": {
+    "g4": 1,
+    "g3": 0,
+    "g2": 3,
+    "g1": 3,
+    "minimal": 2,
+    "maruz_degil": 3
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 12 meslek — Gradyan 3–4: 1; Gradyan 1–2: 6; minimal maruz kalma: 2; maruz değil: 3.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 48–56 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "5244",
+     "ad": "Contact Centre Salespersons",
+     "kategori": "g4",
+     "ort": 0.61,
+     "ss": 0.1,
+     "sayfa": 48
+    },
+    {
+     "kod": "5243",
+     "ad": "Door-to-door Salespersons",
+     "kategori": "g2",
+     "ort": 0.46,
+     "ss": 0.18,
+     "sayfa": 50
+    },
+    {
+     "kod": "5221",
+     "ad": "Shopkeepers",
+     "kategori": "g2",
+     "ort": 0.43,
+     "ss": 0.1,
+     "sayfa": 50
+    },
+    {
+     "kod": "5242",
+     "ad": "Sales Demonstrators",
+     "kategori": "g2",
+     "ort": 0.42,
+     "ss": 0.11,
+     "sayfa": 50
+    },
+    {
+     "kod": "5230",
+     "ad": "Cashiers and Ticket Clerks",
+     "kategori": "g1",
+     "ort": 0.39,
+     "ss": 0.14,
+     "sayfa": 50
+    },
+    {
+     "kod": "5223",
+     "ad": "Shop Sales Assistants",
+     "kategori": "g1",
+     "ort": 0.38,
+     "ss": 0.16,
+     "sayfa": 50
+    },
+    {
+     "kod": "5211",
+     "ad": "Stall and Market Salespersons",
+     "kategori": "g1",
+     "ort": 0.35,
+     "ss": 0.17,
+     "sayfa": 51
+    },
+    {
+     "kod": "5222",
+     "ad": "Shop Supervisors",
+     "kategori": "minimal",
+     "ort": 0.36,
+     "ss": 0.12,
+     "sayfa": 52
+    },
+    {
+     "kod": "5245",
+     "ad": "Service Station Attendants",
+     "kategori": "minimal",
+     "ort": 0.24,
+     "ss": 0.16,
+     "sayfa": 55
+    },
+    {
+     "kod": "5241",
+     "ad": "Fashion and Other Models",
+     "kategori": "maruz_degil",
+     "ort": 0.25,
+     "ss": 0.06,
+     "sayfa": 56
+    },
+    {
+     "kod": "5246",
+     "ad": "Food Service Counter Attendants",
+     "kategori": "maruz_degil",
+     "ort": 0.24,
+     "ss": 0.13,
+     "sayfa": 56
+    },
+    {
+     "kod": "5212",
+     "ad": "Street Food Salespersons",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.11,
+     "sayfa": 56
+    }
+   ],
+   "degisen_gorevler": [
+    "Telefon ve e-postayla senaryoya bağlı satış",
+    "Satış istatistikleri ve raporları",
+    "Potansiyel müşteri listeleri ve randevular"
+   ],
+   "deger_kazanan": [
+    "Yüz yüze satış, müşteriyi dinleme ve ikna",
+    "Güven ilişkisi kurma",
+    "Mağazada ürün, düzen ve hizmette özen"
+   ],
+   "lisede": [
+    "Kermes, okul satışı gibi etkinliklerde satış yapmayı dene",
+    "Kendini ifade etme ve dinleme becerini geliştir",
+    "Bir ürünü gerçekten tanıyıp anlatmayı öğren"
+   ]
+  },
+  "53": {
+   "ad": "Kişisel bakım çalışanları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 5,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 1,
+    "maruz_degil": 4
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — minimal maruz kalma: 1; maruz değil: 4.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 54–59 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "5322",
+     "ad": "Home-based Personal Care Workers",
+     "kategori": "minimal",
+     "ort": 0.25,
+     "ss": 0.18,
+     "sayfa": 54
+    },
+    {
+     "kod": "5312",
+     "ad": "Teachers' Aides",
+     "kategori": "maruz_degil",
+     "ort": 0.24,
+     "ss": 0.14,
+     "sayfa": 56
+    },
+    {
+     "kod": "5311",
+     "ad": "Child Care Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.09,
+     "sayfa": 57
+    },
+    {
+     "kod": "5329",
+     "ad": "Personal Care Workers in Health Services Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.03,
+     "sayfa": 59
+    },
+    {
+     "kod": "5321",
+     "ad": "Health Care Assistants",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.06,
+     "sayfa": 59
+    }
+   ],
+   "degisen_gorevler": [
+    "Bakım kayıtlarının tutulması ve raporlanması",
+    "Randevu ve eşlik planlaması, ders materyali hazırlama"
+   ],
+   "deger_kazanan": [
+    "Bedensel bakım ve destek (kaldırma, besleme, hijyen)",
+    "Şefkat, sabır ve güven",
+    "Çocuk ve yaşlıyla birebir ilgilenme"
+   ],
+   "lisede": [
+    "Yaşlı, engelli ya da çocuklarla ilgili gönüllü çalışmalara katıl",
+    "İlk yardım eğitimi al",
+    "Sabırla dinleme ve iletişim becerini geliştir"
+   ]
+  },
+  "54": {
+   "ad": "Koruma hizmetleri çalışanları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 5,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 5
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — maruz değil: 5.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 57–59 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "5414",
+     "ad": "Security Guards",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.09,
+     "sayfa": 57
+    },
+    {
+     "kod": "5419",
+     "ad": "Protective Services Workers Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.05,
+     "sayfa": 57
+    },
+    {
+     "kod": "5411",
+     "ad": "Fire Fighters",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.1,
+     "sayfa": 58
+    },
+    {
+     "kod": "5412",
+     "ad": "Police Officers",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.03,
+     "sayfa": 59
+    },
+    {
+     "kod": "5413",
+     "ad": "Prison Guards",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.04,
+     "sayfa": 59
+    }
+   ],
+   "degisen_gorevler": [
+    "Giriş-çıkış kontrolü ve kayıt",
+    "Halkı bilgilendirme"
+   ],
+   "deger_kazanan": [
+    "Fiziksel müdahale, kurtarma ve sahada hızlı karar",
+    "Risk anında soğukkanlılık",
+    "Sorumluluk ve güvenilirlik"
+   ],
+   "lisede": [
+    "Düzenli spor yap, fiziksel dayanıklılığını artır",
+    "İlk yardım ve afet bilinci eğitimlerine katıl",
+    "Takım çalışması gerektiren etkinliklerde bulun"
+   ]
+  },
+  "61": {
+   "ad": "Pazara yönelik nitelikli tarım çalışanları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 9,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 9
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 9 meslek — maruz değil: 9.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 56–58 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "6123",
+     "ad": "Apiarists and Sericulturists",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.11,
+     "sayfa": 56
+    },
+    {
+     "kod": "6129",
+     "ad": "Animal Producers Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.14,
+     "sayfa": 57
+    },
+    {
+     "kod": "6122",
+     "ad": "Poultry Producers",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.1,
+     "sayfa": 57
+    },
+    {
+     "kod": "6130",
+     "ad": "Mixed Crop and Animal Producers",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.11,
+     "sayfa": 57
+    },
+    {
+     "kod": "6111",
+     "ad": "Field Crop and Vegetable Growers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.12,
+     "sayfa": 58
+    },
+    {
+     "kod": "6113",
+     "ad": "Gardeners, Horticultural and Nursery Growers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.11,
+     "sayfa": 58
+    },
+    {
+     "kod": "6112",
+     "ad": "Tree and Shrub Crop Growers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.11,
+     "sayfa": 58
+    },
+    {
+     "kod": "6114",
+     "ad": "Mixed Crop Growers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.12,
+     "sayfa": 58
+    },
+    {
+     "kod": "6121",
+     "ad": "Livestock and Dairy Producers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.1,
+     "sayfa": 58
+    }
+   ],
+   "degisen_gorevler": [
+    "Pazar takibi, üretim planı ve satış organizasyonu",
+    "Kayıt ve bütçe işleri"
+   ],
+   "deger_kazanan": [
+    "Toprak, bitki ve hayvanla bedensel ve deneyime dayalı çalışma",
+    "Doğayı ve mevsimi gözlemleme",
+    "Makine kullanımı ve bakım"
+   ],
+   "lisede": [
+    "Okul bahçesi, sera ya da çiftlik ziyaretlerinde uygulamalı deneyim kazan",
+    "Biyoloji ve coğrafyada tarım ve iklim konularını takip et",
+    "Akıllı tarım teknolojilerini (sensör, dron) araştır"
+   ]
+  },
+  "62": {
+   "ad": "Pazara yönelik nitelikli ormancılık, balıkçılık ve avcılık çalışanları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 5,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 5
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — maruz değil: 5.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 56–60 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "6221",
+     "ad": "Aquaculture Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.15,
+     "sayfa": 56
+    },
+    {
+     "kod": "6223",
+     "ad": "Deep-sea Fishery Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.07,
+     "sayfa": 58
+    },
+    {
+     "kod": "6222",
+     "ad": "Inland and Coastal Waters Fishery Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.1,
+     "sayfa": 58
+    },
+    {
+     "kod": "6210",
+     "ad": "Forestry and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.05,
+     "sayfa": 60
+    },
+    {
+     "kod": "6224",
+     "ad": "Hunters and Trappers",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.03,
+     "sayfa": 60
+    }
+   ],
+   "degisen_gorevler": [
+    "Üretim ve çevre verilerinin kaydı",
+    "Ürünlerin pazarlanması ve satışı"
+   ],
+   "deger_kazanan": [
+    "Ormanda ve denizde bedensel, deneyime dayalı çalışma",
+    "Doğa ve hava koşullarını okuma",
+    "İş güvenliği"
+   ],
+   "lisede": [
+    "Doğa ve çevre kulüplerine katıl",
+    "Biyoloji ve coğrafyada orman ve deniz ekosistemlerini öğren",
+    "Yüzme ve ilk yardım gibi güvenlik becerileri kazan"
+   ]
+  },
+  "63": {
+   "ad": "Geçimlik çiftçiler, balıkçılar, avcılar ve toplayıcılar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 4,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 4
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 4 meslek — maruz değil: 4.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 59–60 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "6310",
+     "ad": "Subsistence Crop Farmers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.05,
+     "sayfa": 59
+    },
+    {
+     "kod": "6320",
+     "ad": "Subsistence Livestock Farmers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.04,
+     "sayfa": 59
+    },
+    {
+     "kod": "6330",
+     "ad": "Subsistence Mixed Crop and Livestock Farmers",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.05,
+     "sayfa": 60
+    },
+    {
+     "kod": "6340",
+     "ad": "Subsistence Fishers, Hunters, Trappers and Gatherers",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.05,
+     "sayfa": 60
+    }
+   ],
+   "degisen_gorevler": [
+    "Ürünlerin pazarda satışı ve takası"
+   ],
+   "deger_kazanan": [
+    "Doğayla iç içe bedensel çalışma ve deneyim",
+    "Kendi kendine yetebilme ve uyum"
+   ],
+   "lisede": [
+    "Bahçecilik ve doğa etkinliklerinde deneyim kazan",
+    "Tarım ve kırsal kalkınma programlarını araştır"
+   ]
+  },
+  "71": {
+   "ad": "İnşaat ve ilgili işlerde çalışan sanatkârlar (elektrikçiler hariç)",
+   "duzey": "dusuk",
+   "meslek_sayisi": 16,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 16
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 16 meslek — maruz değil: 16.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 57–61 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "7127",
+     "ad": "Air Conditioning and Refrigeration Mechanics",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.11,
+     "sayfa": 57
+    },
+    {
+     "kod": "7126",
+     "ad": "Plumbers and Pipe Fitters",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.1,
+     "sayfa": 58
+    },
+    {
+     "kod": "7111",
+     "ad": "House Builders",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.07,
+     "sayfa": 59
+    },
+    {
+     "kod": "7125",
+     "ad": "Glaziers",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.0,
+     "sayfa": 59
+    },
+    {
+     "kod": "7115",
+     "ad": "Carpenters and Joiners",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.02,
+     "sayfa": 59
+    },
+    {
+     "kod": "7121",
+     "ad": "Roofers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.08,
+     "sayfa": 59
+    },
+    {
+     "kod": "7124",
+     "ad": "Insulation Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "7131",
+     "ad": "Painters and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.04,
+     "sayfa": 60
+    },
+    {
+     "kod": "7132",
+     "ad": "Spray Painters and Varnishers",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.0,
+     "sayfa": 60
+    },
+    {
+     "kod": "7113",
+     "ad": "Stonemasons, Stone Cutters, Splitters and Carvers",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "7123",
+     "ad": "Plasterers",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.01,
+     "sayfa": 60
+    },
+    {
+     "kod": "7114",
+     "ad": "Concrete Placers, Concrete Finishers and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.1,
+     "ss": 0.03,
+     "sayfa": 60
+    },
+    {
+     "kod": "7122",
+     "ad": "Floor Layers and Tile Setters",
+     "kategori": "maruz_degil",
+     "ort": 0.1,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "7112",
+     "ad": "Bricklayers and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.01,
+     "sayfa": 60
+    },
+    {
+     "kod": "7119",
+     "ad": "Building Frame and Related Trades Workers Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.01,
+     "sayfa": 61
+    },
+    {
+     "kod": "7133",
+     "ad": "Building Structure Cleaners",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.01,
+     "sayfa": 61
+    }
+   ],
+   "degisen_gorevler": [
+    "Proje, çizim ve şartnameleri okuma, malzeme belirleme",
+    "İşin planlanması ve koordinasyonu"
+   ],
+   "deger_kazanan": [
+    "El becerisi ve sahada uygulama",
+    "Güvenli çalışma ve kalite özeni",
+    "Beklenmedik sorunlara pratik çözüm"
+   ],
+   "lisede": [
+    "Atölye ve teknoloji-tasarım derslerinde elinle üretmeye zaman ayır",
+    "Mesleki ve teknik eğitim yollarını (MTAL, usta-çırak) araştır",
+    "Teknik çizim okumayı öğren"
+   ]
+  },
+  "72": {
+   "ad": "Metal, makine ve ilgili işlerde çalışan sanatkârlar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 13,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 13
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 13 meslek — maruz değil: 13.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 57–60 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "7213",
+     "ad": "Sheet Metal Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.09,
+     "sayfa": 57
+    },
+    {
+     "kod": "7222",
+     "ad": "Toolmakers and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.1,
+     "sayfa": 57
+    },
+    {
+     "kod": "7232",
+     "ad": "Aircraft Engine Mechanics and Repairers",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.07,
+     "sayfa": 57
+    },
+    {
+     "kod": "7223",
+     "ad": "Metal Working Machine Tool Setters and  Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.05,
+     "sayfa": 58
+    },
+    {
+     "kod": "7231",
+     "ad": "Motor Vehicle Mechanics and Repairers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.04,
+     "sayfa": 58
+    },
+    {
+     "kod": "7221",
+     "ad": "Blacksmiths, Hammersmiths and Forging Press Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.05,
+     "sayfa": 58
+    },
+    {
+     "kod": "7224",
+     "ad": "Metal Polishers, Wheel Grinders and Tool Sharpeners",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.05,
+     "sayfa": 58
+    },
+    {
+     "kod": "7233",
+     "ad": "Agricultural and Industrial Machinery Mechanics and Repairers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.04,
+     "sayfa": 58
+    },
+    {
+     "kod": "7211",
+     "ad": "Metal Moulders and Coremakers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.01,
+     "sayfa": 60
+    },
+    {
+     "kod": "7212",
+     "ad": "Welders and Flame Cutters",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.05,
+     "sayfa": 60
+    },
+    {
+     "kod": "7215",
+     "ad": "Riggers and Cable Splicers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.03,
+     "sayfa": 60
+    },
+    {
+     "kod": "7234",
+     "ad": "Bicycle and Related Repairers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "7214",
+     "ad": "Structural Metal Preparers and Erectors",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.02,
+     "sayfa": 60
+    }
+   ],
+   "degisen_gorevler": [
+    "Şablon, çizim ve iş süreci hazırlama",
+    "Bakım kayıtlarının tutulması"
+   ],
+   "deger_kazanan": [
+    "Kaynak, montaj, işleme gibi ustalık gerektiren el becerisi",
+    "Makineyi dinleyip arızayı sezme",
+    "Kalite ve güvenlik sorumluluğu"
+   ],
+   "lisede": [
+    "Atölye ve robotik çalışmalarına katıl",
+    "Fizik ve matematiği makine ve mekanizmalarla ilişkilendir",
+    "Bilgisayar destekli üretim (CNC, 3B yazıcı) teknolojilerini tanı"
+   ]
+  },
+  "73": {
+   "ad": "El sanatları ve baskı işlerinde çalışanlar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 11,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 1,
+    "minimal": 0,
+    "maruz_degil": 10
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 11 meslek — Gradyan 1–2: 1; maruz değil: 10.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 50–60 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "7321",
+     "ad": "Pre-press Technicians",
+     "kategori": "g1",
+     "ort": 0.38,
+     "ss": 0.22,
+     "sayfa": 50
+    },
+    {
+     "kod": "7322",
+     "ad": "Printers",
+     "kategori": "maruz_degil",
+     "ort": 0.25,
+     "ss": 0.11,
+     "sayfa": 56
+    },
+    {
+     "kod": "7323",
+     "ad": "Print Finishing and Binding Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.09,
+     "sayfa": 56
+    },
+    {
+     "kod": "7311",
+     "ad": "Precision-instrument Makers and Repairers",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.08,
+     "sayfa": 57
+    },
+    {
+     "kod": "7315",
+     "ad": "Glass Makers, Cutters, Grinders and Finishers",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.06,
+     "sayfa": 57
+    },
+    {
+     "kod": "7313",
+     "ad": "Jewellery and Precious Metal Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.05,
+     "sayfa": 58
+    },
+    {
+     "kod": "7314",
+     "ad": "Potters and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.07,
+     "sayfa": 58
+    },
+    {
+     "kod": "7316",
+     "ad": "Sign Writers, Decorative Painters, Engravers and Etchers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.08,
+     "sayfa": 58
+    },
+    {
+     "kod": "7312",
+     "ad": "Musical Instrument Makers and Tuners",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.02,
+     "sayfa": 59
+    },
+    {
+     "kod": "7317",
+     "ad": "Handicraft Workers in Wood, Basketry and Related Materials",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.01,
+     "sayfa": 59
+    },
+    {
+     "kod": "7318",
+     "ad": "Handicraft Workers in Textile, Leather and Related Materials",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.03,
+     "sayfa": 60
+    }
+   ],
+   "degisen_gorevler": [
+    "Baskı öncesi görüntü, metin ve sayfa düzeni hazırlama",
+    "Dijital baskı ve prova kontrolü"
+   ],
+   "deger_kazanan": [
+    "Geleneksel el sanatlarında ustalık",
+    "Estetik yargı, özgün tasarım",
+    "Malzeme bilgisi"
+   ],
+   "lisede": [
+    "Görsel sanatlar ve el sanatları atölyelerinde üret",
+    "Tasarım programlarını tanı; elle üretimle birleştirmeyi dene",
+    "Portfolyo oluşturmaya başla"
+   ]
+  },
+  "74": {
+   "ad": "Elektrik ve elektronik işlerinde çalışanlar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 5,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 5
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — maruz değil: 5.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 56–59 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "7421",
+     "ad": "Electronics Mechanics and Servicers",
+     "kategori": "maruz_degil",
+     "ort": 0.25,
+     "ss": 0.13,
+     "sayfa": 56
+    },
+    {
+     "kod": "7422",
+     "ad": "Information and Communications Technology Installers and Servicers",
+     "kategori": "maruz_degil",
+     "ort": 0.24,
+     "ss": 0.14,
+     "sayfa": 56
+    },
+    {
+     "kod": "7411",
+     "ad": "Building and Related Electricians",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.06,
+     "sayfa": 57
+    },
+    {
+     "kod": "7412",
+     "ad": "Electrical Mechanics and Fitters",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.05,
+     "sayfa": 58
+    },
+    {
+     "kod": "7413",
+     "ad": "Electrical Line Installers and Repairers",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.08,
+     "sayfa": 59
+    }
+   ],
+   "degisen_gorevler": [
+    "Bakım ve onarım kayıtları",
+    "Teknik bilgi ve öneri verme, ağ performansı izleme"
+   ],
+   "deger_kazanan": [
+    "Sahada kurulum, kablo, direk gibi bedensel ve teknik çalışma",
+    "Elektrik güvenliği sorumluluğu",
+    "Arıza tespiti ve problem çözme"
+   ],
+   "lisede": [
+    "Fizik derslerinde elektrik konusunu uygulamalı öğren",
+    "Robotik ve elektronik kulüplerinde devre kur",
+    "Mesleki ve teknik eğitim yollarını araştır"
+   ]
+  },
+  "75": {
+   "ad": "Gıda işleme, ağaç işleri, giyim ve diğer sanatkârlar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 20,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 2,
+    "maruz_degil": 18
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 20 meslek — minimal maruz kalma: 2; maruz değil: 18.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 54–60 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "7515",
+     "ad": "Food and Beverage Tasters and Graders",
+     "kategori": "minimal",
+     "ort": 0.31,
+     "ss": 0.16,
+     "sayfa": 54
+    },
+    {
+     "kod": "7543",
+     "ad": "Product Graders and Testers (except Foods and Beverages)",
+     "kategori": "minimal",
+     "ort": 0.31,
+     "ss": 0.11,
+     "sayfa": 54
+    },
+    {
+     "kod": "7513",
+     "ad": "Dairy Products Makers",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.17,
+     "sayfa": 56
+    },
+    {
+     "kod": "7521",
+     "ad": "Wood Treaters",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.15,
+     "sayfa": 57
+    },
+    {
+     "kod": "7523",
+     "ad": "Woodworking Machine Tool Setters and Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.16,
+     "sayfa": 57
+    },
+    {
+     "kod": "7534",
+     "ad": "Upholsterers and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.09,
+     "sayfa": 58
+    },
+    {
+     "kod": "7512",
+     "ad": "Bakers, Pastry-cooks and Confectionery Makers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.08,
+     "sayfa": 58
+    },
+    {
+     "kod": "7532",
+     "ad": "Garment and Related Patternmakers and Cutters",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.04,
+     "sayfa": 58
+    },
+    {
+     "kod": "7536",
+     "ad": "Shoemakers and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.06,
+     "sayfa": 58
+    },
+    {
+     "kod": "7522",
+     "ad": "Cabinet-makers and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.16,
+     "ss": 0.06,
+     "sayfa": 59
+    },
+    {
+     "kod": "7541",
+     "ad": "Underwater Divers",
+     "kategori": "maruz_degil",
+     "ort": 0.16,
+     "ss": 0.09,
+     "sayfa": 59
+    },
+    {
+     "kod": "7514",
+     "ad": "Fruit, Vegetable and Related Preservers",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.04,
+     "sayfa": 59
+    },
+    {
+     "kod": "7531",
+     "ad": "Tailors, Dressmakers, Furriers and Hatters",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.05,
+     "sayfa": 59
+    },
+    {
+     "kod": "7516",
+     "ad": "Tobacco Preparers and Tobacco Products Makers",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.06,
+     "sayfa": 59
+    },
+    {
+     "kod": "7549",
+     "ad": "Craft and Related Workers not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.01,
+     "sayfa": 59
+    },
+    {
+     "kod": "7511",
+     "ad": "Butchers, Fishmongers and Related Food Preparers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.03,
+     "sayfa": 60
+    },
+    {
+     "kod": "7544",
+     "ad": "Fumigators and Other Pest and Weed Controllers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.04,
+     "sayfa": 60
+    },
+    {
+     "kod": "7533",
+     "ad": "Sewing, Embroidery and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "7542",
+     "ad": "Shotfirers and Blasters",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.05,
+     "sayfa": 60
+    },
+    {
+     "kod": "7535",
+     "ad": "Pelt Dressers, Tanners and Fellmongers",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.03,
+     "sayfa": 60
+    }
+   ],
+   "degisen_gorevler": [
+    "Üretim kayıtları ve test sonuçlarının raporlanması",
+    "Şartname okuma ve hesaplamalar"
+   ],
+   "deger_kazanan": [
+    "Gıda, ahşap, giysi gibi malzemeyle el emeği ve ustalık",
+    "Tat, doku, kalite gibi duyulara dayalı yargı",
+    "Hijyen ve iş güvenliği"
+   ],
+   "lisede": [
+    "Mutfak, dikiş, ahşap gibi bir el becerisinde düzenli pratik yap",
+    "Mesleki eğitim ve usta-çırak yollarını araştır",
+    "Gıda güvenliği ve hijyen konularını öğren"
+   ]
+  },
+  "81": {
+   "ad": "Sabit tesis ve makine operatörleri",
+   "duzey": "dusuk",
+   "meslek_sayisi": 25,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 1,
+    "maruz_degil": 24
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 25 meslek — minimal maruz kalma: 1; maruz değil: 24.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 54–59 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "8171",
+     "ad": "Pulp and Papermaking Plant Operators",
+     "kategori": "minimal",
+     "ort": 0.28,
+     "ss": 0.14,
+     "sayfa": 54
+    },
+    {
+     "kod": "8132",
+     "ad": "Photographic Products Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.27,
+     "ss": 0.06,
+     "sayfa": 55
+    },
+    {
+     "kod": "8121",
+     "ad": "Metal Processing Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.26,
+     "ss": 0.1,
+     "sayfa": 56
+    },
+    {
+     "kod": "8131",
+     "ad": "Chemical Products Plant and Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.24,
+     "ss": 0.07,
+     "sayfa": 56
+    },
+    {
+     "kod": "8114",
+     "ad": "Cement, Stone and Other Mineral Products Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.23,
+     "ss": 0.11,
+     "sayfa": 56
+    },
+    {
+     "kod": "8183",
+     "ad": "Packing, Bottling and Labelling Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.22,
+     "ss": 0.01,
+     "sayfa": 57
+    },
+    {
+     "kod": "8112",
+     "ad": "Mineral and Stone Processing Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.1,
+     "sayfa": 57
+    },
+    {
+     "kod": "8154",
+     "ad": "Bleaching, Dyeing and Fabric Cleaning Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.15,
+     "sayfa": 57
+    },
+    {
+     "kod": "8122",
+     "ad": "Metal Finishing, Plating and Coating Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.04,
+     "sayfa": 57
+    },
+    {
+     "kod": "8182",
+     "ad": "Steam Engine and Boiler Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.04,
+     "sayfa": 57
+    },
+    {
+     "kod": "8113",
+     "ad": "Well Drillers and Borers and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.19,
+     "ss": 0.12,
+     "sayfa": 57
+    },
+    {
+     "kod": "8141",
+     "ad": "Rubber Products Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.05,
+     "sayfa": 58
+    },
+    {
+     "kod": "8143",
+     "ad": "Paper Products Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.02,
+     "sayfa": 58
+    },
+    {
+     "kod": "8111",
+     "ad": "Miners and Quarriers",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.11,
+     "sayfa": 58
+    },
+    {
+     "kod": "8142",
+     "ad": "Plastic Products Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.05,
+     "sayfa": 58
+    },
+    {
+     "kod": "8181",
+     "ad": "Glass and Ceramics Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.06,
+     "sayfa": 58
+    },
+    {
+     "kod": "8152",
+     "ad": "Weaving and Knitting Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.16,
+     "ss": 0.03,
+     "sayfa": 59
+    },
+    {
+     "kod": "8156",
+     "ad": "Shoemaking and Related Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.16,
+     "ss": 0.02,
+     "sayfa": 59
+    },
+    {
+     "kod": "8157",
+     "ad": "Laundry Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.16,
+     "ss": 0.03,
+     "sayfa": 59
+    },
+    {
+     "kod": "8159",
+     "ad": "Textile, Fur and Leather Products Machine Operators Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.16,
+     "ss": 0.01,
+     "sayfa": 59
+    },
+    {
+     "kod": "8151",
+     "ad": "Fibre Preparing, Spinning and Winding Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.02,
+     "sayfa": 59
+    },
+    {
+     "kod": "8153",
+     "ad": "Sewing Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.03,
+     "sayfa": 59
+    },
+    {
+     "kod": "8155",
+     "ad": "Fur and Leather Preparing Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.02,
+     "sayfa": 59
+    },
+    {
+     "kod": "8160",
+     "ad": "Food and Related Products Machine Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.15,
+     "ss": 0.03,
+     "sayfa": 59
+    },
+    {
+     "kod": "8172",
+     "ad": "Wood Processing Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.05,
+     "sayfa": 59
+    }
+   ],
+   "degisen_gorevler": [
+    "Makineye işlem talimatı girme",
+    "Üretim raporları ve kayıtlar"
+   ],
+   "deger_kazanan": [
+    "Makineyi güvenle çalıştırma, izleme ve bakım",
+    "Süreçteki sorunu erken fark etme",
+    "Ekip içinde güvenli çalışma"
+   ],
+   "lisede": [
+    "Fizik, kimya ve atölye derslerinde makine ve süreçleri merak et",
+    "Otomasyon ve robotlar hakkında bilgi edin",
+    "Mesleki ve teknik eğitim yollarını araştır"
+   ]
+  },
+  "82": {
+   "ad": "Montajcılar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 3,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 3,
+    "maruz_degil": 0
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 3 meslek — minimal maruz kalma: 3.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 53–54 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "8219",
+     "ad": "Assemblers Not Elsewhere Classified",
+     "kategori": "minimal",
+     "ort": 0.32,
+     "ss": 0.17,
+     "sayfa": 53
+    },
+    {
+     "kod": "8212",
+     "ad": "Electrical and Electronic Equipment Assemblers",
+     "kategori": "minimal",
+     "ort": 0.28,
+     "ss": 0.19,
+     "sayfa": 54
+    },
+    {
+     "kod": "8211",
+     "ad": "Mechanical Machinery Assemblers",
+     "kategori": "minimal",
+     "ort": 0.27,
+     "ss": 0.17,
+     "sayfa": 54
+    }
+   ],
+   "degisen_gorevler": [
+    "Üretim ve işletme verilerini forma kaydetme"
+   ],
+   "deger_kazanan": [
+    "Parçaları hizalayıp birleştirme gibi hassas el becerisi",
+    "Hatalı parçayı fark etme",
+    "Çizim ve talimat okuma"
+   ],
+   "lisede": [
+    "Model yapımı, robotik ya da elektronik kitlerle uğraş",
+    "Teknik çizim okumayı öğren"
+   ]
+  },
+  "83": {
+   "ad": "Araç sürücüleri ve hareketli makine operatörleri",
+   "duzey": "dusuk",
+   "meslek_sayisi": 11,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 1,
+    "minimal": 2,
+    "maruz_degil": 8
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 11 meslek — Gradyan 1–2: 1; minimal maruz kalma: 2; maruz değil: 8.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 51–60 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "8322",
+     "ad": "Car, Taxi and Van Drivers",
+     "kategori": "g1",
+     "ort": 0.28,
+     "ss": 0.23,
+     "sayfa": 51
+    },
+    {
+     "kod": "8321",
+     "ad": "Motorcycle Drivers",
+     "kategori": "minimal",
+     "ort": 0.25,
+     "ss": 0.17,
+     "sayfa": 54
+    },
+    {
+     "kod": "8332",
+     "ad": "Heavy Truck and Lorry Drivers",
+     "kategori": "minimal",
+     "ort": 0.24,
+     "ss": 0.22,
+     "sayfa": 55
+    },
+    {
+     "kod": "8311",
+     "ad": "Locomotive Engine Drivers",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.08,
+     "sayfa": 57
+    },
+    {
+     "kod": "8344",
+     "ad": "Lifting Truck Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.1,
+     "sayfa": 57
+    },
+    {
+     "kod": "8331",
+     "ad": "Bus and Tram Drivers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.06,
+     "sayfa": 58
+    },
+    {
+     "kod": "8343",
+     "ad": "Crane, hoist and related plant operators",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.03,
+     "sayfa": 58
+    },
+    {
+     "kod": "8312",
+     "ad": "Railway Brake, Signal and Switch Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.17,
+     "ss": 0.04,
+     "sayfa": 58
+    },
+    {
+     "kod": "8350",
+     "ad": "Ships' Deck Crews and Related Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.02,
+     "sayfa": 59
+    },
+    {
+     "kod": "8342",
+     "ad": "Earthmoving and Related Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "8341",
+     "ad": "Mobile Farm and Forestry Plant Operators",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.03,
+     "sayfa": 60
+    }
+   ],
+   "degisen_gorevler": [
+    "En uygun rotayı belirleme",
+    "Sefer ve iş kayıtlarının tutulması"
+   ],
+   "deger_kazanan": [
+    "Trafikte güvenli araç kullanma ve dikkat",
+    "Yolcuya ve yüke özen, iletişim",
+    "Beklenmedik durumda karar"
+   ],
+   "lisede": [
+    "Trafik ve yol güvenliği konularında bilinçlen",
+    "Lojistik ve ulaştırma alanındaki yeni teknolojileri (rota planlama, sürücü destek sistemleri) araştır"
+   ]
+  },
+  "91": {
+   "ad": "Temizlik çalışanları ve yardımcıları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 6,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 6
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 6 meslek — maruz değil: 6.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 59–61 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "9111",
+     "ad": "Domestic Cleaners and Helpers",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.08,
+     "sayfa": 59
+    },
+    {
+     "kod": "9121",
+     "ad": "Hand Launderers and Pressers",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.03,
+     "sayfa": 59
+    },
+    {
+     "kod": "9112",
+     "ad": "Cleaners and Helpers in Offices, Hotels and Other Establishments",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "9123",
+     "ad": "Window Cleaners",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.03,
+     "sayfa": 60
+    },
+    {
+     "kod": "9129",
+     "ad": "Other Cleaning Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.1,
+     "ss": 0.01,
+     "sayfa": 60
+    },
+    {
+     "kod": "9122",
+     "ad": "Vehicle Cleaners",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.01,
+     "sayfa": 61
+    }
+   ],
+   "degisen_gorevler": [
+    "Alışveriş ve malzeme planlama"
+   ],
+   "deger_kazanan": [
+    "Bedensel çalışma, özen ve düzen",
+    "Güvenilirlik"
+   ],
+   "lisede": [
+    "Ev ve okul işlerinde sorumluluk al",
+    "Hijyen ve iş güvenliği konularını öğren"
+   ]
+  },
+  "92": {
+   "ad": "Tarım, ormancılık ve balıkçılıkta nitelik gerektirmeyen işlerde çalışanlar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 6,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 6
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 6 meslek — maruz değil: 6.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 60–61 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "9212",
+     "ad": "Livestock Farm Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.03,
+     "sayfa": 60
+    },
+    {
+     "kod": "9214",
+     "ad": "Garden and Horticultural Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "9213",
+     "ad": "Mixed Crop and Livestock Farm Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.03,
+     "sayfa": 60
+    },
+    {
+     "kod": "9216",
+     "ad": "Fishery and Aquaculture Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.03,
+     "sayfa": 60
+    },
+    {
+     "kod": "9211",
+     "ad": "Crop Farm Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.02,
+     "sayfa": 61
+    },
+    {
+     "kod": "9215",
+     "ad": "Forestry Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.02,
+     "sayfa": 61
+    }
+   ],
+   "degisen_gorevler": [
+    "Hayvanların durumunu izleme ve raporlama"
+   ],
+   "deger_kazanan": [
+    "Tarlada ve hayvanla bedensel çalışma",
+    "Doğayı gözlemleme ve deneyim"
+   ],
+   "lisede": [
+    "Tarım ve hayvancılıkla ilgili uygulamalı etkinliklere katıl",
+    "Tarımda yeni teknolojileri araştır"
+   ]
+  },
+  "93": {
+   "ad": "Madencilik, inşaat, imalat ve ulaştırmada nitelik gerektirmeyen işlerde çalışanlar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 9,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 9
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 9 meslek — maruz değil: 9.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 57–61 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "9331",
+     "ad": "Hand and Pedal Vehicle Drivers",
+     "kategori": "maruz_degil",
+     "ort": 0.21,
+     "ss": 0.08,
+     "sayfa": 57
+    },
+    {
+     "kod": "9321",
+     "ad": "Hand Packers",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.05,
+     "sayfa": 57
+    },
+    {
+     "kod": "9334",
+     "ad": "Shelf Fillers",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.1,
+     "sayfa": 57
+    },
+    {
+     "kod": "9333",
+     "ad": "Freight Handlers",
+     "kategori": "maruz_degil",
+     "ort": 0.14,
+     "ss": 0.03,
+     "sayfa": 59
+    },
+    {
+     "kod": "9332",
+     "ad": "Drivers of Animal-drawn Vehicles and Machinery",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.08,
+     "sayfa": 60
+    },
+    {
+     "kod": "9329",
+     "ad": "Manufacturing Labourers Not Elsewhere Classified",
+     "kategori": "maruz_degil",
+     "ort": 0.12,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "9311",
+     "ad": "Mining and Quarrying Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.02,
+     "sayfa": 60
+    },
+    {
+     "kod": "9312",
+     "ad": "Civil Engineering Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.02,
+     "sayfa": 61
+    },
+    {
+     "kod": "9313",
+     "ad": "Building Construction Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.02,
+     "sayfa": 61
+    }
+   ],
+   "degisen_gorevler": [
+    "Müşteriyi yönlendirme, satılanları not etme",
+    "Ücret tahsili ve etiketleme"
+   ],
+   "deger_kazanan": [
+    "Bedensel dayanıklılık ve el becerisi",
+    "Güvenli çalışma ve ekip uyumu"
+   ],
+   "lisede": [
+    "Düzenli spor ve fiziksel dayanıklılık",
+    "Mesleki eğitim ve beceri kurslarını araştırarak daha nitelikli işlere geçiş yollarını öğren"
+   ]
+  },
+  "94": {
+   "ad": "Yiyecek hazırlama yardımcıları",
+   "duzey": "dusuk",
+   "meslek_sayisi": 2,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 2
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 2 meslek — maruz değil: 2.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 58–60 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "9411",
+     "ad": "Fast Food Preparers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.05,
+     "sayfa": 58
+    },
+    {
+     "kod": "9412",
+     "ad": "Kitchen Helpers",
+     "kategori": "maruz_degil",
+     "ort": 0.13,
+     "ss": 0.02,
+     "sayfa": 60
+    }
+   ],
+   "degisen_gorevler": [
+    "Sipariş alma ve malzeme siparişi"
+   ],
+   "deger_kazanan": [
+    "Mutfakta hızlı, temiz ve güvenli çalışma",
+    "Ekip uyumu ve özen"
+   ],
+   "lisede": [
+    "Evde ve okulda mutfak deneyimi kazan",
+    "Gıda hijyeni ve güvenliği konularını öğren"
+   ]
+  },
+  "95": {
+   "ad": "Sokak satıcıları ve sokakta hizmet veren diğer çalışanlar",
+   "duzey": "dusuk",
+   "meslek_sayisi": 2,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 0,
+    "minimal": 0,
+    "maruz_degil": 2
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 2 meslek — maruz değil: 2.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 57–58 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "9520",
+     "ad": "Street Vendors (excluding Food)",
+     "kategori": "maruz_degil",
+     "ort": 0.2,
+     "ss": 0.1,
+     "sayfa": 57
+    },
+    {
+     "kod": "9510",
+     "ad": "Street and Related Service Workers",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.09,
+     "sayfa": 58
+    }
+   ],
+   "degisen_gorevler": [
+    "Ödeme alma ve ürün tedariki"
+   ],
+   "deger_kazanan": [
+    "Müşteriyle yüz yüze iletişim",
+    "Pratik ticaret becerisi"
+   ],
+   "lisede": [
+    "Kermes ve okul satışlarında deneyim kazan",
+    "Temel finans okuryazarlığı öğren"
+   ]
+  },
+  "96": {
+   "ad": "Atık toplayıcılar ve nitelik gerektirmeyen diğer işlerde çalışanlar",
+   "duzey": "orta",
+   "meslek_sayisi": 8,
+   "dagilim": {
+    "g4": 0,
+    "g3": 0,
+    "g2": 0,
+    "g1": 2,
+    "minimal": 1,
+    "maruz_degil": 5
+   },
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 8 meslek — Gradyan 1–2: 2; minimal maruz kalma: 1; maruz değil: 5.",
+   "kaynak_bolum": "Tablo A1 (Annex), s. 50–61 (meslek satırlarının sayfaları)",
+   "meslekler": [
+    {
+     "kod": "9623",
+     "ad": "Meter Readers and Vending-machine Collectors",
+     "kategori": "g1",
+     "ort": 0.38,
+     "ss": 0.21,
+     "sayfa": 50
+    },
+    {
+     "kod": "9621",
+     "ad": "Messengers, Package Deliverers and Luggage Porters",
+     "kategori": "g1",
+     "ort": 0.37,
+     "ss": 0.19,
+     "sayfa": 51
+    },
+    {
+     "kod": "9629",
+     "ad": "Elementary Workers Not Elsewhere Classified",
+     "kategori": "minimal",
+     "ort": 0.29,
+     "ss": 0.14,
+     "sayfa": 54
+    },
+    {
+     "kod": "9612",
+     "ad": "Refuse Sorters",
+     "kategori": "maruz_degil",
+     "ort": 0.18,
+     "ss": 0.11,
+     "sayfa": 58
+    },
+    {
+     "kod": "9622",
+     "ad": "Odd Job Persons",
+     "kategori": "maruz_degil",
+     "ort": 0.11,
+     "ss": 0.03,
+     "sayfa": 60
+    },
+    {
+     "kod": "9611",
+     "ad": "Garbage and Recycling Collectors",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.02,
+     "sayfa": 61
+    },
+    {
+     "kod": "9613",
+     "ad": "Sweepers and Related Labourers",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.03,
+     "sayfa": 61
+    },
+    {
+     "kod": "9624",
+     "ad": "Water and Firewood Collectors",
+     "kategori": "maruz_degil",
+     "ort": 0.09,
+     "ss": 0.03,
+     "sayfa": 61
+    }
+   ],
+   "degisen_gorevler": [
+    "Sayaç okuma ve tüketim kaydı",
+    "En verimli dağıtım rotasını planlama",
+    "Bilet satışı ve kontrolü"
+   ],
+   "deger_kazanan": [
+    "Bedensel çalışma ve sahada dikkat",
+    "İnsanlarla iletişim ve güvenilirlik"
+   ],
+   "lisede": [
+    "Sorumluluk ve düzen gerektiren görevler al",
+    "Mesleki eğitim ve beceri kurslarını araştır"
+   ]
+  }
+ }
+}

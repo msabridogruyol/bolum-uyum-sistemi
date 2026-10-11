@@ -18,6 +18,12 @@ import TakvimYonetimi from '../../components/yonetim/TakvimYonetimi'
 import { okulBolumleri } from '../../components/yonetim/okulBolumleri'
 import KonuListesiYonetimi from '../../components/yonetim/KonuListesiYonetimi'
 import OkulPaketKarti from '../../components/yonetim/OkulPaketKarti'
+import RehberlikSekmesi from '../../components/yonetim/Rehberlik'
+import OkulDenemeleri from '../../components/yonetim/OkulDenemeleri'
+import OkulIstatistik from '../../components/yonetim/OkulIstatistik'
+import OkulRaporMerkezi from '../../components/yonetim/OkulRaporMerkezi'
+import Anketler from '../../components/yonetim/Anketler'
+import { Mezunlar, TercihDonemi } from '../../components/yonetim/TercihMezun'
 import { OkulModulleriContext } from '../../yardimci/moduller'
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
@@ -26,10 +32,11 @@ function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
 }
 
 // ----------------------------------------------------------------------------- Özet
-function OzetSekmesi({ oz }) {
+function OzetSekmesi({ oz, onIstatistik }) {
   const enCokGiris = Math.max(1, ...oz.gunluk_giris.map((g) => g.sayi))
   return (
     <>
+      {onIstatistik && <div style={{ textAlign: 'right', margin: '-4px 0 8px' }}><button type="button" className="ak-link" onClick={onIstatistik}>Ayrıntılı istatistikler →</button></div>}
       <div className="yp-kpi-grid">
         <div className="yp-kpi"><div className="yp-kpi-e">Öğrenci</div><div className="yp-kpi-d">{oz.toplam}</div></div>
         <div className="yp-kpi"><div className="yp-kpi-e">Giriş yapan</div><div className="yp-kpi-d">{oz.giris_yapan}</div><div className="yp-kpi-a">%{oz.toplam ? Math.round((100 * oz.giris_yapan) / oz.toplam) : 0}</div></div>
@@ -91,14 +98,16 @@ function OzetSekmesi({ oz }) {
 }
 
 // ----------------------------------------------------------------------------- Öğrenciler
-function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, yenile, baslangicFiltre = '' }) {
+function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, yenile, baslangicFiltre = '', acikOgrenci = null, onDetayKapat }) {
   const [arama, setArama] = useState('')
   // [2026-10-10] Filtre: '' | 's:<sınıf>' (sınıf düzeyi) | 'b:<sınıf>|<şube>' (şube, ör. 12-A)
   const [sinif, setSinif] = useState(baslangicFiltre)
   const [durum, setDurum] = useState('')
   const [secili, setSecili] = useState(new Set())
   const [yukleme, setYukleme] = useState(false)
-  const [detay, setDetay] = useState(null)
+  const [detay, setDetay] = useState(acikOgrenci)
+  // [2026-10-11] Derin bağlantı: ?sekme=ogrenciler&ogrenci=<id> (Filiz yönetim asistanının "Öğrenci detayı" bağlantısı)
+  useEffect(() => { if (acikOgrenci) setDetay(acikOgrenci) }, [acikOgrenci])
   const [sifreler, setSifreler] = useState(null)
   const [silOnay, setSilOnay] = useState(false)
   const [hata, setHata] = useState(null)
@@ -224,7 +233,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
       )}
 
       {yukleme && <TopluYuklemePenceresi okulId={okulId} okulAd={okulAd} onKapat={() => setYukleme(false)} onBitti={yenile} />}
-      {detay && <OgrenciDetayPenceresi ogrenciId={detay} superAdmin={superAdmin} okullar={okullar} onKapat={() => setDetay(null)} onDegisti={yenile} />}
+      {detay && <OgrenciDetayPenceresi ogrenciId={detay} superAdmin={superAdmin} okullar={okullar} onKapat={() => { setDetay(null); onDetayKapat?.() }} onDegisti={yenile} />}
       {sifreler && (
         <Pencere genis baslik={`${sifreler.kayitlar.length} öğrencinin şifresi sıfırlandı`} onKapat={() => setSifreler(null)}
           alt={<button className="btn" onClick={() => setSifreler(null)}>Kapat</button>}>
@@ -461,6 +470,8 @@ export default function OkulPaneliSayfasi() {
   const [params, setParams] = useSearchParams()
   const sekme = params.get('sekme') || 'ozet'
   const setSekme = useCallback((k) => setParams(k === 'ozet' ? {} : { sekme: k }), [setParams])
+  const acikOgrenci = sekme === 'ogrenciler' ? params.get('ogrenci') : null
+  const ogrenciDetayKapat = useCallback(() => { if (params.get('ogrenci')) setParams({ sekme: 'ogrenciler' }, { replace: true }) }, [params, setParams])
   const [oz, setOz] = useState(null)
   const [ogrenciler, setOgrenciler] = useState([])
   const [okullar, setOkullar] = useState([])
@@ -516,9 +527,17 @@ export default function OkulPaneliSayfasi() {
           {sk === 'ozet' && <div className="yp-bolum-rapor">{raporlar}</div>}
         </div>
       )}
-      {sk === 'ozet' && <OzetSekmesi oz={oz} />}
+      {sk === 'ozet' && <OzetSekmesi oz={oz} onIstatistik={okulId > 0 ? () => setSekme('istatistik') : null} />}
+      {sk === 'istatistik' && okulId > 0 && <OkulIstatistik okulId={okulId} />}
+      {sk === 'raporlar' && okulId > 0 && <OkulRaporMerkezi okulId={okulId} oz={oz} superAdmin={superAdmin} okullar={okullar} onDegisti={yenile}
+        onRehberlik={bolumler.some((b) => b.k === 'rehberlik') ? () => setSekme('rehberlik') : null} />}
       {sk === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
-      {sk === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sk === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} acikOgrenci={acikOgrenci} onDetayKapat={ogrenciDetayKapat} />}
+      {sk === 'rehberlik' && <RehberlikSekmesi okulId={okulId} ogrenciler={ogrenciler} superAdmin={superAdmin} okullar={okullar} yenileOkul={yenile} />}
+      {sk === 'tercih' && okulId > 0 && <TercihDonemi okulId={okulId} />}
+      {sk === 'mezunlar' && okulId > 0 && <Mezunlar okulId={okulId} />}
+      {sk === 'anketler' && okulId > 0 && <Anketler okulId={okulId} />}
+      {sk === 'denemeler' && okulId > 0 && <OkulDenemeleri okulId={okulId} />}
       {sk === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
       {sk === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
       {sk === 'takvim' && okulId > 0 && <TakvimYonetimi okulId={okulId} />}

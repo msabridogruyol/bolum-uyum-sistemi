@@ -1,0 +1,238 @@
+{
+  "aciklama": "İş Hayatı → CV Atölyesi → 'CV Rehberi' alt sekmesi (GET /ogrenci/is-hayati/cv/rehber). Lise öğrencisine yönelik kısa konu kartları. Örnek cümlelerdeki kişiler/kurumlar KURGUSALDIR. Sayısal iddialar yalnızca 'kaynaklar' altında doğrulanmış kaynağa dayanır; her konunun 'kaynaklar' listesi bu sözlüğün anahtarlarıdır. Blok türleri: metin | liste | kartlar | cift (kötü→iyi) | fiiller | not (renk: bilgi|uyari|iyi) | ornek (düz metin şablon). Mini sınav: dogru = seçenek sırası (0'dan).",
+  "son_kontrol": "2026-10",
+  "kaynaklar": {
+    "harvard": {"ad": "Harvard FAS Mignone Center for Career Success — HES: Create Impactful Resumes and Cover Letters (son güncelleme 27.05.2026)", "url": "https://careerservices.fas.harvard.edu/resources/hes-create-impactful-resumes-and-cover-letters/", "not": "Eylem fiilleri, sonuçları sayıyla gösterme, fotoğraf/yaş/cinsiyet eklememe, referansı yalnızca istenirse verme, ön yazının bir sayfayı geçmemesi."},
+    "mit": {"ad": "MIT Career Advising & Professional Development — Resume action verbs", "url": "https://capd.mit.edu/resources/resume-action-verbs/", "not": "Kategorilere ayrılmış eylem fiilleri listesi; her maddeye eylem fiiliyle başlama önerisi."},
+    "jmu": {"ad": "James Madison University Career Center — Choosing a Format (13.10.2025)", "url": "https://www.jmu.edu/career/students/career-prep/resumes/format.shtml", "not": "Kronolojik, fonksiyonel ve karma CV türleri; kronolojik türün işverenlerce en çok tercih edilen biçim olduğu."},
+    "ladders": {"ad": "Ladders, Inc. (2018). Eye-Tracking Study", "url": "https://csuglobal.edu/sites/default/files/blog-files/theladders-eyetracking-studyc2.pdf", "not": "İlk taramada CV başına ortalama 7,4 saniye; sade düzen, net başlıklar, madde işaretleri öne çıkıyor; çok sütun, kalabalık düzen ve anahtar kelime doldurma olumsuz. Haber: HR Dive, 08.11.2018."},
+    "greenhouse": {"ad": "Greenhouse Support — Unsuccessful resume parse", "url": "https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse", "not": "Bir ATS sağlayıcısının kendi belgesi: görüntü olarak yüklenen CV, grafik/fotoğraf, tablo, üst/alt bilgi, sütunlu düzen, metin kutusundaki iletişim bilgisi ve harf aralıklı yazı ayrıştırmayı bozar."},
+    "fgcu": {"ad": "Florida Gulf Coast University Career Development Services — Working with Applicant Tracking Systems (ATS)", "url": "https://careerservices.fgcu.edu/working-with-applicant-tracking-systems-ats/", "not": "İlan hangi dosya türünü istiyorsa onu gönder; tablo, metin kutusu, logo, görsel, sütun, üst/alt bilgiden kaçın; anahtar kelimeleri başarı cümlelerinin içinde kullan; ATS'yi kandırmaya çalışma."},
+    "linkedin_ats": {"ad": "LinkedIn Premium — The Easy How-To Guide to Formatting Resumes for Applicant Tracking Systems", "url": "https://premium.linkedin.com/content/premium/global/en_us/index/jobsearch/articles/the-easy-how-to-guide-for-formatting-resumes-for-applicant-tracking-systems", "not": "Standart başlıklar (Özet, Deneyim, Eğitim, Beceriler), standart yazı tipi, görsel/tablo/metin kutusu yok, ilandaki anahtar kelimeler ama aşırı doldurma yok."},
+    "dartmouth": {"ad": "College Recruiter — The new arms race: AI used by job seekers vs that used by employers (Dartmouth Guarini blogunda yeniden yayım, 14.10.2025)", "url": "https://guarinigrad.dartmouth.edu/blog/2025/10/14/the-new-arms-race-ai-used-by-job-seekers-vs-that-used-by-employers/", "not": "Beyaz yazıyla gizlenmiş anahtar kelimelerin iyi bilinen ve kolay yakalanan bir hile olduğu; 'Tümünü seç' ile hemen ortaya çıktığı."},
+    "kvkk": {"ad": "6698 sayılı Kişisel Verilerin Korunması Kanunu, md. 6 (RG 07.04.2016/29677)", "url": "https://mevzuat.gov.tr/MevzuatMetin/1.5.6698.pdf", "not": "Irk, etnik köken, siyasi düşünce, felsefi inanç, din, mezhep, kılık kıyafet, dernek/vakıf/sendika üyeliği, sağlık, cinsel hayat, ceza mahkûmiyeti, biyometrik ve genetik veriler özel nitelikli kişisel veridir."},
+    "linkedin_sozlesme": {"ad": "LinkedIn Kullanıcı Sözleşmesi (yürürlük 03.11.2025) — uygunluk / asgari yaş maddesi", "url": "https://www.linkedin.com/legal/user-agreement", "not": "“Hizmetler 16 yaşından küçükler için değildir”; yasa daha yüksek bir yaş gerektiriyorsa asgari yaş odur. Metin ConductAtlas arşivi üzerinden okundu; kaydolmadan önce güncel sözleşmeyi kontrol et."},
+    "europass": {"ad": "Europass — Create your Europass CV (Avrupa Komisyonu, İstihdam Genel Müdürlüğü)", "url": "https://europass.europa.eu/en/create-europass-cv", "not": "Avrupa'da yaygın bilinen CV biçimi; 31 dilde CV oluşturma, saklama, paylaşma."},
+    "wit": {"ad": "Wentworth Institute of Technology Co-ops & Careers — Application Follow-Up Email Sample", "url": "https://coopsandcareers.wit.edu/?p=3122", "not": "Başvurudan en az 1–2 hafta sonra takip; kısa, kibar, ilgiyi ve uygun 2–3 beceriyi hatırlatan e-posta."},
+    "adu": {"ad": "Aydın Adnan Menderes Üniversitesi PDRM / Kariyer Merkezi — Özgeçmiş nasıl hazırlanır? (yazı dizisi)", "url": "https://aum.adu.edu.tr/pdrm/webfolders/news/20230616143636-SZGEMNASILHAZIRLANIR-000068433568715506030046.pdf", "not": "Türkiye uygulamasına örnek: kısa ve öz CV, tek e-posta, referanslara önceden haber verme, aileden referans vermeme; fotoğraf eklemenin yaygınlığı."},
+    "iskur": {"ad": "İŞKUR ve UNHCR (2018). Türkiye'de İş Bulma Rehberi", "url": "https://media.iskur.gov.tr/43485/turkiyede-is-bulma-rehberi-ingilizce.pdf", "not": "İŞKUR'a kayıtta özgeçmiş oluşturulur; e-Şube üzerinden özgeçmiş hazırlanabilir; iş ve meslek danışmanı iş aramada destek verir."}
+  },
+  "konular": [
+    {
+      "kod": "nedir",
+      "ikon": "📄",
+      "baslik": "CV nedir, ne işe yarar?",
+      "ozet": "Seni tek sayfada tanıtan, “neden seninle görüşmeliyiz?” sorusunu cevaplayan belge.",
+      "bloklar": [
+        {"tur": "metin", "metin": "CV (Latince curriculum vitae, “hayat akışı”) ya da Türkçesiyle özgeçmiş; eğitimini, yaptıklarını ve becerilerini kısa ve düzenli biçimde anlatan belgedir. Amacı her şeyi anlatmak değil, okuyanı seni tanımak için bir görüşmeye çağırmaya ikna etmektir."},
+        {"tur": "not", "renk": "bilgi", "metin": "CV'ne çok kısa sürede göz atılır. Bir göz izleme araştırmasında işe alım uzmanlarının ilk taramada bir CV'ye ortalama 7,4 saniye baktığı bulundu (Ladders, 2018). Bu yüzden en önemli bilgi hemen görünmeli."},
+        {"tur": "kartlar", "baslik": "Sık karıştırılanlar", "kartlar": [
+          {"ikon": "📄", "baslik": "CV / özgeçmiş", "metin": "Türkiye'de ikisi aynı anlamda kullanılır. Lisede hedef: tek sayfa, sade, düzenli."},
+          {"ikon": "✉️", "baslik": "Ön yazı", "metin": "CV'nin yanına eklenen kısa mektup: neden bu ilan, neden sen? Her başvuruya özel yazılır."},
+          {"ikon": "🗂️", "baslik": "Portfolyo", "metin": "Yaptığın işlerin örnekleri: proje dosyası, çizimler, kodlar, fotoğraflar. CV “ne yaptım” der, portfolyo “işte bak” der."},
+          {"ikon": "🇪🇺", "baslik": "Europass CV", "metin": "Avrupa'da yaygın bilinen hazır bir CV biçimi. Erasmus gibi Avrupa programları isteyebilir; ilan ne diyorsa onu kullan."}
+        ]}
+      ],
+      "kaynaklar": ["ladders", "harvard", "europass"],
+      "sinav": [
+        {"soru": "Bir CV'nin asıl amacı nedir?", "secenekler": ["Hayatındaki her şeyi ayrıntılı anlatmak", "Okuyanı seni görüşmeye çağırmaya ikna etmek", "Ne kadar çok kursa gittiğini göstermek"], "dogru": 1, "aciklama": "CV bir tanıtım belgesidir: amaç görüşmeye çağrılmak. Ayrıntıyı görüşmede anlatırsın."},
+        {"soru": "Yaptığın çizimleri ve proje dosyalarını bir arada gösteren şey hangisidir?", "secenekler": ["Ön yazı", "Portfolyo", "Referans"], "dogru": 1, "aciklama": "Portfolyo, işlerinin örneklerini gösterir. CV'de portfolyonun bağlantısını verebilirsin."}
+      ]
+    },
+    {
+      "kod": "ne_zaman",
+      "ikon": "🗓️",
+      "baslik": "Ne zaman CV lazım olur?",
+      "ozet": "Sandığından erken: staj, yaz işi, burs, gönüllülük, kamp, kulüp…",
+      "bloklar": [
+        {"tur": "kartlar", "kartlar": [
+          {"ikon": "🧑‍💻", "baslik": "Staj ve gözlem programları", "metin": "Yaz dönemi gözlem stajları, şirketlerin lise programları."},
+          {"ikon": "☕", "baslik": "Yaz işi / yarı zamanlı iş", "metin": "Kafe, mağaza, etkinlik desteği gibi işler. 18 yaşından küçüklerin çalışabileceği işler ve saatler yasayla sınırlıdır; ilan şartlarını oku."},
+          {"ikon": "🎓", "baslik": "Burslar", "metin": "Vakıf ve kurum bursları çoğu zaman CV ya da benzer bir form ister."},
+          {"ikon": "🤝", "baslik": "Gönüllülük", "metin": "Kütüphane, dernek, hayvan barınağı, festival gönüllülüğü."},
+          {"ikon": "⛺", "baslik": "Yaz okulu ve kamplar", "metin": "Bilim kampları, dil okulları, üniversitelerin lise programları."},
+          {"ikon": "🏛️", "baslik": "Üniversitede", "metin": "Kulüp yönetimi, öğrenci asistanlığı, Erasmus ve değişim programları, ilk stajın."}
+        ]},
+        {"tur": "not", "renk": "iyi", "metin": "İpucu: CV'ni bir kere yazıp unutma. Her yeni proje, görev ya da kurstan sonra 2 dakika ayırıp ekle; başvuru zamanı geldiğinde hazır olur."}
+      ],
+      "kaynaklar": ["iskur"],
+      "sinav": [
+        {"soru": "Lise öğrencisi olarak CV'yi ne zaman hazırlamaya başlamak mantıklıdır?", "secenekler": ["Üniversiteden mezun olunca", "Bir başvuru fırsatı çıkmadan önce, şimdiden", "Yalnızca bir şirket isterse"], "dogru": 1, "aciklama": "Fırsatlar (burs, kamp, gönüllülük) kısa süreli açılır. Hazır bir CV'yi ilana göre güncellemek, sıfırdan yazmaktan çok daha kolaydır."},
+        {"soru": "Hangisi CV istenebilecek bir başvuru DEĞİLDİR?", "secenekler": ["Bir vakfın lise bursu", "Okul kantininden simit almak", "Bir bilim kampı"], "dogru": 1, "aciklama": "Burslar ve kamplar çoğu zaman CV ya da benzeri bir form ister."}
+      ]
+    },
+    {
+      "kod": "turler",
+      "ikon": "🧭",
+      "baslik": "CV türleri: hangisi sana uygun?",
+      "ozet": "Kronolojik, beceri odaklı, karma — lisede genelde karma.",
+      "bloklar": [
+        {"tur": "kartlar", "kartlar": [
+          {"ikon": "📅", "baslik": "Kronolojik", "metin": "Deneyimler tarihe göre, en yeniden eskiye sıralanır. İşverenlerin en çok alıştığı biçim. Uzun bir geçmişin yoksa kısa görünebilir."},
+          {"ikon": "🛠️", "baslik": "Beceri odaklı (fonksiyonel)", "metin": "Tarihler yerine becerilere göre gruplanır (“İletişim”, “Teknik”). Az iş deneyimi olanlar için düşünülür ama tarihlerin görünmemesi okuyanı şüphelendirebilir."},
+          {"ikon": "🧩", "baslik": "Karma", "metin": "Üstte kısa profil ve beceriler, altta tarihli deneyim, proje ve gönüllülükler. İkisinin de iyi yanlarını alır."}
+        ]},
+        {"tur": "not", "renk": "iyi", "metin": "Lise öğrencisi için öneri: karma. İş deneyimin az olsa bile kulüp görevleri, okul projeleri, gönüllülük ve yarışmalar tarihli olarak alt alta yazılabilir; becerilerin de üstte görünür. Filizyol'un CV oluşturucusu bu düzeni kullanır."}
+      ],
+      "kaynaklar": ["jmu"],
+      "sinav": [
+        {"soru": "Deneyimlerin tarih sırasına göre en yeniden eskiye dizildiği CV türü hangisidir?", "secenekler": ["Kronolojik", "Fonksiyonel", "Europass"], "dogru": 0, "aciklama": "Kronolojik CV tarih sırası kullanır; işverenlerin en alışık olduğu biçimdir."},
+        {"soru": "Lise öğrencisi için karma CV neden çoğu zaman en iyi seçimdir?", "secenekler": ["Çünkü tarih yazmak gerekmez", "Az iş deneyimine rağmen hem becerileri hem tarihli etkinlikleri gösterir", "Çünkü daha çok sayfa tutar"], "dogru": 1, "aciklama": "Karma CV becerileri öne çıkarır ama tarihleri saklamaz; okul projeleri ve gönüllülük de deneyim olarak yazılır."}
+      ]
+    },
+    {
+      "kod": "bolumler",
+      "ikon": "🧱",
+      "baslik": "Bölüm bölüm ne yazılır?",
+      "ozet": "İletişim, profil, eğitim, deneyim, beceriler… ve iyi/kötü örnekler.",
+      "bloklar": [
+        {"tur": "liste", "baslik": "Sırasıyla", "maddeler": [
+          "İletişim: ad soyad, sade bir e-posta, şehir. (Telefon istersen; adres, TC kimlik no gerekmez.)",
+          "Profil: 2–3 cümle — kimsin, neye ilgi duyuyorsun, ne arıyorsun.",
+          "Eğitim: okulun, sınıfın; varsa öne çıkan bir ders, proje ya da başarı.",
+          "Deneyim / projeler / gönüllülük: başlık, kurum, tarih ve 1–3 madde: ne yaptın, sonuç ne oldu?",
+          "Ödüller, sertifikalar ve kurslar: adı, veren kurum, yıl.",
+          "Beceriler: somut olanlar (Canva, Excel'de grafik, Python temel, sunum yapma). 4–10 tane.",
+          "Diller: seviyesiyle (A1–C2). “İyi derecede” gibi belirsiz ifade yerine seviye."
+        ]},
+        {"tur": "cift", "baslik": "Kötü → iyi örnekler (kurgusal)", "ciftler": [
+          {"kotu": "Kulüp üyesiydim.", "iyi": "Robotik kulübünde 4 kişilik ekiple engelden kaçan bir araç tasarladık; ben sensör kodunu yazdım ve il yarışmasında finale kaldık.", "neden": "Ne yaptığın, kiminle, senin payın ve sonuç belli."},
+          {"kotu": "Çalışkan, dürüst ve sorumluluk sahibi biriyim.", "iyi": "Okul gazetesinin 6 sayısını zamanında yayına hazırladım; 3 yeni yazarın yazılarını düzelttim.", "neden": "Sıfat yerine kanıt: yaptığın iş, özelliğini kendiliğinden gösterir."},
+          {"kotu": "Gönüllü çalıştım.", "iyi": "Mahalle kütüphanesinde 8 hafta boyunca cumartesi çocuk okuma saatlerine destek oldum (toplam 32 saat).", "neden": "Süre ve sayı inandırır."},
+          {"kotu": "Bilgisayar bilgim iyi.", "iyi": "Beceriler: Excel (tablo, grafik), Canva, Google Slaytlar, Scratch", "neden": "Hangi aracı ne kadar kullandığın anlaşılır; ATS de bu kelimeleri bulur."},
+          {"kotu": "İngilizce: iyi", "iyi": "İngilizce (B1)", "neden": "Seviye herkes için aynı şeyi anlatır."}
+        ]}
+      ],
+      "kaynaklar": ["harvard", "jmu"],
+      "sinav": [
+        {"soru": "Hangisi daha güçlü bir deneyim maddesidir?", "secenekler": ["Münazara kulübündeydim.", "Münazara kulübünde 12 kişilik okul turnuvasını düzenledim; eşleşme tablosunu ve süre takibini ben hazırladım.", "Münazara kulübünde aktif bir üye olarak çeşitli görevler aldım."], "dogru": 1, "aciklama": "Somut görev, senin payın ve sayı var. “Çeşitli görevler” bir şey anlatmaz."},
+        {"soru": "Dil seviyesini yazmanın en iyi yolu hangisidir?", "secenekler": ["Almanca: orta", "Almanca (A2)", "Almanca: biraz"], "dogru": 1, "aciklama": "A1–C2 ölçeği herkes için aynı anlama gelir."},
+        {"soru": "Profil bölümü ne kadar olmalı?", "secenekler": ["2–3 cümle", "Yarım sayfa", "Tek kelime"], "dogru": 0, "aciklama": "Kısa ve net: kimsin, neye ilgi duyuyorsun, ne arıyorsun."}
+      ]
+    },
+    {
+      "kod": "fiiller",
+      "ikon": "⚡",
+      "baslik": "Eylem fiilleri, sonuç ve sayı",
+      "ozet": "“Katıldım” yerine “düzenledim, tasarladım, öğrettim”. Sayı inandırır.",
+      "bloklar": [
+        {"tur": "not", "renk": "bilgi", "metin": "Formül: Ne yaptın (eylem fiili) + nasıl / kiminle + sonuç (mümkünse sayıyla). Örnek: “Okul kermesinin afiş ve sosyal medya duyurularını hazırladım; 40 öğrenciyle 6.500 TL bağış topladık.”"},
+        {"tur": "fiiller", "gruplar": [
+          {"ad": "Düzenleme ve liderlik", "fiiller": ["düzenledim", "yönettim", "planladım", "koordine ettim", "başlattım", "görev dağıttım", "temsil ettim"]},
+          {"ad": "İletişim", "fiiller": ["sundum", "anlattım", "yazdım", "ikna ettim", "tanıttım", "röportaj yaptım", "çevirdim"]},
+          {"ad": "Üretme ve tasarım", "fiiller": ["tasarladım", "geliştirdim", "kurdum", "çizdim", "kodladım", "hazırladım", "ürettim"]},
+          {"ad": "Araştırma ve analiz", "fiiller": ["araştırdım", "inceledim", "ölçtüm", "karşılaştırdım", "analiz ettim", "deney yaptım", "raporladım"]},
+          {"ad": "Yardım ve öğretme", "fiiller": ["öğrettim", "destek oldum", "rehberlik ettim", "eğittim", "karşıladım", "yönlendirdim"]},
+          {"ad": "Sonuç ve gelişim", "fiiller": ["artırdım", "azalttım", "kazandım", "tamamladım", "iyileştirdim", "hızlandırdım", "derece aldım"]}
+        ]},
+        {"tur": "liste", "baslik": "Sayıyı nereden bulursun?", "maddeler": [
+          "Kaç kişi? (ekip, katılımcı, izleyici, öğrenci)",
+          "Ne kadar süre? (hafta, toplam saat, dönem)",
+          "Kaç tane? (sayı, bölüm, ürün, etkinlik, gönderi)",
+          "Ne değişti? (bağış miktarı, katılımda artış, derece)",
+          "Sayı yoksa uydurma: “düzenli olarak her hafta” gibi gerçek bir ölçü yaz."
+        ]}
+      ],
+      "kaynaklar": ["mit", "harvard"],
+      "sinav": [
+        {"soru": "Hangisi bir eylem fiiliyle yazılmış, sonucu belli bir maddedir?", "secenekler": ["Bilim fuarında yer aldım.", "Bilim fuarı için su arıtma deneyi tasarladım; 3 filtreyi karşılaştırıp sonuçları 150 ziyaretçiye sundum.", "Bilim fuarı çok güzeldi."], "dogru": 1, "aciklama": "“Tasarladım, karşılaştırdım, sundum” senin ne yaptığını; sayılar da ölçeği gösterir."},
+        {"soru": "Bir deneyiminde gerçek bir sayı yoksa ne yapmalısın?", "secenekler": ["Tahmini büyük bir sayı yazarım", "Gerçek bir ölçü (süre, sıklık) yazar ya da sayısız bırakırım", "Deneyimi silerim"], "dogru": 1, "aciklama": "Uydurma sayı görüşmede sorulduğunda güvenini bitirir. Dürüst bir ölçü her zaman daha iyidir."}
+      ]
+    },
+    {
+      "kod": "yapma",
+      "ikon": "🚫",
+      "baslik": "Yapılmaması gerekenler",
+      "ozet": "Hassas kişisel bilgi, yalan, yazım hatası, garip e-posta, gereksiz tasarım.",
+      "bloklar": [
+        {"tur": "liste", "baslik": "CV'ye yazma", "maddeler": [
+          "TC kimlik numarası: kimlik hırsızlığına kapı açar. İşe alınırsan resmî işlemler için zaten istenir.",
+          "Doğum tarihi, medeni durum, anne-baba adı, boy-kilo, kan grubu: işle ilgisi yok.",
+          "Din, mezhep, siyasi görüş, sağlık bilgisi, dernek üyeliği: bunlar kanunda “özel nitelikli kişisel veri” sayılır (KVKK md. 6). CV'de gerekmez, ayrımcılığa açık kapı bırakır.",
+          "Ev adresi: şehir yeter."
+        ]},
+        {"tur": "not", "renk": "bilgi", "metin": "Fotoğraf: Türkiye'de CV'ye fotoğraf eklemek yaygındır, ama zorunlu değildir. İlan özellikle istemiyorsa gerekmez. Fotoğraf; yaşın, cinsiyetin, görünüşün hakkında bilgi verir ve bilinçli ya da bilinçsiz ön yargıya yol açabilir. Ayrıca bazı başvuru sistemleri görselleri okurken zorlanır. Eklersen sade, güncel, vesikalık olsun."},
+        {"tur": "liste", "baslik": "Diğer sık hatalar", "maddeler": [
+          "Yalan ya da abartı: olmayan bir beceriyi, ödülü, sertifikayı yazma. Görüşmede sorulur, referansla kontrol edilir.",
+          "Yazım ve noktalama hataları: yüksek sesle oku, bir yetişkine de okut.",
+          "Uygunsuz e-posta adresi: tatlıkedi2009@… yerine ad.soyad@… gibi sade bir adres aç.",
+          "Çok sayfa: lisede bir sayfa yeter.",
+          "Tasarım fazlalığı: çok renk, iki sütun, ikonlar, beceri çubukları (“Excel ★★★★☆”) hem okunmayı zorlaştırır hem de başvuru sistemlerinde bozulur.",
+          "Klişe sıfat yığını: “çalışkan, dürüst, azimli…” yerine yaptıklarınla göster."
+        ]}
+      ],
+      "kaynaklar": ["kvkk", "harvard", "greenhouse", "adu"],
+      "sinav": [
+        {"soru": "Hangisi CV'de YER ALMAMALIDIR?", "secenekler": ["E-posta adresi", "TC kimlik numarası", "Bildiğin diller"], "dogru": 1, "aciklama": "TC kimlik no başvuru aşamasında gerekmez ve kötüye kullanılabilir."},
+        {"soru": "Türkiye'de CV'ye fotoğraf eklemek için doğru ifade hangisi?", "secenekler": ["Yasal olarak zorunludur", "Yaygındır ama ilan istemiyorsa gerekmez", "Kesinlikle yasaktır"], "dogru": 1, "aciklama": "Fotoğraf yaygın ama zorunlu değil; ilan isterse sade bir vesikalık ekle."},
+        {"soru": "Din ve sağlık bilgisi neden CV'ye yazılmaz?", "secenekler": ["Çünkü yer kaplar", "Çünkü özel nitelikli kişisel veridir ve ayrımcılığa yol açabilir", "Çünkü İngilizce yazmak zordur"], "dogru": 1, "aciklama": "KVKK bu bilgileri özel nitelikli sayar; işe uygunluğunla ilgisi yoktur."}
+      ]
+    },
+    {
+      "kod": "ats",
+      "ikon": "🤖",
+      "baslik": "ATS nedir, CV'mi nasıl okur?",
+      "ozet": "Başvuru takip sistemi: CV'ni metne çevirir, bölümlere ayırır, anahtar kelimelere bakar.",
+      "bloklar": [
+        {"tur": "metin", "metin": "ATS (Applicant Tracking System, başvuru takip sistemi), çok başvuru alan şirket ve kurumların başvuruları toplamak, düzenlemek ve aramak için kullandığı yazılımdır. Büyük şirketlerde yaygındır; küçük bir işletme ise CV'ni büyük olasılıkla doğrudan okur."},
+        {"tur": "kartlar", "baslik": "ATS bir CV'yi nasıl “okur”?", "kartlar": [
+          {"ikon": "1️⃣", "baslik": "Metni çıkarır", "metin": "Dosyadaki yazıyı düz metne çevirir. Görsel ya da taranmış CV'de çıkarılacak metin yoktur."},
+          {"ikon": "2️⃣", "baslik": "Bölümlere ayırır", "metin": "“Eğitim”, “Deneyim”, “Beceriler” gibi tanıdık başlıklara bakarak bilgileri yerine koyar; adını ve e-postanı en üstte arar."},
+          {"ikon": "3️⃣", "baslik": "Arar ve sıralar", "metin": "İşe alım yapan kişi ilandaki anahtar kelimelerle arar ya da sistem uyuma göre sıralar. Kararı çoğu zaman yine insanlar verir."}
+        ]},
+        {"tur": "liste", "baslik": "ATS dostu biçim kuralları", "maddeler": [
+          "Tek sütun; tablo, metin kutusu, görsel, ikon, grafik yok.",
+          "Ad ve iletişim bilgisi sayfanın içinde, en üstte (üst bilgi/alt bilgi alanında değil).",
+          "Standart başlıklar: Profil, Eğitim, Deneyim, Projeler, Beceriler, Diller…",
+          "Standart yazı tipi (Arial, Calibri, Liberation Sans gibi); harfleri aralıklı yazma (“Ö Z G E Ç M İ Ş”).",
+          "Tarihler tek biçimde: hep “Eylül 2024 – Haziran 2025” ya da hep “09/2024 – 06/2025”.",
+          "Dosya: ilan ne istiyorsa. Belirtilmemişse metni seçilebilen PDF ya da .docx. Fotoğrafı çekilmiş CV gönderme.",
+          "Dosya adı: Ad_Soyad_CV.pdf — “cv_son_son2.pdf” değil."
+        ]},
+        {"tur": "not", "renk": "iyi", "metin": "Anahtar kelimeler: İlandaki beceri ve araç adlarını (ör. “Excel”, “sosyal medya”, “ekip çalışması”) gerçekten sahipsen CV'nde aynı kelimelerle kullan; tercihen bir deneyimin içinde (“Excel'de 3 aylık bağış tablosunu hazırladım”). Kelimeleri anlamsızca alt alta dizmek (anahtar kelime doldurma) hem ATS'de hem insan okurken kötü görünür."},
+        {"tur": "cift", "baslik": "Efsane → gerçek", "ciftler": [
+          {"kotu": "“İlanı beyaz yazıyla CV'ye gizlersem ATS beni öne çıkarır.”", "iyi": "İşe yaramaz: iyi bilinen ve kolay yakalanan bir hiledir. Sistem metni düz yazı olarak gösterdiğinde ya da biri “Tümünü seç” dediğinde ortaya çıkar ve güvenini bitirir.", "neden": "Dürüstlük, her kelimeden daha değerlidir."},
+          {"kotu": "“Renkli, iki sütunlu, ikonlu tasarım daha çok dikkat çeker.”", "iyi": "Ekranda güzel görünebilir ama ATS sütunları karıştırabilir, ikonları anlamsız karakterlere çevirebilir. İnsan okuyucu için de sade düzen daha hızlı okunur.", "neden": "Önce okunabilirlik."},
+          {"kotu": "“ATS her CV'yi otomatik reddeder; insan hiç görmez.”", "iyi": "Sistemler şirketten şirkete farklıdır. Çoğu, başvuruları düzenleyip aranabilir hâle getirir; kararı genellikle insanlar verir. Bazı ilanlarda yaş ya da çalışma izni gibi ön eleme soruları olabilir.", "neden": "ATS'ye uygun CV, insana da uygun CV'dir."},
+          {"kotu": "“Ne kadar çok anahtar kelime, o kadar iyi.”", "iyi": "Kelimeler bağlam içinde, gerçek deneyimlerle birlikte geçmeli. Okuyan kişi CV'yi sonunda okuyacak.", "neden": "Anahtar kelime doldurma güveni azaltır."}
+        ]}
+      ],
+      "kaynaklar": ["greenhouse", "fgcu", "linkedin_ats", "dartmouth", "ladders"],
+      "sinav": [
+        {"soru": "ATS bir CV'yi okurken ilk ne yapar?", "secenekler": ["Fotoğrafına bakar", "Dosyadaki metni çıkarıp bölümlere ayırır", "Renklerini puanlar"], "dogru": 1, "aciklama": "ATS önce metni çıkarır, sonra başlıklara göre bölümlere ayırır."},
+        {"soru": "Hangisi ATS dostu DEĞİLDİR?", "secenekler": ["Tek sütunlu düzen", "İletişim bilgisini bir görselin içine koymak", "“Eğitim” ve “Beceriler” başlıkları"], "dogru": 1, "aciklama": "Görseldeki yazıyı ATS okuyamaz; ad ve e-posta düz metin olarak en üstte olmalı."},
+        {"soru": "İlandaki anahtar kelimeleri beyaz yazıyla CV'ye gizlemek…", "secenekler": ["Puanı garanti yükseltir", "Kolay fark edilir ve güveni bozar", "Yalnızca PDF'te işe yarar"], "dogru": 1, "aciklama": "Bu iyi bilinen bir hiledir; metin düz yazıya çevrildiğinde görünür."}
+      ]
+    },
+    {
+      "kod": "basvuru",
+      "ikon": "📮",
+      "baslik": "Ön yazı, referans, dijital iz ve başvuru",
+      "ozet": "CV'yi göndermek de bir beceri: e-posta, ek adı, takip.",
+      "bloklar": [
+        {"tur": "liste", "baslik": "Ön yazı ve referans", "maddeler": [
+          "Ön yazı: kısa (bir sayfadan az), her başvuruya özel; kim olduğun, neden bu ilan, neden sen. Bu sekmedeki “Ön yazı” şablonunu kullanabilirsin.",
+          "Referans: CV'ye yazmak zorunlu değil; ilan isterse ekle. Aile üyesi değil; öğretmenin, kulüp danışmanın ya da gönüllü çalıştığın yerin sorumlusu olsun. Adını vermeden önce izin iste."
+        ]},
+        {"tur": "liste", "baslik": "Dijital ayak izi ve profesyonel profil", "maddeler": [
+          "Adını bir arama motorunda arat: herkese açık hesaplarında görünmesini istemediğin bir şey var mı?",
+          "Gizlilik ayarlarını gözden geçir; CV'ye yalnızca işle ilgili ve düzenli bir profil bağlantısı koy (ör. bir proje sayfası).",
+          "LinkedIn gibi platformların yaş sınırı vardır: LinkedIn kullanıcı sözleşmesine göre 16 yaşından küçükler kullanamaz. Herhangi bir platforma kaydolmadan önce yaş sınırını ve gizlilik ayarlarını kontrol et."
+        ]},
+        {"tur": "ornek", "baslik": "E-postayla CV gönderme (örnek)", "metin": "Konu: Yaz Gözlem Stajı Başvurusu – Ad Soyad\n\nSayın Yetkili,\n\n[Okul adı] 11. sınıf öğrencisiyim. Web sitenizde yayımlanan yaz gözlem stajı ilanına başvurmak istiyorum. Okul robotik takımında iki yıldır yazılım sorumlusuyum; özgeçmişim ve ön yazım ektedir.\n\nZaman ayırdığınız için teşekkür ederim.\n\nSaygılarımla,\nAd Soyad\nad.soyad@ornek.com\n\nEkler: Ad_Soyad_CV.pdf, Ad_Soyad_On_Yazi.pdf"},
+        {"tur": "liste", "baslik": "Göndermeden önce ve sonra", "maddeler": [
+          "E-postayı önce kendine gönder: ek açılıyor mu, dosya adı düzgün mü?",
+          "İlan bir başvuru formu istiyorsa e-posta değil formu kullan.",
+          "Takip: 1–2 hafta ses çıkmazsa kısa ve kibar bir e-postayla başvurunun durumunu sorabilirsin.",
+          "Olumsuz cevap da bir cevaptır: teşekkür et, bir sonraki fırsat için iletişimi açık bırak."
+        ]}
+      ],
+      "kaynaklar": ["harvard", "adu", "linkedin_sozlesme", "wit"],
+      "sinav": [
+        {"soru": "CV dosyanın adı hangisi olmalı?", "secenekler": ["cv_yeni_son2.pdf", "Ad_Soyad_CV.pdf", "belge1.pdf"], "dogru": 1, "aciklama": "Okuyan kişi dosyayı adından tanır; sade ve adını içeren bir ad kullan."},
+        {"soru": "Kimi referans olarak göstermek uygun DEĞİLDİR?", "secenekler": ["Kulüp danışman öğretmenin", "Teyzen", "Gönüllü çalıştığın derneğin sorumlusu"], "dogru": 1, "aciklama": "Aile üyeleri tarafsız sayılmaz; seni bir görevde gözlemlemiş kişileri seç."},
+        {"soru": "Başvurudan sonra ne zaman takip e-postası göndermek makuldür?", "secenekler": ["Aynı gün", "1–2 hafta sonra", "Hiçbir zaman"], "dogru": 1, "aciklama": "Kısa ve kibar bir takip, ilgini gösterir; çok erken yazmak sabırsızlık gibi görünür."}
+      ]
+    }
+  ]
+}

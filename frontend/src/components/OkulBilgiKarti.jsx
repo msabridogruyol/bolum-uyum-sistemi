@@ -68,7 +68,7 @@ export default function OkulBilgiKarti({ okul }) {
         </>
       )}
 
-      {bos && <div className="okb-bos">Okulun tanıtım bilgileri henüz eklenmedi.</div>}
+      {bos && <div className="okb-bos">Okulun tanıtım bilgileri burada görünecek.</div>}
     </div>
   )
 }

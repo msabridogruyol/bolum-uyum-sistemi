@@ -2,6 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { api } from '../api/client'
 import { useModuller } from '../yardimci/moduller'
+import { dogalSesVarMi, efekt, sesAcikMi, sesAyarla, soyle, sus } from '../yardimci/filizSes'
 
 /*
  * [2026-10-03] Filiz maskotu — sağ üstte duran, hedef bölüme göre kıyafet değiştiren,
@@ -1064,61 +1065,209 @@ export function Karakter({ cinsiyet, kiyafet, gozGoz, kirp, uyku, konusuyor, sev
   )
 }
 
-// ----------------------------------------------------------------------------- Ana bileşen
+// ----------------------------------------------------------------------------- Ortak canlandırma (öğrenci + yönetim)
+// [2026-10-11] Öğrenci maskotu ile yönetim paneli asistanı (MaskotYonetim.jsx) aynı davranışı paylaşır:
+// animasyonlar, göz kırpma, imleci izleyen gözler, uyuma, efektler, konuşma balonu (yazı makinesi), ses, küçültme.
 const ANIMASYONLAR = ['salla', 'zipla', 'don', 'dans', 'dusun', 'onayla']
 const SURE = { salla: 1600, zipla: 900, don: 1100, dans: 2000, dusun: 2200, onayla: 1200, kutla: 1800, giris: 900 }
-const depoOku = (k, v) => { try { return localStorage.getItem(k) ?? v } catch { return v } }
-const depoYaz = (k, v) => { try { localStorage.setItem(k, v) } catch { /* yok */ } }
+export const depoOku = (k, v) => { try { return localStorage.getItem(k) ?? v } catch { return v } }
+export const depoYaz = (k, v) => { try { localStorage.setItem(k, v) } catch { /* yok */ } }
 
-export default function Maskot({ profil, ozet }) {
-  const filizAcik = useModuller()('filiz')   // [2026-10-10] paket
-  const konum = useLocation()
-  const [hedef, setHedef] = useState(null)
-  const [hedefYuklendi, setHedefYuklendi] = useState(false)
+/**
+ * Balon içeriği: düz metin ya da { metin, baglanti: { etiket, yol }, sira: '1/3' } (yönetimde "Göster →").
+ * mesajSec: ara ara söylenecek cümleyi döndürür (ref ile okunur; aralıklar yeniden kurulmaz).
+ */
+export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAraligi = 55000 } = {}) {
   const [animasyon, setAnimasyon] = useState('giris')
   const [kirp, setKirp] = useState(false)
   const [uyku, setUyku] = useState(false)
   const [gozGoz, setGozGoz] = useState({ x: 0, y: 0 })
-  const [balon, setBalon] = useState('')
+  const [balon, setBalonHam] = useState(null)
   const [yazilan, setYazilan] = useState('')
-  const [kucuk, setKucuk] = useState(() => depoOku('maskot_kucuk', '0') === '1')
-  const [sessiz, setSessiz] = useState(() => depoOku('maskot_sessiz', '0') === '1')
+  const [kucuk, setKucuk] = useState(() => depoOku(kucukAnahtar, '0') === '1')
+  // [2026-10-10] 🔊 gerçek sesi açar / kapatır (varsayılan kapalı); konuşma balonları her zaman görünür
+  const [sesAcik, setSesAcik] = useState(sesAcikMi)
   const [efektler, setEfektler] = useState([])
-  const [haftalik, setHaftalik] = useState(null)
   const [sohbetAcik, setSohbetAcik] = useState(false)
   const kutu = useRef(null)
   const sonHareket = useRef(Date.now())
-  const mesajSirasi = useRef(0)
+  const secici = useRef(mesajSec)
+  secici.current = mesajSec
 
-  const kiyafet = useMemo(() => kiyafetBul(hedef, profil?.hedef_meslek_adi), [hedef, profil?.hedef_meslek_adi])
-  const cinsiyet = profil?.cinsiyet === 'erkek' || profil?.cinsiyet === 'kadin' ? profil.cinsiyet : 'notr'
-  const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0]
-
-  // hedef bölüm: sayfa değiştikçe tazelenir (koçlukta hedef değişince kıyafet hemen değişsin)
-  useEffect(() => {
-    api.aktifHedefGetir().then((h) => setHedef(h?.bolum_adi || null)).catch(() => setHedef(null)).finally(() => setHedefYuklendi(true))
-  }, [konum.pathname])
-
-  // [2026-10-04] haftalık görevler: ilk açılışta çekilir, görev tamamlanınca ana sayfadaki kart olay yayınlar
-  useEffect(() => {
-    api.haftalikGetir().then(setHaftalik).catch(() => {})
-    const dinle = (e) => setHaftalik(e.detail)
-    window.addEventListener('haftalik-guncellendi', dinle)
-    return () => window.removeEventListener('haftalik-guncellendi', dinle)
-  }, [])
-  const seviye = haftalik?.seviye?.no || 1
-
-  const oynat = useCallback((ad) => {
-    setAnimasyon(ad)
+  const setBalon = useCallback((b) => setBalonHam(b ? (typeof b === 'string' ? { metin: b } : b) : null), [])
+  const oynat = useCallback((anim) => {
+    setAnimasyon(anim)
     window.clearTimeout(oynat.zaman)
-    oynat.zaman = window.setTimeout(() => setAnimasyon(''), SURE[ad] || 1200)
+    oynat.zaman = window.setTimeout(() => setAnimasyon(''), SURE[anim] || 1200)
   }, [])
-
   const efektEkle = useCallback((tur, adet) => {
     const yeni = Array.from({ length: adet }, (_, i) => ({ id: `${Date.now()}-${i}-${Math.random()}`, tur, x: Math.random() * 80 - 40, gecikme: i * 70, renk: ['#E63946', '#FFD23F', '#2A9D8F', '#3A86FF', '#8338EC'][i % 5] }))
     setEfektler((e) => [...e, ...yeni])
     window.setTimeout(() => setEfektler((e) => e.filter((x) => !yeni.includes(x))), 1800)
   }, [])
+
+  // sesli: true → cümle sesli okunur (yalnızca kullanıcının bir eylemine karşılık; ara ara gelen sözler sessizdir)
+  const konus = useCallback((icerik, sesli = false) => {
+    if (kucuk || sohbetAcik || !icerik) return
+    setBalon(icerik)
+    if (sesli && sesAcik) soyle(typeof icerik === 'string' ? icerik : icerik.metin)
+  }, [kucuk, sohbetAcik, sesAcik, setBalon])
+
+  // [2026-10-04] sohbet paneli: Filiz yazarken düşünür, cevap gelince başını sallar
+  useEffect(() => {
+    const dinle = (e) => {
+      const d = e.detail || {}
+      setSohbetAcik(!!d.acik)
+      if (d.acik) setBalon(null)
+      if (d.dusunuyor) setAnimasyon('dusun')
+      else if (d.cevaplandi) oynat('onayla')
+      else setAnimasyon((a) => (a === 'dusun' ? '' : a))
+    }
+    window.addEventListener('filiz-durum', dinle)
+    return () => window.removeEventListener('filiz-durum', dinle)
+  }, [oynat, setBalon])
+
+  // yazı makinesi efekti (konuşurken ağız hareket eder); bağlantılı balon biraz daha uzun kalır
+  useEffect(() => {
+    if (!balon) { setYazilan(''); return undefined }
+    const metin = balon.metin || ''
+    let i = 0
+    const t = window.setInterval(() => {
+      i += 1
+      setYazilan(metin.slice(0, i))
+      if (i >= metin.length) window.clearInterval(t)
+    }, 28)
+    const kapat = window.setTimeout(() => setBalon(null), Math.max(balon.baglanti ? 9000 : 5500, metin.length * 90))
+    return () => { window.clearInterval(t); window.clearTimeout(kapat) }
+  }, [balon, setBalon])
+  const konusuyor = !!balon && yazilan.length < (balon.metin || '').length
+
+  // göz kırpma (rastgele aralıklarla, bazen çift)
+  useEffect(() => {
+    let t
+    const dongu = () => {
+      t = window.setTimeout(() => {
+        setKirp(true)
+        window.setTimeout(() => setKirp(false), 140)
+        if (Math.random() < 0.25) window.setTimeout(() => { setKirp(true); window.setTimeout(() => setKirp(false), 120) }, 300)
+        dongu()
+      }, 2200 + Math.random() * 3800)
+    }
+    dongu()
+    return () => window.clearTimeout(t)
+  }, [])
+
+  // gözler imleci takip eder + hareketsizlikte uyur
+  useEffect(() => {
+    const hareket = (e) => {
+      sonHareket.current = Date.now()
+      if (uyku) { setUyku(false); oynat('zipla'); efekt('uyan'); konus('Uyumuyordum, sadece gözlerimi dinlendiriyordum 😅') }
+      const r = kutu.current?.getBoundingClientRect()
+      if (!r) return
+      const dx = e.clientX - (r.left + r.width / 2)
+      const dy = e.clientY - (r.top + r.height * 0.35)
+      const uz = Math.max(1, Math.hypot(dx, dy))
+      setGozGoz({ x: (dx / uz) * 1.8, y: (dy / uz) * 1.6 })
+    }
+    window.addEventListener('mousemove', hareket)
+    const kontrol = window.setInterval(() => {
+      if (!uyku && Date.now() - sonHareket.current > 75000) { setUyku(true); setBalon(null) }
+    }, 5000)
+    return () => { window.removeEventListener('mousemove', hareket); window.clearInterval(kontrol) }
+  }, [uyku, oynat, konus, setBalon])
+
+  // ara ara: rastgele animasyon + cümle
+  useEffect(() => {
+    const anim = window.setInterval(() => { if (!uyku) oynat(ANIMASYONLAR[Math.floor(Math.random() * ANIMASYONLAR.length)]) }, 17000)
+    const soz = window.setInterval(() => { if (!uyku && secici.current) { konus(secici.current()); oynat(Math.random() < 0.5 ? 'onayla' : 'salla') } }, sozAraligi)
+    return () => { window.clearInterval(anim); window.clearInterval(soz) }
+  }, [uyku, oynat, konus, sozAraligi])
+
+  // tıklama tepkisi: uyandır + rastgele animasyon + efekt + ses (cümleyi çağıran seçer)
+  const tepki = useCallback(() => {
+    if (uyku) { setUyku(false); sonHareket.current = Date.now() }
+    const secim = ['zipla', 'don', 'dans', 'salla', 'kutla'][Math.floor(Math.random() * 5)]
+    oynat(secim)
+    efektEkle(secim === 'kutla' ? 'konfeti' : 'kalp', secim === 'kutla' ? 16 : 5)
+    efekt(secim === 'kutla' ? 'kutla' : secim === 'zipla' ? 'zipla' : secim === 'don' ? 'don' : 'kalp')
+  }, [uyku, oynat, efektEkle])
+
+  const kucukDegistir = useCallback((v) => { setKucuk(v); depoYaz(kucukAnahtar, v ? '1' : '0'); if (v) { setBalon(null); sus() } }, [kucukAnahtar, setBalon])
+  const sesDegistir = useCallback(async () => {
+    const v = !sesAcik
+    sesAyarla(v); setSesAcik(v)
+    if (!v) { sus(); setBalon('Sesimi kapattım 🤫'); return }
+    efekt('ac', true)
+    const dogal = await dogalSesVarMi()
+    const m = dogal ? (ad ? `Merhaba ${ad}! Artık beni duyabilirsin 🌱` : 'Artık beni duyabilirsin 🌱')
+      : 'Bu cihazda doğal bir Türkçe ses bulamadım; robotik konuşmak yerine yalnızca küçük sesler çıkaracağım 🎵'
+    setBalon(m)
+    if (dogal) soyle(m)
+  }, [sesAcik, ad, setBalon])
+
+  return { kutu, animasyon, kirp, uyku, setUyku, gozGoz, balon, setBalon, yazilan, konusuyor, kucuk, kucukDegistir, sesAcik, sesDegistir,
+    efektler, efektEkle, oynat, konus, tepki, sohbetAcik }
+}
+
+/** Maskotun görünümü: karakter + balon + efektler + araçlar. Öğrenci ve yönetim aynı bileşeni kullanır. */
+export function MaskotGorunum({ m, cinsiyet, kiyafet, seviye, rozet, onTikla, sorGoster, sorBaslik, miniBaslik, onBaglanti, sinif = '' }) {
+  if (m.kucuk) {
+    return (
+      <button className={`msk-mini ${sinif}`} onClick={() => { m.kucukDegistir(false); m.oynat('salla'); setTimeout(() => m.setBalon('Geri döndüm! 🌱'), 200) }} title={miniBaslik} aria-label={miniBaslik}>
+        <span style={{ fontSize: 22 }}>🌱</span>
+        <style>{MASKOT_CSS}</style>
+      </button>
+    )
+  }
+  const b = m.balon
+  const bitti = b && m.yazilan.length >= (b.metin || '').length
+  return (
+    <div className={`msk-kap ${sinif}`} ref={m.kutu}>
+      <style>{MASKOT_CSS}</style>
+      {b && (
+        <div className="msk-balon" role="status" aria-live="polite">
+          {b.sira && <span className="msk-balon-sira">{b.sira}</span>}
+          {m.yazilan}
+          {b.baglanti && bitti && (
+            <button className="msk-balon-git" onClick={() => onBaglanti?.(b.baglanti)}>{b.baglanti.etiket ? `${b.baglanti.etiket} · ` : ''}Göster →</button>
+          )}
+          <span className="msk-balon-kuyruk" />
+        </div>
+      )}
+      <div className={`msk-karakter msk-${m.animasyon}`} onClick={onTikla} title="Bana tıkla!">
+        <Karakter cinsiyet={cinsiyet} kiyafet={kiyafet} gozGoz={m.gozGoz} kirp={m.kirp} uyku={m.uyku} konusuyor={m.konusuyor} seviye={seviye} />
+        {rozet}
+        {m.animasyon === 'dusun' && <div className="msk-dusunce">💭</div>}
+        {m.uyku && <div className="msk-zzz"><span>z</span><span>z</span><span>Z</span></div>}
+        {m.efektler.map((e) => (
+          <span key={e.id} className={`msk-efekt msk-${e.tur}`} style={{ left: `calc(50% + ${e.x}px)`, animationDelay: `${e.gecikme}ms`, color: e.renk, background: e.tur === 'konfeti' ? e.renk : undefined, '--dx': `${e.x * 1.6}px` }}>
+            {e.tur === 'kalp' ? '❤' : e.tur === 'yildiz' ? '✦' : ''}
+          </span>
+        ))}
+      </div>
+      {!m.sohbetAcik && sorGoster && (
+        <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title={sorBaslik}>💬 Bana sor</button>
+      )}
+      <div className="msk-araclar">
+        <button onClick={m.sesDegistir} title={m.sesAcik ? 'Sesi kapat' : 'Sesi aç'} aria-pressed={m.sesAcik}>{m.sesAcik ? '🔊' : '🔇'}</button>
+        <button onClick={() => m.kucukDegistir(true)} title="Küçült" aria-label="Filiz'i küçült">–</button>
+      </div>
+    </div>
+  )
+}
+
+// ----------------------------------------------------------------------------- Öğrenci maskotu
+export default function Maskot({ profil, ozet }) {
+  const filizAcik = useModuller()('filiz')   // [2026-10-10] paket
+  const konum = useLocation()
+  const [hedef, setHedef] = useState(null)
+  const [hedefYuklendi, setHedefYuklendi] = useState(false)
+  const [haftalik, setHaftalik] = useState(null)
+  const mesajSirasi = useRef(0)
+
+  const kiyafet = useMemo(() => kiyafetBul(hedef, profil?.hedef_meslek_adi), [hedef, profil?.hedef_meslek_adi])
+  const cinsiyet = profil?.cinsiyet === 'erkek' || profil?.cinsiyet === 'kadin' ? profil.cinsiyet : 'notr'
+  const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0]
 
   const mesajSec = useCallback(() => {
     const havuz = []
@@ -1136,38 +1285,22 @@ export default function Maskot({ profil, ozet }) {
     return havuz[mesajSirasi.current]
   }, [konum.pathname, ozet, hedef, kiyafet, ilkAd, haftalik])
 
-  const konus = useCallback((metin) => {
-    if (sessiz || kucuk || sohbetAcik) return
-    setBalon(metin)
-  }, [sessiz, kucuk, sohbetAcik])
+  const m = useMaskot({ kucukAnahtar: 'maskot_kucuk', mesajSec, ad: ilkAd })
+  const { oynat, konus, efektEkle } = m
 
-  // [2026-10-04] sohbet paneli: Filiz yazarken düşünür, cevap gelince başını sallar
+  // hedef bölüm: sayfa değiştikçe tazelenir (koçlukta hedef değişince kıyafet hemen değişsin)
   useEffect(() => {
-    const dinle = (e) => {
-      const d = e.detail || {}
-      setSohbetAcik(!!d.acik)
-      if (d.acik) setBalon('')
-      if (d.dusunuyor) setAnimasyon('dusun')
-      else if (d.cevaplandi) oynat('onayla')
-      else setAnimasyon((a) => (a === 'dusun' ? '' : a))
-    }
-    window.addEventListener('filiz-durum', dinle)
-    return () => window.removeEventListener('filiz-durum', dinle)
-  }, [oynat])
+    api.aktifHedefGetir().then((h) => setHedef(h?.bolum_adi || null)).catch(() => setHedef(null)).finally(() => setHedefYuklendi(true))
+  }, [konum.pathname])
 
-  // yazı makinesi efekti (konuşurken ağız hareket eder)
+  // [2026-10-04] haftalık görevler: ilk açılışta çekilir, görev tamamlanınca ana sayfadaki kart olay yayınlar
   useEffect(() => {
-    if (!balon) { setYazilan(''); return undefined }
-    let i = 0
-    const t = window.setInterval(() => {
-      i += 1
-      setYazilan(balon.slice(0, i))
-      if (i >= balon.length) window.clearInterval(t)
-    }, 28)
-    const kapat = window.setTimeout(() => setBalon(''), Math.max(5500, balon.length * 90))
-    return () => { window.clearInterval(t); window.clearTimeout(kapat) }
-  }, [balon])
-  const konusuyor = balon && yazilan.length < balon.length
+    api.haftalikGetir().then(setHaftalik).catch(() => {})
+    const dinle = (e) => setHaftalik(e.detail)
+    window.addEventListener('haftalik-guncellendi', dinle)
+    return () => window.removeEventListener('haftalik-guncellendi', dinle)
+  }, [])
+  const seviye = haftalik?.seviye?.no || 1
 
   // ilk açılış: selam + sayfa mesajı
   useEffect(() => {
@@ -1183,8 +1316,8 @@ export default function Maskot({ profil, ozet }) {
     if (!hedefYuklendi) return undefined
     const t = window.setTimeout(() => {
       const { ozet: o, hedef: h } = guncel.current
-      const m = sayfaMesaji(konum.pathname, o, h ? baslikDuzelt(h) : null)
-      if (m) { konus(m); oynat('onayla') }
+      const mesaj = sayfaMesaji(konum.pathname, o, h ? baslikDuzelt(h) : null)
+      if (mesaj) { konus(mesaj); oynat('onayla') }
     }, 1600)
     return () => window.clearTimeout(t)
   }, [konum.pathname, hedefYuklendi]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -1206,7 +1339,7 @@ export default function Maskot({ profil, ozet }) {
     if (biten == null) return
     const kayitli = Number(depoOku('maskot_biten_katman', '-1'))
     if (kayitli >= 0 && biten > kayitli) {
-      window.setTimeout(() => { oynat('kutla'); efektEkle('konfeti', 18); konus(`Bir katman daha bitti! ${biten}/${ozet.toplam_ana_katman_sayisi} 🎉`) }, 1800)
+      window.setTimeout(() => { oynat('kutla'); efekt('kutla'); efektEkle('konfeti', 18); konus(`Bir katman daha bitti! ${biten}/${ozet.toplam_ana_katman_sayisi} 🎉`, true) }, 1800)
     }
     depoYaz('maskot_biten_katman', String(biten))
   }, [ozet]) // eslint-disable-line react-hooks/exhaustive-deps
@@ -1217,104 +1350,20 @@ export default function Maskot({ profil, ozet }) {
     if (!haftalik) return
     const kayitli = Number(depoOku('maskot_seviye', '0'))
     if (kayitli > 0 && haftalik.seviye.no > kayitli) {
-      window.setTimeout(() => { oynat('kutla'); efektEkle('yildiz', 14); efektEkle('konfeti', 18); konus(`Büyüdüm! Artık bir ${haftalik.seviye.ad}'ım ${haftalik.seviye.ikon} Teşekkürler!`) }, 600)
+      window.setTimeout(() => { oynat('kutla'); efektEkle('yildiz', 14); efektEkle('konfeti', 18); efekt('kutla'); konus(`Büyüdüm! Artık bir ${haftalik.seviye.ad}'ım ${haftalik.seviye.ikon} Teşekkürler!`, true) }, 600)
     } else if (oncekiHaftalik.current && haftalik.tamamlanan > oncekiHaftalik.current.tamamlanan) {
-      if (haftalik.tamamlanan === haftalik.toplam) { oynat('kutla'); efektEkle('konfeti', 20); konus('Bu haftanın tüm görevleri tamam! 🎉 Pazartesi yenileri gelecek.') }
-      else { oynat('zipla'); efektEkle('kalp', 6); konus(haftalik.tamamlanan === haftalik.seri_esigi ? 'Bu haftaki serin güvende! 🔥' : 'Bir görev daha bitti, süpersin! ✅') }
+      if (haftalik.tamamlanan === haftalik.toplam) { oynat('kutla'); efekt('kutla'); efektEkle('konfeti', 20); konus('Bu haftanın tüm görevleri tamam! 🎉 Pazartesi yenileri gelecek.', true) }
+      else { oynat('zipla'); efekt('zipla'); efektEkle('kalp', 6); konus(haftalik.tamamlanan === haftalik.seri_esigi ? 'Bu haftaki serin güvende! 🔥' : 'Bir görev daha bitti, süpersin! ✅', true) }
     }
     depoYaz('maskot_seviye', String(haftalik.seviye.no))
     oncekiHaftalik.current = haftalik
   }, [haftalik]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // göz kırpma (rastgele aralıklarla, bazen çift)
-  useEffect(() => {
-    let t
-    const dongu = () => {
-      t = window.setTimeout(() => {
-        setKirp(true)
-        window.setTimeout(() => setKirp(false), 140)
-        if (Math.random() < 0.25) window.setTimeout(() => { setKirp(true); window.setTimeout(() => setKirp(false), 120) }, 300)
-        dongu()
-      }, 2200 + Math.random() * 3800)
-    }
-    dongu()
-    return () => window.clearTimeout(t)
-  }, [])
-
-  // gözler imleci takip eder + hareketsizlikte uyur
-  useEffect(() => {
-    const hareket = (e) => {
-      sonHareket.current = Date.now()
-      if (uyku) { setUyku(false); oynat('zipla'); konus('Uyumuyordum, sadece gözlerimi dinlendiriyordum 😅') }
-      const r = kutu.current?.getBoundingClientRect()
-      if (!r) return
-      const dx = e.clientX - (r.left + r.width / 2)
-      const dy = e.clientY - (r.top + r.height * 0.35)
-      const uz = Math.max(1, Math.hypot(dx, dy))
-      setGozGoz({ x: (dx / uz) * 1.8, y: (dy / uz) * 1.6 })
-    }
-    window.addEventListener('mousemove', hareket)
-    const kontrol = window.setInterval(() => {
-      if (!uyku && Date.now() - sonHareket.current > 75000) { setUyku(true); setBalon('') }
-    }, 5000)
-    return () => { window.removeEventListener('mousemove', hareket); window.clearInterval(kontrol) }
-  }, [uyku, oynat, konus])
-
-  // ara ara: rastgele animasyon + motivasyon cümlesi
-  useEffect(() => {
-    const anim = window.setInterval(() => { if (!uyku) oynat(ANIMASYONLAR[Math.floor(Math.random() * ANIMASYONLAR.length)]) }, 17000)
-    const soz = window.setInterval(() => { if (!uyku) { konus(mesajSec()); oynat(Math.random() < 0.5 ? 'onayla' : 'salla') } }, 55000)
-    return () => { window.clearInterval(anim); window.clearInterval(soz) }
-  }, [uyku, oynat, konus, mesajSec])
-
-  function tiklandi() {
-    if (uyku) { setUyku(false); sonHareket.current = Date.now() }
-    const secim = ['zipla', 'don', 'dans', 'salla', 'kutla'][Math.floor(Math.random() * 5)]
-    oynat(secim)
-    efektEkle(secim === 'kutla' ? 'konfeti' : 'kalp', secim === 'kutla' ? 16 : 5)
-    if (!sessiz) setBalon(mesajSec())
-  }
-
-  function kucukDegistir(v) { setKucuk(v); depoYaz('maskot_kucuk', v ? '1' : '0'); if (v) setBalon('') }
-  function sessizDegistir() { const v = !sessiz; setSessiz(v); depoYaz('maskot_sessiz', v ? '1' : '0'); setBalon(v ? '' : 'Tekrar konuşabilirim! 🗣️') }
-
-  if (kucuk) {
-    return (
-      <button className="msk-mini" onClick={() => { kucukDegistir(false); oynat('salla'); setTimeout(() => konus('Geri döndüm! 🌱'), 200) }} title="Filiz Gelişim Koçu'nu göster">
-        <span style={{ fontSize: 22 }}>🌱</span>
-        <style>{MASKOT_CSS}</style>
-      </button>
-    )
-  }
-
   return (
-    <div className="msk-kap" ref={kutu}>
-      <style>{MASKOT_CSS}</style>
-      {balon && (
-        <div className="msk-balon">
-          {yazilan}
-          <span className="msk-balon-kuyruk" />
-        </div>
-      )}
-      <div className={`msk-karakter msk-${animasyon}`} onClick={tiklandi} title="Bana tıkla!">
-        <Karakter cinsiyet={cinsiyet} kiyafet={kiyafet} gozGoz={gozGoz} kirp={kirp} uyku={uyku} konusuyor={!!konusuyor} seviye={seviye} />
-        {haftalik && <div className="msk-rozet" title={`${haftalik.seviye.ad} · ${haftalik.seviye.puan} puan`}>{haftalik.seviye.no}</div>}
-        {animasyon === 'dusun' && <div className="msk-dusunce">💭</div>}
-        {uyku && <div className="msk-zzz"><span>z</span><span>z</span><span>Z</span></div>}
-        {efektler.map((e) => (
-          <span key={e.id} className={`msk-efekt msk-${e.tur}`} style={{ left: `calc(50% + ${e.x}px)`, animationDelay: `${e.gecikme}ms`, color: e.renk, background: e.tur === 'konfeti' ? e.renk : undefined, '--dx': `${e.x * 1.6}px` }}>
-            {e.tur === 'kalp' ? '❤' : e.tur === 'yildiz' ? '✦' : ''}
-          </span>
-        ))}
-      </div>
-      {!sohbetAcik && filizAcik && (
-        <button className="msk-sor" onClick={() => window.dispatchEvent(new CustomEvent('filiz-ac'))} title="Filiz Gelişim Koçu ile sohbet et">💬 Bana sor</button>
-      )}
-      <div className="msk-araclar">
-        <button onClick={sessizDegistir} title={sessiz ? 'Konuşmayı aç' : 'Sessize al'}>{sessiz ? '🔇' : '🔊'}</button>
-        <button onClick={() => kucukDegistir(true)} title="Küçült">–</button>
-      </div>
-    </div>
+    <MaskotGorunum m={m} cinsiyet={cinsiyet} kiyafet={kiyafet} seviye={seviye}
+      rozet={haftalik && <div className="msk-rozet" title={`${haftalik.seviye.ad} · ${haftalik.seviye.puan} puan`}>{haftalik.seviye.no}</div>}
+      onTikla={() => { m.tepki(); konus(mesajSec(), true) }}
+      sorGoster={filizAcik} sorBaslik="Filiz Gelişim Koçu ile sohbet et" miniBaslik="Filiz Gelişim Koçu'nu göster" />
   )
 }
 
@@ -1346,6 +1395,9 @@ const MASKOT_CSS = `
 .msk-kutla{animation:msk-zipla .9s cubic-bezier(.3,1.6,.5,1) 2}
 .msk-kutla .msk-sagkol,.msk-kutla .msk-solkol{animation:msk-kollar 1.8s ease-in-out}
 .msk-balon{position:absolute;right:100px;top:14px;width:max-content;max-width:230px;background:var(--sur,#fff);color:var(--tx,#222);border:1.5px solid var(--pu,#E07A3F);border-radius:14px;padding:9px 12px;font-size:12.5px;line-height:1.45;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,.12);animation:msk-balon .25s ease-out}
+.msk-balon-sira{display:inline-block;margin-right:6px;font-size:10.5px;font-weight:800;color:var(--pu,#E07A3F);background:var(--pul,#FDEBDD);border-radius:999px;padding:0 6px;vertical-align:1px}
+.msk-balon-git{display:block;margin-top:6px;border:0;background:none;padding:0;font:inherit;font-size:12px;font-weight:800;color:var(--pu,#E07A3F);cursor:pointer;text-align:left}
+.msk-balon-git:hover{text-decoration:underline}
 .msk-balon-kuyruk{position:absolute;right:-8px;top:18px;width:14px;height:14px;background:var(--sur,#fff);border-right:1.5px solid var(--pu,#E07A3F);border-top:1.5px solid var(--pu,#E07A3F);transform:rotate(45deg)}
 .msk-araclar{position:absolute;left:-26px;bottom:6px;display:flex;flex-direction:column;gap:4px;opacity:0;transition:opacity .2s}
 .msk-araclar button,.msk-mini{border:1px solid var(--bor,#ddd);background:var(--sur,#fff);border-radius:50%;width:22px;height:22px;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;padding:0}
@@ -1385,6 +1437,6 @@ const MASKOT_CSS = `
 @keyframes msk-zzz{0%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(10px,-18px);opacity:0}}
 @keyframes msk-efekt{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:1}100%{transform:translateY(-60px) scale(1.2);opacity:0}}
 @keyframes msk-konfeti{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx,0),70px) rotate(540deg);opacity:0}}
-@media (max-width: 760px){.msk-kap{position:fixed;width:64px;height:86px;top:6px;right:8px}.msk-mini{position:fixed;top:12px;right:14px}.msk-balon{right:70px;max-width:180px;font-size:11.5px}}
+@media (max-width: 760px){.msk-kap{position:absolute;width:64px;height:86px;top:8px;right:8px}.msk-mini{position:absolute;top:12px;right:14px}.msk-balon{position:fixed;left:12px;right:12px;top:auto;bottom:76px;width:auto;max-width:none;font-size:13px;z-index:65}.msk-balon-kuyruk{display:none}}
 @media (prefers-reduced-motion: reduce){.msk-kap *{animation-duration:0s!important}}
 `

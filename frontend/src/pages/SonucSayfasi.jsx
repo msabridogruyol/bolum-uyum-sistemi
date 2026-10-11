@@ -1,9 +1,11 @@
 import { useEffect, useState } from 'react'
+import GecersizTurUyarisi from '../components/GecersizTurUyarisi'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
 import Sayac from '../components/Sayac'
 import FavoriYildiz from '../components/FavoriYildiz'
+import { KarsilastirDugmesi } from '../components/KarsilastirSepeti'
 import PuanRehberi from '../components/PuanRehberi'
 
 // [2026-10-09] "Neden bu bölüm?" — madde madde: örtüşen yönler (sende / bölümde düzeyi + seçtiğin cevaplar),
@@ -70,6 +72,7 @@ export default function SonucSayfasi({ gomulu = false }) {
           yansıtma; profilin zamanla değişebilir.
         </div>
       </div>}
+      {!gomulu && <GecersizTurUyarisi ozet={ozet} />}
 
       {siralama.length === 0 ? (
         <>
@@ -110,6 +113,7 @@ export default function SonucSayfasi({ gomulu = false }) {
                 </div>
                 <div className="ob-score">%<Sayac deger={Math.round(s.toplam_uyum)} /></div>
                 <FavoriYildiz id={s.bolum_id} ad={s.bolum_adi} />
+                <KarsilastirDugmesi id={s.bolum_id} ad={s.bolum_adi} />
               </div>
               {s.neden_detay ? (
                 <NedenDetay d={s.neden_detay} />

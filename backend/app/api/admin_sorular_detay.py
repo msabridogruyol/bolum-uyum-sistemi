@@ -405,9 +405,43 @@ def secenek_metnini_guncelle(
     db.commit()
 
 
+class KatmanSilmeOzetiOut(BaseModel):
+    katman_kod: str
+    soru_sayisi: int
+    cevap_sayisi: int
+    etkilenen_ogrenci_sayisi: int
+
+
+def _katman_silme_ozeti(db: Session, katman_kod: str):
+    from app.models import OgrenciCevap
+    katman = db.query(Katman).filter(Katman.kod == katman_kod).first()
+    if katman is None:
+        raise HTTPException(status_code=404, detail=f"Katman bulunamadı: {katman_kod}")
+    soru_idler = [s.id for s in db.query(Soru.id).filter(Soru.katman_id == katman.id).all()]
+    cevap_sayisi = ogrenci_sayisi = 0
+    if soru_idler:
+        cevap_sayisi = db.query(func.count(OgrenciCevap.id)).filter(OgrenciCevap.soru_id.in_(soru_idler)).scalar() or 0
+        ogrenci_sayisi = (db.query(func.count(func.distinct(OgrenciCevap.ogrenci_id)))
+                          .filter(OgrenciCevap.soru_id.in_(soru_idler)).scalar() or 0)
+    return katman, soru_idler, int(cevap_sayisi), int(ogrenci_sayisi)
+
+
+@router.get("/katman/{katman_kod}/silme-ozeti", response_model=KatmanSilmeOzetiOut)
+def katman_silme_ozeti(
+    katman_kod: str,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """[2026-10-10] "Katmanı komple sil" onay kutusu için: kaç soru ve kaç öğrenci cevabı silinecek."""
+    _, soru_idler, cevap, ogrenci = _katman_silme_ozeti(db, katman_kod)
+    return KatmanSilmeOzetiOut(katman_kod=katman_kod, soru_sayisi=len(soru_idler), cevap_sayisi=cevap,
+                               etkilenen_ogrenci_sayisi=ogrenci)
+
+
 @router.delete("/katman/{katman_kod}", status_code=204)
 def katmanin_tum_sorularini_sil(
     katman_kod: str,
+    onay: str | None = None,
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
@@ -415,16 +449,20 @@ def katmanin_tum_sorularini_sil(
     [EKLENDİ] Bir katmanın TÜM sorularını (+ seçenekleri, SJT ağırlıkları,
     o sorulara verilmiş öğrenci cevapları) kalıcı olarak siler. Diğer
     katmanlara ve öğrenci turlarına dokunmaz — yalnızca hedef katman.
+    [2026-10-10] Yalnızca süper admin (get_mevcut_admin); ?onay=SIL zorunlu; denetim kaydı yazılır.
     """
     from app.models import OgrenciCevap
+    from app.core.hesap_yonetimi import denetim_yaz
 
-    katman = db.query(Katman).filter(Katman.kod == katman_kod).first()
-    if katman is None:
-        raise HTTPException(status_code=404, detail=f"Katman bulunamadı: {katman_kod}")
-
-    soru_idler = [s.id for s in db.query(Soru.id).filter(Soru.katman_id == katman.id).all()]
+    katman, soru_idler, cevap_sayisi, ogrenci_sayisi = _katman_silme_ozeti(db, katman_kod)
     if not soru_idler:
         return  # zaten boş, silecek bir şey yok
+    if (onay or "").strip().upper() != "SIL":
+        raise HTTPException(
+            status_code=400,
+            detail=(f"Bu işlem {katman_kod} katmanının {len(soru_idler)} sorusunu ve {cevap_sayisi} öğrenci cevabını "
+                    f"({ogrenci_sayisi} öğrenci) kalıcı siler; onaylamak için isteğe onay=SIL ekleyin."),
+        )
 
     secenek_idler = [
         sec.id for sec in db.query(SoruSecenegi.id).filter(SoruSecenegi.soru_id.in_(soru_idler)).all()
@@ -437,4 +475,7 @@ def katmanin_tum_sorularini_sil(
     db.query(SoruSecenegi).filter(SoruSecenegi.soru_id.in_(soru_idler)).delete(synchronize_session=False)
     db.query(Soru).filter(Soru.id.in_(soru_idler)).delete(synchronize_session=False)
 
+    denetim_yaz(db, admin, "katman_sorulari_komple_silme", "sorular", katman_kod,
+                f"{katman_kod} katmanının {len(soru_idler)} sorusu ve {cevap_sayisi} öğrenci cevabı "
+                f"({ogrenci_sayisi} öğrenci) kalıcı silindi")
     db.commit()

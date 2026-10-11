@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { BolumBilgiIcerik } from '../components/BolumBilgiPenceresi'
 import FavoriYildiz from '../components/FavoriYildiz'
+import { KarsilastirDugmesi } from '../components/KarsilastirSepeti'
 
 const ORNEK_ARAMALAR = ['Tıp', 'Bilgisayar Mühendisliği', 'Psikoloji', 'Hukuk', 'İşletme', 'Mimarlık']
 
@@ -122,6 +123,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
                   <div className="ob-body"><div className="ob-name">{s.bolum_adi}</div></div>
                   <div className="ob-score">{s.toplam_uyum !== null ? `%${Math.round(s.toplam_uyum)}` : '—'}</div>
                   <FavoriYildiz id={s.bolum_id} ad={s.bolum_adi} />
+                  <KarsilastirDugmesi id={s.bolum_id} ad={s.bolum_adi} />
                 </div>
               </div>
             ))}

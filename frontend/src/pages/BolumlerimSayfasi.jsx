@@ -2,16 +2,17 @@
 import { lazy, Suspense } from 'react'
 import { NavLink, Navigate, useParams } from 'react-router-dom'
 import { useListem } from '../components/FavoriYildiz'
+import { KarsilastirCubugu } from '../components/KarsilastirSepeti'
 
 const SonucSayfasi = lazy(() => import('./SonucSayfasi'))
 const KesfetSayfasi = lazy(() => import('./KesfetSayfasi'))
-const BolumKarsilastir = lazy(() => import('../components/BolumKarsilastir'))
+const KarsilastirmaSayfasi = lazy(() => import('./KarsilastirmaSayfasi'))   // [2026-10-11] genişletilmiş karşılaştırma
 const ListemSekmesi = lazy(() => import('../components/ListemSekmesi'))
 
 const SEKMELER = [
   { kod: '', ad: 'Sana uygun', ikon: '🌟', alt: 'Değerlendirmene göre en uyumlu 10 bölüm ve nedenleri.' },
   { kod: 'tum', ad: 'Tüm bölümler', ikon: '🔍', alt: '301 bölümün tamamı — ara, incele, beğendiğini ☆ ile listene ekle.' },
-  { kod: 'karsilastir', ad: 'Karşılaştır', ikon: '⚖️', alt: 'Aklındaki 2-3 bölümü yan yana koy: uyum, süre, puan türü, taban puan, meslekler.' },
+  { kod: 'karsilastir', ad: 'Karşılaştır', ikon: '⚖️', alt: 'Aklındaki 2-3 bölümü yan yana koy: uyum ve nedenleri, puan ve sıralama, iş hayatı, meslekler, günlük işler.' },
   { kod: 'listem', ad: 'Listem', ikon: '⭐', alt: 'İlgini çeken bölümler. Rehber öğretmenin de görüşmelerde bu listeyi görür.' },
 ]
 
@@ -40,10 +41,11 @@ export default function BolumlerimSayfasi() {
         <Suspense fallback={<div className="bos-durum">Yükleniyor…</div>}>
           {s.kod === '' && <SonucSayfasi gomulu />}
           {s.kod === 'tum' && <KesfetSayfasi gomulu />}
-          {s.kod === 'karsilastir' && <BolumKarsilastir />}
+          {s.kod === 'karsilastir' && <KarsilastirmaSayfasi gomulu />}
           {s.kod === 'listem' && <ListemSekmesi />}
         </Suspense>
       </div>
+      {s.kod !== 'karsilastir' && <KarsilastirCubugu />}
     </div>
   )
 }

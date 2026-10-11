@@ -62,6 +62,7 @@ export default function SiniflarSekmesi({ okulId, oz, yenile, onOgrenciler }) {
                 ]} />
               )}
             </div>
+            <div className="tablo-kap">
             <table className="yp-tablo">
               <thead><tr><th>Şube</th><th>Sınıf öğretmeni</th><th>Öğrenci</th><th>Giriş</th><th style={{ width: '18%' }}>Tamamlama</th><th>Hedef seçen</th><th>Raporlar</th></tr></thead>
               <tbody>
@@ -93,6 +94,7 @@ export default function SiniflarSekmesi({ okulId, oz, yenile, onOgrenciler }) {
                 ))}
               </tbody>
             </table>
+            </div>
           </div>
         )
       })}

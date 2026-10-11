@@ -336,7 +336,7 @@ def dal_oturumu_baslat(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDege
 
     dal_degiskenleri = db.query(Degisken).filter(Degisken.dal_id == dal.id).all()
     if not dal_degiskenleri:
-        raise IsKuraliHatasi(f"{dal.kod} için henüz soru tanımlanmamış (admin P6 aşaması tamamlanmamış olabilir).")
+        raise IsKuraliHatasi(f"{dal.kod} alan soruları şu an açılamıyor. Biraz sonra tekrar dene ya da rehber öğretmenine bildir.")
 
     sorular = dal_sorulari(db, ogrenci, dal, tur)
     if not sorular:

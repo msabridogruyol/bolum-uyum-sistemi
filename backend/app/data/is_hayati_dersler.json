@@ -1,0 +1,297 @@
+{
+  "surum": "2026-10",
+  "genel_not": "Önemli: Bu dersler genel bilgi verir, hukuki danışmanlık değildir. Tutarlar, oranlar ve kurallar değişebilir; güncel bilgi için resmî kaynaklara (Resmî Gazete, mevzuat.gov.tr, ÇSGB, SGK, GİB) ve ALO 170 Çalışma Hayatı İletişim Merkezi'ne başvur.",
+  "dersler": [
+    {
+      "kod": "bordro",
+      "baslik": "Brüt, net ve bordro okuma",
+      "ikon": "🧾",
+      "ozet": "İş ilanındaki maaşla hesabına yatan para neden farklı? Bordronu okumayı öğren.",
+      "kartlar": [
+        {"baslik": "Brüt ve net", "metin": "Brüt ücret, kesintiler yapılmadan önceki tutardır. Net ücret ise kesintilerden sonra hesabına yatan paradır. Bir iş teklifi aldığında tutarın brüt mü net mi olduğunu mutlaka sor; ikisi arasında belirgin bir fark vardır."},
+        {"baslik": "Çalışandan yapılan kesintiler", "metin": "Bordroda çalışandan yapılan başlıca kesintiler şunlardır: SGK primi işçi payı (brüt ücretin %14'ü: %9 malullük, yaşlılık ve ölüm sigortası + %5 genel sağlık sigortası), işsizlik sigortası işçi payı (%1), gelir vergisi ve damga vergisi (binde 7,59). İşverenin de ayrıca SGK ve işsizlik sigortası primi ödediğini unutma; bu ödemeler senin netinden düşülmez."},
+        {"baslik": "Gelir vergisi neden yıl içinde artar?", "metin": "Ücretlerde gelir vergisi artan oranlıdır ve yıl başından itibaren biriken (kümülatif) vergi matrahına göre hesaplanır. 2026 tarifesinde ücret gelirleri için ilk dilim %15'tir, sonraki dilimler %20, %27, %35 ve %40'tır. Matrahın bir üst dilime geçtiği aylarda netin biraz düşebilir; bu bir hata değil, sistemin işleyişidir."},
+        {"tip": "bordro", "baslik": "Asgari ücretle örnek bordro", "metin": "Asgari ücrete isabet eden kısım için gelir vergisi ve damga vergisi istisnası uygulanır. Bu yüzden asgari ücretle çalışan birinin bordrosunda vergi kesintisi görünmez; yalnızca SGK ve işsizlik sigortası payları kesilir."},
+        {"baslik": "Bordroda nelere bakmalısın?", "metin": "Ücret hesap pusulası (bordro) işveren tarafından çalışana verilir. Kontrol et: çalıştığın gün sayısı, brüt ücret, fazla mesai saatleri ve tutarı, kesintiler ve net tutar. e-Devlet'teki SGK hizmet dökümünden de primlerinin gerçekten yatırılıp yatırılmadığını görebilirsin. Anlamadığın bir kalem olursa muhasebe ya da insan kaynaklarına sormak tamamen normaldir."}
+      ],
+      "sinav": [
+        {"soru": "Bir iş ilanında yazan maaş için ilk sorman gereken şey nedir?", "secenekler": ["Maaşın ayın kaçında yattığı", "Tutarın brüt mü net mi olduğu", "Maaşın hangi bankaya yattığı"], "dogru": 1, "aciklama": "Brüt ile net arasında kesintiler kadar fark vardır; teklifleri karşılaştırırken aynı türden tutarları karşılaştırmalısın."},
+        {"soru": "Aşağıdakilerden hangisi çalışanın brüt ücretinden yapılan bir kesinti DEĞİLDİR?", "secenekler": ["SGK primi işçi payı", "İşsizlik sigortası işçi payı", "İşveren SGK payı"], "dogru": 2, "aciklama": "İşveren payını işveren kendi cebinden öder; senin netinden düşülmez."},
+        {"soru": "Yıl içinde aynı brüt ücreti alırken netin bir ay biraz düştü. En olası neden nedir?", "secenekler": ["Kümülatif gelir vergisi matrahının bir üst dilime geçmesi", "İşverenin keyfi kesinti yapması", "Damga vergisinin her ay artması"], "dogru": 0, "aciklama": "Gelir vergisi yıl başından beri biriken matraha göre hesaplanır; üst dilime geçince vergi oranı artar."},
+        {"soru": "Asgari ücretle çalışan birinin bordrosunda gelir vergisi neden görünmez?", "secenekler": ["Asgari ücretliler vergi beyannamesi verdiği için", "Asgari ücrete isabet eden kısım gelir ve damga vergisinden istisna olduğu için", "İşveren vergiyi ödemeyi unuttuğu için"], "dogru": 1, "aciklama": "Asgari ücret tutarına kadar olan kısım için gelir vergisi ve damga vergisi istisnası vardır."}
+      ],
+      "kaynaklar": [
+        {"ad": "Gelir İdaresi Başkanlığı — 332 Seri No'lu Gelir Vergisi Genel Tebliği (2026 gelir vergisi tarifesi)", "url": "https://www.gib.gov.tr"},
+        {"ad": "5510 sayılı Sosyal Sigortalar ve Genel Sağlık Sigortası Kanunu — prim oranları", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "4447 sayılı İşsizlik Sigortası Kanunu — işsizlik sigortası primi", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "Asgari Ücret Tespit Komisyonu kararı — Resmî Gazete 26.12.2025 / 33119", "url": "https://www.resmigazete.gov.tr"},
+        {"ad": "ÇSGB — Asgari ücret ve çalışma hayatı bilgileri", "url": "https://www.csgb.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "sozlesme",
+      "baslik": "İş sözleşmesi türleri ve deneme süresi",
+      "ikon": "📝",
+      "ozet": "Belirli, belirsiz, kısmi süreli… İmzalamadan önce ne tür bir sözleşme olduğunu bil.",
+      "kartlar": [
+        {"baslik": "Sözleşme yazılı olmalı mı?", "metin": "İş Kanunu'na göre süresi bir yıl ya da daha uzun olan iş sözleşmelerinin yazılı yapılması zorunludur. Daha kısa işler için yazılı sözleşme şart olmasa da her zaman yazılı bir belge istemek seni korur: görevin, ücretin, çalışma saatlerin ve başlangıç tarihin yazılı olsun."},
+        {"baslik": "Belirsiz ve belirli süreli", "metin": "Bir süreye bağlanmayan sözleşme belirsiz süreli sayılır ve en yaygın türdür. Belirli süreli sözleşme ise belirli bir işin tamamlanması ya da belirli bir olayın ortaya çıkması gibi nesnel koşullara dayanır; örneğin bir projenin süresi kadar çalışmak."},
+        {"baslik": "Kısmi süreli ve çağrı üzerine çalışma", "metin": "Kısmi süreli (yarı zamanlı) çalışmada haftalık çalışma süresi tam süreli çalışana göre önemli ölçüde azdır. Çağrı üzerine çalışmada ise iş, ihtiyaç oldukça yapılır. Kısmi süreli çalışan da ayrımcılığa uğramadan, çalıştığı süreyle orantılı haklardan yararlanır."},
+        {"baslik": "Deneme süresi", "metin": "Sözleşmeye deneme süresi konabilir. Bu süre en fazla iki aydır; toplu iş sözleşmeleriyle dört aya kadar uzatılabilir. Deneme süresi içinde taraflar sözleşmeyi bildirim süresi beklemeden ve tazminatsız sona erdirebilir; ancak çalıştığın günlerin ücreti ödenir. Deneme süresi de sigortalı çalışmadır."},
+        {"baslik": "İmzalamadan önce kontrol listesi", "metin": "Görev tanımı, brüt/net ücret, ödeme günü, çalışma saatleri, deneme süresi, çalışma yeri ve sözleşmenin türü yazılı mı? Anlamadığın bir madde varsa imzalamadan önce sor. Sözleşmenin bir kopyasını sakla."}
+      ],
+      "sinav": [
+        {"soru": "Hangi iş sözleşmelerinin yazılı yapılması zorunludur?", "secenekler": ["Yalnızca kamu kurumlarındaki sözleşmeler", "Süresi bir yıl ya da daha uzun olan sözleşmeler", "Yalnızca yarı zamanlı işler"], "dogru": 1, "aciklama": "İş Kanunu süresi bir yıl ve daha uzun olan sözleşmelerde yazılı şekli zorunlu tutar."},
+        {"soru": "Deneme süresi en fazla ne kadar olabilir (toplu sözleşme yoksa)?", "secenekler": ["İki ay", "Altı ay", "Bir yıl"], "dogru": 0, "aciklama": "Deneme süresi en fazla iki aydır; toplu iş sözleşmesiyle dört aya kadar uzatılabilir."},
+        {"soru": "Deneme süresinde sözleşme sona ererse ne olur?", "secenekler": ["Hiçbir ücret ödenmez", "Bildirim süresi ve tazminat olmadan sona erebilir ama çalışılan günlerin ücreti ödenir", "İşveren bir yıllık maaş ödemek zorundadır"], "dogru": 1, "aciklama": "Deneme süresinde fesih bildirimsiz ve tazminatsızdır; ama emeğinin karşılığı olan ücret ödenir."},
+        {"soru": "Bir projenin süresi boyunca çalışmak üzere yapılan sözleşme hangi türe örnektir?", "secenekler": ["Belirsiz süreli", "Belirli süreli", "Çağrı üzerine"], "dogru": 1, "aciklama": "Belirli bir işin tamamlanmasına bağlı sözleşmeler belirli süreli sözleşmedir."}
+      ],
+      "kaynaklar": [
+        {"ad": "4857 sayılı İş Kanunu — iş sözleşmesinin şekli (m. 8), türleri, deneme süreli iş sözleşmesi (m. 15)", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "ÇSGB — Çalışma hayatı rehberleri", "url": "https://www.csgb.gov.tr"},
+        {"ad": "ALO 170 Çalışma Hayatı İletişim Merkezi", "url": "https://www.csgb.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "izin",
+      "baslik": "Yıllık izin hakların",
+      "ikon": "🏖️",
+      "ozet": "Kaç gün izin hakkın olur, ne zaman başlar, 18 yaşından küçüksen ne değişir?",
+      "kartlar": [
+        {"baslik": "İzin hakkı ne zaman doğar?", "metin": "İşe başladığın günden itibaren (deneme süresi dahil) en az bir yıl çalışmış olan işçiye yıllık ücretli izin verilir. Yani ilk yılını doldurmadan yıllık ücretli izin hakkın doğmaz; ama işveren daha önce izin vermeyi kabul edebilir."},
+        {"baslik": "Kaç gün?", "metin": "İş Kanunu'na göre en az: 1 yıldan 5 yıla kadar (5. yıl dahil) çalışanlara 14 gün, 5 yıldan fazla 15 yıldan az çalışanlara 20 gün, 15 yıl (15. yıl dahil) ve daha fazla çalışanlara 26 gün. Bunlar alt sınırdır; sözleşmeyle daha fazlası verilebilir."},
+        {"baslik": "18 yaş ve altı ile 50 yaş ve üstü", "metin": "18 yaşında ve daha küçük çalışanlar ile 50 yaşında ve daha büyük çalışanlara verilecek yıllık ücretli izin 20 günden az olamaz. Yani genç bir çalışan olarak ilk yıllarında bile 14 değil en az 20 gün iznin olur."},
+        {"baslik": "Tatiller izinden sayılmaz", "metin": "İzin süresine denk gelen ulusal bayram, hafta tatili ve genel tatil günleri izin süresinden sayılmaz. İşveren izni tek başına bölemez; taraflar anlaşırsa izin, bir bölümü on günden az olmamak üzere parçalar hâlinde kullanılabilir."},
+        {"baslik": "İzin bir dinlenme hakkıdır", "metin": "Yıllık izin, para karşılığı satılacak bir hak değil, dinlenme hakkıdır. Dinlenmeden sürekli çalışmak tükenmişliğe yol açabilir; iznini planlayıp kullanmak hem sağlığın hem iş verimin için iyidir."}
+      ],
+      "sinav": [
+        {"soru": "Yıllık ücretli izin hakkı için en az ne kadar çalışmış olmak gerekir?", "secenekler": ["Üç ay", "Bir yıl", "İki yıl"], "dogru": 1, "aciklama": "Deneme süresi dahil en az bir yıl çalışmış olmak gerekir."},
+        {"soru": "17 yaşında, işinde ikinci yılını dolduran bir çalışanın yıllık izni en az kaç gündür?", "secenekler": ["14 gün", "20 gün", "26 gün"], "dogru": 1, "aciklama": "18 yaş ve altındaki çalışanlar için yıllık izin 20 günden az olamaz."},
+        {"soru": "İznine denk gelen bir resmî bayram günü ne olur?", "secenekler": ["İzin gününden düşülür", "İzin süresinden sayılmaz", "Ücretsiz izin sayılır"], "dogru": 1, "aciklama": "Ulusal bayram, hafta tatili ve genel tatil günleri izin süresinden sayılmaz."}
+      ],
+      "kaynaklar": [
+        {"ad": "4857 sayılı İş Kanunu — yıllık ücretli izin hakkı ve izin süreleri (m. 53), iznin uygulanması (m. 56)", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "ÇSGB — 30 Soruda Çocuk ve Genç İşçilere Özel Çalışma Koşulları", "url": "https://www.csgb.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "calisma_suresi",
+      "baslik": "Çalışma süresi ve fazla mesai",
+      "ikon": "⏱️",
+      "ozet": "Haftada kaç saat? Fazla mesai nasıl ödenir? Hafta tatili hakkın ne?",
+      "kartlar": [
+        {"baslik": "Haftalık çalışma süresi", "metin": "Genel olarak çalışma süresi haftada en çok 45 saattir. Taraflar anlaşırsa bu süre haftanın günlerine farklı dağıtılabilir, ama günlük çalışma 11 saati aşamaz."},
+        {"baslik": "Fazla çalışma ve ücreti", "metin": "Haftalık 45 saati aşan çalışma fazla çalışmadır. Her fazla çalışma saati için ücret, normal saat ücretinin %50 fazlasıyla ödenir. Fazla çalışmanın toplamı bir yılda 270 saati geçemez ve fazla çalışma için işçinin onayı gerekir."},
+        {"baslik": "Ücret yerine serbest zaman", "metin": "İsteyen çalışan, fazla çalışma ücreti yerine fazla çalıştığı her saat için 1 saat 30 dakika serbest zaman kullanabilir."},
+        {"baslik": "Hafta tatili ve gece çalışması", "metin": "Çalışana, tatil gününden önce çalıştığı günler karşılığında yedi günlük bir dönem içinde kesintisiz en az 24 saat dinlenme (hafta tatili) verilir. Gece çalışmaları ise kural olarak 7,5 saati geçemez."},
+        {"baslik": "18 yaşından küçüksen", "metin": "18 yaşını doldurmamış çalışanlara fazla çalışma yaptırılamaz. Gece döneminde çalışma da 18 yaş altı için yasak işler arasındadır. Okula devam eden çocuklar için ayrıca daha kısa süre sınırları vardır (bkz. 'Staj, çıraklık ve 18 yaş altı çalışma' dersi)."}
+      ],
+      "sinav": [
+        {"soru": "Genel olarak haftalık en çok çalışma süresi kaç saattir?", "secenekler": ["40 saat", "45 saat", "50 saat"], "dogru": 1, "aciklama": "İş Kanunu'na göre genel çalışma süresi haftada en çok 45 saattir."},
+        {"soru": "Fazla çalışmanın her saati için ücret nasıl ödenir?", "secenekler": ["Normal saat ücretiyle aynı", "Normal saat ücretinin %50 fazlasıyla", "İki katıyla"], "dogru": 1, "aciklama": "Fazla çalışma ücreti, normal saat ücretinin yüzde elli yükseltilmesiyle ödenir."},
+        {"soru": "Bir yılda en fazla kaç saat fazla çalışma yapılabilir?", "secenekler": ["100 saat", "270 saat", "Sınırsız"], "dogru": 1, "aciklama": "Fazla çalışmanın toplamı bir yılda 270 saatten fazla olamaz."},
+        {"soru": "16 yaşındaki bir çalışan hakkında hangisi doğrudur?", "secenekler": ["İsterse fazla mesai yapabilir", "Fazla çalışma yaptırılamaz", "Yalnızca hafta sonu fazla mesai yapabilir"], "dogru": 1, "aciklama": "Fazla çalışma yönetmeliğine göre 18 yaşını doldurmamış işçilere fazla çalışma yaptırılamaz."}
+      ],
+      "kaynaklar": [
+        {"ad": "4857 sayılı İş Kanunu — fazla çalışma (m. 41), hafta tatili (m. 46), çalışma süresi (m. 63), gece çalışmaları (m. 69)", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "İş Kanununa İlişkin Fazla Çalışma ve Fazla Sürelerle Çalışma Yönetmeliği", "url": "https://www.mevzuat.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "kidem_ihbar",
+      "baslik": "İşten ayrılırken: ihbar ve kıdem",
+      "ikon": "🚪",
+      "ozet": "İşten ayrılmak ya da çıkarılmak da iş hayatının parçası. Genel kuralları bil.",
+      "kartlar": [
+        {"baslik": "İhbar (bildirim) süresi", "metin": "Belirsiz süreli bir sözleşmeyi sona erdirmek isteyen taraf, karşı tarafa önceden bildirimde bulunmalıdır. Süreler çalışılan süreye göre değişir: 6 aydan az çalışmada 2 hafta, 6 ay–1,5 yıl arası 4 hafta, 1,5–3 yıl arası 6 hafta, 3 yıldan fazla çalışmada 8 hafta. Bu süreler en az sürelerdir, sözleşmeyle artırılabilir."},
+        {"baslik": "Bildirim süresine uyulmazsa", "metin": "Bildirim süresine uymayan taraf, bu sürenin ücreti tutarında ihbar tazminatı ödemekle yükümlü olur. Bu kural hem işveren hem çalışan için geçerlidir; yani istifa ederken de bildirim süresine uymak önemlidir."},
+        {"baslik": "Kıdem tazminatı nedir?", "metin": "Kıdem tazminatı, eski İş Kanunu'nun (1475 sayılı) hâlen yürürlükte olan 14. maddesinde düzenlenir. Aynı işverende en az bir yıl çalışmış olmak gerekir ve genel olarak her tam yıl için 30 günlük brüt ücret tutarında hesaplanır. Yıllık tutarın yasal bir üst sınırı (tavanı) vardır ve bu tavan her yıl güncellenir."},
+        {"baslik": "Kimler kıdem tazminatı alabilir?", "metin": "Genel olarak: işveren haklı bir neden olmadan sözleşmeyi sona erdirirse, çalışan haklı bir nedenle sözleşmeyi feshederse, zorunlu askerlik, emeklilik için ayrılma gibi durumlarda. Haklı bir neden olmadan kendi isteğiyle istifa eden çalışan ise genel olarak kıdem tazminatı alamaz. Her durum farklı olabileceği için bir uzmana danışmak en doğrusudur."},
+        {"baslik": "Güzel bir ayrılış", "metin": "İşten ayrılırken yazılı bildirim ver, devredeceğin işleri düzenle ve teşekkür et. Çalıştığın yerlerden aldığın referanslar ileride çok işine yarar; köprüleri yakmamak profesyonelliğin parçasıdır."}
+      ],
+      "sinav": [
+        {"soru": "İki yıldır aynı işte çalışan biri için yasal en kısa ihbar süresi nedir?", "secenekler": ["2 hafta", "4 hafta", "6 hafta"], "dogru": 2, "aciklama": "1,5–3 yıl arası çalışmada bildirim süresi 6 haftadır."},
+        {"soru": "Kıdem tazminatı için aynı işverende en az ne kadar çalışmış olmak gerekir?", "secenekler": ["Altı ay", "Bir yıl", "Beş yıl"], "dogru": 1, "aciklama": "Kıdem tazminatı için en az bir yıllık kıdem gerekir."},
+        {"soru": "Haklı bir neden olmadan kendi isteğiyle istifa eden çalışan için genel kural nedir?", "secenekler": ["Kıdem tazminatı alamaz", "İki katı kıdem tazminatı alır", "İşveren ihbar tazminatı öder"], "dogru": 0, "aciklama": "Haklı neden olmadan istifada genel olarak kıdem tazminatı hakkı doğmaz."}
+      ],
+      "kaynaklar": [
+        {"ad": "4857 sayılı İş Kanunu — süreli fesih ve bildirim süreleri (m. 17)", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "1475 sayılı İş Kanunu — kıdem tazminatı (yürürlükteki m. 14)", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "ÇSGB — ALO 170 Çalışma Hayatı İletişim Merkezi", "url": "https://www.csgb.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "sgk",
+      "baslik": "SGK ve emekliliğin temeli",
+      "ikon": "🛡️",
+      "ozet": "Sigortalı çalışmak neden önemli? Prim günü, sağlık sigortası ve emekliliğin mantığı.",
+      "kartlar": [
+        {"baslik": "Sigortalı çalışmak ne demek?", "metin": "Sosyal güvenlik sistemi 5510 sayılı Sosyal Sigortalar ve Genel Sağlık Sigortası Kanunu ile düzenlenir. Bir işverene bağlı (iş sözleşmesiyle) çalışanlar '4/a', kendi adına bağımsız çalışanlar '4/b', kamu görevlileri '4/c' olarak bilinir. Sigortalı çalışmak; iş kazası, hastalık, analık, işsizlik ve yaşlılık gibi risklere karşı güvencedir."},
+        {"baslik": "İşe giriş bildirimi", "metin": "İşveren, çalışanı kural olarak işe başlamadan önce SGK'ya bildirmek zorundadır (bazı sektörlerde en geç işe başlama günü). Yani 'deneme süresi, sigortanı sonra yaparız' gibi bir uygulama doğru değildir; ilk günden sigortalı olmalısın."},
+        {"baslik": "Kontrol etmek senin elinde", "metin": "e-Devlet üzerinden SGK hizmet dökümüne bakarak hangi işverenin, hangi aylarda, kaç gün ve hangi kazanç üzerinden prim yatırdığını görebilirsin. İlk işinden itibaren bunu ara ara kontrol etmek iyi bir alışkanlıktır."},
+        {"baslik": "Emekliliğin mantığı", "metin": "Emeklilik genel olarak üç koşula bağlıdır: yaş, prim ödeme gün sayısı ve sigortalılık süresi. Koşullar, ilk sigortalı olduğun tarihe göre değişir ve zaman içinde kanunla değişebilir. İlk sigorta girişin ne kadar erken olursa sigortalılık süren o kadar erken başlar."},
+        {"baslik": "Sigortasız çalışmanın bedeli", "metin": "Sigortasız (kayıt dışı) çalışan biri iş kazasında, hastalıkta ya da işsiz kaldığında güvenceden yoksun kalır ve emeklilik için gün biriktiremez. Kayıt dışı çalıştırıldığını düşünüyorsan ALO 170'ten bilgi alabilirsin."}
+      ],
+      "sinav": [
+        {"soru": "Bir işverene iş sözleşmesiyle bağlı çalışanlar SGK'da genellikle hangi kodla anılır?", "secenekler": ["4/a", "4/b", "4/c"], "dogru": 0, "aciklama": "Hizmet akdiyle çalışanlar 4/a, bağımsız çalışanlar 4/b, kamu görevlileri 4/c olarak bilinir."},
+        {"soru": "İşveren seni SGK'ya kural olarak ne zaman bildirmelidir?", "secenekler": ["Deneme süresi bittikten sonra", "İşe başlamadan önce", "Altı ay içinde"], "dogru": 1, "aciklama": "İşe giriş bildirgesi kural olarak çalışma başlamadan önce verilir."},
+        {"soru": "Primlerinin yatıp yatmadığını nereden görebilirsin?", "secenekler": ["e-Devlet'teki SGK hizmet dökümünden", "Yalnızca işverene sorarak", "Göremezsin"], "dogru": 0, "aciklama": "e-Devlet'teki hizmet dökümü prim gün ve kazançlarını gösterir."}
+      ],
+      "kaynaklar": [
+        {"ad": "5510 sayılı Sosyal Sigortalar ve Genel Sağlık Sigortası Kanunu", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "Sosyal Güvenlik Kurumu (SGK)", "url": "https://www.sgk.gov.tr"},
+        {"ad": "e-Devlet Kapısı — SGK hizmetleri", "url": "https://www.turkiye.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "genc_calisan",
+      "baslik": "Staj, çıraklık ve 18 yaş altı çalışma",
+      "ikon": "🧑‍🎓",
+      "ozet": "Lisedeyken çalışmak ya da staj yapmak istiyorsan bilmen gereken kurallar.",
+      "kartlar": [
+        {"baslik": "Çocuk işçi, genç işçi", "metin": "Mevzuatta 14 yaşını bitirmiş, 15 yaşını doldurmamış ve zorunlu temel eğitimini tamamlamış kişi 'çocuk işçi', 15 yaşını tamamlamış ama 18 yaşını doldurmamış kişi 'genç işçi' olarak tanımlanır. 15 yaşını doldurmamış çocukların (hafif işler dışında) çalıştırılması yasaktır."},
+        {"baslik": "Okula giderken çalışma süresi", "metin": "Okula devam eden çocukların eğitim döneminde çalışma süresi en fazla günde 2, haftada 10 saat olabilir. Okulların kapalı olduğu dönemlerde bu süre günde 7, haftada 35 saati geçemez; 15 yaşını tamamlamış olanlar için günde 8, haftada 40 saate kadar artırılabilir."},
+        {"baslik": "Koruyucu kurallar", "metin": "18 yaş altı çalışanların sözleşmesi velisi ya da vasisiyle yazılı yapılır. Yıllık ücretli izin en az 20 gündür. Fazla mesai yaptırılamaz; gece dönemine rastlayan işler, ağır ve tehlikeli işler, para taşıma ve tahsilat işleri ile parça başı ücretli işler yasak işler arasındadır."},
+        {"baslik": "Meslek lisesinde işletmede eğitim ve staj", "metin": "3308 sayılı Mesleki Eğitim Kanunu'na göre işletmelerde mesleki eğitim gören, staj yapan öğrencilere ve çıraklara asgari ücretin belirli bir oranından az olmamak üzere ücret ödenir; oran, programa ve işletmenin büyüklüğüne göre değişir. Bu öğrenciler iş kazası ve meslek hastalığına karşı sigortalıdır. Güncel oranları okulundaki koordinatör öğretmene ya da MEB'e sor."},
+        {"baslik": "Bir şeyler yanlış giderse", "metin": "Sana yaşına uygun olmayan bir iş veriliyorsa, sigortasız çalıştırılıyorsan ya da kendini güvende hissetmiyorsan ailene, rehber öğretmenine ve okulundaki staj koordinatörüne hemen söyle. ALO 170 de çalışma hayatıyla ilgili sorular için ücretsiz bir hattır."}
+      ],
+      "sinav": [
+        {"soru": "16 yaşındaki bir genç hangi grupta tanımlanır?", "secenekler": ["Çocuk işçi", "Genç işçi", "Yetişkin işçi"], "dogru": 1, "aciklama": "15 yaşını tamamlamış, 18 yaşını doldurmamış kişi genç işçidir."},
+        {"soru": "Okul döneminde okula devam eden bir çocuğun haftalık çalışma süresi en fazla kaç saattir?", "secenekler": ["10 saat", "20 saat", "45 saat"], "dogru": 0, "aciklama": "Eğitim döneminde en fazla günde 2, haftada 10 saat."},
+        {"soru": "Aşağıdaki işlerden hangisi 18 yaş altındakiler için yasaktır?", "secenekler": ["Kütüphanede kitap düzenlemek", "Para taşıma ve tahsilat işi", "Bir mağazada gündüz raf düzenlemek"], "dogru": 1, "aciklama": "Para taşıma ve tahsilat işleri 18 yaş altı için yasak işler arasındadır."},
+        {"soru": "18 yaş altı bir çalışanın iş sözleşmesi nasıl yapılır?", "secenekler": ["Sözlü olarak", "Velisi ya da vasisiyle yazılı olarak", "Sözleşme gerekmez"], "dogru": 1, "aciklama": "Çocuk ve genç işçilerle yazılı sözleşme veli ya da vasiyle birlikte yapılır."}
+      ],
+      "kaynaklar": [
+        {"ad": "ÇSGB — 30 Soruda Çocuk ve Genç İşçilere Özel Çalışma Koşulları", "url": "https://www.csgb.gov.tr"},
+        {"ad": "Çocuk ve Genç İşçilerin Çalıştırılma Usul ve Esasları Hakkında Yönetmelik", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "4857 sayılı İş Kanunu — çalışma yaşı ve çocukları çalıştırma yasağı", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "3308 sayılı Mesleki Eğitim Kanunu — öğrencilere ödenecek ücret", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "Millî Eğitim Bakanlığı — Mesleki ve Teknik Eğitim Genel Müdürlüğü", "url": "https://mtegm.meb.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "eposta",
+      "baslik": "Profesyonel e-posta ve iletişim",
+      "ikon": "✉️",
+      "ozet": "İlk izlenimin çoğu zaman bir e-postayla oluşur. Kısa, açık ve nazik yazmayı öğren.",
+      "kartlar": [
+        {"baslik": "Konu satırı", "metin": "Konu satırı, e-postanın ne hakkında olduğunu tek bakışta anlatmalı: 'Yaz stajı başvurusu – 11. sınıf öğrencisi' gibi. Boş konu satırı ya da 'Merhaba' yazmak e-postanın gözden kaçmasına neden olabilir."},
+        {"baslik": "Yapı: selam – amaç – ayrıntı – kapanış", "metin": "Uygun bir selamla başla ('Sayın … Hanım/Bey' ya da 'Merhaba … Hanım'). İlk cümlede neden yazdığını söyle. Gerekli ayrıntıları kısa paragraflarla ver. Ne istediğini açıkça belirt ve teşekkür edip adınla kapat."},
+        {"baslik": "Profesyonel bir adres ve dil", "metin": "Takma ad içeren e-posta adresleri yerine adın ve soyadından oluşan bir adres kullan. Emoji, kısaltma ('slm', 'tşk') ve tamamı büyük harfle yazmaktan kaçın. Göndermeden önce bir kez yazım denetimi yap."},
+        {"baslik": "Ek ve yanıt süresi", "metin": "Ek gönderiyorsan dosyayı anlamlı adlandır ('Ad_Soyad_CV.pdf') ve e-postada eki belirt. Karşı taraf birkaç iş günü içinde yanıt vermezse, kısa ve nazik bir hatırlatma e-postası yazmak uygundur."},
+        {"baslik": "Telefonda ve yüz yüze", "metin": "Telefonda önce kendini tanıt, neden aradığını söyle ve uygun bir zaman olup olmadığını sor. Toplantılarda dinlemek, not almak ve sözünü kesmemek en az konuşmak kadar önemlidir."}
+      ],
+      "sinav": [
+        {"soru": "Staj başvurusu için en uygun konu satırı hangisi?", "secenekler": ["Merhaba", "Yaz stajı başvurusu – 11. sınıf öğrencisi", "ACİL OKUYUN!!!"], "dogru": 1, "aciklama": "Konu satırı amacı açıkça söylemeli."},
+        {"soru": "Profesyonel bir e-postanın ilk cümlesinde ne olmalı?", "secenekler": ["Neden yazdığın", "Hava durumu", "Uzun bir özgeçmiş"], "dogru": 0, "aciklama": "Okuyan kişi neden yazdığını hemen anlamalı."},
+        {"soru": "Ekli CV dosyası için en uygun ad hangisi?", "secenekler": ["yeni_son_SON2.pdf", "Ad_Soyad_CV.pdf", "belge1.pdf"], "dogru": 1, "aciklama": "Anlamlı dosya adı, karşı tarafın dosyanı bulmasını kolaylaştırır."}
+      ],
+      "kaynaklar": [
+        {"ad": "Türkiye İş Kurumu (İŞKUR) — iş arama becerileri ve iş ve meslek danışmanlığı", "url": "https://www.iskur.gov.tr"},
+        {"ad": "Genel iş iletişimi ilkeleri (rehber öğretmeninle birlikte gözden geçirebilirsin)"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "geri_bildirim",
+      "baslik": "Geri bildirim almak ve vermek",
+      "ikon": "🔁",
+      "ozet": "Eleştiri kişisel değildir. Geri bildirimi büyümek için nasıl kullanırsın?",
+      "kartlar": [
+        {"baslik": "Geri bildirim bir hediyedir", "metin": "İş hayatında sana 'şunu farklı yapabilirsin' diyen biri, aslında gelişmen için zaman ayırıyor demektir. İlk tepki savunmaya geçmek olabilir; bu çok insani. Bir nefes al ve önce anlamaya çalış."},
+        {"baslik": "Alırken: dinle – sor – teşekkür et", "metin": "Sözü kesmeden dinle. Anlamadığın yeri somut bir örnekle sor ('Hangi bölümde daha açık olmalıydım?'). Teşekkür et ve neyi değiştireceğini kısaca söyle. Hemen katılmak zorunda değilsin; düşünmek için zaman isteyebilirsin."},
+        {"baslik": "Verirken: davranış, etki, öneri", "metin": "Kişiyi değil davranışı konuş. 'Sen hep dağınıksın' yerine 'Dünkü raporda iki tablo eksikti, bu yüzden toplantıda veriyi gösteremedik; bir dahaki sefere kontrol listesi kullanabilir miyiz?' de. Olumlu olanı da söylemeyi unutma."},
+        {"baslik": "Zamanlama ve ortam", "metin": "Eleştirel geri bildirimi mümkünse baş başa, olaydan kısa süre sonra ve sakin bir anda ver. Övgüyü ise herkesin içinde yapmak motive edicidir."},
+        {"baslik": "Kendine geri bildirim", "metin": "Bir işi bitirdiğinde kendine sor: Ne iyi gitti? Neyi farklı yapardım? Bir dahaki sefere neyi deneyeceğim? Bu üç soru, düzenli kullanıldığında en güçlü gelişim araçlarından biridir."}
+      ],
+      "sinav": [
+        {"soru": "Yöneticin sunumunun çok uzun olduğunu söyledi. En yapıcı ilk tepki hangisi?", "secenekler": ["'Ama herkes uzun sunum yapıyor' demek", "Hangi bölümlerin kısaltılabileceğini sormak", "Hiçbir şey söylemeden toplantıdan çıkmak"], "dogru": 1, "aciklama": "Somut soru sormak geri bildirimi uygulanabilir hâle getirir."},
+        {"soru": "Hangisi davranışa odaklanan bir geri bildirimdir?", "secenekler": ["'Sen tembelsin.'", "'Bugünkü teslimi iki saat geç yaptın; ekip bekledi.'", "'Hiçbir şeyi doğru yapamıyorsun.'"], "dogru": 1, "aciklama": "Kişiyi değil, gözlenebilir davranışı ve etkisini anlatır."},
+        {"soru": "Eleştirel geri bildirim için genellikle en uygun ortam hangisi?", "secenekler": ["Kalabalık bir toplantı", "Baş başa ve sakin bir an", "Sosyal medya"], "dogru": 1, "aciklama": "Baş başa konuşmak kişinin savunmaya geçmeden dinlemesini kolaylaştırır."}
+      ],
+      "kaynaklar": [
+        {"ad": "Genel iletişim ve iş yeri davranışı ilkeleri (rehber öğretmeninle birlikte gözden geçirebilirsin)"},
+        {"ad": "İŞKUR — iş ve meslek danışmanlığı hizmetleri", "url": "https://www.iskur.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "dijital",
+      "baslik": "Dijital ayak izi ve sosyal medya",
+      "ikon": "👣",
+      "ozet": "İnternette paylaştığın her şey bir iz bırakır. İzini nasıl yönetirsin?",
+      "kartlar": [
+        {"baslik": "Dijital ayak izi nedir?", "metin": "Paylaştığın gönderiler, yorumlar, fotoğraflar ve beğeniler, adınla aratıldığında ortaya çıkan her şey dijital ayak izindir. Silinen içerikler bile ekran görüntüsüyle ya da arşivlerde kalabilir."},
+        {"baslik": "İşverenler bakabilir", "metin": "Bazı işverenler ve okullar adayların herkese açık profillerine bakabilir. Bu, eğlenceli paylaşım yapmamalısın demek değil; ama hakaret, ayrımcılık, şiddet ya da başkasının özel hayatını ifşa eden içerikler ileride önüne çıkabilir."},
+        {"baslik": "Kişisel verini koru", "metin": "T.C. kimlik numarası, ev adresi, telefon numarası, okulunun ve sınıfının açık bilgisi gibi verileri herkese açık paylaşma. Kişisel verilerin korunması 6698 sayılı Kişisel Verilerin Korunması Kanunu ile güvence altındadır; başkalarının fotoğrafını ve bilgilerini izinsiz paylaşmak da onların hakkını ihlal edebilir."},
+        {"baslik": "Olumlu iz bırak", "metin": "Bir proje, gönüllü çalışma, yarışma ya da hobi üzerine düzenli paylaşımlar senin için bir portfolyo olabilir. Kendi adını arama motorunda aratıp ne çıktığına bakmak iyi bir başlangıçtır."},
+        {"baslik": "Hesap güvenliği", "metin": "Güçlü ve her hesap için farklı şifreler kullan, iki adımlı doğrulamayı aç. Bilmediğin bağlantılara tıklama ve şifreni kimseyle paylaşma; kurumlar şifreni asla e-postayla ya da mesajla istemez."}
+      ],
+      "sinav": [
+        {"soru": "Hangisini herkese açık paylaşmak risklidir?", "secenekler": ["Bir bilim fuarı projesinin fotoğrafı", "Ev adresin ve telefon numaran", "Okuduğun bir kitap hakkında yorum"], "dogru": 1, "aciklama": "Adres ve telefon gibi kişisel veriler kötüye kullanılabilir."},
+        {"soru": "Sildiğin bir gönderi hakkında hangisi doğrudur?", "secenekler": ["Kesinlikle tamamen yok olur", "Ekran görüntüsüyle ya da arşivlerde kalmış olabilir", "Yalnızca arkadaşların görebilir"], "dogru": 1, "aciklama": "İnternette paylaşılan içerik silinse bile kopyaları kalabilir."},
+        {"soru": "Hesap güvenliği için en iyi alışkanlık hangisi?", "secenekler": ["Her yerde aynı şifreyi kullanmak", "İki adımlı doğrulamayı açmak", "Şifreyi arkadaşla paylaşmak"], "dogru": 1, "aciklama": "İki adımlı doğrulama, şifre ele geçse bile hesabı korur."}
+      ],
+      "kaynaklar": [
+        {"ad": "6698 sayılı Kişisel Verilerin Korunması Kanunu", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "Kişisel Verileri Koruma Kurumu (KVKK)", "url": "https://www.kvkk.gov.tr"},
+        {"ad": "Güvenli İnternet Merkezi (BTK)", "url": "https://www.guvenlinet.org.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "ilk_hafta",
+      "baslik": "İşe başlama haftası",
+      "ikon": "🗓️",
+      "ozet": "İlk hafta herkes acemidir. Kendini nasıl rahat ve hazır hissedersin?",
+      "kartlar": [
+        {"baslik": "Başlamadan önce", "metin": "İlk gün saat kaçta, nerede ve kime başvuracağını öğren. Yol süresini önceden dene. İstenen belgeleri (kimlik, diploma, banka bilgisi vb.) hazırla ve işe giriş bildiriminin yapıldığından emin ol."},
+        {"baslik": "Bilmemek normaldir", "metin": "İlk hafta herkes çok şey sorar. Soru sormak ilgili ve sorumlu olduğunu gösterir. Cevapları not al ki aynı şeyi tekrar tekrar sorman gerekmesin."},
+        {"baslik": "İnsanları tanı", "metin": "Kendini kısaca tanıt, isimleri öğrenmeye çalış. Kime hangi konuda danışabileceğini öğren. Öğle aralarında ve molalarda kurulan küçük sohbetler, ekibe uyumunu kolaylaştırır."},
+        {"baslik": "Beklentileri netleştir", "metin": "Yöneticine ilk hafta ya da ilk ay sonunda senden ne beklendiğini, işinin nasıl değerlendirileceğini ve öncelikleri sor. Belirsizlik, kaygının en büyük kaynaklarından biridir; netlik seni rahatlatır."},
+        {"baslik": "Kendine iyi bak", "metin": "Yeni bir iş yorucu olabilir. Uykuna, beslenmene ve dinlenmene dikkat et. İlk haftalar zorlayıcı geçse bile bu çoğu zaman alışma sürecinin bir parçasıdır."}
+      ],
+      "sinav": [
+        {"soru": "İlk haftada aynı soruyu tekrar sormamak için ne yapabilirsin?", "secenekler": ["Hiç soru sormamak", "Cevapları not almak", "Her şeyi ezberlemeye çalışmak"], "dogru": 1, "aciklama": "Not almak hem öğrenmeni hızlandırır hem de ilgini gösterir."},
+        {"soru": "İlk hafta yöneticine sorman en faydalı olan soru hangisi?", "secenekler": ["Ne zaman zam alacağım?", "İlk ayın sonunda benden ne bekleniyor?", "Ne zaman erken çıkabilirim?"], "dogru": 1, "aciklama": "Beklentileri netleştirmek başarılı bir başlangıcın anahtarıdır."},
+        {"soru": "İşe başlamadan önce kontrol etmen gereken resmî konu hangisi?", "secenekler": ["İşe giriş bildiriminin yapılması", "İş yerinin sosyal medya hesabı", "Yöneticinin doğum günü"], "dogru": 0, "aciklama": "Sigortalı olarak başlamak senin güvencendir."}
+      ],
+      "kaynaklar": [
+        {"ad": "5510 sayılı Kanun — sigortalı işe giriş bildirimi", "url": "https://www.mevzuat.gov.tr"},
+        {"ad": "İŞKUR — iş ve meslek danışmanlığı", "url": "https://www.iskur.gov.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    },
+    {
+      "kod": "para",
+      "baslik": "Para yönetimi temelleri",
+      "ikon": "💰",
+      "ozet": "İlk maaşını aldığında ne yaparsın? Bütçe, birikim ve borcun mantığı.",
+      "kartlar": [
+        {"baslik": "Bütçe: gelir – gider = kalan", "metin": "Bütçe, paranın nereye gittiğini önceden planlamaktır. Ay başında gelirini yaz, zorunlu giderleri (kira, ulaşım, yemek, faturalar) çıkar, kalanla isteğe bağlı harcamaları ve birikimi planla. Bir ay boyunca tüm harcamalarını yazmak, bütçe yapmanın en öğretici ilk adımıdır."},
+        {"baslik": "Önce kendine öde", "metin": "Birikimi 'aydan ne artarsa' diye bırakmak yerine maaş yatar yatmaz küçük de olsa bir tutarı ayırmak işe yarar. Beklenmedik giderler (sağlık, eşya bozulması, iş değişikliği) için bir acil durum birikimi oluşturmak seni rahatlatır."},
+        {"baslik": "İhtiyaç mı, istek mi?", "metin": "Bir şey almadan önce kendine sor: Buna gerçekten ihtiyacım var mı, yoksa şu an istiyor muyum? Büyük alışverişlerde bir gün beklemek, anlık kararları azaltır. Taksit, toplam bedeli değiştirmez; yalnızca zamana yayar."},
+        {"baslik": "Kredi kartı ve faiz kavramı", "metin": "Kredi kartı bir ödeme aracıdır ama aynı zamanda borçtur. Ekstrenin yalnızca asgari tutarını ödersen kalan borca faiz işler ve borç büyür. Kredi kartı için uygulanabilecek en yüksek faiz oranlarını Türkiye Cumhuriyet Merkez Bankası belirler ve duyurur. Ödemeleri zamanında yapmak, ileride kredi alırken de önemli olan kredi notunu etkiler."},
+        {"baslik": "Dolandırıcılığa dikkat", "metin": "'Kısa sürede kesin kazanç' vaat eden teklifler, sosyal medyadaki 'kolay para' ilanları ve senden hesap bilgisi ya da şifre isteyen mesajlar risklidir. Emin olmadığın her konuda ailene ya da güvendiğin bir yetişkine danış. Bu ders yatırım tavsiyesi vermez."}
+      ],
+      "sinav": [
+        {"soru": "'Önce kendine öde' ilkesi ne demektir?", "secenekler": ["Maaş yatınca önce birikimi ayırmak", "Maaşın tamamını kendine harcamak", "Önce kredi kartı almak"], "dogru": 0, "aciklama": "Birikimi ayın sonuna bırakmak yerine en başta ayırmak birikimi düzenli hâle getirir."},
+        {"soru": "Kredi kartında yalnızca asgari tutarı ödersen ne olur?", "secenekler": ["Borç silinir", "Kalan borca faiz işler", "Kart limitin otomatik artar"], "dogru": 1, "aciklama": "Ödenmeyen kısma faiz işler ve toplam borç büyür."},
+        {"soru": "Taksitle alışveriş hakkında hangisi doğrudur?", "secenekler": ["Ürünü ucuzlatır", "Toplam bedeli zamana yayar", "Hiç borç sayılmaz"], "dogru": 1, "aciklama": "Taksit ödemeyi zamana yayar; toplam tutar (varsa vade farkıyla) yine ödenir."},
+        {"soru": "Hangisi bir dolandırıcılık işareti olabilir?", "secenekler": ["Bankanın şubede sana sözleşme okuması", "Sosyal medyada 'kısa sürede kesin kazanç' vaadi", "Maaş bordrosunun e-postayla gelmesi"], "dogru": 1, "aciklama": "Kesin ve hızlı kazanç vaadi tipik bir dolandırıcılık işaretidir."}
+      ],
+      "kaynaklar": [
+        {"ad": "Türkiye Cumhuriyet Merkez Bankası — kredi kartı azami faiz oranları duyuruları", "url": "https://www.tcmb.gov.tr"},
+        {"ad": "Bankacılık Düzenleme ve Denetleme Kurumu (BDDK) — finansal tüketici bilgilendirmeleri", "url": "https://www.bddk.org.tr"}
+      ],
+      "son_kontrol": "2026-10"
+    }
+  ]
+}

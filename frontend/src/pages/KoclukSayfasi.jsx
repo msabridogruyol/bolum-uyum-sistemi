@@ -5,6 +5,7 @@ import Sayac from '../components/Sayac'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import { AlanTuruRozeti, GeriBildirimOzeti, OlcumKarti, OlcumPenceresi, TamamlaFormu } from '../components/kocluk/KoclukMotoru'
 import { useModuller } from '../yardimci/moduller'
+import { BirGunumSekmesi, BolumunuTani } from '../components/kocluk/BirGunum'
 
 // ============================================================
 // Ana sayfa
@@ -189,6 +190,8 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
 // ============================================================
 const SEKMELER = [
   { kod: 'ozet', ad: 'Özet', ikon: '🧭' },
+  { kod: 'bolum', ad: 'Bölümünü Tanı', ikon: '📘' },
+  { kod: 'gun', ad: 'Bir Günümü Yaşa', ikon: '🎬' },
   { kod: 'karsilastirma', ad: 'Sen ve Bölümün', ikon: '📊' },
   { kod: 'yol', ad: 'Yol Haritam', ikon: '🗺️' },
   { kod: 'guclu', ad: 'Güçlü Yönlerin', ikon: '💪' },
@@ -247,9 +250,9 @@ function IlhamSekmesi({ kaynaklar }) {
     return (
       <div className="card" style={{ textAlign: 'center', padding: 30 }}>
         <div style={{ fontSize: 30 }}>📚</div>
-        <div style={{ fontWeight: 800, margin: '6px 0 4px' }}>Senin alanların için henüz ilham kaynağı eklenmedi</div>
+        <div style={{ fontWeight: 800, margin: '6px 0 4px' }}>İlham kaynaklarını birlikte keşfedelim</div>
         <div className="ps" style={{ margin: 0 }}>
-          Kitap, film, ilham veren kişi ve önemli olay önerileri {kaynaklar.aranan_alanlar?.length ? <>şu alanlar için hazırlanacak: <b>{kaynaklar.aranan_alanlar.join(', ')}</b>.</> : 'yakında burada olacak.'}
+          {kaynaklar.aranan_alanlar?.length ? <>Odak alanların: <b>{kaynaklar.aranan_alanlar.join(', ')}</b>. </> : null}Bu alanlarda ilgini çeken bir kitap, film ya da belgeseli Kütüphanem'e ekleyerek kendi ilham listeni oluşturabilirsin.
         </div>
       </div>
     )
@@ -829,6 +832,8 @@ export default function KoclukSayfasi() {
             {sekme === 'ozet' && <OzetSekmesi plan={plan} gelisim={gelisim} sekmeyeGit={sekmeyeGit} />}
             {sekme === 'yol' && <YolHaritasiSekmesi plan={plan} gelisim={gelisim} hedefId={hedef.bolum_id} onDurum={adimDurumu} kaynaklar={kaynaklar} sekmeyeGit={sekmeyeGit} onOlc={setOlcumAlani} />}
             {sekme === 'ilham' && <IlhamSekmesi kaynaklar={kaynaklar} />}
+            {sekme === 'bolum' && <BolumunuTani hedef={hedef} />}
+            {sekme === 'gun' && <BirGunumSekmesi hedef={hedef} />}
             {sekme === 'guclu' && <GucluSekmesi plan={plan} onDurum={adimDurumu} />}
             {sekme === 'karsilastirma' && <KarsilastirmaSekmesi gelisim={gelisim} hedef={hedef} />}
             {sekme === 'gelisim' && <GelisimSekmesi karsilastirma={karsilastirma} />}

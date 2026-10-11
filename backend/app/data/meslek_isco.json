@@ -1,0 +1,4199 @@
+{
+ "aciklama": "Bölüm detayındaki (bolumler.detay.meslekler) meslek adlarının ISCO-08 2 haneli alt ana gruplarına eşleştirmesi. Meslek verisi ESCO kodu taşımadığı için ad + bölüm bağlamına göre sınıflandırıldı (2026-10-10). guven: yuksek = ad mesleği tek başına belirliyor; orta = makul ama tartışmalı; null = belirsiz (boş bırakıldı). Göç 0054 bu dosyayı meslek_isco tablosuna ON CONFLICT DO NOTHING ile yükler; düzeltmeler süper admin ekranından yapılır (tablo esastır).",
+ "kaynak": "ISCO-08 (ILO, International Standard Classification of Occupations 2008); Türkçe grup adları TÜİK kullanımına göre",
+ "isco08_ana_gruplar": {
+  "0": "Silahlı kuvvetler mensupları",
+  "1": "Yöneticiler",
+  "2": "Profesyonel meslek mensupları",
+  "3": "Teknisyenler, teknikerler ve yardımcı profesyonel meslek mensupları",
+  "4": "Büro hizmetlerinde çalışan elemanlar",
+  "5": "Hizmet ve satış elemanları",
+  "6": "Nitelikli tarım, ormancılık ve su ürünleri çalışanları",
+  "7": "Sanatkârlar ve ilgili işlerde çalışanlar",
+  "8": "Tesis ve makine operatörleri ve montajcılar",
+  "9": "Nitelik gerektirmeyen işlerde çalışanlar"
+ },
+ "isco08_alt_ana_gruplar": {
+  "01": "Subaylar",
+  "02": "Astsubaylar",
+  "03": "Diğer rütbelerdeki silahlı kuvvetler mensupları",
+  "11": "Üst düzey yöneticiler, üst düzey kamu görevlileri ve kanun yapıcılar",
+  "12": "İdari ve ticari müdürler",
+  "13": "Üretim ve uzmanlaşmış hizmet müdürleri",
+  "14": "Otel, perakende ve diğer hizmet müdürleri",
+  "21": "Bilim ve mühendislik profesyonel meslek mensupları",
+  "22": "Sağlık profesyonel meslek mensupları",
+  "23": "Eğitim profesyonel meslek mensupları",
+  "24": "İş ve yönetim profesyonel meslek mensupları",
+  "25": "Bilgi ve iletişim teknolojisi profesyonel meslek mensupları",
+  "26": "Hukuk, sosyal ve kültürel profesyonel meslek mensupları",
+  "31": "Bilim ve mühendislikle ilgili yardımcı profesyonel meslek mensupları",
+  "32": "Sağlıkla ilgili yardımcı profesyonel meslek mensupları",
+  "33": "İş ve yönetimle ilgili yardımcı profesyonel meslek mensupları",
+  "34": "Hukuk, sosyal, kültürel ve ilgili yardımcı profesyonel meslek mensupları",
+  "35": "Bilgi ve iletişim teknisyenleri",
+  "41": "Genel ve klavye kullanan büro elemanları",
+  "42": "Müşteri hizmetleri elemanları",
+  "43": "Sayısal ve malzeme kayıt elemanları",
+  "44": "Diğer büro hizmetleri elemanları",
+  "51": "Kişisel hizmet çalışanları",
+  "52": "Satış çalışanları",
+  "53": "Kişisel bakım çalışanları",
+  "54": "Koruma hizmetleri çalışanları",
+  "61": "Pazara yönelik nitelikli tarım çalışanları",
+  "62": "Pazara yönelik nitelikli ormancılık, balıkçılık ve avcılık çalışanları",
+  "63": "Geçimlik çiftçiler, balıkçılar, avcılar ve toplayıcılar",
+  "71": "İnşaat ve ilgili işlerde çalışan sanatkârlar (elektrikçiler hariç)",
+  "72": "Metal, makine ve ilgili işlerde çalışan sanatkârlar",
+  "73": "El sanatları ve baskı işlerinde çalışanlar",
+  "74": "Elektrik ve elektronik işlerinde çalışanlar",
+  "75": "Gıda işleme, ağaç işleri, giyim ve diğer sanatkârlar",
+  "81": "Sabit tesis ve makine operatörleri",
+  "82": "Montajcılar",
+  "83": "Araç sürücüleri ve hareketli makine operatörleri",
+  "91": "Temizlik çalışanları ve yardımcıları",
+  "92": "Tarım, ormancılık ve balıkçılıkta nitelik gerektirmeyen işlerde çalışanlar",
+  "93": "Madencilik, inşaat, imalat ve ulaştırmada nitelik gerektirmeyen işlerde çalışanlar",
+  "94": "Yiyecek hazırlama yardımcıları",
+  "95": "Sokak satıcıları ve sokakta hizmet veren diğer çalışanlar",
+  "96": "Atık toplayıcılar ve nitelik gerektirmeyen diğer işlerde çalışanlar"
+ },
+ "eslesme": {
+  "3b modelleme sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "3b modelleme ve görselleştirme uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "3b sanatçı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "3b takı modelleme uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ab uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "acil durum planlama sorumlusu": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "acil servis hekimi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "adli antropoloji uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "adli bilimler uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "adli bilişim uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "adli genetik uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "adli sosyal çalışmacı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "adli toksikoloji uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "aerodinamik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "afet eğitimi uzmanı": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "afet risk uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "afet ve acil durum uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "aile danışmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "aile destek uzmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "aile eğitimcisi": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "aile hekimi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "aile sağlığı merkezi ebesi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "aile ve tüketici bilimleri uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "akademisyen": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "akademisyen diş hekimi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "akademisyen hekim": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "aksesuar tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "aktüer": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "aktüerya analisti": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "akustik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "algoritma geliştirici": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "altyapı antrenörü": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "altyapı proje mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ambalaj tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ambalaj üretim uzmanı": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "analiz laboratuvarı uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "animasyon ekip lideri": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "animasyon yönetmeni": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "animatör": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "animatör / etkinlik sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "antrenör": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "antropolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "ar-ge kimyageri": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ar-ge mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ar-ge uzmanı": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "ar-ge ve tasarım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "arama-kurtarma personeli": {
+   "isco_kodu": "54",
+   "guven": "orta"
+  },
+  "aranjör": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "arazi toplulaştırma uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "araştırma mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "araştırma uzmanı": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "araştırmacı": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "araştırmacı / akademisyen": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "arka plan sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "arkeolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "arkeolojik çizim ve belgeleme uzmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "arıtma tesisi işletme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "arşiv uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "arşiv ve dokümantasyon uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "arşivci": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "astronom / astrofizikçi": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "atölye eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "atölye işletmecisi": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "atölye şefi": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "av aracı tasarım uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "aviyonik teknik uzman": {
+   "isco_kodu": "74",
+   "guven": "orta"
+  },
+  "aviyonik teknisyeni": {
+   "isco_kodu": "74",
+   "guven": "orta"
+  },
+  "avukat": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "ayakkabı modelisti": {
+   "isco_kodu": "75",
+   "guven": "orta"
+  },
+  "ayakkabı tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "aydınlatma tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ağ ve sistem mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "ağaç işleri endüstri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ağaçlandırma ve fidanlık sorumlusu": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "bakım hizmetleri koordinatörü": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "bakım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "bakım planlama mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "bakım planlama uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "balıkçılık teknolojisi mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "banka müfettiş yardımcısı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "banka müşteri temsilcisi": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "bankacı / müşteri temsilcisi": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "bankacı / portföy yöneticisi (şube)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "bankasürans uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "banket ve etkinlik sorumlusu": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "baskı atölyesi sorumlusu": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "baskı makinesi operatörü": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "baskı sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "baskı öncesi hazırlık uzmanı": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "basın danışmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "beden eğitimi öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "belediye uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "belediye yönetici / uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "belge yönetimi uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "belgeleme uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "besteci": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "bilgi güvenliği denetçisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "bilgi güvenliği uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "bilgi uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "bilgisayar destekli tasarım uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "bilgisayarlı görü mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "bilim iletişimcisi": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "bilim merkezi eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "bilim tarihi araştırmacısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "bilirkişi": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "bilişim sistemleri mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "bilişim teknolojileri öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "bitki ıslahçısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "biyogüvenlik elemanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "biyoinformatik analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "biyoinformatik uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "biyoistatistikçi": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "biyokimyacı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "biyolog": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "biyomedikal cihaz uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "biyomedikal mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "biyomühendis": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "biyoproses mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "biyoproses uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "biyosistem mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "biyoteknolog": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "biyoçeşitlilik uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "bordro ve özlük işleri uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "boyahane mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "bt proje yöneticisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "bölgesel kalkınma uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "bütçe uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "bütçe ve raporlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "büyük veri uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "cad/cam mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "cam atölyesi teknikeri": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "cam sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "cam ürün tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "canlı ses teknisyeni": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "catering operasyon sorumlusu": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "cbs uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "cevher hazırlama mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "charter (gemi kiralama) uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "coğrafya öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "coğrafyacı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "cumhuriyet savcısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "damızlık kayıt ve ıslah uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "dans eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "dans sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "danışma komitesi destek uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "dağıtım uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "dekor ressamı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "dekor tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "dekor ve aksesuar heykeltıraşı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "denetçi (sayıştay vb.)": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "denetçi yardımcısı / denetçi": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "deniz kılavuz kaptanı": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "depo yöneticisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "deri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "deri ürünleri tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "destek eğitim odası öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "destinasyon yönetimi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "devops mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "dijital iletişim uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "dijital içerik yapımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "dijital içerik üreticisi": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "dijital muhabir": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "dijital pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "dil kursu eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "dil ve konuşma terapisti": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "din görevlisi / vaiz": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "din kültürü ve ahlak bilgisi öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "diplomat": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "dizi ve film oyuncusu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "diş hekimi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "doku kültürü uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "dokuma tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "dokuma ustası": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "doğa eğitimi ve proje uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "doğa ve çevre eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "doğal dil işleme mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "doğrulama editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "doğumhane ebesi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "drama eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "dramaturg": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "duvar resmi sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "düzenleyici (aranjör)": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "dış haberler muhabiri / editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "dış ilişkiler uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "dış işlemler uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "dış politika analisti": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "dış ticaret uzman yardımcısı (kamu)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "dış ticaret uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "e-ticaret uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "e-öğrenme içerik geliştirici": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "ebru sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "ecmo uzmanı": {
+   "isco_kodu": "32",
+   "guven": "orta"
+  },
+  "edebi kurul üyesi": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "edebi çevirmen": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "edebiyat araştırmacısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "editör": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "editör / danışman": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "egzersiz uzmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "ekolojik etki değerlendirme uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ekonometrisyen": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "ekonomik araştırma analisti": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "ekonomik araştırma uzmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "ekonomist": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "el sanatları ustası": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "el yazması eser uzmanı yardımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "elektrik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "elektronik müzik üreticisi": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "elektronik tasarım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "endüstri eczacısı": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "endüstri ilişkileri uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "endüstri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "endüstri ve örgüt psikoloğu": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "endüstriyel tasarımcı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "enerji piyasası uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "enerji proje uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "enerji sistemleri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "enerji uygulamaları uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "enerji verimliliği danışmanı (yönetim tarafı)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "enerji verimliliği uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "enstrümantasyon mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ergoterapist": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "erişilebilirlik danışmanı": {
+   "isco_kodu": "22",
+   "guven": "orta"
+  },
+  "erp danışmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "etkinlik koordinatörü": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "etkinlik mekan tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "etkinlik organizasyon uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "etkinlik yöneticisi": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "etnomüzikolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "etüt öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "ev tekstili tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "eğitim içeriği geliştirici": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "eğitim içeriği yazarı": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "eğitim materyali geliştirici": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "eğitim materyali tasarımcısı": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "eğitim ve gelişim uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "eğitim/sorumlu hemşire": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "faizsiz finans ürün uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "felsefe grubu öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "felsefe öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "fen bilimleri öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "fidanlık yöneticisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "film ve medya müziği bestecisi": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "filo / taşıma planlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "finans uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "finansal analist": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "fizik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "fiziki antropolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "fizikçi / araştırmacı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "fizyoterapist": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "foley sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "fon ve sponsorluk uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "foto muhabiri": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "fotonik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "fotoğrafçı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "galeri asistanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "galeri yöneticisi": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "gayrimenkul danışmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gayrimenkul değerleme uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gayrimenkul geliştirme uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gebe okulu eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "geleneksel dokuma sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "geleneksel sanatlar sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "gelir uzman yardımcısı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "gelir yönetimi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "gemi acentesi uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gemi başmühendisi": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "gemi inşaatı mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "gemi makine sistemleri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "gemi sörveyörü": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "gemoloji asistanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "genel havacılık pilotu": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "genetik analiz uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "genetik laboratuvar uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "geoteknik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "geriatrik ergoterapist": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "gerontolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "girişimci": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "girişimcilik programı koordinatörü": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "grafik tasarımcı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "gömülü sistem geliştirici": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "gömülü yazılım mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "görev analizi mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "görsel sanatlar öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "görsel sanatçı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "görselleştirme uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "görüntü yönetmeni": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "gözlemevi uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "gübre firması teknik uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gümrük mevzuatı danışmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gümrük muhafaza veya gümrük memuru (kamu)": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gümrük müşavir yardımcısı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gümrük müşaviri": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "gürültü ve titreşim uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "güvenlik analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "güvenlik mimarı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "güvenlik operasyon merkezi analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "güverte lostromosu": {
+   "isco_kodu": "83",
+   "guven": "orta"
+  },
+  "güzellik uzmanı": {
+   "isco_kodu": "51",
+   "guven": "yuksek"
+  },
+  "gıda güvenliği denetçisi": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "gıda kontrol görevlisi": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "gıda mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "haber müdürü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "haber spikeri / sunucu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "haberleşme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "halk bilimi derlemecisi": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "halk dansları sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "halk oyunları eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "halk sağlığı hemşiresi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "halkbilimci": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "halkla ilişkiler uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "halı desinatörü": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "halı ve kilim desinatörü": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "hareket danışmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "hareketli grafik tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "harita mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "hasar analizi uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "hasar uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "hasat sonrası kalite sorumlusu": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "hassas tarım uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "hasta hizmetleri sorumlusu": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "hastane eczacısı": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "hastane idari birim yöneticisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "hastane çocuk gelişimcisi": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "hattat": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "hava kargo uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "hava trafik eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "hava trafik kontrolörü (kule)": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "hava trafik kontrolörü (radar)": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "havacılık meteoroloğu": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "havacılık pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "havalimanı işletme uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "havalimanı operasyon uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "havayolu planlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "hayvancılık danışmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "hayvancılık girişimcisi": {
+   "isco_kodu": "61",
+   "guven": "orta"
+  },
+  "hayvancılık işletme sorumlusu": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "hazine uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "hazine ve döviz uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "heykeltıraş": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "hidrojeolog": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "hidrojeoloji mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "hidrolik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "hidrolog": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "hâkim": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "icracı müzisyen": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "idari personel / memur": {
+   "isco_kodu": "41",
+   "guven": "orta"
+  },
+  "ihracat pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "ihracat uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "iklim analisti": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "iktisatçı / ekonomist": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "iletişim araştırmacısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "iletişim proje yöneticisi": {
+   "isco_kodu": "12",
+   "guven": "orta"
+  },
+  "iletişim tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "iletişim uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "illüstratör": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "imalat mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "imam-hatip": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "insan kaynakları uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "insani yardım koordinatörü": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "isg eğitmeni": {
+   "isco_kodu": "22",
+   "guven": "orta"
+  },
+  "isg koordinatörü": {
+   "isco_kodu": "22",
+   "guven": "orta"
+  },
+  "istatistikçi": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "itki sistemleri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "iç denetçi": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "iç kontrol / denetim uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "iç mimar": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "içerik editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "içerik geliştirme uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "içerik pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "içerik satın alma uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "içerik yazarı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "içerik üreticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "iş analisti": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "iş analisti / veri analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "iş geliştirme uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "iş güvenliği uzmanı": {
+   "isco_kodu": "22",
+   "guven": "orta"
+  },
+  "iş sağlığı ve güvenliği uzmanı": {
+   "isco_kodu": "22",
+   "guven": "orta"
+  },
+  "iş ve meslek danışmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "iş yeri hemşiresi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "iş zekâsı uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "işe alım uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "işitme cihazı uzmanı": {
+   "isco_kodu": "32",
+   "guven": "orta"
+  },
+  "işletme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "jeofizik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "jeoloji mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "jeotermal proje mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "kabin memuru": {
+   "isco_kodu": "51",
+   "guven": "yuksek"
+  },
+  "kadastro mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "kadın doğum servisi ebesi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "kalite güvence uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kalite kontrol / güvence uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "kalite kontrol elemanı": {
+   "isco_kodu": "75",
+   "guven": "orta"
+  },
+  "kalite kontrol mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "kalite kontrol sorumlusu": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "kalite kontrol uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "kalite mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "kalite ve uyum uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kalite yönetim sorumlusu": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kalıp ve döküm uzmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "kamp ve doğa etkinlikleri lideri": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "kamu denetim uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "kamu kurumu uzman yardımcısı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kamu uzman yardımcısı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kamu veteriner hekimi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "kamuoyu araştırmacısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "kaptan pilot": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "karakter tasarımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "karakterizasyon uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "kariyer danışmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "kat hizmetleri müdürü": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "katılım bankacılığı uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kaya mekaniği mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "kaymakam adayı": {
+   "isco_kodu": "11",
+   "guven": "orta"
+  },
+  "kazı konservatörü": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "kentsel dönüşüm uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "kentsel tasarımcı": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "kentsel yeşil alan yöneticisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "kimyager": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "kitap sanatları restorasyon uzmanı yardımcısı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "kişisel antrenör": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "klas sörveyörü": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "klinik diyetisyen": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "klinik eğitim sorumlusu": {
+   "isco_kodu": "22",
+   "guven": "orta"
+  },
+  "klinik hemşire": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "klinik psikolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "klinik uygulama uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "klinisyen veteriner hekim": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "kodlama ve robotik eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "koklear implant odyoloğu": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "koleksiyon sorumlusu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "konaklama operasyon müdürü": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "kondisyoner": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "konferans çevirmeni": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "kongre ve etkinlik organizatörü": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "konsept sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "konservatör-restoratör": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "kontrol sistemleri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "kontrolör / sertifikasyon elemanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "kooperatif yöneticisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "koreograf": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "koro sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "koro şefi": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "korrepetitör": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "koruma alanı planlama uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "koruma kurulu uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "korunan alan yöneticisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "koruyucu aile / çocuk koruma uzmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "kostüm sorumlusu": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "kostüm tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "kozmetik ürün danışmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "kreatif direktör": {
+   "isco_kodu": "12",
+   "guven": "orta"
+  },
+  "kredi / fon kullandırma uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kredi analisti": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kredi tahsis uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kreş / gündüz bakımevi yöneticisi veya eğitimcisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "kreş eğitmeni/yöneticisi": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "kriptografi uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "kriz iletişimi danışmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kuaför": {
+   "isco_kodu": "51",
+   "guven": "yuksek"
+  },
+  "kullanıcı deneyimi araştırmacısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "kullanıcı ve tüketici araştırmacısı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kuluçkahane sorumlusu": {
+   "isco_kodu": "62",
+   "guven": "orta"
+  },
+  "kuluçkahane teknikeri": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "kurgucu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "kurs eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "kurs öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "kurs/etüt öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "kurumsal eğitim uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "kurumsal iletişim uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kurumsal iletişim yöneticisi": {
+   "isco_kodu": "12",
+   "guven": "orta"
+  },
+  "kurumsal kimlik tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "kurumsal yayın sorumlusu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "kurumsal yazılım danışmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "kuyumcu": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "kuyumcu ustası": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "kültür araştırmacısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "kültür projeleri uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kültür sanat editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "kültür sanat proje görevlisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kültür sanat proje yöneticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kültür-sanat proje koordinatörü": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kültür-sanat proje yöneticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "kültür-sanat yazarı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "kümes sorumlusu": {
+   "isco_kodu": "61",
+   "guven": "orta"
+  },
+  "küratör": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "kütüphaneci": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "laboratuvar analisti": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "laboratuvar sorumlusu": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "laboratuvar uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "lazer sistemleri uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "liman operasyon elemanı": {
+   "isco_kodu": "83",
+   "guven": "orta"
+  },
+  "liman operasyon uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "lisanslı harita kadastro mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "lisanslı uçak bakım teknisyeni": {
+   "isco_kodu": "72",
+   "guven": "orta"
+  },
+  "lise biyoloji öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "lise coğrafya öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "lise fizik öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "lise kimya öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "lise matematik öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "lise tarih öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "lojistik uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "maden arama jeoloğu": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "maden mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "maket ve model ustası": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "makine öğrenmesi mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "makyaj sanatçısı": {
+   "isco_kodu": "51",
+   "guven": "yuksek"
+  },
+  "maliyet kontrol uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "maliyet muhasebesi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "malzeme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "manevi danışman": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "marka iletişimi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "marka yöneticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "matematik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "matematik öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "matematikçi / araştırmacı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "materyal geliştirici": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "mağaza ve sergi tasarımcısı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "medikal fizikçi": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "medikal ürün uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "medya analisti": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "medya araştırmacısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "medya planlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "medya planlamacı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "mekatronik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "metalurji mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "meteoroloji mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "miksaj uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "miksaj ve mastering uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "mimar": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "mimari yazı uygulayıcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "minyatür sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "misafir ilişkileri yöneticisi": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "mobilya tasarım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "mobilya tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "moda stilisti": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "moda tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "modelist": {
+   "isco_kodu": "75",
+   "guven": "orta"
+  },
+  "moleküler biyolog": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "moleküler biyoloji laboratuvar uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "moleküler biyoteknolog": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "moleküler markör uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "moleküler tanı uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "motor bakım teknisyeni": {
+   "isco_kodu": "72",
+   "guven": "orta"
+  },
+  "muayenehane sahibi diş hekimi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "muhabir": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "muhasebe uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "multimedya yapımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "mutfak müdürü": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "mücevher modelleme uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "mücevher tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "müfettiş / denetçi yardımcısı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "müfettiş yardımcısı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "müze / bilim merkezi uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "müze arkeoloğu": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "müze eğitim görevlisi": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "müze eğitim ve iletişim uzmanı": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "müze eğitimcisi": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "müze konservasyon uzmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "müze tekstil uzmanı yardımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "müze uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "müzik danışmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "müzik eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "müzik kuramcısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "müzik kursu eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "müzik prodüktörü": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "müzik programcısı / editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "müzik yazarı / eleştirmen": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "müzik öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "müzikal oyuncusu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "müzikal sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "müzikolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "müzisyen": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "müşteri deneyimi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "müşteri ilişkileri uzmanı": {
+   "isco_kodu": "42",
+   "guven": "orta"
+  },
+  "müşteri temsilcisi": {
+   "isco_kodu": "42",
+   "guven": "orta"
+  },
+  "mıhlayıcı": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "nanoteknoloji araştırmacısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "nanoteknoloji mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "nitel araştırma uzmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "nota editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "noter": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "nörolojik rehabilitasyon fizyoterapisti": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "nükleer güvenlik denetçisi": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "nükleer mühendis": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ocak planlama mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "oda müziği sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "odyolog": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "okul laboratuvar sorumlusu": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "okul psikolojik danışmanı (rehber öğretmen)": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "okul öncesi öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "okutman": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "olay müdahale uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "olay yeri inceleme uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "operasyon uzmanı": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "operasyon uzmanı (forwarder)": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "operasyon uzmanı (karada)": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "optik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "optik tasarım uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "organik üretim sorumlusu": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "organik ürün pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "organizasyonel gelişim uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "orkestra sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "orkestra şefi": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "orman amenajman uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "orman endüstri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "orman mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "orman yangınları planlama uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ortaokul matematik öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "ortez-protez uzmanı (ortotist-protetist)": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "otel satış ve pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "otomasyon mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "otomotiv tasarım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "oyun geliştirici": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "oyun ses tasarımcısı": {
+   "isco_kodu": "35",
+   "guven": "orta"
+  },
+  "oyun tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "oyun test uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "oyun yazarı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "oyuncu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "oyuncu koçu": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "oyunculuk eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "pasta şefi": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "patlatma mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "pazar araştırma uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "pazarlama analisti": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "pazarlama iletişimi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "pazaryeri yöneticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "pediatrik dil ve konuşma terapisti": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "pediatrik ergoterapist": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "pediatrik fizyoterapist": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "performans analisti": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "performans laboratuvarı uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "performans pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "performans sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "perfüzyonist": {
+   "isco_kodu": "32",
+   "guven": "orta"
+  },
+  "peyzaj bitkileri uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "peyzaj mimarı": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "peyzaj planlama uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "peyzaj uygulama sorumlusu": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "piyano akort ve bakım teknisyeni": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "planlama ve maliyet mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "polimer mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "politika analisti": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "portföy yöneticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "portföy yönetimi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "post-prodüksiyon koordinatörü": {
+   "isco_kodu": "35",
+   "guven": "orta"
+  },
+  "pratisyen hekim": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "program araştırmacısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "program yapımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "proje geliştirme uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "proje koordinatörü": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "proje koordinatörü (stk)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "proje mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "proje sorumlusu": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "proje uzmanı": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "proje uzmanı (destek programları)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "proje uzmanı (dış ticaret destekleri)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "proje yöneticisi": {
+   "isco_kodu": "12",
+   "guven": "orta"
+  },
+  "proses geliştirme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "proses mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "protez teknik uzmanı": {
+   "isco_kodu": "32",
+   "guven": "orta"
+  },
+  "prototip ve modelleme uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "prova yöneticisi": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "psikolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "psikolojik danışman (rehber öğretmen)": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "psikolojik danışman (özel merkez)": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "radyasyon güvenliği uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "radyo programcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "ram uzmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "raylı sistemler mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "redaktör": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "regülasyon uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "rehabilitasyon merkezi eğitimcisi": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "rehberlik ve araştırma merkezi uzmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "reji asistanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "reklam filmi yönetmeni": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "reklam metin yazarı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "rekreasyon uzmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "rekreasyon/etkinlik sorumlusu": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "renk düzenleme uzmanı": {
+   "isco_kodu": "35",
+   "guven": "orta"
+  },
+  "ressam": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "restoran müdürü": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "restorasyon mimarı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "restorasyon proje ekibi uzmanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "restorasyon uygulayıcısı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "rezervasyon ve bilet uzmanı": {
+   "isco_kodu": "42",
+   "guven": "orta"
+  },
+  "rezervuar mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "risk analisti": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "risk analiz uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "risk ve ülke analisti": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "risk yöneticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "risk yönetimi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "robotik sistemler mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "robotik uygulama mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "roket itki mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ruhsatlandırma uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "ruhsatlandırma ve kalite uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "rüzgâr enerjisi analisti": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "saha araştırmacısı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "saha mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "sahne amiri": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "sahne sanatları eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "sahne sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "sahne tasarım asistanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "sahne tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "sanat atölyesi eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "sanat tarihçisi": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "sanat yönetmeni": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "sanat yönetmeni (art director)": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "sanat yönetmeni yardımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "sanatçı menajeri": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "santral işletme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "satın alma (tedarik) uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "satın alma uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "satış geliştirme uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "satış sonrası servis uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "satış sonrası teknik mühendis": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "satış temsilcisi / satış yöneticisi": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "sayfa düzenleme (mizanpaj) uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "sayfa sekreteri": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "sağlık sigortası uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sağlık turizmi koordinatörü": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sağlıklı yaşam programı koordinatörü": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "scada mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "senarist": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "senaryo editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "senaryo ekibi yazarı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "sendika uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "seo uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sera işletme sorumlusu": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "sera ve tarımsal yapı proje uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "seramik sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "seramik ürün tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "serbest diyetisyen": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "serbest eczacı": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "serbest muhasebeci mali müşavir (smmm)": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "serbest orman mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "serbest sanatçı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "sergi asistanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "sergi koordinatörü": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "sergi ve yerleştirme tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "serigrafi uygulayıcısı": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "sertifikasyon mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ses eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "ses kayıt mühendisi / teknisyeni": {
+   "isco_kodu": "35",
+   "guven": "orta"
+  },
+  "ses kayıt teknisyeni": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "ses kurgucusu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "ses sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "ses tasarımcısı": {
+   "isco_kodu": "35",
+   "guven": "orta"
+  },
+  "ses terapisti": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "seslendirme sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "seslendirme ve dublaj sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "seviye (level) tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "seviye tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "seyahat danışmanı": {
+   "isco_kodu": "42",
+   "guven": "orta"
+  },
+  "siber güvenlik analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "siber güvenlik uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "sigorta acentesi / satış uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "sigorta brokeri çalışanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "sigorta uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "sigorta uzmanı (risk kabul)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sigorta uzmanı (underwriter / risk kabul)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sigorta ürün fiyatlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sinyalizasyon mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "sismik veri işlemci": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "sismolog": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "sistem analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "siyasal iletişim danışmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "siyasi analist": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "solist": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "sondaj kontrol mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "sondaj mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "sosyal bilgiler öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "sosyal güvenlik uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sosyal medya editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "sosyal medya uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sosyal medya yöneticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sosyal politika uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sosyal proje uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sosyal çalışmacı (sosyal hizmet uzmanı)": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "sosyolog": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "sponsorluk ve pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "spor diyetisyeni": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "spor eğitmeni": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "spor fizyoterapisti": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "spor kulübü yöneticisi": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "spor organizasyon uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "spor tesisi müdürü": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "statik proje mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "stok değerlendirme uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "storyboard sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "stratejik planlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "stratejik planlamacı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "stüdyo müzisyeni": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "su kalitesi uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "su kaynakları mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "su kaynakları planlama uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "su ürünleri kontrol görevlisi": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "su ürünleri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "sulama proje mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "sulama sistemleri proje uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "söz-müzik yazarı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "sürdürülebilirlik uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "sürü yönetim uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "süt teknolojisi uzmanı / ziraat mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "sınıf öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "sır ve renk geliştirme sorumlusu": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "sızma testi uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "tahmin (forecast) uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "takas ve operasyon uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "takı tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tarih öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "tarihçi / araştırmacı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "tarım kredi uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "tarım teknolojileri saha uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "tarım teknolojileri uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "tarım ürünleri ticaret uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "tarımsal danışman": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tarımsal girişimci": {
+   "isco_kodu": "61",
+   "guven": "orta"
+  },
+  "tarımsal pazar analisti": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "tarımsal robotik geliştirici": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tarımsal yapı proje uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tasarım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "tasarım ve ar-ge uzmanı": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "tasarımcı": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "taşkın risk uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tedarik zinciri planlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "tedarik zinciri uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "teknik müdür (armatör şirketi)": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "teknik ressam / modelleme uzmanı": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "teknik satış temsilcisi": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "teknik satış uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "teknik satış ve destek uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "teknik satış ve servis uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "teknik servis mühendisi": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "teknik süperintendent": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "teknoloji girişimcisi": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "teknoloji transfer uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "tekstil desen tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tekstil desinatörü": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tekstil mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "televizyon muhabiri": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "tersane proje mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "tersane proje sorumlusu": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tersane üretim mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "tesis / site yöneticisi": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "tesis işletme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "tesisat ve iklimlendirme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "test uzmanı": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "test ve doğrulama mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "test ve ölçüm mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "tezhip sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "tiyatro eleştirmeni": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "tiyatro oyuncusu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "tohum analiz laboratuvarı uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tohum üretim sorumlusu": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "tohum üretim uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "toplu beslenme diyetisyeni": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "toplu taşıma planlamacısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "topluluk yöneticisi": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "toplum sağlığı diyetisyeni": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "toprak etüt uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "trafik güvenliği uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "trafik mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "tur lideri": {
+   "isco_kodu": "51",
+   "guven": "yuksek"
+  },
+  "tur operasyon uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "turist rehberi": {
+   "isco_kodu": "51",
+   "guven": "yuksek"
+  },
+  "turizm işletmesi yöneticisi": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "turizm pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "turizm satış ve pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "tüketici hakları uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "tıbbi sosyal hizmet uzmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "tıp mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ulaşım planlama uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "uluslararası finans uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "uluslararası hukuk uzmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "uluslararası ilişkiler uzmanı (ekonomi)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "uluslararası iş geliştirme uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "uluslararası kuruluş personeli": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "uluslararası proje koordinatörü": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "uluslararası proje uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "uluslararası satış temsilcisi": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "uyarlama yazarı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "uydu sistemleri mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "uydu veri analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "uygulama sorumlusu": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "uyum (compliance) uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "uzaktan algılama analisti": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "uzaktan algılama uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "uzakyol kaptanı": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "uzakyol vardiya mühendisi": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "uzakyol vardiya zabiti": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "uzay bilimleri araştırmacısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "uzay bilimleri veri analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "uzman diş hekimi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "uzman hekim": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "uzman yardımcısı (kamu)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "uçak bakım teknisyeni": {
+   "isco_kodu": "72",
+   "guven": "orta"
+  },
+  "uçak bakım teknisyeni (aviyonik)": {
+   "isco_kodu": "74",
+   "guven": "orta"
+  },
+  "uçak tasarım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "uçuş operasyon uzmanı": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "uçuş test mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "uçuş öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "uı/ux tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "vaiz": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "vardiya zabiti": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "vergi danışmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "vergi müfettiş yardımcısı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "veri analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "veri bilimci": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "veri gazetecisi": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "veri mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "veritabanı yöneticisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "video kurgucu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "video sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "vitray sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "vokalist": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "web analisti": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "yaban hayatı uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "yabancı dil öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "yapay zekâ araştırmacısı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "yapay zekâ mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "yapı denetim mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "yapım amiri": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "yapım yöneticisi": {
+   "isco_kodu": "12",
+   "guven": "orta"
+  },
+  "yapımcı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "yapısal analiz mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "yaratıcı yapım asistanı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "yardımcı pilot (ikinci pilot)": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "yat iç mekân tasarımcısı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "yat kaptanı / personeli": {
+   "isco_kodu": "31",
+   "guven": "yuksek"
+  },
+  "yat tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "yatırım analisti (girişim sermayesi)": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "yatırım danışmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "yatırımcı ilişkileri uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "yayın editörü": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "yayın koordinatörü": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "yayın yönetmeni": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "yazma eser uzmanı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "yazılı çevirmen": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "yazılım geliştirici": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "yazılım mimarı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "yazılım mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "yazılım test mühendisi": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "yazılım test uzmanı": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "yaşlı yaşam merkezi sorumlusu": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "yem formülasyon uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "yemek stilisti": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "yeminli tercüman": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "yeni medya sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "yenidoğan tarama sorumlusu": {
+   "isco_kodu": "22",
+   "guven": "orta"
+  },
+  "yenilenebilir enerji proje mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "yer hizmetleri uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "yer istasyonu ve uydu operasyon mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "yerel yönetim memuru": {
+   "isco_kodu": "41",
+   "guven": "orta"
+  },
+  "yerelleştirme uzmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "yiyecek-içecek müdürü": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "yol tasarım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "yoğun bakım hemşiresi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "yutma terapisti": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "yönetici adayı": {
+   "isco_kodu": "12",
+   "guven": "orta"
+  },
+  "yönetici adayı (mt)": {
+   "isco_kodu": "12",
+   "guven": "orta"
+  },
+  "yönetim danışmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "yönetmen": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "yönetmen yardımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "zararlı yazılım analisti": {
+   "isco_kodu": "25",
+   "guven": "yuksek"
+  },
+  "zemin etüt mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (bahçe bitkileri)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (bitki koruma)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (tarla bitkileri)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (tarım ekonomisi)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (tarım makineleri)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (tarımsal biyoteknoloji)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (tarımsal yapılar ve sulama)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (toprak)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ziraat mühendisi (zootekni)": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "zirai karantina uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "çalgı bakım ve onarım uzmanı": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "çalgı eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "çalgı yapımcısı": {
+   "isco_kodu": "73",
+   "guven": "orta"
+  },
+  "çanta modelisti": {
+   "isco_kodu": "75",
+   "guven": "orta"
+  },
+  "çed uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "çevirmen": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "çevre danışmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "çevre görevlisi": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "çevre mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "çevre ve ekoloji uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "çevresel danışman": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "çiftlik hayvanı veteriner hekimi": {
+   "isco_kodu": "22",
+   "guven": "yuksek"
+  },
+  "çiftlik müdürü": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "çini desinatörü": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "çini restorasyon uygulayıcısı": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "çini sanatçısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "çiğ süt kabul sorumlusu": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "çocuk etkinlik eğitmeni": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "çocuk gelişimci": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "çocuk tiyatrosu oyuncusu": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "ölçme-değerlendirme uzmanı": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "ön büro müdürü": {
+   "isco_kodu": "14",
+   "guven": "orta"
+  },
+  "ön büro sorumlusu": {
+   "isco_kodu": "42",
+   "guven": "orta"
+  },
+  "özel eğitim kurumu çocuk gelişimcisi": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "özel eğitim öğretmeni": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "öğrenme yönetim sistemi yöneticisi": {
+   "isco_kodu": "25",
+   "guven": "orta"
+  },
+  "öğretim tasarımcısı": {
+   "isco_kodu": "23",
+   "guven": "orta"
+  },
+  "öğretmen": {
+   "isco_kodu": "23",
+   "guven": "yuksek"
+  },
+  "ücret ve yan haklar uzmanı": {
+   "isco_kodu": "24",
+   "guven": "yuksek"
+  },
+  "üniversite psikolojik danışmanı": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  },
+  "üretim mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "üretim planlama mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "üretim planlama sorumlusu": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "üretim planlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "üretim saha elemanı": {
+   "isco_kodu": "92",
+   "guven": "orta"
+  },
+  "üretim sorumlusu": {
+   "isco_kodu": null,
+   "guven": null
+  },
+  "üretim teknikeri": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "üretim teknisyeni": {
+   "isco_kodu": "31",
+   "guven": "orta"
+  },
+  "üretim ve kalite mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ürün geliştirme mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ürün geliştirme uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ürün pazarlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "ürün tasarım mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ürün tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ürün uzmanı": {
+   "isco_kodu": "33",
+   "guven": "orta"
+  },
+  "ürün ve tur planlama uzmanı": {
+   "isco_kodu": "24",
+   "guven": "orta"
+  },
+  "ürün yöneticisi": {
+   "isco_kodu": "12",
+   "guven": "orta"
+  },
+  "ürün/tıbbi müdür": {
+   "isco_kodu": "13",
+   "guven": "orta"
+  },
+  "ıslah uzmanı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "ısıl işlem mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "ışık tasarımcısı": {
+   "isco_kodu": "21",
+   "guven": "orta"
+  },
+  "şantiye mimarı": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "şantiye mühendisi": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "şef": {
+   "isco_kodu": "34",
+   "guven": "orta"
+  },
+  "şef yardımcısı": {
+   "isco_kodu": "26",
+   "guven": "orta"
+  },
+  "şehir plancısı": {
+   "isco_kodu": "21",
+   "guven": "yuksek"
+  },
+  "şirket avukatı / hukuk müşaviri": {
+   "isco_kodu": "26",
+   "guven": "yuksek"
+  }
+ }
+}

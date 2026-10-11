@@ -5,19 +5,15 @@
 GET    /ogrenci/listem                 — listem (uyum puanıyla, eklenme sırasına göre)
 POST   /ogrenci/listem/{bolum_id}      — listeye ekle (en fazla 20)
 DELETE /ogrenci/listem/{bolum_id}      — listeden çıkar
-GET    /ogrenci/karsilastir?ids=1,2,3  — 2-3 bölümü yan yana: uyum, alan, öne çıkan özellikler
-                                         (öğrencide de güçlü olanlar işaretli), örnek meslekler, meslek dili örneği.
-                                         Üniversite / taban puan bilgisi frontend'de /bolumler/{id}/universiteler'den
-                                         ayrı çekilir (YÖK Atlas önbelleği yavaş olabilir, sayfayı bekletmesin).
+Karşılaştırma (GET /ogrenci/karsilastir) app/api/karsilastir.py'ye taşındı; buradaki yardımcıları kullanır.
 """
-from fastapi import APIRouter, Depends, HTTPException, Query
-from sqlalchemy import text
+from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_ogrenci
 from app.core.database import get_db
 from app.models import (
-    Bolum, BolumDalEslesme, Dal, Degisken, Ogrenci, OgrenciDegerlendirmeTuru, OgrenciDegiskenSkoru,
+    Bolum, BolumDalEslesme, Dal, Ogrenci, OgrenciDegerlendirmeTuru,
     OgrenciFavoriBolum,
 )
 
@@ -97,64 +93,4 @@ def listeden_cikar(bolum_id: int, db: Session = Depends(get_db), o: Ogrenci = De
     return {"bolum_id": bolum_id, "listede": False}
 
 
-@router.get("/karsilastir")
-def karsilastir(ids: str = Query(..., description="virgülle ayrılmış 2-3 bölüm id"), db: Session = Depends(get_db),
-                o: Ogrenci = Depends(get_mevcut_ogrenci)):
-    try:
-        idler = list(dict.fromkeys(int(x) for x in ids.split(",") if x.strip()))[:3]
-    except ValueError:
-        raise HTTPException(status_code=400, detail="Geçersiz bölüm listesi.")
-    if len(idler) < 2:
-        raise HTTPException(status_code=400, detail="Karşılaştırmak için en az 2 bölüm seç.")
-    bolumler = {b.id: b for b in db.query(Bolum).filter(Bolum.id.in_(idler)).all()}
-    if len(bolumler) != len(idler):
-        raise HTTPException(status_code=404, detail="Bölümlerden biri bulunamadı.")
-
-    from app.api.bolum_bilgi import _yetkinlik_tablosu
-    from app.core.meslek_dili_servisi import etkin_surum
-
-    uyum = uyum_haritasi(db, o)
-    alan = _alanlar(db, idler)
-    tablo = _yetkinlik_tablosu(db)
-
-    # Öğrencinin son tamamlanan turdaki özellik puanları (kod → puan): "sende de var" işareti için
-    ogr_puan: dict[str, float] = {}
-    tur = _son_tamamlanan_tur(db, o)
-    if tur is not None:
-        kodlar = {d.id: d.kod for d in db.query(Degisken).all()}
-        for s in db.query(OgrenciDegiskenSkoru).filter(OgrenciDegiskenSkoru.ogrenci_id == o.id,
-                                                       OgrenciDegiskenSkoru.tur_id == tur.id).all():
-            if s.degisken_id in kodlar:
-                ogr_puan[kodlar[s.degisken_id]] = float(s.puan)
-
-    def sende_mi(x: dict) -> bool | None:
-        p = ogr_puan.get(x["kod"])
-        if p is None:
-            return None
-        return p >= 60 if x.get("uc") != "dusuk" else p <= 40
-
-    sonuc = []
-    for bid in idler:
-        b = bolumler[bid]
-        satirlar = [x for grup in tablo["tablo"].get(bid, {}).values() for x in grup if x["one_cikan"]]
-        satirlar.sort(key=lambda x: -x["guc"])
-        try:
-            meslekler = [r[0] for r in db.execute(text(
-                "SELECT meslek_adi FROM bolum_ornek_meslekler WHERE bolum_id = :b ORDER BY sira LIMIT 5"), {"b": bid}).all()]
-        except Exception:   # tablo yoksa (yerel test vb.) karşılaştırma yine gösterilsin
-            db.rollback()
-            meslekler = []
-        try:
-            jargon = (etkin_surum(db, b, o.okul_id) or {}).get("terimler") or []
-        except Exception:
-            db.rollback()
-            jargon = []
-        sonuc.append({
-            "bolum_id": bid, "bolum_adi": b.ad, "kisa_aciklama": b.kisa_aciklama,
-            **alan.get(bid, {"ust_alan": None, "alt_alan": None}),
-            "toplam_uyum": round(float(uyum[bid]), 1) if bid in uyum else None,
-            "one_cikanlar": [{"kod": x["kod"], "etiket": x["etiket"], "onem": x["onem"], "sende": sende_mi(x)} for x in satirlar[:6]],
-            "meslekler": meslekler,
-            "jargon": [{"terim": t.get("terim"), "anlam": t.get("anlam")} for t in jargon[:3] if isinstance(t, dict)],
-        })
-    return {"bolumler": sonuc, "profil_var": bool(ogr_puan)}
+# [2026-10-11] GET /ogrenci/karsilastir → app/api/karsilastir.py (genişletilmiş karşılaştırma; ?ids= de kabul edilir)

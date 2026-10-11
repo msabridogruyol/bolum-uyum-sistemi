@@ -53,6 +53,15 @@ class AsistanDurumOut(BaseModel):
     kalan: int
 
 
+def _ai(db: Session, ogrenci: Ogrenci) -> bool:
+    """[2026-10-10] Yapay zekâlı Filiz: API anahtarı tanımlı VE okulun paketinde 'filiz_ai' modülü var.
+    Aksi halde Filiz, öğrencinin verilerine dayanan otomatik rehber modunda çalışır (maliyetsiz)."""
+    if not asistan_aktif_mi():
+        return False
+    from app.core.paketler import okul_modulleri
+    return "filiz_ai" in okul_modulleri(db, ogrenci.okul_id)
+
+
 def _gunluk_limit(db: Session) -> int:
     try:
         return max(1, int(parametre_oku(db, "filiz_gunluk_mesaj_limiti", str(GUNLUK_MESAJ_LIMITI_VARSAYILAN))))
@@ -78,7 +87,7 @@ def _bugun_gonderilen(db: Session, ogrenci: Ogrenci) -> int:
 def asistan_durumu(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     limit, gonderilen = _gunluk_limit(db), _bugun_gonderilen(db, ogrenci)
     from app.core.filiz_rehber import ORNEK_SORULAR, SORU_KATEGORILERI
-    ai = asistan_aktif_mi()
+    ai = _ai(db, ogrenci)
     return AsistanDurumOut(aktif=True, mod="ai" if ai else "otomatik", ornek_sorular=ORNEK_SORULAR[:6],
                            soru_kategorileri=SORU_KATEGORILERI,
                            gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen) if ai else limit)
@@ -149,8 +158,20 @@ def mesaj_gonder(
         db.commit()
         return MesajCevap(asistan_yaniti=KRIZ_YANITI, oturum_kapandi_mi=False)
 
+    # [2026-10-11] Hiyerarşi koruması (yapay zekâ ve otomatik rehber): başka bir öğrenciyi hedefleyen soru (okuldaki başka
+    # bir öğrencinin adı, "arkadaşımın puanı", "en yüksek net kimde", okul/sınıf ortalaması) modele GİTMEZ; sabit cevap.
+    from app.core.filiz_gizlilik import ogrenci_dizini, ogrenci_hiyerarsi_yaniti, ogrenci_metni_maskele
+    dizin = ogrenci_dizini(db, ogrenci)
+    ai = _ai(db, ogrenci)
+    ret = ogrenci_hiyerarsi_yaniti(metin, dizin, ogrenci.ad_soyad)
+    if ret:
+        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
+        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=ret))
+        db.commit()
+        return MesajCevap(asistan_yaniti=ret, oturum_kapandi_mi=False, otomatik=not ai)
+
     # [2026-10-10] Günlük sınır yapay zekâ maliyeti içindir; otomatik rehber modunda uygulanmaz
-    if asistan_aktif_mi() and _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
+    if ai and _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
         raise HTTPException(status_code=429, detail="Bugünlük mesaj hakkın doldu. Yarın yine konuşalım! 🌱")
 
     onceki_mesajlar = (
@@ -159,11 +180,12 @@ def mesaj_gonder(
         .order_by(OgrenciKoclukMesaji.olusturulma_zamani, OgrenciKoclukMesaji.id)
         .all()
     )
+    # [2026-10-11] Modele giden metinlerde e-posta / telefon / TC ve okul arkadaşlarının adları maskelenir (kendi adı korunur)
     mesaj_gecmisi = [
-        {"role": "user" if m.rol == "ogrenci" else "assistant", "content": m.icerik}
+        {"role": "user" if m.rol == "ogrenci" else "assistant", "content": ogrenci_metni_maskele(dizin, m.icerik, ogrenci.ad_soyad)}
         for m in onceki_mesajlar
     ]
-    mesaj_gecmisi.append({"role": "user", "content": metin})
+    mesaj_gecmisi.append({"role": "user", "content": ogrenci_metni_maskele(dizin, metin, ogrenci.ad_soyad)})
 
     # [2026-10-10] Filiz geçmişi hatırlasın: son 3 sohbetin özeti (tarihleriyle); öğrenci geçmişten bir sohbeti
     # "devam et" ile açtıysa o sohbet en başta verilir.
@@ -188,11 +210,11 @@ def mesaj_gonder(
     parcalar = [f"({(x.bitis_zamani or x.baslama_zamani).strftime('%d.%m.%Y')}"
                 + (", öğrencinin devam etmek istediği sohbet" if baglam is not None and x.id == baglam.id else "")
                 + f") {x.ozet}" for x in onceki if x.ozet]
-    onceki_ozet = "\n".join(parcalar) or None
+    onceki_ozet = ogrenci_metni_maskele(dizin, "\n".join(parcalar), ogrenci.ad_soyad) or None
 
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, onceki_ozet, istek.sayfa)
 
-    otomatik = not asistan_aktif_mi()
+    otomatik = not ai
     if otomatik:   # [2026-10-10] yapay zekâ bağlı değil: öğrencinin verilerine dayanan otomatik rehber cevabı
         from app.core.filiz_rehber import otomatik_yanit
         yanit = otomatik_yanit(db, ogrenci, metin)
@@ -201,6 +223,8 @@ def mesaj_gonder(
             yanit = openai_ile_konus(sistem_promptu, mesaj_gecmisi)
         except AsistanKullanilamiyorHatasi as e:
             raise HTTPException(status_code=503, detail=str(e))
+        from app.core.filiz_gizlilik import ad_normalize
+        yanit = dizin.maskele(yanit, haric=ad_normalize(ogrenci.ad_soyad))   # son kontrol: yanıtta başka öğrenci adı olmasın
 
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit))
@@ -209,7 +233,7 @@ def mesaj_gonder(
     toplam_mesaj = len(onceki_mesajlar) + 2
     kapandi = False
     if toplam_mesaj >= MAKSIMUM_TUR:
-        _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi + [{"role": "assistant", "content": yanit}])
+        _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi + [{"role": "assistant", "content": yanit}], ai)
         kapandi = True
 
     return MesajCevap(asistan_yaniti=yanit, oturum_kapandi_mi=kapandi, otomatik=otomatik)
@@ -233,16 +257,18 @@ def oturumu_bitir(
         .order_by(OgrenciKoclukMesaji.olusturulma_zamani)
         .all()
     )
+    from app.core.filiz_gizlilik import ogrenci_dizini, ogrenci_metni_maskele
+    dizin = ogrenci_dizini(db, ogrenci)
     mesaj_gecmisi = [
-        {"role": "user" if m.rol == "ogrenci" else "assistant", "content": m.icerik}
+        {"role": "user" if m.rol == "ogrenci" else "assistant", "content": ogrenci_metni_maskele(dizin, m.icerik, ogrenci.ad_soyad)}
         for m in mesajlar
     ]
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, None)
-    _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi)
+    _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi, _ai(db, ogrenci))
 
 
-def _oturumu_kapat_ve_ozetle(db: Session, oturum: OgrenciKoclukOturumu, sistem_promptu: str, mesaj_gecmisi: list[dict]):
-    if not asistan_aktif_mi():   # [2026-10-10] otomatik rehber: konu başlığı özet olarak saklanır
+def _oturumu_kapat_ve_ozetle(db: Session, oturum: OgrenciKoclukOturumu, sistem_promptu: str, mesaj_gecmisi: list[dict], ai: bool = True):
+    if not ai or not asistan_aktif_mi():   # [2026-10-10] otomatik rehber: konu başlığı özet olarak saklanır
         ilk = next((m["content"] for m in mesaj_gecmisi if m["role"] == "user"), "")
         ozet = f"Otomatik rehberle sohbet: \"{ilk[:80]}\"" if ilk else None
     else:

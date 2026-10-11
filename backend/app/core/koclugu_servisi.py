@@ -69,8 +69,8 @@ def hedef_sec(db: Session, ogrenci: Ogrenci, bolum_id: int, onay: bool = False, 
 
     if mevcut_aktif is not None and not onay:
         raise IsKuraliHatasi(
-            f"Zaten aktif bir hedefin var (bolum_id={mevcut_aktif.bolum_id}). "
-            f"Değiştirmek için onay=true göndermelisin."
+            "Zaten aktif bir hedef bölümün var. "
+            "Değiştirmek istediğini onaylaman gerekiyor."
         )
 
     if mevcut_aktif is not None:
@@ -429,7 +429,7 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
     # Öncelik = fark × bölümün o özelliğe ağırlığı × katman ağırlığı (K4 = 40, diğerleri 20):
     # uyumu en çok etkileyecek açık en başa gelir.
     from app.models import Katman
-    katman_w = {k.id: float(k.normalizasyon_agirligi or 20) for k in db.query(Katman).all()}
+    katman_w = {k.id: float(k.normalizasyon_agirligi or 25) for k in db.query(Katman).all()}
     # [2026-10-07] Öncelik ayrıca bölümün o özellikteki ayırt ediciliğiyle çarpılır; bölüm için belirgin
     # olmayan özellik (yüzdelik < AYIRT_ESIGI) odak alanı yapılmaz, "sonra odaklanılacak" listesine düşer.
     ayirt = bolum_ayirt_ediciligi(db, hedef_bolum_id, [s.degisken.id for s in gap_satirlari])

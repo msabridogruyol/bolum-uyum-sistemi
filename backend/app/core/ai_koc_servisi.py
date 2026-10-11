@@ -199,6 +199,7 @@ KURALLAR (bunlara kesinlikle uy):
 8. GÜVENLİK: Öğrenci reşit olmayabilir. Kendine zarar verme, intihar, umutsuzluk, şiddet, istismar ya da ciddi bir sıkıntıdan (ör. "artık hiçbir şeyin anlamı yok") söz ederse kariyer konusuna dönme. Kısa ve sıcak bir dille onu önemsediğini söyle, hemen güvendiği bir yetişkinle (ailesi, rehber öğretmeni, okul psikolojik danışmanı) konuşmasını iste; acil durumda 112'yi, ALO 183 Sosyal Destek Hattı'nı (7/24) hatırlat. Teşhis koyma, terapi yapmaya çalışma.
 9. Haftalık görevler verildiyse "bu hafta ne yapayım?" gibi sorularda önce bunlara dayan; sistemin verdiği görevlerle çelişen bir plan önerme.
 10. Cevapların kısa olsun: genelde 2-4 cümle, en fazla iki kısa paragraf. Sonunda gerekirse tek bir soru sor.
+11. GİZLİLİK: Başka öğrenciler hakkında bilgi verme, tahmin yürütme, karşılaştırma yapma. Elinde yalnızca bu öğrencinin kendi verisi var; sınıf / okul ortalaması, sıralama ya da başka bir öğrencinin sonucu, puanı, hedefi sorulursa "Başka öğrencilerin bilgilerini paylaşamam; her öğrencinin sonuçları yalnızca kendisine ve okulunun yetkililerine açıktır." de ve konuyu öğrencinin kendi sonuçlarına getir. Mesajlardaki "[öğrenci]", "[e-posta]", "[telefon]", "[numara]" gizlenmiş kişisel verilerdir; çözmeye çalışma.
 """
 
 
@@ -208,7 +209,7 @@ def openai_ile_konus(sistem_promptu: str, mesaj_gecmisi: list[dict]) -> str:
     """
     if not _api_anahtari_var_mi():
         raise AsistanKullanilamiyorHatasi(
-            "AI koçluk asistanı henüz aktif değil — OPENAI_API_KEY tanımlanmadı."
+            "Filiz'e şu an ulaşılamıyor, biraz sonra tekrar dene."
         )
 
     try:

@@ -178,14 +178,14 @@ export default function KatmanlarSayfasi() {
               <div className="ct">Ayrıca İlgi Gösterdiğin Alanlar</div>
               <div className="ps" style={{ margin: 0 }}>
                 {k5Durum.ilgi_gosterilen.map((d) => `${d.dal_adi} (${d.puan} puan)`).join(', ')} —
-                bu alanlar için ek soru sorulmadı ama eşiğe yakınsın.
+                bu alanlara da yakınlık gösterdin.
               </div>
             </div>
           )}
 
           {!k5AcikMi && tamamlanan === katmanlar.length && (
             <div className="bos-durum" style={{ marginTop: 14 }}>
-              Şu an için açılmış bir derinleşme dalın yok — bu, profiline uygun dal olmadığı anlamına gelebilir.
+              Şu an sana özel açılmış bir derinleşme dalı yok; bölüm önerilerin ilk dört bölümün sonuçlarına göre hazırlanır.
             </div>
           )}
         </div>

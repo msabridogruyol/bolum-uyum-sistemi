@@ -24,7 +24,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
       <div className="ph">
         <div className="pt">Dal Derinleşme — Sonuçların</div>
         <div className="ps">
-          K4 (Alan Eğilimi) sonucuna göre eşiği (%{k5Durum.esik}) geçtiğin dallar burada, kendi sonuçlarıyla listelenir.
+          İlk dört katmanın sonuçlarına göre sana en yakın alanlar burada, kendi sonuçlarıyla listelenir.
         </div>
       </div>
 
@@ -49,7 +49,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
               <div className="taslak-onizleme-overlay">
                 <div className="to-ikon">🌻</div>
                 <div className="to-metin">
-                  K4'ü tamamlayıp eşiği geçince, sana özel açılan dallar ve sonuçları burada görünecek.
+                  İlk dört katmanı tamamladığında sana özel açılan alanlar ve sonuçları burada görünecek.
                 </div>
               </div>
             </div>
@@ -78,7 +78,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
                   <div className="ct">Ayrıca İlgi Gösterdiğin Alanlar</div>
                   <div className="ps" style={{ margin: 0 }}>
                     {k5Durum.ilgi_gosterilen.map((d) => `${d.dal_adi} (${d.puan} puan)`).join(', ')} —
-                    bu alanlar için ek soru sorulmadı ama eşiğe yakınsın.
+                    bu alanlara da yakınlık gösterdin.
                   </div>
                 </div>
               )}

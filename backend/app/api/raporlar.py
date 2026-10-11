@@ -11,9 +11,10 @@ import unicodedata
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_yonetim
+from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
 from app.models import AdminKullanici, Ogrenci
@@ -63,8 +64,29 @@ def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str, netler: bool
     return _cevap(icerik, bicim, _dosya_adi(TUR_ADI[tur] if bicim == "pdf" else "Sonuclar", o.ad_soyad, v["tarih"].strftime("%Y%m%d")))
 
 
-# [2026-10-10] Öğrencinin kendi raporunu indirmesi kaldırıldı: raporları yalnızca okul yetkilisi ve süper admin indirir
-# (veli raporu da okul üzerinden verilir).
+# [2026-10-10] Öğrenci kendi raporunu indirir (Raporlarım) — veli erişimi yerine: veli raporu öğrenci hesabından alınır.
+# Okulun paketinde 'ogrenci_raporlari' modülü yoksa kapalıdır. Yönetim (ayrıntılı) ve sınıf öğretmeni raporu öğrenciye verilmez.
+OGRENCI_TURLERI = {"ogrenci", "veli"}
+
+
+@router.get("/ogrenci/rapor")
+def kendi_raporum(tur: str = Query("ogrenci"), bicim: str = Query("pdf"), netler: bool = Query(True),
+                  db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+    from app.core.hesap_yonetimi import olay_yaz
+    from app.core.paketler import MODULLER, okul_modulleri
+    m = okul_modulleri(db, o.okul_id)
+    if "ogrenci_raporlari" not in m:
+        raise HTTPException(status_code=403, detail=f"“{MODULLER['ogrenci_raporlari']['ad']}” okulunun paketinde yer almıyor.")
+    if tur not in OGRENCI_TURLERI:
+        raise HTTPException(status_code=400, detail="Bu rapor türü öğrenci hesabından alınamaz.")
+    tamam = db.execute(text("SELECT 1 FROM ogrenci_degerlendirme_turu WHERE ogrenci_id = :o AND durum = 'tamamlandi' LIMIT 1"),
+                       {"o": o.id}).first()
+    if not tamam:
+        raise HTTPException(status_code=400, detail="Raporun, değerlendirmeni tamamladığında hazır olur.")
+    cevap = _ogrenci_dosyasi(db, o, tur, bicim, netler and "net_takibi" in m)
+    olay_yaz(db, o.id, "rapor_indir", f"{tur} raporu ({bicim})", yapan="ogrenci")
+    db.commit()
+    return cevap
 
 
 @router.get("/yonetim/ogrenci/{ogrenci_id}/rapor")

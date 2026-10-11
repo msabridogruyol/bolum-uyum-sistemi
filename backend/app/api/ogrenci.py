@@ -46,21 +46,13 @@ router = APIRouter()
 
 def _puan_araligi(puan: float) -> str:
     """
-    Bir puanı 5 aralıktan birine ('belirgin_ustun'...'belirgin_altinda') eşler.
-    NOT: Sınırlar (80/60/40/20) belgede açık şekilde tanımlanmamıştı — F2.1'deki
-    gap kategorilerinin (±15/±5) aralık genişliği mantığına dayanan, buraya
-    özel çıkarılmış bir varsayım. Kalibre edilmesi gerekirse yalnızca bu
-    fonksiyon değişir.
+    Bir puanı 5 yorum aralığından birine ('belirgin_ustun'...'belirgin_altinda') eşler.
+    [2026-10-10] Sınırlar artık app/core/seviye.py'deki ortak düzey bantlarından gelir
+    (75 / 62 / 40; ek olarak 20 yalnızca yorum seçimi için), böylece seçilen yorum
+    ekrandaki "Çok güçlü / Güçlü / Orta / Gelişime açık" etiketiyle çelişmez.
     """
-    if puan >= 80:
-        return "belirgin_ustun"
-    if puan >= 60:
-        return "ustun"
-    if puan >= 40:
-        return "beklenti"
-    if puan >= 20:
-        return "altinda"
-    return "belirgin_altinda"
+    from app.core.seviye import yorum_araligi
+    return yorum_araligi(puan)
 
 
 def _yorumlari_ekle(db: Session, sonuclar: list[KatmanSonucSatiri]) -> list[KatmanSonucSatiri]:
@@ -516,7 +508,8 @@ def durum_ozetini_getir(
     k5_tamamlanan = sum(1 for d in dal_oturumlari if d.durum == "tamamlandi")
 
     sonraki_tur_tarihi = None
-    if tur.durum == "tamamlandi" and tur.tamamlanma_zamani:
+    sonuc_gecerli = tur.sonuc_gecerli_mi is not False
+    if tur.durum == "tamamlandi" and tur.tamamlanma_zamani and sonuc_gecerli:
         min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "120"))
         tamamlanma = tur.tamamlanma_zamani
         if tamamlanma.tzinfo is None:
@@ -527,7 +520,7 @@ def durum_ozetini_getir(
         tur_no=tur.tur_no, tur_tamamlandi_mi=(tur.durum == "tamamlandi"),
         tamamlanan_katman_sayisi=tamamlanan_katman, toplam_ana_katman_sayisi=ana_katman_sayisi,
         k5_acilan_dal_sayisi=k5_acilan, k5_tamamlanan_dal_sayisi=k5_tamamlanan,
-        sonraki_tur_tarihi=sonraki_tur_tarihi,
+        sonraki_tur_tarihi=sonraki_tur_tarihi, sonuc_gecerli=sonuc_gecerli,
     )
 
 

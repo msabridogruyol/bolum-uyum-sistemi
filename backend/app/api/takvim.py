@@ -20,6 +20,7 @@ from app.api.okul_yonetimi import SINIFLAR, _okul_kapsami
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
 from app.models import AdminKullanici, Ogrenci
+from app.core.paketler import okul_modulleri
 from app.api.koclar import gorunen_ad
 
 ogrenci_router = APIRouter(prefix="/ogrenci", tags=["Öğrenci — Takvim"])
@@ -94,7 +95,6 @@ def ogrenci_takvim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcu
         db.rollback()
     try:   # [2026-10-10] kulüp etkinlikleri (üyesi olduğu kulüpler + okulda herkese açık olanlar)
         from app.api.kulup_uyelik import ogrenci_duyurulari
-        from app.core.paketler import okul_modulleri
         kulup_acik = "kulupler" in okul_modulleri(db, o.okul_id)   # [2026-10-10] paket
         for d in (ogrenci_duyurulari(db, o, limit=60) if kulup_acik else []):
             if d["tur"] == "etkinlik" and d["tarih"] and d["tarih"] >= bas:
@@ -102,6 +102,12 @@ def ogrenci_takvim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcu
                               "aciklama": " · ".join(x for x in (d.get("yer"), d.get("metin")) if x) or None,
                               "tur": "okul", "tur_adi": "Kulüp etkinliği", "ikon": "🎭", "baslangic": d["tarih"], "bitis": None,
                               "saat": d.get("saat"), "link": "/kulupler", "hedef_sinif": None, "kaynak": "kulup", "duzenlenebilir": False})
+    except Exception:
+        db.rollback()
+    try:   # [2026-10-10] rehberlik görüşmesi randevuları (notlar gösterilmez)
+        from app.api.rehberlik import ogrenci_randevulari
+        if "rehberlik" in okul_modulleri(db, o.okul_id):
+            sonuc.extend(ogrenci_randevulari(db, o, bas))
     except Exception:
         db.rollback()
     sonuc.sort(key=lambda x: (x["baslangic"], x["saat"] or ""))

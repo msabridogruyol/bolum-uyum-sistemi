@@ -1,0 +1,12 @@
+// [2026-10-10] İstatistik bileşenleri — tek giriş noktası. Ayrıntı: ./README.md
+export { KpiKarti, KpiSatiri } from './KpiKarti'
+export { default as YatayCubuk } from './YatayCubuk'
+export { SutunGrafik, YiginSutun } from './SutunGrafik'
+export { default as CizgiGrafik } from './CizgiGrafik'
+export { default as Huni } from './Huni'
+export { default as Histogram } from './Histogram'
+export { default as IsiHaritasi } from './IsiHaritasi'
+export { default as Halka } from './Halka'
+export { default as GrafikKarti, VeriTablosu } from './GrafikKarti'
+export { bicim, sayi, kisaSayi, csvIndir, csvMetni, histogramTablosu } from './yardimci'
+export * from './palet'
