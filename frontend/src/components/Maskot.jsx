@@ -1400,6 +1400,6 @@ const MASKOT_CSS = `
 @keyframes msk-zzz{0%{transform:translate(0,0);opacity:0}30%{opacity:1}100%{transform:translate(10px,-18px);opacity:0}}
 @keyframes msk-efekt{0%{transform:translateY(0) scale(.6);opacity:0}20%{opacity:1}100%{transform:translateY(-60px) scale(1.2);opacity:0}}
 @keyframes msk-konfeti{0%{transform:translate(0,0) rotate(0);opacity:1}100%{transform:translate(var(--dx,0),70px) rotate(540deg);opacity:0}}
-@media (max-width: 760px){.msk-kap{position:absolute;width:64px;height:86px;top:8px;right:8px}.msk-mini{position:absolute;top:12px;right:14px}.msk-balon{right:70px;max-width:180px;font-size:11.5px}}
+@media (max-width: 760px){.msk-kap{position:absolute;width:64px;height:86px;top:8px;right:8px}.msk-mini{position:absolute;top:12px;right:14px}.msk-balon{position:fixed;left:12px;right:12px;top:auto;bottom:76px;width:auto;max-width:none;font-size:13px;z-index:65}.msk-balon-kuyruk{display:none}}
 @media (prefers-reduced-motion: reduce){.msk-kap *{animation-duration:0s!important}}
 `

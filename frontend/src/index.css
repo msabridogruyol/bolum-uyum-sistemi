@@ -2734,3 +2734,11 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
   .ks-tablo .kr-hucre{padding:10px;font-size:12.5px}
   .ks-kaydir{display:block}
 }
+
+/* [2026-10-11] Telefon: başlık maskota yer bıraksın, alt şerit içerikle birlikte aksın, "Filiz'e sor" düğmesi son içeriği örtmesin */
+@media (max-width: 760px){
+  .ogrenci-main .pg > .ph:first-child{padding-right:84px;min-height:96px}
+  .ogrenci-main .pg > .ph:first-child .pt{overflow-wrap:anywhere}
+  .alt-serit{position:static;backdrop-filter:none;-webkit-backdrop-filter:none;background:transparent}
+  .ogrenci-main .main-icerik{padding-bottom:72px}
+}
