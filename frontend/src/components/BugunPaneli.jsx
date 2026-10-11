@@ -67,24 +67,3 @@ export default function BugunPaneli({ ozet, katmanlar, hedef, plan, motivasyon, 
     </div>
   )
 }
-
-export function Rozetler({ motivasyon, kocluk = true }) {
-  const navigate = useNavigate()
-  if (!motivasyon) return null
-  const r = motivasyon.rozetler
-  return (
-    <div className="card" style={{ marginBottom: 0 }}>
-      <div className="ct" style={{ display: 'flex', justifyContent: 'space-between' }}>🏅 Rozetlerin <span className="rozet-sayi">{motivasyon.kazanilan}/{r.length}</span></div>
-      <div className="rozet-izgara">
-        {r.map((x) => (
-          <div key={x.ad} className={`rozet${x.kazanildi ? ' kazanildi' : ''}`} title={x.kazanildi ? x.aciklama : `Nasıl kazanılır: ${x.ipucu}`}>
-            <span className="rozet-ikon">{x.ikon}</span>
-            <span className="rozet-ad">{x.ad}</span>
-            {!x.kazanildi && <span className="rozet-ipucu">{x.ipucu}</span>}
-          </div>
-        ))}
-      </div>
-      {kocluk && <button className="hg-link" style={{ marginTop: 8 }} onClick={() => navigate('/koclugu?sekme=yol')}>Yeni rozet için sıradaki adımına git →</button>}
-    </div>
-  )
-}
