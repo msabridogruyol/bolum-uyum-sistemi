@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { tembel } from './yardimci/tembelYukle'   // [2026-10-11] eski sürüm parçası yüklenemezse sayfayı yeniler
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
+import SunucuUyarisi from './components/SunucuUyarisi'   // [2026-10-11] sunucu / bağlantı sorunu şeridi
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext'
 import { BolumBilgiProvider } from './context/BolumBilgiContext'
@@ -216,6 +217,7 @@ export default function App() {
     <AuthProvider>
       <AdminAuthProvider>
         <BrowserRouter>
+          <SunucuUyarisi />
           <BolumBilgiProvider>
             <AnaUygulama />
           </BolumBilgiProvider>
