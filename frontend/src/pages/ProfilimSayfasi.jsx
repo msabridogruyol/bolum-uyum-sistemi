@@ -39,7 +39,7 @@ export default function ProfilimSayfasi() {
       </nav>
       <PuanRehberi bolumlu={false} baslik="Güçlü, çok güçlü, gelişime açık ne demek? Profilini nasıl okumalısın?" />
       <div className="gomulu-sayfa" key={k || 'genel'}>
-        <Suspense fallback={<div className="bos-durum">Yükleniyor…</div>}>
+        <Suspense fallback={<div className="bos-durum yukleniyor">Yükleniyor…</div>}>
           {!k && <GenelSonuclarSayfasi gomulu />}
           {['K1', 'K2', 'K3', 'K4'].includes(k) && <KatmanDetaySayfasi gomulu />}
           {k === 'K5' && <K5SonucSayfasi gomulu />}

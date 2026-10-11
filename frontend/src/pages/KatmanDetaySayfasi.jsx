@@ -89,7 +89,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
   }, [hedef])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!katman || !sonuc || hedef === undefined || gelisim === null) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!katman || !sonuc || hedef === undefined || gelisim === null) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   const siraliSonuclar = [...sonuc.sonuclar].sort((a, b) => b.puan - a.puan)
   const guclu = siraliSonuclar.filter((s) => gucluMu(s.puan))

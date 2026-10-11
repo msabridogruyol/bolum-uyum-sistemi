@@ -61,7 +61,7 @@ export function UyelerPenceresi({ kulup, onKapat, onDegisti }) {
   useEffect(() => { yukle() }, [yukle])
   return (
     <Pencere baslik={`👥 ${kulup.ad}`} altBaslik="Onaylı üyeler" onKapat={onKapat}>
-      {!v ? <div className="bos-durum">Yükleniyor…</div> : v.uyeler.length === 0 ? <div className="bos-durum">Henüz üye yok.</div> : (
+      {!v ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : v.uyeler.length === 0 ? <div className="bos-durum">Henüz üye yok.</div> : (
         <table className="yp-tablo">
           <thead><tr><th>Öğrenci</th><th>Sınıf</th><th>Üyelik</th><th /></tr></thead>
           <tbody>{v.uyeler.map((u) => (
@@ -121,7 +121,7 @@ export function DuyurularPenceresi({ kulup, onKapat }) {
         </div>
       </form>
       <div className="ct" style={{ marginTop: 16 }}>Yayınlananlar</div>
-      {!v ? <div className="bos-durum">Yükleniyor…</div> : v.duyurular.length === 0 ? <div className="bos-durum">Henüz duyuru yok.</div> : (
+      {!v ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : v.duyurular.length === 0 ? <div className="bos-durum">Henüz duyuru yok.</div> : (
         <div className="kd-liste">
           {v.duyurular.map((d) => (
             <div key={d.id} className={`kd-satir ${d.tur}`}>

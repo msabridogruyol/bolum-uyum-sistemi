@@ -15,7 +15,7 @@ from fastapi import Request
 from app.core import hesap_guvenligi_servisi as hg
 from app.schemas.auth import KvkkOnayIstek
 from app.core.database import get_db
-from app.core.security import sifre_hashle, sifre_dogrula
+from app.core.security import sifre_hashle, sifre_dogrula, oturumlari_gecersiz_kil, yeni_token_cifti
 from datetime import datetime, timedelta, timezone
 
 from app.core.katman_servisi import (
@@ -577,7 +577,7 @@ class IlkSifreIstek(BaseModel):
     yeni_sifre: str
 
 
-@router.post("/profil/ilk-sifre", status_code=204)
+@router.post("/profil/ilk-sifre")
 def ilk_sifre_belirle(istek: IlkSifreIstek, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
     """[2026-10-09] Yönetimin verdiği geçici şifreyle ilk girişte öğrenci kendi şifresini belirler."""
     if not ogrenci.sifre_degistirmeli:
@@ -588,10 +588,12 @@ def ilk_sifre_belirle(istek: IlkSifreIstek, db: Session = Depends(get_db), ogren
         raise HTTPException(status_code=400, detail="Yeni şifren geçici şifreyle aynı olamaz.")
     from app.core.hesap_yonetimi import olay_yaz
     ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
+    oturumlari_gecersiz_kil(ogrenci)   # [2026-10-11] geçici şifreyle açılmış diğer oturumlar düşer; bu cihaza yeni anahtar
     ogrenci.sifre_degistirmeli = False
     ogrenci.gecici_sifre_sifreli = None   # [2026-10-10]
     olay_yaz(db, ogrenci.id, "sifre_degisti", "İlk girişte kendi şifresini belirledi", "Öğrenci")
     db.commit()
+    return yeni_token_cifti(ogrenci, "ogrenci")
 
 
 @router.put("/profil", response_model=ProfilOut)
@@ -603,6 +605,9 @@ def profil_guncelle(
     veri = istek.model_dump(exclude_unset=True)
     veri.pop("okul", None)   # [2026-10-09] okul öğrenciden alınmaz; yönetimden atanır
     veri.pop("email", None)
+    if ogrenci.okul_id:      # [2026-10-11] okula bağlı öğrencinin sınıfı / şubesi okul tarafından belirlenir
+        veri.pop("sinif", None)
+        veri.pop("sube", None)
 
     if "cinsiyet" in veri and veri["cinsiyet"] is not None:
         if veri["cinsiyet"] not in ("kadin", "erkek", "belirtmek_istemiyorum", "diger"):
@@ -623,7 +628,7 @@ def profil_guncelle(
     return profil_getir(db=db, ogrenci=ogrenci)
 
 
-@router.post("/profil/sifre-degistir", status_code=204)
+@router.post("/profil/sifre-degistir")
 def sifre_degistir(
     istek: SifreDegistirIstek,
     db: Session = Depends(get_db),
@@ -635,12 +640,13 @@ def sifre_degistir(
         raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
 
     ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
+    oturumlari_gecersiz_kil(ogrenci)   # [2026-10-11] diğer cihazlardaki oturumlar düşer; bu cihaza yeni anahtar
     ogrenci.sifre_degistirmeli = False
     ogrenci.gecici_sifre_sifreli = None   # [2026-10-10]
     from app.core.hesap_yonetimi import olay_yaz
     olay_yaz(db, ogrenci.id, "sifre_degisti", "Ayarlar sayfasından şifresini değiştirdi", "Öğrenci")
     db.commit()
-    return None
+    return yeni_token_cifti(ogrenci, "ogrenci")
 
 
 @router.post("/profil/fotograf", response_model=ProfilOut)

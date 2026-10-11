@@ -82,8 +82,35 @@ class HesaplamaGirdisi:
     bolum_matrisi: np.ndarray | None = None     # (n, m) ham bölüm ağırlıkları (bölümler arası yüzdelik için)
 
 
-def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> HesaplamaGirdisi | None:
-    """Öğrenci profili + yayındaki tüm bölümlerin ağırlık matrisini toplar."""
+# [2026-10-11] Bölüm tarafı (değişkenler, katman ağırlıkları, 301 bölüm × ~130 değişken ağırlık matrisi) her öğrencide
+# aynıdır; önceden her istekte (sıralama isteğinde iki kez) ~39 bin satır okunup yeniden kuruluyordu (uzak veritabanında
+# saniyeler). Süreç içinde ONBELLEK_SN saniye saklanır; ağırlık / bölüm durumu değişince bolum_onbellegini_temizle() çağrılır.
+import threading as _threading
+import time as _time
+
+ONBELLEK_SN = 600
+_onbellek: dict = {"zaman": 0.0, "anahtar": None, "veri": None}
+_onbellek_kilit = _threading.Lock()
+
+
+def bolum_onbellegini_temizle() -> None:
+    with _onbellek_kilit:
+        _onbellek.update(zaman=0.0, anahtar=None, veri=None)
+
+
+def _bolum_verisi(db: Session) -> dict | None:
+    from app.core.katman_servisi import parametre_oku
+    haric = frozenset(k.strip() for k in (parametre_oku(db, "eslesme_disi_degiskenler", "P4") or "").split(",") if k.strip())
+    with _onbellek_kilit:
+        if _onbellek["veri"] is not None and _onbellek["anahtar"] == haric and _time.time() - _onbellek["zaman"] < ONBELLEK_SN:
+            return _onbellek["veri"]
+    v = _bolum_verisi_hesapla(db, haric)
+    with _onbellek_kilit:
+        _onbellek.update(zaman=_time.time(), anahtar=haric, veri=v)
+    return v
+
+
+def _bolum_verisi_hesapla(db: Session, haric: frozenset) -> dict | None:
     ana_katmanlar = db.query(Katman).filter(Katman.kosullu_mu.is_(False)).all()
     ana_katman_idler = [k.id for k in ana_katmanlar]
     katman_agirlik = {k.id: float(k.normalizasyon_agirligi or 0) for k in ana_katmanlar}
@@ -93,52 +120,38 @@ def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) 
     # Doğrulama simülasyonu: yalnızca kaygı puanı değişince ilk 10'daki ~4 bölüm değişiyor, kaygılı
     # öğrenciler terapi/psikoloji bölümlerine itiliyordu. Kaygı bir mesleki ilgi değildir; öğrencinin
     # kişilik sonucunda ve koçlukta kullanılmaya devam eder. Parametre: eslesme_disi_degiskenler ("P4,X1").
-    from app.core.katman_servisi import parametre_oku
-    haric = {k.strip() for k in (parametre_oku(db, "eslesme_disi_degiskenler", "P4") or "").split(",") if k.strip()}
-    degiskenler = [d for d in degiskenler if d.kod not in haric]
+    degiskenler = [(d.id, d.kod, d.katman_id) for d in degiskenler if d.kod not in haric]
     if not degiskenler:
         return None
 
     # kriter ağırlığı = katmanın % ağırlığı / o katmandaki değişken sayısı
     katman_basi_sayim: dict[int, int] = {}
-    for d in degiskenler:
-        katman_basi_sayim[d.katman_id] = katman_basi_sayim.get(d.katman_id, 0) + 1
+    for _, _, kid in degiskenler:
+        katman_basi_sayim[kid] = katman_basi_sayim.get(kid, 0) + 1
 
-    degisken_idler = [d.id for d in degiskenler]
+    degisken_idler = [d[0] for d in degiskenler]
     agirliklar = np.array([
-        katman_agirlik.get(d.katman_id, 0) / max(katman_basi_sayim.get(d.katman_id, 1), 1)
-        for d in degiskenler
+        katman_agirlik.get(kid, 0) / max(katman_basi_sayim.get(kid, 1), 1)
+        for _, _, kid in degiskenler
     ])
     if agirliklar.sum() <= 0:
         return None
     agirliklar = agirliklar / agirliklar.sum()  # toplamı 1'e normalize
 
-    ogrenci_skorlari = {
-        s.degisken_id: float(s.puan)
-        for s in db.query(OgrenciDegiskenSkoru).filter(
-            OgrenciDegiskenSkoru.ogrenci_id == ogrenci.id,
-            OgrenciDegiskenSkoru.tur_id == tur.id,
-            OgrenciDegiskenSkoru.degisken_id.in_(degisken_idler),
-        ).all()
-    }
-    if len(ogrenci_skorlari) < len(degisken_idler):
-        return None  # profil eksik — TOPLAM_UYUM hesaplanamaz (D4 kuralı)
-
-    ogrenci_vektor = np.array([ogrenci_skorlari[did] for did in degisken_idler])
-
-    yayinda_bolumler = db.query(Bolum).filter(Bolum.durum == "yayinda").order_by(Bolum.ad).all()
+    yayinda_bolumler = db.query(Bolum.id, Bolum.ad).filter(Bolum.durum == "yayinda").order_by(Bolum.ad).all()
     if not yayinda_bolumler:
         return None
     bolum_idler = [b.id for b in yayinda_bolumler]
     bolum_adlari = {b.id: b.ad for b in yayinda_bolumler}
 
     agirlik_satirlari = (
-        db.query(BolumAgirligi)
+        db.query(BolumAgirligi.bolum_id, BolumAgirligi.degisken_id, BolumAgirligi.versiyon, BolumAgirligi.agirlik_degeri,
+                 BolumAgirligi.agirlikli_varyans, BolumAgirligi.etkin_meslek_sayisi)
         .filter(BolumAgirligi.bolum_id.in_(bolum_idler), BolumAgirligi.degisken_id.in_(degisken_idler))
         .all()
     )
     # (bolum_id, degisken_id) -> agirlik_degeri ; en güncel versiyon kullanılır
-    en_guncel: dict[tuple[int, int], BolumAgirligi] = {}
+    en_guncel: dict[tuple[int, int], object] = {}
     for satir in agirlik_satirlari:
         anahtar = (satir.bolum_id, satir.degisken_id)
         if anahtar not in en_guncel or satir.versiyon > en_guncel[anahtar].versiyon:
@@ -163,19 +176,44 @@ def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) 
 
     # [DÜZELTME 2026-10-03] Katman içi göreli karşılaştırma (bkz. modül docstring'i)
     katman_gruplari: dict[int, list[int]] = {}
-    for j, d in enumerate(degiskenler):
-        katman_gruplari.setdefault(d.katman_id, []).append(j)
+    for j, (_, _, kid) in enumerate(degiskenler):
+        katman_gruplari.setdefault(kid, []).append(j)
     gruplar = list(katman_gruplari.values())
-    ogrenci_olcekli = _katman_ici_olcekle(ogrenci_vektor[None, :], gruplar)[0]
     bolum_olcekli = _katman_ici_olcekle(bolum_matrisi, gruplar)
+    return {"degisken_idler": degisken_idler, "degisken_kodlari": [d[1] for d in degiskenler], "agirliklar": agirliklar,
+            "bolum_idler": bolum_idler, "bolum_adlari": bolum_adlari, "bolum_matrisi": bolum_matrisi,
+            "agirlikli_varyans": agirlikli_varyans, "etkin_meslek_sayisi": etkin_meslek_sayisi,
+            "gruplar": gruplar, "bolum_olcekli": bolum_olcekli}
+
+
+def girdi_hazirla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> HesaplamaGirdisi | None:
+    """Öğrenci profili + yayındaki tüm bölümlerin ağırlık matrisini toplar (bölüm tarafı önbellekten)."""
+    v = _bolum_verisi(db)
+    if v is None:
+        return None
+    degisken_idler = v["degisken_idler"]
+    ogrenci_skorlari = {
+        s.degisken_id: float(s.puan)
+        for s in db.query(OgrenciDegiskenSkoru.degisken_id, OgrenciDegiskenSkoru.puan).filter(
+            OgrenciDegiskenSkoru.ogrenci_id == ogrenci.id,
+            OgrenciDegiskenSkoru.tur_id == tur.id,
+            OgrenciDegiskenSkoru.degisken_id.in_(degisken_idler),
+        ).all()
+    }
+    if len(ogrenci_skorlari) < len(degisken_idler):
+        return None  # profil eksik — TOPLAM_UYUM hesaplanamaz (D4 kuralı)
+
+    ogrenci_vektor = np.array([ogrenci_skorlari[did] for did in degisken_idler])
+    ogrenci_olcekli = _katman_ici_olcekle(ogrenci_vektor[None, :], v["gruplar"])[0]
+    bolum_olcekli = v["bolum_olcekli"]
     performans = np.maximum(0.0, 100.0 - np.abs(ogrenci_olcekli[None, :] - bolum_olcekli))
 
     return HesaplamaGirdisi(
-        bolum_idler=bolum_idler, bolum_adlari=bolum_adlari, degisken_idler=degisken_idler,
-        agirliklar=agirliklar, performans=performans,
-        agirlikli_varyans=agirlikli_varyans, etkin_meslek_sayisi=etkin_meslek_sayisi,
-        degisken_kodlari=[d.kod for d in degiskenler], ogrenci_olcekli=ogrenci_olcekli,
-        bolum_olcekli=bolum_olcekli, bolum_matrisi=bolum_matrisi,
+        bolum_idler=v["bolum_idler"], bolum_adlari=v["bolum_adlari"], degisken_idler=degisken_idler,
+        agirliklar=v["agirliklar"], performans=performans,
+        agirlikli_varyans=v["agirlikli_varyans"], etkin_meslek_sayisi=v["etkin_meslek_sayisi"],
+        degisken_kodlari=v["degisken_kodlari"], ogrenci_olcekli=ogrenci_olcekli,
+        bolum_olcekli=bolum_olcekli, bolum_matrisi=v["bolum_matrisi"],
     )
 
 

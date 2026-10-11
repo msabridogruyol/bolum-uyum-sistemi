@@ -72,7 +72,7 @@ export default function CvAtolyesi({ bolum }) {
     try { yukle(await api.isHayatiCvSil()); setMesaj('CV\'n portfolyondan yeniden oluşturuldu.') } catch (e) { setHata(e.detail || 'Sıfırlanamadı.') } finally { setBekle(false) }
   }
 
-  if (!v || !icerik) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v || !icerik) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const k = v.kontrol
   const alt = altSecim || (v.cv ? 'olustur' : 'rehber')
   const git = (kod) => { setAlt(kod); window.scrollTo?.({ top: Math.max(0, (document.querySelector('.cva-alt')?.getBoundingClientRect().top || 0) + window.scrollY - 80), behavior: 'smooth' }) }

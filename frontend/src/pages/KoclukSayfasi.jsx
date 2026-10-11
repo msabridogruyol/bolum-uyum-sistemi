@@ -695,7 +695,7 @@ function GelisimSekmesi({ karsilastirma }) {
       )}
       <div className="card">
         <div className="ct">Yaptıkların</div>
-        {!g ? <div className="bos-durum" style={{ padding: 12 }}>Yükleniyor…</div> : g.adimlar.length === 0 ? (
+        {!g ? <div className="bos-durum yukleniyor" style={{ padding: 12 }}>Yükleniyor…</div> : g.adimlar.length === 0 ? (
           <div className="ps" style={{ margin: 0 }}>Yol haritandaki bir adımı “Yaptım” diye işaretle. Yaptıkların tarihiyle birlikte burada listelenir.</div>
         ) : (
           <ol className="gm-zaman">
@@ -784,7 +784,7 @@ export default function KoclukSayfasi() {
     }
   }
 
-  if (hedef === undefined) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (hedef === undefined) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   const veriVar = hedef && gelisim && gelisim.length > 0
 

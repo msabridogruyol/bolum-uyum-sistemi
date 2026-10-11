@@ -202,7 +202,7 @@ export default function BeklentiGercek({ bolum }) {
   }
 
   if (hata && !g) return <div className="auth-error">{hata}</div>
-  if (!g) return <div className="bos-durum">Yükleniyor…</div>
+  if (!g) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
 
   if (!sorulacak.length && !maasSor) {
     return (

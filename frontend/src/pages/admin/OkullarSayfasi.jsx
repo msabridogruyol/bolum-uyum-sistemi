@@ -164,7 +164,7 @@ export default function OkullarSayfasi() {
         </form>
       )}
 
-      {!okullar ? <div className="bos-durum">Yükleniyor…</div> : (
+      {!okullar ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
         <div className="yp-okul-grid">
           {okullar.map((o) => (
             <div key={o.id} className={`yp-okul-kart${o.erisim_acik === false ? ' yp-okul-kapali' : ''}`}>

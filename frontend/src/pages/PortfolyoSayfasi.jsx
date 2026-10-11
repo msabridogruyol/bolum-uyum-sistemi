@@ -154,7 +154,7 @@ export default function PortfolyoSayfasi() {
   const [pdf, setPdf] = useState(false)
   useEffect(() => { api.portfolyo().then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [])
   async function pdfIndir() { setPdf(true); setHata(null); try { await api.portfolyoPdf() } catch (e) { setHata(e.detail || 'İndirilemedi.') } finally { setPdf(false) } }
-  if (!v) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+  if (!v) return <div className="pg"><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></div>
   const gruplar = v.turler.map((t) => ({ ...t, liste: v.kayitlar.filter((k) => k.tur === t.kod) })).filter((g) => g.liste.length)
   return (
     <div className="pg pg-genis">

@@ -44,7 +44,7 @@ export default function MezunHikayeleri({ bolum }) {
   const [hata, setHata] = useState(null)
   const [kopyalandi, setKopyalandi] = useState(false)
   useEffect(() => { api.isHayatiMezunHikayeleri(bolum?.id).then(setV).catch((e) => setHata(e.detail || 'Hikâyeler yüklenemedi.')) }, [bolum?.id])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
 
   if (!v.hikayeler.length) {
     return (

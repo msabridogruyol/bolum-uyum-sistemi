@@ -79,7 +79,7 @@ export default function MeslekDiliDuzenleyici({ okulId }) {
   }, [liste, arama, yalnizDuzenlenen])
 
   if (hata) return <div className="auth-error">{hata}</div>
-  if (!liste) return <div className="bos-durum">Yükleniyor…</div>
+  if (!liste) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   const duzenlenenSayisi = liste.filter((b) => b.duzenlendi).length
 
   return (
@@ -117,7 +117,7 @@ export default function MeslekDiliDuzenleyici({ okulId }) {
 
         <div className="md-editor">
           {!secili && <div className="yp-bos"><div style={{ fontSize: 28 }}>📖</div><b>Düzenlemek için soldan bir bölüm seç</b><span className="yp-ince">Her bölümde terim, anlamı ve sahadan bir örnek cümle bulunur.</span></div>}
-          {secili && !kayit && !mesaj && <div className="bos-durum">Yükleniyor…</div>}
+          {secili && !kayit && !mesaj && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
           {secili && kayit && (
             <>
               <div className="md-editor-baslik">

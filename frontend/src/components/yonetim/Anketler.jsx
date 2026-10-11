@@ -94,7 +94,7 @@ function Sonuclar({ id, onKapat }) {
   const [v, setV] = useState(null)
   const [hata, setHata] = useState(null)
   useEffect(() => { api.anketSonuclari(id).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [id])
-  if (!v) return <Pencere baslik="Sonuçlar" onKapat={onKapat}><div className="bos-durum">{hata || 'Yükleniyor…'}</div></Pencere>
+  if (!v) return <Pencere baslik="Sonuçlar" onKapat={onKapat}><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></Pencere>
   const a = v.anket
   const env = v.envanter
   const enCok = (l) => Math.max(1, ...l)
@@ -181,7 +181,7 @@ export default function Anketler({ okulId }) {
   useEffect(() => { yenile(); api.anketSablonlari().then(setSablon).catch(() => {}) }, [yenile])
   async function islem(f) { setHata(null); try { await f(); yenile() } catch (e) { setHata(e.detail || 'İşlem yapılamadı.') } }
   async function duzenle(a) { try { setDuzen({ mevcut: await api.anket(a.id) }) } catch (e) { setHata(e.detail || 'Açılamadı.') } }
-  if (!v || !sablon) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v || !sablon) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   return (
     <>
       <div className="rh-ust">

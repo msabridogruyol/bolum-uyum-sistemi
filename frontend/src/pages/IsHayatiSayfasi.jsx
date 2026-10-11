@@ -120,7 +120,7 @@ export default function IsHayatiSayfasi() {
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
-      {!ozet && !hata && <div className="bos-durum">Yükleniyor…</div>}
+      {!ozet && !hata && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
 
       {ozet && (
         <div className="koc-kap">
@@ -147,7 +147,7 @@ export default function IsHayatiSayfasi() {
                   </button>
                 ))}
               </div>
-              <Suspense fallback={<div className="bos-durum">Yükleniyor…</div>}>
+              <Suspense fallback={<div className="bos-durum yukleniyor">Yükleniyor…</div>}>
                 <Bilesen key={`${sekme}-${bolumId}`} bolum={veri.bolum} veri={veri} ogrenci={ogrenci} />
               </Suspense>
               <VerilerHakkinda kaynaklar={veri.veri_kaynaklari} />

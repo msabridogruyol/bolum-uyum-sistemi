@@ -24,7 +24,7 @@ export default function ParametrelerSayfasi() {
     }
   }
 
-  if (!parametreler) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+  if (!parametreler) return <div className="pg"><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></div>
 
   return (
     <div className="pg pg-genis">

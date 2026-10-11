@@ -8,7 +8,7 @@ export default function OgrenciCalisma({ ogrenciId }) {
   const [v, setV] = useState(null)
   const [hata, setHata] = useState(null)
   useEffect(() => { api.ogrenciCalismaOzeti(ogrenciId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [ogrenciId])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const oz = v.ozet
   if (!v.son_kayit && !v.program_blok) return <div className="bos-durum">Öğrenci henüz çalışma programı yapmamış ve kayıt girmemiş.</div>
   const enCok = Math.max(60, ...oz.haftalar.map((h) => h.dk))

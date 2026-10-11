@@ -165,7 +165,7 @@ export default function DallarSayfasi() {
     }
   }
 
-  if (!dallar) return <div className="pg pg-genis"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+  if (!dallar) return <div className="pg pg-genis"><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></div>
 
   // [2026-10-09] Varsayılan: yalnızca kullanımdaki alanlar; eski yapıdan kalanlar isteğe bağlı gösterilir
   const kullanimDisi = dallar.filter((d) => d.kullanimda === false).length

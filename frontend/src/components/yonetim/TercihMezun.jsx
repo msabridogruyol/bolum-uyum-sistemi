@@ -15,7 +15,7 @@ export function OgrenciTercih({ ogrenciId, onKarar }) {
   const [bekle, setBekle] = useState(false)
   const yukle = useCallback(() => api.ogrenciTercihi(ogrenciId).then((x) => { setV(x); setNotu(x.liste.rehber_notu || '') }).catch((e) => setHata(e.detail || 'Yüklenemedi.')), [ogrenciId])
   useEffect(() => { yukle() }, [yukle])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   async function karar(k) { setBekle(true); setHata(null); try { await api.tercihKarar(ogrenciId, k, notu); await yukle(); onKarar?.() } catch (e) { setHata(e.detail || 'Kaydedilemedi.') } finally { setBekle(false) } }
   if (!v.tercihler.length) return <div className="bos-durum">Öğrenci henüz tercih listesi hazırlamadı.</div>
   return (
@@ -49,7 +49,7 @@ export function TercihDonemi({ okulId }) {
   const [hata, setHata] = useState(null)
   const yukle = useCallback(() => api.okulTercihleri(okulId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')), [okulId])
   useEffect(() => { yukle() }, [yukle])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const liste = v.ogrenciler.filter((o) => !filtre || (filtre === 'yok' ? !o.durum : o.durum === filtre))
   return (
     <>
@@ -150,7 +150,7 @@ function MezunKayitlari({ okulId }) {
   const [hata, setHata] = useState(null)
   const yukle = useCallback(() => api.mezunlar(okulId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')), [okulId])
   useEffect(() => { yukle() }, [yukle])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const kayit = v.kayitlar.filter((k) => !yil || k.yil === Number(yil))
   const son = v.yillar[0]
   return (

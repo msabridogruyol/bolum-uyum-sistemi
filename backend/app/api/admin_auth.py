@@ -24,9 +24,14 @@ YONETIM_ROLLERI = {"super_admin", "okul_yetkilisi"}   # [2026-10-09] 3 rol: süp
 @router.post("/giris", response_model=GirisCevap)
 def admin_giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
     hata = HTTPException(status_code=401, detail="E-posta veya şifre hatalı.")
-    admin = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == istek.email.strip().lower()).first()
+    email = istek.email.strip().lower()
+    from app.core.hiz_siniri import HESAP_DENEME, hesap_kilit_kontrol
+    hesap_kilit_kontrol(email)   # [2026-10-11] hesap başına hatalı şifre sınırı
+    admin = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email).first()
     if admin is None or admin.rol not in YONETIM_ROLLERI or not sifre_dogrula(istek.sifre, admin.sifre_hash):
+        HESAP_DENEME.hatali(email)
         raise hata
+    HESAP_DENEME.temizle(email)
     if admin.aktif_mi is False:
         raise HTTPException(status_code=403, detail="Hesabın devre dışı bırakılmış.")
     if admin.rol == "okul_yetkilisi":

@@ -235,8 +235,21 @@ def okul_tercihleri(okul_id: int, db: Session = Depends(get_db), yon: AdminKulla
     _okul_kapsami(db, yon, okul_id)
     ogr = [o for o in db.query(Ogrenci).filter(Ogrenci.okul_id == okul_id, Ogrenci.sinif.in_(["12. Sınıf", "Mezun"])).all()
            if not getattr(o, "test_hesabi", False)]
+    # [2026-10-11] Tercih satırı olmayan öğrenci için ayrıntılı hesap yapılmaz (önceden öğrenci başına ~5 sorgu: 100 öğrenciyle
+    # 500 sorgu). Liste / tercih / yerleşme bilgisi tüm öğrenciler için toplu okunur; ayrıntı yalnızca tercihi olanlarda.
+    ids = [o.id for o in ogr]
+    tercihli = {r[0] for r in db.execute(text("SELECT DISTINCT ogrenci_id FROM tercihler WHERE ogrenci_id = ANY(:i)"), {"i": ids}).all()} if ids else set()
+    listeler = {r.ogrenci_id: r for r in db.execute(text("SELECT ogrenci_id, siralama FROM tercih_listesi WHERE ogrenci_id = ANY(:i)"), {"i": ids}).all()} if ids else {}
+    yerlesme = dict(db.execute(text("SELECT DISTINCT ON (ogrenci_id) ogrenci_id, durum FROM mezun_yerlesmeleri WHERE ogrenci_id = ANY(:i) "
+                                    "ORDER BY ogrenci_id, yil DESC"), {"i": ids}).all()) if ids else {}
+    bos_sayilar = {"guvenli": 0, "dengeli": 0, "riskli": 0, "toplam": 0, "en_fazla": EN_FAZLA}
     sonuc = []
     for o in sorted(ogr, key=lambda x: (x.sinif or "", x.sube or "", x.ad_soyad.lower())):
+        if o.id not in tercihli:
+            l = listeler.get(o.id)
+            sonuc.append({"ogrenci_id": str(o.id), "ad_soyad": o.ad_soyad, "sinif_metni": _sinif_metni(o), "durum": None, "durum_adi": "Liste yok",
+                          "sayilar": bos_sayilar, "uyari": 0, "siralama": l.siralama if l else None, "yerlesme": yerlesme.get(o.id)})
+            continue
         v = tercih_verisi(db, o, bolumler=False)
         sonuc.append({"ogrenci_id": str(o.id), "ad_soyad": o.ad_soyad, "sinif_metni": _sinif_metni(o), "durum": v["liste"]["durum"] if v["tercihler"] else None,
                       "durum_adi": v["liste"]["durum_adi"] if v["tercihler"] else "Liste yok", "sayilar": v["sayilar"], "uyari": len(v["uyarilar"]),

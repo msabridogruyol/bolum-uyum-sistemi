@@ -271,7 +271,7 @@ export default function CalismaSayfasi() {
         {SEKMELER.map(([k, ad]) => <button key={k} role="tab" aria-selected={sekme === k} className={sekme === k ? 'aktif' : ''} onClick={() => git(k)}>{ad}</button>)}
       </div>
       {hata && <div className="auth-error">{hata}</div>}
-      {!v ? !hata && <div className="bos-durum">Yükleniyor…</div> : (
+      {!v ? !hata && <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
         <>
           {sekme === 'bugun' && <BugunSekmesi v={v} setV={setV} />}
           {sekme === 'program' && <ProgramSekmesi v={v} setV={setV} />}

@@ -49,7 +49,7 @@ export default function Kaynakca() {
   }), [v, grup, q, ayrinti, kaynakMap])
   const kaynaklar = useMemo(() => (v?.kaynaklar || []).filter((k) => !q || kucuk(`${k.a} ${(kullanim.get(k.id) || []).join(' ')}`).includes(q)), [v, q, kullanim])
 
-  if (!v) return <div className="pg pg-genis"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+  if (!v) return <div className="pg pg-genis"><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></div>
   const gruplar = v.gruplar.filter((g) => v.bilesenler.some((b) => b.g === g))
   const kaynakli = v.bilesenler.filter((b) => b.k.length).length
 

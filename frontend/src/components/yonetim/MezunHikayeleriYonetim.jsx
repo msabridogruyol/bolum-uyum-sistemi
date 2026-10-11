@@ -76,7 +76,7 @@ export default function MezunHikayeleriYonetim({ okulId }) {
   const [hata, setHata] = useState(null)
   const yukle = useCallback(() => api.isHayatiMezunHikayeleriOkul(okulId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')), [okulId])
   useEffect(() => { yukle() }, [yukle])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   async function durumDegistir(h) {
     setHata(null)
     try { await api.isHayatiMezunHikayesiDuzenle(okulId, h.id, { ...h, durum: h.durum === 'yayinda' ? 'taslak' : 'yayinda' }); yukle() } catch (e) { setHata(e.detail || 'Değiştirilemedi.') }

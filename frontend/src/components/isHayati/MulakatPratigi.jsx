@@ -156,7 +156,7 @@ function Gecmis({ onKapat }) {
     <div className="card">
       <div className="ihz-tur-ust"><button className="yp-mini" onClick={onKapat}>← Sorular</button><b className="ihz-tur-ad">Pratik geçmişin</b></div>
       <div className="yp-ince" style={{ marginBottom: 8 }}>Yalnızca sen görebilirsin.</div>
-      {!g && <div className="bos-durum">Yükleniyor…</div>}
+      {!g && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
       {g && !g.length && <div className="bos-durum">Henüz bir pratik kaydetmedin.</div>}
       {g && g.map((p) => (
         <div key={p.id} className="ihm-gecmis">
@@ -189,7 +189,7 @@ export default function MulakatPratigi({ bolum }) {
 
   const aktif = useMemo(() => v?.kategoriler.find((k) => k.kod === kat), [v, kat])
   if (hata) return <div className="auth-error">{hata}</div>
-  if (!v) return <div className="bos-durum">Yükleniyor…</div>
+  if (!v) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   if (gecmis) return <Gecmis onKapat={() => { setGecmis(false); yukle() }} />
   if (soru) return <Pratik soru={{ ...soru, kategori: soru.kategori || kat }} v={v} onKapat={() => setSoru(null)} onKaydedildi={yukle} />
 

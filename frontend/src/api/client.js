@@ -9,6 +9,11 @@ function tokenlariKaydet(erisim, yenileme, kapsam = 'ogrenci') {
   localStorage.setItem(`${kapsam}_yenileme_tokeni`, yenileme)
 }
 
+function yeniAnahtarlariKaydet(r, kapsam) {
+  if (r?.erisim_tokeni) tokenlariKaydet(r.erisim_tokeni, r.yenileme_tokeni, kapsam)
+  return null
+}
+
 function tokenlariTemizle(kapsam = 'ogrenci') {
   localStorage.removeItem(`${kapsam}_erisim_tokeni`)
   localStorage.removeItem(`${kapsam}_yenileme_tokeni`)
@@ -365,6 +370,9 @@ export const api = {
   gorusmeSil: (id) => adel(`/yonetim/gorusme/${id}`),
   // [2026-10-11] Sistem sözlüğü — veritabanından bölüm, meslek ve özellik açıklamaları
   sozlukEk: () => get('/ogrenci/sozluk/ek'),
+  sozlukBildir: (v) => post('/ogrenci/sozluk/bildir', v),
+  sozlukBildirimleri: (durum = 'yeni') => aget(`/admin/sozluk-bildirimleri?durum=${durum}`),
+  sozlukBildirimDurumu: (id, durum) => aput(`/admin/sozluk-bildirimleri/${id}`, { durum }),
   // [2026-10-10] Net takibi
   netYapi: () => get('/ogrenci/net/yapi'),
   netDenemeler: () => get('/ogrenci/net/denemeler'),
@@ -486,8 +494,9 @@ export const api = {
   // --- Profil (sonradan eklendi) ---
   profilGetir: () => get('/ogrenci/profil'),
   profilGuncelle: (veri) => put('/ogrenci/profil', veri),
-  sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri),
-  ilkSifreBelirle: (yeniSifre) => post('/ogrenci/profil/ilk-sifre', { yeni_sifre: yeniSifre }),  // [2026-10-09] geçici şifreden sonra
+  // [2026-10-11] Şifre değişince diğer cihazlardaki oturumlar düşer; sunucu bu cihaz için yeni anahtar çifti döner
+  sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),
+  ilkSifreBelirle: (yeniSifre) => post('/ogrenci/profil/ilk-sifre', { yeni_sifre: yeniSifre }).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),  // [2026-10-09] geçici şifreden sonra
   profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
   meslekAra: (q) => get(`/ogrenci/meslek-ara?q=${encodeURIComponent(q)}`),
   katmanSonucuGetir: (kod) => get(`/ogrenci/katmanlar/${kod}/sonuc`),
@@ -600,7 +609,7 @@ export const api = {
   okulSil: (id, hedefId) => adel(`/admin/okullar/${id}${hedefId !== undefined && hedefId !== null ? `?hedef_id=${hedefId}` : ''}`),
   // [2026-10-09] Okul bazlı yönetim (süper admin + okul yetkilisi) — okulId 0 = okul harici
   yonetimBen: () => aget('/yonetim/ben'),
-  yonetimIlkSifre: (yeniSifre) => apost('/yonetim/ben/ilk-sifre', { yeni_sifre: yeniSifre }),
+  yonetimIlkSifre: (yeniSifre) => apost('/yonetim/ben/ilk-sifre', { yeni_sifre: yeniSifre }).then((r) => yeniAnahtarlariKaydet(r, 'admin')),
   yonetimOkullar: () => aget('/yonetim/okullar'),
   okulOzeti: (okulId) => aget(`/yonetim/okul/${okulId}/ozet`),
   // [2026-10-10] Okul paneli → İstatistikler; f: { sinif, sube, bas, bit } (hepsi isteğe bağlı)

@@ -246,7 +246,7 @@ function Adaylar({ okulId, yenile }) {
         Okula kayıt için gelen öğrencileri, Öğrenciler sekmesinden sınıfı <b>"Aday"</b> olarak ekleyin (toplu yüklemede sınıf sütununa "Aday" yazmanız yeterli).
         Aday testi çözdükten sonra hangi şubenin profiline daha yakın olduğunu ve en benzer öğrencileri burada görürsünüz. Aday kendi sonucunu görür; şube karşılaştırmasını görmez.
       </div>
-      {!liste ? <div className="bos-durum">Yükleniyor…</div> : liste.length === 0 ? <div className="bos-durum">Aday öğrenci yok.</div> : (
+      {!liste ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : liste.length === 0 ? <div className="bos-durum">Aday öğrenci yok.</div> : (
         <table className="yp-tablo">
           <thead><tr><th>Ad soyad</th><th>No</th><th>Durum</th><th /></tr></thead>
           <tbody>

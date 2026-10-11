@@ -115,7 +115,7 @@ export default function KoclarSayfasi() {
     try { await api.kocTalebiIptal(t.id); yukle() } catch (e) { setMesaj({ hata: true, metin: e.detail || 'İptal edemedik. Tekrar dene.' }) }
   }
   if (hata) return <div className="pg"><div className="auth-error">{hata}</div></div>
-  if (!v) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!v) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
   const acikTalepler = Object.fromEntries(v.talepler.filter((t) => ['beklemede', 'onaylandi'].includes(t.durum)).map((t) => [t.koc_id, t]))
   const koclar = filtre === 'uygun' ? v.koclar.filter((k) => k.uygun) : v.koclar
 

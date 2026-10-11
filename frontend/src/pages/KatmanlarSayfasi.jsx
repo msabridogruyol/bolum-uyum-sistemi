@@ -55,7 +55,7 @@ export default function KatmanlarSayfasi() {
   }, [katmanlar])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!katmanlar || hedef === undefined) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!katmanlar || hedef === undefined) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   const tamamlanan = katmanlar.filter((k) => k.durum === 'tamamlandi').length
   const profilYuzde = Math.round((tamamlanan / katmanlar.length) * 100)

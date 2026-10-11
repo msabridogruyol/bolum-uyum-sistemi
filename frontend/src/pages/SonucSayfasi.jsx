@@ -61,7 +61,7 @@ export default function SonucSayfasi({ gomulu = false }) {
   }, [])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!siralama || !ozet) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!siralama || !ozet) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   return (
     <div className="pg pg-genis">

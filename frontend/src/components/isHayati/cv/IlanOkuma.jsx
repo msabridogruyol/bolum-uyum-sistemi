@@ -70,7 +70,7 @@ export default function IlanOkuma({ bolum }) {
   const [hata, setHata] = useState(null)
   const [secili, setSecili] = useState(null)
   useEffect(() => { api.isHayatiCvIlanlar(bolum?.id).then(setV).catch((e) => setHata(e.detail || 'İlanlar yüklenemedi.')) }, [bolum?.id])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const ilan = v.ilanlar.find((x) => x.id === secili)
   if (ilan) return <Ilan ilan={ilan} kategoriler={v.kategoriler} onGeri={() => setSecili(null)} />
   return (

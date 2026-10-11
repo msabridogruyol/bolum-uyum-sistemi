@@ -156,7 +156,7 @@ export default function AdminSayfaDuzeni() {
 
       <div className={`main yonetim-main${filizVar ? ' filiz-var' : ''}`}>
         {filizVar && <MaskotYonetim rol={rol} ad={ben.ad_soyad} okulId={ben.okul_id} moduller={ben.moduller} />}
-        <div className="main-icerik">{okulYetkilisi && !ben ? <div className="pg"><div className="bos-durum">Yükleniyor…</div></div> : <Outlet />}</div>
+        <div className="main-icerik">{okulYetkilisi && !ben ? <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div> : <Outlet />}</div>
         <AltSerit okul={ben?.okul_ad || (okulYetkilisi ? null : 'Filizyol Yönetim')} kisi={ben?.ad_soyad} rol={ROL_ADI[rol]} />
       </div>
 

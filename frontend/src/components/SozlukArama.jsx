@@ -4,6 +4,7 @@
 // Bölüm kartından bölüm bilgi penceresi, meslek kartından ilgili bölümler açılır.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { api } from '../api/client'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import { sozlukAra, sozlukDinle, sozlukYukle, sozlukYuklendiMi, toplamTerim } from '../yardimci/sozluk'
 
@@ -18,6 +19,25 @@ export function useSozluk() {
     return kapat
   }, [])
   return { hazir: sozlukYuklendiMi(), toplam: toplamTerim() }
+}
+
+// [2026-10-11] "Bu tanımda hata var" — öğrenci bildirir, süper admin Kontrol Paneli'nde görür
+function HataBildir({ t }) {
+  const [acik, setAcik] = useState(false)
+  const [not, setNot] = useState('')
+  const [sonuc, setSonuc] = useState(null)
+  if (sonuc) return <div className="sz-bildir-tamam">✓ {sonuc}</div>
+  if (!acik) return <button type="button" className="sz-bildir" onClick={() => setAcik(true)}>Bu tanımda hata mı var?</button>
+  async function gonder() {
+    try { const r = await api.sozlukBildir({ terim: t.ad, k: t.k, aciklama: not }); setSonuc(r.mesaj) } catch (e) { setSonuc(e.detail || 'Gönderilemedi.') }
+  }
+  return (
+    <div className="sz-bildir-form">
+      <input value={not} onChange={(e) => setNot(e.target.value)} maxLength={500} placeholder="Ne yanlış ya da anlaşılmıyor? (isteğe bağlı)" aria-label="Hata açıklaması" />
+      <button type="button" className="sz-git" onClick={gonder}>Gönder</button>
+      <button type="button" className="sz-bildir" onClick={() => setAcik(false)}>Vazgeç</button>
+    </div>
+  )
 }
 
 export function TerimKarti({ t, buyuk = false }) {
@@ -38,6 +58,7 @@ export function TerimKarti({ t, buyuk = false }) {
           {t.bolumler.slice(0, 6).map((b) => <button key={b.id} type="button" onClick={() => ac(b.id, b.hamAd)}>{b.ad}</button>)}
         </div>
       )}
+      {buyuk && <HataBildir t={t} />}
     </div>
   )
 }

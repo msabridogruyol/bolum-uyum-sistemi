@@ -260,7 +260,18 @@ def okul_denemeleri(okul_id: int, db: Session = Depends(get_db), yon: AdminKulla
         "id": r["id"], "ad": r["ad"], "tarih": r["tarih"].isoformat(), "oturum": r["oturum"], "olusturan": r["olusturan"],
         "katilim": len(ist.get(r["id"], [])), "ortalama": _ort([float(x.toplam_net) for x in ist.get(r["id"], [])]),
         "en_yuksek": max([float(x.toplam_net) for x in ist.get(r["id"], [])], default=None),
+        "subeler": _sube_ortalamalari(ist.get(r["id"], [])),   # [2026-10-11] grafik: şube karşılaştırması
     } for r in rows], "oturumlar": list(OTURUMLAR)}
+
+
+def _sube_ortalamalari(satirlar) -> list[dict]:
+    """[2026-10-11] Denemedeki şube ortalamaları (okul kendi öğrencilerini gördüğü için küçük grup gizlemesi yok)."""
+    g = defaultdict(list)
+    for x in satirlar:
+        if x.sinif:
+            g[(x.sinif, x.sube or "")].append(float(x.toplam_net))
+    return [{"etiket": (f"{k[0].replace('. Sınıf', '')}-{k[1]}" if k[1] and k[0] != "Mezun" else k[0]), "ortalama": _ort(v), "n": len(v)}
+            for k, v in sorted(g.items())]
 
 
 @router.get("/okul-deneme/{deneme_id}")

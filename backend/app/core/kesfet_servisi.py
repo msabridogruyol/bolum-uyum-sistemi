@@ -116,13 +116,15 @@ def bolumleri_ara(db: Session, ogrenci: Ogrenci, arama_terimi: str, limit: int =
         if not bekleyen_dal_var_mi(db, ogrenci, son_tamamlanan_tur):
             uyum_skorlari = nihai_uyum_haritasi(db, ogrenci, son_tamamlanan_tur)
 
+    # [2026-10-11] detay (ertelenmiş sütun) yalnızca eşleşen bölümler için, tek sorguda
+    detaylar = dict(db.query(Bolum.id, Bolum.detay).filter(Bolum.id.in_([b.id for b in bolumler])).all()) if bolumler else {}
     sonuc = []
     for bolum in bolumler:
         sonuc.append({
             "bolum_id": bolum.id,
             "bolum_adi": bolum.ad,
             "kisa_aciklama": bolum.kisa_aciklama,
-            "detay": bolum.detay,
+            "detay": detaylar.get(bolum.id),
             "toplam_uyum": uyum_skorlari.get(bolum.id),  # None -> henüz hesaplanmadı
             "on_cikan_degiskenler": bolum_on_cikan_degiskenler(db, bolum.id),
         })

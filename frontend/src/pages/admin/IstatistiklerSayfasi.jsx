@@ -145,7 +145,7 @@ export default function IstatistiklerSayfasi() {
       <div className="pg pg-genis">
         <div className="ph"><div className="pt">İstatistikler</div></div>
         {filtreSatiri}
-        <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+        <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
       </div>
     )
   }

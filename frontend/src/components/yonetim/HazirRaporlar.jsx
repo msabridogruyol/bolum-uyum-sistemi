@@ -22,7 +22,7 @@ function Liste({ l, kompakt, onAc }) {
         </div>
         {!kompakt && l.satirlar.length > 0 && (
           <button type="button" className="hr-csv" title="Excel'de açılabilir CSV olarak indir"
-            onClick={() => csvIndir({ sutunlar: ['Sıra', 'Öğrenci', 'Sınıf', l.birim, 'Not'], satirlar: l.satirlar.map((s, i) => [i + 1, s.ad, s.sinif, s.deger, s.ek || '']) }, l.baslik)}>⬇ CSV</button>
+            onClick={() => csvIndir({ sutunlar: ['Sıra', 'Öğrenci', 'Sınıf', l.birim || 'Değer', 'Not'], satirlar: l.satirlar.map((s, i) => [i + 1, s.ad, s.sinif, s.deger, s.ek || '']) }, l.baslik)}>⬇ CSV</button>
         )}
       </div>
       {satirlar.length === 0 ? <div className="hr-bos">{l.bos}</div> : (
@@ -93,7 +93,7 @@ export default function HazirRaporlar({ okulId, kompakt = false, onTumu }) {
         </div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
-      {!v && !hata && <div className="bos-durum">Yükleniyor…</div>}
+      {!v && !hata && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
       {v && (
         <div className={`hr-izgara${kompakt ? ' kompakt' : ''}`}>
           {v.listeler.map((l) => <Liste key={l.kod} l={l} kompakt={kompakt} onAc={ac} />)}

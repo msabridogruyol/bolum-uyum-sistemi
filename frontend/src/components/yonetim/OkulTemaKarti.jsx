@@ -51,7 +51,7 @@ export default function OkulTemaKarti({ okulId }) {
     } finally { setBekle(false) }
   }
 
-  if (kayitli === undefined && !mesaj) return <div className="bos-durum">Yükleniyor…</div>
+  if (kayitli === undefined && !mesaj) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   const degisti = (secim || null) !== (kayitli || null)
   const ozel = secim && !OKUL_PALETI.some((p) => p.renk && p.renk.toLowerCase() === secim.toLowerCase())
 

@@ -89,7 +89,7 @@ export default function RaporMerkeziSayfasi() {
       {okulId === '' ? (
         <div className="bos-durum">Okul raporları için yukarıdan bir okul seçin.</div>
       ) : !ozet ? (
-        !ozetHata && <div className="bos-durum">Yükleniyor…</div>
+        !ozetHata && <div className="bos-durum yukleniyor">Yükleniyor…</div>
       ) : (
         <div className="ist-kartlar">
           <RaporKarti ikon="🏫" baslik="Okul genel raporu" aciklama={`${okulAdi}: katılım durumu, sınıf ve şube kırılımları, alan dağılımı, katman ortalamaları, öğrenci listesi.`}

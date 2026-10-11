@@ -78,7 +78,7 @@ function AramaylaYonlendir({ to }) {
 }
 
 function SayfaYukleniyor() {
-  return <div className="bos-durum" style={{ padding: 40 }}>Yükleniyor…</div>
+  return <div className="bos-durum yukleniyor" style={{ padding: 40 }}>Yükleniyor…</div>
 }
 
 function OzelRota({ children }) {

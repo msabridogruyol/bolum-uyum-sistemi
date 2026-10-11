@@ -126,7 +126,7 @@ export default function KuluplerimSayfasi() {
         <button role="tab" aria-selected={sekme === 'test'} className={sekme === 'test' ? 'aktif' : ''} onClick={() => git('test')}>🎯 İlgi testi</button>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
-      {sekme === 'kulupler' && (v ? <KuluplerSekmesi v={v} setV={setV} testeGit={() => git('test')} /> : !hata && <div className="bos-durum">Yükleniyor…</div>)}
+      {sekme === 'kulupler' && (v ? <KuluplerSekmesi v={v} setV={setV} testeGit={() => git('test')} /> : !hata && <div className="bos-durum yukleniyor">Yükleniyor…</div>)}
       {sekme === 'test' && <IlgiKulupSekmesi />}
     </div>
   )

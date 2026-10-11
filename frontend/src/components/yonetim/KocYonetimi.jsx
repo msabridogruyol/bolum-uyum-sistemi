@@ -173,7 +173,7 @@ export default function KocYonetimi() {
   }
   useEffect(() => { yukle() }, [])
   if (hata) return <div className="auth-error">{hata}</div>
-  if (!koclar || !talepler) return <div className="bos-durum">Yükleniyor…</div>
+  if (!koclar || !talepler) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
 
   const kaydet = async (f) => {
     if (f.id) await api.kocDuzenle(f.id, f)

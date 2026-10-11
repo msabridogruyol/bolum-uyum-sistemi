@@ -420,7 +420,8 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
         }
         g = db.execute(text(f"""
             SELECT g.tur, g.konu, g.durum, to_char(g.zaman AT TIME ZONE 'Europe/Istanbul', 'YYYY-MM') AS ay
-              FROM rehberlik_gorusmeleri g WHERE g.ogrenci_id = ANY(:ids) AND {TRG % 'g.zaman'} BETWEEN :bas AND :bit"""), p).all() if ids else []
+              FROM rehberlik_gorusmeleri g JOIN ogrenciler o ON o.id = g.ogrenci_id AND g.okul_id IS NOT DISTINCT FROM o.okul_id
+             WHERE g.ogrenci_id = ANY(:ids) AND {TRG % 'g.zaman'} BETWEEN :bas AND :bit"""), p).all() if ids else []
         yapilan = [x for x in g if x.durum == "yapildi"]
         aylar = Counter(x.ay for x in yapilan)
         reh["gorusmeler"] = {

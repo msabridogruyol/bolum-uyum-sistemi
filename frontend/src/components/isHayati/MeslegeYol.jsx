@@ -40,7 +40,7 @@ export default function MeslegeYol({ bolum }) {
   }, [bolum.id])
 
   if (hata) return <div className="auth-error">{hata}</div>
-  if (!y) return <div className="bos-durum">Yükleniyor…</div>
+  if (!y) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
 
   return (
     <div>

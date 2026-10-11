@@ -150,24 +150,39 @@ def kayit_ol(istek: OgrenciKayitIstekV2, request: Request, db: Session = Depends
 TEK_GIRIS_ROLLERI = {"ogrenci", "okul_yetkilisi", "super_admin"}
 
 
+def _karmayi_tazele(hesap, duz_sifre: str) -> None:
+    """[2026-10-11] Eski tur sayısıyla karılmış şifreyi güncel ayarla yeniden kar (sonraki girişler hızlansın)."""
+    from app.core.security import sifre_hashle, yeniden_karma_gerekli_mi
+    if yeniden_karma_gerekli_mi(hesap.sifre_hash):
+        hesap.sifre_hash = sifre_hashle(duz_sifre)
+
+
 @router.post("/giris", response_model=GirisCevap)
 def giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
     """[2026-10-11] Tek giriş ekranı: öğrenci, okul yetkilisi ve süper admin. Okulu kapalı hesaplar 423 alır."""
     hata = HTTPException(status_code=401, detail="E-posta veya şifre hatalı.")
     email = istek.email.strip().lower()
+    from app.core.hiz_siniri import HESAP_DENEME, hesap_kilit_kontrol
+    hesap_kilit_kontrol(email)   # [2026-10-11] hesap başına hatalı şifre sınırı (IP'den bağımsız)
 
     ogrenci = db.query(Ogrenci).filter(func.lower(Ogrenci.email) == email).first()
     if ogrenci is not None:
         if sifre_dogrula(istek.sifre, ogrenci.sifre_hash):
+            HESAP_DENEME.temizle(email)
+            _karmayi_tazele(ogrenci, istek.sifre)
             return giris_sonucu(db, ogrenci, "ogrenci", istek.cihaz_tokeni)
         from app.core.hesap_yonetimi import olay_yaz
         olay_yaz(db, ogrenci.id, "giris_hatali", "Yanlış şifre", "Öğrenci")
         db.commit()
+        HESAP_DENEME.hatali(email)
         raise hata
 
     yonetici = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email).first()
     if yonetici is None or yonetici.rol not in TEK_GIRIS_ROLLERI or not sifre_dogrula(istek.sifre, yonetici.sifre_hash):
+        HESAP_DENEME.hatali(email)
         raise hata
+    HESAP_DENEME.temizle(email)
+    _karmayi_tazele(yonetici, istek.sifre)
     if yonetici.aktif_mi is False:
         raise HTTPException(status_code=403, detail="Hesabın devre dışı bırakılmış.")
     return giris_sonucu(db, yonetici, yonetici.rol, istek.yonetim_cihaz_tokeni)
@@ -200,7 +215,8 @@ def token_yenile(istek: YenilemeIstek, db: Session = Depends(get_db)):
         hesap = db.get(Ogrenci, kid)
     else:
         raise hata
-    if hesap is None:
+    from app.core.security import token_hesaba_uygun_mu
+    if hesap is None or not token_hesaba_uygun_mu(payload, hesap):   # [2026-10-11] şifre sıfırlandıysa yenileme reddedilir
         raise hata
     return TokenCifti(erisim_tokeni=erisim_tokeni_uret(hesap.id, rol), yenileme_tokeni=yenileme_tokeni_uret(hesap.id, rol))
 

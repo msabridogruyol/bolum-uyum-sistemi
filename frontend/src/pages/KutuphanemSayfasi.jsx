@@ -76,7 +76,7 @@ export default function KutuphanemSayfasi() {
   }
   const sil = async (x) => { if (window.confirm(`"${x.baslik}" silinsin mi?`)) { await api.kutuphaneSil(x.id).catch(() => {}); yukle() } }
 
-  if (!v) return <div className="pg"><div className={hata ? 'auth-error' : 'bos-durum'}>{hata || 'Yükleniyor…'}</div></div>
+  if (!v) return <div className="pg"><div className={hata ? 'auth-error' : 'bos-durum yukleniyor'}>{hata || 'Yükleniyor…'}</div></div>
   const k = form ? kat[form.kategori] : null
   return (
     <div className="pg pg-genis">

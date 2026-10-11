@@ -28,6 +28,7 @@ OTOMATIK += ["0062_performans_indeksleri"]   # [2026-10-11] okul paneli / rehber
 OTOMATIK += ["0063_okul_erisim"]   # [2026-10-11] okul bazında sistem aç / kapat
 OTOMATIK += ["0064_cevrimici"]   # [2026-10-11] çevrim içi öğrenciler (son görülme + gizlilik)
 OTOMATIK += ["0065_aktif_gunler"]   # [2026-10-11] günlük aktiflik kaydı (öğrencinin sistemi açtığı günler)
+OTOMATIK += ["0066_pilot_hazirlik"]   # [2026-10-11] oturum geçersiz kılma, laboratuvar giriş sınırı, sözlük bildirimleri
 KILIT = 2026101001
 
 

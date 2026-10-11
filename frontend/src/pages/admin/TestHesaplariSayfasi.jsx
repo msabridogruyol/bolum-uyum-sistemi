@@ -256,7 +256,7 @@ export default function TestHesaplariSayfasi() {
         </div>
       )}
       {hata && <div className="auth-error" role="alert">{hata}</div>}
-      {!d ? <div className="bos-durum">Yükleniyor…</div> : (
+      {!d ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
         <>
           <div className="ct" style={{ marginTop: 18 }}>Öğrenci test hesapları ({d.ogrenciler.length})</div>
           {d.ogrenciler.length === 0 ? <div className="bos-durum">Henüz yok. Yukarıdan bir öğrenci test hesabı aç.</div> : (

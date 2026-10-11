@@ -17,6 +17,7 @@ from sqlalchemy import text, func
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_admin, get_mevcut_super_admin
+from app.core.canli_denetim import maddeler as canli_maddeler
 from app.core.database import get_db
 from app.models import (
     AdminKullanici, SistemParametresi, Bolum, OgrenciBolumUyumSkoru,
@@ -135,6 +136,8 @@ def bolum_durumunu_degistir(
     _audit_yaz(db, admin, "bolum_durum_degisikligi", "bolumler", str(bolum_id),
                f"{eski_durum} -> {istek.yeni_durum}: {istek.gerekce}")
     db.commit()
+    from app.core.skor_motoru import bolum_onbellegini_temizle
+    bolum_onbellegini_temizle()   # [2026-10-11] yayındaki bölüm listesi değişti
     db.refresh(bolum)
     return bolum
 
@@ -366,6 +369,7 @@ def kontrol_paneli_ozeti(
         toplam_bolum_sayisi=toplam_bolum, yayinda_bolum_sayisi=yayinda_bolum,
         tanimli_dal_sayisi=tanimli_dal, toplam_ogrenci_sayisi=toplam_ogrenci,
         tamamlanan_tur_sayisi=tamamlanan_tur, yarida_birakma_orani=yarida_birakma_orani,
+        canli_denetim=canli_maddeler(),   # [2026-10-11] JWT anahtarı, e-posta, şifre saklama — gerçek ayarlardan
     )
 
 
@@ -440,6 +444,8 @@ def katman_agirliklarini_guncelle(
     onceki = {kod: float(katmanlar[kod].normalizasyon_agirligi or 0) for kod in _AGIRLIK_KATMANLARI}
     for kod in _AGIRLIK_KATMANLARI:
         katmanlar[kod].normalizasyon_agirligi = round(float(gelen[kod]), 2)
+    from app.core.skor_motoru import bolum_onbellegini_temizle
+    bolum_onbellegini_temizle()   # [2026-10-11]
     yeni = {kod: round(float(gelen[kod]), 2) for kod in _AGIRLIK_KATMANLARI}
     from app.core.hesap_yonetimi import denetim_yaz
     denetim_yaz(db, admin, "katman_agirlik_guncelleme", "katmanlar", "K1-K4",
@@ -811,6 +817,8 @@ def pipeline_taslagini_onayla(
     )
     db.execute(text("UPDATE bolum_agirliklari_taslak SET durum = 'onaylandi' WHERE yukleme_grubu = :g"), {"g": grup})
     db.commit()
+    from app.core.skor_motoru import bolum_onbellegini_temizle
+    bolum_onbellegini_temizle()   # [2026-10-11] yeni ağırlıklar — yeniden hesaplamadan ÖNCE önbellek boşalsın
 
     # [2026-10-07] Öğrencilerin bölüm uyum skorları tur bitince bir kez hesaplanıp saklanıyor.
     # Yeni ağırlıklar canlıya alınınca tüm tamamlanmış turlar yeni ağırlıklarla yeniden hesaplanır;

@@ -28,7 +28,7 @@ export function BirGunumSekmesi({ hedef }) {
     window.addEventListener('simulasyon-kapandi', tazele)
     return () => window.removeEventListener('simulasyon-kapandi', tazele)
   }, [hedef.bolum_id])   // eslint-disable-line react-hooks/exhaustive-deps
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const diger = gecmis.filter((g) => g.bolum_id !== hedef.bolum_id)
   return (
     <>

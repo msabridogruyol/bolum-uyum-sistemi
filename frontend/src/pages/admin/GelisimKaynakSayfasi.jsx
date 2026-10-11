@@ -226,7 +226,7 @@ export default function GelisimKaynakSayfasi() {
       )}
 
       {!kaynaklar ? (
-        <div className="bos-durum">Yükleniyor…</div>
+        <div className="bos-durum yukleniyor">Yükleniyor…</div>
       ) : kaynaklar.length === 0 ? (
         <div className="bos-durum">Bu filtreye uyan kaynak yok.</div>
       ) : (
