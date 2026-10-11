@@ -11,7 +11,7 @@ export default function OgrenciPortfolyo({ ogrenciId }) {
   const modulAcik = useOkulModulleri()   // [2026-10-10] İş Hayatı → paylaşılan CV
   const yukle = useCallback(() => api.ogrenciPortfolyosu(ogrenciId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')), [ogrenciId])
   useEffect(() => { yukle() }, [yukle])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   async function onay(k) { setHata(null); try { await api.portfolyoDogrula(k.id, !k.dogrulandi); yukle() } catch (e) { setHata(e.detail || 'İşlem yapılamadı.') } }
   const bekleyen = v.kayitlar.filter((k) => !k.dogrulandi).length
   return (

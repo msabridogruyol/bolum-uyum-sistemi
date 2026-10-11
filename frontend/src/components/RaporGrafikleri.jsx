@@ -40,7 +40,7 @@ function GucDagilimi({ guclu, orta, gelisim }) {
   )
 }
 
-function NetCizgisi({ denemeler }) {
+export function NetCizgisi({ denemeler }) {
   const [aktif, setAktif] = useState(null)
   const seriler = ['TYT', 'AYT'].map((o) => ({ o, n: denemeler.filter((d) => d.oturum === o) })).filter((s) => s.n.length > 0)
   const tumu = [...denemeler].sort((a, b) => a.tarih.localeCompare(b.tarih))

@@ -13,6 +13,12 @@ Okul yetkilisi (rehber öğretmen) + süper admin — modül: rehberlik
   DELETE /yonetim/gorusme/{gorusme_id}
 
 Öğrenci: planlanan görüşme Takvim'inde "Rehberlik görüşmesi" olarak görünür (notlar asla gösterilmez).
+
+[2026-10-11] Erken uyarı kalibrasyonu (simülasyonda 6.300 öğrencinin ~%20'si "yüksek" çıkıyordu — alarm yorgunluğu):
+  * Katılım kuralları (hiç açmadı, uzak kaldı, test yarıda, başlamadı, görev bıraktı) tek başına en çok "orta";
+    uzak kalma / yarım test 14–29 gün "düşük", 30+ gün "orta".
+  * Son kullanım günlük aktiflikten (ogrenci_aktif_gunler) okunur; "beni hatırla" ile sistemi kullanan öğrenci "girmiyor" sayılmaz.
+  * "Yüksek": net düşüşü %30+ ya da 3+ farklı "orta" uyarının birleşmesi. 3+ farklı düşük uyarı → "orta".
 """
 import io
 from collections import Counter, defaultdict
@@ -125,12 +131,22 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
     ertelenen = {(r.ogrenci_id, r.kural) for r in db.execute(text(
         "SELECT ogrenci_id, kural FROM risk_ertelemeleri WHERE ogrenci_id = ANY(:idler) AND bitis >= CURRENT_DATE"), {"idler": idler}).all()}
     son_gorusme = dict(db.execute(text("""
-        SELECT ogrenci_id, max(zaman) FROM rehberlik_gorusmeleri WHERE ogrenci_id = ANY(:idler) AND durum = 'yapildi' GROUP BY ogrenci_id
+        SELECT g.ogrenci_id, max(g.zaman) FROM rehberlik_gorusmeleri g JOIN ogrenciler o ON o.id = g.ogrenci_id AND g.okul_id IS NOT DISTINCT FROM o.okul_id
+         WHERE g.ogrenci_id = ANY(:idler) AND g.durum = 'yapildi' GROUP BY g.ogrenci_id
     """), {"idler": idler}).all())
     yaklasan = dict(db.execute(text("""
-        SELECT ogrenci_id, min(zaman) FROM rehberlik_gorusmeleri
-         WHERE ogrenci_id = ANY(:idler) AND durum = 'planlandi' AND zaman >= now() - interval '1 day' GROUP BY ogrenci_id
+        SELECT g.ogrenci_id, min(g.zaman) FROM rehberlik_gorusmeleri g JOIN ogrenciler o ON o.id = g.ogrenci_id AND g.okul_id IS NOT DISTINCT FROM o.okul_id
+         WHERE g.ogrenci_id = ANY(:idler) AND g.durum = 'planlandi' AND g.zaman >= now() - interval '1 day' GROUP BY g.ogrenci_id
     """), {"idler": idler}).all())
+
+    # [2026-10-11] Son kullanım: günlük aktiflik kaydı ("beni hatırla" ile açık kalan oturumlar dahil); yoksa son giriş
+    son_aktif = {}
+    try:
+        son_aktif = dict(db.execute(text("SELECT ogrenci_id, max(gun) FROM ogrenci_aktif_gunler WHERE ogrenci_id = ANY(:idler) GROUP BY 1"),
+                                    {"idler": idler}).all())
+    except Exception:
+        db.rollback()
+    bugun_tr = datetime.now(TR).date()
 
     sonuc = []
     for o in ogrenciler:
@@ -138,18 +154,25 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
         kod, _ = _durum(o, x)
         hesap_gun = _gun(o.olusturulma_zamani) or 0
         giris_gun = _gun(o.son_giris_zamani)
+        sa = son_aktif.get(o.id)
+        if sa is not None:
+            g = (bugun_tr - sa).days
+            giris_gun = g if giris_gun is None else min(giris_gun, g)
+        hic_acmadi = o.son_giris_zamani is None and sa is None and kod not in ("tamamlandi", "devam")   # değerlendirmeye başladıysa açmıştır
         r = []
-        if o.son_giris_zamani is None:
+        # [2026-10-11] KALİBRASYON — katılım kuralları tek başına en çok "orta" (katılım, iyi oluş riski değildir);
+        # "yüksek" yalnızca belirgin net düşüşünde ya da birden çok sorun birleştiğinde (aşağıda).
+        if hic_acmadi:
             if hesap_gun >= 7:
-                r.append(("giris_yok", "orta" if hesap_gun < 21 else "yuksek", f"Hesabı {hesap_gun} gün önce açıldı, hiç giriş yapmadı."))
-        elif giris_gun >= 14:
-            r.append(("uzak_kaldi", "yuksek" if giris_gun >= 30 else "orta", f"Son girişi {giris_gun} gün önce."))
+                r.append(("giris_yok", "dusuk" if hesap_gun < 21 else "orta", f"Hesabı {hesap_gun} gün önce açıldı, sistemi hiç açmadı."))
+        elif giris_gun is not None and giris_gun >= 14:
+            r.append(("uzak_kaldi", "orta" if giris_gun >= 30 else "dusuk", f"Sistemi son {giris_gun} gün önce açtı."))
         if kod == "devam" and (giris_gun is None or giris_gun >= 7):
-            r.append(("yarim_test", "orta", f"Değerlendirmede {x.get('biten', 0)}/{x.get('toplam', 4)} bölümde kaldı."))
-        if kod == "baslamadi" and o.son_giris_zamani is not None and hesap_gun >= 14:
+            r.append(("yarim_test", "orta" if (giris_gun or 0) >= 30 else "dusuk", f"Değerlendirmede {x.get('biten', 0)}/{x.get('toplam', 4)} bölümde kaldı."))
+        if kod == "baslamadi" and not hic_acmadi and hesap_gun >= 14:
             r.append(("test_baslamadi", "dusuk", "Giriş yaptı ama değerlendirmeye başlamadı."))
         for oturum, ort, son, yuzde in netler.get(o.id, []):
-            r.append(("net_dususu", "yuksek" if yuzde >= 25 else "orta", f"{oturum} son deneme {son} net; önceki ortalama {ort} (−%{yuzde})."))
+            r.append(("net_dususu", "yuksek" if yuzde >= 30 else "orta", f"{oturum} son deneme {son} net; önceki ortalama {ort} (−%{yuzde})."))
         if o.id in gorev:
             r.append(("gorev_birakti", "orta", "Önceki haftalarda görev yapıyordu, son 3 haftada hiç tamamlamadı."))
         for baslik, seviye in tarama.get(o.id, []):
@@ -161,6 +184,12 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
             continue
         puan = sum(SEVIYE_PUAN[s] for _, s, _ in r)
         en = max(r, key=lambda t: SEVIYE_PUAN[t[1]])[1]
+        # birden çok sorun birleşince bir üst seviye: 3+ farklı orta → yüksek; 3+ farklı uyarı (düşükler dahil) → en az orta
+        orta_sayi = len({k for k, sv, _ in r if sv == "orta"})
+        if en == "orta" and orta_sayi >= 3:
+            en = "yuksek"
+        elif en == "dusuk" and len({k for k, _, _ in r}) >= 3:
+            en = "orta"
         sg = son_gorusme.get(o.id)
         yk = yaklasan.get(o.id)
         sonuc.append({
@@ -220,8 +249,11 @@ def _satir(r) -> dict:
     }
 
 
-SECIM = """
-    SELECT g.*, o.ad_soyad, o.sinif, o.sube FROM rehberlik_gorusmeleri g JOIN ogrenciler o ON o.id = g.ogrenci_id
+# [2026-10-11] Görüşme notu, yazıldığı okula aittir: öğrenci başka okula geçerse eski okulun notları yeni okulda görünmez
+# (g.okul_id = öğrencinin şu anki okulu). Notlar silinmez; öğrenci eski okuluna dönerse yeniden görünür.
+AYNI_OKUL = "g.okul_id IS NOT DISTINCT FROM o.okul_id"
+SECIM = f"""
+    SELECT g.*, o.ad_soyad, o.sinif, o.sube FROM rehberlik_gorusmeleri g JOIN ogrenciler o ON o.id = g.ogrenci_id AND {AYNI_OKUL}
 """
 
 
@@ -357,10 +389,13 @@ def gorusme_ekle(ogrenci_id: str, istek: GorusmeIstek, db: Session = Depends(get
 
 
 def _gorusme(db: Session, yon: AdminKullanici, gorusme_id: int):
-    g = db.execute(text("SELECT id, ogrenci_id FROM rehberlik_gorusmeleri WHERE id = :i"), {"i": gorusme_id}).first()
+    g = db.execute(text("SELECT id, ogrenci_id, okul_id FROM rehberlik_gorusmeleri WHERE id = :i"), {"i": gorusme_id}).first()
     if g is None:
         raise HTTPException(404, "Görüşme bulunamadı.")
-    return g, _ogrenci_kapsami(db, yon, str(g.ogrenci_id))
+    o = _ogrenci_kapsami(db, yon, str(g.ogrenci_id))
+    if (g.okul_id or None) != (o.okul_id or None):   # [2026-10-11] başka okulda yazılmış not
+        raise HTTPException(404, "Görüşme bulunamadı.")
+    return g, o
 
 
 @router.put("/gorusme/{gorusme_id}", status_code=204)
@@ -388,8 +423,8 @@ def ogrenci_randevulari(db: Session, o: Ogrenci, bas: date) -> list[dict]:
     sonuc = []
     for r in db.execute(text("""
         SELECT id, zaman, tur FROM rehberlik_gorusmeleri
-         WHERE ogrenci_id = :o AND durum = 'planlandi' AND ogrenciye_goster AND zaman >= :bas ORDER BY zaman
-    """), {"o": o.id, "bas": bas}).all():
+         WHERE ogrenci_id = :o AND okul_id IS NOT DISTINCT FROM :ok AND durum = 'planlandi' AND ogrenciye_goster AND zaman >= :bas ORDER BY zaman
+    """), {"o": o.id, "ok": o.okul_id, "bas": bas}).all():
         z = r.zaman.astimezone(TR)
         sonuc.append({"id": f"rehber-{r.id}", "baslik": "Rehberlik görüşmesi" if r.tur != "veli" else "Rehberlik: veli görüşmesi",
                       "aciklama": "Rehber öğretmeninle görüşme", "tur": "toplanti", "tur_adi": "Rehberlik", "ikon": "🧭",

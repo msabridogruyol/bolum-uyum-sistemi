@@ -132,7 +132,7 @@ export default function HataKayitlariSayfasi() {
       {hata && <div className="auth-error">{hata}</div>}
       {secili && <Ayrinti key={secili} id={secili} kapat={() => setSecili(null)} degisti={yukle} />}
 
-      {!veri && !hata && <div className="bos-durum">Yükleniyor…</div>}
+      {!veri && !hata && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
       {veri && (
         <div className="ll">
           {veri.gruplar.map((g) => (

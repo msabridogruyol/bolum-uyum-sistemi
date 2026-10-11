@@ -109,7 +109,7 @@ export default function CvRehberi({ onGit }) {
     if (yeni) setTimeout(() => kok.current?.querySelector(`[data-konu="${yeni}"]`)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 30)
   }
 
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const okunan = v.konular.filter((k) => durum.okunan?.[k.kod]).length
   const sira = v.konular.findIndex((k) => k.kod === acik)
 

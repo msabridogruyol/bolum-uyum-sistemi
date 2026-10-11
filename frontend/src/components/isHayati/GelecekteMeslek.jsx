@@ -146,7 +146,7 @@ export default function GelecekteMeslek({ bolum }) {
   }, [bolum.id])
 
   if (hata) return <div className="auth-error">{hata}</div>
-  if (!v) return <div className="bos-durum">Yükleniyor…</div>
+  if (!v) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
 
   const grupMeslekleri = (kod) => v.meslekler.filter((m) => m.grup_kodu === kod)
 

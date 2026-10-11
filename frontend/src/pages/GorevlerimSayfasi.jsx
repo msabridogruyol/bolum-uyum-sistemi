@@ -23,8 +23,16 @@ export default function GorevlerimSayfasi() {
       <HaftalikGorevler />
       <div className="card">
         <div className="ct">Önceki haftalar</div>
-        {!g ? <div className="bos-durum">Yükleniyor…</div> : g.haftalar.length === 0 ? (
-          <div className="bos-durum">Henüz önceki hafta yok. Hafta bittikçe görevlerin burada birikecek.</div>
+        {!g ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : g.haftalar.length === 0 ? (
+          // [2026-10-11] Boş durum: sistemin nasıl işlediğini anlatır
+          <div className="gv-bos">
+            <div className="gv-bos-bas">🌱 Bu senin ilk haftan</div>
+            <div className="gv-bos-adimlar">
+              <div><b>1</b><span>Her pazartesi sana özel <b>3 küçük görev</b> gelir: biri yolculuğun, biri keşif, biri haftanı değerlendirme.</span></div>
+              <div><b>2</b><span>Bir haftada <b>en az 2 görev</b> bitirirsen serin bir hafta uzar 🔥.</span></div>
+              <div><b>3</b><span>Hafta bitince görevlerin ve cevapların burada birikir; geçmiş haftalarına dönüp bakabilirsin.</span></div>
+            </div>
+          </div>
         ) : g.haftalar.map((h) => (
           <div key={h.hafta} className="gv-hafta">
             <button className="gv-hafta-b" onClick={() => setAcik(acik === h.hafta ? null : h.hafta)}>

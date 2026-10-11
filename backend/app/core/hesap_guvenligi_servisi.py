@@ -266,6 +266,8 @@ def sifreyi_sifirla(db: Session, token: str, yeni_sifre: str) -> str:
     if h is None:
         raise IsKuraliHatasi("Bu bağlantı geçersiz.")
     h.sifre_hash = sifre_hashle(yeni_sifre)
+    from app.core.security import oturumlari_gecersiz_kil
+    oturumlari_gecersiz_kil(h)     # [2026-10-11] açık tüm oturumlar düşer
     h.sifre_degistirmeli = False   # [2026-10-09] geçici şifre artık geçersiz
     h.gecici_sifre_sifreli = None  # [2026-10-10]
     if k.kullanici_tipi == "ogrenci":

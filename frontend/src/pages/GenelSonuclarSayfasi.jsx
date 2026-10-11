@@ -41,7 +41,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
   }, [katmanlar])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!katmanlar || !katmanSonuclari || !k5Durum) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!katmanlar || !katmanSonuclari || !k5Durum) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   const tamamlanan = katmanlar.filter((k) => k.durum === 'tamamlandi').length
   const tumTamam = ANA_KATMANLAR.every((kod) => katmanSonuclari[kod] !== null)

@@ -20,7 +20,7 @@ function Yanitla({ id, onBitti, onGeri }) {
   const [bekle, setBekle] = useState(false)
   const [bitti, setBitti] = useState(null)
   useEffect(() => { api.anketAc(id).then(setA).catch((e) => setHata(e.detail || 'Anket açılamadı.')) }, [id])
-  if (!a) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!a) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const zorunlu = a.sorular.filter((s) => s.zorunlu)
   const tamam = zorunlu.filter((s) => c[s.id] != null && c[s.id] !== '' && !(Array.isArray(c[s.id]) && !c[s.id].length)).length
   async function gonder() {
@@ -90,7 +90,7 @@ export default function AnketlerSayfasi() {
   useEffect(() => { yukle() }, [])
   const ac = (id) => setParams(id ? { anket: id } : {})
   if (acik) return <div className="pg"><Yanitla id={Number(acik)} onBitti={yukle} onGeri={() => ac(null)} /></div>
-  if (!v) return <div className="pg"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+  if (!v) return <div className="pg"><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></div>
   const bekleyen = v.anketler.filter((a) => a.acik && !a.yanitladim)
   const biten = v.anketler.filter((a) => a.yanitladim)
   return (

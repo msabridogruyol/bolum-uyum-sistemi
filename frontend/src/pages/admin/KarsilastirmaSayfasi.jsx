@@ -16,7 +16,7 @@ export default function KarsilastirmaSayfasi() {
   useEffect(() => { api.okulKarsilastirma().then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [])
   const m = v?.metrikler.find((x) => x.k === metrik)
   const sirali = useMemo(() => (v ? [...v.okullar].filter((o) => o[metrik] != null).sort((a, b) => b[metrik] - a[metrik]) : []), [v, metrik])
-  if (!v) return <div className="pg pg-genis"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+  if (!v) return <div className="pg pg-genis"><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></div>
   const enCok = m.tur === 'yuzde' ? 100 : Math.max(1, ...sirali.map((o) => o[metrik]))
   const gizliSayi = v.okullar.filter((o) => (o.gizli_alanlar || []).includes(metrik)).length
   const eksik = v.okullar.length - sirali.length - gizliSayi

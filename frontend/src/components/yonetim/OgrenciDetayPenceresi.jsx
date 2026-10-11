@@ -160,7 +160,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
   const okulDegistir = (okulId) => islem(async () => { await api.ogrenciOkulDegistir(ogrenciId, Number(okulId)); yukle(); onDegisti?.() })
 
   if (!d) {
-    return <Pencere baslik="Öğrenci" onKapat={onKapat}>{hata ? <div className="auth-error">{hata}</div> : <div className="bos-durum">Yükleniyor…</div>}</Pencere>
+    return <Pencere baslik="Öğrenci" onKapat={onKapat}>{hata ? <div className="auth-error">{hata}</div> : <div className="bos-durum yukleniyor">Yükleniyor…</div>}</Pencere>
   }
   const h = d.hesap
   const st = d.istatistik

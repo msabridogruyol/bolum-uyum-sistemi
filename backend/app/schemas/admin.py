@@ -83,6 +83,7 @@ class KontrolPaneliOut(BaseModel):
     toplam_ogrenci_sayisi: int
     tamamlanan_tur_sayisi: int
     yarida_birakma_orani: float | None  # None = hiç katman oturumu yok
+    canli_denetim: list[dict] = []      # [2026-10-11] app.core.canli_denetim.maddeler()
 
 
 # --- E2 — Pipeline Durumu (STUB) ---

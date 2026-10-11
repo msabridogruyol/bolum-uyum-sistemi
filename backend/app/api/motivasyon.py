@@ -122,4 +122,6 @@ def haftalik_mesaj(yks: dict | None, bugun: date | None = None) -> str:
 @router.get("/motivasyon")
 def motivasyon(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     yks = yks_bilgisi(db, o.sinif)
-    return {"yks": yks, "mesaj": haftalik_mesaj(yks)}
+    from app.core.aktiflik import aktiflik_ozeti
+    # [2026-10-11] öğrencinin kendi aktiflik serisi (ana sayfa): son 14 gün
+    return {"yks": yks, "mesaj": haftalik_mesaj(yks), "aktiflik": aktiflik_ozeti(db, o.id, 14)}

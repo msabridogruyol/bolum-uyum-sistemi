@@ -28,7 +28,7 @@ function YetkinlikProfili({ bolumId }) {
     return () => { iptal = true }
   }, [bolumId])
   if (hata) return <div className="ps" style={{ margin: 0 }}>{hata}</div>
-  if (!veri) return <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
+  if (!veri) return <div className="bos-durum yukleniyor" style={{ padding: 16 }}>Yükleniyor…</div>
   if (!veri.katmanlar.length) return <div className="ps" style={{ margin: 0 }}>Bu bölümün yetkinlik profilini şu an gösteremiyoruz. Genel Bakış ve Meslekler sekmelerine göz atabilirsin.</div>
   const katmanlar = veri.katmanlar.map((k) => ({ ...k, liste: k.one_cikanlar || k.degiskenler.filter((d) => d.one_cikan) }))
   const toplam = katmanlar.reduce((t, k) => t + k.liste.length, 0)
@@ -402,7 +402,7 @@ export function BolumBilgiIcerik({ bolumId, ad, baslangicSekme = 'genel', onKapa
       </div>
       <div style={{ padding: 16, ...(gomulu ? { border: '1.5px solid var(--bor)', borderTop: 'none', borderRadius: '0 0 16px 16px', background: 'var(--bg)' } : { overflowY: 'auto', flex: 1, minHeight: 0 }) }}>
         {hata ? <div className="ps" style={{ margin: 0 }}>{hata}</div>
-          : !bilgi ? <div className="ps" style={{ margin: 0 }}>Yükleniyor…</div>
+          : !bilgi ? <div className="bos-durum yukleniyor" style={{ padding: 16 }}>Yükleniyor…</div>
             : sekme === 'genel' ? <GenelBakis bilgi={bilgi} />
               : sekme === 'meslek' ? <Meslekler detay={d} bolumId={bilgi?.bolum_id || bilgi?.id || bolumId} />
                 : sekme === 'jargon' ? <MeslekDili terimler={bilgi.jargon} />

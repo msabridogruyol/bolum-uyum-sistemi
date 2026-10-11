@@ -40,7 +40,7 @@ export default function TakvimSayfasi() {
   }
   const sil = async (e) => { if (window.confirm('Bu not silinsin mi?')) { await api.takvimSil(e.id).catch(() => {}); yukle() } }
 
-  if (!v) return <div className="pg"><div className={hata ? 'auth-error' : 'bos-durum'}>{hata || 'Yükleniyor…'}</div></div>
+  if (!v) return <div className="pg"><div className={hata ? 'auth-error' : 'bos-durum yukleniyor'}>{hata || 'Yükleniyor…'}</div></div>
   const yaklasan = v.etkinlikler.find((e) => e.baslangic >= v.bugun && e.kaynak !== 'kisisel')
   return (
     <div className="pg pg-genis">

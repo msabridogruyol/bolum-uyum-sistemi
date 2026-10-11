@@ -97,7 +97,7 @@ export default function IlgiKulupSekmesi() {
   const [testte, setTestte] = useState(false)
   useEffect(() => { api.ilgiTesti().then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [])
   if (hata) return <div className="auth-error">{hata}</div>
-  if (!v) return <div className="bos-durum">Yükleniyor…</div>
+  if (!v) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   if (!v.sonuc || testte) {
     return (
       <>

@@ -39,7 +39,7 @@ export default function BolumlerimSayfasi() {
         ))}
       </nav>
       <div className="gomulu-sayfa" key={s.kod || 'uygun'}>
-        <Suspense fallback={<div className="bos-durum">Yükleniyor…</div>}>
+        <Suspense fallback={<div className="bos-durum yukleniyor">Yükleniyor…</div>}>
           {s.kod === '' && <SonucSayfasi gomulu />}
           {s.kod === 'tum' && <KesfetSayfasi gomulu />}
           {s.kod === 'karsilastir' && <KarsilastirmaSayfasi gomulu />}

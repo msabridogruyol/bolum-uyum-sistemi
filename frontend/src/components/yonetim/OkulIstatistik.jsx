@@ -359,7 +359,7 @@ export default function OkulIstatistik({ okulId }) {
           title="Bu ekrandaki tüm istatistikler, seçili filtrelerle, sayfa sayfa Excel'de">📊 {excel ? 'Hazırlanıyor…' : 'Excel'}</button>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
-      {!v ? <div className="bos-durum">{hata ? '' : 'Yükleniyor…'}</div> : (
+      {!v ? <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata ? '' : 'Yükleniyor…'}</div> : (
         <div style={{ opacity: bekle ? 0.6 : 1, transition: 'opacity .2s' }}>
           <div className="yp-ince ois-kapsam">
             <b>{v.filtre.etiket}</b> · {tarihTR(v.filtre.bas)} – {tarihTR(v.filtre.bit)} · test hesapları hariç

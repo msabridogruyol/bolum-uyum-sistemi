@@ -6,7 +6,7 @@ from fastapi.security import OAuth2PasswordBearer
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
-from app.core.security import token_coz
+from app.core.security import token_coz, token_hesaba_uygun_mu
 from app.models import Ogrenci, AdminKullanici
 from app.core.okul_erisim import okul_acik_olmali, hesap_okulu_acik_olmali
 
@@ -34,7 +34,7 @@ def get_mevcut_ogrenci(
         raise _YETKISIZ
 
     ogrenci = db.get(Ogrenci, ogrenci_id)
-    if ogrenci is None:
+    if ogrenci is None or not token_hesaba_uygun_mu(payload, ogrenci):   # [2026-10-11] şifre sıfırlandıysa eski oturum düşer
         raise _YETKISIZ
     okul_acik_olmali(db, ogrenci.okul_id)   # [2026-10-11] okulun sistemi kapalıysa 423
     return ogrenci
@@ -58,7 +58,7 @@ def get_mevcut_admin(
         raise _YETKISIZ
 
     admin = db.get(AdminKullanici, admin_id)
-    if admin is None or admin.rol != "super_admin" or admin.aktif_mi is False:
+    if admin is None or admin.rol != "super_admin" or admin.aktif_mi is False or not token_hesaba_uygun_mu(payload, admin):
         raise _YETKISIZ
     return admin
 
@@ -79,7 +79,8 @@ def get_mevcut_yonetim(
     except (KeyError, ValueError):
         raise _YETKISIZ
     hesap = db.get(AdminKullanici, kid)
-    if hesap is None or hesap.rol not in YONETIM_ROLLERI or hesap.aktif_mi is False or hesap.rol != payload.get("rol"):
+    if (hesap is None or hesap.rol not in YONETIM_ROLLERI or hesap.aktif_mi is False or hesap.rol != payload.get("rol")
+            or not token_hesaba_uygun_mu(payload, hesap)):
         raise _YETKISIZ
     hesap_okulu_acik_olmali(db, hesap, hesap.rol)   # [2026-10-11] okul yetkilisinin okulu kapalıysa 423
     return hesap
@@ -104,6 +105,7 @@ def get_opsiyonel_ogrenci(
     if payload is None or payload.get("tip") != "access" or payload.get("rol") != "ogrenci":
         return None
     try:
-        return db.get(Ogrenci, uuid.UUID(payload["sub"]))
+        o = db.get(Ogrenci, uuid.UUID(payload["sub"]))
     except (KeyError, ValueError):
         return None
+    return o if o is not None and token_hesaba_uygun_mu(payload, o) else None

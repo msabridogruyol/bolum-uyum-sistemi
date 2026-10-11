@@ -19,7 +19,7 @@ export default function OkulPaketKarti({ okulId, superAdmin, onDegisti }) {
     if (superAdmin) api.paketler().then((d) => setPaketler(d.paketler)).catch(() => {})
   }, [okulId, superAdmin])   // eslint-disable-line react-hooks/exhaustive-deps
 
-  if (!v || !secim) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v || !secim) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const paketMod = new Set((paketler.find((p) => p.kod === secim.paket) || (secim.paket === v.paket ? { moduller: v.paket_modulleri } : { moduller: [] })).moduller)
 
   function paketSec(kod) {

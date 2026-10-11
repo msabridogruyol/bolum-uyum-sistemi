@@ -12,7 +12,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
   }, [])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!k5Durum) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!k5Durum) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   const hicDalYok = k5Durum.acilan.length === 0 && k5Durum.ilgi_gosterilen.length === 0
   const siraliDallar = [...k5Durum.acilan].sort((a, b) => b.puan - a.puan)

@@ -54,7 +54,7 @@ export default function YoneticilerSayfasi() {
     try { await api.yoneticiSil(id); setSilinecek(null); yukle() } catch (err) { setHata(err.detail || 'Silinemedi.') }
   }
 
-  if (!yoneticiler) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!yoneticiler) return <div className="pg pg-genis"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
   const superler = yoneticiler.filter((y) => y.rol === 'super_admin')
   const yetkililer = yoneticiler.filter((y) => y.rol === 'okul_yetkilisi')
 

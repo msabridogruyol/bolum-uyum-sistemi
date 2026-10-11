@@ -798,7 +798,7 @@ export default function SorularSayfasi() {
         </div>
       )}
 
-      {!veri ? <div className="bos-durum">Yükleniyor…</div> : (
+      {!veri ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
         <>
           <div style={{ fontSize: 12, color: 'var(--tx3)', fontWeight: 600, marginBottom: 10 }}>
             {veri.toplam_soru_sayisi} soru bulundu — Sayfa {veri.su_anki_sayfa} / {veri.toplam_sayfa_sayisi}

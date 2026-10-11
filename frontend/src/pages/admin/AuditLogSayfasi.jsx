@@ -10,7 +10,7 @@ export default function AuditLogSayfasi() {
   }, [])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!kayitlar) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!kayitlar) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   return (
     <div className="pg pg-genis">

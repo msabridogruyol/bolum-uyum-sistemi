@@ -216,7 +216,7 @@ export default function FilizSohbet() {
           {gorunum === 'gecmis' && (
             <div className="filiz-mesajlar">
               <div className="filiz-gecmis-bas">🕘 Geçmiş sohbetlerin</div>
-              {gecmis === null && <div className="bos-durum" style={{ padding: 20 }}>Yükleniyor…</div>}
+              {gecmis === null && <div className="bos-durum yukleniyor" style={{ padding: 20 }}>Yükleniyor…</div>}
               {gecmis?.length === 0 && <div className="filiz-not">Henüz bitmiş bir sohbetin yok. Bir sohbeti “↺ Yeni sohbet” ile bitirince özetini burada görürsün.</div>}
               {gecmis?.map((g) => (
                 <button key={g.oturum_id} className="filiz-gecmis-oge" onClick={() => sohbetiAc(g.oturum_id)}>
@@ -229,7 +229,7 @@ export default function FilizSohbet() {
           )}
           {gorunum === 'okuma' && (
             <div className="filiz-mesajlar">
-              {!okunan && <div className="bos-durum" style={{ padding: 20 }}>Yükleniyor…</div>}
+              {!okunan && <div className="bos-durum yukleniyor" style={{ padding: 20 }}>Yükleniyor…</div>}
               {okunan?.hata && <div className="filiz-not">Sohbet açılamadı.</div>}
               {okunan?.mesajlar && (
                 <>

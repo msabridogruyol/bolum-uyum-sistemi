@@ -1,5 +1,6 @@
 // [2026-10-10] Okul denemeleri: Excel şablonu indir → doldur → önizle → kaydet; deneme sonuçları, şube ve ders ortalamaları.
 import { useCallback, useEffect, useState } from 'react'
+import { NetCizgisi } from '../RaporGrafikleri'   // [2026-10-11] okul ortalaması eğilimi
 import { api } from '../../api/client'
 import { Pencere, base64Indir } from './ortak'
 
@@ -138,7 +139,7 @@ function DenemeDetayi({ id, onKapat, onSilindi }) {
   const [hata, setHata] = useState(null)
   useEffect(() => { api.okulDenemesi(id).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [id])
   async function sil() { try { await api.okulDenemesiSil(id); onSilindi() } catch (e) { setHata(e.detail || 'Silinemedi.') } }
-  if (!v) return <Pencere baslik="Deneme" onKapat={onKapat}><div className="bos-durum">{hata || 'Yükleniyor…'}</div></Pencere>
+  if (!v) return <Pencere baslik="Deneme" onKapat={onKapat}><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></Pencere>
   const d = v.deneme
   const enCok = Math.max(1, ...v.subeler.map((s) => s.ortalama || 0))
   return (
@@ -199,7 +200,7 @@ export default function OkulDenemeleri({ okulId }) {
   const [hata, setHata] = useState(null)
   const yenile = useCallback(() => api.okulDenemeleri(okulId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')), [okulId])
   useEffect(() => { yenile() }, [yenile])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   return (
     <>
       <div className="yp-ince" style={{ marginBottom: 12, lineHeight: 1.6 }}>
@@ -210,6 +211,7 @@ export default function OkulDenemeleri({ okulId }) {
       {yukle
         ? <Yukleme okulId={okulId} onVazgec={() => setYukle(false)} onBitti={(r) => { setYukle(false); setBilgi(`${r.kaydedilen} öğrencinin sonucu kaydedildi${r.atlanan ? `, ${r.atlanan} satır atlandı` : ''}.`); yenile() }} />
         : <button className="btn" style={{ marginBottom: 14 }} onClick={() => { setYukle(true); setBilgi(null) }}>📤 Yeni deneme yükle</button>}
+      {v.denemeler.length > 0 && <DenemeGrafikleri denemeler={v.denemeler} />}
       <div className="card">
         <div className="ct">Yüklenen denemeler</div>
         {v.denemeler.length === 0 ? <div className="bos-durum">Henüz okul denemesi yüklenmedi.</div> : (
@@ -231,5 +233,39 @@ export default function OkulDenemeleri({ okulId }) {
       </div>
       {detay && <DenemeDetayi id={detay} onKapat={() => setDetay(null)} onSilindi={() => { setDetay(null); yenile() }} />}
     </>
+  )
+}
+
+// [2026-10-11] Grafikler: denemeden denemeye okul ortalaması (TYT / AYT) + son denemede şube ortalamaları
+function DenemeGrafikleri({ denemeler }) {
+  const seri = denemeler.filter((d) => d.ortalama != null && (d.oturum === 'TYT' || d.oturum === 'AYT'))
+    .map((d) => ({ id: d.id, tarih: d.tarih, oturum: d.oturum, ad: d.ad, toplam_net: d.ortalama }))
+  const son = denemeler.find((d) => d.subeler?.length > 1) || denemeler[0]
+  const enCok = Math.max(1, ...(son?.subeler || []).map((x) => x.ortalama || 0))
+  return (
+    <div className="card gr-rapor" style={{ marginBottom: 14 }}>
+      <div className="rg-izgara">
+        <div className="gr-panel">
+          <div className="gr-baslik">Okul ortalaması eğilimi</div>
+          <div className="gr-alt">Her okul denemesinde öğrencilerin ortalama toplam neti</div>
+          {seri.length >= 2 ? <NetCizgisi denemeler={seri} /> : <div className="gr-bos">Eğilim için en az 2 deneme gerekir. Bir deneme daha yükleyince burada çizgi grafik görünür.</div>}
+        </div>
+        <div className="gr-panel">
+          <div className="gr-baslik">Şube ortalamaları</div>
+          <div className="gr-alt">{son ? `${son.oturum} · ${son.ad} — şube başına ortalama net` : ''}</div>
+          {son?.subeler?.length ? (
+            <div className="gr-yatay">
+              {son.subeler.map((x) => (
+                <div key={x.etiket} className="gr-yatay-satir" title={`${x.etiket}: ${x.ortalama} net · ${x.n} öğrenci`}>
+                  <span className="gr-yatay-ad">{x.etiket} <small style={{ color: 'var(--tx3)', fontWeight: 600 }}>({x.n})</small></span>
+                  <span className="gr-yatay-iz"><span className="gr-yatay-dolu" style={{ width: `${((x.ortalama || 0) / enCok) * 100}%`, background: 'var(--pu)' }} /></span>
+                  <span className="gr-yatay-deger">{x.ortalama}</span>
+                </div>
+              ))}
+            </div>
+          ) : <div className="gr-bos">Şube bilgisi olan sonuç yok.</div>}
+        </div>
+      </div>
+    </div>
   )
 }

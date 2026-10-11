@@ -13,7 +13,7 @@ const GUVENLIK_DENETIMI = [
   { baslik: 'Hassas veri sızıntısı', durum: 'iyi', detay: 'Şifre hash\'i hiçbir yanıtta dönmüyor' },
   { baslik: 'Audit log kapsamı', durum: 'iyi', detay: 'Kritik işlemler (onay, rol, durum değişikliği) kayıt altında' },
   { baslik: 'Toplu yükleme boyut sınırı', durum: 'iyi', detay: 'Tablo dosyaları en çok 10 MB / 20.000 satır, görseller 1–2 MB, her istek en çok 25 MB (aşımda 413)' },
-  { baslik: 'İstek sıklığı sınırlaması', durum: 'iyi', detay: 'Giriş/kod/şifre uçları IP başına 20/dk·150/sa, yükleme-rapor 20/dk, genel 300/dk (aşımda 429); süreç içi sayaç — Parametreler\'den ayarlanır' },
+  { baslik: 'İstek sıklığı sınırlaması', durum: 'iyi', detay: 'Giriş/kod/şifre uçları IP başına 120/dk·2000/sa (bir laboratuvar aynı anda girebilir) + hesap başına hatalı şifre kilidi, yükleme-rapor 20/dk, genel 300/dk (aşımda 429); süreç içi sayaç — Parametreler\'den ayarlanır' },
 ]
 
 const DURUM_RENK = { iyi: 'var(--gr)', dikkat: 'var(--am)', kritik: 'var(--re)' }
@@ -42,7 +42,7 @@ export default function KontrolPaneliSayfasi() {
   }, [])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!veri) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!veri) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
   const o = dikkat?.ozet
 
   return (
@@ -101,13 +101,16 @@ export default function KontrolPaneliSayfasi() {
         </div>
       </div>
 
+      <SozlukBildirimleri />
+
       <div className="card" style={{ marginTop: 14 }}>
         <div className="ct">Güvenlik Durumu</div>
         <div className="ps" style={{ margin: '0 0 8px', fontSize: 11.5 }}>
-          Elle yapılan kod denetiminin sonucu — canlı/otomatik tarama değildir.
+          Üstteki "canlı kontrol" maddeleri sunucunun gerçek ayarlarından gelir; diğerleri elle yapılan kod denetiminin sonucudur.
         </div>
         <div className="kp-guvenlik">
-          {GUVENLIK_DENETIMI.map((d) => (
+          {/* [2026-10-11] Canlı maddeler (sunucunun gerçek ayarları) önce, statik kod denetimi sonra */}
+          {[...(veri?.canli_denetim || []).map((d) => ({ ...d, detay: `${d.detay} · canlı kontrol` })), ...GUVENLIK_DENETIMI].map((d) => (
             <div key={d.baslik} style={{ display: 'flex', gap: 10, alignItems: 'flex-start', padding: '8px 0', borderBottom: '1px solid var(--bor)' }}>
               <span style={{ color: DURUM_RENK[d.durum], fontWeight: 700, fontSize: 13, flexShrink: 0 }}>{DURUM_IKON[d.durum]}</span>
               <div>
@@ -118,6 +121,31 @@ export default function KontrolPaneliSayfasi() {
           ))}
         </div>
       </div>
+    </div>
+  )
+}
+
+// [2026-10-11] Öğrencilerin "Bu tanımda hata var" bildirimleri (sözlük: frontend/src/yardimci/sozlukGenis.json + sozluk.js)
+function SozlukBildirimleri() {
+  const [v, setV] = useState(null)
+  const yukle = () => api.sozlukBildirimleri('yeni').then(setV).catch(() => setV({ bildirimler: [], yeni_sayisi: 0 }))
+  useEffect(() => { yukle() }, [])
+  if (!v || v.bildirimler.length === 0) return null
+  return (
+    <div className="card" style={{ marginTop: 14 }}>
+      <div className="ct">📖 Sözlük hata bildirimleri <span className="yp-ince">({v.yeni_sayisi} açık)</span></div>
+      <table className="yp-tablo">
+        <thead><tr><th>Kelime</th><th>Not</th><th>Okul</th><th>Tarih</th><th /></tr></thead>
+        <tbody>
+          {v.bildirimler.map((b) => (
+            <tr key={b.id}>
+              <td><b>{b.terim}</b></td><td>{b.aciklama || '—'}</td><td className="yp-ince">{b.okul || '—'}</td>
+              <td className="yp-ince">{new Date(b.olusturulma_zamani).toLocaleDateString('tr-TR')}</td>
+              <td><button className="yp-mini" onClick={() => api.sozlukBildirimDurumu(b.id, 'cozuldu').then(yukle)}>✓ Çözüldü</button></td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   )
 }

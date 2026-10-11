@@ -156,7 +156,7 @@ export default function ZorGunler({ bolum }) {
   }
   const kapat = () => { setTur(null); setOzet(null); yukle() }
 
-  if (!z && !hata) return <div className="bos-durum">Yükleniyor…</div>
+  if (!z && !hata) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   if (!z) return <div className="auth-error">{hata}</div>
   if (!z.alan_senaryo_sayisi && !z.meslekler.some((m) => m.ozel)) {
     return <div className="card bos-durum">Bu bölüm için zor gün senaryoları henüz hazırlanmadı.</div>

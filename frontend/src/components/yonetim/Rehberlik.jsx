@@ -151,7 +151,7 @@ function ErkenUyari({ okulId, veri, yenile, ogrenciler, formAc, detayAc }) {
   const [kural, setKural] = useState('')
   const [seviye, setSeviye] = useState('')
   const [hata, setHata] = useState(null)
-  if (!veri) return <div className="bos-durum">Yükleniyor…</div>
+  if (!veri) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   const liste = veri.ogrenciler.filter((s) => (!kural || s.uyarilar.some((u) => u.kural === kural)) && (!seviye || s.seviye === seviye))
   async function ertele(s) {
     setHata(null)
@@ -211,7 +211,7 @@ function Gorusmeler({ okulId, veri, yenile, formAc }) {
   const [ara, setAra] = useState('')
   const [hata, setHata] = useState(null)
   const [indir, setIndir] = useState(false)
-  if (!veri) return <div className="bos-durum">Yükleniyor…</div>
+  if (!veri) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   const duzenle = (g, ek) => formAc({ mevcut: ek ? { ...g, ...ek } : g })
   const q = ara.trim().toLocaleLowerCase('tr')
   const gecmis = veri.gecmis.filter((g) => (!konu || g.konu === konu) && (!q || `${g.ad_soyad} ${g.baslik || ''} ${g.notlar || ''}`.toLocaleLowerCase('tr').includes(q)))
@@ -296,7 +296,7 @@ export function OgrenciRehberlik({ ogrenciId, ogrenci }) {
   const [hata, setHata] = useState(null)
   const yenile = useCallback(() => api.ogrenciGorusmeleri(ogrenciId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')), [ogrenciId])
   useEffect(() => { yenile() }, [yenile])
-  if (!v) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const kim = { id: ogrenciId, ad_soyad: ogrenci?.ad_soyad, sinif_metni: ogrenci?.sinif_metni }
   return (
     <div>

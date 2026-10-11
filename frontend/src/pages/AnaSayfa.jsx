@@ -61,7 +61,7 @@ export default function AnaSayfa() {
   }, [ozet])
 
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!katmanlar || !ozet || !katmanSonuclari || !k5Durum) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!katmanlar || !ozet || !katmanSonuclari || !k5Durum) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   const ilkAd = (profil?.ad_soyad || 'Öğrenci').split(' ')[0]
   const tamamlananYuzde = katmanlar.length ? Math.round((ozet.tamamlanan_katman_sayisi / ozet.toplam_ana_katman_sayisi) * 100) : 0
@@ -104,6 +104,18 @@ export default function AnaSayfa() {
             {profilSkoru !== null && <><span className="as-kimlik-ayrac">·</span><span>En yüksek uyum <b className="as-kimlik-skor">{profilSkoru}</b>/100</span></>}
             <span className="as-kimlik-git">Profilim →</span>
           </div>
+          {/* [2026-10-11] Kendi aktiflik serin: son 14 gün (sistemi açtığın günler) */}
+          {motivasyon?.aktiflik && (
+            <div className="as-aktif" title="Sistemi açtığın günler (her gün bir kez sayılır)">
+              <span className="as-aktif-noktalar" aria-hidden="true">
+                {motivasyon.aktiflik.takvim.map((g) => <i key={g.gun} className={g.aktif ? 'aktif' : ''} />)}
+              </span>
+              <span>
+                Son 2 haftada <b>{motivasyon.aktiflik.aktif_gun} gün</b> buradaydın
+                {motivasyon.aktiflik.seri > 1 ? <> · <b>{motivasyon.aktiflik.seri} gündür</b> üst üste 🔥</> : ''}
+              </span>
+            </div>
+          )}
         </div>
 
         {hedefBolumAdi && (

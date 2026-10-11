@@ -71,7 +71,7 @@ export default function ProfilAyarlariSayfasi() {
     e.preventDefault()
     setHata(null)
     setBasari(null)
-    if (!taslak.sinif?.trim()) {
+    if (!profil?.okul && !taslak.sinif?.trim()) {
       setHata('Devam etmek için sınıfını seçmelisin.')
       return
     }
@@ -172,7 +172,7 @@ export default function ProfilAyarlariSayfasi() {
   }
 
   if (hata && !profil) return <div className="pg"><div className="bos-durum">{hata}</div></div>
-  if (!taslak) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!taslak) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   return (
     <div className="pg">
@@ -233,10 +233,17 @@ export default function ProfilAyarlariSayfasi() {
             </div>
             <div className="auth-field" style={{ flex: 1 }}>
               <label className="auth-label">Sınıf <span style={{ color: 'var(--re)' }}>*</span></label>
-              <select className="auth-input" value={taslak.sinif || ''} onChange={(e) => alanGuncelle('sinif', e.target.value)} required>
-                <option value="">Seç…</option>
-                {['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].concat(taslak.sinif && !['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].includes(taslak.sinif) ? [taslak.sinif] : []).map((s) => <option key={s} value={s}>{s}</option>)}
-              </select>
+              {/* [2026-10-11] Okula bağlı öğrencinin sınıfını okul belirler (yanlış sınıf seçilirse raporlar ve şube listeleri bozulur) */}
+              {profil?.okul ? (
+                <div className="auth-input okul-sabit" title="Sınıfını okulun belirler. Yanlışsa rehber öğretmenine söyle.">
+                  {[profil?.sinif, profil?.sube].filter(Boolean).join(' / ') || 'Okulun henüz girmedi'}
+                </div>
+              ) : (
+                <select className="auth-input" value={taslak.sinif || ''} onChange={(e) => alanGuncelle('sinif', e.target.value)} required>
+                  <option value="">Seç…</option>
+                  {['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].concat(taslak.sinif && !['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].includes(taslak.sinif) ? [taslak.sinif] : []).map((s) => <option key={s} value={s}>{s}</option>)}
+                </select>
+              )}
             </div>
           </div>
 

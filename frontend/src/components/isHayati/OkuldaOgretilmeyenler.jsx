@@ -112,7 +112,7 @@ export default function OkuldaOgretilmeyenler() {
   const [acik, setAcik] = useState(null)
   useEffect(() => { api.isHayatiDersler().then(setV).catch((e) => setHata(e.detail || 'Dersler yüklenemedi.')) }, [])
   if (hata) return <div className="auth-error">{hata}</div>
-  if (!v) return <div className="bos-durum">Yükleniyor…</div>
+  if (!v) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
 
   const ders = v.dersler.find((d) => d.kod === acik)
   if (ders) {

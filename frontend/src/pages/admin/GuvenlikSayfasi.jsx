@@ -28,7 +28,7 @@ function TurDetayModal({ turId, onKapat }) {
     }} onClick={onKapat}>
       <div className="card" style={{ maxWidth: 640, width: '100%', maxHeight: '85vh', overflowY: 'auto' }} onClick={(e) => e.stopPropagation()}>
         {hata && <div className="auth-error">{hata}</div>}
-        {!detay ? <div className="bos-durum">Yükleniyor…</div> : (
+        {!detay ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
           <>
             <div className="ct" style={{ marginBottom: 4 }}>{detay.ozet.ogrenci_adi}</div>
             <div className="ps" style={{ margin: '0 0 16px' }}>
@@ -110,7 +110,7 @@ export default function GuvenlikSayfasi() {
         </select>
       </div>
 
-      {!turlar ? <div className="bos-durum">Yükleniyor…</div> : (
+      {!turlar ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
         <div className="ll">
           {turlar.map((t) => (
             <div key={t.tur_id} className="lc" onClick={() => setAcikTurId(t.tur_id)}>

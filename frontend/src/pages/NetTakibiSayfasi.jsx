@@ -429,7 +429,7 @@ export default function NetTakibiSayfasi() {
   const git = (k) => setParams(k === 'denemeler' ? {} : { sekme: k }, { replace: true })
 
   if (hata) return <div className="pg"><div className="auth-error">{hata}</div></div>
-  if (!yapi) return <div className="pg"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!yapi) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
   return (
     <div className="pg pg-genis">
       <div className="ph">

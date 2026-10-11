@@ -9,7 +9,7 @@ export default function ListemSekmesi() {
   const [secili, setSecili] = useState([])
   const navigate = useNavigate()
 
-  if (liste === null) return <div className="bos-durum">Yükleniyor…</div>
+  if (liste === null) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   if (liste.length === 0) {
     return (
       <div className="veri-yok-grafik" style={{ padding: '36px 18px' }}>

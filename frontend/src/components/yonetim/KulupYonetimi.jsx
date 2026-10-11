@@ -56,7 +56,7 @@ export default function KulupYonetimi({ okulId }) {
   const [mesaj, setMesaj] = useState(null)
   const yukle = () => api.okulKulupleri(okulId).then(setV).catch((e) => setMesaj({ hata: true, metin: e.detail || 'Yüklenemedi.' }))
   useEffect(() => { yukle() }, [okulId])
-  if (!v) return mesaj ? <div className="auth-error">{mesaj.metin}</div> : <div className="bos-durum">Yükleniyor…</div>
+  if (!v) return mesaj ? <div className="auth-error">{mesaj.metin}</div> : <div className="bos-durum yukleniyor">Yükleniyor…</div>
 
   const kaydet = async (f) => {
     const veri = { ...f, id: undefined, ilgi_listesi: undefined, oneri_sayisi: undefined, uye_sayisi: undefined, bekleyen_talep: undefined }
@@ -156,7 +156,7 @@ export default function KulupYonetimi({ okulId }) {
 export function OgrenciIlgi({ ogrenciId }) {
   const [v, setV] = useState(null)
   useEffect(() => { api.ogrenciIlgi(ogrenciId).then(setV).catch(() => setV({ hata: true })) }, [ogrenciId])
-  if (!v) return <div className="bos-durum">Yükleniyor…</div>
+  if (!v) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   if (v.hata) return <div className="auth-error">Yüklenemedi.</div>
   if (!v.sonuc) return <div className="bos-durum">Öğrenci kısa ilgi testini henüz çözmedi (Kulüplerim sayfası).</div>
   const sirali = v.boyutlar.map((b) => ({ ...b, puan: v.sonuc.puanlar[b.kod] ?? 0 })).sort((a, b) => b.puan - a.puan)

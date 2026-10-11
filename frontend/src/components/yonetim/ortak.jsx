@@ -59,6 +59,8 @@ export function SifreHucresi({ gecici, degistirmeli }) {
   const [goster, setGoster] = useState(false)
   if (!degistirmeli) return <span className="yp-durum yp-d-yesil">✓ Kendi şifresi</span>
   if (!gecici) return <span className="yp-durum yp-d-amber" title="Eski kayıt: geçici şifre saklanmamış. Şifre sıfırlayarak yenisini alın.">Geçici · görünmüyor</span>
+  // [2026-10-11] Okul yetkilisi, meslektaşının geçici şifresini göremez (yalnızca süper admin)
+  if (gecici === '(gizli)') return <span className="yp-durum yp-d-amber" title="Geçici şifreyi yalnızca sistem yöneticisi görebilir. Kişi ilk girişinde kendi şifresini belirler.">Geçici şifre verildi</span>
   return (
     <span className="sifre-hucre" onClick={(e) => e.stopPropagation()}>
       <code>{goster ? gecici : '••••-••••'}</code>

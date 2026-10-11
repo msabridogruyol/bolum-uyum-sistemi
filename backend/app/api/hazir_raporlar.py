@@ -78,7 +78,7 @@ def hazir_raporlar(okul_id: int, gun: int = Query(30), sinif: str | None = None,
     son_aktif = {str(r[0]): r[1] for r in db.execute(text(
         "SELECT ogrenci_id, max(gun) FROM ogrenci_aktif_gunler WHERE ogrenci_id = ANY(CAST(:ids AS uuid[])) GROUP BY 1"), p).all()} if ids else {}
     sa = lambda o: son_aktif.get(str(o.id))
-    sa_metin = lambda o: f"son aktif {sa(o).strftime('%d.%m.%Y')}" if sa(o) else "hiç açmadı"
+    sa_metin = lambda o: f"son aktif {sa(o).strftime('%d.%m.%Y')}" if sa(o) else "kayıt yok"
     cok = sorted((o for o in ogr if aktif.get(str(o.id))),
                  key=lambda o: (-aktif[str(o.id)], -giris.get(str(o.id), 0), -(sa(o) or bugun).toordinal()))[:adet]
     listeler.append({"kod": "en_aktif", "ikon": "🔥", "baslik": "En aktif öğrenciler", "birim": "gün",
@@ -90,6 +90,22 @@ def hazir_raporlar(okul_id: int, gun: int = Query(30), sinif: str | None = None,
                      "aciklama": f"Son {gun} günde sistemi en az gün açan ya da hiç açmayan öğrenciler (önce en uzun süredir açmayan)",
                      "satirlar": [_satir(o, aktif.get(str(o.id), 0), sa_metin(o)) for o in az],
                      "bos": "Öğrenci yok."})
+
+    # --- [2026-10-11] değerlendirme ve hedef: rehber öğretmenin takip edeceği listeler ------------------------------
+    from app.api.okul_yonetimi import _durum, _ilerleme
+    il = _ilerleme(db, okul_id) if ids else {}
+    yarim = sorted((o for o in ogr if _durum(o, il.get(o.id))[0] == "devam"),
+                   key=lambda o: ((sa(o) or date.min).toordinal(), (il.get(o.id) or {}).get("biten", 0)))[:adet]
+    listeler.append({"kod": "yarida_kalan", "ikon": "⏸️", "baslik": "Değerlendirmeyi yarıda bırakanlar", "birim": "bölüm",
+                     "aciklama": "Değerlendirmeye başlayıp bitirmeyen öğrenciler (önce en uzun süredir açmayan)",
+                     "satirlar": [_satir(o, f"{(il.get(o.id) or {}).get('biten', 0)}/{(il.get(o.id) or {}).get('toplam', 4)}", sa_metin(o)) for o in yarim],
+                     "bos": "Yarıda bırakan öğrenci yok. 👏"})
+    hedefsiz = [o for o in ogr if o.sinif in ("12. Sınıf", "Mezun") and _durum(o, il.get(o.id))[0] == "tamamlandi"
+                and not (il.get(o.id) or {}).get("hedef")][:adet]
+    listeler.append({"kod": "hedefsiz_son_sinif", "ikon": "🎯", "baslik": "Hedef bölümü olmayan son sınıflar", "birim": "",
+                     "aciklama": "Değerlendirmeyi bitirmiş ama hedef bölüm seçmemiş 12. sınıf ve mezun öğrenciler (tercih öncesi görüşme için)",
+                     "satirlar": [_satir(o, "—", sa_metin(o)) for o in hedefsiz],
+                     "bos": "Son sınıfların hepsi hedef bölüm seçmiş."})
 
     # --- deneme neti (TYT) -------------------------------------------------------------------------------------------
     if "net_takibi" in moduller and ids:
@@ -134,7 +150,8 @@ def hazir_raporlar(okul_id: int, gun: int = Query(30), sinif: str | None = None,
                          "satirlar": [_satir(harita[i], top[i], f"{adim.get(i, 0)} adım · {gorev.get(i, 0)} görev") for i in en],
                          "bos": "Bu dönemde tamamlanan adım ya da görev yok."})
 
-    hic = sum(1 for o in ogr if not o.son_giris_zamani and not sa(o))
+    # "hiç açmadı": özet sayfasındaki "Henüz giriş yapmadı" durumuyla aynı tanım (değerlendirmeye başlamışsa açmış demektir)
+    hic = sum(1 for o in ogr if not sa(o) and not o.son_giris_zamani and _durum(o, il.get(o.id))[0] not in ("tamamlandi", "devam"))
     uzun = sum(1 for o in ogr if sa(o) and sa(o) < bugun - timedelta(days=14))
     bugun_aktif = sum(1 for o in ogr if sa(o) == bugun)
     return {"gun": gun, "donemler": list(DONEMLER), "kapsam": k["etiket"], "secenekler": k["secenekler"],

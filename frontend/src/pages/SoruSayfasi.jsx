@@ -500,7 +500,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         {hata ? (
           <div className="bos-durum">{hata}</div>
         ) : !sorular ? (
-          <div className="bos-durum">Yükleniyor…</div>
+          <div className="bos-durum yukleniyor">Yükleniyor…</div>
         ) : tamamlandi ? (
           <div className="qwrap" style={{ maxWidth: 640 }}>
             <div className="ph" style={{ textAlign: 'center' }}>

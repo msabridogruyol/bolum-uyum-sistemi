@@ -52,7 +52,7 @@ from app.core.gizli_metin import coz, sifrele
 from app.core.hesap_yonetimi import (
     denetim_yaz, gecici_sifre, ogrenciyi_sil, olay_yaz, simdi, yapan_etiketi,
 )
-from app.core.security import sifre_dogrula, sifre_hashle
+from app.core.security import sifre_dogrula, sifre_hashle, oturumlari_gecersiz_kil, yeni_token_cifti
 from app.core.koclugu_servisi import hedef_sec, hedef_hak_durumu
 from app.core.katman_servisi import IsKuraliHatasi
 from app.models import AdminKullanici, AuditLog, Bolum, Ogrenci, OgrenciHesapOlayi, Okul
@@ -458,17 +458,19 @@ def _moduller(db: Session, okul_id) -> list[str]:
     return okul_modulleri(db, okul_id) if okul_id else TUMU[:]
 
 
-@router.post("/ben/ilk-sifre", status_code=204)
+@router.post("/ben/ilk-sifre")
 def ben_ilk_sifre(istek: IlkSifreIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     if len(istek.yeni_sifre or "") < 8:
         raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
     if sifre_dogrula(istek.yeni_sifre, yon.sifre_hash):
         raise HTTPException(status_code=400, detail="Yeni şifre geçici şifreyle aynı olamaz.")
     yon.sifre_hash = sifre_hashle(istek.yeni_sifre)
+    oturumlari_gecersiz_kil(yon)   # [2026-10-11] geçici şifreyle açılmış diğer oturumlar düşer; bu cihaza yeni anahtar
     yon.sifre_degistirmeli = False
     yon.gecici_sifre_sifreli = None   # [2026-10-10]
     denetim_yaz(db, yon, "sifre_belirledi", "admin_kullanicilar", yon.id, "İlk girişte kendi şifresini belirledi", yon.okul_id)
     db.commit()
+    return yeni_token_cifti(yon, yon.rol)
 
 
 # ----------------------------------------------------------------------------- okullar / özet
@@ -914,6 +916,7 @@ def toplu_sifre_sifirla(istek: IdlerIstek, db: Session = Depends(get_db), yon: A
     for o in ogrenciler:
         sifre = gecici_sifre()
         o.sifre_hash = _hizli_hash(sifre)
+        oturumlari_gecersiz_kil(o)   # [2026-10-11] öğrencinin açık oturumları düşer
         o.sifre_degistirmeli = True
         o.gecici_sifre_sifreli = sifrele(sifre)
         db.query(GuvenilirCihaz).filter(GuvenilirCihaz.kullanici_tipi == "ogrenci", GuvenilirCihaz.kullanici_id == o.id).delete()
@@ -947,18 +950,21 @@ def toplu_sil(istek: IdlerIstek, db: Session = Depends(get_db), yon: AdminKullan
 
 
 # ----------------------------------------------------------------------------- okul yetkilileri
-def _yetkili_out(y: AdminKullanici) -> dict:
+def _yetkili_out(y: AdminKullanici, goren: AdminKullanici | None = None) -> dict:
+    # [2026-10-11] Bir okul yetkilisinin geçici şifresini yalnızca süper admin görür. Meslektaşı görürse onun hesabıyla
+    # giriş yapabilir ve işlemler yanlış kişiye yazılırdı (denetim kaydı). Okul yetkilisi kendi satırında "geçici şifre var" görür.
+    goster = goren is None or goren.rol == "super_admin"
     return {"id": str(y.id), "ad_soyad": y.ad_soyad, "email": y.email, "unvan": getattr(y, "unvan", None),
             "olusturulma_zamani": y.olusturulma_zamani,
             "son_giris_zamani": y.son_giris_zamani, "sifre_degistirmeli": bool(y.sifre_degistirmeli), "aktif_mi": y.aktif_mi,
-            "gecici_sifre": coz(y.gecici_sifre_sifreli) if y.sifre_degistirmeli else None,
+            "gecici_sifre": (coz(y.gecici_sifre_sifreli) if goster else "(gizli)") if y.sifre_degistirmeli else None,
             "test_hesabi": bool(getattr(y, "test_hesabi", False))}
 
 
 @router.get("/okul/{okul_id}/yetkililer")
 def yetkilileri_listele(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     _okul_kapsami(db, yon, okul_id)
-    return [_yetkili_out(y) for y in db.query(AdminKullanici).filter(AdminKullanici.okul_id == okul_id)
+    return [_yetkili_out(y, yon) for y in db.query(AdminKullanici).filter(AdminKullanici.okul_id == okul_id)
             .order_by(AdminKullanici.ad_soyad).all()]
 
 
@@ -1007,6 +1013,7 @@ def yetkili_sifre_sifirla(yetkili_id: str, db: Session = Depends(get_db), yon: A
     y = _yetkili(db, yetkili_id)
     sifre = gecici_sifre()
     y.sifre_hash = sifre_hashle(sifre)
+    oturumlari_gecersiz_kil(y)   # [2026-10-11]
     y.sifre_degistirmeli = True
     y.gecici_sifre_sifreli = sifrele(sifre)
     from app.models import GuvenilirCihaz

@@ -103,7 +103,7 @@ export default function SistemHakkinda({ hedef = 'ogrenci' }) {
           <div className="ct" style={{ margin: 0, marginRight: 'auto' }}>Sıkça sorulan sorular</div>
           <input className="yp-sec" style={{ minWidth: 220 }} value={ara} onChange={(e) => setAra(e.target.value)} placeholder="Soru ara…" />
         </div>
-        {sss === null && <div className="bos-durum">Yükleniyor…</div>}
+        {sss === null && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
         {sss !== null && gruplar.length === 0 && <div className="bos-durum">{sss.length ? 'Aramana uygun soru bulunamadı.' : 'Sorular yüklenemedi.'}</div>}
         {gruplar.map(([g, liste]) => (
           <div key={g} className="sh-grup">

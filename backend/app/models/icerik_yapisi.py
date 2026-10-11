@@ -106,7 +106,9 @@ class Bolum(Base):
     kisa_aciklama: Mapped[str | None] = mapped_column(String)                       # D5 Katman-2 "Keşfet" için
     # [2026-10-08] Detaylı tanıtım: ozet, neler_ogrenilir, ornek_dersler, kimler_icin_uygun,
     # calisma_alanlari, meslekler [{ad, aciklama}], puan_turu, ogrenim_suresi, bilmen_gerekenler
-    detay: Mapped[dict | None] = mapped_column(JSON, nullable=True)
+    # [2026-10-11] deferred: 301 bölümün detayı ~1,7 MB; yalnızca ad / id gereken sorgularda (sıralama, listeler) her seferinde
+    # veritabanından taşınıyordu (uzak veritabanında saniyeler). Detay, nesnede .detay okununca ayrıca yüklenir.
+    detay: Mapped[dict | None] = mapped_column(JSON, nullable=True, deferred=True)
     durum: Mapped[str] = mapped_column(String, nullable=False, default="taslak")
     test_notu: Mapped[str | None] = mapped_column(String)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

@@ -148,7 +148,7 @@ export function OlcumPenceresi({ odak, onKapat, onBitti }) {
   return (
     <Pencere baslik={`📏 ${odak.degisken_adi} · gelişimini ölç`} altBaslik="Bunlar ilk değerlendirmedeki sorulardan birkaçı. Çok düşünme, şu anki hâline göre cevapla." onKapat={onKapat}>
       {hata && <div className="auth-error">{hata}</div>}
-      {!veri && !hata && <div className="bos-durum">Yükleniyor…</div>}
+      {!veri && !hata && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
       {veri && veri.sorular.length === 0 && <div className="bos-durum">Bu alan için ölçüm sorusu yok.</div>}
       {sonuc ? (
         <div className="olcum-bitti">

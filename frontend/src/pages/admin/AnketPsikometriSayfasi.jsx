@@ -143,7 +143,7 @@ export default function AnketPsikometriSayfasi() {
       {hata && <div className="auth-error" role="alert">{hata}</div>}
       <PlanKarti />
 
-      {!d ? (!hata && <div className="bos-durum">Yükleniyor…</div>) : (
+      {!d ? (!hata && <div className="bos-durum yukleniyor">Yükleniyor…</div>) : (
         <>
           {d.sablonlar.map((s) => <SablonKarti key={s.kod} s={s} esikler={d.esikler} />)}
           <div className="yp-ince" style={{ lineHeight: 1.6 }}>

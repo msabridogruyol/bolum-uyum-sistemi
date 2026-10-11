@@ -12,7 +12,7 @@ export default function TakvimYonetimi({ okulId }) {
   const [bekle, setBekle] = useState(false)
   const yukle = () => api.yonetimTakvim(okulId).then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.'))
   useEffect(() => { yukle() }, [okulId])
-  if (!v) return <div className={hata ? 'auth-error' : 'bos-durum'}>{hata || 'Yükleniyor…'}</div>
+  if (!v) return <div className={hata ? 'auth-error' : 'bos-durum yukleniyor'}>{hata || 'Yükleniyor…'}</div>
 
   const kaydet = async (e) => {
     e.preventDefault(); setBekle(true); setHata(null)

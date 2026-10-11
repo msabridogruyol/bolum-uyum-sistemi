@@ -25,7 +25,7 @@ export default function PaketlerSayfasi() {
   }
   const modulDegistir = (kod) => setDuzen((d) => ({ ...d, moduller: d.moduller.includes(kod) ? d.moduller.filter((m) => m !== kod) : [...d.moduller, kod] }))
 
-  if (!v) return <div className="pg pg-genis"><div className="bos-durum">{hata || 'Yükleniyor…'}</div></div>
+  if (!v) return <div className="pg pg-genis"><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></div>
   return (
     <div className="pg pg-genis">
       <div className="ph">

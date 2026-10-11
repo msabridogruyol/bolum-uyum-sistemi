@@ -54,7 +54,7 @@ export default function KonuListesiYonetimi({ okulId = null }) {
   const [bekle, setBekle] = useState(false)
   const yenile = useCallback(() => api.konuListesi(okulId).then(setVeri).catch((e) => setHata(e.detail || 'Liste yüklenemedi.')), [okulId])
   useEffect(() => { yenile() }, [yenile])
-  if (!veri) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
+  if (!veri) return <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div>
   const aktif = veri.dersler.find((d) => d.kod === ders) || veri.dersler[0]
   const okulGorunumu = !!veri.okul_id && !!okulId
   async function ekle(e) {

@@ -96,7 +96,7 @@ def test_kademe_bul(metod, yol, beklenen):
 
 
 def test_kurallar_parametreden():
-    assert kurallar("kimlik", VARSAYILAN) == [(20, 60.0), (150, 3600.0)]
+    assert kurallar("kimlik", VARSAYILAN) == [(120, 60.0), (2000, 3600.0)]   # [2026-10-11] laboratuvar
     assert kurallar("genel", {**VARSAYILAN, "hiz_siniri_genel_dakika": "5"}) == [(5, 60.0)]
     assert kurallar("genel", {**VARSAYILAN, "hiz_siniri_genel_dakika": "0"}) == []       # 0 → kapalı
     assert kurallar("agir", {**VARSAYILAN, "hiz_siniri_agir_dakika": "abc"})[0] == (20, 60.0)   # bozuk değer → varsayılan
@@ -154,5 +154,20 @@ def test_ara_katman_parametre_hatasinda_varsayilan():
         return JSONResponse({"ok": True})
     app = HizSiniriAraKatmani(Starlette(routes=[Route("/auth/giris", tamam, methods=["POST"])]), parametre_kaynagi=bozuk)
     c = TestClient(app)
-    kodlar = [c.post("/auth/giris").status_code for _ in range(21)]
-    assert kodlar[:20] == [200] * 20 and kodlar[20] == 429      # varsayılan 20/dk
+    kodlar = [c.post("/auth/giris").status_code for _ in range(121)]
+    assert kodlar[:120] == [200] * 120 and kodlar[120] == 429   # [2026-10-11] varsayılan 120/dk (laboratuvar)
+
+
+
+def test_hesap_deneme_sayaci_kilit_ve_sifirlama():
+    from app.core.hiz_siniri import HesapDenemeSayaci
+    t = [1000.0]
+    s = HesapDenemeSayaci(en_fazla=3, pencere=60, saat=lambda: t[0])
+    for _ in range(3):
+        assert s.bekleme("a@x.com") == 0
+        s.hatali("a@x.com")
+    assert s.bekleme("a@x.com") > 0 and s.bekleme("b@x.com") == 0   # yalnızca o hesap kilitli
+    t[0] += 61
+    assert s.bekleme("a@x.com") == 0                                # süre dolunca açılır
+    s.hatali("a@x.com"); s.temizle("a@x.com")
+    assert s.bekleme("a@x.com") == 0

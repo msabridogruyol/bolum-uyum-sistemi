@@ -372,7 +372,7 @@ export default function OkulTekBakista({ okulId, superAdmin, okullar, onDegisti,
           title="Bu ekrandaki bulgular, göstergeler, kritik öğrenciler, şube tablosu ve akademik sıralama — seçili filtreyle">📄 {pdf ? 'Hazırlanıyor…' : 'Yönetici özeti (PDF)'}</button>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
-      {!v ? <div className="bos-durum">{hata ? '' : 'Yükleniyor…'}</div> : (
+      {!v ? <div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata ? '' : 'Yükleniyor…'}</div> : (
         <div style={{ opacity: bekle ? 0.6 : 1, transition: 'opacity .2s' }}>
           <div className="yp-ince ois-kapsam"><span><b>{v.filtre.etiket}</b> · bugünkü durum · test hesapları hariç · okul ortalaması tüm okuldur</span></div>
           <Bulgular l={v.bulgular} />

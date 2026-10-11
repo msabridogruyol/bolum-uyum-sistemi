@@ -268,7 +268,7 @@ export default function PipelineDurumuSayfasi() {
 
       <div className="ct" style={{ marginTop: 20 }}>Geçmiş Yüklemeler</div>
       {!taslaklar ? (
-        <div className="bos-durum">Yükleniyor…</div>
+        <div className="bos-durum yukleniyor">Yükleniyor…</div>
       ) : taslaklar.length === 0 ? (
         <div className="bos-durum">Henüz hiç pipeline çıktısı yüklenmedi.</div>
       ) : (

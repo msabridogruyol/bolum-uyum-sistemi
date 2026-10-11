@@ -285,7 +285,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
           <button className="yp-mini" onClick={() => setSifre(null)}>Tamam</button>
         </div>
       )}
-      {!liste ? <div className="bos-durum">Yükleniyor…</div> : liste.length === 0 ? <div className="bos-durum">Bu okulun henüz yetkilisi yok.</div> : (
+      {!liste ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : liste.length === 0 ? <div className="bos-durum">Bu okulun henüz yetkilisi yok.</div> : (
         <table className="yp-tablo">
           <thead><tr><th>Ad Soyad</th><th>E-posta</th><th>Son giriş</th><th>Şifre</th>{superAdmin && <th />}</tr></thead>
           <tbody>
@@ -342,7 +342,7 @@ function KayitlarSekmesi({ okulId }) {
         </select>
         <span className="yp-ince">{gosterilen.length} kayıt</span>
       </div>
-      {!liste ? <div className="bos-durum">Yükleniyor…</div> : gosterilen.length === 0 ? <div className="bos-durum">Bu aralıkta kayıt yok.</div> : (
+      {!liste ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : gosterilen.length === 0 ? <div className="bos-durum">Bu aralıkta kayıt yok.</div> : (
         <div className="yp-tablo-kap">
           <table className="yp-tablo">
             <thead><tr><th style={{ width: 150 }}>Zaman</th><th>İşlem</th><th>Kim</th><th>Ayrıntı</th></tr></thead>
@@ -380,7 +380,7 @@ function OkulBilgileriSekmesi({ okulId }) {
     }).catch((e) => setHata(e.detail || 'Bilgiler yüklenemedi.'))
   }, [okulId])
 
-  if (!f) return hata ? <div className="auth-error">{hata}</div> : <div className="bos-durum">Yükleniyor…</div>
+  if (!f) return hata ? <div className="auth-error">{hata}</div> : <div className="bos-durum yukleniyor">Yükleniyor…</div>
   const alan = (k) => (e) => setF({ ...f, [k]: e.target.value })
   const kisi = (i, k) => (e) => setF({ ...f, kadro: f.kadro.map((x, j) => (j === i ? { ...x, [k]: e.target.value } : x)) })
   const kisiSil = (i) => setF({ ...f, kadro: f.kadro.filter((_, j) => j !== i) })
@@ -490,7 +490,7 @@ export default function OkulPaneliSayfasi() {
   useEffect(() => { if (superAdmin) api.yonetimOkullar().then(setOkullar).catch(() => {}) }, [superAdmin])
 
   if (hata) return <div className="pg pg-genis"><div className="auth-error">{hata}</div></div>
-  if (!oz) return <div className="pg pg-genis"><div className="bos-durum">Yükleniyor…</div></div>
+  if (!oz) return <div className="pg pg-genis"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
   const bolumler = okulBolumleri(okulId, oz.moduller)   // [2026-10-10] paketteki modüllere göre
   const etiket = (b) => b.k === 'ogrenciler' ? `${b.ad} (${oz.toplam})` : b.k === 'yetkililer' ? `${b.ad} (${oz.yetkili_sayisi})` : b.ad

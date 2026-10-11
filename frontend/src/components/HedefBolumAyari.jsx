@@ -64,7 +64,7 @@ export default function HedefBolumAyari() {
     try { setSonuclar(await api.kesfetAra(sorgu.trim(), 8)) } catch (err) { setHata(err.detail || 'Arama yapamadık. Tekrar dene.') }
   }
 
-  if (!durum) return <div className="card" ref={kutu} id="hedef"><div className="bos-durum" style={{ padding: 12 }}>Yükleniyor…</div></div>
+  if (!durum) return <div className="card" ref={kutu} id="hedef"><div className="bos-durum yukleniyor" style={{ padding: 12 }}>Yükleniyor…</div></div>
 
   return (
     <div className="card hb-kart" ref={kutu} id="hedef">

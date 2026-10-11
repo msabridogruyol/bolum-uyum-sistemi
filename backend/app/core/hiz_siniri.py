@@ -2,14 +2,15 @@
 [2026-10-11] İstek sıklığı sınırlama (rate limiting) — ek paket yok, süreç içi (in-memory) token bucket.
 
 Kademeler (varsayılanlar; sistem_parametreleri'nden değiştirilebilir, 60 sn'de bir yeniden okunur):
-  kimlik       — giriş, 2 adımlı kod, şifre sıfırlama/davet kabul, kayıt, test girişi: IP başına 20/dk ve 150/saat
+  kimlik       — giriş, 2 adımlı kod, şifre sıfırlama/davet kabul, kayıt, test girişi: IP başına 120/dk ve 2000/saat
+  + hesap başına — [2026-10-11] HESAP_DENEME: aynı e-postaya 15 dakikada 8 hatalı şifre → o hesap 15 dk kilitlenir (IP'den bağımsız)
   agir         — dosya yükleme / önizleme, toplu yükleme, PDF / Excel üretimi, Filiz AI mesajı (öğrenci + yönetim): kişi (yoksa IP) başına 20/dk ve 300/saat
   istemci_hata — POST /istemci-hata (kimliksiz): IP başına 10/dk ve 60/saat
   genel        — diğer tüm API: kişi (yoksa IP) başına 300/dk
   muaf         — OPTIONS, /saglik, /docs, /openapi.json, /redoc, /favicon.ico
-Kimlik kademesi neden 10/dk değil 20/dk? Okullarda bir sınıfın tamamı aynı dış IP'den (NAT) aynı anda giriş yapar;
-hesap başına kaba kuvvet koruması zaten hesap_guvenligi_servisi'nde (2 adımlı kodda 5 deneme vb.) var — bu katman onun
-ÜSTÜNE IP başına bir tavan ekler (parola püskürtme, e-posta bombardımanı). Kimlikli isteklerde anahtar kullanıcıdır (JWT sub),
+[2026-10-11] Kimlik kademesi neden 120/dk? Okullarda bir sınıfın / laboratuvarın tamamı aynı dış IP'den (NAT) aynı anda giriş
+yapar; 20/dk'lık eski sınır 30 kişilik bir laboratuvarı kilitliyordu. Kaba kuvvete karşı asıl koruma artık HESAP başına
+(HESAP_DENEME: e-posta başına hatalı şifre sayacı); IP tavanı yalnızca parola püskürtme / e-posta bombardımanına karşı. Kimlikli isteklerde anahtar kullanıcıdır (JWT sub),
 böylece aynı okul IP'sinin arkasındaki öğrenciler genel kademede birbirinin kotasını tüketmez.
 
 SINIRLAMALAR (bilinçli):
@@ -36,8 +37,8 @@ MUAF_YOLLAR = {"/saglik", "/docs", "/openapi.json", "/redoc", "/favicon.ico", "/
 # (anahtar, varsayılan) — sistem_parametreleri.anahtar
 VARSAYILAN = {
     "hiz_siniri": "acik",                     # "kapali" → tamamen devre dışı
-    "hiz_siniri_kimlik_dakika": "20",
-    "hiz_siniri_kimlik_saat": "150",
+    "hiz_siniri_kimlik_dakika": "120",          # [2026-10-11] 20 → 120: bir laboratuvar (30–40 öğrenci) aynı IP'den aynı anda girer
+    "hiz_siniri_kimlik_saat": "2000",           # 150 → 2000
     "hiz_siniri_agir_dakika": "20",
     "hiz_siniri_agir_saat": "300",
     "hiz_siniri_genel_dakika": "300",
@@ -94,6 +95,57 @@ def kurallar(kademe: str, p: dict) -> list[tuple[int, float]]:
     else:
         k = [(i("hiz_siniri_genel_dakika"), 60.0)]
     return [(n, s) for n, s in k if n > 0]
+
+
+class HesapDenemeSayaci:
+    """[2026-10-11] Hesap (e-posta) başına hatalı şifre sayacı — IP'den bağımsız kaba kuvvet koruması.
+    Pencere içinde `en_fazla` hatalı denemeden sonra hesap `pencere` saniye kilitli kalır; doğru şifre sayacı sıfırlar.
+    Süreç içidir (KovaSinirlayici ile aynı sınırlama)."""
+
+    def __init__(self, en_fazla: int = 8, pencere: float = 900.0, saat: Callable[[], float] = time.monotonic):
+        self.en_fazla, self.pencere, self._saat = en_fazla, pencere, saat
+        self._kayit: dict[str, list[float]] = {}
+        self._kilit = threading.Lock()
+
+    def _guncel(self, anahtar: str, simdi: float) -> list[float]:
+        l = [t for t in self._kayit.get(anahtar, []) if simdi - t < self.pencere]
+        if l:
+            self._kayit[anahtar] = l
+        else:
+            self._kayit.pop(anahtar, None)
+        return l
+
+    def bekleme(self, anahtar: str) -> float:
+        """0 → deneyebilir; >0 → kaç saniye sonra."""
+        simdi = self._saat()
+        with self._kilit:
+            l = self._guncel(anahtar, simdi)
+            return max(0.0, self.pencere - (simdi - l[-self.en_fazla])) if len(l) >= self.en_fazla else 0.0
+
+    def hatali(self, anahtar: str) -> None:
+        simdi = self._saat()
+        with self._kilit:
+            if len(self._kayit) > 50_000:
+                self._kayit.clear()
+            self._guncel(anahtar, simdi)
+            self._kayit.setdefault(anahtar, []).append(simdi)
+
+    def temizle(self, anahtar: str) -> None:
+        with self._kilit:
+            self._kayit.pop(anahtar, None)
+
+
+HESAP_DENEME = HesapDenemeSayaci()
+
+
+def hesap_kilit_kontrol(email: str) -> None:
+    """Giriş uçlarında şifre kontrolünden ÖNCE çağrılır; kilitliyse 429."""
+    from fastapi import HTTPException
+    b = HESAP_DENEME.bekleme(email)
+    if b > 0:
+        dk = max(1, math.ceil(b / 60))
+        raise HTTPException(status_code=429, detail=f"Bu hesap için çok fazla hatalı şifre denendi. Güvenliğin için {dk} dakika sonra tekrar dene "
+                                                    "ya da \"Şifremi unuttum\" ile yeni şifre al.")
 
 
 class KovaSinirlayici:
