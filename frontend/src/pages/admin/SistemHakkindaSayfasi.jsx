@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react'
+import Gelistirici from '../../components/Gelistirici'   // [2026-10-11]
 import { useLocation } from 'react-router-dom'
 
 // [2026-10-11] Her bölümün bağlantısı #sh-N (N = başlıktaki numara); Filiz bu bağlantıyla doğrudan ilgili bölümü açar.
@@ -389,6 +390,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Soru geçerlilik testi metodolojisi düzeltildi:</b> adaylar artık yalnızca sorunun kendi değişken ailesiyle sınırlı tutuluyor, negatif ağırlıklı SJT seçenekleri teste dahil edilmiyor, akademik kaynaklara dayalı %70/%80 eşikleri ve rastgele baseline karşılaştırması eklendi</Madde>
         <Madde><b>Okul modülleri (0041-0051):</b> paketler, rehberlik/erken uyarı, öğrenci raporları, okul denemeleri, çalışma programı, bildirimler, portfolyo, anketler, tercih/mezun, Filiz AI, okul karşılaştırması, meslek simülasyonu, Filiz sesi ve Kaynakça sayfası (bkz. 11. bölüm)</Madde>
       </Bolum>
+      <Gelistirici />
     </div>
   )
 }

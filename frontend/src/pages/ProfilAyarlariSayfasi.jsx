@@ -351,7 +351,7 @@ export default function ProfilAyarlariSayfasi() {
         <div className="card" style={{ marginTop: 20, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
           <div>
             <div className="ct" style={{ marginBottom: 2 }}>Sistem Tanıtımı</div>
-            <div className="ps" style={{ margin: 0, fontSize: 12 }}>Sistemin nasıl çalıştığını anlatan kısa tanıtımı tekrar izle.</div>
+            <div className="ps" style={{ margin: 0, fontSize: 12 }}>Menüleri tek tek tanıtan kısa turu tekrar izle.</div>
           </div>
           <button className="btn sec" type="button" onClick={duzen.tanitimiAc}>Tanıtımı Göster</button>
         </div>
