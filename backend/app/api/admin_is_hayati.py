@@ -135,6 +135,24 @@ def _tablo(istek_dosya_adi: str, icerik: str, tur: str, baslik_satiri: int | Non
     return b, basliklar, govde, satirlar
 
 
+class BaglantiIstek(BaseModel):
+    url: str = Field(..., min_length=10, max_length=2000)
+
+
+@router.post("/baglanti/indir")
+def baglanti_indir(istek: BaglantiIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
+    """[2026-10-10] TÜİK Veri Portalı bağlantısından tabloyu indirir; yanıt /dosya/oku akışına aynen verilir."""
+    from app.core.tuik_baglanti import BaglantiHatasi, indir
+    try:
+        sonuc = indir(istek.url)
+    except BaglantiHatasi as e:
+        raise HTTPException(400, str(e))
+    from app.core.hesap_yonetimi import denetim_yaz
+    denetim_yaz(db, yon, "is_hayati_baglanti_indir", "veri_yuklemeleri", sonuc["dosya_adi"], f"{istek.url[:300]} · {sonuc['boyut']} bayt")
+    db.commit()
+    return sonuc
+
+
 @router.post("/dosya/oku")
 def dosya_oku(istek: DosyaIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
     b, basliklar, govde, ham = _tablo(istek.dosya_adi, istek.icerik_base64, istek.tur, istek.baslik_satiri)
@@ -694,5 +712,6 @@ def ozet(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut
         "asgari": [_satir_json(r) for r in say("SELECT donem, brut, net, kaynak, yururluk_tarihi FROM asgari_ucret ORDER BY yururluk_tarihi DESC")],
         "guncel_asgari": ihs.guncel_asgari(db),
         "giderler": say("SELECT COALESCE(il, 'Türkiye geneli') AS il, COUNT(*) AS kalem, MAX(tarih)::text AS tarih FROM yasam_giderleri GROUP BY 1 ORDER BY 1"),
+        "guncelleme": __import__("app.core.tuik_baglanti", fromlist=["x"]).guncelleme_durumu(db),
         "isco_alt": s["alt"], "isco_ana": s["ana"], "kazanc_gruplari": ihs.KAZANC_GRUPLARI, "gider_kalemleri": ihs.GIDER_KALEMLERI,
     }

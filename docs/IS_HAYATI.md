@@ -132,7 +132,12 @@ Uçlar `app/api/admin_is_hayati.py` (`/admin/is-hayati/*`, yalnız süper admin;
 - `app/api/is_hayati_mezun.py`: okul `GET|POST /yonetim/okul/{okul_id}/mezun-hikayeleri`, `PUT|DELETE …/{hikaye_id}`
   (`okul_modulu("mezun_takibi")`; yazma YALNIZCA kendi okulunun `okul_yetkilisi` — süper admin ekleyemez/düzenleyemez, yalnızca kaldırabilir);
   öğrenci `GET /mezun/hikayeler?bolum_id=` (kendi okulu, yayında; bölüm → aynı dal (`bolum_dal_eslesme`) → diğerleri).
-- Frontend: `components/isHayati/CvAtolyesi.jsx` + `cv/` (CvDuzenleyici, CvKontrol, OnYazi, IlanOkuma, CvOnizleme), `MezunHikayeleri.jsx`;
+- [2026-10-11] `GET /cv/rehber` (CV Rehberi: `app/data/cv_rehberi.json`, 8 konu + mini sınav + doğrulanmış kaynaklar, `son_kontrol`) ve
+  `POST /cv/ats` `{icerik?, ilan_id? | ilan_metni?}` → `{ats_metni, sayfa, dosya_adi, bicim{puan, maddeler[6], bolumler}, uyum{uyum, bulunan, kismen, eksik, anahtar_sayisi} | null, not}`.
+  PDF `cv_pdf` ile üretilip pypdf ile ayrıştırılır; algoritma `app/core/ats.py`, test `backend/test_ats.py`. **Hiçbir şey kaydedilmez.**
+  Alt sekme sırası: CV Rehberi (kayıtlı CV yoksa açılış) → CV oluştur → Kontrol listesi → ATS kontrolü → Ön yazı → İlan okuma.
+  Kontrol listesindeki tarih / tek sayfa / iletişim maddeleri ATS kontrolündeki karşılıklarına bağlantı verir (biri içeriğe, öteki PDF metnine bakar).
+- Frontend: `components/isHayati/CvAtolyesi.jsx` + `cv/` (CvRehberi, CvDuzenleyici, CvKontrol, AtsKontrol, OnYazi, IlanOkuma, CvOnizleme), `MezunHikayeleri.jsx`;
   okul paneli `components/yonetim/MezunHikayeleriYonetim.jsx` (Mezunlar → "Mezun hikâyeleri" alt sekmesi), `OgrenciCv.jsx` (öğrenci detayı → Portfolyo).
 
 ## Zor Günler / Okulda Öğretilmeyenler / Mülakat Pratiği (göç 0056)

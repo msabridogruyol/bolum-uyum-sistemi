@@ -7,7 +7,7 @@ Sistemde elle hazırlanan her bileşen, ne yaptığı, nasıl hesaplandığı ve
 - Kaynaklar bileşenin **kuramsal dayanağını** gösterir; Filizyol ölçekleri bu kaynaklardaki ölçeklerin birebir uyarlaması değildir.
 - **Kurum içi** işaretli bileşenlerde eşik, ağırlık ve sayılar ürün tasarımı kararıdır.
 
-Toplam: 68 bileşen, 152 kaynak.
+Toplam: 69 bileşen, 156 kaynak.
 
 ## İçindekiler
 
@@ -606,6 +606,22 @@ Bölümün mesleklerinden birini sabahtan akşama bir iş günü olarak yaşatan
 - [58] Holland, 1997 — Kişi–çevre uyumunda ilgilerin merkezî rolünü açıklar; günlük işlere verilen keyif tepkisinin ilgiye dayalı bir keşif sinyali olarak kullanılmasını destekler.
 
 > Saat dilimleri, tepki puanları (2/1/0), keyif formülü ve ≥70/≥40 eşikleri kurum içi tasarım kararıdır; geçerliği sınanmış bir ilgi ölçümü değildir, keşif amaçlı yorumlanmalıdır.
+
+### İş Hayatı · CV Rehberi ve ATS kontrolü · _Kurum içi_
+
+CV Atölyesi'nde lise öğrencisine CV'yi anlatan 8 konuluk rehber ve öğrencinin CV PDF'ini bir başvuru takip sisteminin (ATS) göreceği biçimde ayrıştırıp biçim ve ilan uyumu açısından değerlendiren kontrol.
+
+**Nasıl:** Rehber içeriği app/data/cv_rehberi.json (konu başına 2–3 soruluk mini sınav, istemcide puanlanır, kaydedilmez). ATS kontrolü (app/core/ats.py): CV, indirilen PDF ile aynı kodla üretilir ve pypdf ile metne çevrilir; 6 biçim maddesi — metin seçilebilir ve Türkçe harfler korunuyor (25), standart başlıklar (20), ad + e-posta en üstte (15), tek sayfa (15), garip karakter/ikon/harf aralıklı yazı yok (15), tarih biçimi tutarlı (10). İlan uyumu: satırlar ipucu sözcükleri ya da alt başlıklarla zorunlu/tercih/genel olarak işaretlenir (örnek ilanlarda tür veri dosyasından); Türkçe küçük harf, durak sözcüğü ve ilan dolgusu atma, sıfat-fiil görünümlü kelimeleri eleme, hafif ek budama ve ünsüz yumuşaması; sık beceri öbekleri ve ilanda iki kez geçen ikililer; ağırlık zorunlu 3, tercih 2, diğer 1 (nitelik satırı varsa 0,5), tekrar başına +0,5 (en çok 4); uyum = bulunan ağırlık / toplam (öbek kelimeleri yan yana değilse yarım). Hiçbir sonuç ya da ilan metni saklanmaz.
+
+**Dayanak:**
+
+- [153] Greenhouse Software, t.y. — Bir ATS sağlayıcısının kendi belgesi; biçim maddelerinin (görüntü CV, tablo/sütun, üst-alt bilgi, iletişim bilgisinin yeri, harf aralıklı yazı) doğrudan dayanağı.
+- [154] Florida Gulf Coast University, t.y. — Kariyer merkezi rehberi: ATS dostu biçim kuralları ve anahtar kelimeleri bağlam içinde kullanma; 'ATS'yi kandırma' uyarısının dayanağı.
+- [156] LinkedIn, t.y. — Standart bölüm başlıkları ve standart yazı tipi önerisi; 'standart başlıklar' maddesinin dayanağı.
+- [155] Ladders, 2018 — İşe alım uzmanlarının ilk taramada CV'ye çok kısa süre baktığı (ort. 7,4 sn) ve sade, tek sütunlu düzenin daha iyi okunduğu bulgusu; rehberdeki tek sayısal iddianın kaynağı.
+- [72] Kişisel Verilerin Korunması Kanunu, Kanun No. 6698, 2016 — Rehberde din, sağlık gibi bilgilerin 'özel nitelikli kişisel veri' olduğu (md. 6) ve CV'ye yazılmaması önerisinin dayanağı.
+
+> Biçim ağırlıkları, anahtar kelime ağırlıkları, durak/dolgu sözcük listeleri ve ek budama kuralları ürün tasarımı kararıdır; gerçek ATS'ler şirketten şirkete farklıdır ve öğrenciye 'tahmin' olarak gösterilir. ATS kullanım oranı doğrulanamadığı için hiçbir oran verilmez. Rehberdeki öteki kaynaklar (Harvard, MIT, JMU kariyer merkezleri, Europass, LinkedIn kullanıcı sözleşmesi, İŞKUR) cv_rehberi.json içinde listelenir.
 
 ## Rehberlik ve erken uyarı
 
@@ -1298,6 +1314,14 @@ Kimin hangi veriyi görebileceğine dair yapısal kurallar ve kritik işlemlerin
    - Doğrulama: now publishers yayıncı sayfası
 152. Zimmerman, B. J. (2002). Becoming a self-regulated learner: An overview. Theory Into Practice, 41(2), 64–70.
    - Doğrulama: VDU ders kaynağı sayfası (cilt 41, sayı 2, s. 64–70); DOI birincil kaynakta görülmediği için yazılmadı
+153. Greenhouse Software. (t.y.). Unsuccessful resume parse. Greenhouse Support. <https://support.greenhouse.io/hc/en-us/articles/200989175-Unsuccessful-resume-parse>
+   - Doğrulama: Greenhouse destek sayfası doğrudan okundu (2026-10): görüntü olarak yüklenen CV, grafik/fotoğraf, tablo, üst/alt bilgi, sütunlu düzen, metin kutusundaki iletişim bilgisi ve harf aralıklı yazının ayrıştırmayı bozduğu.
+154. Florida Gulf Coast University Career Development Services. (t.y.). Working with applicant tracking systems (ATS). <https://careerservices.fgcu.edu/working-with-applicant-tracking-systems-ats/>
+   - Doğrulama: Sayfa doğrudan okundu (2026-10): dosya türü önerisi, tablo/metin kutusu/görsel/sütun/üst-alt bilgiden kaçınma, anahtar kelimeleri bağlam içinde kullanma, ATS'yi kandırmaya çalışmama.
+155. Ladders, Inc. (2018). Eye-tracking study. <https://csuglobal.edu/sites/default/files/blog-files/theladders-eyetracking-studyc2.pdf>
+   - Doğrulama: Çalışma PDF'i (CSU Global kopyası) ve HR Dive haberi (08.11.2018) okundu: ilk taramada ortalama 7,4 saniye; sade düzen ve net başlıklar olumlu, çok sütun ve anahtar kelime doldurma olumsuz. Örneklem büyüklüğü belgede yazmıyor.
+156. LinkedIn. (t.y.). The easy how-to guide to formatting resumes for applicant tracking systems. LinkedIn Premium. <https://premium.linkedin.com/content/premium/global/en_us/index/jobsearch/articles/the-easy-how-to-guide-for-formatting-resumes-for-applicant-tracking-systems>
+   - Doğrulama: Sayfa doğrudan okundu (2026-10): standart başlıklar (Summary, Work Experience, Education, Skills), standart yazı tipi, görsel/tablo/metin kutusu olmaması, aşırı anahtar kelime kullanmama.
 
 ## Doğrulanamayan ve listeye alınmayan künyeler
 

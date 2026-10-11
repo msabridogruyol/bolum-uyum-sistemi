@@ -8,6 +8,9 @@
   DELETE /cv              — CV'yi sil (baştan başla)
   GET    /cv/pdf          — tek sayfa, ATS dostu PDF (tablo / görsel yok)
   GET    /cv/ilanlar?bolum_id= — "İlan okuma" egzersizi: kurgusal örnek ilanlar (seçili bölümle ilgili olanlar önce)
+  GET    /cv/rehber       — [2026-10-11] "CV Rehberi" konu kartları + mini sınavlar (app/data/cv_rehberi.json)
+  POST   /cv/ats          — [2026-10-11] "ATS kontrolü": {icerik?, ilan_metni?, ilan_id?} → PDF üretilir, pypdf ile ayrıştırılır,
+                            biçim kontrolü + (ilan verilirse) anahtar kelime uyumu. HİÇBİR ŞEY KAYDEDİLMEZ (algoritma: app/core/ats.py).
 Okul (yalnızca öğrenci paylaşırsa; modül kapısı okul_modulu("is_hayati")):
   GET    /yonetim/ogrenci/{ogrenci_id}/is-hayati-cv       — paylaşılan CV (ön yazı hariç)
   GET    /yonetim/ogrenci/{ogrenci_id}/is-hayati-cv/pdf   — denetim kaydı yazılır
@@ -40,6 +43,7 @@ yonetim_router = APIRouter(prefix="/yonetim", tags=["İş Hayatı · CV"])
 _YONETIM_KAPI = [Depends(okul_modulu("is_hayati"))]
 
 _ILANLAR = Path(__file__).resolve().parents[1] / "data" / "ornek_ilanlar.json"
+_REHBER = Path(__file__).resolve().parents[1] / "data" / "cv_rehberi.json"
 
 # kod → (varsayılan başlık, tip)   tip: liste | etiket | dil
 BOLUMLER = {
@@ -262,7 +266,8 @@ def cv_pdf(icerik: dict, renk: str | None = None) -> tuple[bytes, int]:
     h_st = ParagraphStyle("h", fontName="Filiz-B", fontSize=10.5, leading=13, textColor=vurgu, spaceBefore=7, spaceAfter=1, keepWithNext=1)
     g_st = ParagraphStyle("g", fontName="Filiz", fontSize=9.2, leading=12, textColor=koyu)
     o_st = ParagraphStyle("o", parent=g_st, spaceBefore=3)
-    m_st = ParagraphStyle("m", parent=g_st, leftIndent=9, bulletIndent=1, textColor=colors.HexColor("#3A342D"))
+    # bulletFontName: varsayılan Helvetica madde işareti metne "\x7f" olarak çıkıyordu (ATS kontrolü yakaladı); gömülü yazı tipi doğru "•" verir
+    m_st = ParagraphStyle("m", parent=g_st, leftIndent=9, bulletIndent=1, bulletFontName="Filiz", textColor=colors.HexColor("#3A342D"))
     k_st = ParagraphStyle("k", fontName="Filiz", fontSize=7.4, leading=9.5, textColor=gri)
     ONAY = ' <font color="#4E8A4F"><b>OKUL ONAYLI</b></font>'
 
@@ -561,7 +566,7 @@ def cv_sil(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenc
 def _pdf_cevap(icerik_b: bytes, ad: str) -> Response:
     from app.api.raporlar import _dosya_adi
     return Response(icerik_b, media_type="application/pdf",
-                    headers={"Content-Disposition": f'attachment; filename="{_dosya_adi("CV", ad)}.pdf"', "Cache-Control": "no-store"})
+                    headers={"Content-Disposition": f'attachment; filename="{_dosya_adi(ad, "CV")}.pdf"', "Cache-Control": "no-store"})
 
 
 @ogrenci_router.get("/cv/pdf")
@@ -596,6 +601,70 @@ def ilanlar(bolum_id: int | None = Query(None), db: Session = Depends(get_db), o
     liste.sort(key=lambda x: x.pop("_s"))
     return {"kategoriler": veri.get("kategoriler", {}), "ilanlar": liste,
             "not": "Bu ilanların hepsi eğitim amaçlı ÖRNEK ilandır; gerçek bir şirkete ya da kuruma ait değildir."}
+
+
+# ============================================================================= CV Rehberi + ATS kontrolü (2026-10-11)
+@ogrenci_router.get("/cv/rehber")
+def rehber(o: Ogrenci = Depends(get_mevcut_ogrenci)):
+    try:
+        return json.loads(_REHBER.read_text(encoding="utf-8"))
+    except Exception:
+        raise HTTPException(503, "CV rehberi şu an yüklenemedi.")
+
+
+class AtsIstek(BaseModel):
+    icerik: dict | None = None        # düzenleyicideki (kaydedilmemiş olabilir) CV; yoksa kayıtlı CV ya da taslak
+    ilan_metni: str | None = None     # öğrencinin yapıştırdığı ilan (en çok 8.000 karakter)
+    ilan_id: str | None = None        # örnek ilan (ornek_ilanlar.json) — satır türleri dosyadan gelir
+
+
+def _duz_metin(icerik: dict) -> str:
+    parca = [icerik["kisisel"].get(x) or "" for x in ("ad", "eposta", "sehir")] + [icerik.get("profil") or ""]
+    for b in icerik["bolumler"]:
+        for x in b["ogeler"]:
+            parca += [x] if isinstance(x, str) else [str(v) for k, v in x.items() if k in ("baslik", "kurum", "aciklama", "dil", "donem")]
+    return "\n".join(parca)
+
+
+@ogrenci_router.post("/cv/ats")
+def ats_kontrol(istek: AtsIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """Gizlilik: istek gövdesi (ilan metni, CV) ve sonuç veritabanına yazılmaz, olay günlüğüne de girmez."""
+    from app.api.raporlar import _dosya_adi
+    from app.core import ats
+    pv = _portfolyo(db, o)
+    if istek.icerik is not None:
+        icerik = _temizle(istek.icerik)
+    else:
+        r = _kayitli(db, o.id)
+        icerik = _temizle(r.icerik if isinstance(r.icerik, dict) else json.loads(r.icerik)) if r else _taslak(db, o, pv)
+    icerik = _onaylari_isle(icerik, pv)
+    try:
+        pdf, _s_ = cv_pdf(icerik, _okul_rengi(db, o.okul_id))
+        metin, sayfa = ats.pdf_metni(pdf)
+    except Exception:
+        raise HTTPException(500, "CV PDF'i hazırlanıp okunamadı. Biraz sonra yeniden dene.")
+    bicim = ats.bicim_kontrolu(metin, sayfa, _duz_metin(icerik))
+    uyum, ilan_bilgi = None, None
+    if istek.ilan_id:
+        ilan = next((x for x in _ilanlar().get("ilanlar", []) if x.get("id") == istek.ilan_id), None)
+        if ilan is None:
+            raise HTTPException(404, "Örnek ilan bulunamadı.")
+        satirlar = [{"metin": s["metin"], "tur": s.get("dogru") or "genel"} for s in ilan.get("satirlar", [])]
+        ilan_bilgi = {"kaynak": "ornek", "id": ilan["id"], "baslik": ilan.get("baslik")}
+    elif (istek.ilan_metni or "").strip():
+        metin_ilan = istek.ilan_metni.strip()
+        if len(metin_ilan) > 8000:
+            raise HTTPException(400, "İlan metni çok uzun (en çok 8.000 karakter). Yalnızca nitelikler bölümünü yapıştır.")
+        satirlar = ats.ilan_satirlari(metin_ilan)
+        ilan_bilgi = {"kaynak": "yapistirilan"}
+    else:
+        satirlar = None
+    if satirlar is not None:
+        uyum = ats.ilan_uyumu(satirlar, metin)
+        uyum["ilan"] = ilan_bilgi
+    return {"ats_metni": metin, "sayfa": sayfa, "dosya_adi": f"{_dosya_adi(icerik['kisisel'].get('ad') or o.ad_soyad, 'CV')}.pdf",
+            "bicim": bicim, "uyum": uyum,
+            "not": "Gerçek ATS'ler şirketten şirkete farklıdır; bu kontrol yaygın ilkelere dayanan bir tahmindir."}
 
 
 # ============================================================================= okul (yalnızca paylaşılan CV)

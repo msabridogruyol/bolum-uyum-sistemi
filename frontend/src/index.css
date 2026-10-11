@@ -2572,3 +2572,65 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 .ihm-genel{padding:12px 16px;font-size:13px;line-height:1.55;margin-top:12px}
 .ihm-genel summary{cursor:pointer;font-weight:800}
 @media (max-width:640px){.ihd-kart{padding:14px}.ihd-kart-metin{font-size:14.5px}.ihm-soru{font-size:15.5px}.ihz-yak{grid-template-columns:96px 1fr 20px}}
+/* [2026-10-11] CV Atölyesi → CV Rehberi (cvr-) ve ATS kontrolü (ats-) */
+.cvr-hero{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border-left:4px solid var(--okul-c)}
+.cvr-ilerleme{font-family:var(--fd);text-align:right}
+.cvr-ilerleme b{font-size:24px;font-weight:800;color:var(--okul-c)}
+.cvr-ilerleme span{font-size:12px;color:var(--tx3);font-weight:700}
+.cvr-konular{display:grid;gap:10px}
+.cvr-konu{margin:0;padding:0;overflow:hidden;scroll-margin-top:80px}
+.cvr-konu.acik{border-color:color-mix(in srgb, var(--okul-c) 45%, var(--bor))}
+.cvr-konu-ust{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:14px 16px;cursor:pointer;font-family:var(--fn);color:var(--tx);text-align:left}
+.cvr-ikon{width:38px;height:38px;border-radius:12px;display:inline-flex;align-items:center;justify-content:center;font-size:19px;flex-shrink:0;background:color-mix(in srgb, var(--okul-c) 10%, var(--sur2))}
+.cvr-konu-ad{display:block;font-weight:800;font-size:14px;line-height:1.3}
+.cvr-konu-ozet{display:block;font-size:12px;color:var(--tx3);line-height:1.45;margin-top:2px}
+.cvr-ok{font-size:18px;font-weight:700;color:var(--tx3);width:18px;text-align:center;flex-shrink:0}
+.cvr-govde{padding:0 16px 16px;display:grid;gap:12px;font-size:13px;line-height:1.6;color:var(--tx);min-width:0}
+.cvr-metin{margin:0}
+.cvr-alt-baslik{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--okul-c);margin:4px 0 6px}
+.cvr-liste{margin:0;padding-left:18px;display:grid;gap:4px}
+.cvr-not{border-radius:12px;padding:10px 14px;font-size:12.5px;line-height:1.6;border:1px solid var(--bor);background:var(--sur2)}
+.cvr-not.bilgi{background:color-mix(in srgb, var(--okul-c) 7%, var(--sur));border-color:color-mix(in srgb, var(--okul-c) 25%, var(--bor))}
+.cvr-not.iyi{background:var(--grl);border-color:color-mix(in srgb, var(--gr) 35%, transparent)}
+.cvr-not.uyari{background:var(--aml);border-color:var(--am)}
+.cvr-kartlar{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:8px}
+.cvr-kart{border:1px solid var(--bor);border-radius:12px;padding:10px 12px;background:var(--sur);font-size:12.5px;line-height:1.55;color:var(--tx2);min-width:0}
+.cvr-kart-ust{display:flex;gap:8px;align-items:center;color:var(--tx);margin-bottom:4px;font-size:13px}
+.cvr-cift{border:1px solid var(--bor);border-radius:12px;padding:10px 12px;margin-bottom:8px;display:grid;gap:6px;min-width:0}
+.cvr-kotu,.cvr-iyi{font-size:12.5px;line-height:1.55;overflow-wrap:anywhere}
+.cvr-kotu{color:var(--tx3);text-decoration:line-through;text-decoration-color:color-mix(in srgb, var(--re) 55%, transparent)}
+.cvr-iyi{color:var(--tx)}
+.cvr-etiket{display:inline-block;font-size:10px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;border-radius:999px;padding:1px 8px;margin-right:6px;text-decoration:none}
+.cvr-kotu .cvr-etiket{background:var(--rel);color:var(--re)}
+.cvr-iyi .cvr-etiket{background:var(--grl);color:var(--gr)}
+.cvr-neden{font-style:italic}
+.cvr-fiiller{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.cvr-fiil-grup{border:1px solid var(--bor);border-radius:12px;padding:10px 12px}
+.cvr-ciplar{display:flex;flex-wrap:wrap;gap:6px}
+.cvr-cip{font-size:12px;font-weight:600;border-radius:999px;padding:3px 10px;background:color-mix(in srgb, var(--okul-c) 9%, var(--sur2));color:var(--tx)}
+.cvr-sinav{border-top:1px dashed var(--bor);padding-top:4px}
+.cvr-kaynak{font-size:12px;color:var(--tx2)}
+.cvr-kaynak summary{cursor:pointer;font-weight:700;color:var(--tx3)}
+.cvr-kaynak ul{margin:8px 0 0;padding-left:18px;display:grid;gap:6px}
+.cvr-kaynak a{color:var(--okul-c);font-weight:600;overflow-wrap:anywhere}
+.cvr-alt-gezinti{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.ats-bilgi{border-left:4px solid var(--okul-c)}
+.ats-dosya{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;color:var(--tx);overflow-wrap:anywhere}
+.ats-metin-kart{padding:12px 16px}
+.ats-metin{white-space:pre-wrap;overflow-wrap:anywhere;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;line-height:1.55;background:var(--sur2);border:1px solid var(--bor);border-radius:10px;padding:12px 14px;margin:10px 0 0;max-height:420px;overflow:auto;color:var(--tx)}
+.ats-lejant{display:flex;gap:12px;flex-wrap:wrap;margin-bottom:6px}
+.ats-lejant span{display:inline-flex;align-items:center;gap:5px}
+.ats-nokta{display:inline-block;width:8px;height:8px;border-radius:999px;flex-shrink:0}
+.ats-grup{margin-top:12px}
+.ats-cip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;border:1px solid var(--bor);background:var(--sur);border-radius:999px;padding:3px 10px;max-width:100%;overflow-wrap:anywhere}
+.ats-cip small{font-weight:500;color:var(--tx3)}
+.ats-eksik-liste{display:grid;gap:8px}
+.ats-eksik{display:grid;gap:4px;justify-items:start;border-bottom:1px solid var(--bor);padding-bottom:8px}
+.ats-eksik:last-child{border-bottom:0}
+@media (max-width:560px){
+  .cvr-konu-ust{padding:12px;gap:10px}
+  .cvr-ikon{width:32px;height:32px;font-size:16px}
+  .cvr-govde{padding:0 12px 14px}
+  .cvr-ilerleme{text-align:left}
+  .cvr-alt-gezinti .btn{flex:1;justify-content:center}
+}

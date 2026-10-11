@@ -4,14 +4,19 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../api/client'
 import CvDuzenleyici, { yeniId } from './cv/CvDuzenleyici'
+import AtsKontrol from './cv/AtsKontrol'
 import CvKontrol, { puanRengi } from './cv/CvKontrol'
 import CvOnizleme from './cv/CvOnizleme'
+import CvRehberi from './cv/CvRehberi'
 import IlanOkuma from './cv/IlanOkuma'
 import OnYazi from './cv/OnYazi'
 
+// [2026-10-11] 'rehber' (ilk; CV'si kayıtlı olmayan öğrenciyi karşılar) ve 'ats' alt sekmeleri eklendi.
 const ALT = [
+  { kod: 'rehber', ad: '📚 CV Rehberi' },
   { kod: 'olustur', ad: '✏️ CV\'ni oluştur' },
   { kod: 'kontrol', ad: '✅ Kontrol listesi' },
+  { kod: 'ats', ad: '🤖 ATS kontrolü' },
   { kod: 'onyazi', ad: '✉️ Ön yazı' },
   { kod: 'ilan', ad: '🔎 İlan okuma' },
 ]
@@ -34,7 +39,7 @@ export default function CvAtolyesi({ bolum }) {
   const [v, setV] = useState(null)
   const [icerik, setIcerikHam] = useState(null)
   const [degisti, setDegisti] = useState(false)
-  const [alt, setAlt] = useState('olustur')
+  const [altSecim, setAlt] = useState(null)   // null → kayıtlı CV yoksa rehber, varsa oluşturucu
   const [bekle, setBekle] = useState(false)
   const [hata, setHata] = useState(null)
   const [mesaj, setMesaj] = useState(null)
@@ -69,6 +74,8 @@ export default function CvAtolyesi({ bolum }) {
 
   if (!v || !icerik) return <div className="bos-durum">{hata || 'Yükleniyor…'}</div>
   const k = v.kontrol
+  const alt = altSecim || (v.cv ? 'olustur' : 'rehber')
+  const git = (kod) => { setAlt(kod); window.scrollTo?.({ top: Math.max(0, (document.querySelector('.cva-alt')?.getBoundingClientRect().top || 0) + window.scrollY - 80), behavior: 'smooth' }) }
 
   return (
     <div className="cva">
@@ -118,11 +125,14 @@ export default function CvAtolyesi({ bolum }) {
           <div className="cva-yapiskan cva-masaustu">
             <div className="ct" style={{ marginBottom: 8 }}>Önizleme</div>
             <CvOnizleme icerik={icerik} kucuk />
-            <div className="yp-ince" style={{ marginTop: 8, lineHeight: 1.5 }}>PDF sade ve tek sayfa olacak şekilde hazırlanır: tablo ve görsel yok, böylece başvuru sistemleri (ATS) metni doğru okur.</div>
+            <div className="yp-ince" style={{ marginTop: 8, lineHeight: 1.5 }}>PDF sade ve tek sayfa olacak şekilde hazırlanır: tablo ve görsel yok, böylece başvuru sistemleri (ATS) metni doğru okur.{' '}
+              <button type="button" className="hg-link" style={{ fontSize: 11.5, color: 'var(--okul-c)' }} onClick={() => git('ats')}>ATS'nin gördüğünü göster →</button></div>
           </div>
         </div>
       )}
-      {alt === 'kontrol' && <CvKontrol kontrol={k} degisti={degisti} kayitli={!!v.cv} kaydediliyor={bekle} onKaydet={() => kaydet()} />}
+      {alt === 'rehber' && <CvRehberi onGit={git} />}
+      {alt === 'kontrol' && <CvKontrol kontrol={k} degisti={degisti} kayitli={!!v.cv} kaydediliyor={bekle} onKaydet={() => kaydet()} onGit={git} />}
+      {alt === 'ats' && <AtsKontrol icerik={icerik} degisti={degisti} bolum={bolum} onGit={git} />}
       {alt === 'onyazi' && <OnYazi onYazi={icerik.on_yazi} setOnYazi={(x) => setIcerik({ ...icerik, on_yazi: x })} ad={icerik.kisisel.ad} eposta={icerik.kisisel.eposta} />}
       {alt === 'ilan' && <IlanOkuma bolum={bolum} />}
     </div>

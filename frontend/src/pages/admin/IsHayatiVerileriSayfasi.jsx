@@ -51,6 +51,15 @@ function Sihirbaz({ tur, ozet, onBitti }) {
     try { await f() } catch (e) { setHata(e.detail || e.message || 'İşlem başarısız.') }
     setBekle(false)
   }
+  // [2026-10-10] TÜİK Veri Portalı bağlantısından indir → aynı akış
+  const [baglanti, setBaglanti] = useState('')
+  const baglantidanIndir = () => calistir(async () => {
+    setOkuma(null); setOnizleme(null); setSonuc(null)
+    const d = await api.ihBaglantiIndir(baglanti.trim())
+    setDosya({ ad: d.dosya_adi, b64: d.icerik_base64 })
+    const v = await api.ihDosyaOku({ tur, dosya_adi: d.dosya_adi, icerik_base64: d.icerik_base64 })
+    setOkuma(v); setBaslikSatiri(v.baslik_satiri); setEslesme(v.oneri || {})
+  })
   async function dosyaSec(e) {
     const f = e.target.files?.[0]
     if (!f) return
@@ -118,6 +127,14 @@ function Sihirbaz({ tur, ozet, onBitti }) {
         {tur === 'istihdam'
           ? 'TÜİK Yükseköğretim İstihdam Göstergeleri tablosunu (.xlsx ya da .csv) seçin. Başlık satırı ve sütunlar otomatik tahmin edilir; kontrol edip düzeltin. Program adları sistemdeki bölümlerle eşleştirilir ("(İngilizce)", "(Burslu)" gibi ekler yok sayılır).'
           : 'TÜİK Kazanç Yapısı Araştırması meslek grubu tablosunu (.xlsx / .csv) seçin. Meslek grubu kodu (ISCO-08) ayrı sütunda değilse adın başındaki rakamdan ya da grup adından bulunur. Yıllık tutarlar 12\'ye bölünür.'}
+      </div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 8 }}>
+        <input className="yp-sec" style={{ flex: '1 1 340px', minWidth: 0 }} value={baglanti} onChange={(e) => setBaglanti(e.target.value)}
+          placeholder="TÜİK Veri Portalı indirme bağlantısı (https://…tuik.gov.tr/…)" aria-label="TÜİK indirme bağlantısı" />
+        <button className="btn" disabled={bekle || !baglanti.trim()} onClick={baglantidanIndir}>{bekle ? 'İndiriliyor…' : '🔗 Bağlantıdan al'}</button>
+      </div>
+      <div className="yp-ince" style={{ marginBottom: 8 }}>
+        Portalda tablonun indirme simgesine sağ tıklayıp "Bağlantı adresini kopyala"yı seçin. Yalnızca tuik.gov.tr bağlantıları kabul edilir. Bağlantı çalışmazsa dosyayı indirip aşağıdan seçin.
       </div>
       <input type="file" accept=".xlsx,.xlsm,.csv" onChange={dosyaSec} disabled={bekle} />
       {hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
@@ -364,6 +381,13 @@ function IstihdamSekmesi({ ozet, yenileOzet }) {
   const bitti = () => { setYenile((x) => x + 1); yenileOzet() }
   return (
     <>
+      {ozet?.guncelleme && !ozet.guncelleme.guncel && (
+        <div className="card" style={{ marginBottom: 12, borderLeft: '4px solid var(--am)', background: 'color-mix(in srgb, var(--am) 8%, var(--sur))' }}>
+          <b>🔔 Güncelleme zamanı:</b> {ozet.guncelleme.son_veri_yili
+            ? `Sistemdeki son veri ${ozet.guncelleme.son_veri_yili} yılına ait; TÜİK ${ozet.guncelleme.beklenen_veri_yili} verisini yayımlamış olabilir.`
+            : 'Sistemde henüz TÜİK istihdam verisi yok.'} TÜİK genellikle bu tabloyu Temmuz ayında yayımlar; aşağıya portal bağlantısını yapıştırarak yükleyebilirsiniz.
+        </div>
+      )}
       {ozet?.istihdam?.length > 0 && (
         <div className="yp-kpi-grid">
           {ozet.istihdam.map((y) => (

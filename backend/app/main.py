@@ -156,6 +156,19 @@ def _fotograf_temizligi():
         pass
 
 
+def _tuik_hatirlatma():
+    """[2026-10-10] TÜİK Yükseköğretim İstihdam Göstergeleri'nin beklenen yılı yüklenmemişse süper adminlere yılda bir bildirim."""
+    try:
+        from app.core.tuik_baglanti import hatirlat
+        db = SessionLocal()
+        try:
+            hatirlat(db)
+        finally:
+            db.close()
+    except Exception:
+        pass
+
+
 def _bekleyen_skor_hesabi():
     """[2026-10-10] Bir göç katman ağırlıklarını değiştirdiyse (tek_seferlik_gocler'de 'bekleyen_skor_hesabi')
     tamamlanmış turların uyum skorlarını arka planda yeniden hesapla; işaret önce silinir (tek kez çalışsın)."""
@@ -195,11 +208,13 @@ def _baslangic_temizligi():
 
     _fotograf_temizligi()
     _bekleyen_skor_hesabi()
+    _tuik_hatirlatma()
 
     def _dongu():
         while True:
             time.sleep(6 * 3600)
             _fotograf_temizligi()
+            _tuik_hatirlatma()
 
     threading.Thread(target=_dongu, name="fotograf-temizligi", daemon=True).start()
 

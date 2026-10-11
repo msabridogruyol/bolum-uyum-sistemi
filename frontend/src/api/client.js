@@ -341,6 +341,8 @@ export const api = {
   isHayatiCvSil: () => del('/ogrenci/is-hayati/cv'),
   isHayatiCvPdf: () => dosyaIndir('/ogrenci/is-hayati/cv/pdf'),
   isHayatiCvIlanlar: (bolumId) => get(`/ogrenci/is-hayati/cv/ilanlar${bolumId ? `?bolum_id=${bolumId}` : ''}`),
+  isHayatiCvRehber: () => get('/ogrenci/is-hayati/cv/rehber'),   // [2026-10-11] CV Rehberi
+  isHayatiCvAts: (govde) => post('/ogrenci/is-hayati/cv/ats', govde),   // [2026-10-11] ATS kontrolü {icerik?, ilan_id?|ilan_metni?} — kaydedilmez
   isHayatiMezunHikayeleri: (bolumId) => get(`/ogrenci/is-hayati/mezun/hikayeler${bolumId ? `?bolum_id=${bolumId}` : ''}`),
   isHayatiOgrenciCv: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/is-hayati-cv`),
   isHayatiOgrenciCvPdf: (ogrenciId) => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/is-hayati-cv/pdf`, 'admin'),
@@ -350,6 +352,7 @@ export const api = {
   isHayatiMezunHikayesiSil: (okulId, id) => adel(`/yonetim/okul/${okulId}/mezun-hikayeleri/${id}`),
   ihVeriOzet: () => aget('/admin/is-hayati/ozet'),
   ihDosyaOku: (v) => apost('/admin/is-hayati/dosya/oku', v),
+  ihBaglantiIndir: (url) => apost('/admin/is-hayati/baglanti/indir', { url }),
   ihIstihdamOnizle: (v) => apost('/admin/is-hayati/istihdam/onizle', v),
   ihIstihdamKaydet: (v) => apost('/admin/is-hayati/istihdam/kaydet', v),
   ihKazancOnizle: (v) => apost('/admin/is-hayati/kazanc/onizle', v),
