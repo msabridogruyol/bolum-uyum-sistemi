@@ -247,6 +247,7 @@ export const api = {
   katmaniTamamla: (kod) => post(`/ogrenci/katmanlar/${kod}/tamamla`),
   // [2026-10-12] Yeniden değerlendirme: durum (bekleme / güven sorunu / açık) ve sorunlu bölümü tekrar çözme
   degerlendirmeDurumu: () => get('/ogrenci/degerlendirme-durumu'),
+  raporYorumum: () => get('/ogrenci/rapor-yorumu'),   // [2026-10-12] sonuç yorumu ve öneriler
   katmanTekrar: (kod) => post(`/ogrenci/katmanlar/${kod}/tekrar`),
 
   // --- Güvenlik/Tutarlılık (sonradan eklendi) ---
@@ -647,6 +648,8 @@ export const api = {
   degerlendirmeSifirla: (idler) => apost('/yonetim/ogrenciler/degerlendirme-sifirla', { idler }),
   ogrenciDegerlendirmeDurumu: (id) => aget(`/yonetim/ogrenci/${id}/degerlendirme-durumu`),
   katmanTekrarlat: (id, kod) => apost(`/yonetim/ogrenci/${id}/katman-tekrar`, { kod }),
+  ogrenciRaporYorumu: (id, kitle = 'rehber') => aget(`/yonetim/ogrenci/${id}/rapor-yorumu?kitle=${kitle}`),
+  okulRaporYorumu: (okulId, { sinif = '', sube = '' } = {}) => aget(`/yonetim/okul/${okulId}/rapor-yorumu?${new URLSearchParams({ ...(sinif ? { sinif } : {}), ...(sube ? { sube } : {}) })}`),
   sonucEpostasiGonder: (id) => apost(`/yonetim/ogrenci/${id}/sonuc-epostasi`),
   yenidenDegerlendirmeAc: (idler) => apost('/yonetim/ogrenciler/yeniden-degerlendirme', { idler }),
   okulYetkilileri: (okulId) => aget(`/yonetim/okul/${okulId}/yetkililer`),

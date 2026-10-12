@@ -4,6 +4,7 @@ import { Suspense } from 'react'
 import { tembel } from '../yardimci/tembelYukle'   // [2026-10-11] eski sürüm parçası yüklenemezse sayfayı yeniler
 import { NavLink, Navigate, useParams } from 'react-router-dom'
 import PuanRehberi from '../components/PuanRehberi'
+import { OgrenciRaporYorumu } from '../components/RaporYorumu'   // [2026-10-12]
 
 const GenelSonuclarSayfasi = tembel(() => import('./GenelSonuclarSayfasi'))
 const KatmanDetaySayfasi = tembel(() => import('./KatmanDetaySayfasi'))
@@ -38,6 +39,7 @@ export default function ProfilimSayfasi() {
         ))}
       </nav>
       <PuanRehberi bolumlu={false} baslik="Güçlü, çok güçlü, gelişime açık ne demek? Profilini nasıl okumalısın?" />
+      {!k && <OgrenciRaporYorumu />}
       <div className="gomulu-sayfa" key={k || 'genel'}>
         <Suspense fallback={<div className="bos-durum yukleniyor">Yükleniyor…</div>}>
           {!k && <GenelSonuclarSayfasi gomulu />}

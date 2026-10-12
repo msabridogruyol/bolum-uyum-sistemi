@@ -102,12 +102,15 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
     for kid, satirlar in sorted(gruplar.items(), key=lambda kv: katmanlar[kv[0]].sira if kv[0] in katmanlar else 99):
         k = katmanlar.get(kid)
         satirlar.sort(key=lambda x: -x["puan"])
-        v["katmanlar"].append({"kod": k.kod if k else "?", "ad": k.ad if k else "?",
+        from app.core.katman_adlari import katman_adi
+        v["katmanlar"].append({"kod": k.kod if k else "?", "ad": katman_adi(k.kod, k.ad) if k else "?",
                                "ortalama": round(sum(x["puan"] for x in satirlar) / len(satirlar), 1),
                                "ozellikler": satirlar})
     v["k5"] = [{"ad": a, "puan": round(sum(p) / len(p), 1)} for a, p in sorted(k5.items(), key=lambda kv: -sum(kv[1]) / len(kv[1]))]
     sirali = sorted(ana, key=lambda x: -x["puan"])
     from app.core.seviye import gelisime_acik_mi, guclu_mu
+    # [2026-10-12] P4 (duygusal hassasiyet) yüksek puanı güçlü yön, düşük puanı gelişim alanı sayılmaz (yorum.py destek önerir)
+    sirali = [x for x in sirali if x.get("kod") != "P4"]
     v["gucluler"] = [x for x in sirali if guclu_mu(x["puan"])][:6] or sirali[:3]
     v["gelisim"] = [x for x in reversed(sirali) if gelisime_acik_mi(x["puan"])][:5]
 
@@ -194,59 +197,75 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
     return v
 
 
-def swot(v: dict) -> dict:
-    """Güçlü yönler (S) · gelişim alanları (W) · fırsatlar (O) · dikkat edilecekler (T). Kurallı, veriye dayalı."""
+def swot(v: dict, kitle: str = "rehber") -> dict:
+    """Güçlü yönler (S) · gelişim alanları (W) · fırsatlar (O) · dikkat edilecekler (T). Kurallı, veriye dayalı.
+    kitle: 'ogrenci' (sen), 'veli' / 'rehber' (üçüncü kişi). [2026-10-12] Cümleler yorum bölümüyle aynı dilde;
+    düşük kutupta nötr adlar (yorum.DUSUK_AD), listeler ' · ' ile ayrılır."""
+    from app.core.rapor.yorum import DUSUK_AD, YALNIZ_REHBER
+    sen = kitle == "ogrenci"
     S, W, O, T = [], [], [], []
     for x in v["gucluler"][:5]:
-        S.append(f"{x['ad']} — {turkce_kucult(x['seviye'])} ({x['puan']:.0f})")
+        S.append(f"{x['ad']}: {turkce_kucult(x['seviye'])} ({x['puan']:.0f})")
     hedef = v.get("hedef") or {}
     odak = [x for x in hedef.get("odak", [])]
-    if odak:
-        for x in odak[:4]:
-            W.append(f"{x['ad']} — {hedef['ad']} bölümünün beklentisinin altında")
+    for x in odak[:4]:
+        W.append(f"{x['ad']}: {hedef['ad']} bölümünün beklediği düzeyin altında")
     for x in v["gelisim"][:4]:
         if len(W) >= 5:
             break
-        if not any(x["ad"] in w for w in W):
-            W.append(f"{x['ad']} — şu an daha az tercih edilen bir yön ({x['puan']:.0f})")
+        if kitle == "veli" and x.get("kod") in YALNIZ_REHBER:
+            continue
+        ad = DUSUK_AD.get(x.get("kod"), x["ad"])
+        if not any(x["ad"] in w or ad in w for w in W):
+            W.append(f"{ad}: şu an daha az öne çıkıyor ({x['puan']:.0f})")
     if v["bolumler"]:
         ilk = v["bolumler"][:3]
-        O.append("En uyumlu bölümler: " + ", ".join(f"{b['ad']} (%{b['uyum']:.0f})" for b in ilk))
+        O.append(("En uyumlu bölümlerin: " if sen else "En uyumlu bölümler: ") + " · ".join(f"{b['ad']} (%{b['uyum']:.0f})" for b in ilk))
         alanlar = Counter(b["alan"] for b in v["bolumler"] if b.get("alan"))
         if alanlar:
-            O.append("Öne çıkan alan(lar): " + ", ".join(a for a, _ in alanlar.most_common(2)))
+            O.append("Öne çıkan alanlar: " + " · ".join(a for a, _ in alanlar.most_common(2)))
         ortusen = Counter(o for b in v["bolumler"][:5] for o in b.get("ortusen") or [])
         if ortusen:
-            O.append("Önerilerinde tekrar eden güçlü yönler: " + ", ".join(a for a, _ in ortusen.most_common(3)))
+            O.append(("Önerilen bölümlerde sık geçen güçlü yönlerin: " if sen else "Önerilen bölümlerde sık geçen güçlü yönler: ")
+                     + " · ".join(a for a, _ in ortusen.most_common(3)))
     if v["k5"]:
-        O.append(f"Alan sorularında öne çıkan alan: {v['k5'][0]['ad']}")
+        O.append(f"Alan sorularında en yüksek puanlı alan: {v['k5'][0]['ad']}")
     if v["listem"]:
-        O.append("İlgilendiği bölümler (Listem): " + ", ".join(v["listem"][:4]))
+        O.append(("Listene eklediğin bölümler: " if sen else "Listesine eklediği bölümler: ") + " · ".join(v["listem"][:4]))
     if hedef:
         if hedef.get("sira") is None and v["bolumler"]:
-            T.append(f"Hedef bölüm ({hedef['ad']}) ilk 10 önerisi arasında değil"
-                     + (f"; uyumu %{hedef['uyum']:.0f}" if hedef.get("uyum") is not None else "")
-                     + ". Hedef ile profil arasındaki farklar birlikte konuşulmalı.")
+            uyum = f" (uyum %{hedef['uyum']:.0f})" if hedef.get("uyum") is not None else ""
+            T.append(f"Hedefin ({hedef['ad']}) ilk 10 önerin arasında yer almıyor{uyum}. Bu, hedefinin yanlış olduğu anlamına gelmez; "
+                     "farkları rehber öğretmeninle konuş." if sen else
+                     f"Hedef bölüm ({hedef['ad']}) ilk 10 öneri arasında yer almıyor{uyum}. Farkların öğrenciyle birlikte, "
+                     "yargılamadan konuşulması önerilir.")
         oncelikli = [x["ad"] for x in odak if x.get("kategori") == "belirgin_altinda"]
         if oncelikli:
-            T.append("Hedef bölüm için öncelikli gelişim gereken alanlar: " + ", ".join(oncelikli[:3]))
+            T.append(("Hedefin ile profilin arasındaki en belirgin farklar: " if sen else
+                      "Hedef bölüm ile profil arasındaki en belirgin farklar: ") + " · ".join(oncelikli[:3]))
         il = hedef.get("ilerleme") or {}
         if il.get("toplam") and il.get("tamamlanan", 0) == 0:
-            T.append("Yol haritasında henüz tamamlanmış adım yok")
+            T.append("Yol haritanda henüz tamamladığın adım yok; ilk adımla başla." if sen else
+                     "Yol haritasında henüz tamamlanan adım yok.")
     elif v["durum"] == "tamamlandi":
-        T.append("Henüz hedef bölüm seçilmedi; koçluk planı başlamadı")
+        T.append("Henüz hedef bölüm seçmedin; kişisel yol haritan hedef seçince oluşur." if sen else
+                 "Henüz hedef bölüm seçilmedi; kişisel yol haritası hedef seçilince oluşur.")
     for b in v["bolumler"][:3]:
         if b.get("dikkat"):
             T.append(f"{b['ad']}: {b['dikkat']}")
             break
     tur = v.get("tur") or {}
     if tur and not tur.get("gecerli", True):
-        T.append("Son değerlendirmenin güven puanı eşiğin altında; sonuçlar temkinli yorumlanmalı, yeniden değerlendirme önerilir")
+        T.append({"ogrenci": "Bazı yanıtların birbiriyle tam tutarlı görünmüyor; ilgili bölümü yeniden yanıtlaman önerilir.",
+                  "veli": "Bazı bölümlerin yeniden yanıtlanması gerekiyor; sonuçlar şimdilik ön bilgi niteliğindedir."}.get(
+            kitle, "Son değerlendirmenin güven puanı eşiğin altında; sonuçlar temkinli yorumlanmalı, ilgili bölümün yeniden yanıtlanması önerilir."))
     a = v.get("aktivite") or {}
     if v["durum"] == "tamamlandi" and a.get("son4_hafta", 0) == 0:
-        T.append("Son 4 haftada haftalık görev tamamlanmadı; düzenli takip önerilir")
+        T.append("Son 4 haftada tamamlanmış haftalık görevin yok; her hafta en az birini bitirmeyi hedefle." if sen else
+                 "Son 4 haftada haftalık görev tamamlanmadı; düzenli takip önerilir.")
     if v["durum"] != "tamamlandi":
-        T.append("Değerlendirme henüz tamamlanmadı; bölüm önerileri tamamlanınca oluşur")
+        T.append("Değerlendirmen henüz tamamlanmadı; bölüm önerilerin değerlendirmeni tamamlayınca oluşur." if sen else
+                 "Değerlendirme henüz tamamlanmadı; bölüm önerileri değerlendirme tamamlanınca oluşur.")
     return {"S": S, "W": W, "O": O, "T": T}
 
 
@@ -259,7 +278,8 @@ def _katman_ortalamalari(db: Session, tur_idler: list[int]) -> list[dict]:
           JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
          WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
          GROUP BY k.kod, k.ad, k.sira ORDER BY k.sira"""), {"t": tur_idler}).all()
-    return [{"kod": r[0], "ad": r[1], "ortalama": round(float(r[2]), 1)} for r in satir]
+    from app.core.katman_adlari import katman_adi
+    return [{"kod": r[0], "ad": katman_adi(r[0], r[1]), "ortalama": round(float(r[2]), 1)} for r in satir]
 
 
 def _ozet_kucuk_grup(v: dict, kapsamli: bool) -> dict:
@@ -330,8 +350,8 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         okul_katman_ort = _katman_ortalamalari(db, okul_tamam) if yeterli(len(okul_tamam)) else []
     if tamam_turlar and not profil_gizli:
         guclu = db.execute(text("""
-            SELECT d.ad, avg(s.puan) AS o FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
-             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL GROUP BY d.ad ORDER BY o DESC"""), {"t": tamam_turlar}).all()
+            SELECT d.ad, avg(s.puan) AS o, d.kod FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
+             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND d.kod <> 'P4' GROUP BY d.ad, d.kod ORDER BY o DESC"""), {"t": tamam_turlar}).all()
     else:
         guclu = []
     liste = []
@@ -369,8 +389,9 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         "okul": okul_bilgisi(db, okul_id), "tarih": datetime.now(timezone.utc), "ozet": ozet, "kucuk_grup": kg,
         "alanlar": alanlar,
         "katman_ort": katman_ort, "okul_katman_ort": okul_katman_ort, "kapsam": ozet.get("kapsam") or {},
-        "ortak_guclu": [{"ad": r[0], "ortalama": round(float(r[1]), 1)} for r in guclu[:6]],
-        "ortak_gelisim": [{"ad": r[0], "ortalama": round(float(r[1]), 1)} for r in list(reversed(guclu))[:6]],
+        # [2026-10-12] P4 (duygusal hassasiyet) ortak güçlü / gelişim listesine girmez: yüksek puanı güçlü yön değildir
+        "ortak_guclu": [{"ad": r[0], "kod": r[2], "ortalama": round(float(r[1]), 1)} for r in guclu[:6]],
+        "ortak_gelisim": [{"ad": r[0], "kod": r[2], "ortalama": round(float(r[1]), 1)} for r in list(reversed(guclu))[:6]],
         "gecersiz": gecersiz, "ogrenciler": liste,
         "net": net_ozet,
     }

@@ -109,7 +109,10 @@ function kalipGuvenilir(k, s, degerler, cevrilmis) {
 // Bir metnin çevirisi (bulunamazsa null). Baş/son boşluklar korunur.
 // Türkçede yüzde işareti sayıdan önce gelir ("%88"); diğer dillerde sonra ("88%")
 const YUZDE_RX = /%(\d+(?:[.,]\d+)?)/g
-const yuzdeDuzelt = (s) => s.replace(YUZDE_RX, (_, n) => (dil === 'fr' || dil === 'de' ? `${n} %` : `${n}%`))
+// [2026-10-12] Ondalık ayırıcı: Türkçe "60,25" → noktalı dillerde "60.25" (boşluksuz rakam,rakam yalnızca ondalıktır)
+const NOKTA_ONDALIK = new Set(['en', 'zh', 'hi', 'ko', 'ar'])
+const ondalikDuzelt = (s) => (NOKTA_ONDALIK.has(dil) ? s.replace(/(\d),(\d)/g, '$1.$2') : s)
+const yuzdeDuzelt = (s) => ondalikDuzelt(s).replace(YUZDE_RX, (_, n) => (dil === 'fr' || dil === 'de' ? `${n} %` : `${n}%`))
 
 export function cevir(ham) {
   if (!paket || ham == null) return null

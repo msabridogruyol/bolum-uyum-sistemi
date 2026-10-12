@@ -164,3 +164,36 @@ def okul_raporu(okul_id: int, bicim: str = Query("pdf"), sinif: str | None = Que
     db.commit()
     return _cevap(icerik, bicim, _dosya_adi(f"{kapsam_adi}_Sinif_Raporu" if kapsam_adi else "Okul_Raporu", okul_adi,
                                             v["tarih"].strftime("%Y%m%d")))
+
+
+# ============================================================================= [2026-10-12] rapor yorumları (ekranlar)
+# PDF'lerdeki "ne anlama geliyor / ne yapmalı / neden kaçınmalı" bölümünün ekran karşılığı (app/core/rapor/yorum.py).
+@router.get("/ogrenci/rapor-yorumu")
+def kendi_rapor_yorumum(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+    from app.core.rapor.veri import ogrenci_raporu_verisi
+    from app.core.rapor.yorum import ogrenci_yorumu
+    return ogrenci_yorumu(ogrenci_raporu_verisi(db, o), "ogrenci")
+
+
+@router.get("/yonetim/ogrenci/{ogrenci_id}/rapor-yorumu")
+def ogrenci_rapor_yorumu(ogrenci_id: str, kitle: str = Query("rehber"), db: Session = Depends(get_db),
+                         yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """kitle = rehber (varsayılan) | veli | ogretmen | ogrenci — rehber öğretmen velinin ya da öğrencinin ne okuyacağını da görebilir."""
+    from app.api.okul_yonetimi import _ogrenci_kapsami
+    from app.core.rapor.veri import ogrenci_raporu_verisi
+    from app.core.rapor.yorum import KITLELER, ogrenci_yorumu
+    if kitle not in KITLELER:
+        raise HTTPException(status_code=400, detail="Geçersiz kitle.")
+    o = _ogrenci_kapsami(db, yon, ogrenci_id)
+    return ogrenci_yorumu(ogrenci_raporu_verisi(db, o), kitle)
+
+
+@router.get("/yonetim/okul/{okul_id}/rapor-yorumu")
+def okul_rapor_yorumu(okul_id: int, sinif: str | None = Query(None), sube: str | None = Query(None),
+                      db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """Okul / sınıf düzeyi / şube için yönetici özeti, öncelikli işler (kim / ne zaman) ve yapılmaması gerekenler."""
+    from app.api.okul_yonetimi import _okul_kapsami
+    from app.core.rapor.veri import okul_raporu_verisi
+    from app.core.rapor.yorum import okul_yorumu
+    _okul_kapsami(db, yon, okul_id)
+    return okul_yorumu(okul_raporu_verisi(db, okul_id, yon, sinif=sinif or None, sube=sube or None))

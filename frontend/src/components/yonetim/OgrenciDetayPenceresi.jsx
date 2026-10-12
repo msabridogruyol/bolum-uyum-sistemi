@@ -1,6 +1,7 @@
 // [2026-10-09] Öğrenci detayı: hesap, ilerleme, sonuç, istatistik, kayıtlar + şifre sıfırla / düzenle / sil
 import { useEffect, useState } from 'react'
 import { t as cevirT } from '../../yardimci/dil'
+import { YonetimOgrenciYorumu } from '../RaporYorumu'
 import { katmanAdi } from '../../yardimci/katmanAdlari'
 import { AkranListesi } from './AkranPaneli'
 import { OgrenciIlgi } from './KulupYonetimi'
@@ -371,6 +372,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
 
       {sekme === 'sonuc' && (
         <>
+          <YonetimOgrenciYorumu ogrenciId={ogrenciId} />
           {d.sonuc_notu && <div className="yp-uyari" style={{ background: 'var(--sur2)', borderColor: 'var(--bor)' }}>{d.sonuc_notu}</div>}
           {d.oneriler.length > 0 && (
             <table className="yp-tablo">
