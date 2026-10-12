@@ -136,3 +136,22 @@ def test_deneme_yoksa_veli_gorusmesi_ve_dusus_ifadesi():
     assert not any("deneme" in g.lower() for g in y["gorusme"])
     d = ogrenci_yorumu(_veri(netler={"oturumlar": [{"oturum": "TYT", "sayi": 3, "ilk": 70, "son": 60, "degisim": -10}]}), "ogrenci")
     assert any("düşüş" in c for c in d["ozet"]) and any("kendini yargılama" in k for k in d["kacin"])
+
+
+def test_swot_kitleye_gore_ve_notr_adlar():
+    from app.core.rapor.veri import swot
+    v = _veri(gucluler=[_oz("I3", "Baskı altında karar verme", 91) | {"seviye": "Çok güçlü"}],
+              gelisim=[_oz("P3", "Sorumluluk ve disiplin", 25), _oz("I4", "Etik karar verme", 15)],
+              bolumler=[{"ad": "Psikoloji", "alan": "Psikoloji & Sosyal Hizmet", "uyum": 90}], k5=[], listem=["Tıp"],
+              hedef={"ad": "Maden Mühendisliği", "uyum": 3.0, "sira": None})
+    s_ogr, s_veli = swot(v, "ogrenci"), swot(v, "veli")
+    assert any("Planlı çalışma alışkanlığı" in w for w in s_ogr["W"]) and not any("Sorumluluk" in w for w in s_ogr["W"])
+    assert not any("Etik" in w for w in s_veli["W"])
+    assert any(t.startswith("Hedefin (Maden Mühendisliği)") for t in s_ogr["T"])
+    assert any("yargılamadan" in t for t in s_veli["T"]) and "Listesine eklediği bölümler: Tıp" in s_veli["O"]
+
+
+def test_rehber_kendi_metnini_alir():
+    v = _veri(katmanlar=[{"kod": "K4", "ozellikler": [_oz("A1", "Sayısal ve veri eğilimi", 10)]}])
+    d = ogrenci_yorumu(v, "rehber")["destek"]
+    assert any(x["metin"] == ICERIK["A1"]["dusuk"]["rehber"] for x in d)

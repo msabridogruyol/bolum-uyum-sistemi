@@ -126,6 +126,12 @@ def _tablo(st, basliklar, satirlar, genislikler, zebra=True, kucuk=False):
     return t
 
 
+def _swot_kitle(v: dict, kitle: str) -> dict:
+    """[2026-10-12] Öğrenci ve veli raporunda SWOT kendi diliyle (sen / üçüncü kişi) yeniden kurulur."""
+    from app.core.rapor.veri import swot
+    return swot(v, kitle)
+
+
 def _swot(st, s: dict, gen=174 * mm):
     def kutu(baslik, renk, maddeler):
         icerik = [Paragraph(f"<b>{baslik}</b>", ParagraphStyle("sb", parent=st.hucre_b, textColor=renk, fontSize=9.5))]
@@ -455,7 +461,7 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
     if netler:
         h += _net_bolumu(st, v, "ogrenci")
     h.append(st.p("SWOT analizin", st.h2))
-    h.append(_swot(st, v["swot"]))
+    h.append(_swot(st, _swot_kitle(v, "ogrenci")))
     h.append(Spacer(1, 4))
     h += _yorum_bolumu(st, y, "ogrenci", ozet=False, baslik="Şimdi ne yapmalısın?")
     h.append(Spacer(1, 8))
@@ -522,7 +528,7 @@ def veli_pdf(v: dict, netler: bool = True) -> bytes:
     if netler:
         h += _net_bolumu(st, v, "veli")
     h.append(st.p("Özet (SWOT)", st.h2))
-    h.append(_swot(st, v["swot"]))
+    h.append(_swot(st, _swot_kitle(v, "veli")))
     h.append(st.p("Velilere öneriler", st.h2))
     h += _yap_kacin(st, (y["yap"] + VELI_ONERILERI[:2])[:6], y["kacin"], *_YORUM_BASLIK["veli"][:2])
     h.append(st.p("Rehber öğretmenle görüşmede sorabilecekleriniz", st.h2))

@@ -4,17 +4,17 @@
     "D1": {
       "yuksek": {
         "anlam": "Düzenli gelir, öngörülebilir bir çalışma hayatı ve iş güvencesi senin için önemli bir değer.",
-        "ogrenci": "Bölüm araştırırken mezunların iş bulma oranlarına ve uzun süreli çalışma olanaklarına bakarak kendine bir kısa liste çıkar.",
+        "ogrenci": "Bölüm araştırırken mezunların iş bulma oranlarına ve uzun süreli çalışma olanaklarına bakarak kısa bir liste çıkar.",
         "veli": "Çocuğunuzun istikrara neden önem verdiğini dinleyin ve meslek araştırmalarında mezun istihdam bilgilerine birlikte bakın.",
         "ogretmen": "Derslerde ilgili konular geçtiğinde farklı sektörlerin çalışma koşullarını ve istihdam bilgilerini örnek olarak paylaşabilirsiniz.",
         "grup": "Bu öğrencilerle farklı sektörlerin istihdam ve çalışma koşullarını karşılaştıran bir sınıf etkinliği düzenleyebilirsiniz."
       },
       "dusuk": {
         "anlam": "İş güvencesi senin için belirleyici bir ölçüt değil; değişime ve farklı deneyimlere daha açık olabilirsin.",
-        "yap": "İlgini çeken bir meslekte gelirin ne kadar dalgalanabildiğini, o işi yapan biriyle 15 dakikalık bir sohbette sor.",
-        "kacin": "Yalnızca çevrendekiler 'garanti meslek' dediği için bir bölümü listenin başına koymaktan kaçın.",
-        "veli": "Serbest, proje bazlı ve kurumsal çalışma biçimlerini çocuğunuzla birlikte araştırın; onu 'garanti meslek' fikrine yönlendirmek için baskı yapmayın.",
-        "ogretmen": "Proje bazlı ve serbest çalışılan mesleklerin gerçek koşullarını tanıtan meslek tanıtım etkinliklerine yönlendirebilirsiniz.",
+        "yap": "İlgini çeken bir meslekte gelirin ne kadar değişebildiğini, o işi yapan biriyle yapacağın 15 dakikalık bir sohbette sor.",
+        "kacin": "Yalnızca çevrendekiler 'garanti meslek' dedikleri için bir bölümü listenin başına koymaktan kaçın.",
+        "veli": "Serbest, proje bazlı ve kurumsal çalışma biçimlerini çocuğunuzla birlikte araştırın; onu 'garanti meslek' seçmesi için baskı altında bırakmayın.",
+        "ogretmen": "Öğrenciyi, proje bazlı ve serbest çalışılan mesleklerin gerçek koşullarını anlatan meslek tanıtım etkinliklerine yönlendirebilirsiniz.",
         "grup": "Sınıf genelinde serbest, proje bazlı ve girişimci çalışma biçimlerini tanıtan konuk konuşmacılar davet ederek seçenekleri genişletebilirsiniz."
       }
     },
@@ -23,16 +23,16 @@
         "anlam": "Emeğinin karşılığını maddi olarak iyi alabileceğin bir iş senin için önemli.",
         "ogrenci": "İlgilendiğin bölümlerin mezunlarının ilk yıllardaki ve on yıl sonraki kazançlarını araştırıp basit bir karşılaştırma tablosu hazırla.",
         "veli": "Çocuğunuzla para kazanma ve birikim konularını açıkça konuşun; harçlık yönetimi gibi küçük sorumluluklarla bu ilgiyi destekleyin.",
-        "ogretmen": "Meslek tanıtımlarında gelirin yanında eğitim süresi, iş yükü ve rekabet düzeyini birlikte değerlendirmesine yardımcı olabilirsiniz.",
+        "ogretmen": "Meslek tanıtımlarında öğrencinin gelirin yanı sıra eğitim süresini, iş yükünü ve rekabet düzeyini de değerlendirmesine yardımcı olabilirsiniz.",
         "grup": "Bu öğrencilerle meslekleri gelir, eğitim süresi ve iş yükü açısından karşılaştıran bir grup çalışması yapabilirsiniz."
       },
       "dusuk": {
         "anlam": "Yüksek kazanç senin için öncelikli bir hedef değil; işin başka yönleri seni daha çok motive ediyor olabilir.",
-        "yap": "Yüksek kazanç vaat eden ama rekabetçi bir alanı düşünüyorsan, bu temponun seni zorlayıp zorlamayacağını o alanda çalışan biriyle konuşarak sına.",
+        "yap": "Yüksek kazanç vaat eden ama rekabetçi bir alanı düşünüyorsan, bu temponun sana uyup uymayacağını o alanda çalışan biriyle konuşarak öğren.",
         "kacin": "Yalnızca çok para kazandırdığı söylendiği için ilgini çekmeyen bir bölümü seçmekten kaçın.",
         "veli": "Çocuğunuzu neyin motive ettiğini sorup dinleyin; 'o meslek para kazandırmaz' gibi yorumlarla seçimlerini yönlendirmeyin.",
-        "ogretmen": "Gelir dışındaki ölçütleri de (anlam, çalışma ortamı, özerklik) içeren bir meslek karşılaştırma çalışması yaptırabilirsiniz.",
-        "grup": "Sınıf genelinde farklı motivasyonlarla seçilmiş meslekleri tanıtan bir meslek tanıtım günü düzenleyerek keşif alanını genişletebilirsiniz."
+        "ogretmen": "Anlam, çalışma ortamı ve özerklik gibi gelir dışı ölçütleri de içeren bir meslek karşılaştırma çalışması yaptırabilirsiniz.",
+        "grup": "Sınıf genelinde farklı değer ve beklentilere hitap eden meslekleri tanıtan bir meslek günü düzenleyerek keşif alanını genişletebilirsiniz."
       }
     },
     "D3": {
@@ -40,13 +40,13 @@
         "anlam": "Toplumda saygı gören, tanınan ve itibar sağlayan bir konumda olmak senin için önemli.",
         "ogrenci": "Prestijli bulduğun meslekleri yazıp her birinin günlük iş akışını araştır; itibarın yanında işin kendisinin de sana uyduğundan emin ol.",
         "veli": "Çocuğunuzun emeğini görünür kılan sunum, yarışma ya da temsil görevi gibi fırsatlara katılmasını destekleyin.",
-        "ogretmen": "Okul temsil görevleri, sunumlar ve yarışmalar gibi sorumluluk ve görünürlük sağlayan fırsatlara yönlendirebilirsiniz.",
+        "ogretmen": "Öğrenciyi okul temsil görevleri, sunumlar ve yarışmalar gibi sorumluluk ve görünürlük sağlayan fırsatlara yönlendirebilirsiniz.",
         "grup": "Bu öğrencilere okulu temsil edecekleri yarışma, sunum ve etkinliklerde dönüşümlü görevler vererek görünürlük fırsatları yaratabilirsiniz."
       },
       "dusuk": {
         "anlam": "Unvan ya da toplumdaki itibar senin için belirleyici değil; işin içeriği ve sana kattıkları daha önemli olabilir.",
         "yap": "Bu hafta ilgini çeken ama çok bilinmeyen bir mesleği araştır ve rehber öğretmeninle o meslek hakkında konuş.",
-        "kacin": "Yalnızca çevrede saygın görüldüğü için bir bölümü seçme baskısına kapılmaktan kaçın.",
+        "kacin": "Yalnızca çevrende saygın görüldüğü için bir bölümü seçme baskısına kapılmaktan kaçın.",
         "veli": "Çocuğunuzun daha az bilinen alanlara ilgisini merakla karşılayıp bu meslekleri birlikte araştırın; 'herkesin saygı duyduğu meslek' beklentisini öne çıkarmayın.",
         "ogretmen": "Derslerinizle bağlantılı, az bilinen meslekleri ve farklı kariyer yollarını sınıfta kısa örneklerle tanıtabilirsiniz.",
         "grup": "Sınıf genelinde az bilinen meslekleri araştırıp küçük gruplar hâlinde tanıtacakları bir proje düzenleyebilirsiniz."
@@ -63,9 +63,10 @@
       "dusuk": {
         "anlam": "İşin derin bir anlam taşıması senin için öncelikli değil; daha pratik ölçütler seçimlerinde öne çıkabilir.",
         "yap": "Meslek seçerken senin için en önemli üç ölçütü yaz ve bölüm karşılaştırmalarında bu listeyi kullan.",
-        "kacin": "Başkalarının 'anlamlı' bulduğu bir mesleği sırf bu yüzden seçmen gerektiğini düşünmekten kaçın.",
+        "kacin": "Başkaları 'anlamlı' buluyor diye bir mesleği seçmek zorunda olduğunu düşünmekten kaçın.",
         "veli": "Çocuğunuzun çalışma koşulları ve ortam gibi pratik önceliklerini konuşmasına alan açın; 'idealist olmalısın' gibi yargılardan kaçının.",
         "ogretmen": "Öğrenciyi kendi meslek öncelik listesini hazırlamaya teşvik edebilir ve bu listeyi rehber öğretmenle birlikte değerlendirmesini önerebilirsiniz.",
+        "rehber": "Bireysel bir görüşmede öğrencinin kendi meslek seçim ölçütlerini listelemesine yardım edebilir ve bu listeyi önerilen bölümlerle birlikte karşılaştırabilirsiniz.",
         "grup": "Sınıf genelinde öğrencilerin kendi meslek seçim ölçütlerini listeleyip paylaştıkları bir etkinlik yaparak farklı önceliklerin de değerli olduğunu gösterebilirsiniz."
       }
     },
@@ -82,7 +83,7 @@
         "yap": "Düşündüğün bir mesleğin günlük işinin ne kadarının insanlara hizmetle geçtiğini araştır ve bunun sana uyup uymadığını not et.",
         "kacin": "Topluma hizmet odaklı bir mesleği yalnızca çevrenin beklentisi yüzünden seçmekten kaçın.",
         "veli": "Çocuğunuzun değerlerini saygıyla karşılayın; meslek tercihi konusunda suçluluk duygusu yaratabilecek yorumlardan kaçının.",
-        "ogretmen": "Toplumsal etkinin yanı sıra başka ölçütlerle de meslek değerlendirebileceği bir karşılaştırma çalışması önerebilirsiniz.",
+        "ogretmen": "Toplumsal etkinin yanı sıra başka ölçütlerle de meslekleri değerlendirebileceği bir karşılaştırma çalışması önerebilirsiniz.",
         "grup": "Sınıf genelinde teknik, yaratıcı ve ticari alanlardaki meslekleri de tanıtan bir meslek keşif etkinliği düzenleyebilirsiniz."
       }
     },
@@ -92,13 +93,13 @@
         "ogrenci": "Konusunu ve yöntemini kendin seçebileceğin bir proje ödevi ya da bağımsız bir araştırma yaparak bu özgürlüğü nasıl kullandığını gözlemle.",
         "veli": "Ders çalışma düzeni gibi konularda çocuğunuza seçim hakkı tanıyın ve kararlarının sonuçlarını birlikte değerlendirin.",
         "ogretmen": "Ödevlerde konu ya da sunum biçimi seçeneği sunarak öğrencinin özerkliğini öğrenme sürecine katabilirsiniz.",
-        "grup": "Bu öğrencilere konusunu ve yöntemini grupların kendilerinin seçtiği proje ödevleri verip ara kontrol noktalarıyla takip edebilirsiniz."
+        "grup": "Bu öğrencilere konusunu ve yöntemini kendilerinin seçeceği proje ödevleri verip ara kontrol noktalarıyla takip edebilirsiniz."
       },
       "dusuk": {
         "anlam": "Net yönlendirmelerin ve belirli bir yapının olduğu ortamlarda daha rahat çalışabilirsin.",
         "yap": "Serbest çalışma gerektiren bir ödevde, işe başlamadan önce öğretmeninden kısa bir örnek ya da kontrol listesi iste.",
         "kacin": "Tamamen serbest çalışılan bir mesleği yalnızca 'özgür' göründüğü için idealleştirmekten kaçın.",
-        "veli": "Evde net ve tutarlı bir düzen sunun; 'kendi başına halletmelisin' diyerek çocuğunuzu tek başına bırakmayın.",
+        "veli": "Evde net ve tutarlı bir düzen sunun; 'kendi başına halletmelisin' diyerek çocuğunuzu yalnız bırakmayın.",
         "ogretmen": "Açık uçlu görevlerde adım adım yönergeler ve ara kontrol noktaları sunarak öğrencinin rahat çalışmasını destekleyebilirsiniz.",
         "grup": "Sınıf genelinde açık uçlu görevleri örnek çalışmalar ve adım adım yönergelerle sunarak bu öğrencilerin rahat çalışmasını sağlayabilirsiniz."
       }
@@ -115,7 +116,7 @@
         "anlam": "Estetik ya da yaratıcı ifade, meslek seçiminde senin için öncelikli bir ölçüt değil.",
         "yap": "Bölüm araştırırken işin ne kadar tasarım ya da yaratıcı üretim gerektirdiğini not et ve bunu seçim ölçütlerinden biri olarak kullan.",
         "kacin": "Yalnızca başkaları 'yaratıcı bir meslek' diye övdüğü için bir alanı seçmekten kaçın.",
-        "veli": "Çocuğunuzun işlevsellik ve düzen gibi önceliklerini değerli görün; sanatsal ilgileri bir beklenti olarak dayatmayın.",
+        "veli": "Çocuğunuzun işlevsellik ve düzen gibi önceliklerini değerli görün; sanatsal ilgiyi bir beklenti olarak dayatmayın.",
         "ogretmen": "Yaratıcı ödevlerde net ölçütler ve yapılandırılmış alternatifler sunarak öğrencinin kendi güçlü yönleriyle katılmasını sağlayabilirsiniz.",
         "grup": "Sınıf genelinde yaratıcı görevlerin yanında analiz, planlama ve uygulama odaklı seçenekler de sunarak farklı ilgileri görünür kılabilirsiniz."
       }
@@ -125,12 +126,12 @@
         "anlam": "İnsanlarla etkileşim içinde olmak sana enerji veriyor; grup içinde kendini rahatça ifade edebiliyorsun.",
         "ogrenci": "Münazara, tiyatro ya da öğrenci meclisi gibi insanlarla birlikte çalışılan bir etkinlikte görev alarak bu yönünü kullan.",
         "veli": "Çocuğunuzun sosyal etkinliklerini destekleyin ve bu etkinlikler ile ders çalışma zamanı arasındaki dengeyi birlikte planlayın.",
-        "ogretmen": "Grup çalışmalarında sözcülük ya da sunum gibi etkileşim içeren roller vererek bu yönünü öğrenmeye yöneltebilirsiniz.",
+        "ogretmen": "Grup çalışmalarında sözcülük ya da sunum gibi etkileşim içeren roller vererek bu yönünü öğrenme sürecinde kullanmasına fırsat tanıyabilirsiniz.",
         "grup": "Bu öğrencilerle münazara, sunum ve rol oyunu gibi etkileşimli etkinliklere sık yer verip söz sırasını dengeli dağıtabilirsiniz."
       },
       "dusuk": {
-        "anlam": "Yalnız ya da küçük gruplarla çalışırken daha rahat ve verimli olabilirsin; bu bir çalışma tarzıdır.",
-        "yap": "Bir sonraki grup ödevinde, sunumdan önce söyleyeceklerini kısa notlara dökerek hazırlıklı gir.",
+        "anlam": "Yalnız ya da küçük gruplarla çalışırken daha rahat ve verimli olabilirsin; bu da bir çalışma tarzıdır.",
+        "yap": "Bir sonraki grup ödevinde söyleyeceklerini önceden kısa notlara dökerek sunuma hazırlıklı gir.",
         "kacin": "Her sosyal etkinliğe kendini zorlayarak katılıp enerjini tüketme; dinlenmeye de zaman ayır.",
         "veli": "Çocuğunuzun yalnız geçirdiği zamana saygı gösterin ve küçük, tanıdık ortamlarda sosyalleşmesini destekleyin; onu kalabalık ortamlara girmeye zorlamayın.",
         "ogretmen": "Söz almadan önce düşünme süresi tanıyabilir, yazılı katılım ya da ikili çalışma seçenekleri sunabilirsiniz.",
@@ -140,7 +141,7 @@
     "P2": {
       "yuksek": {
         "anlam": "Başkalarıyla uyum içinde çalışmayı, yardımlaşmayı ve ortak çözüm bulmayı önemsiyorsun.",
-        "ogrenci": "Grup çalışmalarında iletişimi kolaylaştıran rolü üstlen; her toplantıda kendi fikrini de en az bir kez açıkça söylemeyi hedefle.",
+        "ogrenci": "Grup çalışmalarında iletişimi kolaylaştıran rolü üstlen; her grup buluşmasında kendi fikrini de en az bir kez açıkça söylemeyi hedefle.",
         "veli": "Çocuğunuzun yardımseverliğini takdir edin ve gerektiğinde 'hayır' diyebilmesinin de doğal olduğunu ona hissettirin.",
         "ogretmen": "Akran öğrenme ve grup projelerinde koordinasyon görevleri verebilir, kendi görüşünü savunmasına da alan açabilirsiniz.",
         "grup": "Bu öğrencilerle iş birliğine dayalı grup projeleri yürütürken her grup üyesinin kendi görüşünü sunacağı bir aşama da planlayabilirsiniz."
@@ -149,8 +150,8 @@
         "anlam": "Fikirlerini doğrudan söyleyen, gerektiğinde itiraz etmekten çekinmeyen ve bağımsız düşünen bir tarzın var.",
         "yap": "Bir sonraki grup tartışmasında itiraz etmeden önce karşındakinin fikrini bir cümleyle özetle, sonra kendi görüşünü söyle.",
         "kacin": "Ekip arkadaşlarının fikirlerini sonuna kadar dinlemeden reddetmekten kaçın.",
-        "veli": "Evdeki konuşmalarda farklı görüşleri sakin bir dille tartışma alıştırması yapın; fikir ayrılığını olumsuz bir özellik gibi yorumlamayın.",
-        "ogretmen": "Münazara ya da karşıt görüş savunma etkinliklerinde bu tarzını yapıcı biçimde kullanmasına, grup çalışmalarında da net rol paylaşımına fırsat verebilirsiniz.",
+        "veli": "Evde farklı görüşleri sakin bir dille konuşabileceğiniz sohbetlere yer açın; fikir ayrılığını olumsuz bir özellik gibi yorumlamayın.",
+        "ogretmen": "Münazara ya da karşıt görüş savunma etkinliklerinde bu tarzını yapıcı biçimde kullanmasına fırsat verebilir, grup çalışmalarında rolleri baştan netleştirebilirsiniz.",
         "grup": "Sınıf genelinde münazara ve karşıt görüş etkinliklerinin kurallarını birlikte belirleyerek fikir ayrılıklarını yapıcı bir öğrenme fırsatına dönüştürebilirsiniz."
       }
     },
@@ -163,7 +164,7 @@
         "grup": "Bu öğrencilerle uzun soluklu projelerde takvim ve görev takibini dönüşümlü paylaştırıp dinlenme aralarını da plana ekleyebilirsiniz."
       },
       "dusuk": {
-        "anlam": "Esnek ve anlık çalışmayı tercih edebilirsin; sıkı planlar seni zaman zaman sıkabilir.",
+        "anlam": "Esnek ve duruma göre çalışmayı tercih ediyor olabilirsin; katı planlar sana zaman zaman sıkıcı gelebilir.",
         "yap": "Bu hafta her sabah günün en önemli tek işini ajandana yaz, akşam yapıldıysa işaretle.",
         "kacin": "Tüm görevleri son güne bırakıp hepsini bir gecede bitirmeye çalışmaktan kaçın.",
         "veli": "Çocuğunuzla kısa ve gerçekçi bir haftalık plan hazırlayın; sürekli hatırlatma ve azarlama yerine küçük ilerlemeleri fark edin.",
@@ -173,7 +174,7 @@
     },
     "P4": {
       "yuksek": {
-        "anlam": "Stresli ya da belirsiz durumları daha yoğun hissedebiliyorsun; bu, duygularına karşı duyarlı olduğunu gösterir.",
+        "anlam": "Stresli ya da belirsiz durumları daha yoğun hissedebiliyorsun; bu, duygularına karşı duyarlı olduğunu da gösterebilir.",
         "ogrenci": "Yoğun haftalarda önceden bir çalışma planı yap, uykuna ve kısa molalara dikkat et; zorlandığında güvendiğin bir yetişkinle ya da rehber öğretmeninle konuş.",
         "veli": "Çocuğunuz endişelendiğinde önce dinleyin, duygusunu küçümsemeden kabul edin ve uyku ile dinlenme düzenini birlikte koruyun.",
         "ogretmen": "Sınav ve sunum öncesinde beklentileri açıkça paylaşabilir, gerektiğinde öğrenciyi bireysel görüşme için nazikçe rehber öğretmene yönlendirebilirsiniz.",
@@ -184,7 +185,7 @@
         "anlam": "Stresli durumlarda genellikle sakin kalabiliyor ve duygularını dengede tutabiliyorsun.",
         "yap": "Bir sonraki grup çalışmasında gerginlik oluştuğunda sakinliğini kullanarak ekibe atılabilecek bir sonraki adımı öner.",
         "kacin": "Arkadaşlarının kaygılarını 'abartıyorsun' diyerek küçümsemekten kaçın; onları dinlemek de bir destektir.",
-        "veli": "Çocuğunuzun sakinliğini takdir edin ama duygularını konuşabileceği bir alan da bırakın; 'sen hiç dert etmezsin' gibi yorumlarla duygularını görmezden gelmeyin.",
+        "veli": "Çocuğunuzun sakinliğini takdir edin, duygularını konuşabileceği bir alan da bırakın; 'sen hiç dert etmezsin' gibi yorumlardan kaçının.",
         "ogretmen": "Grup çalışmalarında dengeleyici bir rol verebilir, sınıfta farklı duygulara saygı gösterilen bir iletişim ortamını pekiştirebilirsiniz.",
         "grup": "Sınıf genelinde farklı duygu tepkilerine saygıyı konu alan kısa bir sohbet ya da rol oyunu yapabilirsiniz."
       }
@@ -194,14 +195,14 @@
         "anlam": "Yeni fikirleri, farklı bakış açılarını ve alışılmadık yolları keşfetmekten keyif alıyorsun.",
         "ogrenci": "Her ay ilgi alanının dışında bir makale, belgesel ya da atölye seç ve öğrendiklerini bir deftere not et.",
         "veli": "Çocuğunuzla müze, bilim merkezi ya da farklı etkinliklere birlikte gidin ve merak ettiği sorular üzerine konuşun.",
-        "ogretmen": "Açık uçlu sorular, disiplinlerarası projeler ve araştırma ödevleri vererek merakını derinleştirebilirsiniz.",
-        "grup": "Bu öğrencilerle disiplinlerarası bir araştırma projesi ya da yeni bir yöntemi deneyecekleri bir atölye çalışması düzenleyebilirsiniz."
+        "ogretmen": "Açık uçlu sorular, disiplinler arası projeler ve araştırma ödevleri vererek merakını derinleştirebilirsiniz.",
+        "grup": "Bu öğrencilerle disiplinler arası bir araştırma projesi ya da yeni bir yöntemi deneyecekleri bir atölye çalışması düzenleyebilirsiniz."
       },
       "dusuk": {
         "anlam": "Denenmiş, bilinen ve işe yaradığı görülmüş yöntemlerle çalışmayı tercih ediyorsun.",
         "yap": "Ayda bir kez alışık olduğun çalışma yönteminde küçük bir değişiklik dene ve işe yarayıp yaramadığını not et.",
         "kacin": "Yeni bir yöntemi hiç denemeden 'bana göre değil' diye hemen reddetmekten kaçın.",
-        "veli": "Yeni deneyimleri çocuğunuzla küçük ve güvenli adımlarla birlikte deneyin; onu ani değişikliklere zorlamayın.",
+        "veli": "Yeni şeyleri çocuğunuzla birlikte, küçük ve güvenli adımlarla deneyin; onu ani değişikliklere zorlamayın.",
         "ogretmen": "Yeni konulara geçerken bildiği örneklerle bağlantı kurarak ve adımları netleştirerek destek olabilirsiniz.",
         "grup": "Sınıf genelinde yeni yöntemleri önce bilinen örneklerle ilişkilendirip küçük adımlarla tanıtarak geçişi kolaylaştırabilirsiniz."
       }
@@ -218,23 +219,23 @@
         "anlam": "Sakin, düzenli ve öngörülebilir ortamlarda daha verimli çalışabilirsin.",
         "yap": "Yoğun bir haftadan önce günlerini kâğıda dökerek hangi saatlerde sakin çalışabileceğini belirle.",
         "kacin": "Aynı anda çok fazla etkinlik üstlenip kendini yorucu bir tempoya sokmaktan kaçın.",
-        "veli": "Evde sakin bir çalışma köşesi ve düzenli bir rutin oluşturmasına yardım edin; 'daha hareketli ol' gibi telkinlerden kaçının.",
+        "veli": "Çocuğunuzun evde sakin bir çalışma köşesi ve düzenli bir rutin oluşturmasına yardım edin; 'daha hareketli ol' gibi telkinlerden kaçının.",
         "ogretmen": "Değişiklikleri önceden haber vererek ve sakin çalışma süreleri tanıyarak öğrencinin verimini destekleyebilirsiniz.",
-        "grup": "Sınıf genelinde ders akışını ve olası değişiklikleri önceden paylaşarak sakin bireysel çalışma sürelerine yer açabilirsiniz."
+        "grup": "Sınıf genelinde ders akışını ve olası değişiklikleri önceden paylaşabilir, sakin bireysel çalışma sürelerine de yer açabilirsiniz."
       }
     },
     "P7": {
       "yuksek": {
         "anlam": "Sonucu belli olmayan durumlarda rahat hareket edebiliyor, yeni şeyler denemekten çekinmiyorsun.",
         "ogrenci": "Bilim fuarı, girişimcilik yarışması ya da deneysel bir proje gibi sonucu belirsiz bir işe katıl; başlamadan önce olası riskleri bir listeye yaz.",
-        "veli": "Çocuğunuzun cesaretli girişimlerini destekleyin ve büyük kararlardan önce artı-eksi listesi yapmayı birlikte alışkanlık hâline getirin.",
+        "veli": "Çocuğunuzun cesur girişimlerini destekleyin ve büyük kararlardan önce artı-eksi listesi yapmayı birlikte alışkanlık hâline getirin.",
         "ogretmen": "Deneme-yanılma gerektiren projelerde sorumluluk verebilir, karar öncesinde riskleri değerlendirmesi için kısa sorular yöneltebilirsiniz.",
         "grup": "Bu öğrencilerle deneme-yanılma gerektiren bir proje yürütüp her aşamada riskleri birlikte değerlendireceğiniz kısa toplantılar yapabilirsiniz."
       },
       "dusuk": {
-        "anlam": "Planı ve sonucu belli olan durumlarda kendini daha güvende hissediyorsun; bu temkinli bir tarzdır.",
+        "anlam": "Planı ve sonucu belli olan durumlarda kendini daha güvende hissediyorsun; bu, temkinli bir çalışma tarzıdır.",
         "yap": "Belirsiz bir durumda bildiklerini ve bilmediklerini iki sütuna yaz, sonra bilmediklerinden birini öğrenmek için birine soru sor.",
-        "kacin": "Tüm ayrıntılar netleşmeden hiç adım atmamaktan kaçın; küçük bir ilk adım çoğu zaman yeterlidir.",
+        "kacin": "Her ayrıntının netleşmesini beklerken hiç adım atmamaktan kaçın; küçük bir ilk adımla başlamak da yeterli olabilir.",
         "veli": "Yeni durumlardan önce çocuğunuzla neyle karşılaşabileceğini birlikte konuşun; 'korkma, at kendini' gibi zorlamalardan kaçının.",
         "ogretmen": "Yeni ya da açık uçlu görevlerde örnek çalışmalar ve net değerlendirme ölçütleri paylaşarak belirsizliği azaltabilirsiniz.",
         "grup": "Sınıf genelinde açık uçlu görevleri örnek çalışmalar ve net değerlendirme ölçütleriyle sunarak belirsizliği azaltabilirsiniz."
@@ -280,14 +281,15 @@
         "ogrenci": "Akran arabuluculuk ya da öğrenci meclisi gibi bir görev üstlenerek bu becerini gerçek durumlarda kullan.",
         "veli": "Kardeşler ya da arkadaşlar arasındaki anlaşmazlıklarda çocuğunuzun önerdiği çözümleri dinleyin ve takdir edin.",
         "ogretmen": "Grup çalışmalarında koordinatörlük görevi verebilir, okulda akran arabuluculuk programı varsa rehber öğretmenle birlikte öğrenciyi bu programa önerebilirsiniz.",
-        "grup": "Bu öğrencilerle, rehber öğretmenle birlikte bir akran arabuluculuk ya da grup koordinatörlüğü sistemi kurabilirsiniz."
+        "rehber": "Okulda akran arabuluculuk programı varsa öğrenciyle kısa bir görüşme yapıp programa katılmak isteyip istemediğini sorabilir, istiyorsa onu programa dahil edebilirsiniz.",
+        "grup": "Rehber öğretmenle iş birliği yaparak bu öğrencilerin görev alacağı bir akran arabuluculuk ya da grup koordinatörlüğü sistemi kurabilirsiniz."
       },
       "dusuk": {
         "anlam": "Ekip içindeki anlaşmazlıkları yönetmek şu an seni zorlayabiliyor; bu beceri pratikle gelişir.",
         "yap": "Bir sonraki anlaşmazlıkta önce karşındakinin ne istediğini kendi cümlelerinle tekrar et, sonra ortak bir çözüm öner.",
         "kacin": "Gerginlik anında hemen cevap vermekten kaçın; kısa bir ara verip sakinleştikten sonra konuş.",
         "veli": "Evdeki anlaşmazlıklarda sakin konuşma ve sırayla dinleme düzenini birlikte uygulayın; çocuğunuzu suçlayıcı bir dille eleştirmekten kaçının.",
-        "ogretmen": "Grup çalışmalarında rolleri ve kuralları baştan netleştirip çatışma çözme adımlarını kısa bir rehber olarak paylaşabilirsiniz.",
+        "ogretmen": "Grup çalışmalarında rolleri ve kuralları baştan netleştirip çatışma çözme adımlarını kısa bir yönerge olarak paylaşabilirsiniz.",
         "grup": "Sınıf genelinde grup çalışmalarından önce rolleri ve tartışma kurallarını birlikte belirleyip çatışma çözme adımlarını panoya asabilirsiniz."
       }
     },
@@ -295,12 +297,12 @@
       "yuksek": {
         "anlam": "Zamanın kısıtlı olduğu baskılı durumlarda bile sakin kalıp karar verebiliyorsun.",
         "ogrenci": "Bilgi yarışmaları, münazaralar ya da süreli problem çözme etkinliklerinde yer alarak bu becerini kullan.",
-        "veli": "Çocuğunuzun hızlı karar verebildiği durumları fark edin ve bu kararları sonradan birlikte değerlendirmesine yardım edin.",
+        "veli": "Çocuğunuzun hızlı karar verebildiği durumları fark edin ve bu kararları sonradan onunla birlikte değerlendirin.",
         "ogretmen": "Süreli etkinliklerde ya da etkinlik organizasyonlarında anlık karar gerektiren görevler verebilirsiniz.",
         "grup": "Bu öğrencilerle süreli problem çözme yarışmaları ya da anlık karar gerektiren canlandırma etkinlikleri düzenleyebilirsiniz."
       },
       "dusuk": {
-        "anlam": "Baskı altında karar vermek şu an seni zorlayabiliyor; düşünmek için zamana ihtiyaç duyman doğal ve bu beceri pratikle gelişir.",
+        "anlam": "Baskı altında karar vermek şu an seni zorlayabiliyor; düşünmek için zamana ihtiyaç duyman doğaldır ve bu beceri pratikle gelişir.",
         "yap": "Haftada bir, süre tutarak kısa bir deneme ya da problem seti çöz ve sonrasında takıldığın anları not et.",
         "kacin": "Sınavda takıldığın bir soruda uzun süre kalmaktan kaçın; soruyu işaretleyip sonra dönmeyi alışkanlık hâline getir.",
         "veli": "Çocuğunuzun karar verirken düşünme süresine saygı gösterin; 'hemen karar ver' diye acele ettirmek yerine seçenekleri birlikte yazın.",
@@ -320,7 +322,7 @@
         "anlam": "Zor kararlarda farklı tarafların çıkarlarını birlikte tartmak şu an sana daha az tanıdık gelebilir; bu yetkinlik örnek durumlar üzerine konuşarak gelişir.",
         "yap": "Haftada bir, haberlerde ya da okulda karşılaştığın bir ikilemi düşün ve bu kararın kimleri nasıl etkileyeceğini kısaca not et.",
         "kacin": "Zor bir kararda yalnızca en hızlı sonuca değil, kararın başkalarını nasıl etkileyeceğine de bakmayı unutma.",
-        "veli": "Günlük hayattaki ikilemleri suçlamadan, açık uçlu sorularla birlikte konuşun.",
+        "veli": "Günlük hayattaki ikilemleri çocuğunuzla suçlamadan, açık uçlu sorularla konuşun.",
         "ogretmen": "Vaka tartışmaları ve rol oyunlarıyla farklı tarafların bakış açısını değerlendirme alıştırmaları yaptırabilirsiniz.",
         "grup": "Sınıf genelinde gündelik ikilemleri farklı tarafların bakış açısından ele alan, yargılayıcı olmayan vaka tartışmaları yapabilirsiniz."
       }
@@ -328,7 +330,7 @@
     "I5": {
       "yuksek": {
         "anlam": "Bir şeyin yapılması gerektiğini gördüğünde beklemeden harekete geçebiliyorsun.",
-        "ogrenci": "Okulda eksik gördüğün bir konuda küçük bir proje başlat ve bunun için bir öğretmenden danışmanlık iste.",
+        "ogrenci": "Okulda eksik gördüğün bir konuda küçük bir proje başlat ve bunun için öğretmenlerinden birinden destek iste.",
         "veli": "Çocuğunuzun başlattığı girişimleri destekleyin ve planlama adımlarını da içerecek şekilde birlikte değerlendirin.",
         "ogretmen": "Kulüp kurma, etkinlik önerme ya da proje başlatma fırsatlarına yönlendirebilir, planlama sürecinde rehberlik edebilirsiniz.",
         "grup": "Bu öğrencilere kulüp kurma, etkinlik önerme ya da okul içi proje başlatma fırsatları sunup planlama aşamasında rehberlik edebilirsiniz."
@@ -355,7 +357,7 @@
         "yap": "Bir sonraki geri bildirimde hemen cevap vermek yerine söyleneni not al, ertesi gün tekrar okuyup tek bir öneriyi uygula.",
         "kacin": "Eleştiriyi kişiliğine yapılmış bir saldırı gibi algılamaktan kaçın; geri bildirim yaptığın işle ilgilidir.",
         "veli": "Geri bildirimi davranış ve iş üzerine, kısa ve sakin bir dille verin; çocuğunuzun kişiliğini eleştirmekten kaçının.",
-        "ogretmen": "Geri bildirimleri bireysel ve yazılı olarak, bir güçlü yönle başlayıp tek bir geliştirme önerisiyle sınırlı tutabilirsiniz.",
+        "ogretmen": "Geri bildirimi bireysel ve yazılı olarak verebilir; bir güçlü yönle başlayıp tek bir geliştirme önerisiyle sınırlı tutabilirsiniz.",
         "grup": "Sınıf genelinde bir güçlü yön ve bir öneriden oluşan geri bildirim kalıbını tanıtıp akran değerlendirmelerinde bu kalıbı kullanabilirsiniz."
       }
     },
@@ -371,7 +373,7 @@
         "anlam": "Stratejik planlama ve iş dünyasının işleyişi şu an sana uzak gelebilir; bu yetkinlik deneyimle gelişebilir.",
         "yap": "Ayda bir, tanıdığın bir işletmenin nasıl gelir elde ettiğini ve hangi giderleri olduğunu araştırıp kısa bir not yaz.",
         "kacin": "İş dünyasıyla ilgili konuların sana göre olmadığını düşünüp bunları tamamen dışarıda bırakmaktan kaçın.",
-        "veli": "Çocuğunuzla tanıdık bir işletmeyi ya da bir yakınınızın iş yerini birlikte ziyaret etmeyi düşünebilirsiniz.",
+        "veli": "Tanıdık bir işletmeyi ya da bir yakınınızın iş yerini çocuğunuzla ziyaret ederek işlerin nasıl yürüdüğünü birlikte gözlemleyebilirsiniz.",
         "ogretmen": "Okul kantini ya da kermes gibi somut örneklerle basit planlama ve bütçe çalışmaları yaptırabilirsiniz.",
         "grup": "Sınıf genelinde kantin ya da kermes gibi tanıdık örnekler üzerinden gelir-gider ve planlama çalışmaları yapabilirsiniz."
       }
@@ -390,6 +392,7 @@
         "kacin": "Yalnızca 'sayısal bölümler daha garanti' dendiği için ilgini çekmeyen bir alanı seçmekten kaçın.",
         "veli": "Çocuğunuzun ilgi alanlarını birlikte keşfedin; sayısal alanı tek güvenli seçenek gibi sunmayın.",
         "ogretmen": "Sayısal konuları öğrencinin ilgi alanlarından örneklerle ilişkilendirebilir, alan araştırması için rehber öğretmenle birlikte kaynak önerebilirsiniz.",
+        "rehber": "Bireysel görüşmede öğrencinin ilgi duyduğu alanları konuşup bu alanlara uygun bölümler için tanıtım kaynakları ve meslek tanıtım etkinlikleri önerebilirsiniz.",
         "grup": "Sınıf genelinde sözel, tasarım, insan odaklı ve uygulamalı alanlardaki meslekleri de tanıtarak keşif seçeneklerini genişletebilirsiniz."
       }
     },
@@ -433,11 +436,11 @@
         "ogrenci": "Çizim, maket, 3B modelleme ya da grafik tasarım gibi bir alanda küçük projeler yap ve bunları bir portfolyoda topla.",
         "veli": "Çocuğunuza çizim, maket ya da tasarım malzemeleri sağlayın ve ürettiklerini ilgiyle inceleyin.",
         "ogretmen": "Görsel sunum, şema ve model hazırlama gibi görevler vererek bu ilgisini derslere katabilirsiniz.",
-        "grup": "Bu öğrencilerle maket, poster ya da dijital tasarım üretecekleri disiplinlerarası bir proje yürütebilirsiniz."
+        "grup": "Bu öğrencilerle maket, poster ya da dijital tasarım üretecekleri disiplinler arası bir proje yürütebilirsiniz."
       },
       "dusuk": {
         "anlam": "Görsel tasarım ve uzamsal çalışmalar şu an ilgini daha az çekiyor; bu bir ilgi tercihidir.",
-        "yap": "Mimarlık ya da tasarım gibi bir alanı düşünüyorsan, o alanda çalışan biriyle konuşarak günlük işin sana uyup uymadığını sına.",
+        "yap": "Mimarlık ya da tasarım gibi bir alanı düşünüyorsan, o alanda çalışan biriyle konuşarak günlük işin sana uyup uymadığını öğren.",
         "kacin": "Yalnızca popüler olduğu için tasarım ağırlıklı bir bölümü seçmekten kaçın.",
         "veli": "Çocuğunuzun ilgisini çeken diğer alanları birlikte keşfedin; tasarım alanını yalnızca popüler olduğu için öne çıkarmayın.",
         "ogretmen": "Görsel ağırlıklı görevlerde alternatif sunum biçimleri tanıyarak öğrencinin güçlü yönleriyle katılmasını sağlayabilirsiniz.",
@@ -447,7 +450,7 @@
     "A5": {
       "yuksek": {
         "anlam": "Doğayı, canlıları ve deney yoluyla keşfetmeyi ilginç buluyorsun.",
-        "ogrenci": "Bilim kulübünde bir deney projesi yürüt ya da bir bilim proje yarışması için fen öğretmeninden danışmanlık iste.",
+        "ogrenci": "Bilim kulübünde bir deney projesi yürüt ya da bir bilim proje yarışmasına hazırlanmak için fen öğretmeninden destek iste.",
         "veli": "Doğa yürüyüşleri, bilim merkezi ziyaretleri ya da evde basit deneylerle çocuğunuzun bu ilgisini destekleyin.",
         "ogretmen": "Laboratuvar çalışmalarında sorumluluk verebilir, bilim fuarı ya da araştırma projelerine yönlendirebilirsiniz.",
         "grup": "Bu öğrencilerle laboratuvar deneyleri, doğa gözlemleri ya da bilim fuarı projeleri planlayabilirsiniz."
@@ -458,6 +461,7 @@
         "kacin": "Yalnızca ailende ya da çevrende tercih edildiği için laboratuvar ağırlıklı bir alana yönelmekten kaçın.",
         "veli": "Çocuğunuzun ilgisini çeken alanları dinleyin; fen alanını ailede tercih edildiği için tek seçenek gibi sunmayın.",
         "ogretmen": "Fen konularını günlük hayattan örneklerle ilişkilendirebilir, farklı ilgi alanlarına uygun bölümleri keşfetmesi için öğrenciyi rehber öğretmene yönlendirebilirsiniz.",
+        "rehber": "Bireysel görüşmede öğrencinin ilgi duyduğu alanlara uygun bölümleri birlikte inceleyebilir, gerekirse aileyle de bir görüşme planlayabilirsiniz.",
         "grup": "Sınıf genelinde sosyal, sözel, tasarım ve ticari alanlardaki meslekleri tanıtan bir keşif günü düzenleyebilirsiniz."
       }
     },
@@ -471,7 +475,7 @@
       },
       "dusuk": {
         "anlam": "Fiziksel ve uygulamalı işler yerine masa başında yürütülen düşünsel çalışmalar ilgini daha çok çekiyor olabilir.",
-        "yap": "Düşündüğün mesleklerde ne kadar ayakta, sahada ya da fiziksel çalışma olduğunu bir iş gözlem ziyaretinde ya da sohbette sor.",
+        "yap": "Düşündüğün mesleklerde ne kadar ayakta, sahada ya da fiziksel çalışma olduğunu bir iş gözlem ziyaretinde ya da o işi yapan biriyle sohbette sor.",
         "kacin": "Fiziksel efor gerektiren bir alanı yalnızca başkaları önerdiği için seçmekten kaçın.",
         "veli": "Çocuğunuzun masa başı ilgilerini değerli görün; günlük hareketi bir zorunluluk yerine keyifli bir aile etkinliği olarak sunun.",
         "ogretmen": "Uygulamalı görevlerde öğrenciye planlama ya da raporlama gibi alternatif roller verebilirsiniz.",
@@ -491,7 +495,7 @@
         "yap": "İlgilendiğin mesleklerde işin ne kadar kurala ve prosedüre bağlı olduğunu bir çalışanla konuşarak öğren.",
         "kacin": "Yalnızca güvenli göründüğü için çok kurallı ve rutin bir işi seçmekten kaçın.",
         "veli": "Çocuğunuzun esnek çalışma tarzına alan tanıyın; her ayrıntıyı sizin belirlediğiniz bir düzene sokmaya çalışmayın.",
-        "ogretmen": "Açık uçlu projeler ve seçenek sunan görevlerle bu tarza uygun öğrenme fırsatları yaratabilirsiniz.",
+        "ogretmen": "Açık uçlu projeler ve seçenek sunan görevlerle bu çalışma tarzına uygun öğrenme fırsatları yaratabilirsiniz.",
         "grup": "Sınıf genelinde seçenek sunan, açık uçlu projeler vererek esnek çalışma tarzına uygun öğrenme fırsatları yaratabilirsiniz."
       }
     },
@@ -500,8 +504,8 @@
         "anlam": "Ayrıntılardan çok bütünü görmeyi, bağlantılar kurmayı ve fikir üretmeyi seviyorsun.",
         "ogrenci": "Bir proje ya da konu için kavram haritası çıkararak fikirlerini bir araya getir ve bunu sunumlarında kullan.",
         "veli": "Güncel konular, gelecek senaryoları ya da fikir tartışmaları üzerine çocuğunuzla sohbet ederek bu tarzını besleyin.",
-        "ogretmen": "Disiplinlerarası projeler, beyin fırtınası ve kavram haritası çalışmalarında öne çıkmasına fırsat verebilirsiniz.",
-        "grup": "Bu öğrencilerle beyin fırtınası, kavram haritası ve disiplinlerarası projeler içeren etkinlikler düzenleyebilirsiniz."
+        "ogretmen": "Disiplinler arası projeler, beyin fırtınası ve kavram haritası çalışmalarında öne çıkmasına fırsat verebilirsiniz.",
+        "grup": "Bu öğrencilerle beyin fırtınası, kavram haritası ve disiplinler arası projeler içeren etkinlikler düzenleyebilirsiniz."
       },
       "dusuk": {
         "anlam": "Soyut fikirlerden çok somut, ayrıntılı ve adım adım ilerleyen çalışmaları tercih ediyorsun.",
@@ -522,10 +526,10 @@
       },
       "dusuk": {
         "anlam": "Satış, ikna ve girişim kurma gibi işler şu an ilgini daha az çekiyor; bu bir ilgi tercihidir.",
-        "yap": "Düşündüğün mesleklerde ne kadar satış, müşteri ikna etme ya da iş geliştirme olduğunu bir iş gözlem ziyaretinde sor.",
+        "yap": "Düşündüğün mesleklerde ne kadar satış, müşteri ikna etme ya da iş geliştirme olduğunu bir iş gözlem ziyaretinde ya da o işi yapan birine sor.",
         "kacin": "Yalnızca kazançlı ya da popüler göründüğü için girişimcilik ağırlıklı bir yola yönelmekten kaçın.",
         "veli": "Çocuğunuzun ilgi alanlarını dinleyin; 'kendi işini kur' gibi beklentileri ona yüklemeyin.",
-        "ogretmen": "Grup projelerinde araştırma ya da içerik hazırlama gibi rolleri seçebileceği seçenekler sunabilirsiniz.",
+        "ogretmen": "Grup projelerinde öğrenciye araştırma ya da içerik hazırlama gibi rolleri seçme fırsatı tanıyabilirsiniz.",
         "grup": "Sınıf genelinde araştırma, üretim ve uzmanlık odaklı meslekleri tanıtarak girişimcilik dışındaki seçenekleri de görünür kılabilirsiniz."
       }
     }

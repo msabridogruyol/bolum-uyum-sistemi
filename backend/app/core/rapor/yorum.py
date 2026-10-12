@@ -149,7 +149,7 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
         y["ozet"].append("Değerlendirmen henüz tamamlanmadı; yorumlar tüm bölümler bitince hazırlanır." if sen else
                          "Değerlendirme henüz tamamlanmadı; yorumlar tüm bölümler bitince hazırlanır.")
         y["yap"].append(("Kalan bölümleri sakin bir zamanda, tek oturumda bitir." if durum == "devam" else
-                         "Sana özel açılan alan sorularını (K5) tamamla; önerilerin bunlarla netleşir.") if sen else
+                         "Sana özel açılan alan sorularını tamamla; önerilerin bunlarla netleşir.") if sen else
                         "Öğrencinin kalan bölümleri tamamlaması için uygun bir zaman planlanmalı.")
         return y
 
@@ -181,7 +181,7 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
     dadlar = " · ".join(g["ad"] for g in degerler)
     if dadlar and kitle != "ogretmen":
         y["ozet"].append({"ogrenci": f"Bir işte en çok önem verdiğin değerler: {dadlar}.",
-                          "veli": f"Bir işte en çok önem verdiği değerler: {dadlar}.",
+                          "veli": f"Çocuğunuzun bir işte en çok önem verdiği değerler: {dadlar}.",
                           "rehber": f"Önem verdiği değerler: {dadlar}."}[kitle])
     if bolumler:
         b1 = bolumler[0]["ad"]
@@ -192,20 +192,20 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
                           "rehber": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. İlk öneri: {b1}."}[kitle])
     if hd == "uyumlu":
         y["ozet"].append(f"Seçtiğin hedef ({h['ad']}) profilinle uyumlu; şimdi önemli olan bu hedef için düzenli çalışmak." if sen else
-                         f"Seçilen hedef ({h['ad']}) profille uyumlu; şimdi önemli olan bu hedef için düzenli çalışmak.")
+                         f"Seçilen hedef ({h['ad']}) öğrencinin profiliyle uyumlu; şimdi önemli olan bu hedef için düzenli çalışmak.")
     elif hd == "farkli":
         y["ozet"].append(f"Seçtiğin hedef ({h['ad']}) ile profilin arasında belirgin farklar var. Bu, hedefin yanlış olduğu anlamına gelmez; "
                          "farkların nereden geldiğini rehber öğretmeninle konuşman karar vermeni kolaylaştırır." if sen else
                          f"Seçilen hedef ({h['ad']}) ile profil arasında belirgin farklar var. Bu, hedefin yanlış olduğu anlamına gelmez; "
                          "farkların öğrenciyle birlikte, yargılamadan konuşulması önerilir.")
     elif hd == "kismen":
-        y["ozet"].append(f"Seçtiğin hedef ({h['ad']}) profilinle kısmen örtüşüyor; güçlü yanlarını bu hedefte nasıl kullanabileceğini keşfet." if sen else
+        y["ozet"].append(f"Seçtiğin hedef ({h['ad']}) profilinle kısmen örtüşüyor; güçlü yönlerini bu hedefte nasıl kullanabileceğini keşfet." if sen else
                          f"Seçilen hedef ({h['ad']}) profille kısmen örtüşüyor.")
     else:
         y["ozet"].append("Henüz bir hedef bölüm seçmedin; önerilerinden birkaçını yakından tanıyarak başlayabilirsin." if sen else
                          "Henüz bir hedef bölüm seçilmedi.")
     for o in net["artis"][:1]:
-        y["ozet"].append(f"Denemelerde yükseliştesin ({o['oturum']}: ilk {_say(o['ilk'])}, son {_say(o['son'])} net); bu düzeni koru." if sen else
+        y["ozet"].append(f"Deneme netlerin yükseliyor ({o['oturum']}: ilk {_say(o['ilk'])}, son {_say(o['son'])} net); bu düzeni koru." if sen else
                          f"Denemelerde yükseliş var ({o['oturum']}: ilk {_say(o['ilk'])}, son {_say(o['son'])} net).")
     for o in net["dusus"][:1]:
         y["ozet"].append(f"Son {o['oturum']} denemesinde ilk denemeye göre düşüş var ({_say(o['ilk'])} → {_say(o['son'])} net); "
@@ -216,14 +216,14 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
     # --- Güçlü yönleri kullanma
     alan_g = {"ogrenci": "ogrenci", "veli": "veli", "ogretmen": "ogretmen", "rehber": "ogretmen"}[kitle]
     for g in guclu[:3]:
-        m = _metin(g.get("kod"), "yuksek", alan_g)
+        m = (kitle == "rehber" and _metin(g.get("kod"), "yuksek", "rehber")) or _metin(g.get("kod"), "yuksek", alan_g)
         if m:
             y["guclu"].append({"ad": g["ad"], "metin": m})
 
     # --- Gelişim / destek (düşük kutupta nötr adlar)
     alan_d = {"ogrenci": "yap", "veli": "veli", "ogretmen": "ogretmen", "rehber": "ogretmen"}[kitle]
     for g in gelisim:
-        m = _metin(g.get("kod"), "dusuk", alan_d)
+        m = (kitle == "rehber" and _metin(g.get("kod"), "dusuk", "rehber")) or _metin(g.get("kod"), "dusuk", alan_d)
         if m:
             y["destek"].append({"ad": DUSUK_AD.get(_kod(g), g["ad"]), "metin": m})
     if hassas_yuksek and kitle != "ogretmen":
@@ -234,7 +234,7 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
     # --- Yapılacaklar (öncelik sırasıyla)
     if guven_dusuk and kitle in ("ogrenci", "rehber"):
         y["yap"].append("Tutarsız görünen bölümü sakin bir zamanda yeniden yanıtla." if sen else
-                        "Öğrenciyle görüşüp güven puanı düşük çıkan bölümü yeniden çözmesini sağlayın (öğrenci detayı → Değerlendirme).")
+                        "Öğrenciyle görüşüp güven puanı düşük çıkan bölümü yeniden yanıtlamasını sağlayın (öğrenci detayı → Değerlendirme).")
     if hd == "yok" and bolumler:
         ilk3 = " · ".join(b["ad"] for b in bolumler[:3])
         y["yap"].append({"ogrenci": f"İlk üç önerini ({ilk3}) ders programı ve örnek meslekleriyle incele; ilgini en çok çekeni deneme hedefi olarak belirleyebilirsin (istediğin zaman değiştirebilirsin).",
@@ -249,42 +249,42 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
                          "rehber": f"Hedef ({h['ad']}) ile ilk öneri ({b1}) arasındaki farkları konuşun; hedefin nasıl oluştuğunu (kendi ilgisi, aile ya da çevre etkisi) açık uçlu sorularla ele alın."}[kitle])
     if h and h.get("siradaki") and kitle in ("ogrenci", "veli"):
         y["yap"].append(f"Yol haritandaki sıradaki adımı ({h['siradaki']}) bu hafta tamamla." if sen else
-                        f"Yol haritasındaki sıradaki adımı ({h['siradaki']}) sorun ve tamamladığında takdir edin.")
+                        f"Çocuğunuza yol haritasındaki sıradaki adımı ({h['siradaki']}) sorun; tamamladığında emeğini takdir edin.")
     if net["en_acik"] is not None:
         s = net["en_acik"]
         y["yap"].append({"ogrenci": f"Hedef programla en büyük farkın {s['ad']} dersinde ({_say(abs(s['fark']))} net); haftalık planına bu dersin konularını öncelikli yaz.",
                          "veli": f"Hedefe göre en çok desteğe ihtiyaç duyulan ders {s['ad']}; çalışma planında bu derse düzenli zaman ayrılmasını destekleyin.",
-                         "ogretmen": f"Hedef programa göre en büyük fark {s['ad']} dersinde; öğrencinin bilgisiyle ders öğretmeniyle paylaşılabilir.",
+                         "ogretmen": f"Hedef programa göre en büyük fark {s['ad']} dersinde; bu bilgi, öğrencinin onayıyla ilgili ders öğretmeniyle paylaşılabilir.",
                          "rehber": f"Hedef programa göre en büyük net farkı {s['ad']} dersinde ({_say(abs(s['fark']))} net); çalışma planında önceliklendirilmeli."}[kitle])
     elif net["en_dusuk"] is not None:
         d = net["en_dusuk"]
-        y["yap"].append(f"{d['oturum']} {d['ad']} dersinde netlerin soru sayısına göre en düşük; bu dersin eksik konularından başla." if sen else
-                        f"{d['oturum']} {d['ad']} dersi, soru sayısına göre netin en düşük olduğu ders; çalışma planında öne alınmalı.")
+        y["yap"].append(f"{d['oturum']} denemelerinde soru sayısına göre en düşük netin {d['ad']} dersinde; çalışmaya bu dersin eksik konularından başla." if sen else
+                        f"{d['oturum']} denemelerinde soru sayısına göre neti en düşük ders {d['ad']}; çalışma planında öne alınabilir.")
     elif not net["oturumlar"] and kitle in ("ogrenci", "rehber"):
-        y["yap"].append("Deneme netlerini Net Takibi'ne girersen gidişatını birlikte izleyebiliriz." if sen else
+        y["yap"].append("Deneme netlerini Net Takibi'ne girersen gidişatını rehber öğretmeninle birlikte izleyebilirsin." if sen else
                         "Öğrencinin deneme sonuçlarını Net Takibi'ne girmesi, gidişatın izlenmesi için önerilir.")
     toplam, son4 = akt.get("gorev_toplam") or 0, akt.get("son4_hafta") or 0
     if toplam and son4 < 2 and kitle in ("ogrenci", "rehber", "veli"):
         y["yap"].append({"ogrenci": "Haftalık görevlerini düzenli yap; her hafta en az birini bitirmek bile fark yaratır.",
-                         "veli": "Haftalık görevlerini sorun; bitirdiklerini fark edip takdir edin.",
+                         "veli": "Çocuğunuza haftalık görevlerini sorun; bitirdiklerini fark edip takdir edin.",
                          "rehber": f"Son 4 haftada tamamlanan haftalık görev: {son4}; düzenli katılım için kısa bir hatırlatma yapılabilir."}[kitle])
     y["yap"] = list(dict.fromkeys(y["yap"]))[:6]
 
     # --- Kaçınılacaklar
     if kitle == "ogrenci":
-        y["kacin"].append("Bölümünü yalnızca uyum yüzdesine bakarak seçme; yüzde bir başarı tahmini değil, profilinin bölümle örtüşmesidir.")
+        y["kacin"].append("Bölümünü yalnızca uyum yüzdesine bakarak seçme; bu yüzde bir başarı tahmini değil, profilinin bölümle ne kadar örtüştüğünü gösterir.")
         if hd == "farkli":
             y["kacin"].append("Uyum düşük çıktı diye hedefinden hemen vazgeçme; önce farkları anlamaya çalış.")
         if net["dusus"]:
-            y["kacin"].append("Tek bir kötü denemeye göre kendini yargılama; gidişata bak.")
+            y["kacin"].append("Düşük geçen tek bir denemeye göre kendini yargılama; gidişata bak.")
         elif net["oturumlar"]:
-            y["kacin"].append("Yanlışlarını incelemeden bir sonraki denemeye geçme; aynı hatayı tekrar yapmamak en kolay kazanılan nettir.")
+            y["kacin"].append("Yanlışlarını incelemeden bir sonraki denemeye geçme; aynı hatayı tekrarlamamak, en kolay net kazanma yoludur.")
         for g in gelisim[:2]:
             m = _metin(g.get("kod"), "dusuk", "kacin")
             if m:
                 y["kacin"].append(m)
     elif kitle == "veli":
-        y["kacin"] += ["Sonuçları bir başarı ya da zekâ ölçüsü gibi yorumlamayın; doğru ya da yanlış cevabı olmayan bir eğilim değerlendirmesidir.",
+        y["kacin"] += ["Sonuçları bir başarı ya da zekâ ölçüsü gibi yorumlamayın; bu, doğru ya da yanlış cevabı olmayan bir eğilim değerlendirmesidir.",
                        "Çocuğunuzu kardeşleri ya da arkadaşlarıyla karşılaştırmayın.",
                        "Bölüm kararını onun yerine vermeyin; seçenekleri birlikte tanıyın, kararı birlikte verin."]
         if net["dusus"]:
@@ -333,7 +333,7 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
             y["gorusme"].append("Güven puanı düşük çıkan bölümün yeniden yanıtlanması.")
     y["gorusme"] = y["gorusme"][:5]
 
-    y["notlar"].append("Bu yorumlar değerlendirme sonuçlarından otomatik hazırlanan bir özettir, yönlendirme kararı değildir; "
+    y["notlar"].append("Bu yorumlar değerlendirme sonuçlarına dayanan bir özettir, yönlendirme kararı değildir; "
                        "son karar öğrenci, ailesi ve rehber öğretmenin birlikte değerlendirmesiyle verilir.")
     return y
 
@@ -384,7 +384,7 @@ def okul_yorumu(ov: dict, moduller: set[str] | None = None) -> dict:
     if on_iki and on_iki["ogrenci"]:
         o12 = _oran(on_iki["tamamlayan"], on_iki["ogrenci"])
         if o12 is not None and o12 < 60:
-            y["ozet"].append(f"12. sınıflarda tamamlama %{_say(round(o12))}; tercih dönemi yaklaştığı için öncelikli konu bu.")
+            y["ozet"].append(f"12. sınıflarda tamamlama oranı %{_say(round(o12))}; tercih dönemi yaklaştığı için bu konu önceliklidir.")
             ekle(f"12. sınıfların değerlendirmeyi tamamlaması için sınıf saatinde bir oturum planlayın ({on_iki['ogrenci'] - on_iki['tamamlayan']} öğrenci kaldı).",
                  "Rehber öğretmen + 12. sınıf öğretmenleri", "Bu hafta", 1)
     if giris_yok:
@@ -395,12 +395,12 @@ def okul_yorumu(ov: dict, moduller: set[str] | None = None) -> dict:
              "rehberlik saatinde birlikte tamamlama oturumu yapın.", "Sınıf öğretmeni + rehber öğretmen", "Bu ay", 2)
     if h_oran is not None and tamam >= 5 and h_oran < 50:
         if erken:
-            y["ozet"].append(f"Hedef bölüm seçen öğrenci sayısı {hedef} (tamamlayanların %{_say(round(h_oran))}); bu sınıf düzeyinde beklenen bir durum, öncelik keşif etkinlikleri.")
+            y["ozet"].append(f"Hedef bölüm seçen öğrenci sayısı {hedef} (tamamlayanların %{_say(round(h_oran))}); bu, sınıf düzeyi için beklenen bir durumdur; öncelik keşif etkinliklerine verilebilir.")
             ekle("Öğrencilerin önerilen bölümleri tanıması için meslek tanıtımı ya da bölüm keşfi etkinliği planlayın.",
                  "Rehber öğretmen", "Bu ay", 2)
         else:
             y["ozet"].append(f"Hedef bölüm seçen öğrenci sayısı {hedef} (tamamlayanların %{_say(round(h_oran))}); kişisel yol haritası ve koçluk adımları hedef seçildiğinde oluşur.")
-            ekle("Hedef seçmemiş öğrencilerle kısa bir hedef belirleme atölyesi yapın: ilk üç önerilerini birlikte incelesinler.",
+            ekle("Hedef seçmemiş öğrencilerle kısa bir atölye yaparak ilk üç bölüm önerilerini birlikte inceleyin.",
                  "Rehber öğretmen", "Bu ay", 2)
     net = ov.get("net") or {}
     if "net_takibi" in moduller and net.get("giren") is not None:
@@ -436,5 +436,5 @@ def okul_yorumu(ov: dict, moduller: set[str] | None = None) -> dict:
                   "Uyum yüzdelerini öğrencileri sıralamak ya da etiketlemek için kullanmayın.",
                   "Bölüm önerilerini kesin yönlendirme gibi sunmayın; karar öğrenci ve ailesiyle birlikte verilir.",
                   "Deneme ortalamalarını şubeleri yarıştırmak için kullanmayın; destek planlamak için kullanın."]
-    y["notlar"].append("Öneriler bu rapordaki sayılardan otomatik çıkarılır; okulun koşullarına göre rehberlik servisi uyarlamalıdır.")
+    y["notlar"].append("Öneriler bu rapordaki sayılara dayanır; rehberlik servisinin bunları okulun koşullarına göre uyarlaması önerilir.")
     return y
