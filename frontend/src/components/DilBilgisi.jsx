@@ -11,7 +11,6 @@ export default function DilBilgisi() {
         <div className="gl-metin">Filizyol Türkçe dışında 12 dilde kullanılabilir. Dil, giriş ekranından ya da Ayarlar sayfasından seçilir.</div>
         <div className="dl-diller" translate="no">{DILLER.map((d) => <span key={d.kod}>{d.bayrak} {d.ad}</span>)}</div>
         <ul className="dl-liste">
-          <li>Çeviriler yapay zekâ ile hazırlanmıştır; bazı ifadeler tam olarak doğru olmayabilir.</li>
           <li>Değerlendirme soruları anlamları korunarak çevrilmiştir. Soruların geçerlilik ve güvenilirlik çalışması Türkçe sürümle yapılmıştır; bu nedenle başka bir dilde verilen cevaplarla elde edilen sonuçlar daha az kesin olabilir.</li>
           <li>KVKK metinleri hukuken bağlayıcı Türkçe asıllarıyla gösterilir. PDF raporlar şimdilik Türkçe hazırlanır.</li>
         </ul>
