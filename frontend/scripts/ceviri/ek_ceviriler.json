@@ -601,5 +601,39 @@
   "uz": "Baholashni toʻliq yakunlading! 🎉 Natijalaring tayyor; tavsiya etilgan yoʻnalishlarni koʻrib chiq.",
   "az": "Qiymətləndirmənin hamısını bitirdin! 🎉 Nəticələrin hazırdır; ixtisas tövsiyələrinə bax.",
   "ko": "평가를 모두 마쳤어요! 🎉 결과가 준비됐어요. 추천 전공을 확인해 보세요."
+ },
+ "Veli toplantısı sunumu ({0})": {
+  "en": "Parent meeting presentation ({0})",
+  "de": "Präsentation für den Elternabend ({0})",
+  "fr": "Présentation de la réunion des parents ({0})",
+  "ru": "Презентация для родительского собрания ({0})",
+  "es": "Presentación para la reunión de padres ({0})",
+  "it": "Presentazione per la riunione con i genitori ({0})",
+  "ar": "عرض اجتماع أولياء الأمور ({0})",
+  "zh": "家长会演示文稿（{0}）",
+  "hi": "अभिभावक बैठक प्रस्तुति ({0})",
+  "uz": "Ota-onalar yigʻilishi taqdimoti ({0})",
+  "az": "Valideyn iclası təqdimatı ({0})",
+  "ko": "학부모 회의 발표 자료 ({0})"
+ },
+ "Veli toplantısı sunumu ({0}, yalnızca genel slaytlar)": {
+  "en": "Parent meeting presentation ({0}, general slides only)",
+  "de": "Präsentation für den Elternabend ({0}, nur allgemeine Folien)",
+  "fr": "Présentation de la réunion des parents ({0}, diapositives générales uniquement)",
+  "ru": "Презентация для родительского собрания ({0}, только общие слайды)",
+  "es": "Presentación para la reunión de padres ({0}, solo diapositivas generales)",
+  "it": "Presentazione per la riunione con i genitori ({0}, solo diapositive generali)",
+  "ar": "عرض اجتماع أولياء الأمور ({0}، الشرائح العامة فقط)",
+  "zh": "家长会演示文稿（{0}，仅通用幻灯片）",
+  "hi": "अभिभावक बैठक प्रस्तुति ({0}, केवल सामान्य स्लाइड)",
+  "uz": "Ota-onalar yigʻilishi taqdimoti ({0}, faqat umumiy slaydlar)",
+  "az": "Valideyn iclası təqdimatı ({0}, yalnız ümumi slaydlar)",
+  "ko": "학부모 회의 발표 자료 ({0}, 일반 슬라이드만)"
+ },
+ "Kendi yolunu filizlendir": {
+  "en": "Let your own path sprout"
+ },
+ "Filizyol · Kendi yolunu filizlendir": {
+  "ru": "Filizyol · Дай ростки своему пути"
  }
 }

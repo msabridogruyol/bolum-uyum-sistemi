@@ -230,7 +230,7 @@ function RaporIndir({ okulId, oz }) {
           <RaporKarti ikon="📋" baslik="Anket sonuçları" aciklama="Seçilen anketin yanıtları. Anonim anketlerde isim ve tarih yer almaz, küçük sınıflar birleştirilir; yanıt sayısı eşiğin altındaysa dosya verilmez."
             kapsam={anketler == null ? <span className="yp-ince">Yükleniyor…</span> : anketler.length ? (
               <select className="yp-sec" value={anket} onChange={(e) => setAnket(e.target.value)} aria-label="Anket">
-                {anketler.map((a) => <option key={a.id} value={a.id}>{a.baslik} ({a.katilim} yanıt)</option>)}
+                {anketler.map((a) => <option key={a.id} value={a.id}>{`${a.baslik} (${a.katilim} yanıt)`}</option>)}
               </select>) : <span className="yp-ince">Yayınlanmış anket yok.</span>}
             dugmeler={[{ ad: '📊 Excel', pasif: !anket, fn: () => api.anketExcel(Number(anket)) }]} />
         )}

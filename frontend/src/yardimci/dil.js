@@ -54,7 +54,8 @@ function kalipHazirla(tr, ceviri) {
   if (harf.replace(/[^\p{L}]/gu, '').length < 2) return null
   const rx = new RegExp('^' + parcalar.map(kacis).join('(.+?)') + '$', 's')
   const enUzun = parcalar.reduce((a, b) => (b.length > a.length ? b : a), '')
-  return { rx, ceviri, sira, enUzun, agirlik: (harf.match(/\p{L}/gu) || []).length }
+  const bitisik = parcalar.slice(1, -1).map((x, i) => (x === ' ' ? i : -1)).filter((i) => i >= 0)
+  return { rx, ceviri, sira, enUzun, bitisik, agirlik: (harf.match(/\p{L}/gu) || []).length }
 }
 
 function yukle(veri) {
@@ -95,6 +96,8 @@ function harfDuzeniyle(s) {
 function kalipGuvenilir(k, s, degerler, cevrilmis) {
   const harf = (x) => (x.match(/\p{L}/gu) || []).length
   const adGibi = (t) => /^\p{Lu}[\p{L}'’-]*(\s+\p{Lu}[\p{L}'’-]*)*[.!?]?$/u.test(t)
+    // [2026-10-12] Seçili dilde biçimlenmiş tarih / saat ya da kod gibi kısa değerler ("Mon, October 12", "10/09/2026, 11:25 AM", "345 TYT-2")
+    || (/\d/.test(t) && t.length <= 32 && (t.match(/\p{L}/gu) || []).length <= 12)
   const yuksek = harf(s) === 0 || k.agirlik / Math.max(1, harf(s)) >= 0.5
   return degerler.every((t, i) => {
     if (!/\p{L}/u.test(t) || cevrilmis[i] != null) return true
@@ -135,9 +138,11 @@ function cevirIc(s, derinlik) {
     const sinirlar = [...s.matchAll(/(?<=[.!?…:])\s+(?=\S)/gu)].map((m) => [m.index, m.index + m[0].length])
     for (const [a, b] of sinirlar.slice(0, 6)) {
       const bas = s.slice(0, a), kalan = s.slice(b)
-      const cb = cevirIc(bas, derinlik + 1) ?? (/\p{L}/u.test(bas) ? null : bas)
+      // "Ayşe Yılmaz: …" gibi ad önekleri olduğu gibi kalır (kayıt ayrıntıları)
+      const cb = cevirIc(bas, derinlik + 1) ?? (!/\p{L}/u.test(bas) || AD_GIBI.test(bas.replace(/:$/, '')) ? bas : null)
       if (cb == null) continue
-      const ck = cevirIc(kalan, derinlik + 1) ?? (/\p{L}/u.test(kalan) ? null : kalan)
+      // "1 öğrenci: Ali Demir, Elif Kaya" — ad listesi olduğu gibi kalır
+      const ck = cevirIc(kalan, derinlik + 1) ?? (!/\p{L}/u.test(kalan) || (bas.endsWith(':') && kalan.split(/,\s*/).every((x) => AD_GIBI.test(x.replace(/…$/, '')))) ? kalan : null)
       if (ck != null) { sonuc = cb + ' ' + ck; break }
     }
   }
@@ -148,6 +153,11 @@ function cevirIc(s, derinlik) {
       const ic = cevirIc(m[2], derinlik + 1)
       if (ic != null) sonuc = (m[1] || '') + ic + (m[3] || '')
     }
+  }
+  // [2026-10-12] Sondaki nokta / ünlem: "Yüksek." → "Yüksek" çevirisi + "."
+  if (sonuc == null && /[^.!?…][.!?…]$/u.test(s)) {
+    const ic = cevirIc(s.slice(0, -1), derinlik + 1)
+    if (ic != null) sonuc = /[.!?…。]$/u.test(ic) ? ic : ic + s.slice(-1)
   }
   // Sonda sayı: "Temel Matematik 23,25" → çeviri + " 23,25"
   if (sonuc == null) {
@@ -208,18 +218,41 @@ function parcalarla(s, ayrac, derinlik, adOlabilir) {
   return cevrilen > 0 && c.every((x) => x != null) ? c.join(ayrac) : null
 }
 
+// "{1} {2}" gibi yalnızca boşlukla ayrılan bitişik değişkenler: düzenli ifade ilk boşlukta böler ("Sayısal" + "ve veri eğilimi 65 puan").
+// Her olası bölme noktası denenir; en çok değişkeni çevrilebilen bölme seçilir ("Sayısal ve veri eğilimi" + "65 puan").
+function bolmeSecenekleri(k, degerler) {
+  const secenekler = [degerler]
+  k.bitisik.forEach((i) => {
+    const yeni = []
+    for (const d of secenekler) {
+      const birlesik = `${d[i]} ${d[i + 1]}`, bosluklar = [...birlesik.matchAll(/ /g)].map((m) => m.index)
+      if (bosluklar.length > 8) { yeni.push(d); continue }
+      for (const b of bosluklar) { const x = [...d]; x[i] = birlesik.slice(0, b); x[i + 1] = birlesik.slice(b + 1); yeni.push(x) }
+    }
+    secenekler.splice(0, secenekler.length, ...yeni.slice(0, 40))
+  })
+  return secenekler
+}
+
 function kaliptan(s, derinlik) {
   for (const k of kaliplar) {
     if (k.enUzun && !s.includes(k.enUzun)) continue
     const m = k.rx.exec(s)
     if (!m) continue
-    const degerler = m.slice(1).map(normal)
-    // Değişken kısımlar da çevrilir (bölüm adı, "5 giriş" gibi iç kalıplar); çevrilemeyen ad / sayı olduğu gibi kalır
-    const cevrilmis = degerler.map((v) => cevirIc(v, derinlik + 1))
-    if (!kalipGuvenilir(k, s, degerler, cevrilmis)) continue
+    let en = null
+    for (const degerler of (k.bitisik.length ? bolmeSecenekleri(k, m.slice(1).map(normal)) : [m.slice(1).map(normal)])) {
+      // Değişken kısımlar da çevrilir (bölüm adı, "5 giriş" gibi iç kalıplar); çevrilemeyen ad / sayı olduğu gibi kalır
+      const cevrilmis = degerler.map((v) => cevirIc(v, derinlik + 1))
+      if (!kalipGuvenilir(k, s, degerler, cevrilmis)) continue
+      // Puan: çevrilen değişkenlerdeki harf sayısı (çok kelimeli adın tamamı çevrilen bölme kazanır)
+      const puan = degerler.reduce((t, v, i) => t + (cevrilmis[i] != null ? (v.match(/\p{L}/gu) || []).length : 0), 0)
+      if (!en || puan > en.puan) en = { degerler, cevrilmis, puan }
+      if (!k.bitisik.length) break
+    }
+    if (!en) continue
     return k.ceviri.replace(/\{(\d+)\}/g, (_, n) => {
       const i = k.sira.indexOf(Number(n))
-      return cevrilmis[i] ?? (degerler[i] != null ? yuzdeDuzelt(degerler[i]) : '')
+      return en.cevrilmis[i] ?? (en.degerler[i] != null ? yuzdeDuzelt(en.degerler[i]) : '')
     })
   }
   return null

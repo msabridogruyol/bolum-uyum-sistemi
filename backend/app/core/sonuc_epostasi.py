@@ -89,7 +89,7 @@ def gonder(db: Session, ogrenci_id, tur_id: int, zorla: bool = False, yapan: str
     durum = "gonderildi" if basarili else "hata"
     db.execute(text("UPDATE ogrenci_degerlendirme_turu SET sonuc_epostasi_durum = :d WHERE id = :t"), {"d": durum, "t": tur_id})
     olay_yaz(db, o.id, "sonuc_epostasi",
-             f"Sonuç e-postası {'gönderildi' if basarili else 'gönderilemedi'}{' (PDF ekli)' if ekler else ''}", yapan=yapan)
+             ("Sonuç e-postası gönderildi" if basarili else "Sonuç e-postası gönderilemedi") + (" (PDF ekli)" if ekler else ""), yapan=yapan)
     db.commit()
     return {"durum": durum, "ekli": bool(ekler), "alici": o.email}
 

@@ -1,6 +1,7 @@
 // [2026-10-10] İstatistik bileşenleri — bileşen olmayan yardımcılar: sayı biçimi, ölçek, metin ölçümü,
 // genişlik ölçümü ve etkileşim (fare/dokunma/klavye) kancaları, CSV.
 import { useEffect, useLayoutEffect, useRef, useState, useCallback } from 'react'
+import { t as cevirT } from '../../yardimci/dil'
 
 // ── Sayı biçimi (Türkçe) ─────────────────────────────────────────────
 export function sayi(n, kesir = 1) {
@@ -51,9 +52,10 @@ export function metinGenisligi(metin, px = 12, kalinlik = 600) {
   } catch { return s.length * px * 0.56 }
 }
 
-/** Genişliğe sığmayan metni "…" ile kısaltır (tam ad title/ipucunda verilir). */
+/** Genişliğe sığmayan metni "…" ile kısaltır (tam ad title/ipucunda verilir).
+ *  [2026-10-12] Önce seçili dile çevrilir: kısaltılmış Türkçe ("Mez…") sonradan çevrilemez. */
 export function kisalt(metin, maks, px = 12, kalinlik = 600) {
-  const s = String(metin ?? '')
+  const s = String(cevirT(String(metin ?? '')) ?? '')
   if (metinGenisligi(s, px, kalinlik) <= maks) return s
   let a = 0, b = s.length
   while (a < b) {
