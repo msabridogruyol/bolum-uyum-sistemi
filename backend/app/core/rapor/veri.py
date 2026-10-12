@@ -4,6 +4,7 @@
 Hiçbir puan burada yeniden hesaplanmaz: ekrandaki sonuçlarla AYNI kaynaklar kullanılır
 (ogrenci_degisken_skorlari, siralama_getir + neden_aciklamalari, koçluk planı, güven skoru).
 """
+from app.core.metin import turkce_kucult
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
 
@@ -197,7 +198,7 @@ def swot(v: dict) -> dict:
     """Güçlü yönler (S) · gelişim alanları (W) · fırsatlar (O) · dikkat edilecekler (T). Kurallı, veriye dayalı."""
     S, W, O, T = [], [], [], []
     for x in v["gucluler"][:5]:
-        S.append(f"{x['ad']} — {x['seviye'].lower()} ({x['puan']:.0f})")
+        S.append(f"{x['ad']} — {turkce_kucult(x['seviye'])} ({x['puan']:.0f})")
     hedef = v.get("hedef") or {}
     odak = [x for x in hedef.get("odak", [])]
     if odak:
