@@ -39,8 +39,17 @@ Pakette olmayan bir metin ekranda Türkçe kalır; sistem hata vermez.
    - backend tarafında `ceviri_servisi.DILLER` (backend'de 13 dilin tamamı zaten tanımlı).
 3. Sağdan sola diller (`SAG_SOL`, şimdilik yalnızca `ar`) için sayfa yönü `dir="rtl"` olur. Fiziksel konumlu öğelerin (Filiz maskotu, sabit rozetler, mobil menü) aynalanması `index.css` sonundaki `[dir="rtl"]` kurallarındadır.
 
+## Ölçme soruları
+
+Sorular ve seçenekler (`tur: soru`) anlamları korunarak çevrilir. Çeviriler ayrıca `SORU_YONERGE.md` ile her dilde anlam ve motivasyon açısından gözden geçirilir; düzeltmeler `ceviri/<dil>/Q_*.json` dosyalarına yazılır ve paketlemede en son uygulanır. Çeviri uyarısı soru ekranında gösterilmez, Sistem Hakkında sayfasındaki "Dil desteği" kartında (`components/DilBilgisi.jsx`) yer alır.
+
+## Eksik çeviri taraması
+
+Yerelde `window.__filizCevrilmeyen()` (tarayıcı konsolu), o oturumda ekranda görülüp çevrilemeyen metinleri listeler. Menülerin ve sekmelerin hepsi gezilerek eksikler toplanabilir; kişi / okul adları ve kullanıcı yazıları bilinçli olarak çevrilmez.
+
 ## Bilinen sınırlar
 
-- Kalın yazılmış bir kelimenin çevresindeki parçalar (`<b>…</b> metin.`) ayrı ayrı çevrilir; bazı dillerde söz dizimi bozulabilir. Bunun çözümü cümleyi kaynakta tek parça yazmaktır.
-- Ölçme sorularının çevirileri yapay zekâ ile yapılmıştır. Türkçe dışındaki dillerde soru ekranında bir uyarı notu gösterilir. Geçerlilik çalışması yalnızca Türkçe sürümle yapılmıştır.
+- İçinde kalın / italik kelime olan cümleler (`Değerlendirme <b>tam ekranda</b> yapılır.`) bütün cümle olarak çevrilir; bu cümlelerde kalın yazı biçimi kaybolur. Bağlantı ya da buton içeren cümleler parça parça çevrilir.
+- Denetim kaydı işlem kodları (`okul_sistemi_ac` gibi) ve teknik hata kayıtları çevrilmez.
+- Ölçme sorularının çevirileri yapay zekâ ile yapılmıştır; geçerlilik çalışması yalnızca Türkçe sürümle yapılmıştır (Sistem Hakkında'da belirtilir).
 - Paket boyutu dil başına yaklaşık 1,6–2,2 MB (gzip ile ~0,6–0,7 MB). Paket yalnızca Türkçe dışında bir dil seçildiğinde indirilir.

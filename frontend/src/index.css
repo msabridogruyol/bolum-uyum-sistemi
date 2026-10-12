@@ -3084,3 +3084,8 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 }
 /* Arapça, Çince, Hintçe, Korece: sistem yazı tipine yedek düşer; satır yüksekliği biraz artırılır */
 :lang(ar) body,:lang(hi) body{line-height:1.6}
+
+/* [2026-10-12] Sistem Hakkında — dil desteği kartı */
+.dl-diller{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
+.dl-diller span{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--sur2,var(--bg));border:1px solid var(--bor)}
+.dl-liste{margin:6px 0 0;padding-inline-start:18px;font-size:13px;line-height:1.6;color:var(--tx2)}

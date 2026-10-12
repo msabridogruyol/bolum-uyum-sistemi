@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
-import { aktifDil, t as cevirT } from '../yardimci/dil'   // [2026-10-12] çoklu dil
+import { t as cevirT } from '../yardimci/dil'   // [2026-10-12] çoklu dil
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { KATMAN_BILGI } from '../yardimci/katmanAdlari'
@@ -77,15 +77,6 @@ function GuvenlikUyariKatmani({ tamEkranaGeriDon, onErkenBitir }) {
 }
 
 // Sınav ekranının üstündeki sabit logo/marka satırı
-// [2026-10-12] Türkçe dışı dilde: soruların çeviri olduğunu ve geçerlilik çalışmasının Türkçe yapıldığını belirt
-function SoruDilNotu() {
-  return (
-    <div className="soru-dil-notu" role="note">
-      🌐 Sorular Türkçe aslından yapay zekâ ile çevrilmiştir. Bu değerlendirmenin geçerlilik ve güvenilirlik çalışması Türkçe sürümle yapılmıştır; çeviriyle verilen cevaplarda sonuçlar daha az kesin olabilir.
-    </div>
-  )
-}
-
 function SinavBasligi() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 0 2px' }}>
@@ -131,7 +122,6 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
         <div style={{ fontSize: 14, color: 'var(--tx3)', fontWeight: 600, marginTop: 4 }}>{altBaslik || `${kod} katmanına başlıyorsun`} · {sorular.length} soru · ~{tahminiDakika} dk</div>
       </div>
 
-      {aktifDil() !== 'tr' && <SoruDilNotu />}
       <div className="sn-bolum">
         <div className="sn-bolum-bas">🧩 Soru tipleri ve nasıl cevaplayacağın</div>
         <div className="sn-tipler">

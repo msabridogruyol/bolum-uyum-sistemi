@@ -5,7 +5,7 @@ KOK = pathlib.Path(sys.argv[1])
 CIKTI = sys.argv[2]
 TR = re.compile(r"[çğıöşüÇĞİÖŞÜ]")
 HARF = re.compile(r"[^\W\d_]")
-ATLA_DOSYA = {"ai_koc_servisi.py", "filiz_yonetim_ai.py", "sema_guncelleme.py", "canli_denetim.py"}
+ATLA_DOSYA = {"ai_koc_servisi.py", "filiz_yonetim_ai.py", "sema_guncelleme.py", "ceviri_servisi.py"}
 ATLA_CAGRI = re.compile(r"(logger|log|logging)\.|text$|execute$|getenv|environ|re\.|compile|startswith|endswith|split|replace|strftime|strptime|encode|decode|join$|Column|ForeignKey|relationship|Index|index|alias|label|filter|order_by|setdefault|get$|pop$|open$|__import__|import_module|Path|uuid|hashlib|hmac")
 sonuc = {}
 
@@ -15,7 +15,7 @@ def ekle(m, dosya):
         return
     if not (TR.search(m) or " " in m or m[:1].isupper()):
         return
-    if re.fullmatch(r"[a-z0-9_\-./:#%?=&@{}]+", m, re.I) and not TR.search(m):
+    if re.fullmatch(r"[a-z0-9_\-./:#%?=&@{}]+", m, re.I) and not TR.search(m) and not re.fullmatch(r"[A-ZÇĞİÖŞÜ][a-zçğıöşü]+", m):
         return
     if re.search(r"\b(SELECT|INSERT|UPDATE|DELETE|WHERE|CREATE|ALTER|JOIN)\b", m):
         return

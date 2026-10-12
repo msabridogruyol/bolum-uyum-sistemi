@@ -104,15 +104,30 @@ function kalipGuvenilir(k, s, degerler, cevrilmis) {
 }
 
 // Bir metnin çevirisi (bulunamazsa null). Baş/son boşluklar korunur.
+// Türkçede yüzde işareti sayıdan önce gelir ("%88"); diğer dillerde sonra ("88%")
+const YUZDE_RX = /%(\d+(?:[.,]\d+)?)/g
+const yuzdeDuzelt = (s) => s.replace(YUZDE_RX, (_, n) => (dil === 'fr' || dil === 'de' ? `${n} %` : `${n}%`))
+
 export function cevir(ham) {
   if (!paket || ham == null) return null
-  return cevirIc(normal(String(ham)), 0)
+  const s = normal(String(ham))
+  const c = cevirIc(s, 0)
+  if (c != null) return c
+  // Harfsiz kısa metinler ("%0", "%61") ve çevrilemeyen metindeki yüzdeler
+  if (/%\d/.test(s) && !/\p{L}{2,}/u.test(s)) return yuzdeDuzelt(s)
+  return null
 }
 
 function cevirIc(s, derinlik) {
   if (!s || !/\p{L}/u.test(s)) return null
   if (bellek.has(s)) return bellek.get(s)
   let sonuc = paket.get(s) ?? harfDuzeniyle(s)
+  // Türkçe ay adlı tarihler ("19 Haziran 2027") seçili dilde yazılır
+  if (sonuc == null && AY_RX.test(s)) {
+    const d = tarihleriCevir(s)
+    if (d !== s) sonuc = cevirIc(d, derinlik + 1) ?? d
+    else if (AY_RX.exec(s)?.[0] === s) sonuc = s   // ay adı hedef dilde de aynı yazılıyor ("Mar")
+  }
   if (sonuc == null && derinlik < 3) sonuc = kaliptan(s, derinlik)
   // Birleştirilmiş cümleler ("Merhaba Elif! " + "Bugün 3 konu öne çıkıyor."): her cümle ayrı çevrilir
   if (sonuc == null && derinlik < 2) {
@@ -136,13 +151,18 @@ function cevirIc(s, derinlik) {
   }
   // Sonda sayı: "Temel Matematik 23,25" → çeviri + " 23,25"
   if (sonuc == null) {
-    const m = /^(.*\p{L}[^\d]*?)(\s+[\d.,%+\-–/]+)$/u.exec(s)
-    if (m) { const ic = cevirIc(m[1], derinlik + 1); if (ic != null) sonuc = ic + m[2] }
+    const m = /^(.*\p{L}[^\d]*?)(\s*\([^\p{L}()]*\)|\s+[\d.,%+\-–/]+)$/u.exec(s)
+    if (m) { const ic = cevirIc(m[1], derinlik + 1); if (ic != null) sonuc = ic + yuzdeDuzelt(m[2]) }
   }
-  // Türkçe ay adlı tarihler ("19 Haziran 2027") seçili dilde yazılır
-  if (sonuc == null && AY_RX.test(s)) {
-    const d = tarihleriCevir(s)
-    if (d !== s) sonuc = cevirIc(d, derinlik + 1) ?? d
+  // "48 yanıt", "2 görüşme": sayı + tek kelime (birim kalıbı yoksa kelimenin kendisi çevrilir)
+  if (sonuc == null) {
+    const m = /^([\d.,]+)\s+(\p{L}+)$/u.exec(s)
+    if (m) { const ic = cevirIc(m[2], derinlik + 1); if (ic != null) sonuc = m[1] + ' ' + ic }
+  }
+  // Başta sınav / katman kodu: "TYT Temel Matematik", "K1 Değerler: …" → kod + çeviri
+  if (sonuc == null) {
+    const m = /^([A-ZÇĞİÖŞÜ]{1,4}\d?(?:-\d)?)\s+(.*\p{Ll}.*)$/u.exec(s)
+    if (m) { const ic = cevirIc(m[2], derinlik + 1); if (ic != null) sonuc = m[1] + ' ' + ic }
   }
   // Liste gibi birleştirilmiş metinler: "A · B" (ad gibi parçalar olduğu gibi kalır), son çare "A, B" (her parça çevrilmeli)
   if (sonuc == null && derinlik < 2) sonuc = parcalarla(s, ' · ', derinlik, true) ?? parcalarla(s, ', ', derinlik, false)
@@ -153,13 +173,21 @@ function cevirIc(s, derinlik) {
 }
 
 const AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık']
-const AY_RX = new RegExp(`\\b(\\d{1,2}) (${AYLAR.join('|')})( \\d{4})?(?![\\p{L}])`, 'u')
+const AY_KISA = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
+const AY_ADI = `(${AYLAR.join('|')}|${AY_KISA.join('|')})`
+// "19 Haziran 2027", "24 Ağu", "Mar 2026", tek başına "Eyl" (grafik eksenleri)
+const AY_RX = new RegExp(`(?<![\\p{L}\\d])(?:(\\d{1,2}) )?${AY_ADI}(?: (\\d{4}|\\d{2}(?!\\d)))?(?![\\p{L}])`, 'u')
+function ayNo(ad) { const i = AYLAR.indexOf(ad); return i >= 0 ? i : AY_KISA.indexOf(ad) }
 function tarihleriCevir(s) {
-  return s.replace(new RegExp(AY_RX.source, 'gu'), (_, gun, ay, yil) => {
-    const tarih = new Date(Number(yil || 2000), AYLAR.indexOf(ay), Number(gun))
-    try {
-      return new Intl.DateTimeFormat(dil, yil ? { day: 'numeric', month: 'long', year: 'numeric' } : { day: 'numeric', month: 'long' }).format(tarih)
-    } catch { return _ }
+  return s.replace(new RegExp(AY_RX.source, 'gu'), (tum, gun, ay, yil) => {
+    const uzun = AYLAR.includes(ay)
+    // Gün de yıl da yoksa yalnızca metnin tamamı ay adıysa çevir ("Mar" kelimesi başka bir şeyin parçası olabilir)
+    if (!gun && !yil && tum !== s) return tum
+    const yilSayi = yil ? (yil.length === 2 ? 2000 + Number(yil) : Number(yil)) : 2000
+    const tarih = new Date(yilSayi, ayNo(ay), Number(gun || 1))
+    const ayBicim = uzun ? 'long' : 'short'
+    const sec = { month: ayBicim, ...(gun ? { day: 'numeric' } : {}), ...(yil ? { year: 'numeric' } : {}) }
+    try { return new Intl.DateTimeFormat(dil, sec).format(tarih) } catch { return tum }
   })
 }
 
@@ -170,7 +198,9 @@ function parcalarla(s, ayrac, derinlik, adOlabilir) {
   if (p.length > 12) return null
   let cevrilen = 0
   const c = p.map((x) => {
-    const y = cevirIc(x.trim(), derinlik + 1)
+    let y = cevirIc(x.trim(), derinlik + 1)
+    // Kod içinde "…arttı, " + "düşen öğrenci yok." gibi birleştirilen parçalar katalogda virgülüyle durur
+    if (y == null && ayrac === ', ') { const v = cevirIc(x.trim() + ',', derinlik + 1); if (v != null) y = v.replace(/[,，、]\s*$/, '') }
     if (y != null) { cevrilen++; return y }
     if (!/\p{L}/u.test(x) || (adOlabilir && AD_GIBI.test(x.trim()))) return x.trim()
     return null
@@ -189,7 +219,7 @@ function kaliptan(s, derinlik) {
     if (!kalipGuvenilir(k, s, degerler, cevrilmis)) continue
     return k.ceviri.replace(/\{(\d+)\}/g, (_, n) => {
       const i = k.sira.indexOf(Number(n))
-      return cevrilmis[i] ?? degerler[i] ?? ''
+      return cevrilmis[i] ?? (degerler[i] != null ? yuzdeDuzelt(degerler[i]) : '')
     })
   }
   return null
@@ -232,26 +262,45 @@ function metinDugumu(n) {
   } else {
     ORIJINAL.set(n, { tr, yazilan: simdi })
     sunucuyaSor(n, tr)
+    cevrilmeyenKaydet(tr)
   }
 }
 
 // Eleman çocukları yalnızca metinse ("Hoş geldin, " + ad + "!") birleşik kalıp dene
+// Bir cümle parçalara bölünmüş olabilir: "Hoş geldin, " + ad + "!" ya da "Değerlendirme " + <b>tam ekranda</b> + " yapılır."
+// Elemanın çocukları yalnızca metin ve içinde yalnızca metin olan satır içi biçim etiketleriyse cümle bütün olarak çevrilir:
+// çeviri ilk metin düğümüne yazılır, diğer parçalar boşaltılır (kalın yazı biçimi bu cümlelerde kaybolur, söz dizimi doğru olur).
+// Bağlantı / buton içeren cümlelere dokunulmaz (tıklanabilir öğe kaybolmasın).
+const SATIR_ICI = new Set(['B', 'STRONG', 'I', 'EM', 'SPAN', 'U', 'MARK', 'SMALL'])
+function grupHedefi(el) {
+  return el && SATIR_ICI.has(el.tagName) && el.parentElement ? el.parentElement : el
+}
 function karisikGrup(el) {
   const c = el.childNodes
   if (c.length < 2) return
-  for (const x of c) if (x.nodeType !== 3) return
-  const parcalar = [...c].map((x) => { const k = ORIJINAL.get(x); return k && x.nodeValue === k.yazilan ? k.tr : x.nodeValue })
+  const dugumler = []
+  let satirIci = false
+  for (const x of c) {
+    if (x.nodeType === 3) { dugumler.push(x); continue }
+    if (x.nodeType !== 1 || !SATIR_ICI.has(x.tagName) || x.getAttribute('translate') === 'no') return
+    for (const y of x.childNodes) { if (y.nodeType !== 3) return; dugumler.push(y) }
+    satirIci = true
+  }
+  if (dugumler.length < 2) return
+  const parcalar = dugumler.map((x) => { const k = ORIJINAL.get(x); return k && x.nodeValue === k.yazilan ? k.tr : x.nodeValue })
+  // Parçaların hepsi zaten tek tek çevrildiyse (ya da harfsizse) birleştirme denenmez: "✏️" + "Çözülen soru" gibi ayrı etiketler bozulmasın
+  if (dugumler.every((x, i) => !/\p{L}{2,}/u.test(parcalar[i]) || x.nodeValue !== parcalar[i])) return
   const tr = parcalar.join('')
-  const ce = cevir(tr)
+  // Satır içi etiketli cümlelerde yalnızca katalogdaki bütün cümle ya da kalıp kabul edilir (rozet / ikon içeren menü öğeleri bozulmasın)
+  const n = normal(tr)
+  const ce = satirIci ? (paket.get(n) ?? (kaliplar.length ? kaliptan(n, 0) : null)) : cevir(tr)
   if (ce == null) return
-  const ilk = c[0]
   const yaz = bosluklu(tr, ce)
-  ;[...c].forEach((x, i) => {
+  dugumler.forEach((x, i) => {
     const v = i === 0 ? yaz : ''
     ORIJINAL.set(x, { tr: parcalar[i], yazilan: v })
     if (x.nodeValue !== v) x.nodeValue = v
   })
-  void ilk
 }
 
 function oznitelikler(el) {
@@ -265,13 +314,14 @@ function oznitelikler(el) {
     if (!kayit) { kayit = {}; OZ_ORIJINAL.set(el, kayit) }
     kayit[ad] = { tr: v, yazilan: c ?? v }
     if (c != null && c !== v) el.setAttribute(ad, c)
+    else if (c == null) cevrilmeyenKaydet(v)
   }
 }
 
 function agacCevir(kok) {
   if (kok.nodeType === 3) {
     const p = kok.parentElement
-    if (p && !cevrilmezMi(p)) { metinDugumu(kok); karisikGrup(p) }
+    if (p && !cevrilmezMi(p)) { metinDugumu(kok); karisikGrup(grupHedefi(p)) }
     return
   }
   if (kok.nodeType !== 1 || cevrilmezMi(kok)) return
@@ -284,7 +334,7 @@ function agacCevir(kok) {
   const gruplar = new Set()
   oznitelikler(kok)
   for (let n = yurut.nextNode(); n; n = yurut.nextNode()) {
-    if (n.nodeType === 3) { metinDugumu(n); if (n.parentElement) gruplar.add(n.parentElement) }
+    if (n.nodeType === 3) { metinDugumu(n); if (n.parentElement) gruplar.add(grupHedefi(n.parentElement)) }
     else oznitelikler(n)
   }
   gruplar.forEach(karisikGrup)
@@ -314,6 +364,13 @@ function gozle() {
 // ---------- Sunucudan içerik çevirisi (bölüm açıklamaları, sözlük, iş hayatı içerikleri) ----------
 const BEKLEYEN_DUGUM = new Map() // tr → Set(düğüm)
 let sunucuZamanlayici = null
+// Tanılama: ekranda görülüp çevrilemeyen metinler (window.__filizCevrilmeyen()) — eksik çevirileri bulmak için
+const CEVRILMEYEN = new Set()
+function cevrilmeyenKaydet(tr) {
+  const s = normal(tr)
+  if (CEVRILMEYEN.size < 3000 && /\p{L}{2,}/u.test(s)) CEVRILMEYEN.add(s)
+}
+
 function sunucuyaSor(n, tr) {
   const s = normal(tr)
   if (s.length < 12 || !/\p{L}{3,}/u.test(s) || sunucuSorulan.has(s)) return
@@ -384,6 +441,7 @@ export async function dilBaslat() {
     }
   }
   window.__filizCevir = cevir   // tanılama: tarayıcı konsolunda çeviri denemek için
+  window.__filizCevrilmeyen = () => [...CEVRILMEYEN]
   const basla = () => { agacCevir(document.body); gozle() }
   if (document.body) basla(); else document.addEventListener('DOMContentLoaded', basla)
 }

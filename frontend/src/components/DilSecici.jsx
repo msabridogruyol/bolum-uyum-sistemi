@@ -24,7 +24,7 @@ export default function DilSecici({ kapsam = null, gorunum = 'kucuk' }) {
         <div className="yp-ince">Sistemin hangi dilde görüneceğini seç. Seçimin hesabına kaydedilir.</div>
         {dil !== 'tr' && (
           <div className="yp-ince" style={{ marginTop: 6 }}>
-            Çeviriler yapay zekâ ile hazırlanmıştır; bazı ifadeler tam doğru olmayabilir. Değerlendirme sorularının geçerlilik çalışması Türkçe sürümle yapılmıştır.
+            Çeviriler yapay zekâ ile hazırlanmıştır. Ayrıntılar Sistem Hakkında sayfasındadır.
           </div>
         )}
       </div>

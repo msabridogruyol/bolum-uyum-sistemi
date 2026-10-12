@@ -1,6 +1,7 @@
 // [2026-10-10] Sistem Hakkında + Sıkça Sorulan Sorular — teknik olmayan, kullanıcıya yönelik anlatım.
 // hedef = 'ogrenci' (öğrenci menüsü) | 'yonetim' (okul yetkilisi / süper admin)
 import { useEffect, useMemo, useState } from 'react'
+import DilBilgisi from './DilBilgisi'   // [2026-10-12] dil desteği ve çeviri uyarısı
 import Gelistirici from './Gelistirici'   // [2026-10-11]
 import { api } from '../api/client'
 
@@ -124,6 +125,7 @@ export default function SistemHakkinda({ hedef = 'ogrenci' }) {
         </div>
       </div>
       <Gelistirici />
+      <DilBilgisi />
     </div>
   )
 }

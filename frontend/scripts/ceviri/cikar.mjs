@@ -63,13 +63,24 @@ function dosyaIsle(dosya) {
   traverse(ast, {
     JSXText(p) { const m = jsxMetin(p.node.value); if (m.trim()) ekle(m, rel, true) },
     JSXElement(p) {
-      // Karışık çocuklar (metin + ifade, eleman yok) → kalıp
+      // Karışık çocuklar → tek cümle kalıbı: metin + ifade + satır içi biçim etiketleri (<b>, <strong>, <i>, <em>, <span>…)
+      // Örn. "Değerlendirme <b>tam ekranda</b> yapılır." → "Değerlendirme tam ekranda yapılır." (ekranda da böyle birleştirilir)
+      const SATIR_ICI = new Set(['b', 'strong', 'i', 'em', 'span', 'u', 'mark', 'small'])
       const c = p.node.children
       if (c.length < 2) return
-      if (!c.every((x) => x.type === 'JSXText' || (x.type === 'JSXExpressionContainer' && x.expression.type !== 'JSXEmptyExpression'))) return
-      if (!c.some((x) => x.type === 'JSXText' && HARF.test(x.value))) return
-      let s = '', i = 0
+      const duz = []
       for (const x of c) {
+        if (x.type === 'JSXText' || (x.type === 'JSXExpressionContainer' && x.expression.type !== 'JSXEmptyExpression')) { duz.push(x); continue }
+        if (x.type === 'JSXElement' && SATIR_ICI.has(x.openingElement.name.name) &&
+          x.children.every((y) => y.type === 'JSXText' || (y.type === 'JSXExpressionContainer' && y.expression.type !== 'JSXEmptyExpression'))) {
+          duz.push(...x.children); continue
+        }
+        if (x.type === 'JSXExpressionContainer') continue   // {/* yorum */}
+        return
+      }
+      if (!duz.some((x) => x.type === 'JSXText' && HARF.test(x.value))) return
+      let s = '', i = 0
+      for (const x of duz) {
         if (x.type === 'JSXText') s += jsxMetin(x.value)
         else if (x.expression.type === 'StringLiteral') s += x.expression.value
         else s += `{${i++}}`
@@ -104,7 +115,8 @@ function dosyaIsle(dosya) {
       if (jsxA && (ATTR_RED.has(jsxA.node.name.name) || String(jsxA.node.name.name).startsWith('data-'))) return
       const s = sablon(p.node.quasis, p.node.expressions)
       const sabit = p.node.quasis.map((q) => q.value.cooked ?? '').join(' ')
-      if (uygunString(sabit) && /\p{L}{2,}/u.test(sabit)) ekle(s, rel)
+      // Tek kelimelik ekler de alınır: `${n} görüşme`, `${ad} seviye`
+      if (/\p{L}{3,}/u.test(sabit)) ekle(s, rel)
     },
   })
 }

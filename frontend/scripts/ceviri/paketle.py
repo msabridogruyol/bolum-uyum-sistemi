@@ -22,6 +22,15 @@ for dil in sys.argv[3:]:
             if c == tr:
                 paket.pop(tr, None); continue
             paket[tr] = c; sayi += 1
+    # "1. Aşama · Bu hafta başla" gibi " · " ile birleşik metinler ekranda parça parça da görünür: parça çiftleri eklenir
+    for tr, c in list(paket.items()):
+        if " · " in tr and "{" not in tr:
+            pt, pc = tr.split(" · "), c.split(" · ")
+            if len(pt) == len(pc):
+                for a_, b_ in zip(pt, pc):
+                    a_, b_ = a_.strip(), b_.strip()
+                    if len(a_) >= 3 and re.search(r"[^\W\d_]{3,}", a_) and a_ not in paket and a_ != b_:
+                        paket[a_] = b_
     # Elle yazılmış ek çeviriler (ek_ceviriler.json) her zaman en son uygulanır
     ek = json.load(open(os.path.join(BURASI, "ek_ceviriler.json")))
     for tr, ceviriler in ek.items():
