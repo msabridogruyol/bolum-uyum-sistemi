@@ -201,3 +201,63 @@ def test_yetkili_tek_katmani_tekrarlatir(istemci, db, okul):
     db.expire_all()
     assert db.execute(text("SELECT durum FROM ogrenci_degerlendirme_turu WHERE id = :t"), {"t": tid}).scalar() == "devam_ediyor"
     assert istemci.post(f"/yonetim/ogrenci/{okul['ogr']['Baska']}/katman-tekrar", headers=okul["yet"], json={"kod": "K3"}).status_code in (403, 404)
+
+
+# ----------------------------------------------------------------------------- [2026-10-12] Sonuç e-postası (+ PDF)
+@db_gerekli
+def test_sonuc_epostasi_bir_kez_gider_pdf_paketle_eklenir(istemci, db, okul, monkeypatch):
+    from app.core import eposta_servisi as ep
+    from app.core import sonuc_epostasi as se
+    monkeypatch.setenv("TEST_EPOSTA_KAYDI", "1")
+    ep.GONDERILENLER.clear()
+    oid = okul["ogr"]["On"]
+    tid = _tamamlanmis_tur(db, oid, 0, True)
+    r = se.gonder(db, oid, tid)
+    assert r["durum"] == "gonderildi"
+    assert len(ep.GONDERILENLER) == 1 and ep.GONDERILENLER[0]["alici"].endswith("@to-test.com")
+    beklenen_ek = se.rapor_ekli_mi(db, okul["a"])
+    ekler = ep.GONDERILENLER[0]["ekler"]
+    assert bool(ekler) == beklenen_ek and r["ekli"] == beklenen_ek
+    if ekler:
+        assert ekler[0][0].endswith(".pdf") and ekler[0][2] == "application/pdf" and ekler[0][1] > 1000
+    # aynı tamamlanma için ikinci kez gitmez
+    assert se.gonder(db, oid, tid)["durum"] == "zaten_gonderildi" and len(ep.GONDERILENLER) == 1
+    # okul yetkilisi yeniden gönderebilir; durum detayda görünür
+    assert istemci.post(f"/yonetim/ogrenci/{oid}/sonuc-epostasi", headers=okul["yet"]).status_code == 200
+    assert len(ep.GONDERILENLER) == 2
+    d = istemci.get(f"/yonetim/ogrenci/{oid}/degerlendirme-durumu", headers=okul["yet"]).json()["sonuc_epostasi"]
+    assert d["durum"] == "gonderildi" and d["gonderilebilir"] is True
+    # başka okulun öğrencisine gönderemez
+    assert istemci.post(f"/yonetim/ogrenci/{okul['ogr']['Baska']}/sonuc-epostasi", headers=okul["yet"]).status_code in (403, 404)
+
+
+@db_gerekli
+def test_sonuc_epostasi_guven_sorununda_ve_test_hesabinda_gitmez(istemci, db, okul, monkeypatch):
+    from app.core import eposta_servisi as ep
+    from app.core import sonuc_epostasi as se
+    from app.models import Ogrenci
+    monkeypatch.setenv("TEST_EPOSTA_KAYDI", "1")
+    ep.GONDERILENLER.clear()
+    oid = okul["ogr"]["Onbir"]
+    tid = _tamamlanmis_tur(db, oid, 0, False, olaylar=[("K2", "sekme_degisti", 8)])
+    assert se.gonder(db, oid, tid)["durum"] == "uygun_degil"
+    assert not se.otomatik_gidecek_mi(db, db.get(Ogrenci, oid), db.get(__import__("app.models", fromlist=["x"]).OgrenciDegerlendirmeTuru, tid))
+    assert istemci.post(f"/yonetim/ogrenci/{oid}/sonuc-epostasi", headers=okul["yet"]).status_code == 400
+    test_id = okul["ogr"]["Test"]
+    assert se.gonder(db, test_id, _tamamlanmis_tur(db, test_id, 0, True))["durum"] == "uygun_degil"
+    assert ep.GONDERILENLER == []
+
+
+@db_gerekli
+def test_katman_tekrari_bitince_sonuc_epostasi_yeniden_gider(db, okul, monkeypatch):
+    """Güven sorunu → sorunlu katman yeniden çözülüp tur tekrar tamamlanınca (yeni tamamlanma zamanı) e-posta yine gider."""
+    from app.core import eposta_servisi as ep
+    from app.core import sonuc_epostasi as se
+    monkeypatch.setenv("TEST_EPOSTA_KAYDI", "1")
+    ep.GONDERILENLER.clear()
+    oid = okul["ogr"]["Oniki"]
+    tid = _tamamlanmis_tur(db, oid, 1, True)
+    assert se.gonder(db, oid, tid)["durum"] == "gonderildi"
+    db.execute(text("UPDATE ogrenci_degerlendirme_turu SET tamamlanma_zamani = clock_timestamp() + interval '1 second' WHERE id = :t"), {"t": tid})
+    db.commit()
+    assert se.gonder(db, oid, tid)["durum"] == "gonderildi" and len(ep.GONDERILENLER) == 2

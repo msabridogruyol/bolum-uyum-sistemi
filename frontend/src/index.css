@@ -3114,3 +3114,4 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 .yd-bant.yesil{border-color:var(--gr);background:var(--grl,#e9f7ef)}
 [data-theme="dark"] .yd-bant{background:rgba(230,181,74,.12)}
 .ydk-tablo td,.ydk-tablo th{padding:6px 8px}
+.yd-eposta{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:10px;padding-top:10px;border-top:1px dashed var(--bor)}

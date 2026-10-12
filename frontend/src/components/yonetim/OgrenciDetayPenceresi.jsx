@@ -174,6 +174,21 @@ function DegerlendirmeYonetimi({ ogrenciId, bekle, islem, yenile }) {
           </tbody>
         </table>
       )}
+      {v.sonuc_epostasi && v.durum !== 'devam' && (
+        <div className="yd-eposta">
+          <span className="yp-ince">
+            {v.sonuc_epostasi.durum === 'gonderildi' ? `📧 Sonuç e-postası ${tarih(v.sonuc_epostasi.zaman)} tarihinde gönderildi${v.sonuc_epostasi.pdf_ekli ? ' (PDF rapor ekli)' : ''}.`
+              : v.sonuc_epostasi.durum === 'hata' ? '⚠️ Sonuç e-postası gönderilemedi.'
+              : v.sonuc_epostasi.durum === 'gonderiliyor' ? '📧 Sonuç e-postası gönderiliyor…'
+              : '📧 Sonuç e-postası henüz gönderilmedi.'}
+          </span>
+          {v.sonuc_epostasi.gonderilebilir && (
+            <button className="yp-mini" disabled={bekle} onClick={() => islem(async () => { await api.sonucEpostasiGonder(ogrenciId); yukle() })}>
+              {v.sonuc_epostasi.durum === 'gonderildi' ? 'Yeniden gönder' : 'Şimdi gönder'}
+            </button>
+          )}
+        </div>
+      )}
       {['bekleme', 'guven_sorunu'].includes(v.durum) && (
         <button className="btn sec" style={{ marginTop: 10 }} disabled={bekle} onClick={() => setOnay({ tur: 'yeni' })}>Yeni değerlendirme aç (önceki sonuçlar kalır)</button>
       )}

@@ -555,6 +555,10 @@ export default function SoruSayfasi({ mod = 'katman' }) {
               </details>
             )}
 
+            {/* [2026-10-12] Değerlendirme bittiyse sonuç raporu e-postayla gider (yalnızca gerçekten gönderilecekse yazılır) */}
+            {tamamlandi.sonuc_epostasi && (
+              <div className="yp-uyari-yesil" style={{ marginBottom: 12 }}>📧 Sonuç raporun birkaç dakika içinde e-posta adresine gönderilecek.</div>
+            )}
             {/* [2026-10-03] K5 zorunlu: K4 bitince öğrenci önce açılan dallara (Katmanlar sayfasında listelenir) yönlendirilir */}
             {dalMi ? (
               <button className="btn full" onClick={() => navigate(k5Bekliyor ? '/katmanlar' : '/bolumler')}>

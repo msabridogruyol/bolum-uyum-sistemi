@@ -647,6 +647,7 @@ export const api = {
   degerlendirmeSifirla: (idler) => apost('/yonetim/ogrenciler/degerlendirme-sifirla', { idler }),
   ogrenciDegerlendirmeDurumu: (id) => aget(`/yonetim/ogrenci/${id}/degerlendirme-durumu`),
   katmanTekrarlat: (id, kod) => apost(`/yonetim/ogrenci/${id}/katman-tekrar`, { kod }),
+  sonucEpostasiGonder: (id) => apost(`/yonetim/ogrenci/${id}/sonuc-epostasi`),
   yenidenDegerlendirmeAc: (idler) => apost('/yonetim/ogrenciler/yeniden-degerlendirme', { idler }),
   okulYetkilileri: (okulId) => aget(`/yonetim/okul/${okulId}/yetkililer`),
   okulYetkilisiEkle: (okulId, veri) => apost(`/yonetim/okul/${okulId}/yetkililer`, veri),

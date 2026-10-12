@@ -71,6 +71,7 @@ class KatmanTamamlamaCevap(BaseModel):
     katman_kodu: str
     sonuclar: list[KatmanSonucSatiri]
     tum_katmanlar_tamamlandi_mi: bool
+    sonuc_epostasi: bool = False   # [2026-10-12] sonuç raporu e-postayla gönderilecek mi (tamamlama ekranında söylenir)
 
 
 class TurDurumOut(BaseModel):
