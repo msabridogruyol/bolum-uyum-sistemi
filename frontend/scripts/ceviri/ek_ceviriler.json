@@ -4,252 +4,588 @@
   "en": "Language",
   "de": "Sprache",
   "fr": "Langue",
-  "ru": "Язык"
+  "ru": "Язык",
+  "es": "Idioma",
+  "it": "Lingua",
+  "ar": "اللغة",
+  "zh": "语言",
+  "hi": "भाषा",
+  "uz": "Til",
+  "az": "Dil",
+  "ko": "언어"
  },
  "🌐 Dil": {
   "en": "🌐 Language",
   "de": "🌐 Sprache",
   "fr": "🌐 Langue",
-  "ru": "🌐 Язык"
+  "ru": "🌐 Язык",
+  "es": "🌐 Idioma",
+  "it": "🌐 Lingua",
+  "ar": "🌐 اللغة",
+  "zh": "🌐 语言",
+  "hi": "🌐 भाषा",
+  "uz": "🌐 Til",
+  "az": "🌐 Dil",
+  "ko": "🌐 언어"
  },
  "Sistemin hangi dilde görüneceğini seç. Seçimin hesabına kaydedilir.": {
   "en": "Choose the language the system is shown in. Your choice is saved to your account.",
   "de": "Wähle, in welcher Sprache das System angezeigt wird. Deine Auswahl wird in deinem Konto gespeichert.",
   "fr": "Choisis la langue d'affichage du système. Ton choix est enregistré dans ton compte.",
-  "ru": "Выбери язык, на котором будет отображаться система. Твой выбор сохранится в аккаунте."
+  "ru": "Выбери язык, на котором будет отображаться система. Твой выбор сохранится в аккаунте.",
+  "es": "Elige en qué idioma se mostrará el sistema. Tu elección se guarda en tu cuenta.",
+  "it": "Scegli in quale lingua mostrare il sistema. La tua scelta viene salvata nel tuo account.",
+  "ar": "اختر اللغة التي سيظهر بها النظام. يتم حفظ اختيارك في حسابك.",
+  "zh": "选择系统显示的语言。你的选择会保存到你的账户中。",
+  "hi": "चुनो कि सिस्टम किस भाषा में दिखाई दे। तुम्हारा चुनाव तुम्हारे खाते में सहेजा जाएगा।",
+  "uz": "Tizim qaysi tilda koʻrsatilishini tanla. Tanloving hisobingda saqlanadi.",
+  "az": "Sistemin hansı dildə göstəriləcəyini seç. Seçimin hesabında saxlanılacaq.",
+  "ko": "시스템이 어떤 언어로 표시될지 골라요. 선택한 내용은 계정에 저장돼요."
  },
  "Çeviriler yapay zekâ ile hazırlanmıştır; bazı ifadeler tam doğru olmayabilir. Değerlendirme sorularının geçerlilik çalışması Türkçe sürümle yapılmıştır.": {
   "en": "Translations were prepared with AI; some phrases may not be fully accurate. The validity study of the assessment questions was carried out with the Turkish version.",
   "de": "Die Übersetzungen wurden mit KI erstellt; einige Formulierungen sind möglicherweise nicht ganz korrekt. Die Validitätsstudie der Bewertungsfragen wurde mit der türkischen Fassung durchgeführt.",
   "fr": "Les traductions ont été réalisées avec l'IA ; certaines formulations peuvent ne pas être tout à fait exactes. L'étude de validité des questions d'évaluation a été menée avec la version turque.",
-  "ru": "Переводы подготовлены с помощью ИИ; некоторые формулировки могут быть неточными. Исследование валидности вопросов оценки проводилось на турецкой версии."
+  "ru": "Переводы подготовлены с помощью ИИ; некоторые формулировки могут быть неточными. Исследование валидности вопросов оценки проводилось на турецкой версии.",
+  "es": "Las traducciones se han preparado con IA; algunas expresiones pueden no ser del todo precisas. El estudio de validez de las preguntas de evaluación se realizó con la versión turca.",
+  "it": "Le traduzioni sono state preparate con l'IA; alcune espressioni potrebbero non essere del tutto accurate. Lo studio di validità delle domande di valutazione è stato condotto con la versione turca.",
+  "ar": "تم إعداد الترجمات بالذكاء الاصطناعي؛ وقد تكون بعض العبارات غير دقيقة تمامًا. أُجريت دراسة صلاحية أسئلة التقييم على النسخة التركية.",
+  "zh": "翻译由 AI 完成，部分表达可能不够准确。评估题目的效度研究是基于土耳其语版本进行的。",
+  "hi": "अनुवाद AI की मदद से तैयार किए गए हैं; कुछ वाक्यांश पूरी तरह सही नहीं हो सकते। मूल्यांकन प्रश्नों का वैधता अध्ययन तुर्की संस्करण के साथ किया गया था।",
+  "uz": "Tarjimalar sunʼgiy intellekt yordamida tayyorlangan; ayrim iboralar toʻliq aniq boʻlmasligi mumkin. Baholash savollarining validligi boʻyicha tadqiqot turkcha versiya bilan oʻtkazilgan.",
+  "az": "Tərcümələr süni intellektlə hazırlanıb; bəzi ifadələr tam dəqiq olmaya bilər. Qiymətləndirmə suallarının validlik tədqiqatı türkcə versiya ilə aparılıb.",
+  "ko": "번역은 AI로 만들어졌고, 일부 표현은 정확하지 않을 수 있어요. 평가 문항의 타당도 연구는 튀르키예어 버전으로 진행됐어요."
  },
  "🌐 Sorular Türkçe aslından yapay zekâ ile çevrilmiştir. Bu değerlendirmenin geçerlilik ve güvenilirlik çalışması Türkçe sürümle yapılmıştır; çeviriyle verilen cevaplarda sonuçlar daha az kesin olabilir.": {
   "en": "🌐 The questions were translated from the Turkish original with AI. The validity and reliability study of this assessment was carried out with the Turkish version; results based on answers to the translation may be less precise.",
   "de": "🌐 Die Fragen wurden mit KI aus dem türkischen Original übersetzt. Die Validitäts- und Reliabilitätsstudie dieser Bewertung wurde mit der türkischen Fassung durchgeführt; Ergebnisse aus Antworten auf die Übersetzung können weniger genau sein.",
   "fr": "🌐 Les questions ont été traduites de l'original turc avec l'IA. L'étude de validité et de fiabilité de cette évaluation a été menée avec la version turque ; les résultats obtenus à partir de la traduction peuvent être moins précis.",
-  "ru": "🌐 Вопросы переведены с турецкого оригинала с помощью ИИ. Исследование валидности и надёжности этой оценки проводилось на турецкой версии; результаты по ответам на перевод могут быть менее точными."
+  "ru": "🌐 Вопросы переведены с турецкого оригинала с помощью ИИ. Исследование валидности и надёжности этой оценки проводилось на турецкой версии; результаты по ответам на перевод могут быть менее точными.",
+  "es": "🌐 Las preguntas se han traducido del original turco con IA. El estudio de validez y fiabilidad de esta evaluación se realizó con la versión turca; los resultados basados en respuestas a la traducción pueden ser menos precisos.",
+  "it": "🌐 Le domande sono state tradotte con l'IA dall'originale turco. Lo studio di validità e affidabilità di questa valutazione è stato condotto con la versione turca; i risultati basati sulle risposte alla traduzione possono essere meno precisi.",
+  "ar": "🌐 تُرجمت الأسئلة من الأصل التركي بالذكاء الاصطناعي. أُجريت دراسة صدق وثبات هذا التقييم على النسخة التركية؛ وقد تكون النتائج المبنية على الإجابات عن الترجمة أقل دقة.",
+  "zh": "🌐 这些问题由 AI 从土耳其语原文翻译而来。本评估的效度和信度研究是基于土耳其语版本进行的；根据译文作答得出的结果可能不够精确。",
+  "hi": "🌐 प्रश्नों का अनुवाद तुर्की मूल से AI की मदद से किया गया है। इस मूल्यांकन का वैधता और विश्वसनीयता अध्ययन तुर्की संस्करण के साथ किया गया था; अनुवाद पर दिए गए उत्तरों के आधार पर परिणाम कम सटीक हो सकते हैं।",
+  "uz": "🌐 Savollar turkcha asldan sunʼiy intellekt yordamida tarjima qilingan. Ushbu baholashning validlik va ishonchlilik boʻyicha tadqiqoti turkcha versiya bilan oʻtkazilgan; tarjima asosida berilgan javoblar natijalari kamroq aniq boʻlishi mumkin.",
+  "az": "🌐 Suallar türkcə orijinaldan süni intellektlə tərcümə edilib. Bu qiymətləndirmənin validlik və etibarlılıq tədqiqatı türkcə versiya ilə aparılıb; tərcümə ilə verilən cavablarda nəticələr daha az dəqiq ola bilər.",
+  "ko": "🌐 질문은 튀르키예어 원문을 AI로 번역한 거예요. 이 평가의 타당도와 신뢰도 연구는 튀르키예어 버전으로 진행됐기 때문에, 번역본으로 답한 결과는 덜 정확할 수 있어요."
  },
  "🌐 KVKK metinleri hukuken bağlayıcı Türkçe asıllarıyla gösterilir.": {
   "en": "🌐 KVKK (personal data protection) texts are shown in their legally binding Turkish original.",
   "de": "🌐 KVKK-Texte (Datenschutz) werden in ihrer rechtsverbindlichen türkischen Originalfassung angezeigt.",
   "fr": "🌐 Les textes KVKK (protection des données personnelles) sont affichés dans leur version originale turque, juridiquement contraignante.",
-  "ru": "🌐 Тексты KVKK (защита персональных данных) показаны в юридически обязательном турецком оригинале."
+  "ru": "🌐 Тексты KVKK (защита персональных данных) показаны в юридически обязательном турецком оригинале.",
+  "es": "🌐 Los textos de la KVKK (protección de datos personales) se muestran en su original turco, jurídicamente vinculante.",
+  "it": "🌐 I testi della KVKK (protezione dei dati personali) vengono mostrati nell'originale turco, giuridicamente vincolante.",
+  "ar": "🌐 تُعرض نصوص KVKK (قانون حماية البيانات الشخصية) بأصلها التركي الملزم قانونًا.",
+  "zh": "🌐 KVKK（个人数据保护）文本以具有法律约束力的土耳其语原文显示。",
+  "hi": "🌐 KVKK (व्यक्तिगत डेटा संरक्षण) के पाठ कानूनी रूप से बाध्यकारी तुर्की मूल में दिखाए जाते हैं।",
+  "uz": "🌐 KVKK (shaxsiy maʼlumotlarni himoya qilish) matnlari huquqiy jihatdan majburiy boʻlgan turkcha asl nusxada koʻrsatiladi.",
+  "az": "🌐 KVKK (şəxsi məlumatların qorunması) mətnləri hüquqi cəhətdən məcburi olan türkcə orijinalda göstərilir.",
+  "ko": "🌐 KVKK(개인정보 보호) 문서는 법적 효력이 있는 튀르키예어 원문으로 보여요."
  },
  "Bu dil desteklenmiyor.": {
   "en": "This language is not supported.",
   "de": "Diese Sprache wird nicht unterstützt.",
   "fr": "Cette langue n'est pas prise en charge.",
-  "ru": "Этот язык не поддерживается."
+  "ru": "Этот язык не поддерживается.",
+  "es": "Este idioma no es compatible.",
+  "it": "Questa lingua non è supportata.",
+  "ar": "هذه اللغة غير مدعومة.",
+  "zh": "不支持该语言。",
+  "hi": "यह भाषा समर्थित नहीं है।",
+  "uz": "Bu til qoʻllab-quvvatlanmaydi.",
+  "az": "Bu dil dəstəklənmir.",
+  "ko": "이 언어는 지원하지 않아요."
  },
  "Bilim ve mühendislik": {
   "en": "Science and engineering",
   "de": "Wissenschaft und Technik",
   "fr": "Sciences et ingénierie",
-  "ru": "Наука и инженерия"
+  "ru": "Наука и инженерия",
+  "es": "Ciencia e ingeniería",
+  "it": "Scienze e ingegneria",
+  "ar": "العلوم والهندسة",
+  "zh": "科学与工程",
+  "hi": "विज्ञान और इंजीनियरिंग",
+  "uz": "Fan va muhandislik",
+  "az": "Elm və mühəndislik",
+  "ko": "과학과 공학"
  },
  "Sağlık": {
   "en": "Health",
   "de": "Gesundheit",
   "fr": "Santé",
-  "ru": "Здоровье"
+  "ru": "Здоровье",
+  "es": "Salud",
+  "it": "Salute",
+  "ar": "الصحة",
+  "zh": "医疗健康",
+  "hi": "स्वास्थ्य",
+  "uz": "Salomatlik",
+  "az": "Sağlamlıq",
+  "ko": "보건"
  },
  "Hukuk ve yönetim": {
   "en": "Law and administration",
   "de": "Recht und Verwaltung",
   "fr": "Droit et administration",
-  "ru": "Право и управление"
+  "ru": "Право и управление",
+  "es": "Derecho y administración",
+  "it": "Diritto e amministrazione",
+  "ar": "القانون والإدارة",
+  "zh": "法律与管理",
+  "hi": "कानून और प्रशासन",
+  "uz": "Huquq va boshqaruv",
+  "az": "Hüquq və idarəetmə",
+  "ko": "법률과 행정"
  },
  "Ekonomi ve işletme": {
   "en": "Economics and business",
   "de": "Wirtschaft und Betriebswirtschaft",
   "fr": "Économie et gestion",
-  "ru": "Экономика и бизнес"
+  "ru": "Экономика и бизнес",
+  "es": "Economía y empresa",
+  "it": "Economia e gestione aziendale",
+  "ar": "الاقتصاد وإدارة الأعمال",
+  "zh": "经济与工商管理",
+  "hi": "अर्थशास्त्र और व्यवसाय",
+  "uz": "Iqtisodiyot va biznes",
+  "az": "İqtisadiyyat və biznes",
+  "ko": "경제와 경영"
  },
  "Sanat, tasarım ve medya": {
   "en": "Art, design and media",
   "de": "Kunst, Design und Medien",
   "fr": "Art, design et médias",
-  "ru": "Искусство, дизайн и медиа"
+  "ru": "Искусство, дизайн и медиа",
+  "es": "Arte, diseño y medios",
+  "it": "Arte, design e media",
+  "ar": "الفن والتصميم والإعلام",
+  "zh": "艺术、设计与媒体",
+  "hi": "कला, डिज़ाइन और मीडिया",
+  "uz": "Sanʼat, dizayn va media",
+  "az": "İncəsənət, dizayn və media",
+  "ko": "예술, 디자인, 미디어"
  },
  "Eğitim ve sosyal bilimler": {
   "en": "Education and social sciences",
   "de": "Bildung und Sozialwissenschaften",
   "fr": "Éducation et sciences sociales",
-  "ru": "Образование и социальные науки"
+  "ru": "Образование и социальные науки",
+  "es": "Educación y ciencias sociales",
+  "it": "Istruzione e scienze sociali",
+  "ar": "التعليم والعلوم الاجتماعية",
+  "zh": "教育与社会科学",
+  "hi": "शिक्षा और सामाजिक विज्ञान",
+  "uz": "Taʼlim va ijtimoiy fanlar",
+  "az": "Təhsil və sosial elmlər",
+  "ko": "교육과 사회과학"
  },
  "Tarım, doğa ve çevre": {
   "en": "Agriculture, nature and environment",
   "de": "Landwirtschaft, Natur und Umwelt",
   "fr": "Agriculture, nature et environnement",
-  "ru": "Сельское хозяйство, природа и окружающая среда"
+  "ru": "Сельское хозяйство, природа и окружающая среда",
+  "es": "Agricultura, naturaleza y medio ambiente",
+  "it": "Agricoltura, natura e ambiente",
+  "ar": "الزراعة والطبيعة والبيئة",
+  "zh": "农业、自然与环境",
+  "hi": "कृषि, प्रकृति और पर्यावरण",
+  "uz": "Qishloq xoʻjaligi, tabiat va atrof-muhit",
+  "az": "Kənd təsərrüfatı, təbiət və ətraf mühit",
+  "ko": "농업, 자연, 환경"
  },
  "Bilgisayar ve teknoloji": {
   "en": "Computers and technology",
   "de": "Computer und Technologie",
   "fr": "Informatique et technologie",
-  "ru": "Компьютеры и технологии"
+  "ru": "Компьютеры и технологии",
+  "es": "Informática y tecnología",
+  "it": "Informatica e tecnologia",
+  "ar": "الحاسوب والتكنولوجيا",
+  "zh": "计算机与技术",
+  "hi": "कंप्यूटर और प्रौद्योगिकी",
+  "uz": "Kompyuter va texnologiya",
+  "az": "Kompüter və texnologiya",
+  "ko": "컴퓨터와 기술"
  },
  "Okul ve üniversite": {
   "en": "School and university",
   "de": "Schule und Universität",
   "fr": "École et université",
-  "ru": "Школа и университет"
+  "ru": "Школа и университет",
+  "es": "Colegio y universidad",
+  "it": "Scuola e università",
+  "ar": "المدرسة والجامعة",
+  "zh": "学校与大学",
+  "hi": "स्कूल और विश्वविद्यालय",
+  "uz": "Maktab va universitet",
+  "az": "Məktəb və universitet",
+  "ko": "학교와 대학교"
  },
  "Genel kelimeler": {
   "en": "General words",
   "de": "Allgemeine Wörter",
   "fr": "Mots généraux",
-  "ru": "Общие слова"
+  "ru": "Общие слова",
+  "es": "Palabras generales",
+  "it": "Parole generali",
+  "ar": "كلمات عامة",
+  "zh": "通用词汇",
+  "hi": "सामान्य शब्द",
+  "uz": "Umumiy soʻlar",
+  "az": "Ümumi sözlər",
+  "ko": "일반 단어"
  },
  "9. Sınıf": {
   "en": "Grade 9",
   "de": "9. Klasse",
   "fr": "Seconde (9e année)",
-  "ru": "9-й класс"
+  "ru": "9-й класс",
+  "es": "Grado 9",
+  "it": "Classe 9",
+  "ar": "الصف 9",
+  "zh": "9年级",
+  "hi": "कक्षा 9",
+  "uz": "9-sinf",
+  "az": "9-cu sinif",
+  "ko": "9학년"
  },
  "10. Sınıf": {
   "en": "Grade 10",
   "de": "10. Klasse",
   "fr": "10e année",
-  "ru": "10-й класс"
+  "ru": "10-й класс",
+  "es": "Grado 10",
+  "it": "Classe 10",
+  "ar": "الصف 10",
+  "zh": "10年级",
+  "hi": "कक्षा 10",
+  "uz": "10-sinf",
+  "az": "10-cu sinif",
+  "ko": "10학년"
  },
  "11. Sınıf": {
   "en": "Grade 11",
   "de": "11. Klasse",
   "fr": "11e année",
-  "ru": "11-й класс"
+  "ru": "11-й класс",
+  "es": "Grado 11",
+  "it": "Classe 11",
+  "ar": "الصف 11",
+  "zh": "11年级",
+  "hi": "कक्षा 11",
+  "uz": "11-sinf",
+  "az": "11-ci sinif",
+  "ko": "11학년"
  },
  "12. Sınıf": {
   "en": "Grade 12",
   "de": "12. Klasse",
   "fr": "12e année",
-  "ru": "12-й класс"
+  "ru": "12-й класс",
+  "es": "Grado 12",
+  "it": "Classe 12",
+  "ar": "الصف 12",
+  "zh": "12年级",
+  "hi": "कक्षा 12",
+  "uz": "12-sinf",
+  "az": "12-ci sinif",
+  "ko": "12학년"
  },
  "Mezun": {
   "en": "Graduate",
   "de": "Absolvent/in",
   "fr": "Diplômé(e)",
-  "ru": "Выпускник"
+  "ru": "Выпускник",
+  "es": "Graduado",
+  "it": "Diplomato",
+  "ar": "خريج",
+  "zh": "毕业生",
+  "hi": "स्नातक",
+  "uz": "Bitiruvchi",
+  "az": "Məzun",
+  "ko": "졸업생"
  },
  "Aday": {
   "en": "Candidate",
   "de": "Kandidat/in",
   "fr": "Candidat(e)",
-  "ru": "Абитуриент"
+  "ru": "Абитуриент",
+  "es": "Aspirante",
+  "it": "Candidato",
+  "ar": "مرشح",
+  "zh": "考生",
+  "hi": "अभ्यर्थी",
+  "uz": "Nomzod",
+  "az": "Namizəd",
+  "ko": "지원자"
  },
  "{0}. Sınıf": {
   "en": "Grade {0}",
   "de": "{0}. Klasse",
   "fr": "{0}e année",
-  "ru": "{0}-й класс"
+  "ru": "{0}-й класс",
+  "es": "Grado {0}",
+  "it": "Classe {0}",
+  "ar": "الصف {0}",
+  "zh": "{0}年级",
+  "hi": "कक्षा {0}",
+  "uz": "{0}-sinf",
+  "az": "Sinif {0}",
+  "ko": "{0}학년"
  },
  "{0}. Sınıf {1}": {
   "en": "Grade {0} {1}",
   "de": "{0}. Klasse {1}",
   "fr": "{0}e année {1}",
-  "ru": "{0}-й класс {1}"
+  "ru": "{0}-й класс {1}",
+  "es": "Grado {0} {1}",
+  "it": "Classe {0} {1}",
+  "ar": "الصف {0} {1}",
+  "zh": "{0}年级 {1}",
+  "hi": "कक्षा {0} {1}",
+  "uz": "{0}-sinf {1}",
+  "az": "Sinif {0} {1}",
+  "ko": "{0}학년 {1}"
  },
  "{0}. Sınıf / {1}": {
   "en": "Grade {0} / {1}",
   "de": "{0}. Klasse / {1}",
   "fr": "{0}e année / {1}",
-  "ru": "{0}-й класс / {1}"
+  "ru": "{0}-й класс / {1}",
+  "es": "Grado {0} / {1}",
+  "it": "Classe {0} / {1}",
+  "ar": "الصف {0} / {1}",
+  "zh": "{0}年级 / {1}",
+  "hi": "कक्षा {0} / {1}",
+  "uz": "{0}-sinf / {1}",
+  "az": "Sinif {0} / {1}",
+  "ko": "{0}학년 / {1}"
  },
  "{0} yıl": {
   "en": "{0} years",
   "de": "{0} Jahre",
   "fr": "{0} ans",
-  "ru": "{0} г."
+  "ru": "{0} г.",
+  "es": "{0} años",
+  "it": "{0} anni",
+  "ar": "{0} سنوات",
+  "zh": "{0}年",
+  "hi": "{0} वर्ष",
+  "uz": "{0} yil",
+  "az": "{0} il",
+  "ko": "{0}년"
  },
  "{0} hafta": {
   "en": "{0} weeks",
   "de": "{0} Wochen",
   "fr": "{0} semaines",
-  "ru": "{0} нед."
+  "ru": "{0} нед.",
+  "es": "{0} semanas",
+  "it": "{0} settimane",
+  "ar": "{0} أسابيع",
+  "zh": "{0}周",
+  "hi": "{0} सप्ताह",
+  "uz": "{0} hafta",
+  "az": "{0} həftə",
+  "ko": "{0}주"
  },
  "{0} saat": {
   "en": "{0} hours",
   "de": "{0} Std.",
   "fr": "{0} h",
-  "ru": "{0} ч"
+  "ru": "{0} ч",
+  "es": "{0} horas",
+  "it": "{0} ore",
+  "ar": "{0} ساعات",
+  "zh": "{0}小时",
+  "hi": "{0} घंटे",
+  "uz": "{0} soat",
+  "az": "{0} saat",
+  "ko": "{0}시간"
  },
  "{0} dakika": {
   "en": "{0} minutes",
   "de": "{0} Minuten",
   "fr": "{0} minutes",
-  "ru": "{0} мин"
+  "ru": "{0} мин",
+  "es": "{0} minutos",
+  "it": "{0} minuti",
+  "ar": "{0} دقائق",
+  "zh": "{0}分钟",
+  "hi": "{0} मिनट",
+  "uz": "{0} daqiqa",
+  "az": "{0} dəqiqə",
+  "ko": "{0}분"
  },
  "{0} saniye": {
   "en": "{0} seconds",
   "de": "{0} Sekunden",
   "fr": "{0} secondes",
-  "ru": "{0} сек"
+  "ru": "{0} сек",
+  "es": "{0} segundos",
+  "it": "{0} secondi",
+  "ar": "{0} ثوانٍ",
+  "zh": "{0}秒",
+  "hi": "{0} सेकंड",
+  "uz": "{0} soniya",
+  "az": "{0} saniyə",
+  "ko": "{0}초"
  },
  "{0} net": {
   "en": "{0} net",
   "de": "{0} Netto",
   "fr": "{0} net",
-  "ru": "{0} нетто"
+  "ru": "{0} нетто",
+  "es": "{0} net",
+  "it": "{0} net",
+  "ar": "{0} صافي",
+  "zh": "{0}净分",
+  "hi": "{0} नेट",
+  "uz": "{0} net",
+  "az": "{0} net",
+  "ko": "{0} net"
  },
  "{0} puan": {
   "en": "{0} points",
   "de": "{0} Punkte",
   "fr": "{0} points",
-  "ru": "{0} балл."
+  "ru": "{0} балл.",
+  "es": "{0} puntos",
+  "it": "{0} punti",
+  "ar": "{0} نقاط",
+  "zh": "{0}分",
+  "hi": "{0} अंक",
+  "uz": "{0} ball",
+  "az": "{0} bal",
+  "ko": "{0}점"
  },
  "{0} kişi": {
   "en": "{0} people",
   "de": "{0} Personen",
   "fr": "{0} personnes",
-  "ru": "{0} чел."
+  "ru": "{0} чел.",
+  "es": "{0} personas",
+  "it": "{0} persone",
+  "ar": "{0} أشخاص",
+  "zh": "{0}人",
+  "hi": "{0} लोग",
+  "uz": "{0} kishi",
+  "az": "{0} nəfər",
+  "ko": "{0}명"
  },
  "{0} bölüm": {
   "en": "{0} majors",
   "de": "{0} Studiengänge",
   "fr": "{0} filières",
-  "ru": "{0} напр."
+  "ru": "{0} напр.",
+  "es": "{0} carreras",
+  "it": "{0} corsi di laurea",
+  "ar": "{0} تخصصات",
+  "zh": "{0}个专业",
+  "hi": "{0} विभाग",
+  "uz": "{0} ta yoʻnalish",
+  "az": "{0} ixtisas",
+  "ko": "{0}개 학과"
  },
  "{0} meslek": {
   "en": "{0} occupations",
   "de": "{0} Berufe",
   "fr": "{0} métiers",
-  "ru": "{0} проф."
+  "ru": "{0} проф.",
+  "es": "{0} profesiones",
+  "it": "{0} professioni",
+  "ar": "{0} مهن",
+  "zh": "{0}个职业",
+  "hi": "{0} पेशे",
+  "uz": "{0} ta kasb",
+  "az": "{0} peşə",
+  "ko": "{0}개 직업"
  },
  "{0} deneme": {
   "en": "{0} practice exams",
   "de": "{0} Probeprüfungen",
   "fr": "{0} examens blancs",
-  "ru": "{0} пробн. экз."
+  "ru": "{0} пробн. экз.",
+  "es": "{0} simulacros",
+  "it": "{0} simulazioni",
+  "ar": "{0} اختبارات تجريبية",
+  "zh": "{0}次模拟考试",
+  "hi": "{0} अभ्यास परीक्षाएँ",
+  "uz": "{0} ta sinov imtihoni",
+  "az": "{0} sınaq imtahanı",
+  "ko": "{0}회 모의고사"
  },
  "{0} görev": {
   "en": "{0} tasks",
   "de": "{0} Aufgaben",
   "fr": "{0} tâches",
-  "ru": "{0} задан."
+  "ru": "{0} задан.",
+  "es": "{0} tareas",
+  "it": "{0} attività",
+  "ar": "{0} مهام",
+  "zh": "{0}项任务",
+  "hi": "{0} कार्य",
+  "uz": "{0} ta topshiriq",
+  "az": "{0} tapşırıq",
+  "ko": "{0}개 과제"
  },
  "{0} giriş": {
   "en": "{0} logins",
   "de": "{0} Anmeldungen",
   "fr": "{0} connexions",
-  "ru": "{0} вход."
+  "ru": "{0} вход.",
+  "es": "{0} inicios de sesión",
+  "it": "{0} accessi",
+  "ar": "{0} عمليات تسجيل دخول",
+  "zh": "{0}次登录",
+  "hi": "{0} लॉगिन",
+  "uz": "{0} marta kirish",
+  "az": "{0} giriş",
+  "ko": "{0}회 로그인"
  },
  "{0} program": {
   "en": "{0} programmes",
   "de": "{0} Programme",
   "fr": "{0} programmes",
-  "ru": "{0} прогр."
+  "ru": "{0} прогр.",
+  "es": "{0} programas",
+  "it": "{0} programmi",
+  "ar": "{0} برامج",
+  "zh": "{0}个项目",
+  "hi": "{0} कार्यक्रम",
+  "uz": "{0} ta dastur",
+  "az": "{0} proqram",
+  "ko": "{0}개 프로그램"
  },
  "{0} sınıf": {
   "en": "{0} classes",
   "de": "{0} Klassen",
   "fr": "{0} classes",
-  "ru": "{0} кл."
+  "ru": "{0} кл.",
+  "es": "{0} clases",
+  "it": "{0} classi",
+  "ar": "{0} صفوف",
+  "zh": "{0}个班级",
+  "hi": "{0} कक्षाएँ",
+  "uz": "{0} ta sinf",
+  "az": "{0} sinif",
+  "ko": "{0}개 반"
  },
  "kopyalama denemeleri": {
   "en": "copy attempts",
   "de": "Kopierversuche",
   "fr": "tentatives de copie",
-  "ru": "попытки копирования"
+  "ru": "попытки копирования",
+  "es": "intentos de copia",
+  "it": "tentativi di copia",
+  "ar": "محاولات النسخ",
+  "zh": "复制尝试",
+  "hi": "कॉपी करने के प्रयास",
+  "uz": "nusxa koʻchirish urinishlari",
+  "az": "kopyalama cəhdləri",
+  "ko": "복사 시도"
  }
 }

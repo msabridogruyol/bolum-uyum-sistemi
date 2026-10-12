@@ -15,6 +15,14 @@ export const DILLER = [
   { kod: 'de', ad: 'Deutsch', bayrak: '🇩🇪' },
   { kod: 'fr', ad: 'Français', bayrak: '🇫🇷' },
   { kod: 'ru', ad: 'Русский', bayrak: '🇷🇺' },
+  { kod: 'es', ad: 'Español', bayrak: '🇪🇸' },
+  { kod: 'it', ad: 'Italiano', bayrak: '🇮🇹' },
+  { kod: 'ar', ad: 'العربية', bayrak: '🇸🇦' },
+  { kod: 'zh', ad: '中文（简体）', bayrak: '🇨🇳' },
+  { kod: 'hi', ad: 'हिन्दी', bayrak: '🇮🇳' },
+  { kod: 'uz', ad: 'Oʻzbekcha', bayrak: '🇺🇿' },
+  { kod: 'az', ad: 'Azərbaycanca', bayrak: '🇦🇿' },
+  { kod: 'ko', ad: '한국어', bayrak: '🇰🇷' },
 ]
 const SAG_SOL = new Set(['ar'])
 const ANAHTAR = 'dil'
@@ -192,6 +200,8 @@ export const t = (s) => cevir(s) ?? s
 
 function bosluklu(ham, c) {
   const bas = ham.match(/^\s*/)[0], son = ham.match(/\s*$/)[0]
+  // Sağdan sola dillerde yön okları da döner ("İncele →" → "… ←")
+  if (SAG_SOL.has(dil)) c = c.replace(/[→←]/g, (o) => (o === '→' ? '←' : '→'))
   return bas + c + son
 }
 

@@ -1,6 +1,6 @@
 # Çoklu dil — çeviri araçları
 
-[2026-10-12] Filizyol arayüzü Türkçe yazılır. Diğer diller, Türkçe metinlerin dil paketlerinden ekranda değiştirilmesiyle gösterilir.
+[2026-10-12] Filizyol arayüzü Türkçe yazılır; 12 dil desteklenir: en, de, fr, ru, es, it, ar (sağdan sola), zh, hi, uz, az, ko. Diğer diller, Türkçe metinlerin dil paketlerinden ekranda değiştirilmesiyle gösterilir.
 Bu klasör paketlerin nasıl üretildiğini ve nasıl güncelleneceğini tutar.
 
 ## Nasıl çalışır
@@ -26,7 +26,7 @@ Bu klasör paketlerin nasıl üretildiğini ve nasıl güncelleneceğini tutar.
 2. `python3 birlestir.py` komutunu çalıştırın. Komut yerel veritabanından soru, bölüm ve özellik adlarını da ekler ve `katalog.json` dosyasını üretir.
 3. Katalogda olmayan yeni metinleri parçalara bölün. Her parçayı `YONERGE.md`'deki yönergeyle her dile çevirin. Çeviriler `ceviri/<dil>/<parça>_*.json` dosyalarına yazılır.
 4. Her parçayı `python3 denetle.py <calisma> <dil> <parça>` ile denetleyin.
-5. `python3 paketle.py katalog.json <calisma>/ceviri en de fr ru` komutu paketleri günceller. Paketteki eski çeviriler korunur.
+5. `python3 paketle.py katalog.json <calisma>/ceviri en de fr ru es it ar zh hi uz az ko` komutu paketleri günceller. Paketteki eski çeviriler korunur.
 6. Kısa ve elle yazılacak ekler için `ek_ceviriler.json` dosyasını kullanın. Bu dosya her paketlemede en son uygulanır.
 
 Pakette olmayan bir metin ekranda Türkçe kalır; sistem hata vermez.
@@ -37,7 +37,7 @@ Pakette olmayan bir metin ekranda Türkçe kalır; sistem hata vermez.
 2. Dili `DILLER` listelerine ekleyin:
    - `src/yardimci/dil.js`;
    - backend tarafında `ceviri_servisi.DILLER` (backend'de 13 dilin tamamı zaten tanımlı).
-3. Arapça için sayfa yönü otomatik olarak `dir="rtl"` olur; düzen ayrıca kontrol edilmelidir.
+3. Sağdan sola diller (`SAG_SOL`, şimdilik yalnızca `ar`) için sayfa yönü `dir="rtl"` olur. Fiziksel konumlu öğelerin (Filiz maskotu, sabit rozetler, mobil menü) aynalanması `index.css` sonundaki `[dir="rtl"]` kurallarındadır.
 
 ## Bilinen sınırlar
 
