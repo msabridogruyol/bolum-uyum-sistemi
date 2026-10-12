@@ -67,6 +67,8 @@ def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str, netler: bool
 # [2026-10-10] Öğrenci kendi raporunu indirir (Raporlarım) — veli erişimi yerine: veli raporu öğrenci hesabından alınır.
 # Okulun paketinde 'ogrenci_raporlari' modülü yoksa kapalıdır. Yönetim (ayrıntılı) ve sınıf öğretmeni raporu öğrenciye verilmez.
 OGRENCI_TURLERI = {"ogrenci", "veli"}
+RAPOR_ADI = {"ogrenci": "Öğrenci raporu", "veli": "Veli raporu", "yonetici": "Yönetici raporu",
+             "sinif_ogretmeni": "Sınıf öğretmeni raporu"}   # [2026-10-12] kayıtlarda kod yerine okunur ad
 
 
 @router.get("/ogrenci/rapor")
@@ -84,7 +86,7 @@ def kendi_raporum(tur: str = Query("ogrenci"), bicim: str = Query("pdf"), netler
     if not tamam:
         raise HTTPException(status_code=400, detail="Raporun, değerlendirmeni tamamladığında hazır olur.")
     cevap = _ogrenci_dosyasi(db, o, tur, bicim, netler and "net_takibi" in m)
-    olay_yaz(db, o.id, "rapor_indir", f"{tur} raporu ({bicim})", yapan="ogrenci")
+    olay_yaz(db, o.id, "rapor_indir", f"{RAPOR_ADI.get(tur, tur)} ({bicim.upper()})", yapan="ogrenci")
     db.commit()
     return cevap
 
@@ -96,7 +98,7 @@ def ogrenci_raporu(ogrenci_id: str, tur: str = Query("yonetici"), bicim: str = Q
     o = _ogrenci_kapsami(db, yon, ogrenci_id)
     netler = _paket_kontrol(db, yon, o.okul_id, tur, netler)
     cevap = _ogrenci_dosyasi(db, o, tur, bicim, netler)
-    denetim_yaz(db, yon, "rapor_indir", "ogrenciler", o.id, f"{o.ad_soyad}: {tur} raporu ({bicim}{', denemeler' if netler else ''})", o.okul_id)
+    denetim_yaz(db, yon, "rapor_indir", "ogrenciler", o.id, f"{o.ad_soyad}: {RAPOR_ADI.get(tur, tur)} ({bicim.upper()}{', denemeler' if netler else ''})", o.okul_id)
     db.commit()
     return cevap
 
@@ -158,7 +160,7 @@ def okul_raporu(okul_id: int, bicim: str = Query("pdf"), sinif: str | None = Que
     v = okul_raporu_verisi(db, okul_id, yon, sinif=sinif, sube=sube)
     icerik = okul_pdf(v, netler=netler) if bicim == "pdf" else okul_xlsx(v, netler=netler)
     denetim_yaz(db, yon, "rapor_indir", "okullar", okul_id,
-                f"{(kapsam_adi + ' sınıf') if kapsam_adi else 'Okul genel'} raporu ({bicim})", okul_id or None)
+                f"{kapsam_adi} sınıf raporu ({bicim.upper()})" if kapsam_adi else f"Okul genel raporu ({bicim.upper()})", okul_id or None)
     db.commit()
     return _cevap(icerik, bicim, _dosya_adi(f"{kapsam_adi}_Sinif_Raporu" if kapsam_adi else "Okul_Raporu", okul_adi,
                                             v["tarih"].strftime("%Y%m%d")))

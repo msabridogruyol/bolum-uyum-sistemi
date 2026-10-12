@@ -196,7 +196,7 @@ def veli_sunumu(okul_id: int, sinif: str | None = None, sube: str | None = None,
     v = veli_sunumu_verisi(db, okul, okul_id, sinif, sube)
     icerik = veli_sunumu_pptx(v)
     denetim_yaz(db, yon, "rapor_indir", "okullar", okul_id,
-                f"Veli toplantısı sunumu ({v['kapsam']}{'' if v['toplu'] else ', yalnızca genel slaytlar'})", okul_id or None)
+                (f"Veli toplantısı sunumu ({v['kapsam']})" if v['toplu'] else f"Veli toplantısı sunumu ({v['kapsam']}, yalnızca genel slaytlar)"), okul_id or None)
     db.commit()
     ad = _dosya_adi("Veli_Toplantisi", okul.ad if okul else "Okul_harici",
                                              v["kapsam"] if v["kapsam_tur"] != "okul" else None, date.today().strftime("%Y%m%d"))

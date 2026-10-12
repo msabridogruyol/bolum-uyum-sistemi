@@ -3,7 +3,7 @@ export default function AltSerit({ okul, kisi, rol }) {
   const yil = new Date().getFullYear()
   return (
     <footer className="alt-serit">
-      <span>© {yil} {okul || 'Filizyol'}</span>
+      <span>© {yil} <span translate="no">{okul || 'Filizyol'}</span></span>
       <span className="as-orta">🌱 Filizyol · Kendi yolunu filizlendir</span>
       {kisi && <span>{kisi}{rol ? ` · ${rol}` : ''}</span>}
     </footer>

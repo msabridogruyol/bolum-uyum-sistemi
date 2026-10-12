@@ -1,5 +1,6 @@
 // [2026-10-09] Öğrenci detayı: hesap, ilerleme, sonuç, istatistik, kayıtlar + şifre sıfırla / düzenle / sil
 import { useEffect, useState } from 'react'
+import { t as cevirT } from '../../yardimci/dil'
 import { katmanAdi } from '../../yardimci/katmanAdlari'
 import { AkranListesi } from './AkranPaneli'
 import { OgrenciIlgi } from './KulupYonetimi'
@@ -312,7 +313,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           </div>
           <div className="yp-bilgi-grid">
             <div><span>Hesap açılışı</span><b>{tarih(h.olusturulma_zamani)}</b></div>
-            <div><span>Son giriş</span><b>{h.son_giris_zamani ? `${tarih(h.son_giris_zamani)} (${onceSure(h.son_giris_zamani)})` : 'Hiç giriş yapmadı'}</b></div>
+            <div><span>Son giriş</span><b>{h.son_giris_zamani ? `${tarih(h.son_giris_zamani)} (${cevirT(onceSure(h.son_giris_zamani))})` : 'Hiç giriş yapmadı'}</b></div>
             {d.aktiflik && <AktiflikSeridi a={d.aktiflik} />}
             <div><span>Şifre</span><b><SifreHucresi gecici={h.gecici_sifre} degistirmeli={h.sifre_degistirmeli} /></b></div>
             <div><span>Öğrenci no</span><b>{h.ogrenci_no || '—'}</b></div>
@@ -420,7 +421,7 @@ function AktiflikSeridi({ a }) {
       <b>{a.aktif_gun} gün aktif{a.seri > 1 ? ` · ${a.seri} gündür üst üste` : ''}{a.son_aktif ? ` · son aktif ${gunAdi(a.son_aktif)}` : ' · sistemi hiç açmadı'}</b>
       <div className="ak-serit" role="img" aria-label={`Son ${a.gun} günde ${a.aktif_gun} gün aktif`}>
         {a.takvim.map((g) => (
-          <span key={g.gun} className={g.aktif ? 'aktif' : ''} title={`${gunAdi(g.gun)}: ${g.aktif ? 'sistemi açtı' : 'açmadı'}`}>{g.aktif ? '✓' : ''}</span>
+          <span key={g.gun} className={g.aktif ? 'aktif' : ''} title={`${gunAdi(g.gun)}: ${cevirT(g.aktif ? 'sistemi açtı' : 'açmadı')}`}>{g.aktif ? '✓' : ''}</span>
         ))}
       </div>
     </div>

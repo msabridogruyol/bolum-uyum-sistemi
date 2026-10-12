@@ -75,6 +75,11 @@ OLAY_ETIKET = {
     "katman_bitti": "Test bölümünü tamamladı",
     "hedef_degisti": "Hedef bölümü değiştirildi (yönetim)",
     "hedef_hakki": "Hedef değiştirme hakkı verildi",
+    # [2026-10-12] Eksik olay adları
+    "sinif_atladi": "Sınıf atladı", "sinif_atlatma_geri_alindi": "Sınıf atlatma geri alındı",
+    "degerlendirme_sifirlandi": "Değerlendirmesi sıfırlandı", "yeniden_degerlendirme_izni": "Yeniden değerlendirme izni verildi",
+    "katman_tekrar": "Değerlendirme bölümü tekrar açıldı", "sonuc_epostasi": "Sonuç e-postası",
+    "rapor_indir": "Rapor indirdi", "ozgecmis_indir": "Özgeçmişini indirdi", "cv_paylasim": "CV paylaşım bağlantısı",
 }
 
 
@@ -839,8 +844,8 @@ def _kocluk_ozeti(db: Session, o: Ogrenci) -> dict:
 
 
 def _ogrenci_kayitlari(db: Session, o: Ogrenci, katmanlar) -> list[dict]:
-    k = [{"zaman": e.zaman, "olay": e.olay, "etiket": OLAY_ETIKET.get(e.olay, e.olay), "aciklama": e.aciklama,
-          "yapan": e.yapan, "tur": "hesap"}
+    k = [{"zaman": e.zaman, "olay": e.olay, "etiket": OLAY_ETIKET.get(e.olay) or islem_etiketi(e.olay), "aciklama": e.aciklama,
+          "yapan": YAPAN_ETIKET.get(e.yapan, e.yapan), "tur": "hesap"}
          for e in db.query(OgrenciHesapOlayi).filter(OgrenciHesapOlayi.ogrenci_id == o.id)
          .order_by(OgrenciHesapOlayi.zaman.desc()).limit(300).all()]
     for x in katmanlar:
@@ -1041,7 +1046,64 @@ ISLEM_ETIKET = {
     "okul_ekle": "Okul eklendi", "okul_guncelle": "Okul bilgisi güncellendi", "okul_sil": "Okul silindi",
     "sifre_belirledi": "Yetkili kendi şifresini belirledi",
     "okul_bilgi_guncelle": "Okul tanıtım bilgileri güncellendi",
+    # [2026-10-12] Eksik işlem adları tamamlandı (kayıtlarda kod yerine okunur ad görünsün; ekran 12 dile çevrilir)
+    "anket_olustur": "Anket oluşturuldu", "anket_duzenle": "Anket düzenlendi", "anket_sil": "Anket silindi",
+    "anket_taslak": "Anket taslağa alındı", "anket_yayinda": "Anket yayınlandı", "anket_kapandi": "Anket kapatıldı",
+    "anket_excel": "Anket sonuçları indirildi (Excel)", "anket_psikometri_excel": "Anket psikometri raporu indirildi (Excel)",
+    "audit_log_excel": "İşlem kayıtları indirildi (Excel)", "cevap_analizi_goruntule": "Cevap analizi görüntülendi",
+    "cv_indir": "Öğrenci CV'si indirildi", "ozgecmis_indir": "Öğrenci özgeçmişi indirildi",
+    "degerlendirme_sifirla": "Değerlendirme sıfırlandı", "yeniden_degerlendirme_ac": "Yeniden değerlendirme izni verildi",
+    "katman_tekrarlat": "Değerlendirme bölümü tekrarlatıldı", "sonuc_epostasi_gonder": "Sonuç e-postası gönderildi",
+    "giris_listesi_indir": "Giriş listesi indirildi",
+    "gorusme_ekle": "Rehberlik görüşmesi eklendi", "gorusme_duzenle": "Rehberlik görüşmesi düzenlendi",
+    "gorusme_sil": "Rehberlik görüşmesi silindi", "gorusme_excel": "Görüşme kayıtları indirildi (Excel)",
+    "hata_kaydi_cozuldu": "Hata kaydı çözüldü olarak işaretlendi", "hata_kayitlari_temizle": "Hata kayıtları temizlendi",
+    "is_hayati_baglanti_indir": "İş hayatı verisi bağlantıdan indirildi", "is_hayati_istihdam_yukle": "İstihdam verisi yüklendi",
+    "is_hayati_kazanc_yukle": "Kazanç verisi yüklendi", "is_hayati_kayit_ekle": "İş hayatı kaydı eklendi",
+    "is_hayati_kayit_duzenle": "İş hayatı kaydı düzenlendi", "is_hayati_kayit_sil": "İş hayatı kaydı silindi",
+    "is_hayati_meslek_isco": "Meslek grubu eşleştirmesi değiştirildi", "is_hayati_meslek_isco_json": "Meslek grubu eşleştirmeleri yüklendi",
+    "is_hayati_yukleme_sil": "Veri yüklemesi silindi", "istatistik_excel": "İstatistikler indirildi (Excel)",
+    "katman_agirlik_guncelleme": "Katman ağırlıkları güncellendi", "katman_sorulari_komple_silme": "Katman soruları silindi",
+    "koc_ekle": "Eğitim koçu eklendi", "koc_duzenle": "Eğitim koçu düzenlendi", "koc_sil": "Eğitim koçu silindi",
+    "koc_okullari": "Eğitim koçunun okulları güncellendi", "koc_talep_guncelle": "Koçluk talebi güncellendi",
+    "konu_ekle": "Sınav konusu eklendi", "konu_duzenle": "Sınav konusu düzenlendi", "konu_gizle": "Sınav konusu gizlendi",
+    "konu_sil": "Sınav konusu silindi",
+    "kulup_ekle": "Kulüp eklendi", "kulup_duzenle": "Kulüp düzenlendi", "kulup_sil": "Kulüp silindi",
+    "kulup_hazir_liste": "Hazır kulüp listesi eklendi", "kulup_onayla": "Kulüp üyeliği onaylandı",
+    "kulup_reddet": "Kulüp üyeliği reddedildi", "kulup_cikar": "Öğrenci kulüpten çıkarıldı",
+    "kulup_duyuru_ekle": "Kulüp duyurusu eklendi", "kulup_duyuru_duzenle": "Kulüp duyurusu düzenlendi",
+    "kulup_duyuru_sil": "Kulüp duyurusu silindi",
+    "meslek_dili_kaydet": "Meslek dili sözlüğü kaydedildi", "meslek_dili_sifirla": "Meslek dili sözlüğü sıfırlandı",
+    "mezun_ekle": "Mezun eklendi", "mezun_duzenle": "Mezun bilgisi düzenlendi", "mezun_sil": "Mezun silindi",
+    "mezun_hikayesi_ekle": "Mezun hikâyesi eklendi", "mezun_hikayesi_duzenle": "Mezun hikâyesi düzenlendi",
+    "mezun_hikayesi_yayinla": "Mezun hikâyesi yayınlandı", "mezun_hikayesi_yayindan_kaldir": "Mezun hikâyesi yayından kaldırıldı",
+    "mezun_hikayesi_kaldir": "Mezun hikâyesi kaldırıldı",
+    "ogrenci_hedef_degistir": "Öğrencinin hedef bölümü değiştirildi", "ogrenci_hedef_hakki": "Hedef değiştirme hakkı verildi",
+    "okul_deneme_yukle": "Okul denemesi yüklendi", "okul_deneme_sil": "Okul denemesi silindi",
+    "okul_karsilastirma_excel": "Okul karşılaştırması indirildi (Excel)", "okul_paket": "Okul paketi değiştirildi",
+    "okul_sistemi_ac": "Okulun sistemi açıldı", "okul_sistemi_kapat": "Okulun sistemi kapatıldı",
+    "okul_tema_guncelle": "Okul görünümü güncellendi",
+    "paket_ekle": "Paket eklendi", "paket_duzenle": "Paket düzenlendi", "paket_sil": "Paket silindi",
+    "portfolyo_dogrula": "Portfolyo kaydı doğrulandı", "rapor_indir": "Rapor indirildi",
+    "risk_ertele": "Erken uyarı ertelendi", "sinif_atlat": "Sınıf atlatma yapıldı", "sinif_atlat_geri_al": "Sınıf atlatma geri alındı",
+    "sube_dagilimi": "Şube dağılımı yapıldı", "sube_ogretmeni": "Şube öğretmeni atandı",
+    "takvim_ekle": "Takvim etkinliği eklendi", "takvim_duzenle": "Takvim etkinliği düzenlendi", "takvim_sil": "Takvim etkinliği silindi",
+    "tercih_onayla": "Tercih listesi onaylandı", "tercih_duzeltme": "Tercih listesi düzeltmeye gönderildi",
+    "test_hesabi_ac": "Test hesabı açıldı", "test_hesabi_sil": "Test hesabı silindi", "test_sifre_yenile": "Test hesabı şifresi yenilendi",
+    "test_baglanti_uret": "Test giriş bağlantısı oluşturuldu", "test_baglanti_iptal": "Test giriş bağlantısı iptal edildi",
+    "test_senaryo": "Test senaryosu çalıştırıldı", "yokatlas_eslestir": "YÖK Atlas eşleştirmesi değiştirildi",
 }
+
+
+YAPAN_ETIKET = {"ogrenci": "Öğrenci", "sistem": "Sistem"}   # [2026-10-12] kayıtlarda ham kod görünmesin
+
+
+def islem_etiketi(kod: str) -> str:
+    """[2026-10-12] Bilinmeyen kod ham görünmesin: 'yeni_islem_adi' → 'Yeni islem adi'."""
+    if kod in ISLEM_ETIKET:
+        return ISLEM_ETIKET[kod]
+    metin = (kod or "").replace("_", " ").strip()
+    return metin[:1].upper() + metin[1:] if metin else "—"
 
 
 @router.get("/okul/{okul_id}/kayitlar")
@@ -1052,7 +1114,7 @@ def okul_kayitlari(okul_id: int, gun: int = 30, db: Session = Depends(get_db), y
     q = db.query(AuditLog).filter(AuditLog.zaman >= sinir)
     q = q.filter(AuditLog.okul_id.is_(None), AuditLog.hedef_tablo == "ogrenciler") if okul_id == 0 else q.filter(AuditLog.okul_id == okul_id)
     for a in q.order_by(AuditLog.zaman.desc()).limit(500).all():
-        kayit.append({"zaman": a.zaman, "tur": "yonetim", "etiket": ISLEM_ETIKET.get(a.islem, a.islem),
+        kayit.append({"zaman": a.zaman, "tur": "yonetim", "etiket": islem_etiketi(a.islem),
                       "aciklama": a.gerekce, "yapan": a.yapan_ad or "—", "ogrenci_id": None})
     kosul, p = _okul_filtresi(okul_id)
     for r in db.execute(text(f"""
@@ -1060,7 +1122,7 @@ def okul_kayitlari(okul_id: int, gun: int = 30, db: Session = Depends(get_db), y
           FROM ogrenci_hesap_olaylari e JOIN ogrenciler o ON o.id = e.ogrenci_id
          WHERE {kosul} AND e.zaman >= :sinir AND e.olay IN ('giris','giris_hatali','sifre_degisti')
          ORDER BY e.zaman DESC LIMIT 1000"""), {**p, "sinir": sinir}).mappings().all():
-        kayit.append({"zaman": r["zaman"], "tur": "ogrenci", "etiket": OLAY_ETIKET.get(r["olay"], r["olay"]),
+        kayit.append({"zaman": r["zaman"], "tur": "ogrenci", "etiket": OLAY_ETIKET.get(r["olay"]) or islem_etiketi(r["olay"]),
                       "aciklama": r["aciklama"], "yapan": r["ad_soyad"], "ogrenci_id": str(r["id"])})
     kayit.sort(key=lambda x: x["zaman"].timestamp() if x["zaman"] else 0, reverse=True)
     return kayit[:1200]
