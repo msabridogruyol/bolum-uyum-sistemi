@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import DilSecici from '../components/DilSecici'   // [2026-10-12] çoklu dil
 import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { profilEksikMi } from '../components/AnaSayfaDuzeni'
@@ -345,6 +346,9 @@ export default function ProfilAyarlariSayfasi() {
 
       {/* --- [2026-10-04] KVKK: isteğe bağlı izinler --- */}
       <GizlilikKarti />
+
+      {/* --- Dil --- */}
+      <DilSecici kapsam="ogrenci" gorunum="kart" />
 
       {/* --- Tanıtım --- */}
       {duzen.tanitimiAc && (

@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { aktifDil } from '../yardimci/dil'   // [2026-10-12] çoklu dil
 import { api } from '../api/client'
 
 // [2026-10-04] KVKK: aydınlatma metni penceresi, onay kutuları ve eski hesaplar için zorunlu onay penceresi.
@@ -8,13 +9,19 @@ const ORTU = {
   display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 16,
 }
 
+// [2026-10-12] KVKK metinleri hukuki metindir ve Türkçe aslıyla gösterilir (çevrilmez)
+function KvkkDilNotu({ ic = false }) {
+  return <div className="soru-dil-notu" style={{ margin: ic ? 0 : '10px 22px 0' }}>🌐 KVKK metinleri hukuken bağlayıcı Türkçe asıllarıyla gösterilir.</div>
+}
+
 export function AydinlatmaMetniPenceresi({ metin, onKapat }) {
   return (
     <div style={ORTU} onClick={onKapat}>
       <div className="card" onClick={(e) => e.stopPropagation()}
         style={{ maxWidth: 640, width: '100%', maxHeight: '85vh', margin: 0, padding: 0, display: 'flex', flexDirection: 'column', boxShadow: '0 20px 60px rgba(0,0,0,.25)' }}>
         <div style={{ padding: '18px 22px', borderBottom: '1px solid var(--bor)', fontWeight: 700, fontSize: 15 }}>Aydınlatma Metni</div>
-        <div style={{ padding: '16px 22px', overflowY: 'auto', whiteSpace: 'pre-wrap', fontSize: 12.8, lineHeight: 1.65, color: 'var(--tx2)' }}>
+        {aktifDil() !== 'tr' && <KvkkDilNotu />}
+        <div style={{ padding: '16px 22px', overflowY: 'auto', whiteSpace: 'pre-wrap', fontSize: 12.8, lineHeight: 1.65, color: 'var(--tx2)' }} translate="no" lang="tr">
           {metin || 'Yükleniyor…'}
         </div>
         <div style={{ padding: '12px 22px', borderTop: '1px solid var(--bor)', textAlign: 'right' }}>
@@ -30,6 +37,7 @@ export function KvkkOnayKutulari({ maddeler, onaylar, setOnaylar, metniAc, sadec
   const liste = sadeceIstegeBagli ? maddeler.filter((m) => !m.zorunlu) : maddeler
   return (
     <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+      {aktifDil() !== 'tr' && <KvkkDilNotu ic />}
       {liste.map((m) => (
         <label key={m.kod} style={{ display: 'flex', gap: 9, alignItems: 'flex-start', cursor: 'pointer', fontSize: 12, lineHeight: 1.5, color: 'var(--tx2)' }}>
           <input type="checkbox" checked={!!onaylar[m.kod]} style={{ marginTop: 2, width: 16, height: 16, flexShrink: 0, accentColor: 'var(--pu)' }}

@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { aktifDil, t as cevirT } from '../yardimci/dil'   // [2026-10-12] çoklu dil
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { KATMAN_BILGI } from '../yardimci/katmanAdlari'
@@ -76,6 +77,15 @@ function GuvenlikUyariKatmani({ tamEkranaGeriDon, onErkenBitir }) {
 }
 
 // Sınav ekranının üstündeki sabit logo/marka satırı
+// [2026-10-12] Türkçe dışı dilde: soruların çeviri olduğunu ve geçerlilik çalışmasının Türkçe yapıldığını belirt
+function SoruDilNotu() {
+  return (
+    <div className="soru-dil-notu" role="note">
+      🌐 Sorular Türkçe aslından yapay zekâ ile çevrilmiştir. Bu değerlendirmenin geçerlilik ve güvenilirlik çalışması Türkçe sürümle yapılmıştır; çeviriyle verilen cevaplarda sonuçlar daha az kesin olabilir.
+    </div>
+  )
+}
+
 function SinavBasligi() {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 0 2px' }}>
@@ -110,7 +120,8 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
   const tipler = ['kutup', 'likert', 'sjt', 'kontrol'].map((t) => ({ t, n: sorular.filter((s) => s.soru_tipi === t).length })).filter((x) => x.n > 0)
   const say = (t) => sorular.filter((s) => s.soru_tipi === t).length
   const tahminiDakika = Math.max(1, Math.ceil((say('likert') * 15 + say('kutup') * 20 + say('sjt') * 30 + say('kontrol') * 10) / 60))
-  const onayGecerli = yaziliOnay.trim() === ONAY_METNI && kurallarOk
+  // [2026-10-12] Başka dilde onay kelimesi çevrilmiş görünür: hem Türkçesi hem çevirisi kabul edilir
+  const onayGecerli = [ONAY_METNI, cevirT(ONAY_METNI)].some((m) => yaziliOnay.trim().toLocaleUpperCase() === m.toLocaleUpperCase()) && kurallarOk
 
   return (
     <div className="qwrap sn-tanitim">
@@ -120,6 +131,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
         <div style={{ fontSize: 14, color: 'var(--tx3)', fontWeight: 600, marginTop: 4 }}>{altBaslik || `${kod} katmanına başlıyorsun`} · {sorular.length} soru · ~{tahminiDakika} dk</div>
       </div>
 
+      {aktifDil() !== 'tr' && <SoruDilNotu />}
       <div className="sn-bolum">
         <div className="sn-bolum-bas">🧩 Soru tipleri ve nasıl cevaplayacağın</div>
         <div className="sn-tipler">
@@ -136,7 +148,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
       <div className="sn-bolum sn-kurallar">
         <div className="sn-bolum-bas">🛡️ Başlamadan önce kuralları oku</div>
         <ul>
-          <li>Değerlendirme <b>tam ekranda</b> yapılır. Sistem şunları kaydeder: tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşuna</b> basmak ve <b>kopyalama</b> denemeleri.</li>
+          <li>Değerlendirme <b>tam ekranda</b> yapılır. Sistem şunları kaydeder: tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşuna</b> basmak ve <b>kopyalama denemeleri</b>.</li>
           <li>Bunların her biri <b>güven puanını</b> düşürür. Bu puanı ekranın üstünde anlık görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b>. O zaman rehber öğretmenin değerlendirmeyi yeniden yapmanı isteyebilir.</li>
           <li>Ekran kaydı almak ya da başkasından yardım almak da kurallara aykırı. Soruları kendin cevapla. Sonuçların ancak <b>yalnızca seni</b> anlatırsa işine yarar.</li>
           <li>Ara vermen gerekirse çıkabilirsin. Cevapların kayıtlı kalır. Döndüğünde <b>kaldığın sorudan</b> devam edersin.</li>

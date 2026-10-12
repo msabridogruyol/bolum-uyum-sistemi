@@ -570,6 +570,7 @@ def profil_getir(
         profil_foto_base64=ogrenci.profil_foto_base64,
         sube=ogrenci.sube,
         sifre_degistirmeli=bool(ogrenci.sifre_degistirmeli),
+        dil=ogrenci.dil,   # None = hiç seçmedi (tarayıcıdaki seçim hesaba yazılır)
     )
 
 

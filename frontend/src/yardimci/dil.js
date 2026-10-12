@@ -1,0 +1,412 @@
+// [2026-10-12] Çoklu dil — ekran çeviri katmanı.
+// Yöntem: Türkçe arayüz metinleri kaynak koddan çıkarılıp (scripts/ceviri) dil paketlerine çevrildi: src/dil/<kod>.json = {"Türkçe": "çeviri"}.
+// Türkçe dışı bir dil seçiliyse sayfadaki metin düğümleri ve placeholder/title/aria-label/alt öznitelikleri paketten çevrilir;
+// React metni güncelledikçe MutationObserver yeniden çevirir. Bileşen kodu değişmeden tüm ekranlar çevrilir.
+//  - Kalıplar: "{0} öğrenci" gibi değişken içeren metinler; değişken kısmı (ör. bölüm adı) ayrıca paketten çevrilir.
+//  - Pakette olmayan metin Türkçe kalır (öğrenci adı, okul adı, kullanıcı yazıları hiç değiştirilmez).
+//  - Bölüm açıklaması / sözlük gibi uzun içerik: paketten bulunamazsa sunucuya sorulur (POST /api/ceviri/icerik).
+//    Sunucu yalnızca kendi içerik havuzunda bulunan metinleri çevirir (kişisel veri yapay zekâya gitmez), sonucu saklar.
+//  - translate="no" ya da .ceviri-yok sınıfı olan bölgeler, input/textarea değerleri çevrilmez.
+// Dil kişiye özeldir: localStorage 'dil' + hesap ayarı (giriş sonrası sunucudaki tercih uygulanır).
+
+export const DILLER = [
+  { kod: 'tr', ad: 'Türkçe', bayrak: '🇹🇷' },
+  { kod: 'en', ad: 'English', bayrak: '🇬🇧' },
+  { kod: 'de', ad: 'Deutsch', bayrak: '🇩🇪' },
+  { kod: 'fr', ad: 'Français', bayrak: '🇫🇷' },
+  { kod: 'ru', ad: 'Русский', bayrak: '🇷🇺' },
+]
+const SAG_SOL = new Set(['ar'])
+const ANAHTAR = 'dil'
+// Paketler ayrı dosya olarak yayımlanır (yalnızca seçilen dil indirilir; JSON.parse büyük JS nesnesinden hızlıdır)
+const PAKETLER = import.meta.glob('../dil/*.json', { query: '?url', import: 'default' })
+
+export function aktifDil() {
+  try {
+    const d = localStorage.getItem(ANAHTAR)
+    return DILLER.some((x) => x.kod === d) ? d : 'tr'
+  } catch { return 'tr' }
+}
+
+let paket = null            // Map tr → çeviri
+let buyukHarf = null        // Map TÜRKÇE BÜYÜK HARF → çeviri (bölüm adları veritabanında büyük harfle durur, ekranda düzeltilir)
+let kaliplar = []           // [{ rx, ceviri, parca }]
+const bellek = new Map()    // tr → çeviri | null
+const sunucuBekleyen = new Set()
+const sunucuSorulan = new Set()
+let dil = 'tr'
+
+const normal = (s) => s.replace(/\s+/g, ' ').trim()
+const kacis = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+
+function kalipHazirla(tr, ceviri) {
+  const parcalar = tr.split(/\{\d+\}/)
+  const sira = [...tr.matchAll(/\{(\d+)\}/g)].map((m) => Number(m[1]))
+  const harf = parcalar.join('')
+  if (harf.replace(/[^\p{L}]/gu, '').length < 2) return null
+  const rx = new RegExp('^' + parcalar.map(kacis).join('(.+?)') + '$', 's')
+  const enUzun = parcalar.reduce((a, b) => (b.length > a.length ? b : a), '')
+  return { rx, ceviri, sira, enUzun, agirlik: (harf.match(/\p{L}/gu) || []).length }
+}
+
+function yukle(veri) {
+  paket = new Map()
+  buyukHarf = new Map()
+  kaliplar = []
+  for (const [tr, c] of Object.entries(veri)) {
+    if (/\{\d+\}/.test(tr)) { const k = kalipHazirla(tr, c); if (k) kaliplar.push(k) }
+    else { paket.set(tr, c); const u = tr.toLocaleUpperCase('tr'); if (!buyukHarf.has(u)) buyukHarf.set(u, c) }
+  }
+  // Ekranda parantezli açıklaması kısaltılan adlar: "İnsanlarla çalışma (dışadönüklük)" → "İnsanlarla çalışma"
+  for (const [tr, c] of [...paket]) {
+    const m = /^(.{3,}?)\s*\([^()]{2,40}\)$/.exec(tr), n = /^(.{2,}?)\s*\([^()]{2,60}\)$/.exec(c)
+    if (m && n && !paket.has(m[1])) { paket.set(m[1], n[1]); const u = m[1].toLocaleUpperCase('tr'); if (!buyukHarf.has(u)) buyukHarf.set(u, n[1]) }
+  }
+  kaliplar.sort((a, b) => b.agirlik - a.agirlik)
+}
+
+// "Maden Mühendisliği" ↔ "MADEN MÜHENDİSLİĞİ": büyük/küçük harf farkıyla eşleşirse çeviriyi kaynağın harf düzenine uydur
+const KUCUK_KELIME = new Set(['and', 'of', 'the', 'in', 'for', 'und', 'für', 'der', 'die', 'das', 'et', 'de', 'des', 'du', 'la', 'le', 'les', 'en', 'y', 'e', 'di', 'del', 'della', 'a', 'à', 'et', 'und'])
+function harfDuzeniyle(s) {
+  if (!buyukHarf || s.length > 160) return null
+  const c = buyukHarf.get(s.toLocaleUpperCase('tr'))
+  if (c == null) return null
+  if (s === s.toLocaleUpperCase('tr')) return c.toLocaleUpperCase(dil)
+  if (c !== c.toLocaleUpperCase(dil)) {
+    // Kaynak büyük harfle başlıyor, çeviri küçükle: ilk harfi büyüt ("iş birliği…" → ekranda "İş birliği…")
+    const ilkBuyuk = s.charAt(0) !== s.charAt(0).toLocaleLowerCase('tr')
+    return ilkBuyuk ? c.charAt(0).toLocaleUpperCase(dil) + c.slice(1) : c
+  }
+  const k = c.toLocaleLowerCase(dil)
+  if (dil === 'ru') return k.charAt(0).toLocaleUpperCase(dil) + k.slice(1)
+  return k.split(' ').map((w, i) => (i > 0 && KUCUK_KELIME.has(w) ? w : w.charAt(0).toLocaleUpperCase(dil) + w.slice(1))).join(' ')
+}
+
+// "{0} çalışma" gibi kısa kalıplar ilgisiz metinlere ("İnsanlarla çalışma") yapışmasın: kalıbın sabit kısmı metnin
+// harflerinin yarısından azını kapsıyorsa, değişken kısım sayı / bilinen bir terim / ad gibi görünmelidir.
+function kalipGuvenilir(k, s, degerler, cevrilmis) {
+  const harf = (x) => (x.match(/\p{L}/gu) || []).length
+  const adGibi = (t) => /^\p{Lu}[\p{L}'’-]*(\s+\p{Lu}[\p{L}'’-]*)*[.!?]?$/u.test(t)
+  const yuksek = harf(s) === 0 || k.agirlik / Math.max(1, harf(s)) >= 0.5
+  return degerler.every((t, i) => {
+    if (!/\p{L}/u.test(t) || cevrilmis[i] != null) return true
+    // Çevrilemeyen değişken (ad, kullanıcı yazısı): kalıp metnin çoğunu kapsıyorsa kabul; azını kapsıyorsa ad gibi olmalı
+    return yuksek || adGibi(t)
+  })
+}
+
+// Bir metnin çevirisi (bulunamazsa null). Baş/son boşluklar korunur.
+export function cevir(ham) {
+  if (!paket || ham == null) return null
+  return cevirIc(normal(String(ham)), 0)
+}
+
+function cevirIc(s, derinlik) {
+  if (!s || !/\p{L}/u.test(s)) return null
+  if (bellek.has(s)) return bellek.get(s)
+  let sonuc = paket.get(s) ?? harfDuzeniyle(s)
+  if (sonuc == null && derinlik < 3) sonuc = kaliptan(s, derinlik)
+  // Birleştirilmiş cümleler ("Merhaba Elif! " + "Bugün 3 konu öne çıkıyor."): her cümle ayrı çevrilir
+  if (sonuc == null && derinlik < 2) {
+    // Her cümle sınırında "baş + kalan" olarak dene (kalan kendi içinde yine bölünebilir; "Bugün … çıkıyor. 🌱" bütün kalır)
+    const sinirlar = [...s.matchAll(/(?<=[.!?…:])\s+(?=\S)/gu)].map((m) => [m.index, m.index + m[0].length])
+    for (const [a, b] of sinirlar.slice(0, 6)) {
+      const bas = s.slice(0, a), kalan = s.slice(b)
+      const cb = cevirIc(bas, derinlik + 1) ?? (/\p{L}/u.test(bas) ? null : bas)
+      if (cb == null) continue
+      const ck = cevirIc(kalan, derinlik + 1) ?? (/\p{L}/u.test(kalan) ? null : kalan)
+      if (ck != null) { sonuc = cb + ' ' + ck; break }
+    }
+  }
+  // Baştaki / sondaki emoji ve işaretler: "🎁 Tahmin yerine …" → "🎁 " + çeviri
+  if (sonuc == null) {
+    const m = /^([^\p{L}\d"“'(«]+)?(.*?)([^\p{L}\d.!?…)"”'»]+)?$/su.exec(s)
+    if (m && (m[1] || m[3]) && m[2] && m[2] !== s) {
+      const ic = cevirIc(m[2], derinlik + 1)
+      if (ic != null) sonuc = (m[1] || '') + ic + (m[3] || '')
+    }
+  }
+  // Sonda sayı: "Temel Matematik 23,25" → çeviri + " 23,25"
+  if (sonuc == null) {
+    const m = /^(.*\p{L}[^\d]*?)(\s+[\d.,%+\-–/]+)$/u.exec(s)
+    if (m) { const ic = cevirIc(m[1], derinlik + 1); if (ic != null) sonuc = ic + m[2] }
+  }
+  // Türkçe ay adlı tarihler ("19 Haziran 2027") seçili dilde yazılır
+  if (sonuc == null && AY_RX.test(s)) {
+    const d = tarihleriCevir(s)
+    if (d !== s) sonuc = cevirIc(d, derinlik + 1) ?? d
+  }
+  // Liste gibi birleştirilmiş metinler: "A · B" (ad gibi parçalar olduğu gibi kalır), son çare "A, B" (her parça çevrilmeli)
+  if (sonuc == null && derinlik < 2) sonuc = parcalarla(s, ' · ', derinlik, true) ?? parcalarla(s, ', ', derinlik, false)
+  if (bellek.size > 20000) bellek.clear()
+  // Derin özyinelemede bazı yollar kapalı olduğundan "bulunamadı" yalnızca en üst düzeyde hatırlanır
+  if (sonuc != null || derinlik === 0) bellek.set(s, sonuc)
+  return sonuc
+}
+
+const AYLAR = ['Ocak', 'Şubat', 'Mart', 'Nisan', 'Mayıs', 'Haziran', 'Temmuz', 'Ağustos', 'Eylül', 'Ekim', 'Kasım', 'Aralık']
+const AY_RX = new RegExp(`\\b(\\d{1,2}) (${AYLAR.join('|')})( \\d{4})?(?![\\p{L}])`, 'u')
+function tarihleriCevir(s) {
+  return s.replace(new RegExp(AY_RX.source, 'gu'), (_, gun, ay, yil) => {
+    const tarih = new Date(Number(yil || 2000), AYLAR.indexOf(ay), Number(gun))
+    try {
+      return new Intl.DateTimeFormat(dil, yil ? { day: 'numeric', month: 'long', year: 'numeric' } : { day: 'numeric', month: 'long' }).format(tarih)
+    } catch { return _ }
+  })
+}
+
+const AD_GIBI = /^\p{Lu}[\p{L}'’.-]*(\s+\p{Lu}[\p{L}'’.-]*)*$/u
+function parcalarla(s, ayrac, derinlik, adOlabilir) {
+  if (!s.includes(ayrac)) return null
+  const p = s.split(ayrac)
+  if (p.length > 12) return null
+  let cevrilen = 0
+  const c = p.map((x) => {
+    const y = cevirIc(x.trim(), derinlik + 1)
+    if (y != null) { cevrilen++; return y }
+    if (!/\p{L}/u.test(x) || (adOlabilir && AD_GIBI.test(x.trim()))) return x.trim()
+    return null
+  })
+  return cevrilen > 0 && c.every((x) => x != null) ? c.join(ayrac) : null
+}
+
+function kaliptan(s, derinlik) {
+  for (const k of kaliplar) {
+    if (k.enUzun && !s.includes(k.enUzun)) continue
+    const m = k.rx.exec(s)
+    if (!m) continue
+    const degerler = m.slice(1).map(normal)
+    // Değişken kısımlar da çevrilir (bölüm adı, "5 giriş" gibi iç kalıplar); çevrilemeyen ad / sayı olduğu gibi kalır
+    const cevrilmis = degerler.map((v) => cevirIc(v, derinlik + 1))
+    if (!kalipGuvenilir(k, s, degerler, cevrilmis)) continue
+    return k.ceviri.replace(/\{(\d+)\}/g, (_, n) => {
+      const i = k.sira.indexOf(Number(n))
+      return cevrilmis[i] ?? degerler[i] ?? ''
+    })
+  }
+  return null
+}
+
+// Bileşenlerde doğrudan kullanmak için: çeviri yoksa metnin kendisi
+export const t = (s) => cevir(s) ?? s
+
+function bosluklu(ham, c) {
+  const bas = ham.match(/^\s*/)[0], son = ham.match(/\s*$/)[0]
+  return bas + c + son
+}
+
+// ---------- DOM ----------
+const ORIJINAL = new WeakMap()   // metin düğümü → { tr, yazilan }
+const OZNITELIK = ['placeholder', 'title', 'aria-label', 'alt']
+const OZ_ORIJINAL = new WeakMap() // eleman → { ad: { tr, yazilan } }
+const ATLA_ETIKET = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'NOSCRIPT', 'CODE', 'PRE'])
+
+function cevrilmezMi(el) {
+  for (let e = el; e && e.nodeType === 1; e = e.parentElement) {
+    if (ATLA_ETIKET.has(e.tagName)) return true
+    if (e.getAttribute('translate') === 'no' || e.classList.contains('ceviri-yok') || e.isContentEditable) return true
+  }
+  return false
+}
+
+function metinDugumu(n) {
+  const kayit = ORIJINAL.get(n)
+  const simdi = n.nodeValue
+  if (kayit && simdi === kayit.yazilan) return
+  const tr = simdi
+  const c = cevir(tr)
+  if (c != null) {
+    const yaz = bosluklu(tr, c)
+    ORIJINAL.set(n, { tr, yazilan: yaz })
+    if (yaz !== simdi) n.nodeValue = yaz
+  } else {
+    ORIJINAL.set(n, { tr, yazilan: simdi })
+    sunucuyaSor(n, tr)
+  }
+}
+
+// Eleman çocukları yalnızca metinse ("Hoş geldin, " + ad + "!") birleşik kalıp dene
+function karisikGrup(el) {
+  const c = el.childNodes
+  if (c.length < 2) return
+  for (const x of c) if (x.nodeType !== 3) return
+  const parcalar = [...c].map((x) => { const k = ORIJINAL.get(x); return k && x.nodeValue === k.yazilan ? k.tr : x.nodeValue })
+  const tr = parcalar.join('')
+  const ce = cevir(tr)
+  if (ce == null) return
+  const ilk = c[0]
+  const yaz = bosluklu(tr, ce)
+  ;[...c].forEach((x, i) => {
+    const v = i === 0 ? yaz : ''
+    ORIJINAL.set(x, { tr: parcalar[i], yazilan: v })
+    if (x.nodeValue !== v) x.nodeValue = v
+  })
+  void ilk
+}
+
+function oznitelikler(el) {
+  let kayit = OZ_ORIJINAL.get(el)
+  for (const ad of OZNITELIK) {
+    const v = el.getAttribute(ad)
+    if (!v) continue
+    const k = kayit?.[ad]
+    if (k && k.yazilan === v) continue
+    const c = cevir(v)
+    if (!kayit) { kayit = {}; OZ_ORIJINAL.set(el, kayit) }
+    kayit[ad] = { tr: v, yazilan: c ?? v }
+    if (c != null && c !== v) el.setAttribute(ad, c)
+  }
+}
+
+function agacCevir(kok) {
+  if (kok.nodeType === 3) {
+    const p = kok.parentElement
+    if (p && !cevrilmezMi(p)) { metinDugumu(kok); karisikGrup(p) }
+    return
+  }
+  if (kok.nodeType !== 1 || cevrilmezMi(kok)) return
+  const yurut = document.createTreeWalker(kok, NodeFilter.SHOW_ELEMENT | NodeFilter.SHOW_TEXT, {
+    acceptNode: (n) => {
+      if (n.nodeType === 1 && (ATLA_ETIKET.has(n.tagName) || n.getAttribute('translate') === 'no' || n.classList.contains('ceviri-yok'))) return NodeFilter.FILTER_REJECT
+      return NodeFilter.FILTER_ACCEPT
+    },
+  })
+  const gruplar = new Set()
+  oznitelikler(kok)
+  for (let n = yurut.nextNode(); n; n = yurut.nextNode()) {
+    if (n.nodeType === 3) { metinDugumu(n); if (n.parentElement) gruplar.add(n.parentElement) }
+    else oznitelikler(n)
+  }
+  gruplar.forEach(karisikGrup)
+}
+
+let kuyruk = new Set(), planli = false
+function isle() {
+  planli = false
+  const k = kuyruk; kuyruk = new Set()
+  gozlemci.disconnect()
+  try { k.forEach((n) => { if (n.isConnected) agacCevir(n) }) } finally { gozle() }
+}
+const gozlemci = typeof MutationObserver !== 'undefined' ? new MutationObserver((kayitlar) => {
+  for (const r of kayitlar) {
+    if (r.type === 'childList') r.addedNodes.forEach((n) => kuyruk.add(n))
+    else if (r.type === 'characterData') kuyruk.add(r.target)
+    else if (r.type === 'attributes') kuyruk.add(r.target)
+  }
+  if (!planli) { planli = true; queueMicrotask(isle) }
+}) : null
+function gozle() {
+  gozlemci.observe(document.body, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: OZNITELIK })
+  const baslik = document.querySelector('title')
+  if (baslik) gozlemci.observe(baslik, { subtree: true, childList: true, characterData: true })
+}
+
+// ---------- Sunucudan içerik çevirisi (bölüm açıklamaları, sözlük, iş hayatı içerikleri) ----------
+const BEKLEYEN_DUGUM = new Map() // tr → Set(düğüm)
+let sunucuZamanlayici = null
+function sunucuyaSor(n, tr) {
+  const s = normal(tr)
+  if (s.length < 12 || !/\p{L}{3,}/u.test(s) || sunucuSorulan.has(s)) return
+  if (!BEKLEYEN_DUGUM.has(s)) BEKLEYEN_DUGUM.set(s, new Set())
+  BEKLEYEN_DUGUM.get(s).add(n)
+  sunucuBekleyen.add(s)
+  clearTimeout(sunucuZamanlayici)
+  sunucuZamanlayici = setTimeout(sunucuyaGonder, 350)
+}
+async function sunucuyaGonder() {
+  const liste = [...sunucuBekleyen].slice(0, 200)
+  liste.forEach((s) => { sunucuBekleyen.delete(s); sunucuSorulan.add(s) })
+  if (!liste.length) return
+  if (sunucuBekleyen.size) sunucuZamanlayici = setTimeout(sunucuyaGonder, 50)
+  try {
+    const yanit = await fetch('/api/ceviri/icerik', {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ dil, metinler: liste }),
+    })
+    if (!yanit.ok) return
+    const { ceviriler } = await yanit.json()
+    gozlemci.disconnect()
+    try {
+      liste.forEach((s, i) => {
+        const c = ceviriler?.[i]
+        if (!c) return
+        paket.set(s, c); bellek.set(s, c)
+        BEKLEYEN_DUGUM.get(s)?.forEach((n) => {
+          if (!n.isConnected) return
+          const k = ORIJINAL.get(n)
+          if (k && n.nodeValue === k.yazilan && normal(k.tr) === s) {
+            const yaz = bosluklu(k.tr, c)
+            ORIJINAL.set(n, { tr: k.tr, yazilan: yaz })
+            n.nodeValue = yaz
+          }
+        })
+        BEKLEYEN_DUGUM.delete(s)
+      })
+    } finally { gozle() }
+  } catch { /* çeviri alınamazsa Türkçe kalır */ }
+}
+
+// ---------- Başlatma ve dil değiştirme ----------
+export async function dilBaslat() {
+  dil = aktifDil()
+  document.documentElement.lang = dil
+  document.documentElement.dir = SAG_SOL.has(dil) ? 'rtl' : 'ltr'
+  if (dil === 'tr') return
+  const yukleyici = PAKETLER[`../dil/${dil}.json`]
+  if (!yukleyici) return
+  try {
+    const adres = await yukleyici()
+    const yanit = await fetch(adres)
+    if (!yanit.ok) throw new Error('paket')
+    yukle(await yanit.json())
+  } catch { dil = 'tr'; document.documentElement.lang = 'tr'; return }
+  const sar = (ad) => {
+    const asil = window[ad]?.bind(window)
+    if (asil) window[ad] = (mesaj, ...g) => asil(mesaj == null ? mesaj : t(String(mesaj)), ...g)
+  }
+  sar('alert'); sar('confirm'); sar('prompt')
+  // Kod 'tr-TR' biçiminde tarih / sayı yazıyorsa seçili dilin biçimi kullanılır (ay ve gün adları dahil)
+  const yerel = (l) => (l == null || /^tr\b/i.test(String(l)) ? dil : l)
+  for (const [nesne, adlar] of [[Date.prototype, ['toLocaleDateString', 'toLocaleString', 'toLocaleTimeString']], [Number.prototype, ['toLocaleString']]]) {
+    for (const ad of adlar) {
+      const asil = nesne[ad]
+      nesne[ad] = function (l, o) { return asil.call(this, yerel(l), o) }
+    }
+  }
+  window.__filizCevir = cevir   // tanılama: tarayıcı konsolunda çeviri denemek için
+  const basla = () => { agacCevir(document.body); gozle() }
+  if (document.body) basla(); else document.addEventListener('DOMContentLoaded', basla)
+}
+
+// Dili değiştir: yerelde sakla, giriş yapılmışsa hesaba kaydet, sayfayı yenile
+export async function dilDegistir(kod, kaydet) {
+  try {
+    localStorage.setItem(ANAHTAR, kod)
+    // Giriş ekranında seçildiyse girişten sonra hesaba yazılacak (hesaptaki eski tercih bunu ezmesin)
+    if (!kaydet) localStorage.setItem('dil_bekleyen', '1'); else localStorage.removeItem('dil_bekleyen')
+  } catch { /* yoksay */ }
+  if (kaydet) { try { await kaydet(kod) } catch { /* sunucuya yazılamazsa yerel tercih yeter */ } }
+  window.location.reload()
+}
+
+// Girişten sonra: giriş ekranında dil seçildiyse hesaba yaz; değilse hesaptaki tercih farklıysa onu uygula
+export function hesapDiliniUygula(sunucuDili, kaydet) {
+  let bekleyen = false
+  try { bekleyen = localStorage.getItem('dil_bekleyen') === '1' } catch { /* yoksay */ }
+  // Giriş ekranında seçildiyse ya da hesapta hiç dil seçilmemişse: tarayıcıdaki seçim hesaba yazılır
+  if (bekleyen || !sunucuDili) {
+    try { localStorage.removeItem('dil_bekleyen') } catch { /* yoksay */ }
+    if (sunucuDili !== aktifDil() && kaydet && (sunucuDili || aktifDil() !== 'tr')) kaydet(aktifDil()).catch(() => {})
+    return false
+  }
+  if (!sunucuDili || sunucuDili === aktifDil() || !DILLER.some((x) => x.kod === sunucuDili)) return false
+  try {
+    // Yenileme döngüsüne karşı: aynı oturumda 30 sn içinde ikinci kez dil yüzünden yenileme yapılmaz
+    const son = Number(sessionStorage.getItem('dil_yenilendi') || 0)
+    if (Date.now() - son < 30000) return false
+    sessionStorage.setItem('dil_yenilendi', String(Date.now()))
+    localStorage.setItem(ANAHTAR, sunucuDili)
+  } catch { return false }
+  window.location.reload()
+  return true
+}

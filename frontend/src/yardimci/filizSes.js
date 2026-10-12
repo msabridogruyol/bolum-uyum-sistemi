@@ -1,3 +1,4 @@
+import { aktifDil, t as cevirT } from './dil'   // [2026-10-12] çoklu dil
 // [2026-10-10] Filiz'in sesi.
 // - Konuşma: tarayıcının sesli okuması, YALNIZCA doğal (sinirsel / "Natural", "Online", "Enhanced", Google) bir Türkçe ses varsa.
 //   Robotik masaüstü sesleri (ör. Windows "Microsoft Tolga/Seda Desktop") kullanılmaz; o cihazda yalnızca efekt sesleri çalar.
@@ -19,7 +20,9 @@ export const sesAyarla = (v) => {
 let ses = undefined   // undefined: aranmadı · null: yok · SpeechSynthesisVoice
 function sesleriAra() {
   if (typeof window === 'undefined' || !window.speechSynthesis) { ses = null; return null }
-  const turkce = window.speechSynthesis.getVoices().filter((v) => /^tr(-|_|$)/i.test(v.lang))
+  // [2026-10-12] seçili dilin sesi (Türkçe dışı dilde o dilin sesi aranır)
+  const kod = aktifDil()
+  const turkce = window.speechSynthesis.getVoices().filter((v) => new RegExp(`^${kod}(-|_|$)`, 'i').test(v.lang))
   if (!turkce.length) return undefined   // liste henüz yüklenmemiş olabilir
   const aday = turkce.filter((v) => DOGAL.test(v.name) && !ROBOTIK.test(v.name))
   // sırala: Natural/Neural > Online > Enhanced > Google > diğer
@@ -73,7 +76,7 @@ function kisalt(t) {
 export function soyle(metin) {
   if (!sesAcikMi()) return false
   if (!ses || !window.speechSynthesis) { efekt('konus'); return false }
-  const t = kisalt(temizle(metin))
+  const t = kisalt(temizle(cevirT(metin)))
   if (!t) return false
   if (!etkilesimVarMi()) { bekleyen = t; return false }
   window.speechSynthesis.cancel()

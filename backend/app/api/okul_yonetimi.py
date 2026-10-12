@@ -449,7 +449,7 @@ def ben(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_
             "rol_adi": "Süper Admin" if yon.rol == "super_admin" else "Okul Yetkilisi", "unvan": getattr(yon, "unvan", None),
             "okul_id": yon.okul_id, "okul_ad": okul.ad if okul else None, "okul_logo": okul.logo if okul else None,
             "okul_renk": okul.tema_renk if okul else None,
-            "sifre_degistirmeli": bool(yon.sifre_degistirmeli),
+            "sifre_degistirmeli": bool(yon.sifre_degistirmeli), "dil": yon.dil,
             "moduller": _moduller(db, yon.okul_id)}   # [2026-10-10] paket: okul yetkilisinin göreceği modüller
 
 

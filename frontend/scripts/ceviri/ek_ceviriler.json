@@ -1,0 +1,255 @@
+{
+ "_aciklama": "[2026-10-12] Katalog dışında kalan / sonradan eklenen metinlerin elle çevirisi. paketle.py --ek ile paketlere eklenir.",
+ "Dil": {
+  "en": "Language",
+  "de": "Sprache",
+  "fr": "Langue",
+  "ru": "Язык"
+ },
+ "🌐 Dil": {
+  "en": "🌐 Language",
+  "de": "🌐 Sprache",
+  "fr": "🌐 Langue",
+  "ru": "🌐 Язык"
+ },
+ "Sistemin hangi dilde görüneceğini seç. Seçimin hesabına kaydedilir.": {
+  "en": "Choose the language the system is shown in. Your choice is saved to your account.",
+  "de": "Wähle, in welcher Sprache das System angezeigt wird. Deine Auswahl wird in deinem Konto gespeichert.",
+  "fr": "Choisis la langue d'affichage du système. Ton choix est enregistré dans ton compte.",
+  "ru": "Выбери язык, на котором будет отображаться система. Твой выбор сохранится в аккаунте."
+ },
+ "Çeviriler yapay zekâ ile hazırlanmıştır; bazı ifadeler tam doğru olmayabilir. Değerlendirme sorularının geçerlilik çalışması Türkçe sürümle yapılmıştır.": {
+  "en": "Translations were prepared with AI; some phrases may not be fully accurate. The validity study of the assessment questions was carried out with the Turkish version.",
+  "de": "Die Übersetzungen wurden mit KI erstellt; einige Formulierungen sind möglicherweise nicht ganz korrekt. Die Validitätsstudie der Bewertungsfragen wurde mit der türkischen Fassung durchgeführt.",
+  "fr": "Les traductions ont été réalisées avec l'IA ; certaines formulations peuvent ne pas être tout à fait exactes. L'étude de validité des questions d'évaluation a été menée avec la version turque.",
+  "ru": "Переводы подготовлены с помощью ИИ; некоторые формулировки могут быть неточными. Исследование валидности вопросов оценки проводилось на турецкой версии."
+ },
+ "🌐 Sorular Türkçe aslından yapay zekâ ile çevrilmiştir. Bu değerlendirmenin geçerlilik ve güvenilirlik çalışması Türkçe sürümle yapılmıştır; çeviriyle verilen cevaplarda sonuçlar daha az kesin olabilir.": {
+  "en": "🌐 The questions were translated from the Turkish original with AI. The validity and reliability study of this assessment was carried out with the Turkish version; results based on answers to the translation may be less precise.",
+  "de": "🌐 Die Fragen wurden mit KI aus dem türkischen Original übersetzt. Die Validitäts- und Reliabilitätsstudie dieser Bewertung wurde mit der türkischen Fassung durchgeführt; Ergebnisse aus Antworten auf die Übersetzung können weniger genau sein.",
+  "fr": "🌐 Les questions ont été traduites de l'original turc avec l'IA. L'étude de validité et de fiabilité de cette évaluation a été menée avec la version turque ; les résultats obtenus à partir de la traduction peuvent être moins précis.",
+  "ru": "🌐 Вопросы переведены с турецкого оригинала с помощью ИИ. Исследование валидности и надёжности этой оценки проводилось на турецкой версии; результаты по ответам на перевод могут быть менее точными."
+ },
+ "🌐 KVKK metinleri hukuken bağlayıcı Türkçe asıllarıyla gösterilir.": {
+  "en": "🌐 KVKK (personal data protection) texts are shown in their legally binding Turkish original.",
+  "de": "🌐 KVKK-Texte (Datenschutz) werden in ihrer rechtsverbindlichen türkischen Originalfassung angezeigt.",
+  "fr": "🌐 Les textes KVKK (protection des données personnelles) sont affichés dans leur version originale turque, juridiquement contraignante.",
+  "ru": "🌐 Тексты KVKK (защита персональных данных) показаны в юридически обязательном турецком оригинале."
+ },
+ "Bu dil desteklenmiyor.": {
+  "en": "This language is not supported.",
+  "de": "Diese Sprache wird nicht unterstützt.",
+  "fr": "Cette langue n'est pas prise en charge.",
+  "ru": "Этот язык не поддерживается."
+ },
+ "Bilim ve mühendislik": {
+  "en": "Science and engineering",
+  "de": "Wissenschaft und Technik",
+  "fr": "Sciences et ingénierie",
+  "ru": "Наука и инженерия"
+ },
+ "Sağlık": {
+  "en": "Health",
+  "de": "Gesundheit",
+  "fr": "Santé",
+  "ru": "Здоровье"
+ },
+ "Hukuk ve yönetim": {
+  "en": "Law and administration",
+  "de": "Recht und Verwaltung",
+  "fr": "Droit et administration",
+  "ru": "Право и управление"
+ },
+ "Ekonomi ve işletme": {
+  "en": "Economics and business",
+  "de": "Wirtschaft und Betriebswirtschaft",
+  "fr": "Économie et gestion",
+  "ru": "Экономика и бизнес"
+ },
+ "Sanat, tasarım ve medya": {
+  "en": "Art, design and media",
+  "de": "Kunst, Design und Medien",
+  "fr": "Art, design et médias",
+  "ru": "Искусство, дизайн и медиа"
+ },
+ "Eğitim ve sosyal bilimler": {
+  "en": "Education and social sciences",
+  "de": "Bildung und Sozialwissenschaften",
+  "fr": "Éducation et sciences sociales",
+  "ru": "Образование и социальные науки"
+ },
+ "Tarım, doğa ve çevre": {
+  "en": "Agriculture, nature and environment",
+  "de": "Landwirtschaft, Natur und Umwelt",
+  "fr": "Agriculture, nature et environnement",
+  "ru": "Сельское хозяйство, природа и окружающая среда"
+ },
+ "Bilgisayar ve teknoloji": {
+  "en": "Computers and technology",
+  "de": "Computer und Technologie",
+  "fr": "Informatique et technologie",
+  "ru": "Компьютеры и технологии"
+ },
+ "Okul ve üniversite": {
+  "en": "School and university",
+  "de": "Schule und Universität",
+  "fr": "École et université",
+  "ru": "Школа и университет"
+ },
+ "Genel kelimeler": {
+  "en": "General words",
+  "de": "Allgemeine Wörter",
+  "fr": "Mots généraux",
+  "ru": "Общие слова"
+ },
+ "9. Sınıf": {
+  "en": "Grade 9",
+  "de": "9. Klasse",
+  "fr": "Seconde (9e année)",
+  "ru": "9-й класс"
+ },
+ "10. Sınıf": {
+  "en": "Grade 10",
+  "de": "10. Klasse",
+  "fr": "10e année",
+  "ru": "10-й класс"
+ },
+ "11. Sınıf": {
+  "en": "Grade 11",
+  "de": "11. Klasse",
+  "fr": "11e année",
+  "ru": "11-й класс"
+ },
+ "12. Sınıf": {
+  "en": "Grade 12",
+  "de": "12. Klasse",
+  "fr": "12e année",
+  "ru": "12-й класс"
+ },
+ "Mezun": {
+  "en": "Graduate",
+  "de": "Absolvent/in",
+  "fr": "Diplômé(e)",
+  "ru": "Выпускник"
+ },
+ "Aday": {
+  "en": "Candidate",
+  "de": "Kandidat/in",
+  "fr": "Candidat(e)",
+  "ru": "Абитуриент"
+ },
+ "{0}. Sınıf": {
+  "en": "Grade {0}",
+  "de": "{0}. Klasse",
+  "fr": "{0}e année",
+  "ru": "{0}-й класс"
+ },
+ "{0}. Sınıf {1}": {
+  "en": "Grade {0} {1}",
+  "de": "{0}. Klasse {1}",
+  "fr": "{0}e année {1}",
+  "ru": "{0}-й класс {1}"
+ },
+ "{0}. Sınıf / {1}": {
+  "en": "Grade {0} / {1}",
+  "de": "{0}. Klasse / {1}",
+  "fr": "{0}e année / {1}",
+  "ru": "{0}-й класс / {1}"
+ },
+ "{0} yıl": {
+  "en": "{0} years",
+  "de": "{0} Jahre",
+  "fr": "{0} ans",
+  "ru": "{0} г."
+ },
+ "{0} hafta": {
+  "en": "{0} weeks",
+  "de": "{0} Wochen",
+  "fr": "{0} semaines",
+  "ru": "{0} нед."
+ },
+ "{0} saat": {
+  "en": "{0} hours",
+  "de": "{0} Std.",
+  "fr": "{0} h",
+  "ru": "{0} ч"
+ },
+ "{0} dakika": {
+  "en": "{0} minutes",
+  "de": "{0} Minuten",
+  "fr": "{0} minutes",
+  "ru": "{0} мин"
+ },
+ "{0} saniye": {
+  "en": "{0} seconds",
+  "de": "{0} Sekunden",
+  "fr": "{0} secondes",
+  "ru": "{0} сек"
+ },
+ "{0} net": {
+  "en": "{0} net",
+  "de": "{0} Netto",
+  "fr": "{0} net",
+  "ru": "{0} нетто"
+ },
+ "{0} puan": {
+  "en": "{0} points",
+  "de": "{0} Punkte",
+  "fr": "{0} points",
+  "ru": "{0} балл."
+ },
+ "{0} kişi": {
+  "en": "{0} people",
+  "de": "{0} Personen",
+  "fr": "{0} personnes",
+  "ru": "{0} чел."
+ },
+ "{0} bölüm": {
+  "en": "{0} majors",
+  "de": "{0} Studiengänge",
+  "fr": "{0} filières",
+  "ru": "{0} напр."
+ },
+ "{0} meslek": {
+  "en": "{0} occupations",
+  "de": "{0} Berufe",
+  "fr": "{0} métiers",
+  "ru": "{0} проф."
+ },
+ "{0} deneme": {
+  "en": "{0} practice exams",
+  "de": "{0} Probeprüfungen",
+  "fr": "{0} examens blancs",
+  "ru": "{0} пробн. экз."
+ },
+ "{0} görev": {
+  "en": "{0} tasks",
+  "de": "{0} Aufgaben",
+  "fr": "{0} tâches",
+  "ru": "{0} задан."
+ },
+ "{0} giriş": {
+  "en": "{0} logins",
+  "de": "{0} Anmeldungen",
+  "fr": "{0} connexions",
+  "ru": "{0} вход."
+ },
+ "{0} program": {
+  "en": "{0} programmes",
+  "de": "{0} Programme",
+  "fr": "{0} programmes",
+  "ru": "{0} прогр."
+ },
+ "{0} sınıf": {
+  "en": "{0} classes",
+  "de": "{0} Klassen",
+  "fr": "{0} classes",
+  "ru": "{0} кл."
+ },
+ "kopyalama denemeleri": {
+  "en": "copy attempts",
+  "de": "Kopierversuche",
+  "fr": "tentatives de copie",
+  "ru": "попытки копирования"
+ }
+}

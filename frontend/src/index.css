@@ -3039,3 +3039,14 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 .gl-metin b{color:var(--tx)}
 .gl-iletisim{font-size:13px;color:var(--tx2);margin-top:4px}
 .gl-iletisim a{color:var(--pu);font-weight:700}
+
+/* [2026-10-12] Çoklu dil — dil seçici */
+.dil-secici{font:inherit;font-size:13px;padding:7px 10px;border-radius:10px;border:1.5px solid var(--bor2);background:var(--sur);color:var(--tx);cursor:pointer;max-width:100%}
+.dil-secici.kart{font-size:14px;padding:9px 12px;min-width:170px}
+.auth-dil{position:fixed;top:16px;right:66px;z-index:200}
+.auth-dil .dil-secici{height:40px;border-radius:20px;box-shadow:0 4px 14px rgba(0,0,0,0.08)}
+.ni-dil{display:flex;align-items:center;gap:8px;padding:6px 12px}
+.ni-dil .dil-secici{flex:1;min-width:0;padding:5px 8px;font-size:12.5px}
+.soru-dil-notu{font-size:12.5px;color:var(--tx2);background:var(--sur2,var(--sur));border:1px dashed var(--bor2);border-radius:10px;padding:8px 12px;margin:0 0 14px;line-height:1.5}
+[dir="rtl"] .auth-dil{right:auto;left:66px}
+[dir="rtl"] .tema-anahtari{right:auto;left:16px}

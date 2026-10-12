@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { t as cevirT } from '../yardimci/dil'   // [2026-10-12] çoklu dil
 import { useLocation } from 'react-router-dom'
 import { api } from '../api/client'
 import { useModuller } from '../yardimci/moduller'
@@ -1136,7 +1137,7 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
   // yazı makinesi efekti (konuşurken ağız hareket eder); bağlantılı balon biraz daha uzun kalır
   useEffect(() => {
     if (!balon) { setYazilan(''); return undefined }
-    const metin = balon.metin || ''
+    const metin = cevirT(balon.metin || '')   // [2026-10-12] seçili dile çevrilmiş metin yazılır (yarım metin çevrilemez)
     // [2026-10-11] Harf grubu (grapheme) olarak yazılır: emoji yarıya bölünüp "�" görünmesin
     const parcalar = typeof Intl !== 'undefined' && Intl.Segmenter
       ? Array.from(new Intl.Segmenter('tr', { granularity: 'grapheme' }).segment(metin), (x) => x.segment)
@@ -1150,7 +1151,7 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
     const kapat = window.setTimeout(() => setBalon(null), Math.max(balon.baglanti ? 9000 : 5500, metin.length * 90))
     return () => { window.clearInterval(t); window.clearTimeout(kapat) }
   }, [balon, setBalon])
-  const konusuyor = !!balon && yazilan.length < (balon.metin || '').length
+  const konusuyor = !!balon && yazilan.length < cevirT(balon.metin || '').length
 
   // göz kırpma (rastgele aralıklarla, bazen çift)
   useEffect(() => {
@@ -1230,14 +1231,14 @@ export function MaskotGorunum({ m, cinsiyet, kiyafet, seviye, rozet, onTikla, so
     )
   }
   const b = m.balon
-  const bitti = b && m.yazilan.length >= (b.metin || '').length
+  const bitti = b && m.yazilan.length >= cevirT(b.metin || '').length
   return (
     <div className={`msk-kap ${sinif}`} ref={m.kutu}>
       <style>{MASKOT_CSS}</style>
       {b && (
         <div className="msk-balon" role="status" aria-live="polite">
           {b.sira && <span className="msk-balon-sira">{b.sira}</span>}
-          {m.yazilan}
+          <span translate="no">{m.yazilan}</span>
           {b.baglanti && bitti && (
             <button className="msk-balon-git" onClick={() => onBaglanti?.(b.baglanti)}>{b.baglanti.etiket ? `${b.baglanti.etiket} · ` : ''}Göster →</button>
           )}

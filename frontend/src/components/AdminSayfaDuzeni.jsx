@@ -1,4 +1,6 @@
 import { Fragment, useCallback, useEffect, useState } from 'react'
+import { hesapDiliniUygula } from '../yardimci/dil'   // [2026-10-12] hesaptaki dil tercihi
+import DilSecici from './DilSecici'   // [2026-10-12] çoklu dil
 import TanitimTuru, { turuBaslat } from './TanitimTuru'   // [2026-10-11] menü tanıtım turu
 import AcilisAmblemi, { acilisGosterilsinMi } from './AcilisAmblemi'   // [2026-10-11] açılış amblemi
 import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
@@ -79,6 +81,8 @@ export default function AdminSayfaDuzeni() {
   // [2026-10-11] Açılış amblemi (oturumda bir kez) + ilk girişte menü tanıtım turu (rol ve pakete göre menüden üretilir)
   const [acilis, setAcilis] = useState(acilisGosterilsinMi)
   const [turAcik, setTurAcik] = useState(false)
+  // [2026-10-12] Hesaptaki dil tercihi (giriş ekranında seçildiyse hesaba yazılır)
+  useEffect(() => { if (ben) hesapDiliniUygula(ben.dil, (k) => api.dilKaydet(k, 'admin')) }, [ben])
   const turAnahtari = ben ? `tur_goruldu_yonetim_${ben.id || ben.email || ben.ad_soyad}` : null
   useEffect(() => {
     if (!turAnahtari || ben?.sifre_degistirmeli) return
@@ -159,6 +163,7 @@ export default function AdminSayfaDuzeni() {
             <NavLink to="/admin/sss" className={ni}><span className="ni-ikon">❓</span>Sistem Hakkında & SSS</NavLink>
             <NavLink to="/admin/kaynakca" className={ni}><span className="ni-ikon">📚</span>Kaynakça</NavLink>
             <button type="button" className="ni ni-btn" onClick={turuBaslat}><span className="ni-ikon">🎬</span>Tanıtımı başlat</button>
+            <div className="ni-dil"><span className="ni-ikon">🌐</span><DilSecici kapsam="admin" /></div>
           </>
         ) : (
           <>
@@ -172,6 +177,7 @@ export default function AdminSayfaDuzeni() {
               </Fragment>
             ))}
             <button type="button" className="ni ni-btn" onClick={turuBaslat}><span className="ni-ikon">🎬</span>Tanıtımı başlat</button>
+            <div className="ni-dil"><span className="ni-ikon">🌐</span><DilSecici kapsam="admin" /></div>
           </>
         )}
       </div>

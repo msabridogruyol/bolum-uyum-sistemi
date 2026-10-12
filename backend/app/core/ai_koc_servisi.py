@@ -214,10 +214,11 @@ def openai_ile_konus(sistem_promptu: str, mesaj_gecmisi: list[dict]) -> str:
 
     try:
         from openai import OpenAI  # yalnızca anahtar varsa import edilir, gereksiz bağımlılık hatası önlenir
+        from app.core.ceviri_servisi import yapay_zeka_dil_talimati
         client = OpenAI(api_key=os.environ["OPENAI_API_KEY"].strip(), timeout=40)
         yanit = client.chat.completions.create(
             model=MODEL_ADI,
-            messages=[{"role": "system", "content": sistem_promptu}] + mesaj_gecmisi,
+            messages=[{"role": "system", "content": sistem_promptu + yapay_zeka_dil_talimati()}] + mesaj_gecmisi,   # [2026-10-12] seçili dilde cevap
             temperature=0.7,
             max_tokens=500,
         )

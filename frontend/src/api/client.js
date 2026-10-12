@@ -1,3 +1,4 @@
+import { aktifDil } from '../yardimci/dil'   // [2026-10-12] Filiz ve sunucu mesajları için seçili dil
 const TABAN_URL = '/api'
 
 function tokenAl(kapsam = 'ogrenci') {
@@ -107,7 +108,7 @@ function dostMesaj(status, detay) {
 
 async function istek(yol, secenekler = {}, kapsam = 'ogrenci', deneme = 0) {
   const token = tokenAl(kapsam)
-  const headers = { 'Content-Type': 'application/json', ...secenekler.headers }
+  const headers = { 'Content-Type': 'application/json', 'X-Dil': aktifDil(), ...secenekler.headers }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const yontem = (secenekler.method || 'GET').toUpperCase()
 
@@ -495,6 +496,8 @@ export const api = {
   profilGetir: () => get('/ogrenci/profil'),
   profilGuncelle: (veri) => put('/ogrenci/profil', veri),
   // [2026-10-11] Şifre değişince diğer cihazlardaki oturumlar düşer; sunucu bu cihaz için yeni anahtar çifti döner
+  // [2026-10-12] Kişisel dil tercihi (hesaba kaydedilir)
+  dilKaydet: (dil, kapsam = 'ogrenci') => put(kapsam === 'admin' ? '/yonetim/ben/dil' : '/ogrenci/profil/dil', { dil }, kapsam),
   sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),
   ilkSifreBelirle: (yeniSifre) => post('/ogrenci/profil/ilk-sifre', { yeni_sifre: yeniSifre }).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),  // [2026-10-09] geçici şifreden sonra
   profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
