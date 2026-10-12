@@ -18,6 +18,8 @@ from app.models import (
 # [EKLENDİ] Güven skoru — tur tamamlanınca otomatik hesaplanır.
 from app.core.guvenlik_servisi import guven_skorunu_hesapla_ve_kaydet
 
+YENIDEN_DEGERLENDIRME_GUN = 90   # [2026-10-12] geçerli bir turdan sonra yeniden değerlendirme için bekleme (≈ 3 ay); sistem parametresiyle değişir
+
 
 class IsKuraliHatasi(Exception):
     """İş kuralı ihlali — 400 seviyesinde bir HTTP hatasına çevrilir (router'da)."""
@@ -75,9 +77,23 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
     )
 
     yeni_tur_no = 1
-    # [2026-10-10] Güven puanı eşiğin altında kalan (geçersiz) turdan sonra bekleme süresi uygulanmaz; öğrenci hemen yeniden değerlendirilebilir.
-    if son_tamamlanan is not None and son_tamamlanan.sonuc_gecerli_mi is not False:
-        min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "120"))
+    # [2026-10-12] Kurallar:
+    #  * Yönetim yeniden değerlendirme izni verdiyse (ogrenci.yeni_tur_izni) bekleme olmadan yeni tur açılır.
+    #  * Son tur güven sorunu nedeniyle geçersizse yeni tam tur AÇILMAZ: öğrenci yalnızca sorunlu katman(lar)ı aynı turda
+    #    tekrar çözer (katmani_tekrara_ac). Bu kontrol yeni tur isteyen her yerde burada yapılır.
+    #  * Geçerli turdan sonra yeniden değerlendirme için yeniden_degerlendirme_min_gun (varsayılan 90 gün ≈ 3 ay) beklenir.
+    izinli = getattr(ogrenci, "yeni_tur_izni", None) is not None
+    if son_tamamlanan is not None and izinli:
+        yeni_tur_no = son_tamamlanan.tur_no + 1
+    elif son_tamamlanan is not None and son_tamamlanan.sonuc_gecerli_mi is False:
+        from app.core.guvenlik_servisi import sorunlu_katmanlar
+        adlar = ", ".join(f"{d['kod']} — {d['ad']}" for d in sorunlu_katmanlar(db, ogrenci, son_tamamlanan))
+        raise IsKuraliHatasi(
+            f"Son değerlendirmende güven puanın düşük çıktı. Yalnızca şu bölümü tekrar çözebilirsin: {adlar}."
+            if adlar else "Son değerlendirmende güven puanın düşük çıktı. Rehber öğretmeninle görüş."
+        )
+    elif son_tamamlanan is not None:
+        min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", str(YENIDEN_DEGERLENDIRME_GUN)))
         simdi = datetime.now(timezone.utc)
         tamamlanma = son_tamamlanan.tamamlanma_zamani
         # [NOT] SQLite test ortamında TIMESTAMPTZ timezone bilgisini korumaz,
@@ -86,13 +102,17 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
         if tamamlanma is not None and tamamlanma.tzinfo is None:
             tamamlanma = tamamlanma.replace(tzinfo=timezone.utc)
         if tamamlanma is not None and (simdi - tamamlanma) < timedelta(days=min_gun):
-            kalan = timedelta(days=min_gun) - (simdi - tamamlanma)
+            acilis = tamamlanma + timedelta(days=min_gun)
+            kalan = (acilis - simdi).days + 1
             raise IsKuraliHatasi(
-                f"Yeniden değerlendirme için henüz erken. En erken {kalan.days} gün sonra tekrar deneyebilirsin."
+                f"Değerlendirmeni {tamamlanma:%d.%m.%Y} tarihinde tamamladın. Yeniden değerlendirme {acilis:%d.%m.%Y} "
+                f"tarihinde açılır ({kalan} gün kaldı)."
             )
         yeni_tur_no = son_tamamlanan.tur_no + 1
 
     yeni_tur = OgrenciDegerlendirmeTuru(ogrenci_id=ogrenci.id, tur_no=yeni_tur_no, durum="devam_ediyor")
+    if getattr(ogrenci, "yeni_tur_izni", None) is not None:
+        ogrenci.yeni_tur_izni = None
     db.add(yeni_tur)
     try:
         db.flush()
@@ -161,12 +181,27 @@ def katman_oturumu_baslat(
     soru_idler = [s.id for s in aktif_sorular]
 
     if oturum is None:
-        oturum = OgrenciKatmanOturumu(
+        # [2026-10-12] Aynı anda iki "başla" isteği (çift tıklama, sekme yenileme) benzersizlik hatasına düşmesin:
+        # kayıt savepoint içinde eklenir; çakışmada diğer isteğin açtığı oturum kullanılır.
+        from sqlalchemy.exc import IntegrityError
+        yeni = OgrenciKatmanOturumu(
             ogrenci_id=ogrenci.id, tur_id=tur.id, katman_id=katman.id,
             durum="devam_ediyor", kilitlenen_soru_id_listesi=soru_idler,
             baslama_zamani=datetime.now(timezone.utc),
         )
-        db.add(oturum)
+        try:
+            with db.begin_nested():
+                db.add(yeni)
+                db.flush()
+            return yeni, aktif_sorular
+        except IntegrityError:
+            mevcut = (db.query(OgrenciKatmanOturumu)
+                      .filter_by(ogrenci_id=ogrenci.id, tur_id=tur.id, katman_id=katman.id).first())
+            if mevcut is None:
+                raise
+            idler = mevcut.kilitlenen_soru_id_listesi or soru_idler
+            sorular = db.query(Soru).filter(Soru.id.in_(idler)).all()
+            return mevcut, sorted(sorular, key=lambda x: idler.index(x.id))
     else:
         oturum.kilitlenen_soru_id_listesi = soru_idler
         oturum.durum = "devam_ediyor"
@@ -386,3 +421,61 @@ def tum_ana_katmanlar_tamamlandi_mi(db: Session, ogrenci: Ogrenci, tur: OgrenciD
         guven_skorunu_hesapla_ve_kaydet(db, ogrenci, tur)
         return True
     return False
+
+
+def katmani_tekrara_ac(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru, katman: Katman) -> None:
+    """[2026-10-12] Bir katmanı aynı turda baştan çözülecek hale getirir (güven sorunu ya da yönetim isteği).
+    Silinenler: o katmanın bu turdaki cevapları, özellik puanları, katman oturumu ve o katmanda kaydedilen ihlaller
+    (yeni denemenin güven puanı eski ihlallerle düşmesin; özet hesap geçmişine yazılır). Tur 'devam_ediyor'a döner;
+    katman yeniden bitince tur güveni, bölüm uyumları ve K5 yeniden hesaplanır. Diğer katmanlara dokunulmaz."""
+    from app.models import Degisken, GuvenlikOlayi, OgrenciCevap
+    soru_idler = [i for (i,) in db.query(Soru.id).filter(Soru.katman_id == katman.id).all()]
+    if soru_idler:
+        db.query(OgrenciCevap).filter(OgrenciCevap.tur_id == tur.id, OgrenciCevap.ogrenci_id == ogrenci.id,
+                                      OgrenciCevap.soru_id.in_(soru_idler)).delete(synchronize_session=False)
+    degisken_idler = [i for (i,) in db.query(Degisken.id).filter(Degisken.katman_id == katman.id).all()]
+    if degisken_idler:
+        db.query(OgrenciDegiskenSkoru).filter(OgrenciDegiskenSkoru.tur_id == tur.id, OgrenciDegiskenSkoru.ogrenci_id == ogrenci.id,
+                                              OgrenciDegiskenSkoru.degisken_id.in_(degisken_idler)).delete(synchronize_session=False)
+    db.query(GuvenlikOlayi).filter(GuvenlikOlayi.tur_id == tur.id, GuvenlikOlayi.ogrenci_id == ogrenci.id,
+                                   GuvenlikOlayi.katman_kod == katman.kod).delete(synchronize_session=False)
+    db.query(OgrenciKatmanOturumu).filter(OgrenciKatmanOturumu.tur_id == tur.id, OgrenciKatmanOturumu.ogrenci_id == ogrenci.id,
+                                          OgrenciKatmanOturumu.katman_id == katman.id).delete(synchronize_session=False)
+    tur.durum = "devam_ediyor"
+    tur.tamamlanma_zamani = None
+    tur.guven_skoru = None
+    tur.sonuc_gecerli_mi = True
+    tur.gecersizlik_nedeni = None
+    db.flush()
+
+
+def degerlendirme_durumu(db: Session, ogrenci: Ogrenci) -> dict:
+    """[2026-10-12] Öğrencinin yeniden değerlendirme durumu (öğrenci ekranındaki açılır pencere ve yönetim paneli için).
+    durum: 'yok' | 'devam' | 'guven_sorunu' | 'bekleme' | 'acik'"""
+    from app.core.guvenlik_servisi import sorunlu_katmanlar
+    tur = (db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.ogrenci_id == ogrenci.id)
+           .order_by(OgrenciDegerlendirmeTuru.tur_no.desc()).first())
+    izin = getattr(ogrenci, "yeni_tur_izni", None) is not None
+    min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", str(YENIDEN_DEGERLENDIRME_GUN)))
+    temel = {"tur_no": tur.tur_no if tur else None, "yonetim_izni": izin, "bekleme_gun": min_gun,
+             "tamamlanma": None, "yeniden_acilis": None, "kalan_gun": 0, "sorunlu_katmanlar": [], "guven_skoru": None}
+    if tur is None:
+        return {**temel, "durum": "yok"}
+    if tur.durum != "tamamlandi":
+        return {**temel, "durum": "devam"}
+    tamamlanma = tur.tamamlanma_zamani
+    if tamamlanma is not None and tamamlanma.tzinfo is None:
+        tamamlanma = tamamlanma.replace(tzinfo=timezone.utc)
+    temel.update(tamamlanma=tamamlanma, guven_skoru=float(tur.guven_skoru) if tur.guven_skoru is not None else None)
+    if izin:
+        return {**temel, "durum": "acik"}
+    if tur.sonuc_gecerli_mi is False:
+        return {**temel, "durum": "guven_sorunu",
+                "sorunlu_katmanlar": [{"kod": d["kod"], "ad": d["ad"], "guven": d["guven"]} for d in sorunlu_katmanlar(db, ogrenci, tur)]}
+    if tamamlanma is None:
+        return {**temel, "durum": "acik"}
+    acilis = tamamlanma + timedelta(days=min_gun)
+    simdi = datetime.now(timezone.utc)
+    if simdi < acilis:
+        return {**temel, "durum": "bekleme", "yeniden_acilis": acilis, "kalan_gun": (acilis - simdi).days + 1}
+    return {**temel, "durum": "acik", "yeniden_acilis": acilis}

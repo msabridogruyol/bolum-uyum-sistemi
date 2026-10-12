@@ -4,6 +4,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { KATMAN_BILGI } from '../yardimci/katmanAdlari'
 import { seviyeEtiketi, seviyeRengi } from '../yardimci/seviye'
+import YenidenDegerlendirmePenceresi from '../components/YenidenDegerlendirmePenceresi'
 
 const renkSec = seviyeRengi   // [2026-10-10] tek kaynak bantlar (yardimci/seviye.js)
 
@@ -139,7 +140,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
         <div className="sn-bolum-bas">🛡️ Başlamadan önce kuralları oku</div>
         <ul>
           <li>Değerlendirme <b>tam ekranda</b> yapılır. Sistem şunları kaydeder: tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşuna</b> basmak ve <b>kopyalama denemeleri</b>.</li>
-          <li>Bunların her biri <b>güven puanını</b> düşürür. Bu puanı ekranın üstünde anlık görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b>. O zaman rehber öğretmenin değerlendirmeyi yeniden yapmanı isteyebilir.</li>
+          <li>Bunların her biri <b>güven puanını</b> düşürür. Bu puanı ekranın üstünde anlık görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b>. O zaman yalnızca güven sorunu çıkan bölümü yeniden çözmen gerekir; diğer bölümlerdeki cevapların korunur.</li>
           <li>Ekran kaydı almak ya da başkasından yardım almak da kurallara aykırı. Soruları kendin cevapla. Sonuçların ancak <b>yalnızca seni</b> anlatırsa işine yarar.</li>
           <li>Ara vermen gerekirse çıkabilirsin. Cevapların kayıtlı kalır. Döndüğünde <b>kaldığın sorudan</b> devam edersin.</li>
         </ul>
@@ -192,6 +193,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   const [gonderiliyor, setGonderiliyor] = useState(false)
   const [hata, setHata] = useState(null)
   const [tamamlandi, setTamamlandi] = useState(null)
+  const [ydDurum, setYdDurum] = useState(null)
   const [tamEkranDisinda, setTamEkranDisinda] = useState(false)
   const [basladiMi, setBasladiMi] = useState(false)  // tanıtım/onay ekranı geçildi mi
   const [guven, setGuven] = useState(null)           // [2026-10-10] canlı güven puanı {guven_puani, esik, ihlaller}
@@ -236,7 +238,11 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         setTurId(veri.tur_id ?? null)
         if (dalMi) setDalAdi(veri.dal_adi || null)
       })
-      .catch((e) => setHata(e.detail || (dalMi ? 'Alan soruları açılamadı.' : 'Katman açılamadı.')))
+      .catch((e) => {
+        setHata(e.detail || (dalMi ? 'Alan soruları açılamadı.' : 'Katman açılamadı.'))
+        // [2026-10-12] Bekleme süresi / güven kuralına takıldıysa durumu açılır pencerede göster
+        if (!dalMi) api.degerlendirmeDurumu().then((d) => { if (['guven_sorunu', 'bekleme'].includes(d?.durum)) setYdDurum(d) }).catch(() => {})
+      })
   }, [kod, dalMi])
 
   // ------------------------------------------------------------------
@@ -499,6 +505,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
       <SinavBasligi />
 
       <div className="sn-sayfa">
+        {ydDurum && <YenidenDegerlendirmePenceresi durum={ydDurum} onKapat={() => navigate('/katmanlar')} />}
         {hata ? (
           <div className="bos-durum">{hata}</div>
         ) : !sorular ? (

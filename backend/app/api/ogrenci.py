@@ -203,6 +203,32 @@ def katmani_baslat(
                              mevcut_cevaplar=_mevcut_cevaplar(db, ogrenci, tur.id, soru_idler))
 
 
+@router.get("/degerlendirme-durumu")
+def degerlendirme_durumu_getir(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """[2026-10-12] Yeniden değerlendirme durumu: güven sorunu (hangi katman), bekleme (açılış tarihi), açık."""
+    from app.core.katman_servisi import degerlendirme_durumu
+    return degerlendirme_durumu(db, ogrenci)
+
+
+@router.post("/katmanlar/{kod}/tekrar")
+def katmani_tekrar_coz(kod: str, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """[2026-10-12] Güven puanı düşük çıkan turda öğrenci YALNIZCA sorunlu katmanı aynı turda tekrar çözebilir."""
+    from app.core.guvenlik_servisi import sorunlu_katmanlar
+    from app.core.hesap_yonetimi import olay_yaz
+    from app.core.katman_servisi import katmani_tekrara_ac
+    katman = _katman_bul(db, kod)
+    tur = (db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.ogrenci_id == ogrenci.id)
+           .order_by(OgrenciDegerlendirmeTuru.tur_no.desc()).first())
+    if tur is None or tur.durum != "tamamlandi" or tur.sonuc_gecerli_mi is not False:
+        raise HTTPException(status_code=400, detail="Bu bölümü şu an tekrar çözemezsin.")
+    if katman.kod not in {d["kod"] for d in sorunlu_katmanlar(db, ogrenci, tur)}:
+        raise HTTPException(status_code=400, detail="Yalnızca güven puanı düşük çıkan bölümü tekrar çözebilirsin.")
+    katmani_tekrara_ac(db, ogrenci, tur, katman)
+    olay_yaz(db, ogrenci.id, "katman_tekrar", f"{katman.kod} güven sorunu nedeniyle tekrar açıldı ({tur.tur_no}. tur)", "Öğrenci")
+    db.commit()
+    return {"tamam": True, "katman": katman.kod}
+
+
 @router.post("/katmanlar/{kod}/cevap", status_code=204)
 def soruyu_cevapla(
     kod: str,
@@ -509,8 +535,8 @@ def durum_ozetini_getir(
 
     sonraki_tur_tarihi = None
     sonuc_gecerli = tur.sonuc_gecerli_mi is not False
-    if tur.durum == "tamamlandi" and tur.tamamlanma_zamani and sonuc_gecerli:
-        min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "120"))
+    if tur.durum == "tamamlandi" and tur.tamamlanma_zamani and sonuc_gecerli and getattr(ogrenci, "yeni_tur_izni", None) is None:
+        min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "90"))
         tamamlanma = tur.tamamlanma_zamani
         if tamamlanma.tzinfo is None:
             tamamlanma = tamamlanma.replace(tzinfo=timezone.utc)

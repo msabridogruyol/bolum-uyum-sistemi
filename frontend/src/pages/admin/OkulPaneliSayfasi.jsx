@@ -7,6 +7,7 @@ import { api } from '../../api/client'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import TopluYuklemePenceresi from '../../components/yonetim/TopluYuklemePenceresi'
 import OgrenciDetayPenceresi from '../../components/yonetim/OgrenciDetayPenceresi'
+import SinifAtlatPenceresi from '../../components/yonetim/SinifAtlatPenceresi'   // [2026-10-12] yeni eğitim yılı
 import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, base64Indir, onceSure, tarih } from '../../components/yonetim/ortak'
 import OkulBilgiKarti from '../../components/OkulBilgiKarti'
 import MeslekDiliDuzenleyici from '../../components/yonetim/MeslekDiliDuzenleyici'
@@ -117,6 +118,9 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
   const [hata, setHata] = useState(null)
   const [bekle, setBekle] = useState(false)
   const [sinifAta, setSinifAta] = useState({ sinif: '', sube: '' })
+  const [sinifAtlat, setSinifAtlat] = useState(false)   // [2026-10-12]
+  const [sifirlaOnay, setSifirlaOnay] = useState(false)
+  const [bilgi, setBilgi] = useState(null)
 
   const SIRA = ['Aday', '9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun']
   const siniflar = useMemo(() => {
@@ -146,6 +150,21 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
   }
   const sifreSifirla = () => topluIslem(async () => { setSifreler(await api.ogrenciSifreleriniSifirla([...secili])); setSecili(new Set()); yenile() })
   const sil = () => topluIslem(async () => { await api.ogrencileriSil([...secili]); setSecili(new Set()); setSilOnay(false); yenile() })
+  // [2026-10-12] Değerlendirmeyi sıfırla: son tur silinir, öğrenci baştan başlar
+  const sifirla = () => topluIslem(async () => {
+    const r = await api.degerlendirmeSifirla([...secili])
+    setBilgi(`${r.sifirlanan} öğrencinin değerlendirmesi sıfırlandı. Öğrenciler değerlendirmeye baştan başlayabilir.` +
+      (r.degerlendirmesi_olmayan ? ` ${r.degerlendirmesi_olmayan} öğrencinin henüz değerlendirmesi yoktu.` : ''))
+    setSecili(new Set()); setSifirlaOnay(false); yenile()
+  })
+  // [2026-10-12] Yeniden değerlendirme izni: bekleme süresi olmadan yeni tur; önceki sonuçlar kalır
+  const yenidenAc = () => topluIslem(async () => {
+    const r = await api.yenidenDegerlendirmeAc([...secili])
+    setBilgi(`${r.acilan} öğrenci yeni değerlendirmeye başlayabilir. Önceki sonuçları saklanır.` +
+      (r.devam_eden ? ` ${r.devam_eden} öğrencinin değerlendirmesi zaten devam ediyor.` : '') +
+      (r.degerlendirmesi_olmayan ? ` ${r.degerlendirmesi_olmayan} öğrencinin henüz değerlendirmesi yoktu.` : ''))
+    setSecili(new Set()); yenile()
+  })
   // [2026-10-10] Seçili öğrencilere sınıf / şube ver (rehber öğretmen)
   const sinifVer = () => topluIslem(async () => {
     for (const id of secili) await api.ogrenciDuzenle(id, { sinif: sinifAta.sinif || undefined, sube: sinifAta.sube })
@@ -172,8 +191,13 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
         <div style={{ flex: 1 }} />
         <button className="btn sec" disabled={bekle} title="Tüm öğrenciler: ad soyad, no, sınıf, e-posta, şifre (geçiciyse). Düzenleyip geri yükleyebilirsiniz."
           onClick={() => topluIslem(async () => { const r = await api.girisListesi(okulId); base64Indir(r.dosya_adi, r.icerik_base64) })}>⬇ Giriş listesi (Excel)</button>
+        {okulId > 0 && (
+          <button className="btn sec" title="Yeni eğitim yılında bütün öğrencileri bir üst sınıfa geçirir (12 → Mezun). Seçili öğrenciler sınıfında kalır."
+            onClick={() => setSinifAtlat(true)}>🎓 Sınıf atlat (yeni yıl)</button>
+        )}
         <button className="btn" onClick={() => setYukleme(true)}>+ Öğrenci ekle / Excel yükle</button>
       </div>
+      {bilgi && <div className="yp-uyari-yesil" style={{ marginBottom: 10 }}>{bilgi} <button className="yp-mini" onClick={() => setBilgi(null)}>Tamam</button></div>}
 
       {secili.size > 0 && (
         <div className="yp-secim-cubugu">
@@ -186,13 +210,21 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
             <input className="auth-input" style={{ width: 64, margin: 0 }} maxLength={2} placeholder="Şube" value={sinifAta.sube} onChange={(e) => setSinifAta({ ...sinifAta, sube: e.target.value.toUpperCase() })} />
             <button className="btn sec" disabled={bekle || (!sinifAta.sinif && !sinifAta.sube)} onClick={sinifVer}>Sınıfı ata</button>
           </span>
+          <button className="btn sec" disabled={bekle} onClick={yenidenAc} title="Bekleme süresi (90 gün) dolmadan yeni değerlendirme açar; önceki sonuçlar silinmez">🔁 Yeniden değerlendirme izni ver</button>
+          {sifirlaOnay ? (
+            <>
+              <span style={{ fontSize: 12, color: 'var(--re)' }}>{`${secili.size} öğrencinin son değerlendirmesi (cevaplar, sonuçlar, bölüm uyumları ve bu değerlendirmeye bağlı koçluk adımları) silinecek. Hesap ve diğer kayıtlar kalır.`}</span>
+              <button className="btn yp-tehlike" disabled={bekle} onClick={sifirla}>Evet, sıfırla</button>
+              <button className="btn sec" onClick={() => setSifirlaOnay(false)}>Vazgeç</button>
+            </>
+          ) : <button className="btn sec" onClick={() => { setSifirlaOnay(true); setSilOnay(false) }} title="Öğrenci değerlendirmeye baştan başlar; bekleme süresi uygulanmaz">🔄 Değerlendirmeyi sıfırla</button>}
           {silOnay ? (
             <>
               <span style={{ fontSize: 12, color: 'var(--re)' }}>{secili.size} öğrenci tüm verileriyle kalıcı olarak silinecek.</span>
               <button className="btn yp-tehlike" disabled={bekle} onClick={sil}>Evet, sil</button>
               <button className="btn sec" onClick={() => setSilOnay(false)}>Vazgeç</button>
             </>
-          ) : <button className="btn sec yp-tehlike-ince" onClick={() => setSilOnay(true)}>🗑 Sil</button>}
+          ) : <button className="btn sec yp-tehlike-ince" onClick={() => { setSilOnay(true); setSifirlaOnay(false) }}>🗑 Sil</button>}
           <div style={{ flex: 1 }} />
           <button className="yp-mini" onClick={() => setSecili(new Set())}>Seçimi kaldır</button>
         </div>
@@ -236,6 +268,11 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
         </div>
       )}
 
+      {sinifAtlat && (
+        <SinifAtlatPenceresi okulId={okulId} haric={[...secili]}
+          haricAdlar={ogrenciler.filter((o) => secili.has(o.id)).map((o) => o.ad_soyad)}
+          onKapat={() => setSinifAtlat(false)} onBitti={() => { setSecili(new Set()); yenile() }} />
+      )}
       {yukleme && <TopluYuklemePenceresi okulId={okulId} okulAd={okulAd} onKapat={() => setYukleme(false)} onBitti={yenile} />}
       {detay && <OgrenciDetayPenceresi ogrenciId={detay} superAdmin={superAdmin} okullar={okullar} onKapat={() => { setDetay(null); onDetayKapat?.() }} onDegisti={yenile} />}
       {sifreler && (

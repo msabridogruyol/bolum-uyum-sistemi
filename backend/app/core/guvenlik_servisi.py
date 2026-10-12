@@ -118,3 +118,44 @@ def guven_skorunu_hesapla_ve_kaydet(db: Session, ogrenci: Ogrenci, tur: OgrenciD
 
     db.flush()
     return guven_skoru
+
+
+# ----------------------------------------------------------------------------- [2026-10-12] Katman bazında güven
+def katman_guven_durumlari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> dict[str, dict]:
+    """Ana katmanların (K1–K4) her biri için güven puanı: o katmanın kontrol soruları + o katmanda kaydedilen ihlaller.
+    Tur güven puanıyla aynı formül (0,5 × kontrol + 0,5 × olay); yalnızca o katmanın verisiyle hesaplanır."""
+    from app.models import Katman
+    esik = parametre_oku_float(db, "guven_skoru_esigi", 50.0)
+    katmanlar = db.query(Katman).filter(Katman.kosullu_mu.is_(False)).order_by(Katman.sira).all()
+    cevaplar = (
+        db.query(Soru.katman_id, Soru.beklenen_secenek_sira, SoruSecenegi.secenek_sirasi)
+        .join(OgrenciCevap, OgrenciCevap.soru_id == Soru.id)
+        .join(SoruSecenegi, SoruSecenegi.id == OgrenciCevap.secenek_id)
+        .filter(OgrenciCevap.ogrenci_id == ogrenci.id, OgrenciCevap.tur_id == tur.id, Soru.soru_tipi == "kontrol")
+        .all()
+    )
+    olaylar = [(k, t) for k, t in db.query(GuvenlikOlayi.katman_kod, GuvenlikOlayi.olay_tipi)
+               .filter(GuvenlikOlayi.ogrenci_id == ogrenci.id, GuvenlikOlayi.tur_id == tur.id).all()]
+    sonuc = {}
+    for k in katmanlar:
+        kc = [(b, s) for kid, b, s in cevaplar if kid == k.id]
+        kontrol = round(sum(1 for b, s in kc if b is not None and s == b) / len(kc) * 100, 2) if kc else 100.0
+        cezali = [t for kk, t in olaylar if kk == k.kod and OLAY_CEZASI.get(t, 0) > 0]
+        olay = max(0.0, 100.0 - sum(OLAY_CEZASI[t] for t in cezali))
+        guven = round(0.5 * kontrol + 0.5 * olay, 2)
+        sonuc[k.kod] = {"kod": k.kod, "ad": k.ad, "katman_id": k.id, "guven": guven, "kontrol": kontrol,
+                        "ihlal": len(cezali), "sorunlu": guven < esik}
+    return sonuc
+
+
+def sorunlu_katmanlar(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> list[dict]:
+    """Geçersiz sayılan (güven puanı eşiğin altında) bir turda tekrar çözülmesi gereken katmanlar.
+    Katman puanı eşiğin altında olanlar; hiçbiri tek başına eşiğin altında değilse en düşük güvenli katman."""
+    if tur is None or tur.durum != "tamamlandi" or tur.sonuc_gecerli_mi is not False:
+        return []
+    durumlar = list(katman_guven_durumlari(db, ogrenci, tur).values())
+    sorunlu = [d for d in durumlar if d["sorunlu"]]
+    if not sorunlu and durumlar:
+        en_dusuk = min(d["guven"] for d in durumlar)
+        sorunlu = [d for d in durumlar if d["guven"] == en_dusuk]
+    return sorunlu
