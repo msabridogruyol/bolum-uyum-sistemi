@@ -102,12 +102,15 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
     for kid, satirlar in sorted(gruplar.items(), key=lambda kv: katmanlar[kv[0]].sira if kv[0] in katmanlar else 99):
         k = katmanlar.get(kid)
         satirlar.sort(key=lambda x: -x["puan"])
-        v["katmanlar"].append({"kod": k.kod if k else "?", "ad": k.ad if k else "?",
+        from app.core.katman_adlari import katman_adi
+        v["katmanlar"].append({"kod": k.kod if k else "?", "ad": katman_adi(k.kod, k.ad) if k else "?",
                                "ortalama": round(sum(x["puan"] for x in satirlar) / len(satirlar), 1),
                                "ozellikler": satirlar})
     v["k5"] = [{"ad": a, "puan": round(sum(p) / len(p), 1)} for a, p in sorted(k5.items(), key=lambda kv: -sum(kv[1]) / len(kv[1]))]
     sirali = sorted(ana, key=lambda x: -x["puan"])
     from app.core.seviye import gelisime_acik_mi, guclu_mu
+    # [2026-10-12] P4 (duygusal hassasiyet) yüksek puanı güçlü yön, düşük puanı gelişim alanı sayılmaz (yorum.py destek önerir)
+    sirali = [x for x in sirali if x.get("kod") != "P4"]
     v["gucluler"] = [x for x in sirali if guclu_mu(x["puan"])][:6] or sirali[:3]
     v["gelisim"] = [x for x in reversed(sirali) if gelisime_acik_mi(x["puan"])][:5]
 
@@ -259,7 +262,8 @@ def _katman_ortalamalari(db: Session, tur_idler: list[int]) -> list[dict]:
           JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
          WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
          GROUP BY k.kod, k.ad, k.sira ORDER BY k.sira"""), {"t": tur_idler}).all()
-    return [{"kod": r[0], "ad": r[1], "ortalama": round(float(r[2]), 1)} for r in satir]
+    from app.core.katman_adlari import katman_adi
+    return [{"kod": r[0], "ad": katman_adi(r[0], r[1]), "ortalama": round(float(r[2]), 1)} for r in satir]
 
 
 def _ozet_kucuk_grup(v: dict, kapsamli: bool) -> dict:
@@ -330,8 +334,8 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         okul_katman_ort = _katman_ortalamalari(db, okul_tamam) if yeterli(len(okul_tamam)) else []
     if tamam_turlar and not profil_gizli:
         guclu = db.execute(text("""
-            SELECT d.ad, avg(s.puan) AS o FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
-             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL GROUP BY d.ad ORDER BY o DESC"""), {"t": tamam_turlar}).all()
+            SELECT d.ad, avg(s.puan) AS o, d.kod FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
+             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND d.kod <> 'P4' GROUP BY d.ad, d.kod ORDER BY o DESC"""), {"t": tamam_turlar}).all()
     else:
         guclu = []
     liste = []
@@ -369,8 +373,9 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         "okul": okul_bilgisi(db, okul_id), "tarih": datetime.now(timezone.utc), "ozet": ozet, "kucuk_grup": kg,
         "alanlar": alanlar,
         "katman_ort": katman_ort, "okul_katman_ort": okul_katman_ort, "kapsam": ozet.get("kapsam") or {},
-        "ortak_guclu": [{"ad": r[0], "ortalama": round(float(r[1]), 1)} for r in guclu[:6]],
-        "ortak_gelisim": [{"ad": r[0], "ortalama": round(float(r[1]), 1)} for r in list(reversed(guclu))[:6]],
+        # [2026-10-12] P4 (duygusal hassasiyet) ortak güçlü / gelişim listesine girmez: yüksek puanı güçlü yön değildir
+        "ortak_guclu": [{"ad": r[0], "kod": r[2], "ortalama": round(float(r[1]), 1)} for r in guclu[:6]],
+        "ortak_gelisim": [{"ad": r[0], "kod": r[2], "ortalama": round(float(r[1]), 1)} for r in list(reversed(guclu))[:6]],
         "gecersiz": gecersiz, "ogrenciler": liste,
         "net": net_ozet,
     }

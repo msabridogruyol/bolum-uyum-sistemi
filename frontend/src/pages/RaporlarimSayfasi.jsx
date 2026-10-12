@@ -4,6 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { useModuller } from '../yardimci/moduller'
 import RaporGrafikleri from '../components/RaporGrafikleri'
+import { OgrenciRaporYorumu } from '../components/RaporYorumu'   // [2026-10-12]
 
 const RAPORLAR = [
   { tur: 'ogrenci', bicim: 'pdf', ikon: '📘', ad: 'Benim raporum', aciklama: 'Güçlü yönlerin, sana uyan bölümler, hedef bölümün ve yol haritan. Kendin okuyabilir ya da rehber öğretmeninle konuşurken kullanabilirsin.' },
@@ -38,6 +39,7 @@ export default function RaporlarimSayfasi() {
       )}
       {hazir && (
         <>
+          <OgrenciRaporYorumu />
           <div className="rp-izgara">
             {RAPORLAR.map((r, i) => (
               <div key={i} className="card rp-kart">
