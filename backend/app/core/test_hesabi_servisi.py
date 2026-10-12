@@ -217,7 +217,7 @@ def senaryo_uygula(db: Session, o: Ogrenci, ayar: dict) -> dict:
     tohum = ayar.get("tohum") or secrets.randbelow(10**6)
     rnd = random.Random(tohum)
     gurultu = 8.0
-    min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "120"))
+    min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "90"))
     gun_once = max(0, int(ayar.get("gun_once") or 0))
     if ayar.get("yeni_tur_hazir") and asama in ("tamamlandi", "k5_bekliyor"):
         gun_once = max(gun_once, min_gun + 1)

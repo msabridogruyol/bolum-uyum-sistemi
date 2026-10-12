@@ -157,6 +157,14 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
       (r.degerlendirmesi_olmayan ? ` ${r.degerlendirmesi_olmayan} öğrencinin henüz değerlendirmesi yoktu.` : ''))
     setSecili(new Set()); setSifirlaOnay(false); yenile()
   })
+  // [2026-10-12] Yeniden değerlendirme izni: bekleme süresi olmadan yeni tur; önceki sonuçlar kalır
+  const yenidenAc = () => topluIslem(async () => {
+    const r = await api.yenidenDegerlendirmeAc([...secili])
+    setBilgi(`${r.acilan} öğrenci yeni değerlendirmeye başlayabilir. Önceki sonuçları saklanır.` +
+      (r.devam_eden ? ` ${r.devam_eden} öğrencinin değerlendirmesi zaten devam ediyor.` : '') +
+      (r.degerlendirmesi_olmayan ? ` ${r.degerlendirmesi_olmayan} öğrencinin henüz değerlendirmesi yoktu.` : ''))
+    setSecili(new Set()); yenile()
+  })
   // [2026-10-10] Seçili öğrencilere sınıf / şube ver (rehber öğretmen)
   const sinifVer = () => topluIslem(async () => {
     for (const id of secili) await api.ogrenciDuzenle(id, { sinif: sinifAta.sinif || undefined, sube: sinifAta.sube })
@@ -202,6 +210,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
             <input className="auth-input" style={{ width: 64, margin: 0 }} maxLength={2} placeholder="Şube" value={sinifAta.sube} onChange={(e) => setSinifAta({ ...sinifAta, sube: e.target.value.toUpperCase() })} />
             <button className="btn sec" disabled={bekle || (!sinifAta.sinif && !sinifAta.sube)} onClick={sinifVer}>Sınıfı ata</button>
           </span>
+          <button className="btn sec" disabled={bekle} onClick={yenidenAc} title="Bekleme süresi (90 gün) dolmadan yeni değerlendirme açar; önceki sonuçlar silinmez">🔁 Yeniden değerlendirme izni ver</button>
           {sifirlaOnay ? (
             <>
               <span style={{ fontSize: 12, color: 'var(--re)' }}>{`${secili.size} öğrencinin son değerlendirmesi (cevaplar, sonuçlar, bölüm uyumları ve bu değerlendirmeye bağlı koçluk adımları) silinecek. Hesap ve diğer kayıtlar kalır.`}</span>

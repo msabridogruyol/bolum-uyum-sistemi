@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from '../components/BolumAdi'
+import YenidenDegerlendirmePenceresi from '../components/YenidenDegerlendirmePenceresi'
 import { KATMAN_BILGI, katmanAdi } from '../yardimci/katmanAdlari'
 
 const DURUM_ETIKET = { baslamadi: null, devam_ediyor: 'Devam Ediyor', tamamlandi: 'Tamamlandı' }
@@ -36,6 +37,8 @@ export default function KatmanlarSayfasi() {
   const [k1Sonuc, setK1Sonuc] = useState(null)
   const [sonuclar, setSonuclar] = useState({})   // [2026-10-10] biten katmanın öne çıkan özelliği
   const [hata, setHata] = useState(null)
+  const [yd, setYd] = useState(null)          // [2026-10-12] yeniden değerlendirme durumu
+  const [ydAcik, setYdAcik] = useState(false)
   const navigate = useNavigate()
 
   useEffect(() => {
@@ -44,6 +47,7 @@ export default function KatmanlarSayfasi() {
     api.aktifHedefGetir().then(setHedef).catch(() => setHedef(null))
     api.profilGetir().then(setProfil).catch(() => {})
     api.katmanSonucuGetir('K1').then(setK1Sonuc).catch(() => setK1Sonuc(null))
+    api.degerlendirmeDurumu().then(setYd).catch(() => setYd(null))
   }, [])
   useEffect(() => {
     (katmanlar || []).filter((k) => !k.kosullu_mu && k.durum === 'tamamlandi').forEach((k) => {
@@ -75,6 +79,25 @@ export default function KatmanlarSayfasi() {
           Kendini 4 kısa bölümde tanı. Son bölümün sonucuna göre sana özel derinleşme soruları açılır. Her bölüm yaklaşık 5 dakika sürer. İstediğin an ara verebilirsin.
         </div>
       </div>
+
+      {ydAcik && <YenidenDegerlendirmePenceresi durum={yd} onKapat={() => setYdAcik(false)} />}
+      {yd?.durum === 'guven_sorunu' && (
+        <div className="yd-bant" onClick={() => setYdAcik(true)}>
+          <span>🛡️</span>
+          <div style={{ flex: 1 }}>
+            <b>Bir bölümü yeniden çözmen gerekiyor.</b>
+            <div className="yp-ince">{`Son değerlendirmende güven puanın düşük çıktı. Yalnızca şu bölümü tekrar çözmen yeterli: ${(yd.sorunlu_katmanlar || []).map((k) => katmanAdi(k.kod, k.ad)).join(', ')}`}</div>
+          </div>
+          <button className="btn">Ayrıntılar</button>
+        </div>
+      )}
+      {yd?.durum === 'acik' && yd.yonetim_izni && (
+        <div className="yd-bant yesil" onClick={() => setYdAcik(true)}>
+          <span>🔁</span>
+          <div style={{ flex: 1 }}><b>Okulun yeni bir değerlendirme yapmana izin verdi.</b></div>
+          <button className="btn">Başla</button>
+        </div>
+      )}
 
       <div className="yol-duzen">
         <div>
@@ -115,8 +138,11 @@ export default function KatmanlarSayfasi() {
                 title={kilitli ? (k.kosullu_mu ? 'İlk 4 bölüm bitince açılır' : `Önce ${katmanAdi(oncekiEksik[0]?.kod, oncekiEksik[0]?.ad)} bölümünü tamamla`) : undefined}
                 onClick={() => {
                   if (kilitli) return
+                  // [2026-10-12] Değerlendirme bittiyse bölüme girmek yerine durum penceresi açılır
+                  // (güven sorunu → yalnızca sorunlu bölüm; değilse 90 gün bekleme; okul açtıysa yeni tur)
+                  if (k.durum === 'tamamlandi' && yd && ['guven_sorunu', 'bekleme', 'acik'].includes(yd.durum)) { setYdAcik(true); return }
                   // [2026-10-03] K5 (koşullu katman) doğrudan başlatılamaz — soruları dallar üzerinden gelir.
-                  // Önceden /katmanlar/K5'e gidiyordu; backend bunu "yeni tur" sanıp 120 gün kuralına takılıyordu.
+                  // Önceden /katmanlar/K5'e gidiyordu; backend bunu "yeni tur" sanıp bekleme süresi kuralına takılıyordu.
                   if (k.kosullu_mu) {
                     const ilkDal = k5Durum?.acilan?.[0]
                     if (ilkDal) navigate(`/k5/${ilkDal.dal_kodu}`)

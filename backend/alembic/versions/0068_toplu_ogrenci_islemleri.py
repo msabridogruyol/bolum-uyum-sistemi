@@ -7,6 +7,7 @@ Create Date: 2026-10-12
 [2026-10-12]
 * toplu_islemler — okul genelinde yapılan toplu işlemlerin kaydı (şimdilik 'sinif_atlat'). veri: her öğrencinin eski /
   yeni sınıfı; 30 gün içinde "Geri al" bu kayıttan yapılır.
+* sistem_parametreleri.yeniden_degerlendirme_min_gun = 90 (≈ 3 ay; yoksa eklenir, varsa değiştirilmez).
 * ogrenciler.yeni_tur_izni — yönetim değerlendirmeyi sıfırladığında yazılır; öğrenci yeniden değerlendirme bekleme
   süresine takılmadan baştan başlar. Yeni tur açılınca temizlenir.
 İdempotent: app/core/sema_guncelleme.py OTOMATIK listesinde, her açılışta yeniden çalışır.
@@ -31,7 +32,10 @@ CREATE TABLE IF NOT EXISTS toplu_islemler (
     veri JSONB NOT NULL DEFAULT '[]'::jsonb,
     geri_alindi_zamani TIMESTAMPTZ
 );
-CREATE INDEX IF NOT EXISTS ix_toplu_islemler_okul_tur ON toplu_islemler (okul_id, tur, zaman DESC)
+CREATE INDEX IF NOT EXISTS ix_toplu_islemler_okul_tur ON toplu_islemler (okul_id, tur, zaman DESC);
+INSERT INTO sistem_parametreleri (anahtar, deger, aciklama, guncelleme_zamani)
+SELECT 'yeniden_degerlendirme_min_gun', '90', 'Geçerli bir değerlendirmeden sonra öğrencinin yeniden değerlendirmeye girebilmesi için beklenecek gün (güven sorunu olan turda yalnızca sorunlu katman beklemeden tekrar çözülür)', now()
+WHERE NOT EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'yeniden_degerlendirme_min_gun')
 """
 
 

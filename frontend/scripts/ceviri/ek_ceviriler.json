@@ -559,5 +559,33 @@
   "uz": "nusxa koʻchirish urinishlari",
   "az": "kopyalama cəhdləri",
   "ko": "복사 시도"
+ },
+ "Tur Karşılaştırması: öğrenci yeniden değerlendirildiğinde (varsayılan en erken 90 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir": {
+  "en": "Round Comparison: when a student is reassessed (by default at the earliest after 90 days), it compares with the previous round and shows real development",
+  "de": "Runden-Vergleich: Wenn die Schülerin oder der Schüler erneut bewertet wird (standardmäßig frühestens nach 90 Tagen), wird mit der vorherigen Runde verglichen und die tatsächliche Entwicklung gezeigt",
+  "fr": "Comparaison des tours : quand l'élève est réévalué (par défaut au plus tôt après 90 jours), elle le compare avec le tour précédent et montre la progression réelle",
+  "ru": "Сравнение туров: когда ученик проходит оценивание повторно (по умолчанию не раньше чем через 90 дней), оно сравнивается с предыдущим туром и показывает реальный рост",
+  "es": "Comparación de Rondas: cuando el estudiante se reevalúa (por defecto, como pronto a los 90 días), se compara con la ronda anterior y se muestra el progreso real",
+  "it": "Confronto tra turni: quando lo studente viene rivalutato (per impostazione predefinita al più presto dopo 90 giorni), lo confronta con il turno precedente e mostra il vero progresso",
+  "ar": "مقارنة الجولات: عند إعادة تقييم الطالب (افتراضيًا بعد 90 يومًا على الأقل) تُقارَن بالجولة السابقة لإظهار التطور الحقيقي",
+  "zh": "轮次对比:学生重新评估时(默认最早 90 天后),与上一轮比较,显示真实的进步",
+  "hi": "दौर तुलना: विद्यार्थी का दोबारा आकलन होने पर (डिफ़ॉल्ट रूप से कम से कम 90 दिन बाद), पिछले दौर से तुलना करके वास्तविक विकास दिखाता है",
+  "uz": "Tur solishtirmasi: oʻquvchi qayta baholanganda (standart eng erta 90 kundan soʻng) oldingi tur bilan solishtirib, haqiqiy rivojlanishni koʻrsatadi",
+  "az": "Tur Müqayisəsi: şagird yenidən qiymətləndiriləndə (susmaya görə ən erkən 90 gün sonra), əvvəlki turla müqayisə edib real inkişafı göstərir",
+  "ko": "회차 비교: 학생이 재평가를 받으면(기본값은 최소 90일 후) 이전 회차와 비교하여 실제 성장을 보여 줍니다"
+ },
+ "öğrenci yeniden değerlendirildiğinde (varsayılan en erken 90 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir": {
+  "en": "when the student is reassessed (by default no earlier than 90 days later), it compares with the previous round and shows real growth",
+  "de": "bei erneuter Bewertung des Schülers (standardmäßig frühestens nach 90 Tagen) wird mit dem vorherigen Durchgang verglichen und die tatsächliche Entwicklung gezeigt",
+  "fr": "quand l'élève est réévalué (par défaut au plus tôt 90 jours après), compare avec la session précédente et montre le progrès réel",
+  "ru": "при повторном оценивании ученика (по умолчанию не ранее чем через 90 дней) сравнивает с предыдущей попыткой и показывает реальный прогресс",
+  "es": "cuando se reevalúa al estudiante (por defecto, como mínimo a los 90 días), se compara con la ronda anterior y muestra el progreso real",
+  "it": "quando lo studente viene rivalutato (per impostazione predefinita non prima di 90 giorni), confronta con il turno precedente e mostra la crescita reale",
+  "ar": "عند إعادة تقييم الطالب (الافتراضي بعد 90 يومًا على الأقل) يقارن بالجولة السابقة ويُظهر التطور الفعلي",
+  "zh": "当学生重新测评时（默认最早 90 天后），会与上一轮对比并显示真实的成长",
+  "hi": "छात्र का दोबारा असेसमेंट होने पर (डिफ़ॉल्ट रूप से कम से कम 90 दिन बाद), पिछले राउंड से तुलना करके असली विकास दिखाता है",
+  "uz": "oʻquvchi qayta baholanganda (sukut boʻyicha eng erta 90 kundan keyin), oldingi urinish bilan solishtirib, haqiqiy rivojlanishni koʻrsatadi",
+  "az": "şagird yenidən qiymətləndiriləndə (defolt ən tez 90 gün sonra), əvvəlki mərhələ ilə müqayisə edib real inkişafı göstərir",
+  "ko": "학생이 재평가를 받으면 (기본적으로 90일 후 이후), 이전 회차와 비교하여 실제 성장을 보여 줍니다"
  }
 }

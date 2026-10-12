@@ -211,3 +211,79 @@ def degerlendirme_sifirla(istek: IdlerIstek, db: Session = Depends(get_db), yon:
                     okullar.pop() if len(okullar) == 1 else None)
     db.commit()
     return {"sifirlanan": len(sifirlanan), "degerlendirmesi_olmayan": turu_yok}
+
+
+# ----------------------------------------------------------------------------- [2026-10-12] Yeniden değerlendirme
+@router.get("/ogrenci/{ogrenci_id}/degerlendirme-durumu")
+def ogrenci_degerlendirme_durumu(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    from app.core.guvenlik_servisi import katman_guven_durumlari
+    from app.core.katman_servisi import degerlendirme_durumu
+    o = _ogrenci_kapsami(db, yon, ogrenci_id)
+    d = degerlendirme_durumu(db, o)
+    tur = db.execute(text("SELECT id FROM ogrenci_degerlendirme_turu WHERE ogrenci_id = :o ORDER BY tur_no DESC LIMIT 1"),
+                     {"o": o.id}).first()
+    katmanlar = []
+    if tur:
+        from app.models import OgrenciDegerlendirmeTuru
+        t = db.get(OgrenciDegerlendirmeTuru, tur.id)
+        biten = {k for (k,) in db.execute(text("""SELECT k.kod FROM ogrenci_katman_oturumlari o JOIN katmanlar k ON k.id = o.katman_id
+                                                   WHERE o.tur_id = :t AND o.durum = 'tamamlandi'"""), {"t": tur.id})}
+        sorunlu = {k["kod"] for k in d.get("sorunlu_katmanlar") or []}
+        katmanlar = [{**{k: v for k, v in x.items() if k != "katman_id"}, "tamamlandi": x["kod"] in biten,
+                      "sorunlu": x["kod"] in sorunlu}   # öğrenciye gösterilen sorunlu bölümle aynı olsun
+                     for x in katman_guven_durumlari(db, o, t).values()]
+    return {**d, "katmanlar": katmanlar}
+
+
+class KatmanTekrarIstek(BaseModel):
+    kod: str
+
+
+@router.post("/ogrenci/{ogrenci_id}/katman-tekrar")
+def katman_tekrarlat(ogrenci_id: str, istek: KatmanTekrarIstek, db: Session = Depends(get_db),
+                     yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """Okul yetkilisi bir öğrencinin son turundaki tek bir katmanı tekrarlatır (diğer katmanlar ve sonuçlar kalır)."""
+    from app.core.katman_servisi import katmani_tekrara_ac
+    from app.models import Katman, OgrenciDegerlendirmeTuru
+    o = _ogrenci_kapsami(db, yon, ogrenci_id)
+    katman = db.query(Katman).filter(Katman.kod == istek.kod.upper(), Katman.kosullu_mu.is_(False)).first()
+    if not katman:
+        raise HTTPException(status_code=400, detail="Bu bölüm tekrarlatılamaz.")
+    tur = (db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.ogrenci_id == o.id)
+           .order_by(OgrenciDegerlendirmeTuru.tur_no.desc()).first())
+    if tur is None:
+        raise HTTPException(status_code=400, detail="Öğrencinin henüz değerlendirmesi yok.")
+    katmani_tekrara_ac(db, o, tur, katman)
+    olay_yaz(db, o.id, "katman_tekrar", f"{katman.kod} okul yetkilisi tarafından tekrar açıldı ({tur.tur_no}. tur)", yapan_etiketi(yon))
+    denetim_yaz(db, yon, "katman_tekrarlat", "ogrenciler", o.id, f"{o.ad_soyad}: {katman.kod} ({tur.tur_no}. tur)", o.okul_id)
+    db.commit()
+    return {"tamam": True}
+
+
+@router.post("/ogrenciler/yeniden-degerlendirme")
+def yeniden_degerlendirme_ac(istek: IdlerIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """Seçili öğrenciler bekleme süresini beklemeden yeni bir değerlendirme turuna başlayabilir. Önceki sonuçlar silinmez,
+    geçmişte kalır (gelişim karşılaştırması için)."""
+    if not istek.idler:
+        raise HTTPException(status_code=400, detail="Öğrenci seçilmedi.")
+    ogrenciler = [_ogrenci_kapsami(db, yon, i) for i in istek.idler]
+    yapan, acilan, devam, yok, okullar = yapan_etiketi(yon), [], 0, 0, set()
+    for o in ogrenciler:
+        son = db.execute(text("SELECT durum FROM ogrenci_degerlendirme_turu WHERE ogrenci_id = :o ORDER BY tur_no DESC LIMIT 1"),
+                         {"o": o.id}).first()
+        if son is None:
+            yok += 1
+            continue
+        if son.durum != "tamamlandi":
+            devam += 1   # zaten devam eden bir değerlendirmesi var
+            continue
+        o.yeni_tur_izni = simdi()
+        olay_yaz(db, o.id, "yeniden_degerlendirme_izni", "Bekleme süresi olmadan yeni değerlendirme açıldı", yapan)
+        acilan.append(o)
+        okullar.add(o.okul_id)
+    if acilan:
+        denetim_yaz(db, yon, "yeniden_degerlendirme_ac", "ogrenciler", ",".join(str(o.id) for o in acilan[:5]),
+                    f"{len(acilan)} öğrenci: " + ", ".join(o.ad_soyad for o in acilan[:10]) + ("…" if len(acilan) > 10 else ""),
+                    okullar.pop() if len(okullar) == 1 else None)
+    db.commit()
+    return {"acilan": len(acilan), "devam_eden": devam, "degerlendirmesi_olmayan": yok}

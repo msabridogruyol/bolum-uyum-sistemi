@@ -108,3 +108,96 @@ def test_degerlendirme_sifirlama_son_turu_siler_ve_beklemeden_baslatir(istemci, 
     tur = aktif_veya_yeni_tur_getir(db, o)                 # bekleme olmadan yeni tur
     assert tur.tur_no == 2 and tur.durum == "devam_ediyor" and o.yeni_tur_izni is None
     db.rollback()
+
+
+# ----------------------------------------------------------------------------- [2026-10-12] Yeniden değerlendirme kuralları
+def _katmanlar(db):
+    for i, kod in enumerate(["K1", "K2", "K3", "K4"], 1):
+        if not db.execute(text("SELECT 1 FROM katmanlar WHERE kod = :k"), {"k": kod}).first():
+            db.execute(text("INSERT INTO katmanlar (kod, ad, sira, kosullu_mu) VALUES (:k, :k, :s, FALSE)"), {"k": kod, "s": i})
+    return {k: i for k, i in db.execute(text("SELECT kod, id FROM katmanlar WHERE kod IN ('K1','K2','K3','K4')"))}
+
+
+def _tamamlanmis_tur(db, oid, gun_once, gecerli, olaylar=()):
+    kat = _katmanlar(db)
+    z = datetime.now(timezone.utc) - timedelta(days=gun_once)
+    tid = db.execute(text("""INSERT INTO ogrenci_degerlendirme_turu (ogrenci_id, tur_no, durum, baslama_zamani, tamamlanma_zamani,
+                             sonuc_gecerli_mi, guven_skoru) VALUES (:o, 1, 'tamamlandi', :z, :z, :g, :gs) RETURNING id"""),
+                     {"o": oid, "z": z, "g": gecerli, "gs": 90 if gecerli else 30}).scalar()
+    for kod, kid in kat.items():
+        db.execute(text("""INSERT INTO ogrenci_katman_oturumlari (ogrenci_id, tur_id, katman_id, durum, baslama_zamani, tamamlanma_zamani)
+                           VALUES (:o, :t, :k, 'tamamlandi', :z, :z)"""), {"o": oid, "t": tid, "k": kid, "z": z})
+    for kod, tip, n in olaylar:
+        for _ in range(n):
+            db.execute(text("""INSERT INTO guvenlik_olaylari (ogrenci_id, tur_id, olay_tipi, katman_kod, olay_zamani)
+                               VALUES (:o, :t, :tip, :k, :z)"""), {"o": oid, "t": tid, "tip": tip, "k": kod, "z": z})
+    db.commit()
+    return tid
+
+
+@db_gerekli
+def test_gecerli_turdan_sonra_3_ay_bekleme_ve_yonetim_izni(istemci, db, okul):
+    from app.core.katman_servisi import IsKuraliHatasi, aktif_veya_yeni_tur_getir, degerlendirme_durumu
+    from app.core.security import erisim_tokeni_uret
+    from app.models import Ogrenci
+    oid = okul["ogr"]["On"]
+    _tamamlanmis_tur(db, oid, 10, True)
+    o = db.get(Ogrenci, oid)
+    d = degerlendirme_durumu(db, o)
+    assert d["durum"] == "bekleme" and 79 <= d["kalan_gun"] <= 81 and d["bekleme_gun"] == 90
+    with pytest.raises(IsKuraliHatasi) as e:
+        aktif_veya_yeni_tur_getir(db, o)
+    assert "tarihinde açılır" in str(e.value)
+    db.rollback()
+    ogr = {"Authorization": f"Bearer {erisim_tokeni_uret(oid, 'ogrenci')}"}
+    assert istemci.get("/ogrenci/degerlendirme-durumu", headers=ogr).json()["durum"] == "bekleme"
+    # Okul yetkilisi yeniden değerlendirme açar: önceki tur kalır, yeni tur beklemeden açılır
+    r = istemci.post("/yonetim/ogrenciler/yeniden-degerlendirme", headers=okul["yet"], json={"idler": [str(oid), str(okul["ogr"]["Dokuz"])]})
+    assert r.json() == {"acilan": 1, "devam_eden": 0, "degerlendirmesi_olmayan": 1}
+    db.expire_all()
+    o = db.get(Ogrenci, oid)
+    assert degerlendirme_durumu(db, o)["durum"] == "acik"
+    tur = aktif_veya_yeni_tur_getir(db, o)
+    assert tur.tur_no == 2 and o.yeni_tur_izni is None
+    db.rollback()
+
+
+@db_gerekli
+def test_guven_sorununda_yalnizca_sorunlu_katman_tekrar_cozulur(istemci, db, okul):
+    from app.core.katman_servisi import IsKuraliHatasi, aktif_veya_yeni_tur_getir
+    from app.core.security import erisim_tokeni_uret
+    from app.models import Ogrenci
+    oid = okul["ogr"]["Onbir"]
+    tid = _tamamlanmis_tur(db, oid, 2, False, olaylar=[("K2", "sekme_degisti", 8), ("K1", "sekme_degisti", 1)])
+    ogr = {"Authorization": f"Bearer {erisim_tokeni_uret(oid, 'ogrenci')}"}
+    d = istemci.get("/ogrenci/degerlendirme-durumu", headers=ogr).json()
+    assert d["durum"] == "guven_sorunu" and [k["kod"] for k in d["sorunlu_katmanlar"]] == ["K2"]
+    # Yeni tam tur açılmaz
+    with pytest.raises(IsKuraliHatasi) as e:
+        aktif_veya_yeni_tur_getir(db, db.get(Ogrenci, oid))
+    assert "K2" in str(e.value)
+    db.rollback()
+    assert istemci.post("/ogrenci/katmanlar/K1/tekrar", headers=ogr).status_code == 400   # sorunsuz katman
+    assert istemci.post("/ogrenci/katmanlar/K2/tekrar", headers=ogr).status_code == 200
+    db.expire_all()
+    tur = db.execute(text("SELECT durum, tur_no FROM ogrenci_degerlendirme_turu WHERE id = :t"), {"t": tid}).first()
+    assert tur.durum == "devam_ediyor" and tur.tur_no == 1                     # aynı tur, yeni tur açılmadı
+    oturumlar = {k for (k,) in db.execute(text("""SELECT k.kod FROM ogrenci_katman_oturumlari o JOIN katmanlar k ON k.id = o.katman_id
+                                                    WHERE o.tur_id = :t"""), {"t": tid})}
+    assert "K2" not in oturumlar and {"K1", "K3", "K4"} <= oturumlar
+    olay = dict(db.execute(text("SELECT katman_kod, count(*) FROM guvenlik_olaylari WHERE tur_id = :t GROUP BY 1"), {"t": tid}).all())
+    assert olay == {"K1": 1}                                                    # eski K2 ihlalleri yeni denemeyi düşürmez
+    assert aktif_veya_yeni_tur_getir(db, db.get(Ogrenci, oid)).id == tid        # öğrenci aynı turda K2'yi çözer
+    db.rollback()
+
+
+@db_gerekli
+def test_yetkili_tek_katmani_tekrarlatir(istemci, db, okul):
+    oid = okul["ogr"]["Oniki"]
+    tid = _tamamlanmis_tur(db, oid, 5, True)
+    r = istemci.get(f"/yonetim/ogrenci/{oid}/degerlendirme-durumu", headers=okul["yet"])
+    assert r.status_code == 200 and r.json()["durum"] == "bekleme" and len(r.json()["katmanlar"]) == 4
+    assert istemci.post(f"/yonetim/ogrenci/{oid}/katman-tekrar", headers=okul["yet"], json={"kod": "K3"}).status_code == 200
+    db.expire_all()
+    assert db.execute(text("SELECT durum FROM ogrenci_degerlendirme_turu WHERE id = :t"), {"t": tid}).scalar() == "devam_ediyor"
+    assert istemci.post(f"/yonetim/ogrenci/{okul['ogr']['Baska']}/katman-tekrar", headers=okul["yet"], json={"kod": "K3"}).status_code in (403, 404)

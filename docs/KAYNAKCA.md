@@ -59,14 +59,14 @@ Toplam: 70 bileşen, 159 kaynak.
 
 K1–K5 soru metinleri ve şıkları; öğrencinin değerlendirme turlarının açılması ve soru setinin dondurulması.
 
-**Nasıl:** Soru metinleri repoda değil, veritabanında; admin panelinden tekil, Likert/SJT toplu ve kutup toplu (katman_kod, a/b değişken kodu, metin, uç etiketleri) yüklemeyle girilir, silinmez yalnızca pasife alınır. Katman başlarken aktif soru id'leri kilitlenir; iki tam tur arasında varsayılan 120 gün (parametre yeniden_degerlendirme_min_gun).
+**Nasıl:** Soru metinleri repoda değil, veritabanında; admin panelinden tekil, Likert/SJT toplu ve kutup toplu (katman_kod, a/b değişken kodu, metin, uç etiketleri) yüklemeyle girilir, silinmez yalnızca pasife alınır. Katman başlarken aktif soru id'leri kilitlenir; iki tam tur arasında varsayılan 90 gün (parametre yeniden_degerlendirme_min_gun; 2026-10-12'de 120'den 90'a indirildi). Güven puanı düşük çıkan turda yeni tam tur açılmaz; yalnızca sorunlu katman(lar) aynı turda yeniden çözülür. Okul yetkilisi tek bir katmanı tekrarlatabilir ya da bekleme süresi olmadan yeni tur açabilir (önceki tur saklanır).
 
 **Dayanak:**
 
 - [2] American Educational Research Association, American Psych…, 2014 — Test içeriğinin kapsam geçerliği, madde geliştirme, belgeleme ve puanların yorumlanmasına ilişkin genel standartları ortaya koyar; bileşen bu ilkelerden esinlenir, standartların resmî bir uygunluk denetiminden geçmemiştir.
-- [84] Low ve ark., 2005 — Mesleki ilgilerin ergenlikte görece daha az kararlı olduğunu ve yaşla kararlılığın arttığını gösterir; lise öğrencisinde belirli aralıklarla yeniden değerlendirme yapılmasına gerekçe verir, ancak 120 günlük aralığın kendisini belirlemez.
+- [84] Low ve ark., 2005 — Mesleki ilgilerin ergenlikte görece daha az kararlı olduğunu ve yaşla kararlılığın arttığını gösterir; lise öğrencisinde belirli aralıklarla yeniden değerlendirme yapılmasına gerekçe verir, ancak 90 günlük aralığın kendisini belirlemez.
 
-> Soru bankasının pasife alma (silmeme), soru setini kilitleme ve toplu yükleme mekanizmaları yazılım/ürün kararıdır. 120 günlük yeniden değerlendirme aralığı kurum içi bir parametredir; akademik bir test–tekrar test aralığına dayanmaz. Maddelerin madde yazım ilkelerine uygunluğu ayrıca belgelenmemiştir.
+> Soru bankasının pasife alma (silmeme), soru setini kilitleme ve toplu yükleme mekanizmaları yazılım/ürün kararıdır. 90 günlük yeniden değerlendirme aralığı kurum içi bir parametredir; akademik bir test–tekrar test aralığına dayanmaz. Maddelerin madde yazım ilkelerine uygunluğu ayrıca belgelenmemiştir.
 
 ### Likert puanlama ve değişken puanı
 
