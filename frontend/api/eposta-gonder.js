@@ -13,6 +13,9 @@
 // Mailgun, Yandex, kurumsal posta vb.) yalnızca ortam değişkeni değiştirerek geçilir; kod değişmez:
 //   SMTP_SUNUCU, SMTP_PORT (465 ya da 587), SMTP_KULLANICI, SMTP_SIFRE, GONDEREN_ADRES (gönderen e-posta adresi)
 // SMTP_SUNUCU tanımlıysa o kullanılır; yoksa Gmail (GMAIL_ADRES / GMAIL_UYGULAMA_SIFRESI).
+//
+// [2026-10-12] Ek dosya: ekler = [{ ad, icerik (base64), tur }] — yalnızca PDF, en çok 3 dosya, toplam 3 MB
+// (sonuç raporu). Vercel istek gövdesi sınırı 4,5 MB'dir.
 import nodemailer from 'nodemailer'
 import crypto from 'node:crypto'
 
@@ -67,7 +70,7 @@ export default async function handler(req, res) {
   if (typeof govde === 'string') {
     try { govde = JSON.parse(govde) } catch { govde = null }
   }
-  const { alici, konu, html, metin } = govde || {}
+  const { alici, konu, html, metin, ekler } = govde || {}
   if (typeof alici !== 'string' || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(alici) || alici.length > 254) {
     return res.status(400).json({ hata: 'Geçersiz alıcı' })
   }
@@ -78,6 +81,25 @@ export default async function handler(req, res) {
     return res.status(400).json({ hata: 'İçerik çok uzun' })
   }
 
+  let ekDosyalar
+  if (ekler !== undefined) {
+    if (!Array.isArray(ekler) || ekler.length > 3) return res.status(400).json({ hata: 'Geçersiz ek' })
+    let toplam = 0
+    ekDosyalar = []
+    for (const e of ekler) {
+      if (!e || typeof e.ad !== 'string' || !/^[A-Za-z0-9_.-]{1,120}\.pdf$/.test(e.ad) || e.tur !== 'application/pdf'
+          || typeof e.icerik !== 'string' || !/^[A-Za-z0-9+/=]+$/.test(e.icerik)) {
+        return res.status(400).json({ hata: 'Geçersiz ek' })
+      }
+      const icerik = Buffer.from(e.icerik, 'base64')
+      toplam += icerik.length
+      if (toplam > 3 * 1024 * 1024 || icerik.subarray(0, 5).toString('latin1') !== '%PDF-') {
+        return res.status(400).json({ hata: 'Geçersiz ek' })
+      }
+      ekDosyalar.push({ filename: e.ad, content: icerik, contentType: 'application/pdf' })
+    }
+  }
+
   try {
     await tasiyiciAl().sendMail({
       from: { name: 'Filizyol', address: gonderenAdres() },
@@ -85,6 +107,7 @@ export default async function handler(req, res) {
       subject: konu,
       text: metin || '',
       html: html || undefined,
+      attachments: ekDosyalar,
     })
     return res.status(200).json({ gonderildi: true })
   } catch (hata) {

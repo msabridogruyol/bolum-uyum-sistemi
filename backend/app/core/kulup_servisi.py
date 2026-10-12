@@ -14,6 +14,7 @@ import json
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from app.core.metin import turkce_kucult
 
 BOYUTLAR = {
     "bilim": {"ad": "Bilim ve deney", "ikon": "🔬"},
@@ -111,7 +112,7 @@ def kulup_uyumu(puanlar: dict, ilgiler: str) -> int | None:
 
 def neden(puanlar: dict, ilgiler: str) -> str:
     e = sorted(etiketler(ilgiler), key=lambda b: -puanlar.get(b, 0))
-    uygun = [f"{BOYUTLAR[b]['ad'].lower()} (%{puanlar.get(b, 0)})" for b in e if puanlar.get(b, 0) >= 60]
+    uygun = [f"{turkce_kucult(BOYUTLAR[b]['ad'])} (%{puanlar.get(b, 0)})" for b in e if puanlar.get(b, 0) >= 60]
     return ("İlgilerinle örtüşüyor: " + ", ".join(uygun[:2])) if uygun else "Yeni bir alan denemek için"
 
 

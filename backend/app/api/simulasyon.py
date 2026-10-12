@@ -25,6 +25,7 @@ from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
 from app.core.database import get_db
 from app.core.meslek_senaryolari import YAKLASIMLAR, senaryo_bul
 from app.models import AdminKullanici, Ogrenci
+from app.core.metin import turkce_kucult
 
 ogrenci_router = APIRouter(prefix="/ogrenci", tags=["Meslek simülasyonu"])
 yonetim_router = APIRouter(prefix="/yonetim", tags=["Meslek simülasyonu"])
@@ -88,7 +89,7 @@ def simulasyon(bolum_id: int, meslek: int = Query(0, ge=0), db: Session = Depend
         raise HTTPException(400, "Bu meslek için simülasyon hazırlanacak kadar bilgi yok.")
     kararlar = senaryo_bul(m.get("ad"))
     sahneler = [{"id": "sabah", "tur": "giris", "saat": "07:30", "baslik": "Güne başlıyorsun",
-                 "metin": f"Bugün bir {m.get('ad', '').lower()} olarak çalışıyorsun. {m.get('calisma_ortami') or ''}".strip()}]
+                 "metin": f"Bugün bir {turkce_kucult(m.get('ad', ''))} olarak çalışıyorsun. {m.get('calisma_ortami') or ''}".strip()}]
     for i, is_ in enumerate(isler):
         sahneler.append({"id": f"is{i}", "tur": "is", "saat": IS_SAATLERI[min(i, len(IS_SAATLERI) - 1)], "baslik": "Görev", "metin": is_})
     for kno, k in enumerate(kararlar):   # karar anları kendi saatlerine yerleşir

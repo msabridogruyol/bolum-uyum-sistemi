@@ -587,5 +587,19 @@
   "uz": "oʻquvchi qayta baholanganda (sukut boʻyicha eng erta 90 kundan keyin), oldingi urinish bilan solishtirib, haqiqiy rivojlanishni koʻrsatadi",
   "az": "şagird yenidən qiymətləndiriləndə (defolt ən tez 90 gün sonra), əvvəlki mərhələ ilə müqayisə edib real inkişafı göstərir",
   "ko": "학생이 재평가를 받으면 (기본적으로 90일 후 이후), 이전 회차와 비교하여 실제 성장을 보여 줍니다"
+ },
+ "Değerlendirmenin tamamını bitirdin! 🎉 Sonuçların hazır; bölüm önerilerine göz at.": {
+  "en": "You've finished the whole assessment! 🎉 Your results are ready; take a look at your major recommendations.",
+  "de": "Du hast die gesamte Bewertung abgeschlossen! 🎉 Deine Ergebnisse sind fertig; sieh dir deine Studienempfehlungen an.",
+  "fr": "Tu as terminé toute l'évaluation ! 🎉 Tes résultats sont prêts ; jette un œil à tes recommandations de filières.",
+  "ru": "Ты прошёл всю оценку! 🎉 Результаты готовы — посмотри рекомендации по специальностям.",
+  "es": "¡Has terminado toda la evaluación! 🎉 Tus resultados están listos; echa un vistazo a tus recomendaciones de carreras.",
+  "it": "Hai completato tutta la valutazione! 🎉 I tuoi risultati sono pronti; dai un’occhiata ai corsi di laurea consigliati.",
+  "ar": "لقد أنهيت التقييم بالكامل! 🎉 نتائجك جاهزة؛ ألقِ نظرة على التخصصات المقترحة لك.",
+  "zh": "你已完成全部评估！🎉 结果已出炉，快去看看为你推荐的专业吧。",
+  "hi": "तुमने पूरा आकलन पूरा कर लिया! 🎉 तुम्हारे नतीजे तैयार हैं; अपने सुझाए गए कोर्स देखो।",
+  "uz": "Baholashni toʻliq yakunlading! 🎉 Natijalaring tayyor; tavsiya etilgan yoʻnalishlarni koʻrib chiq.",
+  "az": "Qiymətləndirmənin hamısını bitirdin! 🎉 Nəticələrin hazırdır; ixtisas tövsiyələrinə bax.",
+  "ko": "평가를 모두 마쳤어요! 🎉 결과가 준비됐어요. 추천 전공을 확인해 보세요."
  }
 }

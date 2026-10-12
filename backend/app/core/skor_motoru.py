@@ -37,6 +37,7 @@ normalizasyon_agirligi'nin o katmandaki değişken sayısına eşit
 bölünmesiyle bulunur [ÇIKARIM — belgede değişken-bazlı ağırlık
 dağılımı tanımlanmamıştı, yalnızca katman-bazlı %20/15/25/40].
 """
+from app.core.metin import turkce_kucult
 import math
 from dataclasses import dataclass
 
@@ -690,7 +691,7 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
     for bid, d in sonuc.items():
         m = []
         if d["ortusen"]:
-            m.append("Örtüşen güçlü yönlerin: " + ", ".join(x["ozellik"].lower() for x in d["ortusen"]) + ".")
+            m.append("Örtüşen güçlü yönlerin: " + ", ".join(turkce_kucult(x["ozellik"]) for x in d["ortusen"]) + ".")
         if d["k5"]:
             m.append(f"Alan sorularında «{d['k5']['is_turu']}» işlerini "
                      + ("öne çıkardın." if d["k5"]["durum"] == "uyumlu" else "daha az seçtin."))

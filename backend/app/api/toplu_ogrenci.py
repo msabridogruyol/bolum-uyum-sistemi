@@ -220,8 +220,16 @@ def ogrenci_degerlendirme_durumu(ogrenci_id: str, db: Session = Depends(get_db),
     from app.core.katman_servisi import degerlendirme_durumu
     o = _ogrenci_kapsami(db, yon, ogrenci_id)
     d = degerlendirme_durumu(db, o)
-    tur = db.execute(text("SELECT id FROM ogrenci_degerlendirme_turu WHERE ogrenci_id = :o ORDER BY tur_no DESC LIMIT 1"),
+    tur = db.execute(text("""SELECT id, durum, sonuc_gecerli_mi, sonuc_epostasi_zamani, sonuc_epostasi_durum
+                             FROM ogrenci_degerlendirme_turu WHERE ogrenci_id = :o ORDER BY tur_no DESC LIMIT 1"""),
                      {"o": o.id}).first()
+    # [2026-10-12] Sonuç e-postası durumu (öğrenci detayında gösterilir; okul yetkilisi yeniden gönderebilir)
+    from app.core import eposta_servisi as ep
+    from app.core.sonuc_epostasi import rapor_ekli_mi
+    eposta = {"zaman": tur.sonuc_epostasi_zamani if tur else None, "durum": tur.sonuc_epostasi_durum if tur else None,
+              "gonderilebilir": bool(tur and tur.durum == "tamamlandi" and tur.sonuc_gecerli_mi is not False and o.email
+                                     and not o.test_hesabi and ep.eposta_yapilandirildi_mi()),
+              "pdf_ekli": rapor_ekli_mi(db, o.okul_id), "alici": o.email}
     katmanlar = []
     if tur:
         from app.models import OgrenciDegerlendirmeTuru
@@ -232,7 +240,27 @@ def ogrenci_degerlendirme_durumu(ogrenci_id: str, db: Session = Depends(get_db),
         katmanlar = [{**{k: v for k, v in x.items() if k != "katman_id"}, "tamamlandi": x["kod"] in biten,
                       "sorunlu": x["kod"] in sorunlu}   # öğrenciye gösterilen sorunlu bölümle aynı olsun
                      for x in katman_guven_durumlari(db, o, t).values()]
-    return {**d, "katmanlar": katmanlar}
+    return {**d, "katmanlar": katmanlar, "sonuc_epostasi": eposta}
+
+
+@router.post("/ogrenci/{ogrenci_id}/sonuc-epostasi")
+def sonuc_epostasini_gonder(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-12] Son tamamlanan değerlendirmenin sonuç e-postasını (PDF ekli) yeniden gönderir."""
+    from app.core import sonuc_epostasi as se
+    o = _ogrenci_kapsami(db, yon, ogrenci_id)
+    tur = db.execute(text("SELECT id FROM ogrenci_degerlendirme_turu WHERE ogrenci_id = :o ORDER BY tur_no DESC LIMIT 1"),
+                     {"o": o.id}).first()
+    if not tur:
+        raise HTTPException(status_code=400, detail="Öğrencinin henüz değerlendirmesi yok.")
+    r = se.gonder(db, o.id, tur.id, zorla=True, yapan=yapan_etiketi(yon))
+    hatalar = {"uygun_degil": "Sonuç e-postası yalnızca güvenilir şekilde tamamlanmış bir değerlendirme için ve e-posta adresi olan öğrenciye gönderilebilir.",
+               "yapilandirilmadi": "E-posta gönderimi yapılandırılmamış.",
+               "hata": "E-posta gönderilemedi. Biraz sonra tekrar deneyin."}
+    if r["durum"] in hatalar:
+        raise HTTPException(status_code=400 if r["durum"] != "hata" else 502, detail=hatalar[r["durum"]])
+    denetim_yaz(db, yon, "sonuc_epostasi_gonder", "ogrenciler", o.id, f"{o.ad_soyad}: sonuç e-postası{' (PDF ekli)' if r['ekli'] else ''}", o.okul_id)
+    db.commit()
+    return r
 
 
 class KatmanTekrarIstek(BaseModel):

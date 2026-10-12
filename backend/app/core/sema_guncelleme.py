@@ -31,6 +31,7 @@ OTOMATIK += ["0065_aktif_gunler"]   # [2026-10-11] günlük aktiflik kaydı (ö�
 OTOMATIK += ["0066_pilot_hazirlik"]   # [2026-10-11] oturum geçersiz kılma, laboratuvar giriş sınırı, sözlük bildirimleri
 OTOMATIK += ["0067_coklu_dil"]   # [2026-10-12] kişisel dil tercihi + içerik çeviri önbelleği
 OTOMATIK += ["0068_toplu_ogrenci_islemleri"]   # [2026-10-12] sınıf atlatma (geri alınabilir) + değerlendirme sıfırlama
+OTOMATIK += ["0069_sonuc_epostasi"]   # [2026-10-12] değerlendirme tamamlanınca sonuç e-postası (+ PDF)
 KILIT = 2026101001
 
 
