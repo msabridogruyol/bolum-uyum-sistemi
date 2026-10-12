@@ -287,6 +287,7 @@ def katmani_tamamla_uc_nokta(
     db.commit()
 
     # [2026-10-12] Değerlendirme bitti → sonuç e-postası (+ PDF) arka planda; cevap beklemez. Güven puanı düşükse gitmez.
+    # K5 derinleşme dalı açıldıysa burada gitmez: son dal bitince (dali_tamamla_uc_nokta) gider.
     sonuc_epostasi = False
     if tum_tamam:
         from app.core import sonuc_epostasi as se
@@ -396,6 +397,7 @@ def dal_soruyu_cevapla(
 @router.post("/dallar/{kod}/tamamla", response_model=DalTamamlamaCevap)
 def dali_tamamla_uc_nokta(
     kod: str,
+    arka_plan: BackgroundTasks,
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
@@ -424,9 +426,17 @@ def dali_tamamla_uc_nokta(
         raise HTTPException(status_code=400, detail=str(e))
     db.commit()
 
+    # [2026-10-12] K5 değerlendirmenin son bölümü: son açık dal da bittiyse sonuç e-postası (+ PDF) arka planda gider
+    from app.core import sonuc_epostasi as se
+    db.refresh(tur)
+    sonuc_epostasi = se.otomatik_gidecek_mi(db, ogrenci, tur)
+    if sonuc_epostasi:
+        arka_plan.add_task(se.arka_planda_gonder, ogrenci.id, tur.id)
+
     degisken_adlari = {d.id: d.ad for d in db.query(Degisken).filter(Degisken.id.in_([s[0] for s in sonuclar])).all()}
     return DalTamamlamaCevap(
         dal_kodu=dal.kod,
+        sonuc_epostasi=sonuc_epostasi,
         sonuclar=[
             KatmanSonucSatiri(degisken_id=did, degisken_adi=degisken_adlari.get(did, "?"), puan=puan)
             for did, puan in sonuclar

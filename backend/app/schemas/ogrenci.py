@@ -158,6 +158,7 @@ class DalBaslatCevap(BaseModel):
 
 class DalTamamlamaCevap(BaseModel):
     dal_kodu: str
+    sonuc_epostasi: bool = False   # [2026-10-12] son K5 dalı bittiyse sonuç raporu e-postayla gönderilecek
     sonuclar: list[KatmanSonucSatiri]
 
 

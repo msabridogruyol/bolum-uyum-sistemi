@@ -261,3 +261,33 @@ def test_katman_tekrari_bitince_sonuc_epostasi_yeniden_gider(db, okul, monkeypat
     db.execute(text("UPDATE ogrenci_degerlendirme_turu SET tamamlanma_zamani = clock_timestamp() + interval '1 second' WHERE id = :t"), {"t": tid})
     db.commit()
     assert se.gonder(db, oid, tid)["durum"] == "gonderildi" and len(ep.GONDERILENLER) == 2
+
+
+@db_gerekli
+def test_sonuc_epostasi_k5_dali_bitmeden_gitmez(db, okul, monkeypatch):
+    """Son bölüm K5: açılan derinleşme dalı bitmeden e-posta gitmez; son dal bitince gider."""
+    from app.core import eposta_servisi as ep
+    from app.core import sonuc_epostasi as se
+    from app.models import Ogrenci, OgrenciDegerlendirmeTuru
+    monkeypatch.setenv("TEST_EPOSTA_KAYDI", "1")
+    ep.GONDERILENLER.clear()
+    oid = okul["ogr"]["Tekrar"]
+    tid = _tamamlanmis_tur(db, oid, 0, True)
+    ek = uuid.uuid4().hex[:6]
+    katman_id = db.execute(text("SELECT id FROM katmanlar ORDER BY sira LIMIT 1")).scalar()
+    dal_id = db.execute(text("""INSERT INTO dallar (kod, ad, dogrulama_durumu, olusturulma_zamani)
+                                VALUES (:k, :k, 'taslak', now()) RETURNING id"""), {"k": f"TDAL{ek}"}).scalar()
+    dg = db.execute(text("""INSERT INTO degiskenler (katman_id, kod, ad, sira, ters_yonlu, dal_id)
+                            VALUES (:ka, :k, :k, 99, FALSE, :d) RETURNING id"""), {"ka": katman_id, "k": f"TDG{ek}", "d": dal_id}).scalar()
+    db.execute(text("""INSERT INTO sorular (katman_id, degisken_id, soru_tipi, soru_metni, ters_kodlanmis_mi, aktif_mi, olusturulma_zamani)
+                       VALUES (:ka, :dg, 'likert', 'Test K5 sorusu', FALSE, TRUE, now())"""), {"ka": katman_id, "dg": dg})
+    db.execute(text("""INSERT INTO ogrenci_dal_oturumlari (ogrenci_id, tur_id, dal_id, durum)
+                       VALUES (:o, :t, :d, 'devam_ediyor')"""), {"o": oid, "t": tid, "d": dal_id})
+    db.commit()
+    o, tur = db.get(Ogrenci, oid), db.get(OgrenciDegerlendirmeTuru, tid)
+    assert se.otomatik_gidecek_mi(db, o, tur) is False
+    assert se.gonder(db, oid, tid)["durum"] == "k5_bekliyor" and ep.GONDERILENLER == []
+    db.execute(text("UPDATE ogrenci_dal_oturumlari SET durum = 'tamamlandi' WHERE tur_id = :t"), {"t": tid})
+    db.commit()
+    assert se.otomatik_gidecek_mi(db, o, tur) is True
+    assert se.gonder(db, oid, tid)["durum"] == "gonderildi" and len(ep.GONDERILENLER) == 1

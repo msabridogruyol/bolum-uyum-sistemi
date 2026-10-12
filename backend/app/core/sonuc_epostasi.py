@@ -2,7 +2,9 @@
 [2026-10-12] Değerlendirme tamamlanınca öğrenciye sonuç e-postası (+ PDF sonuç raporu).
 
 Ne zaman gider?
-  * K1–K4 bitip tur 'tamamlandi' olduğunda, cevap isteğini bekletmeden arka planda (BackgroundTasks).
+  * Değerlendirmenin SON bölümü bitince: K1–K4 tamamlanmış (tur 'tamamlandi') VE açılan K5 derinleşme dallarının
+    hepsi bitmiş olmalı (dal_servisi.bekleyen_dal_var_mi — sonuç ekranıyla aynı kural). K5 dalı açılmadıysa K4
+    bitince gider. Cevap isteğini bekletmez; arka planda (BackgroundTasks) hazırlanır.
   * Güven puanı düşük (sonuc_gecerli_mi = False) turda GİTMEZ: sonuçlar güvenilir sayılmaz. Öğrenci sorunlu katmanı
     yeniden çözüp tur tekrar tamamlanınca gider.
   * Test hesaplarına, e-postası olmayan öğrencilere ve 'sonuc_epostasi_acik' parametresi '0' ise gitmez.
@@ -52,6 +54,8 @@ def gonder(db: Session, ogrenci_id, tur_id: int, zorla: bool = False, yapan: str
         return {"durum": "uygun_degil", "ekli": False, "alici": None}
     if not zorla and not otomatik_acik_mi(db):
         return {"durum": "kapali", "ekli": False, "alici": o.email}
+    if not zorla and _k5_bekliyor(db, o, tur.id):
+        return {"durum": "k5_bekliyor", "ekli": False, "alici": o.email}
     if not ep.eposta_yapilandirildi_mi():
         return {"durum": "yapilandirilmadi", "ekli": False, "alici": o.email}
 
@@ -102,9 +106,18 @@ def arka_planda_gonder(ogrenci_id, tur_id: int) -> None:
         db.close()
 
 
+def _k5_bekliyor(db: Session, ogrenci, tur_id: int) -> bool:
+    """Açılmış ama bitmemiş (sorusu olan) K5 derinleşme dalı var mı? Varsa değerlendirme henüz bitmemiştir."""
+    from app.core.dal_servisi import bekleyen_dal_var_mi
+    from app.models import OgrenciDegerlendirmeTuru
+    return bekleyen_dal_var_mi(db, ogrenci, db.get(OgrenciDegerlendirmeTuru, tur_id))
+
+
 def otomatik_gidecek_mi(db: Session, ogrenci, tur) -> bool:
-    """Tamamlama ekranında 'raporun e-postana gönderilecek' yazılıp yazılmayacağı (yanlış vaat olmasın)."""
+    """Son bölüm (K4 ya da son K5 dalı) bitince çağrılır: e-posta şimdi gidecek mi?
+    Tamamlama ekranında 'raporun e-postana gönderilecek' yalnızca bu True ise yazılır (yanlış vaat olmasın)."""
     from app.core import eposta_servisi as ep
     return (tur is not None and tur.durum == "tamamlandi" and tur.sonuc_gecerli_mi is not False
+            and not _k5_bekliyor(db, ogrenci, tur.id)
             and not getattr(ogrenci, "test_hesabi", False) and bool((ogrenci.email or "").strip())
             and otomatik_acik_mi(db) and ep.eposta_yapilandirildi_mi())

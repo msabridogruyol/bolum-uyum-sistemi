@@ -234,7 +234,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Gelişim Yol Haritası:</b> içeriği olan en öncelikli 3 gelişim alanı + en belirgin 2 güçlü yön; adımlar 3 aşamaya dağılır: "Bu hafta başla" (1-2 hafta) / "Önümüzdeki 1-3 ay" / "6-12 ay". Kaynak önerileri (kitap, film, kişi, aktivite…) admin panelinden elle girilir</Madde>
         <Madde><b>Tekrar ölçüm:</b> değer (K1) dışındaki odak alanında her 3 tamamlanan adımda bir, o değişkene en çok etki eden en fazla 5 soru yeniden sorulur</Madde>
         <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (varsayılan en erken 90 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
-        <Madde><b>Sonuç e-postası:</b> öğrenci dört katmanı bitirince sonuç e-postası kendi e-posta adresine otomatik gider; okulun paketinde öğrenci raporları varsa PDF sonuç raporu ektedir. Güven puanı düşük çıkan değerlendirmede gönderilmez; sorunlu bölüm yeniden çözülünce gider. Okul yetkilisi öğrenci detayından yeniden gönderebilir</Madde>
+        <Madde><b>Sonuç e-postası:</b> öğrenci değerlendirmenin son bölümünü bitirince (K1–K4 ve açıldıysa K5 derinleşme alanlarının tamamı) sonuç e-postası kendi e-posta adresine otomatik gider; okulun paketinde öğrenci raporları varsa PDF sonuç raporu ektedir. Güven puanı düşük çıkan değerlendirmede gönderilmez; sorunlu bölüm yeniden çözülünce gider. Okul yetkilisi öğrenci detayından yeniden gönderebilir</Madde>
         <Madde><b>Haftalık görevler:</b> her hafta 3 görev (yolculuk, keşif, yansıtma), seri ve Filiz seviyesi (Tohum → Ulu Çınar)</Madde>
       </Bolum>
 
