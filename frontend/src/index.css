@@ -3089,3 +3089,15 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 .dl-diller{display:flex;flex-wrap:wrap;gap:6px;margin:8px 0}
 .dl-diller span{font-size:12px;padding:3px 9px;border-radius:999px;background:var(--sur2,var(--bg));border:1px solid var(--bor)}
 .dl-liste{margin:6px 0 0;padding-inline-start:18px;font-size:13px;line-height:1.6;color:var(--tx2)}
+
+/* [2026-10-12] Yeni eğitim yılı: sınıf atlatma penceresi */
+.yp-uyari-yesil{background:var(--grl);border:1px solid var(--gr);color:var(--tx);border-radius:12px;padding:10px 14px;font-size:13px}
+.sa-tablo td,.sa-tablo th{padding:8px 10px}
+.sa-tablo tr.sa-pasif td{opacity:.45}
+.sa-bilgi{margin-top:14px;padding:10px 12px;border:1px dashed var(--bor2);border-radius:12px}
+.sa-baslik{font-weight:700;font-size:13px;margin-bottom:4px}
+.sa-adlar{font-size:12.5px;margin-top:4px}
+.sa-liste{margin:12px 0 0;padding-inline-start:18px;font-size:12.5px;color:var(--tx2);line-height:1.6}
+.sa-son{margin-top:10px;font-size:12.5px;color:var(--tx2)}
+.sa-onay{display:flex;gap:8px;align-items:flex-start;margin-top:14px;font-size:13px;font-weight:600;cursor:pointer}
+.sa-onay input{margin-top:2px;width:16px;height:16px;accent-color:var(--pu)}

@@ -76,7 +76,11 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
 
     yeni_tur_no = 1
     # [2026-10-10] Güven puanı eşiğin altında kalan (geçersiz) turdan sonra bekleme süresi uygulanmaz; öğrenci hemen yeniden değerlendirilebilir.
-    if son_tamamlanan is not None and son_tamamlanan.sonuc_gecerli_mi is not False:
+    # [2026-10-12] Yönetim değerlendirmeyi sıfırladıysa (ogrenci.yeni_tur_izni) bekleme süresi uygulanmaz
+    izinli = getattr(ogrenci, "yeni_tur_izni", None) is not None
+    if son_tamamlanan is not None and (izinli or son_tamamlanan.sonuc_gecerli_mi is False):
+        yeni_tur_no = son_tamamlanan.tur_no + 1
+    elif son_tamamlanan is not None:
         min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "120"))
         simdi = datetime.now(timezone.utc)
         tamamlanma = son_tamamlanan.tamamlanma_zamani
@@ -93,6 +97,8 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
         yeni_tur_no = son_tamamlanan.tur_no + 1
 
     yeni_tur = OgrenciDegerlendirmeTuru(ogrenci_id=ogrenci.id, tur_no=yeni_tur_no, durum="devam_ediyor")
+    if getattr(ogrenci, "yeni_tur_izni", None) is not None:
+        ogrenci.yeni_tur_izni = None
     db.add(yeni_tur)
     try:
         db.flush()

@@ -637,6 +637,11 @@ export const api = {
   girisListesi: (okulId) => aget(`/yonetim/okul/${okulId}/giris-listesi`),
   ogrenciSifreleriniSifirla: (idler) => apost('/yonetim/ogrenciler/sifre-sifirla', { idler }),
   ogrencileriSil: (idler) => apost('/yonetim/ogrenciler/sil', { idler }),
+  // [2026-10-12] Yeni eğitim yılı: toplu sınıf atlatma (geri alınabilir) ve değerlendirmeyi sıfırlama
+  sinifAtlatOnizle: (okulId, haric = []) => aget(`/yonetim/okul/${okulId}/sinif-atlat${haric.length ? `?haric=${haric.join(',')}` : ''}`),
+  sinifAtlat: (okulId, veri) => apost(`/yonetim/okul/${okulId}/sinif-atlat`, veri),
+  topluIslemGeriAl: (islemId) => apost(`/yonetim/toplu-islem/${islemId}/geri-al`),
+  degerlendirmeSifirla: (idler) => apost('/yonetim/ogrenciler/degerlendirme-sifirla', { idler }),
   okulYetkilileri: (okulId) => aget(`/yonetim/okul/${okulId}/yetkililer`),
   okulYetkilisiEkle: (okulId, veri) => apost(`/yonetim/okul/${okulId}/yetkililer`, veri),
   okulYetkilisiSifreSifirla: (id) => apost(`/yonetim/yetkili/${id}/sifre-sifirla`),
