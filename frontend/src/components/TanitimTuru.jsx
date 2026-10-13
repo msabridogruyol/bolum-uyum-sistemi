@@ -13,9 +13,9 @@ export const turuBaslat = () => window.dispatchEvent(new CustomEvent('tur-baslat
 const OGRENCI = {
   '/katmanlar': 'Değerlendirmen burada. Soruları cevapla; doğru ya da yanlış cevap yok, içten cevap ver.',
   '/': 'Ana sayfan: sıradaki adımın, bu haftanın görevleri ve sonuçlarının kısa özeti.',
-  '/profilim': 'Değerlendirme sonuçların: güçlü yönlerin, kişiliğin ve ilgi alanların.',
+  '/profilim': 'Değerlendirme sonuçların ve kısa yorumu: güçlü yönlerin, ilgi alanların, bu dönem neler yapabileceğin.',
   '/bolumler': 'Sana uygun bölümler, tüm bölümleri keşfetme, karşılaştırma ve kendi listen.',
-  '/is-hayati': 'Bölümlerin iş hayatı: meslekler, gerçek maaşlar, CV ve mülakat pratiği.',
+  '/is-hayati': 'Bölümlerin iş hayatı: maaşlar, zor günler, CV, mülakat simülasyonu ve düşünme atölyesi.',
   '/tercih': 'Tercih listeni hazırla; rehber öğretmenin inceleyip onaylar.',
   '/portfolyo': 'Sertifika, yarışma ve etkinliklerini biriktirdiğin dosyan.',
   '/raporlarim': 'Raporlarını PDF indir; velinle paylaşacağın rapor da burada.',
@@ -31,7 +31,7 @@ const OGRENCI = {
   '/koclar': 'Okulunun anlaştığı eğitim koçları.',
   '/sozluk': 'Anlamadığın bir kelime mi var? Sistem Sözlüğü\'nde ara.',
   '/hakkinda': 'Filizyol nasıl çalışır, sonuçlar nasıl hesaplanır?',
-  '/profil': 'Bilgilerin, şifren, gizlilik ayarların. Bu tanıtımı da buradan tekrar izleyebilirsin.',
+  '/profil': 'Bilgilerin, şifren, dilin ve gizlilik ayarların. Bu tanıtımı da buradan tekrar izleyebilirsin.',
 }
 const YONETIM_EK = {
   '/admin/sss': 'Sistem nasıl çalışır, sık sorulan sorular ve kullanım ipuçları.',
