@@ -142,7 +142,7 @@ export default function IsHayatiSayfasi() {
               <div className="koc-sekmeler" role="tablist">
                 {SEKMELER.map((s) => (
                   <button key={s.kod} role="tab" aria-selected={sekme === s.kod} className={sekme === s.kod ? 'aktif' : ''}
-                    onClick={() => paramDegistir({ sekme: s.kod })}>
+                    onClick={() => paramDegistir({ sekme: s.kod, arac: null })}>
                     <span aria-hidden="true">{s.ikon}</span> {s.ad}
                   </button>
                 ))}

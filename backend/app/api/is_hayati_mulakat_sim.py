@@ -20,6 +20,7 @@ from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_ogrenci
+from app.api.is_hayati_dusunme import arac_ozeti
 from app.core import is_hayati_pratik as ihp
 from app.core.database import get_db
 from app.models import Ogrenci
@@ -62,7 +63,7 @@ def mulakat_sim(bolum_id: int, db: Session = Depends(get_db), o: Ogrenci = Depen
     for i, q in enumerate(ic["sorular"]):
         sorular.append({
             "no": i, "konu": q.get("konu"), "beceri": q.get("beceri"), "soru": q.get("soru"), "tur": q.get("tur"),
-            "terimler": q.get("terimler") or [], "ders": q.get("ders"),
+            "terimler": q.get("terimler") or [], "ders": q.get("ders"), "arac": arac_ozeti(q.get("arac")),
             "adaylar": [{"cevap": a.get("cevap"), "iyi": bool(a.get("iyi")), "neden": a.get("neden"), "sonuc": a.get("sonuc")}
                         for a in q.get("adaylar") or []],
         })

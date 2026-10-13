@@ -1,0 +1,601 @@
+{
+  "surum": 1,
+  "araclar": [
+    {
+      "kod": "kok_neden",
+      "ad": "Kök neden (5 Neden)",
+      "ikon": "🌱",
+      "ozet": "Sorunu yamamak yerine, onu asıl doğuran nedeni bulup ortadan kaldır.",
+      "sure_dk": 6,
+      "giris": {
+        "baslik": "Aynı sorun neden hep geri geliyor?",
+        "durum": "Telefonunun şarjı her gün öğlene doğru bitiyor. Çantana powerbank koyuyorsun, sorun çözülmüş gibi oluyor. Ama ertesi gün yine aynı şey. Belki de yalnızca sorunun görünen yüzüyle uğraşıyorsun. Asıl nedeni nasıl bulursun?"
+      },
+      "alistirma": {
+        "tur": "zincir",
+        "sorun": "Matematik sınavından düşük not aldın.",
+        "adimlar": [
+          {
+            "soru": "Neden?",
+            "secenekler": [
+              {
+                "metin": "Sınav kötü geçti, puanım düşük çıktı.",
+                "dogru": false,
+                "aciklama": "Bu, sorunu başka sözlerle tekrar ediyor. Yeni bir bilgi vermediği için seni bir adım bile ileri götürmüyor."
+              },
+              {
+                "metin": "Son altı soruya vakit kalmadı, onları boş bıraktım.",
+                "dogru": true,
+                "aciklama": "Doğru. Somut, gerçekten yaşanmış ve notu doğrudan düşüren bir neden. Şimdi bunun neden olduğunu sorabilirsin."
+              },
+              {
+                "metin": "Hoca çok zor sorular sordu.",
+                "dogru": false,
+                "aciklama": "Sorumluluğu kontrolün dışındaki birine yüklüyor. Doğru olsa bile seni bir çözüme götürmez; senin değiştirebileceğin bir şey aramalısın."
+              }
+            ]
+          },
+          {
+            "soru": "Peki bu neden oldu?",
+            "secenekler": [
+              {
+                "metin": "Süre yetmedi.",
+                "dogru": false,
+                "aciklama": "\"Vakit kalmadı\" cümlesini başka sözlerle söylüyor. Sürenin neden yetmediğini açıklamıyor."
+              },
+              {
+                "metin": "Sınav süresi herkes için çok kısaydı.",
+                "dogru": false,
+                "aciklama": "Süre herkes için aynıydı ve onu değiştiremezsin. Asıl soru, senin süreyi neden yetiremediğin."
+              },
+              {
+                "metin": "İlk sorularda çözüm yolunu bulmak için çok uzun süre düşündüm.",
+                "dogru": true,
+                "aciklama": "Doğru. Zamanın nereye gittiğini somut olarak gösteriyor. Şimdi bunun nedenine inebilirsin."
+              }
+            ]
+          },
+          {
+            "soru": "Peki bu neden oldu?",
+            "secenekler": [
+              {
+                "metin": "Bu tür soruları daha önce kendim hiç çözmemiştim; çalışırken yalnızca çözümlü örnekleri okumuştum.",
+                "dogru": true,
+                "aciklama": "Doğru. Soruyu daha önce kendin çözmediğin için sınavda çözüm yolunu sıfırdan aramak zorunda kaldın, bu da zaman aldı."
+              },
+              {
+                "metin": "Soruları çözmek uzun sürdü.",
+                "dogru": false,
+                "aciklama": "Bir önceki cevabı tekrar ediyor. Neden uzun sürdüğünü sormaya devam etmelisin."
+              },
+              {
+                "metin": "Matematik zaten herkes için zor bir ders.",
+                "dogru": false,
+                "aciklama": "Bu bir genelleme; senin durumunu açıklamıyor ve üzerinde çalışabileceğin bir şey bırakmıyor."
+              }
+            ]
+          },
+          {
+            "soru": "Peki bu neden oldu?",
+            "secenekler": [
+              {
+                "metin": "Öğretmen ödev olarak soru vermemişti.",
+                "dogru": false,
+                "aciklama": "Ödev verilmese de kendi başına soru çözebilirdin. Nedeni başkasında aramak, çözümü de senin elinden alır."
+              },
+              {
+                "metin": "Çözümü okuyup anlayınca konuyu öğrendiğimi sandım; kendimi sınayan bir çalışma yöntemim yoktu.",
+                "dogru": true,
+                "aciklama": "Doğru. Kök burada: anlamakla yapabilmeyi karıştırmak. Bunu değiştirmek tamamen senin elinde ve düzeltince zincirin geri kalanı da çözülür."
+              },
+              {
+                "metin": "Soruları kendim çözmeye çalışmadım.",
+                "dogru": false,
+                "aciklama": "Bir önceki cevabı tekrar ediyor. Neden yalnızca okuyarak çalıştığını henüz açıklamıyor."
+              }
+            ]
+          }
+        ],
+        "kok": "Kendini sınamadan çalışmak: Bir çözümü okuyup anlamayı, o soruyu kendin çözebilmekle karıştırmak.",
+        "cozumler": [
+          {
+            "metin": "Bir sonraki sınavda daha hızlı soru çözmeye çalışmak.",
+            "tur": "belirti",
+            "aciklama": "Asıl sorun hız değil; soruları tanımadığın için düşünmek uzun sürüyor. Yalnızca acele etmek hata sayısını artırabilir."
+          },
+          {
+            "metin": "Her konuyu çalıştıktan sonra çözüme bakmadan, süre tutarak birkaç soru çözmek ve yanlışlarını incelemek.",
+            "tur": "kok",
+            "aciklama": "Kendini sınamak neyi gerçekten bildiğini gösterir. Sınavda da çözüm yolunu daha hızlı tanırsın; böylece süre sorunu kendiliğinden azalır."
+          }
+        ]
+      },
+      "arac": {
+        "baslik": "5 Neden: Belirtiden köke in",
+        "metin": "İlk göze çarpan şey çoğu zaman sorunun kendisi değil, belirtisidir. Belirtiyi düzeltirsen sorun geri gelir. 5 Neden tekniğinde her cevaba yeniden \"Neden?\" diye sorarsın. Kontrol edebileceğin ve düzeltince sorunu bitirecek nedene ulaşınca durursun.",
+        "adimlar": [
+          "Sorunu tek, somut bir cümleyle yaz.",
+          "\"Neden?\" diye sor ve yalnızca gerçekten yaşanmış bir nedeni yaz.",
+          "Her yeni cevaba yeniden \"Neden?\" diye sor.",
+          "Kontrol edebileceğin bir nedene ulaşınca dur; bu genellikle 3–5 adım sürer.",
+          "Çözümü bu köke göre seç ve sorunun tekrar edip etmediğini izle."
+        ],
+        "ipucu": "Cevabın \"şanssızlık\", \"hoca\" ya da \"tembellik\" gibi bir suçlamaysa dur ve yeniden sor: \"Bunun olmasına ne yol açtı?\""
+      },
+      "okulda": {
+        "durum": "Grup projenizin sunumu teslim gününe yetişmedi. Son iki geceyi slaytları birleştirmekle geçirdiniz, çünkü herkes farklı bir şablon ve yazı tipiyle çalışmıştı.",
+        "soru": "Bir kez daha \"Neden?\" diye sorarsan hangi cevap kök nedene en yakın?",
+        "secenekler": [
+          {
+            "metin": "Çünkü birleştirme işi çok uzun sürdü.",
+            "dogru": false,
+            "aciklama": "Zaten bildiğin şeyi tekrar ediyor. Herkesin neden farklı biçimde çalıştığını açıklamıyor."
+          },
+          {
+            "metin": "Çünkü öğretmen projeye çok kısa süre verdi.",
+            "dogru": false,
+            "aciklama": "Süre sizin kontrolünüzde değildi ve sorun süreden değil, iki geceyi birleştirmeye harcamaktan çıktı. Bu cevap sizi bir çözüme götürmez."
+          },
+          {
+            "metin": "Çünkü başlarken kimin neyi, hangi biçimde yapacağını birlikte kararlaştırmamıştık.",
+            "dogru": true,
+            "aciklama": "Doğru. Herkesin farklı şablonla çalışmasının nedeni bu. Bir sonraki projede ilk toplantıda iş bölümü ve ortak şablon belirlemek sorunu baştan önler."
+          }
+        ]
+      },
+      "iste": {
+        "meslek": "Bakım teknisyeni",
+        "durum": "Bir fabrikada paketleme makinesi haftada iki kez duruyor. Teknisyen inceliyor: Kayış kopuyor, çünkü aşırı ısınıyor; ısınıyor, çünkü yanındaki rulman yağsız kalıp sürtünmeyi artırıyor; rulman yağsız, çünkü bakım listesinde yağlama hiç yer almıyor.",
+        "soru": "Hangi çözüm sorunu kökünden çözer?",
+        "secenekler": [
+          {
+            "metin": "Rulmanı hemen yağlamak.",
+            "dogru": false,
+            "aciklama": "Bugünkü arızayı çözer ama yağlamayı kimsenin düzenli yapmasını sağlamaz. Birkaç hafta sonra rulman yine yağsız kalır ve sorun geri gelir."
+          },
+          {
+            "metin": "Bakım listesine düzenli yağlamayı eklemek ve bunu kimin, ne sıklıkla yapacağını belirlemek.",
+            "dogru": true,
+            "aciklama": "Doğru. Zincirin en sonundaki, düzeltilebilir nedeni ortadan kaldırır. Yağlama düzenli yapılınca ısınma, kopma ve duruş zinciri de kırılır."
+          },
+          {
+            "metin": "Depoda daha çok yedek kayış bulundurmak.",
+            "dogru": false,
+            "aciklama": "Arızayı daha hızlı onarmaya yarar ama kayışlar kopmaya devam eder. Bu, belirtiyle yaşamayı kolaylaştırmaktır."
+          }
+        ]
+      },
+      "dene": "Seni tekrar tekrar rahatsız eden küçük bir sorun seç (ör. sabahları geç kalmak). Bir kâğıda yaz ve dört kez \"Neden?\" diye sor. Ulaştığın köke yönelik tek bir değişiklik yap ve bir hafta izle."
+    },
+    {
+      "kod": "korelasyon",
+      "ad": "Birlikte değişmek, neden olmak değildir",
+      "ikon": "🔗",
+      "ozet": "İki şey birlikte değişiyor diye birinin ötekine yol açtığını varsayma.",
+      "sure_dk": 7,
+      "giris": {
+        "baslik": "Kahvaltı mı notu yükseltiyor?",
+        "durum": "Bir arkadaşın şöyle diyor: \"Sınıfta kahvaltı yapanların notları daha yüksek. Demek ki kahvaltı not yükseltiyor!\" Kulağa mantıklı geliyor. Ama iki şeyin birlikte görülmesi, birinin ötekine yol açtığını gerçekten gösterir mi? Başka hangi açıklamalar olabilir?"
+      },
+      "alistirma": {
+        "tur": "iliski",
+        "vakalar": [
+          {
+            "iddia": "Dondurma satışları arttıkça güneş yanığı vakaları da artıyor; demek ki dondurma güneş yanığına yol açıyor.",
+            "x_ad": "Günlük dondurma satışı (adet)",
+            "y_ad": "Günlük güneş yanığı vakası (kişi)",
+            "noktalar": [
+              [
+                20,
+                1
+              ],
+              [
+                35,
+                1
+              ],
+              [
+                50,
+                2
+              ],
+              [
+                70,
+                3
+              ],
+              [
+                90,
+                4
+              ],
+              [
+                110,
+                6
+              ],
+              [
+                130,
+                7
+              ],
+              [
+                160,
+                9
+              ]
+            ],
+            "secenekler": [
+              {
+                "metin": "Dondurma satışı, güneş yanığına neden oluyor.",
+                "dogru": false,
+                "aciklama": "Dondurmanın cildi nasıl yakacağını açıklayan bir yol yok. Birlikte artmaları tek başına neden-sonuç kanıtı değildir."
+              },
+              {
+                "metin": "Güneş yanığı, dondurma satışına neden oluyor.",
+                "dogru": false,
+                "aciklama": "Güneşte yanan biri belki serinlemek ister ama satışları artıran asıl şey bu değil; yanmayan insanlar da sıcakta dondurma alıyor."
+              },
+              {
+                "metin": "İkisini de etkileyen üçüncü bir etken var: sıcak ve güneşli hava.",
+                "dogru": true,
+                "aciklama": "Doğru. Sıcak ve güneşli günlerde hem daha çok dondurma alınır hem de daha çok kişi güneşte kalıp yanar. İkisini birlikte artıran şey hava."
+              },
+              {
+                "metin": "Tesadüf olabilir.",
+                "dogru": false,
+                "aciklama": "Sekiz günün hepsinde düzenli biçimde birlikte artıyorlar ve bunu açıklayan güçlü bir ortak neden var. Tesadüf zayıf bir açıklama kalır."
+              }
+            ],
+            "ders": "İki şey birlikte artıyorsa önce ikisini birden etkileyebilecek ortak bir neden ara."
+          },
+          {
+            "iddia": "Ekranı açık tuttuğun süre arttıkça telefonun şarjı da daha çok harcanıyor; demek ki ekran kullanımı şarjı tüketiyor.",
+            "x_ad": "Günlük ekran süresi (saat)",
+            "y_ad": "Gün içinde harcanan şarj (%)",
+            "noktalar": [
+              [
+                1,
+                18
+              ],
+              [
+                2,
+                24
+              ],
+              [
+                3,
+                37
+              ],
+              [
+                4,
+                45
+              ],
+              [
+                5,
+                52
+              ],
+              [
+                6,
+                64
+              ],
+              [
+                7,
+                73
+              ],
+              [
+                8,
+                85
+              ]
+            ],
+            "secenekler": [
+              {
+                "metin": "Ekran süresi, şarj harcamasına neden oluyor.",
+                "dogru": true,
+                "aciklama": "Doğru. Burada nasıl olduğunu açıklayan net bir yol var: Açık ekran ve çalışan uygulamalar pilden enerji çeker. İlişki gerçekten neden-sonuç ilişkisi."
+              },
+              {
+                "metin": "Şarj harcaması, ekran süresine neden oluyor.",
+                "dogru": false,
+                "aciklama": "Şarjın azalması seni telefona daha çok baktırmaz; tersine, şarj azalınca genellikle daha az kullanırız. Yön burada ters değil."
+              },
+              {
+                "metin": "İkisini de etkileyen üçüncü bir etken var: o günkü hava durumu.",
+                "dogru": false,
+                "aciklama": "Hava, ekran süresi ile şarj arasındaki bu düzenli ilişkiyi açıklamaz. Her şeyin ardında üçüncü bir etken aramak da bir düşünme hatasıdır."
+              },
+              {
+                "metin": "Tesadüf olabilir.",
+                "dogru": false,
+                "aciklama": "İlişki düzenli ve nasıl işlediği belli. Bu kadar açık bir mekanizma varken tesadüf açıklaması zayıf kalır."
+              }
+            ],
+            "ders": "Birlikte değişen her şey yanıltmaz. Neden-sonuç diyebilmek için \"Nasıl?\" sorusuna net bir cevap verebilmelisin."
+          },
+          {
+            "iddia": "Küçük kardeşin pencereden bakıp diyor ki: \"Sokakta açılan şemsiye sayısı arttıkça yağmur da şiddetleniyor; demek ki şemsiyeler yağmuru artırıyor.\"",
+            "x_ad": "Sokakta açık şemsiye sayısı (adet)",
+            "y_ad": "Yağış miktarı (mm/saat)",
+            "noktalar": [
+              [
+                2,
+                0
+              ],
+              [
+                5,
+                1
+              ],
+              [
+                10,
+                2
+              ],
+              [
+                18,
+                4
+              ],
+              [
+                25,
+                6
+              ],
+              [
+                35,
+                8
+              ],
+              [
+                48,
+                11
+              ],
+              [
+                60,
+                14
+              ]
+            ],
+            "secenekler": [
+              {
+                "metin": "Şemsiyeler, yağmura neden oluyor.",
+                "dogru": false,
+                "aciklama": "Şemsiye açmanın havayı değiştirmesinin bir yolu yok. Kardeşin ilişkiyi görmüş ama yönünü yanlış okumuş."
+              },
+              {
+                "metin": "Yağmur, şemsiye açılmasına neden oluyor.",
+                "dogru": true,
+                "aciklama": "Doğru. Yağmur şiddetlendikçe daha çok insan şemsiyesini açar. Neden-sonuç ilişkisi var ama iddia edilenin tam tersi yönde."
+              },
+              {
+                "metin": "İkisini de etkileyen üçüncü bir etken var: bulutlu hava.",
+                "dogru": false,
+                "aciklama": "Bulutlar yağmuru getirir ama insanlar şemsiyeyi bulutu görünce değil, yağmur yağınca açar. Bağlantı doğrudan yağmurdan şemsiyeye."
+              },
+              {
+                "metin": "Tesadüf olabilir.",
+                "dogru": false,
+                "aciklama": "İkisi düzenli olarak birlikte artıyor ve aradaki bağ çok açık. Tesadüf bunu açıklamaz."
+              }
+            ],
+            "ders": "Bir ilişki gördüğünde yönünü de sorgula: Belki sonuç sandığın şey, aslında nedendir."
+          }
+        ]
+      },
+      "arac": {
+        "baslik": "Korelasyon ve nedensellik",
+        "metin": "İki şey birlikte artıp azalıyorsa aralarında bir ilişki, yani korelasyon vardır. Ama bu, birinin ötekine yol açtığını kanıtlamaz. Neden-sonuç demeden önce şu üç olasılığı elemelisin: İlişki ters yönde olabilir, ikisini birden etkileyen üçüncü bir etken olabilir ya da her şey tesadüf olabilir.",
+        "adimlar": [
+          "İddiadaki iki şeyi ve iddia edilen yönü yaz: \"X, Y'ye yol açıyor.\"",
+          "Yönü ters çevir: Y, X'e yol açıyor olabilir mi?",
+          "İkisini birlikte etkileyebilecek üçüncü bir etken ara.",
+          "Veri az mı, ilişki zayıf mı? Tesadüf olabilir mi diye bak.",
+          "Bunları eledikten sonra X'in Y'yi nasıl değiştirdiğini açıklayabiliyor musun, kontrol et."
+        ],
+        "ipucu": "\"X yapanlar daha Y\" cümlesini duyduğunda hemen sor: \"Zaten Y olanlar mı X'i daha çok yapıyor?\""
+      },
+      "okulda": {
+        "durum": "Sınıfında ön sıralarda oturan öğrencilerin notları genellikle daha yüksek. Bir arkadaşın \"Ön sıraya geçersem notlarım da yükselir\" diyor.",
+        "soru": "Bu iddiayı sorgulamak için önce hangi soruyu sormalısın?",
+        "secenekler": [
+          {
+            "metin": "Ön sırayı seçenler, zaten derse daha ilgili ve daha çok çalışan öğrenciler olabilir mi?",
+            "dogru": true,
+            "aciklama": "Doğru. Derse ilgi, hem ön sırayı seçmeye hem de yüksek nota yol açabilir. Önce bu üçüncü etkeni dışarıda bırakmak gerekir."
+          },
+          {
+            "metin": "Notlar yüksekse ön sıra işe yarıyordur; sorgulamaya gerek var mı?",
+            "dogru": false,
+            "aciklama": "Birlikte görülmeyi kanıt saymak, tam da kaçınmak istediğimiz düşünme hatası."
+          },
+          {
+            "metin": "Ön sıralarda kaç sıra ve kaç öğrenci var?",
+            "dogru": false,
+            "aciklama": "İlginç bir bilgi ama iddianın neden-sonuç kısmını sınamıyor. Asıl soru, ön sıradakileri başka neyin farklı kıldığı."
+          }
+        ]
+      },
+      "iste": {
+        "meslek": "Fizyoterapist",
+        "durum": "Bir fizyoterapist kayıtlarına bakıyor: Daha çok seans alan hastaların tamamen iyileşmesi daha uzun sürmüş. Yeni başlayan bir meslektaşı \"Demek ki seanslar iyileşmeyi yavaşlatıyor, seansları azaltalım\" diyor.",
+        "soru": "Bu veriye en mantıklı yorum hangisi?",
+        "secenekler": [
+          {
+            "metin": "Seanslar iyileşmeyi gerçekten yavaşlatıyor; sayıları azaltılmalı.",
+            "dogru": false,
+            "aciklama": "Birlikte görülmeyi doğrudan neden-sonuç sayıyor. Hastaların neden farklı sayıda seans aldığını hiç sormuyor."
+          },
+          {
+            "metin": "Hastalar seanslardan sıkıldıkları için egzersizleri bırakıyor olabilir.",
+            "dogru": false,
+            "aciklama": "Akla gelebilir ama veride buna dair bir ipucu yok. Daha basit ve güçlü bir açıklamayı atlıyor."
+          },
+          {
+            "metin": "Sakatlığı ağır olanlar hem daha çok seansa ihtiyaç duyuyor hem de daha geç iyileşiyor; karşılaştırmada sakatlığın ağırlığı hesaba katılmalı.",
+            "dogru": true,
+            "aciklama": "Doğru. Sakatlığın ağırlığı iki şeyi birden etkileyen üçüncü etken. Benzer ağırlıktaki hastalar karşılaştırılmadan seanslar hakkında karar verilemez."
+          }
+        ]
+      },
+      "dene": "Bir haberde, reklamda ya da sosyal medyada \"X yapanlar daha Y\" türünde bir iddia bul. Üç soru sor: Yön ters olabilir mi? Üçüncü bir etken var mı? Tesadüf olabilir mi? Cevaplarını bir arkadaşınla tartış."
+    },
+    {
+      "kod": "algoritma",
+      "ad": "Algoritmik düşünme",
+      "ikon": "🧭",
+      "ozet": "Bir işi, hiç düşünmeyen biri bile yapabilecek kadar net adımlarla tarif et.",
+      "sure_dk": 6,
+      "giris": {
+        "baslik": "\"Sağa dön\" ama hangi köşede?",
+        "durum": "Arkadaşına evinin yolunu tarif ettin ama kayboldu. \"Sağa dön\" dedin, hangi köşede döneceğini söylemedin. Bilgisayarlar da böyledir: Yalnızca açıkça söylediğini yaparlar. Bir işi hiç yanılmadan uygulanabilecek kadar net nasıl tarif edersin?"
+      },
+      "alistirma": {
+        "tur": "siralama",
+        "gorev": "Bir robot otobüsle okula gidecek. Adımları doğru sıraya koy.",
+        "adimlar": [
+          "Evden çıkıp durağa yürü.",
+          "Otobüsün gelmesini bekle.",
+          "Otobüs durunca ön kapıdan bin.",
+          "Kartını okuyucuya okut.",
+          "Okulun durağına gelince in.",
+          "Duraktan okula yürü."
+        ],
+        "eksik": {
+          "durum": "Robot adımları sırayla uyguladı ve durağa ilk gelen otobüse bindi. Ama o otobüs başka bir hattın otobüsüydü; robot okul yerine şehrin öbür ucuna gitti.",
+          "soru": "Algoritmaya hangi satırı eklersin?",
+          "secenekler": [
+            {
+              "metin": "Gelen her otobüse bin; yanlış otobüsse bir sonraki durakta in.",
+              "dogru": false,
+              "aciklama": "Kontrolü binmeden değil, bindikten sonra yapıyor. Robot indikten sonra ne yapacağını da bilmiyor; bu yüzden yine kaybolabilir."
+            },
+            {
+              "metin": "Durağa daha erken git.",
+              "dogru": false,
+              "aciklama": "Erken gitmek yanlış otobüse binme sorununu çözmez. Robot yine ilk gelen otobüse biner."
+            },
+            {
+              "metin": "Eğer gelen otobüsün hat numarası 42 değilse binme; 2. adıma dön ve beklemeye devam et.",
+              "dogru": true,
+              "aciklama": "Doğru. Bir koşul (\"Eğer … ise\") ve bir tekrar (\"2. adıma dön\") ekliyor. Robot doğru otobüs gelene kadar bekliyor."
+            }
+          ]
+        }
+      },
+      "arac": {
+        "baslik": "Algoritma: Açık, sıralı, eksiksiz",
+        "metin": "Algoritma, bir işi kimseye bir şey sormadan yapılabilecek kadar açık adımlarla tarif etmektir. İyi bir algoritmada üç şey bulunur: doğru sıra, koşullar (\"Eğer … ise …\") ve tekrarlar (\"… olana kadar tekrarla\"). Bilgisayar programları da yemek tarifleri de bu mantıkla çalışır.",
+        "adimlar": [
+          "Başlangıcı ve bitişi belirle: İş ne zaman tamamlanmış sayılır?",
+          "İşi her biri tek eylem olan küçük adımlara böl.",
+          "Adımları sıraya koy; her adımın ihtiyaç duyduğu şey önceki adımlarda hazır olsun.",
+          "\"Ya şöyle olursa?\" diye sor ve beklenmedik durumlar için \"Eğer … ise …\" satırları ekle.",
+          "Tekrarlanan işleri bir döngüyle yaz; sonra algoritmayı birine harfiyen uygulatarak dene."
+        ],
+        "ipucu": "Algoritmanı en iyi, onu kelimesi kelimesine uygulayan ve hiçbir boşluğu kendi aklıyla doldurmayan biri test eder."
+      },
+      "okulda": {
+        "durum": "Deneme sınavlarında hep aynı şey oluyor: Zor bir soruya takılıp dakikalarca uğraşıyorsun, sonra sondaki kolay soruları yetiştiremiyorsun. Şu an algoritman şu: \"Soruları sırayla çöz.\"",
+        "soru": "Sınav algoritmanı en iyi hangi kural düzeltir?",
+        "secenekler": [
+          {
+            "metin": "Önce en zor görünen soruları çöz.",
+            "dogru": false,
+            "aciklama": "Takılma sorununu çözmüyor, hatta öne alıyor. Zor soruda yine sıkışırsan kolay sorulara hiç sıra gelmeyebilir."
+          },
+          {
+            "metin": "Eğer bir soru 2 dakikada çözülmüyorsa işaretle ve geç; sona gelince işaretli sorulara dön.",
+            "dogru": true,
+            "aciklama": "Doğru. Bir koşul (\"2 dakikada çözülmüyorsa\") ve bir dönüş (\"işaretlilere dön\") ekliyor. Böylece hiçbir soru diğerlerinin süresini yiyemez."
+          },
+          {
+            "metin": "Her soruyu bitirmeden bir sonrakine geçme.",
+            "dogru": false,
+            "aciklama": "Bu zaten şu anki algoritman; takılmana yol açan da bu kural. Değişiklik yapmadan farklı sonuç beklenemez."
+          }
+        ]
+      },
+      "iste": {
+        "meslek": "Müşteri hizmetleri uzmanı",
+        "durum": "Bir çevrim içi mağazada iade talepleri şu sırayla işleniyor: 1) Siparişi bul. 2) Ürünü teslim al. 3) Parayı iade et. Mağazanın kuralına göre iade süresi 14 gün, ama sistem 6 ay sonra gelen iadelerin parasını da geri ödüyor.",
+        "soru": "Algoritmaya hangi satırı, nereye eklersin?",
+        "secenekler": [
+          {
+            "metin": "1. adımdan sonra: \"Eğer teslimattan bu yana 14 günden fazla geçtiyse talebi reddet ve müşteriye nedenini yaz; değilse devam et.\"",
+            "dogru": true,
+            "aciklama": "Doğru. Kontrol, ürün teslim alınmadan ve para ödenmeden önce yapılıyor. Müşteri de neden reddedildiğini öğreniyor."
+          },
+          {
+            "metin": "3. adımdan sonra: \"Eğer teslimattan bu yana 14 günden fazla geçtiyse talebi reddet.\"",
+            "dogru": false,
+            "aciklama": "Koşul doğru ama yeri yanlış. Para zaten iade edildikten sonra talebi reddetmek hiçbir şeyi engellemez."
+          },
+          {
+            "metin": "Her iade talebinin sonuna \"Dikkatli ol\" notu ekle.",
+            "dogru": false,
+            "aciklama": "Belirsiz bir uyarı, açık bir kural değildir. Neye dikkat edileceği yazılmadıkça hata devam eder."
+          }
+        ]
+      },
+      "dene": "İyi bildiğin bir işin (ör. sabah hazırlığın ya da bir masa oyununu kurmak) algoritmasını 6–10 adımda yaz. En az bir \"Eğer … ise\" ekle. Bir aile üyesine yalnızca yazdığını uygulat; takıldığı yerleri not al."
+    },
+    {
+      "kod": "ikiye_bolme",
+      "ad": "İkiye bölerek arama",
+      "ikon": "🔎",
+      "ozet": "Sıralı bir şeyde ortaya bakarak her adımda ihtimallerin yarısını ele.",
+      "sure_dk": 5,
+      "giris": {
+        "baslik": "3.000 fotoğrafın içinde bir tane",
+        "durum": "Galerinde 3.000 fotoğraf var ve geçen yaz çektiğin bir fotoğrafı arıyorsun. En baştan tek tek kaydırırsan dakikalar sürer. Oysa fotoğraflar tarih sırasında duruyor. Bunu kullanarak kaç hamlede bulabilirsin? Önce küçük bir oyunla dene."
+      },
+      "alistirma": {
+        "tur": "sayi_bul",
+        "alt": 1,
+        "ust": 100,
+        "aciklama": "Sayıları tek tek deneseydin, en kötü durumda 100 tahmin gerekirdi. Her seferinde kalan aralığın ortasını söyleyip yarısını elediğinde ise sayıyı en fazla 7 tahminde kesin bulursun."
+      },
+      "arac": {
+        "baslik": "Ortaya bak, yarısını ele",
+        "metin": "Sıralı bir şeyin içinde arıyorsan baştan tek tek bakmak yerine ortaya bak. \"Aradığım şey bunun öncesinde mi, sonrasında mı?\" sorusu her seferinde ihtimallerin yarısını eler. Böylece 100 ihtimal en fazla 7, 1.000 ihtimal en fazla 10 adımda biter.",
+        "adimlar": [
+          "Aradığın şeyin sıralı olduğundan emin ol (sayılar, tarihler, sayfalar, zaman).",
+          "Kalan aralığın tam ortasını seç ve kontrol et.",
+          "Cevaba göre aradığının olamayacağı yarıyı tamamen ele.",
+          "Kalan yarıda aynı şeyi, aradığını bulana kadar tekrarla."
+        ],
+        "ipucu": "Yöntem yalnızca \"önce mi, sonra mı?\" sorusuna net cevap alabildiğinde işe yarar. Karışık bir yığında önce sıralaman gerekir."
+      },
+      "okulda": {
+        "durum": "Bilişim dersinde yazdığın 64 satırlık programın sonucu yanlış çıkıyor. Programı istediğin bir satıra kadar çalıştırıp o andaki değerlerin doğru olup olmadığını görebiliyorsun.",
+        "soru": "Hatalı satırı en az denemede bulmak için ne yaparsın?",
+        "secenekler": [
+          {
+            "metin": "1. satırdan başlarım ve her satırdan sonra değerleri tek tek kontrol ederim.",
+            "dogru": false,
+            "aciklama": "Sonunda bulursun ama en kötü durumda 63 kontrol gerekir. Sıralı bir yapıda bu, en yavaş yol."
+          },
+          {
+            "metin": "Hatalı olabileceğini sezdiğim birkaç satıra rastgele bakarım.",
+            "dogru": false,
+            "aciklama": "Şanslıysan hızlı bulursun ama hiçbir garanti yok. Bakmadığın satırlar hakkında da bir şey öğrenmiş olmazsın."
+          },
+          {
+            "metin": "Programı 32. satıra kadar çalıştırırım; değerler doğruysa hata ikinci yarıda, yanlışsa ilk yarıdadır. Sonra kalan yarıyı yine ikiye bölerim.",
+            "dogru": true,
+            "aciklama": "Doğru. Her kontrol ihtimallerin yarısını eler: 64, 32, 16, 8, 4, 2, 1. Hatalı satır en fazla 6 kontrolde bulunur."
+          }
+        ]
+      },
+      "iste": {
+        "meslek": "Matematik öğretmeni",
+        "durum": "Bir öğrenci denklem çözemiyor. Öğretmen hangi konudan itibaren koptuğunu bulmak istiyor. Konular birbirinin üzerine kurulu: Bir konuyu yapamayan, sonrakileri de yapamıyor. Sırası şöyle: 1) dört işlem 2) kesirler 3) negatif sayılar 4) harflerle işlem 5) parantez açma 6) bilinmeyeni yalnız bırakma 7) iki adımlı denklemler 8) kesirli denklemler.",
+        "soru": "En az soruyla bulmak için öğretmen nasıl ilerlemeli?",
+        "secenekler": [
+          {
+            "metin": "Doğrudan 8. konudan sorar; çözemezse her şeyi en baştan yeniden anlatır.",
+            "dogru": false,
+            "aciklama": "Öğrencinin bildiği konuları da yeniden anlatarak zaman harcar. Asıl eksiğin nerede olduğunu hiç bulmaz."
+          },
+          {
+            "metin": "4. konudan bir soru sorar; çözebilirse kopma noktası 5–8 arasında, çözemezse 1–4 arasındadır. Sonra kalan yarıyı yine ikiye böler.",
+            "dogru": true,
+            "aciklama": "Doğru. Konular sıralı olduğu için her soru ihtimallerin yaklaşık yarısını eler. Sekiz konu arasında kopma noktası en fazla üç soruda bulunur."
+          },
+          {
+            "metin": "1. konudan başlayıp sırayla her konudan bir soru sorar.",
+            "dogru": false,
+            "aciklama": "Sonunda bulur ama en kötü durumda neredeyse her konudan bir soru sorması gerekir. Konuların sıralı olmasından hiç yararlanmaz."
+          }
+        ]
+      },
+      "dene": "Bir arkadaşınla 1–1.000 arasında sayı tutma oyunu oyna ve en fazla 10 tahminde bulabildiğini göster. Sonra sözlükte bir kelimeyi, sayfaları ortadan açarak ara ve kaç hamlede bulduğunu say."
+    }
+  ]
+}

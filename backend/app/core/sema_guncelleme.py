@@ -33,6 +33,7 @@ OTOMATIK += ["0067_coklu_dil"]   # [2026-10-12] kişisel dil tercihi + içerik �
 OTOMATIK += ["0068_toplu_ogrenci_islemleri"]   # [2026-10-12] sınıf atlatma (geri alınabilir) + değerlendirme sıfırlama
 OTOMATIK += ["0069_sonuc_epostasi"]   # [2026-10-12] değerlendirme tamamlanınca sonuç e-postası (+ PDF)
 OTOMATIK += ["0070_mulakat_simulasyonu"]   # [2026-10-13] İş Hayatı → Mülakat Simülasyonu sonuçları
+OTOMATIK += ["0071_dusunme_atolyesi"]   # [2026-10-13] İş Hayatı → Düşünme Atölyesi ilerlemesi
 KILIT = 2026101001
 
 

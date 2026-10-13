@@ -63,6 +63,19 @@ function Karo({ i, durum, secili, iyi, acik, onSec }) {
   return <div className={sinif}>{ic}</div>
 }
 
+// [2026-10-13] Soru bir düşünme aracını kullanıyorsa: Düşünme Atölyesi'ndeki modüle bağlantı
+function AracBaglantisi({ arac }) {
+  const [, setParams] = useSearchParams()
+  return (
+    <div className="msim-arac">
+      <span>{arac.ikon} Bu soruda kullanılan düşünme aracı: <b>{arac.ad}</b></span>
+      <button type="button" className="btn sec" onClick={() => setParams((p) => { const n = new URLSearchParams(p); n.set('sekme', 'dusunme'); n.set('arac', arac.kod); return n })}>
+        Atölyede dene
+      </button>
+    </div>
+  )
+}
+
 function Soru({ q, v, sira, toplam, secim, onSec, onIleri }) {
   const [durum, setDurum] = useState(secim != null ? 'sonuc' : 'dusunuyor')
   const geriRef = useRef(null)
@@ -140,6 +153,7 @@ function Soru({ q, v, sira, toplam, secim, onSec, onIleri }) {
             <div className="msim-ders-baslik">💡 Alandan bir bilgi</div>
             <p>{q.ders}</p>
             {q.beceri && <div className="msim-beceri">Bu soruda aranan: <b>{q.beceri}</b></div>}
+            {q.arac && <AracBaglantisi arac={q.arac} />}
           </div>
           <button className="btn msim-ileri" onClick={onIleri}>{sira + 1 < toplam ? 'Sonraki soru' : 'Sonucu gör'}</button>
         </div>
