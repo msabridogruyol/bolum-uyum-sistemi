@@ -489,7 +489,8 @@ def _etkinlik(d: _Deste):
             "Mezunların istihdam oranı ve iş bulma süresi (resmî kaynaklar)",
             "Mesleğe giden yol: eğitim, staj, sınav ve belge adımları",
             "Kazanç ve yaşam giderleri hakkında gerçekçi bilgi",
-            "CV ve mülakat atölyeleri",
+            "CV ve mülakat atölyeleri; her bölüm için mülakat simülasyonu",
+            "Düşünme atölyesi: kök neden, veri okuma, öğrenmeyi öğrenme",
         ], []))
     n = len(kartlar)
     kw = (GEN - 0.3 * (n - 1)) / n
