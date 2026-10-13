@@ -10,7 +10,7 @@ from tests.test_mulakat_simulasyonu import _ogrenci_ve_bolum
 
 VERI = Path(__file__).resolve().parents[1] / "app/data"
 ATOLYE = json.loads((VERI / "dusunme_atolyesi.json").read_text("utf-8"))["araclar"]
-KODLAR = ["kok_neden", "korelasyon", "algoritma", "ikiye_bolme"]
+KODLAR = ["kok_neden", "korelasyon", "algoritma", "ikiye_bolme", "tercih_verisi", "ogrenmeyi_ogren"]
 
 
 def _tek_dogru(secenekler, n=3):
@@ -45,11 +45,21 @@ def test_icerik_dort_arac_ve_tutarli_alistirmalar():
         elif al["tur"] == "siralama":
             assert len(al["adimlar"]) == 6 and len(set(al["adimlar"])) == 6
             _tek_dogru(al["eksik"]["secenekler"])
+        elif al["tur"] == "veri_oku":
+            assert len(al["sorular"]) == 5 and len(al["program"]["yillar"]) == 3
+            for q in al["sorular"]:
+                _tek_dogru(q["secenekler"])
+            assert "kurgusal" in al["program"]["ad"]
+        elif al["tur"] == "deney":
+            kelimeler = [x["kelime"] for x in al["liste_1"] + al["liste_2"]]
+            anlamlar = [x["anlam"] for x in al["liste_1"] + al["liste_2"]]
+            assert len(al["liste_1"]) == len(al["liste_2"]) == 6 and len(set(kelimeler)) == 12 and len(set(anlamlar)) == 12
+            assert all(eval(g["soru"].replace("×", "*").replace("÷", "/").replace("−", "-")) == g["cevap"] for g in al["ara_gorev"])  # noqa: S307
         else:
             assert al["tur"] == "sayi_bul" and al["alt"] < al["ust"]
         metin = json.dumps(a, ensure_ascii=False)
         assert not re.search(r"yapay zek|filizyol", metin, re.I)
-    assert len(meslekler) == 4
+    assert len(meslekler) >= 4
 
 
 def test_mulakat_etiketleri_gecerli_arac():
@@ -78,3 +88,22 @@ def test_uclar_icerik_ilerleme_ve_mulakat_baglantisi(istemci, db):
     # mülakat sorusunda araç etiketi döner
     q = istemci.get(f"/ogrenci/is-hayati/mulakat-sim/{b}", headers=baslik).json()["sorular"]
     assert any(x["arac"] and x["arac"]["kod"] in KODLAR for x in q)
+
+
+@db_gerekli
+def test_ogrenme_deneyi_ikinci_olcum_12_saat_sonra(istemci, db):
+    _b, oid, baslik = _ogrenci_ve_bolum(db)
+    url = "/ogrenci/is-hayati/dusunme-deney"
+    r = istemci.post(url, headers=baslik, json={"asama": 1, "okuma": 3, "sinama": 5, "toplam": 6, "sinama_listesi": 2})
+    assert r.status_code == 200, r.text
+    assert r.json()["ikinci_hazir"] is False and r.json()["kalan_saat"] >= 11
+    assert istemci.post(url, headers=baslik, json={"asama": 2, "okuma": 2, "sinama": 4, "toplam": 6}).status_code == 400
+    db.execute(text("UPDATE is_hayati_ogrenme_deneyi SET olcum1_zamani = now() - interval '13 hours' WHERE ogrenci_id = :o"), {"o": oid})
+    db.commit()
+    assert istemci.get("/ogrenci/is-hayati/dusunme", headers=baslik).json()["deney"]["ikinci_hazir"] is True
+    r = istemci.post(url, headers=baslik, json={"asama": 2, "okuma": 2, "sinama": 4, "toplam": 6})
+    assert r.status_code == 200 and r.json()["olcum2"] == {"okuma": 2, "sinama": 4, "toplam": 6} and r.json()["sinama_listesi"] == 2
+    assert istemci.post(url, headers=baslik, json={"asama": 1, "okuma": 7, "sinama": 1, "toplam": 6}).status_code == 400
+    # deney yeniden yapılınca 2. ölçüm sıfırlanır
+    r = istemci.post(url, headers=baslik, json={"asama": 1, "okuma": 4, "sinama": 4, "toplam": 6})
+    assert r.json()["olcum2"] is None

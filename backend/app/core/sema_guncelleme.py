@@ -34,6 +34,7 @@ OTOMATIK += ["0068_toplu_ogrenci_islemleri"]   # [2026-10-12] sınıf atlatma (g
 OTOMATIK += ["0069_sonuc_epostasi"]   # [2026-10-12] değerlendirme tamamlanınca sonuç e-postası (+ PDF)
 OTOMATIK += ["0070_mulakat_simulasyonu"]   # [2026-10-13] İş Hayatı → Mülakat Simülasyonu sonuçları
 OTOMATIK += ["0071_dusunme_atolyesi"]   # [2026-10-13] İş Hayatı → Düşünme Atölyesi ilerlemesi
+OTOMATIK += ["0072_ogrenme_deneyi"]   # [2026-10-13] Öğrenmeyi öğren deneyi (ertesi gün 2. ölçüm)
 KILIT = 2026101001
 
 

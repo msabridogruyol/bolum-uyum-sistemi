@@ -3363,3 +3363,40 @@ button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2p
   .da-k-ok{display:none}
 }
 @media (prefers-reduced-motion: reduce){.da-cizgi-acik,.da-arac-kart{transition:none}}
+/* [2026-10-13] Düşünme Atölyesi: tercih verisi ve öğrenme deneyi */
+.da-hatirlatma{display:flex;align-items:center;gap:12px;flex-wrap:wrap;margin-top:12px;padding:12px 16px;border-left:4px solid var(--tl);background:color-mix(in srgb,var(--tll) 60%,var(--sur))}
+.da-hatirlatma>span:first-child{font-size:24px}
+.da-hatirlatma>span:nth-child(2){flex:1 1 280px;line-height:1.5}
+.da-program{border:1px solid var(--bor);border-radius:14px;padding:12px 14px;background:var(--sur);margin-bottom:6px}
+.da-program-ust{display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;margin-bottom:8px}
+.da-program-ust .da-etiket{margin:0}
+.da-tablo td,.da-tablo th{white-space:nowrap}
+.da-sira{display:flex;align-items:center;gap:8px;min-width:150px}
+.da-sira-cubuk{height:8px;border-radius:4px;background:color-mix(in srgb,var(--tl) 55%,transparent);flex:none;max-width:80px}
+.da-program-alt{font-size:13.5px;margin:8px 0 4px}
+.da-sayac{position:relative;height:22px;border-radius:11px;background:var(--sur2);overflow:hidden;margin:4px 0 12px;max-width:420px}
+.da-sayac-dolgu{position:absolute;inset:0 auto 0 0;background:color-mix(in srgb,var(--okul-c) 40%,transparent);transition:width 1s linear}
+.da-sayac-yazi{position:relative;display:block;text-align:center;font-size:12.5px;font-weight:700;line-height:22px}
+.da-kelimeler{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-bottom:12px}
+.da-kelime{display:flex;flex-direction:column;align-items:center;gap:2px;padding:12px 8px;border-radius:12px;background:var(--sur2);border:1px solid var(--bor)}
+.da-kelime b{font-family:var(--fd);font-size:20px;letter-spacing:.02em}
+.da-kelime span{color:var(--tx2);font-size:14px}
+.da-test{max-width:520px}
+.da-test-kelime{font-family:var(--fd);font-size:30px;font-weight:700;text-align:center;padding:14px;border-radius:14px;background:var(--sur2);margin:6px 0 10px}
+.da-test-secenekler{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.da-test-secenekler .da-secenek{justify-content:center;text-align:center}
+.da-ara{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:8px;margin-bottom:6px;max-width:700px}
+.da-ara-is{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:10px;background:var(--sur2);border:1.5px solid transparent;font-weight:700}
+.da-ara-is input{width:72px;padding:6px 8px;border:1.5px solid var(--bor2);border-radius:8px;font:inherit;background:var(--sur);color:var(--tx)}
+.da-ara-is.dogru{border-color:var(--grm)}
+.da-ara-is.yanlis{border-color:var(--am)}
+.da-deney-sonuc{display:grid;gap:12px;margin:6px 0 12px;max-width:560px}
+.da-ds-etiket{font-size:13px;font-weight:800;color:var(--tx2);margin-bottom:4px}
+.da-ds-satir{display:grid;grid-template-columns:140px 1fr 48px;align-items:center;gap:10px;margin-bottom:4px;font-size:14px}
+.da-ds-cubuk{height:14px;border-radius:7px;background:var(--sur2);overflow:hidden}
+.da-ds-dolgu{display:block;height:100%;border-radius:7px}
+.da-ds-dolgu.okuma{background:var(--tx3)}
+.da-ds-dolgu.sinama{background:var(--grm)}
+.da-ds-sayi{text-align:right;font-weight:700}
+@media (max-width:640px){.da-ds-satir{grid-template-columns:110px 1fr 44px}.da-test-secenekler{grid-template-columns:1fr}}
+@media (prefers-reduced-motion: reduce){.da-sayac-dolgu{transition:none}}

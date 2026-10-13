@@ -291,7 +291,256 @@ function SayiBul({ a, onBitti }) {
   )
 }
 
-const ALISTIRMA = { zincir: Zincir, iliski: Iliski, siralama: Siralama, sayi_bul: SayiBul }
+
+// ---------------------------------------------------------------- 5. tercih verisi: kurgusal program tablosu + sorular
+const sayiTR = (n) => (typeof n === 'number' ? n.toLocaleString('tr-TR') : n)
+function VeriOku({ a, onBitti }) {
+  const [i, setI] = useState(0)
+  const [ilk, setIlk] = useState(0)
+  const [cevap, setCevap] = useState(null)
+  const p = a.program
+  const s = a.sorular[i]
+  const son = i + 1 >= a.sorular.length
+  const siralar = p.yillar.map((y) => y.taban_sira)
+  const [smin, smax] = [Math.min(...siralar), Math.max(...siralar)]
+  return (
+    <div className="da-veri">
+      <div className="da-program">
+        <div className="da-program-ust"><b>{p.ad}</b><span className="da-etiket">{p.puan_turu}</span></div>
+        <div className="yp-tablo-kap">
+          <table className="yp-tablo da-tablo">
+            <thead><tr><th>Yıl</th><th>Kontenjan</th><th>Taban puan</th><th>Taban başarı sırası</th></tr></thead>
+            <tbody>
+              {p.yillar.map((y) => (
+                <tr key={y.yil}>
+                  <td>{y.yil}</td><td>{sayiTR(y.kontenjan)}</td><td>{String(y.taban_puan).replace('.', ',')}</td>
+                  <td>
+                    <span className="da-sira">
+                      <span className="da-sira-cubuk" style={{ width: `${30 + ((y.taban_sira - smin) / (smax - smin || 1)) * 70}%` }} />
+                      <span>{sayiTR(y.taban_sira)}</span>
+                    </span>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {p.son_yerlesen_net && (
+          <div className="da-program-alt">Son yerleşen kişinin netleri: {Object.entries(p.son_yerlesen_net).map(([k, v]) => `${k} ${String(v).replace('.', ',')}`).join(' · ')}</div>
+        )}
+        <div className="yp-ince">Sıra sayısı büyüdükçe program daha geriden öğrenci almış demektir. Tablodaki program ve sayılar kurgusaldır.</div>
+      </div>
+      <div className="da-soru">Soru {i + 1} / {a.sorular.length}: {s.soru}</div>
+      <Secmeli key={i} secenekler={s.secenekler} kilit={false} onSonuc={(d) => { setCevap(d); if (d) setIlk((n) => n + 1) }} />
+      {cevap != null && (
+        <button type="button" className="btn" onClick={() => { if (son) onBitti(ilk, a.sorular.length); else { setI(i + 1); setCevap(null) } }}>
+          {son ? 'Tamam' : 'Sonraki soru'}
+        </button>
+      )}
+    </div>
+  )
+}
+
+// ---------------------------------------------------------------- 6. öğrenmeyi öğren: kendini sınama ile tekrar okuma deneyi
+const OKUMA_SN = 30
+function Sayac({ sn, onBitti, etiket }) {
+  const [kalan, setKalan] = useState(sn)
+  useEffect(() => {
+    if (kalan <= 0) { onBitti?.(); return undefined }
+    const t = setTimeout(() => setKalan((k) => k - 1), 1000)
+    return () => clearTimeout(t)
+  }, [kalan]) // eslint-disable-line react-hooks/exhaustive-deps
+  return (
+    <div className="da-sayac" role="timer" aria-label={etiket}>
+      <span className="da-sayac-dolgu" style={{ width: `${(kalan / sn) * 100}%` }} />
+      <span className="da-sayac-yazi">{kalan} sn</span>
+    </div>
+  )
+}
+
+function KelimeKartlari({ liste }) {
+  return <div className="da-kelimeler">{liste.map((x) => <div key={x.kelime} className="da-kelime"><b>{x.kelime}</b><span>{x.anlam}</span></div>)}</div>
+}
+
+// Her kelime için anlam seçimi; havuz: aynı listedeki anlamlar. geriBildirim=true → seçimden sonra doğrusu gösterilir.
+function KelimeTesti({ ogeler, havuz, geriBildirim, onBitti, baslik }) {
+  const sorular = useMemo(() => ogeler.map((x, i) => {
+    const digerleri = karistir(havuz.filter((h) => h !== x.anlam), 31 + i).slice(0, 3)
+    return { ...x, secenekler: karistir([x.anlam, ...digerleri], 97 + i) }
+  }), [ogeler, havuz])
+  const [i, setI] = useState(0)
+  const [cevaplar, setCevaplar] = useState([])
+  const [secim, setSecim] = useState(null)
+  const q = sorular[i]
+  const sec = (m) => {
+    if (secim != null) return
+    setSecim(m)
+    const yeni = [...cevaplar, { kelime: q.kelime, dogru: m === q.anlam, liste: q.liste }]
+    const ilerle = () => { setCevaplar(yeni); setSecim(null); if (i + 1 >= sorular.length) onBitti(yeni); else setI(i + 1) }
+    if (geriBildirim) setTimeout(ilerle, 900); else ilerle()
+  }
+  return (
+    <div className="da-test">
+      <div className="da-alt-baslik">{baslik} · {i + 1} / {sorular.length}</div>
+      <div className="da-test-kelime">{q.kelime}</div>
+      <div className="da-test-secenekler">
+        {q.secenekler.map((m) => (
+          <button key={m} type="button" className={`da-secenek${secim != null && geriBildirim ? (m === q.anlam ? ' dogru' : m === secim ? ' yanlis' : '') : ''}`}
+            disabled={secim != null} onClick={() => sec(m)}>{m}</button>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function DeneySonucu({ olcumler, toplam }) {
+  // olcumler: [{etiket, okuma, sinama}]
+  return (
+    <div className="da-deney-sonuc" role="img" aria-label="Deney sonucu">
+      {olcumler.map((o) => (
+        <div key={o.etiket} className="da-ds-grup">
+          <div className="da-ds-etiket">{o.etiket}</div>
+          {[['Tekrar okuyarak', o.okuma, 'okuma'], ['Kendini sınayarak', o.sinama, 'sinama']].map(([ad, n, k]) => (
+            <div key={k} className="da-ds-satir">
+              <span className="da-ds-ad">{ad}</span>
+              <span className="da-ds-cubuk"><span className={`da-ds-dolgu ${k}`} style={{ width: `${(n / toplam) * 100}%` }} /></span>
+              <span className="da-ds-sayi">{n} / {toplam}</span>
+            </div>
+          ))}
+        </div>
+      ))}
+    </div>
+  )
+}
+
+function Deney({ a, onBitti }) {
+  // Sınama listesi rastgele seçilir (liste farkı sonuca karışmasın); önce sınama, sonra okuma çalışılır
+  // (okuma listesi teste daha yakın kalır; buna rağmen fark çıkarsa daha anlamlıdır).
+  const [sinamaListesi] = useState(() => (Math.random() < 0.5 ? 1 : 2))
+  const sinama = (sinamaListesi === 1 ? a.liste_1 : a.liste_2).map((x) => ({ ...x, liste: 'sinama' }))
+  const okuma = (sinamaListesi === 1 ? a.liste_2 : a.liste_1).map((x) => ({ ...x, liste: 'okuma' }))
+  const [asama, setAsama] = useState('tanit')   // tanit → s_oku → s_test → o_oku1 → o_oku2 → ara → test → sonuc
+  const [ara, setAra] = useState({})
+  const [sonuc, setSonuc] = useState(null)
+  const [kayit, setKayit] = useState(null)
+  const tum = useMemo(() => karistir([...sinama, ...okuma], 5), [sinamaListesi]) // eslint-disable-line react-hooks/exhaustive-deps
+  const bitir = (cevaplar) => {
+    const say = (l) => cevaplar.filter((c) => c.liste === l && c.dogru).length
+    const r = { okuma: say('okuma'), sinama: say('sinama'), toplam: sinama.length }
+    setSonuc(r); setAsama('sonuc')
+    api.isHayatiDusunmeDeney({ asama: 1, ...r, sinama_listesi: sinamaListesi }).then(setKayit).catch(() => setKayit({ hata: true }))
+  }
+  const araTamam = a.ara_gorev.every((g, i) => Number(ara[i]) === g.cevap)
+  return (
+    <div className="da-deney">
+      {asama === 'tanit' && (
+        <>
+          <p className="da-metin">{`Küçük bir deney yapacağız. Uydurma bir dilden (${a.dil_adi}) 12 kelime öğreneceksin: 6 tanesini kendini sınayarak, 6 tanesini tekrar okuyarak çalışacaksın. Kısa bir aradan sonra hepsini test edeceğiz ve hangi yöntemin daha iyi işlediğini kendi sonucunda göreceksin.`}</p>
+          <ol className="da-arac-adimlar">
+            <li>Liste A'yı {OKUMA_SN} saniye çalış, sonra kendini sına.</li>
+            <li>Liste B'yi {OKUMA_SN} saniye çalış, sonra bir kez daha {OKUMA_SN} saniye oku.</li>
+            <li>Birkaç işlemle kafanı dağıt, ardından 12 kelimenin hepsini test et.</li>
+          </ol>
+          <button type="button" className="btn" onClick={() => setAsama('s_oku')}>Deneyi başlat</button>
+        </>
+      )}
+      {asama === 's_oku' && (
+        <>
+          <div className="da-soru">Liste A · Kelimeleri ve anlamlarını çalış</div>
+          <Sayac sn={OKUMA_SN} etiket="Çalışma süresi" onBitti={() => setAsama('s_test')} />
+          <KelimeKartlari liste={sinama} />
+          <button type="button" className="btn sec" onClick={() => setAsama('s_test')}>Hazırım, kendimi sınayayım</button>
+        </>
+      )}
+      {asama === 's_test' && (
+        <>
+          <div className="da-soru">Liste A · Şimdi kendini sına: kelimenin anlamı neydi?</div>
+          <KelimeTesti ogeler={karistir(sinama, 3)} havuz={sinama.map((x) => x.anlam)} geriBildirim baslik="Kendini sınama" onBitti={() => setAsama('o_oku1')} />
+        </>
+      )}
+      {(asama === 'o_oku1' || asama === 'o_oku2') && (
+        <>
+          <div className="da-soru">Liste B · {asama === 'o_oku1' ? 'Kelimeleri ve anlamlarını çalış' : 'Bir kez daha oku'}</div>
+          <Sayac key={asama} sn={OKUMA_SN} etiket="Okuma süresi" onBitti={() => setAsama(asama === 'o_oku1' ? 'o_oku2' : 'ara')} />
+          <KelimeKartlari liste={okuma} />
+          <button type="button" className="btn sec" onClick={() => setAsama(asama === 'o_oku1' ? 'o_oku2' : 'ara')}>{asama === 'o_oku1' ? 'Bir kez daha oku' : 'Okudum'}</button>
+        </>
+      )}
+      {asama === 'ara' && (
+        <>
+          <div className="da-soru">Kısa bir ara: kafanı dağıtmak için bu işlemleri yap</div>
+          <div className="da-ara">
+            {a.ara_gorev.map((g, i) => (
+              <label key={i} className={`da-ara-is${ara[i] !== undefined && ara[i] !== '' ? (Number(ara[i]) === g.cevap ? ' dogru' : ' yanlis') : ''}`}>
+                <span>{g.soru} =</span>
+                <input type="number" inputMode="numeric" value={ara[i] ?? ''} onChange={(e) => setAra({ ...ara, [i]: e.target.value })} />
+              </label>
+            ))}
+          </div>
+          <button type="button" className="btn" disabled={!araTamam} onClick={() => setAsama('test')}>Teste geç</button>
+        </>
+      )}
+      {asama === 'test' && (
+        <>
+          <div className="da-soru">Son test · 12 kelimenin hepsi karışık sırayla</div>
+          <KelimeTesti ogeler={tum} havuz={[...sinama, ...okuma].map((x) => x.anlam)} baslik="Test" onBitti={bitir} />
+        </>
+      )}
+      {asama === 'sonuc' && sonuc && (
+        <>
+          <div className="da-soru">Senin deneyinin sonucu</div>
+          <DeneySonucu olcumler={[{ etiket: 'Bugün', ...sonuc }]} toplam={sonuc.toplam} />
+          <div className={`da-aciklama ${sonuc.sinama > sonuc.okuma ? 'dogru' : ''}`}>{sonuc.sinama > sonuc.okuma ? a.aciklama_sinama_iyi : a.aciklama_esit}</div>
+          <div className="da-ders">⏰ En erken 12 saat sonra bu sayfaya döndüğünde aynı 12 kelimeyle ikinci ölçüm açılacak. Asıl fark çoğu zaman orada görünür.</div>
+          {kayit?.hata && <div className="yp-ince">Sonuç kaydedilemedi; ikinci ölçüm için deneyi yeniden yapman gerekebilir.</div>}
+          <button type="button" className="btn" onClick={() => onBitti(sonuc.sinama, sonuc.toplam)}>Tamam</button>
+        </>
+      )}
+    </div>
+  )
+}
+
+// Ertesi gün: aynı 12 kelimeyle çalışmadan test; bugün ile karşılaştırma
+function IkinciOlcum({ a, deney, onKapat, onKaydedildi }) {
+  const al = a.alistirma
+  const sinama = (deney.sinama_listesi === 1 ? al.liste_1 : al.liste_2).map((x) => ({ ...x, liste: 'sinama' }))
+  const okuma = (deney.sinama_listesi === 1 ? al.liste_2 : al.liste_1).map((x) => ({ ...x, liste: 'okuma' }))
+  const tum = useMemo(() => karistir([...sinama, ...okuma], 13), []) // eslint-disable-line react-hooks/exhaustive-deps
+  const [sonuc, setSonuc] = useState(deney.olcum2 || null)   // kaydedildikten sonra yeniden yüklenince de sonuç görünür
+  const bitir = (cevaplar) => {
+    const say = (l) => cevaplar.filter((c) => c.liste === l && c.dogru).length
+    const r = { okuma: say('okuma'), sinama: say('sinama'), toplam: sinama.length }
+    setSonuc(r)
+    api.isHayatiDusunmeDeney({ asama: 2, ...r, sinama_listesi: deney.sinama_listesi }).then(onKaydedildi).catch(() => {})
+  }
+  return (
+    <div className="card da-modul">
+      <div className="da-modul-ust">
+        <button type="button" className="da-geri" onClick={onKapat}>← Araçlar</button>
+        <span className="da-modul-ad"><span aria-hidden="true">{a.ikon}</span> {a.ad}: ikinci ölçüm</span>
+      </div>
+      <div className="da-bolum">
+        {!sonuc && (
+          <>
+            <p className="da-metin">{`Önceki çalışmanda uydurma dilden (${al.dil_adi}) 12 kelime öğrenmiştin. Bu kez hiç çalışmadan hatırladıklarını test edelim.`}</p>
+            <KelimeTesti ogeler={tum} havuz={[...sinama, ...okuma].map((x) => x.anlam)} baslik="İkinci ölçüm" onBitti={bitir} />
+          </>
+        )}
+        {sonuc && (
+          <>
+            <DeneySonucu olcumler={[{ etiket: 'İlk gün', ...deney.olcum1 }, { etiket: 'Bugün', ...sonuc }]} toplam={sonuc.toplam} />
+            {sonuc.sinama >= sonuc.okuma
+              ? <div className="da-aciklama dogru">{al.aciklama_ikinci}</div>
+              : <div className="da-aciklama">{al.aciklama_ikinci_ters || al.aciklama_ikinci}</div>}
+            <button type="button" className="btn" onClick={onKapat}>Araçlara dön</button>
+          </>
+        )}
+      </div>
+    </div>
+  )
+}
+
+const ALISTIRMA = { zincir: Zincir, iliski: Iliski, siralama: Siralama, sayi_bul: SayiBul, veri_oku: VeriOku, deney: Deney }
 
 // ---------------------------------------------------------------- modül
 function Modul({ a, onKapat, onKaydedildi }) {
@@ -405,6 +654,11 @@ export default function DusunmeAtolyesi({ bolum }) {
   if (hata) return <div className="card bos-durum">{hata}</div>
   if (!v) return <div className="card bos-durum yukleniyor">Yükleniyor…</div>
   const secili = v.araclar.find((a) => a.kod === acik)
+  const deneyAraci = v.araclar.find((a) => a.alistirma?.tur === 'deney')
+  if (params.get('olcum') === '2' && deneyAraci && (v.deney?.ikinci_hazir || v.deney?.olcum2)) {
+    return <IkinciOlcum a={deneyAraci} deney={v.deney} onKaydedildi={yukle}
+      onKapat={() => setParams((p) => { const n = new URLSearchParams(p); n.delete('olcum'); n.delete('arac'); return n })} />
+  }
   if (secili) return <Modul key={secili.kod} a={secili} onKapat={() => ac(null)} onKaydedildi={yukle} />
   return (
     <div className="da">
@@ -414,6 +668,13 @@ export default function DusunmeAtolyesi({ bolum }) {
           meslekte ve günlük hayatta işine yarar. Her araç 5–7 dakika: önce kendi bildiğin gibi dene, sonra aracı öğren, okulda ve iş
           hayatında nasıl kullanıldığını gör.</p>
       </div>
+      {deneyAraci && v.deney?.ikinci_hazir && (
+        <div className="card da-hatirlatma">
+          <span aria-hidden="true">⏰</span>
+          <span><b>{`${deneyAraci.ad}: ikinci ölçüm hazır.`}</b> <span>Önceki çalışmandaki 12 kelimeden hangilerini hatırladığına bak; hangi yöntemin daha kalıcı olduğunu gör.</span></span>
+          <button type="button" className="btn" onClick={() => setParams((p) => { const n = new URLSearchParams(p); n.set('olcum', '2'); return n })}>İkinci ölçümü yap</button>
+        </div>
+      )}
       <div className="da-araclar">
         {v.araclar.map((a) => {
           const il = v.ilerleme[a.kod]
@@ -425,6 +686,8 @@ export default function DusunmeAtolyesi({ bolum }) {
                 <span className="da-arac-ozet">{a.ozet}</span>
                 <span className="da-arac-alt">
                   {a.sure_dk} dk{il ? ' · ✓ tamamlandı' : ''}{a.mulakat?.length ? ` · Bu bölümün mülakatında ${a.mulakat.length} soruda` : ''}
+                  {a.alistirma?.tur === 'deney' && v.deney?.kalan_saat ? ` · İkinci ölçüm yaklaşık ${v.deney.kalan_saat} saat sonra` : ''}
+                  {a.alistirma?.tur === 'deney' && v.deney?.olcum2 ? ' · İkinci ölçüm yapıldı' : ''}
                 </span>
               </span>
             </button>
