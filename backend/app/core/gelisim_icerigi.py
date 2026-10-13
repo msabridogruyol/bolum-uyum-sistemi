@@ -508,7 +508,7 @@ ICERIK = {
     },
     "A7": {
         "nedir": "Kuralları net, aşamaları belli, planlı ve sistematik öğrenme/çalışma tarzı.",
-        "gelisim_neden": "{bolum} alanında prosedürlere uygun, adım adım ve sistematik çalışmak önemli bir beklenti (protokoller, standartlar, sıralı işlemler). Bu tarza eğilimin bölümün beklentisinin altında; kontrol listeleri ve sıralı çalışma alışkanlıkları bu açığı kapatır.",
+        "gelisim_neden": "{bolum} alanında prosedürlere uygun, adım adım ve sistematik çalışmak önemli bir beklenti (protokoller, standartlar, sıralı işlemler). Bu tarza eğilimin bölümün beklentisinin altında; kontrol listeleri ve sıralı çalışma alışkanlıkları bu tarzı geliştirmene yardımcı olur.",
         "guclu_neden": "Sistematik ve adım adım çalışma gücün {bolum} ortalamasının da üzerinde. Bu, hata payı düşük ve güvenilir iş çıkarmanı sağlar.",
         "gelisim": [
             ("simdi", "Kontrol listesi", "Bu hafta bir ödevi teslim etmeden önce kontrol listesi hazırla ve madde madde işaretle.", "aliskanlik", "1 hafta", "Kontrol listesiyle bir iş teslim ettin."),

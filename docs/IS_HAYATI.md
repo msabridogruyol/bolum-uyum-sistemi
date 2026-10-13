@@ -100,6 +100,7 @@ Her içerik bileşeni kendi dosyasını açar: `backend/app/api/is_hayati_<konu>
 | `zorgun` | Zor Günler | `components/isHayati/ZorGunler.jsx` |
 | `cv` | CV Atölyesi | `components/isHayati/CvAtolyesi.jsx` |
 | `mulakat` | Mülakat Pratiği | `components/isHayati/MulakatPratigi.jsx` |
+| `mulakatsim` | Mülakat Simülasyonu | `components/isHayati/MulakatSimulasyonu.jsx` |
 | `dersler` | Okulda Öğretilmeyenler | `components/isHayati/OkuldaOgretilmeyenler.jsx` |
 | `mezun` | Mezunlardan | `components/isHayati/MezunHikayeleri.jsx` |
 
@@ -175,3 +176,13 @@ Uçlar `app/api/admin_is_hayati.py` (`/admin/is-hayati/*`, yalnız süper admin;
   meslek_sayisi, ilo_meslekleri[≤8], degisen_gorevler, deger_kazanan, lisede}], genel, kaynaklar, son_kontrol, eslesmeyen, veri_yok}`.
   Gruplar en çok değişecekten başlayarak sıralanır; her ISCO kodu için en yeni veri yılı; 2 haneli satır yoksa 1 haneli ana grup.
 - Arayüz: renkler durum renkleri değil, `--okul-c`'nin açıktan koyuya sıralı tonları; orta güvenli meslek–ISCO eşleşmesinde yıldız + not.
+
+## Mülakat Simülasyonu (göç 0070)
+[2026-10-13] Her bölüm için kısa bir iş görüşmesi. Mülakatçı alana özgü bir durum sorar, iki aday ("Aday 1", "Aday 2") farklı
+yaklaşımla cevap verir, öğrenci daha iyi cevabı seçer. Ardından iki cevabın gerekçesi, mülakatçının tercihi (ya da `ikisi_de`
+sorularda iki yaklaşımın sonucu) ve "Alandan bir bilgi" gösterilir. Bilgi sınavı değildir: doğru aday, gerekçesinden mantıkla bulunabilir.
+- Uçlar: `is_hayati_mulakat_sim.py` → `GET /mulakat-sim/{bolum_id}`, `POST /mulakat-sim` (özet + kayıt).
+- Tablo (0070): `is_hayati_mulakat_sim` (seçimler, mülakatçıyla aynı seçilen soru sayısı). Yalnızca öğrencinin kendi uçlarından okunur.
+- İçerik: `app/data/mulakat_simulasyonu.json` — 301 bölüm × 4 soru (2 alan durumu, 1 iletişim, 1 etik/sorumluluk). Anahtar bölüm
+  adıdır (`bolumler.ad`). Soru alanları: `konu, beceri, soru, terimler[], tur (dogru|ikisi_de), adaylar[2]{cevap, iyi, neden, sonuc?}, ders`.
+  İyi adayın yeri dengelidir (testte %40–60 aralığı denetlenir). Diğer dillerde içerik, `app/data` havuzundan çalışma anında çevrilir.
