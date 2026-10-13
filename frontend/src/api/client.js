@@ -434,6 +434,8 @@ export const api = {
   isHayatiMulakatGeriBildirim: (id) => post(`/ogrenci/is-hayati/mulakat/pratik/${id}/geri-bildirim`, {}),
   isHayatiMulakatGecmis: () => get('/ogrenci/is-hayati/mulakat/gecmis'),
   isHayatiMulakatSil: (id) => del(`/ogrenci/is-hayati/mulakat/pratik/${id}`),
+  isHayatiMulakatSim: (bolumId) => get(`/ogrenci/is-hayati/mulakat-sim/${bolumId}`),   // [2026-10-13] Mülakat Simülasyonu
+  isHayatiMulakatSimKaydet: (v) => post('/ogrenci/is-hayati/mulakat-sim', v),
   // [2026-10-10] İş Hayatı → CV Atölyesi ve Mezunlardan
   isHayatiCv: () => get('/ogrenci/is-hayati/cv'),
   isHayatiCvKaydet: (icerik, paylas) => put('/ogrenci/is-hayati/cv', { icerik, paylas }),

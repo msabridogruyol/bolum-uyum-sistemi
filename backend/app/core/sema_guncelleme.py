@@ -32,6 +32,7 @@ OTOMATIK += ["0066_pilot_hazirlik"]   # [2026-10-11] oturum geçersiz kılma, la
 OTOMATIK += ["0067_coklu_dil"]   # [2026-10-12] kişisel dil tercihi + içerik çeviri önbelleği
 OTOMATIK += ["0068_toplu_ogrenci_islemleri"]   # [2026-10-12] sınıf atlatma (geri alınabilir) + değerlendirme sıfırlama
 OTOMATIK += ["0069_sonuc_epostasi"]   # [2026-10-12] değerlendirme tamamlanınca sonuç e-postası (+ PDF)
+OTOMATIK += ["0070_mulakat_simulasyonu"]   # [2026-10-13] İş Hayatı → Mülakat Simülasyonu sonuçları
 KILIT = 2026101001
 
 

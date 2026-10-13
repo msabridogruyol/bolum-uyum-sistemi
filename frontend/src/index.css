@@ -3152,3 +3152,102 @@ button.ist-kpi:focus-visible{outline:2px solid var(--okul-c, var(--pu));outline-
 .ry-z2{background:color-mix(in srgb,var(--am,#c98a1b) 16%,var(--sur));color:#8a5d0c}
 .ry-z3{background:color-mix(in srgb,var(--gr) 12%,var(--sur));color:var(--gr)}
 .ry-iki.tek{grid-template-columns:1fr}
+
+/* [2026-10-13] İş Hayatı → Mülakat Simülasyonu (msim-*): görüntülü görüşme sahnesi — üstte mülakatçı, altta iki aday karosu */
+:root{--msim-sahne:#2A251D;--msim-karo:#3A3328;--msim-karo2:#463E31;--msim-yazi:#F5EFE2;--msim-yazi2:#C9BE9F;--msim-dizustu:#B7A9D6;--msim-balon:#FFFDF8}
+[data-theme="dark"]{--msim-sahne:#17140F;--msim-karo:#262119;--msim-karo2:#30291F;--msim-balon:#332C21}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--msim-sahne:#17140F;--msim-karo:#262119;--msim-karo2:#30291F;--msim-balon:#332C21}}
+.msim-giris,.msim-ozet{padding:18px 20px;border-left:4px solid var(--okul-c)}
+.msim-giris-ust,.msim-ozet-ust{display:flex;gap:14px;align-items:center}
+.msim-giris-yuz{font-size:44px;line-height:1}
+.msim-giris-baslik{font-family:var(--fd);font-size:21px;font-weight:700;margin:0;line-height:1.2}
+.msim-giris-rol{color:var(--tx2);font-size:13.5px;margin-top:2px}
+.msim-giris-metin{margin:12px 0 10px;line-height:1.6;max-width:72ch;color:var(--tx)}
+.msim-konular,.msim-beceriler{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.msim-konu{background:var(--sur2);border:1px solid var(--bor);border-radius:999px;padding:3px 11px;font-size:12.5px;color:var(--tx2)}
+.msim-basla{margin-top:14px}
+.msim-son{margin-top:12px;font-size:12.5px;color:var(--tx2)}
+.msim-ilerleme{display:flex;align-items:center;gap:6px;margin:2px 2px 10px}
+.msim-ilerleme>span:not(.msim-ilerleme-metin){width:26px;height:5px;border-radius:3px;background:var(--bor2)}
+.msim-ilerleme>span.bitti{background:var(--okul-c)}
+.msim-ilerleme>span.simdi{background:color-mix(in srgb,var(--okul-c) 55%,transparent)}
+.msim-ilerleme-metin{margin-left:6px;font-size:12.5px;color:var(--tx2)}
+.msim-sahne{background:var(--msim-sahne);border-radius:18px;padding:14px;color:var(--msim-yazi);box-shadow:inset 0 0 0 1px rgba(255,240,210,.06)}
+.msim-mulakatci{display:flex;gap:12px;align-items:flex-start;background:var(--msim-karo);border-radius:14px;padding:12px 14px}
+.msim-m-yuz{font-size:34px;line-height:1;flex:none;filter:drop-shadow(0 2px 3px rgba(0,0,0,.35))}
+.msim-m-rol{font-size:12px;color:var(--msim-yazi2);letter-spacing:.02em}
+.msim-m-soru{font-family:var(--fd);font-size:19px;font-weight:600;line-height:1.35;margin:3px 0 0}
+.msim-terimler{margin:10px 0 0;display:grid;gap:4px}
+.msim-terimler>div{font-size:13px;color:var(--msim-yazi2);line-height:1.45}
+.msim-terimler dt{display:inline;font-weight:700;color:var(--msim-yazi)}
+.msim-terimler dt::after{content:': '}
+.msim-terimler dd{display:inline;margin:0}
+.msim-adaylar{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.msim-aday{display:flex;flex-direction:column;gap:10px;min-width:0}
+.msim-karo{position:relative;display:block;width:100%;aspect-ratio:16/9;max-height:210px;border:0;border-radius:14px;overflow:hidden;
+  background:radial-gradient(circle at 50% 38%,var(--msim-karo2),var(--msim-karo) 70%);color:inherit;font:inherit;padding:0;text-align:left;
+  box-shadow:inset 0 0 0 2px transparent;transition:box-shadow .2s}
+button.msim-karo{cursor:pointer}
+button.msim-karo:hover{box-shadow:inset 0 0 0 2px color-mix(in srgb,var(--okul-c) 60%,transparent)}
+button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2px}
+.msim-karo.secili{box-shadow:inset 0 0 0 3px var(--okul-c)}
+.msim-karo.iyi{box-shadow:inset 0 0 0 3px var(--grm)}
+.msim-karo.secili.iyi{box-shadow:inset 0 0 0 3px var(--grm),0 0 0 3px color-mix(in srgb,var(--grm) 35%,transparent)}
+.msim-yuz{position:absolute;left:50%;top:44%;transform:translate(-50%,-50%);font-size:clamp(46px,8vw,72px);line-height:1;filter:drop-shadow(0 4px 6px rgba(0,0,0,.4))}
+.msim-dizustu{position:absolute;left:50%;bottom:-6%;transform:translateX(-50%);width:42%;height:34%;border-radius:10px 10px 0 0;
+  background:linear-gradient(180deg,var(--msim-dizustu),color-mix(in srgb,var(--msim-dizustu) 80%,#000));box-shadow:0 -2px 8px rgba(0,0,0,.25)}
+.msim-dizustu::after{content:'';position:absolute;left:50%;top:38%;width:14%;aspect-ratio:1;transform:translate(-50%,-50%);border-radius:3px;background:rgba(60,40,110,.55)}
+.msim-tepki{position:absolute;right:10px;top:8px;font-size:30px;line-height:1}
+.msim-tepki.dusunuyor{animation:msim-dusun 1.4s ease-in-out infinite}
+@keyframes msim-dusun{50%{transform:rotate(-8deg) translateY(-2px)}}
+.msim-ad{position:absolute;left:10px;bottom:10px;background:rgba(0,0,0,.6);color:#fff;font-weight:700;font-size:13.5px;padding:3px 10px;border-radius:8px}
+.msim-rozet{position:absolute;left:10px;top:10px;font-size:12px;font-weight:700;padding:3px 9px;border-radius:999px}
+.msim-rozet.sen{background:var(--okul-c);color:#fff}
+.msim-rozet.iyi{background:var(--grm);color:#fff}
+.msim-rozet.sen+.msim-rozet.iyi{top:38px}
+.msim-balon{position:relative;background:var(--msim-balon);color:var(--tx);border-radius:12px;padding:10px 12px;font-size:14.5px;line-height:1.55;min-height:64px}
+[data-theme="dark"] .msim-balon{color:var(--tx)}
+.msim-balon::before{content:'';position:absolute;left:22px;top:-7px;border:7px solid transparent;border-top:0;border-bottom-color:var(--msim-balon)}
+.msim-balon.bekliyor{display:flex;align-items:center}
+.msim-yaziyor{display:inline-flex;gap:5px}
+.msim-yaziyor i{width:7px;height:7px;border-radius:50%;background:var(--tx3);animation:msim-nokta 1s infinite ease-in-out}
+.msim-yaziyor i:nth-child(2){animation-delay:.15s}.msim-yaziyor i:nth-child(3){animation-delay:.3s}
+@keyframes msim-nokta{0%,80%,100%{opacity:.25;transform:translateY(0)}40%{opacity:1;transform:translateY(-3px)}}
+.msim-sor{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:12px;padding:10px 12px;
+  border-radius:12px;background:color-mix(in srgb,var(--okul-c) 22%,var(--msim-karo));font-family:var(--fd);font-size:16px;font-weight:600}
+.msim-sor-dugmeler{display:flex;gap:8px}
+.msim-geri{margin-top:14px;background:var(--sur);border:1px solid var(--bor);border-radius:16px;padding:16px 18px;border-top:5px solid var(--am)}
+.msim-geri.ayni{border-top-color:var(--grm)}
+.msim-geri.iki{border-top-color:var(--tl)}
+.msim-geri-baslik{font-family:var(--fd);font-size:19px;font-weight:700}
+.msim-geri-alt{margin:4px 0 0;color:var(--tx2);font-size:14px;line-height:1.5}
+.msim-gerekce{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px}
+.msim-g{border-radius:12px;padding:10px 12px;background:var(--sur2)}
+.msim-g.guclu{background:var(--grl)}
+.msim-g.zayif{background:var(--aml)}
+.msim-g-ad{font-weight:700;font-size:13.5px;margin-bottom:4px}
+.msim-g p{margin:0;font-size:14px;line-height:1.55}
+.msim-g p+p{margin-top:6px}
+.msim-ders{margin-top:12px;border-radius:12px;padding:12px 14px;background:color-mix(in srgb,var(--okul-c) 9%,var(--sur));border:1px dashed color-mix(in srgb,var(--okul-c) 45%,transparent)}
+.msim-ders-baslik{font-weight:800;font-size:14px;margin-bottom:4px}
+.msim-ders p{margin:0;line-height:1.6;font-size:14.5px;max-width:78ch}
+.msim-beceri{margin-top:8px;font-size:13px;color:var(--tx2)}
+.msim-ileri{margin-top:14px}
+.msim-ozet-skor{font-size:15px;margin-top:3px}
+.msim-ozet-ara{font-family:var(--fd);font-size:16px;margin:16px 0 8px}
+.msim-ogrenilen{list-style:none;padding:0;margin:0;display:grid;gap:8px}
+.msim-ogrenilen li{display:flex;gap:10px;align-items:flex-start;background:var(--sur2);border-radius:12px;padding:10px 12px}
+.msim-ogrenilen p{margin:2px 0 0;font-size:14px;line-height:1.55;color:var(--tx2)}
+.msim-o-isaret{flex:none;width:26px;height:26px;border-radius:50%;display:grid;place-items:center;font-weight:800;background:var(--grl);color:var(--gr)}
+.msim-ogrenilen li.farkli .msim-o-isaret{background:var(--aml);color:var(--am)}
+.msim-ogrenilen li.iki .msim-o-isaret{background:var(--tll);color:var(--tl)}
+.msim-beceriler{margin-top:14px;font-size:13px;color:var(--tx2)}
+.msim-ozet-dugmeler{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.msim-not{margin-top:12px}
+@media (max-width:640px){
+  .msim-sahne{padding:10px;border-radius:14px}
+  .msim-m-soru{font-size:17px}
+  .msim-adaylar,.msim-gerekce{grid-template-columns:1fr}
+  .msim-karo{aspect-ratio:auto;height:130px}
+}
+@media (prefers-reduced-motion: reduce){.msim-tepki.dusunuyor,.msim-yaziyor i{animation:none}}

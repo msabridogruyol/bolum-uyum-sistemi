@@ -111,7 +111,12 @@ function kalipGuvenilir(k, s, degerler, cevrilmis) {
 const YUZDE_RX = /%(\d+(?:[.,]\d+)?)/g
 // [2026-10-12] Ondalık ayırıcı: Türkçe "60,25" → noktalı dillerde "60.25" (boşluksuz rakam,rakam yalnızca ondalıktır)
 const NOKTA_ONDALIK = new Set(['en', 'zh', 'hi', 'ko', 'ar'])
-const ondalikDuzelt = (s) => (NOKTA_ONDALIK.has(dil) ? s.replace(/(\d),(\d)/g, '$1.$2') : s)
+// Binlik ayırıcı: Türkçe "1.234.567" → "1,234,567" (yalnızca 3'lü gruplar; tarih "12.10.2026" ve sürüm "1.2" etkilenmez)
+const ondalikDuzelt = (s) => {
+  if (!NOKTA_ONDALIK.has(dil)) return s
+  const binlik = s.replace(/\b\d{1,3}(?:\.\d{3})+(?!\.?\d)/g, (m) => m.replace(/\./g, '\u0001'))
+  return binlik.replace(/(\d),(\d)/g, '$1.$2').replace(/\u0001/g, ',')
+}
 const yuzdeDuzelt = (s) => ondalikDuzelt(s).replace(YUZDE_RX, (_, n) => (dil === 'fr' || dil === 'de' ? `${n} %` : `${n}%`))
 
 export function cevir(ham) {

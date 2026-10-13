@@ -13,6 +13,7 @@ export const SEKMELER = [
   { kod: 'gelecek', ad: 'Gelecekte Bu Meslek', ikon: '🔭', bilesen: lazy(() => import('./GelecekteMeslek')) },
   { kod: 'zorgun', ad: 'Zor Günler', ikon: '🌧️', bilesen: lazy(() => import('./ZorGunler')) },
   { kod: 'cv', ad: 'CV Atölyesi', ikon: '📄', bilesen: lazy(() => import('./CvAtolyesi')) },
+  { kod: 'mulakatsim', ad: 'Mülakat Simülasyonu', ikon: '🧑‍💼', bilesen: lazy(() => import('./MulakatSimulasyonu')) },   // [2026-10-13]
   { kod: 'mulakat', ad: 'Mülakat Pratiği', ikon: '🎤', bilesen: lazy(() => import('./MulakatPratigi')) },
   { kod: 'dersler', ad: 'Okulda Öğretilmeyenler', ikon: '🧰', bilesen: lazy(() => import('./OkuldaOgretilmeyenler')) },
   { kod: 'mezun', ad: 'Mezunlardan', ikon: '🎓', bilesen: lazy(() => import('./MezunHikayeleri')) },
