@@ -5,6 +5,7 @@ import { tembel } from '../yardimci/tembelYukle'   // [2026-10-11] eski sürüm 
 import { NavLink, Navigate, useParams } from 'react-router-dom'
 import PuanRehberi from '../components/PuanRehberi'
 import { OgrenciRaporYorumu } from '../components/RaporYorumu'   // [2026-10-12]
+import GelecekMektup from '../components/GelecekMektup'   // [2026-10-13]
 
 const GenelSonuclarSayfasi = tembel(() => import('./GenelSonuclarSayfasi'))
 const KatmanDetaySayfasi = tembel(() => import('./KatmanDetaySayfasi'))
@@ -47,6 +48,7 @@ export default function ProfilimSayfasi() {
           {k === 'K5' && <K5SonucSayfasi gomulu />}
         </Suspense>
       </div>
+      {!k && <GelecekMektup />}
     </div>
   )
 }

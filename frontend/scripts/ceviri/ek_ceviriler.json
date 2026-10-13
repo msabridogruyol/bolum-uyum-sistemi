@@ -803,5 +803,19 @@
   "uz": "nogʻora",
   "az": "təbil",
   "ko": "북"
+ },
+ "{0} tarihinde yazdın.": {
+  "en": "You wrote this on {0}.",
+  "de": "Du hast ihn am {0} geschrieben.",
+  "fr": "Tu l'as écrite le {0}.",
+  "ru": "Ты написал(а) его {0}.",
+  "es": "La escribiste el {0}.",
+  "it": "L'hai scritta il {0}.",
+  "ar": "كتبتها في {0}.",
+  "zh": "你在{0}写下了这封信。",
+  "hi": "तुमने इसे {0} को लिखा था।",
+  "uz": "Uni {0} kuni yozgansan.",
+  "az": "Onu {0} tarixində yazmısan.",
+  "ko": "{0}에 쓴 편지야."
  }
 }

@@ -167,3 +167,21 @@ def sonuc_raporu_epostasi(ad: str, tarih: str, ekli: bool, giris_adresi: str | N
     metin = (f"Merhaba {ad},\n\n{tarih} tarihinde değerlendirmeni tamamladın.\n{ek_cumle}\n"
              + (f"\nSonuçların: {giris_adresi}\n" if giris_adresi else "") + "\nFilizyol")
     return konu, html, metin
+
+
+def gelecek_mektup_epostasi(ad: str, yazildigi: str, mektup: str) -> tuple[str, str, str]:
+    """[2026-10-13] Öğrencinin geçmişte kendine yazdığı mektup, seçtiği gün gelir (app/core/gelecek_mektup.py)."""
+    ad_h = _html.escape(ad or "")
+    govde = "".join(f'<p style="font-size:15px;line-height:1.7;margin:0 0 12px">{_html.escape(p)}</p>'
+                    for p in (mektup or "").split("\n") if p.strip())
+    konu = f"Geçmişten bir mektup: {yazildigi} tarihinde kendine yazdığın mektup"
+    html = _sablon("Geçmişteki senden bir mektup ✉️", f"""
+      <p style="font-size:13.5px;color:#7A7157;line-height:1.6">Merhaba {ad_h}, {_html.escape(yazildigi)} tarihinde Filizyol'da kendine bir mektup
+      yazmış ve bugün açılmasını istemiştin. İşte o gün yazdıkların:</p>
+      <div style="background:#FBF7EE;border-left:4px solid #E8804A;border-radius:10px;padding:16px 18px;margin:14px 0">{govde}</div>
+      <p style="font-size:12.5px;color:#7A7157;line-height:1.6">O günden bu yana neler değişti, neler aynı kaldı? Belki bugün de
+      ileriki kendine birkaç satır yazmak istersin.</p>""",
+        alt_not="Bu mektubu sen yazdın ve bu tarihte gelmesini sen seçtin. Mektubun şifreli saklandı; okulun ve öğretmenlerin göremedi.")
+    metin = (f"Merhaba {ad},\n\n{yazildigi} tarihinde kendine yazdığın mektup:\n\n{mektup}\n\n"
+             "O günden bu yana neler değişti, neler aynı kaldı?\n\nFilizyol")
+    return konu, html, metin

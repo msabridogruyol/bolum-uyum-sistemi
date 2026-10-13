@@ -439,6 +439,10 @@ export const api = {
   isHayatiDusunme: (bolumId) => get(`/ogrenci/is-hayati/dusunme${bolumId ? `?bolum_id=${bolumId}` : ''}`),   // [2026-10-13] Düşünme Atölyesi
   isHayatiDusunmeBitir: (kod, v) => post(`/ogrenci/is-hayati/dusunme/${kod}`, v),
   isHayatiDusunmeDeney: (v) => post('/ogrenci/is-hayati/dusunme-deney', v),
+  gelecekMektuplarim: () => get('/ogrenci/gelecek-mektup'),   // [2026-10-13] Gelecekteki sana mektup
+  gelecekMektupYaz: (v) => post('/ogrenci/gelecek-mektup', v),
+  gelecekMektupTarih: (id, t) => put(`/ogrenci/gelecek-mektup/${id}`, { teslim_tarihi: t }),
+  gelecekMektupSil: (id) => del(`/ogrenci/gelecek-mektup/${id}`),
   // [2026-10-10] İş Hayatı → CV Atölyesi ve Mezunlardan
   isHayatiCv: () => get('/ogrenci/is-hayati/cv'),
   isHayatiCvKaydet: (icerik, paylas) => put('/ogrenci/is-hayati/cv', { icerik, paylas }),

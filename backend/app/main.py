@@ -46,6 +46,7 @@ from app.api.listem import router as listem_router
 from app.api.karsilastir import router as karsilastir_ogrenci_router   # [2026-10-11] /ogrenci/karsilastir (+ /pdf)
 from app.api.veli_sunumu import router as veli_sunumu_router   # [2026-10-11] /yonetim/okul/{id}/veli-sunumu (.pptx)
 from app.api.raporlar import router as raporlar_router
+from app.api.gelecek_mektup import router as gelecek_mektup_router   # [2026-10-13] Gelecekteki sana mektup
 from app.api.okul_istatistik import router as okul_istatistik_router   # [2026-10-10] okul paneli → İstatistikler
 from app.api.okul_tek_bakista import router as okul_tek_bakista_router   # [2026-10-10] Rapor Merkezi → Tek Bakışta
 from app.api.hazir_raporlar import router as hazir_raporlar_router
@@ -291,15 +292,18 @@ def _baslangic_temizligi():
     import threading
     import time
 
+    from app.core.gelecek_mektup import arka_planda_teslim   # [2026-10-13] teslim günü gelen mektuplar
     _fotograf_temizligi()
     _bekleyen_skor_hesabi()
     _tuik_hatirlatma()
+    arka_planda_teslim()
 
     def _dongu():
         while True:
             time.sleep(6 * 3600)
             _fotograf_temizligi()
             _tuik_hatirlatma()
+            arka_planda_teslim()
 
     threading.Thread(target=_dongu, name="fotograf-temizligi", daemon=True).start()
 
@@ -333,6 +337,7 @@ app.include_router(listem_router)                           # [2026-10-10] /ogre
 app.include_router(karsilastir_ogrenci_router)              # [2026-10-11] /ogrenci/karsilastir (+ /pdf)
 app.include_router(veli_sunumu_router)                      # [2026-10-11] veli toplantısı sunumu (.pptx)
 app.include_router(raporlar_router)                         # [2026-10-10] PDF / Excel raporlar
+app.include_router(gelecek_mektup_router, prefix="/ogrenci", tags=["Öğrenci — Gelecekteki sana mektup"])   # [2026-10-13]
 app.include_router(okul_istatistik_router)                  # [2026-10-10] /yonetim/okul/{id}/istatistik (+ /excel)
 app.include_router(okul_tek_bakista_router)                 # [2026-10-10] /yonetim/okul/{id}/tek-bakista (+ /pdf)
 app.include_router(hazir_raporlar_router)                    # [2026-10-11] /yonetim/okul/{id}/hazir-raporlar
