@@ -8,10 +8,12 @@ Mülakat Simülasyonu'nda bir düşünme aracını kullanan sorular (mulakat_sim
 
   GET  /dusunme?bolum_id=   — araçlar (tüm içerik), öğrencinin ilerlemesi, seçili bölümün mülakatında aracı kullanan sorular
   POST /dusunme/{kod}       — modül bitti: ilk deneme ve son soruların sonucu (öğrenci + araç başına tek satır, üzerine yazılır)
+  POST /dusunme-deney       — "Öğrenmeyi öğren" deneyi: 1. ölçüm (aynı oturum) ya da en erken 12 saat sonra 2. ölçüm
 
 İçerik: app/data/dusunme_atolyesi.json.
 """
 import json
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
@@ -55,7 +57,53 @@ def dusunme(bolum_id: int | None = Query(None), db: Session = Depends(get_db), o
                 for r in db.execute(text("""SELECT arac_kod, ilk, son, deneme, tamamlanma_zamani FROM is_hayati_dusunme
                                              WHERE ogrenci_id = :o"""), {"o": o.id}).all()}
     mulakat = _mulakat_sorulari(db, bolum_id)
-    return {"araclar": [{**a, "mulakat": mulakat.get(a["kod"], [])} for a in araclar()], "ilerleme": ilerleme}
+    return {"araclar": [{**a, "mulakat": mulakat.get(a["kod"], [])} for a in araclar()], "ilerleme": ilerleme,
+            "deney": _deney(db, o)}
+
+
+# ---- "Öğrenmeyi öğren" deneyi: tekrar okuma ile kendini sınamanın aynı gün ve ertesi gün karşılaştırması ---------------------
+IKINCI_OLCUM_SAAT = 12
+
+
+def _deney(db: Session, o: Ogrenci) -> dict | None:
+    r = db.execute(text("""SELECT sinama_listesi, olcum1, olcum1_zamani, olcum2, olcum2_zamani FROM is_hayati_ogrenme_deneyi
+                            WHERE ogrenci_id = :o"""), {"o": o.id}).first()
+    if r is None:
+        return None
+    acilis = r.olcum1_zamani + timedelta(hours=IKINCI_OLCUM_SAAT)
+    simdi = datetime.now(timezone.utc)
+    return {"sinama_listesi": r.sinama_listesi, "olcum1": r.olcum1, "olcum1_zamani": r.olcum1_zamani.isoformat(),
+            "olcum2": r.olcum2, "olcum2_zamani": r.olcum2_zamani.isoformat() if r.olcum2_zamani else None,
+            "ikinci_hazir": r.olcum2 is None and simdi >= acilis,
+            "kalan_saat": None if r.olcum2 is not None or simdi >= acilis else max(1, round((acilis - simdi).total_seconds() / 3600))}
+
+
+class DeneyIstek(BaseModel):
+    asama: int = Field(..., ge=1, le=2)
+    okuma: int = Field(..., ge=0, le=20)      # tekrar okuyarak çalışılan listeden doğru sayısı
+    sinama: int = Field(..., ge=0, le=20)     # kendini sınayarak çalışılan listeden doğru sayısı
+    toplam: int = Field(..., ge=1, le=20)     # liste başına öğe sayısı
+    sinama_listesi: int = Field(1, ge=1, le=2)
+
+
+@ogrenci_router.post("/dusunme-deney")
+def deney_kaydet(istek: DeneyIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+    if max(istek.okuma, istek.sinama) > istek.toplam:
+        raise HTTPException(400, "Geçersiz sonuç.")
+    olcum = json.dumps({"okuma": istek.okuma, "sinama": istek.sinama, "toplam": istek.toplam})
+    if istek.asama == 1:   # deney (yeniden) başlar: 2. ölçüm sıfırlanır
+        db.execute(text("""
+            INSERT INTO is_hayati_ogrenme_deneyi (ogrenci_id, sinama_listesi, olcum1) VALUES (:o, :l, CAST(:m AS JSONB))
+            ON CONFLICT (ogrenci_id) DO UPDATE SET sinama_listesi = EXCLUDED.sinama_listesi, olcum1 = EXCLUDED.olcum1,
+                   olcum1_zamani = now(), olcum2 = NULL, olcum2_zamani = NULL"""), {"o": o.id, "l": istek.sinama_listesi, "m": olcum})
+    else:
+        d = _deney(db, o)
+        if d is None or not d["ikinci_hazir"]:
+            raise HTTPException(400, "İkinci ölçüm, ilk ölçümden en az 12 saat sonra yapılabilir.")
+        db.execute(text("UPDATE is_hayati_ogrenme_deneyi SET olcum2 = CAST(:m AS JSONB), olcum2_zamani = now() WHERE ogrenci_id = :o"),
+                   {"o": o.id, "m": olcum})
+    db.commit()
+    return _deney(db, o)
 
 
 class DusunmeIstek(BaseModel):

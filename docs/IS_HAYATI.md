@@ -197,3 +197,7 @@ ikiye bölerek arama. Modül akışı: durum → ilk deneme (araç bilinmeden) �
 - Uçlar: `is_hayati_dusunme.py` → `GET /dusunme?bolum_id=`, `POST /dusunme/{kod}`. Tablo (0071): `is_hayati_dusunme` (öğrenci + araç başına tek satır).
 - İçerik: `app/data/dusunme_atolyesi.json`. Mülakat Simülasyonu soruları `arac` alanıyla etiketlidir (105 soru); mülakat ekranında
   "Atölyede dene" bağlantısı, atölye özetinde "Bu bölümün mülakatında bu araç" listesi çıkar. `?sekme=dusunme&arac=<kod>` modülü doğrudan açar.
+- [2026-10-13] İki modül daha: `tercih_verisi` (📊 Veriyi doğru oku — kurgusal program tablosu, 5 soru; `alistirma.tur = veri_oku`) ve
+  `ogrenmeyi_ogren` (🧠 Öğrenmeyi öğren — `deney`: uydurma dilden 12 kelime; 6'sı kendini sınayarak, 6'sı tekrar okuyarak çalışılır,
+  ara görevden sonra test edilir). En erken 12 saat sonra aynı kelimelerle 2. ölçüm açılır (`POST /dusunme-deney`, tablo
+  `is_hayati_ogrenme_deneyi`, göç 0072). Sınama listesi rastgele seçilir; sınama önce, okuma sonra çalışılır (okuma teste daha yakın kalır).
