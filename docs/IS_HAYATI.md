@@ -101,6 +101,7 @@ Her içerik bileşeni kendi dosyasını açar: `backend/app/api/is_hayati_<konu>
 | `cv` | CV Atölyesi | `components/isHayati/CvAtolyesi.jsx` |
 | `mulakat` | Mülakat Pratiği | `components/isHayati/MulakatPratigi.jsx` |
 | `mulakatsim` | Mülakat Simülasyonu | `components/isHayati/MulakatSimulasyonu.jsx` |
+| `dusunme` | Düşünme Atölyesi | `components/isHayati/DusunmeAtolyesi.jsx` |
 | `dersler` | Okulda Öğretilmeyenler | `components/isHayati/OkuldaOgretilmeyenler.jsx` |
 | `mezun` | Mezunlardan | `components/isHayati/MezunHikayeleri.jsx` |
 
@@ -186,3 +187,13 @@ sorularda iki yaklaşımın sonucu) ve "Alandan bir bilgi" gösterilir. Bilgi s�
 - İçerik: `app/data/mulakat_simulasyonu.json` — 301 bölüm × 4 soru (2 alan durumu, 1 iletişim, 1 etik/sorumluluk). Anahtar bölüm
   adıdır (`bolumler.ad`). Soru alanları: `konu, beceri, soru, terimler[], tur (dogru|ikisi_de), adaylar[2]{cevap, iyi, neden, sonuc?}, ders`.
   İyi adayın yeri dengelidir (testte %40–60 aralığı denetlenir). Diğer dillerde içerik, `app/data` havuzundan çalışma anında çevrilir.
+
+## Düşünme Atölyesi (göç 0071)
+[2026-10-13] Okulda pek öğretilmeyen düşünme araçları, yaparak: kök neden (5 Neden), korelasyon ≠ nedensellik, algoritmik düşünme,
+ikiye bölerek arama. Modül akışı: durum → ilk deneme (araç bilinmeden) → araç → okulda → iş hayatında → bu hafta dene → özet
+("ilk denemen → aracı kullanınca"; puan değildir).
+- Alıştırma türleri (`alistirma.tur`): `zincir` (neden zinciri + kök/belirti çözümü), `iliski` (3 vaka + saçılım grafiği),
+  `siralama` (adımları sırala, robotu çalıştır, eksik koşul), `sayi_bul` (1–100 sayı bulma + ikiye bölme gösterimi).
+- Uçlar: `is_hayati_dusunme.py` → `GET /dusunme?bolum_id=`, `POST /dusunme/{kod}`. Tablo (0071): `is_hayati_dusunme` (öğrenci + araç başına tek satır).
+- İçerik: `app/data/dusunme_atolyesi.json`. Mülakat Simülasyonu soruları `arac` alanıyla etiketlidir (105 soru); mülakat ekranında
+  "Atölyede dene" bağlantısı, atölye özetinde "Bu bölümün mülakatında bu araç" listesi çıkar. `?sekme=dusunme&arac=<kod>` modülü doğrudan açar.

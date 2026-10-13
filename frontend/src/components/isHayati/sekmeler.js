@@ -16,6 +16,7 @@ export const SEKMELER = [
   { kod: 'mulakatsim', ad: 'Mülakat Simülasyonu', ikon: '🧑‍💼', bilesen: lazy(() => import('./MulakatSimulasyonu')) },   // [2026-10-13]
   { kod: 'mulakat', ad: 'Mülakat Pratiği', ikon: '🎤', bilesen: lazy(() => import('./MulakatPratigi')) },
   { kod: 'dersler', ad: 'Okulda Öğretilmeyenler', ikon: '🧰', bilesen: lazy(() => import('./OkuldaOgretilmeyenler')) },
+  { kod: 'dusunme', ad: 'Düşünme Atölyesi', ikon: '🧩', bilesen: lazy(() => import('./DusunmeAtolyesi')) },   // [2026-10-13]
   { kod: 'mezun', ad: 'Mezunlardan', ikon: '🎓', bilesen: lazy(() => import('./MezunHikayeleri')) },
 ]
 export const VARSAYILAN_SEKME = 'gercek'
