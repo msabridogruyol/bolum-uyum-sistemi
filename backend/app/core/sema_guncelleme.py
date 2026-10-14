@@ -35,6 +35,7 @@ OTOMATIK += ["0069_sonuc_epostasi"]   # [2026-10-12] değerlendirme tamamlanınc
 OTOMATIK += ["0070_mulakat_simulasyonu"]   # [2026-10-13] İş Hayatı → Mülakat Simülasyonu sonuçları
 OTOMATIK += ["0071_dusunme_atolyesi"]   # [2026-10-13] İş Hayatı → Düşünme Atölyesi ilerlemesi
 OTOMATIK += ["0072_ogrenme_deneyi"]   # [2026-10-13] Öğrenmeyi öğren deneyi (ertesi gün 2. ölçüm)
+OTOMATIK += ["0074_haftalik_yansitma_metni"]   # [2026-10-14] haftalık yansıtma görevi açıklaması (gerçeği yansıtmayan cümle)
 KILIT = 2026101001
 
 

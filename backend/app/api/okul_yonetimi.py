@@ -517,12 +517,21 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
     """[2026-10-10] sinif / sube verilirse yalnızca o sınıf düzeyinin / şubenin özeti (sınıf öğretmeni raporu)."""
     okul = _okul_kapsami(db, yon, okul_id)
     kosul, p = _okul_filtresi(okul_id)
-    ogrenciler = db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id).all()
+    # [2026-10-14] Test hesapları sayılmaz (İstatistikler, hazır raporlar, karşılaştırma ve veli sunumuyla aynı kural)
+    kosul += " AND NOT coalesce(o.test_hesabi, false)"
+    ogrenciler = [o for o in db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id).all()
+                  if not getattr(o, "test_hesabi", False)]
     if sinif:
         ogrenciler = [o for o in ogrenciler if o.sinif == sinif and (not sube or (o.sube or "") == sube)]
         kosul += " AND o.sinif = :f_sinif" + (" AND o.sube = :f_sube" if sube else "")
         p = {**p, "f_sinif": sinif, "f_sube": sube}
     il = _ilerleme(db, okul_id, oneri={o.id for o in ogrenciler})   # yalnızca kapsamdaki öğrenciler sıralanır
+    # [2026-10-14] "Giriş yapan" = sistemi en az bir kez açan: son giriş zamanı, günlük aktiflik kaydı ya da değerlendirmeye
+    # başlamış olmak. "Beni hatırla" ile açık kalan oturumda son giriş zamanı güncellenmediği için tek başına yetmez.
+    aktif_olan = {r[0] for r in db.execute(text("SELECT DISTINCT ogrenci_id FROM ogrenci_aktif_gunler WHERE ogrenci_id = ANY(:i)"),
+                                            {"i": [o.id for o in ogrenciler]}).all()} if ogrenciler else set()
+    def acti(o) -> bool:
+        return o.son_giris_zamani is not None or o.id in aktif_olan or ((il.get(o.id) or {}).get("baslayan") or 0) > 0
     adlar = {b.id: b.ad for b in db.query(Bolum.id, Bolum.ad).all()}
 
     durum_say = Counter()
@@ -537,7 +546,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
             grup["ogrenci"] += 1
             grup["tamamlayan"] += kod == "tamamlandi"
             grup["devam"] += kod == "devam"
-            grup["giris_yapan"] += o.son_giris_zamani is not None
+            grup["giris_yapan"] += acti(o)
         subeler[(anahtar, o.sube or "")]["hedef_secen"] += bool((il.get(o.id) or {}).get("hedef"))
         x = il.get(o.id) or {}
         if x.get("durum") == "tamamlandi" and x.get("ilk_bolum"):
@@ -546,7 +555,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
             hedef[adlar.get(x["hedef"], "?")] += 1
 
     toplam = len(ogrenciler)
-    giris_yapan = sum(1 for o in ogrenciler if o.son_giris_zamani is not None)
+    giris_yapan = sum(1 for o in ogrenciler if acti(o))
     sira = {s: i for i, s in enumerate(SINIFLAR)}
     from app.core.aktiflik import bugun_tr
     bugun = bugun_tr()   # [2026-10-11] Türkiye saatiyle gün
