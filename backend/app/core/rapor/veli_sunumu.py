@@ -649,4 +649,26 @@ def veli_sunumu_pptx(v: dict) -> bytes:
     d.p.core_properties.author = "Filizyol"
     out = io.BytesIO()
     d.p.save(out)
-    return out.getvalue()
+    return _yazi_tipi_ve_dil_duzelt(out.getvalue())
+
+
+def _yazi_tipi_ve_dil_duzelt(pptx: bytes) -> bytes:
+    """[2026-10-14] İndirilen dosya her bilgisayarda aynı görünsün:
+    * python-pptx şablonunun teması Calibri'dir (konuşma notları ve tema yazı tipini kullanan her şey); tüm temalar Arial'a
+      çevrilir — slaytlardaki metinler zaten Arial. Arial Windows ve macOS'ta hazır gelir; LibreOffice / Google Slaytlar'da
+      aynı ölçülerde bir karşılığı (Liberation Sans / Arial) vardır, satır taşması olmaz.
+    * Metinler "en-US" etiketliydi: PowerPoint Türkçe metnin altını yazım hatası diye kırmızıyla çizer, büyük harf ve
+      heceleme İngilizce kurala göre yapılır. Tüm etiketler tr-TR yapılır."""
+    import re
+    import zipfile
+    giris, cikis = zipfile.ZipFile(io.BytesIO(pptx)), io.BytesIO()
+    with zipfile.ZipFile(cikis, "w", zipfile.ZIP_DEFLATED) as z:
+        for bilgi in giris.infolist():
+            veri = giris.read(bilgi.filename)
+            if bilgi.filename.endswith(".xml"):
+                metin = veri.decode("utf-8").replace('lang="en-US"', 'lang="tr-TR"')
+                if bilgi.filename.startswith("ppt/theme/"):
+                    metin = re.sub(r'(<a:latin typeface=")[^"]*(")', r"\1Arial\2", metin)
+                veri = metin.encode("utf-8")
+            z.writestr(bilgi, veri)
+    return cikis.getvalue()
