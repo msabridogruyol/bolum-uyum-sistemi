@@ -282,15 +282,41 @@ KENDI_AD_ETIKETI = "[ad]"
 
 
 def kendi_adini_maskele(metin: str | None, kendi_ad: str | None) -> str:
-    """[2026-10-14] Öğrencinin kendi adı da yapay zekâya gitmez: ad/soyad parçalarının her biri (≥ 3 harf, ekli hâlleri dahil)
-    "[ad]" olur. Tek kelime bile maskelenir — öğrencinin kendi adı olduğu için yanlış eşleşme riski düşüktür."""
+    """[2026-10-14] Öğrencinin kendi adı yapay zekâya gitmez — ama adı sıradan bir kelime olan öğrencinin ("Doğa", "Deniz",
+    "Barış") cümlesi de bozulmamalı. Kural:
+      * ad ve soyad birlikte geçerse (sırayla, aradaki ikinci ad atlanabilir; ekli hâli dahil) → "[ad]";
+      * soyad tek başına yalnızca BÜYÜK harfle ve cümle başında değilken → "[ad]" ("Kaya ailesi" evet, "kaya tırmanışı" hayır);
+      * ad tek başına maskelenmez: tek başına kimliği belirlemez ve çoğu zaman sıradan bir kelimedir."""
     m = metin or ""
-    parcalar = [p for p in ad_normalize(kendi_ad) if len(p) >= 3]
-    if not parcalar or not m:
+    parcalar = ad_normalize(kendi_ad)
+    if len(parcalar) < 2 or not m:
         return m
-    for n, b, s, _oz in sorted(_parcala(m), key=lambda x: -x[1]):
-        if any(_ek_uyar(n, p, True) for p in parcalar):
-            m = m[:b] + KENDI_AD_ETIKETI + m[s:]
+    tok = _parcala(m)
+    soyad = parcalar[-1]
+    araliklar: list[tuple[int, int]] = []
+    i = 0
+    while i < len(tok):
+        # ad (+ isteğe bağlı ikinci ad) + soyad dizisi
+        bulundu = None
+        if tok[i][0] == parcalar[0]:
+            for n in range(len(parcalar), 1, -1):
+                hedef = (parcalar[0],) + parcalar[len(parcalar) - n + 1:]   # tam ad ya da ilk ad + soyad
+                if i + len(hedef) <= len(tok) and all(_ek_uyar(tok[i + k][0], hedef[k], k == len(hedef) - 1)
+                                                         for k in range(len(hedef))):
+                    bulundu = len(hedef)
+                    break
+        if bulundu:
+            araliklar.append((tok[i][1], tok[i + bulundu - 1][2]))
+            i += bulundu
+            continue
+        n, b, e, oz = tok[i]
+        if len(soyad) >= 3 and _ek_uyar(n, soyad, True) and oz[:1].isupper():
+            onceki = m[:b].rstrip()
+            if onceki and onceki[-1] not in ".!?:\n\"“'(":
+                araliklar.append((b, e))
+        i += 1
+    for b, e in sorted(araliklar, reverse=True):
+        m = m[:b] + KENDI_AD_ETIKETI + m[e:]
     return m
 
 

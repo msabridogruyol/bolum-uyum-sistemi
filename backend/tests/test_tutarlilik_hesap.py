@@ -110,3 +110,18 @@ def test_mulakat_yanitsiz_sorular_belirtilir():
     assert _yanitsiz_notu(3).startswith("3 soruyu boş bıraktın") and _yanitsiz_notu(0) is None
     assert _yorum(2, 3, yanitsiz=1).startswith("Yanıtladığın soruların çoğunda")
     assert "boş bıraktın" not in _yorum(2, 2)
+
+
+# ----------------------------------------------------------------------------- kendi adı maskeleme (yapay zekâya giden metin)
+def test_kendi_adi_maskeleme_siradan_kelimeleri_bozmaz():
+    from app.core.filiz_gizlilik import kendi_adini_maskele as k
+    assert k("Doğa bilimleri ve doğayı seviyorum", "Doğa Yılmaz") == "Doğa bilimleri ve doğayı seviyorum"
+    assert k("Deniz biyolojisi ilgimi çekiyor", "Deniz Kaya") == "Deniz biyolojisi ilgimi çekiyor"
+    assert k("ben ayşe kaya, kaya tırmanışını severim", "Ayşe Nur Kaya") == "ben [ad], kaya tırmanışını severim"
+    assert k("Merhaba ben Ayşe Nur Kaya, Kaya ailesinin kızıyım.", "Ayşe Nur Kaya") == "Merhaba ben [ad], [ad] ailesinin kızıyım."
+    assert k("Ayşe Kaya'nın hedefi tıp", "Ayşe Nur Kaya") == "[ad]'nın hedefi tıp"
+
+
+def test_sunum_pdf_yarim_yukari():
+    from app.core.rapor.sunum_pdf import _tam
+    assert _tam(62.5) == 63 and _tam(72.4) == 72

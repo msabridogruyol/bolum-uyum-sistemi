@@ -351,13 +351,14 @@ def _xlsx_b64(baslik: str, kolonlar: list[str], satirlar: list[list], not_metni:
 
 
 # ----------------------------------------------------------------------------- ilerleme / durum
-def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | None = None, oneri: bool = True) -> dict:
+def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | None = None, oneri=True) -> dict:
     """{ogrenci_id: {tur_id, tur_durumu, biten, toplam, baslayan, ilk_bolum, oneri_ilk10, hedef, tamamlanma}}
 
     ilk_bolum / oneri_ilk10 (bolum_id listesi): tamamlanan son turda öğrencinin sonuç ekranında gördüğü sıralama
     (skor_motoru.toplu_siralama — K5 etkili nihai uyum + alan sırası); ham toplam_uyum sırası DEĞİL.
     Öneri sıralaması öğrenci başına ~1 ms sürer (1000 öğrencide ~1 sn); kullanmayan çağrılar oneri=False geçebilir
-    (o zaman ilk_bolum None, oneri_ilk10 boş)."""
+    (o zaman ilk_bolum None, oneri_ilk10 boş). [2026-10-14] oneri bir öğrenci kimliği kümesi de olabilir: yalnızca o öğrenciler
+    sıralanır (ör. seçili sınıf / şube raporu tüm okulu sıralamaz)."""
     if ogrenci_id is not None:
         kosul, p = "o.id = :oid", {"oid": ogrenci_id}
     else:
@@ -382,7 +383,11 @@ def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | N
     """), p).mappings().all()
     toplam = db.execute(text("SELECT count(*) FROM katmanlar WHERE NOT kosullu_mu")).scalar() or 4
     from app.core.skor_motoru import toplu_siralama
-    sira = toplu_siralama(db, [r["tur_id"] for r in satirlar if r["durum"] == "tamamlandi"], ilk_n=10) if oneri else {}
+    kume = oneri if isinstance(oneri, (set, frozenset, list, tuple)) else None
+    if kume is not None:
+        kume = set(kume)
+    sira = toplu_siralama(db, [r["tur_id"] for r in satirlar if r["durum"] == "tamamlandi"
+                               and (kume is None or r["ogrenci_id"] in kume)], ilk_n=10) if oneri else {}
     sonuc = {}
     for r in satirlar:
         ilk10 = [s.bolum_id for s in sira.get(r["tur_id"], [])]
@@ -517,7 +522,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
         ogrenciler = [o for o in ogrenciler if o.sinif == sinif and (not sube or (o.sube or "") == sube)]
         kosul += " AND o.sinif = :f_sinif" + (" AND o.sube = :f_sube" if sube else "")
         p = {**p, "f_sinif": sinif, "f_sube": sube}
-    il = _ilerleme(db, okul_id)
+    il = _ilerleme(db, okul_id, oneri={o.id for o in ogrenciler})   # yalnızca kapsamdaki öğrenciler sıralanır
     adlar = {b.id: b.ad for b in db.query(Bolum.id, Bolum.ad).all()}
 
     durum_say = Counter()

@@ -31,6 +31,12 @@ def _fontlar():
     kaydet()
 
 
+def _tam(x) -> int:
+    """Gösterilen tam sayı: yarım yukarı (PowerPoint, ekran ve raporlarla aynı; 62,5 → 63)."""
+    from app.core.rapor.veri import yuvarla
+    return yuvarla(x)
+
+
 def _renk(h: str):
     return HexColor("#" + h)
 
@@ -234,7 +240,7 @@ class PdfSlayt:
                     c.rect(ax_x, by + 1, ax_w * min(v, ust) / ust, kal - 2, stroke=0, fill=1)
                     c.setFillColor(_renk("2B2620"))
                     c.setFont("Filiz-B", 12 if m == 1 else 10)
-                    c.drawString(ax_x + ax_w * min(v, ust) / ust + 4, by + kal / 2 - 4, f"{v:.0f}{sonek}")
+                    c.drawString(ax_x + ax_w * min(v, ust) / ust + 4, by + kal / 2 - 4, f"{_tam(v)}{sonek}")
             c.setStrokeColor(_renk("C9C1B5"))
             c.line(ax_x, ax_y, ax_x, ax_y + ax_h)
         else:
@@ -265,7 +271,7 @@ class PdfSlayt:
                     c.rect(bx + 1, ax_y, kal - 2, bh, stroke=0, fill=1)
                     c.setFillColor(_renk("2B2620"))
                     c.setFont("Filiz-B", 12)
-                    c.drawCentredString(bx + kal / 2, ax_y + bh + 4, f"{v:.0f}{sonek}")
+                    c.drawCentredString(bx + kal / 2, ax_y + bh + 4, f"{_tam(v)}{sonek}")
             c.setStrokeColor(_renk("C9C1B5"))
             c.line(ax_x, ax_y, ax_x + ax_w, ax_y)
         if m > 1:   # gösterge (altta)
@@ -313,7 +319,7 @@ class PdfSlayt:
         c.setFont("Filiz-B", 12)
         for a, v in orta_noktalar:
             rr = r * 0.775
-            c.drawCentredString(cx + rr * math.cos(a), cy + rr * math.sin(a) - 4, f"{v:.0f}")
+            c.drawCentredString(cx + rr * math.cos(a), cy + rr * math.sin(a) - 4, f"{_tam(v)}")
         # gösterge (sağda)
         yuks = [len(self._satirla(c, k, gosterge_w - 18, 12)) * 13.8 for k in kategoriler]
         gy = cy + (sum(yuks) + 6 * (len(yuks) - 1)) / 2

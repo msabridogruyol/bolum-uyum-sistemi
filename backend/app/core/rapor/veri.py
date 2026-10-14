@@ -341,11 +341,12 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
     ozet = _ozet_kucuk_grup(okul_ozeti(okul_id, db, yonetici, sinif=sinif, sube=sube), kapsamli=bool(sinif))
     ogrenciler = db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id) \
         .order_by(Ogrenci.sinif, Ogrenci.sube, Ogrenci.ad_soyad).all()
-    il_okul = _ilerleme(db, okul_id)
     if sinif:
         ogrenciler = [o for o in ogrenciler if o.sinif == sinif and (not sube or (o.sube or "") == sube)]
         if sube:   # şube listesinde okul numarası sırası daha kullanışlı
             ogrenciler.sort(key=lambda o: (int(o.ogrenci_no) if (o.ogrenci_no or "").isdigit() else 10**9, o.ad_soyad))
+    # [2026-10-14] okul geneli ilerleme (okul ortalaması için) — bölüm sıralaması yalnızca rapordaki öğrenciler için
+    il_okul = _ilerleme(db, okul_id, oneri={o.id for o in ogrenciler})
     secili = {o.id for o in ogrenciler}
     il = {k: v for k, v in il_okul.items() if k in secili}
     bolum = {b.id: b for b in db.query(Bolum).all()}

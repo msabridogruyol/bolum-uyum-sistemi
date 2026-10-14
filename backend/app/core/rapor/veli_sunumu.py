@@ -713,7 +713,7 @@ def veli_sunumu_pdf(v: dict, notlu: bool = False) -> bytes:
 
 def veli_sunumu_pptx(v: dict) -> bytes:
     d = _deste_kur(v)
-    d.p.core_properties.title = _baslik(v)
+    d.p.core_properties.title = _baslik(v)[:255]   # [2026-10-14] PowerPoint başlık alanı en çok 255 karakter (uzun okul adı)
     d.p.core_properties.author = "Filizyol"
     out = io.BytesIO()
     d.p.save(out)

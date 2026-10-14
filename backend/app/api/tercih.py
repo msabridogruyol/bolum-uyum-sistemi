@@ -55,12 +55,13 @@ def risk(ogrenci_sira: int | None, taban: int | None) -> str | None:
 def uyumlar(db: Session, ogrenci_id) -> dict:
     """{bolum_id: (uyum, öneri sırası)} — son tamamlanan değerlendirme turundan. Uyum ve sıra, öğrencinin sonuç
     ekranındakiyle aynıdır (skor_motoru.toplu_siralama: K5 etkili nihai uyum + alan sırası)."""
+    from app.core.rapor.veri import yuvarla   # [2026-10-14] yarım yukarı — öğrencinin sonuç ekranıyla aynı
     from app.core.skor_motoru import toplu_siralama
     tur = db.execute(text("SELECT id FROM ogrenci_degerlendirme_turu WHERE ogrenci_id = :o AND durum = 'tamamlandi' ORDER BY tur_no DESC LIMIT 1"),
                      {"o": ogrenci_id}).scalar()
     if not tur:
         return {}
-    return {s.bolum_id: (round(float(s.toplam_uyum)), i) for i, s in enumerate(toplu_siralama(db, [tur]).get(tur, []), 1)}
+    return {s.bolum_id: (yuvarla(float(s.toplam_uyum)), i) for i, s in enumerate(toplu_siralama(db, [tur]).get(tur, []), 1)}
 
 
 def _hedef(db: Session, ogrenci_id):

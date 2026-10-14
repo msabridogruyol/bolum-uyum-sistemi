@@ -99,7 +99,7 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
     if not v["toplu"]:
         return v
 
-    il_tum = _ilerleme(db, okul_id)
+    il_tum = _ilerleme(db, okul_id, oneri={o.id for o in ogr})   # [2026-10-14] sıralama yalnızca kapsamdaki öğrenciler için
     il = {o.id: il_tum.get(o.id) or {} for o in ogr}
     durum = {o.id: _durum(o, il[o.id])[0] for o in ogr}
     tamam_tur = {i: x["tur_id"] for i, x in il.items() if x.get("durum") == "tamamlandi" and x.get("tur_id")}
@@ -140,12 +140,15 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
         sql = """SELECT d.ad, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
                    JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
                   WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu AND d.kod <> ALL(:haric) GROUP BY d.ad"""
-        kapsam_ort = {r.ad: (float(r.ort), r.n) for r in db.execute(text(sql), {"t": list(tamam_tur.values()), "haric": haric}).all()}
+        # [2026-10-14] ortalamalara yalnızca GEÇERLİ (güven eşiğini geçen) son turlar girer — okul raporlarıyla aynı kural
+        from app.core.rapor.veri import gecerli_tur_idleri
+        gecerli_tur = gecerli_tur_idleri(db, list(tamam_tur.values()))
+        kapsam_ort = {r.ad: (float(r.ort), r.n) for r in db.execute(text(sql), {"t": gecerli_tur, "haric": haric}).all()}
         ilk5 = sorted(((a, o) for a, (o, n) in kapsam_ort.items() if yeterli(n)), key=lambda x: -x[1])[:5]
         okul_ort = {}
         if kapsam_tur != "okul":
-            okul_tur = [x["tur_id"] for oid, x in il_tum.items() if x.get("durum") == "tamamlandi" and x.get("tur_id")
-                        and oid in {o.id for o in tum}]
+            okul_tur = gecerli_tur_idleri(db, [x["tur_id"] for oid, x in il_tum.items() if x.get("durum") == "tamamlandi"
+                                               and x.get("tur_id") and oid in {o.id for o in tum}])
             if yeterli(len(okul_tur)):
                 okul_ort = {r.ad: float(r.ort) for r in db.execute(text(sql), {"t": okul_tur, "haric": haric}).all() if yeterli(r.n)}
         v["guclu"] = [{"ad": a, "ort": round(o, 1), "okul": round(okul_ort[a], 1) if a in okul_ort else None} for a, o in ilk5]

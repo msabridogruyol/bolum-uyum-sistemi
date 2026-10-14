@@ -131,7 +131,7 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
     TRG = "(%s AT TIME ZONE 'Europe/Istanbul')::date"   # zaman damgası → İstanbul günü
     simdi = datetime.now(timezone.utc)
 
-    il_tum = _ilerleme(db, okul_id)
+    il_tum = _ilerleme(db, okul_id, oneri=set(ids))   # [2026-10-14] bölüm sıralaması yalnızca kapsamdaki öğrenciler için
     il = {i: il_tum.get(i) or {} for i in ids}
     durum = {o.id: _durum(o, il[o.id])[0] for o in ogr}
     tamam_tur = {i: x["tur_id"] for i, x in il.items() if x.get("durum") == "tamamlandi" and x.get("tur_id")}
