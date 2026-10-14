@@ -3400,3 +3400,37 @@ button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2p
 .da-ds-sayi{text-align:right;font-weight:700}
 @media (max-width:640px){.da-ds-satir{grid-template-columns:110px 1fr 44px}.da-test-secenekler{grid-template-columns:1fr}}
 @media (prefers-reduced-motion: reduce){.da-sayac-dolgu{transition:none}}
+
+/* =====================================================================================================================
+   [2026-10-14] Görsel hizalama ve kısaltma düzeltmeleri
+   ===================================================================================================================== */
+/* Grafik ve özet etiketleri kısaltılmaz ("…" yok): sığmazsa alt satıra geçer (tüm ekranlar) */
+.gr-yatay-ad,.gr-uyum-ad,.ist-halka-ad,.ist-kpi-etiket,.ist-isi-satir,.ist-huni-ad > span:last-child,.ist-yc-ad span{white-space:normal;overflow:visible;text-overflow:clip;overflow-wrap:break-word;line-height:1.25}
+.ist-isi-satir{max-width:220px}
+
+@media (max-width: 760px){
+  /* Başlık alanında yalnızca başlık satırları maskota yer bırakır; altındaki kimlik kutusu, seri ve Hedef kartı tam
+     genişlikte — böylece sayfadaki tüm kartlarla aynı sol / sağ hizada durur */
+  .ogrenci-main .pg > .ph,.ogrenci-main .pg > .ph:first-child{padding-right:0}
+  .ogrenci-main .pg > .ph:first-child .pt,.ogrenci-main .pg > .ph:first-child .ps{padding-right:80px}
+  .anasayfa-baslik{gap:14px}
+  .anasayfa-baslik > .ab-metin{flex:1 1 100%}
+  .as-kimlik{display:flex;width:100%;box-sizing:border-box}
+  .hedef-kart{flex:1 1 100%;min-width:0;box-sizing:border-box}
+  /* Sağ altta üst üste binme: "çevrim içi" sol alta, "Filiz'e sor" sağ altta — aynı satırda, birbirini örtmez */
+  .cv-kap{left:12px;right:auto;bottom:16px;align-items:flex-start}
+  .cv-hap{padding:8px 12px}
+  /* Filiz'in konuşma balonu: alt satırdaki iki düğmenin hemen üstünde kısa süre görünür (bkz. Maskot: telefonda ara sözler kapalı) */
+  .msk-balon{bottom:70px}
+  /* Sayfa sonundaki alt bilgi ve son içerik alttaki düğmelerin altında kalmasın */
+  .alt-serit{padding-bottom:76px}
+  .yonetim-main .main-icerik,.ogrenci-main .main-icerik{padding-bottom:84px}
+  /* Kabı olmayan, doğrudan sayfaya konmuş tablolar da yatay kaydırılır (ör. Okul Yetkilileri) */
+  .pg > table.yp-tablo,.card > table.yp-tablo{display:block;overflow-x:auto;max-width:100%;-webkit-overflow-scrolling:touch}
+  /* Okul Bilgileri → kadro satırı: görev + düğmeler üstte, ad / e-posta / telefon alt alta tam genişlikte */
+  .okb-kadro-satir{grid-template-columns:minmax(0,1fr) auto}
+  .okb-kadro-satir > :nth-child(1){grid-column:1;grid-row:1}
+  .okb-kadro-satir > :nth-child(3){grid-column:2;grid-row:1}
+  .okb-kadro-satir > :nth-child(2),.okb-kadro-satir > :nth-child(4),.okb-kadro-satir > :nth-child(5){grid-column:1 / -1}
+  .okb-form-iki{grid-template-columns:1fr}
+}

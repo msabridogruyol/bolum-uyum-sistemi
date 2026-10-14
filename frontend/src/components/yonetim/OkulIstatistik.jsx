@@ -375,7 +375,7 @@ export default function OkulIstatistik({ okulId }) {
             <KpiKarti etiket="K5 tamamlayan" deger={k.k5_tamamlayan} ikon="🌻" />
             <KpiKarti etiket="Hedef seçen" deger={k.hedef_secen} ikon="🎯" />
             <KpiKarti etiket="Ortalama güven puanı" deger={k.ort_guven ?? '—'} ikon="🛡️" alt="testi tamamlayanlarda (0–100)" />
-            <KpiKarti etiket="Doğrulanamayan öğrenci" deger={k.gecersiz_tur} ikon="⚠️" ton={k.gecersiz_tur ? 'uyari' : 'notr'} alt="son değerlendirmesi güven eşiğinin altında kalan" />
+            <KpiKarti etiket="Güveni düşük sonuç" deger={k.gecersiz_tur} ikon="⚠️" ton={k.gecersiz_tur ? 'uyari' : 'notr'} alt="son değerlendirmesi güven eşiğinin altında kalan öğrenci" />
             {k.kocluk_aktif != null && modulAcik('kocluk') && <KpiKarti etiket="Koçlukta aktif" deger={k.kocluk_aktif} ikon="🪜" alt="aralıkta adım ya da görev tamamlayan" />}
           </KpiSatiri>
           <Katilim v={v} />

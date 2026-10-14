@@ -803,5 +803,33 @@
   "uz": "nogʻora",
   "az": "təbil",
   "ko": "북"
+ },
+ "Güveni düşük sonuç": {
+  "en": "Low-confidence result",
+  "de": "Ergebnis mit geringer Verlässlichkeit",
+  "fr": "Résultat peu fiable",
+  "ru": "Результат с низкой достоверностью",
+  "es": "Resultado de baja fiabilidad",
+  "it": "Risultato poco affidabile",
+  "ar": "نتيجة منخفضة الموثوقية",
+  "zh": "可信度低的结果",
+  "hi": "कम विश्वसनीयता वाला परिणाम",
+  "uz": "Ishonchliligi past natija",
+  "az": "Etibarlılığı aşağı nəticə",
+  "ko": "신뢰도가 낮은 결과"
+ },
+ "son değerlendirmesi güven eşiğinin altında kalan öğrenci": {
+  "en": "students whose latest assessment fell below the confidence threshold",
+  "de": "Schüler, deren letzte Bewertung unter der Verlässlichkeitsschwelle lag",
+  "fr": "élèves dont la dernière évaluation est sous le seuil de fiabilité",
+  "ru": "учащиеся, чья последняя оценка ниже порога достоверности",
+  "es": "estudiantes cuya última evaluación quedó por debajo del umbral de fiabilidad",
+  "it": "studenti la cui ultima valutazione è sotto la soglia di affidabilità",
+  "ar": "الطلاب الذين جاء تقييمهم الأخير دون عتبة الموثوقية",
+  "zh": "最近一次测评低于可信度阈值的学生",
+  "hi": "वे छात्र जिनका पिछला मूल्यांकन विश्वसनीयता सीमा से नीचे रहा",
+  "uz": "oxirgi baholashi ishonchlilik chegarasidan past bo‘lgan o‘quvchilar",
+  "az": "son qiymətləndirməsi etibarlılıq həddindən aşağı olan şagirdlər",
+  "ko": "최근 평가가 신뢰도 기준 아래인 학생"
  }
 }

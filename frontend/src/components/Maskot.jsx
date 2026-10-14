@@ -1151,7 +1151,10 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
       setYazilan(parcalar.slice(0, i).join(''))
       if (i >= parcalar.length) window.clearInterval(t)
     }, 28)
-    const kapat = window.setTimeout(() => setBalon(null), Math.max(balon.baglanti ? 9000 : 5500, metin.length * 90))
+    // [2026-10-14] Telefonda balon içeriğin üstünde durduğu için daha kısa kalır
+    const telefon = typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)').matches
+    const kapat = window.setTimeout(() => setBalon(null), telefon ? Math.max(balon.baglanti ? 6000 : 3500, metin.length * 60)
+      : Math.max(balon.baglanti ? 9000 : 5500, metin.length * 90))
     return () => { window.clearInterval(t); window.clearTimeout(kapat) }
   }, [balon, setBalon])
   const konusuyor = !!balon && yazilan.length < cevirT(balon.metin || '').length
@@ -1193,7 +1196,9 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
   // ara ara: rastgele animasyon + cümle
   useEffect(() => {
     const anim = window.setInterval(() => { if (!uyku) oynat(ANIMASYONLAR[Math.floor(Math.random() * ANIMASYONLAR.length)]) }, 17000)
-    const soz = window.setInterval(() => { if (!uyku && secici.current) { konus(secici.current()); oynat(Math.random() < 0.5 ? 'onayla' : 'salla') } }, sozAraligi)
+    // [2026-10-14] Ara sözler telefonda kapalı: balon ekranın altında içeriği örter; karşılama ve sayfa mesajları sürer
+    const telefon = () => window.matchMedia?.('(max-width: 760px)').matches
+    const soz = window.setInterval(() => { if (!uyku && secici.current && !telefon()) { konus(secici.current()); oynat(Math.random() < 0.5 ? 'onayla' : 'salla') } }, sozAraligi)
     return () => { window.clearInterval(anim); window.clearInterval(soz) }
   }, [uyku, oynat, konus, sozAraligi])
 

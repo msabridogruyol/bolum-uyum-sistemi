@@ -200,8 +200,20 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
     kocluk_aktif = len(kocluk_aralik)
 
     toplam = len(ogr)
-    giris_yapan = sum(1 for o in ogr if o.son_giris_zamani is not None)
-    aktif7 = sum(1 for o in ogr if o.son_giris_zamani and o.son_giris_zamani >= simdi - timedelta(days=7))
+    # [2026-10-14] "Giriş yapan" ve "son 7 gün aktif" günlük aktiflik kaydını da sayar: "beni hatırla" ile açık kalan oturumda
+    # son giriş zamanı güncellenmez (okul özeti ve huni ile aynı tanım)
+    from app.core.aktiflik import bugun_tr
+    aktif_gunler = {}
+    if ids:
+        for oid, son in db.execute(text("SELECT ogrenci_id, max(gun) FROM ogrenci_aktif_gunler WHERE ogrenci_id = ANY(:ids) GROUP BY 1"),
+                                   {"ids": ids}).all():
+            aktif_gunler[oid] = son
+    def acti(o) -> bool:
+        return o.son_giris_zamani is not None or o.id in aktif_gunler or durum[o.id] in ("tamamlandi", "devam")
+    yedi_gun = bugun_tr() - timedelta(days=6)
+    giris_yapan = sum(1 for o in ogr if acti(o))
+    aktif7 = sum(1 for o in ogr if (o.son_giris_zamani and o.son_giris_zamani >= simdi - timedelta(days=7))
+                 or (aktif_gunler.get(o.id) and aktif_gunler[o.id] >= yedi_gun))
     tamamlayan = sum(1 for k in durum.values() if k == "tamamlandi")
     baslayan = sum(1 for k in durum.values() if k in ("tamamlandi", "devam"))
     hedef_secen = sum(1 for x in il.values() if x.get("hedef"))
@@ -221,7 +233,7 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
 
     # ------------------------------------------------------------------ Katılım
     # teste başlayan öğrenci giriş yapmıştır (eski / içe aktarılmış hesaplarda son giriş zamanı boş olabilir)
-    giris_huni = sum(1 for o in ogr if o.son_giris_zamani is not None or durum[o.id] in ("tamamlandi", "devam"))
+    giris_huni = giris_yapan
     huni = [{"ad": "Hesabı açılan", "deger": toplam}, {"ad": "Giriş yaptı", "deger": giris_huni},
             {"ad": "Teste başladı", "deger": baslayan}]
     huni += [{"ad": f"{kod} tamamlandı", "deger": katman_tamam.get(kod, 0)} for kod, _ in katmanlar]
