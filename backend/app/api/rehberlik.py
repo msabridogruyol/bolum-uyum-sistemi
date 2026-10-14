@@ -118,7 +118,7 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
         return []
     idler = [o.id for o in ogrenciler]
     moduller = set(okul_modulleri(db, okul_id or None))
-    il = _ilerleme(db, okul_id, ogrenci_id) if ogrenci_id is not None else _ilerleme(db, okul_id)
+    il = _ilerleme(db, okul_id, ogrenci_id, oneri=False) if ogrenci_id is not None else _ilerleme(db, okul_id, oneri=False)
     netler = _net_dususleri(db, idler) if "net_takibi" in moduller else {}
     gorev = _gorev_birakanlar(db, idler) if "kocluk" in moduller else set()
     tarama = {}

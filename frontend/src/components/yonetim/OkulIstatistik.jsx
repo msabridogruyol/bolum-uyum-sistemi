@@ -1,6 +1,6 @@
 // [2026-10-10] Okul paneli → İstatistikler: okulun tüm istatistikleri tek istekte (GET /yonetim/okul/{id}/istatistik).
 // Filtreler (tek satır): sınıf düzeyi, şube, tarih aralığı. Paket modülü kapalı bölümler gösterilmez (sunucu da döndürmez).
-// Okul kendi öğrencilerini isimle gördüğü için bu ekranda küçük grup gizleme yoktur (toplu PDF/Excel raporlarında vardır).
+// Okul kendi öğrencilerini isimle gördüğü için bu ekranda ve okul PDF/Excel raporlarında küçük grup gizleme yoktur (yalnızca veli sunumunun veli sürümünde vardır).
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import {
@@ -79,7 +79,7 @@ function Profil({ v }) {
   }
   const ozellikTablosu = (l) => tabloYap(['Özellik', 'Katman', 'Ortalama', 'Öğrenci'], l.map((x) => [x.ad, x.katman, x.ortalama, x.n]))
   return (
-    <Bolum id="profil" baslik="Profil" aciklama={`Değerlendirmeyi tamamlayan ${p.tamamlayan} öğrencinin son sonuçları. Puanlar 0–100; 50 civarı ortadır.`}>
+    <Bolum id="profil" baslik="Profil" aciklama={`Değerlendirmeyi tamamlayan ${p.tamamlayan} öğrencinin son sonuçları${p.gecersiz_haric ? ` (güven puanı eşiğin altında kalan ${p.gecersiz_haric} öğrenci ortalamalara katılmadı)` : ''}. Puanlar 0–100; 50 civarı ortadır.`}>
       <div className="ist-kartlar">
         <GrafikKarti genis baslik="Katman ortalamaları" aciklama={p.katman_ort.length > 1 ? 'Seçili kapsamın geneli ve sınıf düzeyleri' : 'Seçili kapsamın ortalaması'}
           tablo={tabloYap(['Kapsam', ...kodlar], p.katman_ort.map((g) => [g.ad, ...kodlar.map((k) => g.degerler[k])]))}>
@@ -375,7 +375,7 @@ export default function OkulIstatistik({ okulId }) {
             <KpiKarti etiket="K5 tamamlayan" deger={k.k5_tamamlayan} ikon="🌻" />
             <KpiKarti etiket="Hedef seçen" deger={k.hedef_secen} ikon="🎯" />
             <KpiKarti etiket="Ortalama güven puanı" deger={k.ort_guven ?? '—'} ikon="🛡️" alt="testi tamamlayanlarda (0–100)" />
-            <KpiKarti etiket="Doğrulanamayan tur" deger={k.gecersiz_tur} ikon="⚠️" ton={k.gecersiz_tur ? 'uyari' : 'notr'} alt="güven puanı eşiğin altında kalan" />
+            <KpiKarti etiket="Güveni düşük sonuç" deger={k.gecersiz_tur} ikon="⚠️" ton={k.gecersiz_tur ? 'uyari' : 'notr'} alt="son değerlendirmesi güven eşiğinin altında kalan öğrenci" />
             {k.kocluk_aktif != null && modulAcik('kocluk') && <KpiKarti etiket="Koçlukta aktif" deger={k.kocluk_aktif} ikon="🪜" alt="aralıkta adım ya da görev tamamlayan" />}
           </KpiSatiri>
           <Katilim v={v} />

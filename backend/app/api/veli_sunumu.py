@@ -8,7 +8,12 @@ Yetki: okul_yonetimi._okul_kapsami (okul yetkilisi yalnızca kendi okulu). Modü
 toplu (veli toplantısı) raporlarıyla aynı kapı (raporlar._paket_kontrol); süper admin her zaman geçer. Her indirme denetim
 kaydına yazılır. Test hesapları sayılmaz.
 
-GİZLİLİK — sunum veli toplantısında topluca gösterilir:
+[2026-10-14] İKİ SÜRÜM (?kitle=veli | ogretmen):
+  * veli (varsayılan): toplantıda velilere gösterilir — aşağıdaki küçük grup gizlemesi uygulanır;
+  * ogretmen: sınıf öğretmeninin hazırlığı için — aynı slaytlar, küçük grup gizlemesi YOK (5'ten az öğrencili gruplar da
+    sayılarıyla görünür); her slaytta "velilerle paylaşmayın" uyarısı. Öğrenci adı / bireysel veri bu sürümde de yoktur.
+
+GİZLİLİK (veli sürümü) — sunum veli toplantısında topluca gösterilir:
   * öğrenci adı, öğrenci bazlı veri, kritik / erken uyarı listesi, net ve net sıralaması YOKTUR (hiç hesaplanmaz);
   * kişilik / değer puanına göre öğrenci sıralaması yoktur — yalnızca kapsamın ortalaması;
   * küçük grup gizleme (app/core/kucuk_grup.py): 5'ten az öğrenciye dayanan hiçbir toplu değer yazılmaz; dağılımlarda
@@ -30,13 +35,16 @@ from app.api.okul_istatistik import _baslik, _sinif_sira, _yuzde, ogrenci_kumesi
 from app.api.okul_yonetimi import _durum, _ilerleme, _okul_kapsami, sube_etiketi
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
-from app.core.kucuk_grup import EN_AZ_GRUP, gizle, grup_birlestir, kirilim_gizle, yeterli
+from app.core.kucuk_grup import EN_AZ_GRUP
+from app.core.kucuk_grup import gizle as _gizle, grup_birlestir as _grup_birlestir, kirilim_gizle as _kirilim_gizle, yeterli as _yeterli
 from app.core.paketler import MODULLER, okul_modulleri
 from app.models import AdminKullanici
 
 router = APIRouter(prefix="/yonetim", tags=["Okul raporları"])
 TR = ZoneInfo("Europe/Istanbul")
 MIME_PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+BICIMLER = {"pptx": (MIME_PPTX, "pptx", "PowerPoint"), "pdf": ("application/pdf", "pdf", "PDF"),
+            "pdf_notlu": ("application/pdf", "pdf", "PDF, konuşma notlu")}
 REHBER_ANAHTAR = ("rehber", "psikolojik", "danışman", "danisman")
 
 
@@ -66,7 +74,13 @@ def _takvim(db: Session, okul_id: int, sinif: str | None) -> list[dict]:
     return [{"baslik": r["baslik"], "tarih": r["baslangic"], "bitis": r["bitis"], "saat": r["saat"]} for r in rows]
 
 
-def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube: str | None) -> dict:
+def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube: str | None, kitle: str = "veli") -> dict:
+    # [2026-10-14] öğretmen sürümünde eşik 0: hiçbir toplu değer gizlenmez (0 da gösterilir), hiçbir kalem "Diğer"e birleşmez
+    esik = 0 if kitle == "ogretmen" else EN_AZ_GRUP
+    gizle = lambda d, n: _gizle(d, n, esik)
+    yeterli = lambda n: _yeterli(n, esik)
+    grup_birlestir = lambda *a, **k: _grup_birlestir(*a, esik=esik, **k)
+    kirilim_gizle = lambda *a, **k: _kirilim_gizle(*a, esik=esik, **k)
     from app.api.listem import _alanlar
     from app.core.rapor.veri import okul_bilgisi
 
@@ -77,15 +91,15 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
     toplam = len(ogr)
     v: dict = {
         "okul": okul_bilgisi(db, okul_id or None), "kapsam": kume["etiket"], "kapsam_tur": kapsam_tur,
-        "tarih": datetime.now(TR), "esik": EN_AZ_GRUP, "moduller": sorted(moduller),
-        "toplu": yeterli(toplam),                     # False → yalnızca genel anlatım slaytları
+        "tarih": datetime.now(TR), "esik": EN_AZ_GRUP if kitle != "ogretmen" else None, "kitle": kitle, "moduller": sorted(moduller),
+        "toplu": toplam > 0 and yeterli(toplam),      # False → yalnızca genel anlatım slaytları
         "iletisim": _iletisim(okul) if okul else {"rehberler": []},
         "takvim": _takvim(db, okul_id, kume["sinif"]) if "takvim" in moduller else [],
     }
     if not v["toplu"]:
         return v
 
-    il_tum = _ilerleme(db, okul_id)
+    il_tum = _ilerleme(db, okul_id, oneri={o.id for o in ogr})   # [2026-10-14] sıralama yalnızca kapsamdaki öğrenciler için
     il = {o.id: il_tum.get(o.id) or {} for o in ogr}
     durum = {o.id: _durum(o, il[o.id])[0] for o in ogr}
     tamam_tur = {i: x["tur_id"] for i, x in il.items() if x.get("durum") == "tamamlandi" and x.get("tur_id")}
@@ -126,12 +140,15 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
         sql = """SELECT d.ad, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
                    JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
                   WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu AND d.kod <> ALL(:haric) GROUP BY d.ad"""
-        kapsam_ort = {r.ad: (float(r.ort), r.n) for r in db.execute(text(sql), {"t": list(tamam_tur.values()), "haric": haric}).all()}
+        # [2026-10-14] ortalamalara yalnızca GEÇERLİ (güven eşiğini geçen) son turlar girer — okul raporlarıyla aynı kural
+        from app.core.rapor.veri import gecerli_tur_idleri
+        gecerli_tur = gecerli_tur_idleri(db, list(tamam_tur.values()))
+        kapsam_ort = {r.ad: (float(r.ort), r.n) for r in db.execute(text(sql), {"t": gecerli_tur, "haric": haric}).all()}
         ilk5 = sorted(((a, o) for a, (o, n) in kapsam_ort.items() if yeterli(n)), key=lambda x: -x[1])[:5]
         okul_ort = {}
         if kapsam_tur != "okul":
-            okul_tur = [x["tur_id"] for oid, x in il_tum.items() if x.get("durum") == "tamamlandi" and x.get("tur_id")
-                        and oid in {o.id for o in tum}]
+            okul_tur = gecerli_tur_idleri(db, [x["tur_id"] for oid, x in il_tum.items() if x.get("durum") == "tamamlandi"
+                                               and x.get("tur_id") and oid in {o.id for o in tum}])
             if yeterli(len(okul_tur)):
                 okul_ort = {r.ad: float(r.ort) for r in db.execute(text(sql), {"t": okul_tur, "haric": haric}).all() if yeterli(r.n)}
         v["guclu"] = [{"ad": a, "ort": round(o, 1), "okul": round(okul_ort[a], 1) if a in okul_ort else None} for a, o in ilk5]
@@ -141,15 +158,13 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
         ilk = [x["ilk_bolum"] for i, x in il.items() if i in tamam_tur and x.get("ilk_bolum")]
         alan_of = {k: (a.get("ust_alan") or "Diğer") for k, a in _alanlar(db, list(set(ilk))).items()}
         v["alanlar"] = grup_birlestir(Counter(alan_of.get(b, "Diğer") for b in ilk), "ad", "sayi", ilk_n=6)
+        # ilk 10 öneri: öğrencinin sonuç ekranındaki sıralama (_ilerleme → skor_motoru.toplu_siralama; K5 etkili nihai uyum)
         ilk10 = Counter()
         ust = defaultdict(set)
-        for r in db.execute(text("""
-            SELECT tur_id, bolum_id FROM (
-                SELECT s.tur_id, s.bolum_id, row_number() OVER (PARTITION BY s.tur_id ORDER BY s.toplam_uyum DESC) AS sira
-                  FROM ogrenci_bolum_uyum_skorlari s WHERE s.tur_id = ANY(:t)) x WHERE sira <= 10"""),
-                {"t": list(tamam_tur.values())}).all():
-            ilk10[r.bolum_id] += 1
-            ust[r.tur_id].add(r.bolum_id)
+        for i in tamam_tur:
+            for b in il[i].get("oneri_ilk10") or []:
+                ilk10[b] += 1
+                ust[tamam_tur[i]].add(b)
         v["bolumler"] = [{"ad": bolum_ad.get(b, "?"), "sayi": n, "oran": _yuzde(n, tamamlayan)}
                          for b, n in ilk10.most_common(12) if yeterli(n)][:6]
         hedefli = {i: x["hedef"] for i, x in il.items() if x.get("hedef") and i in tamam_tur}
@@ -186,19 +201,26 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
 
 
 @router.get("/okul/{okul_id}/veli-sunumu")
-def veli_sunumu(okul_id: int, sinif: str | None = None, sube: str | None = None,
+def veli_sunumu(okul_id: int, sinif: str | None = None, sube: str | None = None, kitle: str = "veli", bicim: str = "pptx",
                 db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-14] bicim: pptx (düzenlenebilir) · pdf (16:9 slayt sayfaları) · pdf_notlu (A4: slayt + konuşma notu)."""
+    if kitle not in ("veli", "ogretmen") or bicim not in BICIMLER:
+        raise HTTPException(status_code=400, detail="Geçersiz sunum türü.")
     from app.api.raporlar import _dosya_adi
-    from app.core.rapor.veli_sunumu import veli_sunumu_pptx
+    from app.core.rapor.veli_sunumu import veli_sunumu_pdf, veli_sunumu_pptx
     okul = _okul_kapsami(db, yon, okul_id)
     if yon.rol != "super_admin" and "gelismis_raporlar" not in okul_modulleri(db, okul_id or None):
         raise HTTPException(status_code=403, detail=f"“{MODULLER['gelismis_raporlar']['ad']}” okulunuzun paketinde yer almıyor.")
-    v = veli_sunumu_verisi(db, okul, okul_id, sinif, sube)
-    icerik = veli_sunumu_pptx(v)
+    v = veli_sunumu_verisi(db, okul, okul_id, sinif, sube, kitle)
+    icerik = veli_sunumu_pptx(v) if bicim == "pptx" else veli_sunumu_pdf(v, notlu=bicim == "pdf_notlu")
     denetim_yaz(db, yon, "rapor_indir", "okullar", okul_id,
-                (f"Veli toplantısı sunumu ({v['kapsam']})" if v['toplu'] else f"Veli toplantısı sunumu ({v['kapsam']}, yalnızca genel slaytlar)"), okul_id or None)
+                ("Veli toplantısı sunumu — öğretmen sürümü" if kitle == "ogretmen" else "Veli toplantısı sunumu")
+                + (f" ({v['kapsam']})" if v['toplu'] else f" ({v['kapsam']}, yalnızca genel slaytlar)") + f" · {BICIMLER[bicim][2]}",
+                okul_id or None)
     db.commit()
-    ad = _dosya_adi("Veli_Toplantisi", okul.ad if okul else "Okul_harici",
+    ad = _dosya_adi(("Veli_Toplantisi_Ogretmen" if kitle == "ogretmen" else "Veli_Toplantisi") + ("_Notlu" if bicim == "pdf_notlu" else ""),
+                    okul.ad if okul else "Okul_harici",
                                              v["kapsam"] if v["kapsam_tur"] != "okul" else None, date.today().strftime("%Y%m%d"))
-    return Response(content=icerik, media_type=MIME_PPTX,
-                    headers={"Content-Disposition": f'attachment; filename="{ad}.pptx"', "Cache-Control": "no-store"})
+    mime, uzanti, _ = BICIMLER[bicim]
+    return Response(content=icerik, media_type=mime,
+                    headers={"Content-Disposition": f'attachment; filename="{ad}.{uzanti}"', "Cache-Control": "no-store"})

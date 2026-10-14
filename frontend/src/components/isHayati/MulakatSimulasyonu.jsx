@@ -179,6 +179,7 @@ function Ozet({ o, v, onTekrar }) {
         </div>
       </div>
       <p className="msim-giris-metin">{o.yorum}</p>
+      {o.yorum_ek && <p className="msim-giris-metin">{o.yorum_ek}</p>}
       <h4 className="msim-ozet-ara">Bu görüşmede öğrendiklerin</h4>
       <ul className="msim-ogrenilen">
         {o.sorular.map((s) => (

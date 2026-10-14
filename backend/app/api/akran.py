@@ -113,7 +113,7 @@ def dagilimi_uygula(okul_id: int, istek: UygulaIstek, db: Session = Depends(get_
 def adaylar(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     _okul_kapsami(db, yon, okul_id)
     from app.api.okul_yonetimi import _durum, _ilerleme
-    il = _ilerleme(db, okul_id)
+    il = _ilerleme(db, okul_id, oneri=False)
     sonuc = []
     for o in sorted([x for x in _okul_ogrencileri(db, okul_id) if x.sinif == "Aday"], key=lambda x: x.ad_soyad.lower()):
         kod, etiket = _durum(o, il.get(o.id) or {})

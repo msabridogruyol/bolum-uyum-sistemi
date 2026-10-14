@@ -34,6 +34,11 @@ OLAY_ADI = {
 }
 
 
+def _goster(x: float) -> int:
+    from app.core.rapor.veri import yuvarla
+    return yuvarla(x)
+
+
 def parametre_oku_float(db: Session, anahtar: str, varsayilan: float) -> float:
     p = db.query(SistemParametresi).filter(SistemParametresi.anahtar == anahtar).first()
     if p is None:
@@ -57,13 +62,12 @@ def kontrol_soru_skoru_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerl
         )
         .all()
     )
+    # [2026-10-14] Beklenen seçeneği tanımlanmamış kontrol sorusu hiç "doğru" sayılamaz; paydaya da girmez.
+    cevaplar = [c for c in cevaplar if c[1].beklenen_secenek_sira is not None]
     if not cevaplar:
         return 100.0  # kontrol sorusu hiç yoksa/cevaplanmadıysa ceza uygulanmaz
 
-    dogru_sayisi = sum(
-        1 for _, soru, secenek in cevaplar
-        if soru.beklenen_secenek_sira is not None and secenek.secenek_sirasi == soru.beklenen_secenek_sira
-    )
+    dogru_sayisi = sum(1 for _, soru, secenek in cevaplar if secenek.secenek_sirasi == soru.beklenen_secenek_sira)
     return round(dogru_sayisi / len(cevaplar) * 100, 2)
 
 
@@ -76,6 +80,13 @@ def guvenlik_olaylari_skoru_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciD
     return round(skor, 2), len(cezali)
 
 
+def gecerli_mi(guven_skoru: float, esik: float) -> bool:
+    """[2026-10-14] Geçerlilik kararı, öğrenciye ve yöneticiye GÖSTERİLEN tam sayı puanla verilir (yarım yukarı yuvarlanır):
+    ekranda "50 / eşik 50" gören öğrencinin turu 49,72 yüzünden geçersiz sayılmaz."""
+    from app.core.rapor.veri import yuvarla
+    return yuvarla(guven_skoru) >= esik
+
+
 def canli_guven_durumu(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> dict:
     """[2026-10-10] Sınav sırasında öğrenciye gösterilen güven puanı (kontrol soruları + ihlaller)."""
     kontrol = kontrol_soru_skoru_hesapla(db, ogrenci, tur)
@@ -86,7 +97,7 @@ def canli_guven_durumu(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
         if OLAY_CEZASI.get(t, 0) > 0:
             sayim[t] = sayim.get(t, 0) + 1
     return {
-        "guven_puani": round(0.5 * kontrol + 0.5 * olay_skoru),
+        "guven_puani": _goster(round(0.5 * kontrol + 0.5 * olay_skoru, 2)),   # kayıtla aynı hesap, aynı yuvarlama
         "esik": parametre_oku_float(db, "guven_skoru_esigi", 50.0),
         "ihlal_sayisi": ihlal,
         "ihlaller": [{"tip": t, "ad": OLAY_ADI.get(t, t), "sayi": n, "ceza": OLAY_CEZASI[t]} for t, n in sayim.items()],
@@ -106,10 +117,10 @@ def guven_skorunu_hesapla_ve_kaydet(db: Session, ogrenci: Ogrenci, tur: OgrenciD
     esik = parametre_oku_float(db, "guven_skoru_esigi", 50.0)
 
     tur.guven_skoru = guven_skoru
-    if guven_skoru < esik:
+    if not gecerli_mi(guven_skoru, esik):
         tur.sonuc_gecerli_mi = False
         tur.gecersizlik_nedeni = (
-            f"Güven skoru eşiğin altında ({guven_skoru} < {esik}). "
+            f"Güven skoru eşiğin altında ({_goster(guven_skoru)} < {esik:g}). "
             f"Kontrol soru skoru: {kontrol_skoru}, güvenlik olayı sayısı: {olay_sayisi} (olay skoru: {olay_skoru})."
         )
     else:
@@ -139,12 +150,13 @@ def katman_guven_durumlari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendi
     sonuc = {}
     for k in katmanlar:
         kc = [(b, s) for kid, b, s in cevaplar if kid == k.id]
-        kontrol = round(sum(1 for b, s in kc if b is not None and s == b) / len(kc) * 100, 2) if kc else 100.0
+        kc = [(b, s) for b, s in kc if b is not None]   # beklenen seçeneği olmayan kontrol sorusu paydaya girmez
+        kontrol = round(sum(1 for b, s in kc if s == b) / len(kc) * 100, 2) if kc else 100.0
         cezali = [t for kk, t in olaylar if kk == k.kod and OLAY_CEZASI.get(t, 0) > 0]
         olay = max(0.0, 100.0 - sum(OLAY_CEZASI[t] for t in cezali))
         guven = round(0.5 * kontrol + 0.5 * olay, 2)
         sonuc[k.kod] = {"kod": k.kod, "ad": k.ad, "katman_id": k.id, "guven": guven, "kontrol": kontrol,
-                        "ihlal": len(cezali), "sorunlu": guven < esik}
+                        "ihlal": len(cezali), "sorunlu": not gecerli_mi(guven, esik)}
     return sonuc
 
 

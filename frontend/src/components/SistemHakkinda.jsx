@@ -19,7 +19,7 @@ const OGRENCI = {
     'Doğru ya da yanlış cevap yoktur. En doğru sonuç, içinden geldiği gibi cevap verdiğinde çıkar.',
     'Sonuçlar sana yol gösterir. Son kararı sen, ailen ve öğretmenlerinle birlikte verirsin.',
     'Sistem sınav puanı tahmini yapmaz. Üniversitelerin taban puanları YÖK Atlas verilerinden alınır.',
-    'Bilgilerini sen ve okulundaki yetkili öğretmenler görür. Diğer öğrenciler göremez.',
+    'Sonuçlarını ve kayıtlarını sen ve okulundaki yetkili öğretmenler görür. Diğer öğrenciler göremez.',
   ],
   sss: [
     ['Değerlendirme', 'Değerlendirmeyi tek seferde bitirmem gerekiyor mu?', 'Hayır. Her bölüm ayrıdır. Bir bölümü bitirip ara verebilirsin. Bir bölümün ortasında çıkarsan da cevapların kayıtlı kalır. Döndüğünde kaldığın yerden devam edersin.'],
@@ -33,19 +33,19 @@ const OGRENCI = {
     ['Sonuçlar', 'Raporlardaki "Kısaca" ve "Bunu yap / Bundan kaçın" bölümleri ne?', 'Sonuçlarındaki sayıların ne anlama geldiğini ve bu dönem neler yapabileceğini anlatan kısa yorumlardır. Profilim\'de, Raporlarım\'da ve PDF raporlarında görünür. Veli raporunda ailen için, öğretmen raporlarında öğretmenlerin için ayrı bir dille yazılır. Yorumlar sonuçlarına dayanan bir özettir, karar değildir; son kararı sen, ailen ve rehber öğretmeninle birlikte verirsin.'],
     ['Sonuçlar', 'Raporumu nasıl alabilirim?', 'Değerlendirmeni bitirince sol menüden Raporlarım sayfasını aç. Oradan üç şey indirebilirsin: kendi raporun, velin için hazırlanan rapor ve sonuçlarının Excel tablosu. Bu sayfayı menüde göremiyorsan rehber öğretmenine sor.'],
     ['Hedef ve koçluk', 'Hedef bölümümü değiştirebilir miyim?', 'Evet, belli sayıda değiştirme hakkın vardır. Hakkın biterse okulundaki yetkili öğretmen sana ek hak verebilir.'],
-    ['Hedef ve koçluk', 'Yol haritasındaki adımları nasıl tamamlarım?', 'Her adımın altında ne yapacağın yazar. Bir de "Nasıl anlarsın?" kontrol listesi vardır. Başlayınca "Başladım"ı, bitirince "Tamamladım"ı işaretle. İlerlemen Koçluğum sayfasında görünür.'],
+    ['Hedef ve koçluk', 'Yol haritasındaki adımları nasıl tamamlarım?', 'Her adımın altında ne yapacağın yazar. Bir de "Nasıl anlarsın?" kontrol listesi vardır. Başlayınca "Başladım"ı, bitirince "Yaptım"ı işaretle. İlerlemen Koçluğum sayfasında görünür.'],
     ['Hedef ve koçluk', 'Filiz kimdir?', 'Filiz, sorularını cevaplayan gelişim koçundur. Sonuçlarına, hedef bölümüne ve görevlerine göre sana yol gösterir. Ona bölümler, meslekler ve çalışma alışkanlıkları hakkında soru sorabilirsin. Önemli kararlarını yine de rehber öğretmeninle ve ailenle birlikte ver.'],
     ['Hedef ve koçluk', 'Eğitim koçuyla nasıl görüşürüm?', 'Eğitim Koçları sayfasından bir koç seçip görüşme talebi bırakırsın. Talebin Filizyol koordinatörüne gider. Görüşme planlanınca tarihini ve saatini hem o sayfada hem Takvim\'inde görürsün.'],
     ['İş hayatı', 'Mülakat Simülasyonu nedir?', 'İş Hayatı sayfasında seçtiğin bölüm için kısa bir iş görüşmesi canlandırılır. Mülakatçı o mesleğe özgü bir durum sorar, iki aday farklı cevap verir; sen daha iyi cevap verdiğini düşündüğün adayı seçersin. Sonra iki cevabın neden güçlü ya da zayıf olduğunu ve o meslekte işin nasıl yapıldığını görürsün. Bu bir sınav değildir: alanı bilmen gerekmez, adayların gerekçelerinden mantıkla seçebilirsin. Sonuçlarını yalnızca sen görürsün.'],
     ['İş hayatı', 'Düşünme Atölyesi nedir?', 'Okulda pek öğretilmeyen ama her derste ve meslekte işine yarayacak düşünme araçlarını yaparak öğrendiğin bölümdür: bir sorunun kök nedenini bulmak, birlikte değişen iki şeyin birbirine yol açıp açmadığını anlamak, bir işi adım adım tarif etmek, ikiye bölerek aramak, tercih verisini doğru okumak ve daha kalıcı öğrenmek. Her araç 5–7 dakika sürer: önce kendi bildiğin gibi denersin, sonra aracı öğrenir, okulda ve iş hayatında nasıl kullanıldığını görürsün. Puan verilmez.'],
     ['İş hayatı', '"Öğrenmeyi öğren" deneyinde ikinci ölçüm ne zaman açılır?', 'Deneyi bitirdikten en erken 12 saat sonra. Düşünme Atölyesi\'ni açtığında "İkinci ölçüm hazır" yazısını görürsün. Aynı kelimeleri hiç çalışmadan yeniden test eder, hangi yöntemin sende daha kalıcı olduğunu kendi sonucunda görürsün.'],
     ['İş hayatı', 'İş Hayatı sayfasını menüde göremiyorum.', 'Bu bölüm okulunun kullandığı pakete göre açılır. Menüde göremiyorsan okulunda henüz açık olmayabilir; rehber öğretmenine sorabilirsin.'],
-    ['Diğer', 'Filizyol\'u başka bir dilde kullanabilir miyim?', 'Evet. Giriş ekranından ya da Ayarlar\'dan 12 dilden birini seçebilirsin; seçimin hesabına kaydedilir. Bazı uzun içerikler ilk açılışta birkaç saniye içinde çevrilir. PDF raporlar, e-postalar ve KVKK metinlerinin asılları Türkçedir.'],
+    ['Diğer', 'Filizyol\'u başka bir dilde kullanabilir miyim?', 'Evet. Giriş ekranından ya da Ayarlar\'dan Türkçe dışında 12 dilden birini seçebilirsin; seçimin hesabına kaydedilir. Bazı uzun içerikler ilk açılışta birkaç saniye içinde çevrilir. PDF raporlar, e-postalar ve KVKK metinlerinin asılları Türkçedir.'],
     ['Diğer', 'Kulüp önerileri ve ilgi testi bölüm sonucumu etkiler mi?', 'Hayır. Kısa ilgi testi yalnızca sana uygun kulüpleri önermek içindir. Bölüm önerilerin değişmez.'],
     ['Diğer', 'Kütüphanem ne işe yarar?', 'Okuduğun kitapları, izlediğin belgeselleri, aldığın kursları ve katıldığın etkinlikleri burada toplarsın. Bu liste, kendini anlatman gerektiğinde çok işe yarar: rehber öğretmeninle görüşürken ya da ileride üniversite başvurularında.'],
-    ['Diğer', 'Takvimde neler görünür?', 'Sınav ve tercih dönemleri gibi önemli tarihler, okulunun etkinlikleri, eğitim koçu görüşmelerin ve kendi eklediğin notlar.'],
+    ['Diğer', 'Takvimde neler görünür?', 'Sınav ve tercih dönemleri gibi önemli tarihler, okulunun ve kulüplerinin etkinlikleri, eğitim koçu ve rehberlik görüşmelerin ve kendi eklediğin notlar.'],
     ['Hesap', 'Şifremi unuttum, ne yapmalıyım?', 'Giriş ekranındaki "Şifremi unuttum" bağlantısını kullan. Ya da okulundaki yetkili öğretmene söyle; o da şifreni sıfırlayabilir.'],
-    ['Hesap', 'Bilgilerimi kimler görebilir?', 'Sonuçlarını, kütüphaneni ve diğer kayıtlarını sen ve okulundaki yetkili öğretmenler görür. Diğer öğrenciler senin bilgilerini göremez. Haftalık görevlerdeki yansıtma cevaplarını yalnızca sen görürsün. Ayrıntılar Ayarlar\'daki Aydınlatma Metni\'nde.'],
+    ['Hesap', 'Bilgilerimi kimler görebilir?', 'Sonuçlarını, kütüphaneni ve diğer kayıtlarını sen ve okulundaki yetkili öğretmenler görür. Diğer öğrenciler bunları göremez. Yalnızca çevrim içiyken adın, soyadının baş harfi ve sınıfın okulundaki öğrencilerin "Çevrim içi" listesinde görünür; bunu Ayarlar\'dan kapatabilirsin. Haftalık görevlerdeki yansıtma cevaplarını yalnızca sen görürsün. Ayrıntılar Ayarlar\'daki Aydınlatma Metni\'nde.'],
   ],
 }
 
@@ -63,7 +63,7 @@ const YONETIM = {
     'Öğrencilere ait veriler kişisel veridir; raporları yalnızca öğrenci, veli ve okulun yetkili personeliyle paylaşın.',
     'Güven puanı düşük sonuçlarda öğrenci yalnızca sorunlu bölümü yeniden yanıtlar; sonucu öğrenciyle konuşarak değerlendirin.',
     'Raporlardaki yorumlar ve "Ne yapılmalı?" önerileri raporun kendi verilerinden üretilir; rehberlik servisinizin okulun koşullarına göre uyarlaması önerilir.',
-    'Yeni eğitim yılında Öğrenciler sekmesindeki "Sınıf atlat (yeni yıl)" ile bütün öğrencileri bir üst sınıfa geçirebilirsiniz; işlem geri alınabilir.',
+    'Yeni eğitim yılında Öğrenciler sekmesindeki "Sınıf atlat (yeni yıl)" ile bütün öğrencileri bir üst sınıfa geçirebilirsiniz; işlem 30 gün içinde geri alınabilir.',
   ],
   // [2026-10-11] SSS'in tek kaynağı sunucuda: backend/app/core/filiz_yonetim_rehber.py (YONETIM_SSS) — Filiz de aynı listeden
   // cevaplar. Sayfa açılınca GET /yonetim/filiz/sss ile yüklenir.

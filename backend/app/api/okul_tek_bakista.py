@@ -32,6 +32,7 @@ from app.api.okul_yonetimi import _durum, _ilerleme, _okul_kapsami, _sinif_metni
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
 from app.core.paketler import okul_modulleri
+from app.core.rapor.veri import yuvarla
 from app.models import AdminKullanici
 
 router = APIRouter(prefix="/yonetim", tags=["Okul istatistikleri"])
@@ -364,7 +365,7 @@ def tek_bakista_verisi(db: Session, okul_id: int, sinif: str | None = None, sube
     simdi = datetime.now(timezone.utc)
     rehberlik_acik = "rehberlik" in moduller
 
-    il = _ilerleme(db, okul_id)
+    il = _ilerleme(db, okul_id, oneri=False)   # ilk_bolum kullanılmıyor; hedef uyumu aşağıda toplu_nihai_uyum ile
     durum = {o.id: _durum(o, il.get(o.id))[0] for o in tum}
     hedef = {o.id: (il.get(o.id) or {}).get("hedef") for o in tum}
     aktif7 = {o.id for o in tum if o.son_giris_zamani and o.son_giris_zamani >= simdi - timedelta(days=7)}
@@ -434,9 +435,10 @@ def tek_bakista_verisi(db: Session, okul_id: int, sinif: str | None = None, sube
     hedefli = {o.id: (son_tur[o.id], hedef[o.id]) for o in ogr if hedef.get(o.id) and durum[o.id] == "tamamlandi" and o.id in son_tur}
     dusuk = []
     if hedefli:
-        uy = {(r.tur_id, r.bolum_id): float(r.toplam_uyum) for r in db.execute(text("""
-            SELECT tur_id, bolum_id, toplam_uyum FROM ogrenci_bolum_uyum_skorlari WHERE tur_id = ANY(:t) AND bolum_id = ANY(:b)"""),
-            {"t": [t for t, _ in hedefli.values()], "b": list({b for _, b in hedefli.values()})}).all()}
+        # öğrencinin sonuç ekranındaki sayı: K5 etkili nihai uyum (skor_motoru.toplu_nihai_uyum), ham toplam_uyum değil
+        from app.core.skor_motoru import toplu_nihai_uyum
+        nihai = toplu_nihai_uyum(db, [t for t, _ in hedefli.values()], {b for _, b in hedefli.values()})
+        uy = {(t, b): u for t, bu in nihai.items() for b, u in bu.items()}
         adlar = {r.id: _baslik(r.ad) for r in db.execute(text("SELECT id, ad FROM bolumler WHERE id = ANY(:b)"),
                                                          {"b": list({b for _, b in hedefli.values()})}).all()}
         for oid, (t, b) in hedefli.items():
@@ -444,7 +446,7 @@ def tek_bakista_verisi(db: Session, okul_id: int, sinif: str | None = None, sube
             if u is not None and u < UYUM_DUSUK:
                 o = ogr_map[str(oid)]
                 dusuk.append({"ogrenci_id": str(oid), "ad_soyad": o.ad_soyad, "sube": _sinif_metni(o) or "—",
-                              "bolum": adlar.get(b, "—"), "uyum": round(u)})
+                              "bolum": adlar.get(b, "—"), "uyum": yuvarla(u)})   # [2026-10-14] yarım yukarı (PDF ile ekran aynı)
     dusuk.sort(key=lambda x: (x["uyum"], x["ad_soyad"]))
     v["hedef_uyum"] = {"sayi": len(dusuk), "hedefli": len(hedefli), "ogrenciler": dusuk[:10], "esik": UYUM_DUSUK}
 

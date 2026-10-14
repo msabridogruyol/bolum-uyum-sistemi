@@ -750,7 +750,7 @@
      "Tahmini sıranı son yılın taban sırasıyla karşılaştır: Güvenli, Dengeli ya da Riskli.",
      "Listeni yalnızca Riskli programlarla doldurma; Dengeli ve Güvenli seçenekler de ekle."
     ],
-    "ipucu": "Sıralamada küçük sayı daha iyidir: 35.000. sıradaki aday, 45.000. sıradakinin önündedir. Taban sıra sayısı büyüdüyse o yıl programa girmek kolaylaşmış demektir."
+    "ipucu": "Sıralamada küçük sayı daha iyidir: 35.000. sıradaki aday, 45.000. sıradakinin önündedir. Taban sıra sayısı büyüdüyse o yıl programa girmek kolaylaşmış olabilir; kontenjan ve aday sayısı da sonucu etkiler."
    },
    "okulda": {
     "durum": "İlk deneme sınavında 68 net yaptın, sınıf ortalaması 60'tı. İkinci denemede 74 net yaptın ama sınıf ortalaması 75'e çıktı.",

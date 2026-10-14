@@ -40,7 +40,7 @@ METRIKLER = [
 def _okul_metrikleri(db: Session, okul: Okul) -> dict:
     ogr = [o for o in db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id).all() if not getattr(o, "test_hesabi", False)]
     n = len(ogr)
-    il = _ilerleme(db, okul.id)
+    il = _ilerleme(db, okul.id, oneri=False)
     sinir = datetime.now(timezone.utc) - timedelta(days=30)
     oran = lambda x: round(100 * x / n) if n else None  # noqa: E731
     moduller = set(okul_modulleri(db, okul.id))

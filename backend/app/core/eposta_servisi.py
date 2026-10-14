@@ -140,12 +140,12 @@ def sifre_sifirlama_epostasi(ad: str, baglanti: str) -> tuple[str, str, str]:
 
 def rehber_davet_epostasi(ad: str, okul: str, baglanti: str) -> tuple[str, str, str]:
     ad_h, okul_h = _html.escape(ad or ""), _html.escape(okul or "")
-    konu = "Filizyol — rehber öğretmen hesabın hazır"
-    html = _sablon("Rehber öğretmen hesabın oluşturuldu", f"""
-      <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, <b>{okul_h}</b> için rehber öğretmen hesabın oluşturuldu.
+    konu = "Filizyol — okul yetkilisi hesabın hazır"
+    html = _sablon("Okul yetkilisi hesabın oluşturuldu", f"""
+      <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, <b>{okul_h}</b> için okul yetkilisi hesabın oluşturuldu.
       Aşağıdaki düğmeyle şifreni belirleyip Filizyol giriş ekranından (öğrencilerle aynı ekran) giriş yapabilirsin. Bağlantı 3 gün geçerlidir.</p>
       {_buton(baglanti, "Şifremi belirle")}""")
-    metin = f"Merhaba {ad},\n\n{okul} için rehber öğretmen hesabın oluşturuldu. Şifreni belirlemek için (3 gün geçerli):\n{baglanti}\n\nFilizyol"
+    metin = f"Merhaba {ad},\n\n{okul} için okul yetkilisi hesabın oluşturuldu. Şifreni belirlemek için (3 gün geçerli):\n{baglanti}\n\nFilizyol"
     return konu, html, metin
 
 
@@ -154,8 +154,8 @@ def sonuc_raporu_epostasi(ad: str, tarih: str, ekli: bool, giris_adresi: str | N
     (e-posta önizlemelerinde kişisel değerlendirme bilgisi görünmesin); ayrıntılar ekteki PDF'te ve sistemdedir."""
     ad_h = _html.escape(ad or "")
     konu = "Filizyol — değerlendirme sonuç raporun"
-    ek_cumle = ("Sonuç raporun bu e-postanın ekinde (PDF). Raporda güçlü yönlerin, sana uygun bölümler ve yol haritan yer alıyor."
-                if ekli else "Sonuçlarını, sana uygun bölümleri ve yol haritanı Filizyol hesabından inceleyebilirsin.")
+    ek_cumle = ("Sonuç raporun bu e-postanın ekinde (PDF). Raporda güçlü yönlerin ve sana uygun bölümler yer alıyor; hedef bölüm seçtiysen yol haritan da."
+                if ekli else "Sonuçlarını ve sana uygun bölümleri Filizyol hesabından inceleyebilirsin; hedef bölüm seçince yol haritan da orada hazırlanır.")
     dugme = _buton(giris_adresi, "Sonuçlarımı aç") if giris_adresi else ""
     html = _sablon("Değerlendirmeni tamamladın 🎉", f"""
       <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, {_html.escape(tarih)} tarihinde değerlendirmeni tamamladın.</p>

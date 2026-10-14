@@ -21,6 +21,7 @@ import json
 import pathlib
 from functools import lru_cache
 
+from app.core.rapor.veri import yuvarla
 from app.core.seviye import GUCLU_ESIK, ORTA_ESIK
 
 _DOSYA = pathlib.Path(__file__).resolve().parents[2] / "data" / "rapor_yorumlari.json"
@@ -51,7 +52,7 @@ def _say(x) -> str:
     """Türkçe sayı: 17.0 → '17', 29.92 → '29,92'."""
     if x is None:
         return "—"
-    x = round(float(x), 2)
+    x = yuvarla(x, 2)
     return (f"{x:.0f}" if x == int(x) else f"{x:.2f}".rstrip("0")).replace(".", ",")
 
 
@@ -71,8 +72,13 @@ def _ozellikler(v: dict) -> list[dict]:
     return [o for k in v.get("katmanlar") or [] for o in k.get("ozellikler") or []]
 
 
+def _ham(o: dict) -> float:
+    """[2026-10-14] Eşik karşılaştırmaları ve sıralama yuvarlanmamış puanla (düzey etiketiyle aynı değer)."""
+    return o.get("ham", o["puan"])
+
+
 def _hassasiyet(v: dict) -> float | None:
-    return next((o["puan"] for o in _ozellikler(v) if o.get("kod") == HASSASIYET), None)
+    return next((_ham(o) for o in _ozellikler(v) if o.get("kod") == HASSASIYET), None)
 
 
 def _kod(o: dict) -> str:
@@ -81,26 +87,26 @@ def _kod(o: dict) -> str:
 
 def _guclu_yonler(v: dict, kitle: str) -> list[dict]:
     """Değerler (K1) hariç güçlü yönler; değerler ayrı cümlede 'önem verdiğin değerler' olarak verilir."""
-    sirali = sorted((o for o in _ozellikler(v) if _kod(o) != HASSASIYET and not _kod(o).startswith("D")), key=lambda o: -o["puan"])
+    sirali = sorted((o for o in _ozellikler(v) if _kod(o) != HASSASIYET and not _kod(o).startswith("D")), key=lambda o: -_ham(o))
     if kitle == "ogretmen":   # sınıf öğretmeni: kişilik (K2) ayrıntısı verilmez
         sirali = [o for o in sirali if not _kod(o).startswith("P")]
-    return [o for o in sirali if o["puan"] >= GUCLU_ESIK][:3]
+    return [o for o in sirali if _ham(o) >= GUCLU_ESIK][:3]
 
 
 def _degerler(v: dict) -> list[dict]:
-    return sorted((o for o in _ozellikler(v) if _kod(o).startswith("D") and o["puan"] >= GUCLU_ESIK), key=lambda o: -o["puan"])[:2]
+    return sorted((o for o in _ozellikler(v) if _kod(o).startswith("D") and _ham(o) >= GUCLU_ESIK), key=lambda o: -_ham(o))[:2]
 
 
 def _gelisim_yonleri(v: dict, kitle: str) -> list[dict]:
-    sirali = sorted((o for o in _ozellikler(v) if _kod(o) != HASSASIYET), key=lambda o: o["puan"])
+    sirali = sorted((o for o in _ozellikler(v) if _kod(o) != HASSASIYET), key=lambda o: _ham(o))
     if kitle == "ogretmen":
         sirali = [o for o in sirali if not _kod(o).startswith("P")]
     if kitle in ("veli", "ogretmen"):
         sirali = [o for o in sirali if _kod(o) not in YALNIZ_REHBER]
     # Önce geliştirilebilir yetkinlikler ve çalışma tarzı (K3, K2), sonra ilgi ve değerler (dikkate alınacak tercih)
     oncelik = {"I": 0, "P": 1, "A": 2, "D": 3}
-    dusukler = [o for o in sirali if o["puan"] < ORTA_ESIK]
-    dusukler.sort(key=lambda o: (oncelik.get(_kod(o)[:1], 9), o["puan"]))
+    dusukler = [o for o in sirali if _ham(o) < ORTA_ESIK]
+    dusukler.sort(key=lambda o: (oncelik.get(_kod(o)[:1], 9), _ham(o)))
     return dusukler[:3]
 
 
@@ -356,9 +362,13 @@ def okul_yorumu(ov: dict, moduller: set[str] | None = None) -> dict:
     if not toplam:
         y["ozet"].append("Bu kapsamda henüz öğrenci yok.")
         return y
+    # [2026-10-14] KVKK küçük grup: 5'ten az öğrencili sınıf / şube raporunda sayılar gizlidir (None); 0 sayılıp
+    # "Tamamlayan 0 / 4 (%0)" gibi yanlış oran üretilmez.
+    gizli = bool(oz.get("kapsam_gizli"))
     t_oran = _oran(tamam, toplam)
     giris_yok = next((d.get("sayi") for d in oz.get("durumlar") or [] if d.get("kod") == "giris_yok"), 0) or 0
-    hedef = oz.get("hedef_secen") or 0
+    # [2026-10-14] Pay ve payda aynı küme: testi tamamlayıp hedef seçenler / tamamlayanlar (oran %100'ü aşamaz)
+    hedef = oz.get("hedef_secen_tamamlayan") or 0
     h_oran = _oran(hedef, tamam) if tamam else None
     siniflar = [s for s in oz.get("siniflar") or [] if not s.get("gizli") and s.get("ogrenci") and s.get("tamamlayan") is not None]
     subeler = [s for s in oz.get("subeler") or [] if not s.get("gizli") and s.get("ogrenci") and s.get("tamamlayan") is not None
@@ -374,8 +384,13 @@ def okul_yorumu(ov: dict, moduller: set[str] | None = None) -> dict:
         y["isler"].append({"metin": metin, "kim": kim, "ne_zaman": ne_zaman, "oncelik": oncelik})
 
     # Durum → analiz
-    y["ozet"].append(f"Değerlendirmeyi tamamlayan öğrenci: {tamam} / {toplam} (%{_say(round(t_oran))}).")
-    if t_oran < 50:
+    if gizli:
+        y["ozet"].append("Bu grupta 5'ten az öğrenci olduğu için sayılar gizlilik gereği gösterilmiyor.")
+    else:
+        y["ozet"].append(f"Değerlendirmeyi tamamlayan öğrenci: {tamam} / {toplam} (%{_say(yuvarla(t_oran))}).")
+    if gizli:
+        pass   # oran cümlesi yok: sayılar gizli
+    elif t_oran < 50:
         y["ozet"].append("Tamamlama oranı yarının altında; bölüm önerileri ve toplu yorumlar bu kapsamdaki öğrencilerin küçük bir kısmını yansıtıyor.")
     elif t_oran < 80:
         y["ozet"].append("Tamamlama oranı orta düzeyde; kalan öğrencilerin tamamlaması bu kapsamdaki sonuçları daha güvenilir kılar.")
@@ -384,26 +399,26 @@ def okul_yorumu(ov: dict, moduller: set[str] | None = None) -> dict:
     if on_iki and on_iki["ogrenci"]:
         o12 = _oran(on_iki["tamamlayan"], on_iki["ogrenci"])
         if o12 is not None and o12 < 60:
-            y["ozet"].append(f"12. sınıflarda tamamlama oranı %{_say(round(o12))}; tercih dönemi yaklaştığı için bu konu önceliklidir.")
+            y["ozet"].append(f"12. sınıflarda tamamlama oranı %{_say(yuvarla(o12))}; tercih dönemi yaklaştığı için bu konu önceliklidir.")
             ekle(f"12. sınıfların değerlendirmeyi tamamlaması için sınıf saatinde bir oturum planlayın ({on_iki['ogrenci'] - on_iki['tamamlayan']} öğrenci kaldı).",
                  "Rehber öğretmen + 12. sınıf öğretmenleri", "Bu hafta", 1)
     if giris_yok:
         ekle(f"Sisteme hiç giriş yapmamış {giris_yok} öğrenciye giriş bilgilerini yeniden ulaştırın (Öğrenciler → Giriş listesi).",
              "Sınıf öğretmenleri", "Bu hafta", 1)
     for s in dusuk_sube:
-        ekle(f"{s.get('etiket') or (s.get('sinif', '') + ' ' + s['sube']).strip()} şubesinde tamamlama %{_say(round(_oran(s['tamamlayan'], s['ogrenci'])))}; "
+        ekle(f"{s.get('etiket') or (s.get('sinif', '') + ' ' + s['sube']).strip()} şubesinde tamamlama %{_say(yuvarla(_oran(s['tamamlayan'], s['ogrenci'])))}; "
              "rehberlik saatinde birlikte tamamlama oturumu yapın.", "Sınıf öğretmeni + rehber öğretmen", "Bu ay", 2)
-    if h_oran is not None and tamam >= 5 and h_oran < 50:
+    if not gizli and h_oran is not None and tamam >= 5 and h_oran < 50:
         if erken:
-            y["ozet"].append(f"Hedef bölüm seçen öğrenci sayısı {hedef} (tamamlayanların %{_say(round(h_oran))}); bu, sınıf düzeyi için beklenen bir durumdur; öncelik keşif etkinliklerine verilebilir.")
+            y["ozet"].append(f"Testi tamamlayıp hedef bölüm seçen öğrenci sayısı {hedef} (tamamlayanların %{_say(yuvarla(h_oran))}); bu, sınıf düzeyi için beklenen bir durumdur; öncelik keşif etkinliklerine verilebilir.")
             ekle("Öğrencilerin önerilen bölümleri tanıması için meslek tanıtımı ya da bölüm keşfi etkinliği planlayın.",
                  "Rehber öğretmen", "Bu ay", 2)
         else:
-            y["ozet"].append(f"Hedef bölüm seçen öğrenci sayısı {hedef} (tamamlayanların %{_say(round(h_oran))}); kişisel yol haritası ve koçluk adımları hedef seçildiğinde oluşur.")
+            y["ozet"].append(f"Testi tamamlayıp hedef bölüm seçen öğrenci sayısı {hedef} (tamamlayanların %{_say(yuvarla(h_oran))}); kişisel yol haritası ve koçluk adımları hedef seçildiğinde oluşur.")
             ekle("Hedef seçmemiş öğrencilerle kısa bir atölye yaparak ilk üç bölüm önerilerini birlikte inceleyin.",
                  "Rehber öğretmen", "Bu ay", 2)
     net = ov.get("net") or {}
-    if "net_takibi" in moduller and net.get("giren") is not None:
+    if "net_takibi" in moduller and net.get("giren") is not None and not gizli:
         n_oran = _oran(net.get("giren"), toplam)
         if n_oran is not None and n_oran < 30:
             y["ozet"].append("Bu kapsamda Net Takibi'ni kullanan öğrenci henüz yok." if not net.get("giren") else
@@ -411,7 +426,7 @@ def okul_yorumu(ov: dict, moduller: set[str] | None = None) -> dict:
             ekle("Okul denemelerini sisteme yükleyin ya da öğrencilerden deneme netlerini girmelerini isteyin; hedef programla karşılaştırma bu verilerle yapılır.",
                  "Okul idaresi + ders öğretmenleri", "Dönem içinde", 3)
     if ov.get("gecersiz"):
-        ekle(f"Güven puanı düşük çıkan {ov['gecersiz']} değerlendirme var; bu öğrencilerle görüşüp ilgili bölümü yeniden yanıtlamalarını sağlayın.",
+        ekle(f"Son değerlendirmesinin güven puanı düşük çıkan {ov['gecersiz']} öğrenci var; bu öğrencilerle görüşüp ilgili bölümü yeniden yanıtlamalarını sağlayın.",
              "Rehber öğretmen", "Bu hafta", 1)
     alanlar = ov.get("alanlar") or []
     ana_alan = next((a["alan"] for a in alanlar if a.get("alan") and a["alan"] != "Diğer" and a.get("sayi") is not None), None)

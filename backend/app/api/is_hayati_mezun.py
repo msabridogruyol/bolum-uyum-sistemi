@@ -48,7 +48,8 @@ ALANLAR = """id, okul_id, mezun_ad, ad_bicimi, mezuniyet_yili, bolum_id, bolum_a
 
 def bas_harfler(ad: str) -> str:
     parca = [p for p in (ad or "").replace(".", " ").split() if p]
-    return " ".join(p[0].upper() + "." for p in parca) or "Mezun"
+    from app.core.metin import turkce_buyut
+    return " ".join(turkce_buyut(p[0]) + "." for p in parca) or "Mezun"
 
 
 def _satir(r, tam: bool = True) -> dict:

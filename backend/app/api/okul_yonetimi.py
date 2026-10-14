@@ -351,8 +351,14 @@ def _xlsx_b64(baslik: str, kolonlar: list[str], satirlar: list[list], not_metni:
 
 
 # ----------------------------------------------------------------------------- ilerleme / durum
-def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | None = None) -> dict:
-    """{ogrenci_id: {tur_id, tur_durumu, biten, toplam, baslayan, ilk_bolum, ilk_uyum, hedef, tamamlanma}}"""
+def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | None = None, oneri=True) -> dict:
+    """{ogrenci_id: {tur_id, tur_durumu, biten, toplam, baslayan, ilk_bolum, oneri_ilk10, hedef, tamamlanma}}
+
+    ilk_bolum / oneri_ilk10 (bolum_id listesi): tamamlanan son turda öğrencinin sonuç ekranında gördüğü sıralama
+    (skor_motoru.toplu_siralama — K5 etkili nihai uyum + alan sırası); ham toplam_uyum sırası DEĞİL.
+    Öneri sıralaması öğrenci başına ~1 ms sürer (1000 öğrencide ~1 sn); kullanmayan çağrılar oneri=False geçebilir
+    (o zaman ilk_bolum None, oneri_ilk10 boş). [2026-10-14] oneri bir öğrenci kimliği kümesi de olabilir: yalnızca o öğrenciler
+    sıralanır (ör. seçili sınıf / şube raporu tüm okulu sıralamaz)."""
     if ogrenci_id is not None:
         kosul, p = "o.id = :oid", {"oid": ogrenci_id}
     else:
@@ -368,9 +374,7 @@ def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | N
                (SELECT count(*) FROM ogrenci_katman_oturumlari k JOIN katmanlar km ON km.id = k.katman_id
                  WHERE k.tur_id = son.id AND k.durum = 'tamamlandi' AND NOT km.kosullu_mu) AS biten,
                (SELECT count(*) FROM ogrenci_katman_oturumlari k JOIN katmanlar km ON km.id = k.katman_id
-                 WHERE k.tur_id = son.id AND k.durum <> 'baslamadi' AND NOT km.kosullu_mu) AS baslayan,
-               (SELECT s.bolum_id FROM ogrenci_bolum_uyum_skorlari s WHERE s.tur_id = son.id
-                 ORDER BY s.toplam_uyum DESC LIMIT 1) AS ilk_bolum
+                 WHERE k.tur_id = son.id AND k.durum <> 'baslamadi' AND NOT km.kosullu_mu) AS baslayan
           FROM son
     """), p).mappings().all()
     hedefler = db.execute(text(f"""
@@ -378,10 +382,20 @@ def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | N
          WHERE hb.aktif_mi AND {kosul}
     """), p).mappings().all()
     toplam = db.execute(text("SELECT count(*) FROM katmanlar WHERE NOT kosullu_mu")).scalar() or 4
-    sonuc = {r["ogrenci_id"]: {**dict(r), "toplam": toplam, "hedef": None} for r in satirlar}
+    from app.core.skor_motoru import toplu_siralama
+    kume = oneri if isinstance(oneri, (set, frozenset, list, tuple)) else None
+    if kume is not None:
+        kume = set(kume)
+    sira = toplu_siralama(db, [r["tur_id"] for r in satirlar if r["durum"] == "tamamlandi"
+                               and (kume is None or r["ogrenci_id"] in kume)], ilk_n=10) if oneri else {}
+    sonuc = {}
+    for r in satirlar:
+        ilk10 = [s.bolum_id for s in sira.get(r["tur_id"], [])]
+        sonuc[r["ogrenci_id"]] = {**dict(r), "ilk_bolum": ilk10[0] if ilk10 else None, "oneri_ilk10": ilk10,
+                                  "toplam": toplam, "hedef": None}
     for h in hedefler:
         sonuc.setdefault(h["ogrenci_id"], {"tur_id": None, "durum": None, "biten": 0, "baslayan": 0, "ilk_bolum": None,
-                                            "toplam": toplam, "tamamlanma_zamani": None})["hedef"] = h["bolum_id"]
+                                            "oneri_ilk10": [], "toplam": toplam, "tamamlanma_zamani": None})["hedef"] = h["bolum_id"]
     return sonuc
 
 
@@ -503,12 +517,21 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
     """[2026-10-10] sinif / sube verilirse yalnızca o sınıf düzeyinin / şubenin özeti (sınıf öğretmeni raporu)."""
     okul = _okul_kapsami(db, yon, okul_id)
     kosul, p = _okul_filtresi(okul_id)
-    ogrenciler = db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id).all()
+    # [2026-10-14] Test hesapları sayılmaz (İstatistikler, hazır raporlar, karşılaştırma ve veli sunumuyla aynı kural)
+    kosul += " AND NOT coalesce(o.test_hesabi, false)"
+    ogrenciler = [o for o in db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id).all()
+                  if not getattr(o, "test_hesabi", False)]
     if sinif:
         ogrenciler = [o for o in ogrenciler if o.sinif == sinif and (not sube or (o.sube or "") == sube)]
         kosul += " AND o.sinif = :f_sinif" + (" AND o.sube = :f_sube" if sube else "")
         p = {**p, "f_sinif": sinif, "f_sube": sube}
-    il = _ilerleme(db, okul_id)
+    il = _ilerleme(db, okul_id, oneri={o.id for o in ogrenciler})   # yalnızca kapsamdaki öğrenciler sıralanır
+    # [2026-10-14] "Giriş yapan" = sistemi en az bir kez açan: son giriş zamanı, günlük aktiflik kaydı ya da değerlendirmeye
+    # başlamış olmak. "Beni hatırla" ile açık kalan oturumda son giriş zamanı güncellenmediği için tek başına yetmez.
+    aktif_olan = {r[0] for r in db.execute(text("SELECT DISTINCT ogrenci_id FROM ogrenci_aktif_gunler WHERE ogrenci_id = ANY(:i)"),
+                                            {"i": [o.id for o in ogrenciler]}).all()} if ogrenciler else set()
+    def acti(o) -> bool:
+        return o.son_giris_zamani is not None or o.id in aktif_olan or ((il.get(o.id) or {}).get("baslayan") or 0) > 0
     adlar = {b.id: b.ad for b in db.query(Bolum.id, Bolum.ad).all()}
 
     durum_say = Counter()
@@ -523,7 +546,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
             grup["ogrenci"] += 1
             grup["tamamlayan"] += kod == "tamamlandi"
             grup["devam"] += kod == "devam"
-            grup["giris_yapan"] += o.son_giris_zamani is not None
+            grup["giris_yapan"] += acti(o)
         subeler[(anahtar, o.sube or "")]["hedef_secen"] += bool((il.get(o.id) or {}).get("hedef"))
         x = il.get(o.id) or {}
         if x.get("durum") == "tamamlandi" and x.get("ilk_bolum"):
@@ -532,7 +555,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
             hedef[adlar.get(x["hedef"], "?")] += 1
 
     toplam = len(ogrenciler)
-    giris_yapan = sum(1 for o in ogrenciler if o.son_giris_zamani is not None)
+    giris_yapan = sum(1 for o in ogrenciler if acti(o))
     sira = {s: i for i, s in enumerate(SINIFLAR)}
     from app.core.aktiflik import bugun_tr
     bugun = bugun_tr()   # [2026-10-11] Türkiye saatiyle gün
@@ -553,6 +576,9 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
         "teste_baslayan": durum_say["devam"] + durum_say["tamamlandi"],
         "tamamlayan": durum_say["tamamlandi"],
         "hedef_secen": sum(1 for o in ogrenciler if (il.get(o.id) or {}).get("hedef")),
+        # [2026-10-14] "hedef seçen / tamamlayan" oranının payı: yalnızca testi tamamlamış ve hedef seçmiş öğrenciler
+        "hedef_secen_tamamlayan": sum(1 for o in ogrenciler if (il.get(o.id) or {}).get("hedef")
+                                      and _durum(o, il.get(o.id))[0] == "tamamlandi"),
         "durumlar": [{"kod": k, "etiket": e, "sayi": durum_say[k]} for k, e in
                      (("giris_yok", "Henüz giriş yapmadı"), ("baslamadi", "Teste başlamadı"),
                       ("devam", "Devam ediyor"), ("tamamlandi", "Testi tamamladı"))],
@@ -763,8 +789,11 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
         sonuc_notu = "Öğrenci K1–K4 bölümlerini tamamladığında öneri listesi burada görünür."
     hedef = None
     if il and il.get("hedef"):
-        uyum = db.execute(text("SELECT toplam_uyum FROM ogrenci_bolum_uyum_skorlari WHERE ogrenci_id = :o AND bolum_id = :b "
-                               "ORDER BY tur_id DESC LIMIT 1"), {"o": o.id, "b": il["hedef"]}).scalar()
+        # öğrencinin sonuç ekranı / öneri listesiyle aynı sayı: K5 etkili nihai uyum (skoru olan en son tur)
+        from app.core.skor_motoru import toplu_nihai_uyum
+        t = db.execute(text("SELECT max(tur_id) FROM ogrenci_bolum_uyum_skorlari WHERE ogrenci_id = :o AND bolum_id = :b"),
+                       {"o": o.id, "b": il["hedef"]}).scalar()
+        uyum = toplu_nihai_uyum(db, [t], [il["hedef"]]).get(t, {}).get(il["hedef"]) if t is not None else None
         hedef = {"bolum": adlar.get(il["hedef"]), "bolum_id": il["hedef"], "uyum": round(float(uyum), 1) if uyum is not None else None}
 
     okul = db.get(Okul, o.okul_id) if o.okul_id else None
@@ -1103,7 +1132,8 @@ def islem_etiketi(kod: str) -> str:
     if kod in ISLEM_ETIKET:
         return ISLEM_ETIKET[kod]
     metin = (kod or "").replace("_", " ").strip()
-    return metin[:1].upper() + metin[1:] if metin else "—"
+    from app.core.metin import turkce_buyut
+    return turkce_buyut(metin[:1]) + metin[1:] if metin else "—"
 
 
 @router.get("/okul/{okul_id}/kayitlar")

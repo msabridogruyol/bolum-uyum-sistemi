@@ -7,15 +7,26 @@ Hiçbir puan burada yeniden hesaplanmaz: ekrandaki sonuçlarla AYNI kaynaklar ku
 from app.core.metin import turkce_kucult
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
+from decimal import ROUND_HALF_UP, Decimal
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.core.kucuk_grup import DIPNOT, EN_AZ_GRUP, GIZLI_METIN, gizle, grup_birlestir, kirilim_gizle, yeterli
+from app.core.kucuk_grup import DIPNOT, EN_AZ_GRUP, GIZLI_METIN
 from app.models import (
     Bolum, Dal, Degisken, GuvenlikOlayi, Katman, Ogrenci, OgrenciDalOturumu, OgrenciDegerlendirmeTuru,
     OgrenciDegiskenSkoru, OgrenciFavoriBolum, OgrenciGelisimAdimDurumu, OgrenciHaftalikGorev, Okul,
 )
+
+
+def yuvarla(x, nd: int = 0):
+    """[2026-10-14] Gösterilen her sayı için TEK yuvarlama: yarım yukarı (62,5 → 63), ekrandaki Math.round ile aynı.
+    Python round() / f"{x:.0f}" yarımı çifte yuvarlar (62,5 → 62); raporlarda bunların yerine bu kullanılır.
+    nd=0 → int, nd>0 → float. None → None."""
+    if x is None:
+        return None
+    q = Decimal(repr(float(x))).quantize(Decimal(1).scaleb(-nd), rounding=ROUND_HALF_UP)
+    return int(q) if nd <= 0 else float(q)
 
 
 def _seviye(puan: float) -> str:
@@ -30,7 +41,7 @@ def _yorumlar(db: Session, satirlar: list[dict]) -> None:
         try:
             r = db.execute(text("SELECT durum_tespiti, aksiyon_onerisi FROM gelisim_yorum_havuzu "
                                 "WHERE degisken_id = :d AND aralik = :a"),
-                           {"d": s["id"], "a": _puan_araligi(s["puan"])}).mappings().first()
+                           {"d": s["id"], "a": _puan_araligi(s.get("ham", s["puan"]))}).mappings().first()
         except Exception:
             db.rollback()
             r = None
@@ -91,8 +102,9 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
         d = degiskenler.get(s.degisken_id)
         if d is None:
             continue
-        satir = {"id": d.id, "kod": d.kod, "ad": d.ad, "aciklama": d.aciklama, "puan": round(float(s.puan), 1),
-                 "seviye": _seviye(float(s.puan))}
+        # [2026-10-14] "ham": düzey etiketi ve güçlü / gelişim eşikleri AYNI değerle (yuvarlanmamış puan) karşılaştırılır
+        satir = {"id": d.id, "kod": d.kod, "ad": d.ad, "aciklama": d.aciklama, "puan": yuvarla(s.puan, 1),
+                 "ham": float(s.puan), "seviye": _seviye(float(s.puan))}
         if d.dal_id:
             k5[dallar.get(d.dal_id, "Alan")].append(float(s.puan))
             continue
@@ -101,18 +113,20 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
     _yorumlar(db, ana)
     for kid, satirlar in sorted(gruplar.items(), key=lambda kv: katmanlar[kv[0]].sira if kv[0] in katmanlar else 99):
         k = katmanlar.get(kid)
-        satirlar.sort(key=lambda x: -x["puan"])
+        satirlar.sort(key=lambda x: -x["ham"])
         from app.core.katman_adlari import katman_adi
         v["katmanlar"].append({"kod": k.kod if k else "?", "ad": katman_adi(k.kod, k.ad) if k else "?",
-                               "ortalama": round(sum(x["puan"] for x in satirlar) / len(satirlar), 1),
+                               "ortalama": yuvarla(sum(x["ham"] for x in satirlar) / len(satirlar), 1),
                                "ozellikler": satirlar})
-    v["k5"] = [{"ad": a, "puan": round(sum(p) / len(p), 1)} for a, p in sorted(k5.items(), key=lambda kv: -sum(kv[1]) / len(kv[1]))]
-    sirali = sorted(ana, key=lambda x: -x["puan"])
+    v["k5"] = [{"ad": a, "puan": yuvarla(sum(p) / len(p), 1)} for a, p in sorted(k5.items(), key=lambda kv: -sum(kv[1]) / len(kv[1]))]
+    sirali = sorted(ana, key=lambda x: -x["ham"])
     from app.core.seviye import gelisime_acik_mi, guclu_mu
     # [2026-10-12] P4 (duygusal hassasiyet) yüksek puanı güçlü yön, düşük puanı gelişim alanı sayılmaz (yorum.py destek önerir)
     sirali = [x for x in sirali if x.get("kod") != "P4"]
-    v["gucluler"] = [x for x in sirali if guclu_mu(x["puan"])][:6] or sirali[:3]
-    v["gelisim"] = [x for x in reversed(sirali) if gelisime_acik_mi(x["puan"])][:5]
+    # [2026-10-14] Güçlü yön yalnızca eşiği (62) geçen özelliktir; eşiği geçen yoksa liste boş kalır (yedek doldurma yok).
+    # Değerler (K1, D…) yorum.py'deki gibi güçlü yön sayılmaz; "önem verdiği değerler" olarak ayrı verilir.
+    v["gucluler"] = [x for x in sirali if guclu_mu(x["ham"]) and not str(x.get("kod") or "").startswith("D")][:6]
+    v["gelisim"] = [x for x in reversed(sirali) if gelisime_acik_mi(x["ham"])][:5]
 
     # Bölüm önerileri + nedenleri (tamamlanmış ve K5 bitmiş tur)
     from app.core.dal_servisi import bekleyen_dal_var_mi
@@ -130,7 +144,7 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
                 n = nedenler.get(s.bolum_id) or {}
                 v["bolumler"].append({
                     "sira": i, "bolum_id": s.bolum_id, "ad": _baslik(adlar.get(s.bolum_id)), "alan": s.alan,
-                    "uyum": round(float(s.toplam_uyum), 1),
+                    "uyum": yuvarla(s.toplam_uyum, 1),
                     "ortusen": [x.get("ozellik") for x in (n.get("ortusen") or [])][:3],
                     "dikkat": (n.get("dikkat") or {}).get("metin"),
                 })
@@ -161,7 +175,7 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
                 try:
                     from app.core.skor_motoru import nihai_uyum_haritasi
                     u = nihai_uyum_haritasi(db, o, tamam).get(h.bolum_id)
-                    hedef["uyum"] = round(float(u), 1) if u is not None else None
+                    hedef["uyum"] = yuvarla(u, 1)
                 except Exception:
                     db.rollback()
             v["hedef"] = hedef
@@ -201,11 +215,25 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
     """Güçlü yönler (S) · gelişim alanları (W) · fırsatlar (O) · dikkat edilecekler (T). Kurallı, veriye dayalı.
     kitle: 'ogrenci' (sen), 'veli' / 'rehber' (üçüncü kişi). [2026-10-12] Cümleler yorum bölümüyle aynı dilde;
     düşük kutupta nötr adlar (yorum.DUSUK_AD), listeler ' · ' ile ayrılır."""
-    from app.core.rapor.yorum import DUSUK_AD, YALNIZ_REHBER
+    from app.core.rapor.yorum import (
+        DUSUK_AD,
+        YALNIZ_REHBER,
+        _degerler,
+        _ham,
+        _ozellikler,
+    )
     sen = kitle == "ogrenci"
     S, W, O, T = [], [], [], []
     for x in v["gucluler"][:5]:
-        S.append(f"{x['ad']}: {turkce_kucult(x['seviye'])} ({x['puan']:.0f})")
+        S.append(f"{x['ad']}: {turkce_kucult(x['seviye'])} ({yuvarla(_ham(x))})")
+    if not S and v.get("durum") == "tamamlandi":
+        # [2026-10-14] Eşiği geçen özellik yoksa en yüksekler "güçlü" diye değil, açıkça "görece en yüksek" diye verilir
+        gorece = sorted((o for o in _ozellikler(v) if o.get("kod") != "P4" and not str(o.get("kod") or "").startswith("D")),
+                        key=lambda o: -_ham(o))[:3]
+        if gorece:
+            S.append(("Henüz belirgin biçimde öne çıkan bir özelliğin yok; görece en yüksek puanların: " if sen else
+                      "Henüz belirgin biçimde öne çıkan bir özellik yok; görece en yüksek puanlar: ")
+                     + " · ".join(f"{x['ad']} ({yuvarla(_ham(x))})" for x in gorece))
     hedef = v.get("hedef") or {}
     odak = [x for x in hedef.get("odak", [])]
     for x in odak[:4]:
@@ -217,10 +245,10 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
             continue
         ad = DUSUK_AD.get(x.get("kod"), x["ad"])
         if not any(x["ad"] in w or ad in w for w in W):
-            W.append(f"{ad}: şu an daha az öne çıkıyor ({x['puan']:.0f})")
+            W.append(f"{ad}: şu an daha az öne çıkıyor ({yuvarla(_ham(x))})")
     if v["bolumler"]:
         ilk = v["bolumler"][:3]
-        O.append(("En uyumlu bölümlerin: " if sen else "En uyumlu bölümler: ") + " · ".join(f"{b['ad']} (%{b['uyum']:.0f})" for b in ilk))
+        O.append(("En uyumlu bölümlerin: " if sen else "En uyumlu bölümler: ") + " · ".join(f"{b['ad']} (%{yuvarla(b['uyum'])})" for b in ilk))
         alanlar = Counter(b["alan"] for b in v["bolumler"] if b.get("alan"))
         if alanlar:
             O.append("Öne çıkan alanlar: " + " · ".join(a for a, _ in alanlar.most_common(2)))
@@ -230,11 +258,15 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
                      + " · ".join(a for a, _ in ortusen.most_common(3)))
     if v["k5"]:
         O.append(f"Alan sorularında en yüksek puanlı alan: {v['k5'][0]['ad']}")
+    degerler = _degerler(v)   # [2026-10-14] yorum.py ile aynı: değerler güçlü yön değil, karar verirken dikkate alınacak tercih
+    if degerler:
+        O.append(("Bir işte en çok önem verdiğin değerler: " if sen else "Bir işte en çok önem verdiği değerler: ")
+                 + " · ".join(x["ad"] for x in degerler))
     if v["listem"]:
         O.append(("Listene eklediğin bölümler: " if sen else "Listesine eklediği bölümler: ") + " · ".join(v["listem"][:4]))
     if hedef:
         if hedef.get("sira") is None and v["bolumler"]:
-            uyum = f" (uyum %{hedef['uyum']:.0f})" if hedef.get("uyum") is not None else ""
+            uyum = f" (uyum %{yuvarla(hedef['uyum'])})" if hedef.get("uyum") is not None else ""
             T.append(f"Hedefin ({hedef['ad']}) ilk 10 önerin arasında yer almıyor{uyum}. Bu, hedefinin yanlış olduğu anlamına gelmez; "
                      "farkları rehber öğretmeninle konuş." if sen else
                      f"Hedef bölüm ({hedef['ad']}) ilk 10 öneri arasında yer almıyor{uyum}. Farkların öğrenciyle birlikte, "
@@ -279,35 +311,27 @@ def _katman_ortalamalari(db: Session, tur_idler: list[int]) -> list[dict]:
          WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
          GROUP BY k.kod, k.ad, k.sira ORDER BY k.sira"""), {"t": tur_idler}).all()
     from app.core.katman_adlari import katman_adi
-    return [{"kod": r[0], "ad": katman_adi(r[0], r[1]), "ortalama": round(float(r[2]), 1)} for r in satir]
+    return [{"kod": r[0], "ad": katman_adi(r[0], r[1]), "ortalama": yuvarla(r[2], 1)} for r in satir]
+
+
+def gecerli_tur_idleri(db: Session, tur_idler: list) -> list:
+    """[2026-10-14] Verilen turlardan güven eşiğini geçenler (sonuc_gecerli_mi doğru). Okul / sınıf ortalamalarına
+    yalnızca bunlar girer (rapor, İstatistikler)."""
+    if not tur_idler:
+        return []
+    gecerli = {r[0] for r in db.execute(text("SELECT id FROM ogrenci_degerlendirme_turu WHERE id = ANY(:t) AND sonuc_gecerli_mi"),
+                                        {"t": list(tur_idler)}).all()}
+    return [t for t in tur_idler if t in gecerli]
 
 
 def _ozet_kucuk_grup(v: dict, kapsamli: bool) -> dict:
-    """[2026-10-10] KVKK — toplu RAPORLARDA (PDF/Excel) 5'ten az öğrencili hücreler gizlenir (app/core/kucuk_grup.py).
-    Okul panelindeki isimli çalışma ekranı (okul_ozeti uç noktası) ham değerleri gösterir; gizleme yalnızca burada.
-    Sınıf düzeyi / şube kırılımlarında küçük grupların değerleri; sınıf / şube kapsamlı rapor 5'ten az öğrenciliyse
-    durum sayıları. Okulun genel toplamları gizlenmez."""
-    from collections import defaultdict
-    alanlar = ["giris_yapan", "devam", "tamamlayan", "hedef_secen"]
-    kirilim_gizle(v.get("siniflar") or [], alanlar)
-    gruplar = defaultdict(list)
-    for x in v.get("subeler") or []:
-        gruplar[x.get("sinif")].append(x)
-    sinif_gizli = {x.get("sinif") for x in v.get("siniflar") or [] if x.get("gizli")}
-    for sf, l in gruplar.items():
-        kirilim_gizle(l, alanlar, ikincil=sf not in sinif_gizli)
+    """[2026-10-14] Okul / sınıf / şube raporları (PDF/Excel) yalnızca okul yetkilisine gider; yetkili her öğrencinin sonucunu
+    adıyla zaten gördüğü için küçük grup gizlemesi UYGULANMAZ (app/core/kucuk_grup.py kapsam notu). Yalnızca liste uzunlukları
+    kısaltılır (en çok önerilen / hedeflenen bölümlerde ilk 8)."""
     for anahtar in ("en_cok_onerilen", "en_cok_hedeflenen"):
-        v[anahtar] = grup_birlestir(v.get(anahtar) or [], "bolum", diger_etiketi="Diğer bölümler", ilk_n=8)
-    v["kapsam_gizli"] = kapsamli and not yeterli(v.get("toplam") or 0)
-    if v["kapsam_gizli"]:
-        for k in ("giris_yapan", "teste_baslayan", "tamamlayan", "hedef_secen"):
-            v[k] = None
-        for d in v.get("durumlar") or []:
-            d["sayi"] = None
-        v["gunluk_giris"] = []
-    tum = (v.get("siniflar") or []) + (v.get("subeler") or []) + v["en_cok_onerilen"] + v["en_cok_hedeflenen"]
-    v["kucuk_grup"] = {"esik": EN_AZ_GRUP, "metin": GIZLI_METIN, "dipnot": DIPNOT,
-                       "uygulandi": v["kapsam_gizli"] or any(x.get("gizli") or x.get("diger") for x in tum)}
+        v[anahtar] = list(v.get(anahtar) or [])[:8]
+    v["kapsam_gizli"] = False
+    v["kucuk_grup"] = {"esik": EN_AZ_GRUP, "metin": GIZLI_METIN, "dipnot": DIPNOT, "uygulandi": False}
     return v
 
 
@@ -317,11 +341,12 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
     ozet = _ozet_kucuk_grup(okul_ozeti(okul_id, db, yonetici, sinif=sinif, sube=sube), kapsamli=bool(sinif))
     ogrenciler = db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id) \
         .order_by(Ogrenci.sinif, Ogrenci.sube, Ogrenci.ad_soyad).all()
-    il_okul = _ilerleme(db, okul_id)
     if sinif:
         ogrenciler = [o for o in ogrenciler if o.sinif == sinif and (not sube or (o.sube or "") == sube)]
         if sube:   # şube listesinde okul numarası sırası daha kullanışlı
             ogrenciler.sort(key=lambda o: (int(o.ogrenci_no) if (o.ogrenci_no or "").isdigit() else 10**9, o.ad_soyad))
+    # [2026-10-14] okul geneli ilerleme (okul ortalaması için) — bölüm sıralaması yalnızca rapordaki öğrenciler için
+    il_okul = _ilerleme(db, okul_id, oneri={o.id for o in ogrenciler})
     secili = {o.id for o in ogrenciler}
     il = {k: v for k, v in il_okul.items() if k in secili}
     bolum = {b.id: b for b in db.query(Bolum).all()}
@@ -337,17 +362,18 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         if d and d.kod.startswith("U") and e.bolum_id not in alan_of:
             alan_of[e.bolum_id] = d.ad
     alan = Counter()
-    tamam_turlar = [x["tur_id"] for x in il.values() if x.get("durum") == "tamamlandi" and x.get("tur_id")]
+    # [2026-10-14] Profil ortalamaları (katman, ortak güçlü / gelişim) yalnızca GEÇERLİ (güven eşiğini geçen) son turlardan;
+    # geçersizler ayrıca "gecersiz" olarak sayılır.
+    tamam_turlar = gecerli_tur_idleri(db, [x["tur_id"] for x in il.values() if x.get("durum") == "tamamlandi" and x.get("tur_id")])
     for x in il.values():
         if x.get("durum") == "tamamlandi" and x.get("ilk_bolum"):
             alan[alan_of.get(x["ilk_bolum"], "Diğer")] += 1
-    # [2026-10-10] KVKK küçük grup: profil ortalamaları 5'ten az tamamlayana dayanıyorsa gösterilmez
-    profil_gizli = bool(tamam_turlar) and not yeterli(len(tamam_turlar))
+    profil_gizli = False   # [2026-10-14] yetkili raporunda küçük grup gizlemesi yok (_ozet_kucuk_grup notu)
     katman_ort = _katman_ortalamalari(db, tamam_turlar) if not profil_gizli else []
     okul_katman_ort = []
     if sinif:
-        okul_tamam = [x["tur_id"] for x in il_okul.values() if x.get("durum") == "tamamlandi" and x.get("tur_id")]
-        okul_katman_ort = _katman_ortalamalari(db, okul_tamam) if yeterli(len(okul_tamam)) else []
+        okul_tamam = gecerli_tur_idleri(db, [x["tur_id"] for x in il_okul.values() if x.get("durum") == "tamamlandi" and x.get("tur_id")])
+        okul_katman_ort = _katman_ortalamalari(db, okul_tamam) if okul_tamam else []
     if tamam_turlar and not profil_gizli:
         guclu = db.execute(text("""
             SELECT d.ad, avg(s.puan) AS o, d.kod FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
@@ -360,7 +386,7 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         x = il.get(o.id) or {}
         kod, etiket = _durum(o, x)
         t = turlar.get(x.get("tur_id"))
-        if t is not None and t.durum == "tamamlandi" and not t.sonuc_gecerli_mi:
+        if t is not None and t.durum == "tamamlandi" and t.sonuc_gecerli_mi is False:   # öğrenci sayısı: son turu geçersiz
             gecersiz += 1
         liste.append({
             "ad_soyad": o.ad_soyad, "sinif": " / ".join(filter(None, [o.sinif, o.sube])) or "—", "durum": etiket,
@@ -377,7 +403,7 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         x["son_tyt"], x["son_ayt"], x["deneme"] = n.get("TYT"), n.get("AYT"), n.get("sayi", 0)
     for anahtar in ("en_cok_onerilen", "en_cok_hedeflenen"):
         ozet[anahtar] = [{**x, "bolum": x["bolum"] if x.get("diger") else _baslik(x["bolum"])} for x in ozet.get(anahtar, [])]
-    alanlar = grup_birlestir(alan, "alan", diger_etiketi="Diğer", ilk_n=8)
+    alanlar = [{"alan": a, "sayi": n} for a, n in alan.most_common(8)]
     if ozet.get("kapsam_gizli"):
         gecersiz = None
     net_ozet = {k: v for k, v in net.items() if k != "ogrenci"}
@@ -390,8 +416,8 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         "alanlar": alanlar,
         "katman_ort": katman_ort, "okul_katman_ort": okul_katman_ort, "kapsam": ozet.get("kapsam") or {},
         # [2026-10-12] P4 (duygusal hassasiyet) ortak güçlü / gelişim listesine girmez: yüksek puanı güçlü yön değildir
-        "ortak_guclu": [{"ad": r[0], "kod": r[2], "ortalama": round(float(r[1]), 1)} for r in guclu[:6]],
-        "ortak_gelisim": [{"ad": r[0], "kod": r[2], "ortalama": round(float(r[1]), 1)} for r in list(reversed(guclu))[:6]],
+        "ortak_guclu": [{"ad": r[0], "kod": r[2], "ortalama": yuvarla(r[1], 1)} for r in guclu[:6]],
+        "ortak_gelisim": [{"ad": r[0], "kod": r[2], "ortalama": yuvarla(r[1], 1)} for r in list(reversed(guclu))[:6]],
         "gecersiz": gecersiz, "ogrenciler": liste,
         "net": net_ozet,
     }
@@ -420,14 +446,14 @@ def net_verisi(db: Session, o: Ogrenci) -> dict | None:
             continue
         son3 = [d["toplam"] for d in l[-3:]]
         oturumlar.append({"oturum": ot, "sayi": len(l), "ilk": l[0]["toplam"], "son": l[-1]["toplam"],
-                          "en_iyi": max(d["toplam"] for d in l), "ort3": round(sum(son3) / len(son3), 2),
-                          "degisim": round(l[-1]["toplam"] - l[0]["toplam"], 2), "seri": [(d["tarih"], d["toplam"]) for d in l]})
+                          "en_iyi": max(d["toplam"] for d in l), "ort3": yuvarla(sum(son3) / len(son3), 2),
+                          "degisim": yuvarla(l[-1]["toplam"] - l[0]["toplam"], 2), "seri": [(d["tarih"], d["toplam"]) for d in l]})
     dersler = []
     for kod, (ot, ad, soru, _) in TESTLER.items():
         v = [d["dersler"][kod]["net"] for d in denemeler if kod in d["dersler"]]
         if v:
             dersler.append({"kod": kod, "oturum": ot, "ad": ad, "soru": soru, "son": v[-1], "onceki": v[-2] if len(v) > 1 else None,
-                            "ort3": round(sum(v[-3:]) / len(v[-3:]), 2)})
+                            "ort3": yuvarla(sum(v[-3:]) / len(v[-3:]), 2)})
     konu_d: dict[str, dict] = {}
     for ders, durum, n in konu:
         x = konu_d.setdefault(ders, {"biten": 0, "calisiyor": 0})
@@ -479,11 +505,11 @@ def okul_net_ozeti(db: Session, ogrenci_idler: list) -> dict:
         x[r.oturum] = float(r.toplam_net)
         for kod, v in (r.dersler or {}).items():
             ders_top.setdefault(kod, []).append(float(v.get("net", 0)))
-    def ort(ot):   # [2026-10-10] KVKK: 5'ten az öğrenciye dayanan ortalama gösterilmez (None, n)
+    def ort(ot):   # [2026-10-14] yetkili raporu: küçük grup gizlemesi yok
         v = [x[ot] for x in ogr.values() if ot in x]
-        return (gizle(round(sum(v) / len(v), 2), len(v)), len(v)) if v else (None, 0)
-    dersler = [{"ad": f"{TESTLER[k][0]} {TESTLER[k][1]}", "soru": TESTLER[k][2], "ort": gizle(round(sum(v) / len(v), 2), len(v)),
-                "n": len(v), "gizli": not yeterli(len(v))} for k, v in ders_top.items() if k in TESTLER]
+        return (yuvarla(sum(v) / len(v), 2), len(v)) if v else (None, 0)
+    dersler = [{"ad": f"{TESTLER[k][0]} {TESTLER[k][1]}", "soru": TESTLER[k][2], "ort": yuvarla(sum(v) / len(v), 2),
+                "n": len(v), "gizli": False} for k, v in ders_top.items() if k in TESTLER]
     tyt, ayt = ort("TYT"), ort("AYT")
     return {"ogrenci": ogr, "giren": len(ogr), "toplam_deneme": sum(sayilar.values()), "tyt": tyt, "ayt": ayt, "dersler": dersler,
             "gizli": any(d["gizli"] for d in dersler) or any(x[1] and x[0] is None for x in (tyt, ayt))}

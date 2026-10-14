@@ -196,4 +196,7 @@ def okul_rapor_yorumu(okul_id: int, sinif: str | None = Query(None), sube: str |
     from app.core.rapor.veri import okul_raporu_verisi
     from app.core.rapor.yorum import okul_yorumu
     _okul_kapsami(db, yon, okul_id)
-    return okul_yorumu(okul_raporu_verisi(db, okul_id, yon, sinif=sinif or None, sube=sube or None))
+    # [2026-10-14] PDF uç noktasıyla aynı normalleştirme (şube büyük harf; sınıfsız şube yok sayılır)
+    sinif = (sinif or "").strip() or None
+    sube = ((sube or "").strip().upper() or None) if sinif else None
+    return okul_yorumu(okul_raporu_verisi(db, okul_id, yon, sinif=sinif, sube=sube))
