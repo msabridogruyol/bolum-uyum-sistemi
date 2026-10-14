@@ -1,6 +1,6 @@
 // [2026-10-10] Okul paneli → İstatistikler: okulun tüm istatistikleri tek istekte (GET /yonetim/okul/{id}/istatistik).
 // Filtreler (tek satır): sınıf düzeyi, şube, tarih aralığı. Paket modülü kapalı bölümler gösterilmez (sunucu da döndürmez).
-// Okul kendi öğrencilerini isimle gördüğü için bu ekranda küçük grup gizleme yoktur (toplu PDF/Excel raporlarında vardır).
+// Okul kendi öğrencilerini isimle gördüğü için bu ekranda ve okul PDF/Excel raporlarında küçük grup gizleme yoktur (yalnızca veli sunumunun veli sürümünde vardır).
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import {

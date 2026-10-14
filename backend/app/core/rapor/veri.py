@@ -12,7 +12,7 @@ from decimal import ROUND_HALF_UP, Decimal
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.core.kucuk_grup import DIPNOT, EN_AZ_GRUP, GIZLI_METIN, gizle, grup_birlestir, kirilim_gizle, yeterli
+from app.core.kucuk_grup import DIPNOT, EN_AZ_GRUP, GIZLI_METIN
 from app.models import (
     Bolum, Dal, Degisken, GuvenlikOlayi, Katman, Ogrenci, OgrenciDalOturumu, OgrenciDegerlendirmeTuru,
     OgrenciDegiskenSkoru, OgrenciFavoriBolum, OgrenciGelisimAdimDurumu, OgrenciHaftalikGorev, Okul,
@@ -325,31 +325,13 @@ def gecerli_tur_idleri(db: Session, tur_idler: list) -> list:
 
 
 def _ozet_kucuk_grup(v: dict, kapsamli: bool) -> dict:
-    """[2026-10-10] KVKK — toplu RAPORLARDA (PDF/Excel) 5'ten az öğrencili hücreler gizlenir (app/core/kucuk_grup.py).
-    Okul panelindeki isimli çalışma ekranı (okul_ozeti uç noktası) ham değerleri gösterir; gizleme yalnızca burada.
-    Sınıf düzeyi / şube kırılımlarında küçük grupların değerleri; sınıf / şube kapsamlı rapor 5'ten az öğrenciliyse
-    durum sayıları. Okulun genel toplamları gizlenmez."""
-    from collections import defaultdict
-    alanlar = ["giris_yapan", "devam", "tamamlayan", "hedef_secen"]
-    kirilim_gizle(v.get("siniflar") or [], alanlar)
-    gruplar = defaultdict(list)
-    for x in v.get("subeler") or []:
-        gruplar[x.get("sinif")].append(x)
-    sinif_gizli = {x.get("sinif") for x in v.get("siniflar") or [] if x.get("gizli")}
-    for sf, l in gruplar.items():
-        kirilim_gizle(l, alanlar, ikincil=sf not in sinif_gizli)
+    """[2026-10-14] Okul / sınıf / şube raporları (PDF/Excel) yalnızca okul yetkilisine gider; yetkili her öğrencinin sonucunu
+    adıyla zaten gördüğü için küçük grup gizlemesi UYGULANMAZ (app/core/kucuk_grup.py kapsam notu). Yalnızca liste uzunlukları
+    kısaltılır (en çok önerilen / hedeflenen bölümlerde ilk 8)."""
     for anahtar in ("en_cok_onerilen", "en_cok_hedeflenen"):
-        v[anahtar] = grup_birlestir(v.get(anahtar) or [], "bolum", diger_etiketi="Diğer bölümler", ilk_n=8)
-    v["kapsam_gizli"] = kapsamli and not yeterli(v.get("toplam") or 0)
-    if v["kapsam_gizli"]:
-        for k in ("giris_yapan", "teste_baslayan", "tamamlayan", "hedef_secen", "hedef_secen_tamamlayan"):
-            v[k] = None
-        for d in v.get("durumlar") or []:
-            d["sayi"] = None
-        v["gunluk_giris"] = []
-    tum = (v.get("siniflar") or []) + (v.get("subeler") or []) + v["en_cok_onerilen"] + v["en_cok_hedeflenen"]
-    v["kucuk_grup"] = {"esik": EN_AZ_GRUP, "metin": GIZLI_METIN, "dipnot": DIPNOT,
-                       "uygulandi": v["kapsam_gizli"] or any(x.get("gizli") or x.get("diger") for x in tum)}
+        v[anahtar] = list(v.get(anahtar) or [])[:8]
+    v["kapsam_gizli"] = False
+    v["kucuk_grup"] = {"esik": EN_AZ_GRUP, "metin": GIZLI_METIN, "dipnot": DIPNOT, "uygulandi": False}
     return v
 
 
@@ -385,13 +367,12 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
     for x in il.values():
         if x.get("durum") == "tamamlandi" and x.get("ilk_bolum"):
             alan[alan_of.get(x["ilk_bolum"], "Diğer")] += 1
-    # [2026-10-10] KVKK küçük grup: profil ortalamaları 5'ten az tamamlayana dayanıyorsa gösterilmez
-    profil_gizli = bool(tamam_turlar) and not yeterli(len(tamam_turlar))
+    profil_gizli = False   # [2026-10-14] yetkili raporunda küçük grup gizlemesi yok (_ozet_kucuk_grup notu)
     katman_ort = _katman_ortalamalari(db, tamam_turlar) if not profil_gizli else []
     okul_katman_ort = []
     if sinif:
         okul_tamam = gecerli_tur_idleri(db, [x["tur_id"] for x in il_okul.values() if x.get("durum") == "tamamlandi" and x.get("tur_id")])
-        okul_katman_ort = _katman_ortalamalari(db, okul_tamam) if yeterli(len(okul_tamam)) else []
+        okul_katman_ort = _katman_ortalamalari(db, okul_tamam) if okul_tamam else []
     if tamam_turlar and not profil_gizli:
         guclu = db.execute(text("""
             SELECT d.ad, avg(s.puan) AS o, d.kod FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
@@ -421,7 +402,7 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
         x["son_tyt"], x["son_ayt"], x["deneme"] = n.get("TYT"), n.get("AYT"), n.get("sayi", 0)
     for anahtar in ("en_cok_onerilen", "en_cok_hedeflenen"):
         ozet[anahtar] = [{**x, "bolum": x["bolum"] if x.get("diger") else _baslik(x["bolum"])} for x in ozet.get(anahtar, [])]
-    alanlar = grup_birlestir(alan, "alan", diger_etiketi="Diğer", ilk_n=8)
+    alanlar = [{"alan": a, "sayi": n} for a, n in alan.most_common(8)]
     if ozet.get("kapsam_gizli"):
         gecersiz = None
     net_ozet = {k: v for k, v in net.items() if k != "ogrenci"}
@@ -523,11 +504,11 @@ def okul_net_ozeti(db: Session, ogrenci_idler: list) -> dict:
         x[r.oturum] = float(r.toplam_net)
         for kod, v in (r.dersler or {}).items():
             ders_top.setdefault(kod, []).append(float(v.get("net", 0)))
-    def ort(ot):   # [2026-10-10] KVKK: 5'ten az öğrenciye dayanan ortalama gösterilmez (None, n)
+    def ort(ot):   # [2026-10-14] yetkili raporu: küçük grup gizlemesi yok
         v = [x[ot] for x in ogr.values() if ot in x]
-        return (gizle(yuvarla(sum(v) / len(v), 2), len(v)), len(v)) if v else (None, 0)
-    dersler = [{"ad": f"{TESTLER[k][0]} {TESTLER[k][1]}", "soru": TESTLER[k][2], "ort": gizle(yuvarla(sum(v) / len(v), 2), len(v)),
-                "n": len(v), "gizli": not yeterli(len(v))} for k, v in ders_top.items() if k in TESTLER]
+        return (yuvarla(sum(v) / len(v), 2), len(v)) if v else (None, 0)
+    dersler = [{"ad": f"{TESTLER[k][0]} {TESTLER[k][1]}", "soru": TESTLER[k][2], "ort": yuvarla(sum(v) / len(v), 2),
+                "n": len(v), "gizli": False} for k, v in ders_top.items() if k in TESTLER]
     tyt, ayt = ort("TYT"), ort("AYT")
     return {"ogrenci": ogr, "giren": len(ogr), "toplam_deneme": sum(sayilar.values()), "tyt": tyt, "ayt": ayt, "dersler": dersler,
             "gizli": any(d["gizli"] for d in dersler) or any(x[1] and x[0] is None for x in (tyt, ayt))}

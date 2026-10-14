@@ -156,7 +156,7 @@ function RaporIndir({ okulId, oz }) {
   return (
     <div className="orm">
       <div className="yp-ince" style={{ marginBottom: 12 }}>
-        Okulunuzun tüm raporları burada; her indirme işlem kayıtlarına yazılır. Okul, sınıf düzeyi ve şube özet raporlarında 5'ten az öğrencili kırılımlar gizlenir (kişisel verilerin korunması).
+        Okulunuzun tüm raporları burada; her indirme işlem kayıtlarına yazılır. Bu raporlar yalnızca okul yetkililerine yöneliktir ve tüm sayıları gösterir; velilere gösterilecek sunumda 5'ten az öğrenciye dayanan sayılar gizlenir.
         Şubeye özel raporlar Sınıflar sekmesindeki <b>Rapor</b> menüsünde de var.
         {acik('net_takibi') && (
           <label className="orm-net">
@@ -179,15 +179,16 @@ function RaporIndir({ okulId, oz }) {
       </Grup>
 
       {acik('gelismis_raporlar') && (
-        <Grup baslik="Veli toplantısı" aciklama="Toplantıda perdeye yansıtılacak, düzenlenebilir PowerPoint sunumu. Yalnızca toplu bilgiler yer alır: öğrenci adı, öğrenci bazlı sonuç, uyarı listesi ve net bilgisi içermez.">
+        <Grup baslik="Veli toplantısı" aciklama="Düzenlenebilir PowerPoint sunumu, iki sürüm. Veli sürümü toplantıda perdeye yansıtılır; öğretmen sürümü sınıf öğretmeninin hazırlığı içindir. İkisinde de öğrenci adı, öğrenci bazlı sonuç, uyarı listesi ve net bilgisi yoktur.">
           <RaporKarti ikon="🎤" baslik="Veli toplantısı sunumu (PowerPoint)" aciklama="Filizyol'un velilere sade anlatımı, katılım, öne çıkan ortak özellikler, en çok önerilen alanlar ve bölümler, hedef seçimi, koçluk ve İş Hayatı, velilerin nasıl destek olabileceği, yaklaşan etkinlikler ve rehberlik servisi iletişimi. Her slaytta öğretmen için konuşma notu var."
             kapsam={<select className="yp-sec" value={veliKapsam} onChange={(e) => setVeliKapsam(e.target.value)} aria-label="Sunum kapsamı">
               <option value="">Tüm okul</option>
               {siniflar.map((s) => <option key={s} value={`s:${s}`}>{s} (tüm şubeler)</option>)}
               {subeler.map((s) => <option key={s.etiket} value={`b:${s.sinif}|${s.sube}`}>{s.etiket} ({s.ogrenci})</option>)}
             </select>}
-            not="5'ten az öğrenciye dayanan değerler gösterilmez; 5'ten az öğrencili şubede yalnızca genel anlatım slaytları yer alır. Okul rengi ve (PNG/JPEG ise) logosu kullanılır."
-            dugmeler={[{ ad: '📽️ PowerPoint (.pptx)', fn: () => api.veliSunumuIndir(okulId, kapsamCoz(veliKapsam)) }]} />
+            not="Veli sürümünde 5'ten az öğrenciye dayanan değerler gösterilmez; 5'ten az öğrencili şubede yalnızca genel anlatım slaytları yer alır. Öğretmen sürümünde tüm sayılar görünür; velilerle paylaşılmamalıdır. Okul rengi ve (PNG/JPEG ise) logosu kullanılır."
+            dugmeler={[{ ad: '📽️ Veli sürümü (.pptx)', fn: () => api.veliSunumuIndir(okulId, kapsamCoz(veliKapsam), 'veli') },
+              { ad: '👩‍🏫 Öğretmen sürümü (.pptx)', fn: () => api.veliSunumuIndir(okulId, kapsamCoz(veliKapsam), 'ogretmen') }]} />
         </Grup>
       )}
 

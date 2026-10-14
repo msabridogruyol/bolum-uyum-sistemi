@@ -8,7 +8,12 @@ Yetki: okul_yonetimi._okul_kapsami (okul yetkilisi yalnızca kendi okulu). Modü
 toplu (veli toplantısı) raporlarıyla aynı kapı (raporlar._paket_kontrol); süper admin her zaman geçer. Her indirme denetim
 kaydına yazılır. Test hesapları sayılmaz.
 
-GİZLİLİK — sunum veli toplantısında topluca gösterilir:
+[2026-10-14] İKİ SÜRÜM (?kitle=veli | ogretmen):
+  * veli (varsayılan): toplantıda velilere gösterilir — aşağıdaki küçük grup gizlemesi uygulanır;
+  * ogretmen: sınıf öğretmeninin hazırlığı için — aynı slaytlar, küçük grup gizlemesi YOK (5'ten az öğrencili gruplar da
+    sayılarıyla görünür); her slaytta "velilerle paylaşmayın" uyarısı. Öğrenci adı / bireysel veri bu sürümde de yoktur.
+
+GİZLİLİK (veli sürümü) — sunum veli toplantısında topluca gösterilir:
   * öğrenci adı, öğrenci bazlı veri, kritik / erken uyarı listesi, net ve net sıralaması YOKTUR (hiç hesaplanmaz);
   * kişilik / değer puanına göre öğrenci sıralaması yoktur — yalnızca kapsamın ortalaması;
   * küçük grup gizleme (app/core/kucuk_grup.py): 5'ten az öğrenciye dayanan hiçbir toplu değer yazılmaz; dağılımlarda
@@ -30,7 +35,8 @@ from app.api.okul_istatistik import _baslik, _sinif_sira, _yuzde, ogrenci_kumesi
 from app.api.okul_yonetimi import _durum, _ilerleme, _okul_kapsami, sube_etiketi
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
-from app.core.kucuk_grup import EN_AZ_GRUP, gizle, grup_birlestir, kirilim_gizle, yeterli
+from app.core.kucuk_grup import EN_AZ_GRUP
+from app.core.kucuk_grup import gizle as _gizle, grup_birlestir as _grup_birlestir, kirilim_gizle as _kirilim_gizle, yeterli as _yeterli
 from app.core.paketler import MODULLER, okul_modulleri
 from app.models import AdminKullanici
 
@@ -66,7 +72,13 @@ def _takvim(db: Session, okul_id: int, sinif: str | None) -> list[dict]:
     return [{"baslik": r["baslik"], "tarih": r["baslangic"], "bitis": r["bitis"], "saat": r["saat"]} for r in rows]
 
 
-def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube: str | None) -> dict:
+def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube: str | None, kitle: str = "veli") -> dict:
+    # [2026-10-14] öğretmen sürümünde eşik 0: hiçbir toplu değer gizlenmez (0 da gösterilir), hiçbir kalem "Diğer"e birleşmez
+    esik = 0 if kitle == "ogretmen" else EN_AZ_GRUP
+    gizle = lambda d, n: _gizle(d, n, esik)
+    yeterli = lambda n: _yeterli(n, esik)
+    grup_birlestir = lambda *a, **k: _grup_birlestir(*a, esik=esik, **k)
+    kirilim_gizle = lambda *a, **k: _kirilim_gizle(*a, esik=esik, **k)
     from app.api.listem import _alanlar
     from app.core.rapor.veri import okul_bilgisi
 
@@ -77,8 +89,8 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
     toplam = len(ogr)
     v: dict = {
         "okul": okul_bilgisi(db, okul_id or None), "kapsam": kume["etiket"], "kapsam_tur": kapsam_tur,
-        "tarih": datetime.now(TR), "esik": EN_AZ_GRUP, "moduller": sorted(moduller),
-        "toplu": yeterli(toplam),                     # False → yalnızca genel anlatım slaytları
+        "tarih": datetime.now(TR), "esik": EN_AZ_GRUP if kitle != "ogretmen" else None, "kitle": kitle, "moduller": sorted(moduller),
+        "toplu": toplam > 0 and yeterli(toplam),      # False → yalnızca genel anlatım slaytları
         "iletisim": _iletisim(okul) if okul else {"rehberler": []},
         "takvim": _takvim(db, okul_id, kume["sinif"]) if "takvim" in moduller else [],
     }
@@ -184,19 +196,22 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
 
 
 @router.get("/okul/{okul_id}/veli-sunumu")
-def veli_sunumu(okul_id: int, sinif: str | None = None, sube: str | None = None,
+def veli_sunumu(okul_id: int, sinif: str | None = None, sube: str | None = None, kitle: str = "veli",
                 db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    if kitle not in ("veli", "ogretmen"):
+        raise HTTPException(status_code=400, detail="Geçersiz sunum türü.")
     from app.api.raporlar import _dosya_adi
     from app.core.rapor.veli_sunumu import veli_sunumu_pptx
     okul = _okul_kapsami(db, yon, okul_id)
     if yon.rol != "super_admin" and "gelismis_raporlar" not in okul_modulleri(db, okul_id or None):
         raise HTTPException(status_code=403, detail=f"“{MODULLER['gelismis_raporlar']['ad']}” okulunuzun paketinde yer almıyor.")
-    v = veli_sunumu_verisi(db, okul, okul_id, sinif, sube)
+    v = veli_sunumu_verisi(db, okul, okul_id, sinif, sube, kitle)
     icerik = veli_sunumu_pptx(v)
     denetim_yaz(db, yon, "rapor_indir", "okullar", okul_id,
-                (f"Veli toplantısı sunumu ({v['kapsam']})" if v['toplu'] else f"Veli toplantısı sunumu ({v['kapsam']}, yalnızca genel slaytlar)"), okul_id or None)
+                ("Veli toplantısı sunumu — öğretmen sürümü" if kitle == "ogretmen" else "Veli toplantısı sunumu")
+                + (f" ({v['kapsam']})" if v['toplu'] else f" ({v['kapsam']}, yalnızca genel slaytlar)"), okul_id or None)
     db.commit()
-    ad = _dosya_adi("Veli_Toplantisi", okul.ad if okul else "Okul_harici",
+    ad = _dosya_adi("Veli_Toplantisi_Ogretmen" if kitle == "ogretmen" else "Veli_Toplantisi", okul.ad if okul else "Okul_harici",
                                              v["kapsam"] if v["kapsam_tur"] != "okul" else None, date.today().strftime("%Y%m%d"))
     return Response(content=icerik, media_type=MIME_PPTX,
                     headers={"Content-Disposition": f'attachment; filename="{ad}.pptx"', "Cache-Control": "no-store"})

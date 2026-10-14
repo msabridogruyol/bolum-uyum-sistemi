@@ -941,16 +941,16 @@ Bir öğrencinin sonuçlarını dört farklı kitleye göre dili ve içeriği de
 
 ### Okul, sınıf ve şube raporları; okul karşılaştırması · _Kurum içi_
 
-Okulun genel durumu, sınıf/şube özetleri (Excel/PDF) ve çok okullu kurumlar için okul karşılaştırması.
+Okulun genel durumu, sınıf/şube özetleri (Excel/PDF) ve süper admin için okullar arası karşılaştırma.
 
-**Nasıl:** Okul raporu: katılım, 1. öneriye göre alan dağılımı (ilk 8), katman ortalamaları (şube raporunda okul ortalamasıyla), ortak en güçlü/en zayıf 6 özellik, geçersiz tur sayısı, öğrenci listesi ve son TYT/AYT netleri. Karşılaştırma 9 metrik: öğrenci, giriş yapan %, son 30 günde aktif %, testi tamamlayan %, hedef seçen %, ort. son TYT neti, 90 günde rehberlik görüşmesi, yüksek uyarılı öğrenci, son yıl yerleşme %. Kodda küçük grup gizleme eşiği yalnızca anketlerde var; okul/şube raporlarında yok. Toplu PDF/Excel raporlarında ve okul karşılaştırmasında 5'ten az öğrenciye dayanan değerler gizlenir, küçük kalemler 'Diğer' altında birleşir (app/core/kucuk_grup.py).
+**Nasıl:** Okul raporu: katılım, 1. öneriye göre alan dağılımı (ilk 8), katman ortalamaları (şube raporunda okul ortalamasıyla), ortak en güçlü/en zayıf 6 özellik, geçersiz tur sayısı, öğrenci listesi ve son TYT/AYT netleri. Karşılaştırma 9 metrik: öğrenci, giriş yapan %, son 30 günde aktif %, testi tamamlayan %, hedef seçen %, ort. son TYT neti, 90 günde rehberlik görüşmesi, yüksek uyarılı öğrenci, son yıl yerleşme %. Küçük grup gizleme (5'ten az öğrenciye dayanan değer gösterilmez, küçük kalemler 'Diğer' altında birleşir; app/core/kucuk_grup.py) yalnızca verinin bireysel olarak görmeye yetkili olmayan kişilere gittiği yerlerde uygulanır: veli toplantısı sunumunun veli sürümü, anonim anketler, öğrenciye gösterilen okul deneme ortalaması ve süper admin okul karşılaştırması. Okul yetkilisinin raporlarında ve sunumun öğretmen sürümünde uygulanmaz; yetkili her öğrencinin sonucunu adıyla zaten görür.
 
 **Dayanak:**
 
-- [129] Sweeney, 2002 — Küçük grupların kimlik açığa çıkarma riskine karşı asgari grup büyüklüğü ilkesini sağlar; toplu raporlarda 5'ten az öğrenciye dayanan değerlerin gizlenmesinin dayanağıdır.
-- [124] Seastrom, 2010 — Toplulaştırılmış eğitim verisi raporlarında küçük hücre gizleme uygulamalarını tanımlar; okul, sınıf düzeyi ve şube raporlarındaki gizleme ve 'Diğer' birleştirmesini destekler.
+- [129] Sweeney, 2002 — Küçük grupların kimlik açığa çıkarma riskine karşı asgari grup büyüklüğü ilkesini sağlar; yetkisiz kitleye giden toplu çıktılarda (veli sunumu, okul karşılaştırması) 5'ten az öğrenciye dayanan değerlerin gizlenmesinin dayanağıdır.
+- [124] Seastrom, 2010 — Toplulaştırılmış eğitim verisi raporlarında küçük hücre gizleme uygulamalarını tanımlar; veli sunumundaki gizleme ve 'Diğer' birleştirmesini destekler.
 
-> Okul karşılaştırmasındaki 9 metrik, ilk 8/ilk 6 sınırları ve 30/90 günlük pencereler kurum içi tasarım kararıdır; belirli bir okul performans göstergesi çerçevesine dayanmaz. Kaynaklar küçük hücre gizlemeyi önerir; mevcut kod okul/şube raporlarında gizleme yapmaz (bilinen boşluk).
+> Okul karşılaştırmasındaki 9 metrik, ilk 8/ilk 6 sınırları ve 30/90 günlük pencereler kurum içi tasarım kararıdır; belirli bir okul performans göstergesi çerçevesine dayanmaz. Kaynaklar küçük hücre gizlemeyi önerir; eşiğin (5) yalnızca yetkisiz kitleye giden çıktılarda uygulanması kurum içi tasarım kararıdır.
 
 ### Paketler, modüller ve bildirimler · _Kurum içi_ · _Okul görünümünde yok_
 

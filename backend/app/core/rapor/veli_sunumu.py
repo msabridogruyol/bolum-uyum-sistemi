@@ -174,7 +174,9 @@ class _Deste:
         self.p.slide_width, self.p.slide_height = Inches(W), Inches(H)
         self.bos = self.p.slide_layouts[6]
         self.no = 0
-        self.alt = f"{v['okul']['ad']} · {v['kapsam']} · Veli toplantısı"
+        self.ogretmen = v.get("kitle") == "ogretmen"   # [2026-10-14] öğretmen sürümü: küçük grup gizlemesi yok, uyarı her slaytta
+        self.alt = (f"{v['okul']['ad']} · {v['kapsam']} · Öğretmen sürümü · velilerle paylaşmayın" if self.ogretmen else
+                    f"{v['okul']['ad']} · {v['kapsam']} · Veli toplantısı")
 
     # ---------------------------------------------------------------- ortak iskelet
     def slayt(self, ust: str, baslik: str, koyu=False):
@@ -322,7 +324,11 @@ def _kapak(d: _Deste):
             y = 1.9
         except Exception:
             pass
-    _metin(sl, SOL, y + 0.3, 8, 0.4, "VELİ TOPLANTISI", 14, _karistir(d.r.ana, "FFFFFF", 0.75), kalin=True)
+    _metin(sl, SOL, y + 0.3, 8, 0.4, "VELİ TOPLANTISI · ÖĞRETMEN SÜRÜMÜ" if d.ogretmen else "VELİ TOPLANTISI", 14,
+           _karistir(d.r.ana, "FFFFFF", 0.75), kalin=True)
+    if d.ogretmen:
+        _metin(sl, SOL, H - 1.25, 8.2, 0.4, "Bu sürümde 5'ten az öğrenciye dayanan sayılar da yer alır. Velilere gösterilecek sunum "
+               "için veli sürümünü kullanın.", 12, BEYAZ, kalin=True)
     _metin(sl, SOL, y + 0.8, 8.2, 1.9, v["okul"]["ad"], 44, BEYAZ, kalin=True, dikey=MSO_ANCHOR.TOP)
     _metin(sl, SOL, y + 2.75, 8, 0.9, [
         [("Bölüm ve meslek yönelimi çalışmalarımız", {"boyut": 22, "kalin": True})],
@@ -366,8 +372,9 @@ def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
           "Son kararı her zaman öğrenci, aile ve rehber öğretmen birlikte verir.", {})],
     ], 15, MUREKKEP, dikey=MSO_ANCHOR.MIDDLE)
     if not d.v["toplu"]:
-        _metin(sl, SOL, 6.72, GEN, 0.25, f"Bu kapsamda {d.v['esik']}'ten az öğrenci olduğu için toplu sonuçlar paylaşılmamaktadır "
-                                          "(kişisel verilerin korunması).", 11, GRI)
+        _metin(sl, SOL, 6.72, GEN, 0.25, "Bu kapsamda henüz öğrenci yok." if d.ogretmen else
+               f"Bu kapsamda {d.v['esik']}'ten az öğrenci olduğu için toplu sonuçlar paylaşılmamaktadır "
+               "(kişisel verilerin korunması).", 11, GRI)
     _not(sl, "Sistemi kısaca tanıtın: öğrenci dört katmanda sorular yanıtlıyor; sonra öne çıkan alanlarda derinleşme soruları geliyor. "
              "Özellikle vurgulayın: bu bir sınav değil, doğru ya da yanlış cevap yok. Sonuçlar bir yön gösterir, kesin karar vermez. "
              "Psikolojik bir tanı aracı da değildir.")
@@ -395,7 +402,7 @@ def _katilim(d: _Deste):
             _metin(sl, 8.65, 6.62, 4.1, 0.25, f"{d.v['esik']}'ten az öğrencili gruplar gösterilmez.", 10, GRI)
     _not(sl, f"Bu kapsamda {k['toplam']} öğrencimiz var; tamamlama oranı {_yuzde(k['tamamlama_orani'])}. Değerlendirmeyi henüz "
              "bitirmeyen öğrencilerimizi evde nazikçe teşvik edebilirsiniz; acele etmeden, dinlenmiş bir zamanda tamamlamaları en "
-             "doğru sonucu verir. Grafikte 5'ten az öğrenciye dayanan gruplar gösterilmez.")
+             "doğru sonucu verir." + ("" if d.ogretmen else " Grafikte 5'ten az öğrenciye dayanan gruplar gösterilmez."))
 
 
 def _ilerleme(d: _Deste, sl, x, y, w, oran, etiket):
@@ -442,7 +449,8 @@ def _alanlar(d: _Deste):
         d.cubuk(sl, 6.6, 2.05, 6.1, 4.55, [x["ad"] for x in b], [("Öğrencilerin %'si", [x["oran"] for x in b])], eksen_max=100, sonek="%")
     if not a and not b:
         _metin(sl, SOL, 2.2, GEN, 1, "Bu kapsamda gösterilecek kadar toplu veri yok.", 16, GRI)
-    _metin(sl, SOL, 6.7, GEN, 0.25, f"Toplu değerler; {d.v['esik']}'ten az öğrencinin seçtiği alan ve bölümler “Diğer” altında birleştirilir ya da gösterilmez.", 10, GRI)
+    if not d.ogretmen:
+        _metin(sl, SOL, 6.7, GEN, 0.25, f"Toplu değerler; {d.v['esik']}'ten az öğrencinin seçtiği alan ve bölümler “Diğer” altında birleştirilir ya da gösterilmez.", 10, GRI)
     _not(sl, "Solda, öğrencilerin en uyumlu çıkan bölümlerinin hangi alanlarda toplandığını görüyorsunuz. Sağda ise öğrencilerin "
              "ilk 10 önerisinde en sık yer alan bölümler var. Bu liste bir yönlendirme değil, grubun ilgi haritasıdır. "
              "Her öğrencinin önerileri kendine özgüdür.")
@@ -512,7 +520,8 @@ def _etkinlik(d: _Deste):
         if sayilar:
             _metin(sl, x + 0.3, 5.25, kw - 0.6, 1.2, [[(s, {"kalin": True, "renk": d.r.koyu})] for s in sayilar], 14, satir_arasi=4)
     if kh < 4.85:
-        _metin(sl, SOL, 5.75, GEN, 0.6, "Öğrencilerimiz bu çalışmalara Filizyol hesaplarından istedikleri zaman ulaşabilir. "
+        _metin(sl, SOL, 5.75, GEN, 0.6, "Öğrencilerimiz bu çalışmalara Filizyol hesaplarından istedikleri zaman ulaşabilir."
+               if d.ogretmen else "Öğrencilerimiz bu çalışmalara Filizyol hesaplarından istedikleri zaman ulaşabilir. "
                f"Katılım sayıları {d.v['esik']}'ten az öğrenciye dayandığında paylaşılmaz.", 14, GRI)
     # [2026-10-14] Not metni okulun açık modüllerine göre (kapalı modülden söz edilmez; çeviri için tam cümleler)
     devam = {(True, True): "Okulumuzda Filizyol yalnızca bir test değil; sonrasında koçluk adımları ve iş hayatı bilgileriyle devam ediyor. "
@@ -521,7 +530,8 @@ def _etkinlik(d: _Deste):
                             "Çocuğunuza bu hafta hangi görevi yaptığını sorabilirsiniz. ",
              (False, True): "Okulumuzda Filizyol yalnızca bir test değil; sonrasında iş hayatı bilgileriyle devam ediyor. "
                             "Çocuğunuza hangi mesleği simülasyonda denediğini sorabilirsiniz. "}.get(("kocluk" in e, "is_hayati" in e), "")
-    _not(sl, devam + "Sayılar yalnızca toplu olarak verilir; 5'ten az öğrenciye dayanan sayılar gösterilmez.")
+    _not(sl, devam + ("Bu öğretmen sürümünde 5'ten az öğrenciye dayanan sayılar da yer alır; velilere veli sürümünü gösterin."
+                      if d.ogretmen else "Sayılar yalnızca toplu olarak verilir; 5'ten az öğrenciye dayanan sayılar gösterilmez."))
 
 
 DESTEK = [
@@ -634,7 +644,8 @@ def veli_sunumu_pptx(v: dict) -> bytes:
     _destek(d)
     _takvim(d)
     _iletisim(d)
-    d.p.core_properties.title = f"Veli toplantısı — {v['okul']['ad']} ({v['kapsam']})"
+    d.p.core_properties.title = (f"Veli toplantısı (öğretmen sürümü) — {v['okul']['ad']} ({v['kapsam']})" if d.ogretmen else
+                                 f"Veli toplantısı — {v['okul']['ad']} ({v['kapsam']})")
     d.p.core_properties.author = "Filizyol"
     out = io.BytesIO()
     d.p.save(out)

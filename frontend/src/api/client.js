@@ -635,7 +635,7 @@ export const api = {
   },
   okulTekBakista: (okulId, f = {}) => aget(`/yonetim/okul/${okulId}/tek-bakista${istatistikSorgu(f)}`),
   okulTekBakistaPdf: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/tek-bakista/pdf${istatistikSorgu(f)}`, 'admin'),
-  veliSunumuIndir: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/veli-sunumu${istatistikSorgu(f)}`, 'admin'),   // [2026-10-11] .pptx
+  veliSunumuIndir: (okulId, f = {}, kitle = 'veli') => { const q = istatistikSorgu(f); return dosyaIndir(`/yonetim/okul/${okulId}/veli-sunumu${q}${q ? '&' : '?'}kitle=${kitle}`, 'admin') },   // [2026-10-11] .pptx; [2026-10-14] kitle: veli | ogretmen
   okulOgrencileri: (okulId) => aget(`/yonetim/okul/${okulId}/ogrenciler`),
   yuklemeSablonu: () => aget('/yonetim/sablon'),
   ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),
