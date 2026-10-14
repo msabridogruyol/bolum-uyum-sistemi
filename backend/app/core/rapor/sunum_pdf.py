@@ -154,10 +154,8 @@ class PdfSlayt:
                 return a
         return ust / 10
 
-    def _etiket_yaz(self, c, metin, x, y, genislik, boyut, hiza="sag", renk="2B2620", en_cok=2):
-        """Kategori etiketi: genişliğe sığmazsa iki satıra böl (gerekirse kısalt)."""
-        c.setFillColor(_renk(renk))
-        c.setFont("Filiz", boyut)
+    @staticmethod
+    def _satirla(c, metin, genislik, boyut) -> list[str]:
         kelimeler, satirlar, s = metin.split(), [], ""
         for k in kelimeler:
             aday = (s + " " + k).strip()
@@ -168,21 +166,33 @@ class PdfSlayt:
                 s = k
         if s:
             satirlar.append(s)
-        if len(satirlar) > en_cok:
-            satirlar = satirlar[:en_cok]
-            while c.stringWidth(satirlar[-1] + "…", "Filiz", boyut) > genislik and len(satirlar[-1]) > 1:
-                satirlar[-1] = satirlar[-1][:-1]
-            satirlar[-1] += "…"
-        lh = boyut * 1.15
+        return satirlar or [""]
+
+    def _etiket_yaz(self, c, metin, x, y, genislik, boyut, hiza="sag", renk="2B2620", yukseklik=None) -> float:
+        """Kategori / gösterge etiketi — HİÇBİR ZAMAN kısaltılmaz: genişliğe sığmazsa satırlara bölünür; satırlar ayrılan
+        yüksekliğe (ya da en uzun kelime genişliğe) sığmazsa yazı boyutu 8 pt'ye kadar küçültülür. y: etiketin dikey ortası.
+        Döndürür: kullanılan yükseklik (nokta)."""
+        b = float(boyut)
+        while True:
+            satirlar = self._satirla(c, metin, genislik, b)
+            lh = b * 1.15
+            sigar = (yukseklik is None or len(satirlar) * lh <= yukseklik) and \
+                all(c.stringWidth(t, "Filiz", b) <= genislik for t in satirlar)
+            if sigar or b <= 8:
+                break
+            b -= 0.5
+        c.setFillColor(_renk(renk))
+        c.setFont("Filiz", b)
         y0 = y + (len(satirlar) - 1) * lh / 2
         for i, t in enumerate(satirlar):
-            yy = y0 - i * lh - boyut * 0.35
+            yy = y0 - i * lh - b * 0.35
             if hiza == "sag":
                 c.drawRightString(x, yy, t)
             elif hiza == "orta":
                 c.drawCentredString(x, yy, t)
             else:
                 c.drawString(x, yy, t)
+        return len(satirlar) * lh
 
     def _cubuk(self, c, x, y, w, h, kategoriler, seriler, yatay=True, eksen_max=None, sonek="", renkler=("E8804A", "B8AFA2")):
         degerler = [v for _, l in seriler for v in l if v is not None]
@@ -214,7 +224,7 @@ class PdfSlayt:
             kal = bant * 0.62 / m
             for i, kat in enumerate(kategoriler):
                 merkez = ax_y + ax_h - bant * (i + 0.5)
-                self._etiket_yaz(c, kat, ax_x - 6, merkez, etiket_w - 4, 12)
+                self._etiket_yaz(c, kat, ax_x - 6, merkez, etiket_w - 4, 12, yukseklik=bant - 2)
                 for j, (_, l) in enumerate(seriler):
                     v = l[i]
                     if v is None:
@@ -244,7 +254,7 @@ class PdfSlayt:
             kal = bant * 0.62 / m
             for i, kat in enumerate(kategoriler):
                 merkez = ax_x + bant * (i + 0.5)
-                self._etiket_yaz(c, kat, merkez, ax_y - 16, bant - 4, 12, hiza="orta")
+                self._etiket_yaz(c, kat, merkez, ax_y - 18, bant - 4, 12, hiza="orta", yukseklik=32)
                 for j, (_, l) in enumerate(seriler):
                     v = l[i]
                     if v is None:
@@ -305,12 +315,14 @@ class PdfSlayt:
             rr = r * 0.775
             c.drawCentredString(cx + rr * math.cos(a), cy + rr * math.sin(a) - 4, f"{v:.0f}")
         # gösterge (sağda)
-        gy = cy + len(kategoriler) * 9
+        yuks = [len(self._satirla(c, k, gosterge_w - 18, 12)) * 13.8 for k in kategoriler]
+        gy = cy + (sum(yuks) + 6 * (len(yuks) - 1)) / 2
         for i, k in enumerate(kategoriler):
+            orta = gy - yuks[i] / 2
             c.setFillColor(_renk(renkler[i % len(renkler)]))
-            c.rect(X + alan_w + 4, gy - 1, 8, 8, stroke=0, fill=1)
-            self._etiket_yaz(c, k, X + alan_w + 16, gy + 3, gosterge_w - 18, 12, hiza="sol")
-            gy -= 20
+            c.rect(X + alan_w + 4, orta - 4 + (yuks[i] - 13.8) / 2, 8, 8, stroke=0, fill=1)
+            self._etiket_yaz(c, k, X + alan_w + 16, orta, gosterge_w - 18, 12, hiza="sol")
+            gy -= yuks[i] + 6
 
 
 def pdf_olustur(slaytlar: list[PdfSlayt], baslik: str, notlu: bool = False, yazar: str = "Filizyol") -> bytes:
