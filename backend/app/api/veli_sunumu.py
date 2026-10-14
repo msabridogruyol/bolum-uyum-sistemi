@@ -43,6 +43,8 @@ from app.models import AdminKullanici
 router = APIRouter(prefix="/yonetim", tags=["Okul raporları"])
 TR = ZoneInfo("Europe/Istanbul")
 MIME_PPTX = "application/vnd.openxmlformats-officedocument.presentationml.presentation"
+BICIMLER = {"pptx": (MIME_PPTX, "pptx", "PowerPoint"), "pdf": ("application/pdf", "pdf", "PDF"),
+            "pdf_notlu": ("application/pdf", "pdf", "PDF, konuşma notlu")}
 REHBER_ANAHTAR = ("rehber", "psikolojik", "danışman", "danisman")
 
 
@@ -196,22 +198,26 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
 
 
 @router.get("/okul/{okul_id}/veli-sunumu")
-def veli_sunumu(okul_id: int, sinif: str | None = None, sube: str | None = None, kitle: str = "veli",
+def veli_sunumu(okul_id: int, sinif: str | None = None, sube: str | None = None, kitle: str = "veli", bicim: str = "pptx",
                 db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
-    if kitle not in ("veli", "ogretmen"):
+    """[2026-10-14] bicim: pptx (düzenlenebilir) · pdf (16:9 slayt sayfaları) · pdf_notlu (A4: slayt + konuşma notu)."""
+    if kitle not in ("veli", "ogretmen") or bicim not in BICIMLER:
         raise HTTPException(status_code=400, detail="Geçersiz sunum türü.")
     from app.api.raporlar import _dosya_adi
-    from app.core.rapor.veli_sunumu import veli_sunumu_pptx
+    from app.core.rapor.veli_sunumu import veli_sunumu_pdf, veli_sunumu_pptx
     okul = _okul_kapsami(db, yon, okul_id)
     if yon.rol != "super_admin" and "gelismis_raporlar" not in okul_modulleri(db, okul_id or None):
         raise HTTPException(status_code=403, detail=f"“{MODULLER['gelismis_raporlar']['ad']}” okulunuzun paketinde yer almıyor.")
     v = veli_sunumu_verisi(db, okul, okul_id, sinif, sube, kitle)
-    icerik = veli_sunumu_pptx(v)
+    icerik = veli_sunumu_pptx(v) if bicim == "pptx" else veli_sunumu_pdf(v, notlu=bicim == "pdf_notlu")
     denetim_yaz(db, yon, "rapor_indir", "okullar", okul_id,
                 ("Veli toplantısı sunumu — öğretmen sürümü" if kitle == "ogretmen" else "Veli toplantısı sunumu")
-                + (f" ({v['kapsam']})" if v['toplu'] else f" ({v['kapsam']}, yalnızca genel slaytlar)"), okul_id or None)
+                + (f" ({v['kapsam']})" if v['toplu'] else f" ({v['kapsam']}, yalnızca genel slaytlar)") + f" · {BICIMLER[bicim][2]}",
+                okul_id or None)
     db.commit()
-    ad = _dosya_adi("Veli_Toplantisi_Ogretmen" if kitle == "ogretmen" else "Veli_Toplantisi", okul.ad if okul else "Okul_harici",
+    ad = _dosya_adi(("Veli_Toplantisi_Ogretmen" if kitle == "ogretmen" else "Veli_Toplantisi") + ("_Notlu" if bicim == "pdf_notlu" else ""),
+                    okul.ad if okul else "Okul_harici",
                                              v["kapsam"] if v["kapsam_tur"] != "okul" else None, date.today().strftime("%Y%m%d"))
-    return Response(content=icerik, media_type=MIME_PPTX,
-                    headers={"Content-Disposition": f'attachment; filename="{ad}.pptx"', "Cache-Control": "no-store"})
+    mime, uzanti, _ = BICIMLER[bicim]
+    return Response(content=icerik, media_type=mime,
+                    headers={"Content-Disposition": f'attachment; filename="{ad}.{uzanti}"', "Cache-Control": "no-store"})

@@ -59,3 +59,15 @@ def test_yetkili_raporunda_gizleme_yok(kisiler, db):
     v = okul_raporu_verisi(db, kisiler["okul_a"], yon, sinif="12. Sınıf", sube="Z")
     assert v["ozet"]["kapsam_gizli"] is False and v["kucuk_grup"]["uygulandi"] is False
     assert v["ozet"]["toplam"] == 3 and v["ozet"]["tamamlayan"] == 0     # gerçek sayı, None değil
+
+
+@db_gerekli
+def test_veli_sunumu_pdf_bicimleri(istemci, kisiler, db):
+    _kucuk_sube(db, kisiler["okul_a"])
+    yol = f"/yonetim/okul/{kisiler['okul_a']}/veli-sunumu"
+    for bicim, uzanti in (("pdf", "pdf"), ("pdf_notlu", "pdf"), ("pptx", "pptx")):
+        r = istemci.get(yol, params={"kitle": "ogretmen", "bicim": bicim}, headers=kisiler["super"])
+        assert r.status_code == 200 and f'.{uzanti}"' in r.headers["content-disposition"]
+        if uzanti == "pdf":
+            assert r.content[:5] == b"%PDF-" and b"LiberationSans" in r.content and b"/Helvetica" not in r.content
+    assert istemci.get(yol, params={"bicim": "docx"}, headers=kisiler["super"]).status_code == 400

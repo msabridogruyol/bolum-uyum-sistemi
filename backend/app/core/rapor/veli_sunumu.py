@@ -24,6 +24,7 @@ from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Inches, Pt
 
 from app.core.metin import turkce_buyut
+from app.core.rapor.sunum_pdf import PdfSlayt, pdf_olustur
 
 FONT = "Arial"
 MUREKKEP = "2B2620"
@@ -97,9 +98,17 @@ def _tarih(d) -> str:
     return f"{d.day} {AYLAR[d.month - 1]} {d.year}"
 
 
+_HIZA = {PP_ALIGN.LEFT: "sol", PP_ALIGN.CENTER: "orta", PP_ALIGN.RIGHT: "sag"}
+_DIKEY = {MSO_ANCHOR.TOP: "ust", MSO_ANCHOR.MIDDLE: "orta", MSO_ANCHOR.BOTTOM: "alt"}
+
+
 def _metin(sl, x, y, w, h, parcalar, boyut=16, renk=MUREKKEP, kalin=False, hiza=PP_ALIGN.LEFT, dikey=MSO_ANCHOR.TOP,
            satir_arasi=None, ad=None):
     """parcalar: str | [paragraf] — paragraf: str ya da [(metin, {boyut, renk, kalin, italik})]."""
+    if isinstance(sl, PdfSlayt):
+        sl.metin(x, y, w, h, parcalar, boyut=boyut, renk=renk, kalin=kalin, hiza=_HIZA.get(hiza, "sol"),
+                 dikey=_DIKEY.get(dikey, "ust"), satir_arasi=satir_arasi)
+        return None
     tb = sl.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h))
     if ad:
         tb.name = ad
@@ -127,6 +136,8 @@ def _metin(sl, x, y, w, h, parcalar, boyut=16, renk=MUREKKEP, kalin=False, hiza=
 
 
 def _kart(sl, x, y, w, h, dolgu, ad=None, yuvarlak=0.06):
+    if isinstance(sl, PdfSlayt):
+        return sl.kart(x, y, w, h, dolgu, yuvarlak=yuvarlak)
     s = sl.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(h))
     s.adjustments[0] = yuvarlak
     s.fill.solid()
@@ -139,6 +150,8 @@ def _kart(sl, x, y, w, h, dolgu, ad=None, yuvarlak=0.06):
 
 
 def _daire(sl, x, y, cap, dolgu, yazi, yazi_renk=BEYAZ, boyut=16):
+    if isinstance(sl, PdfSlayt):
+        return sl.daire(x, y, cap, dolgu, yazi, yazi_renk=yazi_renk, boyut=boyut)
     s = sl.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(y), Inches(cap), Inches(cap))
     s.fill.solid()
     s.fill.fore_color.rgb = _rgb(dolgu)
@@ -157,31 +170,72 @@ def _daire(sl, x, y, cap, dolgu, yazi, yazi_renk=BEYAZ, boyut=16):
 
 
 def _arka(sl, renk):
+    if isinstance(sl, PdfSlayt):
+        return sl.arka(renk)
     bg = sl.background.fill
     bg.solid()
     bg.fore_color.rgb = _rgb(renk)
 
 
 def _not(sl, metin: str):
+    if isinstance(sl, PdfSlayt):
+        sl.not_metni = metin
+        return
     sl.notes_slide.notes_text_frame.text = metin
 
 
+def _oval(sl, x, y, cap, dolgu):
+    if isinstance(sl, PdfSlayt):
+        return sl.oval(x, y, cap, dolgu)
+    s = sl.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(y), Inches(cap), Inches(cap))
+    s.fill.solid()
+    s.fill.fore_color.rgb = _rgb(dolgu)
+    s.line.fill.background()
+    s.shadow.inherit = False
+    return s
+
+
+def _cizgi(sl, x1, y1, x2, y2, renk, kalinlik=2):
+    if isinstance(sl, PdfSlayt):
+        return sl.cizgi(x1, y1, x2, y2, renk, kalinlik)
+    cz = sl.shapes.add_connector(1, Inches(x1), Inches(y1), Inches(x2), Inches(y2))
+    cz.line.color.rgb = _rgb(renk)
+    cz.line.width = Pt(kalinlik)
+    return cz
+
+
+def _resim(sl, akis, x, y, h):
+    if isinstance(sl, PdfSlayt):
+        return sl.resim(akis, x, y, h)
+    return sl.shapes.add_picture(akis, Inches(x), Inches(y), height=Inches(h))
+
+
 class _Deste:
-    def __init__(self, v: dict):
+    def __init__(self, v: dict, pdf: bool = False):
         self.v = v
         self.r = _Renk(v["okul"].get("renk"))
-        self.p = Presentation()
-        self.p.slide_width, self.p.slide_height = Inches(W), Inches(H)
-        self.bos = self.p.slide_layouts[6]
+        self.pdf = pdf                                  # [2026-10-14] True → slaytlar PdfSlayt (aynı slayt kodu, PDF çizimi)
+        self.pdf_slaytlar: list[PdfSlayt] = []
+        if not pdf:
+            self.p = Presentation()
+            self.p.slide_width, self.p.slide_height = Inches(W), Inches(H)
+            self.bos = self.p.slide_layouts[6]
         self.no = 0
         self.ogretmen = v.get("kitle") == "ogretmen"   # [2026-10-14] öğretmen sürümü: küçük grup gizlemesi yok, uyarı her slaytta
         self.alt = (f"{v['okul']['ad']} · {v['kapsam']} · Öğretmen sürümü · velilerle paylaşmayın" if self.ogretmen else
                     f"{v['okul']['ad']} · {v['kapsam']} · Veli toplantısı")
 
     # ---------------------------------------------------------------- ortak iskelet
-    def slayt(self, ust: str, baslik: str, koyu=False):
-        sl = self.p.slides.add_slide(self.bos)
+    def yeni_slayt(self):
         self.no += 1
+        if self.pdf:
+            sl = PdfSlayt(W, H)
+            self.pdf_slaytlar.append(sl)
+            return sl
+        return self.p.slides.add_slide(self.bos)
+
+    def slayt(self, ust: str, baslik: str, koyu=False):
+        sl = self.yeni_slayt()
         _arka(sl, self.r.ana if koyu else BEYAZ)
         _metin(sl, SOL, 0.42, GEN, 0.3, turkce_buyut(ust), 12, BEYAZ if koyu else self.r.ana, kalin=True, ad="Üst başlık")
         _metin(sl, SOL, 0.72, GEN, 0.8, baslik, 32, BEYAZ if koyu else MUREKKEP, kalin=True, ad="Başlık")
@@ -226,6 +280,9 @@ class _Deste:
             pass
 
     def cubuk(self, sl, x, y, w, h, kategoriler, seriler: list[tuple[str, list]], yatay=True, eksen_max=None, sonek=""):
+        if isinstance(sl, PdfSlayt):
+            return sl.cubuk(x, y, w, h, kategoriler, seriler, yatay=yatay, eksen_max=eksen_max, sonek=sonek,
+                            renkler=(self.r.ana, "B8AFA2"))
         cd = CategoryChartData()
         cd.categories = kategoriler
         for ad, degerler in seriler:
@@ -262,6 +319,8 @@ class _Deste:
         return ch
 
     def halka(self, sl, x, y, w, h, kategoriler, degerler, baslik=None):
+        if isinstance(sl, PdfSlayt):
+            return sl.halka(x, y, w, h, kategoriler, degerler, baslik=baslik, renkler=tuple(self.r.seri))
         cd = CategoryChartData()
         cd.categories = kategoriler
         cd.add_series("Öğrenci", degerler)
@@ -306,21 +365,16 @@ def _logo_akisi(logo: str | None):
 # ============================================================================= slaytlar
 def _kapak(d: _Deste):
     v = d.v
-    sl = d.p.slides.add_slide(d.bos)
-    d.no += 1
+    sl = d.yeni_slayt()
     _arka(sl, d.r.ana)
     # sağda iki büyük yumuşak daire (motif: yuvarlak biçimler)
     for (x, y, c, t) in ((8.9, -1.2, 5.6, 0.18), (10.6, 3.6, 4.0, 0.3)):
-        s = sl.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(y), Inches(c), Inches(c))
-        s.fill.solid()
-        s.fill.fore_color.rgb = _rgb(_karistir(d.r.ana, "FFFFFF", t))
-        s.line.fill.background()
-        s.shadow.inherit = False
+        _oval(sl, x, y, c, _karistir(d.r.ana, "FFFFFF", t))
     y = 1.3
     logo = _logo_akisi(v["okul"].get("logo"))
     if logo is not None:
         try:
-            sl.shapes.add_picture(logo, Inches(SOL), Inches(0.7), height=Inches(0.9))
+            _resim(sl, logo, SOL, 0.7, 0.9)
             y = 1.9
         except Exception:
             pass
@@ -576,9 +630,7 @@ def _takvim(d: _Deste):
     n = len(ogeler)
     # yatay zaman çizelgesi: daireler + altlarında metin
     y = 3.0
-    cizgi = sl.shapes.add_connector(1, Inches(SOL + 0.35), Inches(y + 0.3), Inches(W - SOL - 0.35), Inches(y + 0.3))
-    cizgi.line.color.rgb = _rgb(d.r.orta)
-    cizgi.line.width = Pt(2)
+    _cizgi(sl, SOL + 0.35, y + 0.3, W - SOL - 0.35, y + 0.3, d.r.orta, 2)
     aralik = GEN / n
     for i, (ust, alt) in enumerate(ogeler):
         x = SOL + i * aralik
@@ -625,9 +677,9 @@ def _iletisim(d: _Deste):
              "değil, birebir görüşmede konuşmayı önerin; böylece her öğrencinin gizliliği korunur.")
 
 
-def veli_sunumu_pptx(v: dict) -> bytes:
+def _deste_kur(v: dict, pdf: bool = False) -> _Deste:
     from app.core.katman_adlari import KATMAN_ADI
-    d = _Deste(v)
+    d = _Deste(v, pdf=pdf)
     _kapak(d)
     _nedir(d, [(k, KATMAN_ADI[k]) for k in ("K1", "K2", "K3", "K4")])
     if v.get("toplu"):
@@ -644,8 +696,24 @@ def veli_sunumu_pptx(v: dict) -> bytes:
     _destek(d)
     _takvim(d)
     _iletisim(d)
-    d.p.core_properties.title = (f"Veli toplantısı (öğretmen sürümü) — {v['okul']['ad']} ({v['kapsam']})" if d.ogretmen else
-                                 f"Veli toplantısı — {v['okul']['ad']} ({v['kapsam']})")
+    return d
+
+
+def _baslik(v: dict) -> str:
+    return (f"Veli toplantısı (öğretmen sürümü) — {v['okul']['ad']} ({v['kapsam']})" if v.get("kitle") == "ogretmen" else
+            f"Veli toplantısı — {v['okul']['ad']} ({v['kapsam']})")
+
+
+def veli_sunumu_pdf(v: dict, notlu: bool = False) -> bytes:
+    """[2026-10-14] Aynı slaytların PDF'i: notlu=False → 16:9 slayt sayfaları; notlu=True → A4 notlar sayfası
+    (üstte slayt, altta konuşma notu). Yazı tipi PDF'e gömülür."""
+    d = _deste_kur(v, pdf=True)
+    return pdf_olustur(d.pdf_slaytlar, _baslik(v), notlu=notlu)
+
+
+def veli_sunumu_pptx(v: dict) -> bytes:
+    d = _deste_kur(v)
+    d.p.core_properties.title = _baslik(v)
     d.p.core_properties.author = "Filizyol"
     out = io.BytesIO()
     d.p.save(out)
