@@ -426,7 +426,7 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
     bolum_adi = turkce_baslik(bolum.ad) if bolum else "Hedef bölüm"
     durumlar = adim_durumlari_getir(db, ogrenci, hedef_bolum_id)
 
-    # Öncelik = fark × bölümün o özelliğe ağırlığı × katman ağırlığı (K4 = 40, diğerleri 20):
+    # Öncelik = fark × bölümün o özelliğe ağırlığı × katman ağırlığı (katmanlar.normalizasyon_agirligi; varsayılan eşit, 25):
     # uyumu en çok etkileyecek açık en başa gelir.
     from app.models import Katman
     katman_w = {k.id: float(k.normalizasyon_agirligi or 25) for k in db.query(Katman).all()}
@@ -436,7 +436,7 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
     def _ayirt(s):
         return 100.0 if ayirt is None else ayirt.get(s.degisken.id, 50.0)
     gelisim = sorted([s for s in gap_satirlari if _grup(s.kategori) == "gelisim"],
-                     key=lambda s: s.oncelik_skoru * katman_w.get(s.degisken.katman_id, 20.0) * (_ayirt(s) / 100.0), reverse=True)
+                     key=lambda s: s.oncelik_skoru * katman_w.get(s.degisken.katman_id, 25.0) * (_ayirt(s) / 100.0), reverse=True)
     icerikli = [s for s in gelisim if s.degisken.kod in ICERIK and _ayirt(s) >= AYIRT_ESIGI]
     odak = icerikli[:ODAK_ALAN_SAYISI]
     odak_kodlar = {s.degisken.kod for s in odak}

@@ -14,7 +14,7 @@ ESKİ tetikleme kuralı (artık kullanılmıyor, k5_adaylarini_hesapla korunuyor
   1. K4'ün (Alan Eğilimi) 9 boyutundan skoru >= k5_esik_puani olanlar aday dal.
   2. 0 aday varsa -> en yüksek skorlu 1 dal otomatik seçilir.
   3. 1-3 aday varsa -> hepsi açılır.
-  4. 3'ten fazla aday varsa -> en yüksek 3'ü açılır (k5_max_dal_sayisi),
+  4. daha fazla aday varsa -> en yüksekleri açılır (k5_max_dal_sayisi, varsayılan 2),
      kalanlar "ayrıca ilgi gösterdiğin alanlar" olarak yalnızca bilgi
      amaçlı listelenir, oturum açılmaz.
 

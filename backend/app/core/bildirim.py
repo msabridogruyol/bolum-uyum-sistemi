@@ -73,7 +73,7 @@ def _eposta_icerigi(ad: str, baslik: str, metin: str | None, link: str | None, s
     if link:
         govde += _buton(site + link, "Filizyol'da aç")
     govde += ('<p style="font-size:11.5px;color:#A79C7C;margin-top:14px">Bu e-postaları almak istemiyorsan '
-              'Filizyol → Ayarlar → Bildirimler bölümünden kapatabilirsin.</p>')
+              'Filizyol\'da sağ üstteki 🔔 Bildirimler panelinden kapatabilirsin.</p>')
     duz = f"Merhaba {ad},\n\n{baslik}\n{metin or ''}\n" + (f"\n{site + link}\n" if link else "") + "\nFilizyol"
     return _sablon(_html.escape(baslik), govde), duz
 

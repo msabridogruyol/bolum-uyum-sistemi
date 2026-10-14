@@ -179,7 +179,7 @@ def _kesif_gorevi(db: Session, ogrenci: Ogrenci, hafta: date, haric: set | None 
 
 def _yansitma_gorevi() -> dict:
     return {"tur": "yansitma", "baslik": "Haftanı 2 dakikada değerlendir",
-            "aciklama": "3 kısa soru: neyi iyi yaptın, nerede zorlandın, gelecek hafta hedefin ne? Filiz, cevaplarına bakarak önerilerini sana uygun hale getirir."}
+            "aciklama": "3 kısa soru: neyi iyi yaptın, nerede zorlandın, gelecek hafta hedefin ne? Cevaplarını yalnızca sen görürsün; geçmiş haftalarına dönüp bakabilirsin."}
 
 
 def _gorevleri_olustur(db: Session, ogrenci: Ogrenci, hafta: date) -> None:

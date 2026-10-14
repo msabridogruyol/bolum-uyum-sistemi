@@ -23,6 +23,7 @@ from reportlab.platypus import (
 )
 
 from app.core.kucuk_grup import DIPNOT, GIZLI_METIN   # [2026-10-10] KVKK küçük grup gizleme
+from app.core.rapor.veri import yuvarla   # [2026-10-14] gösterilen sayılar: yarım yukarı (ekrandaki Math.round ile aynı)
 from app.core.seviye import gelisime_acik_mi, guclu_mu   # [2026-10-10] ortak düzey bantları
 
 _FONT = Path(__file__).resolve().parent / "fontlar"
@@ -103,7 +104,7 @@ def _cubuklar(satirlar: list[tuple[str, float | None]], genislik=170 * mm, renk=
             w = max(1.5, cubuk_gen * max(0.0, min(1.0, float(deger) / maks)))
             r = renk or (YESIL if guclu_mu(deger) else AMBER if gelisime_acik_mi(deger) else colors.HexColor("#E8804A"))
             d.add(Rect(etiket_gen, y + 1, w, 7, fillColor=r, strokeColor=None))
-            d.add(String(etiket_gen + cubuk_gen + 4, y + 2, f"{deger:.0f}" if maks == 100 else f"{deger:g}",
+            d.add(String(etiket_gen + cubuk_gen + 4, y + 2, f"{yuvarla(deger)}" if maks == 100 else f"{deger:g}",
                          fontName="Filiz-B", fontSize=8, fillColor=colors.HexColor("#3A342D")))
     return d
 
@@ -309,7 +310,7 @@ OTURUM_RENK = {"TYT": colors.HexColor("#2A78D6"), "AYT": colors.HexColor("#EB683
 def _sayi(x) -> str:
     if x is None:
         return "—"
-    return (f"{x:.2f}".rstrip("0").rstrip(".")).replace(".", ",")
+    return (f"{yuvarla(x, 2):.2f}".rstrip("0").rstrip(".")).replace(".", ",")
 
 
 def _net_grafigi(oturumlar: list[dict], gen=174 * mm, yuk=46 * mm):
@@ -326,7 +327,7 @@ def _net_grafigi(oturumlar: list[dict], gen=174 * mm, yuk=46 * mm):
     for k in range(0, 5):
         v = ymax * k / 4
         d.add(Line(sol, y(v), gen - sag, y(v), strokeColor=CIZGI, strokeWidth=0.4))
-        d.add(String(sol - 3, y(v) - 2.5, f"{v:.0f}", fontName="Filiz", fontSize=6.5, fillColor=GRI, textAnchor="end"))
+        d.add(String(sol - 3, y(v) - 2.5, f"{yuvarla(v)}", fontName="Filiz", fontSize=6.5, fillColor=GRI, textAnchor="end"))
     for o in oturumlar:
         r = OTURUM_RENK.get(o["oturum"], GRI)
         nokta = [c for t, v in o["seri"] for c in (x(t), y(v))]
@@ -372,7 +373,7 @@ def _net_bolumu(st, v: dict, kitle: str) -> list:
     k = n.get("kiyas")
     if k:
         hd = k["hedef"]
-        acik = round((k["toplam_hedef"] or 0) - (k["toplam_ben"] or 0), 2)
+        acik = yuvarla((k["toplam_hedef"] or 0) - (k["toplam_ben"] or 0), 2)
         h.append(st.p("Hedef programla karşılaştırma", st.h3))
         h.append(st.p(f"<b>{_e(hd['universite'])}</b> · {_e(hd['program'])} — {k.get('yil')} yılında bu programa yerleşen son öğrencinin "
                       f"netleri ile son denemelerin ortalaması: <b>{_sayi(k['toplam_ben'])}</b> / {_sayi(k['toplam_hedef'])} net "
@@ -424,7 +425,7 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
     if v["gucluler"]:
         h.append(st.p("Güçlü yönlerin", st.h2))
         for x in v["gucluler"]:
-            h.append(KeepTogether([st.p(f"<b>{_e(x['ad'])}</b> · {x['seviye']} ({x['puan']:.0f})", st.h3),
+            h.append(KeepTogether([st.p(f"<b>{_e(x['ad'])}</b> · {x['seviye']} ({yuvarla(x.get('ham', x['puan']))})", st.h3),
                                    st.p(_e(x.get("yorum") or ozellik_anlami(x.get("kod"), "yuksek") or x.get("aciklama") or ""), st.govde),
                                    Spacer(1, 4)]))
     if v["gelisim"]:
@@ -433,7 +434,7 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
                       "Bölüm seçerken bunları da hesaba kat.", st.not_))
         for x in v["gelisim"]:
             from app.core.rapor.yorum import DUSUK_AD
-            parca = [st.p(f"<b>{_e(DUSUK_AD.get(x.get('kod'), x['ad']))}</b> ({x['puan']:.0f})", st.h3)]
+            parca = [st.p(f"<b>{_e(DUSUK_AD.get(x.get('kod'), x['ad']))}</b> ({yuvarla(x.get('ham', x['puan']))})", st.h3)]
             anlam = x.get("yorum") or ozellik_anlami(x.get("kod"), "dusuk")
             if anlam:
                 parca.append(st.p(_e(anlam)))
@@ -445,13 +446,13 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
     if v["bolumler"]:
         h.append(st.p("Sana en uygun 10 bölüm", st.h2))
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum", "Neden?"],
-                        [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{b['uyum']:.0f}", ", ".join(b.get("ortusen") or [])]
+                        [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or [])]
                          for b in v["bolumler"]], [8 * mm, 52 * mm, 34 * mm, 14 * mm, 66 * mm]))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
         h.append(st.p("Hedefin ve yol haritan", st.h2))
-        h.append(st.p(f"<b>Hedef bölüm:</b> {_e(hd['ad'])}" + (f" · uyum %{hd['uyum']:.0f}" if hd.get("uyum") is not None else "")
+        h.append(st.p(f"<b>Hedef bölüm:</b> {_e(hd['ad'])}" + (f" · uyum %{yuvarla(hd['uyum'])}" if hd.get("uyum") is not None else "")
                       + (f" · önerilerinde {hd['sira']}. sırada" if hd.get("sira") else "")))
         if il.get("toplam"):
             h.append(st.p(f"<b>Yol haritası:</b> {il.get('tamamlanan', 0)} / {il['toplam']} adım tamamlandı"
@@ -515,7 +516,7 @@ def veli_pdf(v: dict, netler: bool = True) -> bytes:
     if v["bolumler"]:
         h.append(st.p("Çocuğunuza uygun görünen bölümler", st.h2))
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum"],
-                        [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{b['uyum']:.0f}"] for b in v["bolumler"][:6]],
+                        [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}"] for b in v["bolumler"][:6]],
                         [10 * mm, 90 * mm, 52 * mm, 22 * mm]))
         h.append(st.p("Uyum yüzdesi; çocuğunuzun profilinin bölümün gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir, "
                       "başarı ya da kazanma olasılığı anlamına gelmez.", st.not_))
@@ -553,7 +554,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
     ozet = [
         ["Durum", {"tamamlandi": "Tamamlandı", "devam": "Devam ediyor", "k5_bekliyor": "K5 bekliyor", "baslamadi": "Başlamadı"}.get(v["durum"], v["durum"]),
          "Tur sayısı", str(tur.get("tur_sayisi", 0))],
-        ["Güven puanı", f"{tur['guven']:.0f} / 100" if tur.get("guven") is not None else "—",
+        ["Güven puanı", f"{yuvarla(tur['guven'])} / 100" if tur.get("guven") is not None else "—",
          "Geçerlilik", ("Geçerli" if tur.get("gecerli", True) else "GEÇERSİZ") if tur else "—"],
         ["Kamera doğrulaması", "Var" if g.get("kamera") else "Yok", "İhlaller",
          ", ".join(f"{x['ad']} ({x['sayi']})" for x in g.get("ihlaller", [])) or "Yok"],
@@ -571,15 +572,15 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(st.p("Katman sonuçları", st.h2))
         h.append(_cubuklar([(f"{k['kod']} · {k['ad']}", k["ortalama"]) for k in v["katmanlar"]], renk=st.vurgu))
         for k in v["katmanlar"]:
-            h.append(KeepTogether([st.p(f"{k['kod']} · {_e(k['ad'])} (ortalama {k['ortalama']:.0f})", st.h3),
-                                   _cubuklar([(x["ad"], x["puan"]) for x in k["ozellikler"]]), Spacer(1, 5)]))
+            h.append(KeepTogether([st.p(f"{k['kod']} · {_e(k['ad'])} (ortalama {yuvarla(k['ortalama'])})", st.h3),
+                                   _cubuklar([(x["ad"], x.get("ham", x["puan"])) for x in k["ozellikler"]]), Spacer(1, 5)]))
     if v["k5"]:
         h.append(st.p("Alan soruları (K5)", st.h2))
         h.append(_cubuklar([(x["ad"], x["puan"]) for x in v["k5"]]))
     if v["bolumler"]:
         h.append(st.p("Bölüm önerileri (ilk 10)", st.h2))
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum", "Örtüşen özellikler", "Dikkat"],
-                        [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{b['uyum']:.0f}", ", ".join(b.get("ortusen") or []),
+                        [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or []),
                           b.get("dikkat") or ""] for b in v["bolumler"]],
                         [7 * mm, 40 * mm, 27 * mm, 12 * mm, 45 * mm, 43 * mm], kucuk=True))
     if v["hedef"]:
@@ -587,7 +588,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
         il = hd.get("ilerleme") or {}
         h.append(st.p("Hedef bölüm ve koçluk", st.h2))
         h.append(st.p(f"<b>{_e(hd['ad'])}</b> · seçim: {_tarih(hd.get('secim'))}"
-                      + (f" · uyum %{hd['uyum']:.0f}" if hd.get("uyum") is not None else "")
+                      + (f" · uyum %{yuvarla(hd['uyum'])}" if hd.get("uyum") is not None else "")
                       + (f" · öneri sırası {hd['sira']}" if hd.get("sira") else " · ilk 10 öneri dışında")
                       + (f" · yol haritası {il.get('tamamlanan', 0)}/{il['toplam']}" if il.get("toplam") else "")))
         if hd.get("odak"):
@@ -673,13 +674,13 @@ def okul_pdf(v: dict, netler: bool = True) -> bytes:
     def oran(n):
         if n is None:   # [2026-10-10] KVKK küçük grup
             return GIZLI_METIN
-        return f"{n} (%{round(100 * n / toplam) if toplam else 0})"
+        return f"{n} (%{yuvarla(100 * n / toplam) if toplam else 0})"
 
     def g(x, k):   # gizlenen kırılım hücresi
         return "—" if x.get(k) is None else str(x[k])
 
     def tm(x):
-        return "—" if x.get("tamamlayan") is None else f"%{round(100 * x['tamamlayan'] / x['ogrenci']) if x['ogrenci'] else 0}"
+        return "—" if x.get("tamamlayan") is None else f"%{yuvarla(100 * x['tamamlayan'] / x['ogrenci']) if x['ogrenci'] else 0}"
     kg = v.get("kucuk_grup") or {}
     sayi_st = ParagraphStyle("kpi", fontName="Filiz-B", fontSize=14, leading=18, textColor=st.vurgu)
     kpi = Table([[[Paragraph(a, st.kucuk), Paragraph(str(b), sayi_st)] for a, b in
@@ -730,21 +731,24 @@ def okul_pdf(v: dict, netler: bool = True) -> bytes:
                   (sag[i]["bolum"] + sy(sag[i])) if i < len(sag) else ""] for i in range(max(len(sol), len(sag)))]
         h.append(_tablo(st, ["1. öneri olarak", "Hedef olarak"], satir, [87 * mm, 87 * mm]))
     if v["katman_ort"] and v.get("okul_katman_ort"):
-        okul_ort = {k["kod"]: k["ortalama"] for k in v["okul_katman_ort"]}
+        okul_ort = {k["kod"]: yuvarla(k["ortalama"]) for k in v["okul_katman_ort"]}
+
+        def katman_satiri(k):   # [2026-10-14] fark, GÖSTERİLEN yuvarlanmış değerlerden; okul değeri yoksa "—"
+            g, o = yuvarla(k["ortalama"]), okul_ort.get(k["kod"])
+            return [f"{k['kod']} · {k['ad']}", str(g), "—" if o is None else str(o), "—" if o is None else f"{g - o:+d}"]
         h.append(st.p("Katman ortalamaları — okul ortalamasıyla karşılaştırma", st.h2))
         h.append(_tablo(st, ["Katman", "Şube" if sube_mi else "Sınıf düzeyi", "Okul", "Fark"],
-                        [[f"{k['kod']} · {k['ad']}", f"{k['ortalama']:.0f}", f"{okul_ort.get(k['kod'], 0):.0f}",
-                          f"{k['ortalama'] - okul_ort.get(k['kod'], k['ortalama']):+.0f}"] for k in v["katman_ort"]],
+                        [katman_satiri(k) for k in v["katman_ort"]],
                         [86 * mm, 30 * mm, 30 * mm, 28 * mm]))
         h.append(st.p("Fark ±5 puandan büyükse grup okul ortalamasından belirgin biçimde ayrışıyor demektir.", st.not_))
     elif v["katman_ort"]:
-        h.append(st.p("Katman ortalamaları (testi tamamlayanlar)", st.h2))
+        h.append(st.p("Katman ortalamaları (testi tamamlayanlar; güven eşiğinin altındakiler hariç)", st.h2))
         h.append(_cubuklar([(f"{k['kod']} · {k['ad']}", k["ortalama"]) for k in v["katman_ort"]], renk=st.vurgu))
     elif kg.get("profil_gizli"):
         h.append(st.p("Katman ortalamaları ve ortak güçlü yönler", st.h2))
         h.append(st.p(f"Testi tamamlayan {GIZLI_METIN} olduğundan profil ortalamaları gösterilmez.", st.not_))
     if v["ortak_guclu"]:
-        satir = [[f"{a['ad']} ({a['ortalama']:.0f})", f"{b['ad']} ({b['ortalama']:.0f})"] for a, b in zip(v["ortak_guclu"], v["ortak_gelisim"])]
+        satir = [[f"{a['ad']} ({yuvarla(a['ortalama'])})", f"{b['ad']} ({yuvarla(b['ortalama'])})"] for a, b in zip(v["ortak_guclu"], v["ortak_gelisim"])]
         h.append(KeepTogether([
             st.p(f"{birim} ortak güçlü yönleri ve gelişim alanları", st.h2),
             _tablo(st, ["En yüksek ortalama", "En düşük ortalama"], satir, [87 * mm, 87 * mm]),
@@ -762,7 +766,7 @@ def okul_pdf(v: dict, netler: bool = True) -> bytes:
         if nt.get("dersler"):
             h.append(_tablo(st, ["Ders", "Soru", "Son deneme ortalaması", "Öğrenci", "Doluluk"],
                             [[d["ad"], str(d["soru"]), _sayi(d["ort"]) if d["ort"] is not None else GIZLI_METIN, str(d["n"]),
-                              f"%{round(100 * d['ort'] / d['soru'])}" if d["ort"] is not None else "—"] for d in nt["dersler"]],
+                              f"%{yuvarla(100 * d['ort'] / d['soru'])}" if d["ort"] is not None else "—"] for d in nt["dersler"]],
                             [70 * mm, 18 * mm, 40 * mm, 22 * mm, 24 * mm], kucuk=True))
             h.append(st.p("Doluluk oranı düşük dersler, ders öğretmenleriyle birlikte planlanacak destek çalışmaları için ipucu verir.", st.not_))
     elif netler:
@@ -786,18 +790,18 @@ def okul_pdf(v: dict, netler: bool = True) -> bytes:
         if sube_mi and netler:
             h.append(_tablo(st, ["No", "Ad soyad", "Durum", "1. öneri", "Hedef", "Güven", "Son TYT", "Son AYT"],
                             [[x.get("no") or "", x["ad_soyad"] + (" (test)" if x["test"] else ""), x["durum"], x["ilk_bolum"], x["hedef"],
-                              f"{x['guven']:.0f}" if x["guven"] is not None else "", _sayi(x.get("son_tyt")) if x.get("son_tyt") is not None else "",
+                              f"{yuvarla(x['guven'])}" if x["guven"] is not None else "", _sayi(x.get("son_tyt")) if x.get("son_tyt") is not None else "",
                               _sayi(x.get("son_ayt")) if x.get("son_ayt") is not None else ""] for x in v["ogrenciler"]],
                             [10 * mm, 31 * mm, 23 * mm, 31 * mm, 31 * mm, 16 * mm, 16 * mm, 16 * mm], kucuk=True))
         elif sube_mi:
             h.append(_tablo(st, ["No", "Ad soyad", "Durum", "1. öneri", "Hedef", "Güven"],
                             [[x.get("no") or "", x["ad_soyad"] + (" (test)" if x["test"] else ""), x["durum"], x["ilk_bolum"], x["hedef"],
-                              f"{x['guven']:.0f}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
+                              f"{yuvarla(x['guven'])}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
                             [12 * mm, 38 * mm, 28 * mm, 40 * mm, 40 * mm, 16 * mm], kucuk=True))
         else:
             h.append(_tablo(st, ["Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven"],
                             [[x["ad_soyad"] + (" (test)" if x["test"] else ""), x["sinif"], x["durum"], x["ilk_bolum"], x["hedef"],
-                              f"{x['guven']:.0f}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
+                              f"{yuvarla(x['guven'])}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
                             [36 * mm, 18 * mm, 29 * mm, 37 * mm, 37 * mm, 17 * mm], kucuk=True))
     doc.build(h)
     return tampon.getvalue()
@@ -815,11 +819,14 @@ _BULGU = {"dikkat": ("!", colors.HexColor("#B32D2D"), colors.HexColor("#FBEAEA")
 
 
 def _yuzde_m(x) -> str:
-    return "—" if x is None else f"%{x:.0f}"
+    return "—" if x is None else f"%{yuvarla(x)}"
 
 
 def _isaret(x) -> str:
-    return "—" if x is None else ("+" if x > 0 else "") + _sayi(round(x, 2))
+    if x is None:
+        return "—"
+    x = yuvarla(x, 2)
+    return ("+" if x > 0 else "") + _sayi(x)
 
 
 def yonetici_ozeti_pdf(v: dict, okul: dict) -> bytes:

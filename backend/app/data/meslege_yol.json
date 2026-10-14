@@ -582,7 +582,7 @@
     },
     {
      "baslik": "KPSS ve kuruma özel sınavlar",
-     "aciklama": "Kamu yönetimi alanında mezunların önemli bir kısmı KPSS A grubu ve kurumların uzman yardımcılığı sınavlarıyla ilerler.",
+     "aciklama": "Kamu yönetimi alanında yaygın yollardan biri KPSS A grubu ve kurumların uzman yardımcılığı sınavlarıdır.",
      "zorunlu": false,
      "sure": null
     },
@@ -1283,7 +1283,7 @@
     },
     {
      "zor": "Kalabalık sınıflar ve ilk yıllarda atandığın yer seçme şansının az olması.",
-     "nasil": "Deneyimli öğretmenlerin çoğu bu dönemi 'mesleği en hızlı öğrendikleri yıllar' olarak anlatıyor."
+     "nasil": "Bu dönem, mesleğin en hızlı öğrenildiği yıllar olarak da görülebilir."
     }
    ],
    "neden_seviyor": [
@@ -1551,7 +1551,7 @@
   },
   "ASTRONOMİ VE UZAY BİLİMLERİ": {
    "alan": "U03",
-   "ozel": "Gözlemevleri ve akademi başlıca yoldur; mezunların önemli bir kısmı yazılım, veri ve uzay sanayisine yönelir.",
+   "ozel": "Gözlemevleri ve akademi başlıca yoldur; yazılım, veri ve uzay sanayisi de mezunların yöneldiği alanlar arasındadır.",
    "regule": false
   },
   "AVRUPA BİRLİĞİ İLİŞKİLERİ": {
@@ -3967,7 +3967,7 @@
    "zorlayanlar": [
     {
      "zor": "Yol uzun: 6 yıl fakülte + TUS + birkaç yıl uzmanlık; yani 30'lu yaşlara kadar eğitim sürebilir.",
-     "nasil": "Hekimlerin çoğu bunu 'her aşamanın kendi tatmini var' diye anlatıyor; asistanlık da maaşlı bir çalışma dönemidir."
+     "nasil": "Her aşamanın kendine özgü kazanımları vardır; asistanlık da maaşlı bir çalışma dönemidir."
     },
     {
      "zor": "Nöbetler, yoğun hasta sayısı ve zaman zaman şiddet riski.",
@@ -4353,7 +4353,7 @@
    "zorlayanlar": [
     {
      "zor": "Hayvan sahipleriyle zor konuşmalar ve duygusal yük.",
-     "nasil": "İletişim becerisi ve ekip desteği; hekimler bunu meslekte öğrenilen bir beceri olarak anlatıyor."
+     "nasil": "İletişim becerisi ve ekip desteği; bu, meslekte zamanla öğrenilen bir beceridir."
     },
     {
      "zor": "Çiftlik hayvanları alanında saha koşulları zorlu olabilir.",
@@ -4696,7 +4696,7 @@
    "zorlayanlar": [
     {
      "zor": "Kurallara uymayanları ikna etmek her zaman kolay değil.",
-     "nasil": "İletişim ve eğitim becerisi bu işin yarısı; uzmanlar zamanla saygınlık kazandığını anlatıyor."
+     "nasil": "İletişim ve eğitim becerisi bu işin yarısı; iyi iletişim kuran uzman zamanla çalışanların güvenini kazanır."
     },
     {
      "zor": "Belge sınıfına göre çalışılabilecek işyerleri sınırlı.",

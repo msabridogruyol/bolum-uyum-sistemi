@@ -153,7 +153,7 @@ def test_ogrenci_ai_baglaminda_baska_ogrenci_adi_yok(istemci, ortam, ai, db):
                      headers=ortam["ogrenci"]).json()
     yuk = ai.yuk()
     assert ai.cagrilar and "Zeynep" not in yuk and "Aksoy" not in yuk and "Kerem" not in yuk and ortam["zeynep_eposta"] not in yuk
-    assert G.OGRENCI_ETIKETI in yuk and "Test Öğrenci" in yuk                 # kendi adı korunur
+    assert G.OGRENCI_ETIKETI in yuk and "Test Öğrenci" not in yuk and G.KENDI_AD_ETIKETI in yuk   # [2026-10-14] kendi adı da gitmez
     assert "Zeynep" not in r["asistan_yaniti"] and G.OGRENCI_ETIKETI in r["asistan_yaniti"]   # yanıt son filtresi
     assert "Başka öğrenciler hakkında bilgi verme" in ai.cagrilar[-1][0]
 
@@ -164,7 +164,7 @@ def test_ogrenci_sistem_istemi_yalniz_kendi_verisi(ortam, db):
     from app.models import Ogrenci
     ben = db.query(Ogrenci).filter(Ogrenci.okul_id == ortam["okul_a"], Ogrenci.ad_soyad == "Test Öğrenci").first()
     p = sistem_promptu_olustur(db, ben, None, "/koclugu")
-    assert "Test Öğrenci" in p and "Zeynep" not in p and "Aksoy" not in p and "Kerem" not in p
+    assert "Test Öğrenci" not in p and "Zeynep" not in p and "Aksoy" not in p and "Kerem" not in p
 
 
 # ----------------------------------------------------------------------------- yönetim tarafı

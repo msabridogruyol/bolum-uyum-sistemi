@@ -282,7 +282,7 @@ def k_kulup(b: Baglam, m: str) -> str:
 
 
 def k_koc(b: Baglam, m: str) -> str:
-    return ("Okulunun anlaşmalı koçlarını Eğitim Koçları sayfasında görebilirsin. İlgi alanına uygun olanlar üstte işaretli. "
+    return ("Filizyol'un anlaşmalı, okulun için onaylanmış eğitim koçlarını Eğitim Koçları sayfasında görebilirsin. İlgi alanına uygun olanlar üstte işaretli. "
             "Bir koç seç ve görüşme talebi bırak. Talebin Filizyol koordinatörüne gider. Görüşme planlanınca tarih ve saati Takvim'inde görürsün.")
 
 
@@ -349,7 +349,7 @@ def k_dusunme(b: Baglam, m: str) -> str:
 
 
 def k_dil(b: Baglam, m: str) -> str:
-    return ("Filizyol'u 12 dilde kullanabilirsin. Dilini giriş ekranından ya da Ayarlar'dan seçebilirsin; seçimin hesabına kaydedilir. "
+    return ("Filizyol'u Türkçe dışında 12 dilde daha kullanabilirsin. Dilini giriş ekranından ya da Ayarlar'dan seçebilirsin; seçimin hesabına kaydedilir. "
             "PDF raporlar, e-postalar ve KVKK metinlerinin asılları Türkçedir.")
 
 

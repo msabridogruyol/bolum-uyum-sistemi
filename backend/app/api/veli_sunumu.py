@@ -141,15 +141,13 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
         ilk = [x["ilk_bolum"] for i, x in il.items() if i in tamam_tur and x.get("ilk_bolum")]
         alan_of = {k: (a.get("ust_alan") or "Diğer") for k, a in _alanlar(db, list(set(ilk))).items()}
         v["alanlar"] = grup_birlestir(Counter(alan_of.get(b, "Diğer") for b in ilk), "ad", "sayi", ilk_n=6)
+        # ilk 10 öneri: öğrencinin sonuç ekranındaki sıralama (_ilerleme → skor_motoru.toplu_siralama; K5 etkili nihai uyum)
         ilk10 = Counter()
         ust = defaultdict(set)
-        for r in db.execute(text("""
-            SELECT tur_id, bolum_id FROM (
-                SELECT s.tur_id, s.bolum_id, row_number() OVER (PARTITION BY s.tur_id ORDER BY s.toplam_uyum DESC) AS sira
-                  FROM ogrenci_bolum_uyum_skorlari s WHERE s.tur_id = ANY(:t)) x WHERE sira <= 10"""),
-                {"t": list(tamam_tur.values())}).all():
-            ilk10[r.bolum_id] += 1
-            ust[r.tur_id].add(r.bolum_id)
+        for i in tamam_tur:
+            for b in il[i].get("oneri_ilk10") or []:
+                ilk10[b] += 1
+                ust[tamam_tur[i]].add(b)
         v["bolumler"] = [{"ad": bolum_ad.get(b, "?"), "sayi": n, "oran": _yuzde(n, tamamlayan)}
                          for b, n in ilk10.most_common(12) if yeterli(n)][:6]
         hedefli = {i: x["hedef"] for i, x in il.items() if x.get("hedef") and i in tamam_tur}

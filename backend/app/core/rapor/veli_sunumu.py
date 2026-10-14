@@ -23,6 +23,8 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Inches, Pt
 
+from app.core.metin import turkce_buyut
+
 FONT = "Arial"
 MUREKKEP = "2B2620"
 GRI = "6B6257"
@@ -179,7 +181,7 @@ class _Deste:
         sl = self.p.slides.add_slide(self.bos)
         self.no += 1
         _arka(sl, self.r.ana if koyu else BEYAZ)
-        _metin(sl, SOL, 0.42, GEN, 0.3, ust.upper(), 12, BEYAZ if koyu else self.r.ana, kalin=True, ad="Üst başlık")
+        _metin(sl, SOL, 0.42, GEN, 0.3, turkce_buyut(ust), 12, BEYAZ if koyu else self.r.ana, kalin=True, ad="Üst başlık")
         _metin(sl, SOL, 0.72, GEN, 0.8, baslik, 32, BEYAZ if koyu else MUREKKEP, kalin=True, ad="Başlık")
         renk = _karistir(self.r.ana, "FFFFFF", 0.7) if koyu else GRI
         _metin(sl, SOL, H - 0.5, GEN - 1, 0.25, self.alt, 10, renk, ad="Alt bilgi")
@@ -329,7 +331,11 @@ def _kapak(d: _Deste):
     _metin(sl, SOL, H - 0.75, 8, 0.3, "Filizyol · Bölüm Uyum ve Kariyer Rehberliği", 11, _karistir(d.r.ana, "FFFFFF", 0.7))
     _not(sl, f"Hoş geldiniz. Bu sunumda {v['kapsam'].lower() if v['kapsam_tur'] == 'okul' else v['kapsam']} öğrencilerimizin "
              "bölüm ve meslek yönelimi çalışmalarını toplu olarak paylaşacağız. Sunumda hiçbir öğrencinin adı ya da kişisel sonucu "
-             "yer almıyor; çocuğunuzun kendi raporunu öğrencinin hesabından ya da rehberlik servisinden isteyebilirsiniz.")
+             "yer almıyor; çocuğunuzun kendi raporunu öğrencinin hesabından ya da rehberlik servisinden isteyebilirsiniz."
+             if "ogrenci_raporlari" in (d.v.get("moduller") or []) else
+             f"Hoş geldiniz. Bu sunumda {v['kapsam'].lower() if v['kapsam_tur'] == 'okul' else v['kapsam']} öğrencilerimizin "
+             "bölüm ve meslek yönelimi çalışmalarını toplu olarak paylaşacağız. Sunumda hiçbir öğrencinin adı ya da kişisel sonucu "
+             "yer almıyor; çocuğunuzun kendi raporunu rehberlik servisinden isteyebilirsiniz.")
 
 
 def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
@@ -468,7 +474,8 @@ def _hedef(d: _Deste):
 
 def _etkinlik(d: _Deste):
     e = d.v.get("etkinlik") or {}
-    sl = d.slayt("Okulda neler yapıyoruz", "Koçluk ve İş Hayatı çalışmaları")
+    sl = d.slayt("Okulda neler yapıyoruz", "Koçluk ve İş Hayatı çalışmaları" if "kocluk" in e and "is_hayati" in e else
+                 "Koçluk çalışmaları" if "kocluk" in e else "İş Hayatı çalışmaları")
     kartlar = []
     if "kocluk" in e:
         k = e["kocluk"] or {}
@@ -507,9 +514,14 @@ def _etkinlik(d: _Deste):
     if kh < 4.85:
         _metin(sl, SOL, 5.75, GEN, 0.6, "Öğrencilerimiz bu çalışmalara Filizyol hesaplarından istedikleri zaman ulaşabilir. "
                f"Katılım sayıları {d.v['esik']}'ten az öğrenciye dayandığında paylaşılmaz.", 14, GRI)
-    _not(sl, "Okulumuzda Filizyol yalnızca bir test değil; sonrasında koçluk adımları ve iş hayatı bilgileriyle devam ediyor. "
-             "Çocuğunuza bu hafta hangi görevi yaptığını, hangi mesleği simülasyonda denediğini sorabilirsiniz. "
-             "Sayılar yalnızca toplu olarak verilir; 5'ten az öğrenciye dayanan sayılar gösterilmez.")
+    # [2026-10-14] Not metni okulun açık modüllerine göre (kapalı modülden söz edilmez; çeviri için tam cümleler)
+    devam = {(True, True): "Okulumuzda Filizyol yalnızca bir test değil; sonrasında koçluk adımları ve iş hayatı bilgileriyle devam ediyor. "
+                           "Çocuğunuza bu hafta hangi görevi yaptığını, hangi mesleği simülasyonda denediğini sorabilirsiniz. ",
+             (True, False): "Okulumuzda Filizyol yalnızca bir test değil; sonrasında koçluk adımlarıyla devam ediyor. "
+                            "Çocuğunuza bu hafta hangi görevi yaptığını sorabilirsiniz. ",
+             (False, True): "Okulumuzda Filizyol yalnızca bir test değil; sonrasında iş hayatı bilgileriyle devam ediyor. "
+                            "Çocuğunuza hangi mesleği simülasyonda denediğini sorabilirsiniz. "}.get(("kocluk" in e, "is_hayati" in e), "")
+    _not(sl, devam + "Sayılar yalnızca toplu olarak verilir; 5'ten az öğrenciye dayanan sayılar gösterilmez.")
 
 
 DESTEK = [
@@ -597,7 +609,8 @@ def _iletisim(d: _Deste):
         _metin(sl, SOL, max(y, 4.6), 7.5, 0.9, [[("Okul", {"kalin": True, "renk": soluk})], [(" · ".join(genel), {})]], 15, yazi, satir_arasi=2)
     _metin(sl, 8.6, 2.2, 4.1, 2.5, [[("Teşekkür ederiz", {"boyut": 34, "kalin": True})],
                                     [("Çocuğunuzun raporu, öğrenci hesabındaki Raporlarım bölümünden ya da rehberlik servisinden "
-                                      "alınabilir.", {"boyut": 15, "renk": soluk})]], 15, yazi, satir_arasi=10)
+                                      "alınabilir." if "ogrenci_raporlari" in (d.v.get("moduller") or []) else
+                                      "Çocuğunuzun raporunu rehberlik servisinden isteyebilirsiniz.", {"boyut": 15, "renk": soluk})]], 15, yazi, satir_arasi=10)
     _not(sl, "Rehber öğretmenimizin iletişim bilgilerini paylaşın ve soruları alın. Bireysel sonuçlarla ilgili soruları toplantıda "
              "değil, birebir görüşmede konuşmayı önerin; böylece her öğrencinin gizliliği korunur.")
 

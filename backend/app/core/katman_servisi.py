@@ -33,7 +33,7 @@ def parametre_oku(db: Session, anahtar: str, varsayilan: str) -> str:
 def son_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlendirmeTuru:
     """
     K5/dal akışları için — aktif_veya_yeni_tur_getir'den FARKLI olarak, yeni
-    tur açmaya çalışmaz ve 120 günlük kısıtı tetiklemez. K5, K1-K4 tamamlanıp
+    tur açmaya çalışmaz ve 90 günlük kısıtı tetiklemez. K5, K1-K4 tamamlanıp
     tur.durum='tamamlandi' olduktan SONRA gerçekleşir; bu yüzden "yalnızca
     devam_ediyor turu bul" mantığı (aktif_veya_yeni_tur_getir) burada yanlış
     olurdu — öğrencinin en son turunu (tamamlanmış olsa bile) döner.

@@ -76,18 +76,32 @@ class MulakatSimIstek(BaseModel):
     secimler: dict[str, int] = Field(default_factory=dict)   # {"0": 1, "1": 0, ...} soru no → seçilen aday (0 / 1)
 
 
-def _yorum(dogru: int, toplam: int) -> str:
+def _yorum(dogru: int, toplam: int, yanitsiz: int = 0) -> str:
+    """[2026-10-14] Oran yalnızca YANITLANAN sorulara göre; yarı yarıya "çoğunda" sayılmaz. Her cümle tek parça yazılır
+    (çeviride parça birleştirme bozulmasın); boş bırakılan sorular için ayrı cümle: _yanitsiz_notu."""
     if not toplam:
         return "Bu mülakatta iki yaklaşımın da savunulabildiği durumları inceledin; iş hayatında her sorunun tek bir doğrusu olmaz."
-    oran = dogru / toplam
-    if oran == 1:
-        return ("Her soruda mülakatçıyla aynı adayı seçtin. Bu alandaki düşünme biçimi sana yabancı gelmiyor gibi; "
+    if dogru == toplam:
+        return ("Yanıtladığın her soruda mülakatçıyla aynı adayı seçtin. Bu alandaki düşünme biçimi sana yabancı gelmiyor gibi; "
+                "alandan bilgileri okuyarak bu meslekte işlerin nasıl yürüdüğünü daha yakından tanıyabilirsin." if yanitsiz else
+                "Her soruda mülakatçıyla aynı adayı seçtin. Bu alandaki düşünme biçimi sana yabancı gelmiyor gibi; "
                 "alandan bilgileri okuyarak bu meslekte işlerin nasıl yürüdüğünü daha yakından tanıyabilirsin.")
-    if oran >= 0.5:
-        return ("Soruların çoğunda mülakatçıyla aynı düşündün. Farklı seçtiğin sorulardaki açıklamalara bir daha göz at; "
+    if 2 * dogru > toplam:
+        return ("Yanıtladığın soruların çoğunda mülakatçıyla aynı düşündün. Farklı seçtiğin sorulardaki açıklamalara bir daha göz at; "
+                "bu alanda neye dikkat edildiğini en iyi orada görürsün." if yanitsiz else
+                "Soruların çoğunda mülakatçıyla aynı düşündün. Farklı seçtiğin sorulardaki açıklamalara bir daha göz at; "
                 "bu alanda neye dikkat edildiğini en iyi orada görürsün.")
+    if 2 * dogru == toplam:
+        return ("Yanıtladığın soruların yarısında mülakatçıyla aynı düşündün. Farklı seçtiğin sorulardaki açıklamalar, "
+                "bu alanda neye dikkat edildiğini gösteriyor; onlara bir daha göz at." if yanitsiz else
+                "Soruların yarısında mülakatçıyla aynı düşündün. Farklı seçtiğin sorulardaki açıklamalar, "
+                "bu alanda neye dikkat edildiğini gösteriyor; onlara bir daha göz at.")
     return ("Bu alanın düşünme biçimi sana henüz yeni; bu çok doğal, çünkü bu bilgiler bölümde öğrenilir. "
             "Açıklamalar, bu meslekte bir sorunun nasıl ele alındığını gösteriyor; merak ettiysen bu bölümü daha yakından incele.")
+
+
+def _yanitsiz_notu(yanitsiz: int) -> str | None:
+    return f"{yanitsiz} soruyu boş bıraktın; onlara da dönüp bakarsan bu alanı daha bütünlüklü tanırsın." if yanitsiz else None
 
 
 @ogrenci_router.post("/mulakat-sim")
@@ -118,4 +132,4 @@ def mulakat_sim_kaydet(istek: MulakatSimIstek, db: Session = Depends(get_db), o:
     db.commit()
     return {"bolum": {"id": istek.bolum_id, "ad": ad}, "dogru": dogru, "toplam": toplam, "ikisi_de": ikisi_de,
             "sorular": ozet, "beceriler": list(dict.fromkeys(x["beceri"] for x in ozet if x.get("beceri"))),
-            "yorum": _yorum(dogru, toplam)}
+            "yorum": _yorum(dogru, toplam, len(sorular) - len(ozet)), "yorum_ek": _yanitsiz_notu(len(sorular) - len(ozet))}

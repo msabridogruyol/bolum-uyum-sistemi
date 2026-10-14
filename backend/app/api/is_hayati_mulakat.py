@@ -81,9 +81,9 @@ def maskele(metin: str) -> str:
 
 
 def _ad_maskele(db: Session, o: Ogrenci, metin: str) -> str:
-    """[2026-10-11] Okul arkadaşlarının adları da modele gitmesin (kendi adı korunur)."""
-    from app.core.filiz_gizlilik import ad_normalize, ogrenci_dizini
-    return ogrenci_dizini(db, o).maskele(metin, haric=ad_normalize(o.ad_soyad))
+    """[2026-10-11] Okul arkadaşlarının adları modele gitmez; [2026-10-14] öğrencinin kendi adı da gitmez."""
+    from app.core import filiz_gizlilik as fg
+    return fg.kendi_adini_maskele(fg.ogrenci_dizini(db, o).maskele(metin, haric=fg.ad_normalize(o.ad_soyad)), o.ad_soyad)
 
 
 def mulakat_istemi(soru: dict, kategori_adi: str) -> str:

@@ -144,7 +144,13 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
         SELECT t.id, t.ogrenci_id, t.durum, t.guven_skoru, t.sonuc_gecerli_mi
           FROM ogrenci_degerlendirme_turu t WHERE t.ogrenci_id = ANY(:ids)"""), p).all() if ids else []
     guvenler = [float(t.guven_skoru) for t in turlar if t.id in set(tur_ids) and t.guven_skoru is not None]
-    gecersiz = sum(1 for t in turlar if t.durum == "tamamlandi" and t.sonuc_gecerli_mi is False)
+    # [2026-10-14] Geçersiz = son değerlendirmesi güven eşiğinin altında kalan ÖĞRENCİ sayısı (rapor ve Tek Bakışta ile aynı tanım)
+    son_idler = set(son_tur.values())
+    gecersiz_idler = {t.id for t in turlar if t.id in son_idler and t.durum == "tamamlandi" and t.sonuc_gecerli_mi is False}
+    gecersiz = len(gecersiz_idler)
+    # Profil ortalamalarına yalnızca geçerli (güven eşiğini geçen) son turlar girer
+    gecerli_tur_ids = [t for t in tur_ids if t not in gecersiz_idler]
+    gecerli_ogr = {i for i, t in tamam_tur.items() if t not in gecersiz_idler}
 
     # ------------------------------------------------------------------ K5 (alan derinleşme)
     k5_ogr: dict = {}
@@ -237,13 +243,13 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
 
     # ------------------------------------------------------------------ Profil
     katman_ort, degisken_ort, sube_katman, ogr_katman = [], [], [], {}
-    if tur_ids:
+    if gecerli_tur_ids:
         sinif_of = {o.id: o.sinif or "Belirtilmedi" for o in ogr}
         sube_of = {o.id: (o.sinif or "Belirtilmedi", o.sube or "") for o in ogr}
         rows = db.execute(text("""
             SELECT s.ogrenci_id, k.kod, avg(s.puan) AS ort FROM ogrenci_degisken_skorlari s
               JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
-             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu GROUP BY s.ogrenci_id, k.kod"""), {"t": tur_ids}).all()
+             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu GROUP BY s.ogrenci_id, k.kod"""), {"t": gecerli_tur_ids}).all()
         okul_k, sinif_k, sube_k = defaultdict(list), defaultdict(lambda: defaultdict(list)), defaultdict(lambda: defaultdict(list))
         for r in rows:
             puan = float(r.ort)
@@ -255,7 +261,7 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
         katman_ort = [{"ad": "Okul geneli" if not sinif else sube_etiketi(sinif, sube), "okul": True,
                        "degerler": {k: _ort(okul_k[k]) for k in kodlar}}]
         if not sinif or not sube:
-            katman_ort += [{"ad": s, "okul": False, "ogrenci": len({i for i in tamam_tur if sinif_of.get(i) == s}),
+            katman_ort += [{"ad": s, "okul": False, "ogrenci": len({i for i in gecerli_ogr if sinif_of.get(i) == s}),
                             "degerler": {k: _ort(d[k]) for k in kodlar}}
                            for s, d in sorted(sinif_k.items(), key=lambda kv: _sinif_sira(kv[0]))]
         sube_katman = [{"ad": sube_etiketi(s[0], s[1]) if s[1] else s[0], "degerler": {k: _ort(d[k]) for k in kodlar}}
@@ -264,10 +270,11 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
             SELECT d.ad, k.kod, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
               JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
              WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
-             GROUP BY d.ad, k.kod ORDER BY ort DESC"""), {"t": tur_ids}).all()]
+             GROUP BY d.ad, k.kod ORDER BY ort DESC"""), {"t": gecerli_tur_ids}).all()]
     v["profil"] = {
         "katmanlar": [{"kod": k, "ad": a} for k, a in katmanlar],
-        "tamamlayan": len(tur_ids),
+        "tamamlayan": len(gecerli_tur_ids),   # [2026-10-14] ortalamaların dayandığı (geçerli) öğrenci sayısı
+        "gecersiz_haric": len(tur_ids) - len(gecerli_tur_ids),
         "katman_ort": katman_ort,
         "guclu": degisken_ort[:8],
         "zayif": list(reversed(degisken_ort))[:8],
@@ -282,18 +289,10 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
             ilk[adlar.get(x["ilk_bolum"], "?")] += 1
         if x.get("hedef"):
             hedef[adlar.get(x["hedef"], "?")] += 1
-    # hedefi, son tamamlanan turdaki ilk 10 önerisinde olan öğrenciler (sıralama: tercih.uyumlar ile aynı — toplam uyum)
+    # hedefi, son tamamlanan turdaki ilk 10 önerisinde olan öğrenciler (sıralama: öğrencinin sonuç ekranı ve
+    # tercih.uyumlar ile aynı — _ilerleme'deki oneri_ilk10, K5 etkili nihai uyum + alan sırası)
     hedefli = {i: x["hedef"] for i, x in il.items() if x.get("hedef") and i in tamam_tur}
-    ilk10 = 0
-    if hedefli:
-        ust = defaultdict(set)
-        for r in db.execute(text("""
-            SELECT ogrenci_id, bolum_id FROM (
-                SELECT s.ogrenci_id, s.bolum_id, row_number() OVER (PARTITION BY s.tur_id ORDER BY s.toplam_uyum DESC) AS sira
-                  FROM ogrenci_bolum_uyum_skorlari s WHERE s.tur_id = ANY(:t)) x WHERE sira <= 10"""),
-                {"t": [tamam_tur[i] for i in hedefli]}).all():
-            ust[r.ogrenci_id].add(r.bolum_id)
-        ilk10 = sum(1 for i, b in hedefli.items() if b in ust[i])
+    ilk10 = sum(1 for i, b in hedefli.items() if b in (il[i].get("oneri_ilk10") or []))
     v["bolum"] = {
         "ilk_oneri": [{"ad": b, "deger": n} for b, n in ilk.most_common(15)],
         "hedef": [{"ad": b, "deger": n} for b, n in hedef.most_common(15)],
@@ -528,7 +527,7 @@ def istatistik_xlsx(v: dict, okul_adi: str) -> bytes:
         ["Aralıkta giriş yapan", k["aralikta_giris"]], ["Teste başlayan", k["teste_baslayan"]],
         ["Testi tamamlayan", k["tamamlayan"]], ["Tamamlama oranı (%)", k["tamamlama_orani"]],
         ["K5 (alan derinleşme) tamamlayan", k["k5_tamamlayan"]], ["Hedef bölüm seçen", k["hedef_secen"]],
-        ["Ortalama güven puanı", k["ort_guven"]], ["Doğrulanamayan tur", k["gecersiz_tur"]],
+        ["Ortalama güven puanı", k["ort_guven"]], ["Son değerlendirmesi doğrulanamayan öğrenci", k["gecersiz_tur"]],
         *([["Koçlukta aktif öğrenci (aralıkta)", k["kocluk_aktif"]]] if k.get("kocluk_aktif") is not None else []),
     ], ust)
     ka = v["katilim"]

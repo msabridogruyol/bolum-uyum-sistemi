@@ -278,9 +278,25 @@ def ogrenci_dizini(db: Session, ogrenci) -> AdDizini:
     return dizin_yukle(db, okul_id=getattr(ogrenci, "okul_id", None), haric_id=getattr(ogrenci, "id", None))
 
 
+KENDI_AD_ETIKETI = "[ad]"
+
+
+def kendi_adini_maskele(metin: str | None, kendi_ad: str | None) -> str:
+    """[2026-10-14] Öğrencinin kendi adı da yapay zekâya gitmez: ad/soyad parçalarının her biri (≥ 3 harf, ekli hâlleri dahil)
+    "[ad]" olur. Tek kelime bile maskelenir — öğrencinin kendi adı olduğu için yanlış eşleşme riski düşüktür."""
+    m = metin or ""
+    parcalar = [p for p in ad_normalize(kendi_ad) if len(p) >= 3]
+    if not parcalar or not m:
+        return m
+    for n, b, s, _oz in sorted(_parcala(m), key=lambda x: -x[1]):
+        if any(_ek_uyar(n, p, True) for p in parcalar):
+            m = m[:b] + KENDI_AD_ETIKETI + m[s:]
+    return m
+
+
 def ogrenci_metni_maskele(dizin: AdDizini, metin: str | None, kendi_ad: str | None) -> str:
-    """Yapay zekâya giden öğrenci metni: temel maskeleme + okul arkadaşlarının adları (kendi adı korunur)."""
-    return dizin.maskele(temel_maskele(metin), haric=ad_normalize(kendi_ad))
+    """Yapay zekâya giden öğrenci metni: temel maskeleme + okul arkadaşlarının adları + öğrencinin kendi adı."""
+    return kendi_adini_maskele(dizin.maskele(temel_maskele(metin), haric=ad_normalize(kendi_ad)), kendi_ad)
 
 
 def kimlik_uuid(deger) -> uuid.UUID | None:
