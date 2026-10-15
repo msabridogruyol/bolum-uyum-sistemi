@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { t as cevirT } from '../yardimci/dil'   // [2026-10-12] çoklu dil
 import { useLocation } from 'react-router-dom'
 import { api } from '../api/client'
 import { useModuller } from '../yardimci/moduller'
@@ -620,6 +621,9 @@ function sayfaMesaji(yol, ozet, hedef) {
   if (yol === '/katmanlar') {
     if (biten === 0) return 'İlk katmanla başlayalım: Değerler! 🌱'
     if (biten < toplam) return `${biten}/${toplam} katman tamam, harika gidiyorsun! Sıradaki seni bekliyor.`
+    // [2026-10-12] K5 alanları da bittiyse "alan sorularını bitir" denmez
+    const k5Acilan = ozet?.k5_acilan_dal_sayisi ?? 0
+    if (k5Acilan > 0 && (ozet?.k5_tamamlanan_dal_sayisi ?? 0) >= k5Acilan) return 'Değerlendirmenin tamamını bitirdin! 🎉 Sonuçların hazır; bölüm önerilerine göz at.'
     return 'Tüm katmanlar bitti! 🎉 Alan sorularını da bitirince sonuçların hazır.'
   }
   if (yol === '/bolumler/tum') return 'Bir bölüme tıkla, örnek mesleklerine bak. Beğendiğini ☆ ile listene ekle! 🔍'
@@ -1136,7 +1140,7 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
   // yazı makinesi efekti (konuşurken ağız hareket eder); bağlantılı balon biraz daha uzun kalır
   useEffect(() => {
     if (!balon) { setYazilan(''); return undefined }
-    const metin = balon.metin || ''
+    const metin = cevirT(balon.metin || '')   // [2026-10-12] seçili dile çevrilmiş metin yazılır (yarım metin çevrilemez)
     // [2026-10-11] Harf grubu (grapheme) olarak yazılır: emoji yarıya bölünüp "�" görünmesin
     const parcalar = typeof Intl !== 'undefined' && Intl.Segmenter
       ? Array.from(new Intl.Segmenter('tr', { granularity: 'grapheme' }).segment(metin), (x) => x.segment)
@@ -1147,10 +1151,13 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
       setYazilan(parcalar.slice(0, i).join(''))
       if (i >= parcalar.length) window.clearInterval(t)
     }, 28)
-    const kapat = window.setTimeout(() => setBalon(null), Math.max(balon.baglanti ? 9000 : 5500, metin.length * 90))
+    // [2026-10-14] Telefonda balon içeriğin üstünde durduğu için daha kısa kalır
+    const telefon = typeof window !== 'undefined' && window.matchMedia?.('(max-width: 760px)').matches
+    const kapat = window.setTimeout(() => setBalon(null), telefon ? Math.max(balon.baglanti ? 6000 : 3500, metin.length * 60)
+      : Math.max(balon.baglanti ? 9000 : 5500, metin.length * 90))
     return () => { window.clearInterval(t); window.clearTimeout(kapat) }
   }, [balon, setBalon])
-  const konusuyor = !!balon && yazilan.length < (balon.metin || '').length
+  const konusuyor = !!balon && yazilan.length < cevirT(balon.metin || '').length
 
   // göz kırpma (rastgele aralıklarla, bazen çift)
   useEffect(() => {
@@ -1189,7 +1196,9 @@ export function useMaskot({ kucukAnahtar = 'maskot_kucuk', mesajSec, ad, sozAral
   // ara ara: rastgele animasyon + cümle
   useEffect(() => {
     const anim = window.setInterval(() => { if (!uyku) oynat(ANIMASYONLAR[Math.floor(Math.random() * ANIMASYONLAR.length)]) }, 17000)
-    const soz = window.setInterval(() => { if (!uyku && secici.current) { konus(secici.current()); oynat(Math.random() < 0.5 ? 'onayla' : 'salla') } }, sozAraligi)
+    // [2026-10-14] Ara sözler telefonda kapalı: balon ekranın altında içeriği örter; karşılama ve sayfa mesajları sürer
+    const telefon = () => window.matchMedia?.('(max-width: 760px)').matches
+    const soz = window.setInterval(() => { if (!uyku && secici.current && !telefon()) { konus(secici.current()); oynat(Math.random() < 0.5 ? 'onayla' : 'salla') } }, sozAraligi)
     return () => { window.clearInterval(anim); window.clearInterval(soz) }
   }, [uyku, oynat, konus, sozAraligi])
 
@@ -1230,14 +1239,14 @@ export function MaskotGorunum({ m, cinsiyet, kiyafet, seviye, rozet, onTikla, so
     )
   }
   const b = m.balon
-  const bitti = b && m.yazilan.length >= (b.metin || '').length
+  const bitti = b && m.yazilan.length >= cevirT(b.metin || '').length
   return (
     <div className={`msk-kap ${sinif}`} ref={m.kutu}>
       <style>{MASKOT_CSS}</style>
       {b && (
         <div className="msk-balon" role="status" aria-live="polite">
           {b.sira && <span className="msk-balon-sira">{b.sira}</span>}
-          {m.yazilan}
+          <span translate="no">{m.yazilan}</span>
           {b.baglanti && bitti && (
             <button className="msk-balon-git" onClick={() => onBaglanti?.(b.baglanti)}>{b.baglanti.etiket ? `${b.baglanti.etiket} · ` : ''}Göster →</button>
           )}

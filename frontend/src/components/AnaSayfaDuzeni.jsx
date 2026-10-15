@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { hesapDiliniUygula } from '../yardimci/dil'   // [2026-10-12] hesaptaki dil tercihi
 import { NavLink, Outlet, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { api } from '../api/client'
@@ -66,7 +67,7 @@ export default function AnaSayfaDuzeni() {
     api.kvkkDurumu().then((d) => setKvkkGerekli(!d.guncel)).catch(() => {})
     api.kocVarMi().then((d) => setKocVar(!!d.var)).catch(() => {})   // modül kapalıysa 403 → menüde yok
     api.profilGetir()
-      .then((p) => { setProfil(p); if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
+      .then((p) => { setProfil(p); if (hesapDiliniUygula(p.dil, (k) => api.dilKaydet(k, 'ogrenci'))) return; if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
       .catch(() => {})
       .finally(() => setProfilYuklendi(true))
   }, [])

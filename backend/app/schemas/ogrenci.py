@@ -71,6 +71,7 @@ class KatmanTamamlamaCevap(BaseModel):
     katman_kodu: str
     sonuclar: list[KatmanSonucSatiri]
     tum_katmanlar_tamamlandi_mi: bool
+    sonuc_epostasi: bool = False   # [2026-10-12] sonuç raporu e-postayla gönderilecek mi (tamamlama ekranında söylenir)
 
 
 class TurDurumOut(BaseModel):
@@ -157,6 +158,7 @@ class DalBaslatCevap(BaseModel):
 
 class DalTamamlamaCevap(BaseModel):
     dal_kodu: str
+    sonuc_epostasi: bool = False   # [2026-10-12] son K5 dalı bittiyse sonuç raporu e-postayla gönderilecek
     sonuclar: list[KatmanSonucSatiri]
 
 
@@ -180,6 +182,7 @@ class ProfilOut(BaseModel):
     profil_foto_base64: str | None
     sube: str | None = None
     sifre_degistirmeli: bool = False   # [2026-10-09] geçici şifreyle girdiyse yeni şifre belirlemeli
+    dil: str | None = None   # [2026-10-12] kişisel arayüz dili (None = hiç seçmedi → Türkçe)
 
     model_config = {"from_attributes": True}
 

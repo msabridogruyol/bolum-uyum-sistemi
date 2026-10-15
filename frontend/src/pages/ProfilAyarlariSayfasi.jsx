@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from 'react'
+import DilSecici from '../components/DilSecici'   // [2026-10-12] çoklu dil
 import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { profilEksikMi } from '../components/AnaSayfaDuzeni'
@@ -194,15 +195,15 @@ export default function ProfilAyarlariSayfasi() {
       {basari && <div style={{ background: 'var(--grl)', color: 'var(--gr)', fontSize: 12.5, fontWeight: 600, padding: '10px 13px', borderRadius: 8, marginBottom: 14 }}>{basari}</div>}
 
       {/* --- Fotoğraf --- */}
-      <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 18 }}>
-        <div className="av" style={{ width: 64, height: 64, fontSize: 28, overflow: 'hidden' }}>
+      <div className="card" style={{ display: 'flex', alignItems: 'center', gap: 18, flexWrap: 'wrap' }}>
+        <div className="av" style={{ width: 64, height: 64, fontSize: 28, overflow: 'hidden', flexShrink: 0 }}>
           {taslak.profil_foto_base64
             ? <img src={taslak.profil_foto_base64} alt="Profil" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             : '🎓'}
         </div>
-        <div style={{ flex: 1 }}>
+        <div style={{ flex: '1 1 140px', minWidth: 0 }}>
           <div style={{ fontSize: 15, fontWeight: 700 }}>{taslak.ad_soyad}</div>
-          <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>{taslak.email}</div>
+          <div style={{ fontSize: 12.5, color: 'var(--tx2)', overflowWrap: 'anywhere' }}>{taslak.email}</div>
         </div>
         <label className="btn sec" style={{ cursor: fotoYukleniyor ? 'not-allowed' : 'pointer', opacity: fotoYukleniyor ? 0.6 : 1 }}>
           {fotoYukleniyor ? 'Yükleniyor...' : 'Fotoğraf Değiştir'}
@@ -345,6 +346,9 @@ export default function ProfilAyarlariSayfasi() {
 
       {/* --- [2026-10-04] KVKK: isteğe bağlı izinler --- */}
       <GizlilikKarti />
+
+      {/* --- Dil --- */}
+      <DilSecici kapsam="ogrenci" gorunum="kart" />
 
       {/* --- Tanıtım --- */}
       {duzen.tanitimiAc && (

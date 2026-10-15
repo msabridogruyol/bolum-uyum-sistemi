@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DilSecici from '../../components/DilSecici'   // [2026-10-12] çoklu dil
 import { useNavigate, Link } from 'react-router-dom'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { api } from '../../api/client'
@@ -38,6 +39,7 @@ export default function AdminGirisSayfasi() {
 
   return (
     <div className="auth-wrap">
+      <div className="auth-dil"><DilSecici /></div>
       <div className="auth-card">
         <div className="auth-logo">Filizyol</div>
         <div className="auth-sub">{ikiAdim ? 'Yönetici Paneli · giriş doğrulaması' : 'Yönetici Paneli'}</div>

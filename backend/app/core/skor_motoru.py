@@ -37,6 +37,7 @@ normalizasyon_agirligi'nin o katmandaki değişken sayısına eşit
 bölünmesiyle bulunur [ÇIKARIM — belgede değişken-bazlı ağırlık
 dağılımı tanımlanmamıştı, yalnızca katman-bazlı %20/15/25/40].
 """
+from app.core.metin import turkce_kucult
 import math
 from dataclasses import dataclass
 
@@ -443,10 +444,7 @@ def nihai_uyum_haritasi(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     for s in db.query(OgrenciBolumUyumSkoru).filter(
         OgrenciBolumUyumSkoru.ogrenci_id == ogrenci.id, OgrenciBolumUyumSkoru.tur_id == tur.id
     ).all():
-        nihai = float(s.toplam_uyum)
-        if s.bolum_id in dal_ici:
-            nihai = min(100.0, max(0.0, nihai + K5_SIRALAMA_ETKISI * (dal_ici[s.bolum_id] - 50.0)))
-        harita[s.bolum_id] = round(nihai, 2)
+        harita[s.bolum_id] = _nihai(s.toplam_uyum, dal_ici.get(s.bolum_id))
     return harita
 
 
@@ -457,7 +455,7 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
 
     [YENİ 2026-10-03] K5: öğrencinin tamamladığı dal(lar)ın bölümleri için
     nihai skor = TOPLAM_UYUM + 0.50 × (dal_ici_uyum − 50). 50 = nötr (K5 bilgi vermediyse
-    sıralama değişmez); en fazla ±15 puan. Diğer bölümler değişmez.
+    sıralama değişmez); en fazla ±25 puan (K5_SIRALAMA_ETKISI × 50). Diğer bölümler değişmez.
     Veritabanındaki TOPLAM_UYUM kaydı değiştirilmez; birleştirme okunurken yapılır.
     """
     girdi = girdi_hazirla(db, ogrenci, tur)
@@ -477,21 +475,77 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
                                       kendall_w=float(s.kendall_w) if s.kendall_w is not None else None,
                                       yontem_skorlari=s.yontem_skorlari))
 
+    _satirlari_sirala(satirlar, bolum_alan_haritasi(db), varyans, meslek_sayisi, adlar)
+    return satirlar[:ilk_n]
+
+
+def _nihai(toplam_uyum: float, dal_ici_uyum: float | None) -> float:
+    """Tek bölüm için nihai uyum (nihai_uyum_haritasi ile aynı formül ve yuvarlama)."""
+    nihai = float(toplam_uyum)
+    if dal_ici_uyum is not None:
+        nihai = min(100.0, max(0.0, nihai + K5_SIRALAMA_ETKISI * (float(dal_ici_uyum) - 50.0)))
+    return round(nihai, 2)
+
+
+def _satirlari_sirala(satirlar: list[SiralamaSatiri], alan_of: dict[int, str], varyans: dict, meslek_sayisi: dict,
+                      adlar: dict, ilk_n: int | None = None) -> list[SiralamaSatiri]:
+    """Öğrencinin sonuç ekranındaki sıralama; siralama_getir ve toplu_siralama ortak kullanır.
+    ilk_n yoksa liste yerinde sıralanır; varsa yalnızca ilk ilk_n satır (aynı sırayla) döner (heapq, tam sıralama yok)."""
     # [2026-10-09] Alan kısıtı: liste öğrencinin en güçlü alanı + komşu alanlar (+ yakın ikinci alan) ile sınırlanır;
     # tamamen alakasız alanların bölümleri silinmez, listenin sonuna iner (bkz. alan_komsuluk.py).
     from app.core.alan_komsuluk import alan_sirasi
-    alan_of = bolum_alan_haritasi(db)
     grup = alan_sirasi(alan_of, {s.bolum_id: s.toplam_uyum for s in satirlar}) or {}
     for st in satirlar:
         st.alan = alan_of.get(st.bolum_id)
-    satirlar.sort(key=lambda s: (
-        grup.get(s.alan, 0),
-        -s.toplam_uyum,
-        varyans.get(s.bolum_id, 0.0),
-        -meslek_sayisi.get(s.bolum_id, 0),
-        adlar.get(s.bolum_id, ""),
-    ))
-    return satirlar[:ilk_n]
+
+    def anahtar(s):
+        return (grup.get(s.alan, 0), -s.toplam_uyum, varyans.get(s.bolum_id, 0.0), -meslek_sayisi.get(s.bolum_id, 0),
+                adlar.get(s.bolum_id, ""))
+    if ilk_n is not None:
+        import heapq
+        return heapq.nsmallest(ilk_n, satirlar, key=anahtar)   # sort ile aynı (kararlı) sıra
+    satirlar.sort(key=anahtar)
+    return satirlar
+
+
+# [2026-10-14] Tek kaynak: okul/rehber ekranları, tercih ve toplu istatistikler öğrencinin gördüğü NİHAİ uyumu ve
+# sıralamayı kullansın diye toplu (çok tur için tek seferde) sürümler. Ham toplam_uyum yalnızca admin/denetim içindir.
+def toplu_nihai_uyum(db: Session, tur_idler, bolum_idler=None) -> dict[int, dict[int, float]]:
+    """tur_id -> {bolum_id -> nihai uyum}; nihai_uyum_haritasi'nın çok turlu hâli (tek sorgu, tur sayısından bağımsız).
+    bolum_idler verilirse yalnızca o bölümler okunur (ör. hedef bölüm uyumu)."""
+    from sqlalchemy import Float, and_, cast, select
+
+    from app.models import OgrenciDalUyumSkoru as D
+    S = OgrenciBolumUyumSkoru
+    tur_idler = sorted({int(t) for t in tur_idler if t is not None})
+    if not tur_idler:
+        return {}
+    # numeric → float8 dönüşümü Python'daki float(Decimal) ile aynı değeri verir; Decimal nesnesi üretmemek ~3 kat hızlı.
+    q = (select(S.tur_id, S.bolum_id, cast(S.toplam_uyum, Float), cast(D.dal_ici_uyum, Float))
+         .outerjoin(D, and_(D.tur_id == S.tur_id, D.bolum_id == S.bolum_id))
+         .where(S.tur_id.in_(tur_idler)))
+    if bolum_idler is not None:
+        q = q.where(S.bolum_id.in_(sorted({int(b) for b in bolum_idler})))
+    sonuc: dict[int, dict[int, float]] = {}
+    for t, b, u, d in db.execute(q).all():
+        sonuc.setdefault(t, {})[b] = _nihai(u, d)
+    return sonuc
+
+
+def toplu_siralama(db: Session, tur_idler, ilk_n: int | None = None) -> dict[int, list[SiralamaSatiri]]:
+    """tur_id -> öğrencinin sonuç ekranındaki sıralama (siralama_getir ile aynı skor ve sıra; kendall_w /
+    yontem_skorlari doldurulmaz). Bölüm tarafı (alan haritası, tie-break verisi) bir kez okunur."""
+    harita = toplu_nihai_uyum(db, tur_idler)
+    if not harita:
+        return {}
+    v = _bolum_verisi(db) or {}
+    varyans, meslek_sayisi, adlar = v.get("agirlikli_varyans", {}), v.get("etkin_meslek_sayisi", {}), v.get("bolum_adlari", {})
+    alan_of = bolum_alan_haritasi(db)
+    sonuc: dict[int, list[SiralamaSatiri]] = {}
+    for t, skorlar in harita.items():
+        satirlar = [SiralamaSatiri(bolum_id=b, toplam_uyum=u) for b, u in skorlar.items()]
+        sonuc[t] = _satirlari_sirala(satirlar, alan_of, varyans, meslek_sayisi, adlar, ilk_n)
+    return sonuc
 
 
 # ============================================================================
@@ -690,7 +744,7 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
     for bid, d in sonuc.items():
         m = []
         if d["ortusen"]:
-            m.append("Örtüşen güçlü yönlerin: " + ", ".join(x["ozellik"].lower() for x in d["ortusen"]) + ".")
+            m.append("Örtüşen güçlü yönlerin: " + ", ".join(turkce_kucult(x["ozellik"]) for x in d["ortusen"]) + ".")
         if d["k5"]:
             m.append(f"Alan sorularında «{d['k5']['is_turu']}» işlerini "
                      + ("öne çıkardın." if d["k5"]["durum"] == "uyumlu" else "daha az seçtin."))

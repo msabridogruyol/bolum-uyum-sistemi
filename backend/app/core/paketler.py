@@ -34,12 +34,12 @@ MODULLER = {
     "akran": {"ad": "Şube ve akran analizi", "ikon": "🤝", "aciklama": "Benzer akranlar, şube dağılımı önerisi, aday öğrenci uyumu"},
     "egitim_koclari": {"ad": "Eğitim koçları", "ikon": "👩‍🏫", "aciklama": "Anlaşmalı eğitim koçlarıyla görüşme talebi"},
     "rehberlik": {"ad": "Rehberlik ve erken uyarı", "ikon": "🧭", "aciklama": "Görüşme kayıtları, randevular, takipler ve dikkat gerektiren öğrenciler listesi"},
-    "ogrenci_raporlari": {"ad": "Öğrenci raporları", "ikon": "📄", "aciklama": "Öğrenci kendi raporunu ve velisine göstereceği veli raporunu hesabından indirir (Raporlarım)"},
+    "ogrenci_raporlari": {"ad": "Öğrenci raporları", "ikon": "📄", "aciklama": "Öğrenci kendi raporunu ve velisine göstereceği veli raporunu hesabından indirir (Raporlarım); değerlendirme bitince sonuç e-postasına öğrenci raporu PDF olarak eklenir"},
     "anketler": {"ad": "Anket ve envanterler", "ikon": "📋", "aciklama": "Okulun kendi anketleri ve hazır tarama formları (sınav kaygısı, çalışma alışkanlıkları, okul iklimi, kariyer kararlılığı)"},
     "tercih": {"ad": "Tercih dönemi", "ikon": "🎓", "aciklama": "12. sınıf ve mezunlar için tercih listesi hazırlama (güvenli / dengeli / riskli), bölüm uyumu ve rehber onayı"},
     "mezun_takibi": {"ad": "Mezun takibi", "ikon": "🎉", "aciklama": "Mezunların yerleştiği bölümler, hedefle ve Filizyol önerileriyle uyum oranları"},
     "gelismis_raporlar": {"ad": "Gelişmiş raporlar", "ikon": "🗂️", "aciklama": "Şube toplu raporları ve sınıf öğretmeni raporu"},
-    "is_hayati": {"ad": "İş Hayatı", "ikon": "💼", "aciklama": "Bölüm ve mesleklerin iş hayatındaki gerçekleri: mezun istihdamı, iş bulma süresi, kazanç (TÜİK), kamu maaşları, ilk maaşla yaşam giderleri; CV ve mülakat atölyeleri"},
+    "is_hayati": {"ad": "İş Hayatı", "ikon": "💼", "aciklama": "Bölüm ve mesleklerin iş hayatındaki gerçekleri: mezun istihdamı, iş bulma süresi, kazanç (TÜİK), kamu maaşları, ilk maaşla yaşam giderleri; CV ve mülakat atölyeleri, her bölüm için mülakat simülasyonu ve düşünme atölyesi"},
 }
 TUMU = list(MODULLER)
 # [2026-10-10] modül → çalışması için gereken modül

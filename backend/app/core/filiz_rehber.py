@@ -30,6 +30,7 @@ SORU_KATEGORILERI = [
         "Bu hafta neye odaklanmalıyım?", "Hedef bölümümü değiştirebilir miyim?"]},
     {"ad": "Gelişim", "ikon": "🌱", "sorular": [
         "Okuyabileceğim bir kitap önerir misin?", "İzleyebileceğim bir belgesel önerir misin?",
+        "Mülakat Simülasyonu nedir?", "Düşünme Atölyesi nedir?",
         "Kütüphanemde neler var?", "Hangi kulübe katılmalıyım?", "Netlerim hedefime göre nasıl?"]},
     {"ad": "Motivasyon ve çalışma", "ikon": "💪", "sorular": [
         "YKS'ye kaç gün kaldı?", "Sınav kaygısıyla nasıl başa çıkarım?", "Nasıl daha verimli ders çalışırım?",
@@ -281,7 +282,7 @@ def k_kulup(b: Baglam, m: str) -> str:
 
 
 def k_koc(b: Baglam, m: str) -> str:
-    return ("Okulunun anlaşmalı koçlarını Eğitim Koçları sayfasında görebilirsin. İlgi alanına uygun olanlar üstte işaretli. "
+    return ("Filizyol'un anlaşmalı, okulun için onaylanmış eğitim koçlarını Eğitim Koçları sayfasında görebilirsin. İlgi alanına uygun olanlar üstte işaretli. "
             "Bir koç seç ve görüşme talebi bırak. Talebin Filizyol koordinatörüne gider. Görüşme planlanınca tarih ve saati Takvim'inde görürsün.")
 
 
@@ -308,7 +309,8 @@ def k_test(b: Baglam, m: str) -> str:
                 "Ara verirsen cevapların kaydedilir. Döndüğünde kaldığın yerden devam edersin.")
     d = b.degerlendirme()
     if d["durum"] == "tamamlandi":
-        return "Değerlendirmeni tamamladın. Sonuçların Profilim ve Bölümler sayfalarında. Bir süre sonra yeni tur açılınca kendindeki değişimi de görebileceksin."
+        return ("Değerlendirmeni tamamladın. Sonuçların Profilim ve Bölümler sayfalarında. Yaklaşık 3 ay sonra yeni tur açılınca kendindeki "
+                "değişimi de görebileceksin. Bazı cevapların tutarsız bulunduysa beklemen gerekmez: yalnızca o bölümü yeniden yanıtlarsın.")
     if d["durum"] == "yok":
         return "Değerlendirmeye henüz başlamadın. Doğru ya da yanlış cevap yok. İçinden geldiği gibi cevap ver; en doğru sonuç böyle çıkar. Ara verirsen cevapların kaydedilir."
     return f"Değerlendirmenin {d['biten']}/{d['toplam']} bölümünü bitirdin. Ara verdiğinde cevapların kaydedilir. Döndüğünde kaldığın sorudan devam edersin."
@@ -328,7 +330,33 @@ def k_sistem(b: Baglam, m: str) -> str:
     return ("Filizyol dört adımda ilerler: 1) Değerlendirme — değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların. "
             "2) Sonuçlar — Profilim'de güçlü yönlerin, Bölümler'de sana en uyumlu bölümler. 3) Hedef — bir bölüm seçersin. "
             "Koçluğum'da sana özel bir yol haritası çıkar. 4) Gelişim — haftalık görevler, kulüpler, kütüphanen ve takvimin. "
+            "Okulunda açıksa İş Hayatı sayfasında Mülakat Simülasyonu ve Düşünme Atölyesi de var. "
             "Ayrıntılar sol menüdeki Sistem Hakkında sayfasında.")
+
+
+# [2026-10-13] Yeni özellikler: mülakat simülasyonu, düşünme atölyesi, dil, sonuç e-postası
+def k_mulakat_sim(b: Baglam, m: str) -> str:
+    return ("Mülakat Simülasyonu'nda seçtiğin bölüm için kısa bir iş görüşmesi canlandırılır: mülakatçı o mesleğe özgü bir durum sorar, "
+            "iki aday farklı cevap verir, sen daha iyi cevabı seçersin. Sonra iki cevabın gerekçesini ve o meslekte işin nasıl yapıldığını görürsün. "
+            "Alanı bilmen gerekmez; adayların gerekçelerinden mantıkla seçebilirsin. İş Hayatı sayfasında (okulunda açıksa).")
+
+
+def k_dusunme(b: Baglam, m: str) -> str:
+    return ("Düşünme Atölyesi'nde her derste ve meslekte işine yarayacak araçları yaparak öğrenirsin: kök nedeni bulmak, birlikte değişmek ile "
+            "neden olmayı ayırmak, algoritmik düşünmek, ikiye bölerek aramak, tercih verisini doğru okumak ve kendini sınayarak öğrenmek. "
+            "Her biri 5–7 dakika; önce kendin denersin, sonra aracı öğrenirsin. \"Öğrenmeyi öğren\" deneyinin ikinci ölçümü en erken 12 saat sonra açılır. "
+            "İş Hayatı sayfasında (okulunda açıksa).")
+
+
+def k_dil(b: Baglam, m: str) -> str:
+    return ("Filizyol'u Türkçe dışında 12 dilde daha kullanabilirsin. Dilini giriş ekranından ya da Ayarlar'dan seçebilirsin; seçimin hesabına kaydedilir. "
+            "PDF raporlar, e-postalar ve KVKK metinlerinin asılları Türkçedir.")
+
+
+def k_eposta(b: Baglam, m: str) -> str:
+    return ("Değerlendirmenin son bölümünü bitirdiğinde hesabındaki e-posta adresine kısa bir sonuç e-postası gider; okulunda öğrenci raporları "
+            "açıksa raporun PDF olarak eklenir. Bazı cevapların tutarsız bulunduysa önce o bölümü yeniden yanıtlaman gerekir. E-posta gelmediyse "
+            "istenmeyen (spam) klasörüne bak ya da rehber öğretmenine söyle; o yeniden gönderebilir.")
 
 
 def k_adim(b: Baglam, m: str) -> str:
@@ -496,6 +524,10 @@ KONULAR = [
     (("netlerim", "netim ", "denemelerim", "deneme sonuc", "net takib", "kac net", "hedef net"), k_net),
     (("yks'ye kac", "yksye kac", "yks kac", "yks ne zaman", "yks'ye ne kadar", "sinava kac", "sinava ne kadar", "yks geri sayim"), k_yks),
     (("tesekkur", "sagol", "sag ol", "eyvallah", "cok iyi", "super"), k_tesekkur),
+    (("mulakat simul", "iki aday", "mulakat oyun"), k_mulakat_sim),
+    (("dusunme atolye", "kok neden", "korelasyon", "algoritmik", "ikiye bol", "ogrenmeyi ogren", "ikinci olcum"), k_dusunme),
+    (("dil degistir", "baska dil", "ingilizce kullan", "dilini degistir", "hangi dillerde", "dil sec"), k_dil),
+    (("sonuc e-posta", "sonuc eposta", "sonuc maili", "e-posta gelmedi", "eposta gelmedi", "mail gelmedi", "raporum mail", "raporum e-posta"), k_eposta),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
     (("sistem nasil", "nasil calisiyor", "filizyol nedir", "ne ise yarar"), k_sistem),
     (("motivasyon", "isteksiz", "bikkin", "yoruldum", "canim istemiyor", "hevesim"), k_motivasyon),

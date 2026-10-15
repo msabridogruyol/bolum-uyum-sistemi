@@ -23,6 +23,9 @@ from pptx.enum.shapes import MSO_SHAPE
 from pptx.enum.text import MSO_ANCHOR, PP_ALIGN
 from pptx.util import Inches, Pt
 
+from app.core.metin import turkce_buyut
+from app.core.rapor.sunum_pdf import PdfSlayt, pdf_olustur
+
 FONT = "Arial"
 MUREKKEP = "2B2620"
 GRI = "6B6257"
@@ -95,9 +98,17 @@ def _tarih(d) -> str:
     return f"{d.day} {AYLAR[d.month - 1]} {d.year}"
 
 
+_HIZA = {PP_ALIGN.LEFT: "sol", PP_ALIGN.CENTER: "orta", PP_ALIGN.RIGHT: "sag"}
+_DIKEY = {MSO_ANCHOR.TOP: "ust", MSO_ANCHOR.MIDDLE: "orta", MSO_ANCHOR.BOTTOM: "alt"}
+
+
 def _metin(sl, x, y, w, h, parcalar, boyut=16, renk=MUREKKEP, kalin=False, hiza=PP_ALIGN.LEFT, dikey=MSO_ANCHOR.TOP,
            satir_arasi=None, ad=None):
     """parcalar: str | [paragraf] — paragraf: str ya da [(metin, {boyut, renk, kalin, italik})]."""
+    if isinstance(sl, PdfSlayt):
+        sl.metin(x, y, w, h, parcalar, boyut=boyut, renk=renk, kalin=kalin, hiza=_HIZA.get(hiza, "sol"),
+                 dikey=_DIKEY.get(dikey, "ust"), satir_arasi=satir_arasi)
+        return None
     tb = sl.shapes.add_textbox(Inches(x), Inches(y), Inches(w), Inches(h))
     if ad:
         tb.name = ad
@@ -125,6 +136,8 @@ def _metin(sl, x, y, w, h, parcalar, boyut=16, renk=MUREKKEP, kalin=False, hiza=
 
 
 def _kart(sl, x, y, w, h, dolgu, ad=None, yuvarlak=0.06):
+    if isinstance(sl, PdfSlayt):
+        return sl.kart(x, y, w, h, dolgu, yuvarlak=yuvarlak)
     s = sl.shapes.add_shape(MSO_SHAPE.ROUNDED_RECTANGLE, Inches(x), Inches(y), Inches(w), Inches(h))
     s.adjustments[0] = yuvarlak
     s.fill.solid()
@@ -137,6 +150,8 @@ def _kart(sl, x, y, w, h, dolgu, ad=None, yuvarlak=0.06):
 
 
 def _daire(sl, x, y, cap, dolgu, yazi, yazi_renk=BEYAZ, boyut=16):
+    if isinstance(sl, PdfSlayt):
+        return sl.daire(x, y, cap, dolgu, yazi, yazi_renk=yazi_renk, boyut=boyut)
     s = sl.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(y), Inches(cap), Inches(cap))
     s.fill.solid()
     s.fill.fore_color.rgb = _rgb(dolgu)
@@ -155,31 +170,74 @@ def _daire(sl, x, y, cap, dolgu, yazi, yazi_renk=BEYAZ, boyut=16):
 
 
 def _arka(sl, renk):
+    if isinstance(sl, PdfSlayt):
+        return sl.arka(renk)
     bg = sl.background.fill
     bg.solid()
     bg.fore_color.rgb = _rgb(renk)
 
 
 def _not(sl, metin: str):
+    if isinstance(sl, PdfSlayt):
+        sl.not_metni = metin
+        return
     sl.notes_slide.notes_text_frame.text = metin
 
 
+def _oval(sl, x, y, cap, dolgu):
+    if isinstance(sl, PdfSlayt):
+        return sl.oval(x, y, cap, dolgu)
+    s = sl.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(y), Inches(cap), Inches(cap))
+    s.fill.solid()
+    s.fill.fore_color.rgb = _rgb(dolgu)
+    s.line.fill.background()
+    s.shadow.inherit = False
+    return s
+
+
+def _cizgi(sl, x1, y1, x2, y2, renk, kalinlik=2):
+    if isinstance(sl, PdfSlayt):
+        return sl.cizgi(x1, y1, x2, y2, renk, kalinlik)
+    cz = sl.shapes.add_connector(1, Inches(x1), Inches(y1), Inches(x2), Inches(y2))
+    cz.line.color.rgb = _rgb(renk)
+    cz.line.width = Pt(kalinlik)
+    return cz
+
+
+def _resim(sl, akis, x, y, h):
+    if isinstance(sl, PdfSlayt):
+        return sl.resim(akis, x, y, h)
+    return sl.shapes.add_picture(akis, Inches(x), Inches(y), height=Inches(h))
+
+
 class _Deste:
-    def __init__(self, v: dict):
+    def __init__(self, v: dict, pdf: bool = False):
         self.v = v
         self.r = _Renk(v["okul"].get("renk"))
-        self.p = Presentation()
-        self.p.slide_width, self.p.slide_height = Inches(W), Inches(H)
-        self.bos = self.p.slide_layouts[6]
+        self.pdf = pdf                                  # [2026-10-14] True → slaytlar PdfSlayt (aynı slayt kodu, PDF çizimi)
+        self.pdf_slaytlar: list[PdfSlayt] = []
+        if not pdf:
+            self.p = Presentation()
+            self.p.slide_width, self.p.slide_height = Inches(W), Inches(H)
+            self.bos = self.p.slide_layouts[6]
         self.no = 0
-        self.alt = f"{v['okul']['ad']} · {v['kapsam']} · Veli toplantısı"
+        self.ogretmen = v.get("kitle") == "ogretmen"   # [2026-10-14] öğretmen sürümü: küçük grup gizlemesi yok, uyarı her slaytta
+        self.alt = (f"{v['okul']['ad']} · {v['kapsam']} · Öğretmen sürümü · velilerle paylaşmayın" if self.ogretmen else
+                    f"{v['okul']['ad']} · {v['kapsam']} · Veli toplantısı")
 
     # ---------------------------------------------------------------- ortak iskelet
-    def slayt(self, ust: str, baslik: str, koyu=False):
-        sl = self.p.slides.add_slide(self.bos)
+    def yeni_slayt(self):
         self.no += 1
+        if self.pdf:
+            sl = PdfSlayt(W, H)
+            self.pdf_slaytlar.append(sl)
+            return sl
+        return self.p.slides.add_slide(self.bos)
+
+    def slayt(self, ust: str, baslik: str, koyu=False):
+        sl = self.yeni_slayt()
         _arka(sl, self.r.ana if koyu else BEYAZ)
-        _metin(sl, SOL, 0.42, GEN, 0.3, ust.upper(), 12, BEYAZ if koyu else self.r.ana, kalin=True, ad="Üst başlık")
+        _metin(sl, SOL, 0.42, GEN, 0.3, turkce_buyut(ust), 12, BEYAZ if koyu else self.r.ana, kalin=True, ad="Üst başlık")
         _metin(sl, SOL, 0.72, GEN, 0.8, baslik, 32, BEYAZ if koyu else MUREKKEP, kalin=True, ad="Başlık")
         renk = _karistir(self.r.ana, "FFFFFF", 0.7) if koyu else GRI
         _metin(sl, SOL, H - 0.5, GEN - 1, 0.25, self.alt, 10, renk, ad="Alt bilgi")
@@ -222,6 +280,9 @@ class _Deste:
             pass
 
     def cubuk(self, sl, x, y, w, h, kategoriler, seriler: list[tuple[str, list]], yatay=True, eksen_max=None, sonek=""):
+        if isinstance(sl, PdfSlayt):
+            return sl.cubuk(x, y, w, h, kategoriler, seriler, yatay=yatay, eksen_max=eksen_max, sonek=sonek,
+                            renkler=(self.r.ana, "B8AFA2"))
         cd = CategoryChartData()
         cd.categories = kategoriler
         for ad, degerler in seriler:
@@ -258,6 +319,8 @@ class _Deste:
         return ch
 
     def halka(self, sl, x, y, w, h, kategoriler, degerler, baslik=None):
+        if isinstance(sl, PdfSlayt):
+            return sl.halka(x, y, w, h, kategoriler, degerler, baslik=baslik, renkler=tuple(self.r.seri))
         cd = CategoryChartData()
         cd.categories = kategoriler
         cd.add_series("Öğrenci", degerler)
@@ -302,25 +365,24 @@ def _logo_akisi(logo: str | None):
 # ============================================================================= slaytlar
 def _kapak(d: _Deste):
     v = d.v
-    sl = d.p.slides.add_slide(d.bos)
-    d.no += 1
+    sl = d.yeni_slayt()
     _arka(sl, d.r.ana)
     # sağda iki büyük yumuşak daire (motif: yuvarlak biçimler)
     for (x, y, c, t) in ((8.9, -1.2, 5.6, 0.18), (10.6, 3.6, 4.0, 0.3)):
-        s = sl.shapes.add_shape(MSO_SHAPE.OVAL, Inches(x), Inches(y), Inches(c), Inches(c))
-        s.fill.solid()
-        s.fill.fore_color.rgb = _rgb(_karistir(d.r.ana, "FFFFFF", t))
-        s.line.fill.background()
-        s.shadow.inherit = False
+        _oval(sl, x, y, c, _karistir(d.r.ana, "FFFFFF", t))
     y = 1.3
     logo = _logo_akisi(v["okul"].get("logo"))
     if logo is not None:
         try:
-            sl.shapes.add_picture(logo, Inches(SOL), Inches(0.7), height=Inches(0.9))
+            _resim(sl, logo, SOL, 0.7, 0.9)
             y = 1.9
         except Exception:
             pass
-    _metin(sl, SOL, y + 0.3, 8, 0.4, "VELİ TOPLANTISI", 14, _karistir(d.r.ana, "FFFFFF", 0.75), kalin=True)
+    _metin(sl, SOL, y + 0.3, 8, 0.4, "VELİ TOPLANTISI · ÖĞRETMEN SÜRÜMÜ" if d.ogretmen else "VELİ TOPLANTISI", 14,
+           _karistir(d.r.ana, "FFFFFF", 0.75), kalin=True)
+    if d.ogretmen:
+        _metin(sl, SOL, H - 1.25, 8.2, 0.4, "Bu sürümde 5'ten az öğrenciye dayanan sayılar da yer alır. Velilere gösterilecek sunum "
+               "için veli sürümünü kullanın.", 12, BEYAZ, kalin=True)
     _metin(sl, SOL, y + 0.8, 8.2, 1.9, v["okul"]["ad"], 44, BEYAZ, kalin=True, dikey=MSO_ANCHOR.TOP)
     _metin(sl, SOL, y + 2.75, 8, 0.9, [
         [("Bölüm ve meslek yönelimi çalışmalarımız", {"boyut": 22, "kalin": True})],
@@ -329,7 +391,11 @@ def _kapak(d: _Deste):
     _metin(sl, SOL, H - 0.75, 8, 0.3, "Filizyol · Bölüm Uyum ve Kariyer Rehberliği", 11, _karistir(d.r.ana, "FFFFFF", 0.7))
     _not(sl, f"Hoş geldiniz. Bu sunumda {v['kapsam'].lower() if v['kapsam_tur'] == 'okul' else v['kapsam']} öğrencilerimizin "
              "bölüm ve meslek yönelimi çalışmalarını toplu olarak paylaşacağız. Sunumda hiçbir öğrencinin adı ya da kişisel sonucu "
-             "yer almıyor; çocuğunuzun kendi raporunu öğrencinin hesabından ya da rehberlik servisinden isteyebilirsiniz.")
+             "yer almıyor; çocuğunuzun kendi raporunu öğrencinin hesabından ya da rehberlik servisinden isteyebilirsiniz."
+             if "ogrenci_raporlari" in (d.v.get("moduller") or []) else
+             f"Hoş geldiniz. Bu sunumda {v['kapsam'].lower() if v['kapsam_tur'] == 'okul' else v['kapsam']} öğrencilerimizin "
+             "bölüm ve meslek yönelimi çalışmalarını toplu olarak paylaşacağız. Sunumda hiçbir öğrencinin adı ya da kişisel sonucu "
+             "yer almıyor; çocuğunuzun kendi raporunu rehberlik servisinden isteyebilirsiniz.")
 
 
 def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
@@ -360,8 +426,9 @@ def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
           "Son kararı her zaman öğrenci, aile ve rehber öğretmen birlikte verir.", {})],
     ], 15, MUREKKEP, dikey=MSO_ANCHOR.MIDDLE)
     if not d.v["toplu"]:
-        _metin(sl, SOL, 6.72, GEN, 0.25, f"Bu kapsamda {d.v['esik']}'ten az öğrenci olduğu için toplu sonuçlar paylaşılmamaktadır "
-                                          "(kişisel verilerin korunması).", 11, GRI)
+        _metin(sl, SOL, 6.72, GEN, 0.25, "Bu kapsamda henüz öğrenci yok." if d.ogretmen else
+               f"Bu kapsamda {d.v['esik']}'ten az öğrenci olduğu için toplu sonuçlar paylaşılmamaktadır "
+               "(kişisel verilerin korunması).", 11, GRI)
     _not(sl, "Sistemi kısaca tanıtın: öğrenci dört katmanda sorular yanıtlıyor; sonra öne çıkan alanlarda derinleşme soruları geliyor. "
              "Özellikle vurgulayın: bu bir sınav değil, doğru ya da yanlış cevap yok. Sonuçlar bir yön gösterir, kesin karar vermez. "
              "Psikolojik bir tanı aracı da değildir.")
@@ -389,7 +456,7 @@ def _katilim(d: _Deste):
             _metin(sl, 8.65, 6.62, 4.1, 0.25, f"{d.v['esik']}'ten az öğrencili gruplar gösterilmez.", 10, GRI)
     _not(sl, f"Bu kapsamda {k['toplam']} öğrencimiz var; tamamlama oranı {_yuzde(k['tamamlama_orani'])}. Değerlendirmeyi henüz "
              "bitirmeyen öğrencilerimizi evde nazikçe teşvik edebilirsiniz; acele etmeden, dinlenmiş bir zamanda tamamlamaları en "
-             "doğru sonucu verir. Grafikte 5'ten az öğrenciye dayanan gruplar gösterilmez.")
+             "doğru sonucu verir." + ("" if d.ogretmen else " Grafikte 5'ten az öğrenciye dayanan gruplar gösterilmez."))
 
 
 def _ilerleme(d: _Deste, sl, x, y, w, oran, etiket):
@@ -436,7 +503,8 @@ def _alanlar(d: _Deste):
         d.cubuk(sl, 6.6, 2.05, 6.1, 4.55, [x["ad"] for x in b], [("Öğrencilerin %'si", [x["oran"] for x in b])], eksen_max=100, sonek="%")
     if not a and not b:
         _metin(sl, SOL, 2.2, GEN, 1, "Bu kapsamda gösterilecek kadar toplu veri yok.", 16, GRI)
-    _metin(sl, SOL, 6.7, GEN, 0.25, f"Toplu değerler; {d.v['esik']}'ten az öğrencinin seçtiği alan ve bölümler “Diğer” altında birleştirilir ya da gösterilmez.", 10, GRI)
+    if not d.ogretmen:
+        _metin(sl, SOL, 6.7, GEN, 0.25, f"Toplu değerler; {d.v['esik']}'ten az öğrencinin seçtiği alan ve bölümler “Diğer” altında birleştirilir ya da gösterilmez.", 10, GRI)
     _not(sl, "Solda, öğrencilerin en uyumlu çıkan bölümlerinin hangi alanlarda toplandığını görüyorsunuz. Sağda ise öğrencilerin "
              "ilk 10 önerisinde en sık yer alan bölümler var. Bu liste bir yönlendirme değil, grubun ilgi haritasıdır. "
              "Her öğrencinin önerileri kendine özgüdür.")
@@ -468,7 +536,8 @@ def _hedef(d: _Deste):
 
 def _etkinlik(d: _Deste):
     e = d.v.get("etkinlik") or {}
-    sl = d.slayt("Okulda neler yapıyoruz", "Koçluk ve İş Hayatı çalışmaları")
+    sl = d.slayt("Okulda neler yapıyoruz", "Koçluk ve İş Hayatı çalışmaları" if "kocluk" in e and "is_hayati" in e else
+                 "Koçluk çalışmaları" if "kocluk" in e else "İş Hayatı çalışmaları")
     kartlar = []
     if "kocluk" in e:
         k = e["kocluk"] or {}
@@ -489,7 +558,8 @@ def _etkinlik(d: _Deste):
             "Mezunların istihdam oranı ve iş bulma süresi (resmî kaynaklar)",
             "Mesleğe giden yol: eğitim, staj, sınav ve belge adımları",
             "Kazanç ve yaşam giderleri hakkında gerçekçi bilgi",
-            "CV ve mülakat atölyeleri",
+            "CV ve mülakat atölyeleri; her bölüm için mülakat simülasyonu",
+            "Düşünme atölyesi: kök neden, veri okuma, öğrenmeyi öğrenme",
         ], []))
     n = len(kartlar)
     kw = (GEN - 0.3 * (n - 1)) / n
@@ -504,11 +574,18 @@ def _etkinlik(d: _Deste):
         if sayilar:
             _metin(sl, x + 0.3, 5.25, kw - 0.6, 1.2, [[(s, {"kalin": True, "renk": d.r.koyu})] for s in sayilar], 14, satir_arasi=4)
     if kh < 4.85:
-        _metin(sl, SOL, 5.75, GEN, 0.6, "Öğrencilerimiz bu çalışmalara Filizyol hesaplarından istedikleri zaman ulaşabilir. "
+        _metin(sl, SOL, 5.75, GEN, 0.6, "Öğrencilerimiz bu çalışmalara Filizyol hesaplarından istedikleri zaman ulaşabilir."
+               if d.ogretmen else "Öğrencilerimiz bu çalışmalara Filizyol hesaplarından istedikleri zaman ulaşabilir. "
                f"Katılım sayıları {d.v['esik']}'ten az öğrenciye dayandığında paylaşılmaz.", 14, GRI)
-    _not(sl, "Okulumuzda Filizyol yalnızca bir test değil; sonrasında koçluk adımları ve iş hayatı bilgileriyle devam ediyor. "
-             "Çocuğunuza bu hafta hangi görevi yaptığını, hangi mesleği simülasyonda denediğini sorabilirsiniz. "
-             "Sayılar yalnızca toplu olarak verilir; 5'ten az öğrenciye dayanan sayılar gösterilmez.")
+    # [2026-10-14] Not metni okulun açık modüllerine göre (kapalı modülden söz edilmez; çeviri için tam cümleler)
+    devam = {(True, True): "Okulumuzda Filizyol yalnızca bir test değil; sonrasında koçluk adımları ve iş hayatı bilgileriyle devam ediyor. "
+                           "Çocuğunuza bu hafta hangi görevi yaptığını, hangi mesleği simülasyonda denediğini sorabilirsiniz. ",
+             (True, False): "Okulumuzda Filizyol yalnızca bir test değil; sonrasında koçluk adımlarıyla devam ediyor. "
+                            "Çocuğunuza bu hafta hangi görevi yaptığını sorabilirsiniz. ",
+             (False, True): "Okulumuzda Filizyol yalnızca bir test değil; sonrasında iş hayatı bilgileriyle devam ediyor. "
+                            "Çocuğunuza hangi mesleği simülasyonda denediğini sorabilirsiniz. "}.get(("kocluk" in e, "is_hayati" in e), "")
+    _not(sl, devam + ("Bu öğretmen sürümünde 5'ten az öğrenciye dayanan sayılar da yer alır; velilere veli sürümünü gösterin."
+                      if d.ogretmen else "Sayılar yalnızca toplu olarak verilir; 5'ten az öğrenciye dayanan sayılar gösterilmez."))
 
 
 DESTEK = [
@@ -553,9 +630,7 @@ def _takvim(d: _Deste):
     n = len(ogeler)
     # yatay zaman çizelgesi: daireler + altlarında metin
     y = 3.0
-    cizgi = sl.shapes.add_connector(1, Inches(SOL + 0.35), Inches(y + 0.3), Inches(W - SOL - 0.35), Inches(y + 0.3))
-    cizgi.line.color.rgb = _rgb(d.r.orta)
-    cizgi.line.width = Pt(2)
+    _cizgi(sl, SOL + 0.35, y + 0.3, W - SOL - 0.35, y + 0.3, d.r.orta, 2)
     aralik = GEN / n
     for i, (ust, alt) in enumerate(ogeler):
         x = SOL + i * aralik
@@ -596,14 +671,15 @@ def _iletisim(d: _Deste):
         _metin(sl, SOL, max(y, 4.6), 7.5, 0.9, [[("Okul", {"kalin": True, "renk": soluk})], [(" · ".join(genel), {})]], 15, yazi, satir_arasi=2)
     _metin(sl, 8.6, 2.2, 4.1, 2.5, [[("Teşekkür ederiz", {"boyut": 34, "kalin": True})],
                                     [("Çocuğunuzun raporu, öğrenci hesabındaki Raporlarım bölümünden ya da rehberlik servisinden "
-                                      "alınabilir.", {"boyut": 15, "renk": soluk})]], 15, yazi, satir_arasi=10)
+                                      "alınabilir." if "ogrenci_raporlari" in (d.v.get("moduller") or []) else
+                                      "Çocuğunuzun raporunu rehberlik servisinden isteyebilirsiniz.", {"boyut": 15, "renk": soluk})]], 15, yazi, satir_arasi=10)
     _not(sl, "Rehber öğretmenimizin iletişim bilgilerini paylaşın ve soruları alın. Bireysel sonuçlarla ilgili soruları toplantıda "
              "değil, birebir görüşmede konuşmayı önerin; böylece her öğrencinin gizliliği korunur.")
 
 
-def veli_sunumu_pptx(v: dict) -> bytes:
+def _deste_kur(v: dict, pdf: bool = False) -> _Deste:
     from app.core.katman_adlari import KATMAN_ADI
-    d = _Deste(v)
+    d = _Deste(v, pdf=pdf)
     _kapak(d)
     _nedir(d, [(k, KATMAN_ADI[k]) for k in ("K1", "K2", "K3", "K4")])
     if v.get("toplu"):
@@ -620,8 +696,47 @@ def veli_sunumu_pptx(v: dict) -> bytes:
     _destek(d)
     _takvim(d)
     _iletisim(d)
-    d.p.core_properties.title = f"Veli toplantısı — {v['okul']['ad']} ({v['kapsam']})"
+    return d
+
+
+def _baslik(v: dict) -> str:
+    return (f"Veli toplantısı (öğretmen sürümü) — {v['okul']['ad']} ({v['kapsam']})" if v.get("kitle") == "ogretmen" else
+            f"Veli toplantısı — {v['okul']['ad']} ({v['kapsam']})")
+
+
+def veli_sunumu_pdf(v: dict, notlu: bool = False) -> bytes:
+    """[2026-10-14] Aynı slaytların PDF'i: notlu=False → 16:9 slayt sayfaları; notlu=True → A4 notlar sayfası
+    (üstte slayt, altta konuşma notu). Yazı tipi PDF'e gömülür."""
+    d = _deste_kur(v, pdf=True)
+    return pdf_olustur(d.pdf_slaytlar, _baslik(v), notlu=notlu)
+
+
+def veli_sunumu_pptx(v: dict) -> bytes:
+    d = _deste_kur(v)
+    d.p.core_properties.title = _baslik(v)[:255]   # [2026-10-14] PowerPoint başlık alanı en çok 255 karakter (uzun okul adı)
     d.p.core_properties.author = "Filizyol"
     out = io.BytesIO()
     d.p.save(out)
-    return out.getvalue()
+    return _yazi_tipi_ve_dil_duzelt(out.getvalue())
+
+
+def _yazi_tipi_ve_dil_duzelt(pptx: bytes) -> bytes:
+    """[2026-10-14] İndirilen dosya her bilgisayarda aynı görünsün:
+    * python-pptx şablonunun teması Calibri'dir (konuşma notları ve tema yazı tipini kullanan her şey); tüm temalar Arial'a
+      çevrilir — slaytlardaki metinler zaten Arial. Arial Windows ve macOS'ta hazır gelir; LibreOffice / Google Slaytlar'da
+      aynı ölçülerde bir karşılığı (Liberation Sans / Arial) vardır, satır taşması olmaz.
+    * Metinler "en-US" etiketliydi: PowerPoint Türkçe metnin altını yazım hatası diye kırmızıyla çizer, büyük harf ve
+      heceleme İngilizce kurala göre yapılır. Tüm etiketler tr-TR yapılır."""
+    import re
+    import zipfile
+    giris, cikis = zipfile.ZipFile(io.BytesIO(pptx)), io.BytesIO()
+    with zipfile.ZipFile(cikis, "w", zipfile.ZIP_DEFLATED) as z:
+        for bilgi in giris.infolist():
+            veri = giris.read(bilgi.filename)
+            if bilgi.filename.endswith(".xml"):
+                metin = veri.decode("utf-8").replace('lang="en-US"', 'lang="tr-TR"')
+                if bilgi.filename.startswith("ppt/theme/"):
+                    metin = re.sub(r'(<a:latin typeface=")[^"]*(")', r"\1Arial\2", metin)
+                veri = metin.encode("utf-8")
+            z.writestr(bilgi, veri)
+    return cikis.getvalue()

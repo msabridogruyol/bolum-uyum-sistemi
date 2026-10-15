@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState, useCallback } from 'react'
+import { t as cevirT } from '../yardimci/dil'   // [2026-10-12] çoklu dil
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { KATMAN_BILGI } from '../yardimci/katmanAdlari'
 import { seviyeEtiketi, seviyeRengi } from '../yardimci/seviye'
+import YenidenDegerlendirmePenceresi from '../components/YenidenDegerlendirmePenceresi'
 
 const renkSec = seviyeRengi   // [2026-10-10] tek kaynak bantlar (yardimci/seviye.js)
 
@@ -110,7 +112,8 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
   const tipler = ['kutup', 'likert', 'sjt', 'kontrol'].map((t) => ({ t, n: sorular.filter((s) => s.soru_tipi === t).length })).filter((x) => x.n > 0)
   const say = (t) => sorular.filter((s) => s.soru_tipi === t).length
   const tahminiDakika = Math.max(1, Math.ceil((say('likert') * 15 + say('kutup') * 20 + say('sjt') * 30 + say('kontrol') * 10) / 60))
-  const onayGecerli = yaziliOnay.trim() === ONAY_METNI && kurallarOk
+  // [2026-10-12] Başka dilde onay kelimesi çevrilmiş görünür: hem Türkçesi hem çevirisi kabul edilir
+  const onayGecerli = [ONAY_METNI, cevirT(ONAY_METNI)].some((m) => yaziliOnay.trim().toLocaleUpperCase() === m.toLocaleUpperCase()) && kurallarOk
 
   return (
     <div className="qwrap sn-tanitim">
@@ -136,8 +139,8 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
       <div className="sn-bolum sn-kurallar">
         <div className="sn-bolum-bas">🛡️ Başlamadan önce kuralları oku</div>
         <ul>
-          <li>Değerlendirme <b>tam ekranda</b> yapılır. Sistem şunları kaydeder: tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşuna</b> basmak ve <b>kopyalama</b> denemeleri.</li>
-          <li>Bunların her biri <b>güven puanını</b> düşürür. Bu puanı ekranın üstünde anlık görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b>. O zaman rehber öğretmenin değerlendirmeyi yeniden yapmanı isteyebilir.</li>
+          <li>Değerlendirme <b>tam ekranda</b> yapılır. Sistem şunları kaydeder: tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşuna</b> basmak ve <b>kopyalama denemeleri</b>.</li>
+          <li>Bunların her biri <b>güven puanını</b> düşürür. Bu puanı ekranın üstünde anlık görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b>. O zaman yalnızca güven sorunu çıkan bölümü yeniden çözmen gerekir; diğer bölümlerdeki cevapların korunur.</li>
           <li>Ekran kaydı almak ya da başkasından yardım almak da kurallara aykırı. Soruları kendin cevapla. Sonuçların ancak <b>yalnızca seni</b> anlatırsa işine yarar.</li>
           <li>Ara vermen gerekirse çıkabilirsin. Cevapların kayıtlı kalır. Döndüğünde <b>kaldığın sorudan</b> devam edersin.</li>
         </ul>
@@ -190,6 +193,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   const [gonderiliyor, setGonderiliyor] = useState(false)
   const [hata, setHata] = useState(null)
   const [tamamlandi, setTamamlandi] = useState(null)
+  const [ydDurum, setYdDurum] = useState(null)
   const [tamEkranDisinda, setTamEkranDisinda] = useState(false)
   const [basladiMi, setBasladiMi] = useState(false)  // tanıtım/onay ekranı geçildi mi
   const [guven, setGuven] = useState(null)           // [2026-10-10] canlı güven puanı {guven_puani, esik, ihlaller}
@@ -234,7 +238,11 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         setTurId(veri.tur_id ?? null)
         if (dalMi) setDalAdi(veri.dal_adi || null)
       })
-      .catch((e) => setHata(e.detail || (dalMi ? 'Alan soruları açılamadı.' : 'Katman açılamadı.')))
+      .catch((e) => {
+        setHata(e.detail || (dalMi ? 'Alan soruları açılamadı.' : 'Katman açılamadı.'))
+        // [2026-10-12] Bekleme süresi / güven kuralına takıldıysa durumu açılır pencerede göster
+        if (!dalMi) api.degerlendirmeDurumu().then((d) => { if (['guven_sorunu', 'bekleme'].includes(d?.durum)) setYdDurum(d) }).catch(() => {})
+      })
   }, [kod, dalMi])
 
   // ------------------------------------------------------------------
@@ -497,6 +505,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
       <SinavBasligi />
 
       <div className="sn-sayfa">
+        {ydDurum && <YenidenDegerlendirmePenceresi durum={ydDurum} onKapat={() => navigate('/katmanlar')} />}
         {hata ? (
           <div className="bos-durum">{hata}</div>
         ) : !sorular ? (
@@ -546,6 +555,10 @@ export default function SoruSayfasi({ mod = 'katman' }) {
               </details>
             )}
 
+            {/* [2026-10-12] Değerlendirme bittiyse sonuç raporu e-postayla gider (yalnızca gerçekten gönderilecekse yazılır) */}
+            {tamamlandi.sonuc_epostasi && (
+              <div className="yp-uyari-yesil" style={{ marginBottom: 12 }}>📧 Sonuç raporun birkaç dakika içinde e-posta adresine gönderilecek.</div>
+            )}
             {/* [2026-10-03] K5 zorunlu: K4 bitince öğrenci önce açılan dallara (Katmanlar sayfasında listelenir) yönlendirilir */}
             {dalMi ? (
               <button className="btn full" onClick={() => navigate(k5Bekliyor ? '/katmanlar' : '/bolumler')}>

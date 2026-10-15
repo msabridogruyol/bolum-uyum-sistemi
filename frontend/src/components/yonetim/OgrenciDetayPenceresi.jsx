@@ -1,5 +1,8 @@
 // [2026-10-09] Öğrenci detayı: hesap, ilerleme, sonuç, istatistik, kayıtlar + şifre sıfırla / düzenle / sil
 import { useEffect, useState } from 'react'
+import { t as cevirT } from '../../yardimci/dil'
+import { YonetimOgrenciYorumu } from '../RaporYorumu'
+import { katmanAdi } from '../../yardimci/katmanAdlari'
 import { AkranListesi } from './AkranPaneli'
 import { OgrenciIlgi } from './KulupYonetimi'
 import OgrenciKutuphanesi from './OgrenciKutuphanesi'
@@ -130,6 +133,82 @@ function NetOzeti({ n }) {
   )
 }
 
+// [2026-10-12] Yeniden değerlendirme yönetimi (okul yetkilisi / süper admin):
+// tek bir bölümü tekrarlatma (diğer bölümler ve sonuçlar kalır) veya bekleme süresi olmadan yeni değerlendirme açma.
+const YD_DURUM = {
+  yok: 'Henüz değerlendirmeye başlamadı.',
+  devam: 'Değerlendirme devam ediyor.',
+  guven_sorunu: 'Güven puanı düşük: öğrenci yalnızca sorunlu bölümü yeniden çözebilir.',
+  acik: 'Yeni değerlendirmeye başlayabilir.',
+}
+function DegerlendirmeYonetimi({ ogrenciId, bekle, islem, yenile }) {
+  const [v, setV] = useState(null)
+  const [onay, setOnay] = useState(null)   // { tur: 'katman', kod } | { tur: 'yeni' }
+  const yukle = () => api.ogrenciDegerlendirmeDurumu(ogrenciId).then(setV).catch(() => setV(null))
+  useEffect(() => { yukle() }, [ogrenciId]) // eslint-disable-line react-hooks/exhaustive-deps
+  if (!v || v.durum === 'yok') return null
+  const durumMetni = v.durum === 'bekleme'
+    ? `Bekleme süresinde: yeniden değerlendirme ${new Date(v.yeniden_acilis).toLocaleDateString('tr-TR')} tarihinde açılır (${v.kalan_gun} gün kaldı).`
+    : (v.durum === 'acik' && v.yonetim_izni ? 'Yeni değerlendirme izni verildi; öğrenci başlayabilir.' : YD_DURUM[v.durum])
+  const uygula = () => islem(async () => {
+    if (onay.tur === 'katman') await api.katmanTekrarlat(ogrenciId, onay.kod)
+    else await api.yenidenDegerlendirmeAc([ogrenciId])
+    setOnay(null); yukle(); yenile()
+  })
+  return (
+    <div className="yp-kutu" style={{ marginBottom: 12 }}>
+      <div className="yp-kb">🔁 Yeniden değerlendirme</div>
+      <div className={v.durum === 'guven_sorunu' ? 'yp-uyari' : 'yp-ince'} style={{ marginBottom: 8 }}>{durumMetni}</div>
+      {v.katmanlar?.length > 0 && (
+        <table className="yp-tablo ydk-tablo">
+          <thead><tr><th>Katman</th><th>Durum</th><th>Güven</th><th /></tr></thead>
+          <tbody>
+            {v.katmanlar.map((k) => (
+              <tr key={k.kod}>
+                <td>{katmanAdi(k.kod, k.ad)}</td>
+                <td>{k.tamamlandi ? 'Tamamlandı' : 'Çözülmedi'}</td>
+                <td>{k.guven != null ? <span className={`yp-durum ${k.sorunlu ? 'yp-d-amber' : 'yp-d-yesil'}`}>{`%${Math.round(k.guven)}`}{k.sorunlu ? ' · düşük' : ''}</span> : '—'}</td>
+                <td style={{ textAlign: 'right' }}>
+                  {k.tamamlandi && <button className="yp-mini" disabled={bekle} onClick={() => setOnay({ tur: 'katman', kod: k.kod, ad: k.ad })}>Bu bölümü tekrarlat</button>}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      )}
+      {v.sonuc_epostasi && v.durum !== 'devam' && (
+        <div className="yd-eposta">
+          <span className="yp-ince">
+            {v.sonuc_epostasi.durum === 'gonderildi' ? `📧 Sonuç e-postası ${tarih(v.sonuc_epostasi.zaman)} tarihinde gönderildi${v.sonuc_epostasi.pdf_ekli ? ' (PDF rapor ekli)' : ''}.`
+              : v.sonuc_epostasi.durum === 'hata' ? '⚠️ Sonuç e-postası gönderilemedi.'
+              : v.sonuc_epostasi.durum === 'gonderiliyor' ? '📧 Sonuç e-postası gönderiliyor…'
+              : '📧 Sonuç e-postası henüz gönderilmedi.'}
+          </span>
+          {v.sonuc_epostasi.gonderilebilir && (
+            <button className="yp-mini" disabled={bekle} onClick={() => islem(async () => { await api.sonucEpostasiGonder(ogrenciId); yukle() })}>
+              {v.sonuc_epostasi.durum === 'gonderildi' ? 'Yeniden gönder' : 'Şimdi gönder'}
+            </button>
+          )}
+        </div>
+      )}
+      {['bekleme', 'guven_sorunu'].includes(v.durum) && (
+        <button className="btn sec" style={{ marginTop: 10 }} disabled={bekle} onClick={() => setOnay({ tur: 'yeni' })}>Yeni değerlendirme aç (önceki sonuçlar kalır)</button>
+      )}
+      {onay && (
+        <div className="yp-uyari" style={{ marginTop: 10 }}>
+          {onay.tur === 'katman'
+            ? `“${katmanAdi(onay.kod, onay.ad)}” bölümündeki cevaplar silinir ve öğrenci bu bölümü yeniden çözer. Diğer bölümler korunur; bölüm bitince sonuçlar yeniden hesaplanır.`
+            : 'Öğrenci bekleme süresini beklemeden yeni bir değerlendirmeye başlayabilir. Önceki değerlendirme silinmez; gelişim karşılaştırması için saklanır.'}
+          <div style={{ display: 'flex', gap: 8, marginTop: 8 }}>
+            <button className="btn" disabled={bekle} onClick={uygula}>Onayla</button>
+            <button className="btn sec" onClick={() => setOnay(null)}>Vazgeç</button>
+          </div>
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, onKapat, onDegisti, baslangicSekme = 'genel' }) {
   const [d, setD] = useState(null)
   const [hata, setHata] = useState(null)
@@ -235,7 +314,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           </div>
           <div className="yp-bilgi-grid">
             <div><span>Hesap açılışı</span><b>{tarih(h.olusturulma_zamani)}</b></div>
-            <div><span>Son giriş</span><b>{h.son_giris_zamani ? `${tarih(h.son_giris_zamani)} (${onceSure(h.son_giris_zamani)})` : 'Hiç giriş yapmadı'}</b></div>
+            <div><span>Son giriş</span><b>{h.son_giris_zamani ? `${tarih(h.son_giris_zamani)} (${cevirT(onceSure(h.son_giris_zamani))})` : 'Hiç giriş yapmadı'}</b></div>
             {d.aktiflik && <AktiflikSeridi a={d.aktiflik} />}
             <div><span>Şifre</span><b><SifreHucresi gecici={h.gecici_sifre} degistirmeli={h.sifre_degistirmeli} /></b></div>
             <div><span>Öğrenci no</span><b>{h.ogrenci_no || '—'}</b></div>
@@ -266,6 +345,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
         </>
       )}
 
+      {sekme === 'ilerleme' && <DegerlendirmeYonetimi ogrenciId={ogrenciId} bekle={bekle} islem={islem} yenile={() => { yukle(); onDegisti?.() }} />}
       {sekme === 'ilerleme' && (
         d.turlar.length === 0 ? <div className="bos-durum">Öğrenci teste henüz başlamadı.</div> : d.turlar.map((t) => (
           <div key={t.tur_no} className="yp-kutu" style={{ marginBottom: 12 }}>
@@ -292,6 +372,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
 
       {sekme === 'sonuc' && (
         <>
+          <YonetimOgrenciYorumu ogrenciId={ogrenciId} />
           {d.sonuc_notu && <div className="yp-uyari" style={{ background: 'var(--sur2)', borderColor: 'var(--bor)' }}>{d.sonuc_notu}</div>}
           {d.oneriler.length > 0 && (
             <table className="yp-tablo">
@@ -342,7 +423,7 @@ function AktiflikSeridi({ a }) {
       <b>{a.aktif_gun} gün aktif{a.seri > 1 ? ` · ${a.seri} gündür üst üste` : ''}{a.son_aktif ? ` · son aktif ${gunAdi(a.son_aktif)}` : ' · sistemi hiç açmadı'}</b>
       <div className="ak-serit" role="img" aria-label={`Son ${a.gun} günde ${a.aktif_gun} gün aktif`}>
         {a.takvim.map((g) => (
-          <span key={g.gun} className={g.aktif ? 'aktif' : ''} title={`${gunAdi(g.gun)}: ${g.aktif ? 'sistemi açtı' : 'açmadı'}`}>{g.aktif ? '✓' : ''}</span>
+          <span key={g.gun} className={g.aktif ? 'aktif' : ''} title={`${gunAdi(g.gun)}: ${cevirT(g.aktif ? 'sistemi açtı' : 'açmadı')}`}>{g.aktif ? '✓' : ''}</span>
         ))}
       </div>
     </div>

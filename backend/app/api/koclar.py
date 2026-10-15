@@ -84,7 +84,8 @@ def gorunen_ad(k: dict) -> str:
         return "Eğitim Koçu"
     if len(parca) == 1:
         return parca[0]
-    return " ".join(parca[:-1]) + f" {parca[-1][0].upper()}."
+    from app.core.metin import turkce_buyut
+    return " ".join(parca[:-1]) + f" {turkce_buyut(parca[-1][0])}."
 
 
 def _koc_out(k: dict, alanlar: dict, ozel: bool = False) -> dict:

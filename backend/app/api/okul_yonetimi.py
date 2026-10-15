@@ -75,6 +75,11 @@ OLAY_ETIKET = {
     "katman_bitti": "Test bölümünü tamamladı",
     "hedef_degisti": "Hedef bölümü değiştirildi (yönetim)",
     "hedef_hakki": "Hedef değiştirme hakkı verildi",
+    # [2026-10-12] Eksik olay adları
+    "sinif_atladi": "Sınıf atladı", "sinif_atlatma_geri_alindi": "Sınıf atlatma geri alındı",
+    "degerlendirme_sifirlandi": "Değerlendirmesi sıfırlandı", "yeniden_degerlendirme_izni": "Yeniden değerlendirme izni verildi",
+    "katman_tekrar": "Değerlendirme bölümü tekrar açıldı", "sonuc_epostasi": "Sonuç e-postası",
+    "rapor_indir": "Rapor indirdi", "ozgecmis_indir": "Özgeçmişini indirdi", "cv_paylasim": "CV paylaşım bağlantısı",
 }
 
 
@@ -346,8 +351,14 @@ def _xlsx_b64(baslik: str, kolonlar: list[str], satirlar: list[list], not_metni:
 
 
 # ----------------------------------------------------------------------------- ilerleme / durum
-def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | None = None) -> dict:
-    """{ogrenci_id: {tur_id, tur_durumu, biten, toplam, baslayan, ilk_bolum, ilk_uyum, hedef, tamamlanma}}"""
+def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | None = None, oneri=True) -> dict:
+    """{ogrenci_id: {tur_id, tur_durumu, biten, toplam, baslayan, ilk_bolum, oneri_ilk10, hedef, tamamlanma}}
+
+    ilk_bolum / oneri_ilk10 (bolum_id listesi): tamamlanan son turda öğrencinin sonuç ekranında gördüğü sıralama
+    (skor_motoru.toplu_siralama — K5 etkili nihai uyum + alan sırası); ham toplam_uyum sırası DEĞİL.
+    Öneri sıralaması öğrenci başına ~1 ms sürer (1000 öğrencide ~1 sn); kullanmayan çağrılar oneri=False geçebilir
+    (o zaman ilk_bolum None, oneri_ilk10 boş). [2026-10-14] oneri bir öğrenci kimliği kümesi de olabilir: yalnızca o öğrenciler
+    sıralanır (ör. seçili sınıf / şube raporu tüm okulu sıralamaz)."""
     if ogrenci_id is not None:
         kosul, p = "o.id = :oid", {"oid": ogrenci_id}
     else:
@@ -363,9 +374,7 @@ def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | N
                (SELECT count(*) FROM ogrenci_katman_oturumlari k JOIN katmanlar km ON km.id = k.katman_id
                  WHERE k.tur_id = son.id AND k.durum = 'tamamlandi' AND NOT km.kosullu_mu) AS biten,
                (SELECT count(*) FROM ogrenci_katman_oturumlari k JOIN katmanlar km ON km.id = k.katman_id
-                 WHERE k.tur_id = son.id AND k.durum <> 'baslamadi' AND NOT km.kosullu_mu) AS baslayan,
-               (SELECT s.bolum_id FROM ogrenci_bolum_uyum_skorlari s WHERE s.tur_id = son.id
-                 ORDER BY s.toplam_uyum DESC LIMIT 1) AS ilk_bolum
+                 WHERE k.tur_id = son.id AND k.durum <> 'baslamadi' AND NOT km.kosullu_mu) AS baslayan
           FROM son
     """), p).mappings().all()
     hedefler = db.execute(text(f"""
@@ -373,10 +382,20 @@ def _ilerleme(db: Session, okul_id: int | None = None, ogrenci_id: uuid.UUID | N
          WHERE hb.aktif_mi AND {kosul}
     """), p).mappings().all()
     toplam = db.execute(text("SELECT count(*) FROM katmanlar WHERE NOT kosullu_mu")).scalar() or 4
-    sonuc = {r["ogrenci_id"]: {**dict(r), "toplam": toplam, "hedef": None} for r in satirlar}
+    from app.core.skor_motoru import toplu_siralama
+    kume = oneri if isinstance(oneri, (set, frozenset, list, tuple)) else None
+    if kume is not None:
+        kume = set(kume)
+    sira = toplu_siralama(db, [r["tur_id"] for r in satirlar if r["durum"] == "tamamlandi"
+                               and (kume is None or r["ogrenci_id"] in kume)], ilk_n=10) if oneri else {}
+    sonuc = {}
+    for r in satirlar:
+        ilk10 = [s.bolum_id for s in sira.get(r["tur_id"], [])]
+        sonuc[r["ogrenci_id"]] = {**dict(r), "ilk_bolum": ilk10[0] if ilk10 else None, "oneri_ilk10": ilk10,
+                                  "toplam": toplam, "hedef": None}
     for h in hedefler:
         sonuc.setdefault(h["ogrenci_id"], {"tur_id": None, "durum": None, "biten": 0, "baslayan": 0, "ilk_bolum": None,
-                                            "toplam": toplam, "tamamlanma_zamani": None})["hedef"] = h["bolum_id"]
+                                            "oneri_ilk10": [], "toplam": toplam, "tamamlanma_zamani": None})["hedef"] = h["bolum_id"]
     return sonuc
 
 
@@ -449,7 +468,7 @@ def ben(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_
             "rol_adi": "Süper Admin" if yon.rol == "super_admin" else "Okul Yetkilisi", "unvan": getattr(yon, "unvan", None),
             "okul_id": yon.okul_id, "okul_ad": okul.ad if okul else None, "okul_logo": okul.logo if okul else None,
             "okul_renk": okul.tema_renk if okul else None,
-            "sifre_degistirmeli": bool(yon.sifre_degistirmeli),
+            "sifre_degistirmeli": bool(yon.sifre_degistirmeli), "dil": yon.dil,
             "moduller": _moduller(db, yon.okul_id)}   # [2026-10-10] paket: okul yetkilisinin göreceği modüller
 
 
@@ -498,12 +517,21 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
     """[2026-10-10] sinif / sube verilirse yalnızca o sınıf düzeyinin / şubenin özeti (sınıf öğretmeni raporu)."""
     okul = _okul_kapsami(db, yon, okul_id)
     kosul, p = _okul_filtresi(okul_id)
-    ogrenciler = db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id).all()
+    # [2026-10-14] Test hesapları sayılmaz (İstatistikler, hazır raporlar, karşılaştırma ve veli sunumuyla aynı kural)
+    kosul += " AND NOT coalesce(o.test_hesabi, false)"
+    ogrenciler = [o for o in db.query(Ogrenci).filter(Ogrenci.okul_id.is_(None) if okul_id == 0 else Ogrenci.okul_id == okul_id).all()
+                  if not getattr(o, "test_hesabi", False)]
     if sinif:
         ogrenciler = [o for o in ogrenciler if o.sinif == sinif and (not sube or (o.sube or "") == sube)]
         kosul += " AND o.sinif = :f_sinif" + (" AND o.sube = :f_sube" if sube else "")
         p = {**p, "f_sinif": sinif, "f_sube": sube}
-    il = _ilerleme(db, okul_id)
+    il = _ilerleme(db, okul_id, oneri={o.id for o in ogrenciler})   # yalnızca kapsamdaki öğrenciler sıralanır
+    # [2026-10-14] "Giriş yapan" = sistemi en az bir kez açan: son giriş zamanı, günlük aktiflik kaydı ya da değerlendirmeye
+    # başlamış olmak. "Beni hatırla" ile açık kalan oturumda son giriş zamanı güncellenmediği için tek başına yetmez.
+    aktif_olan = {r[0] for r in db.execute(text("SELECT DISTINCT ogrenci_id FROM ogrenci_aktif_gunler WHERE ogrenci_id = ANY(:i)"),
+                                            {"i": [o.id for o in ogrenciler]}).all()} if ogrenciler else set()
+    def acti(o) -> bool:
+        return o.son_giris_zamani is not None or o.id in aktif_olan or ((il.get(o.id) or {}).get("baslayan") or 0) > 0
     adlar = {b.id: b.ad for b in db.query(Bolum.id, Bolum.ad).all()}
 
     durum_say = Counter()
@@ -518,7 +546,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
             grup["ogrenci"] += 1
             grup["tamamlayan"] += kod == "tamamlandi"
             grup["devam"] += kod == "devam"
-            grup["giris_yapan"] += o.son_giris_zamani is not None
+            grup["giris_yapan"] += acti(o)
         subeler[(anahtar, o.sube or "")]["hedef_secen"] += bool((il.get(o.id) or {}).get("hedef"))
         x = il.get(o.id) or {}
         if x.get("durum") == "tamamlandi" and x.get("ilk_bolum"):
@@ -527,7 +555,7 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
             hedef[adlar.get(x["hedef"], "?")] += 1
 
     toplam = len(ogrenciler)
-    giris_yapan = sum(1 for o in ogrenciler if o.son_giris_zamani is not None)
+    giris_yapan = sum(1 for o in ogrenciler if acti(o))
     sira = {s: i for i, s in enumerate(SINIFLAR)}
     from app.core.aktiflik import bugun_tr
     bugun = bugun_tr()   # [2026-10-11] Türkiye saatiyle gün
@@ -548,6 +576,9 @@ def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici 
         "teste_baslayan": durum_say["devam"] + durum_say["tamamlandi"],
         "tamamlayan": durum_say["tamamlandi"],
         "hedef_secen": sum(1 for o in ogrenciler if (il.get(o.id) or {}).get("hedef")),
+        # [2026-10-14] "hedef seçen / tamamlayan" oranının payı: yalnızca testi tamamlamış ve hedef seçmiş öğrenciler
+        "hedef_secen_tamamlayan": sum(1 for o in ogrenciler if (il.get(o.id) or {}).get("hedef")
+                                      and _durum(o, il.get(o.id))[0] == "tamamlandi"),
         "durumlar": [{"kod": k, "etiket": e, "sayi": durum_say[k]} for k, e in
                      (("giris_yok", "Henüz giriş yapmadı"), ("baslamadi", "Teste başlamadı"),
                       ("devam", "Devam ediyor"), ("tamamlandi", "Testi tamamladı"))],
@@ -758,8 +789,11 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
         sonuc_notu = "Öğrenci K1–K4 bölümlerini tamamladığında öneri listesi burada görünür."
     hedef = None
     if il and il.get("hedef"):
-        uyum = db.execute(text("SELECT toplam_uyum FROM ogrenci_bolum_uyum_skorlari WHERE ogrenci_id = :o AND bolum_id = :b "
-                               "ORDER BY tur_id DESC LIMIT 1"), {"o": o.id, "b": il["hedef"]}).scalar()
+        # öğrencinin sonuç ekranı / öneri listesiyle aynı sayı: K5 etkili nihai uyum (skoru olan en son tur)
+        from app.core.skor_motoru import toplu_nihai_uyum
+        t = db.execute(text("SELECT max(tur_id) FROM ogrenci_bolum_uyum_skorlari WHERE ogrenci_id = :o AND bolum_id = :b"),
+                       {"o": o.id, "b": il["hedef"]}).scalar()
+        uyum = toplu_nihai_uyum(db, [t], [il["hedef"]]).get(t, {}).get(il["hedef"]) if t is not None else None
         hedef = {"bolum": adlar.get(il["hedef"]), "bolum_id": il["hedef"], "uyum": round(float(uyum), 1) if uyum is not None else None}
 
     okul = db.get(Okul, o.okul_id) if o.okul_id else None
@@ -839,8 +873,8 @@ def _kocluk_ozeti(db: Session, o: Ogrenci) -> dict:
 
 
 def _ogrenci_kayitlari(db: Session, o: Ogrenci, katmanlar) -> list[dict]:
-    k = [{"zaman": e.zaman, "olay": e.olay, "etiket": OLAY_ETIKET.get(e.olay, e.olay), "aciklama": e.aciklama,
-          "yapan": e.yapan, "tur": "hesap"}
+    k = [{"zaman": e.zaman, "olay": e.olay, "etiket": OLAY_ETIKET.get(e.olay) or islem_etiketi(e.olay), "aciklama": e.aciklama,
+          "yapan": YAPAN_ETIKET.get(e.yapan, e.yapan), "tur": "hesap"}
          for e in db.query(OgrenciHesapOlayi).filter(OgrenciHesapOlayi.ogrenci_id == o.id)
          .order_by(OgrenciHesapOlayi.zaman.desc()).limit(300).all()]
     for x in katmanlar:
@@ -1041,7 +1075,65 @@ ISLEM_ETIKET = {
     "okul_ekle": "Okul eklendi", "okul_guncelle": "Okul bilgisi güncellendi", "okul_sil": "Okul silindi",
     "sifre_belirledi": "Yetkili kendi şifresini belirledi",
     "okul_bilgi_guncelle": "Okul tanıtım bilgileri güncellendi",
+    # [2026-10-12] Eksik işlem adları tamamlandı (kayıtlarda kod yerine okunur ad görünsün; ekran 12 dile çevrilir)
+    "anket_olustur": "Anket oluşturuldu", "anket_duzenle": "Anket düzenlendi", "anket_sil": "Anket silindi",
+    "anket_taslak": "Anket taslağa alındı", "anket_yayinda": "Anket yayınlandı", "anket_kapandi": "Anket kapatıldı",
+    "anket_excel": "Anket sonuçları indirildi (Excel)", "anket_psikometri_excel": "Anket psikometri raporu indirildi (Excel)",
+    "audit_log_excel": "İşlem kayıtları indirildi (Excel)", "cevap_analizi_goruntule": "Cevap analizi görüntülendi",
+    "cv_indir": "Öğrenci CV'si indirildi", "ozgecmis_indir": "Öğrenci özgeçmişi indirildi",
+    "degerlendirme_sifirla": "Değerlendirme sıfırlandı", "yeniden_degerlendirme_ac": "Yeniden değerlendirme izni verildi",
+    "katman_tekrarlat": "Değerlendirme bölümü tekrarlatıldı", "sonuc_epostasi_gonder": "Sonuç e-postası gönderildi",
+    "giris_listesi_indir": "Giriş listesi indirildi",
+    "gorusme_ekle": "Rehberlik görüşmesi eklendi", "gorusme_duzenle": "Rehberlik görüşmesi düzenlendi",
+    "gorusme_sil": "Rehberlik görüşmesi silindi", "gorusme_excel": "Görüşme kayıtları indirildi (Excel)",
+    "hata_kaydi_cozuldu": "Hata kaydı çözüldü olarak işaretlendi", "hata_kayitlari_temizle": "Hata kayıtları temizlendi",
+    "is_hayati_baglanti_indir": "İş hayatı verisi bağlantıdan indirildi", "is_hayati_istihdam_yukle": "İstihdam verisi yüklendi",
+    "is_hayati_kazanc_yukle": "Kazanç verisi yüklendi", "is_hayati_kayit_ekle": "İş hayatı kaydı eklendi",
+    "is_hayati_kayit_duzenle": "İş hayatı kaydı düzenlendi", "is_hayati_kayit_sil": "İş hayatı kaydı silindi",
+    "is_hayati_meslek_isco": "Meslek grubu eşleştirmesi değiştirildi", "is_hayati_meslek_isco_json": "Meslek grubu eşleştirmeleri yüklendi",
+    "is_hayati_yukleme_sil": "Veri yüklemesi silindi", "istatistik_excel": "İstatistikler indirildi (Excel)",
+    "katman_agirlik_guncelleme": "Katman ağırlıkları güncellendi", "katman_sorulari_komple_silme": "Katman soruları silindi",
+    "koc_ekle": "Eğitim koçu eklendi", "koc_duzenle": "Eğitim koçu düzenlendi", "koc_sil": "Eğitim koçu silindi",
+    "koc_okullari": "Eğitim koçunun okulları güncellendi", "koc_talep_guncelle": "Koçluk talebi güncellendi",
+    "konu_ekle": "Sınav konusu eklendi", "konu_duzenle": "Sınav konusu düzenlendi", "konu_gizle": "Sınav konusu gizlendi",
+    "konu_sil": "Sınav konusu silindi",
+    "kulup_ekle": "Kulüp eklendi", "kulup_duzenle": "Kulüp düzenlendi", "kulup_sil": "Kulüp silindi",
+    "kulup_hazir_liste": "Hazır kulüp listesi eklendi", "kulup_onayla": "Kulüp üyeliği onaylandı",
+    "kulup_reddet": "Kulüp üyeliği reddedildi", "kulup_cikar": "Öğrenci kulüpten çıkarıldı",
+    "kulup_duyuru_ekle": "Kulüp duyurusu eklendi", "kulup_duyuru_duzenle": "Kulüp duyurusu düzenlendi",
+    "kulup_duyuru_sil": "Kulüp duyurusu silindi",
+    "meslek_dili_kaydet": "Meslek dili sözlüğü kaydedildi", "meslek_dili_sifirla": "Meslek dili sözlüğü sıfırlandı",
+    "mezun_ekle": "Mezun eklendi", "mezun_duzenle": "Mezun bilgisi düzenlendi", "mezun_sil": "Mezun silindi",
+    "mezun_hikayesi_ekle": "Mezun hikâyesi eklendi", "mezun_hikayesi_duzenle": "Mezun hikâyesi düzenlendi",
+    "mezun_hikayesi_yayinla": "Mezun hikâyesi yayınlandı", "mezun_hikayesi_yayindan_kaldir": "Mezun hikâyesi yayından kaldırıldı",
+    "mezun_hikayesi_kaldir": "Mezun hikâyesi kaldırıldı",
+    "ogrenci_hedef_degistir": "Öğrencinin hedef bölümü değiştirildi", "ogrenci_hedef_hakki": "Hedef değiştirme hakkı verildi",
+    "okul_deneme_yukle": "Okul denemesi yüklendi", "okul_deneme_sil": "Okul denemesi silindi",
+    "okul_karsilastirma_excel": "Okul karşılaştırması indirildi (Excel)", "okul_paket": "Okul paketi değiştirildi",
+    "okul_sistemi_ac": "Okulun sistemi açıldı", "okul_sistemi_kapat": "Okulun sistemi kapatıldı",
+    "okul_tema_guncelle": "Okul görünümü güncellendi",
+    "paket_ekle": "Paket eklendi", "paket_duzenle": "Paket düzenlendi", "paket_sil": "Paket silindi",
+    "portfolyo_dogrula": "Portfolyo kaydı doğrulandı", "rapor_indir": "Rapor indirildi",
+    "risk_ertele": "Erken uyarı ertelendi", "sinif_atlat": "Sınıf atlatma yapıldı", "sinif_atlat_geri_al": "Sınıf atlatma geri alındı",
+    "sube_dagilimi": "Şube dağılımı yapıldı", "sube_ogretmeni": "Şube öğretmeni atandı",
+    "takvim_ekle": "Takvim etkinliği eklendi", "takvim_duzenle": "Takvim etkinliği düzenlendi", "takvim_sil": "Takvim etkinliği silindi",
+    "tercih_onayla": "Tercih listesi onaylandı", "tercih_duzeltme": "Tercih listesi düzeltmeye gönderildi",
+    "test_hesabi_ac": "Test hesabı açıldı", "test_hesabi_sil": "Test hesabı silindi", "test_sifre_yenile": "Test hesabı şifresi yenilendi",
+    "test_baglanti_uret": "Test giriş bağlantısı oluşturuldu", "test_baglanti_iptal": "Test giriş bağlantısı iptal edildi",
+    "test_senaryo": "Test senaryosu çalıştırıldı", "yokatlas_eslestir": "YÖK Atlas eşleştirmesi değiştirildi",
 }
+
+
+YAPAN_ETIKET = {"ogrenci": "Öğrenci", "sistem": "Sistem"}   # [2026-10-12] kayıtlarda ham kod görünmesin
+
+
+def islem_etiketi(kod: str) -> str:
+    """[2026-10-12] Bilinmeyen kod ham görünmesin: 'yeni_islem_adi' → 'Yeni islem adi'."""
+    if kod in ISLEM_ETIKET:
+        return ISLEM_ETIKET[kod]
+    metin = (kod or "").replace("_", " ").strip()
+    from app.core.metin import turkce_buyut
+    return turkce_buyut(metin[:1]) + metin[1:] if metin else "—"
 
 
 @router.get("/okul/{okul_id}/kayitlar")
@@ -1052,7 +1144,7 @@ def okul_kayitlari(okul_id: int, gun: int = 30, db: Session = Depends(get_db), y
     q = db.query(AuditLog).filter(AuditLog.zaman >= sinir)
     q = q.filter(AuditLog.okul_id.is_(None), AuditLog.hedef_tablo == "ogrenciler") if okul_id == 0 else q.filter(AuditLog.okul_id == okul_id)
     for a in q.order_by(AuditLog.zaman.desc()).limit(500).all():
-        kayit.append({"zaman": a.zaman, "tur": "yonetim", "etiket": ISLEM_ETIKET.get(a.islem, a.islem),
+        kayit.append({"zaman": a.zaman, "tur": "yonetim", "etiket": islem_etiketi(a.islem),
                       "aciklama": a.gerekce, "yapan": a.yapan_ad or "—", "ogrenci_id": None})
     kosul, p = _okul_filtresi(okul_id)
     for r in db.execute(text(f"""
@@ -1060,7 +1152,7 @@ def okul_kayitlari(okul_id: int, gun: int = 30, db: Session = Depends(get_db), y
           FROM ogrenci_hesap_olaylari e JOIN ogrenciler o ON o.id = e.ogrenci_id
          WHERE {kosul} AND e.zaman >= :sinir AND e.olay IN ('giris','giris_hatali','sifre_degisti')
          ORDER BY e.zaman DESC LIMIT 1000"""), {**p, "sinir": sinir}).mappings().all():
-        kayit.append({"zaman": r["zaman"], "tur": "ogrenci", "etiket": OLAY_ETIKET.get(r["olay"], r["olay"]),
+        kayit.append({"zaman": r["zaman"], "tur": "ogrenci", "etiket": OLAY_ETIKET.get(r["olay"]) or islem_etiketi(r["olay"]),
                       "aciklama": r["aciklama"], "yapan": r["ad_soyad"], "ogrenci_id": str(r["id"])})
     kayit.sort(key=lambda x: x["zaman"].timestamp() if x["zaman"] else 0, reverse=True)
     return kayit[:1200]

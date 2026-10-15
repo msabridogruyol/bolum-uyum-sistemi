@@ -124,6 +124,7 @@ def okul_paketi_kaydet(okul_id: int, istek: OkulPaketIstek, db: Session = Depend
     db.execute(text("UPDATE okullar SET paket = :p, modul_ekle = CAST(:e AS JSONB), modul_cikar = CAST(:c AS JSONB) WHERE id = :o"),
                {"p": istek.paket, "e": json.dumps(ekle), "c": json.dumps(cikar), "o": okul_id})
     denetim_yaz(db, yon, "okul_paket", "okullar", okul_id,
-                f"{p.ad}" + (f" + {', '.join(ekle)}" if ekle else "") + (f" − {', '.join(cikar)}" if cikar else ""), okul_id)
+                f"{p.ad}" + (f" + {', '.join(MODULLER.get(m, {}).get('ad', m) for m in ekle)}" if ekle else "")
+                + (f" − {', '.join(MODULLER.get(m, {}).get('ad', m) for m in cikar)}" if cikar else ""), okul_id)   # [2026-10-12] kod yerine modül adı
     db.commit()
     return okul_paket_bilgisi(db, okul_id)

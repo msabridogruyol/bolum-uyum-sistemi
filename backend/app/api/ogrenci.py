@@ -5,7 +5,7 @@ POST /ogrenci/katmanlar/{kod}/basla         — katmanı başlat/devam et, soru 
 POST /ogrenci/katmanlar/{kod}/cevap         — bir soruyu cevapla
 POST /ogrenci/katmanlar/{kod}/tamamla       — katmanı bitir, değişken puanlarını hesapla
 """
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import text, func
@@ -203,6 +203,32 @@ def katmani_baslat(
                              mevcut_cevaplar=_mevcut_cevaplar(db, ogrenci, tur.id, soru_idler))
 
 
+@router.get("/degerlendirme-durumu")
+def degerlendirme_durumu_getir(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """[2026-10-12] Yeniden değerlendirme durumu: güven sorunu (hangi katman), bekleme (açılış tarihi), açık."""
+    from app.core.katman_servisi import degerlendirme_durumu
+    return degerlendirme_durumu(db, ogrenci)
+
+
+@router.post("/katmanlar/{kod}/tekrar")
+def katmani_tekrar_coz(kod: str, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    """[2026-10-12] Güven puanı düşük çıkan turda öğrenci YALNIZCA sorunlu katmanı aynı turda tekrar çözebilir."""
+    from app.core.guvenlik_servisi import sorunlu_katmanlar
+    from app.core.hesap_yonetimi import olay_yaz
+    from app.core.katman_servisi import katmani_tekrara_ac
+    katman = _katman_bul(db, kod)
+    tur = (db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.ogrenci_id == ogrenci.id)
+           .order_by(OgrenciDegerlendirmeTuru.tur_no.desc()).first())
+    if tur is None or tur.durum != "tamamlandi" or tur.sonuc_gecerli_mi is not False:
+        raise HTTPException(status_code=400, detail="Bu bölümü şu an tekrar çözemezsin.")
+    if katman.kod not in {d["kod"] for d in sorunlu_katmanlar(db, ogrenci, tur)}:
+        raise HTTPException(status_code=400, detail="Yalnızca güven puanı düşük çıkan bölümü tekrar çözebilirsin.")
+    katmani_tekrara_ac(db, ogrenci, tur, katman)
+    olay_yaz(db, ogrenci.id, "katman_tekrar", f"{katman.kod} güven sorunu nedeniyle tekrar açıldı ({tur.tur_no}. tur)", "Öğrenci")
+    db.commit()
+    return {"tamam": True, "katman": katman.kod}
+
+
 @router.post("/katmanlar/{kod}/cevap", status_code=204)
 def soruyu_cevapla(
     kod: str,
@@ -223,6 +249,7 @@ def soruyu_cevapla(
 @router.post("/katmanlar/{kod}/tamamla", response_model=KatmanTamamlamaCevap)
 def katmani_tamamla_uc_nokta(
     kod: str,
+    arka_plan: BackgroundTasks,
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
@@ -259,6 +286,16 @@ def katmani_tamamla_uc_nokta(
 
     db.commit()
 
+    # [2026-10-12] Değerlendirme bitti → sonuç e-postası (+ PDF) arka planda; cevap beklemez. Güven puanı düşükse gitmez.
+    # K5 derinleşme dalı açıldıysa burada gitmez: son dal bitince (dali_tamamla_uc_nokta) gider.
+    sonuc_epostasi = False
+    if tum_tamam:
+        from app.core import sonuc_epostasi as se
+        db.refresh(tur)
+        sonuc_epostasi = se.otomatik_gidecek_mi(db, ogrenci, tur)
+        if sonuc_epostasi:
+            arka_plan.add_task(se.arka_planda_gonder, ogrenci.id, tur.id)
+
     degisken_adlari = {d.id: d.ad for d in db.query(Degisken).filter(Degisken.id.in_([s[0] for s in sonuclar])).all()}
 
     sonuc_satirlari = _yorumlari_ekle(db, [
@@ -270,6 +307,7 @@ def katmani_tamamla_uc_nokta(
         katman_kodu=katman.kod,
         sonuclar=sonuc_satirlari,
         tum_katmanlar_tamamlandi_mi=tum_tamam,
+        sonuc_epostasi=sonuc_epostasi,
     )
 
 
@@ -359,6 +397,7 @@ def dal_soruyu_cevapla(
 @router.post("/dallar/{kod}/tamamla", response_model=DalTamamlamaCevap)
 def dali_tamamla_uc_nokta(
     kod: str,
+    arka_plan: BackgroundTasks,
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
@@ -387,9 +426,17 @@ def dali_tamamla_uc_nokta(
         raise HTTPException(status_code=400, detail=str(e))
     db.commit()
 
+    # [2026-10-12] K5 değerlendirmenin son bölümü: son açık dal da bittiyse sonuç e-postası (+ PDF) arka planda gider
+    from app.core import sonuc_epostasi as se
+    db.refresh(tur)
+    sonuc_epostasi = se.otomatik_gidecek_mi(db, ogrenci, tur)
+    if sonuc_epostasi:
+        arka_plan.add_task(se.arka_planda_gonder, ogrenci.id, tur.id)
+
     degisken_adlari = {d.id: d.ad for d in db.query(Degisken).filter(Degisken.id.in_([s[0] for s in sonuclar])).all()}
     return DalTamamlamaCevap(
         dal_kodu=dal.kod,
+        sonuc_epostasi=sonuc_epostasi,
         sonuclar=[
             KatmanSonucSatiri(degisken_id=did, degisken_adi=degisken_adlari.get(did, "?"), puan=puan)
             for did, puan in sonuclar
@@ -509,8 +556,8 @@ def durum_ozetini_getir(
 
     sonraki_tur_tarihi = None
     sonuc_gecerli = tur.sonuc_gecerli_mi is not False
-    if tur.durum == "tamamlandi" and tur.tamamlanma_zamani and sonuc_gecerli:
-        min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "120"))
+    if tur.durum == "tamamlandi" and tur.tamamlanma_zamani and sonuc_gecerli and getattr(ogrenci, "yeni_tur_izni", None) is None:
+        min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "90"))
         tamamlanma = tur.tamamlanma_zamani
         if tamamlanma.tzinfo is None:
             tamamlanma = tamamlanma.replace(tzinfo=timezone.utc)
@@ -570,6 +617,7 @@ def profil_getir(
         profil_foto_base64=ogrenci.profil_foto_base64,
         sube=ogrenci.sube,
         sifre_degistirmeli=bool(ogrenci.sifre_degistirmeli),
+        dil=ogrenci.dil,   # None = hiç seçmedi (tarayıcıdaki seçim hesaba yazılır)
     )
 
 

@@ -8,6 +8,7 @@ import { api } from '../../api/client'
 import { CizgiGrafik, DURUM, GrafikKarti, Halka, KATEGORIK, KpiKarti, KpiSatiri, YatayCubuk, bicim, sayi } from '../istatistik'
 import OgrenciDetayPenceresi from './OgrenciDetayPenceresi'
 import { onceSure } from './ortak'
+import { OkulRaporYorumu } from '../RaporYorumu'   // [2026-10-12] ne yapılmalı
 
 const OKUL = 'var(--okul-c, var(--ist-k1))'
 const yuzde = (v) => (v == null ? '—' : bicim(v, '%', 0))
@@ -376,6 +377,7 @@ export default function OkulTekBakista({ okulId, superAdmin, okullar, onDegisti,
         <div style={{ opacity: bekle ? 0.6 : 1, transition: 'opacity .2s' }}>
           <div className="yp-ince ois-kapsam"><span><b>{v.filtre.etiket}</b> · bugünkü durum · test hesapları hariç · okul ortalaması tüm okuldur</span></div>
           <Bulgular l={v.bulgular} />
+          <OkulRaporYorumu okulId={okulId} sinif={sinif} sube={sube} />
           <KpiSatiri min={150}>
             <KpiKarti etiket="Öğrenci" deger={k.ogrenci} ikon="🎓" ton="okul" alt={`${k.aktif7 == null ? '—' : yuzde(k.aktif7)} son 7 günde giriş yaptı`} />
             <KpiKarti etiket="Tamamlama" deger={k.tamamlama ?? '—'} birim={k.tamamlama == null ? undefined : '%'} ikon="✅"

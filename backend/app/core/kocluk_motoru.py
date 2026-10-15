@@ -69,7 +69,8 @@ def kazanim(adim: dict, bolum: str) -> str:
     if "-U-" in adim["kod"]:
         return f"{ilk} {GUCLU_KAZANIM}".strip()
     alan = ALAN_KAZANIM.get(tur, "").format(alan=adim["degisken_adi"], bolum=bolum)
-    alan = alan[:1].upper() + alan[1:] if alan else ""
+    from app.core.metin import turkce_buyut
+    alan = turkce_buyut(alan[:1]) + alan[1:] if alan else ""
     return f"{ilk} {alan}".strip()
 
 

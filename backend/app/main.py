@@ -50,6 +50,9 @@ from app.api.okul_istatistik import router as okul_istatistik_router   # [2026-1
 from app.api.okul_tek_bakista import router as okul_tek_bakista_router   # [2026-10-10] Rapor Merkezi → Tek Bakışta
 from app.api.hazir_raporlar import router as hazir_raporlar_router
 from app.api.sozluk import admin_router as sozluk_admin_router, router as sozluk_router
+from app.api.ceviri import router as ceviri_router                      # [2026-10-12] çoklu dil
+from app.api.toplu_ogrenci import router as toplu_ogrenci_router        # [2026-10-12] sınıf atlatma + değerlendirme sıfırlama
+from app.core.ceviri_servisi import DilAraKatmani                        # [2026-10-12] X-Dil başlığı → istek dili
 from app.api.akran import router as akran_router
 from app.api.takvim import ogrenci_router as takvim_ogrenci_router, router as takvim_router
 from app.api.kutuphane import ogrenci_router as kutuphane_ogrenci_router, router as kutuphane_router
@@ -75,6 +78,7 @@ app = FastAPI(
 
 # [2026-10-11] Koruma ara katmanları — CORS'tan ÖNCE eklenir ki CORS en dışta kalsın (429/413/500 yanıtları da CORS başlığı alsın).
 # İstek akışı (dıştan içe): ZiyaretKaydi → CORS → HataYakalama (istek kimliği, 500) → HizSiniri (429) → GovdeBoyutu (413) → uygulama
+app.add_middleware(DilAraKatmani)   # [2026-10-12] Filiz'in cevap dili için
 app.add_middleware(GovdeBoyutuAraKatmani)
 app.add_middleware(HizSiniriAraKatmani)
 app.add_middleware(HataYakalamaAraKatmani)
@@ -334,6 +338,8 @@ app.include_router(okul_tek_bakista_router)                 # [2026-10-10] /yone
 app.include_router(hazir_raporlar_router)                    # [2026-10-11] /yonetim/okul/{id}/hazir-raporlar
 app.include_router(sozluk_router)                            # [2026-10-11] /ogrenci/sozluk/ek (bölüm, meslek, özellik) + /bildir
 app.include_router(sozluk_admin_router)                      # [2026-10-11] /admin/sozluk-bildirimleri
+app.include_router(ceviri_router)                            # [2026-10-12] çoklu dil: dil tercihi + içerik çevirisi
+app.include_router(toplu_ogrenci_router)                     # [2026-10-12] /yonetim/okul/{id}/sinif-atlat, /yonetim/ogrenciler/degerlendirme-sifirla
 app.include_router(kulup_router, dependencies=[_Dep(okul_modulu("kulupler"))])                            # [2026-10-10] okul kulüpleri
 app.include_router(kulup_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])                    # [2026-10-10] /ogrenci/ilgi-testi
 app.include_router(koc_router)                              # [2026-10-10] anlaşmalı eğitim koçları

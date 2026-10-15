@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import DilSecici from '../components/DilSecici'   // [2026-10-12] çoklu dil
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useAdminAuth } from '../context/AdminAuthContext'
@@ -64,6 +65,7 @@ export default function GirisSayfasi() {
   return (
     <div className="auth-wrap">
       <TemaAnahtari />
+      <div className="auth-dil"><DilSecici /></div>
       <div className="auth-card" style={sekme === 'kayit' && !ikiAdim ? { maxWidth: 460 } : undefined}>
         <span className="auth-emoji">🌱</span>
         <div className="auth-logo">Filizyol</div>

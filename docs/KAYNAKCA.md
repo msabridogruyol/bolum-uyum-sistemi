@@ -7,7 +7,7 @@ Sistemde elle hazırlanan her bileşen, ne yaptığı, nasıl hesaplandığı ve
 - Kaynaklar bileşenin **kuramsal dayanağını** gösterir; Filizyol ölçekleri bu kaynaklardaki ölçeklerin birebir uyarlaması değildir.
 - **Kurum içi** işaretli bileşenlerde eşik, ağırlık ve sayılar ürün tasarımı kararıdır.
 
-Toplam: 70 bileşen, 159 kaynak.
+Toplam: 75 bileşen, 160 kaynak.
 
 ## İçindekiler
 
@@ -59,14 +59,14 @@ Toplam: 70 bileşen, 159 kaynak.
 
 K1–K5 soru metinleri ve şıkları; öğrencinin değerlendirme turlarının açılması ve soru setinin dondurulması.
 
-**Nasıl:** Soru metinleri repoda değil, veritabanında; admin panelinden tekil, Likert/SJT toplu ve kutup toplu (katman_kod, a/b değişken kodu, metin, uç etiketleri) yüklemeyle girilir, silinmez yalnızca pasife alınır. Katman başlarken aktif soru id'leri kilitlenir; iki tam tur arasında varsayılan 120 gün (parametre yeniden_degerlendirme_min_gun).
+**Nasıl:** Soru metinleri repoda değil, veritabanında; admin panelinden tekil, Likert/SJT toplu ve kutup toplu (katman_kod, a/b değişken kodu, metin, uç etiketleri) yüklemeyle girilir, silinmez yalnızca pasife alınır. Katman başlarken aktif soru id'leri kilitlenir. Güven sorunu yoksa iki tam tur arasında varsayılan 90 gün beklenir (parametre yeniden_degerlendirme_min_gun; 2026-10-12'de 120'den 90'a indirildi, elle girilmiş değer korunur). Güven puanı düşük çıkan turda yeni tam tur açılmaz; yalnızca sorunlu katman(lar) aynı turda yeniden çözülür (o katmanın cevapları, puanları ve ihlal kayıtları sıfırlanır, diğer katmanlar korunur). Okul yetkilisi öğrenci detayından tek bir katmanı tekrarlatabilir ya da bekleme süresi olmadan yeni değerlendirme açabilir (önceki tur saklanır). 'Değerlendirmeyi sıfırla' öğrencinin son turunu (cevaplar, sonuçlar, bölüm uyumları, bu tura bağlı koçluk adımları) siler; önceki turlar ve hesap kalır, öğrenci beklemeden baştan başlar.
 
 **Dayanak:**
 
 - [2] American Educational Research Association, American Psych…, 2014 — Test içeriğinin kapsam geçerliği, madde geliştirme, belgeleme ve puanların yorumlanmasına ilişkin genel standartları ortaya koyar; bileşen bu ilkelerden esinlenir, standartların resmî bir uygunluk denetiminden geçmemiştir.
-- [84] Low ve ark., 2005 — Mesleki ilgilerin ergenlikte görece daha az kararlı olduğunu ve yaşla kararlılığın arttığını gösterir; lise öğrencisinde belirli aralıklarla yeniden değerlendirme yapılmasına gerekçe verir, ancak 120 günlük aralığın kendisini belirlemez.
+- [84] Low ve ark., 2005 — Mesleki ilgilerin ergenlikte görece daha az kararlı olduğunu ve yaşla kararlılığın arttığını gösterir; lise öğrencisinde belirli aralıklarla yeniden değerlendirme yapılmasına gerekçe verir, ancak 90 günlük aralığın kendisini belirlemez.
 
-> Soru bankasının pasife alma (silmeme), soru setini kilitleme ve toplu yükleme mekanizmaları yazılım/ürün kararıdır. 120 günlük yeniden değerlendirme aralığı kurum içi bir parametredir; akademik bir test–tekrar test aralığına dayanmaz. Maddelerin madde yazım ilkelerine uygunluğu ayrıca belgelenmemiştir.
+> Soru bankasının pasife alma (silmeme), soru setini kilitleme ve toplu yükleme mekanizmaları yazılım/ürün kararıdır. 90 günlük yeniden değerlendirme aralığı kurum içi bir parametredir; akademik bir test–tekrar test aralığına dayanmaz. Düşük güvende yalnızca sorunlu katmanın aynı turda yeniden çözülmesi, okul yetkilisinin katman tekrarlatma ve beklemeden yeni tur açma yetkisi ile sıfırlamanın yalnızca son turu silmesi de ürün kararlarıdır; yeniden yanıtlanan katmanın ilk yanıtlarla karşılaştırılabilirliği ayrıca incelenmemiştir. Maddelerin madde yazım ilkelerine uygunluğu ayrıca belgelenmemiştir.
 
 ### Likert puanlama ve değişken puanı
 
@@ -177,7 +177,7 @@ Her değişken için puan aralığına göre öğrenciye gösterilen durum tespi
 
 - [32] Dickson ve Kelly, 1985 — Herkese uyabilecek genel kişilik yorumlarının kişiler tarafından yüksek doğrulukta algılandığını (Barnum etkisi) özetler; yorumların puan aralığına özgü ve somut yazılması gerekliliğine dikkat çeker (bileşenin bunu ne ölçüde başardığı ayrıca sınanmamıştır).
 
-> 155 yorum cümlesi kurum içinde elle yazılmıştır; puan aralıkları (≥80, ≥60, ≥40, ≥20) akademik bir kesme noktasına dayanmaz. Önerilerin yalnızca 'altında' aralıklarında yazılması ve P4'te boş bırakılması içerik kararıdır. Güçlü yön temelli geri bildirim için doğrulanmış bir kaynak eşlenmemiştir.
+> 155 yorum cümlesi kurum içinde elle yazılmıştır; puan aralıkları (≥75, ≥62, ≥40, ≥20) akademik bir kesme noktasına dayanmaz. Önerilerin yalnızca 'altında' aralıklarında yazılması ve P4'te boş bırakılması içerik kararıdır. Güçlü yön temelli geri bildirim için doğrulanmış bir kaynak eşlenmemiştir.
 
 ### Seviye etiketleri ve 'Puan Rehberi' · _Kurum içi_
 
@@ -190,7 +190,7 @@ Puanların 'Çok güçlü / Güçlü / Orta / Gelişime açık' gibi etiketlerle
 - [150] Zenisky ve Hambleton, 2012 — Puan raporlarında açık etiketler, yorum rehberi ve kullanıcıya uygun dil kullanılmasını önerir; seviye etiketleri ve 'bu bir not değil, eğilimdir' açıklamalı Puan Rehberi'ni destekler.
 - [2] American Educational Research Association, American Psych…, 2014 — Test içeriğinin kapsam geçerliği, madde geliştirme, belgeleme ve puanların yorumlanmasına ilişkin genel standartları ortaya koyar; bileşen bu ilkelerden esinlenir, standartların resmî bir uygunluk denetiminden geçmemiştir.
 
-> Seviye eşikleri (≥75, 62–74, 40–61, <40; ≥85/≥70 yüzdelik; renk ≥70/≥40; güçlü ≥60/≥62; gelişim <45) kurum içi tasarım kararıdır, standart belirleme (standard setting) çalışmasıyla saptanmamıştır ve ekranlar arasında tutarlı değildir. 'Aşırı güçlü yön' ilkesi için doğrulanabilen bir kaynak bulunamadı.
+> Seviye eşikleri (≥75, 62–74, 50–61, 40–49, <40) kurum içi tasarım kararıdır ve standart belirleme (standard setting) çalışmasıyla saptanmamıştır. Bölümün bir özellikteki yüzdeliğini anlatan etiketler (Bölüm detayı ve 'Neden bu bölüm?') ayrı bir ölçektir; öğrenci puanı bantlarıyla karıştırılmamalıdır. 'Aşırı güçlü yön' ilkesi için doğrulanabilen bir kaynak bulunamadı.
 
 ### Değerlendirme yönergeleri ve ekran metinleri · _Kurum içi_
 
@@ -383,14 +383,14 @@ Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını ve ilk
 
 Öğrenci ile hedef bölüm arasındaki farkı özellik özellik sınıflayıp en önemli gelişim alanlarını bulma.
 
-**Nasıl:** Göreli fark (katman/dal içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (K4 40, diğerleri 20) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır.
+**Nasıl:** Göreli fark (katman/dal içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır.
 
 **Dayanak:**
 
 - [30] Dawis ve Lofquist, 1984 — Kişinin yetenek/ihtiyaçları ile çevrenin gereksinim/pekiştireçleri arasındaki uygunluğun (correspondence) karşılaştırılmasını kuramsal olarak temellendirir; özellik bazında öğrenci–bölüm farkı bu mantıktan esinlenir.
 - [76] Kristof-Brown ve ark., 2005 — Kişi–iş uyumunun memnuniyet ve bağlılıkla ilişkisini meta-analitik olarak gösterir; uyum açıklarının gelişim alanı olarak ele alınmasını destekler.
 
-> Fark kategorilerinin eşikleri (±5, ±15), öncelik formülü, K4 ağırlığının 40 diğerlerinin 20 olması, ayırt edicilik için en az 20 yayın, <40 ve ≥75 kesme noktaları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz.
+> Fark kategorilerinin eşikleri (±5, ±15), öncelik formülü, katman ağırlıklarının eşit (25) olması, ayırt edicilik için en az 20 yayın, <40 ve ≥75 kesme noktaları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz.
 
 ### Gelişim yol haritası yapısı
 
@@ -513,7 +513,7 @@ Yapay zekâ bağlı değilken öğrencinin gerçek verileriyle anahtar kelimeye 
 
 - [33] Dunlosky ve ark., 2013 — Aralıklı çalışma ve deneme/geri getirme pratiğinin en etkili öğrenme teknikleri arasında olduğunu gösterir; 'deneme sınavlarını gerçek koşulda çöz' ve planlı çalışma önerilerini destekler.
 - [19] Cepeda ve ark., 2006 — Dağıtılmış çalışmanın yığılmış çalışmaya üstünlüğünü meta-analitik olarak gösterir; çalışmayı bloklara bölme önerisini kısmen destekler.
-- [139] von der Embse ve Jester, 2018 — Sınav kaygısının performansla olumsuz ilişkisini ve yordayıcılarını özetler; sınav kaygısı konusunun rehberde ele alınmasının gerekçesidir.
+- [139] von der Embse ve ark., 2018 — Sınav kaygısının performansla olumsuz ilişkisini ve yordayıcılarını özetler; sınav kaygısı konusunun rehberde ele alınmasının gerekçesidir.
 - [43] Gati ve ark., 1996 — Kariyer kararsızlığının bilgi eksikliği ve tutarsız bilgi gibi kaynaklarını sınıflar; kararsızlık cevabındaki 'bölümleri karşılaştır, meslek sahibiyle konuş' önerilerini destekler.
 
 > Anahtar kelime listesi, örnek sorular ve sabit cevap metinleri kurum içi olarak elle yazılmıştır. 25–30 dakikalık blok önerisi Pomodoro uygulamasından esinlenir; bu süre için hakemli bir kaynak eklenmedi. Uyku düzeni önerisi için ayrıca kaynak eklenmedi.
@@ -522,7 +522,7 @@ Yapay zekâ bağlı değilken öğrencinin gerçek verileriyle anahtar kelimeye 
 
 OpenAI modeline öğrencinin gerçek profiliyle giden sistem istemi, oturum/limit kuralları ve kendine zarar ifadelerinde sabit güvenli yanıt.
 
-**Nasıl:** Sistem istemi 10 kural içerir: sohbet dili (liste yok), kişisel anı uydurmama, yalnızca profil verisine dayanma, sistemle çelişmeme, kariyer eksenli kalma, sıcak/yargısız ton, kaynakları hedef bölüme göre çerçeveleme (en fazla 1–2), reşit olmayan güvenliği (112, ALO 183, teşhis koymama), haftalık görevlere dayanma, 2–4 cümle. Model gpt-4o-mini, temperature 0,7, en çok 500 token; oturum 20 mesajda kapanır, 2–3 cümlelik özet sonraki oturuma taşınır; günlük 30 mesaj (filiz_gunluk_mesaj_limiti). 23 kriz ifadesi geçerse model çağrılmadan sabit yanıt verilir.
+**Nasıl:** Sistem istemi 11 kural içerir: sohbet dili (liste yok), kişisel anı uydurmama, yalnızca profil verisine dayanma, sistemle çelişmeme, kariyer eksenli kalma, sıcak/yargısız ton, kaynakları hedef bölüme göre çerçeveleme (en fazla 1–2), reşit olmayan güvenliği (112, ALO 183, teşhis koymama), haftalık görevlere dayanma, 2–4 cümle, gizlilik (başka öğrenci hakkında bilgi vermeme). Öğrencinin adı modele gönderilmez; mesajlardaki kendi adı ve okul arkadaşlarının adları maskelenir. Model gpt-4o-mini, temperature 0,7, en çok 500 token; oturum 20 mesajda kapanır, 2–3 cümlelik özet sonraki oturuma taşınır; günlük 30 mesaj (filiz_gunluk_mesaj_limiti). 23 kriz ifadesi geçerse model çağrılmadan sabit yanıt verilir.
 
 **Dayanak:**
 
@@ -637,13 +637,42 @@ Seçili bölümün meslekleri için, ait oldukları ISCO-08 meslek grubunun üre
 
 > Grup düzeyi ILO'nun yayımladığı bir değer değil, bu uygulamanın sayım kuralıdır; ILO istihdam ağırlıklı grup puanı yayımlamaz. ILO endeksi Polonya görev tanımları ve küresel uzman görüşüyle kurulmuş genel bir endekstir, teknolojinin benimsenmesini ve yeni işleri hesaba katmaz. Meslek–ISCO eşleşmesi orta güvenliyse öğrenciye not gösterilir. OECD Employment Outlook 2023 doğrulanmadığı için kullanılmadı.
 
+### İş Hayatı · Mülakat Simülasyonu
+
+Her bölüm için 4 soruluk kısa bir iş görüşmesi: mülakatçı alana özgü bir durum sorar, iki aday farklı yaklaşımla cevap verir, öğrenci daha iyi cevabı seçer; ardından iki cevabın gerekçesi, mülakatçının tercihi ve 'Alandan bir bilgi' gösterilir.
+
+**Nasıl:** İçerik app/data/mulakat_simulasyonu.json: 301 bölüm × 4 soru (2 alan durumu, 1 iletişim, 1 etik/sorumluluk) = 1.204 soru; her soruda konu, beceri, terimler, iki aday cevabı ve gerekçeleri, 'Alandan bir bilgi' (ders). 1.149 soruda tek iyi aday vardır; 55 soru 'ikisi de' türündedir (iki yaklaşımın sonucu anlatılır). İyi adayın yeri dengelidir (Aday 1: 572, Aday 2: 577; testte %40–60 aralığı denetlenir). Bilgi sınavı değildir; doğru aday gerekçeden mantıkla bulunabilir. 105 soru bir düşünme aracıyla etiketlidir ve 'Atölyede dene' bağlantısıyla Düşünme Atölyesi'ne bağlanır. Durumlar kurgusaldır ve bağımsız içerik denetiminden geçmiştir. Kayıt: seçimler ve mülakatçıyla aynı seçilen soru sayısı (is_hayati_mulakat_sim), yalnızca öğrencinin kendi uçlarından okunur; puan ya da uyum hesabına girmez.
+
+**Dayanak:**
+
+- [111] Premack ve Wanous, 1985 — Gerçekçi iş önizlemelerinin işe yeni başlayanların başlangıç beklentilerini gerçekçileştirdiğini meta-analitik olarak gösterir; meslekteki zorlu durumları ve iki farklı yaklaşımın sonuçlarını göstermenin gerekçesidir. Çalışmalar iş adayları ve yeni çalışanlarla yapılmıştır; lise öğrencisine sunulan kurgusal bir mülakatın etkisini göstermez.
+- [108] Phillips, 1998 — Gerçekçi iş önizlemelerinin beklentiler ve işten ayrılma üzerinde küçük ama tutarlı etkileri olduğunu meta-analitik olarak gösterir; simülasyonun meslek tanıtım amacını destekler, etkinin büyüklüğü ya da öğrenci örnekleminde geçerliği konusunda bir şey söylemez.
+- [88] McDaniel ve ark., 2001 — Durumsal yargı testlerinin iş performansını yordadığını gösterir; bir duruma verilen cevapları karşılaştırıp daha iyisini seçme biçimi bu test türünden esinlenir. Mülakat simülasyonu bir seçme ya da ölçme aracı değildir; geçerlik çalışması yapılmamıştır ve sonuç öğrenciyi değerlendirmek için kullanılmaz.
+
+> 1.204 soru, aday cevapları, gerekçeler ve 'Alandan bir bilgi' metinleri kurum içinde yazılmış kurgusal içeriktir; bağımsız içerik denetiminden geçmiş olsa da her alan için alan uzmanı onayı ve durumsal yargı testi olarak psikometrik çalışma yoktur. Soru dağılımı (2 alan, 1 iletişim, 1 etik), iyi adayın yerinin %40–60 dengesi ve düşünme aracı etiketleri ürün kararıdır.
+
+### İş Hayatı · Düşünme Atölyesi · _Kurum içi_
+
+Okulda pek öğretilmeyen düşünme araçlarını yaparak öğreten 6 modül: kök neden (5 Neden), korelasyon ≠ nedensellik, algoritmik düşünme, ikiye bölerek arama, veriyi doğru oku (tercih) ve öğrenmeyi öğren (kendini sınama deneyi).
+
+**Nasıl:** İçerik app/data/dusunme_atolyesi.json. Modül akışı: durum → ilk deneme (araç bilinmeden) → araç → okulda → iş hayatında → bu hafta dene → özet ('ilk denemen → aracı kullanınca'; puan değildir). Alıştırmalar: neden zinciri ve kök/belirti ayrımı; saçılım grafikli 3 korelasyon vakası; adımları sıralayıp robotu çalıştırma; 1–100 arası sayı bulma ve ikiye bölme gösterimi; kurgusal program tablosu (kontenjan, taban puan, taban başarı sırası, son yerleşenin netleri) üzerinde 5 soru ve Güvenli/Dengeli/Riskli sınıflaması (oran ≤0,85 / ≤1,10 / >1,10; Tercih bileşeniyle aynı eşikler); öğrenmeyi öğren deneyi: uydurma dilden 12 kelime, 6'sı kendini sınayarak 6'sı tekrar okuyarak çalışılır (sınama listesi rastgele, sınama önce okuma sonra), ara görevden sonra test; aynı kelimelerle 2. ölçüm en erken 12 saat sonra açılır ve sonuca göre açıklama verilir. Mülakat Simülasyonu'ndaki 105 etiketli soru ilgili modüle bağlanır. Kayıt: öğrenci + araç başına tek satır (is_hayati_dusunme) ve deney ölçümleri (is_hayati_ogrenme_deneyi).
+
+**Dayanak:**
+
+- [115] Roediger ve Karpicke, 2006 — Kendini sınamanın, aynı süre tekrar okumaya göre gecikmeli testlerde (2 gün, 1 hafta) daha iyi hatırlama sağladığını, 5 dakika sonraki testte ise tekrar okumanın önde olabildiğini deneysel olarak gösterir; 'öğrenmeyi öğren' deneyinin tasarımının ve 2. ölçümün geç yapılmasının doğrudan dayanağıdır. 12 saatlik alt sınır ve 12 kelimelik liste bu çalışmadan alınmamıştır; tek öğrencinin sonucu bu etkiyi kanıtlamaz ya da çürütmez.
+- [33] Dunlosky ve ark., 2013 — Kendini sınama (practice testing) ve aralıklı çalışmayı yüksek yararlılıkta, tekrar okuma ve altını çizmeyi düşük yararlılıkta değerlendiren kapsamlı derlemedir; modüldeki çalışma yöntemi önerilerinin dayanağıdır.
+- [19] Cepeda ve ark., 2006 — Dağıtılmış çalışmanın yığılmış çalışmaya göre daha iyi hatırlama sağladığını meta-analitik olarak gösterir; modüldeki 'çalışmayı sınava son geceye yığma, günlere yay' senaryosunu destekler. Deney aralıklı çalışmayı ayrıca sınamaz.
+- [160] Ohno, 1988 — Bir sorun karşısında 'neden?' sorusunu art arda (beş kez) sorarak kök nedene inme yaklaşımını Toyota Üretim Sistemi'nin parçası olarak anlatan özgün kaynaktır; 'Kök neden (5 Neden)' modülünün dayanağıdır. Yöntemin bir sınıf etkinliği olarak etkililiğine ilişkin ampirik kanıt sunmaz; 'beş' sayısı katı bir kural değil, sezgisel bir yönlendirmedir.
+
+> Korelasyon ≠ nedensellik, algoritmik düşünme, ikiye bölerek arama ve tercih verisini okuma modülleri için akademik kaynak eklenmedi; bunlar yerleşik genel bilgi olarak, kurgusal örneklerle sunulur. Güvenli/Dengeli/Riskli oran eşikleri (0,85/1,10) Tercih bileşeniyle aynı kurum içi tasarım kararıdır; deneydeki 12 kelime, 6/6 bölüşüm ve en az 12 saatlik bekleme de kurum içi karardır. 'İlk deneme → aracı kullanınca' özeti puan ya da beceri ölçümü değildir; modüllerin öğrenme etkisi sınanmamıştır.
+
 ## Rehberlik ve erken uyarı
 
 ### Erken uyarı kuralları ve rehberlik görüşme kayıtları · _Kurum içi_
 
 Rehber öğretmene dikkat gerektiren öğrencileri kural bazlı listeleyen panel ve görüşme/randevu/takip kayıtları.
 
-**Nasıl:** 8 kural: hiç giriş yok (hesap ≥7 gün; <21 orta, ≥21 yüksek), uzak kaldı (son giriş ≥14 gün; ≥30 yüksek), test yarıda (son giriş ≥7 gün, orta), teste başlamadı (giriş var, hesap ≥14 gün, düşük), net düşüşü (son deneme önceki en çok 3 denemenin ortalamasından %15+ düşük, ortalama ≥5; %25+ yüksek), görevleri bıraktı (son 3 haftada 0, önceki 5 haftada ≥2 görev), tarama formunda destek ihtiyacı (son 120 gün), hedef yok (12. sınıf/mezun, düşük). Seviye puanı yüksek 3, orta 2, düşük 1; 'görüştüm, N gün gösterme' ertelemesi 1–120 gün (varsayılan 14). Görüşme: 4 tür, 8 konu, 3 durum; notlar öğrenciye gösterilmez.
+**Nasıl:** 8 kural: hiç giriş yok (hesap ≥7 gün; <21 düşük, ≥21 orta), uzak kaldı (son giriş ≥14 gün düşük; ≥30 orta), test yarıda (son giriş ≥7 gün düşük; ≥30 orta), teste başlamadı (giriş var, hesap ≥14 gün, düşük), net düşüşü (son deneme önceki en çok 3 denemenin ortalamasından %15+ düşük, ortalama ≥5; %30+ yüksek), görevleri bıraktı (son 3 haftada 0, önceki 5 haftada ≥2 görev), tarama formunda destek ihtiyacı (son 120 gün), hedef yok (12. sınıf/mezun, düşük). Katılım kuralları tek başına en çok orta düzeydedir; aynı öğrencide 3 ya da daha fazla farklı orta uyarı birleşirse yüksek, 3 ya da daha fazla farklı uyarı (düşükler dahil) birleşirse en az orta olur. Seviye puanı yüksek 3, orta 2, düşük 1; 'görüştüm, N gün gösterme' ertelemesi 1–120 gün (varsayılan 14). Görüşme: 4 tür, 8 konu, 3 durum; notlar öğrenciye gösterilmez.
 
 **Dayanak:**
 
@@ -651,7 +680,7 @@ Rehber öğretmene dikkat gerektiren öğrencileri kural bazlı listeleyen panel
 - [1] Allensworth ve Easton, 2007 — Basit, izlenebilir göstergelerin (ders başarısı, devam) yol üstünde kalmayı yordadığını göstererek kural bazlı erken uyarı yaklaşımını destekler.
 - [95] Millî Eğitim Bakanlığı Rehberlik ve Psikolojik Danışma Hi…, 2020 — Rehber öğretmenin öğrenci izleme, görüşme ve kayıt tutma rolünün mevzuat çerçevesini sağlar.
 
-> Kural eşikleri (7/14/21/30 gün, %15/%25 net düşüşü, 120 gün, 1–120 gün erteleme) ve seviye puanları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. Erken uyarı yaklaşımının kendisi literatüre dayanır.
+> Kural eşikleri (7/14/21/30 gün, %15/%30 net düşüşü, 3 uyarı birleşme kuralı, 120 gün, 1–120 gün erteleme) ve seviye puanları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. Erken uyarı yaklaşımının kendisi literatüre dayanır.
 
 ### Akran benzerliği
 
@@ -705,7 +734,7 @@ Sınav öncesi ve sırasında yaşanan kaygıyı yoklayan, tanı koymayan isimli
 **Dayanak:**
 
 - [149] Zeidner, 1998 — Sınav kaygısının bilişsel (endişe) ve duyuşsal (bedensel tepki) bileşenlerini tanımlayarak madde içeriğinin kuramsal çerçevesini sağlar.
-- [139] von der Embse ve Jester, 2018 — Sınav kaygısının yaygınlığını ve başarıyla olumsuz ilişkisini 30 yıllık meta-analizle göstererek okulda tarama yapılmasını destekler; form yerleşik ölçeklerden (ör. TAI) esinlenmiştir, uyarlaması değildir.
+- [139] von der Embse ve ark., 2018 — Sınav kaygısının yaygınlığını ve başarıyla olumsuz ilişkisini 30 yıllık meta-analizle göstererek okulda tarama yapılmasını destekler; form yerleşik ölçeklerden (ör. TAI) esinlenmiştir, uyarlaması değildir.
 - [54] Hembree, 1988 — Sınav kaygısının performansla olumsuz ilişkisini ve tedaviyle azaltılabildiğini meta-analizle göstererek yüksek kaygıda destek yönlendirmesini destekler.
 - [17] Cassady ve Johnson, 2002 — Bilişsel sınav kaygısının sınav başarısını düşürdüğünü göstererek endişe odaklı maddelerin dahil edilmesini destekler.
 
@@ -899,7 +928,7 @@ Bölümün üniversite/program bilgileri (kontenjan, taban puan, başarı sıras
 
 Bir öğrencinin sonuçlarını dört farklı kitleye göre dili ve içeriği değişen PDF olarak sunar.
 
-**Nasıl:** Puanlar yeniden hesaplanmaz, ekrandakiyle aynı kaynaklar kullanılır (güçlü ≥62 en çok 6, gelişim <45 en çok 5). Kurallı SWOT: S ilk 5 güçlü yön; W hedef odakları + gelişim alanları (en çok 5); O ilk 3 bölüm, öne çıkan 2 alan, tekrar eden güçlü yönler, K5 alanı, Listem; T hedef ilk 10'da değil, belirgin açıklar, hiç adım yok, düşük güven, son 4 haftada görev yok vb. Veli raporunda 6 öneri ve 4 'öğretmene sorulacak soru'; her sayfada 'Kişisel veri içerir' altbilgisi; net bölümünde 'hedef netler tek kişiye aittir, OBP etkiler' notu.
+**Nasıl:** Puanlar yeniden hesaplanmaz, ekrandakiyle aynı kaynaklar kullanılır (güçlü ≥62 en çok 6, gelişim <40 en çok 5). Kurallı SWOT: S ilk 5 güçlü yön; W hedef odakları + gelişim alanları (en çok 5); O ilk 3 bölüm, öne çıkan 2 alan, tekrar eden güçlü yönler, K5 alanı, Listem; T hedef ilk 10'da değil, belirgin açıklar, hiç adım yok, düşük güven, son 4 haftada görev yok vb. Veli raporunda 6 öneri ve 4 'öğretmene sorulacak soru'; her sayfada 'Kişisel veri içerir' altbilgisi; net bölümünde 'hedef netler tek kişiye aittir, OBP etkiler' notu.
 
 **Dayanak:**
 
@@ -908,26 +937,26 @@ Bir öğrencinin sonuçlarını dört farklı kitleye göre dili ve içeriği de
 - [36] Epstein, 1995 — Veli raporundaki öneriler ve 'öğretmene sorulacak sorular', Epstein'ın okul-aile iletişimi ve evde öğrenmeyi destekleme katılım türlerinden esinlenir; birebir uyarlama değildir.
 - [53] Helms ve Nixon, 2010 — SWOT çerçevesinin kullanımı genel SWOT literatürüne dayanır; ancak kurallı kişisel SWOT'a eşleme (hangi verinin S/W/O/T'ye gittiği) bu kaynakta yoktur.
 
-> Güçlü (≥62, en çok 6) ve gelişim (<45, en çok 5) eşikleri, SWOT madde eşleme kuralları ve 6 öneri/4 soru sayıları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. 'Kişisel veri içerir' altbilgisi KVKK'nın genel veri güvenliği yükümlülüğüyle uyumlu bir ürün kararıdır.
+> Güçlü (≥62, en çok 6) ve gelişim (<40, en çok 5) eşikleri, SWOT madde eşleme kuralları ve 6 öneri/4 soru sayıları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. 'Kişisel veri içerir' altbilgisi KVKK'nın genel veri güvenliği yükümlülüğüyle uyumlu bir ürün kararıdır.
 
 ### Okul, sınıf ve şube raporları; okul karşılaştırması · _Kurum içi_
 
-Okulun genel durumu, sınıf/şube özetleri (Excel/PDF) ve çok okullu kurumlar için okul karşılaştırması.
+Okulun genel durumu, sınıf/şube özetleri (Excel/PDF) ve süper admin için okullar arası karşılaştırma.
 
-**Nasıl:** Okul raporu: katılım, 1. öneriye göre alan dağılımı (ilk 8), katman ortalamaları (şube raporunda okul ortalamasıyla), ortak en güçlü/en zayıf 6 özellik, geçersiz tur sayısı, öğrenci listesi ve son TYT/AYT netleri. Karşılaştırma 9 metrik: öğrenci, giriş yapan %, son 30 günde aktif %, testi tamamlayan %, hedef seçen %, ort. son TYT neti, 90 günde rehberlik görüşmesi, yüksek uyarılı öğrenci, son yıl yerleşme %. Kodda küçük grup gizleme eşiği yalnızca anketlerde var; okul/şube raporlarında yok. Toplu PDF/Excel raporlarında ve okul karşılaştırmasında 5'ten az öğrenciye dayanan değerler gizlenir, küçük kalemler 'Diğer' altında birleşir (app/core/kucuk_grup.py).
+**Nasıl:** Okul raporu: katılım, 1. öneriye göre alan dağılımı (ilk 8), katman ortalamaları (şube raporunda okul ortalamasıyla), ortak en güçlü/en zayıf 6 özellik, geçersiz tur sayısı, öğrenci listesi ve son TYT/AYT netleri. Karşılaştırma 9 metrik: öğrenci, giriş yapan %, son 30 günde aktif %, testi tamamlayan %, hedef seçen %, ort. son TYT neti, 90 günde rehberlik görüşmesi, yüksek uyarılı öğrenci, son yıl yerleşme %. Küçük grup gizleme (5'ten az öğrenciye dayanan değer gösterilmez, küçük kalemler 'Diğer' altında birleşir; app/core/kucuk_grup.py) yalnızca verinin bireysel olarak görmeye yetkili olmayan kişilere gittiği yerlerde uygulanır: veli toplantısı sunumunun veli sürümü, anonim anketler, öğrenciye gösterilen okul deneme ortalaması ve süper admin okul karşılaştırması. Okul yetkilisinin raporlarında ve sunumun öğretmen sürümünde uygulanmaz; yetkili her öğrencinin sonucunu adıyla zaten görür.
 
 **Dayanak:**
 
-- [129] Sweeney, 2002 — Küçük grupların kimlik açığa çıkarma riskine karşı asgari grup büyüklüğü ilkesini sağlar; toplu raporlarda 5'ten az öğrenciye dayanan değerlerin gizlenmesinin dayanağıdır.
-- [124] Seastrom, 2010 — Toplulaştırılmış eğitim verisi raporlarında küçük hücre gizleme uygulamalarını tanımlar; okul, sınıf düzeyi ve şube raporlarındaki gizleme ve 'Diğer' birleştirmesini destekler.
+- [129] Sweeney, 2002 — Küçük grupların kimlik açığa çıkarma riskine karşı asgari grup büyüklüğü ilkesini sağlar; yetkisiz kitleye giden toplu çıktılarda (veli sunumu, okul karşılaştırması) 5'ten az öğrenciye dayanan değerlerin gizlenmesinin dayanağıdır.
+- [124] Seastrom, 2010 — Toplulaştırılmış eğitim verisi raporlarında küçük hücre gizleme uygulamalarını tanımlar; veli sunumundaki gizleme ve 'Diğer' birleştirmesini destekler.
 
-> Okul karşılaştırmasındaki 9 metrik, ilk 8/ilk 6 sınırları ve 30/90 günlük pencereler kurum içi tasarım kararıdır; belirli bir okul performans göstergesi çerçevesine dayanmaz. Kaynaklar küçük hücre gizlemeyi önerir; mevcut kod okul/şube raporlarında gizleme yapmaz (bilinen boşluk).
+> Okul karşılaştırmasındaki 9 metrik, ilk 8/ilk 6 sınırları ve 30/90 günlük pencereler kurum içi tasarım kararıdır; belirli bir okul performans göstergesi çerçevesine dayanmaz. Kaynaklar küçük hücre gizlemeyi önerir; eşiğin (5) yalnızca yetkisiz kitleye giden çıktılarda uygulanması kurum içi tasarım kararıdır.
 
 ### Paketler, modüller ve bildirimler · _Kurum içi_ · _Okul görünümünde yok_
 
 Okulun hangi modülleri kullanacağını belirleyen paket yapısı ve uygulama içi/e-posta bildirimleri.
 
-**Nasıl:** 19 modül; Temel (takvim), Gelişim (takvim, koçluk, kütüphane, kulüpler, Filiz), Tam (tüm modüller, filiz_ai yalnız Tam'da); etkin = paket ∪ ekle − çıkar; bağımlılık okul_denemeleri→net_takibi, filiz_ai→filiz; okulsuz öğrenci tüm modülleri görür. Bildirim e-postası günlük 300 sınırı (Gmail ~500), kişi e-postayı kapatabilir.
+**Nasıl:** 20 modül; Temel (takvim, öğrenci raporları, bildirimler), Gelişim (Temel'e ek olarak koçluk, kütüphane, kulüpler, Filiz, rehberlik, çalışma programı, e-portfolyo, anketler; 11 modül), Tam (tüm 20 modül; filiz_ai, net takibi, akran, eğitim koçları, gelişmiş raporlar, okul denemeleri, tercih, mezun takibi ve İş Hayatı yalnız Tam'da); etkin = paket ∪ ekle − çıkar; bağımlılık okul_denemeleri→net_takibi, filiz_ai→filiz; okulsuz öğrenci tüm modülleri görür. Bildirim e-postası günlük 300 sınırı (Gmail ~500), kişi e-postayı kapatabilir.
 
 **Dayanak:** Akademik dayanak yok.
 
@@ -958,6 +987,40 @@ Deneme/tanıtım için açılan hesaplarda öğrencinin yerine soruları gerçek
 - [96] Morris ve ark., 2019 — Bilinen bir 'gerçek' profilden yapay veri üretip algoritmanın çıktısını kontrol etme yaklaşımı, istatistiksel yöntemlerin simülasyonla değerlendirilmesi ilkeleriyle uyumludur; senaryo üreticisi biçimsel bir simülasyon çalışması değildir, esinlenmedir.
 
 > Senaryo üreticisi asıl olarak tanıtım/deneme amaçlı bir ürün özelliğidir; eğilim vektörü, rastgelelik miktarı ve 'bölüme göre' hedef profil kurum içi tasarım kararıdır. Test hesaplarında 2 adımlı doğrulamanın atlanması ve süreli giriş bağlantısı güvenlik açısından ürün kararıdır; akademik dayanağı yoktur.
+
+### Rapor yorumları ve öncelikli işler · _Kurum içi_
+
+PDF raporlarında ve rapor ekranlarında sayıların yanında 'ne anlama geliyor, ne yapılmalı, nelerden kaçınılmalı' bölümü: öğrenci, veli, sınıf öğretmeni ve rehber öğretmen için ayrı dilde yorum; okul, sınıf ve şube raporlarında kim/ne zaman bilgisiyle öncelikli işler.
+
+**Nasıl:** Kural tabanlıdır (app/core/rapor/yorum.py); yalnızca raporda zaten bulunan verileri kullanır, yeni sayı ya da tahmin üretmez, öğrenci verisi dışarı gönderilmez. Özellik metinleri app/data/rapor_yorumlari.json'da: 31 özellik × yüksek/düşük × kitle (anlam, öğrenci, veli, sınıf öğretmeni, okul grubu). Öğrenci yorumu: 'Kısaca' özeti, yapılması/yapılmaması gerekenler, güçlü yönler (en çok 3, güçlü bandı ≥62; değerler K1 ayrı cümlede en çok 2), gelişime açık yönler (en çok 3, <40; önce K3 yetkinlik ve K2 çalışma tarzı, sonra ilgi ve değerler), hedef durumu (hedef ilk 10 öneride ya da uyum ≥60 → uyumlu, <40 → belirgin fark, arası kısmen) ve rehber öğretmen için görüşme gündemi. Çerçeve: K1 değerler ve K4 ilgiler 'eksik' değil dikkate alınacak tercihtir; K2'de düşük puan bir çalışma tarzıdır; duygusal hassasiyet (P4) ≥62 ise güçlü yön sayılmaz, destek önerilir. Gizlilik: sınıf öğretmeni yorumunda kişilik (K2) ayrıntısı ve duygusal hassasiyet bilgisi yer almaz; etik karar verme (I4) veli ve sınıf öğretmenine gelişim alanı olarak gösterilmez; düşük kutupta etiketleyici okunabilecek adlar nötr adla gösterilir (ör. 'Planlı çalışma alışkanlığı'). Okul düzeyi (okul_yorumu): tamamlama oranı (%50 altı öncelikli iş), 12. sınıf ve şube bazında düşük tamamlama, hedef seçme oranı, net verisi; 'Ne yapılmalı?' tablosu (öncelik, kim, ne zaman) ve yapılmaması gerekenler; ortak özelliklerden grup etkinliği önerisi üretilirken kişilik ve duygusal hassasiyet kullanılmaz.
+
+**Dayanak:**
+
+- [150] Zenisky ve Hambleton, 2012 — Puan raporlarının hedef kitleye göre uyarlanmasını ve sayıların yanında yorum ile 'ne yapılabilir' rehberliği verilmesini önerir; kitleye göre ayrı yorum ve öncelikli işler bölümünün tasarım dayanağıdır. Kitleye özgü cümlelerin içeriğini ya da eşikleri belirlemez; yorumlar kullanıcılarla sınanmamıştır.
+- [2] American Educational Research Association, American Psych…, 2014 — Puan kullanıcılarına anlaşılır yorum bilgisi verilmesi ve puanların aşırı yorumlanmaması ilkesini destekler; 'uyum yüzdesini etiketleme ya da sıralama için kullanmayın' gibi yapılmaması gerekenler bu ilkeyle uyumludur. Standartlara resmî bir uygunluk denetimi yapılmamıştır.
+- [32] Dickson ve Kelly, 1985 — Genel ve herkese uyan kişilik yorumlarının kişiye özgü sanılması (Barnum etkisi) riskini gösterir; yorumların yalnızca öğrencinin kendi yüksek/düşük sonuçlarına bağlanmasının ve somut eylem önermesinin gerekçesidir. Kalıp metinlerin bu riski ne ölçüde azalttığı sınanmamıştır.
+
+> Güçlü (≥62) ve gelişime açık (<40) bantları, en çok 3/2 madde sınırları, hedef uyumu için 60/40 eşikleri, okul düzeyinde %50 tamamlama sınırı ve öncelik sıraları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. 31 özellik × yön × kitle metinleri kurum içinde yazılmıştır; uzman paneli ya da kullanıcı çalışmasıyla doğrulanmamıştır. Kitleye göre gizleme kuralları (kişilik, duygusal hassasiyet, etik karar verme) KVKK'nın ölçülülük ilkesiyle uyumlu ürün kararlarıdır.
+
+### Sonuç e-postası ve toplu öğrenci işlemleri · _Kurum içi_
+
+Değerlendirmenin son bölümü bitince öğrenciye giden sonuç e-postası; yeni eğitim yılında toplu sınıf atlatma ve öğrencinin değerlendirmesini sıfırlama.
+
+**Nasıl:** Sonuç e-postası (app/core/sonuc_epostasi.py) son bölümden sonra arka planda gider: K1–K4 bitince, K5 derinleşme dalı açıldıysa son dal tamamlanınca. Okulun paketinde 'Öğrenci raporları' modülü varsa öğrenci raporu PDF olarak eklenir (yalnızca PDF, en çok 3 MB), yoksa e-posta eksiz gider. Güven puanı düşük turda ve test hesaplarında gitmez; sorunlu katman yeniden çözülüp tur tamamlanınca gider; bir tamamlanma için bir kez gider. Okul yetkilisi öğrenci detayında gönderim durumunu görür ve 'Yeniden gönder' diyebilir; sonuc_epostasi_acik parametresiyle kapatılabilir. Sınıf atlatma: 9→10, 10→11, 11→12, 12→Mezun, şube harfi korunur; önizleme (sınıf başına sayı), sınıf bazında seçim, seçili öğrenciler sınıfında kalır; test hesapları ve 'Aday' dahil edilmez; aynı yıl ikinci kez yapılırsa uyarı ve açık onay. Eski sınıf toplu_islemler'e yazılır, 30 gün içinde 'Geri al' (sonradan elle değişenler atlanır). 'Değerlendirmeyi sıfırla' öğrencinin son turunu siler (cevaplar, sonuçlar, bölüm uyumları, bu tura bağlı koçluk adımları); önceki turlar ve hesap kalır; işlemler denetim kaydına yazılır.
+
+**Dayanak:** Akademik dayanak yok.
+
+> E-posta gönderim kuralları, PDF eki sınırı, 30 günlük geri alma süresi ve sınıf atlatma kuralları ürün ve işletim kararlarıdır; akademik dayanak gerektirmez ve aranmamıştır. Sonuçların e-postayla iletilmesi kişisel veri aktarımıdır; dayanağı okulun aydınlatma metni ve KVKK yükümlülükleridir (Güvenlik ve veri koruma grubundaki bileşenler).
+
+### Çoklu dil · _Kurum içi_
+
+Arayüzün, ölçme sorularının ve sistem içeriğinin Türkçeye ek olarak 12 dilde (İngilizce, Almanca, Fransızca, Rusça, İspanyolca, İtalyanca, Arapça, Çince, Hintçe, Özbekçe, Azerbaycan dili, Korece) gösterilmesi; uzun sistem içeriği içerik çevirisi servisi ile çevrilip önbelleğe alınır.
+
+**Nasıl:** Ekran çeviri katmanı (frontend/src/yardimci/dil.js) Türkçe metinleri dil paketlerinden (frontend/src/dil/<kod>.json) çevirir; kalıplar ({0}), büyük/küçük harf, birleşik cümleler, tarih, yüzde ve sayı biçimleri (ondalık ve binlik ayırıcı dile göre) desteklenir; Arapça sağdan sola gösterilir. Dil seçimi hesaba kaydedilir. Ölçme soruları dillere çevrilip anlam açısından gözden geçirilmiştir. Uzun sistem içeriği (yalnızca içerik havuzu; kişisel veri gönderilmez) içerik çevirisi servisi ile çevrilip önbelleğe alınır. PDF raporlar, e-postalar ve KVKK metinleri Türkçe asıllarıyla kalır.
+
+**Dayanak:** Akademik dayanak yok.
+
+> Dil kapsamı ve çeviri altyapısı ürün kararıdır. Ölçme sorularının çevirileri için ayrı bir uyarlama/eşdeğerlik (ölçme değişmezliği) çalışması yapılmamıştır; Türkçe dışındaki dillerde puanlar Türkçe formla doğrudan karşılaştırılabilir kabul edilmemelidir (bu not Sistem Hakkında 'Dil desteği' kartında yer alır).
 
 ## Güvenlik ve veri koruma
 
@@ -1342,6 +1405,8 @@ Kimin hangi veriyi görebileceğine dair yapısal kurallar ve kritik işlemlerin
    - Doğrulama: HTML sürümü okundu (webapps.ilo.org/static/english/intserv/working-papers/wp096, 2026-10): özet ve sonuçta en önemli etkinin büyük olasılıkla işi tamamlama/destekleme (augmentation) olduğu; büro destek elemanlarının görevlerinde en yüksek maruz kalma. Gruplara göre sayısal tablo metinde verilmiyor (yalnızca şekiller); bu çalışmadan sayı alınmadı.
 159. World Economic Forum (2025). The Future of Jobs Report 2025. Cenevre: WEF. <https://www.weforum.org/reports/the-future-of-jobs-report-2025/digest>
    - Doğrulama: Özet sayfası doğrudan okundu (2026-10; yayın 7 Ocak 2025): en hızlı önem kazanan beceriler (yapay zekâ ve büyük veri, ağlar ve siber güvenlik, teknoloji okuryazarlığı; analitik ve yaratıcı düşünme, dayanıklılık-esneklik, merak ve yaşam boyu öğrenme), mutlak sayıca en çok büyüyen ve en hızlı küçülen işler. Küresel işveren anketi; Türkiye'ye birebir uymayabilir. Yalnızca nitel düzeyde kullanıldı.
+160. Ohno, T. (1988). Toyota production system: Beyond large-scale production. Productivity Press. <https://www.routledge.com/9780915299140>
+   - Doğrulama: Routledge ürün sayfası (yazar, başlık, Productivity Press, 1988, 1. baskı, ISBN 9780915299140) ve USI kütüphane kaydı (Cambridge, Mass.; xix + 143 s.; Toyota seisan hōshiki'nin İngilizce çevirisi; ISBN 0915299143). '5 kez neden' anlatımının kitabın 2. bölümünün başında yer aldığı ikincil kaynaktan (Gemba Academy yazısı); sayfa numarası doğrulanmadı. DOI yok.
 
 ## Doğrulanamayan ve listeye alınmayan künyeler
 

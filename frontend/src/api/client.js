@@ -1,3 +1,4 @@
+import { aktifDil } from '../yardimci/dil'   // [2026-10-12] Filiz ve sunucu mesajları için seçili dil
 const TABAN_URL = '/api'
 
 function tokenAl(kapsam = 'ogrenci') {
@@ -107,7 +108,7 @@ function dostMesaj(status, detay) {
 
 async function istek(yol, secenekler = {}, kapsam = 'ogrenci', deneme = 0) {
   const token = tokenAl(kapsam)
-  const headers = { 'Content-Type': 'application/json', ...secenekler.headers }
+  const headers = { 'Content-Type': 'application/json', 'X-Dil': aktifDil(), ...secenekler.headers }
   if (token) headers['Authorization'] = `Bearer ${token}`
   const yontem = (secenekler.method || 'GET').toUpperCase()
 
@@ -244,6 +245,10 @@ export const api = {
   soruyuCevapla: (kod, soruId, secenekId, enAzSecenekId = null) =>
     post(`/ogrenci/katmanlar/${kod}/cevap`, { soru_id: soruId, secenek_id: secenekId, en_az_secenek_id: enAzSecenekId }),
   katmaniTamamla: (kod) => post(`/ogrenci/katmanlar/${kod}/tamamla`),
+  // [2026-10-12] Yeniden değerlendirme: durum (bekleme / güven sorunu / açık) ve sorunlu bölümü tekrar çözme
+  degerlendirmeDurumu: () => get('/ogrenci/degerlendirme-durumu'),
+  raporYorumum: () => get('/ogrenci/rapor-yorumu'),   // [2026-10-12] sonuç yorumu ve öneriler
+  katmanTekrar: (kod) => post(`/ogrenci/katmanlar/${kod}/tekrar`),
 
   // --- Güvenlik/Tutarlılık (sonradan eklendi) ---
   guvenlikOlayiKaydet: (turId, olayTipi, katmanKod) =>
@@ -429,6 +434,11 @@ export const api = {
   isHayatiMulakatGeriBildirim: (id) => post(`/ogrenci/is-hayati/mulakat/pratik/${id}/geri-bildirim`, {}),
   isHayatiMulakatGecmis: () => get('/ogrenci/is-hayati/mulakat/gecmis'),
   isHayatiMulakatSil: (id) => del(`/ogrenci/is-hayati/mulakat/pratik/${id}`),
+  isHayatiMulakatSim: (bolumId) => get(`/ogrenci/is-hayati/mulakat-sim/${bolumId}`),   // [2026-10-13] Mülakat Simülasyonu
+  isHayatiMulakatSimKaydet: (v) => post('/ogrenci/is-hayati/mulakat-sim', v),
+  isHayatiDusunme: (bolumId) => get(`/ogrenci/is-hayati/dusunme${bolumId ? `?bolum_id=${bolumId}` : ''}`),   // [2026-10-13] Düşünme Atölyesi
+  isHayatiDusunmeBitir: (kod, v) => post(`/ogrenci/is-hayati/dusunme/${kod}`, v),
+  isHayatiDusunmeDeney: (v) => post('/ogrenci/is-hayati/dusunme-deney', v),
   // [2026-10-10] İş Hayatı → CV Atölyesi ve Mezunlardan
   isHayatiCv: () => get('/ogrenci/is-hayati/cv'),
   isHayatiCvKaydet: (icerik, paylas) => put('/ogrenci/is-hayati/cv', { icerik, paylas }),
@@ -495,6 +505,8 @@ export const api = {
   profilGetir: () => get('/ogrenci/profil'),
   profilGuncelle: (veri) => put('/ogrenci/profil', veri),
   // [2026-10-11] Şifre değişince diğer cihazlardaki oturumlar düşer; sunucu bu cihaz için yeni anahtar çifti döner
+  // [2026-10-12] Kişisel dil tercihi (hesaba kaydedilir)
+  dilKaydet: (dil, kapsam = 'ogrenci') => put(kapsam === 'admin' ? '/yonetim/ben/dil' : '/ogrenci/profil/dil', { dil }, kapsam),
   sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),
   ilkSifreBelirle: (yeniSifre) => post('/ogrenci/profil/ilk-sifre', { yeni_sifre: yeniSifre }).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),  // [2026-10-09] geçici şifreden sonra
   profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
@@ -623,7 +635,7 @@ export const api = {
   },
   okulTekBakista: (okulId, f = {}) => aget(`/yonetim/okul/${okulId}/tek-bakista${istatistikSorgu(f)}`),
   okulTekBakistaPdf: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/tek-bakista/pdf${istatistikSorgu(f)}`, 'admin'),
-  veliSunumuIndir: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/veli-sunumu${istatistikSorgu(f)}`, 'admin'),   // [2026-10-11] .pptx
+  veliSunumuIndir: (okulId, f = {}, kitle = 'veli', bicim = 'pptx') => { const q = istatistikSorgu(f); return dosyaIndir(`/yonetim/okul/${okulId}/veli-sunumu${q}${q ? '&' : '?'}kitle=${kitle}&bicim=${bicim}`, 'admin') },   // [2026-10-14] kitle: veli | ogretmen · bicim: pptx | pdf | pdf_notlu
   okulOgrencileri: (okulId) => aget(`/yonetim/okul/${okulId}/ogrenciler`),
   yuklemeSablonu: () => aget('/yonetim/sablon'),
   ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),
@@ -634,6 +646,17 @@ export const api = {
   girisListesi: (okulId) => aget(`/yonetim/okul/${okulId}/giris-listesi`),
   ogrenciSifreleriniSifirla: (idler) => apost('/yonetim/ogrenciler/sifre-sifirla', { idler }),
   ogrencileriSil: (idler) => apost('/yonetim/ogrenciler/sil', { idler }),
+  // [2026-10-12] Yeni eğitim yılı: toplu sınıf atlatma (geri alınabilir) ve değerlendirmeyi sıfırlama
+  sinifAtlatOnizle: (okulId, haric = []) => aget(`/yonetim/okul/${okulId}/sinif-atlat${haric.length ? `?haric=${haric.join(',')}` : ''}`),
+  sinifAtlat: (okulId, veri) => apost(`/yonetim/okul/${okulId}/sinif-atlat`, veri),
+  topluIslemGeriAl: (islemId) => apost(`/yonetim/toplu-islem/${islemId}/geri-al`),
+  degerlendirmeSifirla: (idler) => apost('/yonetim/ogrenciler/degerlendirme-sifirla', { idler }),
+  ogrenciDegerlendirmeDurumu: (id) => aget(`/yonetim/ogrenci/${id}/degerlendirme-durumu`),
+  katmanTekrarlat: (id, kod) => apost(`/yonetim/ogrenci/${id}/katman-tekrar`, { kod }),
+  ogrenciRaporYorumu: (id, kitle = 'rehber') => aget(`/yonetim/ogrenci/${id}/rapor-yorumu?kitle=${kitle}`),
+  okulRaporYorumu: (okulId, { sinif = '', sube = '' } = {}) => aget(`/yonetim/okul/${okulId}/rapor-yorumu?${new URLSearchParams({ ...(sinif ? { sinif } : {}), ...(sube ? { sube } : {}) })}`),
+  sonucEpostasiGonder: (id) => apost(`/yonetim/ogrenci/${id}/sonuc-epostasi`),
+  yenidenDegerlendirmeAc: (idler) => apost('/yonetim/ogrenciler/yeniden-degerlendirme', { idler }),
   okulYetkilileri: (okulId) => aget(`/yonetim/okul/${okulId}/yetkililer`),
   okulYetkilisiEkle: (okulId, veri) => apost(`/yonetim/okul/${okulId}/yetkililer`, veri),
   okulYetkilisiSifreSifirla: (id) => apost(`/yonetim/yetkili/${id}/sifre-sifirla`),

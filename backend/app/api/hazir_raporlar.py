@@ -93,7 +93,7 @@ def hazir_raporlar(okul_id: int, gun: int = Query(30), sinif: str | None = None,
 
     # --- [2026-10-11] değerlendirme ve hedef: rehber öğretmenin takip edeceği listeler ------------------------------
     from app.api.okul_yonetimi import _durum, _ilerleme
-    il = _ilerleme(db, okul_id) if ids else {}
+    il = _ilerleme(db, okul_id, oneri=False) if ids else {}
     yarim = sorted((o for o in ogr if _durum(o, il.get(o.id))[0] == "devam"),
                    key=lambda o: ((sa(o) or date.min).toordinal(), (il.get(o.id) or {}).get("biten", 0)))[:adet]
     listeler.append({"kod": "yarida_kalan", "ikon": "⏸️", "baslik": "Değerlendirmeyi yarıda bırakanlar", "birim": "bölüm",

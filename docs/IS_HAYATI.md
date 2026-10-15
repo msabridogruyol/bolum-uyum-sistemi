@@ -100,6 +100,8 @@ Her içerik bileşeni kendi dosyasını açar: `backend/app/api/is_hayati_<konu>
 | `zorgun` | Zor Günler | `components/isHayati/ZorGunler.jsx` |
 | `cv` | CV Atölyesi | `components/isHayati/CvAtolyesi.jsx` |
 | `mulakat` | Mülakat Pratiği | `components/isHayati/MulakatPratigi.jsx` |
+| `mulakatsim` | Mülakat Simülasyonu | `components/isHayati/MulakatSimulasyonu.jsx` |
+| `dusunme` | Düşünme Atölyesi | `components/isHayati/DusunmeAtolyesi.jsx` |
 | `dersler` | Okulda Öğretilmeyenler | `components/isHayati/OkuldaOgretilmeyenler.jsx` |
 | `mezun` | Mezunlardan | `components/isHayati/MezunHikayeleri.jsx` |
 
@@ -175,3 +177,27 @@ Uçlar `app/api/admin_is_hayati.py` (`/admin/is-hayati/*`, yalnız süper admin;
   meslek_sayisi, ilo_meslekleri[≤8], degisen_gorevler, deger_kazanan, lisede}], genel, kaynaklar, son_kontrol, eslesmeyen, veri_yok}`.
   Gruplar en çok değişecekten başlayarak sıralanır; her ISCO kodu için en yeni veri yılı; 2 haneli satır yoksa 1 haneli ana grup.
 - Arayüz: renkler durum renkleri değil, `--okul-c`'nin açıktan koyuya sıralı tonları; orta güvenli meslek–ISCO eşleşmesinde yıldız + not.
+
+## Mülakat Simülasyonu (göç 0070)
+[2026-10-13] Her bölüm için kısa bir iş görüşmesi. Mülakatçı alana özgü bir durum sorar, iki aday ("Aday 1", "Aday 2") farklı
+yaklaşımla cevap verir, öğrenci daha iyi cevabı seçer. Ardından iki cevabın gerekçesi, mülakatçının tercihi (ya da `ikisi_de`
+sorularda iki yaklaşımın sonucu) ve "Alandan bir bilgi" gösterilir. Bilgi sınavı değildir: doğru aday, gerekçesinden mantıkla bulunabilir.
+- Uçlar: `is_hayati_mulakat_sim.py` → `GET /mulakat-sim/{bolum_id}`, `POST /mulakat-sim` (özet + kayıt).
+- Tablo (0070): `is_hayati_mulakat_sim` (seçimler, mülakatçıyla aynı seçilen soru sayısı). Yalnızca öğrencinin kendi uçlarından okunur.
+- İçerik: `app/data/mulakat_simulasyonu.json` — 301 bölüm × 4 soru (2 alan durumu, 1 iletişim, 1 etik/sorumluluk). Anahtar bölüm
+  adıdır (`bolumler.ad`). Soru alanları: `konu, beceri, soru, terimler[], tur (dogru|ikisi_de), adaylar[2]{cevap, iyi, neden, sonuc?}, ders`.
+  İyi adayın yeri dengelidir (testte %40–60 aralığı denetlenir). Diğer dillerde içerik, `app/data` havuzundan çalışma anında çevrilir.
+
+## Düşünme Atölyesi (göç 0071)
+[2026-10-13] Okulda pek öğretilmeyen düşünme araçları, yaparak: kök neden (5 Neden), korelasyon ≠ nedensellik, algoritmik düşünme,
+ikiye bölerek arama. Modül akışı: durum → ilk deneme (araç bilinmeden) → araç → okulda → iş hayatında → bu hafta dene → özet
+("ilk denemen → aracı kullanınca"; puan değildir).
+- Alıştırma türleri (`alistirma.tur`): `zincir` (neden zinciri + kök/belirti çözümü), `iliski` (3 vaka + saçılım grafiği),
+  `siralama` (adımları sırala, robotu çalıştır, eksik koşul), `sayi_bul` (1–100 sayı bulma + ikiye bölme gösterimi).
+- Uçlar: `is_hayati_dusunme.py` → `GET /dusunme?bolum_id=`, `POST /dusunme/{kod}`. Tablo (0071): `is_hayati_dusunme` (öğrenci + araç başına tek satır).
+- İçerik: `app/data/dusunme_atolyesi.json`. Mülakat Simülasyonu soruları `arac` alanıyla etiketlidir (105 soru); mülakat ekranında
+  "Atölyede dene" bağlantısı, atölye özetinde "Bu bölümün mülakatında bu araç" listesi çıkar. `?sekme=dusunme&arac=<kod>` modülü doğrudan açar.
+- [2026-10-13] İki modül daha: `tercih_verisi` (📊 Veriyi doğru oku — kurgusal program tablosu, 5 soru; `alistirma.tur = veri_oku`) ve
+  `ogrenmeyi_ogren` (🧠 Öğrenmeyi öğren — `deney`: uydurma dilden 12 kelime; 6'sı kendini sınayarak, 6'sı tekrar okuyarak çalışılır,
+  ara görevden sonra test edilir). En erken 12 saat sonra aynı kelimelerle 2. ölçüm açılır (`POST /dusunme-deney`, tablo
+  `is_hayati_ogrenme_deneyi`, göç 0072). Sınama listesi rastgele seçilir; sınama önce, okuma sonra çalışılır (okuma teste daha yakın kalır).

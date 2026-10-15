@@ -40,6 +40,8 @@ class Ogrenci(Base):
     son_giris_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     # [2026-10-11] Bu zamandan önce verilmiş oturum anahtarları geçersiz (şifre sıfırlama / değiştirme)
     oturum_gecersiz_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    dil: Mapped[str | None] = mapped_column(String(5), nullable=True)   # [2026-10-12] arayüz dili (NULL = Türkçe)
+    yeni_tur_izni: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)   # [2026-10-12] değerlendirme sıfırlandı: bekleme süresi uygulanmaz
     sinif: Mapped[str | None] = mapped_column(String, nullable=True)
     dogum_tarihi: Mapped[date | None] = mapped_column(Date, nullable=True)
     # NOT: dogum_tarihi/cinsiyet KVKK açısından hassas — veli onayı akışı ayrıca kurulmalı.
@@ -80,6 +82,7 @@ class AdminKullanici(Base):
     son_giris_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     # [2026-10-11] Bu zamandan önce verilmiş oturum anahtarları geçersiz (şifre sıfırlama / değiştirme)
     oturum_gecersiz_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    dil: Mapped[str | None] = mapped_column(String(5), nullable=True)   # [2026-10-12] arayüz dili (NULL = Türkçe)
     # [2026-10-10] Süper adminin açtığı test hesabı: 2 adımlı doğrulama istenmez, giriş bağlantısıyla açılabilir.
     test_hesabi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     test_giris_anahtari: Mapped[str | None] = mapped_column(String, nullable=True)   # bağlantı anahtarının SHA-256 özeti
