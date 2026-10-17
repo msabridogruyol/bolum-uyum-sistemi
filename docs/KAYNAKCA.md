@@ -312,11 +312,11 @@ Duygusal hassasiyet puanının bölüm önerisine katılmaması ve koçlukta ter
 
 > P4'ün eşleşmeden çıkarılması ve ters yönlü işaretlenmesi kurum içi tasarım kararıdır (gerekçe: kurum içi simülasyonda yalnız kaygı değişince ilk 10'da ~4 bölümün değişmesi); kaynaklar genel gerekçe sağlar, bu kuralı doğrudan önermez.
 
-### Alan tutarlılığı cezası ve alan komşuluğu · _Kurum içi_
+### Alan tutarlılığı (sıralama) ve alan komşuluğu · _Kurum içi_
 
 Öneri listesinde konu olarak alakasız bölümlerin (ör. Hukuk + Veterinerlik) yan yana çıkmasını engelleyen kurallar.
 
-**Nasıl:** Alan gücü = alandaki en iyi 3 bölümün ortalaması; puan += katsayı × (alan_gücü − en_güçlü_alan), katsayı parametre alan_tutarlilik_katsayisi = 3 (0 = kapalı). Ardından 17 alan için elle yazılmış simetrik KOMSU tablosuyla liste gruplanır: grup 0 = en güçlü alan + komşuları, grup 1 = ana alana en çok 10 puan yakın ikinci alan, grup 2 = diğerleri (silinmez, sona iner).
+**Nasıl:** Gösterilen uyum puanı değişmez. Alan gücü = alandaki en iyi 3 bölümün ortalaması; yalnızca sıralamada bölüm, 1 × (alan_gücü − en_güçlü_alan) kadar geri itilir. Ardından 17 alan için elle yazılmış simetrik KOMSU tablosuyla liste gruplanır: grup 0 = en güçlü alan + komşuları, grup 1 = ana alana en çok 10 puan yakın ikinci alan, grup 2 = diğerleri (silinmez, sona iner). İlk 10'da tek bir alandan en fazla 5 bölüm bulunur; fazlası 11. sıradan itibaren gelir.
 
 **Dayanak:**
 
@@ -325,7 +325,7 @@ Duygusal hassasiyet puanının bölüm önerisine katılmaması ve koçlukta ter
 - [110] Prediger, 1982 — Veri/fikir ve insan/nesne boyutlarıyla alanlar arası uzaklığın tanımlanabileceğini gösterir; komşu alan gruplamasına kavramsal destek verir.
 - [137] UNESCO Institute for Statistics, 2015 — Eğitim alanlarının hiyerarşik sınıflamasını verir; 17 alanın tanımlanmasına ve ilişkilendirilmesine resmî referans sağlar.
 
-> Alan gücü (en iyi 3 ortalaması), alan_tutarlilik_katsayisi = 3, 10 puanlık ikinci alan eşiği ve 17 alanlık elle yazılmış KOMSU tablosu kurum içi tasarım kararlarıdır; Holland altıgeninden esinlenilmiştir, ampirik olarak türetilmiş bir uzaklık matrisi değildir.
+> Alan gücü (en iyi 3 ortalaması), sıralama katsayısı 1, ilk 10'da alan başına en fazla 5 bölüm, 10 puanlık ikinci alan eşiği ve 17 alanlık elle yazılmış KOMSU tablosu kurum içi tasarım kararlarıdır; Holland altıgeninden esinlenilmiştir, ampirik olarak türetilmiş bir uzaklık matrisi değildir. 2026-10-17 öncesinde ceza puana yazılıp 0'a kırpılıyordu; bu, öğrenci başına bölümlerin yaklaşık üçte ikisini 0 gösterdiği için kaldırıldı (16 öğrenci tipiyle sanal doğrulamada ilk 3 doğruluğu değişmedi).
 
 ### K5 etkisi, eşitlik bozma ve ilk 10 liste · _Kurum içi_ · _Okul görünümünde yok_
 

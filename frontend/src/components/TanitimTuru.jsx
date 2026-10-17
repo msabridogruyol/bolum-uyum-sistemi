@@ -20,6 +20,7 @@ const OGRENCI = {
   '/portfolyo': 'Sertifika, yarışma ve etkinliklerini biriktirdiğin dosyan.',
   '/raporlarim': 'Raporlarını (PDF) ve sonuç tablonu (Excel) indir; velinle paylaşacağın rapor da burada.',
   '/koclugu': 'Hedef bölümün için adım adım yol haritan.',
+  '/koclugu?sekme=karsilastirma': 'Hedef bölümünün beklediği özelliklerle seni tek tek karşılaştırır: nerede güçlüsün, nerede gelişmen gerekiyor.',
   '/calisma': 'Çalışma programın, günlük çalışma süren ve çözdüğün sorular.',
   '/netlerim': 'Deneme netlerin, konu takibin ve hedefinle karşılaştırma.',
   '/gorevler': 'Her hafta sana özel 3 küçük görev; tamamladıkça serin uzar.',

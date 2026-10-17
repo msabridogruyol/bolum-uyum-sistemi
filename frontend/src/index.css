@@ -3434,3 +3434,23 @@ button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2p
   .okb-kadro-satir > :nth-child(2),.okb-kadro-satir > :nth-child(4),.okb-kadro-satir > :nth-child(5){grid-column:1 / -1}
   .okb-form-iki{grid-template-columns:1fr}
 }
+
+/* [2026-10-17] Ana sayfa: sistemin ana işi (bölüm uyumu + hedef bölümle karşılaştırma) diğer araçlardan önce ve belirgin */
+.as-cekirdek{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:4px 0 20px}
+.as-cekirdek-kutu{background:var(--sur);border:2px solid var(--pum);border-radius:var(--r16);padding:16px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 18px rgba(60,50,20,.06)}
+.as-cekirdek-ust{font-size:12px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--pu)}
+.as-cekirdek-liste{margin:0;padding:0;list-style:none;counter-reset:cek;display:flex;flex-direction:column;gap:6px}
+.as-cekirdek-liste li{counter-increment:cek;display:flex;align-items:baseline;gap:10px;font-size:14.5px}
+.as-cekirdek-liste li::before{content:counter(cek) ".";font-weight:800;color:var(--tx3);min-width:16px}
+.as-cekirdek-liste li button{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--tx);cursor:pointer;overflow-wrap:break-word}
+.as-cekirdek-liste li button:hover{color:var(--pu);text-decoration:underline}
+.as-cekirdek-liste li b{font-family:var(--fd);color:var(--pu);font-size:16px}
+.as-cekirdek-hedef{font-family:var(--fd);font-size:19px;font-weight:800;line-height:1.25;overflow-wrap:break-word}
+.as-cekirdek-not{font-size:13px;color:var(--tx2);line-height:1.45}
+.as-cekirdek-dugmeler{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.as-cekirdek-kutu > .btn{align-self:flex-start;margin-top:auto}
+
+/* [2026-10-17] Öğrenci menüsü: ana grup (bölüm uyumu + koçluk) belirgin, diğerleri "Ek araçlar" */
+.ns-ana{color:var(--pu) !important}
+.ni-ana{font-weight:700}
+.ni-alt{padding-left:34px !important;font-size:12.5px}

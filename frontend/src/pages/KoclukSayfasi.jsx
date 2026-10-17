@@ -189,12 +189,13 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
 // [2026-10-09] Hedef seçimi/değiştirme yalnızca Ayarlar sayfasında (en fazla 3 değişiklik).
 // ============================================================
 const SEKMELER = [
+  // [2026-10-17] Ana iş önde: Özet → Sen ve Bölümün → Yol Haritam → Güçlü Yönlerin, ardından bölümü tanıma araçları
   { kod: 'ozet', ad: 'Özet', ikon: '🧭' },
-  { kod: 'bolum', ad: 'Bölümünü Tanı', ikon: '📘' },
-  { kod: 'gun', ad: 'Bir Günümü Yaşa', ikon: '🎬' },
   { kod: 'karsilastirma', ad: 'Sen ve Bölümün', ikon: '📊' },
   { kod: 'yol', ad: 'Yol Haritam', ikon: '🗺️' },
   { kod: 'guclu', ad: 'Güçlü Yönlerin', ikon: '💪' },
+  { kod: 'bolum', ad: 'Bölümünü Tanı', ikon: '📘' },
+  { kod: 'gun', ad: 'Bir Günümü Yaşa', ikon: '🎬' },
   { kod: 'ilham', ad: 'İlham Kaynakları', ikon: '📚' },
   { kod: 'gelisim', ad: 'Gelişimin', ikon: '📈' },
 ]

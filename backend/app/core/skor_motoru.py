@@ -329,40 +329,16 @@ def _kendall_w(siralamalar: np.ndarray) -> float:
     return float(12 * S / payda)
 
 
-# [2026-10-09] Alan tutarlılığı: K1-K4 çalışma tarzını ölçer, konu alanını değil. Bu yüzden tek başına
-# öne çıkan, kendi alanında desteği olmayan bölümler (ör. hukuk profilli öğrenciye Orkestra Şefliği) listeye
-# girebiliyordu. Her üst alanın gücü = o alandaki en iyi 3 bölümün ortalaması; bir bölümün puanı, alanının
-# gücü en güçlü alanın gerisinde kaldığı ölçüde düşürülür: puan += katsayı × (alan_gücü − en_güçlü_alan).
-# Katsayı parametre tablosundan okunur ('alan_tutarlilik_katsayisi', varsayılan 3; 0 = kapalı).
-ALAN_TUTARLILIK_VARSAYILAN = 3.0
-
-
-def alan_tutarliligi_uygula(db: Session, bolum_idler: list[int], skor: np.ndarray) -> np.ndarray:
-    from app.core.katman_servisi import parametre_oku
-    from app.models import BolumDalEslesme, Dal
-    try:
-        katsayi = float(parametre_oku(db, "alan_tutarlilik_katsayisi", str(ALAN_TUTARLILIK_VARSAYILAN)))
-    except (TypeError, ValueError):
-        katsayi = ALAN_TUTARLILIK_VARSAYILAN
-    if katsayi <= 0 or len(skor) == 0:
-        return skor
-    alan_of = {
-        e.bolum_id: e.dal_id
-        for e, d in db.query(BolumDalEslesme, Dal).join(Dal, Dal.id == BolumDalEslesme.dal_id)
-        .filter(Dal.kod.like("U%")).all()
-    }
-    gruplar: dict[int, list[int]] = {}
-    for i, b in enumerate(bolum_idler):
-        if b in alan_of:
-            gruplar.setdefault(alan_of[b], []).append(i)
-    if len(gruplar) < 2:
-        return skor
-    guc = {a: float(np.sort(skor[ix])[-3:].mean()) for a, ix in gruplar.items()}
-    en_guclu = max(guc.values())
-    yeni = skor.astype(float).copy()
-    for a, ix in gruplar.items():
-        yeni[ix] = yeni[ix] + katsayi * (guc[a] - en_guclu)
-    return np.clip(yeni, 0.0, 100.0)
+# [2026-10-09 → 2026-10-17] Alan tutarlılığı ARTIK PUANI DEĞİŞTİRMEZ, yalnızca sırayı etkiler.
+# Eskiden puan += 3 × (alan_gücü − en_güçlü_alan) yazılıp 0'a kırpılıyordu: öğrenci başına ortalama 301 bölümün
+# 200'ü 0 görünüyor, "Karşılaştır" ekranında özellikleri uyumlu bir bölüm 0 çıkıyordu. Ölçülen uyum (10 yöntemin
+# ortalaması) olduğu gibi gösterilir; sıralamada zayıf alanların bölümleri hafifçe geri itilir (ALAN_SIRA_KATSAYISI)
+# ve ilk 10'da tek bir alandan en fazla ILK10_ALAN_UST_SINIRI bölüm yer alır (bkz. _satirlari_sirala).
+# Doğrulama (16 öğrenci tipi × 150 sanal öğrenci, canlı bölüm ağırlıkları): ilk 3 doğruluğu %68,8 → %68,2 (fark yok),
+# 0 görünen bölüm 200 → 0, ilk 10'daki farklı alan 1,8 → 3,1, ilk 10'da tek alanın payı 8,2 → 4,9.
+ALAN_SIRA_KATSAYISI = 1.0
+ILK10_ALAN_UST_SINIRI = 5
+UYUM_SKOR_SURUMU = "2026-10-17"   # bu sürümden eski kayıtlar açılışta bir kez yeniden hesaplanır
 
 
 def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> int:
@@ -392,7 +368,6 @@ def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     kendall_w = _kendall_w(siralama_matrisi)
 
     ortalama = np.mean([normalize_skorlar[a] for a in YONTEMLER], axis=0)
-    ortalama = alan_tutarliligi_uygula(db, girdi.bolum_idler, ortalama)
 
     # eski skorları temizle (bu tur için varsa) — tur bazlı, tekrar hesaplama idempotent olsun
     db.query(OgrenciBolumUyumSkoru).filter(
@@ -493,19 +468,64 @@ def _satirlari_sirala(satirlar: list[SiralamaSatiri], alan_of: dict[int, str], v
     ilk_n yoksa liste yerinde sıralanır; varsa yalnızca ilk ilk_n satır (aynı sırayla) döner (heapq, tam sıralama yok)."""
     # [2026-10-09] Alan kısıtı: liste öğrencinin en güçlü alanı + komşu alanlar (+ yakın ikinci alan) ile sınırlanır;
     # tamamen alakasız alanların bölümleri silinmez, listenin sonuna iner (bkz. alan_komsuluk.py).
+    # [2026-10-17] Gösterilen puan değişmez; zayıf alanlar yalnızca sırada geri itilir ve ilk 10'da tek alandan
+    # en fazla ILK10_ALAN_UST_SINIRI bölüm olur (fazlası 11. sıradan itibaren, kendi sırasıyla gelir).
     from app.core.alan_komsuluk import alan_sirasi
     grup = alan_sirasi(alan_of, {s.bolum_id: s.toplam_uyum for s in satirlar}) or {}
     for st in satirlar:
         st.alan = alan_of.get(st.bolum_id)
+    alan_puanlari: dict[str, list[float]] = {}
+    for st in satirlar:
+        if st.alan:
+            alan_puanlari.setdefault(st.alan, []).append(float(st.toplam_uyum))
+    guc = {a: float(np.mean(sorted(p, reverse=True)[:3])) for a, p in alan_puanlari.items()}
+    en_guclu = max(guc.values()) if guc else 0.0
 
     def anahtar(s):
-        return (grup.get(s.alan, 0), -s.toplam_uyum, varyans.get(s.bolum_id, 0.0), -meslek_sayisi.get(s.bolum_id, 0),
-                adlar.get(s.bolum_id, ""))
+        sira_puani = float(s.toplam_uyum) + (ALAN_SIRA_KATSAYISI * (guc[s.alan] - en_guclu) if s.alan in guc else 0.0)
+        return (grup.get(s.alan, 0), -sira_puani, -s.toplam_uyum, varyans.get(s.bolum_id, 0.0),
+                -meslek_sayisi.get(s.bolum_id, 0), adlar.get(s.bolum_id, ""))
+    sirali = sorted(satirlar, key=anahtar)
+    ilk10, sayim = [], {}
+    for st in sirali:
+        if len(ilk10) == 10:
+            break
+        if st.alan and sayim.get(st.alan, 0) >= ILK10_ALAN_UST_SINIRI:
+            continue
+        ilk10.append(st)
+        sayim[st.alan] = sayim.get(st.alan, 0) + 1
+    secilen = {id(st) for st in ilk10}
+    sirali = ilk10 + [st for st in sirali if id(st) not in secilen]
     if ilk_n is not None:
-        import heapq
-        return heapq.nsmallest(ilk_n, satirlar, key=anahtar)   # sort ile aynı (kararlı) sıra
-    satirlar.sort(key=anahtar)
+        return sirali[:ilk_n]
+    satirlar[:] = sirali
     return satirlar
+
+
+def eski_uyum_skorlarini_guncelle(db: Session) -> int:
+    """[2026-10-17] Alan cezasıyla 0'a kırpılmış eski TOPLAM_UYUM kayıtlarını bir kez yeniden hesaplar (açılışta).
+    Öğrenci cevapları, K5 dalları ve dal içi uyum değişmez; yalnızca ogrenci_bolum_uyum_skorlari yeniden yazılır."""
+    from sqlalchemy import text as _text
+
+    from app.models import SistemParametresi
+    db.execute(_text("SELECT pg_advisory_xact_lock(20261017)"))   # çok işçili sunucuda tek işçi çalışsın
+    p = db.query(SistemParametresi).filter(SistemParametresi.anahtar == "uyum_skor_surumu").first()
+    if p is not None and p.deger == UYUM_SKOR_SURUMU:
+        db.rollback()
+        return 0
+    cift = db.query(OgrenciBolumUyumSkoru.ogrenci_id, OgrenciBolumUyumSkoru.tur_id).distinct().all()
+    sayi = 0
+    for ogrenci_id, tur_id in cift:
+        o, t = db.get(Ogrenci, ogrenci_id), db.get(OgrenciDegerlendirmeTuru, tur_id)
+        if o is not None and t is not None and toplam_uyum_hesapla(db, o, t):
+            sayi += 1
+    if p is None:
+        db.add(SistemParametresi(anahtar="uyum_skor_surumu", deger=UYUM_SKOR_SURUMU,
+                                 aciklama="Bölüm uyum puanı hesaplama sürümü (otomatik; elle değiştirmeyin)"))
+    else:
+        p.deger = UYUM_SKOR_SURUMU
+    db.commit()
+    return sayi
 
 
 # [2026-10-14] Tek kaynak: okul/rehber ekranları, tercih ve toplu istatistikler öğrencinin gördüğü NİHAİ uyumu ve

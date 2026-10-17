@@ -1,4 +1,3 @@
-import { dogalSesVarMi, efekt, sesAcikMi, sesAyarla, soyle, sus } from '../yardimci/filizSes'
 import { useEffect, useRef, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { api } from '../api/client'
@@ -106,7 +105,6 @@ export default function FilizSohbet() {
     const terim = sozlukSorusu(metin)
     if (terim) {
       setMesajlar((m) => [...m, { rol: 'asistan', sozluk: terim, icerik: `📖 ${terim.ad}: ${terim.t}${terim.o ? `\n\nÖrnek: ${terim.o}` : ''}` }])
-      soyle(`${terim.ad}: ${terim.t}${terim.o ? ` Örnek: ${terim.o}` : ''}`)   // [2026-10-11] ses açıksa okunur
       return
     }
     setGonderiliyor(true)
@@ -122,7 +120,6 @@ export default function FilizSohbet() {
         cevap = await api.aiKocMesajGonder(id, metin, konum.pathname)
       }
       setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti, otomatik: cevap.otomatik }])
-      soyle(cevap.asistan_yaniti)   // [2026-10-11] ses açıksa Filiz cevabı sesli okur
       setDurum((d) => (d && d.mod !== 'otomatik' ? { ...d, kalan: Math.max(0, d.kalan - 1) } : d))
       if (cevap.oturum_kapandi_mi) {
         setOturumId(null)
@@ -175,10 +172,9 @@ export default function FilizSohbet() {
       {!acik && <FilizAcDugmesi onClick={() => setAcik(true)} aria="Filiz Gelişim Koçu ile konuş" />}
 
       {acik && (
-        <FilizCerceve baslik="Filiz Gelişim Koçu" ariaLabel="Filiz Gelişim Koçu ile sohbet" onKapat={() => { sus(); setAcik(false) }}
+        <FilizCerceve baslik="Filiz Gelişim Koçu" ariaLabel="Filiz Gelişim Koçu ile sohbet" onKapat={() => setAcik(false)}
           durum={gonderiliyor ? 'yazıyor…' : pasif ? 'şu an çevrimdışı' : 'çevrimiçi'}
           araclar={<>
-            <SesDugmesi />
             {gorunum !== 'sohbet' && <button className="filiz-ikon-btn" title="Sohbete dön" onClick={() => setGorunum('sohbet')}>←</button>}
             {gorunum === 'sohbet' && mesajlar.length > 0 && !pasif && <button className="filiz-ikon-btn" title="Yeni sohbet" onClick={sohbetiSifirla}>↺</button>}
           </>}>
@@ -325,33 +321,6 @@ export default function FilizSohbet() {
 }
 
 // [2026-10-11] Görsel parçalar — öğrenci sohbeti ve yönetim paneli asistanı (FilizYonetimSohbet.jsx) ortak kullanır.
-// [2026-10-11] Sohbet panelinde ses düğmesi — Filiz balonundaki 🔊 ile aynı ayar (yardimci/filizSes)
-export function useFilizSesi() {
-  const [acik, setAcik] = useState(sesAcikMi)
-  useEffect(() => {
-    const dinle = (e) => setAcik(!!e.detail?.acik)
-    window.addEventListener('filiz-ses', dinle)
-    return () => window.removeEventListener('filiz-ses', dinle)
-  }, [])
-  return acik
-}
-export function SesDugmesi() {
-  const acik = useFilizSesi()
-  async function degistir() {
-    const v = !acik
-    sesAyarla(v)
-    if (!v) { sus(); return }
-    efekt('ac', true)
-    if (await dogalSesVarMi()) soyle('Artık beni duyabilirsin.')
-  }
-  return (
-    <button className="filiz-ikon-btn" onClick={degistir} aria-pressed={acik}
-      title={acik ? 'Sesi kapat' : 'Sesi aç: Filiz cevaplarını sesli okusun'} aria-label={acik ? 'Sesi kapat' : 'Sesi aç'}>
-      {acik ? '🔊' : '🔇'}
-    </button>
-  )
-}
-
 export function FilizAcDugmesi({ onClick, aria, yazi = "Filiz'e sor" }) {
   return (
     <button className="filiz-balon" onClick={onClick} aria-label={aria}>
