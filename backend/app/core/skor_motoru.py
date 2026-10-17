@@ -329,15 +329,11 @@ def _kendall_w(siralamalar: np.ndarray) -> float:
     return float(12 * S / payda)
 
 
-# [2026-10-09 → 2026-10-17] Alan tutarlılığı ARTIK PUANI DEĞİŞTİRMEZ, yalnızca sırayı etkiler.
-# Eskiden puan += 3 × (alan_gücü − en_güçlü_alan) yazılıp 0'a kırpılıyordu: öğrenci başına ortalama 301 bölümün
-# 200'ü 0 görünüyor, "Karşılaştır" ekranında özellikleri uyumlu bir bölüm 0 çıkıyordu. Ölçülen uyum (10 yöntemin
-# ortalaması) olduğu gibi gösterilir; sıralamada zayıf alanların bölümleri hafifçe geri itilir (ALAN_SIRA_KATSAYISI)
-# ve ilk 10'da tek bir alandan en fazla ILK10_ALAN_UST_SINIRI bölüm yer alır (bkz. _satirlari_sirala).
-# Doğrulama (16 öğrenci tipi × 150 sanal öğrenci, canlı bölüm ağırlıkları): ilk 3 doğruluğu %68,8 → %68,2 (fark yok),
-# 0 görünen bölüm 200 → 0, ilk 10'daki farklı alan 1,8 → 3,1, ilk 10'da tek alanın payı 8,2 → 4,9.
-ALAN_SIRA_KATSAYISI = 1.0
-ILK10_ALAN_UST_SINIRI = 5
+# [2026-10-17] Sıralamaya sonradan müdahale YOK. Uyum puanı = 10 ÇKKV yönteminin ortalaması (+ K5 dal katkısı);
+# öneri sırası bu puana göredir. Kaldırılanlar: alan tutarlılığı cezası (puana yazılıp 0'a kırpıyordu: öğrenci başına
+# ortalama 301 bölümün 200'ü 0 görünüyordu), alan komşuluğu gruplaması (ana alan + komşuları puana bakılmadan öne
+# alınıyordu; ör. 54 puanlı bölüm 90 puanlının önüne geçiyordu). Konu olarak uzak görünen iki bölüm birlikte çıkıyorsa
+# bu, öğrencinin ölçülen özelliklerinde gerçek bir ortaklıktır; ayrım ölçümün kendisinden (değişkenler, K5) gelmelidir.
 UYUM_SKOR_SURUMU = "2026-10-17"   # bu sürümden eski kayıtlar açılışta bir kez yeniden hesaplanır
 
 
@@ -465,40 +461,18 @@ def _nihai(toplam_uyum: float, dal_ici_uyum: float | None) -> float:
 def _satirlari_sirala(satirlar: list[SiralamaSatiri], alan_of: dict[int, str], varyans: dict, meslek_sayisi: dict,
                       adlar: dict, ilk_n: int | None = None) -> list[SiralamaSatiri]:
     """Öğrencinin sonuç ekranındaki sıralama; siralama_getir ve toplu_siralama ortak kullanır.
-    ilk_n yoksa liste yerinde sıralanır; varsa yalnızca ilk ilk_n satır (aynı sırayla) döner (heapq, tam sıralama yok)."""
-    # [2026-10-09] Alan kısıtı: liste öğrencinin en güçlü alanı + komşu alanlar (+ yakın ikinci alan) ile sınırlanır;
-    # tamamen alakasız alanların bölümleri silinmez, listenin sonuna iner (bkz. alan_komsuluk.py).
-    # [2026-10-17] Gösterilen puan değişmez; zayıf alanlar yalnızca sırada geri itilir ve ilk 10'da tek alandan
-    # en fazla ILK10_ALAN_UST_SINIRI bölüm olur (fazlası 11. sıradan itibaren, kendi sırasıyla gelir).
-    from app.core.alan_komsuluk import alan_sirasi
-    grup = alan_sirasi(alan_of, {s.bolum_id: s.toplam_uyum for s in satirlar}) or {}
+    [2026-10-17] Yalnızca gösterilen uyum puanına göre (büyükten küçüğe). Eşitlikte D4 kuralı: ağırlıklı varyans
+    artan, etkin meslek sayısı azalan, ad alfabetik. alan yalnızca bilgi olarak doldurulur, sırayı etkilemez.
+    ilk_n yoksa liste yerinde sıralanır; varsa yalnızca ilk ilk_n satır döner."""
     for st in satirlar:
         st.alan = alan_of.get(st.bolum_id)
-    alan_puanlari: dict[str, list[float]] = {}
-    for st in satirlar:
-        if st.alan:
-            alan_puanlari.setdefault(st.alan, []).append(float(st.toplam_uyum))
-    guc = {a: float(np.mean(sorted(p, reverse=True)[:3])) for a, p in alan_puanlari.items()}
-    en_guclu = max(guc.values()) if guc else 0.0
 
     def anahtar(s):
-        sira_puani = float(s.toplam_uyum) + (ALAN_SIRA_KATSAYISI * (guc[s.alan] - en_guclu) if s.alan in guc else 0.0)
-        return (grup.get(s.alan, 0), -sira_puani, -s.toplam_uyum, varyans.get(s.bolum_id, 0.0),
-                -meslek_sayisi.get(s.bolum_id, 0), adlar.get(s.bolum_id, ""))
-    sirali = sorted(satirlar, key=anahtar)
-    ilk10, sayim = [], {}
-    for st in sirali:
-        if len(ilk10) == 10:
-            break
-        if st.alan and sayim.get(st.alan, 0) >= ILK10_ALAN_UST_SINIRI:
-            continue
-        ilk10.append(st)
-        sayim[st.alan] = sayim.get(st.alan, 0) + 1
-    secilen = {id(st) for st in ilk10}
-    sirali = ilk10 + [st for st in sirali if id(st) not in secilen]
+        return (-s.toplam_uyum, varyans.get(s.bolum_id, 0.0), -meslek_sayisi.get(s.bolum_id, 0), adlar.get(s.bolum_id, ""))
     if ilk_n is not None:
-        return sirali[:ilk_n]
-    satirlar[:] = sirali
+        import heapq
+        return heapq.nsmallest(ilk_n, satirlar, key=anahtar)   # sort ile aynı (kararlı) sıra
+    satirlar.sort(key=anahtar)
     return satirlar
 
 
