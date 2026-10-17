@@ -51,12 +51,19 @@ def _paket_kontrol(db: Session, yon: AdminKullanici, okul_id, tur: str, netler: 
     return netler and "net_takibi" in m
 
 
-def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str, netler: bool = True) -> Response:
+def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str, netler: bool = True, ek_aciklama: bool = False) -> Response:
     from app.core.rapor.excel import ogrenci_xlsx
     from app.core.rapor.veri import ogrenci_raporu_verisi
     if tur not in TUR_ADI or bicim not in MIME:
         raise HTTPException(status_code=400, detail="Geçersiz rapor türü ya da biçimi.")
     v = ogrenci_raporu_verisi(db, o)
+    if tur == "yonetici" and bicim == "pdf" and ek_aciklama:
+        # [2026-10-17] uyum açıklama eki (matris + katkılar + soru–cevap) — yalnızca yönetici raporu; öğrenci / veli almaz
+        try:
+            from app.core.uyum_aciklama import rapor_eki
+            v["uyum_aciklama"] = rapor_eki(db, o)
+        except Exception:  # ek, raporun kendisini engellemesin
+            db.rollback()
     if bicim == "xlsx":
         icerik = ogrenci_xlsx(v, netler=netler)
     else:
@@ -97,7 +104,7 @@ def ogrenci_raporu(ogrenci_id: str, tur: str = Query("yonetici"), bicim: str = Q
     from app.api.okul_yonetimi import _ogrenci_kapsami
     o = _ogrenci_kapsami(db, yon, ogrenci_id)
     netler = _paket_kontrol(db, yon, o.okul_id, tur, netler)
-    cevap = _ogrenci_dosyasi(db, o, tur, bicim, netler)
+    cevap = _ogrenci_dosyasi(db, o, tur, bicim, netler, ek_aciklama=True)
     denetim_yaz(db, yon, "rapor_indir", "ogrenciler", o.id, f"{o.ad_soyad}: {RAPOR_ADI.get(tur, tur)} ({bicim.upper()}{', denemeler' if netler else ''})", o.okul_id)
     db.commit()
     return cevap

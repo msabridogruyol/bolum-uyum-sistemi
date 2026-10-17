@@ -217,7 +217,8 @@ export default function SistemHakkindaSayfasi() {
         <p style={{ marginTop: 10, padding: '10px 12px', background: 'var(--rel, #fdecea)', borderRadius: 8, color: 'var(--re)' }}>
           🔒 Kritik kural: <code>yontem_skorlari</code>, <code>kendall_w</code>, <code>agirlikli_varyans</code>,
           <code> etkin_meslek_sayisi</code> gibi alanlar öğrenci API şemalarında hiç tanımlı değildir —
-          kodda "gizlenmiyor", yapısal olarak <b>var olamaz</b>. Ham cevap analizi yalnızca süper admindedir;
+          kodda "gizlenmiyor", yapısal olarak <b>var olamaz</b>. Ham cevap analizi öğrenciye kapalıdır (kendi okulunun yetkilisi
+          ve süper admin görür; 10 yöntemin ayrı puanları yalnızca süper admindedir);
           akran/şube sonuçları ve rehberlik notları öğrenciye gösterilmez.
         </p>
       </Bolum>
@@ -232,6 +233,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Gap Analizi:</b> her değişkende göreli fark (katman içi 50 ± 15 ölçekte öğrenci − bölüm) hesaplanır, 5 kademeye ayrılır: ≥15 belirgin üstün, ≥5 üstün, uyumlu, altında, ≤−15 belirgin altında</Madde>
         <Madde><b>Öncelik Skoru:</b> fark büyüklüğü × bölüm ağırlığı × katman ağırlığı × bölümün o özellikteki ayırt ediciliği (bölümler arası yüzdelik) — hangi boyutun geliştirilmesi en çok fark yaratır, onu öne çıkarır</Madde>
         <Madde><b>Sen ve Bölümün — fark sınıfları (2026-10-17):</b> uyum puanı farkın yönüne bakmadığı için (100 − |öğrenci − bölüm|) ekran da yakınlık dilinde: |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz. Değerlerde (K1) etiket "senin için daha önemli / daha az önemli". P4 (kaygı) istisna: yalnızca fazlası fark sayılır. Güçlü yön = uyumlu (±5) ve öğrencinin kendi profilinde yüksek (katman içi ≥ 60), değerler hariç. "Neden bu bölüm?" dikkat notu iki yönlü: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not, 3+ bölümde tekrarlanan not gösterilmez</Madde>
+        <Madde><b>Cevap analizi ve uyum matrisleri (2026-10-17):</b> öğrenci detayında okul yetkilisi (yalnızca kendi okulu) ve süper admin görür, öğrenci görmez. Üç matris: cevap matrisi (soru × özellik katkısı), uyum matrisi (özellik × bölüm: fark ve renk sınıfı, ya da katkı) ve yöntem matrisi (bölüm × 10 ÇKKV yöntemi + Kendall W; yalnızca süper admin). Katkı "bu özellik olmasaydı" yöntemiyle hesaplanır (özellik çıkarılıp 10 yöntem yeniden çalıştırılır; gösterilen puanla aynı hesap). Varsayılan: ilk 10 + hedef + son 3 bölüm, istenen bölüm eklenebilir. Excel'de tüm bölümler; yönetici PDF raporunun sonunda "Uyum açıklaması" eki (ilk 5 + hedef, katkılar, soru–cevap dökümü). Her görüntüleme / indirme işlem kaydına yazılır</Madde>
         <Madde><b>Gelişim Yol Haritası:</b> içeriği olan en öncelikli 3 gelişim alanı + en belirgin 2 güçlü yön; adımlar 3 aşamaya dağılır: "Bu hafta başla" (1-2 hafta) / "Önümüzdeki 1-3 ay" / "6-12 ay". Kaynak önerileri (kitap, film, kişi, aktivite…) admin panelinden elle girilir</Madde>
         <Madde><b>Tekrar ölçüm:</b> değer (K1) dışındaki odak alanında her 3 tamamlanan adımda bir, o değişkene en çok etki eden en fazla 5 soru yeniden sorulur</Madde>
         <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (varsayılan en erken 90 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
@@ -346,7 +348,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Derinleşme Alanları (K5):</b> her alan "Taslak", "Güçlü Kanıtlı" ya da "Gözden Geçirilmeli" olarak işaretlenir. Bu etiketlerin açıklamaları eski kümeleme yapısından kalmadır; yerel veritabanında 17 üst alan "Güçlü Kanıtlı", eski D01 "Taslak"</Madde>
         <Madde><b>Pipeline Sonuçları:</b> bilgisayarınızda üretilen bölüm profili çıktısı, önce taslak tabloya gider, istatistiksel önizleme sonrası yalnızca süper admin onayıyla canlıya (yeni bir versiyon olarak) yazılır</Madde>
         <Madde><b>Dosya formatları:</b> soru, pipeline ve geçerlilik yüklemeleri .xlsx (.xls/.csv de kabul); bölüm ve dal toplu yüklemesi hâlâ yalnızca .csv; okul yüklemeleri .xlsx/.csv (.xls desteklenmez)</Madde>
-        <Madde><b>Audit Log:</b> durum değişikliği, rol değişikliği, pipeline onayı, parametre değişikliği, cevap analizi görüntüleme gibi kritik işlemler kalıcı olarak kaydedilir</Madde>
+        <Madde><b>Audit Log:</b> durum değişikliği, rol değişikliği, pipeline onayı, parametre değişikliği, cevap analizi görüntüleme / indirme gibi kritik işlemler kalıcı olarak kaydedilir</Madde>
         <Madde><b>Şema güncelleme:</b> sunucu her açılışta 0024-0051 göçlerinin tekrar çalıştırılabilir SQL'ini uygular (<code>sema_guncelleme.py</code>); daha eski göçler elle uygulanmış kabul edilir</Madde>
       </Bolum>
 

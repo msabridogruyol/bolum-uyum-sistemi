@@ -601,9 +601,91 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
         h += _net_bolumu(st, v, "yonetici")
     h.append(st.p("SWOT analizi", st.h2))
     h.append(_swot(st, v["swot"]))
+    if v.get("uyum_aciklama"):   # [2026-10-17] yalnızca rehber / okul yetkilisi raporu
+        h += _uyum_aciklama_eki(st, v["uyum_aciklama"])
     doc.build(h)
     return tampon.getvalue()
 
+
+
+# ============================================================================= [2026-10-17] uyum açıklama eki (yalnızca yönetici raporu)
+_FARK_ZEMIN = {"yesil": colors.HexColor("#DCEFD6"), "turuncu": colors.HexColor("#FBE3C2"), "kirmizi": colors.HexColor("#F6CFCB")}
+_SINIF_AD = {"uyumlu": "uyumlu", "fazla": "fazla", "eksik": "az", "belirgin_fazla": "belirgin fazla", "belirgin_eksik": "belirgin az"}
+
+
+def _isaretli(x, o=0) -> str:
+    if x is None:
+        return "—"
+    x = round(float(x), o)
+    if x == 0:
+        return "0"
+    return ("+" if x > 0 else "") + f"{x:.{o}f}".replace(".", ",")
+
+
+def _uyum_aciklama_eki(st, ek: dict) -> list:
+    """Rehber için: neden bu bölümler üstte / altta? Özellik × bölüm fark matrisi, katkılar ve soru–cevap dökümü."""
+    from reportlab.platypus import PageBreak
+    m = ek.get("matris")
+    h = [PageBreak(), st.p("Ek: Uyum açıklaması", st.h2),
+         st.p("Bu ek yalnızca okul yetkilisi / rehberlik içindir; öğrenci ve veli raporlarında yer almaz. Uyum puanı göreli: "
+              "301 bölüm içinde öğrencinin profiline yakınlık (100 = en yakın). <b>Fark</b> = öğrenci − bölüm beklentisi "
+              "(katman içi ölçek): |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin (kırmızı). "
+              "<b>Katkı</b> = bu özellik hesaba katılmasaydı uyum puanı ne kadar değişirdi (artı yükseltiyor, eksi düşürüyor). "
+              "Katkı da göreli bir ölçüdür: bir özellikte fark olsa bile öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan "
+              "daha yakınsa katkı artı çıkabilir.",
+              st.kucuk), Spacer(1, 4)]
+    if m and m.get("bolumler"):
+        bolumler = m["bolumler"]
+        hs = ParagraphStyle("ue", parent=st.hucre, fontSize=6.8, leading=8.4)
+        hb = ParagraphStyle("ueb", parent=hs, fontName="Filiz-B")
+        n = len(bolumler)
+        b_gen = min(22 * mm, (174 * mm - 58 * mm) / max(1, n))
+        bas = [Paragraph("<b>Özellik</b>", hs), Paragraph("<b>Öğr.</b>", hs)] + [
+            Paragraph(f"<b>{b['sira']}. {_e((b['bolum'] or '')[:34])}</b><br/>%{yuvarla(b['uyum'])}{' · hedef' if b.get('hedef') else ''}", hs)
+            for b in bolumler]
+        veri, stil = [bas], [("BACKGROUND", (0, 0), (-1, 0), ACIK), ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                             ("TOPPADDING", (0, 0), (-1, -1), 1.5), ("BOTTOMPADDING", (0, 0), (-1, -1), 1.5),
+                             ("LINEBELOW", (0, 0), (-1, -1), 0.25, CIZGI), ("ALIGN", (1, 1), (-1, -1), "CENTER")]
+        onceki = None
+        for j, oz in enumerate(m["ozellikler"]):
+            if oz.get("katman") != onceki:
+                onceki = oz.get("katman")
+                veri.append([Paragraph(f"<b>{_e(onceki or '')}</b>", hb)] + [""] * (n + 1))
+                stil += [("SPAN", (0, len(veri) - 1), (-1, len(veri) - 1)), ("BACKGROUND", (0, len(veri) - 1), (-1, len(veri) - 1), colors.HexColor("#FCFAF6"))]
+            satir = [Paragraph(f"{_e(oz['kod'])} {_e(oz['ad'])}", hs), Paragraph(str(yuvarla(oz["ogrenci"])), hb)]
+            for i, b in enumerate(bolumler):
+                c = b["hucreler"][j]
+                satir.append(Paragraph(_isaretli(c["fark"]), hs))
+                stil.append(("BACKGROUND", (2 + i, len(veri)), (2 + i, len(veri)), _FARK_ZEMIN[c["renk"]]))
+            veri.append(satir)
+        t = Table(veri, colWidths=[46 * mm, 12 * mm] + [b_gen] * n, repeatRows=1)
+        t.setStyle(TableStyle(stil))
+        h += [st.p("Özellik × bölüm farkı", st.h3), t, Spacer(1, 6), st.p("Puanı en çok yükselten / düşüren özellikler", st.h3)]
+        oz = m["ozellikler"]
+        satirlar = []
+        for b in bolumler:
+            def liste(xs, b=b):
+                return "; ".join(f"{oz[x['j']]['ad']} ({_isaretli(x['katki'], 1)}, {_SINIF_AD[b['hucreler'][x['j']]['sinif']]})" for x in xs) or "—"
+            k5 = f" · K5 {_isaretli(b['k5_katkisi'], 1)}" if b.get("k5_katkisi") is not None else ""
+            satirlar.append([f"{b['sira']}. {b['bolum']} (%{yuvarla(b['uyum'])}{k5})", liste(b["yukselten"]), liste(b["dusuren"])])
+        h.append(_tablo(st, ["Bölüm", "Yükselten", "Düşüren"], satirlar, [44 * mm, 65 * mm, 65 * mm], kucuk=True))
+    cevaplar = ek.get("cevaplar") or []
+    if cevaplar:
+        h += [Spacer(1, 6), st.p(f"Soru–cevap dökümü ({ek.get('tur_no')}. değerlendirme, {len(cevaplar)} cevap)", st.h3),
+              st.p("Her cevabın hangi özelliğe kaç puan kattığı (0–100) gösterilir; dikkat kontrolü soruları puanlamaya girmez.", st.kucuk)]
+        satirlar = []
+        for c in cevaplar:
+            secilen = next((x["metin"] for x in c["secenekler"] if x["secildi"]), "—")
+            en_az = next((x["metin"] for x in c["secenekler"] if x["en_az"]), None)
+            cevap = secilen + (f" · en az: {en_az}" if en_az else "")
+            if c.get("kontrol"):
+                katki = "Dikkat kontrolü: " + ("doğru" if c["kontrol"]["dogru"] else "yanlış")
+            else:
+                katki = ", ".join(f"{k['kod']} {yuvarla(k['puan'])}" for k in c["katkilar"]) or "—"
+            satirlar.append([str(c["sira"]), c["katman"], c["soru"], cevap, katki])
+        h.append(_tablo(st, ["#", "Katman", "Soru", "Cevap", "Katkı"], satirlar,
+                        [7 * mm, 14 * mm, 68 * mm, 50 * mm, 35 * mm], kucuk=True))
+    return h
 
 
 # ============================================================================= [2026-10-10] sınıf öğretmeni raporu

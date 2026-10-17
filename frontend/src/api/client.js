@@ -674,7 +674,10 @@ export const api = {
   testSifreYenile: (tip, id) => apost(`/yonetim/test-hesaplari/${tip}/${id}/sifre`),
   testSenaryo: (id, ayar) => apost(`/yonetim/test-hesaplari/ogrenci/${id}/senaryo`, ayar),
   testHesabiSil: (tip, id) => adel(`/yonetim/test-hesaplari/${tip}/${id}`),
-  cevapAnalizi: (ogrenciId, turNo) => aget(`/yonetim/ogrenci/${ogrenciId}/cevap-analizi${turNo ? `?tur_no=${turNo}` : ''}`),
+  // [2026-10-17] süper admin + okul yetkilisi; bolumler: uyum matrisinde gösterilecek bölüm id'leri (boşsa ilk 10 + hedef + son 3)
+  cevapAnalizi: (ogrenciId, turNo, bolumler) => aget(`/yonetim/ogrenci/${ogrenciId}/cevap-analizi?${new URLSearchParams({
+    ...(turNo ? { tur_no: turNo } : {}), ...(bolumler?.length ? { bolumler: bolumler.join(',') } : {}) })}`),
+  cevapAnaliziExcel: (ogrenciId, turNo) => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/cevap-analizi.xlsx${turNo ? `?tur_no=${turNo}` : ''}`, 'admin'),
   okulTemaKaydet: (okulId, renk) => aput(`/yonetim/okul/${okulId}/tema`, { renk }),
   // [2026-10-09] Meslek dili sözlüğü — okulId 0 = genel sürüm (süper admin)
   meslekDiliListe: (okulId) => aget(`/yonetim/meslek-dili?okul_id=${okulId}`),

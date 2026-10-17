@@ -346,18 +346,18 @@ Her önerilen bölüm için örtüşen güçlü yönleri, öğrencinin kanıt ce
 
 > Yüzdelik ≥60 / puan ≥55 örtüşme eşikleri, ≥85/≤40 dikkat notu kuralı, 3+ bölümde tekrar eden notun gizlenmesi, K5 ≥60/≤40 ve 110 karakter kısaltması kurum içi tasarım kararlarıdır; akademik bir kesme noktasına dayanmaz.
 
-### Cevap analizi (süper admin) · _Kurum içi_ · _Okul görünümünde yok_
+### Cevap analizi ve uyum matrisleri (okul yetkilisi + süper admin) · _Kurum içi_
 
-Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını ve ilk 5 öneriyi hangi özelliklerin yukarı/aşağı çektiğini gösteren inceleme ekranı.
+Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını (cevap matrisi), her bölümde öğrencinin bölüm beklentisine göre farkını (uyum matrisi) ve bölümün puanını hangi özelliklerin yükseltip düşürdüğünü gösteren inceleme ekranı; yönetici PDF raporunda ek, Excel'de tüm matrisler.
 
-**Nasıl:** Katkılar katman puanlamasıyla aynı fonksiyonla (cevaplari_puanla) hesaplanır; etki = kriter ağırlığı × (bölümün performansı − tüm bölümlerin ortalaması), ilk 5 yukarı ve 3 aşağı özellik; görüntüleme denetim kaydına yazılır, okul yetkilisi erişemez.
+**Nasıl:** Cevap katkıları katman puanlamasıyla aynı fonksiyonla (cevaplari_puanla) hesaplanır. Fark = öğrenci − bölüm beklentisi (katman içi ölçek); |fark| < 5 uyumlu, 5–15 fazla/az, 15+ belirgin. Katkı 'bu özellik olmasaydı' yöntemiyle bulunur: özellik çıkarılıp ağırlıklar yeniden normalize edilir, 10 yöntem tüm bölümler için yeniden hesaplanır; katkı = gerçek uyum − özelliksiz uyum (gösterilen puanla aynı hesap). Varsayılan görünüm ilk 10 + hedef + son 3 bölüm; yönetici istediği bölümü ekleyebilir. Okul yetkilisi yalnızca kendi okulunun öğrencisini görür, öğrenci görmez; 10 yöntemin ayrı puanları ve Kendall W yalnızca süper admindedir. Her görüntüleme ve indirme denetim kaydına yazılır.
 
 **Dayanak:**
 
-- [118] Saltelli ve ark., 2008 — Model çıktısının girdilere duyarlılığını inceleme ilkelerini verir; özellik etkisinin 'ağırlık × ortalamadan sapma' ile gösterilmesi bu yaklaşımın basit, yerel bir biçimidir (esinlenme).
-- [72] Kişisel Verilerin Korunması Kanunu, Kanun No. 6698, 2016 — Veri sorumlusunun kişisel verilere erişimi denetleme ve güvenlik önlemi alma yükümlülüğü, görüntülemenin denetim kaydına yazılması ve okul yetkilisinin erişiminin kısıtlanmasını destekler.
+- [118] Saltelli ve ark., 2008 — Model çıktısının girdilere duyarlılığını inceleme ilkelerini verir; katkının bir girdi çıkarılınca çıktının ne kadar değiştiğiyle ölçülmesi (birini dışarıda bırakma) bu yaklaşımın yerel bir biçimidir (esinlenme).
+- [72] Kişisel Verilerin Korunması Kanunu, Kanun No. 6698, 2016 — Veri sorumlusunun kişisel verilere erişimi denetleme ve güvenlik önlemi alma yükümlülüğü, görüntülemenin denetim kaydına yazılmasını ve erişimin yalnızca kendi okulunun yetkilisi ve sistem yöneticisiyle sınırlanmasını destekler.
 
-> İlk 5 yukarı / 3 aşağı özellik gösterimi ve etki formülü kurum içi tasarım kararıdır; SHAP gibi yerleşik bir açıklama yöntemi değildir.
+> Katkılar toplanınca puana eşit olmaz (yöntemler doğrusal değildir); her biri o özelliğin tek başına etkisidir ve göreli bir ölçüdür (fark olan bir özellik, öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan daha yakınsa puanı yükseltebilir). Varsayılan bölüm seçimi ve fark eşikleri kurum içi tasarım kararıdır; SHAP gibi yerleşik bir açıklama yöntemi değildir.
 
 ## Koçluk
 
@@ -1070,11 +1070,11 @@ Tam ekran zorunluluğu, sekme/odak/ikinci ekran/ekran görüntüsü/kopyalama ta
 
 Kimin hangi veriyi görebileceğine dair yapısal kurallar ve kritik işlemlerin kaydı.
 
-**Nasıl:** Öğrenci API şemalarında yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi alanları tanımlı değil; ham cevap analizi yalnızca süper admin; akran/şube sonuçları öğrenciye gösterilmez; rehberlik notları öğrenciye gösterilmez; koç iletişim bilgisi öğrenciden gizli; durum/rol değişikliği, pipeline onayı, cevap analizi görüntüleme gibi işlemler audit log'a yazılır; test hesapları erken uyarı listesinden ve okul karşılaştırmasından hariç tutulur.
+**Nasıl:** Öğrenci API şemalarında yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi alanları tanımlı değil; ham cevap analizi öğrenciye kapalı (yalnızca kendi okulunun yetkilisi ve süper admin; yöntem ayrıntısı yalnızca süper admin); akran/şube sonuçları öğrenciye gösterilmez; rehberlik notları öğrenciye gösterilmez; koç iletişim bilgisi öğrenciden gizli; durum/rol değişikliği, pipeline onayı, cevap analizi görüntüleme / indirme gibi işlemler audit log'a yazılır; test hesapları erken uyarı listesinden ve okul karşılaştırmasından hariç tutulur.
 
 **Dayanak:**
 
-- [119] Saltzer ve Schroeder, 1975 — En az ayrıcalık ve varsayılan olarak reddetme (fail-safe defaults) ilkeleri, öğrenci şemalarında iç alanların hiç tanımlanmaması ve ham cevap analizinin yalnızca süper admine açılmasını destekler.
+- [119] Saltzer ve Schroeder, 1975 — En az ayrıcalık ve varsayılan olarak reddetme (fail-safe defaults) ilkeleri, öğrenci şemalarında iç alanların hiç tanımlanmaması ve ham cevap analizinin öğrenciye kapalı ve yalnızca gereken rollere (kendi okulunun yetkilisi, süper admin) açık olmasını destekler.
 - [120] Sandhu ve ark., 1996 — Rol tabanlı erişim denetimi modeli, öğrenci/öğretmen/okul yetkilisi/süper admin rollerine göre veri görünürlüğü kurallarının kuramsal temelidir.
 - [18] Cavoukian, 2011 — Gizliliğin varsayılan ayar olarak tasarıma gömülmesi ilkesi, hassas alanların API düzeyinde yapısal olarak dışlanmasını destekler.
 - [70] Kişisel Verileri Koruma Kurumu, 2018 — Erişim yetki matrisi oluşturulması ve kullanıcı işlem kayıtlarının (log) düzenli tutulması önerileri audit log uygulamasını destekler.

@@ -299,7 +299,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
         ]} />
       </div>
       <div className="yp-sekmeler">
-        {[...SEKMELER.filter((x) => modulAcik(x[2]) && (x[0] !== 'tercih' || ['12. Sınıf', 'Mezun'].includes(h.sinif))), ...(superAdmin ? [['cevaplar', '🔒 Cevap analizi']] : [])].map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
+        {[...SEKMELER.filter((x) => modulAcik(x[2]) && (x[0] !== 'tercih' || ['12. Sınıf', 'Mezun'].includes(h.sinif))), ['cevaplar', '🔍 Cevap analizi']].map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
       </div>
 
       {sekme === 'genel' && (
@@ -398,7 +398,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
       {sekme === 'ilgi' && <OgrenciIlgi ogrenciId={ogrenciId} />}
       {sekme === 'kutuphane' && <OgrenciKutuphanesi ogrenciId={ogrenciId} />}
 
-      {sekme === 'cevaplar' && superAdmin && <CevapAnaliziSekmesi ogrenciId={ogrenciId} />}
+      {sekme === 'cevaplar' && <CevapAnaliziSekmesi ogrenciId={ogrenciId} superAdmin={superAdmin} />}
 
       {sekme === 'kayit' && (
         <div className="yp-zaman-cizelgesi">
