@@ -173,12 +173,12 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
           <div className="mini-ilerleme-track"><div className="mini-ilerleme-fill" style={{ width: `${b.toplam_uyum}%`, background: 'var(--okul-c)' }} /></div>
           {b.sira && <small className="yp-ince">{b.sira}. sırada · {veri.toplam_bolum} bölüm içinde</small>}
         </div>
-      )), 'genel uyumun ve öneri sıran')
+      )), '301 bölüm içinde sana yakınlığı ve sıran')
     if (veri.sonuc_var) {
       satir('neden', 'Neden bu bölüm', (b) => (b.neden.length || b.dikkat ? (
         <ul className="kr-liste duz">
           {b.neden.map((x) => <li key={x}>{x}</li>)}
-          {b.dikkat && <li className="ks-dikkat">⚠️ {b.dikkat}</li>}
+          {(b.dikkatler?.length ? b.dikkatler : b.dikkat ? [b.dikkat] : []).map((m) => <li key={m} className="ks-dikkat">⚠️ {m}</li>)}
         </ul>
       ) : <Yok neden="Açıklama hazırlayamadık" />))
     }

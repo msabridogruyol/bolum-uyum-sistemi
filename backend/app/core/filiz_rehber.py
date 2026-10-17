@@ -217,7 +217,10 @@ def k_gelisim(b: Baglam, m: str) -> str:
     return (f"{b.hedef['ad']} için odaklanmanı önerdiğim alanlar: {_liste([x['degisken_adi'] for x in o[:3]])}. "
             f"En önemlisi {_kucuk(ilk['degisken_adi'])}. "
             + (f"Şu adımla başlayabilirsin: \"{adim['baslik']}\". " if adim else "")
-            + "Gelişime açık olmak eksik olmak demek değil. Bunlar biraz emekle büyüyebilecek yönlerin.")
+            + "Gelişime açık olmak eksik olmak demek değil. Bunlar biraz emekle büyüyebilecek yönlerin."
+            # [2026-10-17] değerler büyütülecek bir beceri değil: farkı bilerek karar verilir
+            + (" Listedeki değerlerde ise amaç değiştirmek değil, bölümün bu yönünün sana uyup uymadığını bilerek karar vermek."
+               if any(str(x.get("degisken_kod") or "").startswith("D") for x in o[:3]) else ""))
 
 
 def k_hedef(b: Baglam, m: str) -> str:
@@ -239,7 +242,7 @@ def k_bolum_oner(b: Baglam, m: str) -> str:
     if not ilk:
         return _hedefsiz(b)
     return (f"Değerlendirmene göre sana en uyumlu bölümler: {_liste([f'{a} (%{p})' for a, p in ilk])}. "
-            "Her bölümün mezunları belli mesleklerde çalışır. Uyum yüzdesi, bu mesleklerin istediği özelliklerin sende ne kadar olduğunu gösterir. "
+            "Uyum puanı, 301 bölümü profiline yakınlığına göre sıralar: 100 sana en yakın bölüm, 0 en uzak bölüm. "
             "Bölümler sayfasında her bölümün derslerine ve üniversitelerine bakabilirsin. Karşılaştır ile bölümleri yan yana da koyabilirsin.")
 
 
@@ -317,8 +320,9 @@ def k_test(b: Baglam, m: str) -> str:
 
 
 def k_uyum(b: Baglam, m: str) -> str:
-    return ("Her bölümün mezunları belli mesleklerde çalışır. Uyum yüzdesi, bu mesleklerin istediği özelliklerin sende ne kadar olduğunu gösterir. "
-            "Sistem bunu bölümleri birbiriyle karşılaştırarak hesaplar. Bu bir başarı tahmini değildir. Karar verirken ilgini, hayallerini ve ailenle konuştuklarını da düşün.")
+    return ("Her bölümün mezunları belli mesleklerde çalışır ve bu meslekler bazı özellikler ister. Sistem senin özelliklerini 301 bölümün "
+            "beklentisiyle karşılaştırır ve bölümleri sana yakınlığına göre sıralar: 100 sana en yakın bölüm, 0 en uzak bölüm. "
+            "Yani puan, bölümün senin için diğer bölümlere göre nerede durduğunu gösterir. Bu bir başarı tahmini değildir. Karar verirken ilgini, hayallerini ve ailenle konuştuklarını da düşün.")
 
 
 def k_kim(b: Baglam, m: str) -> str:

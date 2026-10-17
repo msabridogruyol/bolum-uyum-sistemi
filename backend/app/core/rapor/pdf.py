@@ -448,6 +448,7 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum", "Neden?"],
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or [])]
                          for b in v["bolumler"]], [8 * mm, 52 * mm, 34 * mm, 14 * mm, 66 * mm]))
+        h.append(st.p("Uyum, bölümün 301 bölüm içinde senin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
@@ -459,6 +460,8 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
                           + (f" · sıradaki adım: {_e(hd.get('siradaki'))}" if hd.get("siradaki") else "")))
         for x in hd.get("odak", [])[:3]:
             h.append(st.p(f"• <b>{_e(x['ad'])}:</b> {_e(x.get('neden') or '')}", st.govde))
+    if v.get("hedef_kiyasi"):
+        h += _hedef_kiyasi_bolumu(st, v["hedef_kiyasi"], "ogrenci")
     if netler:
         h += _net_bolumu(st, v, "ogrenci")
     h.append(st.p("SWOT analizin", st.h2))
@@ -518,6 +521,7 @@ def veli_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum"],
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}"] for b in v["bolumler"][:6]],
                         [10 * mm, 90 * mm, 52 * mm, 22 * mm]))
+        h.append(st.p("Uyum, bölümün 301 bölüm içinde çocuğunuzun profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
         h.append(st.p("Uyum yüzdesi; çocuğunuzun profilinin bölümün gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir, "
                       "başarı ya da kazanma olasılığı anlamına gelmez.", st.not_))
     if v["hedef"]:
@@ -526,6 +530,8 @@ def veli_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(st.p("Hedef ve çalışma planı", st.h2))
         h.append(st.p(f"Çocuğunuzun seçtiği hedef bölüm: <b>{_e(hd['ad'])}</b>."
                       + (f" Kişisel yol haritasında {il.get('tamamlanan', 0)} / {il['toplam']} adımı tamamladı." if il.get("toplam") else "")))
+    if v.get("hedef_kiyasi"):
+        h += _hedef_kiyasi_bolumu(st, v["hedef_kiyasi"], "veli")
     if netler:
         h += _net_bolumu(st, v, "veli")
     h.append(st.p("Özet (SWOT)", st.h2))
@@ -583,6 +589,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or []),
                           b.get("dikkat") or ""] for b in v["bolumler"]],
                         [7 * mm, 40 * mm, 27 * mm, 12 * mm, 45 * mm, 43 * mm], kucuk=True))
+        h.append(st.p("Uyum, bölümün 301 bölüm içinde öğrencinin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
@@ -594,13 +601,173 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
         if hd.get("odak"):
             h.append(_tablo(st, ["Odak alanı", "Neden önemli"], [[x["ad"], x.get("neden") or ""] for x in hd["odak"]],
                             [40 * mm, 134 * mm], kucuk=True))
+    if v.get("hedef_kiyasi"):
+        h += _hedef_kiyasi_bolumu(st, v["hedef_kiyasi"], "yonetici")
     if netler:
         h += _net_bolumu(st, v, "yonetici")
     h.append(st.p("SWOT analizi", st.h2))
     h.append(_swot(st, v["swot"]))
+    if v.get("uyum_aciklama"):   # [2026-10-17] yalnızca rehber / okul yetkilisi raporu
+        h += _uyum_aciklama_eki(st, v["uyum_aciklama"])
     doc.build(h)
     return tampon.getvalue()
 
+
+
+# ============================================================================= [2026-10-17] hedef bölüm kıyası (öğrenci, veli, yönetici)
+_KIYAS_SINIF = {"uyumlu": "uyumlu", "fazla": "beklenenden fazla", "eksik": "beklenenden az",
+                "belirgin_fazla": "belirgin fazla", "belirgin_eksik": "belirgin az"}
+_KIYAS_BASLIK = {"ogrenci": "Hedef bölümünle kıyas", "veli": "Hedef bölüm ile diğer bölümlerin kıyası", "yonetici": "Hedef bölüm kıyası"}
+_KIYAS_NOT = {
+    "ogrenci": ("Puan farkı, iki bölümün sana yakınlık puanları arasındaki farktır. Özellikler bu farkın en çok nereden geldiğini "
+                "gösterir: “geride bırakan” özellikte o bölüm senin profiline hedefinden daha yakın, “öne çıkaran” özellikte "
+                "hedefin daha yakın. Parantez içi, senin düzeyinin o bölümün beklediğine göre durumudur. Bu özelliklerdeki gelişim "
+                "adımları için koçluk ekranına bakabilirsin."),
+    "veli": ("Puan farkı, iki bölümün çocuğunuzun profiline yakınlık puanları arasındaki farktır. Özellikler bu farkın en çok "
+             "nereden geldiğini gösterir: “geride bırakan” özellikte o bölüm çocuğunuzun profiline hedefinden daha yakın, "
+             "“öne çıkaran” özellikte hedef bölüm daha yakın. Parantez içi, çocuğunuzun düzeyinin o bölümün beklediğine göre "
+             "durumudur. Başarı ya da kazanma olasılığı anlamına gelmez."),
+    "yonetici": ("Puan farkı = hedefin uyumu − bölümün uyumu. Özellik etkisi = hedefteki katkı − bölümdeki katkı ('bu özellik "
+                 "olmasaydı' katkılarının farkı; gösterilen puanla aynı hesap). Geride bırakan: farkı hedef aleyhine açan, "
+                 "öne çıkaran: hedef lehine açan özellikler. Parantez içi: öğrencinin düzeyinin bölüm beklentisine göre fark sınıfı."),
+}
+
+
+def _kiyas_sinif(x: dict, anahtar: str, kitle: str) -> str:
+    sinif = x.get(anahtar) or "uyumlu"
+    if (x.get("kod") or "").startswith("D") and sinif != "uyumlu":   # değerler: önem dili
+        kim = {"ogrenci": "senin için", "veli": "çocuğunuz için", "yonetici": "öğrenci için"}[kitle]
+        derece = "çok " if sinif.startswith("belirgin") else ""
+        return f"{kim} {derece}daha {'önemli' if sinif.endswith('fazla') else 'az önemli'}"
+    return _KIYAS_SINIF.get(sinif, sinif)
+
+
+def _kiyas_ozellikleri(xs: list, kitle: str, hedefli: bool) -> str:
+    if not xs:
+        return "—"
+    parcalar = []
+    for x in xs:
+        if hedefli:
+            parcalar.append(f"<b>{_e(x['ad'])}</b> (hedefte {_kiyas_sinif(x, 'hedef_sinif', kitle)}, "
+                            f"burada {_kiyas_sinif(x, 'bolum_sinif', kitle)})")
+        else:
+            parcalar.append(f"<b>{_e(x['ad'])}</b> ({_kiyas_sinif(x, 'bolum_sinif', kitle)})")
+    return "<br/>".join(parcalar)
+
+
+def _hedef_kiyasi_bolumu(st, k: dict, kitle: str) -> list:
+    hs = ParagraphStyle("hk2", parent=st.hucre, fontSize=7.6, leading=9.8)
+    toplam = k.get("bolum_sayisi") or 301
+    h = [st.p(_KIYAS_BASLIK[kitle], st.h2)]
+    hd = k.get("hedef")
+    satirlar = k.get("satirlar") or []
+    if hd is None:
+        h.append(st.p("<b>Not:</b> Hedef bölüm seçilmediği için kıyas yapılamadı. Aşağıda seçilen bölümlerin sonuçları ve puanı en çok "
+                      "etkileyen özellikler yer alıyor; hedef bölüm seçildiğinde bölümler hedefe göre kıyaslanır.", st.not_))
+        veri = [[Paragraph(f"{_e(s['bolum'])}<br/>%{yuvarla(s['uyum'])} · {s['sira']}. sıra", hs),
+                 Paragraph(_kiyas_ozellikleri(s.get("yukselten"), kitle, False), hs),
+                 Paragraph(_kiyas_ozellikleri(s.get("dusuren"), kitle, False), hs)] for s in satirlar]
+        if veri:
+            h.append(_tablo(st, ["Bölüm", "Puanı yükselten özellikler", "Puanı düşüren özellikler"], veri,
+                            [50 * mm, 62 * mm, 62 * mm], kucuk=True))
+    else:
+        h.append(st.p(f"<b>Hedef bölüm:</b> {_e(hd['bolum'])} · uyum %{yuvarla(hd['uyum'])} · {toplam} bölüm içinde {hd['sira']}. sırada"))
+        if not satirlar:
+            h.append(st.p("Kıyas için hedefin dışında bölüm seçilmedi.", st.not_))
+        veri = []
+        for s in satirlar:
+            f = s.get("fark") or 0
+            fark = "eşit" if abs(f) < 0.5 else (f"hedef {yuvarla(abs(f))} puan geride" if f < 0 else f"hedef {yuvarla(f)} puan önde")
+            veri.append([Paragraph(f"{_e(s['bolum'])}<br/>%{yuvarla(s['uyum'])} · {s['sira']}. sıra", hs), Paragraph(fark, hs),
+                         Paragraph(_kiyas_ozellikleri(s.get("geride_birakan"), kitle, True), hs),
+                         Paragraph(_kiyas_ozellikleri(s.get("one_cikaran"), kitle, True), hs)])
+        if veri:
+            h.append(_tablo(st, ["Bölüm", "Puan farkı", "Hedefi geride bırakan", "Hedefi öne çıkaran"], veri,
+                            [40 * mm, 22 * mm, 56 * mm, 56 * mm], kucuk=True))
+        h.append(st.p(_KIYAS_NOT[kitle], st.kucuk))
+    if k.get("kirpildi"):
+        h.append(st.p(f"En çok {k.get('sinir', 6)} bölüm (hedef dahil) kıyaslanabilir; fazlası rapora alınmadı.", st.kucuk))
+    return h
+
+
+# ============================================================================= [2026-10-17] uyum açıklama eki (yalnızca yönetici raporu)
+_FARK_ZEMIN = {"yesil": colors.HexColor("#DCEFD6"), "turuncu": colors.HexColor("#FBE3C2"), "kirmizi": colors.HexColor("#F6CFCB")}
+_SINIF_AD = {"uyumlu": "uyumlu", "fazla": "fazla", "eksik": "az", "belirgin_fazla": "belirgin fazla", "belirgin_eksik": "belirgin az"}
+
+
+def _isaretli(x, o=0) -> str:
+    if x is None:
+        return "—"
+    x = round(float(x), o)
+    if x == 0:
+        return "0"
+    return ("+" if x > 0 else "") + f"{x:.{o}f}".replace(".", ",")
+
+
+def _uyum_aciklama_eki(st, ek: dict) -> list:
+    """Rehber için: neden bu bölümler üstte / altta? Özellik × bölüm fark matrisi, katkılar ve soru–cevap dökümü."""
+    from reportlab.platypus import PageBreak
+    m = ek.get("matris")
+    h = [PageBreak(), st.p("Ek: Uyum açıklaması", st.h2),
+         st.p("Bu ek yalnızca okul yetkilisi / rehberlik içindir; öğrenci ve veli raporlarında yer almaz. Uyum puanı göreli: "
+              "301 bölüm içinde öğrencinin profiline yakınlık (100 = en yakın). <b>Fark</b> = öğrenci − bölüm beklentisi "
+              "(katman içi ölçek): |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin (kırmızı). "
+              "<b>Katkı</b> = bu özellik hesaba katılmasaydı uyum puanı ne kadar değişirdi (artı yükseltiyor, eksi düşürüyor). "
+              "Katkı da göreli bir ölçüdür: bir özellikte fark olsa bile öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan "
+              "daha yakınsa katkı artı çıkabilir.",
+              st.kucuk), Spacer(1, 4)]
+    if m and m.get("bolumler"):
+        bolumler = m["bolumler"]
+        hs = ParagraphStyle("ue", parent=st.hucre, fontSize=6.8, leading=8.4)
+        hb = ParagraphStyle("ueb", parent=hs, fontName="Filiz-B")
+        n = len(bolumler)
+        b_gen = min(22 * mm, (174 * mm - 58 * mm) / max(1, n))
+        bas = [Paragraph("<b>Özellik</b>", hs), Paragraph("<b>Öğr.</b>", hs)] + [
+            Paragraph(f"<b>{b['sira']}. {_e((b['bolum'] or '')[:34])}</b><br/>%{yuvarla(b['uyum'])}{' · hedef' if b.get('hedef') else ''}", hs)
+            for b in bolumler]
+        veri, stil = [bas], [("BACKGROUND", (0, 0), (-1, 0), ACIK), ("VALIGN", (0, 0), (-1, -1), "MIDDLE"),
+                             ("TOPPADDING", (0, 0), (-1, -1), 1.5), ("BOTTOMPADDING", (0, 0), (-1, -1), 1.5),
+                             ("LINEBELOW", (0, 0), (-1, -1), 0.25, CIZGI), ("ALIGN", (1, 1), (-1, -1), "CENTER")]
+        onceki = None
+        for j, oz in enumerate(m["ozellikler"]):
+            if oz.get("katman") != onceki:
+                onceki = oz.get("katman")
+                veri.append([Paragraph(f"<b>{_e(onceki or '')}</b>", hb)] + [""] * (n + 1))
+                stil += [("SPAN", (0, len(veri) - 1), (-1, len(veri) - 1)), ("BACKGROUND", (0, len(veri) - 1), (-1, len(veri) - 1), colors.HexColor("#FCFAF6"))]
+            satir = [Paragraph(f"{_e(oz['kod'])} {_e(oz['ad'])}", hs), Paragraph(str(yuvarla(oz["ogrenci"])), hb)]
+            for i, b in enumerate(bolumler):
+                c = b["hucreler"][j]
+                satir.append(Paragraph(_isaretli(c["fark"]), hs))
+                stil.append(("BACKGROUND", (2 + i, len(veri)), (2 + i, len(veri)), _FARK_ZEMIN[c["renk"]]))
+            veri.append(satir)
+        t = Table(veri, colWidths=[46 * mm, 12 * mm] + [b_gen] * n, repeatRows=1)
+        t.setStyle(TableStyle(stil))
+        h += [st.p("Özellik × bölüm farkı", st.h3), t, Spacer(1, 6), st.p("Puanı en çok yükselten / düşüren özellikler", st.h3)]
+        oz = m["ozellikler"]
+        satirlar = []
+        for b in bolumler:
+            def liste(xs, b=b):
+                return "; ".join(f"{oz[x['j']]['ad']} ({_isaretli(x['katki'], 1)}, {_SINIF_AD[b['hucreler'][x['j']]['sinif']]})" for x in xs) or "—"
+            k5 = f" · K5 {_isaretli(b['k5_katkisi'], 1)}" if b.get("k5_katkisi") is not None else ""
+            satirlar.append([f"{b['sira']}. {b['bolum']} (%{yuvarla(b['uyum'])}{k5})", liste(b["yukselten"]), liste(b["dusuren"])])
+        h.append(_tablo(st, ["Bölüm", "Yükselten", "Düşüren"], satirlar, [44 * mm, 65 * mm, 65 * mm], kucuk=True))
+    cevaplar = ek.get("cevaplar") or []
+    if cevaplar:
+        h += [Spacer(1, 6), st.p(f"Soru–cevap dökümü ({ek.get('tur_no')}. değerlendirme, {len(cevaplar)} cevap)", st.h3),
+              st.p("Her cevabın hangi özelliğe kaç puan kattığı (0–100) gösterilir; dikkat kontrolü soruları puanlamaya girmez.", st.kucuk)]
+        satirlar = []
+        for c in cevaplar:
+            secilen = next((x["metin"] for x in c["secenekler"] if x["secildi"]), "—")
+            en_az = next((x["metin"] for x in c["secenekler"] if x["en_az"]), None)
+            cevap = secilen + (f" · en az: {en_az}" if en_az else "")
+            if c.get("kontrol"):
+                katki = "Dikkat kontrolü: " + ("doğru" if c["kontrol"]["dogru"] else "yanlış")
+            else:
+                katki = ", ".join(f"{k['kod']} {yuvarla(k['puan'])}" for k in c["katkilar"]) or "—"
+            satirlar.append([str(c["sira"]), c["katman"], c["soru"], cevap, katki])
+        h.append(_tablo(st, ["#", "Katman", "Soru", "Cevap", "Katkı"], satirlar,
+                        [7 * mm, 14 * mm, 68 * mm, 50 * mm, 35 * mm], kucuk=True))
+    return h
 
 
 # ============================================================================= [2026-10-10] sınıf öğretmeni raporu

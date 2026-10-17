@@ -10,19 +10,34 @@ import { BirGunumSekmesi, BolumunuTani } from '../components/kocluk/BirGunum'
 // ============================================================
 // Ana sayfa
 // ============================================================
-// [2026-10-03] Kategori etiketleri — grafik, kartlar ve plan AYNI göreli ölçekten gelir
-const KATEGORI = {
-  belirgin_ustun: { etiket: 'Belirgin güçlü', renk: 'var(--gr)', zemin: 'var(--grl)', grup: 'guclu' },
-  ustun: { etiket: 'Güçlü', renk: 'var(--gr)', zemin: 'var(--grl)', grup: 'guclu' },
-  beklenti: { etiket: 'Uyumlu', renk: 'var(--pu)', zemin: 'var(--pul)', grup: 'uyumlu' },
-  altinda: { etiket: 'Gelişime açık', renk: 'var(--am)', zemin: 'var(--aml)', grup: 'gelisim' },
-  belirgin_altinda: { etiket: 'Öncelikli gelişim', renk: 'var(--re)', zemin: 'var(--rel)', grup: 'gelisim' },
+// [2026-10-17] Sen ve bölüm karşılaştırması YAKINLIK dilinde: uyum puanı farkın yönüne bakmaz (fazlalık da eksiklik de
+// uyumu düşürür). Uyumlu = yeşil; fazla / az = turuncu; belirgin fazla / az = kırmızı. Fazlalık "güçlü yön" değildir.
+// Değerlerde (K1) fark "senin için daha önemli / daha az önemli" diye anlatılır (bir üstünlük ya da eksik değildir).
+const FARK = {
+  uyumlu: { etiket: 'Uyumlu', renk: 'var(--gr)', zemin: 'var(--grl)' },
+  fazla: { etiket: 'Beklenenden fazla', renk: 'var(--am)', zemin: 'var(--aml)' },
+  belirgin_fazla: { etiket: 'Belirgin fazla', renk: 'var(--re)', zemin: 'var(--rel)' },
+  eksik: { etiket: 'Beklenenden az', renk: 'var(--am)', zemin: 'var(--aml)' },
+  belirgin_eksik: { etiket: 'Belirgin az', renk: 'var(--re)', zemin: 'var(--rel)' },
+}
+const DEGER_ETIKET = {
+  fazla: 'Senin için daha önemli', belirgin_fazla: 'Senin için çok daha önemli',
+  eksik: 'Senin için daha az önemli', belirgin_eksik: 'Senin için çok daha az önemli',
+}
+// eski kayıtlar (fark_sinifi yok) için kategoriden türetme
+const KATEGORIDEN = { belirgin_ustun: 'belirgin_fazla', ustun: 'fazla', beklenti: 'uyumlu', altinda: 'eksik', belirgin_altinda: 'belirgin_eksik' }
+const farkSinifi = (g) => g?.fark_sinifi || KATEGORIDEN[g?.kategori] || 'uyumlu'
+function farkBilgisi(g) {
+  const sinif = farkSinifi(g)
+  const f = FARK[sinif] || FARK.uyumlu
+  const deger = String(g?.degisken_kod || '').startsWith('D') && DEGER_ETIKET[sinif]
+  return { ...f, sinif, etiket: deger || f.etiket }
 }
 // [2026-10-10] Özet kutularındaki üç grubun ne anlama geldiği (öğrenci dilinde)
 const GRUP_ACIKLAMA = {
-  guclu: { ad: 'güçlü yön', metin: 'Bu özelliklerde bölümün beklediğinden daha güçlüsün. Bu bölümde sana avantaj sağlar. Onları nasıl büyüteceğini “Güçlü Yönlerin” sekmesinde görürsün.' },
-  uyumlu: { ad: 'bölümle uyumlu', metin: 'Bu özelliklerde bölümün beklediği düzeydesin. Şimdilik ek çalışma gerekmez. Bu düzeyi koruman yeterli.' },
-  gelisim: { ad: 'gelişime açık', metin: 'Bu özelliklerde bölümün beklediği düzeyin altındasın. Bunlar eksiklik değil, büyüyebileceğin alanlar. Yol haritan tam da bunlar için hazırlandı.' },
+  uyumlu: { ad: 'bölümle uyumlu', metin: 'Bu özelliklerde bölümün beklediği düzeydesin. Uyumunu en çok bunlar destekler. Güçlü yönlerin de bu gruptan, senin en yüksek olduğun özelliklerden seçilir.' },
+  fazla: { ad: 'beklenenden fazla', metin: 'Bu özelliklerde bölümün beklediğinden fazlasın. Bu bir eksiklik değil, ama bölümle aranızda bir fark: bu yönünü bölümde daha az kullanabilirsin. Değerlerde ise bu değer senin için bu alanda çalışanların çoğundan daha önemli demek. Karar verirken dikkate al.' },
+  eksik: { ad: 'beklenenden az', metin: 'Bu özelliklerde bölümün beklediği düzeyin altındasın. Bunlar büyüyebileceğin alanlar; yol haritan bunlar için hazırlandı. Değerlerde ise bu değer senin için bu alanda çalışanların çoğundan daha az önemli demek.' },
 }
 // [2026-10-09] Sadeleştirildi: yalnızca "Başladım" ve "Yaptım"
 const DURUMLAR = [
@@ -30,8 +45,8 @@ const DURUMLAR = [
   { kod: 'tamamlandi', etiket: '✓ Yaptım' },
 ]
 
-function KategoriRozeti({ kategori }) {
-  const k = KATEGORI[kategori] || KATEGORI.beklenti
+function FarkRozeti({ g }) {
+  const k = farkBilgisi(g)
   return (
     <span style={{ fontSize: 10.5, fontWeight: 700, color: k.renk, background: k.zemin, padding: '2px 8px', borderRadius: 20, whiteSpace: 'nowrap' }}>
       {k.etiket}
@@ -49,18 +64,19 @@ function KarsilastirmaSatiri({ g }) {
     <div style={{ marginBottom: 12 }}>
       <div onClick={() => setAcik(!acik)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 8, marginBottom: 5, cursor: 'pointer' }}>
         <div style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--tx2)' }}>{g.degisken_adi} <span style={{ color: 'var(--tx3)', fontWeight: 400 }}>{acik ? '▴' : 'ⓘ'}</span></div>
-        <KategoriRozeti kategori={g.kategori} />
+        <FarkRozeti g={g} />
       </div>
       {acik && (
         <div style={{ fontSize: 11.5, color: 'var(--tx3)', margin: '0 0 6px', lineHeight: 1.45 }}>
-          {g.nedir}{g.durum_tespiti ? <><br /><span style={{ color: 'var(--tx2)' }}>{g.durum_tespiti}</span></> : null}
+          {g.nedir}{(g.aciklama || g.durum_tespiti) ? <><br /><span style={{ color: 'var(--tx2)' }}>{g.aciklama || g.durum_tespiti}</span></> : null}
         </div>
       )}
+      {/* [2026-10-17] Senin çubuğun fark rengiyle (yeşil uyumlu · turuncu / kırmızı fark), bölümünki nötr */}
       <div className="mini-cubuk-track" style={{ width: '100%', marginBottom: 3 }}>
-        <div className="mini-cubuk-fill" style={{ width: `${g.ogrenci_goreli ?? g.ogrenci_puan}%`, background: 'var(--pu)' }} />
+        <div className="mini-cubuk-fill" style={{ width: `${g.ogrenci_goreli ?? g.ogrenci_puan}%`, background: farkBilgisi(g).renk }} />
       </div>
       <div className="mini-cubuk-track" style={{ width: '100%' }}>
-        <div className="mini-cubuk-fill" style={{ width: `${g.bolum_goreli ?? g.bolum_beklenen}%`, background: 'var(--gr)' }} />
+        <div className="mini-cubuk-fill" style={{ width: `${g.bolum_goreli ?? g.bolum_beklenen}%`, background: 'var(--tx3)' }} />
       </div>
     </div>
   )
@@ -189,12 +205,13 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
 // [2026-10-09] Hedef seçimi/değiştirme yalnızca Ayarlar sayfasında (en fazla 3 değişiklik).
 // ============================================================
 const SEKMELER = [
+  // [2026-10-17] Ana iş önde: Özet → Sen ve Bölümün → Yol Haritam → Güçlü Yönlerin, ardından bölümü tanıma araçları
   { kod: 'ozet', ad: 'Özet', ikon: '🧭' },
-  { kod: 'bolum', ad: 'Bölümünü Tanı', ikon: '📘' },
-  { kod: 'gun', ad: 'Bir Günümü Yaşa', ikon: '🎬' },
   { kod: 'karsilastirma', ad: 'Sen ve Bölümün', ikon: '📊' },
   { kod: 'yol', ad: 'Yol Haritam', ikon: '🗺️' },
   { kod: 'guclu', ad: 'Güçlü Yönlerin', ikon: '💪' },
+  { kod: 'bolum', ad: 'Bölümünü Tanı', ikon: '📘' },
+  { kod: 'gun', ad: 'Bir Günümü Yaşa', ikon: '🎬' },
   { kod: 'ilham', ad: 'İlham Kaynakları', ikon: '📚' },
   { kod: 'gelisim', ad: 'Gelişimin', ikon: '📈' },
 ]
@@ -308,7 +325,9 @@ function IlhamSekmesi({ kaynaklar }) {
               <h3>{baslik}</h3>
               {alanlar.map((a) => (
                 <div key={a.degisken_kod} className="ilham-alan-satir">
-                  <div className="ilham-alan-bas"><b>{a.degisken_adi}</b><KategoriRozeti kategori={a.kategori} /></div>
+                  <div className="ilham-alan-bas"><b>{a.degisken_adi}</b>{a.grup === 'guclu'
+                    ? <span style={{ fontSize: 10.5, fontWeight: 700, color: 'var(--gr)', background: 'var(--grl)', padding: '2px 8px', borderRadius: 20, whiteSpace: 'nowrap' }}>Güçlü yönün</span>
+                    : <FarkRozeti g={a} />}</div>
                   <div className="ilham-grid">{a.liste.map((k) => kart({ k, alan: a.degisken_adi, grup: a.grup }, false))}</div>
                 </div>
               ))}
@@ -348,7 +367,7 @@ function OdakSatirlari({ plan }) {
           </div>
           <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
             <AlanTuruRozeti odak={o} />
-            {o.alan_turu !== 'deger' && <KategoriRozeti kategori={o.kategori} />}
+            <FarkRozeti g={o} />
           </div>
         </div>
       ))}
@@ -362,13 +381,13 @@ function OzetSekmesi({ plan, gelisim, sekmeyeGit }) {
   const [acikGrup, setAcikGrup] = useState(null)
   if (!plan) return <div className="bos-durum">Plan hazırlanıyor…</div>
   const s = plan.siradaki_adim
-  const gruplar = { guclu: [], uyumlu: [], gelisim: [] }
-  ;(gelisim || []).forEach((g) => gruplar[(KATEGORI[g.kategori] || KATEGORI.beklenti).grup].push(g))
-  const renk = { guclu: 'var(--gr)', uyumlu: 'var(--pu)', gelisim: 'var(--am)' }
+  const gruplar = { uyumlu: [], fazla: [], eksik: [] }
+  ;(gelisim || []).forEach((g) => gruplar[farkSinifi(g).replace('belirgin_', '')].push(g))
+  const renk = { uyumlu: 'var(--gr)', fazla: 'var(--am)', eksik: 'var(--am)' }
   return (
     <>
       <div className="koc-ozet-kutular">
-        {['guclu', 'uyumlu', 'gelisim'].map((k) => (
+        {['uyumlu', 'fazla', 'eksik'].map((k) => (
           <button key={k} className={`koc-ozet-kutu${acikGrup === k ? ' acik' : ''}`} onClick={() => setAcikGrup(acikGrup === k ? null : k)} aria-expanded={acikGrup === k}>
             <b style={{ color: renk[k] }}><Sayac deger={gruplar[k].length} /></b><span>{GRUP_ACIKLAMA[k].ad}</span>
             <small>{acikGrup === k ? 'gizle ▴' : 'ne demek? ▾'}</small>
@@ -383,8 +402,8 @@ function OzetSekmesi({ plan, gelisim, sekmeyeGit }) {
               {gruplar[acikGrup].map((g) => <span key={g.degisken_id}>{g.degisken_adi}</span>)}
             </div>
           )}
-          <button className="hg-link" onClick={() => sekmeyeGit(acikGrup === 'guclu' ? 'guclu' : 'karsilastirma')}>
-            {acikGrup === 'guclu' ? 'Güçlü yönlerini nasıl büyütürsün →' : 'Bölümle tek tek karşılaştır →'}
+          <button className="hg-link" onClick={() => sekmeyeGit(acikGrup === 'uyumlu' ? 'guclu' : acikGrup === 'eksik' ? 'yol' : 'karsilastirma')}>
+            {acikGrup === 'uyumlu' ? 'Güçlü yönlerini gör →' : acikGrup === 'eksik' ? 'Yol haritanı gör →' : 'Bölümle tek tek karşılaştır →'}
           </button>
         </div>
       )}
@@ -400,7 +419,7 @@ function OzetSekmesi({ plan, gelisim, sekmeyeGit }) {
       ) : (
         <div className="card">
           <div className="ps" style={{ margin: 0 }}>
-            Harika! {plan.hedef_bolum_adi} için belirgin bir gelişim alanın görünmüyor. Bu avantajı büyütmek için “Güçlü Yönlerin” sekmesindeki adımlara bak.
+            {plan.hedef_bolum_adi} için belirgin bir gelişim alanın görünmüyor. Güçlü yönlerini kullanmak için “Güçlü Yönlerin” sekmesindeki adımlara bak; “Sen ve Bölümün” sekmesinde fazlalıklarını da gözden geçir.
           </div>
         </div>
       )}
@@ -473,7 +492,7 @@ function YolHaritasiSekmesi({ plan, gelisim, hedefId, onDurum, kaynaklar, sekmey
             return (
               <div className="yh-neden">
                 <div className="yh-neden-bas">❓ Bu adım neden? <b>{simdiki.degisken_adi}</b>
-                  {odak?.alan_turu ? <AlanTuruRozeti odak={odak} /> : g && <KategoriRozeti kategori={g.kategori} />}</div>
+                  {odak?.alan_turu ? <AlanTuruRozeti odak={odak} /> : g && <FarkRozeti g={g} />}</div>
                 {odak?.neden_onemli && <div>{odak.neden_onemli}</div>}
                 {odak?.alan_turu_aciklama && <div className="koc-alan-turu-not">{odak.alan_turu_aciklama}</div>}
                 {g && (
@@ -593,14 +612,14 @@ function HedefKarti({ hedef, plan }) {
 // ---------------------------------------------------------------- 3) Güçlü yönler
 function GucluSekmesi({ plan, onDurum }) {
   if (!plan) return <div className="bos-durum">Plan hazırlanıyor…</div>
-  if (!plan.guclu_yonler.length) return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefe göre henüz öne çıkan bir güçlü yönün yok. Katmanları yeniden tamamladığında burası güncellenir.</div></div>
+  if (!plan.guclu_yonler.length) return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefe göre henüz öne çıkan bir güçlü yönün yok. Güçlü yön, hem bölümün beklediği düzeyde olduğun hem de kendi profilinde yüksek olan özelliklerindir. Katmanları yeniden tamamladığında burası güncellenir.</div></div>
   return (
     <>
-      <div className="ps" style={{ marginBottom: 14 }}>Bu özelliklerin {plan.hedef_bolum_adi} için bir avantaj. Aşağıdaki adımlarla onları gösterebileceğin bir başarıya çevirebilirsin.</div>
+      <div className="ps" style={{ marginBottom: 14 }}>Bu özelliklerde hem yüksek düzeydesin hem de {plan.hedef_bolum_adi} bu düzeyi bekliyor. Aşağıdaki adımlarla onları gösterebileceğin bir başarıya çevirebilirsin.</div>
       {plan.guclu_yonler.map((g) => (
         <section key={g.degisken_kod} className="koc-yatay">
           <div className="koc-yatay-sol">
-            <KategoriRozeti kategori={g.kategori} />
+            <FarkRozeti g={g} />
             <h2>✓ {g.degisken_adi}</h2>
             <p>{g.neden_onemli}</p>
             <small>{g.adimlar.filter((a) => a.durum === 'tamamlandi').length}/{g.adimlar.length} adım tamamlandı</small>
@@ -629,20 +648,21 @@ function KarsilastirmaSekmesi({ gelisim, hedef }) {
   return (
     <div className="card">
       <div className="drl" style={{ marginBottom: 6 }}>
-        <div className="dli"><div className="ddt" style={{ background: 'var(--pu)' }} /> Sen</div>
-        <div className="dli"><div className="ddt" style={{ background: 'var(--gr)' }} /> {hedef.bolum_adi}</div>
+        <div className="dli"><div className="ddt" style={{ background: 'linear-gradient(90deg, var(--gr) 0 33%, var(--am) 33% 66%, var(--re) 66%)' }} /> Sen (renk: farkın büyüklüğü)</div>
+        <div className="dli"><div className="ddt" style={{ background: 'var(--tx3)' }} /> {hedef.bolum_adi}</div>
       </div>
       <div className="ps" style={{ margin: '0 0 14px', fontSize: 11.5 }}>
-        Her katmanda bir özelliğinin, diğer özelliklerine göre ne kadar öne çıktığına bakıyoruz. Bunu bölümün beklentisiyle karşılaştırıyoruz. İki çubuk aynı ölçekte. Etiket, senin özelliğinin bölümün beklentisinin üstünde mi altında mı olduğunu gösterir. Açıklama için özelliğin adına dokun.
+        Bu karşılaştırma bölüm önerisi değildir; hedef bölümüne hazırlanırken nelere odaklanacağını gösterir. Her katmanda bir özelliğinin, diğer özelliklerine göre ne kadar öne çıktığına bakıyor ve bunu bölümün beklentisiyle karşılaştırıyoruz. İki çubuk aynı ölçekte. Bölümün beklentisine yakın olmak uyumu artırır; fazlası da azı da bir farktır. Açıklama için özelliğin adına dokun.
       </div>
       <div className="koc-etiket-rehber">
-        <span><b style={{ color: 'var(--gr)' }}>Güçlü / Belirgin güçlü</b> bölümün beklediğinin üstündesin</span>
-        <span><b style={{ color: 'var(--pu)' }}>Uyumlu</b> beklenen düzeydesin</span>
-        <span><b style={{ color: 'var(--am)' }}>Gelişime açık / Öncelikli</b> yol haritan bunlar için hazırlandı</span>
+        <span><b style={{ color: 'var(--gr)' }}>Uyumlu</b> bölümün beklediği düzeydesin</span>
+        <span><b style={{ color: 'var(--am)' }}>Beklenenden fazla / az</b> bölümle aranda fark var</span>
+        <span><b style={{ color: 'var(--re)' }}>Belirgin fazla / az</b> fark büyük</span>
+        <span><b>Değerlerde</b> “senin için daha önemli / daha az önemli” yazar</span>
       </div>
       <div className="koc-katman-cipler">
         {sira.map((kod) => {
-          const n = gruplar[kod].satirlar.filter((g) => KATEGORI[g.kategori]?.grup === 'gelisim').length
+          const n = gruplar[kod].satirlar.filter((g) => farkSinifi(g) !== 'uyumlu').length
           return (
             <button key={kod} className={kod === secili ? 'aktif' : ''} onClick={() => setSecili(kod)}>
               {gruplar[kod].ad}{n > 0 && <span className="koc-cip-sayi">{n}</span>}

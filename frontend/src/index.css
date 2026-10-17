@@ -341,7 +341,7 @@ button,input{font-family:inherit}
 .neden-ozellik{font-size:13.5px;font-weight:700;margin-right:2px}
 .neden-etiket{font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px}
 .neden-etiket.sen{background:var(--grl,#E4EEDE);color:var(--gr,#5E8A54)}
-.neden-etiket.bolum{background:var(--pul);color:var(--pud)}
+.neden-etiket.bolum{background:var(--sur2);color:var(--tx2)}   /* [2026-10-17] nötr: turuncu yalnızca fark için */
 .neden-kanit{font-size:12px;color:var(--tx2);margin-top:4px;line-height:1.5}
 .neden-kanit q{font-style:italic;margin-right:6px}
 .neden-kanit q::before{content:'«'}
@@ -818,6 +818,33 @@ textarea.md-girdi{resize:vertical;min-height:44px}
 .ca-etki-satir{display:grid;grid-template-columns:minmax(110px,1.3fr) minmax(60px,1fr) 48px 70px;gap:8px;align-items:center;width:100%;border:none;background:none;padding:4px 2px;cursor:pointer;font-family:var(--fn);font-size:12px;color:var(--tx);text-align:left;border-radius:8px}
 .ca-etki-satir:hover{background:var(--sur2)}
 .ca-etki-deger{font-weight:800;text-align:right}
+.ca-okuma{margin:8px 0 2px;line-height:1.5}
+.ca-matris-ust{display:flex;gap:10px;align-items:center;flex-wrap:wrap;justify-content:space-between;margin:4px 0 8px}
+.ca-anahtar{display:flex;gap:6px;flex-wrap:wrap}
+.ca-bolum-ekle{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.ca-bolum-ekle .auth-input{margin:0;width:220px;max-width:100%;padding:6px 10px;font-size:12.5px}
+.ca-lejant{display:flex;gap:6px 14px;flex-wrap:wrap;font-size:11.5px;color:var(--tx2);margin-bottom:8px}
+.ca-lejant i{display:inline-block;width:12px;height:12px;border-radius:3px;vertical-align:-2px;margin-right:4px;border:1px solid var(--bor)}
+.ca-matris-kap{overflow:auto;max-height:70vh;border:1px solid var(--bor);border-radius:12px;background:var(--sur)}
+.ca-matris{border-collapse:separate;border-spacing:0;font-size:11.5px;min-width:100%}
+.ca-matris th,.ca-matris td{padding:4px 6px;border-bottom:1px solid var(--bor);white-space:nowrap}
+.ca-matris thead th{position:sticky;top:0;z-index:2;background:var(--sur2);font-weight:700;color:var(--tx2);text-align:center;vertical-align:bottom;white-space:normal;min-width:74px;max-width:110px;line-height:1.25}
+.ca-matris thead th.hedef{background:var(--pul);color:var(--tx)}
+.ca-m-sira{color:var(--tx3);font-weight:800}
+.ca-m-uyum{display:block;font-family:var(--fd);font-size:13px;color:var(--pu);margin-top:2px}
+.ca-matris .ca-m-ozellik{position:sticky;left:0;z-index:1;background:var(--sur);text-align:left;min-width:170px;max-width:220px;overflow:hidden;text-overflow:ellipsis}
+.ca-matris thead .ca-m-ozellik{z-index:3;background:var(--sur2)}
+.ca-m-ozellik button{border:none;background:none;padding:0;font:inherit;color:var(--tx);cursor:pointer;text-align:left}
+.ca-m-ogr{text-align:center;font-weight:800;color:var(--tx)}
+.ca-m-hucre{text-align:center;font-weight:700;cursor:pointer;font-variant-numeric:tabular-nums}
+.ca-m-hucre:hover{outline:2px solid var(--tx);outline-offset:-2px}
+.ca-m-grup td{background:var(--sur2);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);position:sticky;left:0}
+.ca-etki-ogr{font-size:10.5px;font-weight:700;text-align:right}
+.ca-kiyas-hedef{font-size:13px;margin:0 0 10px;padding:9px 12px;background:var(--pul);border-radius:10px}
+.ca-kiyas-fark{font-weight:800;font-size:12.5px;margin-left:14px}
+.ca-kiyas-oz{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;margin:3px 0}
+.ca-kiyas-oz span small{color:var(--tx3)}
+.ca-etki-satir{grid-template-columns:minmax(110px,1.3fr) minmax(50px,1fr) 48px 92px}
 @media (max-width: 760px){.ca-etki-iki{grid-template-columns:1fr}}
 
 /* [2026-10-09] Koçluk — ilham kaynakları */
@@ -1684,6 +1711,17 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .rs-ikon{font-size:18px}
 .rs-secenek{display:flex;gap:8px;align-items:flex-start;background:var(--sur2);border-radius:12px;padding:9px 10px;cursor:pointer}
 .rs-secenek span{display:grid}.rs-secenek b{font-size:12.5px}
+.rs-bolum{display:grid;gap:7px;border-top:1px solid var(--bor);padding-top:9px}
+.rs-sayac{float:right;color:var(--tx2)}
+.rs-not{font-size:11.5px;color:var(--tx3);line-height:1.4}
+.rs-not.uyari{color:var(--am);background:var(--aml);border-radius:8px;padding:6px 8px}
+.rs-ciplar{display:flex;flex-wrap:wrap;gap:5px}
+.rs-cip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;background:var(--sur2);border-radius:999px;padding:3px 4px 3px 9px;max-width:100%}
+.rs-cip.hedef{background:var(--pul);padding-right:9px}
+.rs-cip button{border:none;background:none;cursor:pointer;color:var(--tx3);font-size:11px;padding:0 4px}
+.rs-ekle{display:flex;gap:6px;align-items:center}
+.rs-ekle .auth-input{margin:0;flex:1;min-width:0;padding:6px 9px;font-size:12.5px}
+.rs-sifirla{border:none;background:none;padding:0;font-size:11.5px;color:var(--pu);cursor:pointer;text-align:left;font-family:var(--fn)}
 
 /* [2026-10-10] Konu listesi yönetimi */
 .kl-liste{display:grid;gap:5px;margin-bottom:12px}
@@ -3434,3 +3472,23 @@ button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2p
   .okb-kadro-satir > :nth-child(2),.okb-kadro-satir > :nth-child(4),.okb-kadro-satir > :nth-child(5){grid-column:1 / -1}
   .okb-form-iki{grid-template-columns:1fr}
 }
+
+/* [2026-10-17] Ana sayfa: sistemin ana işi (bölüm uyumu + hedef bölümle karşılaştırma) diğer araçlardan önce ve belirgin */
+.as-cekirdek{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:4px 0 20px}
+.as-cekirdek-kutu{background:var(--sur);border:2px solid var(--pum);border-radius:var(--r16);padding:16px 18px;display:flex;flex-direction:column;gap:10px;box-shadow:0 6px 18px rgba(60,50,20,.06)}
+.as-cekirdek-ust{font-size:12px;font-weight:800;letter-spacing:.4px;text-transform:uppercase;color:var(--pu)}
+.as-cekirdek-liste{margin:0;padding:0;list-style:none;counter-reset:cek;display:flex;flex-direction:column;gap:6px}
+.as-cekirdek-liste li{counter-increment:cek;display:flex;align-items:baseline;gap:10px;font-size:14.5px}
+.as-cekirdek-liste li::before{content:counter(cek) ".";font-weight:800;color:var(--tx3);min-width:16px}
+.as-cekirdek-liste li button{flex:1;min-width:0;text-align:left;background:none;border:0;padding:0;font:inherit;font-weight:700;color:var(--tx);cursor:pointer;overflow-wrap:break-word}
+.as-cekirdek-liste li button:hover{color:var(--pu);text-decoration:underline}
+.as-cekirdek-liste li b{font-family:var(--fd);color:var(--pu);font-size:16px}
+.as-cekirdek-hedef{font-family:var(--fd);font-size:19px;font-weight:800;line-height:1.25;overflow-wrap:break-word}
+.as-cekirdek-not{font-size:13px;color:var(--tx2);line-height:1.45}
+.as-cekirdek-dugmeler{display:flex;flex-wrap:wrap;gap:8px;margin-top:auto}
+.as-cekirdek-kutu > .btn{align-self:flex-start;margin-top:auto}
+
+/* [2026-10-17] Öğrenci menüsü: ana grup (bölüm uyumu + koçluk) belirgin, diğerleri "Ek araçlar" */
+.ns-ana{color:var(--pu) !important}
+.ni-ana{font-weight:700}
+.ni-alt{padding-left:34px !important;font-size:12.5px}

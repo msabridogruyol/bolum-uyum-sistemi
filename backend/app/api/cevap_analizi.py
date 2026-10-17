@@ -1,53 +1,60 @@
 # -*- coding: utf-8 -*-
 """
-[2026-10-09] Öğrenci cevap analizi — YALNIZCA SÜPER ADMİN.
+[2026-10-09] Öğrenci cevap analizi. [2026-10-17] Süper admin VE okul yetkilisi (yalnızca kendi okulunun öğrencisi;
+her görüntüleme / indirme işlem kaydına yazılır). Öğrenci bu ekranı görmez.
 
-GET /yonetim/ogrenci/{ogrenci_id}/cevap-analizi?tur_no=
+GET /yonetim/ogrenci/{ogrenci_id}/cevap-analizi?tur_no=&bolumler=1,2,3
+GET /yonetim/ogrenci/{ogrenci_id}/cevap-analizi.xlsx?tur_no=      (tüm matrisler, Excel)
 
-Öğrencinin bir değerlendirme turundaki her cevabı: soru, tüm şıklar (seçilen / en az uyan işaretli),
-bu cevabın hangi özelliğe kaç puan kattığı (katman tamamlanırken kullanılan puanlama kuralının AYNISI:
-katman_servisi.cevaplari_puanla), kontrol sorularında beklenen–verilen.
-Özellik özeti: özellik puanı = o özelliğe katkı veren cevapların ortalaması.
-Sonuca etkisi: ilk 5 öneri ve her biri için bölümü diğer bölümlere göre öne çıkaran / geri çeken özellikler
-(kriter ağırlığı × özellik uyumu, bölüm ortalamasına göre fark — ÇKKV yöntemlerinin ortak girdisi).
-Okul yetkilisi bu uç noktaya erişemez (öğrencinin ham cevapları hassas veridir).
+Cevap matrisi: öğrencinin bir turdaki her cevabı: soru, tüm şıklar (seçilen / en az uyan işaretli), bu cevabın hangi
+özelliğe kaç puan kattığı (katman tamamlanırken kullanılan puanlama kuralının AYNISI: katman_servisi.cevaplari_puanla),
+kontrol sorularında beklenen–verilen. Özellik özeti: özellik puanı = o özelliğe katkı veren cevapların ortalaması.
+Uyum matrisi ve katkılar: core/uyum_aciklama ("bu özellik olmasaydı" katkısı; gösterilen puanla aynı hesap).
+Yöntem matrisi (10 ÇKKV yöntemi + Kendall W) yalnızca süper admine döner.
 """
-import uuid
+import re
+import unicodedata
 
-import numpy as np
 from fastapi import APIRouter, Depends, HTTPException, Query
+from fastapi.responses import Response
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_admin
+from app.api.deps import get_mevcut_yonetim
+from app.api.okul_yonetimi import _ogrenci_kapsami
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
 from app.core.katman_servisi import cevaplari_puanla, puanlama_onbellegi
 from app.models import (
-    AdminKullanici, Dal, Degisken, Katman, Ogrenci, OgrenciCevap, OgrenciDegerlendirmeTuru,
-    OgrenciDegiskenSkoru, Soru,
+    AdminKullanici,
+    Dal,
+    Degisken,
+    Katman,
+    Ogrenci,
+    OgrenciCevap,
+    OgrenciDegerlendirmeTuru,
+    OgrenciDegiskenSkoru,
+    Soru,
 )
 
-router = APIRouter(prefix="/yonetim/ogrenci", tags=["Cevap analizi (süper admin)"])
+router = APIRouter(prefix="/yonetim/ogrenci", tags=["Cevap analizi (süper admin + okul yetkilisi)"])
 
 TIP_ADI = {"likert": "Likert", "sjt": "Durum sorusu", "kutup": "İki uç", "kontrol": "Dikkat kontrolü"}
+OKUMA_NOTU = ("Uyum puanı göreli: 301 bölüm içinde öğrencinin profiline yakınlık (100 = en yakın, 0 = en uzak). "
+              "Katkı = bu özellik olmasaydı puan ne kadar değişirdi (artı: yükseltiyor, eksi: düşürüyor); katkı da göreli "
+              "olduğundan, farkı olan bir özellik öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan daha yakınsa artı çıkabilir. "
+              "Fark = öğrenci − bölüm beklentisi (katman içi ölçek); |fark| < 5 uyumlu, 5–15 fazla / az, 15+ belirgin.")
 
 
-@router.get("/{ogrenci_id}/cevap-analizi")
-def cevap_analizi(ogrenci_id: str, tur_no: int | None = Query(None), db: Session = Depends(get_db),
-                  admin: AdminKullanici = Depends(get_mevcut_admin)):
-    try:
-        o = db.get(Ogrenci, uuid.UUID(ogrenci_id))
-    except ValueError:
-        o = None
-    if o is None:
-        raise HTTPException(status_code=404, detail="Öğrenci bulunamadı.")
-
+def _ogrenci_ve_tur(db: Session, yon: AdminKullanici, ogrenci_id: str, tur_no: int | None):
+    o = _ogrenci_kapsami(db, yon, ogrenci_id)   # okul yetkilisi yalnızca kendi okulu (403)
     turlar = (db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.ogrenci_id == o.id)
               .order_by(OgrenciDegerlendirmeTuru.tur_no.desc()).all())
-    if not turlar:
-        return {"turlar": [], "tur": None, "cevaplar": [], "ozellikler": [], "etki": [], "not": "Öğrenci teste henüz başlamadı."}
-    tur = next((t for t in turlar if t.tur_no == tur_no), turlar[0])
+    tur = next((t for t in turlar if t.tur_no == tur_no), turlar[0]) if turlar else None
+    return o, turlar, tur
 
+
+def _cevaplar_ve_ozellikler(db: Session, o: Ogrenci, tur: OgrenciDegerlendirmeTuru):
+    """Cevap matrisi (soru × özellik katkısı) ve özellik özeti; ekran ve Excel ortak kullanır."""
     cevaplar = (db.query(OgrenciCevap).filter(OgrenciCevap.ogrenci_id == o.id, OgrenciCevap.tur_id == tur.id)
                 .order_by(OgrenciCevap.cevap_zamani, OgrenciCevap.id).all())
     sorular = {s.id: s for s in db.query(Soru).filter(Soru.id.in_([c.soru_id for c in cevaplar] or [-1])).all()}
@@ -92,7 +99,6 @@ def cevap_analizi(ogrenci_id: str, tur_no: int | None = Query(None), db: Session
             "katkilar": katki_listesi, "kontrol": kontrol, "zaman": c.cevap_zamani,
         })
 
-    # Özellik özeti: kayıtlı puan + katkı veren cevaplar
     kayitli = {x.degisken_id: float(x.puan) for x in db.query(OgrenciDegiskenSkoru).filter(
         OgrenciDegiskenSkoru.ogrenci_id == o.id, OgrenciDegiskenSkoru.tur_id == tur.id).all()}
     ozellikler = []
@@ -102,44 +108,65 @@ def cevap_analizi(ogrenci_id: str, tur_no: int | None = Query(None), db: Session
         ozellikler.append({**ozellik(did), "puan": kayitli.get(did),
                            "hesaplanan": round(sum(x["puan"] for x in k) / len(k), 1) if k else None,
                            "cevap_sayisi": len(k), "cevaplar": [x["sira"] for x in k]})
+    return satirlar, ozellikler
 
-    # Sonuca etkisi
-    etki, not_metni = [], None
+
+@router.get("/{ogrenci_id}/cevap-analizi")
+def cevap_analizi(ogrenci_id: str, tur_no: int | None = Query(None), bolumler: str | None = Query(None),
+                  db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    o, turlar, tur = _ogrenci_ve_tur(db, yon, ogrenci_id, tur_no)
+    if tur is None:
+        return {"turlar": [], "tur": None, "cevaplar": [], "ozellikler": [], "matris": None, "not": "Öğrenci teste henüz başlamadı."}
+    satirlar, ozellikler = _cevaplar_ve_ozellikler(db, o, tur)
+
+    matris, not_metni = None, None
     if tur.durum == "tamamlandi":
         try:
-            from app.core.skor_motoru import girdi_hazirla, siralama_getir
-            girdi = girdi_hazirla(db, o, tur)
-            sira_listesi = siralama_getir(db, o, tur, 5)
-            if girdi is not None:
-                satir_of = {b: i for i, b in enumerate(girdi.bolum_idler)}
-                ort = girdi.performans.mean(axis=0)
-                for st in sira_listesi:
-                    i = satir_of.get(st.bolum_id)
-                    if i is None:
-                        continue
-                    fark = girdi.agirliklar * (girdi.performans[i] - ort)   # uyum puanına katkının bölüm ortalamasına göre farkı (puan)
-                    sirali = np.argsort(fark)
-                    def kalem(j):
-                        did = girdi.degisken_idler[j]
-                        return {**ozellik(did), "etki": round(float(fark[j]), 2), "ogrenci_puan": kayitli.get(did),
-                                "bolum_beklenti": round(float(girdi.bolum_olcekli[i][j]), 1),
-                                "ogrenci_olcekli": round(float(girdi.ogrenci_olcekli[j]), 1),
-                                "uyum": round(float(girdi.performans[i][j]), 1)}
-                    etki.append({
-                        "bolum_id": st.bolum_id, "bolum": girdi.bolum_adlari.get(st.bolum_id), "uyum": round(st.toplam_uyum, 1),
-                        "yukari": [kalem(j) for j in sirali[::-1][:5] if fark[j] > 0],
-                        "asagi": [kalem(j) for j in sirali[:3] if fark[j] < 0],
-                    })
-        except Exception as e:  # analiz sonucu göstermeyi engellemesin
+            from app.core.uyum_aciklama import hedef_kiyasi, uyum_matrisi
+            secim = [int(x) for x in re.findall(r"\d+", bolumler or "")][:30] or None
+            matris = uyum_matrisi(db, o, tur, secim, yontem=yon.rol == "super_admin")
+            if matris is not None:
+                matris["kiyas"] = hedef_kiyasi(matris)   # [2026-10-17] hedef bölüm kıyası (raporla aynı hesap)
+            if matris is None:
+                not_metni = "Öğrencinin profili eksik olduğu için bölüm uyumu hesaplanamadı."
+        except Exception as e:  # analiz cevapları göstermeyi engellemesin
             db.rollback()
-            not_metni = f"Sonuç etkisi hesaplanamadı: {type(e).__name__}"
+            not_metni = f"Bölüm uyumu açıklaması hesaplanamadı: {type(e).__name__}"
     else:
         not_metni = "Tur tamamlanmadığı için bölüm sonuçları henüz hesaplanmadı."
 
-    denetim_yaz(db, admin, "cevap_analizi_goruntule", "ogrenciler", o.id, f"{o.ad_soyad}: {tur.tur_no}. tur cevapları görüntülendi", o.okul_id)
+    denetim_yaz(db, yon, "cevap_analizi_goruntule", "ogrenciler", o.id, f"{o.ad_soyad}: {tur.tur_no}. tur cevapları görüntülendi", o.okul_id)
     db.commit()
     return {
         "turlar": [{"tur_no": t.tur_no, "durum": t.durum} for t in turlar],
         "tur": {"tur_no": tur.tur_no, "durum": tur.durum, "baslama": tur.baslama_zamani, "tamamlanma": tur.tamamlanma_zamani},
-        "cevaplar": satirlar, "ozellikler": ozellikler, "etki": etki, "not": not_metni,
+        "cevaplar": satirlar, "ozellikler": ozellikler, "matris": matris, "okuma_notu": OKUMA_NOTU, "not": not_metni,
     }
+
+
+def _dosya_adi(*parcalar) -> str:
+    metin = "_".join(str(p) for p in parcalar if p)
+    metin = metin.translate(str.maketrans("çğıöşüÇĞİÖŞÜ", "cgiosuCGIOSU"))
+    metin = unicodedata.normalize("NFKD", metin).encode("ascii", "ignore").decode()
+    return re.sub(r"[^A-Za-z0-9_.-]+", "_", metin).strip("_")[:120]
+
+
+@router.get("/{ogrenci_id}/cevap-analizi.xlsx")
+def cevap_analizi_excel(ogrenci_id: str, tur_no: int | None = Query(None),
+                        db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """Tüm matrisler: cevaplar (soru × özellik), özellikler, uyum (bölüm × özellik farkı), katkılar, bölüm beklentileri;
+    süper admin için ayrıca 10 yöntem + Kendall W."""
+    from app.core.rapor.uyum_excel import cevap_analizi_xlsx
+    from app.core.uyum_aciklama import tam_matris
+    o, _turlar, tur = _ogrenci_ve_tur(db, yon, ogrenci_id, tur_no)
+    if tur is None:
+        raise HTTPException(status_code=404, detail="Öğrencinin değerlendirme kaydı yok.")
+    satirlar, ozellikler = _cevaplar_ve_ozellikler(db, o, tur)
+    tam = tam_matris(db, o, tur) if tur.durum == "tamamlandi" else None
+    icerik = cevap_analizi_xlsx(db, o, tur, satirlar, ozellikler, tam, yontem=yon.rol == "super_admin", not_metni=OKUMA_NOTU)
+    denetim_yaz(db, yon, "cevap_analizi_indir", "ogrenciler", o.id, f"{o.ad_soyad}: {tur.tur_no}. tur cevap ve uyum matrisleri indirildi (Excel)", o.okul_id)
+    db.commit()
+    ad = _dosya_adi("Cevap_ve_Uyum_Matrisi", o.ad_soyad, f"tur{tur.tur_no}")
+    return Response(content=icerik, media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+                    headers={"Content-Disposition": f'attachment; filename="{ad}.xlsx"', "Cache-Control": "no-store"})
+

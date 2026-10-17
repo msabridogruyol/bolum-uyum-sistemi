@@ -1079,7 +1079,7 @@ ISLEM_ETIKET = {
     "anket_olustur": "Anket oluşturuldu", "anket_duzenle": "Anket düzenlendi", "anket_sil": "Anket silindi",
     "anket_taslak": "Anket taslağa alındı", "anket_yayinda": "Anket yayınlandı", "anket_kapandi": "Anket kapatıldı",
     "anket_excel": "Anket sonuçları indirildi (Excel)", "anket_psikometri_excel": "Anket psikometri raporu indirildi (Excel)",
-    "audit_log_excel": "İşlem kayıtları indirildi (Excel)", "cevap_analizi_goruntule": "Cevap analizi görüntülendi",
+    "audit_log_excel": "İşlem kayıtları indirildi (Excel)", "cevap_analizi_goruntule": "Cevap analizi görüntülendi", "cevap_analizi_indir": "Cevap ve uyum matrisleri indirildi (Excel)",
     "cv_indir": "Öğrenci CV'si indirildi", "ozgecmis_indir": "Öğrenci özgeçmişi indirildi",
     "degerlendirme_sifirla": "Değerlendirme sıfırlandı", "yeniden_degerlendirme_ac": "Yeniden değerlendirme izni verildi",
     "katman_tekrarlat": "Değerlendirme bölümü tekrarlatıldı", "sonuc_epostasi_gonder": "Sonuç e-postası gönderildi",

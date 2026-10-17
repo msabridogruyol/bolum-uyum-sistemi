@@ -17,7 +17,7 @@ from app.models import (
 )
 from app.core.katman_servisi import IsKuraliHatasi
 from app.core.skor_motoru import _katman_ici_olcekle
-from app.core.gelisim_icerigi import ICERIK, TUR_ETIKET, ASAMA_SIRASI, adim_kodu
+from app.core.gelisim_icerigi import ICERIK, FAZLA_NEDEN, TUR_ETIKET, ASAMA_SIRASI, adim_kodu
 from app.core.gelisim_detay import DETAY
 import numpy as np
 
@@ -112,6 +112,57 @@ def gap_kategorisi(gap: float) -> str:
     return "belirgin_altinda"
 
 
+# [2026-10-17] Fark sınıfı: uyum puanı farkın YÖNÜNE bakmaz (100 − |öğrenci − bölüm|), bu yüzden ekran da
+# yakınlığı gösterir: ±5 içi "uyumlu" (yeşil), 5–15 fazla/eksik (turuncu), 15+ belirgin fazla/eksik (kırmızı).
+# Fazlalık "güçlü / avantaj" sayılmaz. İstisna P4 (kaygı, ters yönlü, eşleşmeye girmez): yalnızca fazlası sorundur;
+# bölümün beklediğinden sakin olmak "uyumlu" sayılır.
+UYUM_BANDI = 5.0
+BELIRGIN_FARK = 15.0
+GUCLU_YON_ESIGI = 60.0   # güçlü yön = bölümle uyumlu VE öğrencinin kendi profilinde yüksek (katman içi ölçek, 50 = orta)
+
+
+def fark_sinifi(gap: float, ters_yonlu: bool = False) -> str:
+    if ters_yonlu:
+        return "belirgin_fazla" if gap >= BELIRGIN_FARK else "fazla" if gap >= UYUM_BANDI else "uyumlu"
+    if gap >= BELIRGIN_FARK:
+        return "belirgin_fazla"
+    if gap >= UYUM_BANDI:
+        return "fazla"
+    if gap > -UYUM_BANDI:
+        return "uyumlu"
+    return "eksik" if gap > -BELIRGIN_FARK else "belirgin_eksik"
+
+
+def fark_rengi(sinif: str) -> str:
+    return "yesil" if sinif == "uyumlu" else "kirmizi" if sinif.startswith("belirgin") else "turuncu"
+
+
+def guclu_yon_mu(s) -> bool:
+    """Güçlü yön: bölümle uyumlu ve öğrencinin kendi profilinde yüksek. Değerler (D) ve P4 güçlü yön sayılmaz."""
+    kod = s.degisken.kod
+    return (s.fark_sinifi == "uyumlu" and not kod.startswith("D") and not s.degisken.ters_yonlu and kod in ICERIK
+            and float(getattr(s, "ogrenci_goreli", 0.0) or 0.0) >= GUCLU_YON_ESIGI)
+
+
+def fark_aciklamasi(s, bolum_adi: str) -> str:
+    """Özellik bazında karşılaştırmanın öğrenci dilinde açıklaması (fark sınıfına ve özellik türüne göre)."""
+    kod, sinif, ic = s.degisken.kod, s.fark_sinifi, ICERIK.get(s.degisken.kod, {})
+    if sinif == "uyumlu":
+        if kod.startswith("D"):
+            metin = "Bu değer senin için {bolum} alanında çalışanların çoğu kadar önemli."
+        elif s.degisken.ters_yonlu:
+            metin = "Strese karşı hassasiyetin {bolum} için beklenen düzeyi aşmıyor."
+        elif guclu_yon_mu(s) and ic.get("guclu_neden"):
+            metin = ic["guclu_neden"]
+        else:
+            metin = "Bu özellikte {bolum} için beklenen düzeydesin."
+    elif sinif in ("fazla", "belirgin_fazla"):
+        metin = ic.get("gelisim_neden", "") if s.degisken.ters_yonlu else FAZLA_NEDEN.get(kod, "")
+    else:
+        metin = ic.get("gelisim_neden", "")
+    return metin.replace("{bolum}", bolum_adi)
+
+
 class GapSatiri:
     def __init__(self, degisken: Degisken, ogrenci_puan: float, bolum_beklenen: float,
                  bolum_agirlik: float, gelisim_karti: GelisimYorumHavuzu | None,
@@ -130,6 +181,7 @@ class GapSatiri:
         # değeri yalnızca görüntüleme/şeffaflık için saklanır.
         degerlendirme_farki = -self.gap if degisken.ters_yonlu else self.gap
         self.kategori = gap_kategorisi(degerlendirme_farki)
+        self.fark_sinifi = fark_sinifi(self.gap, bool(degisken.ters_yonlu))
         self.oncelik_skoru = abs(degerlendirme_farki) * (bolum_agirlik / 100.0)  # F2.2
         self.gelisim_karti = gelisim_karti
 
@@ -442,10 +494,10 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
     odak_kodlar = {s.degisken.kod for s in odak}
     sonraki = [s for s in gelisim if s.degisken.kod not in odak_kodlar]
 
-    def duzeltilmis(s):
-        return -s.gap if s.degisken.ters_yonlu else s.gap
-    guclu = sorted([s for s in gap_satirlari if _grup(s.kategori) == "guclu" and s.degisken.kod in ICERIK],
-                   key=duzeltilmis, reverse=True)[:GUCLU_YON_SAYISI]
+    # [2026-10-17] Güçlü yön = bölümle uyumlu (±5) VE öğrencinin kendi profilinde yüksek özellik (değerler hariç).
+    # Bölümün beklediğinden fazla olmak güçlü yön değildir (uyum puanı fazlalığı da uyumsuzluk sayar).
+    guclu = sorted([s for s in gap_satirlari if guclu_yon_mu(s)],
+                   key=lambda s: float(getattr(s, "ogrenci_goreli", 0.0) or 0.0), reverse=True)[:GUCLU_YON_SAYISI]
 
     odak_alanlari = []
     asama_adimlari = {a: [] for a in ASAMA_SIRASI}
@@ -453,9 +505,13 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
         ic = ICERIK[s.degisken.kod]
         odak_alanlari.append({
             "degisken_id": s.degisken.id, "degisken_kod": s.degisken.kod, "degisken_adi": s.degisken.ad,
-            "kategori": s.kategori, "oncelik_sirasi": oncelik_sirasi,
+            "kategori": s.kategori, "fark_sinifi": s.fark_sinifi, "oncelik_sirasi": oncelik_sirasi,
             "nedir": ic["nedir"],
             "neden_onemli": (ic["gelisim_neden"].replace("{bolum}", bolum_adi) if _ayirt(s) >= AYIRT_GUCLU_ESIK else
+                             # [2026-10-17] değerler "güçlendirilmez": fark bir karar konusudur
+                             f"{bolum_adi} alanında çalışanlar için bu değer orta düzeyde önemli; senin için ise daha az önemli. "
+                             f"Bu bir eksik değil. Bölümün bu yönünün sana uyup uymadığını bilerek karar ver."
+                             if s.degisken.kod.startswith("D") else
                              f"{bolum_adi} için bu alan orta düzeyde önemli. Senin bu alandaki eğilimin, bölümün beklediğinin "
                              f"altında. Küçük ve düzenli adımlarla güçlendirirsen bölümde işin kolaylaşır."),
             "durum_tespiti": s.gelisim_karti.durum_tespiti if s.gelisim_karti else None,
@@ -482,7 +538,7 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
         ic = ICERIK[s.degisken.kod]
         guclu_yonler.append({
             "degisken_id": s.degisken.id, "degisken_kod": s.degisken.kod, "degisken_adi": s.degisken.ad,
-            "kategori": s.kategori, "nedir": ic["nedir"],
+            "kategori": s.kategori, "fark_sinifi": s.fark_sinifi, "nedir": ic["nedir"],
             "neden_onemli": ic["guclu_neden"].replace("{bolum}", bolum_adi),
             "adimlar": [_adim(s.degisken.kod, s.degisken.ad, "U", i, ham, bolum_adi, durumlar) for i, ham in enumerate(ic["guclu"], 1)],
         })
@@ -493,7 +549,8 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
     return plani_zenginlestir(db, ogrenci, hedef_bolum_id, {
         "hedef_bolum_adi": bolum_adi,
         "odak_alanlari": odak_alanlari,
-        "sonraki_alanlar": [{"degisken_id": s.degisken.id, "degisken_adi": s.degisken.ad, "kategori": s.kategori} for s in sonraki],
+        "sonraki_alanlar": [{"degisken_id": s.degisken.id, "degisken_adi": s.degisken.ad, "kategori": s.kategori,
+                             "fark_sinifi": s.fark_sinifi} for s in sonraki],
         "asamalar": asamalar,
         "guclu_yonler": guclu_yonler,
         "siradaki_adim": siradaki,

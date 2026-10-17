@@ -148,7 +148,7 @@ ICERIK = {
     "P1": {
         "nedir": "İnsanlarla yüz yüze çalışma, ekipte olma ve sosyal ortamdan enerji alma eğilimi.",
         "gelisim_neden": "{bolum} alanında çalışanlar günün önemli kısmını insanlarla iletişim içinde geçiriyor (ekip toplantıları, sunumlar, müşteri/danışan görüşmeleri). Sen daha içe dönük bir tarza sahipsin; bu bir zayıflık değil ama sosyal durumlarda kendini rahat hissetmeni sağlayacak alışkanlıklar seni güçlendirir.",
-        "guclu_neden": "Sosyal enerjin {bolum} ortalamasının da üzerinde. Bu, ekip çalışmalarında, sunumlarda ve ağ kurmada sana avantaj sağlar.",
+        "guclu_neden": "Sosyal enerjin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, ekip çalışmalarında, sunumlarda ve ağ kurmada sana avantaj sağlar.",
         "gelisim": [
             ("simdi", "Bir sohbet başlat", "Bu hafta okulda az tanıdığın biriyle ya da bir öğretmeninle ders dışı kısa bir sohbet başlat.", "aliskanlik", "1 hafta", "En az 2 yeni sohbet başlattın."),
             ("simdi", "Enerji haritanı çıkar", "Hangi sosyal ortamlar seni yoruyor, hangileri dinlendiriyor? Bir hafta boyunca not al.", "yansitma", "1 hafta", "Seni yoran ve dinlendiren ortamları listeledin."),
@@ -165,7 +165,7 @@ ICERIK = {
     "P2": {
         "nedir": "Uzlaşma, empati ve ekip içinde uyum sağlama eğilimi.",
         "gelisim_neden": "{bolum} alanında uyumlu ve işbirlikçi çalışmak önemli bir beklenti; ekipler ortak karar alıyor ve insan ilişkileri işin merkezinde. Sen görüşünü net savunan birisin; bu değerli ama karşındakini anlama ve ortak zemin bulma becerin geliştikçe ekip içindeki etkin artar.",
-        "guclu_neden": "İşbirliği ve empati gücün {bolum} ortalamasının da üzerinde. Bu, ekiplerde güvenilen bir arabulucu olmanı sağlar; yalnızca gerektiğinde \"hayır\" diyebildiğinden emin ol.",
+        "guclu_neden": "İşbirliği ve empati gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, ekiplerde güvenilen bir arabulucu olmanı sağlar; yalnızca gerektiğinde \"hayır\" diyebildiğinden emin ol.",
         "gelisim": [
             ("simdi", "Aktif dinleme denemesi", "Bu hafta bir tartışmada cevap vermeden önce karşındakinin söylediğini kendi cümlelerinle özetle (\"Yani sen ... diyorsun\").", "aliskanlik", "1 hafta", "En az 3 konuşmada bu tekniği kullandın."),
             ("simdi", "Karşı tarafın gözünden", "Son yaşadığın bir anlaşmazlığı karşı tarafın bakış açısından yaz.", "yansitma", "20 dk", "Karşı tarafın gerekçelerini yazabildin."),
@@ -182,7 +182,7 @@ ICERIK = {
     "P3": {
         "nedir": "Planlı çalışma, işleri zamanında bitirme ve görev bilinci.",
         "gelisim_neden": "{bolum} eğitimi ve iş hayatı düzenli, planlı ve sorumluluk bilinci yüksek çalışmayı gerektiriyor (yoğun ders yükü, teslim tarihleri, hata kabul etmeyen işler). Planlama alışkanlıkların geliştikçe bu alandaki başarın belirgin şekilde artar.",
-        "guclu_neden": "Disiplin ve sorumluluk gücün {bolum} ortalamasının da üzerinde. Bu, yoğun bir eğitim sürecinde en büyük avantajlarından biri; bu gücü uzun vadeli hedeflere bağlarsan fark yaratırsın.",
+        "guclu_neden": "Disiplin ve sorumluluk gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, yoğun bir eğitim sürecinde en büyük avantajlarından biri; bu gücü uzun vadeli hedeflere bağlarsan fark yaratırsın.",
         "gelisim": [
             ("simdi", "Haftalık plan", "Bu haftanın ödev ve çalışmalarını bir listeye yaz, her birine gün ata.", "aliskanlik", "15 dk", "Haftalık listen var ve her işin bir günü belli."),
             ("simdi", "25 dakika kuralı", "Pomodoro tekniğini dene: 25 dakika odaklı çalış, 5 dakika mola ver. Günde en az 2 tur yap.", "aliskanlik", "1 hafta", "5 gün boyunca günde en az 2 tur yaptın."),
@@ -216,7 +216,7 @@ ICERIK = {
     "P5": {
         "nedir": "Yeni fikirlere, farklı alanlara ve değişen koşullara merak ve açıklık.",
         "gelisim_neden": "{bolum} alanı sürekli gelişiyor; yeni yöntemler, teknolojiler ve bakış açıları öğrenmek işin bir parçası. Yeniliğe açıklığın bu alanın ortalamasının altında; merakını küçük adımlarla beslemek, hızla değişen bu alanda geride kalmamanı sağlar.",
-        "guclu_neden": "Merakın ve yeniliğe açıklığın {bolum} ortalamasının da üzerinde. Bu seni hızlı öğrenen ve yeni fikirler üreten biri yapar; merakını derinleştirmek için bir konuya odaklanmayı da unutma.",
+        "guclu_neden": "Merakın ve yeniliğe açıklığın yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu seni hızlı öğrenen ve yeni fikirler üreten biri yapar; merakını derinleştirmek için bir konuya odaklanmayı da unutma.",
         "gelisim": [
             ("simdi", "Haftanın yeni konusu", "Bu hafta hiç bilmediğin bir konuda 10 dakikalık bir video izle ya da bir yazı oku.", "okuma", "10-15 dk", "Yeni konuyu birine 2 cümleyle anlatabildin."),
             ("simdi", "Alandaki yenilikler", "{bolum} alanında son 2 yılda ortaya çıkan bir yeniliği araştır.", "arastirma", "30 dk", "Bir yeniliği ve etkisini not ettin."),
@@ -233,7 +233,7 @@ ICERIK = {
     "P6": {
         "nedir": "Sabit ve tekrarlayan işler mi, değişken ve sürprizli işler mi tercih ettiğin.",
         "gelisim_neden": "{bolum} alanında iş günü genellikle değişken: her gün farklı görevler, beklenmedik durumlar ve hızlı uyum gerekiyor. Sen rutini tercih ediyorsun; değişime uyum becerini kademeli olarak artırmak bu alanda rahat etmeni sağlar.",
-        "guclu_neden": "Dinamik ve değişken işlerden keyif alma eğilimin {bolum} ortalamasının da üzerinde. Bu, hızlı tempolu ortamlarda sana avantaj sağlar; rutin ama gerekli işleri de aksatmamak için küçük sistemler kur.",
+        "guclu_neden": "Dinamik ve değişken işlerden keyif alma eğilimin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, hızlı tempolu ortamlarda sana avantaj sağlar; rutin ama gerekli işleri de aksatmamak için küçük sistemler kur.",
         "gelisim": [
             ("simdi", "Küçük bir değişiklik", "Bu hafta rutininde bilinçli bir değişiklik yap (farklı bir çalışma yeri, farklı bir ders sırası) ve nasıl hissettiğini gözlemle.", "aliskanlik", "1 hafta", "Değişikliği denedin ve gözlemini yazdın."),
             ("simdi", "Bir iş gününü incele", "{bolum} alanında çalışan birinin sıradan bir gününde ne kadar değişkenlik olduğunu araştır.", "arastirma", "30 dk", "Bir iş gününün sabit ve değişken kısımlarını ayırdın."),
@@ -250,7 +250,7 @@ ICERIK = {
     "P7": {
         "nedir": "Kuralların net olmadığı, sonucu belirsiz durumlara tahammül ve risk alma isteği.",
         "gelisim_neden": "{bolum} alanında belirsizlikle çalışmak sık karşılaşılan bir durum: eksik bilgiyle karar vermek, sonucu belli olmayan projeler yürütmek gerekiyor. Belirsizliğe toleransın bu alanın ortalamasının altında; küçük ve güvenli risklerle bu kası geliştirebilirsin.",
-        "guclu_neden": "Belirsizliğe toleransın {bolum} ortalamasının da üzerinde. Bu, yeni ve keşfedilmemiş alanlarda öncü olmanı sağlayabilir; risklerini hesaplı almak için küçük bir değerlendirme alışkanlığı edin.",
+        "guclu_neden": "Belirsizliğe toleransın yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, yeni ve keşfedilmemiş alanlarda öncü olmanı sağlayabilir; risklerini hesaplı almak için küçük bir değerlendirme alışkanlığı edin.",
         "gelisim": [
             ("simdi", "Küçük risk", "Bu hafta sonucundan emin olmadığın küçük bir adım at (derste soru sormak, yeni bir yemek denemek, bir kulübe başvurmak).", "aliskanlik", "1 hafta", "En az bir küçük risk aldın ve sonucunu not ettin."),
             ("simdi", "En kötü senaryo", "Seni kaygılandıran bir belirsizlik için \"en kötü ne olabilir, olursa ne yaparım?\" sorusunu yaz.", "yansitma", "15 dk", "En kötü senaryo ve planını yazdın."),
@@ -267,7 +267,7 @@ ICERIK = {
     "P8": {
         "nedir": "Sorumluluk alma, ekibe yön verme ve karar verici olma isteği.",
         "gelisim_neden": "{bolum} alanında ilerledikçe ekip yönetme, sorumluluk alma ve karar verme beklentisi artıyor. Liderlik isteğin bu alanın ortalamasının altında; liderliğin farklı biçimlerini (yönlendirme, örnek olma, organize etme) küçük ölçekte denemek seni hazırlar.",
-        "guclu_neden": "Liderlik isteğin {bolum} ortalamasının da üzerinde. Bu, ileride ekip ve proje yönetiminde öne çıkmanı sağlar; şimdiden küçük ekiplerde deneyim kazanmaya başlayabilirsin.",
+        "guclu_neden": "Liderlik isteğin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, ileride ekip ve proje yönetiminde öne çıkmanı sağlar; şimdiden küçük ekiplerde deneyim kazanmaya başlayabilirsin.",
         "gelisim": [
             ("simdi", "Küçük bir sorumluluk", "Bu hafta bir grup çalışmasında küçük bir koordinasyon görevi üstlen (toplantı saati belirlemek, görev dağıtmak).", "deneyim", "1 hafta", "Bir koordinasyon görevini tamamladın."),
             ("simdi", "Liderlik türleri", "Farklı liderlik tarzlarını (yönlendiren, destekleyen, örnek olan) araştır ve sana en yakın olanı seç.", "okuma", "30 dk", "Sana uyan liderlik tarzını gerekçesiyle seçtin."),
@@ -286,7 +286,7 @@ ICERIK = {
     "I1": {
         "nedir": "Birden fazla işi planlama, öncelik sıralama ve teslim tarihlerini yönetme becerisi.",
         "gelisim_neden": "{bolum} alanında aynı anda birçok iş (dersler, projeler, staj, sınavlar) yürütülüyor ve önceliklendirme başarının anahtarı. Bu becerin alanın beklentisinin altında; birkaç basit teknikle hızla gelişebilir.",
-        "guclu_neden": "Zaman yönetimin {bolum} ortalamasının da üzerinde. Bu sayede yoğun dönemlerde bile ek fırsatlara (proje, yarışma, kurs) yer açabilirsin.",
+        "guclu_neden": "Zaman yönetimin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu sayede yoğun dönemlerde bile ek fırsatlara (proje, yarışma, kurs) yer açabilirsin.",
         "gelisim": [
             ("simdi", "Önemli–acil tablosu", "Bu haftaki işlerini 4 kutuya ayır: önemli-acil, önemli-acil değil, acil-önemsiz, ikisi de değil. Önce ilk kutudan başla.", "aliskanlik", "20 dk", "Bu haftanın işlerini 4 kutuya ayırdın."),
             ("simdi", "Zaman takibi", "İki gün boyunca zamanını nereye harcadığını yarım saatlik dilimlerle not et.", "yansitma", "2 gün", "Zamanını en çok neyin aldığını gördün."),
@@ -303,7 +303,7 @@ ICERIK = {
     "I2": {
         "nedir": "Takım içi anlaşmazlıkları çözme ve farklı görüşleri yönetebilme yetkinliği.",
         "gelisim_neden": "{bolum} alanında ekipler farklı görüşlerden insanlarla çalışıyor; anlaşmazlıkları yapıcı şekilde çözmek önemli bir beklenti. Bu becerin alanın ortalamasının altında; çatışmayı büyümeden yönetmeyi öğrenmek ekip içindeki etkini artırır.",
-        "guclu_neden": "Çatışma yönetimi becerin {bolum} ortalamasının da üzerinde. Bu, ekiplerde güvenilen ve sorun çözen kişi olmanı sağlar.",
+        "guclu_neden": "Çatışma yönetimi becerin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, ekiplerde güvenilen ve sorun çözen kişi olmanı sağlar.",
         "gelisim": [
             ("simdi", "Ben dili", "Bir anlaşmazlıkta \"sen hep...\" yerine \"ben ... hissediyorum, çünkü...\" kalıbını kullanmayı dene.", "aliskanlik", "1 hafta", "En az 2 kez ben dili kullandın."),
             ("simdi", "Son çatışmayı çözümle", "Son yaşadığın bir anlaşmazlığı yaz: ne oldu, ne istendi, nasıl çözülebilirdi?", "yansitma", "20 dk", "Alternatif bir çözüm yolu yazdın."),
@@ -320,7 +320,7 @@ ICERIK = {
     "I3": {
         "nedir": "Stres altında ve eksik bilgiyle bile makul karar verebilme kapasitesi.",
         "gelisim_neden": "{bolum} alanında zaman baskısı altında, tüm bilgiler elinde olmadan karar vermek sık karşılaşılan bir durum. Bu becerin alanın ortalamasının altında; karar verme yöntemleri ve kontrollü baskı deneyimleriyle güçlenebilir.",
-        "guclu_neden": "Baskı altında karar verme becerin {bolum} ortalamasının da üzerinde. Bu, kriz anlarında güvenilen kişi olmanı sağlar; kararlarını sonradan değerlendirerek daha da keskinleştirebilirsin.",
+        "guclu_neden": "Baskı altında karar verme becerin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, kriz anlarında güvenilen kişi olmanı sağlar; kararlarını sonradan değerlendirerek daha da keskinleştirebilirsin.",
         "gelisim": [
             ("simdi", "Hızlı karar kuralı", "Küçük kararlar için kendine süre sınırı koy (ör. 2 dakika) ve o sürede karar ver.", "aliskanlik", "1 hafta", "Bir hafta boyunca küçük kararları süre sınırıyla verdin."),
             ("simdi", "Karar sorusu", "Zor bir kararda kendine sor: \"Elimdeki bilgiyle en makul seçenek hangisi, yanılırsam ne olur?\"", "yansitma", "10 dk", "Bu soruyu bir kararında kullandın."),
@@ -337,7 +337,7 @@ ICERIK = {
     "I4": {
         "nedir": "Adalet, dürüstlük ve etik ilkelere bağlı kalma hassasiyeti.",
         "gelisim_neden": "{bolum} alanında etik ilkeler ve meslek kuralları işin temelinde yer alıyor; dürüstlük ve sorumluluk güçlü bir beklenti. Bu konudaki duyarlılığın alanın ortalamasının altında; mesleğin etik kurallarını tanımak ve gri durumları tartışmak bu farkındalığı artırır.",
-        "guclu_neden": "Etik duyarlılığın {bolum} ortalamasının da üzerinde. Bu, güvenilir bir profesyonel olmanın temelidir; ilkelerini esnek çözümlerle nasıl birleştireceğini de öğrenmek seni güçlendirir.",
+        "guclu_neden": "Etik duyarlılığın yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, güvenilir bir profesyonel olmanın temelidir; ilkelerini esnek çözümlerle nasıl birleştireceğini de öğrenmek seni güçlendirir.",
         "gelisim": [
             ("simdi", "Meslek etiği kuralları", "{bolum} alanının meslek etiği kurallarını (meslek örgütü yönetmelikleri) araştır ve 3 temel kuralı not et.", "arastirma", "45 dk", "3 etik kuralı kendi cümlelerinle yazdın."),
             ("simdi", "Gri durum düşün", "Doğru ile kolay olanın çatıştığı bir durum hayal et (ör. kopya, hatayı gizleme); ne yapardın ve neden?", "yansitma", "15 dk", "Bir gri durum ve kararını yazdın."),
@@ -354,7 +354,7 @@ ICERIK = {
     "I5": {
         "nedir": "Beklemeden sorumluluk alma, sorun gördüğünde adım atma (proaktiflik).",
         "gelisim_neden": "{bolum} alanında başarılı olanlar fırsatları kendileri yaratıyor: staj arıyor, proje başlatıyor, soru soruyor. İnisiyatif alma eğilimin alanın ortalamasının altında; küçük ilk adımları alışkanlık haline getirmek büyük fark yaratır.",
-        "guclu_neden": "İnisiyatif alma gücün {bolum} ortalamasının da üzerinde. Bu, fırsatları erken yakalamanı sağlar; enerjini en önemli hedeflerine yönlendirmek için öncelik belirlemeyi unutma.",
+        "guclu_neden": "İnisiyatif alma gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, fırsatları erken yakalamanı sağlar; enerjini en önemli hedeflerine yönlendirmek için öncelik belirlemeyi unutma.",
         "gelisim": [
             ("simdi", "Bir soru sor", "Bu hafta bir öğretmenine ders dışında, {bolum} hakkında merak ettiğin bir soru sor.", "gorusme", "10 dk", "Soruyu sordun ve cevabı not ettin."),
             ("simdi", "Gördüğün bir sorunu çöz", "Çevrende küçük bir sorun fark et (sınıf düzeni, grup iletişimi) ve çözmek için bir adım at.", "deneyim", "1 hafta", "Bir sorunu çözmek için harekete geçtin."),
@@ -371,7 +371,7 @@ ICERIK = {
     "I6": {
         "nedir": "Yapıcı eleştiriyi kabul etme, hatadan öğrenme ve savunmaya geçmeme eğilimi.",
         "gelisim_neden": "{bolum} alanında gelişim büyük ölçüde geri bildirimle oluyor: hocalar, yöneticiler ve meslektaşlar işini sürekli değerlendiriyor. Eleştiriye açıklığın alanın ortalamasının altında; geri bildirimi kişisel algılamadan bir gelişim aracı olarak kullanmayı öğrenmek ilerlemeni hızlandırır.",
-        "guclu_neden": "Geri bildirime açıklığın {bolum} ortalamasının da üzerinde. Bu, hızlı öğrenmeni sağlar; geri bildirimi aktif olarak istemek seni daha da öne çıkarır.",
+        "guclu_neden": "Geri bildirime açıklığın yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, hızlı öğrenmeni sağlar; geri bildirimi aktif olarak istemek seni daha da öne çıkarır.",
         "gelisim": [
             ("simdi", "Teşekkür et ve dinle", "Bu hafta aldığın bir eleştiriye cevap vermeden önce \"Teşekkürler, biraz düşüneyim\" de.", "aliskanlik", "1 hafta", "En az bir eleştiriye savunmaya geçmeden yanıt verdin."),
             ("simdi", "Hata günlüğü", "Bir sınavda yaptığın hataları türlerine göre ayır (bilgi eksiği, dikkat, süre).", "yansitma", "30 dk", "Hata türlerini ve en sık olanını belirledin."),
@@ -388,7 +388,7 @@ ICERIK = {
     "I7": {
         "nedir": "Stratejik düşünme, süreç ve insan yönetimi, ticari ve pazar farkındalığı.",
         "gelisim_neden": "{bolum} alanında işlerin büyük resmini görmek (kurumun hedefleri, maliyet, müşteri, rekabet) önemli bir beklenti. Bu yetkinliğin alanın ortalamasının altında; iş dünyasını tanımak ve strateji düşüncesini küçük projelerle denemek seni bu alana hazırlar.",
-        "guclu_neden": "Stratejik ve ticari farkındalığın {bolum} ortalamasının da üzerinde. Bu, ileride yönetim, proje liderliği ya da girişimcilik yollarında sana avantaj sağlar.",
+        "guclu_neden": "Stratejik ve ticari farkındalığın yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, ileride yönetim, proje liderliği ya da girişimcilik yollarında sana avantaj sağlar.",
         "gelisim": [
             ("simdi", "Bir şirketi tanı", "{bolum} alanında faaliyet gösteren bir şirketin ne sattığını, kime sattığını ve rakiplerini araştır.", "arastirma", "45 dk", "Şirketin iş modelini 3 cümleyle anlatabiliyorsun."),
             ("simdi", "Ekonomi haberi", "Haftada bir ekonomi/iş dünyası haberi oku ve bölümünle ilişkisini düşün.", "aliskanlik", "1 hafta", "Bir haberi bölümünle ilişkilendirdin."),
@@ -407,7 +407,7 @@ ICERIK = {
     "A1": {
         "nedir": "Matematik, istatistik, veri analizi ve sistem mantığına ilgi ve yatkınlık.",
         "gelisim_neden": "{bolum} eğitimi sayısal düşünme, veri yorumlama ve formül/sistem mantığına dayanıyor. Bu alandaki eğilimin bölümün beklentisinin altında; sayısal temelini düzenli pratikle güçlendirmek bölümdeki zorlu derslerde sana büyük kolaylık sağlar.",
-        "guclu_neden": "Sayısal ve sistem odaklı düşünme gücün {bolum} ortalamasının da üzerinde. Bu, bölümde analitik derslerde öne çıkmanı sağlar; veri ve programlama becerileriyle bu gücü katlayabilirsin.",
+        "guclu_neden": "Sayısal ve sistem odaklı düşünme gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, bölümde analitik derslerde öne çıkmanı sağlar; veri ve programlama becerileriyle bu gücü katlayabilirsin.",
         "gelisim": [
             ("simdi", "Eksik konu tespiti", "Son matematik sınavlarına bakıp en çok zorlandığın 3 konuyu belirle.", "yansitma", "30 dk", "3 öncelikli konun belli."),
             ("simdi", "Günlük 20 dakika", "Her gün 20 dakika matematik problemi çöz; kolaydan zora ilerle.", "aliskanlik", "1 hafta", "Bir hafta boyunca her gün çözdün."),
@@ -424,7 +424,7 @@ ICERIK = {
     "A2": {
         "nedir": "Okuma-yazma, kavramsal düşünme, tartışma ve ikna süreçlerine yatkınlık.",
         "gelisim_neden": "{bolum} alanında yoğun okuma, yazılı anlatım ve argüman kurma önemli bir yer tutuyor. Sözel eğilimin bölümün beklentisinin altında; düzenli okuma ve yazma alışkanlığıyla bu beceri belirgin şekilde gelişir.",
-        "guclu_neden": "Sözel ve argüman kurma gücün {bolum} ortalamasının da üzerinde. Bu, raporlarda, sunumlarda ve ikna gerektiren durumlarda seni öne çıkarır.",
+        "guclu_neden": "Sözel ve argüman kurma gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, raporlarda, sunumlarda ve ikna gerektiren durumlarda seni öne çıkarır.",
         "gelisim": [
             ("simdi", "Günlük 15 sayfa", "Her gün 15 sayfa kitap oku; ilgini çeken bir türden başla.", "aliskanlik", "1 hafta", "Bir hafta boyunca her gün okudun."),
             ("simdi", "Tek paragraf görüş", "Bir güncel konu hakkında tek paragraflık bir görüş yazısı yaz: iddia, gerekçe, örnek.", "proje", "30 dk", "İddia-gerekçe-örnek yapısında bir paragrafın var."),
@@ -441,7 +441,7 @@ ICERIK = {
     "A3": {
         "nedir": "İnsan davranışı, psikoloji, eğitim ve sosyal hizmet gibi insan merkezli alanlara ilgi.",
         "gelisim_neden": "{bolum} alanı insan davranışını anlamayı ve insanlarla doğrudan çalışmayı gerektiriyor. İnsan odaklı eğilimin bölümün beklentisinin altında; insanları gözlemleme, dinleme ve onlara destek olma deneyimleri bu alana uyumunu test eder ve güçlendirir.",
-        "guclu_neden": "İnsan odaklı ilgin {bolum} ortalamasının da üzerinde. Bu, danışmanlık, eğitim ya da insan kaynakları gibi alt alanlarda seni öne çıkarabilir.",
+        "guclu_neden": "İnsan odaklı ilgin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, danışmanlık, eğitim ya da insan kaynakları gibi alt alanlarda seni öne çıkarabilir.",
         "gelisim": [
             ("simdi", "İnsan gözlemi", "Bu hafta bir ortamda (sınıf, kafe) insanların davranışlarını gözlemle ve 3 ilginç örüntü not et.", "deneyim", "1 hafta", "3 gözlem notun var."),
             ("simdi", "Psikolojiye giriş", "Psikoloji ya da insan davranışı üzerine kısa bir video/makale serisi izle.", "okuma", "30-45 dk", "Öğrendiğin bir kavramı birine anlattın."),
@@ -458,7 +458,7 @@ ICERIK = {
     "A4": {
         "nedir": "Tasarım, çizim, görsel üretim ve görsel-uzamsal problem çözme eğilimi.",
         "gelisim_neden": "{bolum} alanında görsel düşünme, tasarım ve uzamsal problem çözme önemli bir yer tutuyor. Bu eğilimin bölümün beklentisinin altında; çizim, maket ve dijital tasarım pratikleriyle hem becerini geliştirip hem de bu alana uyumunu sınayabilirsin.",
-        "guclu_neden": "Görsel ve tasarım gücün {bolum} ortalamasının da üzerinde. Bu, sunumlarda, projelerde ve portfolyoda seni ayırt eder.",
+        "guclu_neden": "Görsel ve tasarım gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, sunumlarda, projelerde ve portfolyoda seni ayırt eder.",
         "gelisim": [
             ("simdi", "Günlük eskiz", "Her gün 10 dakika çevrendeki bir nesneyi çiz.", "aliskanlik", "1 hafta", "7 eskizin var."),
             ("simdi", "Uzamsal bulmacalar", "3D bulmaca, origami ya da uzamsal zeka oyunlarıyla pratik yap.", "aliskanlik", "1 hafta", "En az 3 bulmaca tamamladın."),
@@ -475,7 +475,7 @@ ICERIK = {
     "A5": {
         "nedir": "Biyoloji, kimya, çevre, laboratuvar deneyleri ve saha çalışmalarına ilgi.",
         "gelisim_neden": "{bolum} alanında laboratuvar, deney ve canlılar/doğa üzerine çalışmak eğitimin önemli bir parçası. Bu eğilimin bölümün beklentisinin altında; uygulamalı deneyimler bu alanın sana ne kadar uygun olduğunu netleştirir.",
-        "guclu_neden": "Doğa ve laboratuvar ilgin {bolum} ortalamasının da üzerinde. Bu, araştırma projelerinde ve uygulamalı derslerde seni öne çıkarır.",
+        "guclu_neden": "Doğa ve laboratuvar ilgin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, araştırma projelerinde ve uygulamalı derslerde seni öne çıkarır.",
         "gelisim": [
             ("simdi", "Belgesel izle", "Doğa, biyoloji ya da kimya üzerine bir belgesel izle ve seni şaşırtan 3 bilgiyi not et.", "okuma", "1 saat", "3 bilgi not ettin."),
             ("simdi", "Evde basit deney", "Güvenli bir ev deneyi yap (ör. bitki büyütme, pH deneyi) ve gözlemlerini kaydet.", "deneyim", "1 hafta", "Deney günlüğün var."),
@@ -492,7 +492,7 @@ ICERIK = {
     "A6": {
         "nedir": "Spor, beden kullanımı ve sahada aktif olmayı gerektiren işlere yatkınlık.",
         "gelisim_neden": "{bolum} alanında fiziksel aktivite, sahada çalışma ya da beden kullanımı önemli bir yer tutuyor. Bu eğilimin bölümün beklentisinin altında; düzenli hareket alışkanlığı ve sahada deneyim bu alana uyumunu artırır.",
-        "guclu_neden": "Fiziksel ve sahaya yönelik eğilimin {bolum} ortalamasının da üzerinde. Bu, uygulamalı ve sahada geçen işlerde sana avantaj sağlar.",
+        "guclu_neden": "Fiziksel ve sahaya yönelik eğilimin yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, uygulamalı ve sahada geçen işlerde sana avantaj sağlar.",
         "gelisim": [
             ("simdi", "Günlük hareket", "Her gün en az 20 dakika yürüyüş ya da hafif egzersiz yap.", "aliskanlik", "1 hafta", "7 gün boyunca hareket ettin."),
             ("simdi", "Sahayı gör", "{bolum} alanında sahada çalışan birinin gününü anlatan bir video izle.", "arastirma", "30 dk", "Saha işinin fiziksel yönlerini not ettin."),
@@ -509,7 +509,7 @@ ICERIK = {
     "A7": {
         "nedir": "Kuralları net, aşamaları belli, planlı ve sistematik öğrenme/çalışma tarzı.",
         "gelisim_neden": "{bolum} alanında prosedürlere uygun, adım adım ve sistematik çalışmak önemli bir beklenti (protokoller, standartlar, sıralı işlemler). Bu tarza eğilimin bölümün beklentisinin altında; kontrol listeleri ve sıralı çalışma alışkanlıkları bu tarzı geliştirmene yardımcı olur.",
-        "guclu_neden": "Sistematik ve adım adım çalışma gücün {bolum} ortalamasının da üzerinde. Bu, hata payı düşük ve güvenilir iş çıkarmanı sağlar.",
+        "guclu_neden": "Sistematik ve adım adım çalışma gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, hata payı düşük ve güvenilir iş çıkarmanı sağlar.",
         "gelisim": [
             ("simdi", "Kontrol listesi", "Bu hafta bir ödevi teslim etmeden önce kontrol listesi hazırla ve madde madde işaretle.", "aliskanlik", "1 hafta", "Kontrol listesiyle bir iş teslim ettin."),
             ("simdi", "Adım adım not", "Bir konuyu çalışırken adımları numaralandırarak not al.", "aliskanlik", "1 hafta", "Numaralı adımlarla bir konu notun var."),
@@ -526,7 +526,7 @@ ICERIK = {
     "A8": {
         "nedir": "Önce büyük resmi görme, sezgiyle ilerleme ve görsel/şematik düşünme eğilimi.",
         "gelisim_neden": "{bolum} alanında ayrıntılara boğulmadan büyük resmi görmek, kavramlar arası bağlantı kurmak ve sezgisel çözümler üretmek önemli. Bu eğilimin bölümün beklentisinin altında; zihin haritaları ve bağlantı kurma alıştırmalarıyla gelişebilir.",
-        "guclu_neden": "Büyük resmi görme ve sezgisel düşünme gücün {bolum} ortalamasının da üzerinde. Bu, yaratıcı çözümler ve stratejik bakış açısı üretmeni sağlar.",
+        "guclu_neden": "Büyük resmi görme ve sezgisel düşünme gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, yaratıcı çözümler ve stratejik bakış açısı üretmeni sağlar.",
         "gelisim": [
             ("simdi", "Zihin haritası", "Bir konuyu çalışmaya başlamadan önce tek sayfalık zihin haritası çıkar.", "aliskanlik", "1 hafta", "En az 2 zihin haritası yaptın."),
             ("simdi", "Neden önemli?", "Çalıştığın her konunun başında \"bu konu neden var, neye yarıyor?\" sorusunu yanıtla.", "yansitma", "1 hafta", "Konuların amacını tek cümleyle yazabiliyorsun."),
@@ -543,7 +543,7 @@ ICERIK = {
     "A9": {
         "nedir": "Fırsat görme, satış/pazarlık yapma ve risk alarak iş kurma isteği.",
         "gelisim_neden": "{bolum} alanında fırsatları görmek, fikirlerini ikna edici şekilde sunmak ve girişimci bakış önemli bir beklenti. Bu eğilimin bölümün beklentisinin altında; küçük satış/ikna deneyimleri ve girişimcilik etkinlikleri bu becerini geliştirir.",
-        "guclu_neden": "Girişimci ve ikna gücün {bolum} ortalamasının da üzerinde. Bu, ileride kendi işini kurma, satış/pazarlama ya da iş geliştirme yollarında sana avantaj sağlar.",
+        "guclu_neden": "Girişimci ve ikna gücün yüksek; bu düzey {bolum} için beklenen düzeyle uyumlu. Bu, ileride kendi işini kurma, satış/pazarlama ya da iş geliştirme yollarında sana avantaj sağlar.",
         "gelisim": [
             ("simdi", "Fikrini 1 dakikada anlat", "Bir fikrini 1 dakikada anlatan kısa bir konuşma hazırla ve bir arkadaşına sun.", "deneyim", "30 dk", "1 dakikalık sunumunu yaptın."),
             ("simdi", "Fırsat avı", "Çevrende çözülmemiş 3 problem bul ve her biri için bir çözüm fikri yaz.", "yansitma", "30 dk", "3 problem ve çözüm fikrin var."),
@@ -557,6 +557,45 @@ ICERIK = {
             ("bu_donem", "İş fikri yarışması", "Bir iş fikri ya da girişimcilik yarışmasına katıl.", "proje", "2-3 ay", "Başvurunu yaptın."),
         ],
     },
+}
+
+
+# [2026-10-17] FAZLALIK açıklamaları: öğrenci bu özellikte hedef bölümün beklediğinden belirgin YÜKSEK.
+# Uyum puanı farkın yönüne bakmaz (100 − |öğrenci − bölüm|); fazlalık da uyumu düşürür. Bu yüzden fazlalık
+# "güçlü yön" ya da "avantaj" olarak sunulmaz: ne anlama geldiği ve tek bir yönlendirme verilir.
+# Değerlerde (D) fazlalık = "bu değer senin için bu alanın tipik çalışanından daha önemli" (karar konusu).
+# P4 (kaygı) ters yönlüdür; fazlası "gelişim" metniyle (gelisim_neden) anlatılır, burada yer almaz.
+FAZLA_NEDEN = {
+    "D1": "Güvence ve düzen senin için {bolum} alanında çalışanların çoğundan daha önemli. Bu alandaki her kariyer yolu aynı güvenceyi sunmayabilir. Mezunların hangi kurumlarda, ne kadar güvenceli çalıştığını araştır ve bunun sana yetip yetmeyeceğine karar ver.",
+    "D2": "Gelir senin için {bolum} alanında çalışanların çoğundan daha önemli. Bu alanda gelir beklentin her zaman karşılanmayabilir. Gerçek maaş aralıklarını araştır ve bunun sana yetip yetmeyeceğine karar ver.",
+    "D3": "Saygınlık ve tanınırlık senin için {bolum} alanında çalışanların çoğundan daha önemli. Bu alan beklediğin görünürlüğü her zaman sağlamayabilir. Mezunların iş hayatındaki konumunu araştır ve bunun sana yetip yetmeyeceğine karar ver.",
+    "D4": "Yaptığın işin anlamlı olması senin için {bolum} alanında çalışanların çoğundan daha önemli. Günlük işin bir kısmı bu beklentiyi karşılamayabilir. Bu alanda sana anlamlı gelecek alt alanları araştır ve hangisinin sana uyduğuna karar ver.",
+    "D5": "Topluma katkı senin için {bolum} alanında çalışanların çoğundan daha önemli. Bu alanın her işi bu isteği doğrudan karşılamayabilir. Bölümün topluma dokunan alt alanlarını araştır ve bunun sana yetip yetmeyeceğine karar ver.",
+    "D6": "Özerklik ve özgürlük senin için {bolum} alanında çalışanların çoğundan daha önemli. Bu alanda işler çoğu zaman belli kurallar ve hiyerarşi içinde yürür. Serbest çalışma ve girişim yollarının bu alanda ne kadar mümkün olduğunu araştır ve karar ver.",
+    "D7": "Estetik ve yaratıcılık senin için {bolum} alanında çalışanların çoğundan daha önemli. Bu alanın günlük işi yaratıcılığına her zaman yer açmayabilir. Yaratıcılığını kullanabileceğin alt alanları araştır ve bunun sana yetip yetmeyeceğine karar ver.",
+    "P1": "Sosyal enerjin {bolum} için beklenenden fazla. Bu alanda zamanının önemli bir kısmını tek başına ya da küçük gruplarla çalışarak geçirebilirsin. Bu çalışma düzeninin seni zorlayıp zorlamayacağını bir mezuna sorarak sına.",
+    "P2": "İşbirliği ve uzlaşma eğilimin {bolum} için beklenenden fazla. Bu alanda zaman zaman net ve rekabetçi bir tutum alman gerekebilir. Fikrini açıkça savunman gereken durumlarda nasıl hissettiğini gözlemle.",
+    "P3": "Planlı ve düzenli çalışma eğilimin {bolum} için beklenenden fazla. Bu alanda işler her zaman bir plana göre ilerlemeyebilir. Plan dışı gelişmelere esnek davranmayı küçük denemelerle sına.",
+    "P5": "Merakın ve yeniliğe açıklığın {bolum} için beklenenden fazla. Bu alanda işin bir bölümü tekrar eden ve yerleşik yöntemlerle yürüyebilir. Rutin işlerin seni sıkıp sıkmayacağını bir mezuna sorarak sına.",
+    "P6": "Dinamik ve değişken işlerden keyif alma eğilimin {bolum} için beklenenden fazla. Bu alanda iş temposu daha düzenli ve öngörülebilir olabilir. Düzenli bir tempoda motivasyonunu nasıl koruyacağını düşün.",
+    "P7": "Belirsizliğe toleransın {bolum} için beklenenden fazla. Bu alanda işler çoğu zaman net kurallar ve prosedürlerle yürür. Kurallı bir ortamda kendini nasıl hissedeceğini bir mezuna sorarak sına.",
+    "P8": "Liderlik isteğin {bolum} için beklenenden fazla. Bu alanda uzun süre ekibin bir üyesi olarak çalışman gerekebilir. Liderlik isteğini okul kulüpleri ve proje görevleriyle de karşılayabileceğini unutma.",
+    "I1": "Zaman yönetimi becerin {bolum} için beklenenden fazla. Bu alanda bu beceri günlük işin merkezinde olmayabilir. Bu becerini, bölümün daha çok beklediği özelliklere zaman ayırmak için kullan.",
+    "I2": "Çatışma yönetimi becerin {bolum} için beklenenden fazla. Bu alanda bu beceri günlük işin merkezinde olmayabilir. Ekip çalışması ve koordinasyon gerektiren alt alanların sana daha uygun olup olmadığını araştır.",
+    "I3": "Baskı altında karar verme becerin {bolum} için beklenenden fazla. Bu alanda işler çoğu zaman hızlı karar gerektirmeyen, planlı bir tempoda yürür. Daha yavaş ve ayrıntılı ilerleyen işlerin seni sıkıp sıkmayacağını düşün.",
+    "I4": "Etik duyarlılığın {bolum} için beklenenden fazla. Bu alanda etik ikilemler günlük işin merkezinde olmayabilir. Bu duyarlılığını kullanabileceğin denetim, uyum ya da kamu yararı odaklı alt alanları araştır.",
+    "I5": "İnisiyatif alma eğilimin {bolum} için beklenenden fazla. Bu alanda işler çoğu zaman belli talimatlar ve sorumluluk zinciri içinde yürür. Kendi fikrini uygulayamadığın durumlarda nasıl hissedeceğini bir mezuna sorarak sına.",
+    "I6": "Geri bildirime açıklığın {bolum} için beklenenden fazla. Bu alanda düzenli geri bildirim her zaman olmayabilir. Kendi gelişimini izlemek için kendine küçük ölçütler koymayı alışkanlık edin.",
+    "I7": "Stratejik ve ticari farkındalığın {bolum} için beklenenden fazla. Bu alanda iş ve piyasa bakışı günlük işin merkezinde olmayabilir. Bu bakışını kullanabileceğin yönetim ya da girişim odaklı alt alanları araştır.",
+    "A1": "Sayısal ve sistem odaklı düşünme eğilimin {bolum} için beklenenden fazla. Bu alanda bu eğilim günlük işin merkezinde olmayabilir. Sayısal eğilimini kullanabileceğin veri, analiz ya da ölçme odaklı alt alanları araştır.",
+    "A2": "Sözel ve argüman kurma eğilimin {bolum} için beklenenden fazla. Bu alanda yazma ve konuşma günlük işin merkezinde olmayabilir. Bu eğilimini kullanabileceğin iletişim, eğitim ya da raporlama odaklı alt alanları araştır.",
+    "A3": "İnsanlarla çalışma ilgin {bolum} için beklenenden fazla. Bu alanda insanlarla doğrudan çalışma sınırlı olabilir. Danışmanlık, eğitim ya da ekip yönetimi gibi insanla iç içe alt alanların sana daha uygun olup olmadığını araştır.",
+    "A4": "Görsel ve tasarım eğilimin {bolum} için beklenenden fazla. Bu alanda tasarım günlük işin merkezinde olmayabilir. Bu eğilimini kullanabileceğin tasarım ya da görselleştirme odaklı alt alanları araştır.",
+    "A5": "Doğa ve laboratuvar ilgin {bolum} için beklenenden fazla. Bu alanda laboratuvar ya da doğa çalışması sınırlı olabilir. Bu ilgini kullanabileceğin araştırma ya da saha odaklı alt alanları araştır.",
+    "A6": "Fiziksel ve sahaya yönelik eğilimin {bolum} için beklenenden fazla. Bu alanda işin çoğu masa başında geçebilir. Uzun süre masa başında çalışmanın seni zorlayıp zorlamayacağını bir mezuna sorarak sına.",
+    "A7": "Sistematik ve adım adım çalışma eğilimin {bolum} için beklenenden fazla. Bu alanda işler çoğu zaman esnek ve doğaçlama ilerleyebilir. Belirsiz ve değişken işlerde kendini nasıl hissedeceğini düşün.",
+    "A8": "Büyük resmi görme ve sezgisel düşünme eğilimin {bolum} için beklenenden fazla. Bu alanda işin çoğu ayrıntılı ve adım adım ilerleyebilir. Ayrıntıya dayalı işlerin seni sıkıp sıkmayacağını bir mezuna sorarak sına.",
+    "A9": "Girişimci ve ikna eğilimin {bolum} için beklenenden fazla. Bu alanda satış, ikna ya da iş geliştirme günlük işin merkezinde olmayabilir. Bu eğilimini kullanabileceğin yönetim ya da girişim odaklı alt alanları araştır.",
 }
 
 # ============================ [2026-10-09] EK ADIMLAR ============================
