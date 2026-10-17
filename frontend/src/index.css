@@ -840,6 +840,10 @@ textarea.md-girdi{resize:vertical;min-height:44px}
 .ca-m-hucre:hover{outline:2px solid var(--tx);outline-offset:-2px}
 .ca-m-grup td{background:var(--sur2);font-size:10.5px;font-weight:800;letter-spacing:.06em;text-transform:uppercase;color:var(--tx2);position:sticky;left:0}
 .ca-etki-ogr{font-size:10.5px;font-weight:700;text-align:right}
+.ca-kiyas-hedef{font-size:13px;margin:0 0 10px;padding:9px 12px;background:var(--pul);border-radius:10px}
+.ca-kiyas-fark{font-weight:800;font-size:12.5px;margin-left:14px}
+.ca-kiyas-oz{display:flex;flex-wrap:wrap;gap:4px 10px;font-size:12px;margin:3px 0}
+.ca-kiyas-oz span small{color:var(--tx3)}
 .ca-etki-satir{grid-template-columns:minmax(110px,1.3fr) minmax(50px,1fr) 48px 92px}
 @media (max-width: 760px){.ca-etki-iki{grid-template-columns:1fr}}
 
@@ -1707,6 +1711,17 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .rs-ikon{font-size:18px}
 .rs-secenek{display:flex;gap:8px;align-items:flex-start;background:var(--sur2);border-radius:12px;padding:9px 10px;cursor:pointer}
 .rs-secenek span{display:grid}.rs-secenek b{font-size:12.5px}
+.rs-bolum{display:grid;gap:7px;border-top:1px solid var(--bor);padding-top:9px}
+.rs-sayac{float:right;color:var(--tx2)}
+.rs-not{font-size:11.5px;color:var(--tx3);line-height:1.4}
+.rs-not.uyari{color:var(--am);background:var(--aml);border-radius:8px;padding:6px 8px}
+.rs-ciplar{display:flex;flex-wrap:wrap;gap:5px}
+.rs-cip{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;font-weight:600;background:var(--sur2);border-radius:999px;padding:3px 4px 3px 9px;max-width:100%}
+.rs-cip.hedef{background:var(--pul);padding-right:9px}
+.rs-cip button{border:none;background:none;cursor:pointer;color:var(--tx3);font-size:11px;padding:0 4px}
+.rs-ekle{display:flex;gap:6px;align-items:center}
+.rs-ekle .auth-input{margin:0;flex:1;min-width:0;padding:6px 9px;font-size:12.5px}
+.rs-sifirla{border:none;background:none;padding:0;font-size:11.5px;color:var(--pu);cursor:pointer;text-align:left;font-family:var(--fn)}
 
 /* [2026-10-10] Konu listesi yönetimi */
 .kl-liste{display:grid;gap:5px;margin-bottom:12px}

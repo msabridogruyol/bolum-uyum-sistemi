@@ -122,9 +122,11 @@ def cevap_analizi(ogrenci_id: str, tur_no: int | None = Query(None), bolumler: s
     matris, not_metni = None, None
     if tur.durum == "tamamlandi":
         try:
-            from app.core.uyum_aciklama import uyum_matrisi
+            from app.core.uyum_aciklama import hedef_kiyasi, uyum_matrisi
             secim = [int(x) for x in re.findall(r"\d+", bolumler or "")][:30] or None
             matris = uyum_matrisi(db, o, tur, secim, yontem=yon.rol == "super_admin")
+            if matris is not None:
+                matris["kiyas"] = hedef_kiyasi(matris)   # [2026-10-17] hedef bölüm kıyası (raporla aynı hesap)
             if matris is None:
                 not_metni = "Öğrencinin profili eksik olduğu için bölüm uyumu hesaplanamadı."
         except Exception as e:  # analiz cevapları göstermeyi engellemesin

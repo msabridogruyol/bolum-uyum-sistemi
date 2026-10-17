@@ -254,7 +254,9 @@ export const api = {
   guvenlikOlayiKaydet: (turId, olayTipi, katmanKod) =>
     post('/ogrenci/guvenlik/olay', { tur_id: turId, olay_tipi: olayTipi, katman_kod: katmanKod }),
   // [2026-10-10] Raporlar
-  ogrenciRaporuIndir: (ogrenciId, tur, bicim = 'pdf', netler = true) => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/rapor?tur=${tur}&bicim=${bicim}&netler=${netler}`, 'admin'),
+  // [2026-10-17] bolumler: kıyaslanacak bölüm id'leri (hedef sunucuda her zaman eklenir; en çok 6)
+  ogrenciRaporuIndir: (ogrenciId, tur, bicim = 'pdf', netler = true, bolumler = null) => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/rapor?tur=${tur}&bicim=${bicim}&netler=${netler}${bolumler?.length ? `&bolumler=${bolumler.join(',')}` : ''}`, 'admin'),
+  raporBolumleri: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/rapor-bolumleri`),
   okulRaporuIndir: (okulId, bicim = 'pdf', netler = true) => dosyaIndir(`/yonetim/okul/${okulId}/rapor?bicim=${bicim}&netler=${netler}`, 'admin'),
   // [2026-10-10] Sınıf düzeyi / şube raporu; tur: ozet | toplu_ogrenci | toplu_veli | toplu_yonetici
   sinifRaporuIndir: (okulId, sinif, sube, tur = 'ozet', bicim = 'pdf', netler = true) => dosyaIndir(

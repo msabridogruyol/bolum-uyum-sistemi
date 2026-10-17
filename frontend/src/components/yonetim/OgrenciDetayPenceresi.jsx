@@ -290,10 +290,10 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
 
       {/* [2026-10-10] Seçenekli raporlar: kime + "deneme ve net bilgilerini ekle" */}
       <div style={{ marginBottom: 12 }}>
-        <RaporSecici etiket="Rapor al" hiza="sol" turler={[
-          { k: 'ogrenci', ad: 'Öğrenci', ikon: '📘', aciklama: 'Öğrenciye verilecek rapor: güçlü yönler, bölümler, yol haritası', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'pdf', netler) },
-          { k: 'veli', ad: 'Veli', ikon: '👪', aciklama: 'Sade dil, evde destek önerileri, görüşme soruları', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'veli', 'pdf', netler) },
-          { k: 'yonetici', ad: 'Yönetim', ikon: '🗂️', aciklama: 'Tüm ayrıntılar: güven puanı, ihlaller, katman puanları, öneriler, SWOT', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'yonetici', 'pdf', netler) },
+        <RaporSecici etiket="Rapor al" hiza="sol" bolumSecimi={{ yukle: () => api.raporBolumleri(ogrenciId), tumBolumler: () => api.yonetimBolumler() }} turler={[
+          { k: 'ogrenci', ad: 'Öğrenci', ikon: '📘', aciklama: 'Öğrenciye verilecek rapor: güçlü yönler, bölümler, yol haritası', bolumlu: true, indir: ({ netler, bolumler }) => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'pdf', netler, bolumler) },
+          { k: 'veli', ad: 'Veli', ikon: '👪', aciklama: 'Sade dil, evde destek önerileri, görüşme soruları', bolumlu: true, indir: ({ netler, bolumler }) => api.ogrenciRaporuIndir(ogrenciId, 'veli', 'pdf', netler, bolumler) },
+          { k: 'yonetici', ad: 'Yönetim', ikon: '🗂️', aciklama: 'Tüm ayrıntılar: güven puanı, ihlaller, katman puanları, öneriler, SWOT', bolumlu: true, indir: ({ netler, bolumler }) => api.ogrenciRaporuIndir(ogrenciId, 'yonetici', 'pdf', netler, bolumler) },
           { k: 'sinif_ogretmeni', ad: 'Sınıf öğretmeni', modul: 'gelismis_raporlar', ikon: '🧑‍🏫', aciklama: 'Katılım, öne çıkanlar, hedef ve denemeler; psikolojik ayrıntı içermez', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'sinif_ogretmeni', 'pdf', netler) },
           { k: 'excel', ad: 'Excel', ikon: '📊', aciklama: 'Tüm puanlar, bölümler ve denemeler tablo halinde', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'xlsx', netler) },
         ]} />

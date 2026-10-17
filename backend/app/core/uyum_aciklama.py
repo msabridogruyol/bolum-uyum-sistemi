@@ -118,21 +118,97 @@ def tam_matris(db: Session, o: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> dict |
     return {"girdi": girdi, "sira": sira, "satir_of": satir_of, "katki": K}
 
 
-def rapor_eki(db: Session, o: Ogrenci, ilk_n: int = 5) -> dict | None:
-    """[2026-10-17] Yönetici (rehber) PDF raporunun "Uyum açıklama eki": son tamamlanmış tur; ilk 5 + hedef bölüm
-    uyum matrisi ve katkılar, soru–cevap dökümü. Öğrenci / veli raporuna eklenmez."""
-    tur = (db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.ogrenci_id == o.id,
-                                                     OgrenciDegerlendirmeTuru.durum == "tamamlandi")
-           .order_by(OgrenciDegerlendirmeTuru.tur_no.desc()).first())
+
+# [2026-10-17] Raporlarda kıyaslanacak bölümler: hedef + seçilenler; A4 sayfaya sığan en çok sütun sayısı
+RAPOR_BOLUM_SINIRI = 6
+KIYAS_ESIGI = 0.3     # puan; bundan küçük katkı farkı "fark yaratan özellik" sayılmaz
+
+
+def son_tamamlanan_tur(db: Session, o: Ogrenci):
+    return (db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.ogrenci_id == o.id,
+                                                      OgrenciDegerlendirmeTuru.durum == "tamamlandi")
+            .order_by(OgrenciDegerlendirmeTuru.tur_no.desc()).first())
+
+
+def rapor_secimi(db: Session, o: Ogrenci, tur: OgrenciDegerlendirmeTuru, bolum_idler: list[int] | None = None) -> dict:
+    """Rapor bölüm seçimi: hedef her zaman ilk sırada (varsa); seçim yoksa hedef + ilk öneriler; en çok RAPOR_BOLUM_SINIRI."""
+    from app.core.koclugu_servisi import aktif_hedef_getir
+    sira = sm.siralama_getir(db, o, tur, ilk_n=301)
+    gecerli = {s.bolum_id for s in sira}
+    hedef = aktif_hedef_getir(db, o)
+    hedef_id = hedef.bolum_id if hedef and hedef.bolum_id in gecerli else None
+    istenen = [b for b in dict.fromkeys(bolum_idler or []) if b in gecerli]
+    if not istenen:
+        istenen = [s.bolum_id for s in sira[:RAPOR_BOLUM_SINIRI]]
+    secim = ([hedef_id] if hedef_id else []) + [b for b in istenen if b != hedef_id]
+    return {"secim": secim[:RAPOR_BOLUM_SINIRI], "hedef_id": hedef_id, "kirpildi": len(secim) > RAPOR_BOLUM_SINIRI,
+            "sira": sira}
+
+
+def hedef_kiyasi(m: dict | None) -> dict | None:
+    """Hedef bölüm ile matristeki diğer bölümler: puan ve sıra farkı; farkı en çok yaratan özellikler.
+    Özellik etkisi = hedefteki katkı − diğer bölümdeki katkı ("bu özellik olmasaydı" katkılarının farkı; gösterilen
+    puanla aynı hesap). Eksi: hedefi o bölümün gerisinde bırakan, artı: hedefi önde tutan özellik."""
+    if not m or not m.get("bolumler"):
+        return None
+    oz = m["ozellikler"]
+    ref = next((b for b in m["bolumler"] if b.get("hedef")), None)
+
+    def ozellik(j, b, etki=None):
+        x = {"kod": oz[j]["kod"], "ad": oz[j]["ad"], "bolum_sinif": b["hucreler"][j]["sinif"]}
+        if ref is not None:
+            x["hedef_sinif"] = ref["hucreler"][j]["sinif"]
+        if etki is not None:
+            x["etki"] = round(etki, 2)
+        return x
+
+    satirlar = []
+    for b in m["bolumler"]:
+        if b is ref:
+            continue
+        satir = {"bolum_id": b["bolum_id"], "bolum": b["bolum"], "sira": b["sira"], "uyum": b["uyum"]}
+        if ref is not None:
+            D = [ref["hucreler"][j]["katki"] - b["hucreler"][j]["katki"] for j in range(len(oz))]
+            sirali = sorted(range(len(oz)), key=lambda j: D[j])
+            satir["fark"] = round(ref["uyum"] - b["uyum"], 1)
+            satir["geride_birakan"] = [ozellik(j, b, D[j]) for j in sirali[:3] if D[j] < -KIYAS_ESIGI]
+            satir["one_cikaran"] = [ozellik(j, b, D[j]) for j in sirali[::-1][:3] if D[j] > KIYAS_ESIGI]
+        else:
+            satir["yukselten"] = [ozellik(x["j"], b, x["katki"]) for x in b["yukselten"][:3]]
+            satir["dusuren"] = [ozellik(x["j"], b, x["katki"]) for x in b["dusuren"][:3]]
+        satirlar.append(satir)
+    hedef = None if ref is None else {"bolum_id": ref["bolum_id"], "bolum": ref["bolum"], "sira": ref["sira"],
+                                     "uyum": ref["uyum"]}
+    return {"hedef": hedef, "satirlar": satirlar, "bolum_sayisi": m.get("bolum_sayisi")}
+
+
+def rapor_eki(db: Session, o: Ogrenci, bolum_idler: list[int] | None = None, cevaplar: bool = False) -> dict | None:
+    """[2026-10-17] Raporlar için: seçilen bölümler (hedef + en çok 5) — hedef kıyası (öğrenci, veli, yönetici raporu)
+    ve yalnızca yönetici raporu için uyum matrisi + soru–cevap dökümü (cevaplar=True)."""
+    tur = son_tamamlanan_tur(db, o)
     if tur is None:
         return None
-    from app.api.cevap_analizi import _cevaplar_ve_ozellikler
-    from app.core.koclugu_servisi import aktif_hedef_getir
-    sira = sm.siralama_getir(db, o, tur, ilk_n=ilk_n)
-    secim = [s.bolum_id for s in sira[:ilk_n]]
-    hedef = aktif_hedef_getir(db, o)
-    if hedef and hedef.bolum_id not in secim:
-        secim.append(hedef.bolum_id)
-    m = uyum_matrisi(db, o, tur, secim or None)
-    satirlar, _ = _cevaplar_ve_ozellikler(db, o, tur)
-    return {"tur_no": tur.tur_no, "matris": m, "cevaplar": satirlar}
+    s = rapor_secimi(db, o, tur, bolum_idler)
+    m = uyum_matrisi(db, o, tur, s["secim"] or None)
+    if m is None:
+        return None
+    ek = {"tur_no": tur.tur_no, "matris": m, "kiyas": hedef_kiyasi(m), "kirpildi": s["kirpildi"],
+          "sinir": RAPOR_BOLUM_SINIRI}
+    if cevaplar:
+        from app.api.cevap_analizi import _cevaplar_ve_ozellikler
+        ek["cevaplar"], _ = _cevaplar_ve_ozellikler(db, o, tur)
+    return ek
+
+
+def rapor_bolum_onerisi(db: Session, o: Ogrenci) -> dict:
+    """Rapor penceresi için varsayılan seçim (hedef + ilk öneriler) ve sınır."""
+    tur = son_tamamlanan_tur(db, o)
+    if tur is None:
+        return {"hedef": None, "varsayilan": [], "sinir": RAPOR_BOLUM_SINIRI, "hazir": False}
+    s = rapor_secimi(db, o, tur)
+    sira_no = {x.bolum_id: i for i, x in enumerate(s["sira"], 1)}
+    from app.models import Bolum
+    ad = {b.id: b.ad for b in db.query(Bolum).filter(Bolum.id.in_(s["secim"] or [-1]))}
+    puan = {x.bolum_id: round(float(x.toplam_uyum), 1) for x in s["sira"]}
+    liste = [{"id": b, "ad": ad.get(b), "sira": sira_no.get(b), "uyum": puan.get(b), "hedef": b == s["hedef_id"]} for b in s["secim"]]
+    return {"hedef": next((x for x in liste if x["hedef"]), None), "varsayilan": liste, "sinir": RAPOR_BOLUM_SINIRI, "hazir": True}

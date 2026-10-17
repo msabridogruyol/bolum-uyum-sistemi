@@ -133,3 +133,56 @@ def test_excel_sayfalari(istemci, db, kisiler):
     wb = load_workbook(io.BytesIO(r.content))
     assert wb.sheetnames == temel
     assert wb["Uyum (fark)"].max_row > 100                          # öğrenci satırı + tüm bölümler
+
+
+def test_hedef_kiyasi_isaret_ve_yapi():
+    """Hedef kıyası: fark = hedef − bölüm; özellik etkisi = hedef katkısı − bölüm katkısı."""
+    def bolum(i, uyum, katkilar, hedef=False):
+        return {"bolum_id": i, "bolum": f"B{i}", "sira": i, "uyum": uyum, "hedef": hedef,
+                "hucreler": [{"katki": k, "sinif": "uyumlu"} for k in katkilar], "yukselten": [], "dusuren": []}
+    m = {"ozellikler": [{"kod": f"X{j}", "ad": f"Ö{j}"} for j in range(3)], "bolum_sayisi": 301,
+         "bolumler": [bolum(5, 60.0, [1.0, 0.0, -2.0], hedef=True), bolum(1, 70.0, [0.0, 0.1, 1.0])]}
+    k = ua.hedef_kiyasi(m)
+    assert k["hedef"]["bolum_id"] == 5 and len(k["satirlar"]) == 1
+    s = k["satirlar"][0]
+    assert s["fark"] == -10.0
+    assert [x["kod"] for x in s["geride_birakan"]] == ["X2"] and s["geride_birakan"][0]["etki"] == -3.0
+    assert [x["kod"] for x in s["one_cikaran"]] == ["X0"]
+    m["bolumler"][0]["hedef"] = False
+    k2 = ua.hedef_kiyasi(m)
+    assert k2["hedef"] is None and len(k2["satirlar"]) == 2 and "yukselten" in k2["satirlar"][0]
+
+
+@db_gerekli
+def test_rapor_secimi_hedef_ilk_ve_sinir(db):
+    from app.models import Ogrenci, OgrenciHedefBolum
+    h = db.query(OgrenciHedefBolum).filter(OgrenciHedefBolum.aktif_mi.is_(True)).all()
+    for x in h:
+        o = db.get(Ogrenci, x.ogrenci_id)
+        tur = ua.son_tamamlanan_tur(db, o)
+        if tur is None:
+            continue
+        tum = [r.bolum_id for r in ua.rapor_secimi(db, o, tur)["sira"]]
+        s = ua.rapor_secimi(db, o, tur, tum[-20:])
+        assert s["secim"][0] == x.bolum_id == s["hedef_id"]
+        assert len(s["secim"]) == ua.RAPOR_BOLUM_SINIRI and s["kirpildi"]
+        v = ua.rapor_secimi(db, o, tur)
+        assert v["secim"][0] == x.bolum_id and len(v["secim"]) <= ua.RAPOR_BOLUM_SINIRI
+        return
+
+
+@db_gerekli
+def test_rapor_bolum_secimi_uc_noktalari(istemci, db, kisiler):
+    satir = _tamamlanmis(db)
+    if satir is None:
+        return
+    oid, okul = satir
+    yt = _yetkili_tokeni(db, okul)
+    r = istemci.get(f"/yonetim/ogrenci/{oid}/rapor-bolumleri", headers=yt)
+    assert r.status_code == 200 and r.json()["sinir"] == ua.RAPOR_BOLUM_SINIRI
+    ids = ",".join(str(x["id"]) for x in r.json()["varsayilan"][:2])
+    for tur in ("ogrenci", "veli", "yonetici"):
+        r = istemci.get(f"/yonetim/ogrenci/{oid}/rapor?tur={tur}&bicim=pdf&bolumler={ids}", headers=yt)
+        assert r.status_code == 200 and r.content[:4] == b"%PDF", tur
+    baska = _ogrenci(db, kisiler["okul_b"])
+    assert istemci.get(f"/yonetim/ogrenci/{baska}/rapor-bolumleri", headers=kisiler["yetkili"]).status_code == 403

@@ -201,6 +201,61 @@ function NedenDokumu({ m, onOzellik }) {
   ))
 }
 
+// ---------------------------------------------------------------- [2026-10-17] Hedefle kıyas (raporlardaki bölümle aynı hesap)
+const KIYAS_SINIF = { uyumlu: 'uyumlu', fazla: 'fazla', eksik: 'az', belirgin_fazla: 'belirgin fazla', belirgin_eksik: 'belirgin az' }
+function KiyasOzellikleri({ xs, hedefli, onOzellik }) {
+  if (!xs?.length) return <div className="yp-ince">—</div>
+  return xs.map((x) => (
+    <button key={x.kod} className="ca-etki-satir" style={{ gridTemplateColumns: '1fr auto' }} onClick={() => onOzellik?.(x.kod)}>
+      <span className="ca-etki-ad"><b>{x.kod}</b> {x.ad}</span>
+      <span className="yp-ince">{hedefli ? `hedefte ${KIYAS_SINIF[x.hedef_sinif]} · burada ${KIYAS_SINIF[x.bolum_sinif]}` : KIYAS_SINIF[x.bolum_sinif]}</span>
+    </button>
+  ))
+}
+
+function HedefKiyasi({ k, onOzellik }) {
+  if (!k) return <div className="bos-durum">Kıyas hesaplanamadı.</div>
+  const hd = k.hedef
+  return (
+    <>
+      {hd ? (
+        <div className="ca-kiyas-hedef">🎯 <b>Hedef: {hd.bolum}</b> · uyum %{sayi(hd.uyum, 0)} · {k.bolum_sayisi} bölüm içinde {hd.sira}. sırada</div>
+      ) : (
+        <div className="yp-uyari">⚠ Öğrenci hedef bölüm seçmemiş; kıyas yapılamıyor. Aşağıda seçili bölümlerde puanı en çok etkileyen özellikler var.</div>
+      )}
+      <div className="yp-ince" style={{ margin: '0 0 12px', lineHeight: 1.55 }}>
+        {hd
+          ? 'Puan farkı = hedefin uyumu − bölümün uyumu. Özellik etkisi = hedefteki katkı − bölümdeki katkı ("bu özellik olmasaydı"; gösterilen puanla aynı hesap). Raporlardaki "Hedef bölüm kıyası" bu hesaptır. Bölüm eklemek için Uyum matrisi sekmesini kullanın.'
+          : 'Hedef seçildiğinde her bölüm hedefe göre kıyaslanır.'}
+      </div>
+      {k.satirlar.map((s) => {
+        const f = s.fark ?? 0
+        return (
+          <div key={s.bolum_id} className="ca-etki">
+            <div className="ca-etki-bas">
+              <span className="ca-no">{s.sira}</span><b>{s.bolum}</b>
+              <span className="ca-etki-uyum">%{sayi(s.uyum, 0)}</span>
+              {hd && <span className="ca-kiyas-fark" style={{ color: Math.abs(f) < 0.5 ? 'var(--tx2)' : f < 0 ? 'var(--re)' : 'var(--gr)' }}>
+                {Math.abs(f) < 0.5 ? 'hedefle eşit' : f < 0 ? `hedef ${sayi(-f, 0)} puan geride` : `hedef ${sayi(f, 0)} puan önde`}
+              </span>}
+            </div>
+            <div className="ca-etki-iki">
+              <div>
+                <div className="ca-etki-baslik" style={{ color: 'var(--re)' }}>{hd ? 'Hedefi geride bırakan' : 'Puanı düşüren'}</div>
+                <KiyasOzellikleri xs={hd ? s.geride_birakan : s.dusuren} hedefli={!!hd} onOzellik={onOzellik} />
+              </div>
+              <div>
+                <div className="ca-etki-baslik" style={{ color: 'var(--gr)' }}>{hd ? 'Hedefi öne çıkaran' : 'Puanı yükselten'}</div>
+                <KiyasOzellikleri xs={hd ? s.one_cikaran : s.yukselten} hedefli={!!hd} onOzellik={onOzellik} />
+              </div>
+            </div>
+          </div>
+        )
+      })}
+    </>
+  )
+}
+
 // ---------------------------------------------------------------- Yöntem matrisi (yalnızca süper admin)
 function YontemMatrisi({ m }) {
   return (
@@ -229,6 +284,7 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
   const [hata, setHata] = useState(null)
   const [turNo, setTurNo] = useState(null)
   const [secim, setSecim] = useState(null)   // null = varsayılan (ilk 10 + hedef + son 3)
+  const [eklenen, setEklenen] = useState([])  // sonradan eklenen bölümler raporda öncelikli
   const [gorunum, setGorunum] = useState('matris')
   const [kip, setKip] = useState('fark')
   const [katman, setKatman] = useState('')
@@ -261,11 +317,19 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
   const kontroller = d.cevaplar.filter((c) => c.kontrol)
   const ozellikGoster = (id) => { setOzellikId(id); setKatman(''); setArama(''); setGorunum('cevap') }
   const sekmeler = [
-    ...(m ? [['matris', 'Uyum matrisi'], ['neden', 'Neden yüksek / düşük']] : []),
+    ...(m ? [['matris', 'Uyum matrisi'], ['kiyas', '🎯 Hedefle kıyas'], ['neden', 'Neden yüksek / düşük']] : []),
     ['cevap', `Cevaplar (${d.cevaplar.length})`], ['ozellik', 'Özellik puanları'],
     ...(m?.yontem_adlari ? [['yontem', '🔒 Yöntemler']] : []),
   ]
   const aktif = sekmeler.some(([k]) => k === gorunum) ? gorunum : sekmeler[0][0]
+  // [2026-10-17] Ekrandaki bölümlerle yönetici raporu: hedef + ilk 5 (sunucu en çok 6 bölüm alır)
+  async function rapor() {
+    setIndiriliyor(true)
+    try {
+      const idler = [...new Set([...eklenen, ...m.bolumler.map((b) => b.bolum_id)])]
+      await api.ogrenciRaporuIndir(ogrenciId, 'yonetici', 'pdf', true, idler)
+    } catch (e) { setHata(e.detail || 'Rapor indirilemedi.') } finally { setIndiriliyor(false) }
+  }
   async function excel() {
     setIndiriliyor(true)
     try { await api.cevapAnaliziExcel(ogrenciId, d.tur.tur_no) } catch (e) { setHata(e.detail || 'Excel indirilemedi.') } finally { setIndiriliyor(false) }
@@ -278,7 +342,7 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
       </div>
       <div className="ca-ust">
         {d.turlar.length > 1 && (
-          <select className="yp-sec" value={d.tur.tur_no} onChange={(e) => { setTurNo(Number(e.target.value)); setSecim(null) }}>
+          <select className="yp-sec" value={d.tur.tur_no} onChange={(e) => { setTurNo(Number(e.target.value)); setSecim(null); setEklenen([]) }}>
             {d.turlar.map((t) => <option key={t.tur_no} value={t.tur_no}>{t.tur_no}. değerlendirme{t.durum !== 'tamamlandi' ? ' (devam ediyor)' : ''}</option>)}
           </select>
         )}
@@ -286,7 +350,9 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
           {d.cevaplar.length} cevap · {d.ozellikler.length} özellik
           {kontroller.length > 0 && ` · dikkat kontrolü ${kontroller.filter((c) => c.kontrol.dogru).length}/${kontroller.length} doğru`}
         </span>
-        <button className="yp-mini" style={{ marginLeft: 'auto' }} onClick={excel} disabled={indiriliyor}>{indiriliyor ? 'Hazırlanıyor…' : '📊 Excel (tüm matrisler)'}</button>
+        {m && <button className="yp-mini" style={{ marginLeft: 'auto' }} onClick={rapor} disabled={indiriliyor}
+          title="Yönetim raporu: hedef + eklediğiniz bölümler + ekrandaki ilk bölümler (en çok 6, hedef dahil)">📄 Bu bölümlerle rapor</button>}
+        <button className="yp-mini" style={m ? undefined : { marginLeft: 'auto' }} onClick={excel} disabled={indiriliyor}>{indiriliyor ? 'Hazırlanıyor…' : '📊 Excel (tüm matrisler)'}</button>
       </div>
       {d.okuma_notu && m && <div className="yp-ince ca-okuma">{d.okuma_notu}</div>}
       {d.not && <div className="yp-uyari">{d.not}</div>}
@@ -296,7 +362,11 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
 
       {aktif === 'matris' && m && (
         <UyumMatrisi m={m} kip={kip} setKip={setKip} onOzellik={ozellikGoster} bolumListesi={bolumListesi} ozelSecim={secim !== null}
-          onBolumEkle={(id) => setSecim([...new Set([...m.bolumler.map((b) => b.bolum_id), id])])} onVarsayilan={() => setSecim(null)} />
+          onBolumEkle={(id) => { setEklenen([...eklenen.filter((x) => x !== id), id]); setSecim([...new Set([...m.bolumler.map((b) => b.bolum_id), id])]) }}
+          onVarsayilan={() => { setSecim(null); setEklenen([]) }} />
+      )}
+      {aktif === 'kiyas' && m && (
+        <HedefKiyasi k={m.kiyas} onOzellik={(kod) => { const o = m.ozellikler.find((x) => x.kod === kod); if (o) ozellikGoster(o.id) }} />
       )}
       {aktif === 'neden' && m && (
         <>
