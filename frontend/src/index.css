@@ -341,7 +341,7 @@ button,input{font-family:inherit}
 .neden-ozellik{font-size:13.5px;font-weight:700;margin-right:2px}
 .neden-etiket{font-size:11px;font-weight:700;border-radius:999px;padding:2px 9px}
 .neden-etiket.sen{background:var(--grl,#E4EEDE);color:var(--gr,#5E8A54)}
-.neden-etiket.bolum{background:var(--pul);color:var(--pud)}
+.neden-etiket.bolum{background:var(--sur2);color:var(--tx2)}   /* [2026-10-17] nötr: turuncu yalnızca fark için */
 .neden-kanit{font-size:12px;color:var(--tx2);margin-top:4px;line-height:1.5}
 .neden-kanit q{font-style:italic;margin-right:6px}
 .neden-kanit q::before{content:'«'}

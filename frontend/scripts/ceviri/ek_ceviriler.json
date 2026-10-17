@@ -985,5 +985,47 @@
   "uz": "Seni maqsad yo‘nalishing kutadigan xususiyatlar bilan birma-bir solishtiradi: qayerda kuchlisan, qayerda rivojlanishing kerak.",
   "az": "Səni hədəf ixtisasının gözlədiyi xüsusiyyətlərlə bir-bir müqayisə edir: harada güclüsən, harada inkişaf etməlisən.",
   "ko": "목표 전공이 기대하는 특성과 너를 하나하나 비교해: 어디가 강하고 어디를 키워야 하는지."
+ },
+ "{0}: {1} alanında çalışanların çoğuna göre senin için daha az önemli; karar verirken dikkate al.": {
+  "en": "{0}: less important to you than to most people working in {1}; keep this in mind when you decide.",
+  "de": "{0}: dir weniger wichtig als den meisten, die im Bereich {1} arbeiten; berücksichtige das bei deiner Entscheidung.",
+  "fr": "{0} : moins important pour toi que pour la plupart des personnes qui travaillent dans le domaine {1} ; tiens-en compte dans ta décision.",
+  "ru": "{0}: для тебя это менее важно, чем для большинства работающих в сфере {1}; учитывай это при выборе.",
+  "es": "{0}: es menos importante para ti que para la mayoría de quienes trabajan en {1}; tenlo en cuenta al decidir.",
+  "it": "{0}: per te è meno importante che per la maggior parte di chi lavora nel campo {1}; tienine conto quando decidi.",
+  "ar": "{0}: أقل أهمية بالنسبة لك مما هو لمعظم العاملين في مجال {1}؛ ضع ذلك في اعتبارك عند اتخاذ قرارك.",
+  "zh": "{0}：对你来说，这比对大多数从事{1}领域工作的人更不重要；做决定时请考虑这一点。",
+  "hi": "{0}: {1} क्षेत्र में काम करने वाले अधिकांश लोगों की तुलना में यह तुम्हारे लिए कम महत्वपूर्ण है; निर्णय लेते समय इसे ध्यान में रखो।",
+  "uz": "{0}: bu sen uchun {1} sohasida ishlaydiganlarning ko‘pchiligiga qaraganda kamroq muhim; qaror qabul qilayotganda buni hisobga ol.",
+  "az": "{0}: bu sənin üçün {1} sahəsində çalışanların əksəriyyətindən daha az vacibdir; qərar verərkən bunu nəzərə al.",
+  "ko": "{0}: {1} 분야에서 일하는 대부분의 사람보다 너에게 덜 중요해. 결정할 때 이 점을 고려해."
+ },
+ "{0}: {1} alanında çalışanların çoğuna göre öğrenci için daha az önemli; karar verirken dikkate alınmalı.": {
+  "en": "{0}: less important to the student than to most people working in {1}; this should be considered when deciding.",
+  "de": "{0}: für die Schülerin bzw. den Schüler weniger wichtig als für die meisten, die im Bereich {1} arbeiten; bei der Entscheidung berücksichtigen.",
+  "fr": "{0} : moins important pour l'élève que pour la plupart des personnes qui travaillent dans le domaine {1} ; à prendre en compte dans la décision.",
+  "ru": "{0}: для ученика это менее важно, чем для большинства работающих в сфере {1}; это следует учитывать при выборе.",
+  "es": "{0}: es menos importante para el estudiante que para la mayoría de quienes trabajan en {1}; debe tenerse en cuenta al decidir.",
+  "it": "{0}: per lo studente è meno importante che per la maggior parte di chi lavora nel campo {1}; va considerato nella decisione.",
+  "ar": "{0}: أقل أهمية بالنسبة للطالب مما هو لمعظم العاملين في مجال {1}؛ ينبغي مراعاة ذلك عند اتخاذ القرار.",
+  "zh": "{0}：对学生来说，这比对大多数从事{1}领域工作的人更不重要；做决定时应予以考虑。",
+  "hi": "{0}: {1} क्षेत्र में काम करने वाले अधिकांश लोगों की तुलना में यह विद्यार्थी के लिए कम महत्वपूर्ण है; निर्णय लेते समय इसे ध्यान में रखना चाहिए।",
+  "uz": "{0}: bu o‘quvchi uchun {1} sohasida ishlaydiganlarning ko‘pchiligiga qaraganda kamroq muhim; qaror qabul qilishda buni hisobga olish kerak.",
+  "az": "{0}: bu şagird üçün {1} sahəsində çalışanların əksəriyyətindən daha az vacibdir; qərar verərkən nəzərə alınmalıdır.",
+  "ko": "{0}: {1} 분야에서 일하는 대부분의 사람보다 학생에게 덜 중요합니다. 결정할 때 고려해야 합니다."
+ },
+ "Listedeki değerlerde ise amaç değiştirmek değil, bölümün bu yönünün sana uyup uymadığını bilerek karar vermek.": {
+  "en": "For the values in the list, the goal is not to change them but to decide knowing whether this side of the major suits you.",
+  "de": "Bei den Werten in der Liste geht es nicht darum, sie zu ändern, sondern bewusst zu entscheiden, ob diese Seite des Studienfachs zu dir passt.",
+  "fr": "Pour les valeurs de la liste, le but n'est pas de les changer mais de décider en sachant si cet aspect de la filière te convient.",
+  "ru": "Что касается ценностей в списке, цель не в том, чтобы их менять, а в том, чтобы решать, понимая, подходит ли тебе эта сторона направления.",
+  "es": "En los valores de la lista, el objetivo no es cambiarlos, sino decidir sabiendo si este aspecto de la carrera encaja contigo.",
+  "it": "Per i valori nell'elenco, l'obiettivo non è cambiarli ma decidere sapendo se questo aspetto del corso fa per te.",
+  "ar": "أما القيم الواردة في القائمة، فالهدف ليس تغييرها، بل أن تقرر وأنت تعرف ما إذا كان هذا الجانب من التخصص يناسبك.",
+  "zh": "至于列表中的价值观，目的不是改变它们，而是在了解专业这一方面是否适合你的前提下做出决定。",
+  "hi": "सूची में दिए गए मूल्यों के लिए लक्ष्य उन्हें बदलना नहीं, बल्कि यह जानते हुए निर्णय लेना है कि विषय का यह पहलू तुम्हारे अनुकूल है या नहीं।",
+  "uz": "Ro‘yxatdagi qadriyatlarda maqsad ularni o‘zgartirish emas, balki yo‘nalishning bu jihati senga mos kelish-kelmasligini bilib qaror qabul qilishdir.",
+  "az": "Siyahıdakı dəyərlərdə məqsəd onları dəyişmək deyil, ixtisasın bu tərəfinin sənə uyğun olub-olmadığını bilərək qərar verməkdir.",
+  "ko": "목록에 있는 가치관의 경우, 목표는 그것을 바꾸는 것이 아니라 전공의 이 측면이 너에게 맞는지 알고 결정하는 거야."
  }
 }

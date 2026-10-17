@@ -204,6 +204,7 @@ def karsilastirma_verisi(db: Session, o: Ogrenci, idler: list[int]) -> dict:
             # "Dikkat" cümlesi metinlerde de var; ayrı alanda (dikkat) gösterildiği için tekrarlanmaz
             "neden": [m for m in (n.get("metinler") or []) if not str(m).startswith("Dikkat")][:4],
             "dikkat": (n.get("dikkat") or {}).get("metin"),
+            "dikkatler": [x["metin"] for x in n.get("dikkatler") or []],   # [2026-10-17] eksik + fazla (en çok 2)
             "one_cikanlar": [{"kod": x["kod"], "etiket": x["etiket"], "onem": x["onem"], "sende": sende_mi(x)} for x in satirlar[:6]],
             "puan_turu": d.get("puan_turu") or getattr(b, "osym_puan_turu", None) or yok.get("puan_turu"),
             "ogrenim_suresi": d.get("ogrenim_suresi"),
@@ -282,7 +283,7 @@ def karsilastirma_pdf(v: dict, okul: dict, ad_soyad: str) -> bytes:
     if v["sonuc_var"]:
         satir("Uyumun", lambda b: f"<b>%{b['toplam_uyum']:.0f}</b>" + (f" · {b['sira']}. sıra" if b.get("sira") else "")
               if b["toplam_uyum"] is not None else "—")
-        satir("Neden bu bölüm", lambda b: liste(b["neden"] + ([f"Dikkat: {b['dikkat']}"] if b.get("dikkat") else [])))
+        satir("Neden bu bölüm", lambda b: liste(b["neden"] + [f"Dikkat: {m}" for m in (b.get("dikkatler") or ([b["dikkat"]] if b.get("dikkat") else []))]))
     satir("Alan", lambda b: _e(b.get("alt_alan") or b.get("ust_alan") or "—"))
     satir("Puan türü", lambda b: _e(b.get("puan_turu") or "—"))
     satir("Öğrenim süresi", lambda b: _e(b.get("ogrenim_suresi") or "—"))

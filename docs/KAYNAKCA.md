@@ -338,7 +338,7 @@ Alan sorularının nihai uyuma katılması ve gösterilen sıralamanın kurallar
 
 Her önerilen bölüm için örtüşen güçlü yönleri, öğrencinin kanıt cevaplarını, K5 notunu ve dikkat notunu üreten açıklama.
 
-**Nasıl:** Örtüşen yön: bölümün o özellikteki bölümler arası yüzdeliği ≥60 ve öğrencinin ölçekli puanı ≥55; en fazla 3 yön, 30 kısa ad (KISA_AD). Dikkat notu: bölüm yüzdeliği ≥85 ve öğrenci ≤40, aynı not 3+ bölümde çıkıyorsa gösterilmez. K5 notu ana eksen puanı ≥60/≤40. Kanıtlar: SJT'de ağırlık ≥0,5 seçilen şık, Likert'te en güçlü katılım, kutupta 1. veya 4. şık; metinler 110 karakterle kısaltılır.
+**Nasıl:** Örtüşen yön: bölümün o özellikteki bölümler arası yüzdeliği ≥60 ve öğrencinin ölçekli puanı ≥55; en fazla 3 yön, 30 kısa ad (KISA_AD). Dikkat notu: bölüm yüzdeliği ≥85 ve öğrenci ≤40, aynı not 3+ bölümde çıkıyorsa gösterilmez. K5 notu ana eksen puanı ≥60/≤40. Kanıtlar: SJT'de ağırlık ≥0,5 seçilen şık, Likert'te en güçlü katılım, kutupta 1. veya 4. şık; metinler 110 karakterle kısaltılır. [2026-10-17] Dikkat notu iki yönlüdür: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not.
 
 **Dayanak:**
 
@@ -380,14 +380,14 @@ Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını ve ilk
 
 Öğrenci ile hedef bölüm arasındaki farkı özellik özellik sınıflayıp en önemli gelişim alanlarını bulma.
 
-**Nasıl:** Göreli fark (katman/dal içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır.
+**Nasıl:** Göreli fark (katman/dal içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır. [2026-10-17] Ekranda fark yakınlık dilinde gösterilir (uyum puanı da farkın yönüne bakmaz): |fark| < 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz; değerlerde (K1) 'senin için daha önemli / daha az önemli' denir; P4 (kaygı) için yalnızca fazlası fark sayılır.
 
 **Dayanak:**
 
 - [30] Dawis ve Lofquist, 1984 — Kişinin yetenek/ihtiyaçları ile çevrenin gereksinim/pekiştireçleri arasındaki uygunluğun (correspondence) karşılaştırılmasını kuramsal olarak temellendirir; özellik bazında öğrenci–bölüm farkı bu mantıktan esinlenir.
 - [76] Kristof-Brown ve ark., 2005 — Kişi–iş uyumunun memnuniyet ve bağlılıkla ilişkisini meta-analitik olarak gösterir; uyum açıklarının gelişim alanı olarak ele alınmasını destekler.
 
-> Fark kategorilerinin eşikleri (±5, ±15), öncelik formülü, katman ağırlıklarının eşit (25) olması, ayırt edicilik için en az 20 yayın, <40 ve ≥75 kesme noktaları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz.
+> Fark kategorilerinin eşikleri (±5, ±15), öncelik formülü, katman ağırlıklarının eşit (25) olması, ayırt edicilik için en az 20 yayın, <40 ve ≥75 kesme noktaları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. Güçlü yön tanımı (uyumlu ve öğrencinin kendi profilinde katman içi ≥ 60) da kurum içi karardır.
 
 ### Gelişim yol haritası yapısı
 

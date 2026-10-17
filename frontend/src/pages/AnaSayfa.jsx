@@ -101,7 +101,7 @@ export default function AnaSayfa() {
             <b>{profil?.ad_soyad || 'Öğrenci'}</b>
             <span className="as-kimlik-ayrac">·</span>
             <span>{[profil?.okul, profil?.sinif].filter(Boolean).join(' · ') || 'Okul bilgisi eklenmedi'}</span>
-            {profilSkoru !== null && <><span className="as-kimlik-ayrac">·</span><span>En yüksek uyum <b className="as-kimlik-skor">{profilSkoru}</b>/100</span></>}
+            {profilSkoru !== null && <><span className="as-kimlik-ayrac">·</span><span>Sana en yakın bölüm <b className="as-kimlik-skor">{profilSkoru}</b>/100</span></>}
             <span className="as-kimlik-git">Profilim →</span>
           </div>
           {/* [2026-10-11] Kendi aktiflik serin: son 14 gün (sistemi açtığın günler) */}
@@ -150,6 +150,7 @@ export default function AnaSayfa() {
                 </li>
               ))}
             </ol>
+            <div className="as-cekirdek-not">Puan, bölümün 301 bölüm içinde sana ne kadar yakın olduğunu gösterir (100 = en yakın).</div>
             <button type="button" className="btn" onClick={() => navigate('/bolumler')}>Tüm önerileri ve nedenlerini gör →</button>
           </div>
           {kocluk && (

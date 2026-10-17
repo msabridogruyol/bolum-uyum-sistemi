@@ -574,6 +574,10 @@ NEDEN_OGRENCI_ESIK = 55.0        # öğrencinin kendi profilinde ortalamanın ü
 NEDEN_DIKKAT_BOLUM = 85.0       # bölüm bu özellikte bölümlerin en üst %15'inde
 NEDEN_DIKKAT_OGRENCI = 40.0     # öğrencinin kendi profilinde belirgin şekilde geride
 NEDEN_DIKKAT_TEKRAR = 3         # aynı dikkat notu bu kadar bölümde çıkıyorsa bölüme özgü değildir → gösterilmez
+# [2026-10-17] Uyum puanı farkın yönüne bakmaz; dikkat notu da iki yönlü: bölümün çok az beklediği (bölümlerin en alt
+# %15'i) bir özellikte öğrenci belirgin yüksekse (≥ 60) "fazlalık" notu verilir. En fazla 2 not (eksik + fazla).
+NEDEN_FAZLA_BOLUM = 15.0
+NEDEN_FAZLA_OGRENCI = 60.0
 
 
 def _liste_metni(adlar: list[str]) -> str:
@@ -720,19 +724,30 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
                 k = kanitlar.get(d_ana, [])
                 k5 = {"is_turu": eksen_ad.get(d_ana, ""), "durum": "uyumlu" if guclu_mu(p) else "az",
                       "kanit": k[0] if (k and guclu_mu(p)) else None}
-        dikkat = [(float(o[j]), j) for j in range(len(kodlar))
-                  if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_DIKKAT_BOLUM and o[j] <= NEDEN_DIKKAT_OGRENCI]
-        if dikkat:
-            dikkat_of[bid] = min(dikkat)[1]
-        sonuc[bid] = {"ortusen": ortusen, "k5": k5, "dikkat": None}
+        eksik = [(float(o[j]), j) for j in range(len(kodlar))
+                 if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_DIKKAT_BOLUM and o[j] <= NEDEN_DIKKAT_OGRENCI]
+        fazla = [(-float(o[j]), j) for j in range(len(kodlar))
+                 if kodlar[j] in KISA_AD and yuzdelik[i, j] <= NEDEN_FAZLA_BOLUM and o[j] >= NEDEN_FAZLA_OGRENCI]
+        dikkat_of[bid] = ([("eksik", min(eksik)[1])] if eksik else []) + ([("fazla", min(fazla)[1])] if fazla else [])
+        sonuc[bid] = {"ortusen": ortusen, "k5": k5, "dikkat": None, "dikkatler": []}
 
     # dikkat notu: yalnızca bölüme özgüyse (listede az tekrar ediyorsa) eklenir
     from collections import Counter
-    tekrar = Counter(dikkat_of.values())
-    for bid, j in dikkat_of.items():
-        if tekrar[j] < NEDEN_DIKKAT_TEKRAR:
-            sonuc[bid]["dikkat"] = {"ozellik": KISA_AD[kodlar[j]],
-                                    "metin": f"Bu bölüm yüksek düzeyde {KISA_AD[kodlar[j]]} bekliyor; senin cevaplarında bu yön daha geri planda."}
+    tekrar = Counter(n for l in dikkat_of.values() for n in l)
+    for bid, notlar in dikkat_of.items():
+        for yon, j in notlar:
+            if tekrar[(yon, j)] >= NEDEN_DIKKAT_TEKRAR:
+                continue
+            ad, deger = KISA_AD[kodlar[j]], kodlar[j].startswith("D")
+            if yon == "eksik":
+                metin = (f"Bu bölümde çalışanlar için {ad} çok önemli; senin önceliklerinde bu daha geri planda." if deger else
+                         f"Bu bölüm yüksek düzeyde {ad} bekliyor; senin cevaplarında bu yön daha geri planda.")
+            else:
+                metin = (f"{_buyuk_bas(ad)} senin için bu bölümde çalışanların çoğundan daha önemli; bölüm bu beklentini her zaman karşılamayabilir." if deger else
+                         f"Bu bölümde {ad} daha az öne çıkar; senin cevaplarında ise bu yön güçlü. Bu yönünü bölümde daha az kullanabilirsin.")
+            sonuc[bid]["dikkatler"].append({"ozellik": ad, "yon": yon, "metin": metin})
+        if sonuc[bid]["dikkatler"]:
+            sonuc[bid]["dikkat"] = sonuc[bid]["dikkatler"][0]
 
     # eski istemciler için düz cümleler
     for bid, d in sonuc.items():
@@ -742,7 +757,7 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
         if d["k5"]:
             m.append(f"Alan sorularında «{d['k5']['is_turu']}» işlerini "
                      + ("öne çıkardın." if d["k5"]["durum"] == "uyumlu" else "daha az seçtin."))
-        if d["dikkat"]:
-            m.append("Dikkat: " + d["dikkat"]["metin"])
+        for x in d.get("dikkatler") or []:
+            m.append("Dikkat: " + x["metin"])
         d["metinler"] = m
     return sonuc

@@ -448,6 +448,7 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum", "Neden?"],
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or [])]
                          for b in v["bolumler"]], [8 * mm, 52 * mm, 34 * mm, 14 * mm, 66 * mm]))
+        h.append(st.p("Uyum, bölümün 301 bölüm içinde senin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
@@ -518,6 +519,7 @@ def veli_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum"],
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}"] for b in v["bolumler"][:6]],
                         [10 * mm, 90 * mm, 52 * mm, 22 * mm]))
+        h.append(st.p("Uyum, bölümün 301 bölüm içinde çocuğunuzun profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
         h.append(st.p("Uyum yüzdesi; çocuğunuzun profilinin bölümün gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir, "
                       "başarı ya da kazanma olasılığı anlamına gelmez.", st.not_))
     if v["hedef"]:
@@ -583,6 +585,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or []),
                           b.get("dikkat") or ""] for b in v["bolumler"]],
                         [7 * mm, 40 * mm, 27 * mm, 12 * mm, 45 * mm, 43 * mm], kucuk=True))
+        h.append(st.p("Uyum, bölümün 301 bölüm içinde öğrencinin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
