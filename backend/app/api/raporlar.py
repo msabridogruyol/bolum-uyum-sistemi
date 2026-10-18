@@ -87,7 +87,7 @@ def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str, netler: bool
         raise HTTPException(status_code=400, detail="Geçersiz rapor türü ya da biçimi.")
     v = ogrenci_raporu_verisi(db, o)
     if bicim == "xlsx":
-        icerik = ogrenci_xlsx(v, netler=netler)
+        icerik = ogrenci_xlsx(v, netler=netler, yonetim=ek_aciklama)   # ek_aciklama: yönetim ucundan istendi
     else:
         _kiyas_ekle(db, o, v, tur, bolum_idler, cevaplar=ek_aciklama)
         icerik = _uretici(tur)(v, netler=netler)

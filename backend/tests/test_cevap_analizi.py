@@ -209,3 +209,30 @@ def test_profili_eksik_ogrencide_yonetim_raporu_not_verir(istemci, db, kisiler):
         for tur_ad in ("ogrenci", "veli"):
             assert istemci.get(f"/yonetim/ogrenci/{o.id}/rapor?tur={tur_ad}&bicim=pdf", headers=yt).status_code == 200
         return
+
+
+@db_gerekli
+def test_ogrenci_yalniz_kendi_ve_veli_raporunu_alir(istemci, db, kisiler):
+    """Öğrenci hesabından yalnızca kendi ve veli raporu; yönetim / sınıf öğretmeni raporu, cevap analizi ve matris
+    Excel'i alınamaz; öğrencinin Excel'inde sayısal güven puanı yoktur (yönetim Excel'inde vardır)."""
+    import io
+
+    from openpyxl import load_workbook
+
+    from app.core.security import erisim_tokeni_uret
+    satir = _tamamlanmis(db)
+    if satir is None:
+        return
+    oid, okul = satir
+    otok = {"Authorization": f"Bearer {erisim_tokeni_uret(oid, 'ogrenci')}"}
+    for tur in ("yonetici", "sinif_ogretmeni"):
+        assert istemci.get(f"/ogrenci/rapor?tur={tur}&bicim=pdf", headers=otok).status_code in (400, 403)
+    for yol in ("cevap-analizi", "cevap-analizi.xlsx", "rapor?tur=yonetici&bicim=pdf", "rapor-bolumleri"):
+        assert istemci.get(f"/yonetim/ogrenci/{oid}/{yol}", headers=otok).status_code in (401, 403), yol
+    r = istemci.get("/ogrenci/rapor?tur=ogrenci&bicim=xlsx", headers=otok)
+    if r.status_code == 200:
+        ozet = [str(c.value) for row in load_workbook(io.BytesIO(r.content))["Özet"].iter_rows() for c in row]
+        assert "Güven puanı" not in ozet
+    r = istemci.get(f"/yonetim/ogrenci/{oid}/rapor?tur=ogrenci&bicim=xlsx", headers=_yetkili_tokeni(db, okul))
+    assert r.status_code == 200
+    assert "Güven puanı" in [str(c.value) for row in load_workbook(io.BytesIO(r.content))["Özet"].iter_rows() for c in row]
