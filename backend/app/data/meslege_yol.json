@@ -1590,11 +1590,6 @@
    "regule": false,
    "oda_kaydi": true
   },
-  "BANKACILIK VE FİNANS": {
-   "alan": "U10",
-   "ozel": "Bankaların uzman yardımcılığı/MT programları; SPK lisansları bazı görevlerde avantaj ya da şarttır.",
-   "regule": false
-  },
   "BANKACILIK VE SİGORTACILIK": {
    "alan": "U10",
    "ozel": "Bankalar ve sigorta şirketleri; sigorta aracılığı için ayrıca levha/belge süreçleri vardır.",
@@ -1632,21 +1627,9 @@
    "ozel": "Disiplinlerarası sanat üretimi, sergiler ve kültür kurumları.",
    "regule": false
   },
-  "BİLGİ GÜVENLİĞİ MÜHENDİSLİĞİ": {
-   "alan": "U02",
-   "ozel": "Güvenlik operasyon merkezleri, sızma testi ve güvenlik danışmanlığı; sektörde tanınmış sertifikalar avantaj sağlar.",
-   "sablon": "tmmob",
-   "regule": false,
-   "oda_kaydi": true
-  },
   "BİLGİ VE BELGE YÖNETİMİ": {
    "alan": "U08",
    "ozel": "Arşiv, kütüphane ve kurumların belge yönetimi birimleri; dijital arşivleme becerisi değerlidir.",
-   "regule": false
-  },
-  "BİLGİSAYAR BİLİMLERİ": {
-   "alan": "U02",
-   "ozel": "Algoritma ve kuramsal temeli güçlü bir program; yazılım geliştirme, veri ve akademi yollarına açılır.",
    "regule": false
   },
   "BİLGİSAYAR MÜHENDİSLİĞİ": {
@@ -1730,11 +1713,6 @@
   "BİYOTEKNOLOJİ": {
    "alan": "U03",
    "ozel": "Biyoteknoloji şirketleri ve ar-ge laboratuvarları; yüksek lisans genellikle beklenir.",
-   "regule": false
-  },
-  "CAM": {
-   "alan": "U12",
-   "ozel": "Cam sanatı atölyeleri, tasarım ve endüstriyel cam üretimi.",
    "regule": false
   },
   "CAZ VE POPÜLER MÜZİK": {
@@ -1856,11 +1834,6 @@
   "DOĞA KORUMA VE BİYOÇEŞİTLİLİK YÖNETİMİ": {
    "alan": "U15",
    "ozel": "Milli parklar, koruma kurumları ve STK'lar; kamu kadroları KPSS iledir.",
-   "regule": false
-  },
-  "DRAMA VE OYUNCULUK": {
-   "alan": "U13",
-   "ozel": "Tiyatro, dizi/film ve drama eğitmenliği; ajans ve seçmeler önemli bir yoldur.",
    "regule": false
   },
   "DRAMA YAZARLIĞI VE DRAMATURJİ": {
@@ -2395,13 +2368,6 @@
    "ozel": "Sanat üretimi, sergiler, eğitim; öğretmenlik için kaynak program şartlarını kontrol et.",
    "regule": false
   },
-  "GÖRSEL SANATLAR ÖĞRETMENLİĞİ": {
-   "alan": "U07",
-   "sablon": "ogretmenlik",
-   "regule": true,
-   "ozel": "Görsel sanatlar öğretmenliği; özel yetenek sınavıyla girilir.",
-   "son_kontrol": "2026-10-10"
-  },
   "GÖRSEL İLETİŞİM TASARIMI": {
    "alan": "U12",
    "ozel": "Grafik, arayüz ve hareketli grafik tasarımı; ajans ve teknoloji şirketleri.",
@@ -2506,11 +2472,6 @@
   "HALI, KİLİM VE GELENEKSEL KUMAŞ DESENLERİ": {
    "alan": "U12",
    "ozel": "Halı ve tekstil sektöründe desen tasarımı, restorasyon ve kültür kurumları.",
-   "regule": false
-  },
-  "HALKBİLİMİ": {
-   "alan": "U08",
-   "ozel": "Kültür kurumları, müzeler ve araştırma; yüksek lisans sık tercih edilir.",
    "regule": false
   },
   "HALKLA İLİŞKİLER VE REKLAMCILIK": {
@@ -2917,11 +2878,6 @@
    "ozel": "Kültür kurumları, medya ve kurumsal iletişim alanları.",
    "regule": false
   },
-  "KÜRESEL SİYASET VE ULUSLARARASI İLİŞKİLER": {
-   "alan": "U09",
-   "ozel": "Dışişleri ve diğer kurumların sınavları, uluslararası kuruluşlar, düşünce kuruluşları; ileri düzey yabancı dil şarttır.",
-   "regule": false
-  },
   "KİMYA": {
    "alan": "U03",
    "ozel": "Kalite kontrol, ar-ge ve analiz laboratuvarları; sanayide 'kimyager' olarak çalışılır.",
@@ -2975,13 +2931,6 @@
   "MALZEME BİLİMİ VE MÜHENDİSLİĞİ": {
    "alan": "U01",
    "ozel": "Metal, polimer, seramik ve kompozit üreticilerinde kalite, üretim ve ar-ge işleri yapılır.",
-   "sablon": "tmmob",
-   "regule": false,
-   "oda_kaydi": true
-  },
-  "MALZEME BİLİMİ VE NANOTEKNOLOJİ MÜHENDİSLİĞİ": {
-   "alan": "U01",
-   "ozel": "Ar-ge yoğun bir alan; sektörde iş için laboratuvar deneyimi ve çoğu zaman yüksek lisans önemlidir.",
    "sablon": "tmmob",
    "regule": false,
    "oda_kaydi": true
@@ -3047,11 +2996,6 @@
   "MOLEKÜLER BİYOLOJİ VE GENETİK": {
    "alan": "U03",
    "ozel": "Genetik tanı ve araştırma laboratuvarları, biyoteknoloji; kariyer için lisansüstü eğitim sık gerekir.",
-   "regule": false
-  },
-  "MOLEKÜLER BİYOTEKNOLOJİ": {
-   "alan": "U03",
-   "ozel": "Biyoteknoloji ar-gesi ve ilaç sektörü; yüksek lisans genellikle beklenir.",
    "regule": false
   },
   "MUHASEBE VE DENETİM": {
@@ -3193,11 +3137,6 @@
    "regule": true,
    "son_kontrol": "2026-10-10"
   },
-  "OTEL YÖNETİCİLİĞİ": {
-   "alan": "U17",
-   "ozel": "Otellerin departmanlarında başlayıp yöneticiliğe uzanan yol; yabancı dil kritik.",
-   "regule": false
-  },
   "OTOMOTİV MÜHENDİSLİĞİ": {
    "alan": "U01",
    "ozel": "Otomotiv üreticileri ve yan sanayide tasarım, test ve üretim işleri; elektrikli araçlar alanı büyüyor.",
@@ -3213,11 +3152,6 @@
   "PAZARLAMA": {
    "alan": "U10",
    "ozel": "Marka, ürün, satış ve dijital pazarlama rolleri; veri analizi ve dijital beceriler fark yaratır.",
-   "regule": false
-  },
-  "PAZARLAMA İLETİŞİMİ": {
-   "alan": "U11",
-   "ozel": "Marka iletişimi, reklam ve dijital kampanyalar.",
    "regule": false
   },
   "PERFÜZYON": {
@@ -3342,13 +3276,6 @@
     }
    ],
    "duzey": "tam",
-   "son_kontrol": "2026-10-10"
-  },
-  "PSİKOLOJİK DANIŞMANLIK VE REHBERLİK ÖĞRETMENLİĞİ": {
-   "alan": "U07",
-   "sablon": "ogretmenlik",
-   "regule": true,
-   "ozel": "Okullarda rehber öğretmen (psikolojik danışman); rehberlik araştırma merkezleri ve özel kurumlar da seçenektir.",
    "son_kontrol": "2026-10-10"
   },
   "PİLOTAJ": {
@@ -3485,11 +3412,6 @@
   "SAHNE DEKORU VE KOSTÜMÜ": {
    "alan": "U13",
    "ozel": "Tiyatro, opera, dizi/film setleri ve etkinlik prodüksiyonu.",
-   "regule": false
-  },
-  "SAHNE SANATLARI": {
-   "alan": "U13",
-   "ozel": "Tiyatro, sahne prodüksiyonu ve eğitim.",
    "regule": false
   },
   "SAHNE TASARIMI": {
@@ -3709,82 +3631,6 @@
    "regule": false,
    "oda_kaydi": true
   },
-  "SİGORTACILIK VE AKTÜERYA BİLİMLERİ": {
-   "alan": "U10",
-   "ozel": "Sigorta şirketlerinde teknik işler; aktüer olmak için aktüerlik sınavları gerekir.",
-   "regule": true,
-   "adimlar": [
-    {
-     "baslik": "YKS ve tercih",
-     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
-     "zorunlu": true,
-     "sure": null
-    },
-    {
-     "baslik": "Aktüerya lisansı",
-     "aciklama": "Olasılık, istatistik, finans matematiği ağırlıklı.",
-     "zorunlu": true,
-     "sure": "4 yıl"
-    },
-    {
-     "baslik": "Aktüerlik sınavları",
-     "aciklama": "Aktüer unvanı için Aktüerler Yönetmeliğine göre yapılan aktüerlik sınavlarını (temel ve ileri düzey modüller) başarmak ve mesleki deneyim şartını sağlamak gerekir; sınavlar dönemsel olarak duyurulur.",
-     "zorunlu": false,
-     "sure": null
-    },
-    {
-     "baslik": "Sigorta, emeklilik ve risk alanında ilk iş",
-     "aciklama": "Mezunlar genellikle sigorta ve bireysel emeklilik şirketlerinde aktüer yardımcısı olarak başlar.",
-     "zorunlu": true,
-     "sure": null
-    }
-   ],
-   "basamaklar": [
-    {
-     "ad": "Giriş",
-     "donem": "ilk yıllar",
-     "aciklama": "Aktüer yardımcısı, risk/veri analisti."
-    },
-    {
-     "ad": "Orta",
-     "donem": "sınavlar tamamlandıkça",
-     "aciklama": "Aktüer; ürün fiyatlama, rezerv."
-    },
-    {
-     "ad": "Kıdemli",
-     "donem": "uzun vadede",
-     "aciklama": "Sorumlu aktüer, risk yöneticisi."
-    }
-   ],
-   "zorlayanlar": [
-    {
-     "zor": "Sınavlar zor ve yıllara yayılır.",
-     "nasil": "İşe başlayınca şirketler çoğu zaman hazırlığı destekler; modüller tek tek geçilir."
-    },
-    {
-     "zor": "Mesleğin dar bir sektörde yoğunlaşması.",
-     "nasil": "Veri bilimi ve finans becerileri başka sektörlere de taşınır."
-    }
-   ],
-   "neden_seviyor": [
-    "Matematiği doğrudan gerçek hayattaki riskleri ölçmek için kullanmak.",
-    "Az sayıda uzman olduğu için aranan bir meslek."
-   ],
-   "hazirlik": [
-    "Olasılık ve istatistik.",
-    "Excel ve bir programlama dili.",
-    "Matematik olimpiyatı/proje deneyimi."
-   ],
-   "kaynaklar": [
-    {
-     "ad": "Aktüerler Yönetmeliği ve TSB 2025 Aktüerlik Sınavları duyuruları",
-     "url": "https://alomaliye.com/2007/08/15/aktuerler-yonetmeligi/",
-     "tarih": null
-    }
-   ],
-   "temel_bolum": "AKTÜERYA BİLİMLERİ",
-   "son_kontrol": "2026-10-10"
-  },
   "SİGORTACILIK VE RİSK YÖNETİMİ": {
    "alan": "U10",
    "ozel": "Sigorta şirketleri ve acenteler, risk yönetimi birimleri; aracılık için ayrıca belge/levha süreçleri vardır.",
@@ -3899,11 +3745,6 @@
   "TELEVİZYON HABERCİLİĞİ VE PROGRAMCILIĞI": {
    "alan": "U11",
    "ozel": "Televizyon kanallarında muhabirlik, editörlük ve program yapımı.",
-   "regule": false
-  },
-  "TEZHİP-MİNYATÜR VE EBRU": {
-   "alan": "U12",
-   "ozel": "Geleneksel sanat üretimi, restorasyon ve eğitim.",
    "regule": false
   },
   "TIP": {
@@ -4156,11 +3997,6 @@
    "ozel": "Finans kurumları ve uluslararası şirketlerin hazine birimleri; SPK lisansları ve yabancı dil önemlidir.",
    "regule": false
   },
-  "ULUSLARARASI GİRİŞİMCİLİK": {
-   "alan": "U10",
-   "ozel": "İhracat, uluslararası pazarlama ve kendi işini kurma; yabancı dil kritik.",
-   "regule": false
-  },
   "ULUSLARARASI HUKUK": {
    "alan": "U09",
    "ozel": "Hukuk fakültesi değildir: avukat, hâkim ya da savcı olmak için hukuk fakültesi mezuniyeti, HMGS ve staj gerekir. Uluslararası kuruluşlar ve araştırma için genellikle yüksek lisans ve ileri dil beklenir.",
@@ -4198,13 +4034,6 @@
    "alan": "U03",
    "ozel": "Uydu verisi, uzay teknolojileri ar-gesi; yazılım ve veri becerisi iş seçeneklerini artırır.",
    "regule": false
-  },
-  "UZAY MÜHENDİSLİĞİ": {
-   "alan": "U01",
-   "ozel": "Uydu ve uzay sistemleri ar-gesi; işverenler sınırlı ve büyük ölçüde savunma/uzay kuruluşlarıdır.",
-   "sablon": "tmmob",
-   "regule": false,
-   "oda_kaydi": true
   },
   "UÇAK BAKIM VE ONARIM": {
    "alan": "U16",
@@ -4285,13 +4114,6 @@
    ],
    "duzey": "tam",
    "son_kontrol": "2026-10-10"
-  },
-  "UÇAK MÜHENDİSLİĞİ": {
-   "alan": "U01",
-   "ozel": "Uçak tasarımı, bakım mühendisliği ve savunma sanayisinde çalışılır.",
-   "sablon": "tmmob",
-   "regule": false,
-   "oda_kaydi": true
   },
   "VERİ BİLİMİ VE ANALİTİĞİ": {
    "alan": "U02",
@@ -4391,18 +4213,6 @@
    "regule": false,
    "oda_kaydi": true
   },
-  "YAPAY ZEKA VE MAKİNE ÖĞRENMESİ": {
-   "alan": "U02",
-   "ozel": "Makine öğrenmesi ve veri rolleri; araştırma tarafı için yüksek lisans sık tercih edilir.",
-   "regule": false
-  },
-  "YAPAY ZEKA VE VERİ MÜHENDİSLİĞİ": {
-   "alan": "U02",
-   "ozel": "Veri altyapısı (veri mühendisliği) ve yapay zekâ uygulamaları; bulut ve veritabanı becerisi aranır.",
-   "sablon": "tmmob",
-   "regule": false,
-   "oda_kaydi": true
-  },
   "YAZILIM MÜHENDİSLİĞİ": {
    "alan": "U02",
    "ozel": "Web, mobil ve kurumsal yazılım geliştirme; iyi bir GitHub/proje geçmişi işe girişi hızlandırır.",
@@ -4488,11 +4298,6 @@
    "regule": false,
    "oda_kaydi": true
   },
-  "İKTİSAT": {
-   "alan": "U10",
-   "ozel": "Bankacılık, finans, araştırma ve kamu sınavları (uzman yardımcılığı, müfettişlik); SMMM yolu da açıktır.",
-   "regule": false
-  },
   "İLAHİYAT": {
    "alan": "U08",
    "regule": true,
@@ -4552,13 +4357,6 @@
    "alan": "U11",
    "ozel": "Görsel iletişim, kurumsal kimlik ve iletişim yönetimi.",
    "regule": false
-  },
-  "İLKÖĞRETİM MATEMATİK ÖĞRETMENLİĞİ": {
-   "alan": "U07",
-   "sablon": "ogretmenlik",
-   "regule": true,
-   "ozel": "Ortaokul matematik öğretmenliği.",
-   "son_kontrol": "2026-10-10"
   },
   "İMALAT MÜHENDİSLİĞİ": {
    "alan": "U01",
