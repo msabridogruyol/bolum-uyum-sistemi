@@ -57,7 +57,9 @@ def _puan_araligi(puan: float) -> str:
 
 def _yorumlari_ekle(db: Session, sonuclar: list[KatmanSonucSatiri]) -> list[KatmanSonucSatiri]:
     """Her sonuç satırına, gelisim_yorum_havuzu'ndan puana uygun yorumu ekler."""
+    kodlar = dict(db.query(Degisken.id, Degisken.kod).filter(Degisken.id.in_([x.degisken_id for x in sonuclar] or [-1])).all())
     for s in sonuclar:
+        s.degisken_kod = kodlar.get(s.degisken_id)
         aralik = _puan_araligi(s.puan)
         satir = db.execute(
             text("""

@@ -126,7 +126,8 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
     # [2026-10-14] Güçlü yön yalnızca eşiği (62) geçen özelliktir; eşiği geçen yoksa liste boş kalır (yedek doldurma yok).
     # Değerler (K1, D…) yorum.py'deki gibi güçlü yön sayılmaz; "önem verdiği değerler" olarak ayrı verilir.
     v["gucluler"] = [x for x in sirali if guclu_mu(x["ham"]) and not str(x.get("kod") or "").startswith("D")][:6]
-    v["gelisim"] = [x for x in reversed(sirali) if gelisime_acik_mi(x["ham"])][:5]
+    # [2026-10-18] Değerler (D) geliştirilecek eksik değildir; gelişime açık listesine girmez
+    v["gelisim"] = [x for x in reversed(sirali) if gelisime_acik_mi(x["ham"]) and not str(x.get("kod") or "").startswith("D")][:5]
 
     # Bölüm önerileri + nedenleri (tamamlanmış ve K5 bitmiş tur)
     from app.core.dal_servisi import bekleyen_dal_var_mi
@@ -241,8 +242,8 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
     for x in odak[:4]:
         # [2026-10-17] değerler bir eksik değil, karar konusudur: gelişim alanlarına değil, dikkat edileceklere yazılır
         if str(x.get("kod") or "").startswith("D"):
-            T.append(f"{x['ad']}: {hedef['ad']} alanında çalışanların çoğuna göre senin için daha az önemli; karar verirken dikkate al." if sen else
-                     f"{x['ad']}: {hedef['ad']} alanında çalışanların çoğuna göre öğrenci için daha az önemli; karar verirken dikkate alınmalı.")
+            T.append(f"{x['ad']}: {hedef['ad']} bölümünün öne çıkardığına göre senin için daha az önemli; karar verirken dikkate al." if sen else
+                     f"{x['ad']}: {hedef['ad']} bölümünün öne çıkardığına göre öğrenci için daha az önemli; karar verirken dikkate alınmalı.")
         else:
             W.append(f"{x['ad']}: {hedef['ad']} bölümünün beklediği düzeyin altında")
     for x in v["gelisim"][:4]:
@@ -384,7 +385,7 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
     if tamam_turlar and not profil_gizli:
         guclu = db.execute(text("""
             SELECT d.ad, avg(s.puan) AS o, d.kod FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
-             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND d.kod <> 'P4' GROUP BY d.ad, d.kod ORDER BY o DESC"""), {"t": tamam_turlar}).all()
+             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND d.kod <> 'P4' AND left(d.kod, 1) <> 'D' GROUP BY d.ad, d.kod ORDER BY o DESC"""), {"t": tamam_turlar}).all()
     else:
         guclu = []
     liste = []

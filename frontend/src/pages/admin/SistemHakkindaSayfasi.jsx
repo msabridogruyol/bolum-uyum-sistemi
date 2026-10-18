@@ -46,7 +46,7 @@ export default function SistemHakkindaSayfasi() {
       <Bolum ikon="🎯" baslik="1. Sistemin Genel Amacı" varsayilanAcik>
         <p style={{ marginBottom: 10 }}>
           Sistem, bir öğrencinin değerler, kişilik, iş ortamı tercihleri ve bilişsel eğilimlerini ölçüp,
-          bunu 301 üniversite bölümünün "beklenen profili" ile karşılaştırarak kişiselleştirilmiş bölüm
+          bunu sistemdeki 278 üniversite bölümünün "beklenen profili" ile karşılaştırarak kişiselleştirilmiş bölüm
           önerileri sunar. Süreç 5 ana aşamadan oluşur:
         </p>
         <Madde>Öğrenci Değerlendirmesi (K1-K5) — öğrenciden veri toplama</Madde>
@@ -84,13 +84,13 @@ export default function SistemHakkindaSayfasi() {
       <Bolum ikon="🧬" baslik="3. Aşama 2 — Bölüm-Meslek Eşleştirme Pipeline'ı (Offline)">
         <p style={{ marginBottom: 10 }}>
           Bu aşama öğrenciden bağımsızdır — <b>periyodik olarak</b> (örn. 6 ayda bir), yöneticinin kendi
-          bilgisayarında çalıştırdığı bir işlemdir. Amaç: 301 bölümün her birinin, 31 değişkende
+          bilgisayarında çalıştırdığı bir işlemdir. Amaç: 278 bölümün her birinin, 31 değişkende
           <b> "beklenen profilini"</b> (agirlik_degeri) hesaplamak. Pipeline betikleri bu kod deposunda değildir;
           sunucu yalnızca çıktıyı (xlsx/csv) alır. Admin panelindeki "pipeline durumu" uç noktası yer tutucudur
           (iş kuyruğu kurulmadı).
         </p>
         <Madde>Meslek veri kaynağı: <b>ESCO</b> (Avrupa Birliği'nin resmi meslek sınıflandırması) — 3.039 meslek, her biri için gerçek, uzmanlarca yazılmış açıklama içerir</Madde>
-        <Madde>Bölüm veri kaynağı: sistemin kendi 301 bölümü, her biri için yazılmış kısa açıklama</Madde>
+        <Madde>Bölüm veri kaynağı: sistemin kendi 278 bölümü (2026-10-18: ayırt edilemeyen 21 grup birleştirildi), her biri için yazılmış kısa açıklama</Madde>
         <Madde>Her meslek, tam açıklama metninin anlamsal benzerliğine göre bölümlerle eşleştirilir (benzerlik skoru)</Madde>
         <Madde>Bir bölüme "yakın" mesleklerin puanları ağırlıklı ortalamayla birleştirilip o bölümün 31 değişkenlik profili çıkarılır; bir değişkende veri yoksa skor motoru nötr 50 kullanır</Madde>
         <Madde><b>etkin_meslek_sayisi</b> ve <b>agirlikli_varyans</b>, bu hesaplamanın ne kadar güvenilir olduğunun göstergesidir (admin-only, öğrenciye asla gösterilmez); sıralamada eşitlik bozucu olarak da kullanılır</Madde>
@@ -211,7 +211,7 @@ export default function SistemHakkindaSayfasi() {
 
       <Bolum ikon="📊" baslik="5. Aşama 4 — Sonuç Sunumu ve Gizlilik Kuralları">
         <p style={{ marginBottom: 10 }}>Öğrenciye üç farklı sonuç ekranı sunulur:</p>
-        <Madde><b>Bölüm Uyumum</b> — yalnızca K1-K4'ün 4'ü de bitince ve açılan K5 alanları tamamlanınca (yoksa 409 döner), en yüksek uyumlu <b>en fazla 10</b> bölüm (API üst sınırı 10; arayüz 20 istese de 10 döner). Her bölüm için "Neden bu bölüm?" açıklaması: en fazla 3 örtüşen güçlü yön + öğrencinin bunu gösteren seçimleri, K5 notu ve bölüme özgü bir dikkat notu</Madde>
+        <Madde><b>Bölüm Uyumum</b> — yalnızca K1-K4'ün 4'ü de bitince ve açıldıysa K5 iş türü soruları tamamlanınca (yoksa 409 döner), en yüksek uyumlu <b>en fazla 10</b> bölüm (API üst sınırı 10; arayüz 20 istese de 10 döner). Her bölüm için "Neden bu bölüm?" açıklaması: en fazla 3 örtüşen güçlü yön + öğrencinin bunu gösteren seçimleri, K5 notu ve bölüme özgü bir dikkat notu</Madde>
         <Madde><b>Tüm Bölümleri Keşfet</b> — profil eksik olsa bile çalışır; bölümün en yüksek ağırlıklı 5 değişkenini ve (hesaplandıysa) uyum yüzdesini gösterir</Madde>
         <Madde><b>Genel Sonuçlar</b> — K1-K4'ün özet profili, gerçek "öne çıkan güçler/gelişim alanları"</Madde>
         <p style={{ marginTop: 10, padding: '10px 12px', background: 'var(--rel, #fdecea)', borderRadius: 8, color: 'var(--re)' }}>
@@ -230,9 +230,9 @@ export default function SistemHakkindaSayfasi() {
           <code> hedef_degisim_hakki</code>). Okul yetkilisi/süper admin değişikliği hak harcamaz ve ek hak verebilir;
           eski bir hedefe dönülünce ilerleme korunur.
         </p>
-        <Madde><b>Gap Analizi:</b> her değişkende göreli fark (katman içi 50 ± 15 ölçekte öğrenci − bölüm) hesaplanır, 5 kademeye ayrılır: ≥15 belirgin üstün, ≥5 üstün, uyumlu, altında, ≤−15 belirgin altında</Madde>
+        <Madde><b>Gap Analizi:</b> her değişkende göreli fark (katman içi 50 ± 15 ölçekte öğrenci − bölüm) hesaplanır, 5 kademeye ayrılır: ≥15 belirgin fazla, ≥5 fazla, ±5 içi uyumlu, eksik, ≤−15 belirgin eksik (fark yönsüzdür; fazlalık avantaj sayılmaz)</Madde>
         <Madde><b>Öncelik Skoru:</b> fark büyüklüğü × bölüm ağırlığı × katman ağırlığı × bölümün o özellikteki ayırt ediciliği (bölümler arası yüzdelik) — hangi boyutun geliştirilmesi en çok fark yaratır, onu öne çıkarır</Madde>
-        <Madde><b>Sen ve Bölümün — fark sınıfları (2026-10-17):</b> uyum puanı farkın yönüne bakmadığı için (100 − |öğrenci − bölüm|) ekran da yakınlık dilinde: |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz. Değerlerde (K1) etiket "senin için daha önemli / daha az önemli". P4 (kaygı) istisna: yalnızca fazlası fark sayılır. Güçlü yön = uyumlu (±5) ve öğrencinin kendi profilinde yüksek (katman içi ≥ 60), değerler hariç. "Neden bu bölüm?" dikkat notu iki yönlü: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not, 3+ bölümde tekrarlanan not gösterilmez</Madde>
+        <Madde><b>Sen ve Bölümün — fark sınıfları (2026-10-17):</b> uyum puanı farkın yönüne bakmadığı için (100 − |öğrenci − bölüm|) ekran da yakınlık dilinde: |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz. Değerlerde (K1) etiket "senin için daha önemli / daha az önemli". P4 (kaygı) istisna: yalnızca fazlası fark sayılır. Güçlü yön = uyumlu (±5) ve öğrencinin kendi profilinde yüksek (katman içi ≥ 60), değerler (D) ve P4 hariç. "Neden bu bölüm?" dikkat notu iki yönlü: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not, 3+ bölümde tekrarlanan not gösterilmez</Madde>
         <Madde><b>Cevap analizi ve uyum matrisleri (2026-10-17):</b> öğrenci detayında okul yetkilisi (yalnızca kendi okulu) ve süper admin görür, öğrenci görmez. Üç matris: cevap matrisi (soru × özellik katkısı), uyum matrisi (özellik × bölüm: fark ve renk sınıfı, ya da katkı) ve yöntem matrisi (bölüm × 10 ÇKKV yöntemi + Kendall W; yalnızca süper admin). Katkı "bu özellik olmasaydı" yöntemiyle hesaplanır (özellik çıkarılıp 10 yöntem yeniden çalıştırılır; gösterilen puanla aynı hesap). Varsayılan: ilk 10 + hedef + son 3 bölüm, istenen bölüm eklenebilir. Excel'de tüm bölümler; yönetici PDF raporunun sonunda "Uyum açıklaması" eki (ilk 5 + hedef, katkılar, soru–cevap dökümü). Her görüntüleme / indirme işlem kaydına yazılır</Madde>
         <Madde><b>Raporlarda hedef bölüm kıyası (2026-10-17):</b> öğrenci, veli ve yönetim raporlarında "Hedef bölüm kıyası": hedef + seçilen bölümler (en çok 6, hedef dahil; A4'e sığan sütun sayısı). Her bölüm için puan farkı ve farkı en çok yaratan özellikler (hedefteki katkı − bölümdeki katkı). Sorular / cevaplar yalnızca yönetim raporunun ekinde; öğrenci ve veli raporunda yok. Bölümler "Rapor al" penceresinden seçilir (varsayılan hedef + ilk öneriler); hedef yoksa uyarıyla seçilen bölümlerin sonuçları gösterilir. Öğrencinin kendi indirdiği ve toplu raporlarda varsayılan seçim kullanılır</Madde>
         <Madde><b>Gelişim Yol Haritası:</b> içeriği olan en öncelikli 3 gelişim alanı + en belirgin 2 güçlü yön; adımlar 3 aşamaya dağılır: "Bu hafta başla" (1-2 hafta) / "Önümüzdeki 1-3 ay" / "6-12 ay". Kaynak önerileri (kitap, film, kişi, aktivite…) admin panelinden elle girilir</Madde>

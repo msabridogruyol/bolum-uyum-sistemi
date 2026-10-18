@@ -85,7 +85,7 @@ def uyum_matrisi(db: Session, o: Ogrenci, tur: OgrenciDegerlendirmeTuru, bolum_i
         hucreler = []
         for j in range(len(girdi.degisken_idler)):
             fark = float(girdi.ogrenci_olcekli[j] - girdi.bolum_olcekli[i, j])
-            sinif = fark_sinifi(fark)
+            sinif = fark_sinifi(fark, bool(getattr(degisken.get(girdi.degisken_idler[j]), 'ters_yonlu', False)))
             hucreler.append({"bolum": round(float(girdi.bolum_olcekli[i, j]), 1), "fark": round(fark, 1),
                              "sinif": sinif, "renk": fark_rengi(sinif), "uyum": round(float(girdi.performans[i, j]), 1),
                              "katki": round(float(K[i, j]), 2)})

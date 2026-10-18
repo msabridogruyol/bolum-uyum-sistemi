@@ -155,7 +155,7 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
         y["ozet"].append("Değerlendirmen henüz tamamlanmadı; yorumlar tüm bölümler bitince hazırlanır." if sen else
                          "Değerlendirme henüz tamamlanmadı; yorumlar tüm bölümler bitince hazırlanır.")
         y["yap"].append(("Kalan bölümleri sakin bir zamanda, tek oturumda bitir." if durum == "devam" else
-                         "Sana özel açılan alan sorularını tamamla; önerilerin bunlarla netleşir.") if sen else
+                         "Sana özel açılan iş türü sorularını tamamla; uyumu yüksek bölümlerinin kendi aralarındaki sırası bunlarla netleşir.") if sen else
                         "Öğrencinin kalan bölümleri tamamlaması için uygun bir zaman planlanmalı.")
         return y
 

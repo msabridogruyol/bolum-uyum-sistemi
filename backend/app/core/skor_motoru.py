@@ -766,11 +766,11 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
                 continue
             ad, deger = KISA_AD[kodlar[j]], kodlar[j].startswith("D")
             if yon == "eksik":
-                metin = (f"Bu bölümde çalışanlar için {ad} çok önemli; senin önceliklerinde bu daha geri planda." if deger else
+                metin = (f"Bu bölüm {ad} değerini öne çıkarıyor; senin önceliklerinde bu daha geri planda." if deger else
                          f"Bu bölüm yüksek düzeyde {ad} bekliyor; senin cevaplarında bu yön daha geri planda.")
             else:
-                metin = (f"{_buyuk_bas(ad)} senin için bu bölümde çalışanların çoğundan daha önemli; bölüm bu beklentini her zaman karşılamayabilir." if deger else
-                         f"Bu bölümde {ad} daha az öne çıkar; senin cevaplarında ise bu yön güçlü. Bu yönünü bölümde daha az kullanabilirsin.")
+                metin = (f"{_buyuk_bas(ad)} senin için bu bölümün öne çıkardığından daha önemli; bölüm bu beklentini her zaman karşılamayabilir." if deger else
+                         f"Bu bölümde {ad} daha az öne çıkar; senin cevaplarında ise bu yön daha öne çıkıyor. Bu yönünü bölümde daha az kullanabilirsin.")
             sonuc[bid]["dikkatler"].append({"ozellik": ad, "yon": yon, "metin": metin})
         if sonuc[bid]["dikkatler"]:
             sonuc[bid]["dikkat"] = sonuc[bid]["dikkatler"][0]

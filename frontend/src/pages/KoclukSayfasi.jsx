@@ -36,8 +36,8 @@ function farkBilgisi(g) {
 // [2026-10-10] Özet kutularındaki üç grubun ne anlama geldiği (öğrenci dilinde)
 const GRUP_ACIKLAMA = {
   uyumlu: { ad: 'bölümle uyumlu', metin: 'Bu özelliklerde bölümün beklediği düzeydesin. Uyumunu en çok bunlar destekler. Güçlü yönlerin de bu gruptan, senin en yüksek olduğun özelliklerden seçilir.' },
-  fazla: { ad: 'beklenenden fazla', metin: 'Bu özelliklerde bölümün beklediğinden fazlasın. Bu bir eksiklik değil, ama bölümle aranızda bir fark: bu yönünü bölümde daha az kullanabilirsin. Değerlerde ise bu değer senin için bu alanda çalışanların çoğundan daha önemli demek. Karar verirken dikkate al.' },
-  eksik: { ad: 'beklenenden az', metin: 'Bu özelliklerde bölümün beklediği düzeyin altındasın. Bunlar büyüyebileceğin alanlar; yol haritan bunlar için hazırlandı. Değerlerde ise bu değer senin için bu alanda çalışanların çoğundan daha az önemli demek.' },
+  fazla: { ad: 'beklenenden fazla', metin: 'Bu özelliklerde bölümün beklediğinden fazlasın. Bu bir eksiklik de avantaj da değil, bölümle aranda bir fark: bu yönünü bu bölümde daha az kullanabilirsin; sana uyup uymadığını sına. Değerlerde ise bu değer senin için, bölümün öne çıkardığından daha önemli demek; bölümün bu yönü sana uyar mı, karar verirken dikkate al.' },
+  eksik: { ad: 'beklenenden az', metin: 'Bu özelliklerde bölümün beklediği düzeyin altındasın. Yol haritan bunların içinden bölüm için en ayırt edici en fazla 3 alana odaklanır: beceriler çalıştıkça gelişir, kişilik yönlerin küçük alışkanlıklarla esneyebilir, ilgileri deneyerek keşfedersin. Değerlerde ise bu değer senin için, bölümün öne çıkardığından daha az önemli demek; geliştirilecek bir eksik değil, karar verirken dikkate alacağın bir fark.' },
 }
 // [2026-10-09] Sadeleştirildi: yalnızca "Başladım" ve "Yaptım"
 const DURUMLAR = [
@@ -316,7 +316,7 @@ function IlhamSekmesi({ kaynaklar }) {
           </section>
         ))
       ) : (
-        [['gelisim', '🌱 Gelişim alanların için'], ['guclu', '💪 Güçlü yönlerini büyütmek için']].map(([g, baslik]) => {
+        [['gelisim', '🌱 Gelişim alanların için'], ['guclu', '💪 Güçlü yönlerini kullanmak için']].map(([g, baslik]) => {
           const alanlar = kaynaklar.alanlar.filter((a) => a.grup === g)
             .map((a) => ({ ...a, liste: a.kaynaklar.filter((k) => !tip || k.tip === tip) })).filter((a) => a.liste.length)
           if (!alanlar.length) return null
@@ -615,7 +615,7 @@ function GucluSekmesi({ plan, onDurum }) {
   if (!plan.guclu_yonler.length) return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefe göre henüz öne çıkan bir güçlü yönün yok. Güçlü yön, hem bölümün beklediği düzeyde olduğun hem de kendi profilinde yüksek olan özelliklerindir. Katmanları yeniden tamamladığında burası güncellenir.</div></div>
   return (
     <>
-      <div className="ps" style={{ marginBottom: 14 }}>Bu özelliklerde hem yüksek düzeydesin hem de {plan.hedef_bolum_adi} bu düzeyi bekliyor. Aşağıdaki adımlarla onları gösterebileceğin bir başarıya çevirebilirsin.</div>
+      <div className="ps" style={{ marginBottom: 14 }}>Bu özellikler kendi profilinde öne çıkıyor ve {plan.hedef_bolum_adi} de bu düzeyi bekliyor. Aşağıdaki adımlarla onları somut deneyimlere dönüştürebilirsin.</div>
       {plan.guclu_yonler.map((g) => (
         <section key={g.degisken_kod} className="koc-yatay">
           <div className="koc-yatay-sol">

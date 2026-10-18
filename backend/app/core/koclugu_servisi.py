@@ -149,7 +149,7 @@ def fark_aciklamasi(s, bolum_adi: str) -> str:
     kod, sinif, ic = s.degisken.kod, s.fark_sinifi, ICERIK.get(s.degisken.kod, {})
     if sinif == "uyumlu":
         if kod.startswith("D"):
-            metin = "Bu değer senin için {bolum} alanında çalışanların çoğu kadar önemli."
+            metin = "Bu değer senin için, {bolum} alanında genellikle olduğu kadar önemli."
         elif s.degisken.ters_yonlu:
             metin = "Strese karşı hassasiyetin {bolum} için beklenen düzeyi aşmıyor."
         elif guclu_yon_mu(s) and ic.get("guclu_neden"):
@@ -360,7 +360,7 @@ GUCLU_YON_SAYISI = 2
 ADIM_DURUMLARI = ("planlandi", "devam_ediyor", "tamamlandi")
 ASAMA_BILGI = {
     "simdi": ("1. Aşama · Bu hafta başla", "Kısa, hemen yapılabilecek adımlar — 1-2 hafta"),
-    "bu_donem": ("2. Aşama · Önümüzdeki 1-3 ay", "Düzenli pratik ve deneyimle becerini oturt"),
+    "bu_donem": ("2. Aşama · Önümüzdeki 1-3 ay", "Düzenli pratik ve deneyimlerle ilerle; neyin sana uyduğunu gör"),
     "uzun_vadede": ("3. Aşama · 6-12 ay", "Kalıcı alışkanlık ve büyük adımlar"),
 }
 _KUCUK = {"ve", "ile", "veya"}
@@ -461,6 +461,23 @@ def bolum_ayirt_ediciligi(db: Session, hedef_bolum_id: int, degisken_idler: list
     return {d: float((M[:, j] < M[h, j]).sum() / (n - 1) * 100) for j, d in enumerate(idler)}
 
 
+def _orta_onem_metni(d: Degisken, bolum_adi: str) -> str:
+    """Bölümün bu özellikte orta düzeyde ayırt edici olduğu odak alanı için açıklama — özellik türüne göre
+    (değer: karar konusu; P4: fazla hassasiyet; ilgi: dene ve keşfet; kişilik / beceri: küçük adımlarla esnet / geliştir)."""
+    kod = d.kod or ""
+    if kod.startswith("D"):
+        return (f"{bolum_adi} alanında bu değer orta düzeyde önemli; senin için ise daha az önemli. Bu bir eksik değil. "
+                f"Bölümün bu yönünün sana uyup uymadığını bilerek karar ver.")
+    if d.ters_yonlu:
+        return (f"{bolum_adi} için bu alan orta düzeyde önemli. Strese karşı hassasiyetin, bölümün beklediğinden biraz fazla. "
+                f"Aşağıdaki küçük adımlar, yoğun dönemlerde sakin kalmana yardım eder.")
+    if kod.startswith("A"):
+        return (f"{bolum_adi} için bu alan orta düzeyde önemli. Bu ilgin, bölümün beklediğinden daha az öne çıkıyor. "
+                f"Aşağıdaki adımlarla bu tür işleri deneyip gerçekten ilgini çekip çekmediğini görebilirsin.")
+    return (f"{bolum_adi} için bu alan orta düzeyde önemli. Bu yönün, bölümün beklediğinden daha az öne çıkıyor. "
+            f"Küçük ve düzenli adımlarla bu yönünü geliştirirsen bölümde işin kolaylaşır.")
+
+
 def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, gap_satirlari: list[GapSatiri]) -> dict:
     """
     Yol haritası mantığı:
@@ -507,13 +524,8 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
             "degisken_id": s.degisken.id, "degisken_kod": s.degisken.kod, "degisken_adi": s.degisken.ad,
             "kategori": s.kategori, "fark_sinifi": s.fark_sinifi, "oncelik_sirasi": oncelik_sirasi,
             "nedir": ic["nedir"],
-            "neden_onemli": (ic["gelisim_neden"].replace("{bolum}", bolum_adi) if _ayirt(s) >= AYIRT_GUCLU_ESIK else
-                             # [2026-10-17] değerler "güçlendirilmez": fark bir karar konusudur
-                             f"{bolum_adi} alanında çalışanlar için bu değer orta düzeyde önemli; senin için ise daha az önemli. "
-                             f"Bu bir eksik değil. Bölümün bu yönünün sana uyup uymadığını bilerek karar ver."
-                             if s.degisken.kod.startswith("D") else
-                             f"{bolum_adi} için bu alan orta düzeyde önemli. Senin bu alandaki eğilimin, bölümün beklediğinin "
-                             f"altında. Küçük ve düzenli adımlarla güçlendirirsen bölümde işin kolaylaşır."),
+            "neden_onemli": (ic["gelisim_neden"].replace("{bolum}", bolum_adi) if _ayirt(s) >= AYIRT_GUCLU_ESIK
+                             else _orta_onem_metni(s.degisken, bolum_adi)),
             "durum_tespiti": s.gelisim_karti.durum_tespiti if s.gelisim_karti else None,
         })
         for sira, ham in enumerate(ic["gelisim"], 1):

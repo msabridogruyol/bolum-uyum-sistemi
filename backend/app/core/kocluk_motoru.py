@@ -43,7 +43,7 @@ TUR_KAZANIM = {
     "proje": "Elinde gösterebileceğin somut bir iş olur.",
     "aliskanlik": "Küçük ama düzenli bir alışkanlık kazanırsın; sınav döneminde de işine yarar.",
     "okuma": "Konuya farklı bir bakış ve sohbetlerde kullanabileceğin fikirler kazanırsın.",
-    "kurs": "Kalıcı bir beceri ve özgeçmişine yazabileceğin bir belge kazanırsın.",
+    "kurs": "Yeni bir beceri kazanırsın; kurs belge veriyorsa onu da saklayabilirsin.",
     "yansitma": "Kendini daha net tanırsın; kararlarının arkasındaki \"neden\"i söyleyebilirsin.",
 }
 ALAN_KAZANIM = {

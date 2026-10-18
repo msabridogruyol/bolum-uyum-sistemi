@@ -63,6 +63,7 @@ class KatmanSonucSatiri(BaseModel):
     degisken_id: int
     degisken_adi: str
     puan: float
+    degisken_kod: str | None = None   # [2026-10-18] ekranlar değerleri (D) ve P4'ü güçlü / gelişim listelerinden ayırabilsin
     # --- Gelişim yorumu (sonradan eklendi, opsiyonel — geriye dönük uyumlu) ---
     durum_tespiti: str | None = None
     aksiyon_onerisi: str | None = None

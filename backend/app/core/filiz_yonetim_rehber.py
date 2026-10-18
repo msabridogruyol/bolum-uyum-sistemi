@@ -58,7 +58,7 @@ YONETIM_SSS: list[tuple[str, str, str, str | None]] = [
 # Süper admin: Sistem Hakkında sayfasının bölüm dizini (sayfadaki numaralı başlıklar; bağlantı #sh-N bölümü açar)
 SISTEM_HAKKINDA = [
     (1, "Sistemin Genel Amacı", "amac genel asama surec nasil calisir"),
-    (2, "Öğrenci Değerlendirmesi (K1-K5)", "degerlendirme katman k1 k2 k3 k4 k5 deger kisilik ilgi alan derinlesme degisken"),
+    (2, "Öğrenci Değerlendirmesi (K1-K5)", "degerlendirme katman k1 k2 k3 k4 k5 deger kisilik yetkinlik ilgi is turu tercihleri degisken"),
     (3, "Bölüm-Meslek Eşleştirme Pipeline'ı", "pipeline esco meslek eslestirme agirlik taslak onet yukleme bolum profili"),
     (4, "Uyum Hesaplama (10 Yöntemli Karar Motoru)", "uyum skor hesaplama motor yontem puan formul"),
     (5, "Sonuç Sunumu ve Gizlilik Kuralları", "sonuc sunum gizlilik kural siralama kesfet"),

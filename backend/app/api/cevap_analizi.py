@@ -39,10 +39,11 @@ from app.models import (
 router = APIRouter(prefix="/yonetim/ogrenci", tags=["Cevap analizi (süper admin + okul yetkilisi)"])
 
 TIP_ADI = {"likert": "Likert", "sjt": "Durum sorusu", "kutup": "İki uç", "kontrol": "Dikkat kontrolü"}
-OKUMA_NOTU = ("Uyum puanı göreli: 301 bölüm içinde öğrencinin profiline yakınlık (100 = en yakın, 0 = en uzak). "
+OKUMA_NOTU = ("Uyum puanı göreli: tüm bölümler içinde öğrencinin profiline yakınlık (100 = en yakın, 0 = en uzak). "
               "Katkı = bu özellik olmasaydı puan ne kadar değişirdi (artı: yükseltiyor, eksi: düşürüyor); katkı da göreli "
               "olduğundan, farkı olan bir özellik öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan daha yakınsa artı çıkabilir. "
-              "Fark = öğrenci − bölüm beklentisi (katman içi ölçek); |fark| < 5 uyumlu, 5–15 fazla / az, 15+ belirgin.")
+              "Fark = öğrenci − bölüm beklentisi (katman içi ölçek, yönsüz): |fark| < 5 uyumlu, 5–15 fazla / eksik, 15+ belirgin fazla / belirgin eksik. "
+              "Fazla olmak da uyumsuzluktur, avantaj sayılmaz; duygusal hassasiyette (P4) yalnızca fazlası fark sayılır.")
 
 
 def _ogrenci_ve_tur(db: Session, yon: AdminKullanici, ogrenci_id: str, tur_no: int | None):

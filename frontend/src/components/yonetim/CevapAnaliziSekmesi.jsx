@@ -378,7 +378,7 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
         <>
           <div className="yp-ince" style={{ margin: '0 0 12px', lineHeight: 1.55 }}>
             Her bölümde puanı en çok yükselten ve düşüren özellikler. Katkı = bu özellik hesaba katılmasaydı uyum puanı ne kadar değişirdi
-            (gösterilen puanla aynı hesap). Puan ve katkı göreli: 301 bölüm içinde öğrenciye yakınlık. Farkı olan bir özellik, öğrenci o
+            (gösterilen puanla aynı hesap). Puan ve katkı göreli: sistemdeki tüm bölümler içinde öğrenciye yakınlık. Farkı olan bir özellik, öğrenci o
             özellikte bu bölüme diğer bölümlerin çoğundan daha yakınsa puanı yine yükseltebilir. Özelliğe tıklayınca o cevaplar açılır.
           </div>
           <NedenDokumu m={m} onOzellik={ozellikGoster} />
