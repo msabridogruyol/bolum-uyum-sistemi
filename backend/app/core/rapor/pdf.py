@@ -448,7 +448,7 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum", "Neden?"],
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or [])]
                          for b in v["bolumler"]], [8 * mm, 52 * mm, 34 * mm, 14 * mm, 66 * mm]))
-        h.append(st.p("Uyum, bölümün 301 bölüm içinde senin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
+        h.append(st.p("Uyum, bölümün 278 bölüm içinde senin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
@@ -521,7 +521,7 @@ def veli_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum"],
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}"] for b in v["bolumler"][:6]],
                         [10 * mm, 90 * mm, 52 * mm, 22 * mm]))
-        h.append(st.p("Uyum, bölümün 301 bölüm içinde çocuğunuzun profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
+        h.append(st.p("Uyum, bölümün 278 bölüm içinde çocuğunuzun profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
         h.append(st.p("Uyum yüzdesi; çocuğunuzun profilinin bölümün gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir, "
                       "başarı ya da kazanma olasılığı anlamına gelmez.", st.not_))
     if v["hedef"]:
@@ -589,7 +589,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or []),
                           b.get("dikkat") or ""] for b in v["bolumler"]],
                         [7 * mm, 40 * mm, 27 * mm, 12 * mm, 45 * mm, 43 * mm], kucuk=True))
-        h.append(st.p("Uyum, bölümün 301 bölüm içinde öğrencinin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
+        h.append(st.p("Uyum, bölümün 278 bölüm içinde öğrencinin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
@@ -712,7 +712,7 @@ def _uyum_aciklama_eki(st, ek: dict) -> list:
     m = ek.get("matris")
     h = [PageBreak(), st.p("Ek: Uyum açıklaması", st.h2),
          st.p("Bu ek yalnızca okul yetkilisi / rehberlik içindir; öğrenci ve veli raporlarında yer almaz. Uyum puanı göreli: "
-              "301 bölüm içinde öğrencinin profiline yakınlık (100 = en yakın). <b>Fark</b> = öğrenci − bölüm beklentisi "
+              "278 bölüm içinde öğrencinin profiline yakınlık (100 = en yakın). <b>Fark</b> = öğrenci − bölüm beklentisi "
               "(katman içi ölçek): |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin (kırmızı). "
               "<b>Katkı</b> = bu özellik hesaba katılmasaydı uyum puanı ne kadar değişirdi (artı yükseltiyor, eksi düşürüyor). "
               "Katkı da göreli bir ölçüdür: bir özellikte fark olsa bile öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan "

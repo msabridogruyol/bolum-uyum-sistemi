@@ -6,7 +6,7 @@ POST /ogrenci/sozluk/bildir                 — [2026-10-11] "Bu tanımda hata v
 GET  /admin/sozluk-bildirimleri             — süper admin: açık bildirimler
 PUT  /admin/sozluk-bildirimleri/{id}        — süper admin: {durum: 'cozuldu' | 'yeni'}
 GET /ogrenci/sozluk/ek
-  bolumler   : [{id, ad, t}]                 — 301 bölüm, açıklama = detay.ozet
+  bolumler   : [{id, ad, t}]                 — 278 bölüm, açıklama = detay.ozet
   meslekler  : [{ad, t, bolumler:[{id, ad}]}] — bölüm detaylarındaki meslekler (tekil ada göre birleştirilir)
   ozellikler : [{ad, t, katman}]             — değerlendirmede ölçülen özellikler (açıklaması olanlar)
 

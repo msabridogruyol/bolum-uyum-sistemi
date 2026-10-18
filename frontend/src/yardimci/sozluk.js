@@ -51,8 +51,8 @@ export const SOZLUK = [
     t: 'Değerlendirmeyi kurallara uygun, kendi başına yaptığını gösteren puan. Sekme değiştirmek, tam ekrandan çıkmak ya da kopyalamaya çalışmak gibi durumlar bu puanı düşürür. Kamerayı açmamak puanı düşürmez.',
     o: 'Test sırasında 2 kez başka sekmeye geçtiysen güven puanın biraz düşer.' },
   { k: 'uyum', ad: 'Uyum (uyum puanı)', g: 'Değerlendirme', es: ['uyum puanı', 'uyum yüzdesi', 'uyum oranı', 'bölüm uyumu', '% uyum'],
-    t: 'Bir bölümün, senin özelliklerine 301 bölüm içinde ne kadar yakın olduğu: 100 sana en yakın bölüm, 0 en uzak bölüm. Başarı ya da kazanma tahmini değildir; "bu yol sana ne kadar benziyor" sorusunun cevabıdır.',
-    o: 'Psikoloji için %82 uyum: Psikoloji, 301 bölüm içinde senin özelliklerine en yakın bölümler arasında.' },
+    t: 'Bir bölümün, senin özelliklerine 278 bölüm içinde ne kadar yakın olduğu: 100 sana en yakın bölüm, 0 en uzak bölüm. Başarı ya da kazanma tahmini değildir; "bu yol sana ne kadar benziyor" sorusunun cevabıdır.',
+    o: 'Psikoloji için %82 uyum: Psikoloji, 278 bölüm içinde senin özelliklerine en yakın bölümler arasında.' },
   { k: 'profil', ad: 'Profil', g: 'Değerlendirme', es: ['profilin', 'profili', 'profil'], tam: true,
     t: 'Değerlendirmeden çıkan, seni anlatan özelliklerin tamamı. Zamanla değişebilir.' },
   { k: 'ozellik', ad: 'Özellik', g: 'Değerlendirme', es: ['özelliklerin', 'özelliğin', 'özellik'],
@@ -398,7 +398,7 @@ export const terimBul = (k) => _harita.get(k)
 //  2. sozlukGenis.json — bölüm açıklamaları, öğrenci ekranları, sorular ve özellik açıklamalarında geçen ~3.300 terim
 //     (alan terimleri, ders adları, kısaltmalar, resmî/akademik kelimeler). Lise düzeyinde yazıldı ve bağımsız olarak
 //     gözden geçirildi; sayı / maaş / istatistik içermez. Sıkı biçim: [ad, grupNo, tanım, örnek, [yazılışlar]].
-//  3. GET /ogrenci/sozluk/ek — veritabanından 301 bölüm (özet), bölümlerdeki meslekler ve ölçülen özellikler.
+//  3. GET /ogrenci/sozluk/ek — veritabanından 278 bölüm (özet), bölümlerdeki meslekler ve ölçülen özellikler.
 // 2 ve 3 yalnızca sözlük ilk kez kullanıldığında yüklenir (ana paket büyümesin).
 const baslik = (ad) => String(ad || '').toLocaleLowerCase('tr').split(' ')
   .map((w) => (['ve', 'ile', 'veya'].includes(w) ? w : w.charAt(0).toLocaleUpperCase('tr') + w.slice(1))).join(' ')

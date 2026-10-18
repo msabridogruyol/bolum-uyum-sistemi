@@ -1,6 +1,6 @@
 // [2026-10-11] Sistem sözlüğü — arama kutusu + sonuçlar. Filiz panelindeki "Sözlük" sekmesinde, Sözlük penceresinde
 // ve /sozluk sayfasında aynı bileşen kullanılır. Kelime yazılınca anlamı, varsa örnekle birlikte görünür.
-// [2026-10-11] Genişletilmiş sözlük: ~3.300 terim + 301 bölüm + meslekler + özellikler (ilk kullanımda yüklenir).
+// [2026-10-11] Genişletilmiş sözlük: ~3.300 terim + 278 bölüm + meslekler + özellikler (ilk kullanımda yüklenir).
 // Bölüm kartından bölüm bilgi penceresi, meslek kartından ilgili bölümler açılır.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { Link } from 'react-router-dom'

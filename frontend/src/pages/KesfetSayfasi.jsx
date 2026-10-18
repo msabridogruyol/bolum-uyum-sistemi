@@ -56,7 +56,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
     <div className={`pg${secili ? ' pg-genis' : ''}`}>
       {!gomulu && <div className="ph">
         <div className="pt">Tüm Bölümleri Keşfet</div>
-        <div className="ps">301 bölümün hepsi burada. Bir bölüme tıkla. Tanıtımını, mesleklerini, yetkinlik profilini ve üniversitelerini incele.</div>
+        <div className="ps">278 bölümün hepsi burada. Bir bölüme tıkla. Tanıtımını, mesleklerini, yetkinlik profilini ve üniversitelerini incele.</div>
       </div>}
 
       <form onSubmit={ara} style={{ display: 'flex', gap: 8, marginBottom: sonuclar ? 20 : 14 }}>

@@ -2,7 +2,7 @@
 D5, Katman 2 — Tüm Bölümleri Keşfet.
 Kaynak: sistem_genel_anlatim.md D5
 
-301 bölümün tamamı aranabilir; her sonuç için % uyum (varsa, D4'ten —
+278 bölümün tamamı aranabilir; her sonuç için % uyum (varsa, D4'ten —
 hesaplanmamışsa null) + öne çıkan değişkenler + kısa bilgi notu döner.
 
 [ÇIKARIM — SONRADAN DEĞİŞTİRİLDİ]: İlk sürümde bu alan "katman bazlı
@@ -19,7 +19,7 @@ ILIKE'ı, veritabanı collation ayarına bağlı olarak Türkçe'nin dört harfl
 İ/I/ı/i ayrımını doğru çeviremiyor — örneğin "TIP" (düz ASCII I) tam
 yazılınca eşleşiyordu ama "tıp" (Türkçe'ye özel noktasız ı) hiç
 eşleşmiyordu, çünkü veritabanı "ı"yı "I"ya doğru büyütemiyordu. Çözüm:
-arama artık SQL'e bırakılmıyor; 301 bölüm zaten küçük bir küme olduğu
+arama artık SQL'e bırakılmıyor; 278 bölüm zaten küçük bir küme olduğu
 için tamamı çekilip Python'da, Türkçe'ye özel doğru bir küçültme
 fonksiyonuyla karşılaştırılıyor.
 """

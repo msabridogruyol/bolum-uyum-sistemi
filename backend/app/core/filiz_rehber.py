@@ -242,7 +242,7 @@ def k_bolum_oner(b: Baglam, m: str) -> str:
     if not ilk:
         return _hedefsiz(b)
     return (f"Değerlendirmene göre sana en uyumlu bölümler: {_liste([f'{a} (%{p})' for a, p in ilk])}. "
-            "Uyum puanı, 301 bölümü profiline yakınlığına göre sıralar: 100 sana en yakın bölüm, 0 en uzak bölüm. "
+            "Uyum puanı, 278 bölümü profiline yakınlığına göre sıralar: 100 sana en yakın bölüm, 0 en uzak bölüm. "
             "Bölümler sayfasında her bölümün derslerine ve üniversitelerine bakabilirsin. Karşılaştır ile bölümleri yan yana da koyabilirsin.")
 
 
@@ -320,7 +320,7 @@ def k_test(b: Baglam, m: str) -> str:
 
 
 def k_uyum(b: Baglam, m: str) -> str:
-    return ("Her bölümün mezunları belli mesleklerde çalışır ve bu meslekler bazı özellikler ister. Sistem senin özelliklerini 301 bölümün "
+    return ("Her bölümün mezunları belli mesleklerde çalışır ve bu meslekler bazı özellikler ister. Sistem senin özelliklerini 278 bölümün "
             "beklentisiyle karşılaştırır ve bölümleri sana yakınlığına göre sıralar: 100 sana en yakın bölüm, 0 en uzak bölüm. "
             "Yani puan, bölümün senin için diğer bölümlere göre nerede durduğunu gösterir. Bu bir başarı tahmini değildir. Karar verirken ilgini, hayallerini ve ailenle konuştuklarını da düşün.")
 

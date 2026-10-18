@@ -1,6 +1,6 @@
 // [2026-10-11] Sistem Sözlüğü — Filizyol'da geçen kelimeler, lise öğrencisinin anlayacağı dilde.
 // Arama: kelimeyi yaz, anlamı (ve örneği) çıksın. Arama boşken kelimeler konulara göre listelenir (100'erli sayfa).
-// Kapsam: sistem terimleri + bölüm açıklamaları ve ekranlarda geçen ~3.300 terim + 301 bölüm + meslekler + özellikler.
+// Kapsam: sistem terimleri + bölüm açıklamaları ve ekranlarda geçen ~3.300 terim + 278 bölüm + meslekler + özellikler.
 // Filiz panelindeki "Sözlük" sekmesinden "Sözlüğün tamamı" bağlantısı buraya ?q=<arama> ile gelir.
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'

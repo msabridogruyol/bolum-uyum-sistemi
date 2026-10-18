@@ -150,7 +150,7 @@ export default function AnaSayfa() {
                 </li>
               ))}
             </ol>
-            <div className="as-cekirdek-not">Puan, bölümün 301 bölüm içinde sana ne kadar yakın olduğunu gösterir (100 = en yakın).</div>
+            <div className="as-cekirdek-not">Puan, bölümün 278 bölüm içinde sana ne kadar yakın olduğunu gösterir (100 = en yakın).</div>
             <button type="button" className="btn" onClick={() => navigate('/bolumler')}>Tüm önerileri ve nedenlerini gör →</button>
           </div>
           {kocluk && (
@@ -225,7 +225,7 @@ export default function AnaSayfa() {
         <div className="as-baglantilar">
           <button type="button" onClick={() => navigate('/bolumler')}><span>🌟</span><b>Sana uygun bölümler</b><small>Nedenleriyle birlikte</small></button>
           <button type="button" onClick={() => navigate('/bolumler/karsilastir')}><span>⚖️</span><b>Karşılaştır</b><small>2-3 bölümü yan yana koy</small></button>
-          <button type="button" onClick={() => navigate('/bolumler/tum')}><span>🔍</span><b>Tüm bölümler</b><small>301 bölümü keşfet</small></button>
+          <button type="button" onClick={() => navigate('/bolumler/tum')}><span>🔍</span><b>Tüm bölümler</b><small>278 bölümü keşfet</small></button>
           <button type="button" onClick={() => navigate('/profilim')}><span>🧭</span><b>Profilim</b><small>Güçlü yönlerin, katmanların</small></button>
         </div>
       )}

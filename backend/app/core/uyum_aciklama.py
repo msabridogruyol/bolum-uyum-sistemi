@@ -11,7 +11,7 @@ KATKI = "bu özellik olmasaydı": özellik çıkarılıp (ağırlıklar yeniden 
 yeniden hesaplanır; katkı = gerçek TOPLAM_UYUM − özelliksiz TOPLAM_UYUM. Pozitif katkı bölümün puanını yükselten,
 negatif katkı düşüren özelliktir. Böylece döküm, gösterilen puanla aynı hesaptan gelir (doğrusal yaklaşım değildir).
 Katkılar toplanınca puana eşit olmaz (yöntemler doğrusal değildir); her biri "tek başına bu özelliğin etkisi"dir.
-K5 dal katkısı ayrı bir satırdır (nihai − TOPLAM_UYUM). Puanlar göreli: 301 bölüm içinde öğrenciye yakınlık.
+K5 dal katkısı ayrı bir satırdır (nihai − TOPLAM_UYUM). Puanlar göreli: 278 bölüm içinde öğrenciye yakınlık.
 """
 import numpy as np
 from sqlalchemy.orm import Session

@@ -7,7 +7,7 @@ değişkenlik profili, her bölümün bolum_agirliklari profiliyle 10 farklı
 yöntemle karşılaştırılır" diyor ama METOTLARIN karar matrisine hangi HAM
 DEĞERİ koyacağını (öğrenci puanı mı, bölüm ağırlığı mı, ikisinin farkı mı)
 belirtmiyor. Klasik ÇKKV yöntemleri "alternatifler × kriterler" matrisi
-üzerinde çalışır — burada alternatifler 301 bölüm, kriterler 31 değişken.
+üzerinde çalışır — burada alternatifler 278 bölüm, kriterler 31 değişken.
 Her (bölüm, değişken) hücresi için bir "uyum performans değeri" tanımlamak
 gerekiyor. Burada seçilen tanım:
 
@@ -83,7 +83,7 @@ class HesaplamaGirdisi:
     bolum_matrisi: np.ndarray | None = None     # (n, m) ham bölüm ağırlıkları (bölümler arası yüzdelik için)
 
 
-# [2026-10-11] Bölüm tarafı (değişkenler, katman ağırlıkları, 301 bölüm × ~130 değişken ağırlık matrisi) her öğrencide
+# [2026-10-11] Bölüm tarafı (değişkenler, katman ağırlıkları, 278 bölüm × ~130 değişken ağırlık matrisi) her öğrencide
 # aynıdır; önceden her istekte (sıralama isteğinde iki kez) ~39 bin satır okunup yeniden kuruluyordu (uzak veritabanında
 # saniyeler). Süreç içinde ONBELLEK_SN saniye saklanır; ağırlık / bölüm durumu değişince bolum_onbellegini_temizle() çağrılır.
 import threading as _threading
@@ -331,7 +331,7 @@ def _kendall_w(siralamalar: np.ndarray) -> float:
 
 # [2026-10-17] Sıralamaya sonradan müdahale YOK. Uyum puanı = 10 ÇKKV yönteminin ortalaması (+ K5 dal katkısı);
 # öneri sırası bu puana göredir. Kaldırılanlar: alan tutarlılığı cezası (puana yazılıp 0'a kırpıyordu: öğrenci başına
-# ortalama 301 bölümün 200'ü 0 görünüyordu), alan komşuluğu gruplaması (ana alan + komşuları puana bakılmadan öne
+# ortalama 278 bölümün 200'ü 0 görünüyordu), alan komşuluğu gruplaması (ana alan + komşuları puana bakılmadan öne
 # alınıyordu; ör. 54 puanlı bölüm 90 puanlının önüne geçiyordu). Konu olarak uzak görünen iki bölüm birlikte çıkıyorsa
 # bu, öğrencinin ölçülen özelliklerinde gerçek bir ortaklıktır; ayrım ölçümün kendisinden (değişkenler, K5) gelmelidir.
 UYUM_SKOR_SURUMU = "2026-10-17"   # bu sürümden eski kayıtlar açılışta bir kez yeniden hesaplanır
