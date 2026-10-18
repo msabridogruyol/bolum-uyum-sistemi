@@ -53,6 +53,7 @@ export default function AnaSayfaDuzeni() {
   const [acilis, setAcilis] = useState(acilisGosterilsinMi)
   const [kvkkGerekli, setKvkkGerekli] = useState(false) // [2026-10-04] eski hesap veya yeni metin sürümü
   const konum = useLocation()
+  const karsilastirmaAcik = konum.pathname === '/koclugu' && new URLSearchParams(konum.search).get('sekme') === 'karsilastirma'
   const navigate = useNavigate()
   const acik = useModuller()   // [2026-10-10] okulun paketindeki modüller
   const menu = useMobilMenu()   // [2026-10-11] dar ekranda çekmece menü
@@ -162,15 +163,25 @@ export default function AnaSayfaDuzeni() {
         <NavLink to="/" end className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
           🏠 Ana Sayfa
         </NavLink>
-        {/* [2026-10-10] Menü 3 grupta: Keşfet (kendini ve bölümleri tanı) · Gelişim (koçluk) · Okul */}
-        <div className="ns">Keşfet</div>
-        <NavLink to="/profilim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-          🧭 Profilim
-        </NavLink>
-        <NavLink to="/bolumler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+        {/* [2026-10-17] Menü: önce sistemin ana işi (bölüm uyumu + hedef bölümle karşılaştırma / koçluk) belirgin grupta,
+            diğer modüller "Ek araçlar" altında, okul modülleri "Okul" altında. */}
+        <div className="ns ns-ana">Bölüm uyumu ve koçluk</div>
+        <NavLink to="/bolumler" className={({ isActive }) => `ni ni-ana${isActive ? ' active' : ''}`}>
           🌟 Bölümler
         </NavLink>
+        {acik('kocluk') && (<>
+          <NavLink to="/koclugu" className={({ isActive }) => `ni ni-ana${isActive && !karsilastirmaAcik ? ' active' : ''}`}>
+            🎯 Koçluğum
+          </NavLink>
+          <NavLink to="/koclugu?sekme=karsilastirma" className={() => `ni ni-alt${karsilastirmaAcik ? ' active' : ''}`}>
+            📊 Sen ve Bölümün
+          </NavLink>
+        </>)}
+        <NavLink to="/profilim" className={({ isActive }) => `ni ni-ana${isActive ? ' active' : ''}`}>
+          🧭 Profilim
+        </NavLink>
         {/* [2026-10-11] "Karşılaştır" menüden kaldırıldı: Bölümler sayfasındaki "Karşılaştır" sekmesinde (/bolumler/karsilastir) */}
+        {['is_hayati', 'tercih', 'portfolyo', 'ogrenci_raporlari', 'calisma', 'net_takibi', 'kocluk', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Ek araçlar</div>}
         {acik('is_hayati') && (
           <NavLink to="/is-hayati" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             💼 İş Hayatı
@@ -181,20 +192,9 @@ export default function AnaSayfaDuzeni() {
             🎓 Tercihlerim
           </NavLink>
         )}
-        {acik('portfolyo') && (
-          <NavLink to="/portfolyo" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-            🗂️ Portfolyom
-          </NavLink>
-        )}
-        {acik('ogrenci_raporlari') && (
-          <NavLink to="/raporlarim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-            📄 Raporlarım
-          </NavLink>
-        )}
-        {['kocluk', 'calisma', 'net_takibi', 'kutuphane', 'filiz'].some(acik) && <div className="ns">Gelişim</div>}
         {acik('kocluk') && (
-        <NavLink to="/koclugu" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-            🎯 Koçluğum
+          <NavLink to="/gorevler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            ✅ Görevlerim
           </NavLink>
         )}
         {acik('calisma') && (
@@ -203,18 +203,23 @@ export default function AnaSayfaDuzeni() {
           </NavLink>
         )}
         {acik('net_takibi') && (
-        <NavLink to="/netlerim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+          <NavLink to="/netlerim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
             📈 Net Takibi
           </NavLink>
         )}
-        {acik('kocluk') && (
-        <NavLink to="/gorevler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-            ✅ Görevlerim
+        {acik('kutuphane') && (
+          <NavLink to="/kutuphane" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            📚 Kütüphanem
           </NavLink>
         )}
-        {acik('kutuphane') && (
-        <NavLink to="/kutuphane" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-            📚 Kütüphanem
+        {acik('portfolyo') && (
+          <NavLink to="/portfolyo" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            🗂️ Portfolyom
+          </NavLink>
+        )}
+        {acik('ogrenci_raporlari') && (
+          <NavLink to="/raporlarim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            📄 Raporlarım
           </NavLink>
         )}
         {acik('filiz') && (<>

@@ -19,6 +19,7 @@ from app.core.koclugu_servisi import (
     aktif_hedef_getir, hedef_sec, gap_analizi_hesapla, yol_haritasi_olustur,
     aksiyon_durumu_guncelle, tur_karsilastirmasi_hesapla,
     gelisim_plani_olustur, adim_durumu_guncelle, HedefHakkiBitti, hedef_hak_durumu,
+    fark_aciklamasi, fark_rengi, guclu_yon_mu, turkce_baslik,
 )
 from app.core.gelisim_icerigi import ICERIK
 from app.models import Ogrenci, Bolum, Katman, OgrenciGelisimAksiyonDurumu
@@ -104,7 +105,13 @@ def _gap_satirlarini_hazirla(db: Session, ogrenci: Ogrenci):
     return satirlar
 
 
-def _gap_satiri_to_out(s) -> GapSatiriOut:
+def _hedef_bolum_adi(db: Session, ogrenci: Ogrenci) -> str:
+    hedef = aktif_hedef_getir(db, ogrenci)
+    bolum = db.get(Bolum, hedef.bolum_id) if hedef else None
+    return turkce_baslik(bolum.ad) if bolum else "Hedef bölüm"
+
+
+def _gap_satiri_to_out(s, bolum_adi: str = "Hedef bölüm") -> GapSatiriOut:
     kart = s.gelisim_karti
     return GapSatiriOut(
         degisken_id=s.degisken.id, degisken_kod=s.degisken.kod, degisken_adi=s.degisken.ad,
@@ -115,6 +122,9 @@ def _gap_satiri_to_out(s) -> GapSatiriOut:
         nedir=ICERIK.get(s.degisken.kod, {}).get("nedir") or s.degisken.aciklama,
         ogrenci_puan=s.ogrenci_puan, bolum_beklenen=s.bolum_beklenen,
         gap=round(s.gap, 2), kategori=s.kategori, oncelik_skoru=round(s.oncelik_skoru, 2),
+        # [2026-10-17] yakınlık dili: uyumlu (yeşil) · fazla/eksik (turuncu) · belirgin fazla/eksik (kırmızı)
+        fark_sinifi=s.fark_sinifi, renk=fark_rengi(s.fark_sinifi), guclu_yon=guclu_yon_mu(s),
+        aciklama=fark_aciklamasi(s, bolum_adi),
         durum_tespiti=kart.durum_tespiti if kart else None,
         aksiyon_onerisi=kart.aksiyon_onerisi if kart else None,
         kaynak_tipi=kart.kaynak_tipi if kart else None,
@@ -128,7 +138,8 @@ def gelisim_analizi_getir(
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
     satirlar = _gap_satirlarini_hazirla(db, ogrenci)
-    return [_gap_satiri_to_out(s) for s in satirlar]
+    ad = _hedef_bolum_adi(db, ogrenci)
+    return [_gap_satiri_to_out(s, ad) for s in satirlar]
 
 
 @router.get("/hedef/yol-haritasi", dependencies=[Depends(_KOCLUK)], response_model=YolHaritasiOut)
@@ -138,7 +149,8 @@ def yol_haritasini_getir(
 ):
     satirlar = _gap_satirlarini_hazirla(db, ogrenci)
     harita = yol_haritasi_olustur(satirlar)
-    return YolHaritasiOut(**{k: [_gap_satiri_to_out(s) for s in v] for k, v in harita.items()})
+    ad = _hedef_bolum_adi(db, ogrenci)
+    return YolHaritasiOut(**{k: [_gap_satiri_to_out(s, ad) for s in v] for k, v in harita.items()})
 
 
 @router.post("/hedef/aksiyon/{degisken_id}", dependencies=[Depends(_KOCLUK)], status_code=204)
@@ -266,9 +278,9 @@ def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(g
     satirlar = _gap_satirlarini_hazirla(db, ogrenci)
     hedef = aktif_hedef_getir(db, ogrenci)
     plan = gelisim_plani_olustur(db, ogrenci, hedef.bolum_id, satirlar)
-    alanlar = [{**{k: o[k] for k in ("degisken_id", "degisken_kod", "degisken_adi", "kategori")}, "grup": "gelisim"}
+    alanlar = [{**{k: o.get(k) for k in ("degisken_id", "degisken_kod", "degisken_adi", "kategori", "fark_sinifi")}, "grup": "gelisim"}
                for o in plan["odak_alanlari"]]
-    alanlar += [{**{k: g[k] for k in ("degisken_id", "degisken_kod", "degisken_adi", "kategori")}, "grup": "guclu"}
+    alanlar += [{**{k: g.get(k) for k in ("degisken_id", "degisken_kod", "degisken_adi", "kategori", "fark_sinifi")}, "grup": "guclu"}
                 for g in plan["guclu_yonler"]]
     if not alanlar:
         return {"alanlar": []}
@@ -278,7 +290,9 @@ def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(g
     sonuc = []
     for a in alanlar:
         secilen = []
-        for aralik in KOMSU_ARALIK.get(a["kategori"], [a["kategori"]]):
+        araliklar = (["ustun", "belirgin_ustun", "beklenti"] if a["grup"] == "guclu"
+                     else KOMSU_ARALIK.get(a["kategori"], [a["kategori"]]))
+        for aralik in araliklar:
             secilen += [k for k in havuz if k.degisken_id == a["degisken_id"] and k.aralik == aralik and k not in secilen]
             if len(secilen) >= ALAN_BASINA:
                 break

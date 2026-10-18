@@ -312,20 +312,17 @@ Duygusal hassasiyet puanının bölüm önerisine katılmaması ve koçlukta ter
 
 > P4'ün eşleşmeden çıkarılması ve ters yönlü işaretlenmesi kurum içi tasarım kararıdır (gerekçe: kurum içi simülasyonda yalnız kaygı değişince ilk 10'da ~4 bölümün değişmesi); kaynaklar genel gerekçe sağlar, bu kuralı doğrudan önermez.
 
-### Alan tutarlılığı cezası ve alan komşuluğu · _Kurum içi_
+### Öneri sıralaması · _Kurum içi_
 
-Öneri listesinde konu olarak alakasız bölümlerin (ör. Hukuk + Veterinerlik) yan yana çıkmasını engelleyen kurallar.
+Öğrenciye gösterilen bölüm önerilerinin sırası.
 
-**Nasıl:** Alan gücü = alandaki en iyi 3 bölümün ortalaması; puan += katsayı × (alan_gücü − en_güçlü_alan), katsayı parametre alan_tutarlilik_katsayisi = 3 (0 = kapalı). Ardından 17 alan için elle yazılmış simetrik KOMSU tablosuyla liste gruplanır: grup 0 = en güçlü alan + komşuları, grup 1 = ana alana en çok 10 puan yakın ikinci alan, grup 2 = diğerleri (silinmez, sona iner).
+**Nasıl:** Sıra yalnızca gösterilen uyum puanına göredir (10 ÇKKV yönteminin ortalaması + K5 dal katkısı), büyükten küçüğe. Eşitlikte ağırlıklı varyans (artan), etkin meslek sayısı (azalan) ve ad (alfabetik) kullanılır. Sonradan alan cezası, alan gruplaması ya da kota uygulanmaz.
 
 **Dayanak:**
 
-- [58] Holland, 1997 — Altıgen modelde komşu tiplerin daha tutarlı olduğu 'tutarlılık' kavramını tanımlar; alan komşuluğu ve tutarlılık cezasının esin kaynağıdır.
-- [135] Tracey ve Rounds, 1993 — İlgi alanlarının dairesel (komşuluk) yapısını meta-analitik olarak destekler; alanlar arası yakınlık tablosu fikrine dayanak sağlar.
-- [110] Prediger, 1982 — Veri/fikir ve insan/nesne boyutlarıyla alanlar arası uzaklığın tanımlanabileceğini gösterir; komşu alan gruplamasına kavramsal destek verir.
-- [137] UNESCO Institute for Statistics, 2015 — Eğitim alanlarının hiyerarşik sınıflamasını verir; 17 alanın tanımlanmasına ve ilişkilendirilmesine resmî referans sağlar.
+- [137] UNESCO Institute for Statistics, 2015 — Eğitim alanlarının hiyerarşik sınıflamasını verir; önerilerde bilgi olarak gösterilen 17 üst alanın tanımlanmasına resmî referans sağlar.
 
-> Alan gücü (en iyi 3 ortalaması), alan_tutarlilik_katsayisi = 3, 10 puanlık ikinci alan eşiği ve 17 alanlık elle yazılmış KOMSU tablosu kurum içi tasarım kararlarıdır; Holland altıgeninden esinlenilmiştir, ampirik olarak türetilmiş bir uzaklık matrisi değildir.
+> 2026-10-17 öncesinde alan tutarlılığı cezası (puana yazılıp 0'a kırpılan) ve 17 alanlık elle yazılmış komşuluk tablosuyla gruplama vardı; ölçülen sonucu değiştirdikleri için kaldırıldı. Konu olarak uzak görünen bölümlerin birlikte çıkması, öğrencinin ölçülen özelliklerindeki gerçek ortaklığı gösterir; ayrım değişkenlerden ve K5 derinleşmesinden gelir.
 
 ### K5 etkisi, eşitlik bozma ve ilk 10 liste · _Kurum içi_ · _Okul görünümünde yok_
 
@@ -341,7 +338,7 @@ Alan sorularının nihai uyuma katılması ve gösterilen sıralamanın kurallar
 
 Her önerilen bölüm için örtüşen güçlü yönleri, öğrencinin kanıt cevaplarını, K5 notunu ve dikkat notunu üreten açıklama.
 
-**Nasıl:** Örtüşen yön: bölümün o özellikteki bölümler arası yüzdeliği ≥60 ve öğrencinin ölçekli puanı ≥55; en fazla 3 yön, 30 kısa ad (KISA_AD). Dikkat notu: bölüm yüzdeliği ≥85 ve öğrenci ≤40, aynı not 3+ bölümde çıkıyorsa gösterilmez. K5 notu ana eksen puanı ≥60/≤40. Kanıtlar: SJT'de ağırlık ≥0,5 seçilen şık, Likert'te en güçlü katılım, kutupta 1. veya 4. şık; metinler 110 karakterle kısaltılır.
+**Nasıl:** Örtüşen yön: bölümün o özellikteki bölümler arası yüzdeliği ≥60 ve öğrencinin ölçekli puanı ≥55; en fazla 3 yön, 30 kısa ad (KISA_AD). Dikkat notu: bölüm yüzdeliği ≥85 ve öğrenci ≤40, aynı not 3+ bölümde çıkıyorsa gösterilmez. K5 notu ana eksen puanı ≥60/≤40. Kanıtlar: SJT'de ağırlık ≥0,5 seçilen şık, Likert'te en güçlü katılım, kutupta 1. veya 4. şık; metinler 110 karakterle kısaltılır. [2026-10-17] Dikkat notu iki yönlüdür: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not.
 
 **Dayanak:**
 
@@ -349,18 +346,18 @@ Her önerilen bölüm için örtüşen güçlü yönleri, öğrencinin kanıt ce
 
 > Yüzdelik ≥60 / puan ≥55 örtüşme eşikleri, ≥85/≤40 dikkat notu kuralı, 3+ bölümde tekrar eden notun gizlenmesi, K5 ≥60/≤40 ve 110 karakter kısaltması kurum içi tasarım kararlarıdır; akademik bir kesme noktasına dayanmaz.
 
-### Cevap analizi (süper admin) · _Kurum içi_ · _Okul görünümünde yok_
+### Cevap analizi ve uyum matrisleri (okul yetkilisi + süper admin) · _Kurum içi_
 
-Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını ve ilk 5 öneriyi hangi özelliklerin yukarı/aşağı çektiğini gösteren inceleme ekranı.
+Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını (cevap matrisi), her bölümde öğrencinin bölüm beklentisine göre farkını (uyum matrisi) ve bölümün puanını hangi özelliklerin yükseltip düşürdüğünü gösteren inceleme ekranı; yönetici PDF raporunda ek, Excel'de tüm matrisler.
 
-**Nasıl:** Katkılar katman puanlamasıyla aynı fonksiyonla (cevaplari_puanla) hesaplanır; etki = kriter ağırlığı × (bölümün performansı − tüm bölümlerin ortalaması), ilk 5 yukarı ve 3 aşağı özellik; görüntüleme denetim kaydına yazılır, okul yetkilisi erişemez.
+**Nasıl:** Cevap katkıları katman puanlamasıyla aynı fonksiyonla (cevaplari_puanla) hesaplanır. Fark = öğrenci − bölüm beklentisi (katman içi ölçek); |fark| < 5 uyumlu, 5–15 fazla/az, 15+ belirgin. Katkı 'bu özellik olmasaydı' yöntemiyle bulunur: özellik çıkarılıp ağırlıklar yeniden normalize edilir, 10 yöntem tüm bölümler için yeniden hesaplanır; katkı = gerçek uyum − özelliksiz uyum (gösterilen puanla aynı hesap). Varsayılan görünüm ilk 10 + hedef + son 3 bölüm; yönetici istediği bölümü ekleyebilir. Okul yetkilisi yalnızca kendi okulunun öğrencisini görür, öğrenci görmez; 10 yöntemin ayrı puanları ve Kendall W yalnızca süper admindedir. Her görüntüleme ve indirme denetim kaydına yazılır. Raporlarda hedef bölüm kıyası: hedef + seçilen bölümler (en çok 6); puan farkı = hedefin uyumu − bölümün uyumu, özellik etkisi = hedefteki katkı − bölümdeki katkı. Öğrenci ve veli raporlarında sorular / cevaplar yer almaz.
 
 **Dayanak:**
 
-- [118] Saltelli ve ark., 2008 — Model çıktısının girdilere duyarlılığını inceleme ilkelerini verir; özellik etkisinin 'ağırlık × ortalamadan sapma' ile gösterilmesi bu yaklaşımın basit, yerel bir biçimidir (esinlenme).
-- [72] Kişisel Verilerin Korunması Kanunu, Kanun No. 6698, 2016 — Veri sorumlusunun kişisel verilere erişimi denetleme ve güvenlik önlemi alma yükümlülüğü, görüntülemenin denetim kaydına yazılması ve okul yetkilisinin erişiminin kısıtlanmasını destekler.
+- [118] Saltelli ve ark., 2008 — Model çıktısının girdilere duyarlılığını inceleme ilkelerini verir; katkının bir girdi çıkarılınca çıktının ne kadar değiştiğiyle ölçülmesi (birini dışarıda bırakma) bu yaklaşımın yerel bir biçimidir (esinlenme).
+- [72] Kişisel Verilerin Korunması Kanunu, Kanun No. 6698, 2016 — Veri sorumlusunun kişisel verilere erişimi denetleme ve güvenlik önlemi alma yükümlülüğü, görüntülemenin denetim kaydına yazılmasını ve erişimin yalnızca kendi okulunun yetkilisi ve sistem yöneticisiyle sınırlanmasını destekler.
 
-> İlk 5 yukarı / 3 aşağı özellik gösterimi ve etki formülü kurum içi tasarım kararıdır; SHAP gibi yerleşik bir açıklama yöntemi değildir.
+> Katkılar toplanınca puana eşit olmaz (yöntemler doğrusal değildir); her biri o özelliğin tek başına etkisidir ve göreli bir ölçüdür (fark olan bir özellik, öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan daha yakınsa puanı yükseltebilir). Varsayılan bölüm seçimi ve fark eşikleri kurum içi tasarım kararıdır; SHAP gibi yerleşik bir açıklama yöntemi değildir.
 
 ## Koçluk
 
@@ -383,14 +380,14 @@ Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını ve ilk
 
 Öğrenci ile hedef bölüm arasındaki farkı özellik özellik sınıflayıp en önemli gelişim alanlarını bulma.
 
-**Nasıl:** Göreli fark (katman/dal içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır.
+**Nasıl:** Göreli fark (katman/dal içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır. [2026-10-17] Ekranda fark yakınlık dilinde gösterilir (uyum puanı da farkın yönüne bakmaz): |fark| < 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz; değerlerde (K1) 'senin için daha önemli / daha az önemli' denir; P4 (kaygı) için yalnızca fazlası fark sayılır.
 
 **Dayanak:**
 
 - [30] Dawis ve Lofquist, 1984 — Kişinin yetenek/ihtiyaçları ile çevrenin gereksinim/pekiştireçleri arasındaki uygunluğun (correspondence) karşılaştırılmasını kuramsal olarak temellendirir; özellik bazında öğrenci–bölüm farkı bu mantıktan esinlenir.
 - [76] Kristof-Brown ve ark., 2005 — Kişi–iş uyumunun memnuniyet ve bağlılıkla ilişkisini meta-analitik olarak gösterir; uyum açıklarının gelişim alanı olarak ele alınmasını destekler.
 
-> Fark kategorilerinin eşikleri (±5, ±15), öncelik formülü, katman ağırlıklarının eşit (25) olması, ayırt edicilik için en az 20 yayın, <40 ve ≥75 kesme noktaları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz.
+> Fark kategorilerinin eşikleri (±5, ±15), öncelik formülü, katman ağırlıklarının eşit (25) olması, ayırt edicilik için en az 20 yayın, <40 ve ≥75 kesme noktaları kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. Güçlü yön tanımı (uyumlu ve öğrencinin kendi profilinde katman içi ≥ 60) da kurum içi karardır.
 
 ### Gelişim yol haritası yapısı
 
@@ -1073,11 +1070,11 @@ Tam ekran zorunluluğu, sekme/odak/ikinci ekran/ekran görüntüsü/kopyalama ta
 
 Kimin hangi veriyi görebileceğine dair yapısal kurallar ve kritik işlemlerin kaydı.
 
-**Nasıl:** Öğrenci API şemalarında yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi alanları tanımlı değil; ham cevap analizi yalnızca süper admin; akran/şube sonuçları öğrenciye gösterilmez; rehberlik notları öğrenciye gösterilmez; koç iletişim bilgisi öğrenciden gizli; durum/rol değişikliği, pipeline onayı, cevap analizi görüntüleme gibi işlemler audit log'a yazılır; test hesapları erken uyarı listesinden ve okul karşılaştırmasından hariç tutulur.
+**Nasıl:** Öğrenci API şemalarında yontem_skorlari, kendall_w, agirlikli_varyans, etkin_meslek_sayisi alanları tanımlı değil; ham cevap analizi öğrenciye kapalı (yalnızca kendi okulunun yetkilisi ve süper admin; yöntem ayrıntısı yalnızca süper admin); akran/şube sonuçları öğrenciye gösterilmez; rehberlik notları öğrenciye gösterilmez; koç iletişim bilgisi öğrenciden gizli; durum/rol değişikliği, pipeline onayı, cevap analizi görüntüleme / indirme gibi işlemler audit log'a yazılır; test hesapları erken uyarı listesinden ve okul karşılaştırmasından hariç tutulur.
 
 **Dayanak:**
 
-- [119] Saltzer ve Schroeder, 1975 — En az ayrıcalık ve varsayılan olarak reddetme (fail-safe defaults) ilkeleri, öğrenci şemalarında iç alanların hiç tanımlanmaması ve ham cevap analizinin yalnızca süper admine açılmasını destekler.
+- [119] Saltzer ve Schroeder, 1975 — En az ayrıcalık ve varsayılan olarak reddetme (fail-safe defaults) ilkeleri, öğrenci şemalarında iç alanların hiç tanımlanmaması ve ham cevap analizinin öğrenciye kapalı ve yalnızca gereken rollere (kendi okulunun yetkilisi, süper admin) açık olmasını destekler.
 - [120] Sandhu ve ark., 1996 — Rol tabanlı erişim denetimi modeli, öğrenci/öğretmen/okul yetkilisi/süper admin rollerine göre veri görünürlüğü kurallarının kuramsal temelidir.
 - [18] Cavoukian, 2011 — Gizliliğin varsayılan ayar olarak tasarıma gömülmesi ilkesi, hassas alanların API düzeyinde yapısal olarak dışlanmasını destekler.
 - [70] Kişisel Verileri Koruma Kurumu, 2018 — Erişim yetki matrisi oluşturulması ve kullanıcı işlem kayıtlarının (log) düzenli tutulması önerileri audit log uygulamasını destekler.

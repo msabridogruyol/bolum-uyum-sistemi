@@ -33,7 +33,8 @@ def _sayfa(wb, ad, basliklar, satirlar, genislik=None, renk="E8804A"):
     return ws
 
 
-def ogrenci_xlsx(v: dict, netler: bool = True) -> bytes:
+def ogrenci_xlsx(v: dict, netler: bool = True, yonetim: bool = False) -> bytes:
+    """[2026-10-18] yonetim=False (öğrencinin kendi indirdiği dosya): sayısal güven puanı yazılmaz — yönetim bilgisidir."""
     wb = Workbook()
     wb.remove(wb.active)
     renk = v["okul"].get("renk") or "#E8804A"
@@ -42,7 +43,8 @@ def ogrenci_xlsx(v: dict, netler: bool = True) -> bytes:
         ["Öğrenci", k["ad_soyad"]], ["E-posta", k["email"]], ["Okul", v["okul"]["ad"]],
         ["Sınıf / şube", " / ".join(filter(None, [k.get("sinif"), k.get("sube")]))],
         ["Değerlendirme turu", tur.get("no")], ["Tamamlanma", tur.get("tamamlanma")],
-        ["Güven puanı", tur.get("guven")], ["Geçerli", "Evet" if tur.get("gecerli", True) else "Hayır"],
+        *([["Güven puanı", tur.get("guven")]] if yonetim else []),
+        ["Geçerli", "Evet" if tur.get("gecerli", True) else "Hayır"],
         ["Hedef bölüm", (v.get("hedef") or {}).get("ad")], ["Listem", ", ".join(v["listem"])],
         ["Rapor tarihi", v["tarih"]],
     ], [24, 60], renk)

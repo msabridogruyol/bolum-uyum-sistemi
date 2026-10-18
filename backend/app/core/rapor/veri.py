@@ -146,7 +146,8 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
                     "sira": i, "bolum_id": s.bolum_id, "ad": _baslik(adlar.get(s.bolum_id)), "alan": s.alan,
                     "uyum": yuvarla(s.toplam_uyum, 1),
                     "ortusen": [x.get("ozellik") for x in (n.get("ortusen") or [])][:3],
-                    "dikkat": (n.get("dikkat") or {}).get("metin"),
+                    # [2026-10-17] iki yönlü dikkat (eksik + fazla, en çok 2)
+                    "dikkat": " ".join(x["metin"] for x in n.get("dikkatler") or []) or (n.get("dikkat") or {}).get("metin"),
                 })
         except Exception:
             db.rollback()
@@ -166,7 +167,8 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
                 from app.api.koclugu import _gap_satirlarini_hazirla
                 plan = gelisim_plani_olustur(db, o, h.bolum_id, _gap_satirlarini_hazirla(db, o))
                 hedef["ilerleme"] = plan["ilerleme"]
-                hedef["odak"] = [{"ad": x["degisken_adi"], "neden": x.get("neden_onemli"), "kategori": x.get("kategori")}
+                hedef["odak"] = [{"ad": x["degisken_adi"], "neden": x.get("neden_onemli"), "kategori": x.get("kategori"),
+                                  "kod": x.get("degisken_kod")}
                                  for x in plan["odak_alanlari"]]
                 hedef["siradaki"] = (plan.get("siradaki_adim") or {}).get("baslik")
             except Exception:
@@ -237,7 +239,12 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
     hedef = v.get("hedef") or {}
     odak = [x for x in hedef.get("odak", [])]
     for x in odak[:4]:
-        W.append(f"{x['ad']}: {hedef['ad']} bölümünün beklediği düzeyin altında")
+        # [2026-10-17] değerler bir eksik değil, karar konusudur: gelişim alanlarına değil, dikkat edileceklere yazılır
+        if str(x.get("kod") or "").startswith("D"):
+            T.append(f"{x['ad']}: {hedef['ad']} alanında çalışanların çoğuna göre senin için daha az önemli; karar verirken dikkate al." if sen else
+                     f"{x['ad']}: {hedef['ad']} alanında çalışanların çoğuna göre öğrenci için daha az önemli; karar verirken dikkate alınmalı.")
+        else:
+            W.append(f"{x['ad']}: {hedef['ad']} bölümünün beklediği düzeyin altında")
     for x in v["gelisim"][:4]:
         if len(W) >= 5:
             break

@@ -51,15 +51,45 @@ def _paket_kontrol(db: Session, yon: AdminKullanici, okul_id, tur: str, netler: 
     return netler and "net_takibi" in m
 
 
-def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str, netler: bool = True) -> Response:
+KIYASLI_TURLER = {"ogrenci", "veli", "yonetici"}
+
+
+def _kiyas_ekle(db: Session, o: Ogrenci, v: dict, tur: str, bolum_idler: list[int] | None = None, cevaplar: bool = False) -> None:
+    """[2026-10-17] Hedef bölüm kıyası (öğrenci, veli, yönetici raporu; sorular / cevaplar yok) ve yalnızca yönetici
+    raporuna uyum açıklaması eki (matris; cevaplar=True ise soru–cevap dökümü). Ek, raporun kendisini engellemez."""
+    if tur not in KIYASLI_TURLER or v.get("durum") != "tamamlandi":
+        return
+    try:
+        from app.core.uyum_aciklama import rapor_eki
+        ek = rapor_eki(db, o, bolum_idler, cevaplar=cevaplar and tur == "yonetici")
+    except Exception:  # noqa: BLE001
+        db.rollback()
+        return
+    if ek is None:
+        if tur == "yonetici":   # rehber neden olmadığını görsün; öğrenci / veli raporunda bölüm yalnızca yer almaz
+            v["hedef_kiyasi_notu"] = ("Hedef bölüm kıyası ve uyum açıklaması eki hazırlanamadı: öğrencinin son tamamlanan "
+                                      "değerlendirmesinde özellik puanları eksik.")
+        return
+    v["hedef_kiyasi"] = {**(ek["kiyas"] or {}), "kirpildi": ek["kirpildi"], "sinir": ek["sinir"]}
+    if tur == "yonetici":
+        v["uyum_aciklama"] = ek
+
+
+def _bolum_idleri(metin: str | None) -> list[int] | None:
+    return [int(x) for x in re.findall(r"\d+", metin or "")][:30] or None
+
+
+def _ogrenci_dosyasi(db: Session, o: Ogrenci, tur: str, bicim: str, netler: bool = True, ek_aciklama: bool = False,
+                     bolum_idler: list[int] | None = None) -> Response:
     from app.core.rapor.excel import ogrenci_xlsx
     from app.core.rapor.veri import ogrenci_raporu_verisi
     if tur not in TUR_ADI or bicim not in MIME:
         raise HTTPException(status_code=400, detail="Geçersiz rapor türü ya da biçimi.")
     v = ogrenci_raporu_verisi(db, o)
     if bicim == "xlsx":
-        icerik = ogrenci_xlsx(v, netler=netler)
+        icerik = ogrenci_xlsx(v, netler=netler, yonetim=ek_aciklama)   # ek_aciklama: yönetim ucundan istendi
     else:
+        _kiyas_ekle(db, o, v, tur, bolum_idler, cevaplar=ek_aciklama)
         icerik = _uretici(tur)(v, netler=netler)
     return _cevap(icerik, bicim, _dosya_adi(TUR_ADI[tur] if bicim == "pdf" else "Sonuclar", o.ad_soyad, v["tarih"].strftime("%Y%m%d")))
 
@@ -93,14 +123,24 @@ def kendi_raporum(tur: str = Query("ogrenci"), bicim: str = Query("pdf"), netler
 
 @router.get("/yonetim/ogrenci/{ogrenci_id}/rapor")
 def ogrenci_raporu(ogrenci_id: str, tur: str = Query("yonetici"), bicim: str = Query("pdf"), netler: bool = Query(True),
+                   bolumler: str | None = Query(None, max_length=300),
                    db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """bolumler: kıyaslanacak bölüm id'leri (virgülle); hedef her zaman eklenir, en çok 6 bölüm."""
     from app.api.okul_yonetimi import _ogrenci_kapsami
     o = _ogrenci_kapsami(db, yon, ogrenci_id)
     netler = _paket_kontrol(db, yon, o.okul_id, tur, netler)
-    cevap = _ogrenci_dosyasi(db, o, tur, bicim, netler)
+    cevap = _ogrenci_dosyasi(db, o, tur, bicim, netler, ek_aciklama=True, bolum_idler=_bolum_idleri(bolumler))
     denetim_yaz(db, yon, "rapor_indir", "ogrenciler", o.id, f"{o.ad_soyad}: {RAPOR_ADI.get(tur, tur)} ({bicim.upper()}{', denemeler' if netler else ''})", o.okul_id)
     db.commit()
     return cevap
+
+
+@router.get("/yonetim/ogrenci/{ogrenci_id}/rapor-bolumleri")
+def rapor_bolumleri(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-10-17] Rapor penceresi: varsayılan kıyas seçimi (hedef + ilk öneriler) ve en çok bölüm sayısı."""
+    from app.api.okul_yonetimi import _ogrenci_kapsami
+    from app.core.uyum_aciklama import rapor_bolum_onerisi
+    return rapor_bolum_onerisi(db, _ogrenci_kapsami(db, yon, ogrenci_id))
 
 
 TOPLU_SINIR = 80
@@ -147,7 +187,9 @@ def okul_raporu(okul_id: int, bicim: str = Query("pdf"), sinif: str | None = Que
         uret = _uretici(TOPLU_TUR[tur][0])
         yazici = PdfWriter()
         for o in ogrenciler:
-            yazici.append(BytesIO(uret(ogrenci_raporu_verisi(db, o), netler=netler)), outline_item=o.ad_soyad)
+            v = ogrenci_raporu_verisi(db, o)
+            _kiyas_ekle(db, o, v, TOPLU_TUR[tur][0])   # [2026-10-17] varsayılan: hedef + ilk öneriler; soru–cevap dökümü yok
+            yazici.append(BytesIO(uret(v, netler=netler)), outline_item=o.ad_soyad)
         cikti = BytesIO()
         yazici.write(cikti)
         denetim_yaz(db, yon, "rapor_indir", "okullar", okul_id, f"{kapsam_adi}: toplu {TOPLU_TUR[tur][0]} raporu ({len(ogrenciler)} öğrenci)", okul_id or None)

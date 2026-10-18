@@ -41,6 +41,10 @@ class GapSatiriOut(BaseModel):
     gap: float
     kategori: str
     oncelik_skoru: float
+    fark_sinifi: str = "uyumlu"   # [2026-10-17] uyumlu | fazla | belirgin_fazla | eksik | belirgin_eksik
+    renk: str = "yesil"           # yesil | turuncu | kirmizi
+    guclu_yon: bool = False       # bölümle uyumlu ve öğrencinin kendi profilinde yüksek
+    aciklama: str | None = None   # karşılaştırmanın öğrenci dilinde açıklaması
     durum_tespiti: str | None
     aksiyon_onerisi: str | None
     kaynak_tipi: str | None
@@ -107,6 +111,7 @@ class OdakAlaniOut(BaseModel):
     degisken_kod: str
     degisken_adi: str
     kategori: str
+    fark_sinifi: str | None = None   # [2026-10-17] uyumlu | fazla | belirgin_fazla | eksik | belirgin_eksik
     oncelik_sirasi: int
     nedir: str
     neden_onemli: str
@@ -122,6 +127,7 @@ class GucluYonOut(BaseModel):
     degisken_kod: str
     degisken_adi: str
     kategori: str
+    fark_sinifi: str | None = None   # [2026-10-17] uyumlu | fazla | belirgin_fazla | eksik | belirgin_eksik
     nedir: str
     neden_onemli: str
     adimlar: list[PlanAdimiOut]
@@ -131,6 +137,7 @@ class SonrakiAlanOut(BaseModel):
     degisken_id: int
     degisken_adi: str
     kategori: str
+    fark_sinifi: str | None = None   # [2026-10-17] uyumlu | fazla | belirgin_fazla | eksik | belirgin_eksik
 
 
 class PlanIlerlemeOut(BaseModel):

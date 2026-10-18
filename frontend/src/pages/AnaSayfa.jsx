@@ -101,7 +101,7 @@ export default function AnaSayfa() {
             <b>{profil?.ad_soyad || 'Öğrenci'}</b>
             <span className="as-kimlik-ayrac">·</span>
             <span>{[profil?.okul, profil?.sinif].filter(Boolean).join(' · ') || 'Okul bilgisi eklenmedi'}</span>
-            {profilSkoru !== null && <><span className="as-kimlik-ayrac">·</span><span>En yüksek uyum <b className="as-kimlik-skor">{profilSkoru}</b>/100</span></>}
+            {profilSkoru !== null && <><span className="as-kimlik-ayrac">·</span><span>Sana en yakın bölüm <b className="as-kimlik-skor">{profilSkoru}</b>/100</span></>}
             <span className="as-kimlik-git">Profilim →</span>
           </div>
           {/* [2026-10-11] Kendi aktiflik serin: son 14 gün (sistemi açtığın günler) */}
@@ -136,6 +136,47 @@ export default function AnaSayfa() {
       </div>
 
       <GecersizTurUyarisi ozet={ozet} />
+
+      {/* [2026-10-17] Sistemin ana işi: bölüm uyumu + hedef bölümle karşılaştırma / koçluk. Diğer araçlardan önce ve belirgin. */}
+      {ozet.tur_tamamlandi_mi && siralama && siralama.length > 0 && (
+        <section className="as-cekirdek" aria-label="Bölüm uyumun ve koçluğun">
+          <div className="as-cekirdek-kutu">
+            <div className="as-cekirdek-ust">🌟 Sana en uygun bölümler</div>
+            <ol className="as-cekirdek-liste">
+              {siralama.slice(0, 3).map((s) => (
+                <li key={s.bolum_id}>
+                  <button type="button" onClick={() => bolumBilgisiAc(s.bolum_id, s.bolum_adi)}>{s.bolum_adi}</button>
+                  <b>%{Math.round(s.toplam_uyum)}</b>
+                </li>
+              ))}
+            </ol>
+            <div className="as-cekirdek-not">Puan, bölümün 301 bölüm içinde sana ne kadar yakın olduğunu gösterir (100 = en yakın).</div>
+            <button type="button" className="btn" onClick={() => navigate('/bolumler')}>Tüm önerileri ve nedenlerini gör →</button>
+          </div>
+          {kocluk && (
+            <div className="as-cekirdek-kutu">
+              <div className="as-cekirdek-ust">📊 Sen ve hedef bölümün</div>
+              {hedefBolumAdi ? (
+                <>
+                  <div className="as-cekirdek-hedef">{hedefBolumAdi}</div>
+                  <div className="as-cekirdek-not">Bu bölümün beklediği özelliklerle seni tek tek karşılaştırdık: nerede güçlüsün, nerede gelişmen gerekiyor.</div>
+                  <div className="as-cekirdek-dugmeler">
+                    <button type="button" className="btn" onClick={() => navigate('/koclugu?sekme=karsilastirma')}>Karşılaştırmayı gör →</button>
+                    <button type="button" className="btn sec" onClick={() => navigate('/koclugu?sekme=yol')}>Yol haritam</button>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div className="as-cekirdek-not">Bir hedef bölüm seç; seni o bölümle özellik özellik karşılaştıralım ve sana adım adım bir gelişim planı hazırlayalım.</div>
+                  <div className="as-cekirdek-dugmeler">
+                    <button type="button" className="btn" onClick={() => navigate('/profil#hedef')}>Hedef bölümümü seç →</button>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </section>
+      )}
 
       <BugunPaneli ozet={ozet} katmanlar={katmanlar} hedef={hedef} plan={plan} motivasyon={motivasyon} kocluk={kocluk} />
 

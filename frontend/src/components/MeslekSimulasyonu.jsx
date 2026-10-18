@@ -1,12 +1,10 @@
 // [2026-10-10] "Bir günümü yaşa" — meslek simülasyonu.
 // Her yerden açılır: window.dispatchEvent(new CustomEvent('simulasyon-ac', { detail: { bolumId, meslek } }))
 // Sahne sahne ilerler: işlere tepki (😍 / 🙂 / 😕), karar anlarında seçim + geri bildirim, sonunda özet.
-// Filiz'in sesi açıksa ve cihazda doğal Türkçe ses varsa sahneler sesli anlatılır.
 import { useEffect, useState } from 'react'
 import { createPortal } from 'react-dom'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
-import { efekt, soyle, sus } from '../yardimci/filizSes'
 
 const TEPKILER = [
   { d: 2, ikon: '😍', ad: 'Bunu yapmak keyifli' },
@@ -82,14 +80,8 @@ function Simulasyon({ bolumId, meslek, onKapat }) {
   useEffect(() => {
     setV(null); setI(0); setTepki({}); setKarar({}); setOzet(null)
     api.simulasyon(bolumId, meslek).then(setV).catch((e) => setHata(e.detail || 'Simülasyonu açamadık. Tekrar dene.'))
-    return () => sus()
   }, [bolumId, meslek])
   const sahne = v?.sahneler[i]
-  useEffect(() => {
-    if (!sahne) return
-    efekt(sahne.tur === 'karar' ? 'uyan' : 'konus')
-    soyle(`${sahne.saat.replace(':', '.')} . ${sahne.baslik}. ${sahne.metin}`)
-  }, [sahne])
   if (hata) return <div className="ms-govde"><div className="auth-error">{hata}</div><button className="btn sec" onClick={onKapat}>Kapat</button></div>
   if (!v) return <div className="ms-govde"><div className="bos-durum">Gün hazırlanıyor…</div></div>
   if (ozet) {
@@ -106,7 +98,7 @@ function Simulasyon({ bolumId, meslek, onKapat }) {
     setBekle(true); setHata(null)
     try {
       const r = await api.simulasyonKaydet({ bolum_id: bolumId, meslek, tepkiler: tepki, kararlar: karar })
-      efekt('kutla'); setOzet(r); soyle(`Günün bitti. Bu meslekteki keyif puanın yüzde ${r.keyif}.`)
+      setOzet(r)
     } catch (e) { setHata(e.detail || 'Kaydedemedik. Tekrar dene.') } finally { setBekle(false) }
   }
   const secilen = sahne.tur === 'karar' && karar[sahne.id] != null ? sahne.secenekler[karar[sahne.id]] : null
@@ -126,7 +118,7 @@ function Simulasyon({ bolumId, meslek, onKapat }) {
           <div className="ms-tepkiler" role="radiogroup" aria-label="Bu işe tepkin">
             {TEPKILER.map((t) => (
               <button key={t.d} role="radio" aria-checked={tepki[sahne.id] === t.d} className={tepki[sahne.id] === t.d ? 'secili' : ''}
-                onClick={() => { setTepki({ ...tepki, [sahne.id]: t.d }); efekt(t.d === 2 ? 'kalp' : 'konus') }}>
+                onClick={() => { setTepki({ ...tepki, [sahne.id]: t.d }) }}>
                 <span className="ms-emoji">{t.ikon}</span>{t.ad}
               </button>
             ))}
@@ -137,7 +129,7 @@ function Simulasyon({ bolumId, meslek, onKapat }) {
             <div className="ms-soru">Ne yaparsın?</div>
             {sahne.secenekler.map((x) => (
               <button key={x.no} disabled={secilen != null} className={`ms-secenek${karar[sahne.id] === x.no ? ' secili' : ''}`}
-                onClick={() => { setKarar({ ...karar, [sahne.id]: x.no }); efekt(x.onerilen ? 'kutla' : 'konus'); soyle(x.sonuc) }}>
+                onClick={() => { setKarar({ ...karar, [sahne.id]: x.no }) }}>
                 {x.metin}
               </button>
             ))}
@@ -181,7 +173,7 @@ export default function SimulasyonKatmani() {
     return () => window.removeEventListener('keydown', esc)
   }, [acik])
   if (!acik) return null
-  const kapat = () => { setAcik(null); sus(); window.dispatchEvent(new CustomEvent('simulasyon-kapandi')) }
+  const kapat = () => { setAcik(null); window.dispatchEvent(new CustomEvent('simulasyon-kapandi')) }
   return createPortal(
     <div className="yp-ortu ms-ortu" onMouseDown={(e) => { if (e.target === e.currentTarget) kapat() }}>
       <div className="yp-pencere genis ms-pencere" role="dialog" aria-modal="true" aria-label="Bir günümü yaşa">

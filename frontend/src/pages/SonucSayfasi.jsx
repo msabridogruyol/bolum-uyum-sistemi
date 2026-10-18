@@ -44,7 +44,7 @@ function NedenDetay({ d }) {
           {d.k5.kanit && <div className="neden-kanit" style={{ marginTop: 4 }}>Seçimin: <q>{d.k5.kanit}</q></div>}
         </div>
       )}
-      {d.dikkat && <div className="neden-not zayif">⚠️ {d.dikkat.metin}</div>}
+      {(d.dikkatler?.length ? d.dikkatler : d.dikkat ? [d.dikkat] : []).map((x) => <div key={x.metin} className="neden-not zayif">⚠️ {x.metin}</div>)}
     </div>
   )
 }

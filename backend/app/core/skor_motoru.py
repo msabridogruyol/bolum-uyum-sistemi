@@ -329,40 +329,12 @@ def _kendall_w(siralamalar: np.ndarray) -> float:
     return float(12 * S / payda)
 
 
-# [2026-10-09] Alan tutarlılığı: K1-K4 çalışma tarzını ölçer, konu alanını değil. Bu yüzden tek başına
-# öne çıkan, kendi alanında desteği olmayan bölümler (ör. hukuk profilli öğrenciye Orkestra Şefliği) listeye
-# girebiliyordu. Her üst alanın gücü = o alandaki en iyi 3 bölümün ortalaması; bir bölümün puanı, alanının
-# gücü en güçlü alanın gerisinde kaldığı ölçüde düşürülür: puan += katsayı × (alan_gücü − en_güçlü_alan).
-# Katsayı parametre tablosundan okunur ('alan_tutarlilik_katsayisi', varsayılan 3; 0 = kapalı).
-ALAN_TUTARLILIK_VARSAYILAN = 3.0
-
-
-def alan_tutarliligi_uygula(db: Session, bolum_idler: list[int], skor: np.ndarray) -> np.ndarray:
-    from app.core.katman_servisi import parametre_oku
-    from app.models import BolumDalEslesme, Dal
-    try:
-        katsayi = float(parametre_oku(db, "alan_tutarlilik_katsayisi", str(ALAN_TUTARLILIK_VARSAYILAN)))
-    except (TypeError, ValueError):
-        katsayi = ALAN_TUTARLILIK_VARSAYILAN
-    if katsayi <= 0 or len(skor) == 0:
-        return skor
-    alan_of = {
-        e.bolum_id: e.dal_id
-        for e, d in db.query(BolumDalEslesme, Dal).join(Dal, Dal.id == BolumDalEslesme.dal_id)
-        .filter(Dal.kod.like("U%")).all()
-    }
-    gruplar: dict[int, list[int]] = {}
-    for i, b in enumerate(bolum_idler):
-        if b in alan_of:
-            gruplar.setdefault(alan_of[b], []).append(i)
-    if len(gruplar) < 2:
-        return skor
-    guc = {a: float(np.sort(skor[ix])[-3:].mean()) for a, ix in gruplar.items()}
-    en_guclu = max(guc.values())
-    yeni = skor.astype(float).copy()
-    for a, ix in gruplar.items():
-        yeni[ix] = yeni[ix] + katsayi * (guc[a] - en_guclu)
-    return np.clip(yeni, 0.0, 100.0)
+# [2026-10-17] Sıralamaya sonradan müdahale YOK. Uyum puanı = 10 ÇKKV yönteminin ortalaması (+ K5 dal katkısı);
+# öneri sırası bu puana göredir. Kaldırılanlar: alan tutarlılığı cezası (puana yazılıp 0'a kırpıyordu: öğrenci başına
+# ortalama 301 bölümün 200'ü 0 görünüyordu), alan komşuluğu gruplaması (ana alan + komşuları puana bakılmadan öne
+# alınıyordu; ör. 54 puanlı bölüm 90 puanlının önüne geçiyordu). Konu olarak uzak görünen iki bölüm birlikte çıkıyorsa
+# bu, öğrencinin ölçülen özelliklerinde gerçek bir ortaklıktır; ayrım ölçümün kendisinden (değişkenler, K5) gelmelidir.
+UYUM_SKOR_SURUMU = "2026-10-17"   # bu sürümden eski kayıtlar açılışta bir kez yeniden hesaplanır
 
 
 def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> int:
@@ -392,7 +364,6 @@ def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     kendall_w = _kendall_w(siralama_matrisi)
 
     ortalama = np.mean([normalize_skorlar[a] for a in YONTEMLER], axis=0)
-    ortalama = alan_tutarliligi_uygula(db, girdi.bolum_idler, ortalama)
 
     # eski skorları temizle (bu tur için varsa) — tur bazlı, tekrar hesaplama idempotent olsun
     db.query(OgrenciBolumUyumSkoru).filter(
@@ -490,22 +461,45 @@ def _nihai(toplam_uyum: float, dal_ici_uyum: float | None) -> float:
 def _satirlari_sirala(satirlar: list[SiralamaSatiri], alan_of: dict[int, str], varyans: dict, meslek_sayisi: dict,
                       adlar: dict, ilk_n: int | None = None) -> list[SiralamaSatiri]:
     """Öğrencinin sonuç ekranındaki sıralama; siralama_getir ve toplu_siralama ortak kullanır.
-    ilk_n yoksa liste yerinde sıralanır; varsa yalnızca ilk ilk_n satır (aynı sırayla) döner (heapq, tam sıralama yok)."""
-    # [2026-10-09] Alan kısıtı: liste öğrencinin en güçlü alanı + komşu alanlar (+ yakın ikinci alan) ile sınırlanır;
-    # tamamen alakasız alanların bölümleri silinmez, listenin sonuna iner (bkz. alan_komsuluk.py).
-    from app.core.alan_komsuluk import alan_sirasi
-    grup = alan_sirasi(alan_of, {s.bolum_id: s.toplam_uyum for s in satirlar}) or {}
+    [2026-10-17] Yalnızca gösterilen uyum puanına göre (büyükten küçüğe). Eşitlikte D4 kuralı: ağırlıklı varyans
+    artan, etkin meslek sayısı azalan, ad alfabetik. alan yalnızca bilgi olarak doldurulur, sırayı etkilemez.
+    ilk_n yoksa liste yerinde sıralanır; varsa yalnızca ilk ilk_n satır döner."""
     for st in satirlar:
         st.alan = alan_of.get(st.bolum_id)
 
     def anahtar(s):
-        return (grup.get(s.alan, 0), -s.toplam_uyum, varyans.get(s.bolum_id, 0.0), -meslek_sayisi.get(s.bolum_id, 0),
-                adlar.get(s.bolum_id, ""))
+        return (-s.toplam_uyum, varyans.get(s.bolum_id, 0.0), -meslek_sayisi.get(s.bolum_id, 0), adlar.get(s.bolum_id, ""))
     if ilk_n is not None:
         import heapq
         return heapq.nsmallest(ilk_n, satirlar, key=anahtar)   # sort ile aynı (kararlı) sıra
     satirlar.sort(key=anahtar)
     return satirlar
+
+
+def eski_uyum_skorlarini_guncelle(db: Session) -> int:
+    """[2026-10-17] Alan cezasıyla 0'a kırpılmış eski TOPLAM_UYUM kayıtlarını bir kez yeniden hesaplar (açılışta).
+    Öğrenci cevapları, K5 dalları ve dal içi uyum değişmez; yalnızca ogrenci_bolum_uyum_skorlari yeniden yazılır."""
+    from sqlalchemy import text as _text
+
+    from app.models import SistemParametresi
+    db.execute(_text("SELECT pg_advisory_xact_lock(20261017)"))   # çok işçili sunucuda tek işçi çalışsın
+    p = db.query(SistemParametresi).filter(SistemParametresi.anahtar == "uyum_skor_surumu").first()
+    if p is not None and p.deger == UYUM_SKOR_SURUMU:
+        db.rollback()
+        return 0
+    cift = db.query(OgrenciBolumUyumSkoru.ogrenci_id, OgrenciBolumUyumSkoru.tur_id).distinct().all()
+    sayi = 0
+    for ogrenci_id, tur_id in cift:
+        o, t = db.get(Ogrenci, ogrenci_id), db.get(OgrenciDegerlendirmeTuru, tur_id)
+        if o is not None and t is not None and toplam_uyum_hesapla(db, o, t):
+            sayi += 1
+    if p is None:
+        db.add(SistemParametresi(anahtar="uyum_skor_surumu", deger=UYUM_SKOR_SURUMU,
+                                 aciklama="Bölüm uyum puanı hesaplama sürümü (otomatik; elle değiştirmeyin)"))
+    else:
+        p.deger = UYUM_SKOR_SURUMU
+    db.commit()
+    return sayi
 
 
 # [2026-10-14] Tek kaynak: okul/rehber ekranları, tercih ve toplu istatistikler öğrencinin gördüğü NİHAİ uyumu ve
@@ -580,6 +574,10 @@ NEDEN_OGRENCI_ESIK = 55.0        # öğrencinin kendi profilinde ortalamanın ü
 NEDEN_DIKKAT_BOLUM = 85.0       # bölüm bu özellikte bölümlerin en üst %15'inde
 NEDEN_DIKKAT_OGRENCI = 40.0     # öğrencinin kendi profilinde belirgin şekilde geride
 NEDEN_DIKKAT_TEKRAR = 3         # aynı dikkat notu bu kadar bölümde çıkıyorsa bölüme özgü değildir → gösterilmez
+# [2026-10-17] Uyum puanı farkın yönüne bakmaz; dikkat notu da iki yönlü: bölümün çok az beklediği (bölümlerin en alt
+# %15'i) bir özellikte öğrenci belirgin yüksekse (≥ 60) "fazlalık" notu verilir. En fazla 2 not (eksik + fazla).
+NEDEN_FAZLA_BOLUM = 15.0
+NEDEN_FAZLA_OGRENCI = 60.0
 
 
 def _liste_metni(adlar: list[str]) -> str:
@@ -726,19 +724,30 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
                 k = kanitlar.get(d_ana, [])
                 k5 = {"is_turu": eksen_ad.get(d_ana, ""), "durum": "uyumlu" if guclu_mu(p) else "az",
                       "kanit": k[0] if (k and guclu_mu(p)) else None}
-        dikkat = [(float(o[j]), j) for j in range(len(kodlar))
-                  if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_DIKKAT_BOLUM and o[j] <= NEDEN_DIKKAT_OGRENCI]
-        if dikkat:
-            dikkat_of[bid] = min(dikkat)[1]
-        sonuc[bid] = {"ortusen": ortusen, "k5": k5, "dikkat": None}
+        eksik = [(float(o[j]), j) for j in range(len(kodlar))
+                 if kodlar[j] in KISA_AD and yuzdelik[i, j] >= NEDEN_DIKKAT_BOLUM and o[j] <= NEDEN_DIKKAT_OGRENCI]
+        fazla = [(-float(o[j]), j) for j in range(len(kodlar))
+                 if kodlar[j] in KISA_AD and yuzdelik[i, j] <= NEDEN_FAZLA_BOLUM and o[j] >= NEDEN_FAZLA_OGRENCI]
+        dikkat_of[bid] = ([("eksik", min(eksik)[1])] if eksik else []) + ([("fazla", min(fazla)[1])] if fazla else [])
+        sonuc[bid] = {"ortusen": ortusen, "k5": k5, "dikkat": None, "dikkatler": []}
 
     # dikkat notu: yalnızca bölüme özgüyse (listede az tekrar ediyorsa) eklenir
     from collections import Counter
-    tekrar = Counter(dikkat_of.values())
-    for bid, j in dikkat_of.items():
-        if tekrar[j] < NEDEN_DIKKAT_TEKRAR:
-            sonuc[bid]["dikkat"] = {"ozellik": KISA_AD[kodlar[j]],
-                                    "metin": f"Bu bölüm yüksek düzeyde {KISA_AD[kodlar[j]]} bekliyor; senin cevaplarında bu yön daha geri planda."}
+    tekrar = Counter(n for l in dikkat_of.values() for n in l)
+    for bid, notlar in dikkat_of.items():
+        for yon, j in notlar:
+            if tekrar[(yon, j)] >= NEDEN_DIKKAT_TEKRAR:
+                continue
+            ad, deger = KISA_AD[kodlar[j]], kodlar[j].startswith("D")
+            if yon == "eksik":
+                metin = (f"Bu bölümde çalışanlar için {ad} çok önemli; senin önceliklerinde bu daha geri planda." if deger else
+                         f"Bu bölüm yüksek düzeyde {ad} bekliyor; senin cevaplarında bu yön daha geri planda.")
+            else:
+                metin = (f"{_buyuk_bas(ad)} senin için bu bölümde çalışanların çoğundan daha önemli; bölüm bu beklentini her zaman karşılamayabilir." if deger else
+                         f"Bu bölümde {ad} daha az öne çıkar; senin cevaplarında ise bu yön güçlü. Bu yönünü bölümde daha az kullanabilirsin.")
+            sonuc[bid]["dikkatler"].append({"ozellik": ad, "yon": yon, "metin": metin})
+        if sonuc[bid]["dikkatler"]:
+            sonuc[bid]["dikkat"] = sonuc[bid]["dikkatler"][0]
 
     # eski istemciler için düz cümleler
     for bid, d in sonuc.items():
@@ -748,7 +757,7 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
         if d["k5"]:
             m.append(f"Alan sorularında «{d['k5']['is_turu']}» işlerini "
                      + ("öne çıkardın." if d["k5"]["durum"] == "uyumlu" else "daha az seçtin."))
-        if d["dikkat"]:
-            m.append("Dikkat: " + d["dikkat"]["metin"])
+        for x in d.get("dikkatler") or []:
+            m.append("Dikkat: " + x["metin"])
         d["metinler"] = m
     return sonuc

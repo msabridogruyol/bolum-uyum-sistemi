@@ -2,8 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import { okulBolumleri } from './yonetim/okulBolumleri'
-import { FILIZ_CSS, FilizAcDugmesi, FilizCerceve, SesDugmesi, durumYayinla } from './FilizSohbet'
-import { soyle, sus } from '../yardimci/filizSes'
+import { FILIZ_CSS, FilizAcDugmesi, FilizCerceve, durumYayinla } from './FilizSohbet'
 
 // [2026-10-11] Filiz — yönetim paneli asistanı sohbeti ("Bana sor"). Öğrenci sohbetinin görsel parçalarını kullanır.
 // POST /yonetim/filiz/sor → { mod: 'ai' | 'rehber', ... }. Yapay zekâ modu (okulda 'filiz_ai' + anahtar) yoksa ya da hata
@@ -64,7 +63,6 @@ export default function FilizYonetimSohbet({ rol, okulId, moduller }) {
       const c = await api.filizYonetimSor(metin, gecmis)
       if (c.mod) setMod(c.mod)
       setMesajlar((l) => [...l, { rol: 'filiz', metin: c.metin, cevap: c }])
-      soyle(c.metin)   // [2026-10-11] ses açıksa okunur
       durumYayinla({ acik: true, dusunuyor: false, cevaplandi: true })
     } catch (e) {
       setMesajlar((l) => [...l, { rol: 'not', metin: e.status === 403 ? (e.detail || 'Filiz bu panelde açık değil.') : 'Cevap alınamadı, bağlantınızı kontrol edip tekrar deneyin.' }])
@@ -87,9 +85,9 @@ export default function FilizYonetimSohbet({ rol, okulId, moduller }) {
     <>
       {!acik && <FilizAcDugmesi onClick={() => setAcik(true)} aria="Filiz Panel Asistanı'na sor" />}
       {acik && (
-        <FilizCerceve baslik={baslik} ariaLabel="Filiz Panel Asistanı" onKapat={() => { sus(); setAcik(false) }}
+        <FilizCerceve baslik={baslik} ariaLabel="Filiz Panel Asistanı" onKapat={() => setAcik(false)}
           durum={gonderiliyor ? 'düşünüyor…' : <span className={`fy-mod fy-mod-${mod || 'rehber'}`}>{mod === 'ai' ? '✨ Yapay zekâ asistanı' : '📘 Rehber modu'}</span>}
-          araclar={<><SesDugmesi />{mesajlar.length > 0 && <button className="filiz-ikon-btn" title="Temizle" onClick={() => setMesajlar([])}>↺</button>}</>}>
+          araclar={mesajlar.length > 0 && <button className="filiz-ikon-btn" title="Temizle" onClick={() => setMesajlar([])}>↺</button>}>
           <div className="filiz-oto-serit">
             🔒 {aydinlatma || 'Sorularınız kaydedilmez. Belirli bir öğrenciyle ilgili sorular yalnızca yetkiniz dahilinde, sistem içinde cevaplanır.'}
           </div>

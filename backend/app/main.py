@@ -226,6 +226,26 @@ def _sema_guncelle():
         semayi_guncelle(engine)
     except Exception:
         pass
+    import sys as _sys
+    if "pytest" not in _sys.modules:   # testler kendi verisini kurar; arka plan işi araya girmesin
+        _threading.Thread(target=_uyum_skorlarini_guncelle, name="uyum-skor-guncelle", daemon=True).start()
+
+
+def _uyum_skorlarini_guncelle():
+    """[2026-10-17] Alan cezasıyla 0'a kırpılmış eski bölüm uyum puanlarını bir kez yeniden hesapla (arka planda)."""
+    import logging
+    try:
+        from app.core.database import SessionLocal
+        from app.core.skor_motoru import eski_uyum_skorlarini_guncelle
+        db = SessionLocal()
+        try:
+            n = eski_uyum_skorlarini_guncelle(db)
+            if n:
+                logging.getLogger("uvicorn.error").info("Bölüm uyum puanları yeniden hesaplandı: %d değerlendirme", n)
+        finally:
+            db.close()
+    except Exception:
+        logging.getLogger("uvicorn.error").exception("Bölüm uyum puanları yeniden hesaplanamadı")
 
 
 def _fotograf_temizligi():
