@@ -17,7 +17,7 @@ function NedenDetay({ d }) {
   return (
     <div className="neden-kutu">
       {ortusen.length > 0 && (
-        <div className="neden-ozet"><span className="neden-ozet-bas">Bölümle örtüşen güçlü yönlerin:</span> {ortusen.map((x) => x.ozellik).join(' · ')}</div>
+        <div className="neden-ozet"><span className="neden-ozet-bas">Bölümle örtüşen yönlerin:</span> {ortusen.map((x) => x.ozellik).join(' · ')}</div>
       )}
       {d.k5 && (
         <div className={`neden-ozet k5 ${d.k5.durum === 'uyumlu' ? 'iyi' : 'zayif'}`}>

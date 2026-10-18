@@ -211,7 +211,7 @@ export default function SistemHakkindaSayfasi() {
 
       <Bolum ikon="📊" baslik="5. Aşama 4 — Sonuç Sunumu ve Gizlilik Kuralları">
         <p style={{ marginBottom: 10 }}>Öğrenciye üç farklı sonuç ekranı sunulur:</p>
-        <Madde><b>Bölüm Uyumum</b> — yalnızca K1-K4'ün 4'ü de bitince ve açıldıysa K5 iş türü soruları tamamlanınca (yoksa 409 döner), en yüksek uyumlu <b>en fazla 10</b> bölüm (API üst sınırı 10; arayüz 20 istese de 10 döner). Her bölüm için "Neden bu bölüm?" açıklaması: en fazla 3 örtüşen güçlü yön + öğrencinin bunu gösteren seçimleri, K5 notu ve bölüme özgü bir dikkat notu</Madde>
+        <Madde><b>Bölüm Uyumum</b> — yalnızca K1-K4'ün 4'ü de bitince ve açıldıysa K5 iş türü soruları tamamlanınca (yoksa 409 döner), en yüksek uyumlu <b>en fazla 10</b> bölüm (API üst sınırı 10; arayüz 20 istese de 10 döner). Her bölüm için "Neden bu bölüm?" açıklaması: en fazla 3 örtüşen yön (değerler dahil; öğrenci ve bölüm ikisinde de yüksek) + öğrencinin bunu gösteren seçimleri, K5 notu ve bölüme özgü bir dikkat notu</Madde>
         <Madde><b>Tüm Bölümleri Keşfet</b> — profil eksik olsa bile çalışır; bölümün en yüksek ağırlıklı 5 değişkenini ve (hesaplandıysa) uyum yüzdesini gösterir</Madde>
         <Madde><b>Genel Sonuçlar</b> — K1-K4'ün özet profili, gerçek "öne çıkan güçler/gelişim alanları"</Madde>
         <p style={{ marginTop: 10, padding: '10px 12px', background: 'var(--rel, #fdecea)', borderRadius: 8, color: 'var(--re)' }}>

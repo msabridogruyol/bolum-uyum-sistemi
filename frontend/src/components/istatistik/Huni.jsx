@@ -32,7 +32,7 @@ export default function Huni({ adimlar, birim, baslik, ariaEtiket }) {
               <li key={`${a.ad}-${i}`}>
                 {i > 0 && (
                   <div className="ist-huni-gecis" aria-hidden="true">
-                    <span>↓</span> {gecis == null ? '—' : `%${sayi(gecis, 1)}`} <small>devam etti</small>
+                    <span>↓</span> {gecis == null || gecis > 100 ? '—' : `%${sayi(gecis, 1)}`} <small>{gecis != null && gecis > 100 ? 'önceki adımdan bağımsız' : 'devam etti'}</small>
                   </div>
                 )}
                 <div {...e.isaret(i)} className={`ist-huni-satir${e.aktif === i ? ' aktif' : ''}`}>

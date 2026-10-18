@@ -262,7 +262,7 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
             O.append("Öne çıkan alanlar: " + " · ".join(a for a, _ in alanlar.most_common(2)))
         ortusen = Counter(o for b in v["bolumler"][:5] for o in b.get("ortusen") or [])
         if ortusen:
-            O.append(("Önerilen bölümlerde sık geçen güçlü yönlerin: " if sen else "Önerilen bölümlerde sık geçen güçlü yönler: ")
+            O.append(("Önerilen bölümlerle sık örtüşen yönlerin: " if sen else "Önerilen bölümlerle sık örtüşen yönler: ")
                      + " · ".join(a for a, _ in ortusen.most_common(3)))
     if v["k5"]:
         O.append(f"İş türü sorularında en çok öne çıkan iş: {v['k5'][0]['ad']}")

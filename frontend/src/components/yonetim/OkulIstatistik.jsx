@@ -4,10 +4,9 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import {
-  CizgiGrafik, GrafikKarti, Halka, Histogram, Huni, IsiHaritasi, KATEGORIK, KpiKarti, KpiSatiri, SutunGrafik,
-  YatayCubuk, YiginSutun, bicim, histogramTablosu, sayi,
+  CizgiGrafik, GrafikKarti, Halka, Huni, KATEGORIK, KpiKarti, KpiSatiri, SutunGrafik,
+  YatayCubuk, YiginSutun, bicim,
 } from '../istatistik'
-import { BANTLAR } from '../../yardimci/seviye'
 import { katmanAdi } from '../../yardimci/katmanAdlari'
 import { useOkulModulleri } from '../../yardimci/moduller'
 
@@ -70,47 +69,25 @@ function Katilim({ v }) {
 // ----------------------------------------------------------------------------- Profil
 function Profil({ v }) {
   const p = v.profil
-  const [hk, setHk] = useState('hepsi')
-  const kodlar = p.katmanlar.map((k) => k.kod)
   const kAd = (kod) => `${kod} · ${katmanAdi(kod, p.katmanlar.find((k) => k.kod === kod)?.ad)}`
-  const histDeger = useMemo(() => (hk === 'hepsi' ? kodlar.flatMap((k) => p.histogram[k] || []) : p.histogram[hk] || []), [hk, p])
   if (!p.tamamlayan) {
     return <Bolum id="profil" baslik="Profil"><div className="card bos-durum">Profil istatistikleri değerlendirmeyi tamamlayan öğrenciler oldukça oluşur.</div></Bolum>
   }
   const ozellikTablosu = (l) => tabloYap(['Özellik', 'Katman', 'Ortalama', 'Öğrenci'], l.map((x) => [x.ad, x.katman, x.ortalama, x.n]))
   return (
-    <Bolum id="profil" baslik="Profil" aciklama={`Değerlendirmeyi tamamlayan ${p.tamamlayan} öğrencinin son sonuçları${p.gecersiz_haric ? ` (güven puanı eşiğin altında kalan ${p.gecersiz_haric} öğrenci ortalamalara katılmadı)` : ''}. Puanlar 0–100; 50 civarı ortadır.`}>
+    <Bolum id="profil" baslik="Profil" aciklama={`Değerlendirmeyi tamamlayan ${p.tamamlayan} öğrencinin son sonuçları${p.gecersiz_haric ? ` (güven puanı eşiğin altında kalan ${p.gecersiz_haric} öğrenci ortalamalara katılmadı)` : ''}. Puanlar her öğrencinin kendi profili içinde görelidir (0–100); bu yüzden katman ortalamaları gösterilmez.`}>
       <div className="ist-kartlar">
-        <GrafikKarti genis baslik="Katman ortalamaları" aciklama={p.katman_ort.length > 1 ? 'Seçili kapsamın geneli ve sınıf düzeyleri' : 'Seçili kapsamın ortalaması'}
-          tablo={tabloYap(['Kapsam', ...kodlar], p.katman_ort.map((g) => [g.ad, ...kodlar.map((k) => g.degerler[k])]))}>
-          <div className="ois-mini-izgara">
-            {kodlar.map((k) => (
-              <div key={k} className="ois-mini">
-                <div className="ois-mini-baslik">{kAd(k)}</div>
-                <YatayCubuk veri={p.katman_ort.map((g) => ({ ad: g.ad, deger: g.degerler[k] }))} maks={100} birim="puan"
-                  sirala={false} vurgu={p.katman_ort[0].ad} renk={OKUL} />
-              </div>
-            ))}
-          </div>
-        </GrafikKarti>
-        <GrafikKarti baslik="En güçlü 8 özellik" aciklama="Öğrencilerin ortalamada en yüksek puan aldığı özellikler" tablo={ozellikTablosu(p.guclu)}>
+        <GrafikKarti baslik="En öne çıkan 8 özellik" aciklama="Ortalaması en yüksek özellikler (değerler ve duygusal hassasiyet hariç)" tablo={ozellikTablosu(p.guclu)}>
           <YatayCubuk veri={p.guclu.map((x) => ({ ad: x.ad, deger: x.ortalama, alt: kAd(x.katman) }))} maks={100} birim="puan" renk={OKUL} />
         </GrafikKarti>
-        <GrafikKarti baslik="En az öne çıkan 8 özellik" aciklama="Ortalaması en düşük özellikler — gelişim çalışmaları için ipucu" tablo={ozellikTablosu(p.zayif)}>
+        <GrafikKarti baslik="En az öne çıkan 8 özellik" aciklama="Ortalaması en düşük özellikler (değerler ve duygusal hassasiyet hariç) — gelişim çalışmaları için ipucu" tablo={ozellikTablosu(p.zayif)}>
           <YatayCubuk veri={p.zayif.map((x) => ({ ad: x.ad, deger: x.ortalama, alt: kAd(x.katman) }))} maks={100} birim="puan" sirala={false} renk={KATEGORIK[1]} />
         </GrafikKarti>
-        <GrafikKarti baslik="Şube × katman ortalaması" aciklama="Her hücre o şubenin katman ortalaması (0–100)"
-          tablo={tabloYap(['Şube', ...kodlar], p.sube_katman.map((g) => [g.ad, ...kodlar.map((k) => g.degerler[k])]))}>
-          <IsiHaritasi satirBasligi="Şube" satirlar={p.sube_katman.map((g) => g.ad)} sutunlar={kodlar}
-            degerler={p.sube_katman.map((g) => kodlar.map((k) => g.degerler[k]))} aralik={[0, 100]} bicim={(x) => sayi(x)} />
-        </GrafikKarti>
-        <GrafikKarti baslik="Katman puanı dağılımı" aciklama="Öğrenci başına katman ortalaması; arka plan düzey bantlarıdır"
-          sag={<select className="yp-sec" value={hk} onChange={(e) => setHk(e.target.value)} aria-label="Katman">
-            <option value="hepsi">Tüm katmanlar</option>{kodlar.map((k) => <option key={k} value={k}>{kAd(k)}</option>)}
-          </select>}
-          tablo={histogramTablosu(histDeger)}>
-          <Histogram degerler={histDeger} aralik={[0, 100]} kova={10} bantlar={BANTLAR} renk={OKUL} />
-        </GrafikKarti>
+        {(p.degerler || []).length > 0 && (
+          <GrafikKarti baslik="Öğrencilerin önem verdiği değerler" aciklama="Değerler bir tercihtir; güçlü yön ya da gelişim alanı sayılmaz" tablo={ozellikTablosu(p.degerler)}>
+            <YatayCubuk veri={p.degerler.map((x) => ({ ad: x.ad, deger: x.ortalama }))} maks={100} birim="puan" renk={KATEGORIK[3]} />
+          </GrafikKarti>
+        )}
       </div>
     </Bolum>
   )

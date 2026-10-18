@@ -211,10 +211,6 @@ export default function IstatistiklerSayfasi() {
 
       <Bolum baslik="Sonuçlar" aciklama="Öğrencinin dönem içinde tamamladığı son tur esas alınır." />
       <div className="ist-kartlar">
-        <GrafikKarti baslik="Katman ortalamaları" aciklama="K1–K4: katmandaki özellik puanlarının öğrenci ortalaması (0–100)"
-          tablo={{ sutunlar: ['Katman', 'Ortalama', 'Öğrenci'], satirlar: v.katmanlar.map((x) => [x.kod, x.ortalama, x.n]) }}>
-          <SutunGrafik veri={v.katmanlar.map((x) => ({ ad: x.kod, deger: x.ortalama }))} maks={100} birim="puan" />
-        </GrafikKarti>
         <GrafikKarti baslik={`Puan dağılımı — ${secKatman || ''}`} aciklama="Arka plan bantları: düzey etiketleri (Gelişime açık … Çok güçlü)"
           sag={<div className="sis-mini-sec" role="group" aria-label="Katman seç">{katKod.map((kk) => (
             <button key={kk} type="button" className="ist-dugme" aria-pressed={kk === secKatman} onClick={() => setKatman(kk)}>{kk}</button>
@@ -230,7 +226,7 @@ export default function IstatistiklerSayfasi() {
           tablo={{ sutunlar: ['Bölüm', 'Öğrenci'], satirlar: v.onerilen.map((x) => [x.ad, x.deger]) }}>
           <YatayCubuk veri={v.onerilen} birim="öğrenci" enFazla={10} />
         </GrafikKarti>
-        <GrafikKarti baslik="Üst alan dağılımı" aciklama="1. sıradaki bölümün K5 üst alanı"
+        <GrafikKarti baslik="Üst alan dağılımı" aciklama="1. sıradaki bölümün alanı"
           tablo={{ sutunlar: ['Üst alan', 'Öğrenci'], satirlar: v.alanlar.map((x) => [x.ad, x.deger]) }}>
           <YatayCubuk veri={v.alanlar} birim="öğrenci" enFazla={10} renk={KATEGORIK[1]} />
         </GrafikKarti>

@@ -779,7 +779,7 @@ def neden_aciklamalari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
     for bid, d in sonuc.items():
         m = []
         if d["ortusen"]:
-            m.append("Örtüşen güçlü yönlerin: " + ", ".join(turkce_kucult(x["ozellik"]) for x in d["ortusen"]) + ".")
+            m.append("Bölümle örtüşen yönlerin: " + ", ".join(turkce_kucult(x["ozellik"]) for x in d["ortusen"]) + ".")
         if d["k5"]:
             m.append(f"İş türü sorularında «{d['k5']['is_turu']}» işlerini "
                      + ("öne çıkardın." if d["k5"]["durum"] == "uyumlu" else "daha az seçtin."))

@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
 import HaftalikGorevler from '../components/HaftalikGorevler'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
-import AnaSayfaGrafikleri from '../components/AnaSayfaGrafikleri'
+import { gucluMu } from '../yardimci/seviye'
 import BugunPaneli from '../components/BugunPaneli'
 import { modulAcikMi, modulleriYukle, useModuller } from '../yardimci/moduller'
 
@@ -67,10 +67,12 @@ export default function AnaSayfa() {
   const tamamlananYuzde = katmanlar.length ? Math.round((ozet.tamamlanan_katman_sayisi / ozet.toplam_ana_katman_sayisi) * 100) : 0
 
 
-  // Gerçek "profil skoru" — en yüksek bölüm uyum puanı
-  const profilSkoru = siralama && siralama.length > 0 ? Math.round(siralama[0].toplam_uyum) : null
-
-  const tumSonuclar = ANA_KATMANLAR.flatMap((kod) => katmanSonuclari[kod]?.sonuclar || [])
+  // [2026-10-18] Profil özeti: güçlü yönler (62+, değerler ve P4 hariç) ve en önem verilen değerler.
+  // Katman ortalaması gösterilmez (katman içi puanlar göreli, ortalama hep ≈50).
+  const tumSonuclar = ANA_KATMANLAR.flatMap((kod) => (katmanSonuclari[kod]?.sonuclar || []).map((s) => ({ ...s, katmanKod: kod })))
+  const degerMi = (s) => s.katmanKod === 'K1' || String(s.degisken_kod || '').startsWith('D')
+  const gucluYonler = tumSonuclar.filter((s) => !degerMi(s) && s.degisken_kod !== 'P4' && gucluMu(s.puan)).sort((a, b) => b.puan - a.puan).slice(0, 3)
+  const onemliDegerler = tumSonuclar.filter(degerMi).sort((a, b) => b.puan - a.puan).slice(0, 3)
 
   const hedefBolumAdi = hedef?.bolum_adi || null
   const hedefUniversite = profil?.hedef_universite || null
@@ -97,7 +99,6 @@ export default function AnaSayfa() {
             <b>{profil?.ad_soyad || 'Öğrenci'}</b>
             <span className="as-kimlik-ayrac">·</span>
             <span>{[profil?.okul, profil?.sinif].filter(Boolean).join(' · ') || 'Okul bilgisi eklenmedi'}</span>
-            {profilSkoru !== null && <><span className="as-kimlik-ayrac">·</span><span>Sana en yakın bölüm <b className="as-kimlik-skor">{profilSkoru}</b>/100</span></>}
             <span className="as-kimlik-git">Profilim →</span>
           </div>
           {/* [2026-10-11] Kendi aktiflik serin: son 14 gün (sistemi açtığın günler) */}
@@ -147,7 +148,11 @@ export default function AnaSayfa() {
               ))}
             </ol>
             <div className="as-cekirdek-not">Puan, bölümün tüm bölümler içinde sana ne kadar yakın olduğunu gösterir (100 = en yakın).</div>
-            <button type="button" className="btn" onClick={() => navigate('/bolumler')}>Tüm önerileri ve nedenlerini gör →</button>
+            <div className="as-cekirdek-dugmeler">
+              <button type="button" className="btn" onClick={() => navigate('/bolumler')}>Öneriler ve nedenleri →</button>
+              <button type="button" className="btn sec" onClick={() => navigate('/bolumler/karsilastir')}>Karşılaştır</button>
+              <button type="button" className="btn sec" onClick={() => navigate('/bolumler/tum')}>Tüm bölümler</button>
+            </div>
           </div>
           {kocluk && (
             <div className="as-cekirdek-kutu">
@@ -155,7 +160,7 @@ export default function AnaSayfa() {
               {hedefBolumAdi ? (
                 <>
                   <div className="as-cekirdek-hedef">{hedefBolumAdi}</div>
-                  <div className="as-cekirdek-not">Bu bölümün beklediği özelliklerle seni tek tek karşılaştırdık: nerede güçlüsün, nerede gelişmen gerekiyor.</div>
+                  <div className="as-cekirdek-not">Bu bölümün beklediği özelliklerle seni tek tek karşılaştırdık: nerede uyumlusun, nerede farkın var ve ne yapabilirsin.</div>
                   <div className="as-cekirdek-dugmeler">
                     <button type="button" className="btn" onClick={() => navigate('/koclugu?sekme=karsilastirma')}>Karşılaştırmayı gör →</button>
                     <button type="button" className="btn sec" onClick={() => navigate('/koclugu?sekme=yol')}>Yol haritam</button>
@@ -201,28 +206,27 @@ export default function AnaSayfa() {
       {/* [2026-10-04] Her hafta 3 görev — sistemi düzenli kullanımın merkezi */}
       {kocluk && <HaftalikGorevler />}
 
-      {/* [2026-10-11] Güç Dağılımın ve Rozetler kaldırıldı; öğrenci bilgisi başlığın altında küçük şeritte */}
-
-      {/* [2026-10-09] Tam genişlikte grafik satırı: katman profili · en güçlü yönler · bölüm uyum sıralaması */}
-      {tumSonuclar.length > 0 && (
-        <div style={{ marginTop: 20 }}>
-          <AnaSayfaGrafikleri
-            katmanVerisi={ANA_KATMANLAR.map((kod) => ({ kod, deger: katmanSonuclari[kod]?.puanOrtalama ?? null }))}
-            gucluYonler={[...tumSonuclar].sort((a, b) => b.puan - a.puan).slice(0, 6).map((s) => ({ ad: s.degisken_adi, deger: Math.round(s.puan) }))}
-            siralama={siralama}
-            onBolumAc={bolumBilgisiAc}
-          />
-        </div>
-      )}
-
-      {/* [2026-10-10] 10'lu öneri kartları kaldırıldı (grafikteki uyum sıralaması + Bölümler sayfası ile tekrar ediyordu) */}
-      {ozet.tur_tamamlandi_mi && (
-        <div className="as-baglantilar">
-          <button type="button" onClick={() => navigate('/bolumler')}><span>🌟</span><b>Sana uygun bölümler</b><small>Nedenleriyle birlikte</small></button>
-          <button type="button" onClick={() => navigate('/bolumler/karsilastir')}><span>⚖️</span><b>Karşılaştır</b><small>2-3 bölümü yan yana koy</small></button>
-          <button type="button" onClick={() => navigate('/bolumler/tum')}><span>🔍</span><b>Tüm bölümler</b><small>Bütün bölümleri keşfet</small></button>
-          <button type="button" onClick={() => navigate('/profilim')}><span>🧭</span><b>Profilim</b><small>Güçlü yönlerin, katmanların</small></button>
-        </div>
+      {/* [2026-10-18] Grafik satırı ve kısayol kutuları kaldırıldı (katman ortalaması anlamsızdı; kısayollar menüyü tekrar ediyordu).
+          Yerine kısa profil özeti; ayrıntı Profilim'de. */}
+      {(gucluYonler.length > 0 || onemliDegerler.length > 0) && (
+        <section className="card as-profil-ozet" aria-label="Profil özetin">
+          <div className="as-profil-ust">
+            <div className="ct" style={{ margin: 0 }}>🧭 Profil özetin</div>
+            <button type="button" className="hg-link" onClick={() => navigate('/profilim')}>Profilimin tamamı →</button>
+          </div>
+          <div className="as-profil-sutunlar">
+            <div>
+              <div className="as-profil-baslik">Güçlü yönlerin</div>
+              {gucluYonler.length
+                ? gucluYonler.map((s) => <div key={s.degisken_id} className="as-profil-satir"><span>{s.degisken_adi}</span><b style={{ color: 'var(--gr)' }}>{Math.round(s.puan)}</b></div>)
+                : <div className="as-cekirdek-not">Henüz belirgin biçimde öne çıkan bir özelliğin yok.</div>}
+            </div>
+            <div>
+              <div className="as-profil-baslik">En önem verdiğin değerler</div>
+              {onemliDegerler.map((s) => <div key={s.degisken_id} className="as-profil-satir"><span>{s.degisken_adi}</span><b style={{ color: 'var(--pu)' }}>{Math.round(s.puan)}</b></div>)}
+            </div>
+          </div>
+        </section>
       )}
     </div>
   )

@@ -553,9 +553,20 @@ export default function OkulPaneliSayfasi() {
             </div>
           </div>
           {raporlar}
+          {/* [2026-10-18] 19 sekme tek çubukta yerine gruplar (okul yetkilisinin sol menüsüyle aynı gruplar) + grubun alt sekmeleri */}
           <div className="yp-sekmeler yp-sekmeler-buyuk">
-            {bolumler.map((b) => <button key={b.k} className={sk === b.k ? 'aktif' : ''} onClick={() => setSekme(b.k)}>{etiket(b)}</button>)}
+            {[...new Set(bolumler.map((b) => b.grup))].map((g) => {
+              const ilk = bolumler.find((b) => b.grup === g)
+              return <button key={g} className={aktifBolum.grup === g ? 'aktif' : ''} onClick={() => aktifBolum.grup !== g && setSekme(ilk.k)}>{g}</button>
+            })}
           </div>
+          {bolumler.filter((b) => b.grup === aktifBolum.grup).length > 1 && (
+            <div className="koc-alt-sekmeler">
+              {bolumler.filter((b) => b.grup === aktifBolum.grup).map((b) => (
+                <button key={b.k} className={sk === b.k ? 'aktif' : ''} onClick={() => setSekme(b.k)}>{b.ikon} {etiket(b)}</button>
+              ))}
+            </div>
+          )}
         </>
       ) : (
         // [2026-10-10] Okul yetkilisi: bölümler sol menüde; burada yalnızca açık bölümün başlığı

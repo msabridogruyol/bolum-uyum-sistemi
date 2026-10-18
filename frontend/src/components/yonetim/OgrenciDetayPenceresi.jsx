@@ -68,6 +68,11 @@ function OgrenciSimulasyonlari({ ogrenciId }) {
 }
 
 const SEKMELER = [['genel', 'Genel'], ['ilerleme', 'Test ilerlemesi'], ['sonuc', 'Sonuçlar'], ['rehberlik', 'Rehberlik', 'rehberlik'], ['kocluk', 'Koçluk', 'kocluk'], ['netler', 'Netler', 'net_takibi'], ['calisma', 'Çalışma', 'calisma'], ['portfolyo', 'Portfolyo', 'portfolyo'], ['tercih', 'Tercih', 'tercih'], ['akran', 'Benzer akranlar', 'akran'], ['ilgi', 'İlgi & kulüp', 'kulupler'], ['kutuphane', 'Kütüphane', 'kutuphane'], ['kayit', 'Kayıtlar']]
+const SEKME_GRUPLARI = [
+  { ad: 'Değerlendirme', kodlar: ['genel', 'ilerleme', 'sonuc', 'cevaplar'] },
+  { ad: 'Gelişim ve takip', kodlar: ['kocluk', 'netler', 'calisma', 'portfolyo', 'kutuphane', 'ilgi'] },
+  { ad: 'Rehberlik', kodlar: ['rehberlik', 'tercih', 'akran', 'kayit'] },
+]
 const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam ediyor', yarida_birakildi: '⏸ Yarıda bıraktı', baslamadi: '— Başlamadı' }
 
 // [2026-10-10] Rehber öğretmen için koçluk özeti: tamamlanan adımlar + öğrencinin kısa geri bildirimi + tekrar ölçümler
@@ -298,9 +303,24 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           { k: 'excel', ad: 'Excel', ikon: '📊', aciklama: 'Tüm puanlar, bölümler ve denemeler tablo halinde', indir: ({ netler }) => api.ogrenciRaporuIndir(ogrenciId, 'ogrenci', 'xlsx', netler) },
         ]} />
       </div>
-      <div className="yp-sekmeler">
-        {[...SEKMELER.filter((x) => modulAcik(x[2]) && (x[0] !== 'tercih' || ['12. Sınıf', 'Mezun'].includes(h.sinif))), ['cevaplar', '🔍 Cevap analizi']].map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
-      </div>
+      {(() => {
+        // [2026-10-18] 14 sekme 3 gruba toplandı; içerik aynı
+        const gorunen = [...SEKMELER.filter((x) => modulAcik(x[2]) && (x[0] !== 'tercih' || ['12. Sınıf', 'Mezun'].includes(h.sinif))), ['cevaplar', '🔍 Cevap analizi']]
+        const gruplar = SEKME_GRUPLARI.map((g) => ({ ...g, alt: gorunen.filter((x) => g.kodlar.includes(x[0])) })).filter((g) => g.alt.length)
+        const aktif = gruplar.find((g) => g.kodlar.includes(sekme)) || gruplar[0]
+        return (
+          <>
+            <div className="yp-sekmeler">
+              {gruplar.map((g) => <button key={g.ad} className={g === aktif ? 'aktif' : ''} onClick={() => g !== aktif && setSekme(g.alt[0][0])}>{g.ad}</button>)}
+            </div>
+            {aktif.alt.length > 1 && (
+              <div className="koc-alt-sekmeler">
+                {aktif.alt.map(([k, ad]) => <button key={k} className={sekme === k ? 'aktif' : ''} onClick={() => setSekme(k)}>{ad}</button>)}
+              </div>
+            )}
+          </>
+        )
+      })()}
 
       {sekme === 'genel' && (
         <>

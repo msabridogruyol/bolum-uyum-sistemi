@@ -28,7 +28,7 @@ export default function ProfilimSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Profilim</div>
-        <div className="ps">Değerlendirmene göre değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların burada. Güçlü yönlerini ve gelişebileceğin alanları da görürsün.</div>
+        <div className="ps">Değerlerin, kişiliğin, iş ortamı yetkinliklerin ve ilgi alanların. Önce özet, ayrıntılar sekmelerde.</div>
       </div>
       <nav className="sayfa-sekmeleri" aria-label="Profil bölümleri">
         {SEKMELER.map((s) => (
@@ -39,7 +39,6 @@ export default function ProfilimSayfasi() {
         ))}
       </nav>
       <PuanRehberi bolumlu={false} baslik="Güçlü, çok güçlü, gelişime açık ne demek? Profilini nasıl okumalısın?" />
-      {!k && <OgrenciRaporYorumu />}
       <div className="gomulu-sayfa" key={k || 'genel'}>
         <Suspense fallback={<div className="bos-durum yukleniyor">Yükleniyor…</div>}>
           {!k && <GenelSonuclarSayfasi gomulu />}
@@ -47,6 +46,7 @@ export default function ProfilimSayfasi() {
           {k === 'K5' && <K5SonucSayfasi gomulu />}
         </Suspense>
       </div>
+      {!k && <OgrenciRaporYorumu />}
     </div>
   )
 }

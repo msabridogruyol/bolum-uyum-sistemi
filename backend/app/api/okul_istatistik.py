@@ -283,18 +283,20 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
                            for s, d in sorted(sinif_k.items(), key=lambda kv: _sinif_sira(kv[0]))]
         sube_katman = [{"ad": sube_etiketi(s[0], s[1]) if s[1] else s[0], "degerler": {k: _ort(d[k]) for k in kodlar}}
                        for s, d in sorted(sube_k.items(), key=lambda kv: (_sinif_sira(kv[0][0]), kv[0][1]))]
-        degisken_ort = [{"ad": r.ad, "katman": r.kod, "ortalama": round(float(r.ort), 1), "n": r.n} for r in db.execute(text("""
-            SELECT d.ad, k.kod, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
+        degisken_ort = [{"ad": r.ad, "katman": r.kod, "dkod": r.dkod, "ortalama": round(float(r.ort), 1), "n": r.n} for r in db.execute(text("""
+            SELECT d.ad, k.kod, d.kod AS dkod, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
               JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
              WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
-             GROUP BY d.ad, k.kod ORDER BY ort DESC"""), {"t": gecerli_tur_ids}).all()]
+             GROUP BY d.ad, k.kod, d.kod ORDER BY ort DESC"""), {"t": gecerli_tur_ids}).all()]
     v["profil"] = {
         "katmanlar": [{"kod": k, "ad": a} for k, a in katmanlar],
         "tamamlayan": len(gecerli_tur_ids),   # [2026-10-14] ortalamaların dayandığı (geçerli) öğrenci sayısı
         "gecersiz_haric": len(tur_ids) - len(gecerli_tur_ids),
         "katman_ort": katman_ort,
-        "guclu": degisken_ort[:8],
-        "zayif": list(reversed(degisken_ort))[:8],
+        # [2026-10-18] Değerler (D) güçlü/zayıf sayılmaz, ayrı listelenir; P4 ters yönlüdür, iki listeye de girmez
+        "guclu": [x for x in degisken_ort if not str(x["dkod"]).startswith("D") and x["dkod"] != "P4"][:8],
+        "zayif": [x for x in reversed(degisken_ort) if not str(x["dkod"]).startswith("D") and x["dkod"] != "P4"][:8],
+        "degerler": [x for x in degisken_ort if str(x["dkod"]).startswith("D")],
         "sube_katman": sube_katman,
         "histogram": ogr_katman,   # {K1: [öğrenci başına katman ortalaması, …]}
     }

@@ -204,17 +204,25 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
 //   Özet · Yol Haritası · Güçlü Yönlerin · Bölümle Karşılaştırma · Gelişimin
 // [2026-10-09] Hedef seçimi/değiştirme yalnızca Ayarlar sayfasında (en fazla 3 değişiklik).
 // ============================================================
-const SEKMELER = [
-  // [2026-10-17] Ana iş önde: Özet → Sen ve Bölümün → Yol Haritam → Güçlü Yönlerin, ardından bölümü tanıma araçları
-  { kod: 'ozet', ad: 'Özet', ikon: '🧭' },
-  { kod: 'karsilastirma', ad: 'Sen ve Bölümün', ikon: '📊' },
-  { kod: 'yol', ad: 'Yol Haritam', ikon: '🗺️' },
-  { kod: 'guclu', ad: 'Güçlü Yönlerin', ikon: '💪' },
-  { kod: 'bolum', ad: 'Bölümünü Tanı', ikon: '📘' },
-  { kod: 'gun', ad: 'Bir Günümü Yaşa', ikon: '🎬' },
-  { kod: 'ilham', ad: 'İlham Kaynakları', ikon: '📚' },
-  { kod: 'gelisim', ad: 'Gelişimin', ikon: '📈' },
+// [2026-10-18] 8 sekme 3 gruba toplandı (içerik aynı; alt sekmeler grubun içinde). Sekme kodları değişmedi,
+// eski bağlantılar (?sekme=…) doğru grubu ve alt sekmeyi açar.
+const GRUPLAR = [
+  { kod: 'durum', ad: 'Durumum', ikon: '🧭', alt: [
+    { kod: 'ozet', ad: 'Özet' },
+    { kod: 'karsilastirma', ad: 'Sen ve Bölümün' },
+    { kod: 'gelisim', ad: 'Gelişimin' },
+  ] },
+  { kod: 'adimlar', ad: 'Adımlarım', ikon: '🗺️', alt: [
+    { kod: 'yol', ad: 'Yol Haritam' },
+    { kod: 'guclu', ad: 'Güçlü Yönlerin' },
+    { kod: 'ilham', ad: 'İlham Kaynakları' },
+  ] },
+  { kod: 'tani', ad: 'Bölümünü Tanı', ikon: '📘', alt: [
+    { kod: 'bolum', ad: 'Bölüm Rehberi' },
+    { kod: 'gun', ad: 'Bir Günümü Yaşa' },
+  ] },
 ]
+const SEKMELER = GRUPLAR.flatMap((g) => g.alt.map((s) => ({ ...s, grup: g.kod })))
 
 // [2026-10-09] İlham kaynakları — yönetimdeki "Gelişim Kaynak Havuzu" öğrencinin odak ve güçlü alanlarına göre
 const KAYNAK_TIP = {
@@ -365,7 +373,7 @@ function OdakSatirlari({ plan }) {
             <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5 }}>{o.neden_onemli}</div>
             {o.alan_turu_aciklama && <div className="koc-alan-turu-not">{o.alan_turu_aciklama}</div>}
           </div>
-          <div style={{ display: 'grid', gap: 4, justifyItems: 'end' }}>
+          <div className="koc-odak-rozetler">
             <AlanTuruRozeti odak={o} />
             <FarkRozeti g={o} />
           </div>
@@ -842,11 +850,19 @@ export default function KoclukSayfasi() {
         {veriVar && (
           <>
             <div className="koc-sekmeler" role="tablist">
-              {SEKMELER.map((s) => (
-                <button key={s.kod} role="tab" aria-selected={sekme === s.kod} className={sekme === s.kod ? 'aktif' : ''} onClick={() => sekmeyeGit(s.kod)}>
-                  <span aria-hidden="true">{s.ikon}</span> {s.ad}
-                  {s.kod === 'yol' && plan && plan.ilerleme.toplam > 0 && <span className="koc-cip-sayi">{plan.ilerleme.tamamlanan}/{plan.ilerleme.toplam}</span>}
-                </button>
+              {GRUPLAR.map((g) => {
+                const aktif = SEKMELER.find((s) => s.kod === sekme)?.grup === g.kod
+                return (
+                  <button key={g.kod} role="tab" aria-selected={aktif} className={aktif ? 'aktif' : ''} onClick={() => !aktif && sekmeyeGit(g.alt[0].kod)}>
+                    <span aria-hidden="true">{g.ikon}</span> {g.ad}
+                    {g.kod === 'adimlar' && plan && plan.ilerleme.toplam > 0 && <span className="koc-cip-sayi">{plan.ilerleme.tamamlanan}/{plan.ilerleme.toplam}</span>}
+                  </button>
+                )
+              })}
+            </div>
+            <div className="koc-alt-sekmeler" role="tablist">
+              {GRUPLAR.find((g) => g.alt.some((s) => s.kod === sekme))?.alt.map((s) => (
+                <button key={s.kod} role="tab" aria-selected={sekme === s.kod} className={sekme === s.kod ? 'aktif' : ''} onClick={() => sekmeyeGit(s.kod)}>{s.ad}</button>
               ))}
             </div>
             {sekme === 'ozet' && <OzetSekmesi plan={plan} gelisim={gelisim} sekmeyeGit={sekmeyeGit} />}
