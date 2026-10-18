@@ -66,10 +66,6 @@ export default function AnaSayfa() {
   const ilkAd = (profil?.ad_soyad || 'Öğrenci').split(' ')[0]
   const tamamlananYuzde = katmanlar.length ? Math.round((ozet.tamamlanan_katman_sayisi / ozet.toplam_ana_katman_sayisi) * 100) : 0
 
-  // K5 — dal bazlı, açılan dalların ortalama puanı (varsa)
-  const k5OrtalamaPuan = k5Durum.acilan.length > 0
-    ? Math.round(k5Durum.acilan.reduce((a, d) => a + d.puan, 0) / k5Durum.acilan.length)
-    : null
 
   // Gerçek "profil skoru" — en yüksek bölüm uyum puanı
   const profilSkoru = siralama && siralama.length > 0 ? Math.round(siralama[0].toplam_uyum) : null
@@ -211,8 +207,7 @@ export default function AnaSayfa() {
       {tumSonuclar.length > 0 && (
         <div style={{ marginTop: 20 }}>
           <AnaSayfaGrafikleri
-            katmanVerisi={[...ANA_KATMANLAR.map((kod) => ({ kod, deger: katmanSonuclari[kod]?.puanOrtalama ?? null })),
-              ...(k5OrtalamaPuan !== null ? [{ kod: 'K5', deger: k5OrtalamaPuan }] : [])]}
+            katmanVerisi={ANA_KATMANLAR.map((kod) => ({ kod, deger: katmanSonuclari[kod]?.puanOrtalama ?? null }))}
             gucluYonler={[...tumSonuclar].sort((a, b) => b.puan - a.puan).slice(0, 6).map((s) => ({ ad: s.degisken_adi, deger: Math.round(s.puan) }))}
             siralama={siralama}
             onBolumAc={bolumBilgisiAc}

@@ -609,6 +609,10 @@ export const api = {
   dalFiltreListesiGetir: () => aget('/admin/sorular-detay/dallar'),
   soruMetniGuncelle: (soruId, soruMetni) => aput(`/admin/sorular-detay/soru/${soruId}`, { soru_metni: soruMetni }),
   secenekMetniGuncelle: (secenekId, secenekMetni) => aput(`/admin/sorular-detay/secenek/${secenekId}`, { secenek_metni: secenekMetni }),
+  k5BankasiGetir: () => aget('/admin/sorular-detay/k5-bankasi'),
+  k5CumleGuncelle: (id, metin) => aput(`/admin/sorular-detay/k5-bankasi/cumle/${id}`, { metin }),
+  k5KokGuncelle: (id, metin) => aput(`/admin/sorular-detay/k5-bankasi/kok/${id}`, { metin }),
+  ucMetinleriGuncelle: (soruId, ucA, ucB) => aput(`/admin/sorular-detay/soru/${soruId}/uclar`, { uc_a_metni: ucA, uc_b_metni: ucB }),
   dallariDetayliListele: () => aget('/admin/sorular-detay/dallar-detay'),
   // [2026-10-09] Okullar (süper admin) + öğrencinin kendi okul rozeti
   okulBenim: () => get('/okul/benim'),

@@ -265,7 +265,8 @@ def test_katman_tekrari_bitince_sonuc_epostasi_yeniden_gider(db, okul, monkeypat
 
 @db_gerekli
 def test_sonuc_epostasi_k5_dali_bitmeden_gitmez(db, okul, monkeypatch):
-    """Son bölüm K5: açılan derinleşme dalı bitmeden e-posta gitmez; son dal bitince gider."""
+    """Son bölüm K5: açılan K5 (iş türü soruları) oturumu bitmeden e-posta gitmez; bitince gider.
+    [2026-10-18] Yeni K5'te tek adım vardır (dal kodu K5N); eski alan oturumları öğrenciyi kilitlemez."""
     from app.core import eposta_servisi as ep
     from app.core import sonuc_epostasi as se
     from app.models import Ogrenci, OgrenciDegerlendirmeTuru
@@ -273,14 +274,8 @@ def test_sonuc_epostasi_k5_dali_bitmeden_gitmez(db, okul, monkeypatch):
     ep.GONDERILENLER.clear()
     oid = okul["ogr"]["Tekrar"]
     tid = _tamamlanmis_tur(db, oid, 0, True)
-    ek = uuid.uuid4().hex[:6]
-    katman_id = db.execute(text("SELECT id FROM katmanlar ORDER BY sira LIMIT 1")).scalar()
-    dal_id = db.execute(text("""INSERT INTO dallar (kod, ad, dogrulama_durumu, olusturulma_zamani)
-                                VALUES (:k, :k, 'taslak', now()) RETURNING id"""), {"k": f"TDAL{ek}"}).scalar()
-    dg = db.execute(text("""INSERT INTO degiskenler (katman_id, kod, ad, sira, ters_yonlu, dal_id)
-                            VALUES (:ka, :k, :k, 99, FALSE, :d) RETURNING id"""), {"ka": katman_id, "k": f"TDG{ek}", "d": dal_id}).scalar()
-    db.execute(text("""INSERT INTO sorular (katman_id, degisken_id, soru_tipi, soru_metni, ters_kodlanmis_mi, aktif_mi, olusturulma_zamani)
-                       VALUES (:ka, :dg, 'likert', 'Test K5 sorusu', FALSE, TRUE, now())"""), {"ka": katman_id, "dg": dg})
+    dal_id = db.execute(text("SELECT id FROM dallar WHERE kod = 'K5N'")).scalar()
+    assert dal_id, "0076 göçü K5N dalını eklemeli"
     db.execute(text("""INSERT INTO ogrenci_dal_oturumlari (ogrenci_id, tur_id, dal_id, durum)
                        VALUES (:o, :t, :d, 'devam_ediyor')"""), {"o": oid, "t": tid, "d": dal_id})
     db.commit()

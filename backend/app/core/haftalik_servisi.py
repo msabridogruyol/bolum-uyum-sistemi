@@ -104,7 +104,7 @@ def _yolculuk_gorevi(db: Session, ogrenci: Ogrenci) -> dict | None:
                     "ref_kod": sonraki.kod, "link": "/katmanlar"}
         return None
     if bekleyen_dal_var_mi(db, ogrenci, tur):
-        return {"tur": "k5", "baslik": "Sana açılan alan (K5) sorularını tamamla",
+        return {"tur": "k5", "baslik": "İş türü (K5) sorularını tamamla",
                 "aciklama": "Bölüm önerilerin ve koçluk planın bu adımdan sonra hazırlanıyor.",
                 "ref_kod": "K5", "link": "/katmanlar"}
     hedef = aktif_hedef_getir(db, ogrenci)

@@ -125,7 +125,7 @@ function BolumMeslek({ v }) {
         <KpiKarti etiket="Hedefi ilk 10 önerisinde" deger={b.uyum.oran == null ? '—' : b.uyum.oran} birim={b.uyum.oran == null ? undefined : '%'} ikon="🎯" ton="okul"
           alt={`${b.uyum.ilk10} / ${b.uyum.hedefli_tamamlayan} hedef seçmiş ve testi tamamlamış öğrenci`} />
         <KpiKarti etiket="Hedef bölüm seçen" deger={v.kpi.hedef_secen} ikon="📌" alt={`${v.kpi.ogrenci} öğrenciden`} />
-        <KpiKarti etiket="K5 alan derinleşmesini bitiren" deger={v.kpi.k5_tamamlayan} ikon="🌻" />
+        <KpiKarti etiket="K5 iş türü sorularını bitiren" deger={v.kpi.k5_tamamlayan} ikon="🌻" />
       </KpiSatiri>
       <div className="ist-kartlar">
         <GrafikKarti baslik="1. sırada önerilen bölümler" aciklama="Testi tamamlayanların en üst önerisi" tablo={cubukTablosu('Bölüm', 'Öğrenci', b.ilk_oneri)}>
@@ -134,7 +134,7 @@ function BolumMeslek({ v }) {
         <GrafikKarti baslik="Hedeflenen bölümler" aciklama="Öğrencilerin seçtiği hedef bölüm" tablo={cubukTablosu('Bölüm', 'Öğrenci', b.hedef)}>
           <YatayCubuk veri={b.hedef} birim="öğrenci" enFazla={10} />
         </GrafikKarti>
-        <GrafikKarti baslik="K5 alan dağılımı" aciklama="Alan derinleşmesinde tamamlanan alanlar (bir öğrenci birden çok alanda olabilir)" tablo={cubukTablosu('Alan', 'Öğrenci', b.k5_alan)}>
+        <GrafikKarti baslik="K5 iş türü dağılımı" aciklama="K5'i bitiren öğrencilerin en çok öne çıkardığı iş türü (her öğrenci bir kez sayılır)" tablo={cubukTablosu('İş türü', 'Öğrenci', b.k5_alan)}>
           <YatayCubuk veri={b.k5_alan} birim="öğrenci" enFazla={10} renk={KATEGORIK[2]} />
         </GrafikKarti>
         {b.simulasyon && (

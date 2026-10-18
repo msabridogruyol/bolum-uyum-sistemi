@@ -76,17 +76,14 @@ def kutup_sorularini_toplu_yukle(
         soru = Soru(
             katman_id=katman.id, degisken_id=a_degisken.id, b_ucu_degisken_id=b_degisken.id,
             soru_tipi="kutup", soru_metni=satir.soru_metni.strip(), aktif_mi=True,
+            uc_a_metni=satir.a_ucu_etiketi.strip(), uc_b_metni=satir.b_ucu_etiketi.strip(),
         )
         db.add(soru)
         db.flush()  # soru.id'yi almak için
 
-        secenek_metinleri = [
-            f"Kesinlikle {satir.a_ucu_etiketi}",
-            f"Daha Çok {satir.a_ucu_etiketi}",
-            f"Daha Çok {satir.b_ucu_etiketi}",
-            f"Kesinlikle {satir.b_ucu_etiketi}",
-        ]
-        for sira, metin in enumerate(secenek_metinleri, start=1):
+        # [2026-10-18] Uç metinleri ayrı alanlarda (ekranda iki kart); şıklar sabit 4'lü ölçek — puanlama sırası buna bağlı
+        from app.core.dal_servisi import KUTUP_SECENEKLERI
+        for sira, metin in enumerate(KUTUP_SECENEKLERI, start=1):
             db.add(SoruSecenegi(soru_id=soru.id, secenek_sirasi=sira, secenek_metni=metin))
 
         eklenen += 1

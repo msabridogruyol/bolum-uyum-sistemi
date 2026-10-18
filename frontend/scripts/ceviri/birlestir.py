@@ -30,10 +30,15 @@ for m, fs in be.items():
     if not fs: continue
     ekle(adli_yer_tutucu(m), "icerik" if fs[0].startswith("core/gelisim") else "arayuz", "be:" + fs[0])
 
-c = psycopg2.connect("postgresql://postgres:pg@localhost/k5test2"); cur = c.cursor()
+# [2026-10-18] Veritabanı adresi ortam değişkeninden (varsayılan yerel kopya). Öğrenciye özel üretilen K5 soruları
+# (sorular.ogrenci_id dolu) kataloğa girmez: metinleri zaten k5_soru_kokleri / k5_cumleleri'nden gelir.
+c = psycopg2.connect(os.environ.get("CEVIRI_DB", "postgresql://postgres:pg@localhost/k5test2")); cur = c.cursor()
 SORGULAR = [
-    ("select soru_metni from sorular", "soru", "db:sorular"),
-    ("select secenek_metni from soru_secenekleri", "soru", "db:soru_secenekleri"),
+    ("select soru_metni from sorular where ogrenci_id is null", "soru", "db:sorular"),
+    ("select x.secenek_metni from soru_secenekleri x join sorular s on s.id = x.soru_id where s.ogrenci_id is null", "soru", "db:soru_secenekleri"),
+    ("select uc_a_metni from sorular where ogrenci_id is null union select uc_b_metni from sorular where ogrenci_id is null", "soru", "db:soru_secenekleri"),
+    ("select metin from k5_soru_kokleri where aktif_mi", "soru", "db:sorular"),
+    ("select metin from k5_cumleleri where aktif_mi", "soru", "db:soru_secenekleri"),
     ("select ad from degiskenler union select aciklama from degiskenler", "etiket", "db:degiskenler"),
     ("select ad from bolumler", "etiket", "db:bolumler"),
     ("select ad from sinav_konulari union select ders from sinav_konulari", "etiket", "db:sinav_konulari"),

@@ -68,7 +68,7 @@ function SenaryoPenceresi({ ogrenci, bolumler, onKapat, onTamam }) {
             <option value="k1">K1 bitti</option>
             <option value="k2">K1–K2 bitti</option>
             <option value="k3">K1–K3 bitti</option>
-            <option value="k5_bekliyor">K1–K4 bitti, alan soruları (K5) bekliyor</option>
+            <option value="k5_bekliyor">K1–K4 bitti, iş türü soruları (K5) bekliyor</option>
             <option value="tamamlandi">Değerlendirme tamamlandı (sonuçlar hazır)</option>
           </select>
         </label>

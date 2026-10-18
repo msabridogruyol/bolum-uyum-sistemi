@@ -581,7 +581,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
             h.append(KeepTogether([st.p(f"{k['kod']} · {_e(k['ad'])} (ortalama {yuvarla(k['ortalama'])})", st.h3),
                                    _cubuklar([(x["ad"], x.get("ham", x["puan"])) for x in k["ozellikler"]]), Spacer(1, 5)]))
     if v["k5"]:
-        h.append(st.p("Alan soruları (K5)", st.h2))
+        h.append(st.p("İş türü tercihleri (K5)", st.h2))
         h.append(_cubuklar([(x["ad"], x["puan"]) for x in v["k5"]]))
     if v["bolumler"]:
         h.append(st.p("Bölüm önerileri (ilk 10)", st.h2))

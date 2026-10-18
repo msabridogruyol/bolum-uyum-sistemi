@@ -94,6 +94,7 @@ def _cevaplar_ve_ozellikler(db: Session, o: Ogrenci, tur: OgrenciDegerlendirmeTu
             "sira": sira, "soru_id": s.id, "katman": k.kod if k else "?", "katman_ad": k.ad if k else "?",
             "tip": s.soru_tipi, "tip_ad": TIP_ADI.get(s.soru_tipi, s.soru_tipi),
             "cevap_bicimi": s.cevap_bicimi, "ters": bool(s.ters_kodlanmis_mi), "soru": s.soru_metni,
+            "uc_a": s.uc_a_metni, "uc_b": s.uc_b_metni,   # [2026-10-18] uçlar sorusunda iki ucun metni
             "secenekler": [{"id": x.id, "sira": x.secenek_sirasi, "metin": x.secenek_metni,
                             "secildi": x.id == c.secenek_id, "en_az": x.id == c.en_az_secenek_id} for x in secenekler],
             "katkilar": katki_listesi, "kontrol": kontrol, "zaman": c.cevap_zamani,

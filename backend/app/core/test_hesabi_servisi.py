@@ -32,7 +32,7 @@ ASAMALAR = {
 }
 ASAMA_ADI = {
     "baslamadi": "Hiç başlamadı", "k1": "K1 bitti", "k2": "K1–K2 bitti", "k3": "K1–K3 bitti",
-    "k5_bekliyor": "K1–K4 bitti, alan soruları (K5) bekliyor", "tamamlandi": "Değerlendirme tamamlandı",
+    "k5_bekliyor": "K1–K4 bitti, iş türü soruları (K5) bekliyor", "tamamlandi": "Değerlendirme tamamlandı",
 }
 
 
@@ -91,10 +91,16 @@ def hedef_profil(db: Session, egilim: str, bolum_id: int | None, rnd: random.Ran
         for grup in _yetkinlik_tablosu(db)["tablo"].get(bolum_id, {}).values():
             for x in grup:
                 yuzdelik[x["kod"]] = x["yuzdelik"]
+    # [2026-10-18] K5 iş türleri: bölüm eğilimli öğrenci o bölümün bağlı iş türlerini (bağ gücüyle) öne çıkarır;
+    # diğerlerinde dağınık bir öğrenci (önceden tüm iş türleri 50-80 → K5 hiçbir şeyi ayırt etmiyordu).
+    k5_hedef: dict[int, float] = {}
+    if egilim == "bolum" and bolum_id:
+        from app.models import BolumK5Bag
+        k5_hedef = {b.degisken_id: float(b.bag) for b in db.query(BolumK5Bag).filter(BolumK5Bag.bolum_id == bolum_id).all()}
     profil = {}
     for d in degiskenler:
-        if d.dal_id is not None:                       # K5 alan soruları: açılan alana ilgili bir öğrenci
-            profil[d.id] = rnd.uniform(50, 80)
+        if d.dal_id is not None:                       # K5 iş türleri
+            profil[d.id] = (70 + 25 * k5_hedef[d.id]) if d.id in k5_hedef else rnd.uniform(25, 70)
         elif d.kod in yuzdelik:                        # bölüm beklentisine yakın ama birebir değil
             profil[d.id] = 15 + 0.7 * yuzdelik[d.kod] + rnd.gauss(0, 10)
         elif egilim == "dengeli":

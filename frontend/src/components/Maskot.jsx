@@ -620,10 +620,10 @@ function sayfaMesaji(yol, ozet, hedef) {
   if (yol === '/katmanlar') {
     if (biten === 0) return 'İlk katmanla başlayalım: Değerler! 🌱'
     if (biten < toplam) return `${biten}/${toplam} katman tamam, harika gidiyorsun! Sıradaki seni bekliyor.`
-    // [2026-10-12] K5 alanları da bittiyse "alan sorularını bitir" denmez
+    // [2026-10-12] K5 de bittiyse "iş türü sorularını bitir" denmez
     const k5Acilan = ozet?.k5_acilan_dal_sayisi ?? 0
     if (k5Acilan > 0 && (ozet?.k5_tamamlanan_dal_sayisi ?? 0) >= k5Acilan) return 'Değerlendirmenin tamamını bitirdin! 🎉 Sonuçların hazır; bölüm önerilerine göz at.'
-    return 'Tüm katmanlar bitti! 🎉 Alan sorularını da bitirince sonuçların hazır.'
+    return 'Tüm katmanlar bitti! 🎉 İş türü sorularını da bitirince sonuçların hazır.'
   }
   if (yol === '/bolumler/tum') return 'Bir bölüme tıkla, örnek mesleklerine bak. Beğendiğini ☆ ile listene ekle! 🔍'
   if (yol === '/bolumler/karsilastir') return 'Aklındaki 2-3 bölümü yan yana koy, farkları gör. ⚖️'

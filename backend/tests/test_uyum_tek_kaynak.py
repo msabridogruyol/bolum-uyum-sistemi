@@ -1,8 +1,8 @@
 """
 [2026-10-14] Tek kaynak: öğrencinin sonuç ekranındaki bölüm uyumu (skor_motoru.siralama_getir — K5 etkili nihai uyum +
 alan sırası) ile tercih ekranı, rehber öğrenci detayı ve okul listelerinin gösterdiği uyum / ilk öneri aynı olmalı.
-Ham toplam_uyum 38 + K5 (dal_ici 90 → +0,15 × 40 = +6) = 44 olan bölüm, ham 43'lük bölümün önüne geçer; hedef olarak
-ham 38 (< 40) ama öğrencinin gördüğü 44'tür. [2026-10-18] K5 katsayısı 0,50 → 0,15.
+[2026-10-18] Yeni K5: iki bölüm K5 kümesinde (K5 puanı: 43'lük bölüm 50, 38'lik bölüm 90). Ölçüt 38 + 0,15 × 40 = 44 > 43
+olduğundan 38'lik bölüm öne geçer ve kümenin yuvalarını sırayla alır: öğrencinin gördüğü 43 (hedef) ve 38.
 """
 import pytest
 from sqlalchemy import text
@@ -34,9 +34,10 @@ def k5li_ogrenci(db, kisiler):
     for bid, u in ((a, 43), (b, 38)):
         db.execute(text("""INSERT INTO ogrenci_bolum_uyum_skorlari (ogrenci_id, tur_id, bolum_id, toplam_uyum, olusturulma_zamani)
                            VALUES (:o, :t, :b, :u, now())"""), {"o": oid, "t": tur, "b": bid, "u": u})
-    dal = db.execute(text("SELECT id FROM dallar ORDER BY id LIMIT 1")).scalar()
-    db.execute(text("""INSERT INTO ogrenci_dal_uyum_skorlari (ogrenci_id, tur_id, dal_id, bolum_id, dal_ici_uyum, olusturulma_zamani)
-                       VALUES (:o, :t, :d, :b, 90, now())"""), {"o": oid, "t": tur, "d": dal, "b": b})
+    dal = db.execute(text("SELECT id FROM dallar WHERE kod = 'K5N'")).scalar()
+    for bid, k5 in ((a, 50), (b, 90)):
+        db.execute(text("""INSERT INTO ogrenci_dal_uyum_skorlari (ogrenci_id, tur_id, dal_id, bolum_id, dal_ici_uyum, olusturulma_zamani)
+                           VALUES (:o, :t, :d, :b, :k, now())"""), {"o": oid, "t": tur, "d": dal, "b": bid, "k": k5})
     db.execute(text("INSERT INTO ogrenci_hedef_bolum (ogrenci_id, bolum_id, secim_zamani, aktif_mi) VALUES (:o, :b, now(), TRUE)"),
                {"o": oid, "b": b})
     db.commit()
@@ -51,7 +52,7 @@ def _ogrenci_ekrani(db, d):
 
 def test_ogrenci_ekrani_k5_etkili(db, k5li_ogrenci):
     sira = _ogrenci_ekrani(db, k5li_ogrenci)
-    assert [(s.bolum_id, s.toplam_uyum) for s in sira] == [(k5li_ogrenci["k5_ilk"], 44.0), (k5li_ogrenci["ham_ilk"], 43.0)]
+    assert [(s.bolum_id, s.toplam_uyum) for s in sira] == [(k5li_ogrenci["k5_ilk"], 43.0), (k5li_ogrenci["ham_ilk"], 38.0)]
 
 
 def test_toplu_fonksiyonlar_ogrenci_ekraniyla_ayni(db, k5li_ogrenci):
@@ -59,22 +60,22 @@ def test_toplu_fonksiyonlar_ogrenci_ekraniyla_ayni(db, k5li_ogrenci):
     sira = _ogrenci_ekrani(db, k5li_ogrenci)
     t = k5li_ogrenci["tur"]
     assert [(s.bolum_id, s.toplam_uyum, s.alan) for s in toplu_siralama(db, [t])[t]] == [(s.bolum_id, s.toplam_uyum, s.alan) for s in sira]
-    assert toplu_nihai_uyum(db, [t], [k5li_ogrenci["k5_ilk"]]) == {t: {k5li_ogrenci["k5_ilk"]: 44.0}}
+    assert toplu_nihai_uyum(db, [t], [k5li_ogrenci["k5_ilk"]]) == {t: {k5li_ogrenci["k5_ilk"]: 43.0}}
 
 
 def test_tercih_ekrani_ayni_uyum_ve_sira(db, istemci, kisiler, k5li_ogrenci):
     r = istemci.get("/ogrenci/tercih", headers=kisiler["ogrenci"])
     assert r.status_code == 200, r.text
     bolumler = {b["id"]: b for b in r.json()["bolumler"]}
-    assert (bolumler[k5li_ogrenci["k5_ilk"]]["uyum"], bolumler[k5li_ogrenci["k5_ilk"]]["sira"]) == (44, 1)
-    assert (bolumler[k5li_ogrenci["ham_ilk"]]["uyum"], bolumler[k5li_ogrenci["ham_ilk"]]["sira"]) == (43, 2)
+    assert (bolumler[k5li_ogrenci["k5_ilk"]]["uyum"], bolumler[k5li_ogrenci["k5_ilk"]]["sira"]) == (43, 1)
+    assert (bolumler[k5li_ogrenci["ham_ilk"]]["uyum"], bolumler[k5li_ogrenci["ham_ilk"]]["sira"]) == (38, 2)
 
 
 def test_rehber_ogrenci_detayi_ayni_uyum(db, istemci, kisiler, k5li_ogrenci):
     r = istemci.get(f"/yonetim/ogrenci/{k5li_ogrenci['ogrenci_id']}", headers=kisiler["yetkili"])
     assert r.status_code == 200, r.text
     v = r.json()
-    assert v["hedef"]["uyum"] == 44.0
+    assert v["hedef"]["uyum"] == 43.0
     assert [o["uyum"] for o in v["oneriler"]] == [s.toplam_uyum for s in _ogrenci_ekrani(db, k5li_ogrenci)]
 
 
@@ -85,7 +86,7 @@ def test_okul_listesi_ilk_bolum_ve_tek_bakista(db, kisiler, k5li_ogrenci):
     assert il["ilk_bolum"] == k5li_ogrenci["k5_ilk"]
     assert il["oneri_ilk10"] == [s.bolum_id for s in _ogrenci_ekrani(db, k5li_ogrenci)]
     v = tek_bakista_verisi(db, kisiler["okul_a"], None, None)
-    # hedef uyumu ham 38 (< 40) ama nihai 44: 'hedef uyumu düşük' listesinde OLMAMALI
+    # hedef uyumu ham 38 (< 40) ama nihai 43: 'hedef uyumu düşük' listesinde OLMAMALI
     assert v["hedef_uyum"]["hedefli"] >= 1
     assert all(x["ogrenci_id"] != str(k5li_ogrenci["ogrenci_id"]) for x in v["hedef_uyum"]["ogrenciler"])
 

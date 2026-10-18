@@ -49,9 +49,8 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
   // [2026-10-03] K5 zorunlu: açılan dal(lar) bitmediyse öğrenci K5'e yönlendirilir
   const k5Bekliyor = !!ozet && ozet.k5_acilan_dal_sayisi > ozet.k5_tamamlanan_dal_sayisi
 
-  const k5OrtalamaPuan = k5Durum.acilan.length > 0
-    ? Math.round(k5Durum.acilan.reduce((a, d) => a + d.puan, 0) / k5Durum.acilan.length)
-    : null
+  // [2026-10-18] Yeni K5'in tek bir "puanı" yoktur (iş türü tercihleri küme içi sırayı değiştirir): kartta durum gösterilir
+  const k5Bitti = k5Durum.acilan.some((d) => d.durum === 'tamamlandi')
 
   const tumSonuclar = ANA_KATMANLAR.flatMap((kod) => katmanSonuclari[kod]?.sonuclar || [])
   const genelOrtalama = tumSonuclar.length
@@ -75,9 +74,9 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
 
       {k5Bekliyor && (
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)', marginBottom: 16 }}>
-          <div className="ct">Bir adım kaldı: Alan Soruları (K5)</div>
+          <div className="ct">Bir adım kaldı: İş Türü Soruları (K5)</div>
           <div className="ps" style={{ margin: '0 0 12px' }}>
-            K4 sonuçlarına göre sana özel alan soruları açıldı. Bu soruları bitirince bölüm önerilerin hazırlanacak.
+            Sana en uygun çıkan bölümleri karşılaştıran, sana özel iş türü soruları açıldı. Bu soruları bitirince bölüm önerilerin hazırlanacak.
           </div>
           <button className="btn" onClick={() => navigate('/katmanlar')}>K5'e Devam Et →</button>
         </div>
@@ -102,8 +101,8 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
         <div className="oc" onClick={() => navigate(k5Durum.acilan.length > 0 && !k5Bekliyor ? '/profilim/K5' : '/katmanlar')}>
           <div className="oi">{KATMAN_IKON.K5}</div>
           <div className="ol">Katman 5</div>
-          <div className="op" style={{ color: k5OrtalamaPuan !== null ? 'var(--gr)' : 'var(--tx3)' }}>
-            {k5OrtalamaPuan !== null ? k5OrtalamaPuan : '—'}
+          <div className="op" style={{ color: k5Bitti ? 'var(--gr)' : 'var(--tx3)' }}>
+            {k5Bitti ? '✓' : '—'}
           </div>
           <div className="ob">Derinleşme</div>
         </div>
@@ -209,7 +208,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
       )}
 
       {k5Bekliyor ? (
-        <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>Alan Sorularına (K5) Devam Et →</button>
+        <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>İş Türü Sorularına (K5) Devam Et →</button>
       ) : (
         <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/')}>Ana Sayfaya Dön</button>
       )}

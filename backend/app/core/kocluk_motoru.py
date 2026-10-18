@@ -214,7 +214,8 @@ def _yedek_sorular(db: Session, degisken_id: int) -> list[int]:
     agirlik = (db.query(SoruSecenegi.soru_id, SjtSecenekDegiskenAgirlik.agirlik)
                .join(SjtSecenekDegiskenAgirlik, SjtSecenekDegiskenAgirlik.secenek_id == SoruSecenegi.id)
                .join(Soru, Soru.id == SoruSecenegi.soru_id)
-               .filter(SjtSecenekDegiskenAgirlik.degisken_id == degisken_id, Soru.aktif_mi.is_(True)).all())
+               .filter(SjtSecenekDegiskenAgirlik.degisken_id == degisken_id, Soru.aktif_mi.is_(True),
+                       Soru.ogrenci_id.is_(None)).all())   # öğrenciye özel K5 soruları başkasına sorulmaz
     etki: dict[int, float] = {}
     for sid, w in agirlik:
         etki[sid] = max(etki.get(sid, 0.0), abs(float(w)))
@@ -239,6 +240,7 @@ def olcum_sorulari(db: Session, ogrenci: Ogrenci, degisken_id: int) -> dict:
         s = db.get(Soru, sid)
         sec = db.query(SoruSecenegi).filter(SoruSecenegi.soru_id == s.id).order_by(SoruSecenegi.secenek_sirasi).all()
         sorular.append({"id": s.id, "metin": s.soru_metni, "tip": s.soru_tipi, "cevap_bicimi": s.cevap_bicimi or "tek",
+                        "uc_a_metni": s.uc_a_metni, "uc_b_metni": s.uc_b_metni,
                         "secenekler": [{"id": x.id, "metin": x.secenek_metni} for x in sec]})
     return {"degisken_id": degisken_id, "degisken_adi": d.ad if d else "", "sorular": sorular}
 

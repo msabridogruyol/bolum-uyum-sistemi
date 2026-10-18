@@ -1080,6 +1080,11 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .sn-tip-etiket span{font-weight:600;color:var(--tx2)}
 .qtext.sn-metin{font-size:clamp(21px,2.4vw,29px);line-height:1.4;margin:12px 0 22px;min-height:0;animation:fy-gir .3s ease both}
 .sn-adim{margin:-6px 0 14px;padding:11px 15px;border-radius:12px;font-size:15px;font-weight:700}
+/* [2026-10-18] Uçlar sorusu: iki tercih kartı (A / B); altında mevcut şık listesiyle 4'lü ölçek */
+.sn-uclar{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 14px}
+.sn-uc{display:flex;gap:10px;align-items:flex-start;padding:14px 16px;border:1.5px solid var(--bor);border-radius:14px;background:var(--sur2);font-size:clamp(15px,1.4vw,17px);line-height:1.45}
+.sn-uc b{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--pu);color:#fff;font-size:14px}
+@media(max-width:640px){.sn-uclar{grid-template-columns:1fr}}
 .sn-adim.bir{background:var(--grl);color:var(--gr)}.sn-adim.iki{background:var(--rel);color:var(--re)}.sn-adim.tamam{background:var(--sur2);color:var(--tx2)}
 .qopts.sn-secenekler{display:flex;flex-direction:column;gap:11px}
 .qopt.sn-secenek{display:flex;align-items:center;gap:12px;text-align:left;padding:17px 20px;font-size:clamp(15.5px,1.5vw,18px);line-height:1.45;border-radius:14px}

@@ -86,9 +86,9 @@ def _gap_satirlarini_hazirla(db: Session, ogrenci: Ogrenci):
         raise HTTPException(status_code=400, detail=str(e))
     if tur.durum != "tamamlandi":
         raise HTTPException(status_code=400, detail="Gelişim analizini görmek için önce K1-K4'ü tamamla.")
-    # [2026-10-03] Sonuç ekranıyla aynı kural: açılan alan (K5) soruları bitmeden koçluk analizi gösterilmez
+    # [2026-10-03] Sonuç ekranıyla aynı kural: K5 (iş türü) soruları bitmeden koçluk analizi gösterilmez
     if bekleyen_dal_var_mi(db, ogrenci, tur):
-        raise HTTPException(status_code=409, detail="Koçluk analizini görmek için önce sana açılan alan (K5) sorularını tamamla.")
+        raise HTTPException(status_code=409, detail="Koçluk analizini görmek için önce sana özel iş türü (K5) sorularını tamamla.")
     satirlar = gap_analizi_hesapla(db, ogrenci, tur, hedef.bolum_id)
     katmanlar = {k.id: k for k in db.query(Katman).all()}
     durumlar = {

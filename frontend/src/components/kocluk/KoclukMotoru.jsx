@@ -166,7 +166,13 @@ export function OlcumPenceresi({ odak, onKapat, onBitti }) {
           <div className="olcum-sayac">Soru {i + 1} / {veri.sorular.length}</div>
           <div className="olcum-metin">{soru.metin}</div>
           {ikili && <div className={`sn-adim ${!c.enCok ? 'bir' : !c.enAz ? 'iki' : 'tamam'}`}>{!c.enCok ? '1. Sana EN ÇOK uyan şıkkı seç.' : !c.enAz ? '2. Şimdi EN AZ uyan şıkkı seç.' : '✓ Tamam.'}</div>}
-          <div className="qopts sn-secenekler">
+          {soru.uc_a_metni && soru.uc_b_metni && (
+            <div className="sn-uclar">
+              <div className="sn-uc"><b>A</b><span>{soru.uc_a_metni}</span></div>
+              <div className="sn-uc"><b>B</b><span>{soru.uc_b_metni}</span></div>
+            </div>
+          )}
+          <div className={`qopts sn-secenekler${soru.uc_a_metni ? ' olcek' : ''}`}>
             {soru.secenekler.map((s) => {
               const cok = c.enCok === s.id; const az = ikili && c.enAz === s.id
               return (

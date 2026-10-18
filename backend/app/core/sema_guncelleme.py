@@ -37,6 +37,9 @@ OTOMATIK += ["0071_dusunme_atolyesi"]   # [2026-10-13] İş Hayatı → Düşün
 OTOMATIK += ["0072_ogrenme_deneyi"]   # [2026-10-13] Öğrenmeyi öğren deneyi (ertesi gün 2. ölçüm)
 OTOMATIK += ["0074_haftalik_yansitma_metni"]   # [2026-10-14] haftalık yansıtma görevi açıklaması (gerçeği yansıtmayan cümle)
 OTOMATIK += ["0075_bolum_birlestirme"]   # [2026-10-18] ayırt edilemeyen 21 bölüm grubu birleştirildi (23 bölüm silindi)
+OTOMATIK += ["0076_yeni_k5_sorular"]   # [2026-10-18] yeni K1-K4 soruları (tek seferlik değişim) + yeni K5 (iş türü kapıştırma)
+OTOMATIK += ["0077_bolum_kisa_aciklama"]   # [2026-10-18] boş bölüm kısa açıklamaları (pipeline veri/bolumler.csv)
+OTOMATIK += ["0078_bolum_icerik_duzeltme"]   # [2026-10-18] bölüm tanıtımlarında doğrulanmış olgu düzeltmeleri (yalnızca değişmemiş metne)
 KILIT = 2026101001
 
 

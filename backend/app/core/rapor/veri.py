@@ -105,8 +105,8 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
         # [2026-10-14] "ham": düzey etiketi ve güçlü / gelişim eşikleri AYNI değerle (yuvarlanmamış puan) karşılaştırılır
         satir = {"id": d.id, "kod": d.kod, "ad": d.ad, "aciklama": d.aciklama, "puan": yuvarla(s.puan, 1),
                  "ham": float(s.puan), "seviye": _seviye(float(s.puan))}
-        if d.dal_id:
-            k5[dallar.get(d.dal_id, "Alan")].append(float(s.puan))
+        if d.dal_id:   # [2026-10-18] K5: iş türü puanları (alan ortalaması değil — yeni K5 alanlar arası kapıştırır)
+            k5[d.ad].append(float(s.puan))
             continue
         gruplar[d.katman_id].append(satir)
         ana.append(satir)
@@ -118,7 +118,7 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
         v["katmanlar"].append({"kod": k.kod if k else "?", "ad": katman_adi(k.kod, k.ad) if k else "?",
                                "ortalama": yuvarla(sum(x["ham"] for x in satirlar) / len(satirlar), 1),
                                "ozellikler": satirlar})
-    v["k5"] = [{"ad": a, "puan": yuvarla(sum(p) / len(p), 1)} for a, p in sorted(k5.items(), key=lambda kv: -sum(kv[1]) / len(kv[1]))]
+    v["k5"] = [{"ad": a, "puan": yuvarla(sum(p) / len(p), 1)} for a, p in sorted(k5.items(), key=lambda kv: -sum(kv[1]) / len(kv[1]))][:10]
     sirali = sorted(ana, key=lambda x: -x["ham"])
     from app.core.seviye import gelisime_acik_mi, guclu_mu
     # [2026-10-12] P4 (duygusal hassasiyet) yüksek puanı güçlü yön, düşük puanı gelişim alanı sayılmaz (yorum.py destek önerir)
@@ -264,7 +264,7 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
             O.append(("Önerilen bölümlerde sık geçen güçlü yönlerin: " if sen else "Önerilen bölümlerde sık geçen güçlü yönler: ")
                      + " · ".join(a for a, _ in ortusen.most_common(3)))
     if v["k5"]:
-        O.append(f"Alan sorularında en yüksek puanlı alan: {v['k5'][0]['ad']}")
+        O.append(f"İş türü sorularında en çok öne çıkan iş: {v['k5'][0]['ad']}")
     degerler = _degerler(v)   # [2026-10-14] yorum.py ile aynı: değerler güçlü yön değil, karar verirken dikkate alınacak tercih
     if degerler:
         O.append(("Bir işte en çok önem verdiğin değerler: " if sen else "Bir işte en çok önem verdiği değerler: ")

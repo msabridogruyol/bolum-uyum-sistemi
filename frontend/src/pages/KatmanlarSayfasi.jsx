@@ -76,7 +76,7 @@ export default function KatmanlarSayfasi() {
       <div className="ph">
         <div className="pt">Değerlendirme</div>
         <div className="ps">
-          Kendini 4 kısa bölümde tanı. Son bölümün sonucuna göre sana özel derinleşme soruları açılır. Her bölüm yaklaşık 5 dakika sürer. İstediğin an ara verebilirsin.
+          Kendini 4 kısa bölümde tanı. Dördü bitince sana en uygun bölümleri karşılaştıran, sana özel iş türü soruları açılır. Her bölüm yaklaşık 5 dakika sürer. İstediğin an ara verebilirsin.
         </div>
       </div>
 
@@ -145,7 +145,8 @@ export default function KatmanlarSayfasi() {
                   // Önceden /katmanlar/K5'e gidiyordu; backend bunu "yeni tur" sanıp bekleme süresi kuralına takılıyordu.
                   if (k.kosullu_mu) {
                     const ilkDal = k5Durum?.acilan?.[0]
-                    if (ilkDal) navigate(`/k5/${ilkDal.dal_kodu}`)
+                    if (k.durum === 'tamamlandi') navigate('/profilim')   // [2026-10-18] bitmiş K5: sonuçlar profilde
+                    else if (ilkDal) navigate(`/k5/${ilkDal.dal_kodu}`)
                     return
                   }
                   navigate(`/katmanlar/${k.kod}`)
@@ -157,7 +158,7 @@ export default function KatmanlarSayfasi() {
                 <div className="lb-wrap">
                   <div className="lt">{katmanAdi(k.kod, k.ad)}</div>
                   <div className="ld">
-                    {k.kosullu_mu ? 'Son bölümün sonucuna göre sana özel açılan sorular' : (KATMAN_BILGI[k.kod]?.soru || KATMAN_ACIKLAMA[k.kod] || '')}
+                    {k.kosullu_mu ? 'Sana en uygun çıkan bölümleri, o bölümlerde yapılan işlerle karşılaştıran sana özel sorular' : (KATMAN_BILGI[k.kod]?.soru || KATMAN_ACIKLAMA[k.kod] || '')}
                   </div>
                   {sonuclar[k.kod]?.length > 0 && (
                     <div className="katman-one-cikan">✨ Öne çıkanın: {sonuclar[k.kod].map((x) => <b key={x.degisken_id}>{x.degisken_adi}</b>)}</div>
@@ -187,13 +188,13 @@ export default function KatmanlarSayfasi() {
               )
             })}
 
-            {k5Durum?.acilan?.map((d) => (
+            {k5Durum?.acilan?.filter((d) => d.durum !== 'tamamlandi').map((d) => (
               <div key={d.dal_kodu} className="lc" onClick={() => navigate(`/k5/${d.dal_kodu}`)}>
                 <div className="ln" style={{ background: 'var(--pul)', color: 'var(--pu)', fontSize: 18 }}>🌟</div>
                 <div className="lb-wrap">
                   <div className="lt">{d.dal_adi}</div>
-                  <div className="ld">Derinleşme dalı — Puanın: {d.puan}</div>
-                  <span className="bdg bdg-prog">Açık — sorularını cevapla</span>
+                  <div className="ld">Sana en uygun {Math.round(d.puan)} bölüm kendi aralarında karşılaştırılacak.</div>
+                  <span className="bdg bdg-prog">{d.durum === 'devam_ediyor' ? 'Devam et — sorularını cevapla' : 'Açık — sorularını cevapla'}</span>
                 </div>
               </div>
             ))}
@@ -211,7 +212,7 @@ export default function KatmanlarSayfasi() {
 
           {!k5AcikMi && tamamlanan === katmanlar.length && (
             <div className="bos-durum" style={{ marginTop: 14 }}>
-              Şu an sana özel açılmış bir derinleşme dalı yok. Bölüm önerilerin ilk dört bölümün sonuçlarına göre hazırlanır.
+              Şu an sana özel açılmış iş türü sorusu yok. Bölüm önerilerin ilk dört bölümün sonuçlarına göre hazırlanır.
             </div>
           )}
         </div>

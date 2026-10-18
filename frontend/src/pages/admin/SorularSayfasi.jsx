@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
+import K5BankasiPaneli from './K5BankasiPaneli'
 import { api } from '../../api/client'
 
 const KATMAN_ID = { K1: 1, K2: 2, K3: 3, K4: 4, K5: 5 }
@@ -522,7 +523,9 @@ function SoruKarti({ soru, sira, onGuncelle }) {
             <span className="bdg bdg-prog">{soru.katman_kod}</span>
             {soru.dal_adi && <span className="bdg" style={{ background: 'var(--tll)', color: 'var(--tl)' }}>{soru.dal_adi}</span>}
             <span className="bdg bdg-lock">{{likert:'Likert', sjt:'SJT', kutup:'Kutup', kontrol:'Kontrol'}[soru.soru_tipi] || soru.soru_tipi}</span>
-            {soru.degisken_adi && <span className="bdg bdg-lock">{soru.degisken_adi}</span>}
+            {soru.degisken_adi && <span className="bdg bdg-lock">{soru.b_ucu_degisken_adi ? 'A: ' : ''}{soru.degisken_adi}</span>}
+            {soru.b_ucu_degisken_adi && <span className="bdg bdg-lock">B: {soru.b_ucu_degisken_adi}</span>}
+            {soru.soru_tipi === 'sjt' && soru.cevap_bicimi !== 'encok_enaz' && <span className="bdg" style={{ background: 'var(--tll)', color: 'var(--tl)' }}>Tek seçim</span>}
             {soru.ters_kodlanmis_mi && <span className="bdg" style={{ background: 'var(--aml)', color: 'var(--am)' }}>Ters Kodlanmış</span>}
             {soru.cevap_bicimi === 'encok_enaz' && <span className="bdg" style={{ background: 'var(--tll)', color: 'var(--tl)' }}>En çok / En az</span>}
             <span className={`bdg ${soru.aktif_mi ? 'bdg-done' : 'bdg-lock'}`}>{soru.aktif_mi ? 'Aktif' : 'Pasif'}</span>
@@ -536,6 +539,21 @@ function SoruKarti({ soru, sira, onGuncelle }) {
         </div>
       </div>
 
+      {soru.uc_a_metni != null && (
+        <div style={{ paddingLeft: 40, display: 'flex', flexDirection: 'column', gap: 6, marginBottom: 8 }}>
+          {[['A', 'uc_a_metni'], ['B', 'uc_b_metni']].map(([h, alan]) => (
+            <div key={h} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
+              <span style={{ width: 18, color: 'var(--pu)', fontWeight: 800, flexShrink: 0 }}>{h}</span>
+              <div style={{ flex: 1 }}>
+                <DuzenlenebilirMetin
+                  deger={soru[alan] || ''}
+                  onKaydet={(yeni) => onGuncelle('uclar', soru.id, { a: alan === 'uc_a_metni' ? yeni : soru.uc_a_metni, b: alan === 'uc_b_metni' ? yeni : soru.uc_b_metni })}
+                />
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
       <div style={{ paddingLeft: 40, display: 'flex', flexDirection: 'column', gap: 6 }}>
         {soru.secenekler.map((sec) => (
           <div key={sec.id} style={{ display: 'flex', alignItems: 'center', gap: 8, fontSize: 13 }}>
@@ -651,6 +669,7 @@ export default function SorularSayfasi() {
 
   async function alanGuncelle(tip, id, yeniMetin) {
     if (tip === 'soru') await api.soruMetniGuncelle(id, yeniMetin)
+    else if (tip === 'uclar') await api.ucMetinleriGuncelle(id, yeniMetin.a, yeniMetin.b)
     else await api.secenekMetniGuncelle(id, yeniMetin)
     yukle(aktifKatman, dalFiltre, degiskenFiltre, tipFiltre, aktifFiltre, sayfa, aramaGecikmeli)
   }
@@ -703,10 +722,10 @@ export default function SorularSayfasi() {
         ))}
       </div>
 
-      <OzetKartlari ozet={ozet} />
+      {aktifKatman !== 'K5' && <OzetKartlari ozet={ozet} />}
 
-      {/* Filtre satırı */}
-      <div style={{ display: 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
+      {/* Filtre satırı (K5'te soru bankası yerine iş türü bankası gösterilir) */}
+      <div style={{ display: aktifKatman === 'K5' ? 'none' : 'flex', gap: 10, marginBottom: 16, alignItems: 'center', flexWrap: 'wrap' }}>
         <input
           className="auth-input"
           style={{ width: 240 }}
@@ -751,17 +770,17 @@ export default function SorularSayfasi() {
         </button>
       </div>
 
-      {aktifSekme === 'toplu' && (
+      {aktifKatman !== 'K5' && aktifSekme === 'toplu' && (
         <div style={{ marginBottom: 20 }}>
           <TopluYuklemeFormu onTamamlandi={yenidenYukle} />
         </div>
       )}
-      {aktifSekme === 'tekli' && (
+      {aktifKatman !== 'K5' && aktifSekme === 'tekli' && (
         <div style={{ marginBottom: 20 }}>
           <YeniSoruFormu onEklendi={yenidenYukle} />
         </div>
       )}
-      {aktifSekme === 'sil' && (
+      {aktifKatman !== 'K5' && aktifSekme === 'sil' && (
         <div className="card" style={{ marginBottom: 20, borderColor: 'var(--re)', background: 'var(--rel)' }}>
           <div className="ct" style={{ color: 'var(--re)' }}>⚠️ {aktifKatman} Katmanını Komple Sil</div>
           <div className="ps" style={{ margin: '0 0 12px' }}>
@@ -798,7 +817,7 @@ export default function SorularSayfasi() {
         </div>
       )}
 
-      {!veri ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
+      {aktifKatman === 'K5' ? <K5BankasiPaneli /> : !veri ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
         <>
           <div style={{ fontSize: 12, color: 'var(--tx3)', fontWeight: 600, marginBottom: 10 }}>
             {veri.toplam_soru_sayisi} soru bulundu — Sayfa {veri.su_anki_sayfa} / {veri.toplam_sayfa_sayisi}
