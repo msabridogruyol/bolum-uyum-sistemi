@@ -11,8 +11,8 @@ const KarsilastirmaSayfasi = tembel(() => import('./KarsilastirmaSayfasi'))   //
 const ListemSekmesi = tembel(() => import('../components/ListemSekmesi'))
 
 const SEKMELER = [
-  { kod: '', ad: 'Sana uygun', ikon: '🌟', alt: '301 bölüm profiline yakınlığına göre sıralandı (100 = sana en yakın). Burada sana en yakın 10 bölüm ve nedenleri var.' },
-  { kod: 'tum', ad: 'Tüm bölümler', ikon: '🔍', alt: '301 bölümün hepsi burada. Ara, incele, beğendiğini ☆ ile listene ekle.' },
+  { kod: '', ad: 'Sana uygun', ikon: '🌟', alt: '278 bölüm profiline yakınlığına göre sıralandı (100 = sana en yakın). Burada sana en yakın 10 bölüm ve nedenleri var.' },
+  { kod: 'tum', ad: 'Tüm bölümler', ikon: '🔍', alt: '278 bölümün hepsi burada. Ara, incele, beğendiğini ☆ ile listene ekle.' },
   { kod: 'karsilastir', ad: 'Karşılaştır', ikon: '⚖️', alt: 'Aklındaki 2-3 bölümü yan yana koy. Uyumunu ve nedenlerini, puan ve sıralamayı, iş hayatını, meslekleri ve günlük işleri karşılaştır.' },
   { kod: 'listem', ad: 'Listem', ikon: '⭐', alt: 'İlgini çeken bölümler. Rehber öğretmenin de görüşmelerde bu listeyi görür.' },
 ]

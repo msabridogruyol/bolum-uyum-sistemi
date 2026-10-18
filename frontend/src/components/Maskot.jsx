@@ -87,7 +87,7 @@ const KIYAFET_KURALLARI = [
 // Karşılaştırma büyük/küçük harf ve ı/i farkından etkilenmez (fold).
 const fold = (t) => ` ${String(t || '').toLocaleLowerCase('tr').replace(/ı/g, 'i')} `
 
-// 301 bölümün her biri tek tek eşlendi (kelime eşleştirmesi 'Gastronomi'yi astronot yapıyordu).
+// 278 bölümün her biri tek tek eşlendi (kelime eşleştirmesi 'Gastronomi'yi astronot yapıyordu).
 const BOLUM_KIYAFET = {
   'acil yardim ve afet yönetimi': 'paramedik',
   'adli bilimler': 'dedektif',

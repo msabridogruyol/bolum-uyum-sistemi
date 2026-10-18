@@ -173,7 +173,7 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
           <div className="mini-ilerleme-track"><div className="mini-ilerleme-fill" style={{ width: `${b.toplam_uyum}%`, background: 'var(--okul-c)' }} /></div>
           {b.sira && <small className="yp-ince">{b.sira}. sırada · {veri.toplam_bolum} bölüm içinde</small>}
         </div>
-      )), '301 bölüm içinde sana yakınlığı ve sıran')
+      )), '278 bölüm içinde sana yakınlığı ve sıran')
     if (veri.sonuc_var) {
       satir('neden', 'Neden bu bölüm', (b) => (b.neden.length || b.dikkat ? (
         <ul className="kr-liste duz">
