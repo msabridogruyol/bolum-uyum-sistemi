@@ -383,7 +383,11 @@ def toplam_uyum_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     return n
 
 
-K5_SIRALAMA_ETKISI = 0.50  # dal_ici_uyum 50'den her 1 puan sapma → nihai skorda 0.50 puan (en fazla ±25)
+K5_SIRALAMA_ETKISI = 0.15  # dal_ici_uyum 50'den her 1 puan sapma → nihai skorda 0.15 puan (en fazla ±7,5)
+# [2026-10-18] 0.50 → 0.15: uçtan uca simülasyonda (278 bölüm, gerçek bölümü bilinen 1.112 sanal öğrenci, canlı K5 akışı)
+# K5'in bir bölüme etkisi (medyan ±16) K1-K4'te 1. ile 5. bölüm arasındaki farkı (8-10) aşıyor ve sonucu eziyordu.
+# Alan cevapları öğrencinin bölümüyle ilgisizken doğru bölümün 1. çıkma oranı: K5 yok %43, 0.50 → %28, 0.15 → %42;
+# alan cevapları uyumluyken: K5 yok %43, 0.50 → %47, 0.15 → %56. Tekrar testinde 1. bölüm aynı: 0.50 %40-57, 0.15 %57-67.
 # [2026-10-08] 0.30 → 0.50: iki aşamalı doğrulama simülasyonunda (K1-K4 + dal soruları) öğrenci tiplerinin
 # ilk 3 doğruluğu %75,5 → %76,5, Finans tipi %34 → %42. 0.70'te en zayıf tip (Spor) bozulduğu için 0.50 seçildi.
 
@@ -401,7 +405,7 @@ def nihai_uyum_haritasi(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirme
     """
     [YENİ 2026-10-03] bolum_id -> öğrenciye GÖSTERİLEN nihai uyum. Sonuç listesi ve Keşfet
     aynı sayıyı göstersin diye tek yerde hesaplanır:
-    nihai = TOPLAM_UYUM + 0.50 × (dal_ici_uyum − 50)  (yalnızca tamamlanan dalların bölümleri için)
+    nihai = TOPLAM_UYUM + K5_SIRALAMA_ETKISI × (dal_ici_uyum − 50)  (yalnızca tamamlanan dalların bölümleri için)
     """
     from app.models import OgrenciDalUyumSkoru  # döngüsel import olmasın diye burada
 
@@ -425,8 +429,8 @@ def siralama_getir(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru,
     kuralı: agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad alfabetik.
 
     [YENİ 2026-10-03] K5: öğrencinin tamamladığı dal(lar)ın bölümleri için
-    nihai skor = TOPLAM_UYUM + 0.50 × (dal_ici_uyum − 50). 50 = nötr (K5 bilgi vermediyse
-    sıralama değişmez); en fazla ±25 puan (K5_SIRALAMA_ETKISI × 50). Diğer bölümler değişmez.
+    nihai skor = TOPLAM_UYUM + K5_SIRALAMA_ETKISI (0.15) × (dal_ici_uyum − 50). 50 = nötr (K5 bilgi vermediyse
+    sıralama değişmez); en fazla ±7,5 puan (K5_SIRALAMA_ETKISI × 50). Diğer bölümler değişmez.
     Veritabanındaki TOPLAM_UYUM kaydı değiştirilmez; birleştirme okunurken yapılır.
     """
     girdi = girdi_hazirla(db, ogrenci, tur)

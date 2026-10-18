@@ -7,7 +7,7 @@ Kaynak: sistem_genel_anlatim.md D3, A6
 temsil edilen dal her zaman açılır; ikinci dal, ilk 15'te en az 4 bölümü
 varsa açılır (en fazla k5_max_dal_sayisi). Böylece açılan dal ile sonuç
 listesi her zaman tutarlıdır. Dal tamamlanınca o dalın bölümleri için
-dal_ici_uyum hesaplanır ve sonuç sıralamasına %30 ağırlıkla katılır
+dal_ici_uyum hesaplanır ve sonuç sıralamasına K5_SIRALAMA_ETKISI (0.15) katsayısıyla katılır
 (bkz. skor_motoru.siralama_getir).
 
 ESKİ tetikleme kuralı (artık kullanılmıyor, k5_adaylarini_hesapla korunuyor):
