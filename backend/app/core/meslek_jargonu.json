@@ -831,58 +831,6 @@
    "ornek": "Mevcut av miktarı MSY'nin üzerinde, kotaların düşürülmesi gerekiyor."
   }
  ],
- "BANKACILIK VE FİNANS": [
-  {
-   "terim": "Mevduat",
-   "anlam": "Müşterilerin bankaya yatırdığı para. Vadesiz ya da faiz getiren vadeli hesaplarda tutulabilir.",
-   "ornek": "Bu ay şubenin mevduat hedefini tutturmak için kampanya yapıyoruz."
-  },
-  {
-   "terim": "Teminat",
-   "anlam": "Kredi geri ödenmezse bankanın alacağını güvenceye alan ev, araç veya kefil gibi değerler.",
-   "ornek": "Kredi onayı için ek teminat olarak ipotek istenecek."
-  },
-  {
-   "terim": "Limit tahsisi",
-   "anlam": "Bankanın bir müşteriye ne kadar kredi veya kredi kartı limiti açacağına karar vermesi.",
-   "ornek": "Firmanın bilançosu geldi, limit tahsisi için krediler bölümüne gönderiyorum."
-  },
-  {
-   "terim": "Spread",
-   "anlam": "Alış ve satış fiyatı arasındaki fark ya da bankanın kredi faizi ile mevduat faizi arasındaki marj.",
-   "ornek": "Döviz piyasası hareketli, spread'ler açıldı."
-  },
-  {
-   "terim": "Likidite",
-   "anlam": "Bir varlığın ya da bankanın ihtiyaç anında kolayca nakde dönebilme gücü.",
-   "ornek": "Ay sonu ödemeleri yüzünden likidite ihtiyacımızı önceden planlamalıyız."
-  },
-  {
-   "terim": "Valör",
-   "anlam": "Bir işlemin hesaba fiilen işlediği, faizin başladığı tarih. İşlem günüyle aynı olmayabilir.",
-   "ornek": "Çek yatırıldı ama valörü iki gün sonra, para o zaman kullanılabilir."
-  },
-  {
-   "terim": "Takipteki kredi",
-   "anlam": "Ödemesi uzun süre gecikmiş ve tahsili riskli hale gelmiş kredi.",
-   "ornek": "Takipteki kredi oranı artıyor, risk birimi toplantı istedi."
-  },
-  {
-   "terim": "Hedge",
-   "anlam": "Kur veya faizdeki ani değişimlerin zararından korunmak için yapılan koruma işlemi.",
-   "ornek": "İhracatçı müşteri kur riskine karşı hedge yapmak istiyor."
-  },
-  {
-   "terim": "KYC",
-   "anlam": "Know Your Customer, yani müşterini tanı. Hesap açarken kimlik ve gelir bilgilerinin doğrulanması süreci.",
-   "ornek": "KYC belgeleri eksik, müşteriden adres belgesi isteyelim."
-  },
-  {
-   "terim": "KKB",
-   "anlam": "Kredi Kayıt Bürosu. Kişilerin kredi geçmişini ve kredi notunu tutan kuruluş; bankalar kredi verirken buna bakar.",
-   "ornek": "Müşterinin KKB raporunda iki gecikme görünüyor."
-  }
- ],
  "BANKACILIK VE SİGORTACILIK": [
   {
    "terim": "Poliçe",
@@ -1247,58 +1195,6 @@
    "ornek": "Duvardaki resme telefonu tutunca AR ile figürler hareket ediyor."
   }
  ],
- "BİLGİ GÜVENLİĞİ MÜHENDİSLİĞİ": [
-  {
-   "terim": "Pentest",
-   "anlam": "Sızma testi. Bir sistemin açıklarını bulmak için izin alınarak gerçek bir saldırgan gibi yapılan saldırı denemesi.",
-   "ornek": "Yeni mobil uygulama yayına girmeden önce pentest yaptıracağız."
-  },
-  {
-   "terim": "Zafiyet",
-   "anlam": "Bir yazılım veya sistemde saldırganların istismar edebileceği güvenlik açığı.",
-   "ornek": "Taramada web sunucusunda kritik bir zafiyet çıktı."
-  },
-  {
-   "terim": "Oltalama",
-   "anlam": "Phishing. Sahte e-posta veya site ile kullanıcıyı kandırıp şifre ya da bilgi ele geçirme saldırısı.",
-   "ornek": "Bu ay personele oltalama simülasyonu yapıp kimin linke tıkladığına bakacağız."
-  },
-  {
-   "terim": "Yama",
-   "anlam": "Patch. Bir yazılımdaki hatayı veya güvenlik açığını kapatmak için yayımlanan güncelleme.",
-   "ornek": "Yama hafta sonu bakım saatinde tüm sunuculara geçilecek."
-  },
-  {
-   "terim": "Zero-day",
-   "anlam": "Üreticinin henüz haberi olmayan ve yaması bulunmayan, bu yüzden çok tehlikeli güvenlik açığı.",
-   "ornek": "Tarayıcıda zero-day çıkmış, yama gelene kadar geçici önlem alalım."
-  },
-  {
-   "terim": "Red team / Blue team",
-   "anlam": "Kırmızı takım şirkete saldıran, mavi takım ise savunan ekiptir. Tatbikatlarla savunmanın gücü test edilir.",
-   "ornek": "Red team ofise kadar sızmayı başardı, blue team geç fark etti."
-  },
-  {
-   "terim": "Olay müdahalesi",
-   "anlam": "Incident response. Bir saldırı fark edildiğinde etkiyi sınırlamak, temizlemek ve sistemi geri getirmek için izlenen süreç.",
-   "ornek": "Fidye yazılımı tespit edildi, olay müdahale ekibini hemen toplayın."
-  },
-  {
-   "terim": "SOC",
-   "anlam": "Security Operations Center. Kurumun sistemlerini yedi gün yirmi dört saat izleyen güvenlik operasyon merkezi.",
-   "ornek": "Gece SOC'tan alarm geldi, şüpheli giriş denemeleri var."
-  },
-  {
-   "terim": "SIEM",
-   "anlam": "Security Information and Event Management. Tüm sistemlerden gelen kayıtları toplayıp şüpheli olayları alarm olarak gösteren yazılım.",
-   "ornek": "SIEM'e yeni bir kural yazdım, art arda hatalı girişleri yakalayacak."
-  },
-  {
-   "terim": "CVE",
-   "anlam": "Common Vulnerabilities and Exposures. Bilinen güvenlik açıklarına verilen uluslararası kimlik numarası.",
-   "ornek": "Bu açığın CVE numarasını raporun başına yaz."
-  }
- ],
  "BİLGİ VE BELGE YÖNETİMİ": [
   {
    "terim": "Dosya planı",
@@ -1349,58 +1245,6 @@
    "terim": "KEP",
    "anlam": "Kayıtlı Elektronik Posta. Gönderimi ve teslimi hukuken ispatlanabilen resmi e-posta sistemi.",
    "ornek": "Firmaya ihtarnameyi KEP ile gönderdik, teslim kaydı elimizde."
-  }
- ],
- "BİLGİSAYAR BİLİMLERİ": [
-  {
-   "terim": "Big-O",
-   "anlam": "Bir algoritmanın, girdi büyüdükçe çalışma süresinin veya bellek kullanımının nasıl arttığını gösteren gösterim.",
-   "ornek": "Bu çözüm O(n²), milyon kayıtta çok yavaşlar."
-  },
-  {
-   "terim": "NP-zor",
-   "anlam": "Bilinen hızlı bir çözümü olmayan ve büyük girdilerde tam çözümü pratikte imkânsıza yakın olan problem sınıfı.",
-   "ornek": "Problem NP-zor çıktı, tam çözüm yerine yaklaşık algoritma kullanalım."
-  },
-  {
-   "terim": "Sözde kod",
-   "anlam": "Pseudocode. Bir algoritmayı belirli bir programlama diline bağlı kalmadan, insanın okuyabileceği şekilde yazma.",
-   "ornek": "Makalede algoritmayı önce sözde kodla verelim."
-  },
-  {
-   "terim": "Edge case",
-   "anlam": "Uç durum. Boş liste, sıfır veya çok büyük sayı gibi nadir ama programı bozabilecek girdiler.",
-   "ornek": "Kanıt güzel ama boş graf edge case'ini atlamışsın."
-  },
-  {
-   "terim": "Baseline",
-   "anlam": "Yeni yöntemin başarısını karşılaştırmak için kullanılan bilinen, basit referans yöntem.",
-   "ornek": "Önce basit bir baseline kuralım, modelin gerçekten iyi olup olmadığını görelim."
-  },
-  {
-   "terim": "Benchmark",
-   "anlam": "Farklı yöntemleri adil biçimde karşılaştırmak için kullanılan standart test seti ve ölçümler.",
-   "ornek": "Yöntemimizi üç bilinen benchmark üzerinde de çalıştırmalıyız."
-  },
-  {
-   "terim": "Ablasyon çalışması",
-   "anlam": "Bir modelin parçalarını tek tek çıkarıp hangi parçanın başarıya ne kadar katkı verdiğini ölçme deneyi.",
-   "ornek": "Hakemler ablasyon çalışması istedi, dikkat katmanını kaldırıp deneyelim."
-  },
-  {
-   "terim": "Camera-ready",
-   "anlam": "Konferansta kabul edilen makalenin düzeltmeleri yapılmış, yayına hazır son sürümü.",
-   "ornek": "Makale kabul edildi, camera-ready sürümün son günü cuma."
-  },
-  {
-   "terim": "SOTA",
-   "anlam": "State of the Art. Bir alanda şu ana kadar elde edilmiş en iyi sonuç ya da yöntem.",
-   "ornek": "Bu veri setinde SOTA'yı yüzde iki geçtik."
-  },
-  {
-   "terim": "OOM",
-   "anlam": "Out of Memory. Programın kullanılabilir belleği aşması ve çökmesi durumu.",
-   "ornek": "Batch boyutunu büyütünce eğitim OOM verip durdu."
   }
  ],
  "BİLGİSAYAR MÜHENDİSLİĞİ": [
@@ -2079,58 +1923,6 @@
    "ornek": "Çıkmadan gece kültürünü kur, sabah plazmit izolasyonu yapacağız."
   }
  ],
- "CAM": [
-  {
-   "terim": "Cam üfleme",
-   "anlam": "Erimiş camı uzun bir borunun ucuna alıp üfleyerek ve çevirerek şekillendirme tekniği.",
-   "ornek": "Bugün cam üflemede vazonun ağzını açmayı çalışacağız."
-  },
-  {
-   "terim": "Pipo",
-   "anlam": "Cam üflemede erimiş camın alındığı, içinden üflenen uzun metal boru.",
-   "ornek": "Pipoyu sürekli çevir, yoksa cam bir yana sarkar."
-  },
-  {
-   "terim": "Pota",
-   "anlam": "Fırının içinde camın eritildiği, ısıya dayanıklı kap.",
-   "ornek": "Potadaki cam henüz tam arınmadı, kabarcıklar var."
-  },
-  {
-   "terim": "Tavlama",
-   "anlam": "Şekillendirilen cam parçasını özel fırında yavaş yavaş soğutma. İç gerilimi gidererek çatlamayı önler.",
-   "ornek": "Parçayı hemen tavlama fırınına koy, yoksa gece çatlar."
-  },
-  {
-   "terim": "Füzyon",
-   "anlam": "Cam parçalarını fırında birbirine kaynayacak kadar ısıtarak birleştirme tekniği.",
-   "ornek": "Renkli şeritleri füzyonla tabak şeklinde birleştirdim."
-  },
-  {
-   "terim": "Çökertme",
-   "anlam": "Düz bir camı fırında ısıtıp kendi ağırlığıyla bir kalıbın içine oturtarak şekil verme. Slumping de denir.",
-   "ornek": "Füzyondan sonra parçayı kase kalıbında çökertmeye alacağız."
-  },
-  {
-   "terim": "Vitray",
-   "anlam": "Renkli cam parçalarının kurşun ya da bakır şeritlerle birleştirilmesiyle yapılan pano ya da pencere.",
-   "ornek": "Kilise restorasyonunda kırık vitray panelleri tek tek yeniledik."
-  },
-  {
-   "terim": "Kumlama",
-   "anlam": "Camın yüzeyine basınçlı kum püskürterek matlaştırma ya da desen işleme.",
-   "ornek": "Logoyu bantla maskeleyip kumlama yapacağız."
-  },
-  {
-   "terim": "Pontil",
-   "anlam": "Üflenen parçayı pipodan ayırıp işlemeye devam etmek için dibine yapıştırılan metal çubuk.",
-   "ornek": "Pontili tak, ağız kısmını şimdi açacağız."
-  },
-  {
-   "terim": "Murrine",
-   "anlam": "Renkli cam çubukların kesitlerinden oluşan, mozaik gibi desen veren Venedik kökenli teknik.",
-   "ornek": "Kâsenin dibine çiçek desenli murrine dizdim."
-  }
- ],
  "CAZ VE POPÜLER MÜZİK": [
   {
    "terim": "Gig",
@@ -2545,58 +2337,6 @@
    "terim": "Bayrak tür",
    "anlam": "Halkın ilgisini çeken ve bir bölgenin korunması için simge olarak kullanılan karizmatik tür.",
    "ornek": "Kampanyada Anadolu parsını bayrak tür olarak kullanacağız."
-  }
- ],
- "DRAMA VE OYUNCULUK": [
-  {
-   "terim": "Prova",
-   "anlam": "Oyunun sahnelenmeden önce defalarca çalışılması.",
-   "ornek": "Yarın sabah onda ikinci perde provası var, metinler ezber gelsin."
-  },
-  {
-   "terim": "Genel prova",
-   "anlam": "Prömiyerden önce kostüm, ışık ve dekorla, gerçek oyun gibi yapılan son prova.",
-   "ornek": "Genel provada ışık geçişleri hâlâ oturmadı."
-  },
-  {
-   "terim": "Mizansen",
-   "anlam": "Oyuncuların sahnedeki konumları, hareketleri ve sahnenin genel düzeni.",
-   "ornek": "Yönetmen ikinci sahnenin mizansenini değiştirdi, artık sağdan giriyorsun."
-  },
-  {
-   "terim": "Replik",
-   "anlam": "Bir oyuncunun oyundaki konuşmalarından her biri.",
-   "ornek": "Benim repliğim senin cümlenin bitişine bağlı, biraz net bitir."
-  },
-  {
-   "terim": "Sufle",
-   "anlam": "Sahnede repliğini unutan oyuncuya kulisten fısıltıyla hatırlatma yapmak.",
-   "ornek": "Dün akşam ikinci perdede bana sufle vermek zorunda kaldılar."
-  },
-  {
-   "terim": "Kulis",
-   "anlam": "Sahnenin arkasında, seyircinin görmediği hazırlık ve bekleme alanı.",
-   "ornek": "Girişinden beş dakika önce kuliste hazır ol."
-  },
-  {
-   "terim": "Avanseyn",
-   "anlam": "Sahnenin perde çizgisinin önünde kalan, seyirciye en yakın bölümü.",
-   "ornek": "Monoloğu avanseynde, perde kapalıyken oynayacaksın."
-  },
-  {
-   "terim": "Doğaçlama",
-   "anlam": "Önceden yazılmış metin olmadan, o anda üretilerek yapılan oyunculuk.",
-   "ornek": "Karakteri tanımak için bugün doğaçlama çalışacağız."
-  },
-  {
-   "terim": "Dördüncü duvar",
-   "anlam": "Sahne ile seyirci arasındaki hayali duvar. Oyuncunun doğrudan seyirciye konuşmasına dördüncü duvarı yıkmak denir.",
-   "ornek": "Bu sahnede dördüncü duvarı yıkıp seyirciye dönüyorsun."
-  },
-  {
-   "terim": "Prömiyer",
-   "anlam": "Bir oyunun seyirci önündeki ilk resmi gösterimi.",
-   "ornek": "Prömiyere iki hafta kaldı, her gün prova yapacağız."
   }
  ],
  "DRAMA YAZARLIĞI VE DRAMATURJİ": [
@@ -5043,58 +4783,6 @@
    "ornek": "Üç aylık rezidans programına kabul edildim, yazın Berlin'de çalışacağım."
   }
  ],
- "GÖRSEL SANATLAR ÖĞRETMENLİĞİ": [
-  {
-   "terim": "Kazanım",
-   "anlam": "Öğretim programında öğrencinin dersin sonunda kazanması beklenen bilgi veya beceri.",
-   "ornek": "Bu haftaki kazanım renk değerleri, etkinliği ona göre planladım."
-  },
-  {
-   "terim": "Ders planı",
-   "anlam": "Öğretmenin dersin amacını, etkinliklerini, malzemelerini ve süresini önceden yazdığı plan.",
-   "ornek": "Baskı resim ünitesi için ders planını yarın müdür yardımcısına teslim edeceğim."
-  },
-  {
-   "terim": "Zümre toplantısı",
-   "anlam": "Aynı dersi veren öğretmenlerin plan, sınav ve etkinlikleri birlikte kararlaştırdığı toplantı.",
-   "ornek": "Zümre toplantısında yıl sonu sergisinin tarihini kesinleştirdik."
-  },
-  {
-   "terim": "Rubrik",
-   "anlam": "Dereceli puanlama anahtarı. Bir çalışmanın hangi ölçütlere göre kaç puan alacağını gösteren tablo.",
-   "ornek": "Afiş çalışmalarını rubrikle değerlendireceğim, ölçütleri öğrencilerle paylaştım."
-  },
-  {
-   "terim": "Ürün dosyası",
-   "anlam": "Öğrencinin dönem boyunca yaptığı çalışmaların toplandığı dosya. Gelişimini görmek ve değerlendirmek için kullanılır.",
-   "ornek": "Herkes ürün dosyasına bugünkü kolajını eklesin, dönem sonunda bakacağım."
-  },
-  {
-   "terim": "BEP",
-   "anlam": "Bireyselleştirilmiş Eğitim Programı. Özel gereksinimli bir öğrenci için ona göre uyarlanmış hedeflerle hazırlanan plan.",
-   "ornek": "Kaan'ın BEP'ine göre ona kalın fırça ve daha büyük kâğıt vereceğim."
-  },
-  {
-   "terim": "ÖABT",
-   "anlam": "Öğretmenlik Alan Bilgisi Testi. Öğretmen adaylarının atanmak için KPSS kapsamında girdiği, kendi alanını ölçen sınav.",
-   "ornek": "Bu yıl ÖABT'de sanat tarihi soruları ağırlıktaydı."
-  },
-  {
-   "terim": "Nöbetçi öğretmen",
-   "anlam": "Teneffüs ve ders aralarında okulda düzeni sağlamak için belirli günlerde görevlendirilen öğretmen.",
-   "ornek": "Salı günleri nöbetçi öğretmenim, atölyeyi teneffüste kilitli tutuyorum."
-  },
-  {
-   "terim": "Eskiz",
-   "anlam": "Asıl çalışmadan önce fikri denemek için yapılan hızlı ön çizim. Öğrencilere planlama alışkanlığı kazandırmak için istenir.",
-   "ornek": "Boyaya geçmeden önce defterinize iki eskiz yapıp bana gösterin."
-  },
-  {
-   "terim": "Okul sergisi",
-   "anlam": "Öğrencilerin yıl boyunca yaptığı sanat çalışmalarının okulda veliler ve ziyaretçilere sergilendiği etkinlik.",
-   "ornek": "Okul sergisi için her sınıftan en iyi beş çalışmayı seçiyoruz."
-  }
- ],
  "GÖRSEL İLETİŞİM TASARIMI": [
   {
    "terim": "UI",
@@ -5405,58 +5093,6 @@
    "terim": "İkat",
    "anlam": "İpliklerin dokunmadan önce bağlanıp boyandığı, kumaşta kenarları hafif dalgalı desen oluşturan teknik. Anadolu'da abrabant da denir.",
    "ornek": "Bu ikat kumaşta desen kenarları bilerek bulanık bırakılmış, tekniğin imzası bu."
-  }
- ],
- "HALKBİLİMİ": [
-  {
-   "terim": "Derleme",
-   "anlam": "Halk arasındaki türkü, masal, inanç ve gelenekleri yerinde dinleyip kaydederek toplama işi.",
-   "ornek": "Bu yaz Kars köylerinde ağıt derlemesi yapacağız."
-  },
-  {
-   "terim": "Saha çalışması",
-   "anlam": "Araştırmacının kütüphane yerine doğrudan insanların yaşadığı yere gidip gözlem ve görüşme yapması.",
-   "ornek": "Saha çalışmasında düğünlere katılıp tüm aşamaları fotoğrafladık."
-  },
-  {
-   "terim": "Kaynak kişi",
-   "anlam": "Derleme sırasında bilgi, hikâye veya türkü aktaran kişi. Adı, yaşı ve yaşadığı yer mutlaka kayda geçirilir.",
-   "ornek": "En iyi kaynak kişimiz seksen yaşında bir nine, yüzlerce mani biliyor."
-  },
-  {
-   "terim": "Deşifre",
-   "anlam": "Ses veya video kaydındaki konuşmaların kelimesi kelimesine yazıya geçirilmesi.",
-   "ornek": "Dünkü görüşmelerin deşifresi bitmeden analiz yapamayız."
-  },
-  {
-   "terim": "Varyant",
-   "anlam": "Aynı masal, türkü ya da efsanenin farklı yerlerde veya kişilerden derlenen değişik anlatımı.",
-   "ornek": "Bu masalın Konya'dan derlediğimiz varyantında kahraman kız değil erkek."
-  },
-  {
-   "terim": "ATU",
-   "anlam": "Aarne-Thompson-Uther masal tipleri kataloğu. Dünya masallarını konularına göre numaralandıran uluslararası sınıflandırma.",
-   "ornek": "Bu anlatı ATU'da üvey anne ve kız kardeş tipine giriyor."
-  },
-  {
-   "terim": "SOKÜM",
-   "anlam": "Somut Olmayan Kültürel Miras. Gelenek, el sanatı, sözlü anlatım gibi elle tutulmayan ama yaşatılan kültürel değerler; UNESCO bunları listeler.",
-   "ornek": "Bu bayram geleneğini SOKÜM ulusal envanterine önermek için dosya hazırlıyoruz."
-  },
-  {
-   "terim": "Geçiş dönemi",
-   "anlam": "Doğum, sünnet, evlilik ve ölüm gibi insanın hayatında bir aşamadan diğerine geçtiği önemli anlar ve bunlara bağlı gelenekler.",
-   "ornek": "Tezim geçiş dönemlerinden doğum çevresindeki inançlarla ilgili."
-  },
-  {
-   "terim": "Sözlü kültür",
-   "anlam": "Yazıya geçirilmeden, ağızdan ağıza aktarılarak yaşayan bilgi ve anlatılar.",
-   "ornek": "Bu destan yüzyıllarca sözlü kültürde yaşadı, ilk kez geçen yüzyılda yazıya geçirildi."
-  },
-  {
-   "terim": "Folklorizm",
-   "anlam": "Geleneklerin doğal ortamından çıkarılıp sahne, turizm veya reklam için yeniden düzenlenerek sunulması.",
-   "ornek": "Festivaldeki gösterilik düğün canlandırması tipik bir folklorizm örneği."
   }
  ],
  "HALKLA İLİŞKİLER VE REKLAMCILIK": [
@@ -6759,58 +6395,6 @@
    "ornek": "Bu hafta her kanal aynı konuyu açtı, tam bir gündem belirleme örneği."
   }
  ],
- "KÜRESEL SİYASET VE ULUSLARARASI İLİŞKİLER": [
-  {
-   "terim": "Nota",
-   "anlam": "Bir devletin başka bir devlete resmi tutumunu, isteğini veya itirazını bildirdiği yazılı diplomatik mesaj.",
-   "ornek": "Hava sahası ihlali için Dışişleri büyükelçiliğe protesto notası verdi."
-  },
-  {
-   "terim": "İkili görüşme",
-   "anlam": "İki ülkenin yetkilileri arasında, çok taraflı bir zirvenin kenarında veya ayrıca yapılan baş başa görüşme.",
-   "ornek": "Zirve aralarında iki ikili görüşme ayarlamaya çalışıyoruz."
-  },
-  {
-   "terim": "Mutabakat zaptı",
-   "anlam": "Ülkeler veya kurumlar arasında işbirliği niyetini yazıya döken belge. İngilizcede MoU (Memorandum of Understanding) denir.",
-   "ornek": "Enerji alanında mutabakat zaptı imzalandı ama asıl anlaşma henüz yok."
-  },
-  {
-   "terim": "Ortak bildiri",
-   "anlam": "Görüşme veya zirve sonunda tarafların üzerinde uzlaştığı noktaları açıkladığı ortak metin.",
-   "ornek": "Ortak bildirideki her kelime için gece yarısına kadar pazarlık edildi."
-  },
-  {
-   "terim": "Yumuşak güç",
-   "anlam": "Bir ülkenin askeri ya da ekonomik baskı yerine kültürü, dizileri, eğitimi ve değerleriyle başkalarını etkileyebilme gücü.",
-   "ornek": "Diziler Orta Doğu'da Türkiye'nin yumuşak gücünü epey artırdı."
-  },
-  {
-   "terim": "Persona non grata",
-   "anlam": "Latince istenmeyen kişi. Bir diplomatın ev sahibi ülkece istenmediğinin ilan edilmesi; genelde ülkeyi terk etmesi gerekir.",
-   "ornek": "Casusluk iddiasıyla iki diplomat persona non grata ilan edildi."
-  },
-  {
-   "terim": "Agreman",
-   "anlam": "Bir ülkenin, büyükelçi olarak gönderilecek kişiyi kabul ettiğini önceden bildirmesi.",
-   "ornek": "Yeni büyükelçi için agreman talep ettik, onay gelince atama açıklanacak."
-  },
-  {
-   "terim": "Maslahatgüzar",
-   "anlam": "Büyükelçi yokken veya atanmamışken elçiliği geçici olarak yöneten diplomat.",
-   "ornek": "Büyükelçi geri çağrıldı, elçiliği şimdilik maslahatgüzar yönetiyor."
-  },
-  {
-   "terim": "BMGK",
-   "anlam": "Birleşmiş Milletler Güvenlik Konseyi. Uluslararası barış ve güvenlikle ilgili bağlayıcı kararlar alan, beş daimi üyesi olan BM organı.",
-   "ornek": "Karar tasarısı BMGK'da veto edildiği için yürürlüğe giremedi."
-  },
-  {
-   "terim": "Think tank",
-   "anlam": "Düşünce kuruluşu. Dış politika ve güvenlik gibi konularda araştırma yapıp rapor ve öneri hazırlayan kurum.",
-   "ornek": "Mezun olunca bir think tank'te Kafkasya masasında analist olarak çalışmak istiyorum."
-  }
- ],
  "KİMYA": [
   {
    "terim": "Numune",
@@ -7277,58 +6861,6 @@
    "terim": "XRD",
    "anlam": "X-Ray Diffraction, X-ışını kırınımı. Bir malzemenin hangi kristal yapı ve fazlardan oluştuğunu belirleyen analiz.",
    "ornek": "Tozun saf olup olmadığını anlamak için XRD'ye gönderdim."
-  }
- ],
- "MALZEME BİLİMİ VE NANOTEKNOLOJİ MÜHENDİSLİĞİ": [
-  {
-   "terim": "Nanopartikül",
-   "anlam": "Boyutu yaklaşık 1-100 nanometre arasında olan, bu küçüklük sayesinde farklı özellikler gösteren parçacık.",
-   "ornek": "Gümüş nanopartiküllerin boyutu küçüldükçe çözeltinin rengi değişiyor."
-  },
-  {
-   "terim": "İnce film",
-   "anlam": "Bir yüzeyin üzerine birkaç nanometre ile birkaç mikrometre arası kalınlıkta kaplanan malzeme tabakası.",
-   "ornek": "Cam üzerine ince film kaplayıp güneş hücresi verimini ölçeceğiz."
-  },
-  {
-   "terim": "Temiz oda",
-   "anlam": "Havadaki toz parçacıklarının sıkı biçimde kontrol edildiği, özel tulum giyerek girilen üretim ve araştırma odası.",
-   "ornek": "Temiz odaya girmeden tulum, bone ve galoşu eksiksiz giy."
-  },
-  {
-   "terim": "Spin kaplama",
-   "anlam": "Yüzeye damlatılan sıvının, yüzey çok hızlı döndürülerek ince ve eşit bir film halinde yayılmasını sağlayan yöntem.",
-   "ornek": "Dakikada üç bin devirde spin kaplama yaparsak film kalınlığı tutuyor."
-  },
-  {
-   "terim": "Aglomerasyon",
-   "anlam": "Nanopartiküllerin birbirine yapışıp topaklanması; çoğu zaman istenmeyen bir durumdur.",
-   "ornek": "Çözeltide aglomerasyon olmuş, ultrasonik banyoda dağıtmayı deneyelim."
-  },
-  {
-   "terim": "Litografi",
-   "anlam": "Işık veya elektron ışını kullanarak yüzeyde çok küçük desenler oluşturma yöntemi; çip üretiminin temelidir.",
-   "ornek": "Elektrot desenlerini litografiyle çıkardık, şimdi metal kaplamaya geçiyoruz."
-  },
-  {
-   "terim": "Sputter",
-   "anlam": "Saçtırma. Bir hedef malzemeden atomlar koparılarak başka bir yüzeyin üzerine ince film halinde biriktirilmesi.",
-   "ornek": "Örneklere elli nanometre altın sputter edip ölçüme hazırlayalım."
-  },
-  {
-   "terim": "Kuantum noktası",
-   "anlam": "Boyutuna göre farklı renkte ışık yayan nanometre ölçeğinde yarı iletken kristaller; bazı ekranlarda kullanılır.",
-   "ornek": "Kuantum noktalarını biraz büyütünce yeşil yerine kırmızı ışık vermeye başladılar."
-  },
-  {
-   "terim": "TEM",
-   "anlam": "Transmission Electron Microscope, geçirimli elektron mikroskobu. Tek tek nanopartikülleri, hatta atom dizilimlerini görmeye yarar.",
-   "ornek": "TEM görüntüleri partiküllerin küresel ve on nanometre civarında olduğunu gösteriyor."
-  },
-  {
-   "terim": "AFM",
-   "anlam": "Atomic Force Microscope, atomik kuvvet mikroskobu. Çok ince bir uçla yüzeyi tarayıp nanometre düzeyinde pürüzlülüğü ölçer.",
-   "ornek": "Filmin yüzey pürüzlülüğünü AFM ile ölçtük, gayet düzgün çıktı."
   }
  ],
  "MALİYE": [
@@ -7901,58 +7433,6 @@
    "terim": "CRISPR",
    "anlam": "Clustered Regularly Interspaced Short Palindromic Repeats. DNA'da belirli bir noktayı kesip değiştirmeyi sağlayan gen düzenleme aracı.",
    "ornek": "Bu geni CRISPR ile susturup hücrenin davranışını izleyeceğiz."
-  }
- ],
- "MOLEKÜLER BİYOTEKNOLOJİ": [
-  {
-   "terim": "PCR",
-   "anlam": "Polimeraz Zincir Reaksiyonu. Belirli bir DNA parçasını laboratuvarda milyonlarca kez çoğaltma yöntemi.",
-   "ornek": "Örnekleri hazırladım, öğleden sonra PCR'a koyacağım."
-  },
-  {
-   "terim": "Primer",
-   "anlam": "PCR'da çoğaltılacak DNA bölgesinin başlangıç ve bitişini işaretleyen kısa DNA parçası.",
-   "ornek": "Primerler gelmedi, siparişi bir daha kontrol eder misin?"
-  },
-  {
-   "terim": "Jel yürütmek",
-   "anlam": "DNA parçalarını büyüklüklerine göre ayırmak için agaroz jele yükleyip elektrik akımı vermek.",
-   "ornek": "PCR ürünlerini kontrol etmek için yarım saatlik bir jel yürüteceğim."
-  },
-  {
-   "terim": "Ladder (marker)",
-   "anlam": "Jelde boyutları bilinen DNA parçalarından oluşan cetvel; örneklerin boyutunu karşılaştırmaya yarar.",
-   "ornek": "Bantlar ladder'daki 500'lük banda denk geliyor, ürün doğru."
-  },
-  {
-   "terim": "Plazmit",
-   "anlam": "Bakterilerde bulunan küçük, halka şeklindeki DNA; araştırmacılar gen taşımak için kullanır.",
-   "ornek": "Geni plazmite klonladık, şimdi bakteriye aktaracağız."
-  },
-  {
-   "terim": "Overnight kültür",
-   "anlam": "Bakterilerin bir gece boyunca çalkalayıcılı inkübatörde çoğalmaya bırakıldığı sıvı kültür.",
-   "ornek": "Akşam çıkmadan overnight kültürleri kurmayı unutma."
-  },
-  {
-   "terim": "Pellet",
-   "anlam": "Santrifüjden sonra tüpün dibinde toplanan hücre veya madde tortusu.",
-   "ornek": "Santrifüjden sonra süpernatantı dök, pelleti tamponla çöz."
-  },
-  {
-   "terim": "Otoklav",
-   "anlam": "Basınçlı buharla malzeme ve atıkları sterilize eden cihaz; laboratuvarın vazgeçilmezi.",
-   "ornek": "Besiyerlerini otoklava koydum, bir saate hazır olur."
-  },
-  {
-   "terim": "Laminar kabin",
-   "anlam": "Havası filtrelenen steril çalışma kabini; hücre kültürü gibi işler mikrop bulaşmasın diye burada yapılır.",
-   "ornek": "Hücrelere dokunmadan önce laminar kabini alkolle sil."
-  },
-  {
-   "terim": "qPCR",
-   "anlam": "Kantitatif (gerçek zamanlı) PCR. DNA çoğalırken miktarını anlık ölçerek gen ifadesini hesaplamayı sağlar.",
-   "ornek": "qPCR sonuçlarına göre gen ifadesi iki kat artmış."
   }
  ],
  "MUHASEBE VE DENETİM": [
@@ -9151,58 +8631,6 @@
    "ornek": "Diz kilitli KAFO ile ayakta durma çalışmasına başladık."
   }
  ],
- "OTEL YÖNETİCİLİĞİ": [
-  {
-   "terim": "Front office",
-   "anlam": "Resepsiyon ve misafirle doğrudan ilgilenen ön büro departmanı.",
-   "ornek": "Front office'te bu akşam iki kişi eksiğiz."
-  },
-  {
-   "terim": "Housekeeping",
-   "anlam": "Odaların ve genel alanların temizliğinden sorumlu kat hizmetleri departmanı.",
-   "ornek": "Housekeeping'e haber ver, 305 numaralı oda acil hazırlansın."
-  },
-  {
-   "terim": "Doluluk oranı",
-   "anlam": "Otelde satılan oda sayısının toplam odaya oranı.",
-   "ornek": "Bayram haftası doluluk oranı yüzde 95'e çıktı."
-  },
-  {
-   "terim": "Overbooking",
-   "anlam": "Rezervasyon iptallerine karşı oteldeki oda sayısından fazla satış yapılması.",
-   "ornek": "Overbooking var, iki misafiri anlaşmalı otele aktarmamız gerekebilir."
-  },
-  {
-   "terim": "No-show",
-   "anlam": "Rezervasyonu olduğu hâlde haber vermeden otele gelmeyen misafir.",
-   "ornek": "Dün gece üç no-show vardı, ilk gece ücretini tahsil ediyoruz."
-  },
-  {
-   "terim": "Walk-in",
-   "anlam": "Rezervasyonu olmadan doğrudan otele gelip oda isteyen misafir.",
-   "ornek": "Boş oda varsa walk-in misafire güncel fiyattan verelim."
-  },
-  {
-   "terim": "Upgrade",
-   "anlam": "Misafiri ödediğinden daha üst kategoride bir odaya geçirmek.",
-   "ornek": "Balayı çiftine deniz manzaralı odaya upgrade yapalım."
-  },
-  {
-   "terim": "Late check-out",
-   "anlam": "Misafirin odayı normal çıkış saatinden daha geç boşaltması.",
-   "ornek": "Misafir saat üçe kadar late check-out istedi, uygun mu?"
-  },
-  {
-   "terim": "ADR",
-   "anlam": "Average Daily Rate. Satılan odaların ortalama gecelik fiyatı.",
-   "ornek": "Bu ay ADR geçen yıla göre yüzde on arttı."
-  },
-  {
-   "terim": "RevPAR",
-   "anlam": "Revenue Per Available Room. Satılsın satılmasın her oda başına düşen ortalama gelir.",
-   "ornek": "Doluluk düştü ama fiyat arttığı için RevPAR yerinde kaldı."
-  }
- ],
  "OTOMOTİV MÜHENDİSLİĞİ": [
   {
    "terim": "Homologasyon",
@@ -9357,58 +8785,6 @@
    "terim": "ROI",
    "anlam": "Return on Investment, yatırım getirisi. Harcanan paraya karşılık ne kadar kazanç sağlandığı.",
    "ornek": "Influencer çalışmasının ROI'si televizyon reklamından yüksek çıktı."
-  }
- ],
- "PAZARLAMA İLETİŞİMİ": [
-  {
-   "terim": "Basın bülteni",
-   "anlam": "Kurumun bir haberini medyaya duyurmak için hazırlayıp gazetecilere gönderdiği metin.",
-   "ornek": "Yeni mağaza açılışı için basın bültenini yarın dağıtıyoruz."
-  },
-  {
-   "terim": "Medya planı",
-   "anlam": "Reklamın hangi mecrada, ne zaman ve hangi bütçeyle yayınlanacağını gösteren plan.",
-   "ornek": "Medya planında bütçenin yarısı dijitale ayrıldı."
-  },
-  {
-   "terim": "Kreatif",
-   "anlam": "Reklamın görsel ve metin olarak ortaya çıkan yaratıcı fikri; ajansta bu işi yapan ekip.",
-   "ornek": "Kreatif ekip yarın üç farklı fikir sunacak."
-  },
-  {
-   "terim": "Copy",
-   "anlam": "Reklam metni; bu metni yazan kişiye de copywriter denir.",
-   "ornek": "Afişteki copy çok uzun, tek cümleye indirelim."
-  },
-  {
-   "terim": "Etkileşim",
-   "anlam": "Sosyal medyada beğeni, yorum ve paylaşım gibi kullanıcı tepkilerinin toplamı; engagement da denir.",
-   "ornek": "Video içerikler görsellere göre iki kat etkileşim aldı."
-  },
-  {
-   "terim": "Erişim",
-   "anlam": "Bir içeriği veya reklamı en az bir kez gören farklı kişi sayısı; reach da denir.",
-   "ornek": "Kampanya ilk haftada iki milyon erişime ulaştı."
-  },
-  {
-   "terim": "Kriz iletişimi",
-   "anlam": "Marka hakkında olumsuz bir olay yaşandığında kamuoyuna yapılan planlı açıklama ve yönetim süreci.",
-   "ornek": "Ürün geri çağırması için kriz iletişimi ekibi toplanıyor."
-  },
-  {
-   "terim": "Influencer işbirliği",
-   "anlam": "Sosyal medyada takipçisi çok olan kişilerle markanın tanıtım için anlaşması.",
-   "ornek": "Influencer işbirliğinde paylaşımların reklam etiketli olmasına dikkat edin."
-  },
-  {
-   "terim": "CTR",
-   "anlam": "Click Through Rate, tıklanma oranı. Reklamı görenlerin yüzde kaçının tıkladığını gösterir.",
-   "ornek": "Yeni banner'da CTR yüzde ikiye çıktı."
-  },
-  {
-   "terim": "GRP",
-   "anlam": "Gross Rating Point. Televizyon reklamının toplam izlenme gücünü gösteren ölçü birimi.",
-   "ornek": "Bu dönem için 300 GRP'lik televizyon planı yaptık."
   }
  ],
  "PERFÜZYON": [
@@ -9773,58 +9149,6 @@
    "terim": "Sonlandırma",
    "anlam": "Terapinin hedeflere ulaşıldığında planlı biçimde bitirilmesi süreci.",
    "ornek": "Hedeflerin çoğuna ulaştık, önümüzdeki ay sonlandırmaya hazırlanıyoruz."
-  }
- ],
- "PSİKOLOJİK DANIŞMANLIK VE REHBERLİK ÖĞRETMENLİĞİ": [
-  {
-   "terim": "RAM",
-   "anlam": "Rehberlik ve Araştırma Merkezi. Özel eğitim ihtiyacı olan öğrencileri değerlendirip yönlendiren MEB kurumu.",
-   "ornek": "Öğrencinin dosyasını hazırlayıp RAM'a değerlendirme için gönderelim."
-  },
-  {
-   "terim": "BEP",
-   "anlam": "Bireyselleştirilmiş Eğitim Programı. Özel eğitim ihtiyacı olan öğrenci için hazırlanan kişiye özel plan.",
-   "ornek": "Kaynaştırma öğrencimizin BEP toplantısını ders öğretmenleriyle cuma yapacağız."
-  },
-  {
-   "terim": "Sınıf rehberlik etkinliği",
-   "anlam": "Rehberlik saatinde sınıf öğretmeninin uyguladığı, rehber öğretmenin hazırladığı ya da desteklediği grup etkinliği.",
-   "ornek": "Bu haftaki sınıf rehberlik etkinliği sınav kaygısı üzerine, föyleri dağıttım."
-  },
-  {
-   "terim": "Veli görüşmesi",
-   "anlam": "Öğrencinin durumu hakkında aileyle yapılan planlı görüşme.",
-   "ornek": "Devamsızlığı arttı, yarın annesiyle veli görüşmesi ayarladım."
-  },
-  {
-   "terim": "Kaynaştırma öğrencisi",
-   "anlam": "Özel eğitim ihtiyacı olup normal sınıfta akranlarıyla birlikte eğitim alan öğrenci.",
-   "ornek": "7-B'deki kaynaştırma öğrencisi için öğretmenlere bilgilendirme yapmalıyım."
-  },
-  {
-   "terim": "Sosyometri",
-   "anlam": "Sınıftaki arkadaşlık ilişkilerini, kimin dışlandığını ya da popüler olduğunu ortaya çıkaran teknik.",
-   "ornek": "Sosyometri sonuçlarına göre iki öğrenci sınıfta neredeyse hiç seçilmemiş."
-  },
-  {
-   "terim": "Kimdir Bu tekniği",
-   "anlam": "Öğrencilerin verilen özelliklere uyan sınıf arkadaşlarının adını yazdığı bir öğrenci tanıma tekniği.",
-   "ornek": "Kimdir Bu tekniğinde en yardımsever olarak hep aynı öğrenci yazılmış."
-  },
-  {
-   "terim": "Risk haritası",
-   "anlam": "Okulda devamsızlık, şiddet, madde kullanımı gibi riskleri tespit etmek için hazırlanan durum analizi.",
-   "ornek": "Risk haritası sonuçlarını öğretmenler kuruluna sunacağım."
-  },
-  {
-   "terim": "Yönlendirme",
-   "anlam": "Öğrenciyi ihtiyacına göre doktor, RAM ya da başka bir uzmana sevk etmek.",
-   "ornek": "Belirtiler okul ortamını aşıyor, çocuk psikiyatrisine yönlendirme yapalım."
-  },
-  {
-   "terim": "Tercih danışmanlığı",
-   "anlam": "Sınav sonrası öğrenciye okul veya bölüm tercihlerini yaparken verilen rehberlik desteği.",
-   "ornek": "LGS sonuçları açıklandı, bu hafta tercih danışmanlığı randevuları dolu."
   }
  ],
  "PİLOTAJ": [
@@ -10293,58 +9617,6 @@
    "terim": "Gerdirme",
    "anlam": "Ahşap çerçeveye kumaş gerilerek yapılan hafif dekor panosu; sahnede duvar gibi kullanılır.",
    "ornek": "Oda duvarlarını gerdirmeyle yapalım, hem hafif hem taşınması kolay."
-  }
- ],
- "SAHNE SANATLARI": [
-  {
-   "terim": "Mizansen",
-   "anlam": "Oyuncuların sahnede nerede durup nasıl hareket edeceğinin yönetmence düzenlenmesi.",
-   "ornek": "Yönetmen ikinci sahnenin mizansenini değiştirdi, artık masanın arkasından giriyorum."
-  },
-  {
-   "terim": "Replik",
-   "anlam": "Oyunda bir oyuncunun söylediği konuşma parçası. Sıradaki oyuncu için işaret olur.",
-   "ornek": "Replikleri ezberledim ama vurgu yerlerinden hâlâ emin değilim."
-  },
-  {
-   "terim": "Suflör",
-   "anlam": "Oyuncu repliğini unuttuğunda görünmeden ona fısıldayarak hatırlatan kişi.",
-   "ornek": "Dün gece takıldım, neyse ki suflör hemen yetişti."
-  },
-  {
-   "terim": "Doğaçlama",
-   "anlam": "Önceden yazılmamış, o an kurgulanarak oynanan sahne veya konuşma.",
-   "ornek": "Provanın ilk yarım saati doğaçlama, karakteri tanımak için."
-  },
-  {
-   "terim": "Dördüncü duvar",
-   "anlam": "Sahne ile seyirci arasındaki hayalî duvar. Oyuncu seyirciyle doğrudan konuşursa dördüncü duvarı yıkmış olur.",
-   "ornek": "Bu sahnede dördüncü duvarı yıkıp seyirciye soru soruyorsun."
-  },
-  {
-   "terim": "Monolog",
-   "anlam": "Bir oyuncunun uzun süre tek başına konuştuğu bölüm; seçmelerde sıkça istenir.",
-   "ornek": "Konservatuvar sınavı için bir klasik, bir modern monolog hazırlıyorum."
-  },
-  {
-   "terim": "Sahne sağı ve sahne solu",
-   "anlam": "Yönler, seyirciye göre değil sahnede seyirciye bakan oyuncuya göre söylenir.",
-   "ornek": "Sahne solundan gir, masaya geç ve seyirciye dön."
-  },
-  {
-   "terim": "Gala",
-   "anlam": "Bir oyunun ya da gösterinin davetlilerle yapılan ilk resmî temsili; prömiyer de denir.",
-   "ornek": "Galaya bir hafta kaldı, her gün akşama kadar prova var."
-  },
-  {
-   "terim": "Isınma",
-   "anlam": "Oyuncuların ve dansçıların sahneden önce bedenlerini ve seslerini hazırladığı egzersizler.",
-   "ornek": "Isınmayı atlarsan ikinci perdede sesin kısılır."
-  },
-  {
-   "terim": "Temsil",
-   "anlam": "Bir oyunun seyirci önünde oynanan her bir gösterimi.",
-   "ornek": "Bu sezon oyun kırkıncı temsilini oynadı."
   }
  ],
  "SAHNE TASARIMI": [
@@ -11387,58 +10659,6 @@
    "ornek": "Kurduğumuz honeypot bir gecede yüzlerce giriş denemesi topladı."
   }
  ],
- "SİGORTACILIK VE AKTÜERYA BİLİMLERİ": [
-  {
-   "terim": "Prim",
-   "anlam": "Sigortalının güvence karşılığında sigorta şirketine ödediği ücret.",
-   "ornek": "Bu yaş grubunda riski yükselttiğimiz için primi yüzde on artırmamız gerekiyor."
-  },
-  {
-   "terim": "Poliçe",
-   "anlam": "Sigorta sözleşmesinin yazılı belgesi; neyin hangi şartlarla güvence altında olduğunu gösterir.",
-   "ornek": "Yeni ürünün poliçe şartlarını hukukla birlikte son kez gözden geçirelim."
-  },
-  {
-   "terim": "Muallak hasar",
-   "anlam": "Gerçekleşmiş ama henüz ödemesi tamamlanmamış, sonucu bekleyen hasar dosyası.",
-   "ornek": "Yıl sonu kapanışından önce muallak hasar karşılığını yeniden hesaplamamız lazım."
-  },
-  {
-   "terim": "Reasürans",
-   "anlam": "Sigorta şirketinin üstlendiği büyük riskin bir kısmını başka bir sigorta şirketine devretmesi; sigortacının sigortası.",
-   "ornek": "Deprem riskinin büyük kısmını reasüransa devrettik, tek başımıza taşıyamayız."
-  },
-  {
-   "terim": "Hasar/prim oranı",
-   "anlam": "Ödenen hasarların toplanan primlere oranı. Bir ürünün kâr edip etmediğini gösteren temel göstergedir.",
-   "ornek": "Kasko branşında hasar/prim oranı yüzde doksanı geçti, tarifeyi gözden geçirmeliyiz."
-  },
-  {
-   "terim": "Mortalite tablosu",
-   "anlam": "Her yaştaki kişinin bir yıl içinde ölme olasılığını gösteren tablo. Hayat sigortası fiyatlamasının temelidir.",
-   "ornek": "Güncel mortalite tablosunu kullanınca hayat ürününün primi biraz düştü."
-  },
-  {
-   "terim": "Teknik faiz",
-   "anlam": "Hayat sigortası hesaplarında gelecekteki ödemeleri bugüne indirgemek için varsayılan faiz oranı.",
-   "ornek": "Teknik faizi düşürürsek ayrılması gereken karşılık artar, dikkat edelim."
-  },
-  {
-   "terim": "IBNR",
-   "anlam": "Incurred But Not Reported. Gerçekleşmiş ama şirkete henüz bildirilmemiş hasarlar için ayrılan tahmini karşılık.",
-   "ornek": "Bu çeyrek IBNR tahmininde ciddi sapma var, varsayımları tekrar kontrol et."
-  },
-  {
-   "terim": "SEDDK",
-   "anlam": "Sigortacılık ve Özel Emeklilik Düzenleme ve Denetleme Kurumu. Türkiye'de sigorta sektörünü düzenleyen ve denetleyen kurum.",
-   "ornek": "Aktüerya raporunu ay sonuna kadar SEDDK'ya göndermemiz gerekiyor."
-  },
-  {
-   "terim": "Chain ladder (Zincir merdiven)",
-   "anlam": "Geçmiş yılların hasar gelişim üçgenine bakarak gelecekte ödenecek hasarları tahmin eden aktüerya yöntemi.",
-   "ornek": "Üçgeni chain ladder ile çalıştırdım, sonuç geçen yıla yakın çıktı."
-  }
- ],
  "SİGORTACILIK VE RİSK YÖNETİMİ": [
   {
    "terim": "Eksper",
@@ -12479,58 +11699,6 @@
    "ornek": "Bu görüntüyü bulanıklaştırmadan verirsek RTÜK cezası alabiliriz."
   }
  ],
- "TEZHİP-MİNYATÜR VE EBRU": [
-  {
-   "terim": "Rumi",
-   "anlam": "Tezhipte kullanılan, hayvan figürlerinin stilize edilmesiyle oluştuğu düşünülen kıvrımlı motif.",
-   "ornek": "Köşelerde rumi motifleri kullanırsak kompozisyon daha dengeli olur."
-  },
-  {
-   "terim": "Hatayi",
-   "anlam": "Çiçeklerin üstten veya yandan görünüşünün stilize edilmesiyle oluşan tezhip motifi.",
-   "ornek": "Hatayileri rumilerle aynı kıvrım üzerinde birleştirelim."
-  },
-  {
-   "terim": "Tahrir",
-   "anlam": "Motiflerin çevresine ince fırçayla çekilen kontur çizgisi.",
-   "ornek": "Boyama bitti, şimdi altınların tahririni çekme sırası."
-  },
-  {
-   "terim": "Halkâr",
-   "anlam": "Altınla yapılan, tek renkli ve fırçayla gölgelendirilmiş ince tezhip tekniği.",
-   "ornek": "Hattın kenarlarına halkâr yapacağım, renk kullanmayacağım."
-  },
-  {
-   "terim": "Ahar",
-   "anlam": "Kâğıdın yüzeyini düzleştirip mürekkebi emmesini önlemek için sürülen yumurta akı ve nişasta karışımı.",
-   "ornek": "Aharlı kâğıt kurudu, şimdi mühreleyebiliriz."
-  },
-  {
-   "terim": "Mühre",
-   "anlam": "Aharlanmış kâğıdı veya altını parlatmak için kullanılan cam ya da taş parlatma aracı.",
-   "ornek": "Altını mühreyle yavaşça parlat, fazla bastırırsan kâğıt bozulur."
-  },
-  {
-   "terim": "Kitre",
-   "anlam": "Ebru teknesindeki suyu koyulaştırmak için kullanılan bitkisel zamk.",
-   "ornek": "Kitreyi dün akşam ıslattım, sabah tekneyi hazırlarız."
-  },
-  {
-   "terim": "Öd",
-   "anlam": "Ebruda boyaların su yüzeyinde dağılıp açılmasını sağlamak için boyaya katılan sığır safrası.",
-   "ornek": "Boya açılmıyor, birkaç damla daha öd ekle."
-  },
-  {
-   "terim": "Battal ebru",
-   "anlam": "Boyaların su yüzeyine serpilip hiç şekil verilmeden kâğıda alındığı en temel ebru türü.",
-   "ornek": "Yeni öğrenciler önce battal ebruyla başlıyor."
-  },
-  {
-   "terim": "Gelgit",
-   "anlam": "Boyalar serpildikten sonra bizle tekne boyunca ileri geri çizgiler çekilerek yapılan ebru türü.",
-   "ornek": "Battal zemine gelgit çekip üzerine şal desenine geçeceğiz."
-  }
- ],
  "TIP": [
   {
    "terim": "Vizit",
@@ -13259,58 +12427,6 @@
    "ornek": "Seçim sonrası CDS primleri hızla geriledi."
   }
  ],
- "ULUSLARARASI GİRİŞİMCİLİK": [
-  {
-   "terim": "Startup",
-   "anlam": "Hızlı büyüme hedefiyle yenilikçi bir ürün veya hizmet geliştiren yeni kurulmuş şirket; girişim.",
-   "ornek": "Startup'ımız şu an beş kişi, yıl sonuna kadar Almanya'ya açılmak istiyoruz."
-  },
-  {
-   "terim": "Pitch",
-   "anlam": "Girişimcinin yatırımcılara fikrini birkaç dakikada ikna edici şekilde sunması.",
-   "ornek": "Demo gününde üç dakikalık pitch hakkımız var, slaytları sadeleştirelim."
-  },
-  {
-   "terim": "MVP",
-   "anlam": "Minimum Viable Product; fikrin işe yarayıp yaramadığını test etmek için yapılan en basit çalışan ürün sürümü.",
-   "ornek": "Önce MVP'yi çıkarıp yüz kullanıcıyla test edelim, sonra özellik ekleriz."
-  },
-  {
-   "terim": "Melek yatırımcı",
-   "anlam": "Erken aşamadaki girişimlere kendi parasıyla yatırım yapan ve genelde tecrübesiyle de destek olan kişi.",
-   "ornek": "İlk paramızı bir melek yatırımcıdan aldık, bize mentorluk da yapıyor."
-  },
-  {
-   "terim": "Seed yatırım",
-   "anlam": "Tohum yatırım; girişimin ilk aşamada ürünü geliştirip pazara çıkması için aldığı ilk ciddi yatırım.",
-   "ornek": "Seed yatırım turunu kapattık, şimdi ekibi büyütebiliriz."
-  },
-  {
-   "terim": "Pivot",
-   "anlam": "Girişimin işe yaramayan iş modelini veya hedef kitlesini değiştirip yeni bir yöne dönmesi.",
-   "ornek": "Bireysel kullanıcı tutmadı, şirketlere satışa pivot yaptık."
-  },
-  {
-   "terim": "Burn rate",
-   "anlam": "Girişimin her ay harcadığı nakit miktarı; paranın ne kadar hızlı eridiğini gösterir.",
-   "ornek": "Bu burn rate ile sekiz ay sonra paramız bitiyor."
-  },
-  {
-   "terim": "Ölçeklemek",
-   "anlam": "İşi maliyetleri aynı oranda artırmadan çok daha fazla müşteriye ve yeni ülkelere büyütmek.",
-   "ornek": "Ürün Türkiye'de tuttu, şimdi Körfez pazarına ölçeklemeyi konuşuyoruz."
-  },
-  {
-   "terim": "VC",
-   "anlam": "Venture Capital, yani girişim sermayesi; hızlı büyüme potansiyeli olan girişimlere yatırım yapan fonlar.",
-   "ornek": "Londra'daki bir VC ile ikinci görüşmemiz yarın."
-  },
-  {
-   "terim": "Unicorn",
-   "anlam": "Borsaya açılmadan değeri bir milyar doları aşan girişim. Bu kadar nadir olduğu için tek boynuzlu ata benzetilir.",
-   "ornek": "Türkiye'den çıkan unicorn'lar oyun sektörünün ne kadar güçlü olduğunu gösterdi."
-  }
- ],
  "ULUSLARARASI HUKUK": [
   {
    "terim": "Antlaşma",
@@ -13571,58 +12687,6 @@
    "ornek": "TUA'nın yeni burs programına başvurmayı düşünüyorum."
   }
  ],
- "UZAY MÜHENDİSLİĞİ": [
-  {
-   "terim": "Faydalı yük (Payload)",
-   "anlam": "Uydunun asıl görevini yapan donanım; örneğin kamera, haberleşme cihazı veya bilimsel alet.",
-   "ornek": "Faydalı yükün ağırlığı arttı, güç bütçesini yeniden hesaplamamız lazım."
-  },
-  {
-   "terim": "Fırlatma penceresi",
-   "anlam": "Hedef yörüngeye ulaşmak için roketin fırlatılabileceği sınırlı zaman aralığı.",
-   "ornek": "Fırlatma penceresi on beş dakika, hava bozarsa iki gün bekleyeceğiz."
-  },
-  {
-   "terim": "Telemetri",
-   "anlam": "Uydu veya roketten yere gönderilen sıcaklık, basınç, güç gibi anlık durum verileri.",
-   "ornek": "Telemetride batarya sıcaklığı sınırda görünüyor, takipte kalalım."
-  },
-  {
-   "terim": "Küp uydu (CubeSat)",
-   "anlam": "10 santimetrelik küp birimlerden oluşan, ucuz ve küçük uydu türü. Üniversite projelerinde çok kullanılır.",
-   "ornek": "Kulübümüzün 3U küp uydusu gelecek yıl fırlatılacak."
-  },
-  {
-   "terim": "Termal vakum testi",
-   "anlam": "Uydunun uzaydaki boşluk ve aşırı sıcaklık değişimlerine dayanıp dayanmadığını yerde özel odada sınamak.",
-   "ornek": "Termal vakum testinde bir sensör arıza verdi, kartı değiştiriyoruz."
-  },
-  {
-   "terim": "Titreşim testi",
-   "anlam": "Fırlatma sırasında oluşacak sarsıntıları sarsıcı masada taklit ederek uydunun dayanıklılığını ölçmek.",
-   "ornek": "Titreşim testinden sonra tüm cıvataların torkunu tekrar kontrol ettik."
-  },
-  {
-   "terim": "Delta-v",
-   "anlam": "Bir aracın manevra yapabilmek için hızını ne kadar değiştirebileceğini gösteren değer; yakıt bütçesi gibi düşünülür.",
-   "ornek": "Görev sonuna kadar yeterli delta-v kalması için manevraları azaltmalıyız."
-  },
-  {
-   "terim": "PDR / CDR",
-   "anlam": "Preliminary Design Review ve Critical Design Review; projede ön tasarımın ve son tasarımın uzmanlarca gözden geçirildiği resmi toplantılar.",
-   "ornek": "CDR'ı geçmeden uçuş modelinin üretimine başlayamayız."
-  },
-  {
-   "terim": "TRL",
-   "anlam": "Technology Readiness Level, yani teknoloji hazırlık seviyesi. Bir teknolojinin laboratuvardan uzayda kanıtlanmaya kadar ne kadar olgun olduğunu 1-9 arası gösterir.",
-   "ornek": "Bu itki sistemi hâlâ TRL 4'te, uçuşa koymak için erken."
-  },
-  {
-   "terim": "Uçuş mirası (Flight heritage)",
-   "anlam": "Bir parçanın daha önce uzayda başarıyla çalışmış olması; mühendisler bu parçalara daha çok güvenir.",
-   "ornek": "Bu reaksiyon tekeri flight heritage sahibi, riski düşük."
-  }
- ],
  "UÇAK BAKIM VE ONARIM": [
   {
    "terim": "AMM",
@@ -13673,58 +12737,6 @@
    "terim": "B1 / B2 lisansı",
    "anlam": "Uçak bakım teknisyeni lisans türleri. B1 mekanik ve motor işleri, B2 elektrik ve aviyonik sistemler içindir.",
    "ornek": "B2 lisansımı alınca aviyonik işlerine de imza atabileceğim."
-  }
- ],
- "UÇAK MÜHENDİSLİĞİ": [
-  {
-   "terim": "Taşıma ve sürükleme",
-   "anlam": "Kanadın uçağı yukarı kaldıran kuvveti taşıma, hava direncinin uçağı geri çeken kuvveti sürüklemedir.",
-   "ornek": "Yeni kanat ucu sürüklemeyi yüzde üç azaltıyor."
-  },
-  {
-   "terim": "Perdövites (Stall)",
-   "anlam": "Kanadın çok dik açıyla havaya girmesi sonucu taşımanın aniden kaybolması durumu.",
-   "ornek": "Rüzgar tünelinde bu profil on dört derecede perdövitese giriyor."
-  },
-  {
-   "terim": "CFD",
-   "anlam": "Computational Fluid Dynamics, hesaplamalı akışkanlar dinamiği. Hava akışının bilgisayarda simüle edilmesidir.",
-   "ornek": "CFD sonuçları rüzgar tüneli verisiyle uyumlu çıktı."
-  },
-  {
-   "terim": "Rüzgar tüneli",
-   "anlam": "Küçültülmüş uçak modellerinin üzerinden kontrollü hava geçirilerek aerodinamiğinin test edildiği tesis.",
-   "ornek": "Model haftaya rüzgar tüneline giriyor, sensörleri bitirelim."
-  },
-  {
-   "terim": "Ağırlık bütçesi",
-   "anlam": "Uçağın her parçasına ayrılan izin verilen ağırlık sınırı. Aşılırsa menzil ve performans düşer.",
-   "ornek": "Kablo demeti ağırlık bütçesini iki kilo aştı, alternatif arıyoruz."
-  },
-  {
-   "terim": "MTOW",
-   "anlam": "Maximum Take-Off Weight, azami kalkış ağırlığı. Uçağın yakıt, yük ve yolcuyla birlikte kalkabileceği en yüksek ağırlık.",
-   "ornek": "Yeni koltuk düzeniyle MTOW sınırına yaklaşıyoruz."
-  },
-  {
-   "terim": "Flutter",
-   "anlam": "Kanat veya kuyruğun belli hızlarda kontrolsüz ve tehlikeli şekilde titreşmeye başlaması; tasarımda mutlaka önlenmelidir.",
-   "ornek": "Flutter analizine göre bu kanatçıkta denge ağırlığı gerekiyor."
-  },
-  {
-   "terim": "FEA",
-   "anlam": "Finite Element Analysis, sonlu elemanlar analizi. Yapının yük altında nasıl gerileceğini bilgisayarda parçalara bölerek hesaplamak.",
-   "ornek": "FEA'da bağlantı noktasında gerilme yüksek çıktı, kalınlığı artıralım."
-  },
-  {
-   "terim": "Fly-by-wire",
-   "anlam": "Pilotun kumanda hareketlerinin mekanik bağlantı yerine elektrik sinyalleri ve bilgisayarlarla kontrol yüzeylerine iletilmesi.",
-   "ornek": "Fly-by-wire sayesinde bilgisayar uçağın sınırları aşmasına izin vermiyor."
-  },
-  {
-   "terim": "Sertifikasyon",
-   "anlam": "Uçağın havacılık otoritesinin güvenlik kurallarına uyduğunun testlerle kanıtlanıp onaylanması süreci; EASA ve SHGM gibi kurumlar yürütür.",
-   "ornek": "Sertifikasyon için yüzlerce test raporu hazırlamamız gerekiyor."
   }
  ],
  "VERİ BİLİMİ VE ANALİTİĞİ": [
@@ -13933,110 +12945,6 @@
    "terim": "Edge AI",
    "anlam": "Yapay zeka modelinin bulut yerine doğrudan telefon, kamera veya araç gibi cihazın üzerinde çalışması.",
    "ornek": "Kameralarda edge AI kullanıyoruz, görüntü buluta gitmeden analiz ediliyor."
-  }
- ],
- "YAPAY ZEKA VE MAKİNE ÖĞRENMESİ": [
-  {
-   "terim": "Overfitting",
-   "anlam": "Aşırı öğrenme; modelin eğitim verisini ezberleyip yeni veride kötü sonuç vermesi.",
-   "ornek": "Eğitimde yüzde doksan dokuz, testte yüzde altmış; açık açık overfitting var."
-  },
-  {
-   "terim": "Epoch",
-   "anlam": "Modelin tüm eğitim verisini baştan sona bir kez görmesi.",
-   "ornek": "Yirminci epoch'tan sonra doğrulama kaybı artmaya başladı, durduralım."
-  },
-  {
-   "terim": "Batch size",
-   "anlam": "Modelin ağırlıklarını güncellemeden önce aynı anda işlediği örnek sayısı.",
-   "ornek": "GPU belleği yetmedi, batch size'ı 64'ten 32'ye düşürdüm."
-  },
-  {
-   "terim": "Learning rate",
-   "anlam": "Öğrenme oranı; modelin her adımda ağırlıklarını ne kadar büyük değiştireceğini belirleyen ayar.",
-   "ornek": "Learning rate çok yüksek, kayıp grafiği zikzak çiziyor."
-  },
-  {
-   "terim": "Loss (Kayıp)",
-   "anlam": "Modelin tahminlerinin doğru cevaptan ne kadar uzak olduğunu gösteren sayı. Eğitimde düşürülmeye çalışılır.",
-   "ornek": "Loss bir süredir yerinde sayıyor, modeli değiştirmemiz gerekebilir."
-  },
-  {
-   "terim": "Train/test ayrımı",
-   "anlam": "Verinin bir kısmıyla model eğitilip, hiç görmediği diğer kısmıyla başarısının ölçülmesi.",
-   "ornek": "Test verisi eğitime sızmış, train/test ayrımını baştan yapalım."
-  },
-  {
-   "terim": "Hiperparametre",
-   "anlam": "Eğitim başlamadan önce elle belirlenen ayarlar; öğrenme oranı ve katman sayısı gibi.",
-   "ornek": "Bu gece hiperparametre taraması çalıştırıp en iyi ayarı bulacağız."
-  },
-  {
-   "terim": "Feature engineering",
-   "anlam": "Ham veriden modelin daha iyi öğrenmesini sağlayacak yeni ve anlamlı özellikler türetmek.",
-   "ornek": "Tarihten hafta sonu özelliği çıkarmak feature engineering'in en işe yarayan adımıydı."
-  },
-  {
-   "terim": "SOTA",
-   "anlam": "State of the Art; bir görevde şu ana kadar elde edilmiş en iyi sonuç veya yöntem.",
-   "ornek": "Makalede bu veri setinde SOTA sonucu geçtiğimizi iddia ediyoruz."
-  },
-  {
-   "terim": "Benchmark",
-   "anlam": "Farklı modellerin başarısını karşılaştırmak için kullanılan standart test veri seti veya ölçüt.",
-   "ornek": "Yeni modelimizi üç farklı benchmark'ta denedik."
-  }
- ],
- "YAPAY ZEKA VE VERİ MÜHENDİSLİĞİ": [
-  {
-   "terim": "Data pipeline",
-   "anlam": "Verinin kaynaktan alınıp işlenerek hedef sisteme otomatik taşındığı veri hattı.",
-   "ornek": "Gece pipeline patlamış, sabah raporları boş geldi."
-  },
-  {
-   "terim": "ETL / ELT",
-   "anlam": "Extract-Transform-Load; veriyi kaynaktan çekme, dönüştürme ve yükleme süreci. ELT'de veri önce yüklenip sonra dönüştürülür.",
-   "ornek": "Eski ETL işlerini buluta taşıyıp ELT yapısına geçiriyoruz."
-  },
-  {
-   "terim": "Veri ambarı (Data warehouse)",
-   "anlam": "Analiz ve raporlama için düzenlenmiş, yapılandırılmış verilerin tutulduğu merkezi veritabanı.",
-   "ornek": "Satış verisi veri ambarına günde bir kez yükleniyor."
-  },
-  {
-   "terim": "Data lake",
-   "anlam": "Ham verilerin her formatta, düzenlenmeden büyük miktarda saklandığı depolama alanı.",
-   "ornek": "Log dosyalarını şimdilik data lake'e atalım, sonra işleriz."
-  },
-  {
-   "terim": "Batch / Streaming",
-   "anlam": "Batch verinin belli aralıklarla toplu işlenmesi, streaming ise verinin geldiği anda anlık işlenmesidir.",
-   "ornek": "Dolandırıcılık tespiti için batch yetmez, streaming kurmamız şart."
-  },
-  {
-   "terim": "DAG",
-   "anlam": "Directed Acyclic Graph; Airflow gibi araçlarda veri işlerinin hangi sırayla çalışacağını gösteren iş akış şeması.",
-   "ornek": "Yeni tabloyu DAG'a ekledim, raporlamadan önce çalışacak."
-  },
-  {
-   "terim": "Backfill",
-   "anlam": "Hata veya yeni kurulum nedeniyle geçmiş tarihlere ait verilerin sonradan yeniden işlenip doldurulması.",
-   "ornek": "Hatayı düzelttik, şimdi son üç ayın backfill'ini çalıştırıyoruz."
-  },
-  {
-   "terim": "Şema",
-   "anlam": "Bir tablodaki sütunların adlarını ve veri tiplerini tanımlayan yapı.",
-   "ornek": "Kaynak sistem şemayı haber vermeden değiştirmiş, yükleme hata veriyor."
-  },
-  {
-   "terim": "Feature store",
-   "anlam": "Modellerde kullanılan hazır özelliklerin merkezi olarak saklandığı ve farklı ekiplerce paylaşıldığı sistem.",
-   "ornek": "Müşteri skorlarını feature store'a koyduk, diğer ekipler de kullanabiliyor."
-  },
-  {
-   "terim": "Vektör veritabanı",
-   "anlam": "Metin ve görselleri sayısal vektörler olarak saklayıp benzerlerini hızla bulmayı sağlayan veritabanı; yapay zeka asistanlarında kullanılır.",
-   "ornek": "Şirket belgelerini vektör veritabanına yükledik, asistan artık oradan cevap buluyor."
   }
  ],
  "YAZILIM MÜHENDİSLİĞİ": [
@@ -14819,58 +13727,6 @@
    "ornek": "Omega blokajı yüzünden sıcak hava dalgası bir hafta daha sürecek."
   }
  ],
- "İKTİSAT": [
-  {
-   "terim": "Politika faizi",
-   "anlam": "Merkez bankasının bankalara borç verirken uyguladığı ve ekonomideki diğer faizlere yön veren temel faiz oranı.",
-   "ornek": "Piyasa bu toplantıda politika faizinin sabit kalmasını bekliyor."
-  },
-  {
-   "terim": "Sıkılaştırma",
-   "anlam": "Enflasyonu düşürmek için faizi artırma ya da kredi koşullarını zorlaştırma gibi adımlarla para politikasını sertleştirme.",
-   "ornek": "Sıkılaştırmanın etkisi kredi büyümesinde görülmeye başladı."
-  },
-  {
-   "terim": "Baz etkisi",
-   "anlam": "Geçen yılın aynı ayındaki değerin çok yüksek ya da düşük olması nedeniyle yıllık değişimin olduğundan farklı görünmesi.",
-   "ornek": "Yıllık enflasyondaki düşüşün bir kısmı baz etkisinden kaynaklanıyor."
-  },
-  {
-   "terim": "Mevsimsellikten arındırılmış",
-   "anlam": "Bayram, tatil, hava gibi her yıl tekrarlanan etkilerin verilerden çıkarılmış hâli. Gerçek eğilimi görmeye yarar.",
-   "ornek": "Mevsimsellikten arındırılmış verilere bakınca sanayi üretimi aslında yatay."
-  },
-  {
-   "terim": "Cari açık",
-   "anlam": "Bir ülkenin mal, hizmet ve gelir olarak dışarıya ödediğinin, dışarıdan kazandığından fazla olması.",
-   "ornek": "Enerji fiyatları düşerse cari açık belirgin şekilde daralır."
-  },
-  {
-   "terim": "Piyasa beklentisi (konsensüs)",
-   "anlam": "Ekonomistlerin bir veri ya da karar için yaptığı tahminlerin ortalaması. Açıklanan veri buna göre yorumlanır.",
-   "ornek": "Enflasyon konsensüsün üzerinde geldi, kur hemen tepki verdi."
-  },
-  {
-   "terim": "Veri takvimi",
-   "anlam": "Önemli ekonomik verilerin hangi gün ve saatte açıklanacağını gösteren liste.",
-   "ornek": "Bu hafta veri takvimi yoğun, perşembe büyüme rakamları geliyor."
-  },
-  {
-   "terim": "PPK",
-   "anlam": "Para Politikası Kurulu. Merkez Bankası'nda faiz kararlarını alan kurul.",
-   "ornek": "PPK metnindeki ifade değişikliği indirim sinyali olarak okunuyor."
-  },
-  {
-   "terim": "TÜFE",
-   "anlam": "Tüketici Fiyat Endeksi. Hanelerin satın aldığı mal ve hizmetlerin fiyat değişimini ölçerek enflasyonu gösteren endeks.",
-   "ornek": "Aylık TÜFE'de en büyük katkı gıda ve kiradan geldi."
-  },
-  {
-   "terim": "Şahin / güvercin",
-   "anlam": "Şahin, enflasyonla mücadele için yüksek faizi savunan; güvercin ise büyümeyi korumak için düşük faizi tercih eden politika yapıcıdır.",
-   "ornek": "Yeni başkan beklenenden şahin çıktı, faiz indirimi ertelendi."
-  }
- ],
  "İLAHİYAT": [
   {
    "terim": "Tefsir",
@@ -15025,58 +13881,6 @@
    "terim": "Lorem ipsum",
    "anlam": "Tasarımda gerçek metin gelmeden yer tutması için kullanılan, anlamsız Latince görünümlü örnek yazı.",
    "ornek": "Metinler gelmedi, şimdilik lorem ipsum koyup sayfa düzenini gönder."
-  }
- ],
- "İLKÖĞRETİM MATEMATİK ÖĞRETMENLİĞİ": [
-  {
-   "terim": "Kazanım",
-   "anlam": "Öğretim programında öğrencinin bir dersin sonunda öğrenmesi beklenen bilgi ya da beceri.",
-   "ornek": "Bu hafta kesirlerde toplama kazanımını bitirmemiz gerekiyor."
-  },
-  {
-   "terim": "Yıllık plan",
-   "anlam": "Hangi konunun hangi hafta işleneceğini gösteren, yıl başında hazırlanan ders planı.",
-   "ornek": "Tatil uzayınca yıllık planın gerisinde kaldık, oran orantıyı sıkıştıracağız."
-  },
-  {
-   "terim": "Zümre toplantısı",
-   "anlam": "Aynı dersi veren öğretmenlerin planlama, sınav ve ortak kararlar için yaptığı toplantı.",
-   "ornek": "Ortak sınav tarihlerini zümre toplantısında kararlaştıralım."
-  },
-  {
-   "terim": "Nöbetçi öğretmen",
-   "anlam": "Teneffüslerde koridor ve bahçede düzeni sağlayan, o gün okulda sorumluluk alan öğretmen.",
-   "ornek": "Salı nöbetçi öğretmenim, teneffüste bahçede olacağım."
-  },
-  {
-   "terim": "Kavram yanılgısı",
-   "anlam": "Öğrencinin bir konuyu kendi kafasında yanlış ama tutarlı bir şekilde anlaması.",
-   "ornek": "Çoğu öğrencide çarpma her zaman sayıyı büyütür diye bir kavram yanılgısı var."
-  },
-  {
-   "terim": "Cebir karoları",
-   "anlam": "Cebirsel ifadeleri renkli kare ve dikdörtgen parçalarla somut olarak göstermeye yarayan ders materyali.",
-   "ornek": "Özdeşlikleri cebir karolarıyla gösterince öğrenciler alanı daha kolay kavradı."
-  },
-  {
-   "terim": "Beceri temelli soru",
-   "anlam": "Ezber yerine yorumlama, akıl yürütme ve günlük hayatla ilişki kurmayı ölçen, genellikle uzun metinli soru.",
-   "ornek": "Bu yazılıda yarı yarıya beceri temelli soru sormayı planlıyorum."
-  },
-  {
-   "terim": "e-Okul",
-   "anlam": "Öğrenci notlarının, devamsızlığın ve okul bilgilerinin girildiği MEB'in çevrim içi sistemi.",
-   "ornek": "Yazılı notlarını cumaya kadar e-Okul'a girmemiz gerekiyor."
-  },
-  {
-   "terim": "LGS",
-   "anlam": "Liselere Geçiş Sistemi. Sekizinci sınıf öğrencilerinin girdiği, liseye yerleştirmede kullanılan merkezi sınav.",
-   "ornek": "Sekizlerle LGS'ye kadar haftada bir deneme çözeceğiz."
-  },
-  {
-   "terim": "MEB",
-   "anlam": "Millî Eğitim Bakanlığı. Okulları, öğretim programlarını ve öğretmen atamalarını yöneten bakanlık.",
-   "ornek": "MEB yeni matematik programını yayımladı, kazanımlar değişmiş."
   }
  ],
  "İMALAT MÜHENDİSLİĞİ": [
