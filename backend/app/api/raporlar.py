@@ -66,6 +66,9 @@ def _kiyas_ekle(db: Session, o: Ogrenci, v: dict, tur: str, bolum_idler: list[in
         db.rollback()
         return
     if ek is None:
+        if tur == "yonetici":   # rehber neden olmadığını görsün; öğrenci / veli raporunda bölüm yalnızca yer almaz
+            v["hedef_kiyasi_notu"] = ("Hedef bölüm kıyası ve uyum açıklaması eki hazırlanamadı: öğrencinin son tamamlanan "
+                                      "değerlendirmesinde özellik puanları eksik.")
         return
     v["hedef_kiyasi"] = {**(ek["kiyas"] or {}), "kirpildi": ek["kirpildi"], "sinir": ek["sinir"]}
     if tur == "yonetici":

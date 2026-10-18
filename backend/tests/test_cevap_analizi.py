@@ -186,3 +186,26 @@ def test_rapor_bolum_secimi_uc_noktalari(istemci, db, kisiler):
         assert r.status_code == 200 and r.content[:4] == b"%PDF", tur
     baska = _ogrenci(db, kisiler["okul_b"])
     assert istemci.get(f"/yonetim/ogrenci/{baska}/rapor-bolumleri", headers=kisiler["yetkili"]).status_code == 403
+
+
+@db_gerekli
+def test_profili_eksik_ogrencide_yonetim_raporu_not_verir(istemci, db, kisiler):
+    """Tamamlanmış görünen ama özellik puanı eksik öğrenci: rapor üretilir, yönetim raporu nedenini yazar."""
+    import io
+
+    from pypdf import PdfReader
+
+    from app.core import skor_motoru as sm
+    from app.models import Ogrenci
+    for o in db.query(Ogrenci).filter(Ogrenci.okul_id.isnot(None)).all():
+        tur = ua.son_tamamlanan_tur(db, o)
+        if tur is None or sm.girdi_hazirla(db, o, tur) is not None:
+            continue
+        yt = _yetkili_tokeni(db, o.okul_id)
+        r = istemci.get(f"/yonetim/ogrenci/{o.id}/rapor?tur=yonetici&bicim=pdf", headers=yt)
+        assert r.status_code == 200
+        metin = "".join(p.extract_text() for p in PdfReader(io.BytesIO(r.content)).pages)
+        assert "hazırlanamadı" in metin
+        for tur_ad in ("ogrenci", "veli"):
+            assert istemci.get(f"/yonetim/ogrenci/{o.id}/rapor?tur={tur_ad}&bicim=pdf", headers=yt).status_code == 200
+        return

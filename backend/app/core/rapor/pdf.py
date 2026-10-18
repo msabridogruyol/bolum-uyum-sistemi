@@ -603,6 +603,8 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
                             [40 * mm, 134 * mm], kucuk=True))
     if v.get("hedef_kiyasi"):
         h += _hedef_kiyasi_bolumu(st, v["hedef_kiyasi"], "yonetici")
+    elif v.get("hedef_kiyasi_notu"):
+        h += [st.p(_KIYAS_BASLIK["yonetici"], st.h2), st.p(_e(v["hedef_kiyasi_notu"]), st.not_)]
     if netler:
         h += _net_bolumu(st, v, "yonetici")
     h.append(st.p("SWOT analizi", st.h2))
