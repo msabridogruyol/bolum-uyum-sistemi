@@ -16,7 +16,7 @@ const SEKMELER = [
   { kod: 'K2', ad: 'Kişilik', ikon: '🌿' },
   { kod: 'K3', ad: 'İş ortamı', ikon: '🍃' },
   { kod: 'K4', ad: 'Alan eğilimi', ikon: '🌸' },
-  { kod: 'K5', ad: 'Derinleşme', ikon: '🌻' },
+  { kod: 'K5', ad: 'İş türü tercihleri', ikon: '🌻' },
 ]
 
 export default function ProfilimSayfasi() {

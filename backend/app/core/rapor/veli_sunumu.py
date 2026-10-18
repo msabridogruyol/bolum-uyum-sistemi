@@ -406,7 +406,7 @@ def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
         "Öğrenci soruları kendi hızında yanıtlar; sistem bu yanıtları 300'den fazla üniversite bölümünün gerektirdiği "
         "özelliklerle karşılaştırır ve öğrenciye en uyumlu bölümleri nedenleriyle birlikte gösterir.",
     ], 16, MUREKKEP, satir_arasi=12)
-    # katman kartları (2 x 2) + derinleşme
+    # katman kartları (2 x 2) + K5 iş türü tercihleri
     x0, y0, kw, kh = 6.35, 1.75, 3.1, 1.15
     for i, (kod, ad) in enumerate(katmanlar[:4]):
         x = x0 + (i % 2) * (kw + 0.2)
@@ -417,7 +417,7 @@ def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
     _kart(sl, x0, y0 + 2 * (kh + 0.2), 2 * kw + 0.2, 0.8, d.r.acik)
     _daire(sl, x0 + 0.2, y0 + 2 * (kh + 0.2) + 0.13, 0.55, d.r.ana, "5", boyut=16)
     _metin(sl, x0 + 0.9, y0 + 2 * (kh + 0.2) + 0.1, 2 * kw - 0.8, 0.6,
-           "Alan derinleşmesi: öne çıkan alanlarda ek sorularla daha ayrıntılı bakış", 14, MUREKKEP, dikey=MSO_ANCHOR.MIDDLE)
+           "İş türü tercihleri: en uygun bölümler, bu bölümlerde yapılan işlerle ilgili sorularla karşılaştırılır", 14, MUREKKEP, dikey=MSO_ANCHOR.MIDDLE)
     # karar desteği uyarısı
     _kart(sl, SOL, 5.45, GEN, 1.2, _karistir(d.r.ana, "FFFFFF", 0.94))
     _metin(sl, SOL + 0.3, 5.6, GEN - 0.6, 0.9, [
@@ -429,7 +429,7 @@ def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
         _metin(sl, SOL, 6.72, GEN, 0.25, "Bu kapsamda henüz öğrenci yok." if d.ogretmen else
                f"Bu kapsamda {d.v['esik']}'ten az öğrenci olduğu için toplu sonuçlar paylaşılmamaktadır "
                "(kişisel verilerin korunması).", 11, GRI)
-    _not(sl, "Sistemi kısaca tanıtın: öğrenci dört katmanda sorular yanıtlıyor; sonra öne çıkan alanlarda derinleşme soruları geliyor. "
+    _not(sl, "Sistemi kısaca tanıtın: öğrenci dört katmanda sorular yanıtlıyor; sonra en uygun çıkan bölümleri karşılaştıran iş türü soruları geliyor. "
              "Özellikle vurgulayın: bu bir sınav değil, doğru ya da yanlış cevap yok. Sonuçlar bir yön gösterir, kesin karar vermez. "
              "Psikolojik bir tanı aracı da değildir.")
 

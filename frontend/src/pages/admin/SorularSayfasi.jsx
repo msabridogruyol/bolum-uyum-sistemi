@@ -8,7 +8,7 @@ const KATMAN_ADI = {
   K2: 'Kişilik & Çalışma Tarzı',
   K3: 'İş Ortamı & Profesyonel Yetkinlik',
   K4: 'Alan Eğilimi & Bilişsel Stil',
-  K5: 'Derinleşme',
+  K5: 'İş türü tercihleri',
 }
 
 const DEGISKENLER = [

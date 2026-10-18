@@ -104,7 +104,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
           <div className="op" style={{ color: k5Bitti ? 'var(--gr)' : 'var(--tx3)' }}>
             {k5Bitti ? '✓' : '—'}
           </div>
-          <div className="ob">Derinleşme</div>
+          <div className="ob">İş türleri</div>
         </div>
       </div>
 

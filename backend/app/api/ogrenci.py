@@ -294,7 +294,7 @@ def katmani_tamamla_uc_nokta(
     db.commit()
 
     # [2026-10-12] Değerlendirme bitti → sonuç e-postası (+ PDF) arka planda; cevap beklemez. Güven puanı düşükse gitmez.
-    # K5 derinleşme dalı açıldıysa burada gitmez: son dal bitince (dali_tamamla_uc_nokta) gider.
+    # K5 iş türü soruları açıldıysa burada gitmez: son dal bitince (dali_tamamla_uc_nokta) gider.
     sonuc_epostasi = False
     if tum_tamam:
         from app.core import sonuc_epostasi as se
@@ -318,7 +318,7 @@ def katmani_tamamla_uc_nokta(
     )
 
 
-# ===================== D3 — K5 Dal Derinleşme ===================== #
+# ===================== K5 — İş türü tercihleri ===================== #
 
 @router.get("/k5/durum", response_model=K5DurumOut)
 def k5_durumu_getir(
