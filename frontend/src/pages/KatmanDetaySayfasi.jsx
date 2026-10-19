@@ -15,7 +15,7 @@ const renkSec = seviyeRengi   // [2026-10-10] tek kaynak bantlar (yardimci/seviy
 
 function BoyutSatiri({ s }) {
   const [acik, setAcik] = useState(false)
-  const detayVarMi = s.durum_tespiti || s.aksiyon_onerisi
+  const detayVarMi = s.durum_tespiti || s.aksiyon_onerisi || s.maarif?.length
 
   return (
     <div className={`boyut-satir${acik ? ' acik' : ''}`} onClick={() => detayVarMi && setAcik((a) => !a)}>
@@ -31,6 +31,9 @@ function BoyutSatiri({ s }) {
         <div className="boyut-detay">
           {s.durum_tespiti && (
             <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.55, paddingLeft: 18 }}>{s.durum_tespiti}</div>
+          )}
+          {s.maarif?.length > 0 && (
+            <div className="maarif-satir" style={{ paddingLeft: 18 }}>Maarif Modeli'nde ilişkili: <span translate="no">{s.maarif.join(' · ')}</span></div>
           )}
           {s.aksiyon_onerisi && (
             <div style={{

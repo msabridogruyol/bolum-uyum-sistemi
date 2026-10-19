@@ -78,10 +78,10 @@ function Profil({ v }) {
     <Bolum id="profil" baslik="Profil" aciklama={`Değerlendirmeyi tamamlayan ${p.tamamlayan} öğrencinin son sonuçları${p.gecersiz_haric ? ` (güven puanı eşiğin altında kalan ${p.gecersiz_haric} öğrenci ortalamalara katılmadı)` : ''}. Puanlar her öğrencinin kendi profili içinde görelidir (0–100); bu yüzden katman ortalamaları gösterilmez.`}>
       <div className="ist-kartlar">
         <GrafikKarti baslik="En öne çıkan 8 özellik" aciklama="Ortalaması en yüksek özellikler (değerler ve duygusal hassasiyet hariç)" tablo={ozellikTablosu(p.guclu)}>
-          <YatayCubuk veri={p.guclu.map((x) => ({ ad: x.ad, deger: x.ortalama, alt: kAd(x.katman) }))} maks={100} birim="puan" renk={OKUL} />
+          <YatayCubuk veri={p.guclu.map((x) => ({ ad: x.ad, deger: x.ortalama, alt: kAd(x.katman) + (x.maarif ? ` · Maarif: ${x.maarif}` : '') }))} maks={100} birim="puan" renk={OKUL} />
         </GrafikKarti>
         <GrafikKarti baslik="En az öne çıkan 8 özellik" aciklama="Ortalaması en düşük özellikler (değerler ve duygusal hassasiyet hariç) — gelişim çalışmaları için ipucu" tablo={ozellikTablosu(p.zayif)}>
-          <YatayCubuk veri={p.zayif.map((x) => ({ ad: x.ad, deger: x.ortalama, alt: kAd(x.katman) }))} maks={100} birim="puan" sirala={false} renk={KATEGORIK[1]} />
+          <YatayCubuk veri={p.zayif.map((x) => ({ ad: x.ad, deger: x.ortalama, alt: kAd(x.katman) + (x.maarif ? ` · Maarif: ${x.maarif}` : '') }))} maks={100} birim="puan" sirala={false} renk={KATEGORIK[1]} />
         </GrafikKarti>
         {(p.degerler || []).length > 0 && (
           <GrafikKarti baslik="Öğrencilerin önem verdiği değerler" aciklama="Değerler bir tercihtir; güçlü yön ya da gelişim alanı sayılmaz" tablo={ozellikTablosu(p.degerler)}>

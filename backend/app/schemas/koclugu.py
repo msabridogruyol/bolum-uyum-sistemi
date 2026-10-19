@@ -119,6 +119,7 @@ class OdakAlaniOut(BaseModel):
     alan_turu: str | None = None
     alan_turu_etiket: str | None = None
     alan_turu_aciklama: str | None = None
+    maarif: list[str] = []                  # [2026-10-19] Maarif Modeli'nde ilişkili kavramlar (yorumsal)
     olcum: dict | None = None               # {tamamlanan_adim, gereken, acik, son: {onceki, yeni, fark, zaman}}
 
 
@@ -131,6 +132,7 @@ class GucluYonOut(BaseModel):
     nedir: str
     neden_onemli: str
     adimlar: list[PlanAdimiOut]
+    maarif: list[str] = []
 
 
 class SonrakiAlanOut(BaseModel):

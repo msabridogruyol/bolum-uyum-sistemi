@@ -3547,3 +3547,8 @@ button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2p
 @media(max-width:640px){.as-profil-sutunlar{grid-template-columns:1fr;gap:12px}}
 .koc-odak-rozetler{display:grid;gap:4px;justify-items:end}
 @media(max-width:640px){.koc-odak-satir{flex-wrap:wrap}.koc-odak-rozetler{width:100%;display:flex;flex-wrap:wrap;justify-content:flex-start;padding-left:36px}}
+/* [2026-10-19] Maarif Modeli ilişkilendirmesi (yorumsal) */
+.maarif-satir{font-size:11.5px;color:var(--tx3);margin-top:4px;line-height:1.5}
+.maarif-satir::before{content:"🏛 ";}
+.maarif-kart summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--tx2)}
+.maarif-kart .gp-satir-alt{color:var(--tx3)}

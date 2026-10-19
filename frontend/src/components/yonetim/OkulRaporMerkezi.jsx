@@ -212,7 +212,7 @@ function RaporIndir({ okulId, oz }) {
       )}
 
       <Grup baslik="İstatistikler" aciklama="İstatistikler ekranındaki tüm göstergeler, sayfa sayfa.">
-        <RaporKarti ikon="📊" baslik="İstatistikler (Excel)" aciklama="Özet göstergeler, haftalık katılım, huni, şubeler, katman ve özellik ortalamaları, bölümler, K5 alanları ve paketinizdeki modüllere göre koçluk, deneme, rehberlik, anket, tercih, mezun ve kulüp sayfaları."
+        <RaporKarti ikon="📊" baslik="İstatistikler (Excel)" aciklama="Özet göstergeler, haftalık katılım, huni, şubeler, özellik ortalamaları, bölümler, iş türü tercihleri ve paketinizdeki modüllere göre koçluk, deneme, rehberlik, anket, tercih, mezun ve kulüp sayfaları."
           kapsam={<select className="yp-sec" value={istKapsam} onChange={(e) => setIstKapsam(e.target.value)} aria-label="Kapsam">
             <option value="">Tüm okul</option>
             {siniflar.map((s) => <option key={s} value={`s:${s}`}>{s}</option>)}

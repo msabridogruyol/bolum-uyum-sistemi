@@ -372,6 +372,7 @@ function OdakSatirlari({ plan }) {
             <div style={{ fontSize: 13.5, fontWeight: 700 }}>{o.degisken_adi}</div>
             <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5 }}>{o.neden_onemli}</div>
             {o.alan_turu_aciklama && <div className="koc-alan-turu-not">{o.alan_turu_aciklama}</div>}
+            {o.maarif?.length > 0 && <div className="maarif-satir">Maarif Modeli'nde ilişkili: <span translate="no">{o.maarif.join(' · ')}</span></div>}
           </div>
           <div className="koc-odak-rozetler">
             <AlanTuruRozeti odak={o} />
@@ -630,6 +631,7 @@ function GucluSekmesi({ plan, onDurum }) {
             <FarkRozeti g={g} />
             <h2>✓ {g.degisken_adi}</h2>
             <p>{g.neden_onemli}</p>
+            {g.maarif?.length > 0 && <div className="maarif-satir">Maarif Modeli'nde ilişkili: <span translate="no">{g.maarif.join(' · ')}</span></div>}
             <small>{g.adimlar.filter((a) => a.durum === 'tamamlandi').length}/{g.adimlar.length} adım tamamlandı</small>
           </div>
           <div className="koc-adim-grid koc-yatay-sag">

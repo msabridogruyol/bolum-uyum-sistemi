@@ -283,7 +283,9 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
                            for s, d in sorted(sinif_k.items(), key=lambda kv: _sinif_sira(kv[0]))]
         sube_katman = [{"ad": sube_etiketi(s[0], s[1]) if s[1] else s[0], "degerler": {k: _ort(d[k]) for k in kodlar}}
                        for s, d in sorted(sube_k.items(), key=lambda kv: (_sinif_sira(kv[0][0]), kv[0][1]))]
-        degisken_ort = [{"ad": r.ad, "katman": r.kod, "dkod": r.dkod, "ortalama": round(float(r.ort), 1), "n": r.n} for r in db.execute(text("""
+        from app.core.maarif import kisa_metin as maarif_metni
+        degisken_ort = [{"ad": r.ad, "katman": r.kod, "dkod": r.dkod, "maarif": maarif_metni(r.dkod),
+                         "ortalama": round(float(r.ort), 1), "n": r.n} for r in db.execute(text("""
             SELECT d.ad, k.kod, d.kod AS dkod, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
               JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
              WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
