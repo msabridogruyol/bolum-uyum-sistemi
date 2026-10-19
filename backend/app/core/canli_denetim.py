@@ -40,6 +40,17 @@ def maddeler() -> list[dict]:
     return m
 
 
+def uretim_mi() -> bool:
+    """[2026-10-19] Canlı ortam: Render RENDER=true ortam değişkenini kendisi tanımlar; ORTAM=uretim ile de işaretlenebilir."""
+    import os
+    return bool(os.getenv("RENDER")) or os.getenv("ORTAM", "").lower() in ("uretim", "production", "prod")
+
+
 def acilista_uyar() -> None:
     if jwt_anahtari_zayif_mi():
         _log.critical("GÜVENLİK: JWT_SECRET_KEY varsayılan ya da kısa! Sahte oturum açılabilir. Ortam değişkenini hemen ayarlayın.")
+        # [2026-10-19] Canlıda zayıf anahtarla açılmak herkesin sahte süper admin oturumu üretebilmesi demektir: açılma.
+        # Yalnızca varsayılan / çok kısa (16'dan az) anahtarda durur; 16–31 karakterlik anahtar uyarıyla açılır (yanlışlıkla kesinti olmasın).
+        k = settings.JWT_SECRET_KEY or ""
+        if uretim_mi() and (k == VARSAYILAN_JWT or len(k) < 16):
+            raise SystemExit("JWT_SECRET_KEY canlı ortamda varsayılan ya da çok kısa — Render ortam değişkenine en az 32 karakterlik rastgele bir değer girin.")

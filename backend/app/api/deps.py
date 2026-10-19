@@ -109,3 +109,12 @@ def get_opsiyonel_ogrenci(
     except (KeyError, ValueError):
         return None
     return o if o is not None and token_hesaba_uygun_mu(payload, o) else None
+
+
+def get_kvkk_onayli_ogrenci(db: Session = Depends(get_db), ogrenci=Depends(get_mevcut_ogrenci)):
+    """[2026-10-19] Kişisel veri işleyen asıl işlemler (değerlendirme başlatma, yapay zekâ sohbeti) güncel KVKK onayı ister.
+    Ön yüzdeki onay penceresi bunu zaten zorunlu tutar; bu kontrol API'nin doğrudan kullanılmasına karşıdır."""
+    from app.core.hesap_guvenligi_servisi import kvkk_durumu
+    if not kvkk_durumu(db, "ogrenci", ogrenci.id)["guncel"]:
+        raise HTTPException(status_code=403, detail="Devam etmek için önce Kişisel Verilerin Korunması onaylarını tamamla.")
+    return ogrenci

@@ -87,6 +87,10 @@ def kvkk_kaydet(db: Session, kullanici_tipi: str, kullanici_id: uuid.UUID, onayl
         if tam_kayit or mevcut.get(kod) != deger:
             db.add(KvkkOnayi(kullanici_tipi=kullanici_tipi, kullanici_id=kullanici_id, onay_kodu=kod,
                              metin_surumu=KVKK_SURUM, verildi=deger, ip_adresi=(ip or "")[:64] or None))
+    # [2026-10-19] Kamera rızası geri çekilince o ana kadar çekilen fotoğraflar hemen silinir (6 ay beklenmez)
+    if kullanici_tipi == "ogrenci" and onaylar.get("kamera") is False and mevcut.get("kamera") is True:
+        from app.models import GuvenlikFotografi
+        db.query(GuvenlikFotografi).filter(GuvenlikFotografi.ogrenci_id == kullanici_id).delete(synchronize_session=False)
     db.flush()
 
 
