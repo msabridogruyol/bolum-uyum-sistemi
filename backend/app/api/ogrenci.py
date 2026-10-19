@@ -567,7 +567,8 @@ def durum_ozetini_getir(
     sonraki_tur_tarihi = None
     sonuc_gecerli = tur.sonuc_gecerli_mi is not False
     if tur.durum == "tamamlandi" and tur.tamamlanma_zamani and sonuc_gecerli and getattr(ogrenci, "yeni_tur_izni", None) is None:
-        min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", "90"))
+        from app.core.katman_servisi import yeniden_degerlendirme_gunu
+        min_gun = yeniden_degerlendirme_gunu(db, ogrenci)
         tamamlanma = tur.tamamlanma_zamani
         if tamamlanma.tzinfo is None:
             tamamlanma = tamamlanma.replace(tzinfo=timezone.utc)

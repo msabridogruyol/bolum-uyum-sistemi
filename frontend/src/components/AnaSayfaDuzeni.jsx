@@ -109,7 +109,7 @@ export default function AnaSayfaDuzeni() {
   const kapaliModul = yolModulu && !acik(yolModulu) ? yolModulu : null
 
   const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0] || 'Öğrenci'
-  // Değerlendirme menüde yalnızca bitmemişse (K1-K4 veya açılan K5 dalları) ya da 90 günlük yeni tur zamanı geldiyse görünür
+  // Değerlendirme menüde yalnızca bitmemişse (K1-K4 veya açılan K5 dalları) ya da sınıfa göre yeni tur zamanı geldiyse görünür
   const k5Bekliyor = !!ozet && ozet.k5_acilan_dal_sayisi > ozet.k5_tamamlanan_dal_sayisi
   const yeniTurHazir = !!ozet?.sonraki_tur_tarihi && new Date(ozet.sonraki_tur_tarihi) <= new Date()
   const degerlendirmeGoster = !ozet || !ozet.tur_tamamlandi_mi || k5Bekliyor || yeniTurHazir

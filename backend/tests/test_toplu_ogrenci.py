@@ -136,7 +136,7 @@ def _tamamlanmis_tur(db, oid, gun_once, gecerli, olaylar=()):
 
 
 @db_gerekli
-def test_gecerli_turdan_sonra_3_ay_bekleme_ve_yonetim_izni(istemci, db, okul):
+def test_gecerli_turdan_sonra_bekleme_ve_yonetim_izni(istemci, db, okul):
     from app.core.katman_servisi import IsKuraliHatasi, aktif_veya_yeni_tur_getir, degerlendirme_durumu
     from app.core.security import erisim_tokeni_uret
     from app.models import Ogrenci
@@ -144,7 +144,8 @@ def test_gecerli_turdan_sonra_3_ay_bekleme_ve_yonetim_izni(istemci, db, okul):
     _tamamlanmis_tur(db, oid, 10, True)
     o = db.get(Ogrenci, oid)
     d = degerlendirme_durumu(db, o)
-    assert d["durum"] == "bekleme" and 79 <= d["kalan_gun"] <= 81 and d["bekleme_gun"] == 90
+    # [2026-10-19] 10. sınıf: yılda 2 değerlendirme → 183 gün bekleme
+    assert d["durum"] == "bekleme" and 172 <= d["kalan_gun"] <= 174 and d["bekleme_gun"] == 183
     with pytest.raises(IsKuraliHatasi) as e:
         aktif_veya_yeni_tur_getir(db, o)
     assert "tarihinde açılır" in str(e.value)
@@ -286,3 +287,25 @@ def test_sonuc_epostasi_k5_dali_bitmeden_gitmez(db, okul, monkeypatch):
     db.commit()
     assert se.otomatik_gidecek_mi(db, o, tur) is True
     assert se.gonder(db, oid, tid)["durum"] == "gonderildi" and len(ep.GONDERILENLER) == 1
+
+
+@db_gerekli
+def test_bekleme_suresi_sinifa_gore_ve_parametreyle_degisir(db, okul):
+    """[2026-10-19] 12. sınıf ve mezun 70 günde bir; diğer sınıflar yılda 2 kez (183 gün). Süper admin parametresi uygulanır."""
+    from app.core.katman_servisi import degerlendirme_durumu, son_sinif_mi, yeniden_degerlendirme_gunu
+    from app.models import Ogrenci
+    assert son_sinif_mi("12. Sınıf") and son_sinif_mi("12-A") and son_sinif_mi("Mezun") and son_sinif_mi("12")
+    assert not son_sinif_mi("11. Sınıf") and not son_sinif_mi("Aday") and not son_sinif_mi(None) and not son_sinif_mi("1. Sınıf")
+    oniki, on = db.get(Ogrenci, okul["ogr"]["Oniki"]), db.get(Ogrenci, okul["ogr"]["On"])
+    assert yeniden_degerlendirme_gunu(db, oniki) == 70 and yeniden_degerlendirme_gunu(db, on) == 183
+    _tamamlanmis_tur(db, oniki.id, 69, True)
+    assert degerlendirme_durumu(db, oniki)["durum"] == "bekleme"
+    db.execute(text("UPDATE ogrenci_degerlendirme_turu SET tamamlanma_zamani = now() - interval '71 days' WHERE ogrenci_id = :o"),
+               {"o": oniki.id})
+    assert degerlendirme_durumu(db, oniki)["durum"] == "acik"
+    # Parametre: diğer sınıflar yılda 4 → 92 gün; 12. sınıf 30 gün
+    db.execute(text("""INSERT INTO sistem_parametreleri (anahtar, deger, guncelleme_zamani) VALUES
+                       ('yeniden_degerlendirme_yillik_hak', '4', now()), ('yeniden_degerlendirme_gun_12', '30', now())
+                       ON CONFLICT (anahtar) DO UPDATE SET deger = EXCLUDED.deger"""))
+    assert yeniden_degerlendirme_gunu(db, on) == 92 and yeniden_degerlendirme_gunu(db, oniki) == 30
+    db.rollback()

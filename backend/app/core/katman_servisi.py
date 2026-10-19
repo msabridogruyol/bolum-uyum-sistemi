@@ -4,6 +4,8 @@ Likert puanlama formülü (D2), katman tamamlama.
 
 Bu dosya router'dan ayrı tutuldu ki iş kuruları test edilebilir kalsın.
 """
+import math
+import re
 from datetime import datetime, timedelta, timezone
 
 from sqlalchemy import func
@@ -18,7 +20,30 @@ from app.models import (
 # [EKLENDİ] Güven skoru — tur tamamlanınca otomatik hesaplanır.
 from app.core.guvenlik_servisi import guven_skorunu_hesapla_ve_kaydet
 
-YENIDEN_DEGERLENDIRME_GUN = 90   # [2026-10-12] geçerli bir turdan sonra yeniden değerlendirme için bekleme (≈ 3 ay); sistem parametresiyle değişir
+YENIDEN_DEGERLENDIRME_GUN_12 = 70   # [2026-10-19] 12. sınıf ve mezun: geçerli turdan sonra en erken kaç gün (parametre yeniden_degerlendirme_gun_12)
+YENIDEN_DEGERLENDIRME_YILLIK_HAK = 2   # [2026-10-19] diğer sınıflar: yılda kaç değerlendirme (parametre yeniden_degerlendirme_yillik_hak)
+
+
+def son_sinif_mi(sinif: str | None) -> bool:
+    """12. sınıf ya da mezun mu? ('12. Sınıf', '12', '12-A', 'Mezun')"""
+    s = (sinif or "").strip().lower()
+    return s.startswith("mezun") or bool(re.match(r"^12(\D|$)", s))
+
+
+def yeniden_degerlendirme_gunu(db: Session, ogrenci) -> int:
+    """[2026-10-19] Geçerli bir turdan sonra yeni tura kadar beklenecek gün, öğrencinin ŞU ANKİ sınıfına göre:
+    12. sınıf ve mezun → yeniden_degerlendirme_gun_12 (varsayılan 70); diğerleri → 365 / yeniden_degerlendirme_yillik_hak
+    (varsayılan yılda 2 → 183 gün). Süper admin Parametreler sayfasından değiştirir."""
+    if son_sinif_mi(getattr(ogrenci, "sinif", None)):
+        try:
+            return max(1, int(parametre_oku(db, "yeniden_degerlendirme_gun_12", str(YENIDEN_DEGERLENDIRME_GUN_12))))
+        except ValueError:
+            return YENIDEN_DEGERLENDIRME_GUN_12
+    try:
+        hak = max(1, int(parametre_oku(db, "yeniden_degerlendirme_yillik_hak", str(YENIDEN_DEGERLENDIRME_YILLIK_HAK))))
+    except ValueError:
+        hak = YENIDEN_DEGERLENDIRME_YILLIK_HAK
+    return math.ceil(365 / hak)
 
 
 class IsKuraliHatasi(Exception):
@@ -52,7 +77,7 @@ def son_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlendirmeTuru:
 def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlendirmeTuru:
     """
     D2c — Öğrencinin 'devam_ediyor' durumundaki turu varsa onu döner.
-    Yoksa, son tamamlanan turdan bu yana yeniden_degerlendirme_min_gun
+    Yoksa, son tamamlanan turdan bu yana yeniden_degerlendirme_gunu (sınıfa göre)
     geçmiş mi kontrol edip yeni bir tur açar.
     """
     aktif = (
@@ -81,7 +106,7 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
     #  * Yönetim yeniden değerlendirme izni verdiyse (ogrenci.yeni_tur_izni) bekleme olmadan yeni tur açılır.
     #  * Son tur güven sorunu nedeniyle geçersizse yeni tam tur AÇILMAZ: öğrenci yalnızca sorunlu katman(lar)ı aynı turda
     #    tekrar çözer (katmani_tekrara_ac). Bu kontrol yeni tur isteyen her yerde burada yapılır.
-    #  * Geçerli turdan sonra yeniden değerlendirme için yeniden_degerlendirme_min_gun (varsayılan 90 gün ≈ 3 ay) beklenir.
+    #  * Geçerli turdan sonra beklenecek süre sınıfa göre: yeniden_degerlendirme_gunu (12. sınıf / mezun 70 gün, diğerleri yılda 2).
     izinli = getattr(ogrenci, "yeni_tur_izni", None) is not None
     if son_tamamlanan is not None and izinli:
         yeni_tur_no = son_tamamlanan.tur_no + 1
@@ -93,7 +118,7 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
             if adlar else "Son değerlendirmende güven puanın düşük çıktı. Rehber öğretmeninle görüş."
         )
     elif son_tamamlanan is not None:
-        min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", str(YENIDEN_DEGERLENDIRME_GUN)))
+        min_gun = yeniden_degerlendirme_gunu(db, ogrenci)
         simdi = datetime.now(timezone.utc)
         tamamlanma = son_tamamlanan.tamamlanma_zamani
         # [NOT] SQLite test ortamında TIMESTAMPTZ timezone bilgisini korumaz,
@@ -467,7 +492,7 @@ def degerlendirme_durumu(db: Session, ogrenci: Ogrenci) -> dict:
     tur = (db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.ogrenci_id == ogrenci.id)
            .order_by(OgrenciDegerlendirmeTuru.tur_no.desc()).first())
     izin = getattr(ogrenci, "yeni_tur_izni", None) is not None
-    min_gun = int(parametre_oku(db, "yeniden_degerlendirme_min_gun", str(YENIDEN_DEGERLENDIRME_GUN)))
+    min_gun = yeniden_degerlendirme_gunu(db, ogrenci)
     temel = {"tur_no": tur.tur_no if tur else None, "yonetim_izni": izin, "bekleme_gun": min_gun,
              "tamamlanma": None, "yeniden_acilis": None, "kalan_gun": 0, "sorunlu_katmanlar": [], "guven_skoru": None}
     if tur is None:

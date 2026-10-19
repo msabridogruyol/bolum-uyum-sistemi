@@ -139,7 +139,7 @@ export default function KatmanlarSayfasi() {
                 onClick={() => {
                   if (kilitli) return
                   // [2026-10-12] Değerlendirme bittiyse bölüme girmek yerine durum penceresi açılır
-                  // (güven sorunu → yalnızca sorunlu bölüm; değilse 90 gün bekleme; okul açtıysa yeni tur)
+                  // (güven sorunu → yalnızca sorunlu bölüm; değilse sınıfa göre bekleme; okul açtıysa yeni tur)
                   if (k.durum === 'tamamlandi' && yd && ['guven_sorunu', 'bekleme', 'acik'].includes(yd.durum)) { setYdAcik(true); return }
                   // [2026-10-03] K5 (koşullu katman) doğrudan başlatılamaz — soruları dallar üzerinden gelir.
                   // Önceden /katmanlar/K5'e gidiyordu; backend bunu "yeni tur" sanıp bekleme süresi kuralına takılıyordu.

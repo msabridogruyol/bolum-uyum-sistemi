@@ -76,8 +76,9 @@ export default function SistemHakkindaSayfasi() {
           Her katman tamamlandığında, o katmandaki her değişken için 0-100 arası bir puan hesaplanır (aynı değişkene
           katkı veren tüm cevapların aritmetik ortalaması) ve <code> ogrenci_degisken_skorlari</code> tablosuna, o
           "tur"a (değerlendirme dönemi) bağlı olarak kaydedilir. Katman başlarken aktif soru listesi kilitlenir.
-          İki tam tur arasındaki süre <code>yeniden_degerlendirme_min_gun</code> parametresinden okunur (varsayılan
-          <b>90 gün</b>, yaklaşık 3 ay). Güven puanı düşük çıkan turda öğrenci yalnızca sorunlu katmanı aynı turda tekrar çözer; okul yetkilisi istediği an yeniden değerlendirme açabilir.
+          İki tam tur arasındaki süre öğrencinin o anki sınıfına göre belirlenir: 12. sınıf ve mezunlar
+          <code>yeniden_degerlendirme_gun_12</code> (varsayılan <b>70 gün</b>), diğer sınıflar yılda
+          <code>yeniden_degerlendirme_yillik_hak</code> kez (varsayılan <b>yılda 2</b>, yani 183 gün). İkisi de Parametreler sayfasından değiştirilir. Güven puanı düşük çıkan turda öğrenci yalnızca sorunlu katmanı aynı turda tekrar çözer; okul yetkilisi istediği an yeniden değerlendirme açabilir.
         </p>
       </Bolum>
 
@@ -237,7 +238,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Raporlarda hedef bölüm kıyası (2026-10-17):</b> öğrenci, veli ve yönetim raporlarında "Hedef bölüm kıyası": hedef + seçilen bölümler (en çok 6, hedef dahil; A4'e sığan sütun sayısı). Her bölüm için puan farkı ve farkı en çok yaratan özellikler (hedefteki katkı − bölümdeki katkı). Sorular / cevaplar yalnızca yönetim raporunun ekinde; öğrenci ve veli raporunda yok. Bölümler "Rapor al" penceresinden seçilir (varsayılan hedef + ilk öneriler); hedef yoksa uyarıyla seçilen bölümlerin sonuçları gösterilir. Öğrencinin kendi indirdiği ve toplu raporlarda varsayılan seçim kullanılır</Madde>
         <Madde><b>Gelişim Yol Haritası:</b> içeriği olan en öncelikli 3 gelişim alanı + en belirgin 2 güçlü yön; adımlar 3 aşamaya dağılır: "Bu hafta başla" (1-2 hafta) / "Önümüzdeki 1-3 ay" / "6-12 ay". Kaynak önerileri (kitap, film, kişi, aktivite…) admin panelinden elle girilir</Madde>
         <Madde><b>Tekrar ölçüm:</b> değer (K1) dışındaki odak alanında her 3 tamamlanan adımda bir, o değişkene en çok etki eden en fazla 5 soru yeniden sorulur</Madde>
-        <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (varsayılan en erken 90 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
+        <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (12. sınıf ve mezunlarda en erken 70 gün, diğer sınıflarda 183 gün sonra; varsayılan), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
         <Madde><b>Sonuç e-postası:</b> öğrenci değerlendirmenin son bölümünü bitirince (K1–K4 ve açıldıysa K5 iş türü soruları) sonuç e-postası kendi e-posta adresine otomatik gider; okulun paketinde öğrenci raporları varsa PDF sonuç raporu ektedir. Güven puanı düşük çıkan değerlendirmede gönderilmez; sorunlu bölüm yeniden çözülünce gider. Okul yetkilisi öğrenci detayından yeniden gönderebilir</Madde>
         <Madde><b>Haftalık görevler:</b> her hafta 3 görev (yolculuk, keşif, yansıtma), seri ve Filiz seviyesi (Tohum → Ulu Çınar)</Madde>
       </Bolum>
@@ -397,7 +398,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Katman ağırlıkları:</b> K1–K4 eşit, %25'er (0052 göçü; eski 20/20/20/40 değeri bu göçle bir kez güncellendi). Parametreler ekranından değiştirilebilir</Madde>
         <Madde><b>Soru Bankası yeniden tasarlandı:</b> katman bazlı sekmeler, arama, değişken/tip filtreleri, sayfa sayfa görünüm ve doğrudan düzenleme eklendi</Madde>
         <Madde><b>Dosya formatı:</b> pipeline, soru ve geçerlilik yüklemeleri .xlsx'e geçti (.csv hâlâ kabul); bölüm ve dal toplu yüklemesi hâlâ .csv</Madde>
-        <Madde><b>Yeniden değerlendirme süresi:</b> varsayılan 90 gün (parametre <code>yeniden_degerlendirme_min_gun</code>, 0068 göçüyle eklendi); güven sorunu olan turda yalnızca sorunlu katman tekrar çözülür</Madde>
+        <Madde><b>Yeniden değerlendirme süresi:</b> sınıfa göre — 12. sınıf ve mezun 70 günde bir, diğer sınıflar yılda 2 kez (parametreler <code>yeniden_degerlendirme_gun_12</code>, <code>yeniden_degerlendirme_yillik_hak</code>; 0079 göçü); güven sorunu olan turda yalnızca sorunlu katman tekrar çözülür</Madde>
         <Madde><b>3. soru tipi eklendi (Kutup):</b> A-mı-B-mi tarzı, 4'lü ölçekli, iki değişkeni doğrudan karşılaştıran yeni bir soru tipi kuruldu</Madde>
         <Madde><b>Soru geçerlilik testi metodolojisi düzeltildi:</b> adaylar artık yalnızca sorunun kendi değişken ailesiyle sınırlı tutuluyor, negatif ağırlıklı SJT seçenekleri teste dahil edilmiyor, akademik kaynaklara dayalı %70/%80 eşikleri ve rastgele baseline karşılaştırması eklendi</Madde>
         <Madde><b>Okul modülleri (0041-0051):</b> paketler, rehberlik/erken uyarı, öğrenci raporları, okul denemeleri, çalışma programı, bildirimler, portfolyo, anketler, tercih/mezun, Filiz AI, okul karşılaştırması, meslek simülasyonu, Filiz sesi ve Kaynakça sayfası (bkz. 11. bölüm)</Madde>
