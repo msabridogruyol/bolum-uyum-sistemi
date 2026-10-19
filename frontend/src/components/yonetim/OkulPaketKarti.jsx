@@ -50,7 +50,7 @@ export default function OkulPaketKarti({ okulId, superAdmin, onDegisti }) {
               </button>
             ))}
           </div>
-          <div className="yp-ince" style={{ margin: '10px 0' }}>Paketi seçin; gerekirse bu okula özel modül ekleyip çıkarın. <b>Değerlendirme, bölüm önerileri, profil, okul paneli ve temel raporlar</b> her pakette vardır.</div>
+          <div className="yp-ince" style={{ margin: '10px 0' }}>Paketi seçin; gerekirse bu okula özel modül ekleyip çıkarın. <b>Değerlendirme, bölüm önerileri, profil, koçluk ve haftalık görevler, okul paneli ve temel raporlar</b> her pakette vardır ve çıkarılamaz.</div>
         </>
       ) : (
         <div className="yp-ince" style={{ marginBottom: 10 }}>Okulunuzda açık olan Filizyol modülleri. Paket değişikliği için Filizyol ile iletişime geçebilirsiniz.</div>

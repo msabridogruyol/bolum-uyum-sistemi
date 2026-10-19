@@ -25,7 +25,7 @@ from app.api.deps import get_mevcut_ogrenci, get_mevcut_super_admin, get_mevcut_
 from app.api.okul_yonetimi import _okul_kapsami
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
-from app.core.paketler import MODULLER, okul_modulleri, okul_paket_bilgisi, paket_listesi
+from app.core.paketler import MODULLER, SECMELI, ZORUNLU, okul_modulleri, okul_paket_bilgisi, paket_listesi
 from app.models import AdminKullanici, Ogrenci
 import json
 
@@ -46,7 +46,8 @@ def _modul_listesi(liste: list[str]) -> list[str]:
 def paketler(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
     sayi = dict(db.execute(text("SELECT paket, count(*) FROM okullar GROUP BY paket")).all())
     return {"paketler": [{**p, "okul_sayisi": sayi.get(p["kod"], 0)} for p in paket_listesi(db)],
-            "moduller": [{"kod": k, **v} for k, v in MODULLER.items()]}
+            "moduller": [{"kod": k, **v} for k, v in SECMELI.items()],
+            "zorunlu": [{"kod": k, **MODULLER[k]} for k in ZORUNLU]}
 
 
 class PaketIstek(BaseModel):
@@ -101,7 +102,8 @@ def paket_sil(kod: str, db: Session = Depends(get_db), yon: AdminKullanici = Dep
 def okul_paketi(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     _okul_kapsami(db, yon, okul_id)
     b = okul_paket_bilgisi(db, okul_id)
-    return {**b, "modul_tanimlari": [{"kod": k, **v} for k, v in MODULLER.items()]}
+    return {**b, "modul_tanimlari": [{"kod": k, **v} for k, v in SECMELI.items()],
+            "zorunlu": [{"kod": k, **MODULLER[k]} for k in ZORUNLU]}
 
 
 class OkulPaketIstek(BaseModel):
@@ -119,8 +121,8 @@ def okul_paketi_kaydet(okul_id: int, istek: OkulPaketIstek, db: Session = Depend
     if p is None:
         raise HTTPException(400, "Paket bulunamadı.")
     paket_mod = set(p.moduller if isinstance(p.moduller, list) else json.loads(p.moduller or "[]"))
-    ekle = [m for m in _modul_listesi(istek.ekle) if m not in paket_mod]          # pakette zaten olanı eklemeye gerek yok
-    cikar = [m for m in _modul_listesi(istek.cikar) if m in paket_mod]           # pakette olmayanı çıkarmaya gerek yok
+    ekle = [m for m in _modul_listesi(istek.ekle) if m not in paket_mod and m not in ZORUNLU]   # pakette zaten olanı / zorunluyu eklemeye gerek yok
+    cikar = [m for m in _modul_listesi(istek.cikar) if m in paket_mod and m not in ZORUNLU]   # pakette olmayanı çıkarmaya gerek yok; zorunlu çıkarılamaz
     db.execute(text("UPDATE okullar SET paket = :p, modul_ekle = CAST(:e AS JSONB), modul_cikar = CAST(:c AS JSONB) WHERE id = :o"),
                {"p": istek.paket, "e": json.dumps(ekle), "c": json.dumps(cikar), "o": okul_id})
     denetim_yaz(db, yon, "okul_paket", "okullar", okul_id,
