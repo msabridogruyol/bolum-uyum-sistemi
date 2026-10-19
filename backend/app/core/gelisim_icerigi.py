@@ -31,9 +31,9 @@ ICERIK = {
         "gelisim": [
             ("simdi", "Mezunlar nerede çalışıyor?", "{bolum} mezunlarının ilk 5 yılda hangi kurumlarda (kamu, özel, serbest) çalıştığını araştır. Üniversitelerin mezun takip sayfaları ve LinkedIn bu iş için iyi bir başlangıç.", "arastirma", "1 saat", "En az 5 mezunun kariyer yolunu bir tabloya not ettin."),
             ("simdi", "Kendine 3 soru", "Bir kâğıda yaz: \"İşimi kaybetme riski beni ne kadar rahatsız eder?\", \"Esnek ama belirsiz bir iş mi, sabit ama sıkıcı bir iş mi?\", \"5 yıl sonra nasıl bir düzende yaşamak isterim?\"", "yansitma", "20 dk", "Üç soruya da en az ikişer cümlelik cevap yazdın."),
-            ("bu_donem", "Bir mezunla konuş", "{bolum} okumuş birine (aile çevresi, öğretmen, LinkedIn) ulaş ve işinin ne kadar istikrarlı olduğunu sor. Görüşmeden önce 5 soru hazırla.", "gorusme", "30-45 dk", "Görüşmeyi yaptın ve en önemli 3 bilgiyi not ettin."),
+            ("bu_donem", "Bir mezunla konuş", "{bolum} okumuş birine (aile çevresi, öğretmen, okulun mezunları) ailenin ya da öğretmeninin bilgisiyle ulaş ve işinin ne kadar istikrarlı olduğunu sor. Görüşmeyi okulda, ailenin yanında ya da görüntülü yap; görüşmeden önce 5 soru hazırla.", "gorusme", "30-45 dk", "Görüşmeyi yaptın ve en önemli 3 bilgiyi not ettin."),
             ("bu_donem", "İki kariyer yolunu karşılaştır", "{bolum} ile girilebilecek bir güvenceli (ör. kamu kadrosu) ve bir esnek (ör. serbest/girişim) yolu yan yana koy: gelir, istikrar, özgürlük ve sana uygunluk açısından puanla.", "arastirma", "1-2 saat", "İki yolu 1-5 arası puanladığın bir karşılaştırma tablon var."),
-            ("uzun_vadede", "Kısa bir iş deneyimi", "Yaz tatilinde ya da hafta sonları kurumsal düzende kısa süreli bir işte (staj, yarı zamanlı iş, gönüllülük) çalış ve düzenli mesai sana nasıl hissettiriyor, gözlemle.", "deneyim", "2-4 hafta", "Deneyim sonunda \"bu düzende mutlu olur muyum?\" sorusuna net bir cevabın var."),
+            ("uzun_vadede", "Kısa bir iş deneyimi", "Yaz tatilinde ya da hafta sonları kurumsal düzende kısa süreli bir deneyim edin (okulun yönlendirdiği staj, gönüllülük ya da ailenin onayıyla yaşına uygun, yasal izinli hafif bir iş) ve düzenli mesai sana nasıl hissettiriyor, gözlemle.", "deneyim", "2-4 hafta", "Deneyim sonunda \"bu düzende mutlu olur muyum?\" sorusuna net bir cevabın var."),
             ("uzun_vadede", "B planı oluştur", "Bu bölümün güvenceli yolları sana dar gelirse diye esneklik sağlayacak yan beceriler (dil, sertifika, ikinci uzmanlık) belirle ve hangisine ne zaman başlayacağını planla.", "proje", "1 dönem", "Yazılı bir B planın ve ilk adımın tarihi belli."),
         ],
         "guclu": [
@@ -123,7 +123,7 @@ ICERIK = {
         ],
         "guclu": [
             ("simdi", "Bağımsız yolları keşfet", "{bolum} ile serbest çalışma ya da girişim yapan 2 kişiyi araştır.", "arastirma", "1 saat", "İki bağımsız kariyer örneğini not ettin."),
-            ("bu_donem", "Kendi küçük işin", "Bu alana yakın küçük bir girişim ya da serbest iş dene (ör. ders verme, tasarım işi, içerik üretimi).", "deneyim", "1-3 ay", "İlk işini/müşterini tamamladın."),
+            ("bu_donem", "Kendi küçük işin", "Ailenin onayıyla ve güvenli çevrende bu alana yakın küçük bir girişim ya da serbest iş dene (ör. küçüklere ders verme, okul için tasarım işi, içerik üretimi).", "deneyim", "1-3 ay", "İlk işini/müşterini tamamladın."),
         ],
     },
     "D7": {
@@ -158,7 +158,7 @@ ICERIK = {
             ("uzun_vadede", "Kendi tarzını bul", "İçe dönüklüğünü güce çevir: bire bir iletişim, yazılı iletişim ve dinleme gibi güçlü yanlarını bölümde nasıl kullanacağını planla.", "yansitma", "30 dk", "Güçlü iletişim yollarını ve kullanım alanlarını yazdın."),
         ],
         "guclu": [
-            ("simdi", "Ağını genişlet", "{bolum} okuyan ya da mezun 2 kişiyle tanış (aile çevresi, sosyal medya, okul mezunları).", "gorusme", "1-2 hafta", "İki kişiyle tanıştın ve iletişim bilgilerini kaydettin."),
+            ("simdi", "Ağını genişlet", "{bolum} okuyan ya da mezun 2 kişiyle tanış (aile çevresi, okulun rehberlik servisi aracılığıyla okul mezunları).", "gorusme", "1-2 hafta", "İki kişiyle tanıştın ve iletişim bilgilerini kaydettin."),
             ("bu_donem", "Liderlik eden sunucu ol", "Okulda bir etkinlikte sunuculuk ya da tanıtım görevi üstlen.", "deneyim", "1-2 ay", "Bir etkinlikte sahne/sunum görevi yaptın."),
         ],
     },

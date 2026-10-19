@@ -1365,4 +1365,4 @@ def yetkili_duzenle(yetkili_id: str, istek: YetkiliDuzenleIstek, db: Session = D
     denetim_yaz(db, yon, "okul_yetkilisi_duzenle", "admin_kullanicilar", y.id,
                 f"{y.ad_soyad}{' · ' + y.unvan if y.unvan else ''}", y.okul_id)
     db.commit()
-    return _yetkili_out(y)
+    return _yetkili_out(y, yon)   # [2026-10-19] meslektaşın geçici şifresi okul yetkilisine dönmesin

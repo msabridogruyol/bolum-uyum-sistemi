@@ -70,7 +70,11 @@ from app.core.hata_izleme import HataYakalamaAraKatmani, sentry_baslat   # [2026
 from app.core.hiz_siniri import HizSiniriAraKatmani                     # [2026-10-11] istek sıklığı sınırı
 from app.core.yukleme_siniri import GovdeBoyutuAraKatmani               # [2026-10-11] gövde boyutu sınırı (25 MB)
 sentry_baslat()   # [2026-10-11] yalnızca SENTRY_DSN tanımlı ve sentry-sdk kuruluysa
+from app.core.canli_denetim import uretim_mi as _uretim_mi
 app = FastAPI(
+    # [2026-10-19] Canlıda otomatik API belgeleri (/docs, /redoc, /openapi.json) kapalı
+    docs_url=None if _uretim_mi() else "/docs", redoc_url=None if _uretim_mi() else "/redoc",
+    openapi_url=None if _uretim_mi() else "/openapi.json",
     title="Filizyol API",
     description="Öğrenci ve yönetici arayüzlerinin veritabanıyla tek temas noktası.",
     version="0.1.0",

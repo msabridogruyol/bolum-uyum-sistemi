@@ -40,7 +40,7 @@ export const SOZLUK = [
   { k: 'k4', ad: 'K4 – Alan Eğilimi ve Düşünme Stili', g: 'Değerlendirme', es: ['k4'], tam: true, bh: true,
     t: 'Hangi konuların seni çektiğine (sayılar, dil, insanlar, tasarım, doğa…) ve nasıl düşündüğüne bakar.' },
   { k: 'k5', ad: 'K5 – İş türü tercihleri', g: 'Değerlendirme', es: ['k5', 'iş türü tercihleri', 'iş türü soruları'], bh: true,
-    t: 'İlk dört katman bitince uyumu 70 ve üzerinde çıkan bölümlerinin (en fazla 20) işleriyle ilgili ek sorular. Yalnızca bu bölümleri kendi aralarında yeniden sıralar; listeye yeni bölüm girmez, listeden bölüm çıkmaz.' },
+    t: 'İlk dört katman bitince sana en yakın çıkan bölümlerin (uyumu 70 ve üzeri olanlar; en az 5, en fazla 20) işleriyle ilgili ek sorular. Yalnızca bu bölümleri kendi aralarında yeniden sıralar; bu yüzden ilk 10 listende küçük değişiklikler olabilir, diğer bölümler etkilenmez.' },
   { k: 'maarif', ad: 'Maarif Modeli karşılığı', g: 'Değerlendirme', es: ['maarif modeli', 'maarif', 'türkiye yüzyılı maarif modeli'],
     t: 'Okulda uygulanan Türkiye Yüzyılı Maarif Modeli\'nde değerler, eğilimler (merak, sorumluluk, empati…) ve beceriler (iş birliği, karar verme…) tanımlanır. Filizyol, özelliklerinin bu kavramlardan hangilerine yakın olduğunu gösterir. Bu yorumsal bir ilişkilendirmedir; puanlarını etkilemez.',
     o: '"Yeniliğe açıklık" özelliğin Maarif Modeli\'nde "Merak" ve "Açık fikirlilik" eğilimleriyle ilişkilidir.' },
