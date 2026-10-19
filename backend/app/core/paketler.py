@@ -3,7 +3,8 @@
 [2026-10-10] Paketler ve modüller.
 
 - Çekirdek (her pakette): değerlendirme, sonuçlar ve bölüm önerileri, Bölümler / Listem, profil, hedef bölüm seçimi,
-  okul paneli (öğrenciler, sınıflar, okul ayarları), temel raporlar, YKS sayacı.
+  koçluk ve haftalık görevler (sistemin omurgası; [2026-10-19] zorunlu modül), okul paneli (öğrenciler, sınıflar,
+  okul ayarları), temel raporlar, YKS sayacı.
 - Modüller paketlere göre açılır; okul için ayrıca tek tek eklenip çıkarılabilir:
   etkin = paketin modülleri ∪ modul_ekle − modul_cikar.
 - Okul harici öğrenciler (okul_id yok) tüm modülleri görür.
@@ -21,7 +22,7 @@ from app.core.database import get_db
 
 MODULLER = {
     "bildirimler": {"ad": "Bildirimler", "ikon": "🔔", "aciklama": "Uygulama içi bildirimler ve önemli olaylarda e-posta (kulüp kararı, rehberlik randevusu, kulüp etkinliği)"},
-    "kocluk": {"ad": "Koçluk ve görevler", "ikon": "🎯", "aciklama": "Koçluğum (yol haritası, Sen ve Bölümün, ilham kaynakları, tekrar ölçüm) ve haftalık Görevlerim"},
+    "kocluk": {"ad": "Koçluk ve görevler", "ikon": "🎯", "aciklama": "Koçluğum (yol haritası, Sen ve Bölümün, ilham kaynakları, tekrar ölçüm) ve haftalık Görevlerim", "zorunlu": True},
     "takvim": {"ad": "Takvim", "ikon": "🗓️", "aciklama": "Öğrenci takvimi ve okul etkinlikleri"},
     "kutuphane": {"ad": "Kütüphanem", "ikon": "📚", "aciklama": "Okuduğu kitaplar, izledikleri ve grafikler"},
     "kulupler": {"ad": "Kulüpler", "ikon": "🎭", "aciklama": "İlgi testi, kulüp önerileri, katılma talepleri ve kulüp duyuruları"},
@@ -42,6 +43,10 @@ MODULLER = {
     "is_hayati": {"ad": "İş Hayatı", "ikon": "💼", "aciklama": "Bölüm ve mesleklerin iş hayatındaki gerçekleri: mezun istihdamı, iş bulma süresi, kazanç (TÜİK), kamu maaşları, ilk maaşla yaşam giderleri; CV ve mülakat atölyeleri, her bölüm için mülakat simülasyonu ve düşünme atölyesi"},
 }
 TUMU = list(MODULLER)
+# [2026-10-19] Zorunlu modüller: bölüm yönlendirme + koçluk sistemin omurgasıdır; her pakette ve her okulda açıktır,
+# paketten ya da okuldan çıkarılamaz. Paket ekranlarında seçilebilir modül olarak gösterilmez.
+ZORUNLU = [k for k, v in MODULLER.items() if v.get("zorunlu")]
+SECMELI = {k: v for k, v in MODULLER.items() if not v.get("zorunlu")}
 # [2026-10-10] modül → çalışması için gereken modül
 BAGIMLILIK = {"okul_denemeleri": "net_takibi", "filiz_ai": "filiz"}
 
@@ -59,7 +64,7 @@ def _liste(v) -> list[str]:
 
 def paket_listesi(db: Session) -> list[dict]:
     rows = db.execute(text("SELECT kod, ad, aciklama, moduller, sira FROM paketler ORDER BY sira, kod")).mappings().all()
-    return [{**dict(r), "moduller": _liste(r["moduller"])} for r in rows]
+    return [{**dict(r), "moduller": [m for m in TUMU if m in set(_liste(r["moduller"])) | set(ZORUNLU)]} for r in rows]
 
 
 def okul_modulleri(db: Session, okul_id: int | None) -> list[str]:
@@ -76,6 +81,7 @@ def okul_modulleri(db: Session, okul_id: int | None) -> list[str]:
         return TUMU[:]
     etkin = (set(_liste(r.moduller)) if r.paket else set(TUMU)) | set(_liste(r.modul_ekle))
     etkin -= set(_liste(r.modul_cikar))
+    etkin |= set(ZORUNLU)                                                   # zorunlu modül çıkarılamaz
     etkin -= {m for m, gerek in BAGIMLILIK.items() if gerek not in etkin}   # bağlı olduğu modül kapalıysa çalışamaz
     return [m for m in TUMU if m in etkin]
 
@@ -86,7 +92,7 @@ def okul_paket_bilgisi(db: Session, okul_id: int | None) -> dict:
     r = db.execute(text("SELECT o.paket, o.modul_ekle, o.modul_cikar, p.ad, p.moduller AS pm FROM okullar o LEFT JOIN paketler p ON p.kod = o.paket "
                         "WHERE o.id = :o"), {"o": okul_id}).first()
     return {"paket": r.paket if r else None, "paket_ad": (r.ad if r else None) or "—", "moduller": okul_modulleri(db, okul_id),
-            "paket_modulleri": _liste(r.pm) if r else [],
+            "paket_modulleri": [m for m in TUMU if m in set(_liste(r.pm) if r else []) | set(ZORUNLU)],
             "ekle": _liste(r.modul_ekle) if r else [], "cikar": _liste(r.modul_cikar) if r else []}
 
 

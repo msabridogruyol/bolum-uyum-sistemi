@@ -41,6 +41,7 @@ OTOMATIK += ["0076_yeni_k5_sorular"]   # [2026-10-18] yeni K1-K4 soruları (tek 
 OTOMATIK += ["0077_bolum_kisa_aciklama"]   # [2026-10-18] boş bölüm kısa açıklamaları (pipeline veri/bolumler.csv)
 OTOMATIK += ["0078_bolum_icerik_duzeltme"]   # [2026-10-18] bölüm tanıtımlarında doğrulanmış olgu düzeltmeleri (yalnızca değişmemiş metne)
 OTOMATIK += ["0079_yeniden_degerlendirme_sikligi"]   # [2026-10-19] yeniden değerlendirme sıklığı sınıfa göre (12. sınıf / mezun 70 gün, diğerleri yılda 2)
+OTOMATIK += ["0080_kocluk_cekirdek"]   # [2026-10-19] koçluk her pakette zorunlu (veri tutarlılığı)
 KILIT = 2026101001
 
 

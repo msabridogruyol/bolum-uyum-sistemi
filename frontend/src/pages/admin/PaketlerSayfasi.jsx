@@ -33,7 +33,7 @@ export default function PaketlerSayfasi() {
         <div className="ps">Her paketin içerdiği modülleri belirleyin. Okula paket <Link to="/admin/okullar">Okullar</Link> → okul → <b>Paket</b> bölümünden atanır; orada okula özel modül de eklenip çıkarılabilir.</div>
       </div>
       <div className="yp-uyari" style={{ marginBottom: 14 }}>
-        <b>Her pakette olanlar:</b> değerlendirme (testler), bölüm önerileri, profil, hedef bölüm seçimi, okul paneli (öğrenciler, sınıflar, okul ayarları) ve temel raporlar (öğrenci / veli / yönetim, sınıf ve okul raporu).
+        <b>Her pakette olanlar (çıkarılamaz):</b> değerlendirme (testler), bölüm önerileri, profil, hedef bölüm seçimi, koçluk ve haftalık görevler (Koçluğum: yol haritası, Sen ve Bölümün, ilham kaynakları), okul paneli (öğrenciler, sınıflar, okul ayarları) ve temel raporlar (öğrenci / veli / yönetim, sınıf ve okul raporu).
         Kapalı modüller öğrencinin ve okul yetkilisinin menüsünde görünmez, sunucu tarafında da erişilemez.
       </div>
       {hata && <div className="auth-error">{hata}</div>}
