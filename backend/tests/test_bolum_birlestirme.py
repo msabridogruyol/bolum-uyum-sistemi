@@ -45,10 +45,20 @@ def _bolum(db, ad):
                               VALUES (:a, 'yayinda', '{}'::jsonb, now()) RETURNING id"""), {"a": ad}).scalar()
 
 
+def _iki_degisken(db):
+    """Test için iki değişken: boş test şemasında (CI) değişken yoksa işlem içinde geçici katman + değişken açılır."""
+    ids = [r[0] for r in db.execute(text("SELECT id FROM degiskenler ORDER BY id LIMIT 2"))]
+    if len(ids) == 2:
+        return ids
+    kid = db.execute(text("INSERT INTO katmanlar (kod, ad, sira) VALUES ('TSTK', 'TST katman', 99) RETURNING id")).scalar()
+    return [db.execute(text("""INSERT INTO degiskenler (katman_id, kod, ad, sira) VALUES (:k, :kod, :kod, :s) RETURNING id"""),
+                       {"k": kid, "kod": f"TSTD{s}", "s": s}).scalar() for s in (1, 2)]
+
+
 @db_gerekli
 def test_ortalama_alir_bagli_satirlari_siler_tekrar_calistirmada_degismez(db):
     ana, u1, u2 = (_bolum(db, f"TST BİRLEŞTİR {x}") for x in ("ANA", "U1", "U2"))
-    d1, d2 = [r[0] for r in db.execute(text("SELECT id FROM degiskenler ORDER BY id LIMIT 2"))]
+    d1, d2 = _iki_degisken(db)
     for b, (a1, a2) in ((ana, (40, 70)), (u1, (50, 60)), (u2, (60, 80))):
         for d, a in ((d1, a1), (d2, a2)):
             db.execute(text("""INSERT INTO bolum_agirliklari (bolum_id, degisken_id, agirlik_degeri, yakinsama_skoru,

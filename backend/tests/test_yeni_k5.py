@@ -164,11 +164,18 @@ def _hedef_bolum(db):
                                WHERE x.durum = 'yayinda' GROUP BY b.bolum_id HAVING count(*) >= 2 ORDER BY b.bolum_id LIMIT 1""")).scalar()
 
 
+def _k5_icerigi_var(db):
+    """Uçtan uca K5 testleri gerçek içerik ister: K5N dalı, K1 soruları ve K5 bağı olan yayında bölüm."""
+    return bool(db.execute(text("SELECT 1 FROM dallar WHERE kod = 'K5N'")).scalar()
+                and db.execute(text("SELECT 1 FROM sorular s JOIN katmanlar k ON k.id = s.katman_id WHERE k.kod = 'K1' LIMIT 1")).scalar()
+                and _hedef_bolum(db))
+
+
 @pytest.fixture
 def k5_tamam(db, kisiler):
     from app.core.test_hesabi_servisi import senaryo_uygula
-    if not db.execute(text("SELECT 1 FROM dallar WHERE kod = 'K5N'")).scalar():
-        pytest.skip("0076 göçü uygulanmamış")
+    if not _k5_icerigi_var(db):
+        pytest.skip("K5 içeriği yok (0076 uygulanmamış ya da boş test şeması: soru, bölüm, K5 bağı yok)")
     o = _ogrenci(db, kisiler)
     hedef = _hedef_bolum(db)
     senaryo_uygula(db, o, {"asama": "tamamlandi", "egilim": "bolum", "egilim_bolum_id": hedef, "tohum": 11})
@@ -245,8 +252,8 @@ def test_tur_silinince_ozel_sorular_da_silinir(db, k5_tamam):
 @db_gerekli
 def test_ogrenci_api_uclar_ve_k5_akisi(db, istemci, kisiler):
     """Öğrenci API'si: uçlar sorusunda iki uç metni gelir; K1-K4 bitince tek K5 adımı açılır ve soruları öğrenciye özeldir."""
-    if not db.execute(text("SELECT 1 FROM dallar WHERE kod = 'K5N'")).scalar():
-        pytest.skip("0076 göçü uygulanmamış")
+    if not _k5_icerigi_var(db):
+        pytest.skip("K5 içeriği yok (0076 uygulanmamış ya da boş test şeması: soru, bölüm, K5 bağı yok)")
     h = kisiler["ogrenci"]
     for kod in ("K1", "K2", "K3", "K4"):
         r = istemci.post(f"/ogrenci/katmanlar/{kod}/basla", headers=h)
@@ -291,8 +298,8 @@ def test_basla_oturumu_kilitler(db, kisiler):
     from app.core import dal_servisi as ds
     from app.core.test_hesabi_servisi import senaryo_uygula
     from app.models import OgrenciDegerlendirmeTuru
-    if not db.execute(text("SELECT 1 FROM dallar WHERE kod = 'K5N'")).scalar():
-        pytest.skip("0076 göçü uygulanmamış")
+    if not _k5_icerigi_var(db):
+        pytest.skip("K5 içeriği yok (0076 uygulanmamış ya da boş test şeması: soru, bölüm, K5 bağı yok)")
     o = _ogrenci(db, kisiler)
     senaryo_uygula(db, o, {"asama": "k5_bekliyor", "egilim": "bolum", "egilim_bolum_id": _hedef_bolum(db), "tohum": 3})
     db.flush()

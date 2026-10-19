@@ -90,6 +90,8 @@ BEGIN
   IF EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'k5_banka_surumu' AND deger = '__BSURUM__') THEN
     RETURN;
   END IF;
+  -- boş kurulum (ör. CI test şeması): değişken yoksa yüklenecek içerik de yok
+  IF NOT EXISTS (SELECT 1 FROM degiskenler) THEN RETURN; END IF;
   FOR e IN SELECT key, value FROM jsonb_each(b->'cumleler') LOOP
     SELECT id INTO vid FROM degiskenler WHERE kod = e.key;
     IF vid IS NULL THEN RAISE EXCEPTION 'K5 bankası: değişken yok %', e.key; END IF;
@@ -129,6 +131,8 @@ BEGIN
   IF EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'olcme_soru_seti' AND deger = '__SURUM__') THEN
     RETURN;
   END IF;
+  -- boş kurulum (ör. CI test şeması): katmanlar/değişkenler yoksa soru seti kurulmaz, hiçbir şey silinmez
+  IF NOT EXISTS (SELECT 1 FROM katmanlar WHERE kod = 'K1') OR NOT EXISTS (SELECT 1 FROM degiskenler) THEN RETURN; END IF;
   DELETE FROM ogrenci_degerlendirme_turu;
   eski := ARRAY(SELECT s.id FROM sorular s JOIN katmanlar k ON k.id = s.katman_id
                  WHERE k.kod IN ('K1','K2','K3','K4','K5'));
