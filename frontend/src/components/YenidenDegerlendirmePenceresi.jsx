@@ -1,7 +1,7 @@
 // [2026-10-12] Yeniden değerlendirme açılır penceresi (öğrenci).
 // Kurallar (backend: katman_servisi.degerlendirme_durumu):
 //  - guven_sorunu: son değerlendirmede güven puanı düşük → yalnızca sorunlu bölüm(ler) tekrar çözülebilir
-//  - bekleme: güven sorunu yok → tamamlanmadan 90 gün sonra yeniden açılır; bu süre içinde durum gösterilir
+//  - bekleme: güven sorunu yok → sınıfa göre bekleme süresi (12. sınıf / mezun 70 gün, diğerleri yılda 2) sonunda yeniden açılır; bu süre içinde durum gösterilir
 //  - acik: süre doldu ya da okul yetkilisi yeniden değerlendirme açtı → yeni tur başlatılabilir
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'

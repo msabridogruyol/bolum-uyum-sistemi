@@ -2,6 +2,9 @@ import { useEffect, useState, useCallback } from 'react'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { api } from '../../api/client'
 
+// [2026-10-19] Yeniden değerlendirme sıklığı ayrı kartta düzenlenir (genel listede gösterilmez)
+const SIKLIK_ANAHTARLARI = ['yeniden_degerlendirme_gun_12', 'yeniden_degerlendirme_yillik_hak']
+
 export default function ParametrelerSayfasi() {
   const [parametreler, setParametreler] = useState(null)
   const [duzenleme, setDuzenleme] = useState({})
@@ -35,9 +38,10 @@ export default function ParametrelerSayfasi() {
         </div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
+      <YenidenDegerlendirmeKarti parametreler={parametreler} duzenlenebilir={suAdminMi} onKaydedildi={yukle} />
       <KatmanAgirliklariKarti duzenlenebilir={suAdminMi} />
       <div className="ll">
-        {parametreler.map((p) => (
+        {parametreler.filter((p) => !SIKLIK_ANAHTARLARI.includes(p.anahtar)).map((p) => (
           <div key={p.anahtar} className="lc" style={{ cursor: 'default' }}>
             <div className="lb-wrap">
               <div className="lt">{p.anahtar}</div>
@@ -159,6 +163,76 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
             <button className="btn sec" disabled={kaydediliyor} onClick={() => setOnayAdimi(false)}>Vazgeç</button>
           </div>
         </div>
+      )}
+    </div>
+  )
+}
+
+
+// [2026-10-19] Yeniden değerlendirme sıklığı — öğrencinin o anki sınıfına göre:
+// 12. sınıf ve mezun → kaç günde bir; diğer sınıflar → yılda kaç kez (iki değerlendirme arası 365 / bu sayı gün).
+function YenidenDegerlendirmeKarti({ parametreler, duzenlenebilir, onKaydedildi }) {
+  const deger = (a, v) => parametreler.find((p) => p.anahtar === a)?.deger ?? v
+  const [gun12, setGun12] = useState(deger('yeniden_degerlendirme_gun_12', '70'))
+  const [hak, setHak] = useState(deger('yeniden_degerlendirme_yillik_hak', '2'))
+  const [hata, setHata] = useState(null)
+  const [mesaj, setMesaj] = useState(null)
+  const [kaydediliyor, setKaydediliyor] = useState(false)
+  const degisti = String(gun12) !== String(deger('yeniden_degerlendirme_gun_12', '70')) || String(hak) !== String(deger('yeniden_degerlendirme_yillik_hak', '2'))
+  const hakSayi = parseInt(hak, 10)
+  const araGun = hakSayi >= 1 ? Math.ceil(365 / hakSayi) : null
+
+  async function kaydet() {
+    setHata(null); setMesaj(null)
+    const g = parseInt(gun12, 10)
+    if (!(g >= 7 && g <= 365)) return setHata('12. sınıf için gün sayısı 7 ile 365 arasında olmalı.')
+    if (!(hakSayi >= 1 && hakSayi <= 12)) return setHata('Yılda değerlendirme sayısı 1 ile 12 arasında olmalı.')
+    setKaydediliyor(true)
+    try {
+      await api.parametreGuncelle('yeniden_degerlendirme_gun_12', String(g))
+      await api.parametreGuncelle('yeniden_degerlendirme_yillik_hak', String(hakSayi))
+      setMesaj('Kaydedildi. Yeni süreler bir sonraki değerlendirme açılışından itibaren uygulanır.')
+      onKaydedildi()
+    } catch (e) {
+      setHata(e.detail || 'Kaydedilemedi.')
+    } finally {
+      setKaydediliyor(false)
+    }
+  }
+
+  return (
+    <div className="card" style={{ marginBottom: 16 }}>
+      <div className="ct">Yeniden değerlendirme sıklığı</div>
+      <div className="ps" style={{ margin: '0 0 12px' }}>
+        Öğrenci geçerli bir değerlendirmeyi tamamladıktan sonra yenisine ne zaman girebilir? Süre öğrencinin o anki sınıfına göre
+        belirlenir. Okul yetkilisi gerektiğinde bekleme süresi dolmadan yeni değerlendirme açabilir.
+      </div>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))', gap: 12 }}>
+        <label className="lc" style={{ cursor: 'default', alignItems: 'center' }}>
+          <div className="lb-wrap">
+            <div className="lt">12. sınıf ve mezunlar</div>
+            <div className="ld">Kaç günde bir (7–365)</div>
+          </div>
+          <input className="auth-input" type="number" min={7} max={365} style={{ width: 90 }} value={gun12}
+            disabled={!duzenlenebilir} onChange={(e) => setGun12(e.target.value)} aria-label="12. sınıf ve mezunlar: kaç günde bir" />
+          <span className="ld">gün</span>
+        </label>
+        <label className="lc" style={{ cursor: 'default', alignItems: 'center' }}>
+          <div className="lb-wrap">
+            <div className="lt">Diğer tüm sınıflar</div>
+            <div className="ld">Yılda kaç kez (1–12){araGun ? ` · iki değerlendirme arası ${araGun} gün` : ''}</div>
+          </div>
+          <input className="auth-input" type="number" min={1} max={12} style={{ width: 90 }} value={hak}
+            disabled={!duzenlenebilir} onChange={(e) => setHak(e.target.value)} aria-label="Diğer sınıflar: yılda kaç kez" />
+          <span className="ld">kez</span>
+        </label>
+      </div>
+      {hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
+      {mesaj && <div className="ps" style={{ margin: '10px 0 0', color: 'var(--gr)' }}>{mesaj}</div>}
+      {duzenlenebilir && (
+        <button className="btn" style={{ marginTop: 12 }} disabled={!degisti || kaydediliyor} onClick={kaydet}>
+          {kaydediliyor ? 'Kaydediliyor…' : 'Kaydet'}
+        </button>
       )}
     </div>
   )

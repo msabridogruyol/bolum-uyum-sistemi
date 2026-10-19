@@ -210,7 +210,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
             <input className="auth-input" style={{ width: 64, margin: 0 }} maxLength={2} placeholder="Şube" value={sinifAta.sube} onChange={(e) => setSinifAta({ ...sinifAta, sube: e.target.value.toUpperCase() })} />
             <button className="btn sec" disabled={bekle || (!sinifAta.sinif && !sinifAta.sube)} onClick={sinifVer}>Sınıfı ata</button>
           </span>
-          <button className="btn sec" disabled={bekle} onClick={yenidenAc} title="Bekleme süresi (90 gün) dolmadan yeni değerlendirme açar; önceki sonuçlar silinmez">🔁 Yeniden değerlendirme izni ver</button>
+          <button className="btn sec" disabled={bekle} onClick={yenidenAc} title="Bekleme süresi dolmadan yeni değerlendirme açar; önceki sonuçlar silinmez">🔁 Yeniden değerlendirme izni ver</button>
           {sifirlaOnay ? (
             <>
               <span style={{ fontSize: 12, color: 'var(--re)' }}>{`${secili.size} öğrencinin son değerlendirmesi (cevaplar, sonuçlar, bölüm uyumları ve bu değerlendirmeye bağlı koçluk adımları) silinecek. Hesap ve diğer kayıtlar kalır.`}</span>

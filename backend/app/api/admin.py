@@ -80,6 +80,18 @@ def parametreyi_guncelle(
     if parametre is None:
         raise HTTPException(status_code=404, detail=f"Parametre bulunamadı: {anahtar}")
 
+    # [2026-10-19] Yeniden değerlendirme sıklığı: tam sayı ve makul aralık zorunlu (yanlış değer öğrencileri kilitlemesin)
+    sinirlar = {"yeniden_degerlendirme_gun_12": (7, 365), "yeniden_degerlendirme_yillik_hak": (1, 12)}
+    if anahtar in sinirlar:
+        alt, ust = sinirlar[anahtar]
+        try:
+            sayi = int(str(istek.deger).strip())
+        except ValueError:
+            raise HTTPException(status_code=422, detail="Tam sayı girin.")
+        if not alt <= sayi <= ust:
+            raise HTTPException(status_code=422, detail=f"Değer {alt} ile {ust} arasında olmalı.")
+        istek.deger = str(sayi)
+
     eski_deger = parametre.deger
     parametre.deger = istek.deger
     parametre.guncelleme_zamani = datetime.now(timezone.utc)
