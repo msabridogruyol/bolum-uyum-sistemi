@@ -8,43 +8,49 @@ import FavoriYildiz from '../components/FavoriYildiz'
 import { KarsilastirDugmesi } from '../components/KarsilastirSepeti'
 import PuanRehberi from '../components/PuanRehberi'
 
-// [2026-10-09] "Neden bu bölüm?" — madde madde: örtüşen yönler (sende / bölümde düzeyi + seçtiğin cevaplar),
-// alan sorularındaki iş türü uyumu ve varsa dikkat edilecek nokta.
+// [2026-10-09] "Neden bu bölüm?" — örtüşen yönler (sende / bölümde düzeyi + seçtiğin cevaplar), iş türü (K5) notu, dikkat notu.
+// [2026-10-18] Sadeleştirildi: kartta tek satırlık özet görünür; seçim kanıtları "Neden?" açılır bölümünde (bilgi azalmadı).
 function NedenDetay({ d }) {
   const ortusen = d.ortusen || []
-  if (!ortusen.length && !d.k5 && !d.dikkat) return null
+  const dikkatler = d.dikkatler?.length ? d.dikkatler : d.dikkat ? [d.dikkat] : []
+  if (!ortusen.length && !d.k5 && !dikkatler.length) return null
   return (
     <div className="neden-kutu">
-      <div className="neden-baslik">Neden bu bölüm?</div>
       {ortusen.length > 0 && (
-        <ul className="neden-liste">
-          {ortusen.map((x, k) => (
-            <li key={k}>
-              <div className="neden-satir">
-                <span className="neden-ozellik">{x.ozellik}</span>
-                <span className="neden-etiket sen">Sende: {x.sen}</span>
-                <span className="neden-etiket bolum">Bölüm: {x.bolum}</span>
-              </div>
-              {x.kanitlar && x.kanitlar.length > 0 && (
-                <div className="neden-kanit">
-                  Bu yönü öne çıkaran seçimlerin:{' '}
-                  {x.kanitlar.map((m, i) => <q key={i}>{m}</q>)}
-                  {x.kanit_sayisi > x.kanitlar.length && <span className="neden-ek"> +{x.kanit_sayisi - x.kanitlar.length} seçim daha</span>}
-                </div>
-              )}
-            </li>
-          ))}
-        </ul>
+        <div className="neden-ozet"><span className="neden-ozet-bas">Bölümle örtüşen yönlerin:</span> {ortusen.map((x) => x.ozellik).join(' · ')}</div>
       )}
       {d.k5 && (
-        <div className={`neden-not ${d.k5.durum === 'uyumlu' ? 'iyi' : 'zayif'}`}>
+        <div className={`neden-ozet k5 ${d.k5.durum === 'uyumlu' ? 'iyi' : 'zayif'}`}>
           🌻 {d.k5.durum === 'uyumlu'
-            ? <>Alan sorularında <b>{d.k5.is_turu}</b> işlerini öne çıkardın. Bu bölümde en çok bu işler yapılır.</>
-            : <>Bu bölümde en çok <b>{d.k5.is_turu}</b> işleri yapılır. Sen alan sorularında bu işleri daha az seçtin. Bölüm bilgisine göz atmanı öneririz.</>}
-          {d.k5.kanit && <div className="neden-kanit" style={{ marginTop: 4 }}>Seçimin: <q>{d.k5.kanit}</q></div>}
+            ? <>İş türü sorularında bu bölümün ana işini (<b>{d.k5.is_turu}</b>) öne çıkardın.</>
+            : <>Bu bölümün ana işi <b>{d.k5.is_turu}</b>; iş türü sorularında bunu daha az seçtin.</>}
         </div>
       )}
-      {(d.dikkatler?.length ? d.dikkatler : d.dikkat ? [d.dikkat] : []).map((x) => <div key={x.metin} className="neden-not zayif">⚠️ {x.metin}</div>)}
+      {dikkatler.map((x) => <div key={x.metin} className="neden-ozet zayif">⚠️ {x.metin}</div>)}
+      {ortusen.length > 0 && (
+        <details className="neden-ac">
+          <summary>Neden bu bölüm? Seçimlerini gör</summary>
+          <ul className="neden-liste">
+            {ortusen.map((x, k) => (
+              <li key={k}>
+                <div className="neden-satir">
+                  <span className="neden-ozellik">{x.ozellik}</span>
+                  <span className="neden-etiket sen">Sende: {x.sen}</span>
+                  <span className="neden-etiket bolum">Bölüm: {x.bolum}</span>
+                </div>
+                {x.kanitlar && x.kanitlar.length > 0 && (
+                  <div className="neden-kanit">
+                    Bu yönü öne çıkaran seçimlerin:{' '}
+                    {x.kanitlar.map((m, i) => <q key={i}>{m}</q>)}
+                    {x.kanit_sayisi > x.kanitlar.length && <span className="neden-ek"> +{x.kanit_sayisi - x.kanitlar.length} seçim daha</span>}
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+          {d.k5?.kanit && <div className="neden-kanit">İş türü seçimin: <q>{d.k5.kanit}</q></div>}
+        </details>
+      )}
     </div>
   )
 }

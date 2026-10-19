@@ -35,7 +35,7 @@ function GucDagilimi({ guclu, orta, gelisim }) {
           </div>
         ))}
       </div>
-      <div className="gr-not">Toplam {guclu + orta + gelisim} özellik · K1–K4</div>
+      <div className="gr-not">Toplam {guclu + orta + gelisim} özellik · K2–K4 (değerler ve duygusal hassasiyet hariç)</div>
     </>
   )
 }
@@ -99,8 +99,9 @@ export default function RaporGrafikleri({ netAcik }) {
   const [denemeler, setDenemeler] = useState([])
 
   useEffect(() => {
-    Promise.all(ANA_KATMANLAR.map((k) => api.katmanSonucuGetir(k).then((r) => (r?.tamamlandi_mi ? r.sonuclar : [])).catch(() => [])))
-      .then((l) => setSonuclar(l.flat()))
+    Promise.all(ANA_KATMANLAR.map((k) => api.katmanSonucuGetir(k).then((r) => (r?.tamamlandi_mi ? r.sonuclar.map((s) => ({ ...s, katmanKod: k })) : [])).catch(() => [])))
+      // [2026-10-18] Değerler (K1/D) ve duygusal hassasiyet (P4, ters yönlü) güçlü / gelişime açık sayılmaz (PDF ile aynı)
+      .then((l) => setSonuclar(l.flat().filter((s) => s.katmanKod !== 'K1' && !String(s.degisken_kod || '').startsWith('D') && s.degisken_kod !== 'P4')))
     api.siralamaGetir(5).then(setSiralama).catch(() => setSiralama([]))
   }, [])
   useEffect(() => { if (netAcik) api.netDenemeler().then((r) => setDenemeler(r.denemeler || [])).catch(() => {}) }, [netAcik])
@@ -114,7 +115,7 @@ export default function RaporGrafikleri({ netAcik }) {
   if (!sonuclar || !siralama) return null
   if (!sonuclar.length) return null
 
-  const gelisimAlanlari = [...sonuclar].sort((a, b) => a.puan - b.puan).slice(0, 5).map((s) => ({ ad: s.degisken_adi, deger: Math.round(s.puan) }))
+  const gelisimAlanlari = [...sonuclar].filter((s) => gelisimeAcikMi(s.puan)).sort((a, b) => a.puan - b.puan).slice(0, 5).map((s) => ({ ad: s.degisken_adi, deger: Math.round(s.puan) }))
   const uyum = siralama.slice(0, 5).map((s) => ({ ad: s.bolum_adi, deger: Math.round(s.toplam_uyum) }))
   const netVar = netAcik && denemeler.length >= 2
 
@@ -132,8 +133,8 @@ export default function RaporGrafikleri({ netAcik }) {
         </div>
         <div className="gr-panel">
           <div className="gr-baslik">Gelişime açık alanların</div>
-          <div className="gr-alt">En düşük puanlı 5 özelliğin (0–100)</div>
-          <YatayCubuklar satirlar={gelisimAlanlari} renk="var(--am)" />
+          <div className="gr-alt">{ORTA_ESIK}'ın altında kalan en düşük 5 özelliğin (değerler hariç)</div>
+          {gelisimAlanlari.length ? <YatayCubuklar satirlar={gelisimAlanlari} renk="var(--am)" /> : <div className="gr-not">{ORTA_ESIK}'ın altında kalan özelliğin yok.</div>}
         </div>
         <div className="gr-panel">
           <div className="gr-baslik">Sana en uygun 5 bölüm</div>

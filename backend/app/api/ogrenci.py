@@ -28,7 +28,7 @@ from app.core.dal_servisi import (
 from app.core.skor_motoru import toplam_uyum_hesapla, siralama_getir, neden_aciklamalari
 from app.core.kesfet_servisi import bolumleri_ara
 from app.models import (
-    Ogrenci, Katman, OgrenciKatmanOturumu, Degisken, Soru, SoruSecenegi, OgrenciDalOturumu, Bolum,
+    Ogrenci, Katman, OgrenciKatmanOturumu, Degisken, Soru, SoruSecenegi, OgrenciDalOturumu, Bolum, Dal,
     OgrenciDegerlendirmeTuru, GuvenlikOlayi, GuvenlikFotografi,
 )
 from app.schemas.ogrenci import (
@@ -57,7 +57,9 @@ def _puan_araligi(puan: float) -> str:
 
 def _yorumlari_ekle(db: Session, sonuclar: list[KatmanSonucSatiri]) -> list[KatmanSonucSatiri]:
     """Her sonuç satırına, gelisim_yorum_havuzu'ndan puana uygun yorumu ekler."""
+    kodlar = dict(db.query(Degisken.id, Degisken.kod).filter(Degisken.id.in_([x.degisken_id for x in sonuclar] or [-1])).all())
     for s in sonuclar:
+        s.degisken_kod = kodlar.get(s.degisken_id)
         aralik = _puan_araligi(s.puan)
         satir = db.execute(
             text("""
@@ -100,7 +102,7 @@ def katmanlari_listele(
     # sabit/tahmini "boyut" bilgisi yerine bunu kullanıyor.
     soru_sayilari = dict(
         db.query(Soru.katman_id, func.count(Soru.id))
-        .filter(Soru.aktif_mi.is_(True))
+        .filter(Soru.aktif_mi.is_(True), Soru.ogrenci_id.is_(None))
         .group_by(Soru.katman_id)
         .all()
     )
@@ -124,12 +126,18 @@ def katmanlari_listele(
         ).all()
     }
 
+    # [2026-10-18] K5'in katman oturumu yoktur: durumu öğrenciye özel K5 oturumundan gelir
+    from app.core.skor_motoru import K5_DAL_KODU
+    k5_durum = (db.query(OgrenciDalOturumu.durum).join(Dal, Dal.id == OgrenciDalOturumu.dal_id)
+                .filter(OgrenciDalOturumu.ogrenci_id == ogrenci.id, OgrenciDalOturumu.tur_id == tur.id,
+                        Dal.kod == K5_DAL_KODU).scalar())
     return [
         KatmanOut(
             id=k.id, kod=k.kod, ad=k.ad, sira=k.sira,
             normalizasyon_agirligi=float(k.normalizasyon_agirligi) if k.normalizasyon_agirligi else None,
             kosullu_mu=k.kosullu_mu,
-            durum=oturumlar.get(k.id, "baslamadi"),
+            durum=(k5_durum or "baslamadi") if k.kosullu_mu else oturumlar.get(k.id, "baslamadi"),
+            soru_sayisi=soru_sayilari.get(k.id, 0),
         )
         for k in katmanlar
     ]
@@ -192,6 +200,7 @@ def katmani_baslat(
     soru_out = [
         SoruOut(
             id=s.id, soru_tipi=s.soru_tipi, soru_metni=s.soru_metni, cevap_bicimi=getattr(s, 'cevap_bicimi', None) or 'tek',
+            uc_a_metni=s.uc_a_metni, uc_b_metni=s.uc_b_metni,
             secenekler=[
                 SecenekOut(id=sec.id, secenek_sirasi=sec.secenek_sirasi, secenek_metni=sec.secenek_metni)
                 for sec in secenekler_by_soru.get(s.id, [])
@@ -287,7 +296,7 @@ def katmani_tamamla_uc_nokta(
     db.commit()
 
     # [2026-10-12] Değerlendirme bitti → sonuç e-postası (+ PDF) arka planda; cevap beklemez. Güven puanı düşükse gitmez.
-    # K5 derinleşme dalı açıldıysa burada gitmez: son dal bitince (dali_tamamla_uc_nokta) gider.
+    # K5 iş türü soruları açıldıysa burada gitmez: son dal bitince (dali_tamamla_uc_nokta) gider.
     sonuc_epostasi = False
     if tum_tamam:
         from app.core import sonuc_epostasi as se
@@ -311,7 +320,7 @@ def katmani_tamamla_uc_nokta(
     )
 
 
-# ===================== D3 — K5 Dal Derinleşme ===================== #
+# ===================== K5 — İş türü tercihleri ===================== #
 
 @router.get("/k5/durum", response_model=K5DurumOut)
 def k5_durumu_getir(
@@ -367,6 +376,7 @@ def dali_baslat(
     soru_out = [
         SoruOut(
             id=s.id, soru_tipi=s.soru_tipi, soru_metni=s.soru_metni, cevap_bicimi=getattr(s, 'cevap_bicimi', None) or 'tek',
+            uc_a_metni=s.uc_a_metni, uc_b_metni=s.uc_b_metni,
             secenekler=[
                 SecenekOut(id=sec.id, secenek_sirasi=sec.secenek_sirasi, secenek_metni=sec.secenek_metni)
                 for sec in secenekler_by_soru.get(s.id, [])
@@ -417,7 +427,7 @@ def dali_tamamla_uc_nokta(
         .first()
     )
     if oturum is None:
-        raise HTTPException(status_code=400, detail="Bu alan sorularına henüz başlamadın.")
+        raise HTTPException(status_code=400, detail="Bu sorulara henüz başlamadın.")
 
     try:
         sonuclar = dali_tamamla(db, ogrenci, dal, tur, oturum)
@@ -474,7 +484,7 @@ def bolum_siralamasi_getir(
     if bekleyen_dal_var_mi(db, ogrenci, tur):
         raise HTTPException(
             status_code=409,
-            detail="Sonuçlarını görmek için önce sana açılan alan (K5) sorularını tamamla.",
+            detail="Sonuçlarını görmek için önce sana özel iş türü (K5) sorularını tamamla.",
         )
 
     siralama = siralama_getir(db, ogrenci, tur, ilk_n=max(1, min(ilk_n, 10)))
@@ -758,7 +768,13 @@ def katman_gecmis_sonucu(
         )
         .first()
     )
-    if oturum is None or oturum.durum != "tamamlandi":
+    tamam = oturum is not None and oturum.durum == "tamamlandi"
+    if katman.kosullu_mu:   # [2026-10-18] K5'in katman oturumu yok: öğrenciye özel K5 oturumuna bakılır
+        from app.core.skor_motoru import K5_DAL_KODU
+        tamam = (db.query(OgrenciDalOturumu.id).join(Dal, Dal.id == OgrenciDalOturumu.dal_id)
+                 .filter(OgrenciDalOturumu.ogrenci_id == ogrenci.id, OgrenciDalOturumu.tur_id == tur.id,
+                         OgrenciDalOturumu.durum == "tamamlandi", Dal.kod == K5_DAL_KODU).first()) is not None
+    if not tamam:
         return KatmanGecmisSonucOut(katman_kodu=katman.kod, tamamlandi_mi=False, sonuclar=[])
 
     satirlar = db.execute(

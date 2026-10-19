@@ -46,7 +46,7 @@ export default function SistemHakkindaSayfasi() {
       <Bolum ikon="🎯" baslik="1. Sistemin Genel Amacı" varsayilanAcik>
         <p style={{ marginBottom: 10 }}>
           Sistem, bir öğrencinin değerler, kişilik, iş ortamı tercihleri ve bilişsel eğilimlerini ölçüp,
-          bunu 301 üniversite bölümünün "beklenen profili" ile karşılaştırarak kişiselleştirilmiş bölüm
+          bunu sistemdeki 278 üniversite bölümünün "beklenen profili" ile karşılaştırarak kişiselleştirilmiş bölüm
           önerileri sunar. Süreç 5 ana aşamadan oluşur:
         </p>
         <Madde>Öğrenci Değerlendirmesi (K1-K5) — öğrenciden veri toplama</Madde>
@@ -62,16 +62,16 @@ export default function SistemHakkindaSayfasi() {
 
       <Bolum ikon="📝" baslik="2. Aşama 1 — Öğrenci Değerlendirmesi (K1-K5)">
         <p style={{ marginBottom: 10 }}>
-          Öğrenci, sırasıyla 4 zorunlu katmanı (K1-K4) tamamlar; K1-K4 bitince kendisine 1 veya 2 derinleşme alanı
-          (K5) açılır ve açılan alanlar bitmeden sonuç listesi gösterilmez. K1-K4 toplam <b>31 değişken</b> ölçer;
+          Öğrenci, sırasıyla 4 zorunlu katmanı (K1-K4) tamamlar; K1-K4 bitince kendisine özel üretilen iş türü
+          soruları (K5) açılır ve K5 bitmeden sonuç listesi gösterilmez. K1-K4 toplam <b>31 değişken</b> ölçer;
           sorular 4 tipten biridir (Likert, SJT/durum, kutup, kontrol — bkz. 7. bölüm):
         </p>
         <Madde><b>K1 — Değerler/Motivasyon</b> (7 değişken, D1-D7): güvence, ekonomik getiri, statü, anlam, sosyal etki, özerklik, estetik/yaratıcılık</Madde>
         <Madde><b>K2 — Kişilik & Çalışma Tarzı</b> (8 değişken, P1-P8): dışadönüklük, uyumluluk, sorumluluk, duygusal hassasiyet (P4), deneyime açıklık, rutin/dinamik tercihi, risk toleransı, liderlik isteği. P4 varsayılan olarak bölüm eşleşmesine girmez (parametre <code>eslesme_disi_degiskenler</code>, varsayılan "P4")</Madde>
         <Madde><b>K3 — İş Ortamı & Yetkinlik</b> (7 değişken, I1-I7): zaman yönetimi, çatışma yönetimi, kriz kararı, etik, inisiyatif, geri bildirime açıklık, yönetim/strateji yetkinliği</Madde>
         <Madde><b>K4 — Alan Eğilimi & Bilişsel Stil</b> (9 değişken, A1-A9): sayısal, sözel, sosyal, yaratıcı, doğa/laboratuvar, fiziksel, yapılandırılmış stil, sezgisel stil, girişimcilik eğilimi</Madde>
-        <Madde><b>K5 — Alan Derinleşme</b> (koşullu): <b>17 üst alan</b> (Mühendislik, Bilişim & Yazılım, Sağlık & Rehabilitasyon … Turizm & Hizmet; kod U01-U17). Alan, öğrencinin K1-K4 sonrası bölüm listesine göre açılır: ilk 15 bölüm alanlarına göre gruplanır, 1. sıradaki bölümün alanı her zaman açılır; ikinci alan, en iyi 3 bölüm ortalaması ana alandan en çok 10 puan gerideyse açılır (en fazla <code>k5_max_dal_sayisi</code> = 2). Ana alanın tüm soruları, ikinci alanın yalnızca ilk 6 sorusu sorulur (en fazla 14 + 6 = 20). Eski K4 eşiği (<code>k5_esik_puani</code>) artık seçimde kullanılmıyor</Madde>
-        <Madde>K5'te her alanın kendi iş türü eksenleri vardır (alan başına 4-11, toplam 129 değişken; ör. U01_M). Yerel veritabanında 187 aktif K5 sorusu var (alan başına 6-14)</Madde>
+        <Madde><b>K5 — İş türü tercihleri</b> (koşullu, 2026-10-18): K1-K4 uyumu <b>≥ 70</b> olan bölümler bir kümeye alınır (en fazla 20, en az 5). Kümedeki bölümlerin bağlı olduğu iş türlerinden (<code>bolum_k5_baglari</code>; alan sınırı yok) öğrenciye özel sorular üretilir: soru sayısı = iş türü sayısı × 3/4 (en az 6, en fazla 15); yaklaşık %50 en çok / en az, %20 tek seçim, %30 uçlar (K1-K4'te birbirine en yakın bölüm çiftlerinin ana iş türleri karşı karşıya). Sorular tur başına sabittir (tohum = tur kimliği) ve <code>sorular.ogrenci_id / tur_id</code> dolu olarak saklanır; soru bankası listelerinde görünmez</Madde>
+        <Madde>K5 soru bankası: 129 iş türünün her biri için 3 etkinlik cümlesi (<code>k5_cumleleri</code>, toplam 387) ve 20 soru kökü (<code>k5_soru_kokleri</code>: 8 en çok / en az, 4 tek seçim, 8 uçlar); kaynak dosya <code>app/data/k5_soru_bankasi.json</code></Madde>
         <p style={{ marginTop: 10 }}>
           Her katman tamamlandığında, o katmandaki her değişken için 0-100 arası bir puan hesaplanır (aynı değişkene
           katkı veren tüm cevapların aritmetik ortalaması) ve <code> ogrenci_degisken_skorlari</code> tablosuna, o
@@ -84,13 +84,13 @@ export default function SistemHakkindaSayfasi() {
       <Bolum ikon="🧬" baslik="3. Aşama 2 — Bölüm-Meslek Eşleştirme Pipeline'ı (Offline)">
         <p style={{ marginBottom: 10 }}>
           Bu aşama öğrenciden bağımsızdır — <b>periyodik olarak</b> (örn. 6 ayda bir), yöneticinin kendi
-          bilgisayarında çalıştırdığı bir işlemdir. Amaç: 301 bölümün her birinin, 31 değişkende
+          bilgisayarında çalıştırdığı bir işlemdir. Amaç: 278 bölümün her birinin, 31 değişkende
           <b> "beklenen profilini"</b> (agirlik_degeri) hesaplamak. Pipeline betikleri bu kod deposunda değildir;
           sunucu yalnızca çıktıyı (xlsx/csv) alır. Admin panelindeki "pipeline durumu" uç noktası yer tutucudur
           (iş kuyruğu kurulmadı).
         </p>
         <Madde>Meslek veri kaynağı: <b>ESCO</b> (Avrupa Birliği'nin resmi meslek sınıflandırması) — 3.039 meslek, her biri için gerçek, uzmanlarca yazılmış açıklama içerir</Madde>
-        <Madde>Bölüm veri kaynağı: sistemin kendi 301 bölümü, her biri için yazılmış kısa açıklama</Madde>
+        <Madde>Bölüm veri kaynağı: sistemin kendi 278 bölümü (2026-10-18: ayırt edilemeyen 21 grup birleştirildi), her biri için yazılmış kısa açıklama</Madde>
         <Madde>Her meslek, tam açıklama metninin anlamsal benzerliğine göre bölümlerle eşleştirilir (benzerlik skoru)</Madde>
         <Madde>Bir bölüme "yakın" mesleklerin puanları ağırlıklı ortalamayla birleştirilip o bölümün 31 değişkenlik profili çıkarılır; bir değişkende veri yoksa skor motoru nötr 50 kullanır</Madde>
         <Madde><b>etkin_meslek_sayisi</b> ve <b>agirlikli_varyans</b>, bu hesaplamanın ne kadar güvenilir olduğunun göstergesidir (admin-only, öğrenciye asla gösterilmez); sıralamada eşitlik bozucu olarak da kullanılır</Madde>
@@ -202,8 +202,8 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Katman içi göreli ölçekleme:</b> öğrenci vektörü ve her bölüm satırı her katman içinde kendi ortalama/std'sine göre 50 + 15·z'ye çekilir (düzey değil "şekil" karşılaştırılır)</Madde>
         <Madde>Performans matrisi: hücre = max(0, 100 − |öğrenci − bölüm|) (ölçekli değerlerle); 10 yöntemin ortak girdisi budur, tüm kriterler fayda yönlüdür</Madde>
         <Madde>10 yöntemin sonucu min-max ile 0-100'e normalize edilip <b>aritmetik ortalaması</b> alınır → <b>toplam_uyum</b></Madde>
-        <Madde><b>Sıralama (2026-10-17):</b> öneri sırası yalnızca gösterilen uyum puanına göredir (10 ÇKKV yönteminin ortalaması + K5 dal katkısı); sonradan müdahale yok. Kaldırılanlar: alan tutarlılığı cezası (puana yazılıp 0'a kırpıyordu; öğrenci başına ~200/301 bölüm 0 görünüyordu) ve alan komşuluğu gruplaması (ana alan + komşuları puana bakılmadan öne alınıyordu). Konu olarak uzak iki bölüm birlikte çıkıyorsa bu, ölçülen özelliklerdeki gerçek ortaklıktır; ayrım ölçümden (değişkenler, K5) gelir</Madde>
-        <Madde><b>K5 etkisi:</b> tamamlanan alanın bölümleri için nihai = toplam_uyum + 0,50 × (dal_ici_uyum − 50), 0-100'e kırpılır (en fazla ±25). Veritabanındaki toplam_uyum değişmez; birleştirme okunurken yapılır</Madde>
+        <Madde><b>Sıralama (2026-10-17):</b> öneri sırası yalnızca gösterilen uyum puanına göredir (10 ÇKKV yönteminin ortalaması; K5 yalnızca küme içi sırayı değiştirir); sonradan müdahale yok. Kaldırılanlar: alan tutarlılığı cezası (puana yazılıp 0'a kırpıyordu; öğrenci başına ~200/301 bölüm 0 görünüyordu) ve alan komşuluğu gruplaması (ana alan + komşuları puana bakılmadan öne alınıyordu). Konu olarak uzak iki bölüm birlikte çıkıyorsa bu, ölçülen özelliklerdeki gerçek ortaklıktır; ayrım ölçümden (değişkenler, K5) gelir</Madde>
+        <Madde><b>K5 etkisi (2026-10-18):</b> bölümün K5 puanı = bağlı iş türlerinin bağ ağırlıklı ortalaması; öğrencinin iş türü puanlarının yayılımı düşükse (std &lt; 15) orantılı olarak 50'ye çekilir. Kümedeki bölümler ölçüt = toplam_uyum + 0,15 × (K5 − 50) ile (ölçütte en fazla ±7,5) yeniden sıralanır ve kümenin kendi K1-K4 puanlarını (büyükten küçüğe) yuva olarak alır; kümenin dışı değişmez. Veritabanındaki toplam_uyum değişmez; birleştirme okunurken yapılır</Madde>
         <Madde><b>Kendall's W</b> hesaplanır — 10 yöntem ne kadar "hemfikir", bu bir güvenilirlik/sağlamlık kontrolüdür</Madde>
         <Madde>Bu ham skorlar (yontem_skorlari, kendall_w) yalnızca admin şemasında bulunur — öğrenciye asla gösterilmez</Madde>
         <Madde><b>Katman ağırlıkları:</b> veritabanındaki <code>katmanlar.normalizasyon_agirligi</code> sütunundan okunur; değişken ağırlığı = katman ağırlığı / katmandaki (eşleşmeye giren) değişken sayısı, toplam 1'e normalize. Kayıtlı göçlere göre değer K1-K3 %20, K4 %40'tır (0008; ilk kurulum 0002: 20/15/25/40). Ürün kararı K1-K4 eşit %25: 0052 göçü bunu bir kez uygular (tek_seferlik_gocler işaretiyle; sonradan Parametreler ekranından yapılan değişikliği ezmez)</Madde>
@@ -211,7 +211,7 @@ export default function SistemHakkindaSayfasi() {
 
       <Bolum ikon="📊" baslik="5. Aşama 4 — Sonuç Sunumu ve Gizlilik Kuralları">
         <p style={{ marginBottom: 10 }}>Öğrenciye üç farklı sonuç ekranı sunulur:</p>
-        <Madde><b>Bölüm Uyumum</b> — yalnızca K1-K4'ün 4'ü de bitince ve açılan K5 alanları tamamlanınca (yoksa 409 döner), en yüksek uyumlu <b>en fazla 10</b> bölüm (API üst sınırı 10; arayüz 20 istese de 10 döner). Her bölüm için "Neden bu bölüm?" açıklaması: en fazla 3 örtüşen güçlü yön + öğrencinin bunu gösteren seçimleri, K5 notu ve bölüme özgü bir dikkat notu</Madde>
+        <Madde><b>Bölüm Uyumum</b> — yalnızca K1-K4'ün 4'ü de bitince ve açıldıysa K5 iş türü soruları tamamlanınca (yoksa 409 döner), en yüksek uyumlu <b>en fazla 10</b> bölüm (API üst sınırı 10; arayüz 20 istese de 10 döner). Her bölüm için "Neden bu bölüm?" açıklaması: en fazla 3 örtüşen yön (değerler dahil; öğrenci ve bölüm ikisinde de yüksek) + öğrencinin bunu gösteren seçimleri, K5 notu ve bölüme özgü bir dikkat notu</Madde>
         <Madde><b>Tüm Bölümleri Keşfet</b> — profil eksik olsa bile çalışır; bölümün en yüksek ağırlıklı 5 değişkenini ve (hesaplandıysa) uyum yüzdesini gösterir</Madde>
         <Madde><b>Genel Sonuçlar</b> — K1-K4'ün özet profili, gerçek "öne çıkan güçler/gelişim alanları"</Madde>
         <p style={{ marginTop: 10, padding: '10px 12px', background: 'var(--rel, #fdecea)', borderRadius: 8, color: 'var(--re)' }}>
@@ -230,15 +230,15 @@ export default function SistemHakkindaSayfasi() {
           <code> hedef_degisim_hakki</code>). Okul yetkilisi/süper admin değişikliği hak harcamaz ve ek hak verebilir;
           eski bir hedefe dönülünce ilerleme korunur.
         </p>
-        <Madde><b>Gap Analizi:</b> her değişkende göreli fark (katman içi 50 ± 15 ölçekte öğrenci − bölüm) hesaplanır, 5 kademeye ayrılır: ≥15 belirgin üstün, ≥5 üstün, uyumlu, altında, ≤−15 belirgin altında</Madde>
+        <Madde><b>Gap Analizi:</b> her değişkende göreli fark (katman içi 50 ± 15 ölçekte öğrenci − bölüm) hesaplanır, 5 kademeye ayrılır: ≥15 belirgin fazla, ≥5 fazla, ±5 içi uyumlu, eksik, ≤−15 belirgin eksik (fark yönsüzdür; fazlalık avantaj sayılmaz)</Madde>
         <Madde><b>Öncelik Skoru:</b> fark büyüklüğü × bölüm ağırlığı × katman ağırlığı × bölümün o özellikteki ayırt ediciliği (bölümler arası yüzdelik) — hangi boyutun geliştirilmesi en çok fark yaratır, onu öne çıkarır</Madde>
-        <Madde><b>Sen ve Bölümün — fark sınıfları (2026-10-17):</b> uyum puanı farkın yönüne bakmadığı için (100 − |öğrenci − bölüm|) ekran da yakınlık dilinde: |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz. Değerlerde (K1) etiket "senin için daha önemli / daha az önemli". P4 (kaygı) istisna: yalnızca fazlası fark sayılır. Güçlü yön = uyumlu (±5) ve öğrencinin kendi profilinde yüksek (katman içi ≥ 60), değerler hariç. "Neden bu bölüm?" dikkat notu iki yönlü: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not, 3+ bölümde tekrarlanan not gösterilmez</Madde>
+        <Madde><b>Sen ve Bölümün — fark sınıfları (2026-10-17):</b> uyum puanı farkın yönüne bakmadığı için (100 − |öğrenci − bölüm|) ekran da yakınlık dilinde: |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz. Değerlerde (K1) etiket "senin için daha önemli / daha az önemli". P4 (kaygı) istisna: yalnızca fazlası fark sayılır. Güçlü yön = uyumlu (±5) ve öğrencinin kendi profilinde yüksek (katman içi ≥ 60), değerler (D) ve P4 hariç. "Neden bu bölüm?" dikkat notu iki yönlü: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not, 3+ bölümde tekrarlanan not gösterilmez</Madde>
         <Madde><b>Cevap analizi ve uyum matrisleri (2026-10-17):</b> öğrenci detayında okul yetkilisi (yalnızca kendi okulu) ve süper admin görür, öğrenci görmez. Üç matris: cevap matrisi (soru × özellik katkısı), uyum matrisi (özellik × bölüm: fark ve renk sınıfı, ya da katkı) ve yöntem matrisi (bölüm × 10 ÇKKV yöntemi + Kendall W; yalnızca süper admin). Katkı "bu özellik olmasaydı" yöntemiyle hesaplanır (özellik çıkarılıp 10 yöntem yeniden çalıştırılır; gösterilen puanla aynı hesap). Varsayılan: ilk 10 + hedef + son 3 bölüm, istenen bölüm eklenebilir. Excel'de tüm bölümler; yönetici PDF raporunun sonunda "Uyum açıklaması" eki (ilk 5 + hedef, katkılar, soru–cevap dökümü). Her görüntüleme / indirme işlem kaydına yazılır</Madde>
         <Madde><b>Raporlarda hedef bölüm kıyası (2026-10-17):</b> öğrenci, veli ve yönetim raporlarında "Hedef bölüm kıyası": hedef + seçilen bölümler (en çok 6, hedef dahil; A4'e sığan sütun sayısı). Her bölüm için puan farkı ve farkı en çok yaratan özellikler (hedefteki katkı − bölümdeki katkı). Sorular / cevaplar yalnızca yönetim raporunun ekinde; öğrenci ve veli raporunda yok. Bölümler "Rapor al" penceresinden seçilir (varsayılan hedef + ilk öneriler); hedef yoksa uyarıyla seçilen bölümlerin sonuçları gösterilir. Öğrencinin kendi indirdiği ve toplu raporlarda varsayılan seçim kullanılır</Madde>
         <Madde><b>Gelişim Yol Haritası:</b> içeriği olan en öncelikli 3 gelişim alanı + en belirgin 2 güçlü yön; adımlar 3 aşamaya dağılır: "Bu hafta başla" (1-2 hafta) / "Önümüzdeki 1-3 ay" / "6-12 ay". Kaynak önerileri (kitap, film, kişi, aktivite…) admin panelinden elle girilir</Madde>
         <Madde><b>Tekrar ölçüm:</b> değer (K1) dışındaki odak alanında her 3 tamamlanan adımda bir, o değişkene en çok etki eden en fazla 5 soru yeniden sorulur</Madde>
         <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (varsayılan en erken 90 gün sonra), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
-        <Madde><b>Sonuç e-postası:</b> öğrenci değerlendirmenin son bölümünü bitirince (K1–K4 ve açıldıysa K5 derinleşme alanlarının tamamı) sonuç e-postası kendi e-posta adresine otomatik gider; okulun paketinde öğrenci raporları varsa PDF sonuç raporu ektedir. Güven puanı düşük çıkan değerlendirmede gönderilmez; sorunlu bölüm yeniden çözülünce gider. Okul yetkilisi öğrenci detayından yeniden gönderebilir</Madde>
+        <Madde><b>Sonuç e-postası:</b> öğrenci değerlendirmenin son bölümünü bitirince (K1–K4 ve açıldıysa K5 iş türü soruları) sonuç e-postası kendi e-posta adresine otomatik gider; okulun paketinde öğrenci raporları varsa PDF sonuç raporu ektedir. Güven puanı düşük çıkan değerlendirmede gönderilmez; sorunlu bölüm yeniden çözülünce gider. Okul yetkilisi öğrenci detayından yeniden gönderebilir</Madde>
         <Madde><b>Haftalık görevler:</b> her hafta 3 görev (yolculuk, keşif, yansıtma), seri ve Filiz seviyesi (Tohum → Ulu Çınar)</Madde>
       </Bolum>
 
@@ -246,8 +246,8 @@ export default function SistemHakkindaSayfasi() {
         <p style={{ marginBottom: 10 }}>
           Veritabanı 4 soru tipine izin verir (<code>likert</code>, <code>sjt</code>, <code>kutup</code>,
           <code> kontrol</code>); SJT'nin ayrıca 2 cevap biçimi vardır (tek seçim / en çok–en az). Her biri farklı bir
-          puanlama formülüne dayanır. Yerel veritabanında K1-K5'teki tüm aktif sorular en çok/en az biçimli 4 şıklı SJT'dir
-          (K1-K4 15'er, K5 187); canlıdaki dağılım soru bankasından görülmelidir.
+          puanlama formülüne dayanır. 2026-10-18 soru seti (<code>app/data/olcme_sorulari.json</code>): K1-K4'te katman başına
+          15 soru — 8 en çok / en az (4 şık), 3 tek seçim (4 şık), 4 uçlar (A / B). K5 soruları öğrenciye özel üretilir (yukarıda).
         </p>
 
         <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--bor)' }}>
@@ -261,14 +261,14 @@ export default function SistemHakkindaSayfasi() {
           <div className="ct" style={{ fontSize: 13 }}>SJT (Durumsal Yargı Testi)</div>
           <Madde>Bir senaryo anlatılır, öğrenci birden fazla davranış seçeneğinden seçim yapar</Madde>
           <Madde>Her seçenek, bir veya birden fazla değişkene <b>ağırlıklı</b> bağlanabilir (örn. bir seçenek hem D1'e 0.6 hem D2'ye 0.7 ağırlıkla katkı verebilir)</Madde>
-          <Madde><b>Tek seçim:</b> seçilen seçeneğin ağırlığı × 100, ilgili değişkenin puan listesine eklenir. Ağırlık <b>negatif</b> de olabilir — "bu seçeneği seçmek, o değişkenin DÜŞÜK olduğunu gösterir" (örn. "Karışmam, kendi işime odaklanırım" → çatışma yönetimi −0.7)</Madde>
+          <Madde><b>Tek seçim (2026-10-18):</b> seçilen şık 100, seçilmeyen şıklar (50·n − 100) / (n − 1) alır (4 şıkta 33,3) — sorunun ortalaması 50 kalır ve seçilmeyen şıklar da bilgi taşır; ağırlıkla 50'ye çekilir: 50 + (puan − 50) × w. Önceden yalnızca seçilen şık puan alıyordu; değişkenin ortalaması her zaman yukarı kayıyordu</Madde>
           <Madde><b>En çok / en az:</b> öğrenci sana en çok ve en az uyan şıkkı seçer (ikisi aynı olamaz). En çok seçilen şık 100, en az seçilen 0, diğerleri 50 alır; ağırlıkla 50'ye çekilir: 50 + (puan − 50) × w (w 0–1'e kırpılır, bu biçimde negatif ağırlık etkisizdir)</Madde>
         </div>
 
         <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bor)' }}>
           <div className="ct" style={{ fontSize: 13 }}>Kutup (A-mı-B-mi, 4'lü Ölçek)</div>
           <Madde>İki değişkeni doğrudan birbirine karşı konumlandıran, hikayeleştirilmiş bir tercih sorusu (örn. "Güvenceli bir kurum mu, esnek/bağımsız bir düzen mi?")</Madde>
-          <Madde>4 seçenek: Kesinlikle A / Daha Çok A / Daha Çok B / Kesinlikle B</Madde>
+          <Madde>4 seçenek: Kesinlikle A / Daha çok A / Daha çok B / Kesinlikle B. İki ucun metni ayrı alanlarda tutulur (<code>uc_a_metni</code>, <code>uc_b_metni</code>) ve ekranda iki kart olarak gösterilir</Madde>
           <Madde>A ucu puanı, seçilen seçeneğe göre lineer enterpole edilir: 1→100, 2→66.7, 3→33.3, 4→0. B ucu puanı bunun tamamlayanıdır (100 − A puanı) — iki uç matematiksel olarak birbirinin simetrik zıttıdır</Madde>
           <Madde>Kavramsal olarak birbirine yakın/karışabilecek iki değişkeni (örn. "Deneyime Açıklık" ile "Rutin/Dinamik Tercihi") ayrı ayrı Likert yerine <b>doğrudan karşılaştırarak</b> ölçmek, hem daha az soru gerektirir hem de aralarındaki ayrımı daha net ortaya çıkarır</Madde>
         </div>
@@ -345,8 +345,8 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Bölümler:</b> Taslak → Test Ediliyor → Yayında akışı; her geçiş gerekçeli ve audit log'a yazılı</Madde>
         <Madde><b>Soru Bankası:</b> katman bazlı sekmeler, arama ve çoklu filtrelerle yönetilir; sorular normalde pasife alınır (geçmiş oturumlar bozulmasın diye). Ancak tekil/toplu silme API'leri ve arayüzde "katmanı komple sil" (sorular, şıklar ve o sorulara verilmiş öğrenci cevapları kalıcı silinir) vardır; bunlar yalnızca süper admine açıktır, öğrenci cevabı silinecekse açık onay (<code>onay=SIL</code>) ister ve kaç soru/kaç cevap silindiği audit log'a yazılır</Madde>
         <Madde><b>Katman Ağırlıkları:</b> Parametreler sayfasındaki "Katman ağırlıkları" kartından (yalnızca süper admin) K1–K4 için ayarlanır; <code>/admin/katman-agirliklari</code> doğrudan skor motorunun okuduğu <code>katmanlar.normalizasyon_agirligi</code> değerini okur/yazar (toplam 100, değişiklik audit log'a yazılır). Ürün kararı: K1–K4 eşit %25. Eski <code>katman_agirliklari</code> tablosu artık kullanılmıyor</Madde>
-        <Madde><b>Sistem Parametreleri:</b> eşikler ve süreler (yeniden değerlendirme, güven eşiği, K5 alan sayısı, alan tutarlılığı, Filiz mesaj limiti vb.) veritabanındaki satırdan okunur, satır yoksa koddaki varsayılan kullanılır; yalnızca süper admin değiştirebilir</Madde>
-        <Madde><b>Derinleşme Alanları (K5):</b> her alan "Taslak", "Güçlü Kanıtlı" ya da "Gözden Geçirilmeli" olarak işaretlenir. Bu etiketlerin açıklamaları eski kümeleme yapısından kalmadır; yerel veritabanında 17 üst alan "Güçlü Kanıtlı", eski D01 "Taslak"</Madde>
+        <Madde><b>Sistem Parametreleri:</b> eşikler ve süreler (yeniden değerlendirme, güven eşiği, Filiz mesaj limiti vb.) veritabanındaki satırdan okunur, satır yoksa koddaki varsayılan kullanılır; yalnızca süper admin değiştirebilir</Madde>
+        <Madde><b>Üst alanlar (eski K5 alanları):</b> 17 üst alan (U01-U17) artık soru açmak için kullanılmaz; bölümlerin alan etiketi (listeler, raporlar) ve iş türlerinin gruplanması için kalır. Yeni K5'in tek adımı "İş türü tercihleri" (kod K5N)</Madde>
         <Madde><b>Pipeline Sonuçları:</b> bilgisayarınızda üretilen bölüm profili çıktısı, önce taslak tabloya gider, istatistiksel önizleme sonrası yalnızca süper admin onayıyla canlıya (yeni bir versiyon olarak) yazılır</Madde>
         <Madde><b>Dosya formatları:</b> soru, pipeline ve geçerlilik yüklemeleri .xlsx (.xls/.csv de kabul); bölüm ve dal toplu yüklemesi hâlâ yalnızca .csv; okul yüklemeleri .xlsx/.csv (.xls desteklenmez)</Madde>
         <Madde><b>Audit Log:</b> durum değişikliği, rol değişikliği, pipeline onayı, parametre değişikliği, cevap analizi görüntüleme / indirme gibi kritik işlemler kalıcı olarak kaydedilir</Madde>
@@ -390,7 +390,8 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>ESCO geçişi:</b> meslek veri kaynağı 7.764 kayıtlı eski listeden, AB'nin resmi 3.039 kayıtlı ESCO sınıflandırmasına taşındı — hatalı eşleşmeler büyük ölçüde ortadan kalktı</Madde>
         <Madde><b>K5 yeniden kuruldu (2026-10-08, göç 0013):</b> eski 8 dallık yapı (A1-A9'a göre kümeleme, dal başına 7 değişken) yerine 17 üst alan, alan başına 4-11 iş türü ekseni (toplam 129) ve elle hazırlanmış bölüm–eksen bağları; alan açma kuralı K4 eşiğinden bölüm listesine geçti</Madde>
         <Madde><b>En çok / en az biçimi (0012):</b> SJT sorularında öğrenci en çok ve en az uyan şıkkı seçiyor</Madde>
-        <Madde><b>Uyum motoru düzeltmeleri:</b> katman içi göreli ölçekleme (10-03), P4 eşleşme dışı (10-07), K5 etkisi 0,30 → 0,50 (10-08), alan tutarlılığı ve alan komşuluğu, "Neden bu bölüm?" açıklamaları (10-09); öğrenci listesi en fazla 10 bölüm</Madde>
+        <Madde><b>Yeni soru seti ve yeni K5 (2026-10-18, göç 0076):</b> K1-K4'ün eski soruları silindi, yerine 60 yeni soru (en çok / en az, tek seçim, uçlar) eklendi; alan bazlı K5 yerine K1-K4'te ≥ 70 olan bölümleri (en fazla 20) iş türü sorularıyla kapıştıran K5. Göç tek seferlik olarak eski değerlendirme turlarını da sildi (eski cevaplar yeni puanlamayla karşılaştırılamaz)</Madde>
+        <Madde><b>Uyum motoru düzeltmeleri:</b> katman içi göreli ölçekleme (10-03), P4 eşleşme dışı (10-07), K5 etkisi 0,30 → 0,50 (10-08), 0,50 → 0,15 (10-18), alan tutarlılığı ve alan komşuluğu, "Neden bu bölüm?" açıklamaları (10-09); öğrenci listesi en fazla 10 bölüm</Madde>
         <Madde><b>Güvenlik/Tutarlılık altyapısı:</b> tam ekran zorunluluğu, kamera, davranış izleme ve güven skoru; 10-10'da olay türüne göre ceza, ikinci ekran/ekran görüntüsü/kopyalama takibi ve cezasız kamera reddi eklendi</Madde>
         <Madde><b>Hedef değiştirme hakkı (0022):</b> 1 aktif hedef, varsayılan 3 değiştirme hakkı, yönetim ek hak verebilir</Madde>
         <Madde><b>Katman ağırlıkları:</b> K1–K4 eşit, %25'er (0052 göçü; eski 20/20/20/40 değeri bu göçle bir kez güncellendi). Parametreler ekranından değiştirilebilir</Madde>

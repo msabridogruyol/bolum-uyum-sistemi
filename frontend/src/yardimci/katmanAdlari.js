@@ -5,7 +5,7 @@ export const KATMAN_BILGI = {
   K2: { ad: 'Kişilik & Çalışma Tarzı', ikon: '🌿', soru: 'Nasıl bir ortamda rahat edersin?', sure: '≈ 5 dk' },
   K3: { ad: 'İş Ortamı & Profesyonel Yetkinlik', ikon: '🍃', soru: 'Zor bir durumda nasıl davranırsın?', sure: '≈ 5 dk' },
   K4: { ad: 'Alan Eğilimi & Bilişsel Stil', ikon: '🌸', soru: 'Hangi alanlar seni kendine çekiyor?', sure: '≈ 5 dk' },
-  K5: { ad: 'Derinleşme', ikon: '🌻', soru: 'İlgi alanında sana en uygun yön hangisi?', sure: '≈ 3 dk (her alan)' },
+  K5: { ad: 'İş türü tercihleri', ikon: '🌻', soru: 'Sana en uygun bölümlerdeki işlerden hangileri sana daha yakın?', sure: '≈ 3-5 dk' },
 }
 export function katmanAdi(kod, ad) {
   if (ad && ad.trim() && ad.trim().toUpperCase() !== (kod || '').toUpperCase()) return ad.trim()

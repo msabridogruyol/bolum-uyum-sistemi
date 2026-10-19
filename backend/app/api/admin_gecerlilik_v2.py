@@ -199,7 +199,7 @@ def gecerlilik_girdisi_getir_v2(
     sjt_sorular = (
         db.query(Soru, Katman.kod)
         .join(Katman, Katman.id == Soru.katman_id)
-        .filter(Soru.soru_tipi == "sjt", Soru.aktif_mi.is_(True))
+        .filter(Soru.soru_tipi == "sjt", Soru.aktif_mi.is_(True), Soru.ogrenci_id.is_(None))
         .all()
     )
     for soru, katman_kodu in sjt_sorular:
@@ -234,13 +234,24 @@ def gecerlilik_girdisi_getir_v2(
     kutup_sorular = (
         db.query(Soru, Katman.kod)
         .join(Katman, Katman.id == Soru.katman_id)
-        .filter(Soru.soru_tipi == "kutup", Soru.aktif_mi.is_(True))
+        .filter(Soru.soru_tipi == "kutup", Soru.aktif_mi.is_(True), Soru.ogrenci_id.is_(None))
         .all()
     )
     for soru, katman_kodu in kutup_sorular:
         if soru.degisken_id is None or soru.b_ucu_degisken_id is None:
             continue
         secenekler = db.query(SoruSecenegi).filter(SoruSecenegi.soru_id == soru.id).order_by(SoruSecenegi.secenek_sirasi).all()
+        # [2026-10-18] Uçlar metni ayrı alanda tutuluyorsa (şıklar yalnızca "Kesinlikle A … Kesinlikle B") test edilecek
+        # metin iki uçtur: A ucu 1. şıkla, B ucu son şıkla eşlenir.
+        if soru.uc_a_metni and soru.uc_b_metni and secenekler:
+            for sec, metin, beklenen_id in ((secenekler[0], soru.uc_a_metni, soru.degisken_id),
+                                            (secenekler[-1], soru.uc_b_metni, soru.b_ucu_degisken_id)):
+                sonuc.append(GecerlilikBirimiOut(
+                    birim_anahtari=f"kutup_{soru.id}_{sec.id}", kaynak_soru_id=soru.id, secenek_id=sec.id,
+                    kaynak_tipi="kutup", katman_kod=katman_kodu, metin=metin, baglam=soru.soru_metni,
+                    beklenen_degisken_kod=degisken_kodlari.get(beklenen_id, ""),
+                ))
+            continue
         for sec in secenekler:
             beklenen_id = soru.degisken_id if sec.secenek_sirasi <= 2 else soru.b_ucu_degisken_id
             sonuc.append(GecerlilikBirimiOut(

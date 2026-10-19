@@ -2,8 +2,10 @@ import { useEffect, useState } from 'react'
 import GecersizTurUyarisi from '../components/GecersizTurUyarisi'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
+import { katmanAdi } from '../yardimci/katmanAdlari'
+import { gelisimeAcikMi, gucluMu } from '../yardimci/seviye'
 
-const KATMAN_IKON = { K1: '❤️', K2: '🧠', K3: '💡', K4: '🎯', K5: '🔭' }
+const KATMAN_IKON = { K1: '🌱', K2: '🌿', K3: '🍃', K4: '🌸', K5: '🌻' }
 const ANA_KATMANLAR = ['K1', 'K2', 'K3', 'K4']
 
 export default function GenelSonuclarSayfasi({ gomulu = false }) {
@@ -49,18 +51,23 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
   // [2026-10-03] K5 zorunlu: açılan dal(lar) bitmediyse öğrenci K5'e yönlendirilir
   const k5Bekliyor = !!ozet && ozet.k5_acilan_dal_sayisi > ozet.k5_tamamlanan_dal_sayisi
 
-  const k5OrtalamaPuan = k5Durum.acilan.length > 0
-    ? Math.round(k5Durum.acilan.reduce((a, d) => a + d.puan, 0) / k5Durum.acilan.length)
-    : null
+  // [2026-10-18] Yeni K5'in tek bir "puanı" yoktur (iş türü tercihleri küme içi sırayı değiştirir): kartta durum gösterilir
+  const k5Bitti = k5Durum.acilan.some((d) => d.durum === 'tamamlandi')
 
+  // [2026-10-18] Sadeleştirme + sistem mantığı: puanlar katman içinde görelidir (ortalama hep ≈50, gösterilmez).
+  // Güçlü yön = 62 ve üstü; değerler (K1/D) güçlü yön ya da gelişim alanı sayılmaz, "önem verdiklerin" olarak ayrı
+  // listelenir; duygusal hassasiyet (P4) ters yönlüdür, iki listeye de girmez (Kişilik sekmesinde görünür).
   const tumSonuclar = ANA_KATMANLAR.flatMap((kod) => katmanSonuclari[kod]?.sonuclar || [])
-  const genelOrtalama = tumSonuclar.length
-    ? Math.round(tumSonuclar.reduce((a, s) => a + s.puan, 0) / tumSonuclar.length)
-    : null
-
-  const siraliSonuclar = [...tumSonuclar].sort((a, b) => b.puan - a.puan)
-  const guclerListesi = siraliSonuclar.slice(0, 5)
-  const gelisimListesi = [...tumSonuclar].sort((a, b) => a.puan - b.puan).slice(0, 4)
+  const degerMi = (s) => s.katmanKod === 'K1' || String(s.degisken_kod || '').startsWith('D')
+  const p4Mu = (s) => s.degisken_kod === 'P4'
+  const ozellikler = tumSonuclar.filter((s) => !degerMi(s) && !p4Mu(s)).sort((a, b) => b.puan - a.puan)
+  const degerler = tumSonuclar.filter(degerMi).sort((a, b) => b.puan - a.puan)
+  const gucluler = ozellikler.filter((s) => gucluMu(s.puan)).slice(0, 6)
+  const gorece = gucluler.length ? [] : ozellikler.slice(0, 3)
+  const gelisim = ozellikler.filter((s) => gelisimeAcikMi(s.puan)).reverse().slice(0, 5)
+  const onemli = degerler.slice(0, 3)
+  const azOnemli = degerler.length > 3 ? degerler.slice(-2).reverse() : []
+  const enOne = (kod) => [...(katmanSonuclari[kod]?.sonuclar || [])].filter((s) => !p4Mu(s)).sort((a, b) => b.puan - a.puan)[0]
 
   return (
     <div className="pg pg-genis">
@@ -68,62 +75,47 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
         <div className="pt">Genel Sonuçlar</div>
         <div className="ps">
           Tüm katmanların özet profili · {tamamlanan}/{katmanlar.length} katman tamamlandı
-          {genelOrtalama !== null && <> · Genel ortalama puan: <b>{genelOrtalama}</b></>}
         </div>
       </div>
       {!gomulu && <GecersizTurUyarisi ozet={ozet} />}
 
       {k5Bekliyor && (
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)', marginBottom: 16 }}>
-          <div className="ct">Bir adım kaldı: Alan Soruları (K5)</div>
+          <div className="ct">Bir adım kaldı: İş Türü Soruları (K5)</div>
           <div className="ps" style={{ margin: '0 0 12px' }}>
-            K4 sonuçlarına göre sana özel alan soruları açıldı. Bu soruları bitirince bölüm önerilerin hazırlanacak.
+            Sana en uygun çıkan bölümleri karşılaştıran, sana özel iş türü soruları açıldı. Bu soruları bitirince bölüm önerilerin hazırlanacak.
           </div>
           <button className="btn" onClick={() => navigate('/katmanlar')}>K5'e Devam Et →</button>
         </div>
       )}
 
-      {/* --- Katman özet kartları (K1-K5) --- */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 12, marginBottom: 20 }}>
-        {ANA_KATMANLAR.map((kod, i) => {
-          const k = katmanlar.find((x) => x.kod === kod)
+      {/* --- Katmanlar: her katmanda en öne çıkan özellik (ortalama değil — katman içi puanlar göreli) --- */}
+      <div className="gp-katmanlar">
+        {ANA_KATMANLAR.map((kod) => {
           const sonuc = katmanSonuclari[kod]
+          const ust = enOne(kod)
           return (
-            <div key={kod} className="oc" onClick={() => navigate(`/profilim/${kod}`)}>
-              <div className="oi">{KATMAN_IKON[kod]}</div>
-              <div className="ol">Katman {i + 1}</div>
-              <div className="op" style={{ color: sonuc ? 'var(--gr)' : 'var(--tx3)' }}>
-                {sonuc ? sonuc.puanOrtalama : '—'}
-              </div>
-              <div className="ob">{k?.ad?.split(' ')[0] || kod}</div>
-            </div>
+            <button key={kod} type="button" className="gp-katman" onClick={() => navigate(`/profilim/${kod}`)}>
+              <span className="gp-katman-ad">{KATMAN_IKON[kod]} {katmanAdi(kod)}</span>
+              {sonuc && ust ? (
+                <span className="gp-katman-ust"><small>{kod === 'K1' ? 'En önem verdiğin' : 'En öne çıkan'}</small>{ust.degisken_adi}</span>
+              ) : <span className="gp-katman-ust bos">Henüz tamamlanmadı</span>}
+            </button>
           )
         })}
-        <div className="oc" onClick={() => navigate(k5Durum.acilan.length > 0 && !k5Bekliyor ? '/profilim/K5' : '/katmanlar')}>
-          <div className="oi">{KATMAN_IKON.K5}</div>
-          <div className="ol">Katman 5</div>
-          <div className="op" style={{ color: k5OrtalamaPuan !== null ? 'var(--gr)' : 'var(--tx3)' }}>
-            {k5OrtalamaPuan !== null ? k5OrtalamaPuan : '—'}
-          </div>
-          <div className="ob">Derinleşme</div>
-        </div>
+        <button type="button" className="gp-katman" onClick={() => navigate(k5Durum.acilan.length > 0 && !k5Bekliyor ? '/profilim/K5' : '/katmanlar')}>
+          <span className="gp-katman-ad">{KATMAN_IKON.K5} {katmanAdi('K5')}</span>
+          <span className={'gp-katman-ust' + (k5Bitti ? '' : ' bos')}>{k5Bitti ? <><small>Durum</small>Tamamlandı ✓</> : k5Durum.acilan.length ? 'Sorular bekliyor' : 'Açılmadı'}</span>
+        </button>
       </div>
 
       {!tumTamam ? (
         <>
           <div className="taslak-onizleme">
             <div className="taslak-onizleme-icerik">
-              <div className="card">
-                <div className="ct">Öne Çıkan Boyutların</div>
-                <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                  {['Entelektüel Merak', 'Sistemik Düşünce', 'Sosyal Etki', 'Özerklik'].map((ad, i) => (
-                    <span key={i} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>{ad}</span>
-                  ))}
-                </div>
-              </div>
               <div className="sw">
                 <div className="swc">
-                  <div className="swh"><div className="swi" style={{ background: 'var(--grl)' }}>✓</div><div className="swt">Öne Çıkan Güçlerin</div></div>
+                  <div className="swh"><div className="swi" style={{ background: 'var(--grl)' }}>✓</div><div className="swt">Güçlü yönlerin</div></div>
                   {['Entelektüel Merak', 'Sistemik Düşünce', 'Sosyal Etki', 'Özerklik', 'Yaratıcılık'].map((ad, i) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
                       <span>{ad}</span><b style={{ color: 'var(--gr)' }}>{90 - i * 6}</b>
@@ -131,7 +123,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
                   ))}
                 </div>
                 <div className="swc">
-                  <div className="swh"><div className="swi" style={{ background: 'var(--aml)' }}>↻</div><div className="swt">Gelişim Alanların</div></div>
+                  <div className="swh"><div className="swi" style={{ background: 'var(--aml)' }}>↻</div><div className="swt">Gelişime açık yönlerin</div></div>
                   {['Dışadönüklük', 'Risk Toleransı', 'Rekabet', 'Statü'].map((ad, i) => (
                     <div key={i} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, color: 'var(--tx2)', padding: '5px 0' }}>
                       <span>{ad}</span><b style={{ color: 'var(--am)' }}>{35 - i * 4}</b>
@@ -143,7 +135,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
             <div className="taslak-onizleme-overlay">
               <div className="to-ikon">📊</div>
               <div className="to-metin">
-                K1–K4'ün hepsini bitirince öne çıkan boyutların, güçlerin ve gelişim alanların burada görünecek. Şu an {tamamlanan}/{katmanlar.length} katman tamamlandı.
+                K1–K4'ün hepsini bitirince güçlü yönlerin, önem verdiğin değerler ve gelişime açık yönlerin burada görünecek. Şu an {tamamlanan}/{katmanlar.length} katman tamamlandı.
               </div>
             </div>
           </div>
@@ -153,66 +145,69 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
         </>
       ) : (
         <>
-          {guclerListesi.length > 0 && (
-            <div className="card">
-              <div className="ct">Öne Çıkan Boyutların</div>
-              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8 }}>
-                {guclerListesi.map((s) => (
-                  <span key={s.degisken_id} className="bdg bdg-prog" style={{ fontSize: 12, padding: '6px 14px' }}>
-                    {s.degisken_adi}
-                  </span>
-                ))}
+          <div className="gp-ozet">
+            <div className="swc">
+              <div className="swh">
+                <div className="swi" style={{ background: 'var(--grl)' }}>✓</div>
+                <div className="swt">Güçlü yönlerin</div>
               </div>
+              <div className="gp-not">Kendi profilinde öne çıkan özelliklerin (62 ve üstü).</div>
+              {gucluler.map((s) => <Satir key={s.degisken_id} s={s} renk="var(--gr)" alt={s.durum_tespiti} />)}
+              {!gucluler.length && (
+                <>
+                  <div className="gp-not">Henüz belirgin biçimde öne çıkan bir özelliğin yok; görece en yüksek puanların:</div>
+                  {gorece.map((s) => <Satir key={s.degisken_id} s={s} renk="var(--tx2)" />)}
+                </>
+              )}
             </div>
-          )}
-          <div className="sw">
-          <div className="swc">
-            <div className="swh">
-              <div className="swi" style={{ background: 'var(--grl)' }}>✓</div>
-              <div className="swt">Öne Çıkan Güçlerin</div>
-            </div>
-            {guclerListesi.map((s) => (
-              <div key={s.degisken_id} style={{ padding: '9px 0', borderBottom: '1px solid var(--bor)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12.5, fontWeight: 600 }}>
-                    <span style={{ fontSize: 9.5, fontWeight: 800, color: 'var(--pu)', background: 'var(--pul)', padding: '2px 7px', borderRadius: 20 }}>{s.katmanKod}</span>
-                    {s.degisken_adi}
-                  </span>
-                  <b style={{ color: 'var(--gr)' }}>{s.puan}</b>
-                </div>
-                {s.durum_tespiti && <div style={{ fontSize: 11.5, color: 'var(--tx3)', marginTop: 4, lineHeight: 1.5 }}>{s.durum_tespiti}</div>}
+            <div className="swc">
+              <div className="swh">
+                <div className="swi" style={{ background: 'var(--pul)' }}>❤</div>
+                <div className="swt">Önem verdiğin değerler</div>
               </div>
-            ))}
+              <div className="gp-not">Bir işte senin için önemli olanlar. Değerler geliştirilecek bir yön değil; bölüm seçerken dikkate alacağın bir tercih.</div>
+              {onemli.map((s) => <Satir key={s.degisken_id} s={s} renk="var(--pu)" katmansiz />)}
+              {azOnemli.length > 0 && (
+                <>
+                  <div className="gp-alt-baslik">Senin için daha az belirleyici</div>
+                  {azOnemli.map((s) => <Satir key={s.degisken_id} s={s} renk="var(--tx3)" katmansiz />)}
+                </>
+              )}
+            </div>
+            <div className="swc">
+              <div className="swh">
+                <div className="swi" style={{ background: 'var(--aml)' }}>↻</div>
+                <div className="swt">Gelişime açık yönlerin</div>
+              </div>
+              <div className="gp-not">Kendi profilinde geride kalan özelliklerin (40'ın altı). Kötü olduğun anlamına gelmez.</div>
+              {gelisim.map((s) => <Satir key={s.degisken_id} s={s} renk="var(--am)" alt={s.aksiyon_onerisi && `💡 ${s.aksiyon_onerisi}`} />)}
+              {!gelisim.length && <div className="gp-not">40'ın altında kalan bir özelliğin yok.</div>}
+            </div>
           </div>
-          <div className="swc">
-            <div className="swh">
-              <div className="swi" style={{ background: 'var(--aml)' }}>↻</div>
-              <div className="swt">Gelişim Alanların</div>
-            </div>
-            {gelisimListesi.map((s) => (
-              <div key={s.degisken_id} style={{ padding: '9px 0', borderBottom: '1px solid var(--bor)' }}>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ display: 'flex', alignItems: 'center', gap: 7, fontSize: 12.5, fontWeight: 600 }}>
-                    <span style={{ fontSize: 9.5, fontWeight: 800, color: 'var(--am)', background: 'var(--aml)', padding: '2px 7px', borderRadius: 20 }}>{s.katmanKod}</span>
-                    {s.degisken_adi}
-                  </span>
-                  <b style={{ color: 'var(--am)' }}>{s.puan}</b>
-                </div>
-                {s.aksiyon_onerisi && (
-                  <div style={{ fontSize: 11.5, color: 'var(--tx2)', marginTop: 4, lineHeight: 1.5 }}>💡 {s.aksiyon_onerisi}</div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
         </>
       )}
 
       {k5Bekliyor ? (
-        <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>Alan Sorularına (K5) Devam Et →</button>
-      ) : (
+        <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>İş Türü Sorularına (K5) Devam Et →</button>
+      ) : !gomulu && (
         <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/')}>Ana Sayfaya Dön</button>
       )}
+    </div>
+  )
+}
+
+// Tek özellik satırı: ad + katman adı + tam sayı puan (+ isteğe bağlı kısa açıklama)
+function Satir({ s, renk, alt, katmansiz = false }) {
+  return (
+    <div className="gp-satir">
+      <div className="gp-satir-ust">
+        <span>
+          {s.degisken_adi}
+          {!katmansiz && <small>{katmanAdi(s.katmanKod).split(/ [&/] /)[0]}</small>}
+        </span>
+        <b style={{ color: renk }}>{Math.round(s.puan)}</b>
+      </div>
+      {alt && <div className="gp-satir-alt">{alt}</div>}
     </div>
   )
 }

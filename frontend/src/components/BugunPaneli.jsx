@@ -16,7 +16,7 @@ function SiradakiAdim({ ozet, katmanlar, hedef, plan, kocluk = true }) {
     alt = `${b.soru || ''} ${b.sure || ''} · Yarıda bırakırsan kaldığın yerden devam edersin.`
     dugme = bekleyen.durum === 'devam_ediyor' ? 'Kaldığın yerden devam et' : 'Başla'; git = '/katmanlar'
   } else if (!ozet.tur_tamamlandi_mi) {
-    ust = 'Değerlendirme'; baslik = '🌻 Sana özel alan soruları'; alt = 'Bu adımı bitirince bölüm önerilerin kesinleşir.'; dugme = 'Devam et'; git = '/katmanlar'
+    ust = 'Değerlendirme'; baslik = '🌻 Sana özel iş türü soruları'; alt = 'Bu adımı bitirince bölüm önerilerin kesinleşir.'; dugme = 'Devam et'; git = '/katmanlar'
   } else if (!hedef) {
     ust = 'Sonuçların hazır'; baslik = '🎯 Bir hedef bölüm seç'; alt = 'Sana uygun bölümlere bak. Birini hedef seçince adım adım planın hazırlanır.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
   } else if (!kocluk) {
@@ -31,7 +31,7 @@ function SiradakiAdim({ ozet, katmanlar, hedef, plan, kocluk = true }) {
   } else if (plan) {
     ust = 'Koçluk'; baslik = '🎉 Yol haritanın tamamını bitirdin'; alt = 'Güçlü yönlerini büyütecek adımlara geçebilirsin.'; dugme = 'Güçlü yönlerim'; git = '/koclugu?sekme=guclu'
   } else if (plan === false) {
-    ust = 'Koçluk'; baslik = '🎯 Koçluğuna göz at'; alt = 'Planın şu an gösterilemedi. Alan soruların bekliyor olabilir.'; dugme = 'Koçluğum'; git = '/koclugu'
+    ust = 'Koçluk'; baslik = '🎯 Koçluğuna göz at'; alt = 'Planın şu an gösterilemedi. İş türü soruların bekliyor olabilir.'; dugme = 'Koçluğum'; git = '/koclugu'
   } else return <div className="bugun-adim"><div className="bugun-ust">Yükleniyor…</div></div>
   return (
     <div className="bugun-adim" role="button" tabIndex={0} onClick={() => navigate(git)} onKeyDown={(e) => { if (e.key === 'Enter') navigate(git) }}>

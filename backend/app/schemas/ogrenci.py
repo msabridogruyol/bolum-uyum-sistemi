@@ -38,6 +38,9 @@ class SoruOut(BaseModel):
     soru_metni: str
     cevap_bicimi: str = "tek"  # 'tek' | 'encok_enaz'
     secenekler: list[SecenekOut] = []
+    # [2026-10-18] Uçlar (soru_tipi='kutup') sorusunda iki ucun metni; seçenekler "Kesinlikle A … Kesinlikle B"
+    uc_a_metni: str | None = None
+    uc_b_metni: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -60,6 +63,7 @@ class KatmanSonucSatiri(BaseModel):
     degisken_id: int
     degisken_adi: str
     puan: float
+    degisken_kod: str | None = None   # [2026-10-18] ekranlar değerleri (D) ve P4'ü güçlü / gelişim listelerinden ayırabilsin
     # --- Gelişim yorumu (sonradan eklendi, opsiyonel — geriye dönük uyumlu) ---
     durum_tespiti: str | None = None
     aksiyon_onerisi: str | None = None
@@ -139,7 +143,8 @@ class BolumSiralamaSatiri(BaseModel):
 class DalAdayOut(BaseModel):
     dal_kodu: str
     dal_adi: str
-    puan: float
+    puan: float                      # [2026-10-18] yeni K5: karşılaştırılacak bölüm sayısı
+    durum: str = "baslamadi"         # K5 oturumunun durumu: baslamadi | devam_ediyor | tamamlandi
 
 
 class K5DurumOut(BaseModel):

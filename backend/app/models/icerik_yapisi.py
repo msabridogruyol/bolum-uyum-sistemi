@@ -2,8 +2,10 @@
 İçerik yapısı tabloları — schema.sql BÖLÜM 2
 Kaynak: sistem_genel_anlatim.md B), D2, D3, A6, E4, E5
 """
+import uuid
 from datetime import datetime
-from sqlalchemy import String, Integer, Numeric, Boolean, DateTime, ForeignKey, CheckConstraint, ARRAY, UniqueConstraint, JSON
+from sqlalchemy import BigInteger, String, Integer, Numeric, Boolean, DateTime, ForeignKey, CheckConstraint, ARRAY, UniqueConstraint, JSON
+from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 from app.core.database import Base
 
@@ -74,13 +76,45 @@ class Soru(Base):
     # hem kendisine EN ÇOK hem EN AZ uyan şıkkı seçer (yalnızca sjt sorularında).
     cevap_bicimi: Mapped[str] = mapped_column(String, nullable=False, default="tek", server_default="tek")
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    # [2026-10-18] Yeni K5: öğrenciye özel üretilen sorular (soru bankası değil). Dolu olanlar yalnızca o öğrencinin o
+    # turunda görünür; admin soru listeleri, geçerlilik testleri ve çeviri kataloğu bunları dışarıda tutar.
+    ogrenci_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("ogrenciler.id", ondelete="CASCADE"))
+    tur_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("ogrenci_degerlendirme_turu.id", ondelete="CASCADE"))
+    # Uçlar (kutup) sorusunda iki ucun metni ekranda ayrı kartlar olarak gösterilir (seçenekler "Kesinlikle A" … ).
+    uc_a_metni: Mapped[str | None] = mapped_column(String)
+    uc_b_metni: Mapped[str | None] = mapped_column(String)
+
+
+class K5Cumle(Base):
+    """[2026-10-18] Yeni K5 soru bankası: her iş türü (K5 eksen değişkeni) için bağımsız etkinlik cümleleri.
+    Öğrenciye özel K5 soruları bu cümlelerle kurulur (dal_servisi)."""
+    __tablename__ = "k5_cumleleri"
+    __table_args__ = (UniqueConstraint("degisken_id", "sira", name="uq_k5c_degisken_sira"),)
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
+    sira: Mapped[int] = mapped_column(Integer, nullable=False)
+    metin: Mapped[str] = mapped_column(String, nullable=False)
+    aktif_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
+
+
+class K5SoruKoku(Base):
+    """[2026-10-18] Yeni K5 soru kökleri. tip: 'encok' (en çok / en az), 'tek' (tek seçim), 'kutup' (iki uç)."""
+    __tablename__ = "k5_soru_kokleri"
+    __table_args__ = (CheckConstraint("tip IN ('encok','tek','kutup')", name="ck_k5k_tip"),
+                      UniqueConstraint("tip", "metin", name="uq_k5k_tip_metin"))
+
+    id: Mapped[int] = mapped_column(Integer, primary_key=True)
+    tip: Mapped[str] = mapped_column(String, nullable=False)
+    metin: Mapped[str] = mapped_column(String, nullable=False)
+    aktif_mi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=True)
 
 
 class SoruSecenegi(Base):
     __tablename__ = "soru_secenekleri"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    soru_id: Mapped[int] = mapped_column(ForeignKey("sorular.id"), nullable=False)
+    soru_id: Mapped[int] = mapped_column(ForeignKey("sorular.id", ondelete="CASCADE"), nullable=False)
     secenek_sirasi: Mapped[int] = mapped_column(Integer, nullable=False)
     secenek_metni: Mapped[str] = mapped_column(String, nullable=False)
 
@@ -89,7 +123,7 @@ class SjtSecenekDegiskenAgirlik(Base):
     __tablename__ = "sjt_secenek_degisken_agirlik"
 
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
-    secenek_id: Mapped[int] = mapped_column(ForeignKey("soru_secenekleri.id"), nullable=False)
+    secenek_id: Mapped[int] = mapped_column(ForeignKey("soru_secenekleri.id", ondelete="CASCADE"), nullable=False)
     degisken_id: Mapped[int] = mapped_column(ForeignKey("degiskenler.id"), nullable=False)
     agirlik: Mapped[float] = mapped_column(Numeric(4, 3), nullable=False)
 

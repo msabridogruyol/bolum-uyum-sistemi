@@ -33,7 +33,7 @@ def test_guclu_yon_ve_aciklama():
     assert not ks.guclu_yon_mu(_satir("P1", 2.0, 52.0))              # uyumlu ama kendi profilinde yüksek değil
     deger = _satir("D2", 18.0, 80.0)
     assert deger.fark_sinifi == "belirgin_fazla" and not ks.guclu_yon_mu(deger)
-    assert "çalışanların çoğundan daha önemli" in ks.fark_aciklamasi(deger, "Sosyal Hizmet")
+    assert "genellikle olduğundan daha önemli" in ks.fark_aciklamasi(deger, "Sosyal Hizmet")
     assert not ks.guclu_yon_mu(_satir("D2", 1.0, 80.0))               # değer uyumlu olsa da güçlü yön değildir
     sakin = _satir("P4", -25.0, 30.0, ters=True)
     assert sakin.fark_sinifi == "uyumlu" and not ks.guclu_yon_mu(sakin)

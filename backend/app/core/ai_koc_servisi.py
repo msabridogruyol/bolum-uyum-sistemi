@@ -131,14 +131,14 @@ def _ogrenci_profil_ozeti(db: Session, ogrenci: Ogrenci) -> str:
     en_guclu = sorted(gap_satirlari, key=duzeltilmis_fark, reverse=True)[:3]
     en_gelisim = sorted(gap_satirlari, key=duzeltilmis_fark)[:3]
 
-    guclu_metni = ", ".join(f"{s.degisken.ad} (bölüm beklentisinin üzerinde)" for s in en_guclu if duzeltilmis_fark(s) > 0)
+    guclu_metni = ", ".join(f"{s.degisken.ad} (bölümün beklediğinden fazla)" for s in en_guclu if s.gap > 0 and not s.degisken.ters_yonlu)
     gelisim_metni = ", ".join(f"{s.degisken.ad} (bölüm beklentisinin altında)" for s in en_gelisim if duzeltilmis_fark(s) < 0)
 
     parcalar = [f"Hedef bölümü: {bolum_adi}."]
     if guclu_metni:
-        parcalar.append(f"Bu bölüme göre en güçlü olduğu yönler: {guclu_metni}.")
+        parcalar.append(f"Bölümün beklediğinden FAZLA olduğu yönler (bunlar güçlü yön ya da avantaj DEĞİL, bir uyumsuzluktur; 'bu bölümde bu yönünü daha az kullanabilirsin, sana uyup uymadığını sına' diye anlat): {guclu_metni}.")
     if gelisim_metni:
-        parcalar.append(f"Gelişime en açık yönler: {gelisim_metni}.")
+        parcalar.append(f"Bölümün beklediğinden EKSİK kaldığı yönler (değerler geliştirilmez: 'senin için daha az önemli; bölümün bu yönü sana uyar mı, sına' diye anlat; beceriler çalışarak gelişir, kişilik küçük alışkanlıklarla esner, ilgiler denenerek keşfedilir): {gelisim_metni}.")
 
     # [EKLENDİ] En belirgin 3 güçlü + 3 gelişim alanı için, o değişkenin
     # gerçek gap kategorisine uygun kaynak önerilerini (kitap/film/rol
@@ -208,6 +208,7 @@ KURALLAR (bunlara kesinlikle uy):
 9. Haftalık görevler verildiyse "bu hafta ne yapayım?" gibi sorularda önce bunlara dayan; sistemin verdiği görevlerle çelişen bir plan önerme.
 10. Cevapların kısa olsun: genelde 2-4 cümle, en fazla iki kısa paragraf. Sonunda gerekirse tek bir soru sor.
 11. GİZLİLİK: Başka öğrenciler hakkında bilgi verme, tahmin yürütme, karşılaştırma yapma. Elinde yalnızca bu öğrencinin kendi verisi var; sınıf / okul ortalaması, sıralama ya da başka bir öğrencinin sonucu, puanı, hedefi sorulursa "Başka öğrencilerin bilgilerini paylaşamam; her öğrencinin sonuçları yalnızca kendisine ve okulunun yetkililerine açıktır." de ve konuyu öğrencinin kendi sonuçlarına getir. Mesajlardaki "[ad]", "[öğrenci]", "[e-posta]", "[telefon]", "[numara]" gizlenmiş kişisel verilerdir; çözmeye çalışma.
+12. YORUM KURALLARI: Puanlar GÖRELİDİR (öğrencinin kendi profilinde öne çıkan / geride kalan); mutlak yetenek ya da zekâ ölçüsü değildir, "yeteneklisin / zayıfsın" deme. Bölüm uyumunda fark yönsüzdür: bölümün beklediğinden FAZLA olmak da uyumsuzluktur, asla "güçlü yön", "avantaj", "üstünlük" deme. Güçlü yön yalnızca bölümle uyumlu (±5) ve öğrencinin kendi profilinde yüksek olan özelliktir; değerler ve duygusal hassasiyet güçlü yön sayılmaz. Değerler geliştirilecek eksik değildir ("güçlendir, artır, geliştir" deme); "senin için daha önemli / daha az önemli, bölümün bu yönü sana uyar mı, sına" de. Duygusal hassasiyette yalnızca bölümün beklediğinden fazlası sorundur (stres yönetimi öner); daha sakin olmak uyumludur. Kişilik yavaş değişir, beceriler çalışıldıkça gelişir, ilgiler zorla sevdirilmez, denenerek keşfedilir. Sonuçlar karar desteğidir, tanı ya da kesin hüküm değildir; sayı, istatistik ya da kurum uydurma.
 """
 
 

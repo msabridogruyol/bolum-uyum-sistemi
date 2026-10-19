@@ -527,6 +527,7 @@ def sorulari_listele(
         db.query(Soru, Katman.kod, Degisken.kod, Degisken.ad)
         .join(Katman, Katman.id == Soru.katman_id)
         .outerjoin(Degisken, Degisken.id == Soru.degisken_id)
+        .filter(Soru.ogrenci_id.is_(None))   # [2026-10-18] öğrenciye özel K5 soruları soru bankası değildir
     )
     if katman_kod:
         sorgu = sorgu.filter(Katman.kod == katman_kod)
@@ -1145,7 +1146,7 @@ def gecerlilik_test_girdisini_getir(
             SELECT s.id, s.soru_metni, d.kod AS degisken_kod
             FROM sorular s
             JOIN degiskenler d ON d.id = s.degisken_id
-            WHERE s.soru_tipi = 'likert' AND s.aktif_mi = true
+            WHERE s.soru_tipi = 'likert' AND s.aktif_mi = true AND s.ogrenci_id IS NULL
         """)
     ).mappings().all()
     for r in likert_satirlari:
@@ -1161,7 +1162,7 @@ def gecerlilik_test_girdisini_getir(
             SELECT sec.id AS secenek_id, sec.secenek_metni, s.id AS soru_id, s.soru_metni
             FROM soru_secenekleri sec
             JOIN sorular s ON s.id = sec.soru_id
-            WHERE s.soru_tipi = 'sjt' AND s.aktif_mi = true
+            WHERE s.soru_tipi = 'sjt' AND s.aktif_mi = true AND s.ogrenci_id IS NULL
         """)
     ).mappings().all()
     for r in sjt_secenek_satirlari:

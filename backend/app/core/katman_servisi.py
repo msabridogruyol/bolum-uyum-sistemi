@@ -171,7 +171,7 @@ def katman_oturumu_baslat(
 
     aktif_sorular = (
         db.query(Soru)
-        .filter(Soru.katman_id == katman.id, Soru.aktif_mi.is_(True))
+        .filter(Soru.katman_id == katman.id, Soru.aktif_mi.is_(True), Soru.ogrenci_id.is_(None))
         .order_by(Soru.id)
         .all()
     )
@@ -320,11 +320,18 @@ def cevaplari_puanla(db: Session, sorular: dict, cevaplar: list, onb: dict | Non
                     degisken_puanlari.setdefault(a.degisken_id, []).append(50.0 + (secim_puani - 50.0) * w)
 
         elif soru.soru_tipi == "sjt":
-            # [ÇIKARIM] — SJT ağırlığı (0-1 aralığı varsayılıyor) doğrudan
-            # o değişken için 0-100 skalasına ölçeklenip katkı puanı sayılır.
-            agirliklar = _agirliklar(cevap.secenek_id)
-            for a in agirliklar:
-                degisken_puanlari.setdefault(a.degisken_id, []).append(float(a.agirlik) * 100)
+            # [2026-10-18] Tek seçim: seçilen şıkkın değişkeni 100, seçilmeyenlerinki (50·n − 100)/(n − 1) alır
+            # (4 şıkta 33,3) — böylece sorunun ortalaması 50 kalır ve seçilmeyen şıklar da bilgi taşır. Önceden
+            # yalnızca seçilen şık puan alıyordu; değişkenin ortalaması her zaman 100'e kayıyordu.
+            # Ağırlık (w) 1'den küçükse puan 50'ye doğru çekilir: 50 + (puan − 50) × w.
+            soru_secenekleri = _soru_secenekleri(soru.id)
+            n = len(soru_secenekleri)
+            diger = (50.0 * n - 100.0) / (n - 1) if n > 1 else 50.0
+            for sec in soru_secenekleri:
+                secim_puani = 100.0 if sec.id == cevap.secenek_id else diger
+                for a in _agirliklar(sec.id):
+                    w = max(0.0, min(1.0, float(a.agirlik)))
+                    degisken_puanlari.setdefault(a.degisken_id, []).append(50.0 + (secim_puani - 50.0) * w)
 
         elif soru.soru_tipi == "kutup":
             # [EKLENDİ] A-mı-B-mi, 4'lü ölçek. secenek_sirasi: 1=Kesinlikle A,
@@ -441,6 +448,10 @@ def katmani_tekrara_ac(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
                                    GuvenlikOlayi.katman_kod == katman.kod).delete(synchronize_session=False)
     db.query(OgrenciKatmanOturumu).filter(OgrenciKatmanOturumu.tur_id == tur.id, OgrenciKatmanOturumu.ogrenci_id == ogrenci.id,
                                           OgrenciKatmanOturumu.katman_id == katman.id).delete(synchronize_session=False)
+    # [2026-10-18] K5 sorulari K1-K4 sonucuna gore (kume) uretilir: K1-K4 degisince K5 bastan alinir.
+    if not katman.kosullu_mu:
+        from app.core.dal_servisi import k5_sifirla
+        k5_sifirla(db, ogrenci, tur)
     tur.durum = "devam_ediyor"
     tur.tamamlanma_zamani = None
     tur.guven_skoru = None

@@ -53,6 +53,11 @@ class SoruDetayOut(BaseModel):
     aktif_mi: bool
     cevap_bicimi: str = "tek"   # [2026-10-09] 'tek' | 'encok_enaz' (en çok / en az seçimli)
     secenekler: list[SecenekDetayOut]
+    # [2026-10-18] Uçlar (kutup) sorusu: B ucunun değişkeni ve iki ucun metni
+    b_ucu_degisken_kod: str | None = None
+    b_ucu_degisken_adi: str | None = None
+    uc_a_metni: str | None = None
+    uc_b_metni: str | None = None
 
 
 class SayfalanmisSorularOut(BaseModel):
@@ -73,6 +78,11 @@ class SoruMetniGuncelleIstek(BaseModel):
 
 class SecenekMetniGuncelleIstek(BaseModel):
     secenek_metni: str
+
+
+class UcMetinleriGuncelleIstek(BaseModel):
+    uc_a_metni: str
+    uc_b_metni: str
 
 
 # ============================================================================
@@ -137,7 +147,7 @@ def _kullanimdaki_dal_idleri(db: Session) -> set[int]:
               .join(SjtSecenekDegiskenAgirlik, SjtSecenekDegiskenAgirlik.degisken_id == Degisken.id)
               .join(SoruSecenegi, SoruSecenegi.id == SjtSecenekDegiskenAgirlik.secenek_id)
               .join(Soru, Soru.id == SoruSecenegi.soru_id)
-              .filter(Soru.aktif_mi.is_(True), Degisken.dal_id.isnot(None)).distinct().all()}
+              .filter(Soru.aktif_mi.is_(True), Soru.ogrenci_id.is_(None), Degisken.dal_id.isnot(None)).distinct().all()}
     return idler
 
 
@@ -192,7 +202,7 @@ def dallari_detayli_listele(
         .join(SjtSecenekDegiskenAgirlik, SjtSecenekDegiskenAgirlik.secenek_id == SoruSecenegi.id)
         .join(Degisken, Degisken.id == SjtSecenekDegiskenAgirlik.degisken_id)
         .join(Soru, Soru.id == SoruSecenegi.soru_id)
-        .filter(Degisken.dal_id.isnot(None))
+        .filter(Degisken.dal_id.isnot(None), Soru.ogrenci_id.is_(None))
         .all()
     )
     for soru_id, dal_id, aktif in sjt_satirlari:
@@ -264,7 +274,8 @@ def katman_ozeti_getir(
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
     """Bir katmanın (K5'te isteğe bağlı bir dalın) özet istatistikleri."""
-    sorgu = db.query(Soru).join(Katman, Katman.id == Soru.katman_id).filter(Katman.kod == katman_kod)
+    sorgu = (db.query(Soru).join(Katman, Katman.id == Soru.katman_id)
+             .filter(Katman.kod == katman_kod, Soru.ogrenci_id.is_(None)))   # öğrenciye özel K5 soruları hariç
     tum_sorular = sorgu.all()
 
     if dal_kod:
@@ -301,7 +312,7 @@ def sorulari_detayli_listele(
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
-    sorgu = db.query(Soru, Katman.kod).join(Katman, Katman.id == Soru.katman_id)
+    sorgu = db.query(Soru, Katman.kod).join(Katman, Katman.id == Soru.katman_id).filter(Soru.ogrenci_id.is_(None))
     if katman_kod:
         sorgu = sorgu.filter(Katman.kod == katman_kod)
     if aktif_mi is not None:
@@ -365,6 +376,8 @@ def sorulari_detayli_listele(
             soru_metni=s.soru_metni, ters_kodlanmis_mi=s.ters_kodlanmis_mi, aktif_mi=s.aktif_mi,
             cevap_bicimi=getattr(s, "cevap_bicimi", None) or "tek",
             secenekler=secenekler_by_soru.get(s.id, []),
+            b_ucu_degisken_kod=degisken_kodlari.get(s.b_ucu_degisken_id), b_ucu_degisken_adi=degisken_adlari.get(s.b_ucu_degisken_id),
+            uc_a_metni=s.uc_a_metni, uc_b_metni=s.uc_b_metni,
         ))
 
     return SayfalanmisSorularOut(
@@ -386,6 +399,25 @@ def soru_metnini_guncelle(
     if not istek.soru_metni.strip():
         raise HTTPException(status_code=400, detail="Soru metni boş olamaz.")
     soru.soru_metni = istek.soru_metni.strip()
+    db.commit()
+
+
+@router.put("/soru/{soru_id}/uclar", status_code=204)
+def uc_metinlerini_guncelle(
+    soru_id: int,
+    istek: UcMetinleriGuncelleIstek,
+    db: Session = Depends(get_db),
+    admin: AdminKullanici = Depends(get_mevcut_admin),
+):
+    """[2026-10-18] Uçlar (kutup) sorusunun A / B uç metinleri."""
+    soru = db.get(Soru, soru_id)
+    if soru is None or soru.ogrenci_id is not None:
+        raise HTTPException(status_code=404, detail="Soru bulunamadı.")
+    if soru.soru_tipi != "kutup":
+        raise HTTPException(status_code=400, detail="Uç metinleri yalnızca uçlar sorusunda vardır.")
+    if not istek.uc_a_metni.strip() or not istek.uc_b_metni.strip():
+        raise HTTPException(status_code=400, detail="Uç metinleri boş olamaz.")
+    soru.uc_a_metni, soru.uc_b_metni = istek.uc_a_metni.strip(), istek.uc_b_metni.strip()
     db.commit()
 
 
@@ -417,7 +449,8 @@ def _katman_silme_ozeti(db: Session, katman_kod: str):
     katman = db.query(Katman).filter(Katman.kod == katman_kod).first()
     if katman is None:
         raise HTTPException(status_code=404, detail=f"Katman bulunamadı: {katman_kod}")
-    soru_idler = [s.id for s in db.query(Soru.id).filter(Soru.katman_id == katman.id).all()]
+    # öğrenciye özel K5 soruları soru bankası değildir; tur / öğrenciyle birlikte silinir
+    soru_idler = [s.id for s in db.query(Soru.id).filter(Soru.katman_id == katman.id, Soru.ogrenci_id.is_(None)).all()]
     cevap_sayisi = ogrenci_sayisi = 0
     if soru_idler:
         cevap_sayisi = db.query(func.count(OgrenciCevap.id)).filter(OgrenciCevap.soru_id.in_(soru_idler)).scalar() or 0
@@ -478,4 +511,56 @@ def katmanin_tum_sorularini_sil(
     denetim_yaz(db, admin, "katman_sorulari_komple_silme", "sorular", katman_kod,
                 f"{katman_kod} katmanının {len(soru_idler)} sorusu ve {cevap_sayisi} öğrenci cevabı "
                 f"({ogrenci_sayisi} öğrenci) kalıcı silindi")
+    db.commit()
+
+
+# ============================================================================
+# [2026-10-18] Yeni K5 soru bankası (iş türü cümleleri + soru kökleri). K5 soruları öğrenciye özel bunlardan üretilir;
+# metin değişikliği yalnızca bundan sonra üretilecek soruları etkiler (öğrencinin turundaki sorular sabittir).
+# ============================================================================
+class K5MetinIstek(BaseModel):
+    metin: str
+
+
+@router.get("/k5-bankasi")
+def k5_bankasi(db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
+    from app.models import BolumK5Bag, Dal, K5Cumle, K5SoruKoku
+    alan = {d.id: d.ad for d in db.query(Dal).all()}
+    bag_sayisi = dict(db.query(BolumK5Bag.degisken_id, func.count(BolumK5Bag.id)).group_by(BolumK5Bag.degisken_id).all())
+    cumleler: dict[int, list] = {}
+    for c in db.query(K5Cumle).order_by(K5Cumle.degisken_id, K5Cumle.sira).all():
+        cumleler.setdefault(c.degisken_id, []).append({"id": c.id, "sira": c.sira, "metin": c.metin, "aktif_mi": c.aktif_mi})
+    is_turleri = [
+        {"degisken_id": d.id, "kod": d.kod, "ad": d.ad, "alan": alan.get(d.dal_id), "bagli_bolum_sayisi": int(bag_sayisi.get(d.id, 0)),
+         "cumleler": cumleler.get(d.id, [])}
+        for d in db.query(Degisken).filter(Degisken.dal_id.isnot(None)).order_by(Degisken.dal_id, Degisken.sira).all()
+    ]
+    kokler = [{"id": k.id, "tip": k.tip, "metin": k.metin, "aktif_mi": k.aktif_mi}
+              for k in db.query(K5SoruKoku).order_by(K5SoruKoku.tip, K5SoruKoku.id).all()]
+    return {"kokler": kokler, "is_turleri": is_turleri}
+
+
+@router.put("/k5-bankasi/cumle/{cumle_id}", status_code=204)
+def k5_cumle_guncelle(cumle_id: int, istek: K5MetinIstek, db: Session = Depends(get_db),
+                      admin: AdminKullanici = Depends(get_mevcut_admin)):
+    from app.models import K5Cumle
+    c = db.get(K5Cumle, cumle_id)
+    if c is None:
+        raise HTTPException(status_code=404, detail="Cümle bulunamadı.")
+    if not istek.metin.strip():
+        raise HTTPException(status_code=400, detail="Metin boş olamaz.")
+    c.metin = istek.metin.strip()
+    db.commit()
+
+
+@router.put("/k5-bankasi/kok/{kok_id}", status_code=204)
+def k5_kok_guncelle(kok_id: int, istek: K5MetinIstek, db: Session = Depends(get_db),
+                    admin: AdminKullanici = Depends(get_mevcut_admin)):
+    from app.models import K5SoruKoku
+    k = db.get(K5SoruKoku, kok_id)
+    if k is None:
+        raise HTTPException(status_code=404, detail="Soru kökü bulunamadı.")
+    if not istek.metin.strip():
+        raise HTTPException(status_code=400, detail="Metin boş olamaz.")
+    k.metin = istek.metin.strip()
     db.commit()

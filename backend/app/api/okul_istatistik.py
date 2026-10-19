@@ -152,18 +152,23 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
     gecerli_tur_ids = [t for t in tur_ids if t not in gecersiz_idler]
     gecerli_ogr = {i for i, t in tamam_tur.items() if t not in gecersiz_idler}
 
-    # ------------------------------------------------------------------ K5 (alan derinleşme)
+    # ------------------------------------------------------------------ K5 (iş türü soruları)
     k5_ogr: dict = {}
     k5_alan = Counter()
     if tur_ids:
         for r in db.execute(text("""
-            SELECT d.ogrenci_id, bool_and(d.durum = 'tamamlandi') AS hepsi,
-                   array_agg(dl.ad) FILTER (WHERE d.durum = 'tamamlandi') AS alanlar
+            SELECT d.ogrenci_id, bool_and(d.durum = 'tamamlandi') AS hepsi
               FROM ogrenci_dal_oturumlari d JOIN dallar dl ON dl.id = d.dal_id
-             WHERE d.tur_id = ANY(:t) GROUP BY d.ogrenci_id"""), {"t": tur_ids}).all():
+             WHERE d.tur_id = ANY(:t) AND dl.kod = 'K5N' GROUP BY d.ogrenci_id"""), {"t": tur_ids}).all():
             k5_ogr[r.ogrenci_id] = bool(r.hepsi)
-            for a in r.alanlar or []:
-                k5_alan[a] += 1
+        # [2026-10-18] Yeni K5: öğrencinin en yüksek puanlı iş türü (alan derinleşmesi kaldırıldı)
+        for r in db.execute(text("""
+            SELECT DISTINCT ON (s.ogrenci_id) s.ogrenci_id, v.ad
+              FROM ogrenci_degisken_skorlari s JOIN degiskenler v ON v.id = s.degisken_id
+             WHERE s.tur_id = ANY(:t) AND v.dal_id IS NOT NULL
+             ORDER BY s.ogrenci_id, s.puan DESC, v.id"""), {"t": tur_ids}).all():
+            if k5_ogr.get(r.ogrenci_id):
+                k5_alan[r.ad] += 1
     k5_tamam = sum(1 for v in k5_ogr.values() if v)
 
     # ------------------------------------------------------------------ katman (K1–K4) adımları — huni
@@ -278,18 +283,20 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
                            for s, d in sorted(sinif_k.items(), key=lambda kv: _sinif_sira(kv[0]))]
         sube_katman = [{"ad": sube_etiketi(s[0], s[1]) if s[1] else s[0], "degerler": {k: _ort(d[k]) for k in kodlar}}
                        for s, d in sorted(sube_k.items(), key=lambda kv: (_sinif_sira(kv[0][0]), kv[0][1]))]
-        degisken_ort = [{"ad": r.ad, "katman": r.kod, "ortalama": round(float(r.ort), 1), "n": r.n} for r in db.execute(text("""
-            SELECT d.ad, k.kod, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
+        degisken_ort = [{"ad": r.ad, "katman": r.kod, "dkod": r.dkod, "ortalama": round(float(r.ort), 1), "n": r.n} for r in db.execute(text("""
+            SELECT d.ad, k.kod, d.kod AS dkod, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
               JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
              WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu
-             GROUP BY d.ad, k.kod ORDER BY ort DESC"""), {"t": gecerli_tur_ids}).all()]
+             GROUP BY d.ad, k.kod, d.kod ORDER BY ort DESC"""), {"t": gecerli_tur_ids}).all()]
     v["profil"] = {
         "katmanlar": [{"kod": k, "ad": a} for k, a in katmanlar],
         "tamamlayan": len(gecerli_tur_ids),   # [2026-10-14] ortalamaların dayandığı (geçerli) öğrenci sayısı
         "gecersiz_haric": len(tur_ids) - len(gecerli_tur_ids),
         "katman_ort": katman_ort,
-        "guclu": degisken_ort[:8],
-        "zayif": list(reversed(degisken_ort))[:8],
+        # [2026-10-18] Değerler (D) güçlü/zayıf sayılmaz, ayrı listelenir; P4 ters yönlüdür, iki listeye de girmez
+        "guclu": [x for x in degisken_ort if not str(x["dkod"]).startswith("D") and x["dkod"] != "P4"][:8],
+        "zayif": [x for x in reversed(degisken_ort) if not str(x["dkod"]).startswith("D") and x["dkod"] != "P4"][:8],
+        "degerler": [x for x in degisken_ort if str(x["dkod"]).startswith("D")],
         "sube_katman": sube_katman,
         "histogram": ogr_katman,   # {K1: [öğrenci başına katman ortalaması, …]}
     }
@@ -538,7 +545,7 @@ def istatistik_xlsx(v: dict, okul_adi: str) -> bytes:
         ["Öğrenci", k["ogrenci"]], ["Giriş yapan (hiç)", k["giris_yapan"]], ["Son 7 gün aktif", k["aktif_7"]],
         ["Aralıkta giriş yapan", k["aralikta_giris"]], ["Teste başlayan", k["teste_baslayan"]],
         ["Testi tamamlayan", k["tamamlayan"]], ["Tamamlama oranı (%)", k["tamamlama_orani"]],
-        ["K5 (alan derinleşme) tamamlayan", k["k5_tamamlayan"]], ["Hedef bölüm seçen", k["hedef_secen"]],
+        ["K5 (iş türü soruları) tamamlayan", k["k5_tamamlayan"]], ["Hedef bölüm seçen", k["hedef_secen"]],
         ["Ortalama güven puanı", k["ort_guven"]], ["Son değerlendirmesi doğrulanamayan öğrenci", k["gecersiz_tur"]],
         *([["Koçlukta aktif öğrenci (aralıkta)", k["kocluk_aktif"]]] if k.get("kocluk_aktif") is not None else []),
     ], ust)
@@ -565,7 +572,7 @@ def istatistik_xlsx(v: dict, okul_adi: str) -> bytes:
             for i in range(max(len(b["ilk_oneri"]), len(b["hedef"])))],
            f"Hedefi ilk 10 önerisinde olan: {b['uyum']['ilk10']} / {b['uyum']['hedefli_tamamlayan']} (%{b['uyum']['oran'] or 0})")
     if b["k5_alan"]:
-        _sayfa(wb, "K5 alanları", ["Alan", "Tamamlayan öğrenci"], [[a["ad"], a["deger"]] for a in b["k5_alan"]])
+        _sayfa(wb, "K5 iş türleri", ["En çok öne çıkan iş türü", "Öğrenci"], [[a["ad"], a["deger"]] for a in b["k5_alan"]])
     if b.get("simulasyon"):
         _sayfa(wb, "Simülasyonlar", ["Meslek", "Simülasyon", "Öğrenci", "Ortalama keyif"],
                [[s["ad"], s["deger"], s["ogrenci"], s["keyif"]] for s in b["simulasyon"]])

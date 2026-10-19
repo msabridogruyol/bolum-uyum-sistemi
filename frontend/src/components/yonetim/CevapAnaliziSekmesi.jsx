@@ -49,6 +49,12 @@ function CevapKarti({ c, onOzellik }) {
         <span className="yp-ince" style={{ marginLeft: 'auto' }}>{tarih(c.zaman)}</span>
       </div>
       <div className="ca-soru">{c.soru}</div>
+      {c.uc_a && c.uc_b && (
+        <div className="ca-secenekler">
+          <div className="ca-secenek"><span className="ca-isaret">A</span><span>{c.uc_a}</span></div>
+          <div className="ca-secenek"><span className="ca-isaret">B</span><span>{c.uc_b}</span></div>
+        </div>
+      )}
       <div className="ca-secenekler">
         {c.secenekler.map((s) => (
           <div key={s.id} className={`ca-secenek${s.secildi ? ' secildi' : ''}${s.en_az ? ' enaz' : ''}`}>
@@ -174,7 +180,7 @@ function NedenDokumu({ m, onOzellik }) {
         <span className="ca-etki-uyum">%{sayi(b.uyum, 0)}</span>
       </div>
       {b.k5_katkisi != null && (
-        <div className="yp-ince" style={{ marginBottom: 8 }}>Alan derinleşme (K5) katkısı: <b>{isaretli(b.k5_katkisi, 1)}</b> puan (özellik katkılarına ek olarak)</div>
+        <div className="yp-ince" style={{ marginBottom: 8 }}>K5 (iş türü soruları) etkisi: <b>{isaretli(b.k5_katkisi, 1)}</b> puan (özellik katkılarına ek olarak)</div>
       )}
       <div className="ca-etki-iki">
         {[['Puanı yükselten', b.yukselten, 'var(--gr)'], ['Puanı düşüren', b.dusuren, 'var(--re)']].map(([baslik, l, r]) => (
@@ -305,7 +311,7 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
     const q = arama.trim().toLocaleLowerCase('tr')
     return d.cevaplar.filter((c) => (!katman || c.katman === katman)
       && (!ozellikId || c.katkilar.some((k) => k.id === ozellikId))
-      && (!q || `${c.soru} ${c.secenekler.map((s) => s.metin).join(' ')}`.toLocaleLowerCase('tr').includes(q)))
+      && (!q || `${c.soru} ${c.uc_a || ''} ${c.uc_b || ''} ${c.secenekler.map((s) => s.metin).join(' ')}`.toLocaleLowerCase('tr').includes(q)))
   }, [d, katman, ozellikId, arama])
 
   if (hata) return <div className="auth-error">{hata}</div>
@@ -372,7 +378,7 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
         <>
           <div className="yp-ince" style={{ margin: '0 0 12px', lineHeight: 1.55 }}>
             Her bölümde puanı en çok yükselten ve düşüren özellikler. Katkı = bu özellik hesaba katılmasaydı uyum puanı ne kadar değişirdi
-            (gösterilen puanla aynı hesap). Puan ve katkı göreli: 301 bölüm içinde öğrenciye yakınlık. Farkı olan bir özellik, öğrenci o
+            (gösterilen puanla aynı hesap). Puan ve katkı göreli: sistemdeki tüm bölümler içinde öğrenciye yakınlık. Farkı olan bir özellik, öğrenci o
             özellikte bu bölüme diğer bölümlerin çoğundan daha yakınsa puanı yine yükseltebilir. Özelliğe tıklayınca o cevaplar açılır.
           </div>
           <NedenDokumu m={m} onOzellik={ozellikGoster} />

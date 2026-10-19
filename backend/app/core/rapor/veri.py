@@ -105,8 +105,8 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
         # [2026-10-14] "ham": düzey etiketi ve güçlü / gelişim eşikleri AYNI değerle (yuvarlanmamış puan) karşılaştırılır
         satir = {"id": d.id, "kod": d.kod, "ad": d.ad, "aciklama": d.aciklama, "puan": yuvarla(s.puan, 1),
                  "ham": float(s.puan), "seviye": _seviye(float(s.puan))}
-        if d.dal_id:
-            k5[dallar.get(d.dal_id, "Alan")].append(float(s.puan))
+        if d.dal_id:   # [2026-10-18] K5: iş türü puanları (alan ortalaması değil — yeni K5 alanlar arası kapıştırır)
+            k5[d.ad].append(float(s.puan))
             continue
         gruplar[d.katman_id].append(satir)
         ana.append(satir)
@@ -118,7 +118,7 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
         v["katmanlar"].append({"kod": k.kod if k else "?", "ad": katman_adi(k.kod, k.ad) if k else "?",
                                "ortalama": yuvarla(sum(x["ham"] for x in satirlar) / len(satirlar), 1),
                                "ozellikler": satirlar})
-    v["k5"] = [{"ad": a, "puan": yuvarla(sum(p) / len(p), 1)} for a, p in sorted(k5.items(), key=lambda kv: -sum(kv[1]) / len(kv[1]))]
+    v["k5"] = [{"ad": a, "puan": yuvarla(sum(p) / len(p), 1)} for a, p in sorted(k5.items(), key=lambda kv: -sum(kv[1]) / len(kv[1]))][:10]
     sirali = sorted(ana, key=lambda x: -x["ham"])
     from app.core.seviye import gelisime_acik_mi, guclu_mu
     # [2026-10-12] P4 (duygusal hassasiyet) yüksek puanı güçlü yön, düşük puanı gelişim alanı sayılmaz (yorum.py destek önerir)
@@ -126,7 +126,8 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
     # [2026-10-14] Güçlü yön yalnızca eşiği (62) geçen özelliktir; eşiği geçen yoksa liste boş kalır (yedek doldurma yok).
     # Değerler (K1, D…) yorum.py'deki gibi güçlü yön sayılmaz; "önem verdiği değerler" olarak ayrı verilir.
     v["gucluler"] = [x for x in sirali if guclu_mu(x["ham"]) and not str(x.get("kod") or "").startswith("D")][:6]
-    v["gelisim"] = [x for x in reversed(sirali) if gelisime_acik_mi(x["ham"])][:5]
+    # [2026-10-18] Değerler (D) geliştirilecek eksik değildir; gelişime açık listesine girmez
+    v["gelisim"] = [x for x in reversed(sirali) if gelisime_acik_mi(x["ham"]) and not str(x.get("kod") or "").startswith("D")][:5]
 
     # Bölüm önerileri + nedenleri (tamamlanmış ve K5 bitmiş tur)
     from app.core.dal_servisi import bekleyen_dal_var_mi
@@ -241,8 +242,8 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
     for x in odak[:4]:
         # [2026-10-17] değerler bir eksik değil, karar konusudur: gelişim alanlarına değil, dikkat edileceklere yazılır
         if str(x.get("kod") or "").startswith("D"):
-            T.append(f"{x['ad']}: {hedef['ad']} alanında çalışanların çoğuna göre senin için daha az önemli; karar verirken dikkate al." if sen else
-                     f"{x['ad']}: {hedef['ad']} alanında çalışanların çoğuna göre öğrenci için daha az önemli; karar verirken dikkate alınmalı.")
+            T.append(f"{x['ad']}: {hedef['ad']} bölümünün öne çıkardığına göre senin için daha az önemli; karar verirken dikkate al." if sen else
+                     f"{x['ad']}: {hedef['ad']} bölümünün öne çıkardığına göre öğrenci için daha az önemli; karar verirken dikkate alınmalı.")
         else:
             W.append(f"{x['ad']}: {hedef['ad']} bölümünün beklediği düzeyin altında")
     for x in v["gelisim"][:4]:
@@ -261,10 +262,10 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
             O.append("Öne çıkan alanlar: " + " · ".join(a for a, _ in alanlar.most_common(2)))
         ortusen = Counter(o for b in v["bolumler"][:5] for o in b.get("ortusen") or [])
         if ortusen:
-            O.append(("Önerilen bölümlerde sık geçen güçlü yönlerin: " if sen else "Önerilen bölümlerde sık geçen güçlü yönler: ")
+            O.append(("Önerilen bölümlerle sık örtüşen yönlerin: " if sen else "Önerilen bölümlerle sık örtüşen yönler: ")
                      + " · ".join(a for a, _ in ortusen.most_common(3)))
     if v["k5"]:
-        O.append(f"Alan sorularında en yüksek puanlı alan: {v['k5'][0]['ad']}")
+        O.append(f"İş türü sorularında en çok öne çıkan iş: {v['k5'][0]['ad']}")
     degerler = _degerler(v)   # [2026-10-14] yorum.py ile aynı: değerler güçlü yön değil, karar verirken dikkate alınacak tercih
     if degerler:
         O.append(("Bir işte en çok önem verdiğin değerler: " if sen else "Bir işte en çok önem verdiği değerler: ")
@@ -384,7 +385,7 @@ def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = 
     if tamam_turlar and not profil_gizli:
         guclu = db.execute(text("""
             SELECT d.ad, avg(s.puan) AS o, d.kod FROM ogrenci_degisken_skorlari s JOIN degiskenler d ON d.id = s.degisken_id
-             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND d.kod <> 'P4' GROUP BY d.ad, d.kod ORDER BY o DESC"""), {"t": tamam_turlar}).all()
+             WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND d.kod <> 'P4' AND left(d.kod, 1) <> 'D' GROUP BY d.ad, d.kod ORDER BY o DESC"""), {"t": tamam_turlar}).all()
     else:
         guclu = []
     liste = []

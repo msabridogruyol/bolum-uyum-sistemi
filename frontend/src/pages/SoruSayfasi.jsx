@@ -239,7 +239,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         if (dalMi) setDalAdi(veri.dal_adi || null)
       })
       .catch((e) => {
-        setHata(e.detail || (dalMi ? 'Alan soruları açılamadı.' : 'Katman açılamadı.'))
+        setHata(e.detail || (dalMi ? 'İş türü soruları açılamadı.' : 'Katman açılamadı.'))
         // [2026-10-12] Bekleme süresi / güven kuralına takıldıysa durumu açılır pencerede göster
         if (!dalMi) api.degerlendirmeDurumu().then((d) => { if (['guven_sorunu', 'bekleme'].includes(d?.durum)) setYdDurum(d) }).catch(() => {})
       })
@@ -562,11 +562,11 @@ export default function SoruSayfasi({ mod = 'katman' }) {
             {/* [2026-10-03] K5 zorunlu: K4 bitince öğrenci önce açılan dallara (Katmanlar sayfasında listelenir) yönlendirilir */}
             {dalMi ? (
               <button className="btn full" onClick={() => navigate(k5Bekliyor ? '/katmanlar' : '/bolumler')}>
-                {k5Bekliyor ? 'Sıradaki Alan Sorularına Geç →' : 'Bölüm Sonuçlarımı Gör →'}
+                {k5Bekliyor ? 'İş Türü Sorularına Dön →' : 'Bölüm Sonuçlarımı Gör →'}
               </button>
             ) : (
               (() => {
-                // [2026-10-03] Katmanlar sırayla ilerler: K1 → K2 → K3 → K4 → (K5 alan soruları)
+                // [2026-10-03] Katmanlar sırayla ilerler: K1 → K2 → K3 → K4 → (K5 iş türü soruları)
                 const n = Number(String(kod).replace(/\D/g, ''))
                 const sonraki = !tamamlandi.tum_katmanlar_tamamlandi_mi && n >= 1 && n < 4 ? `K${n + 1}` : null
                 return sonraki ? (
@@ -576,7 +576,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
                   </>
                 ) : (
                   <button className="btn full" onClick={() => navigate('/katmanlar')}>
-                    {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sana özel derinleşme sorularına geç →' : 'Değerlendirmeye dön'}
+                    {tamamlandi.tum_katmanlar_tamamlandi_mi ? 'Sana özel iş türü sorularına geç →' : 'Değerlendirmeye dön'}
                   </button>
                 )
               })()
@@ -588,8 +588,8 @@ export default function SoruSayfasi({ mod = 'katman' }) {
             kameraRizasi={kameraRizasi} onKameraIzni={async () => {
               try { await api.kvkkGuncelle({ kamera: true }); setKameraRizasi(true) } catch { /* izin kaydedilemedi */ }
             }}
-            baslik={dalMi ? (dalAdi || 'Alan Soruları') : undefined}
-            altBaslik={dalMi ? 'K5 — sana özel alan sorularına başlıyorsun' : undefined}
+            baslik={dalMi ? (dalAdi || 'İş Türü Soruları') : undefined}
+            altBaslik={dalMi ? 'K5 — sana özel iş türü sorularına başlıyorsun' : undefined}
           />
         ) : (
           <SoruIcerigiDuzeni
@@ -598,7 +598,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
             cevaplar={cevaplar}
             gonderiliyor={gonderiliyor}
             kod={kod}
-            baslik={dalMi ? (dalAdi || 'Alan Soruları') : undefined}
+            baslik={dalMi ? (dalAdi || 'İş Türü Soruları') : undefined}
             onSecenekSec={secenekSec}
             onIleriGit={ileriGit}
             onGeriGit={geriGit}
@@ -688,6 +688,12 @@ function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, onSecenekSec
       {ikiliMi && (
         <div className={`sn-adim ${!enCok ? 'bir' : !enAz ? 'iki' : 'tamam'}`}>
           {!enCok ? '1. adım: Sana EN ÇOK uyan şıkkı seç.' : !enAz ? '2. adım: Şimdi sana EN AZ uyan şıkkı seç.' : '✓ Tamam. Değiştirmek için şıklara tekrar dokunabilirsin.'}
+        </div>
+      )}
+      {aktifSoru.uc_a_metni && aktifSoru.uc_b_metni && (
+        <div className="sn-uclar" key={`uc-${aktifSoru.id}`}>
+          <div className="sn-uc"><b>A</b><span>{aktifSoru.uc_a_metni}</span></div>
+          <div className="sn-uc"><b>B</b><span>{aktifSoru.uc_b_metni}</span></div>
         </div>
       )}
       <div className={`qopts sn-secenekler${kutupMu && aktifSoru.secenekler.length <= 5 ? ' olcek' : ''}`}>

@@ -222,7 +222,7 @@ def _bitmedi_notu(st, v):
         return []
     metin = {"baslamadi": "Öğrenci değerlendirmeye henüz başlamadı.",
              "devam": "Değerlendirme henüz tamamlanmadı; aşağıdaki bilgiler tamamlanan katmanlara dayanır, bölüm önerileri oluşmadı.",
-             "k5_bekliyor": "Alan soruları (K5) bekliyor; bölüm önerileri bu adım tamamlanınca oluşur."}.get(v["durum"], "")
+             "k5_bekliyor": "İş türü soruları (K5) bekliyor; uyumu 70 ve üzeri bölümlerin kendi aralarındaki sırası bu adım tamamlanınca netleşir."}.get(v["durum"], "")
     return [st.p(_e(metin), st.not_), Spacer(1, 4)]
 
 
@@ -448,7 +448,7 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum", "Neden?"],
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or [])]
                          for b in v["bolumler"]], [8 * mm, 52 * mm, 34 * mm, 14 * mm, 66 * mm]))
-        h.append(st.p("Uyum, bölümün 301 bölüm içinde senin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
+        h.append(st.p("Uyum, bölümün tüm bölümler içinde senin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
@@ -521,7 +521,7 @@ def veli_pdf(v: dict, netler: bool = True) -> bytes:
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum"],
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}"] for b in v["bolumler"][:6]],
                         [10 * mm, 90 * mm, 52 * mm, 22 * mm]))
-        h.append(st.p("Uyum, bölümün 301 bölüm içinde çocuğunuzun profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
+        h.append(st.p("Uyum, bölümün tüm bölümler içinde çocuğunuzun profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
         h.append(st.p("Uyum yüzdesi; çocuğunuzun profilinin bölümün gerektirdiği özelliklerle ne kadar örtüştüğünü gösterir, "
                       "başarı ya da kazanma olasılığı anlamına gelmez.", st.not_))
     if v["hedef"]:
@@ -581,7 +581,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
             h.append(KeepTogether([st.p(f"{k['kod']} · {_e(k['ad'])} (ortalama {yuvarla(k['ortalama'])})", st.h3),
                                    _cubuklar([(x["ad"], x.get("ham", x["puan"])) for x in k["ozellikler"]]), Spacer(1, 5)]))
     if v["k5"]:
-        h.append(st.p("Alan soruları (K5)", st.h2))
+        h.append(st.p("İş türü tercihleri (K5)", st.h2))
         h.append(_cubuklar([(x["ad"], x["puan"]) for x in v["k5"]]))
     if v["bolumler"]:
         h.append(st.p("Bölüm önerileri (ilk 10)", st.h2))
@@ -589,7 +589,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
                         [[str(b["sira"]), b["ad"], b.get("alan") or "", f"%{yuvarla(b['uyum'])}", ", ".join(b.get("ortusen") or []),
                           b.get("dikkat") or ""] for b in v["bolumler"]],
                         [7 * mm, 40 * mm, 27 * mm, 12 * mm, 45 * mm, 43 * mm], kucuk=True))
-        h.append(st.p("Uyum, bölümün 301 bölüm içinde öğrencinin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
+        h.append(st.p("Uyum, bölümün tüm bölümler içinde öğrencinin profiline yakınlığını gösterir (100 = en yakın, 0 = en uzak); başarı tahmini değildir.", st.kucuk))
     if v["hedef"]:
         hd = v["hedef"]
         il = hd.get("ilerleme") or {}
@@ -712,7 +712,7 @@ def _uyum_aciklama_eki(st, ek: dict) -> list:
     m = ek.get("matris")
     h = [PageBreak(), st.p("Ek: Uyum açıklaması", st.h2),
          st.p("Bu ek yalnızca okul yetkilisi / rehberlik içindir; öğrenci ve veli raporlarında yer almaz. Uyum puanı göreli: "
-              "301 bölüm içinde öğrencinin profiline yakınlık (100 = en yakın). <b>Fark</b> = öğrenci − bölüm beklentisi "
+              "Tüm bölümler içinde öğrencinin profiline yakınlık (100 = en yakın). <b>Fark</b> = öğrenci − bölüm beklentisi "
               "(katman içi ölçek): |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin (kırmızı). "
               "<b>Katkı</b> = bu özellik hesaba katılmasaydı uyum puanı ne kadar değişirdi (artı yükseltiyor, eksi düşürüyor). "
               "Katkı da göreli bir ölçüdür: bir özellikte fark olsa bile öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan "
@@ -789,7 +789,7 @@ def sinif_ogretmeni_pdf(v: dict, netler: bool = True) -> bytes:
     a = v.get("aktivite") or {}
     hd = v.get("hedef") or {}
     il = hd.get("ilerleme") or {}
-    durum = {"tamamlandi": "Tamamlandı", "devam": "Devam ediyor", "k5_bekliyor": "Alan soruları bekliyor",
+    durum = {"tamamlandi": "Tamamlandı", "devam": "Devam ediyor", "k5_bekliyor": "İş türü soruları bekliyor",
              "baslamadi": "Başlamadı"}.get(v["durum"], v["durum"])
     h.append(st.p("Katılım ve ilerleme", st.h2))
     h.append(_tablo(st, ["", "", "", ""], [

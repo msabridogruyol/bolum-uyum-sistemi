@@ -41,7 +41,7 @@ Pakette olmayan bir metin ekranda Türkçe kalır; sistem hata vermez.
 
 ## Ölçme soruları
 
-Sorular ve seçenekler (`tur: soru`) anlamları korunarak çevrilir. Çeviriler ayrıca `SORU_YONERGE.md` ile her dilde anlam ve motivasyon açısından gözden geçirilir; düzeltmeler `ceviri/<dil>/Q_*.json` dosyalarına yazılır ve paketlemede en son uygulanır. Çeviri uyarısı soru ekranında gösterilmez, Sistem Hakkında sayfasındaki "Dil desteği" kartında (`components/DilBilgisi.jsx`) yer alır.
+Sorular ve seçenekler (`tur: soru`) anlamları korunarak çevrilir. Çeviriler ayrıca `SORU_YONERGE.md` ile her dilde anlam ve motivasyon açısından gözden geçirilir; düzeltmeler `ceviri/<dil>/zzQ_<dil>.json` dosyalarına yazılır ve paketlemede en son uygulanır (paketle.py dosyaları ada göre sıralar; düzeltme dosyasının adı parça dosyalarından sonra gelmeli — `Q_` büyük harfle başladığı için önce uygulanıp eziliyordu). [2026-10-18] `birlestir.py` veritabanı adresini `CEVIRI_DB` ortam değişkeninden okur; öğrenciye özel K5 soruları kataloğa girmez, K5 cümle ve kökleri (`k5_cumleleri`, `k5_soru_kokleri`) ile uçlar metinleri girer. Çeviri uyarısı soru ekranında gösterilmez, Sistem Hakkında sayfasındaki "Dil desteği" kartında (`components/DilBilgisi.jsx`) yer alır.
 
 ## Eksik çeviri taraması
 

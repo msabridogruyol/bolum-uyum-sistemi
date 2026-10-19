@@ -211,13 +211,13 @@ def k_gelisim(b: Baglam, m: str) -> str:
         return _hedefsiz(b)
     o = b.plan.get("odak_alanlari", [])
     if not o:
-        return f"Harika haber: {b.hedef['ad']} için öncelikli bir gelişim alanın görünmüyor. Güçlü yönlerini büyütmeye odaklanabilirsin."
+        return f"{b.hedef['ad']} için bölümün senden daha fazla beklediği öncelikli bir alan görünmüyor. Bölümün beklediğinden fazla olduğun yönler varsa Koçluğum → Sen ve Bölümün sekmesine bak: bunlar bu bölümde daha az kullanabileceğin yönlerin, sana uyup uymadığını sına."
     ilk = o[0]
     adim = b.simdiki_adim()
     return (f"{b.hedef['ad']} için odaklanmanı önerdiğim alanlar: {_liste([x['degisken_adi'] for x in o[:3]])}. "
             f"En önemlisi {_kucuk(ilk['degisken_adi'])}. "
             + (f"Şu adımla başlayabilirsin: \"{adim['baslik']}\". " if adim else "")
-            + "Gelişime açık olmak eksik olmak demek değil. Bunlar biraz emekle büyüyebilecek yönlerin."
+            + "Bunlar bölümün senden daha fazla beklediği yönler. Becerilerin çalıştıkça gelişir; kişilik yönlerin küçük alışkanlıklarla esneyebilir; ilgileri ise deneyerek keşfedersin."
             # [2026-10-17] değerler büyütülecek bir beceri değil: farkı bilerek karar verilir
             + (" Listedeki değerlerde ise amaç değiştirmek değil, bölümün bu yönünün sana uyup uymadığını bilerek karar vermek."
                if any(str(x.get("degisken_kod") or "").startswith("D") for x in o[:3]) else ""))
@@ -233,7 +233,7 @@ def k_hedef(b: Baglam, m: str) -> str:
         return (f"Hedefin {b.hedef['ad']}. Sana en uyumlu bölümler arasında {sira}. sırada (%{uyum} uyum). "
                 "Bu iyi bir eşleşme. Bölüme hangi yönlerde uyduğunu Koçluğum → Sen ve Bölümün sekmesinde görebilirsin.")
     return (f"Hedefin {b.hedef['ad']}, ilk 10 önerin arasında değil. Ama bu \"yapamazsın\" demek değil. Bazı özelliklerin bölümün "
-            "beklediğinden farklı. Yol haritan tam da bu farkları kapatmak için var. İstersen Bölümler sayfasında öne çıkan diğer "
+            "beklediğinden farklı. Yol haritan, bölümün senden daha fazla beklediği yönlere odaklanır; bölümün beklediğinden fazla olduğun yönlerde ve değerlerinde ise amaç farkı kapatmak değil, sana uyup uymadığını sınamak. İstersen Bölümler sayfasında öne çıkan diğer "
             "bölümlere de bak. Karar her zaman senin.")
 
 
@@ -242,7 +242,7 @@ def k_bolum_oner(b: Baglam, m: str) -> str:
     if not ilk:
         return _hedefsiz(b)
     return (f"Değerlendirmene göre sana en uyumlu bölümler: {_liste([f'{a} (%{p})' for a, p in ilk])}. "
-            "Uyum puanı, 301 bölümü profiline yakınlığına göre sıralar: 100 sana en yakın bölüm, 0 en uzak bölüm. "
+            "Uyum puanı, bütün bölümleri profiline yakınlığına göre sıralar: 100 sana en yakın bölüm, 0 en uzak bölüm. "
             "Bölümler sayfasında her bölümün derslerine ve üniversitelerine bakabilirsin. Karşılaştır ile bölümleri yan yana da koyabilirsin.")
 
 
@@ -320,7 +320,7 @@ def k_test(b: Baglam, m: str) -> str:
 
 
 def k_uyum(b: Baglam, m: str) -> str:
-    return ("Her bölümün mezunları belli mesleklerde çalışır ve bu meslekler bazı özellikler ister. Sistem senin özelliklerini 301 bölümün "
+    return ("Her bölümün mezunları belli mesleklerde çalışır ve bu meslekler bazı özellikler ister. Sistem senin özelliklerini tüm bölümlerin "
             "beklentisiyle karşılaştırır ve bölümleri sana yakınlığına göre sıralar: 100 sana en yakın bölüm, 0 en uzak bölüm. "
             "Yani puan, bölümün senin için diğer bölümlere göre nerede durduğunu gösterir. Bu bir başarı tahmini değildir. Karar verirken ilgini, hayallerini ve ailenle konuştuklarını da düşün.")
 
@@ -331,7 +331,7 @@ def k_kim(b: Baglam, m: str) -> str:
 
 
 def k_sistem(b: Baglam, m: str) -> str:
-    return ("Filizyol dört adımda ilerler: 1) Değerlendirme — değerlerin, kişiliğin, sevdiğin iş ortamı ve ilgi alanların. "
+    return ("Filizyol dört adımda ilerler: 1) Değerlendirme — değerlerin, kişiliğin, iş ortamı yetkinliklerin ve ilgi alanların; uyumu 70 ve üzeri bölümlerin varsa son adımda iş türü tercihlerin bu bölümleri kendi aralarında yeniden sıralar. "
             "2) Sonuçlar — Profilim'de güçlü yönlerin, Bölümler'de sana en uyumlu bölümler. 3) Hedef — bir bölüm seçersin. "
             "Koçluğum'da sana özel bir yol haritası çıkar. 4) Gelişim — haftalık görevler, kulüpler, kütüphanen ve takvimin. "
             "Okulunda açıksa İş Hayatı sayfasında Mülakat Simülasyonu ve Düşünme Atölyesi de var. "
@@ -482,7 +482,7 @@ def k_kaynak_soru(b: Baglam, m: str) -> str | None:
     parcalar = [f"\"{baslik}\" iyi bir seçim."]
     if aciklama:
         parcalar.append(aciklama.rstrip(".") + ".")
-    parcalar.append(f"Neden işine yarar: {alan_k}, profilinde öne çıkan alanlardan biri. Bu kaynak sana bu konuda yeni bir bakış ve somut örnekler verir.")
+    parcalar.append(f"Neden işine yarar: bu kaynak sana {alan_k} konusunda yeni bir bakış ve somut örnekler verir.")
     parcalar.append("Nasıl başlarsın: " + _NASIL_BASLA.get(tip or "", _NASIL_BASLA["kitap"]).format(alan=alan_k))
     parcalar.append("İstersen İlham Kaynakları'ndaki \"Kütüphaneme ekle\" ile listene kaydet. Bitirince kısa bir not yaz. Gelişimini Kütüphanem'deki grafiklerde görürsün.")
     return " ".join(parcalar)

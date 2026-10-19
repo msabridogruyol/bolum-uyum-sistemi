@@ -1,0 +1,679 @@
+{
+ "surum": "2026-10-18",
+ "aciklama": "Yeni K5 soru bankası: 129 iş türü × 3 etkinlik cümlesi ve soru kökleri. Sorular öğrenciye özel bu bankadan kurulur (dal_servisi).",
+ "kokler": {
+  "encok": [
+   "Bir hafta boyunca bunlardan birini yapacak olsan hangisi sana en çok, hangisi en az uyar?",
+   "Yazın bir yerde staj yapma fırsatın var. Bu işlerden hangisi sana en çok, hangisi en az uyar?",
+   "Bir arkadaşın bu işlerden birinde ona eşlik etmeni istiyor. Hangisine en çok, hangisine en az katılmak istersin?",
+   "İnternette bir işin nasıl yapıldığını anlatan bir video serisi izleyeceksin. Hangisi sana en çok, hangisi en az ilginç gelir?",
+   "Bir gün boyunca birinin yanında çalışacaksın. Hangisi sana en çok, hangisi en az ilginç gelir?",
+   "Bir hafta sonunu bu işlerden biriyle geçireceksin. Hangisi sana en çok, hangisi en az uyar?",
+   "Bu işlerden birinde bir gün yardımcı olacaksın. Hangisi sana en çok, hangisi en az uyar?",
+   "Bir projede görev alacaksın. Hangi görev sana en çok, hangisi en az uyar?"
+  ],
+  "tek": [
+   "Bir hafta boyunca bunlardan yalnızca birini yapabilecek olsan hangisini seçerdin?",
+   "Bir yaz boyunca bunlardan yalnızca birini deneyebilecek olsan hangisini seçerdin?",
+   "Bir arkadaşın bunlardan birini birlikte yapmayı öneriyor. Hangisini seçerdin?",
+   "Bir gününü bu işlerden yalnızca biriyle geçirebilecek olsan hangisini seçerdin?"
+  ],
+  "kutup": [
+   "İki staj teklifin var. Hangisine daha yakınsın?",
+   "Bir hafta sonunu bu iki işten biriyle geçireceksin. Hangisine daha yakınsın?",
+   "İleride her gün yapacağın iş bu ikisinden biri olacak. Hangisine daha yakınsın?",
+   "Bir arkadaşın seni iki farklı projeye çağırıyor. Hangisine daha yakınsın?",
+   "Bir yaz boyunca bu iki işten birini öğreneceksin. Hangisine daha yakınsın?",
+   "Bir proje için iki farklı görev var. Hangisine daha yakınsın?",
+   "Bir günlüğüne bu iki işten birini yapan birinin yerinde olabilirsin. Hangisine daha yakınsın?",
+   "İki işi düşündüğünde kendini hangisine daha yakın hissediyorsun?"
+  ]
+ },
+ "cumleler": {
+  "U01_A": [
+   "Evdeki süpürge robotunun engellere çarpmadan dönmesi için hareket kurallarını ayarlamak",
+   "Bir robot kolun bardağı devirmeden kavrayıp taşıması için hareketlerini programlamak",
+   "Bir paketleme hattında ürünleri kendiliğinden ayıran makinenin algılayıcılarını test etmek"
+  ],
+  "U01_B": [
+   "Vücuttaki şeker düzeyini iğnesiz ölçen yeni bir cihazın algılayıcısını geliştirmek",
+   "Kalp atışını ölçen giyilebilir bir bandın algılayıcısını vücuda uyacak şekilde tasarlamak",
+   "Hasar görmüş deriyi onarmak için laboratuvarda yapay doku üretmeyi denemek"
+  ],
+  "U01_E": [
+   "Evdeki sigortanın neden attığını bulmak için elektrik hattını ölçü aletiyle kontrol etmek",
+   "Bir binada her katın ne kadar elektrik çekeceğini hesaplayıp kabloların kalınlığını seçmek",
+   "Bir kablosuz kulaklığın sesi kesintisiz alması için anten devresini tasarlamak"
+  ],
+  "U01_F": [
+   "Bir konser salonunda sesin her köşeye eşit ulaşması için yansımaları ölçmek",
+   "Mercekleri doğru aralıkla dizerek uzaktaki yazıları büyüten bir dürbün kurmak",
+   "Çok küçük parçacıklarla kaplanan bir camın buğulanmayı önleyip önlemediğini denemek"
+  ],
+  "U01_H": [
+   "Bir dronun daha uzun uçabilmesi için kanat ve pervane şeklini tasarlamak",
+   "Model uçağın kanadını rüzgâr tünelinde deneyip havada nasıl kaldığını ölçmek",
+   "Bir uydunun yörüngeye oturması için roketin ne kadar itiş gücü gerektiğini hesaplamak"
+  ],
+  "U01_I": [
+   "Dere üstüne kurulacak bir yaya köprüsünün ne kadar yük taşıyacağını hesaplamak",
+   "Mahalleye açılacak yeni yolun eğimini ve genişliğini arazide ölçmek",
+   "Bir konut sitesinde yağmur suyunu taşıyacak kanalların boyutlarını belirlemek"
+  ],
+  "U01_K": [
+   "Parktaki demir bankların paslanmaması için farklı kaplamaları yan yana denemek",
+   "Daha hafif ama kolay kırılmayan bir bisiklet kaskı için yeni malzeme karışımı geliştirmek",
+   "Bir boya fabrikasında her üretimde aynı tonun çıkması için karışım oranlarını ayarlamak"
+  ],
+  "U01_M": [
+   "Bisikletin vites dişlilerini söküp zincirin gücü nasıl aktardığını incelemek",
+   "Bir arabanın motor parçalarını bilgisayarda çizip ölçülerini üretime hazırlamak",
+   "Bir atölyede metal bir parçayı makinede istenen ölçüde kesip denemek"
+  ],
+  "U01_N": [
+   "Evin çatısına kaç güneş paneli konursa elektriğin yeteceğini hesaplamak",
+   "Mahallenin atık suyunu temizleyecek bir arıtma düzeneğinin maketini kurmak",
+   "Yoğun bir caddede hava kirliliğini ölçüp azaltmak için çözümler önermek"
+  ],
+  "U01_S": [
+   "Kafedeki kuyruğun neden uzadığını inceleyip siparişleri hızlandıracak bir düzen kurmak",
+   "Bir fabrikadaki üretim hattında işi yavaşlatan adımı bulup iş sırasını yeniden düzenlemek",
+   "Bir fırında ekmek üretiminin hangi adımda zaman kaybettiğini ölçmek"
+  ],
+  "U01_Y": [
+   "Bir mermer ocağında taş damarının yerin altında hangi yöne uzandığını haritalamak",
+   "Bir yamaçtaki toprak kaymasının nedenini zemin örnekleri alarak araştırmak",
+   "Deprem istasyonundan gelen sarsıntı kayıtlarına bakıp fay hattının yerini belirlemek"
+  ],
+  "U02_G": [
+   "Ailenin ev ağına izinsiz bağlanan cihazları bulup engellemek",
+   "Dolandırıcılık amaçlı bir e-postadaki bağlantının nereye götürdüğünü güvenli bir ortamda incelemek",
+   "Bir hesabın ele geçirildiği anı bilgisayar kayıtlarında iz sürerek bulmak"
+  ],
+  "U02_H": [
+   "Eski bir bilgisayarın belleğini ve diskini değiştirip yeniden hızlı çalıştırmak",
+   "Küçük bir denetleyici kartla odanın sıcaklığını ölçüp ekrana yazan bir cihaz yapmak",
+   "Akıllı bir saatin pilinin daha uzun gitmesi için içindeki küçük devreyi ayarlamak"
+  ],
+  "U02_K": [
+   "Kargo aracının tüm durakları en kısa yoldan dolaşacağı sırayı bulan bir yöntem geliştirmek",
+   "Bir sınıf listesini en hızlı sıralayan yolu bulmak için farklı yöntemleri karşılaştırmak",
+   "Bir bulmacanın çözümünü bilgisayarın izleyebileceği adımlara bölerek kâğıda dökmek"
+  ],
+  "U02_O": [
+   "Arkadaşlarının oynayacağı bir telefon oyununun bölümlerini ve kurallarını tasarlamak",
+   "Bir uygulamayı ilk kez kullanan birinin hangi düğmede takıldığını izleyip ekranı düzenlemek",
+   "Bir oyunun zorluğunu oyuncular ne sıkılacak ne de bırakacak şekilde dengelemek"
+  ],
+  "U02_S": [
+   "Bir dükkânın stok, satış ve kasa kayıtlarını tek bir sistemde birleştirmek",
+   "Bir derneğin üye kaydından aidat takibine kadar işlerini adım adım dijitale taşımak",
+   "Bir kütüphanenin ödünç verme işinde hangi bilginin nerede tutulacağını planlamak"
+  ],
+  "U02_V": [
+   "Fotoğraflardaki kedi ve köpekleri ayırt eden bir programı örneklerle eğitip denemek",
+   "Bir müzik uygulamasında dinleme geçmişine bakarak yeni şarkı öneren bir model kurmak",
+   "İnternetteki yorumları olumlu ya da olumsuz diye kendi başına ayıran bir program eğitmek"
+  ],
+  "U02_Y": [
+   "Mahalledeki fırın için sipariş alınabilen bir internet sitesi yazmak",
+   "Harcamalarını takip ettiğin bir telefon uygulamasına yeni bir özellik eklemek",
+   "Bir uygulamanın düğmeye basınca kapanmasına yol açan kod hatasını bulup düzeltmek"
+  ],
+  "U03_A": [
+   "Dere kenarına dökülen molozun kaynağını lastik izlerini inceleyerek bulmak",
+   "Bir mektuptaki imzanın sahte olup olmadığını el yazısı örnekleriyle karşılaştırmak",
+   "Hırsızlık yapılan bir evde kapı kolundaki parmak izlerini özel tozla ortaya çıkarmak"
+  ],
+  "U03_B": [
+   "Bir derede yaşayan böcek ve küçük canlı türlerini toplayıp listelemek",
+   "Göz rengi gibi bir özelliğin ailede kuşaklar boyunca nasıl aktarıldığını incelemek",
+   "Mayanın farklı sıcaklıklarda ne kadar hızlı çoğaldığını mikroskopla gözlemlemek"
+  ],
+  "U03_F": [
+   "Farklı uzunluktaki salıncakların ne kadar sürede gidip geldiğini ölçüp kuralını bulmak",
+   "Farklı sıvılarda buzun ne kadarının battığını ölçüp yoğunlukla ilişkisini bulmak",
+   "Bir yayın ne kadar uzadığını farklı ağırlıklar asarak ölçüp kuralını bulmak"
+  ],
+  "U03_K": [
+   "Musluk suyundaki kireç miktarını basit bir testle ölçmek",
+   "Kırmızı lahana suyuyla mutfaktaki sıvıların asit mi baz mı olduğunu bulmak",
+   "Bir alev üzerine farklı tuzlar serpip alevin hangi renge döndüğünü incelemek"
+  ],
+  "U03_S": [
+   "Mahallede anket yapıp sonuçları tablo ve grafiklerle özetlemek",
+   "Bir zarın hileli olup olmadığını yüzlerce atışın sonuçlarına bakarak test etmek",
+   "Az sayıda kişiye sorulan bir anketin bütün şehri ne kadar yansıttığını hesaplamak"
+  ],
+  "U03_T": [
+   "Bir zemini hangi düzgün şekillerle boşluksuz döşeyebileceğini bulup nedenini kanıtlamak",
+   "Bir sayı dizisindeki gizli örüntüyü çözüp genel kuralını formül olarak yazmak",
+   "Bir pizzayı düz kesimlerle en fazla kaç parçaya bölebileceğini araştırmak"
+  ],
+  "U03_U": [
+   "Bir ay boyunca Ay'ın şeklini her gece gözleyip defterine çizmek",
+   "Teleskop görüntülerinde bir yıldızın parlaklığındaki küçük düşüşlerden gezegen aramak",
+   "Işık kirliliğinden uzak bir tepede takımyıldızları gökyüzü haritasıyla eşleştirmek"
+  ],
+  "U04_A": [
+   "Bir mahalle deprem tatbikatında toplanma alanını ve tahliye yollarını planlamak",
+   "Parkta düşüp dizini yaralayan bir çocuğa ilk yardım uygulamak",
+   "Sel ihtimaline karşı ailenin acil durum çantasını ve iletişim planını hazırlamak"
+  ],
+  "U04_B": [
+   "Yalnız yaşayan yaşlı bir komşunun ilaç saatlerini ve günlük ihtiyaçlarını takip etmek",
+   "Ameliyattan yeni çıkan bir yakınının yatakta rahat etmesi için yatışını düzenlemek",
+   "Yeni doğmuş bir bebeğin ilk günlerinde ailesine banyo ve bakım konusunda destek olmak"
+  ],
+  "U04_D": [
+   "Dişleri tellerle düzeltilecek birinin ağız ölçüsünden alçı model çıkarmak",
+   "Çocukların dişlerini ayna ve ışıkla kontrol edip çürük olanları not almak",
+   "Kırılan bir ön dişin rengine uygun dolgu malzemesini seçip şekillendirmek"
+  ],
+  "U04_H": [
+   "Ateşi ve öksürüğü olan birinin şikâyetlerini dinleyip olası hastalıkları sıralamak",
+   "Bir röntgen görüntüsüne bakıp kemikteki çatlağın tam yerini bulmak",
+   "Bir hastanın kontrol sonuçlarına göre tedavi planını yeniden düzenlemek"
+  ],
+  "U04_I": [
+   "Bir eczanede reçetedeki ilacın nasıl ve ne zaman kullanılacağını hastaya anlatmak",
+   "İki ilacın birlikte kullanılınca birbirini etkileyip etkilemediğini kontrol etmek",
+   "Bir bitkiden elde edilen maddenin hangi miktarda ağrıyı azalttığını laboratuvarda denemek"
+  ],
+  "U04_K": [
+   "Bir arkadaşının işitmesini ince ve kalın seslerle test edip sonucu kaydetmek",
+   "Bazı sesleri söylemekte zorlanan bir çocukla oyunlarla konuşma çalışması yapmak",
+   "Kekemelik yaşayan birinin daha akıcı konuşması için nefes ve hız egzersizleri planlamak"
+  ],
+  "U04_N": [
+   "Bir yaz kampındaki çocukların bir haftalık dengeli yemek listesini hazırlamak",
+   "Bir sporcunun maç öncesi ne yemesi ve ne kadar su içmesi gerektiğini belirlemek",
+   "Bir aile büyüğünün günlük yediklerini kaydedip şeker ve tuz miktarını hesaplamak"
+  ],
+  "U04_R": [
+   "Bileği burkulan bir arkadaşın iyileşmesi için günlük hareket programı hazırlamak",
+   "Ameliyat sonrası yeniden yürümeye çalışan birine denge çalışmaları yaptırmak",
+   "Elini kullanmakta zorlanan birine düğme iliklemeyi adım adım yeniden çalıştırmak"
+  ],
+  "U04_T": [
+   "Bir hastanın kullandığı insülin pompasını ve ölçüm cihazını doğru çalışacak şekilde ayarlamak",
+   "Bir hastanede solunum cihazının bağlantılarını ve alarmlarını kontrol etmek",
+   "Röntgen çekiminde cihazı hastaya göre konumlandırıp net bir görüntü almak"
+  ],
+  "U04_V": [
+   "Barınaktaki bir köpeği tartıp aşılarını yapıp sağlık kartına işlemek",
+   "Topallayan bir sokak kedisini muayene edip nerede zorlandığını anlamak",
+   "Kısırlaştırılan bir sokak kedisinin iyileşme süresince pansumanını yenilemek"
+  ],
+  "U04_Y": [
+   "Bir aile sağlığı merkezinde nöbet listesini ve malzeme siparişlerini düzenlemek",
+   "Bir atölyede çalışanlar için riskli noktaları bulup güvenlik önlemlerini belirlemek",
+   "Bir aşı kampanyasında gönüllüleri, malzemeleri ve günlük programı organize etmek"
+  ],
+  "U05_A": [
+   "Mahalle futbol takımının maç öncesi antrenman programını ve taktiğini hazırlamak",
+   "Bir yüzücünün yarış videosunu izleyip dönüş tekniğindeki hataları belirlemek",
+   "Basketbol maçında mola alıp oyunculara yeni bir savunma düzeni anlatmak"
+  ],
+  "U05_E": [
+   "Koşu sırasında nabzın nasıl değiştiğini ölçüp grafiğe dökmek",
+   "Isınma yapmanın zıplama yüksekliğini ne kadar artırdığını küçük bir deneyle test etmek",
+   "Bir bisikletçinin yorulma noktasını oksijen kullanımına bakarak belirlemek"
+  ],
+  "U05_R": [
+   "Her yaştan komşunun katılacağı bir hafta sonu parkta oyun şenliği düzenlemek",
+   "Bir tatil köyünde misafirler için gün boyu sürecek oyun ve hobi etkinlikleri hazırlamak",
+   "Bir doğa yürüyüşünde gruba harita ve pusulayla yön bulma oyunu oynatmak"
+  ],
+  "U05_Y": [
+   "Mahalleler arası bir turnuva için takımları, hakemleri ve maç takvimini ayarlamak",
+   "Amatör bir kulübün sponsorluk görüşmelerini ve yıllık bütçesini yönetmek",
+   "Bir koşu yarışında kayıt, numara dağıtımı ve su istasyonlarını organize etmek"
+  ],
+  "U06_A": [
+   "Kalabalık bir ailenin aylık alışverişini ve harcamalarını bütçeye göre planlamak",
+   "Ev için alınacak bir buzdolabının fiyatını, garantisini ve elektrik tüketimini karşılaştırmak",
+   "Kalabalık bir ailede ev işlerinin haftalık paylaşımını herkese uygun biçimde planlamak"
+  ],
+  "U06_C": [
+   "Bir bebeğin ilk iki yılında hangi becerileri ne zaman kazandığını gözlemlemek",
+   "Üç yaşındaki bir kuzenin gelişimine uygun oyuncakları ve oyunları seçmek",
+   "Farklı yaşlardaki çocukların çizdiği resimleri karşılaştırıp gelişimlerini değerlendirmek"
+  ],
+  "U06_D": [
+   "Zor bir dönemden geçen bir gençle düzenli konuşup ne yaşadığını anlamaya çalışmak",
+   "Kardeşiyle sürekli tartışan birinin kendi duygularını fark etmesine yardım etmek",
+   "Kaygılı birinin sorununu adım adım konuşup başa çıkma yolları bulmasına destek olmak"
+  ],
+  "U06_P": [
+   "İnsanların aynı olayı neden farklı hatırladığını küçük bir deneyle sınamak",
+   "Arka plandaki müziğin dikkat süresini nasıl etkilediğini arkadaşlarla test etmek",
+   "Göz yanılmalarında beynin görüntüyü neden yanlış yorumladığını araştırmak"
+  ],
+  "U06_S": [
+   "Engelli bir gencin okula ulaşımı için belediyeden hangi desteği alabileceğini araştırmak",
+   "Zor durumdaki bir ailenin hangi desteklerden yararlanabileceğini araştırıp başvurusuna yardım etmek",
+   "Evsiz kalan birinin barınma ve iş bulma sürecinde yanında olmak"
+  ],
+  "U07_A": [
+   "Komşu çocuklarına sulu boyayla renk karıştırmayı adım adım göstermek",
+   "Bağlama çalmayı yeni öğrenen bir gruba ilk tutuşları ve ritmi adım adım öğretmek",
+   "Bir yaz atölyesinde katılımcılara gölgelendirmeyle resme derinlik vermeyi anlatmak"
+  ],
+  "U07_F": [
+   "Küçük kardeşine mıknatısların nasıl çalıştığını evdeki eşyalarla göstermek",
+   "Parktaki çocuklara bitkilerin nasıl su çektiğini basit bir deneyle anlatmak",
+   "Bir bilim şenliğinde ziyaretçilere sirke ile karbonatın neden köpürdüğünü açıklamak"
+  ],
+  "U07_K": [
+   "Altı yaşındaki bir çocuğa oyunla harfleri ve sayıları tanıtmak",
+   "Kreşteki çocuklara şarkılarla sıra beklemeyi ve paylaşmayı öğretmek",
+   "İlkokula yeni başlayan bir çocukla okumayı hece hece çalışmak"
+  ],
+  "U07_L": [
+   "Türkçe öğrenen yeni komşulara günlük konuşma kalıplarını öğretmek",
+   "Bir arkadaşına İngilizce kelimeleri oyunlarla akılda kalacak şekilde çalıştırmak",
+   "Yabancı dil konuşmaktan çekinen birine sohbet ederek doğru telaffuzu göstermek"
+  ],
+  "U07_M": [
+   "Kesirlerde zorlanan bir kardeşe konuyu pizza dilimleriyle anlatmak",
+   "Bir arkadaşına yüzde hesaplarını alışveriş indirimleri üzerinden adım adım açıklamak",
+   "Çocuklara kâğıt katlayarak üçgen ve karelerin özelliklerini keşfettirmek"
+  ],
+  "U07_O": [
+   "Görme engelli bir çocuğa kabartmalı kartlarla şekilleri ve harfleri tanıtmak",
+   "Otizm spektrumundaki bir çocuğa resimli kartlarla günlük işlerin sırasını öğretmek",
+   "Down sendromu olan bir gence para üstü saymayı alışveriş yaparak çalıştırmak"
+  ],
+  "U07_P": [
+   "Mahalledeki çocuklara voleybolda manşet atmayı ve oyunun kurallarını öğretmek",
+   "Yaz kampında bir gruba yüzerken doğru nefes almayı göstermek",
+   "Hiç spor yapmamış arkadaşlarına basketbolda top sürmeyi baştan anlatmak"
+  ],
+  "U07_R": [
+   "Lise seçecek bir komşu çocuğuyla ilgi alanlarını konuşup seçeneklerini sıralamak",
+   "Sınava hazırlanan bir gencin çalışma planını ve hedeflerini birlikte belirlemek",
+   "Gençlik merkezinde gençlerin ilgi ve yeteneklerini tanıyacağı bir etkinlik yürütmek"
+  ],
+  "U07_S": [
+   "Ortaokuldaki kuzenine bir imparatorluğun nasıl yükseldiğini haritalarla kolayca anlatmak",
+   "Küçük kardeşine dünya haritasında iklimin insanların yaşamını nasıl etkilediğini göstermek",
+   "Bir grup gence seçimlerin ve yerel yönetimin nasıl işlediğini örneklerle anlatmak"
+  ],
+  "U07_T": [
+   "Büyükannene telefonda görüntülü arama yapmayı ve fotoğraf göndermeyi öğretmek",
+   "Çocuklara blok tabanlı bir kodlama uygulamasıyla basit animasyon yapmayı göstermek",
+   "Gönüllü bir atölyede gençlere güvenli internet kullanımını ve şifre korumayı anlatmak"
+  ],
+  "U08_C": [
+   "Yabancı bir şarkının sözlerini anlamını ve ritmini koruyarak Türkçeye aktarmak",
+   "Tatilde tanıştığın yabancı bir aileyle esnaf arasında anında karşılıklı çeviri yapmak",
+   "Yabancı bir dizinin altyazısındaki çeviri hatalarını bulup düzeltmek"
+  ],
+  "U08_D": [
+   "Farklı dinlerde oruç geleneğinin nasıl ortaya çıktığını kaynaklardan karşılaştırmak",
+   "Bir dinin bayramlarının ve ibadetlerinin farklı bölgelerde nasıl uygulandığını karşılaştırmak",
+   "Kutsal bir metindeki bir bölümün yüzyıllar içinde nasıl farklı yorumlandığını incelemek"
+  ],
+  "U08_E": [
+   "Tatilde yaşadığın bir olaydan yola çıkarak kısa bir öykü yazmak",
+   "Bir şiirdeki imgeleri ve şairin anlatmak istediklerini satır satır çözümlemek",
+   "Bir kitap buluşmasında okunan romanın karakterlerini ve anlatımını tartışmak"
+  ],
+  "U08_F": [
+   "“Yalan söylemek hiç doğru olabilir mi?” sorusunu farklı açılardan tartışmak",
+   "Özgürlük ile kurallar arasındaki dengeyi düşünürlerin görüşleriyle karşılaştırmak",
+   "Bir şeyi gerçekten bilip bilmediğimizi nasıl anlayabileceğimiz üzerine akıl yürütmek"
+  ],
+  "U08_G": [
+   "Uydu görüntülerinden yaşadığın ilin dağlarını ve ovalarını haritaya işlemek",
+   "Bir akarsuyun çevresindeki köylerin yerleşim düzenini nasıl etkilediğini incelemek",
+   "Yaşadığın bölgenin ikliminin oradaki tarımı ve yaşamı nasıl şekillendirdiğini incelemek"
+  ],
+  "U08_H": [
+   "Köydeki yaşlılardan eski düğün geleneklerini dinleyip yazıya geçirmek",
+   "Bölgene özgü manileri ve atasözlerini derleyip konularına göre sınıflandırmak",
+   "Bayramlarda yapılan yöresel adetlerin köyden köye nasıl değiştiğini karşılaştırmak"
+  ],
+  "U08_M": [
+   "Aile albümündeki eski fotoğrafları tarihlerine göre sınıflandırıp etiketlemek",
+   "Bağışlanan eski eşyaların bir vitrinde hangi sırayla sergileneceğini planlamak",
+   "Belediyenin eski belgelerini numaralandırıp kolayca bulunacak şekilde kataloglamak"
+  ],
+  "U08_R": [
+   "Antik bir kentte toprağı katman katman açıp eski duvar kalıntılarını ortaya çıkarmak",
+   "Tarlada bulunan çanak çömlek parçalarının hangi döneme ait olduğunu incelemek",
+   "Kazıda çıkan her buluntunun yerini ölçüp krokiye işlemek"
+  ],
+  "U08_S": [
+   "Kasaba halkıyla görüşüp gençlerin neden kente göç ettiğini araştırmak",
+   "Bir mahallede komşuluk ilişkilerinin yıllar içinde nasıl değiştiğini gözlemlemek",
+   "Gençlerin arkadaşlık kurma biçimlerinin sosyal medyayla nasıl değiştiğini anketle incelemek"
+  ],
+  "U08_T": [
+   "Mahallenin yüz yıl önceki halini eski gazetelerden ve kayıtlardan araştırmak",
+   "Eski mektuplara dayanarak bir savaşın nasıl başladığını adım adım çözmek",
+   "Aynı olayı anlatan iki eski belgeden hangisinin daha güvenilir olduğunu sorgulamak"
+  ],
+  "U09_E": [
+   "Devletin akaryakıt vergisini artırmasının ailelerin harcamalarına etkisini hesaplamak",
+   "Belediyenin toplu taşıma ücretini düşürmesinin bütçeye maliyetini ve kazancını hesaplamak",
+   "Devletin vereceği bir kira desteğinin kamu bütçesine yükünü ve halka yararını tartmak"
+  ],
+  "U09_H": [
+   "Bir kira anlaşmazlığında hangi kanun maddesinin kimden yana olduğunu incelemek",
+   "İnternette izinsiz paylaşılan bir fotoğraf için hangi hakların kullanılabileceğini araştırmak",
+   "Bir anlaşmazlıkta bir tarafın haklarını kanunlara dayanarak savunmak"
+  ],
+  "U09_K": [
+   "Belediyeye gelen vatandaş şikâyetlerini ilgili birimlere yönlendirip çözülmesini takip etmek",
+   "Bir ilçede çöp toplama ve otobüs hizmetlerinin aksamadan yürümesini düzenlemek",
+   "Mahalledeki parkların ve kütüphanelerin bakımı için bir hizmet planı hazırlamak"
+  ],
+  "U09_S": [
+   "Bir seçimde oyların bölgelere göre neden farklı dağıldığını incelemek",
+   "Seçim kampanyalarındaki hangi vaatlerin gençleri neden etkilediğini çözümlemek",
+   "Bir yasa önerisine meclisteki grupların neden farklı tavır aldığını incelemek"
+  ],
+  "U09_U": [
+   "İki ülke arasındaki bir su anlaşmazlığının çözümü için seçenekler geliştirmek",
+   "Başka ülkelerden gelen temsilcilerle ortak bir anlaşma metni üzerinde uzlaşmak",
+   "Komşu bir ülkedeki bir gelişmenin Türkiye ile ilişkilere etkisini yorumlamak"
+  ],
+  "U10_D": [
+   "Bir aile işletmesinin zeytinyağını başka bir ülkeye göndermek için belgeleri hazırlamak",
+   "Farklı şehirlerden toplanan bağışların depoya zamanında ulaşmasını ayarlamak",
+   "Bir kargonun karayolu ile deniz yolu arasındaki maliyet ve süre farkını karşılaştırmak"
+  ],
+  "U10_E": [
+   "Domates fiyatının bir ayda neden iki katına çıktığını arz ve talep ile açıklamak",
+   "Kira fiyatlarındaki artışın semtten semte neden farklı olduğunu incelemek",
+   "Kasabaya açılan bir fabrikanın iş bulma ve ücretlere etkisini araştırmak"
+  ],
+  "U10_F": [
+   "Harçlıktan biriken parayı mevduat, altın ve fon arasında paylaştırmayı planlamak",
+   "İki bankanın kredi tekliflerini karşılaştırıp toplam geri ödemeyi hesaplamak",
+   "Bir şirketin hissesini almadan önce kâr ve borç durumunu incelemek"
+  ],
+  "U10_G": [
+   "Mahallede eksik olan bir hizmeti fark edip bir iş fikrine dönüştürmek",
+   "Yaz tatilinde el yapımı ürünler satan küçük bir işi sıfırdan başlatmak",
+   "Bir iş fikri için ortak bulup ilk sermayeyi nasıl toplayacağını kurgulamak"
+  ],
+  "U10_J": [
+   "Bir yerel üreticinin ürünleri için çevrimiçi mağaza kurup siparişleri yönetmek",
+   "Bir yerel markanın internet satışlarını artırmak için reklam ve kampanya ayarlarını yönetmek",
+   "Bir internet mağazasında ödeme ve kargo adımlarını kolaylaştıran düzenlemeler yapmak"
+  ],
+  "U10_M": [
+   "Mahalledeki bir dükkânın aylık gelir ve giderlerini düzenli olarak kaydetmek",
+   "Bir derneğin yıllık hesaplarındaki hataları ve eksikleri tek tek denetlemek",
+   "Serbest çalışan bir yakının ödemesi gereken yıllık vergiyi hesaplamak"
+  ],
+  "U10_P": [
+   "Bir pazar tezgâhında hangi ürünün kime daha çok satıldığını izlemek",
+   "Yeni açılan bir spor salonu için müşteri grupları belirleyip satış planı yapmak",
+   "Fuar standında ziyaretçilerle konuşup onları ürünü denemeye ve almaya ikna etmek"
+  ],
+  "U10_R": [
+   "Geçmiş hava kayıtlarından bir açık hava şenliğinin iptal edilme riskini hesaplamak",
+   "Bir telefon sigortasının fiyatını arıza ve kaybolma olasılıklarına göre belirlemek",
+   "Bir dükkânın gelecek yıl zarar etme ihtimalini farklı senaryolarla tahmin etmek"
+  ],
+  "U10_Y": [
+   "Gönüllü ekibinde kimin hangi göreve uygun olduğuna karar verip işleri dağıtmak",
+   "Bir kafeye yeni eleman alırken adaylarla görüşüp seçim yapmak",
+   "Bir mağazada çalışanların vardiya düzenini herkesin ihtiyacına göre organize etmek"
+  ],
+  "U11_D": [
+   "Mahalle barınağının sosyal medya hesabı için haftalık paylaşım takvimi hazırlamak",
+   "Hangi paylaşımın daha çok etkileşim aldığını takip edip yeni içerik biçimleri denemek",
+   "Bir etkinliği anlık hikâyeler ve kısa videolarla takipçilere canlı aktarmak"
+  ],
+  "U11_F": [
+   "Parkta geçen kısa bir filmin senaryosunu yazıp sahnelere bölmek",
+   "Arkadaşlarınla çektiğin kısa filmde oyunculara sahnenin nasıl oynanacağını tarif etmek",
+   "Bir filmin hikâyesinin nasıl kurulduğunu sahne sahne çözümlemek"
+  ],
+  "U11_H": [
+   "Mahallede kapanan bir parkın nedenini araştırıp yetkililerle konuşarak haber yazmak",
+   "İnternette yayılan bir iddianın doğru olup olmadığını kaynaklarından doğrulamak",
+   "Yerel bir pazarın esnafıyla röportaj yapıp sorunlarını haberleştirmek"
+  ],
+  "U11_I": [
+   "Bir kütüphanenin yeni hizmetlerini tanıtmak için basınla ve halkla iletişimi yürütmek",
+   "Bir kurumun yaşadığı bir aksaklık sonrası halka yapacağı açıklamayı yazmak",
+   "Bir derneğin basın toplantısını düzenleyip gelebilecek sorulara cevap hazırlamak"
+  ],
+  "U11_K": [
+   "Telefonla çekilen görüntüleri kesip birleştirerek akıcı bir video oluşturmak",
+   "Bir röportaj kaydındaki arka plan gürültüsünü temizleyip sesi dengelemek",
+   "Bir tatil videosunun sahnelerine uygun müzik ve ses efektleri yerleştirmek"
+  ],
+  "U11_R": [
+   "Yeni açılan bir pastane için kısa ve akılda kalan bir slogan yazmak",
+   "Bir meyve suyu için otuz saniyelik reklam filminin ana fikrini bulmak",
+   "Toplu taşıma kullanımını artırmak için otobüs duraklarına konacak bir reklam mesajı yazmak"
+  ],
+  "U11_Y": [
+   "Yerel bir radyoda haftalık bir müzik ve sohbet programı hazırlayıp sunmak",
+   "Bir televizyon programı için konuları ve konukları belirleyip akışı planlamak",
+   "Bir podcast bölümünün yayın akışını dakika dakika hazırlayıp kaydetmek"
+  ],
+  "U12_A": [
+   "Kendi çizdiğin bir karakterin yürüyüşünü kare kare çizip hareketlendirmek",
+   "Bir hikâyedeki kahramanı bilgisayarda üç boyutlu bir karakter olarak modellemek",
+   "Bir kısa çizgi filmdeki karakterin yüz ifadelerini sahneye göre canlandırmak"
+  ],
+  "U12_F": [
+   "Bir arkadaşının doğum gününde ışığı ayarlayıp anı fotoğrafları çekmek",
+   "Tatildeki gün batımını farklı açılardan çekip en iyi kareyi seçmek",
+   "Mahalledeki eski bir sokağı farklı saatlerde fotoğraflayıp bir dizi oluşturmak"
+  ],
+  "U12_G": [
+   "Mahalledeki bir fırın için akılda kalan bir logo çizmek",
+   "Bir kitap fuarı için dikkat çeken bir afiş tasarlamak",
+   "Bir arkadaşının yazdığı öyküye kapak için yazı ve renk seçmek"
+  ],
+  "U12_H": [
+   "Kilden bir insan figürü şekillendirip fırında pişirmek",
+   "Bir ağaç kütüğünü oyarak üç boyutlu bir hayvan figürü yontmak",
+   "Atık metal parçaları kaynakla birleştirip parkta duracak bir yapıt oluşturmak"
+  ],
+  "U12_K": [
+   "Bir kütüphanedeki yıpranmış eski bir kitabın sayfalarını bozmadan onarmak",
+   "Eski bir konaktaki solmuş duvar süslemesinin asıl renklerini yerinde incelemek",
+   "Kırılmış eski bir çini tabağın parçalarını aslına uygun biçimde yapıştırmak"
+  ],
+  "U12_L": [
+   "Su yüzeyine boya serpip kâğıda ebru deseni aktarmak",
+   "Kamış kalem ve mürekkeple harfleri belirli ölçülere göre süsleyerek yazmayı çalışmak",
+   "Bir köydeki tezgâhta geleneksel motiflerle küçük bir kilim dokumak"
+  ],
+  "U12_M": [
+   "Kendi tasarladığın bir ceketin çizimini yapıp kumaşını seçmek",
+   "Eski bir kotu söküp yeniden biçerek farklı bir kıyafete dönüştürmek",
+   "Yaz koleksiyonu için tişörtlere basılacak bir kumaş deseni oluşturmak"
+  ],
+  "U12_R": [
+   "Tuval üzerine yağlı boyayla bir köy manzarası boyamak",
+   "Bir parkta oturup gelip geçen insanların karakalem eskizlerini çizmek",
+   "Mahalledeki boş bir duvara renkli bir duvar resmi işlemek"
+  ],
+  "U12_T": [
+   "Boncuk ve ince telle kendine özgü bir kolye yapmak",
+   "Bir arkadaşın için gümüş bir yüzüğün biçimini kâğıda çizmek",
+   "Eski düğmeleri ve deri parçalarını birleştirip bir bileklik ile anahtarlık üretmek"
+  ],
+  "U12_U": [
+   "Elleri titreyen yaşlıların rahat tutabileceği bir çay bardağının biçimini çizmek",
+   "Evdeki bir mutfak eşyasının kullanılmasını zorlaştıran ayrıntıları gözlemleyip not etmek",
+   "Küçük bir odaya sığan, katlanabilir bir çalışma masasının kartondan maketini yapmak"
+  ],
+  "U12_Y": [
+   "Mahalledeki gençlerin çizimlerinden oluşan bir serginin açılışını organize etmek",
+   "El yapımı ürünler pazarına katılacak üreticileri ve stant yerlerini ayarlamak",
+   "Bir kültür merkezinin bir aylık atölye ve sergi takvimini düzenlemek"
+  ],
+  "U13_B": [
+   "Kendi uydurduğun bir ezgiyi notaya döküp sözlerini eklemek",
+   "Bilinen bir şarkıyı yaylı çalgılar için yeniden düzenlemek",
+   "Mahalle korosunun provasında ses gruplarını el hareketleriyle yönetmek"
+  ],
+  "U13_C": [
+   "Yeni bir parçayı piyanoda hatasız çalana kadar bölüm bölüm çalışmak",
+   "Arkadaşlarınla kurduğun müzik grubunda bir mahalle konserinde bağlama çalmak",
+   "Kulaktan duyduğun bir ezgiyi piyanoda bulup çalmak"
+  ],
+  "U13_D": [
+   "Bir aile yemeğinde geçen kısa bir sahne oyununun diyaloglarını yazmak",
+   "İzlediğin bir sahne oyununun güçlü ve zayıf yanlarını anlatan bir yazı yazmak",
+   "Bir romanı sahnede oynanabilecek bir metne uyarlamak"
+  ],
+  "U13_E": [
+   "Bir sahne oyunu için eski bir evin salonunu dekor olarak tasarlamak",
+   "Bir sahne oyununda kullanılacak eşyaları ve dekor parçalarını dönemine uygun seçmek",
+   "Bir konser sahnesinde şarkı değiştikçe ışıkların rengini ve yönünü planlamak"
+  ],
+  "U13_K": [
+   "Bir türkünün hangi makamda olduğunu ve ezgisinin nasıl ilerlediğini çözümlemek",
+   "Bir şarkının akor geçişlerini inceleyip kulağa neden hoş geldiğini açıklamak",
+   "İki farklı dönemin şarkılarındaki ritim ve akor kalıplarını karşılaştırmak"
+  ],
+  "U13_N": [
+   "Bir şarkıya ritmine uygun kendi dans hareketlerini oluşturmak",
+   "Bir düğünde arkadaşlarınla halk oyunu figürlerini uyum içinde sergilemek",
+   "Ayna karşısında bir dans gösterisinin adımlarını ritme oturtana kadar tekrar etmek"
+  ],
+  "U13_O": [
+   "Bir sahne oyununda kendinden çok farklı bir karakteri canlandırmak",
+   "Bir doğaçlama atölyesinde anında verilen bir duruma göre rol yapmak",
+   "Bir karakterin repliklerini ezberleyip ses tonunu ve jestlerini çalışmak"
+  ],
+  "U13_S": [
+   "Bir yaz konserinde sahneye çıkıp bir şarkı söylemek",
+   "Nefes ve ses egzersizleriyle sesini daha uzun tutmayı çalışmak",
+   "Mahalle korosunda yeni bir şarkının ikinci sesini seslendirmek"
+  ],
+  "U13_T": [
+   "Bir arkadaşının şarkısını kaydedip vokal ile çalgıların ses seviyelerini dengelemek",
+   "Bilgisayarda doğadan kaydettiğin seslerle yeni bir elektronik ritim üretmek",
+   "Bir açık hava konserinde mikrofonları ve hoparlörleri kurup ses ayarını yapmak"
+  ],
+  "U13_Y": [
+   "Bir konser gecesinde grupların sahneye çıkış sırasını ve süresini organize etmek",
+   "Bir sahne oyununun prova takvimini ve ekiplerin görev dağılımını düzenlemek",
+   "Gösteri sırasında perde arkasında ışık, ses ve dekor ekiplerini yönlendirmek"
+  ],
+  "U14_B": [
+   "Bir sahil kasabası için tek katlı bir tatil evinin planını çizmek",
+   "Bir binanın güneşi ve rüzgârı nasıl aldığına göre pencere yerlerini belirlemek",
+   "Mahalleye yapılacak bir kütüphane binasının kartondan maketini yapmak"
+  ],
+  "U14_I": [
+   "Küçük bir odayı daha ferah göstermek için mobilya ve renk düzenini planlamak",
+   "Bir kafenin içi için duvar rengini, aydınlatmayı ve oturma düzenini seçmek",
+   "Dar bir mutfağın dolap ve tezgâh yerleşimini kâğıt üzerinde yeniden çizmek"
+  ],
+  "U14_P": [
+   "Apartmanın boş arka bahçesine yürüyüş yolu, çiçeklik ve oturma köşesi tasarlamak",
+   "Bir parkta hangi ağaçların gölge yapacağını düşünerek dikim yerlerini belirlemek",
+   "Bir meydanın yeşil alanlarını ve havuzunu yeniden düzenleyen bir çizim hazırlamak"
+  ],
+  "U14_S": [
+   "Yeni kurulacak bir mahallede okul, pazar yeri ve parkın nerede olacağını belirlemek",
+   "Bir ilçenin haritasında hangi bölgelerin konut, hangilerinin sanayi olacağını işaretlemek",
+   "Nüfusu artan bir kasabaya kaç yeni park ve sağlık merkezi gerektiğini hesaplamak"
+  ],
+  "U15_B": [
+   "Balkondaki saksılarda domates ve biber fidelerini yetiştirip meyve verene kadar bakmak",
+   "Bir bahçede sebzelerin ne zaman ekileceğini ve ne kadar sulanacağını planlamak",
+   "Bir tarlada buğdayı yabani otlardan korumanın yollarını öğrenip uygulamak"
+  ],
+  "U15_E": [
+   "Bir köydeki kiraz üreticilerinin ürünlerini birlikte satarak ne kazanacağını hesaplamak",
+   "Bir dönüm domates ekmenin tohum, gübre ve işçilik maliyetini çıkarmak",
+   "Bir köyde bu yıl hangi ürünü ekmenin daha kârlı olacağını hesaplamak"
+  ],
+  "U15_G": [
+   "Toplanan meyvelerden reçel yapıp bozulmadan saklanması için kavanozları hazırlamak",
+   "Bir süt işletmesinde yoğurdun mayalanma sıcaklığını ve temizliğini kontrol etmek",
+   "Paketli bir atıştırmalığın daha uzun süre taze kalması için ambalajını iyileştirmek"
+  ],
+  "U15_H": [
+   "Bir çiftlikte buzağıların her hafta ne kadar kilo aldığını takip etmek",
+   "Köydeki tavukların daha rahat yaşaması için kümesin düzenini yeniden kurmak",
+   "Keçiler için mevsime göre en uygun yem karışımını belirlemek"
+  ],
+  "U15_L": [
+   "Farklı tohumların ne kadarının çimlendiğini kontrollü bir denemeyle ölçmek",
+   "Lekelenmiş bir yaprağı mikroskopla inceleyip bitkiye hangi hastalığın bulaştığını bulmak",
+   "Bahçe toprağından alınan örnekte bitkiler için hangi besinlerin eksik olduğunu test etmek"
+  ],
+  "U15_O": [
+   "Bir ormanda ağaç türlerini sayıp hangilerinin hastalandığını kaydetmek",
+   "Yangından sonra yanmış bir yamaçta hangi fidanların dikileceğini seçmek",
+   "Ormana kurulan gizli kameralarla yaban hayvanlarını izleyip yaşadıkları alanları belirlemek"
+  ],
+  "U15_S": [
+   "Bir gölde balık sayısını takip edip avlanma dönemini belirlemeye yardım etmek",
+   "Bir havuzda alabalık yavrularının büyümesini ve yem miktarını izlemek",
+   "Denizdeki bir midye çiftliğinde ağları ve suyun temizliğini kontrol etmek"
+  ],
+  "U15_T": [
+   "Tarladaki toprak nem ölçerine göre otomatik açılan bir damla sulama kurmak",
+   "Bir traktörün çapa ve ekim makinesini tarlaya uygun biçimde ayarlamak",
+   "Bir seranın sıcaklığını ve havalandırmasını telefondan izlenebilir hale getirmek"
+  ],
+  "U16_B": [
+   "Küçük bir uçağın motorunu kontrol listesine göre adım adım gözden geçirmek",
+   "Bir teknenin motorundaki arızayı bulup parçasını değiştirerek yeniden çalıştırmak",
+   "Bir uçağın tekerlek ve fren parçalarındaki aşınmayı ölçüp kaydetmek"
+  ],
+  "U16_D": [
+   "Bir tekneyi dar bir limanda rüzgâra göre manevra yaparak iskeleye yanaştırmak",
+   "Bir gemide pusula ve haritayla açık denizde rota belirlemek",
+   "Bir yük gemisinin güvertesinde gece vardiyasında radar ve rotayı kontrol etmek"
+  ],
+  "U16_I": [
+   "Bir feribot hattının sefer saatlerini yolcu yoğunluğuna göre yeniden planlamak",
+   "Bir havalimanında bagajların doğru uçağa yüklenme akışını düzenlemek",
+   "Bir limana gelen gemilerin yanaşma sırasını ve yükleme işlerini organize etmek"
+  ],
+  "U16_T": [
+   "Kuleden uçaklara iniş sırası ve pist bilgisi vermek",
+   "Radar ekranında birbirine yaklaşan iki uçağı farklı yüksekliklere yönlendirmek",
+   "Fırtına yaklaşırken havalimanına gelen uçakları bekleme rotasına almak"
+  ],
+  "U16_U": [
+   "Bir eğitim uçağıyla kontrol listesini uygulayarak kalkış ve iniş alıştırması yapmak",
+   "Uçuştan önce hava durumunu okuyup yakıt ve rota planını çıkarmak",
+   "Yan rüzgârda uçağı pistin ortasına hizalayarak yere indirmek"
+  ],
+  "U17_G": [
+   "Bir arkadaşının yüz şekline uygun bir saç kesimi yapmak",
+   "Bir sahne gösterisi için oyuncuların saçını ve makyajını hazırlamak",
+   "Cilt tipine göre yüz bakım ürünlerini seçip bakım uygulamak"
+  ],
+  "U17_O": [
+   "Bir otelin resepsiyonunda gelen misafirlerin girişini yapıp odalarına yerleştirmek",
+   "Bir misafirin şikâyetini dinleyip sorununu kısa sürede çözmek",
+   "Bir pansiyonda gelen rezervasyonlara göre odaların günlük dağılımını planlamak"
+  ],
+  "U17_M": [
+   "Yöresel bir yemeği yeni bir tarif ve sunumla yeniden yorumlamak",
+   "Bir pansiyonun kahvaltısı için mevsim ürünleriyle bir menü oluşturmak",
+   "Farklı baharatları deneyerek bir çorbanın tadını dengelemek"
+  ],
+  "U17_R": [
+   "Şehre gelen ziyaretçilere tarihî çarşıyı gezdirip hikâyesini anlatmak",
+   "Bir grup gezgine bir kalenin geçmişini surlarda dolaşarak anlatmak",
+   "Bir gezi sırasında grubun sorularını yanıtlayıp duraklar arasında yön göstermek"
+  ],
+  "U17_S": [
+   "Ailenin tatili için bütçeye uygun ulaşım ve konaklamayı araştırıp ayarlamak",
+   "Arkadaş grubunun üç günlük şehir gezisi için gün gün program hazırlamak",
+   "Bir yayla turu için otobüs, otel ve yemek rezervasyonlarını tek pakette birleştirmek"
+  ]
+ }
+}

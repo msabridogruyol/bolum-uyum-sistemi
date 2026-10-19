@@ -2,7 +2,7 @@
 [2026-10-12] Değerlendirme tamamlanınca öğrenciye sonuç e-postası (+ PDF sonuç raporu).
 
 Ne zaman gider?
-  * Değerlendirmenin SON bölümü bitince: K1–K4 tamamlanmış (tur 'tamamlandi') VE açılan K5 derinleşme dallarının
+  * Değerlendirmenin SON bölümü bitince: K1–K4 tamamlanmış (tur 'tamamlandi') VE açılan K5 iş türü sorularının
     hepsi bitmiş olmalı (dal_servisi.bekleyen_dal_var_mi — sonuç ekranıyla aynı kural). K5 dalı açılmadıysa K4
     bitince gider. Cevap isteğini bekletmez; arka planda (BackgroundTasks) hazırlanır.
   * Güven puanı düşük (sonuc_gecerli_mi = False) turda GİTMEZ: sonuçlar güvenilir sayılmaz. Öğrenci sorunlu katmanı
@@ -107,7 +107,7 @@ def arka_planda_gonder(ogrenci_id, tur_id: int) -> None:
 
 
 def _k5_bekliyor(db: Session, ogrenci, tur_id: int) -> bool:
-    """Açılmış ama bitmemiş (sorusu olan) K5 derinleşme dalı var mı? Varsa değerlendirme henüz bitmemiştir."""
+    """Açılmış ama bitmemiş K5 (iş türü soruları) oturumu var mı? Varsa değerlendirme henüz bitmemiştir."""
     from app.core.dal_servisi import bekleyen_dal_var_mi
     from app.models import OgrenciDegerlendirmeTuru
     return bekleyen_dal_var_mi(db, ogrenci, db.get(OgrenciDegerlendirmeTuru, tur_id))

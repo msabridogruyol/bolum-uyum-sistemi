@@ -176,7 +176,7 @@ export default function DallarSayfasi() {
   return (
     <div className="pg pg-genis">
       <div className="ph">
-        <div className="pt">Derinleşme Alanları (K5)</div>
+        <div className="pt">Üst Alanlar (bölüm alan etiketleri)</div>
         <div className="ps">Öğrencinin K4 sonucuna göre kendisine özel açılabilecek ek inceleme alanları. "Taslak" durumu bir hata değil — yalnızca henüz tek yöntemle doğrulandığı anlamına gelir.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}

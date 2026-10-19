@@ -39,10 +39,11 @@ from app.models import (
 router = APIRouter(prefix="/yonetim/ogrenci", tags=["Cevap analizi (süper admin + okul yetkilisi)"])
 
 TIP_ADI = {"likert": "Likert", "sjt": "Durum sorusu", "kutup": "İki uç", "kontrol": "Dikkat kontrolü"}
-OKUMA_NOTU = ("Uyum puanı göreli: 301 bölüm içinde öğrencinin profiline yakınlık (100 = en yakın, 0 = en uzak). "
+OKUMA_NOTU = ("Uyum puanı göreli: tüm bölümler içinde öğrencinin profiline yakınlık (100 = en yakın, 0 = en uzak). "
               "Katkı = bu özellik olmasaydı puan ne kadar değişirdi (artı: yükseltiyor, eksi: düşürüyor); katkı da göreli "
               "olduğundan, farkı olan bir özellik öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan daha yakınsa artı çıkabilir. "
-              "Fark = öğrenci − bölüm beklentisi (katman içi ölçek); |fark| < 5 uyumlu, 5–15 fazla / az, 15+ belirgin.")
+              "Fark = öğrenci − bölüm beklentisi (katman içi ölçek, yönsüz): |fark| < 5 uyumlu, 5–15 fazla / eksik, 15+ belirgin fazla / belirgin eksik. "
+              "Fazla olmak da uyumsuzluktur, avantaj sayılmaz; duygusal hassasiyette (P4) yalnızca fazlası fark sayılır.")
 
 
 def _ogrenci_ve_tur(db: Session, yon: AdminKullanici, ogrenci_id: str, tur_no: int | None):
@@ -94,6 +95,7 @@ def _cevaplar_ve_ozellikler(db: Session, o: Ogrenci, tur: OgrenciDegerlendirmeTu
             "sira": sira, "soru_id": s.id, "katman": k.kod if k else "?", "katman_ad": k.ad if k else "?",
             "tip": s.soru_tipi, "tip_ad": TIP_ADI.get(s.soru_tipi, s.soru_tipi),
             "cevap_bicimi": s.cevap_bicimi, "ters": bool(s.ters_kodlanmis_mi), "soru": s.soru_metni,
+            "uc_a": s.uc_a_metni, "uc_b": s.uc_b_metni,   # [2026-10-18] uçlar sorusunda iki ucun metni
             "secenekler": [{"id": x.id, "sira": x.secenek_sirasi, "metin": x.secenek_metni,
                             "secildi": x.id == c.secenek_id, "en_az": x.id == c.en_az_secenek_id} for x in secenekler],
             "katkilar": katki_listesi, "kontrol": kontrol, "zaman": c.cevap_zamani,

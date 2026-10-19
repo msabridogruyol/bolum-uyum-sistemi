@@ -6,7 +6,7 @@ olması gerekir, bu dosya onu garanti eder.
 from app.models.kimlik import Ogrenci, AdminKullanici, OgrenciHesapOlayi
 from app.models.icerik_yapisi import (
     Katman, Degisken, Soru, SoruSecenegi, SjtSecenekDegiskenAgirlik,
-    Bolum, Dal, BolumDalEslesme, BolumKumelemeSonucu, BolumK5Bag, YokatlasOnbellek,
+    Bolum, Dal, BolumDalEslesme, BolumKumelemeSonucu, BolumK5Bag, YokatlasOnbellek, K5Cumle, K5SoruKoku,
 )
 from app.models.meslek_verisi import (
     Meslek, Kategori, AltGrupKategoriEslesme,
@@ -38,7 +38,7 @@ __all__ = [
     "MeslekBolumEslesmeAday", "MeslekDegiskenSkoru",
     "BolumAgirligi",
     "OgrenciDegerlendirmeTuru", "OgrenciKatmanOturumu",
-    "OgrenciDalOturumu", "OgrenciDegiskenSkoru", "OgrenciCevap",
+    "OgrenciDalOturumu", "OgrenciDegiskenSkoru", "OgrenciCevap", "K5Cumle", "K5SoruKoku",
     "GuvenlikOlayi", "GuvenlikFotografi",
     "OgrenciBolumUyumSkoru", "OgrenciDalUyumSkoru",
     "SistemParametresi", "KatmanAgirligi", "GecerlilikSonucu", "Okul", "MeslekDili",

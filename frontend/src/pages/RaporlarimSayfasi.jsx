@@ -39,7 +39,6 @@ export default function RaporlarimSayfasi() {
       )}
       {hazir && (
         <>
-          <OgrenciRaporYorumu />
           <div className="rp-izgara">
             {RAPORLAR.map((r, i) => (
               <div key={i} className="card rp-kart">
@@ -61,6 +60,8 @@ export default function RaporlarimSayfasi() {
             Rapor, indirdiğin andaki sonuçlarını gösterir. İçinde kişisel bilgilerin var. Bu yüzden yalnızca velinle ve rehber öğretmeninle paylaş.
           </div>
           <RaporGrafikleri netAcik={acik('net_takibi')} />
+          {/* [2026-10-18] Aynı yorum Profilim'de açık; burada indirilen raporun içeriği olarak kapalı başlar */}
+          <div style={{ marginTop: 18 }}><OgrenciRaporYorumu baslangicAcik={false} /></div>
         </>
       )}
     </div>

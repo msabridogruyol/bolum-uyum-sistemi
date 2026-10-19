@@ -3,7 +3,7 @@
 // Tek seriler tek renk; değerler metin renginde; üzerine gelince ayrıntı (title + vurgu).
 import { useState } from 'react'
 
-const KISA = { K1: 'Değerler', K2: 'Kişilik', K3: 'İş ortamı', K4: 'Alan eğilimi', K5: 'Derinleşme' }
+const KISA = { K1: 'Değerler', K2: 'Kişilik', K3: 'İş ortamı', K4: 'Alan eğilimi', K5: 'İş türleri' }
 
 function KatmanSutunlari({ veriler }) {
   const [aktif, setAktif] = useState(null)
