@@ -332,10 +332,24 @@ def k_kim(b: Baglam, m: str) -> str:
 
 def k_sistem(b: Baglam, m: str) -> str:
     return ("Filizyol dört adımda ilerler: 1) Değerlendirme — değerlerin, kişiliğin, iş ortamı yetkinliklerin ve ilgi alanların; uyumu 70 ve üzeri bölümlerin varsa son adımda iş türü tercihlerin bu bölümleri kendi aralarında yeniden sıralar. "
-            "2) Sonuçlar — Profilim'de güçlü yönlerin, Bölümler'de sana en uyumlu bölümler. 3) Hedef — bir bölüm seçersin. "
-            "Koçluğum'da sana özel bir yol haritası çıkar. 4) Gelişim — haftalık görevler, kulüpler, kütüphanen ve takvimin. "
+            "2) Sonuçlar — Profilim'de güçlü yönlerin, önem verdiğin değerler ve bunların Maarif Modeli'ndeki karşılıkları; Bölümler'de sana en uyumlu bölümler ve nedenleri. "
+            "3) Hedef — bir bölüm seçersin; Koçluğum'da kendini bu bölümle karşılaştırırsın ve sana özel bir yol haritası çıkar. 4) Gelişim — haftalık görevler, kulüpler, kütüphanen ve takvimin. "
             "Okulunda açıksa İş Hayatı sayfasında Mülakat Simülasyonu ve Düşünme Atölyesi de var. "
             "Ayrıntılar sol menüdeki Sistem Hakkında sayfasında.")
+
+
+# [2026-10-19] Maarif Modeli karşılıkları ve iş türü soruları
+def k_maarif(b: Baglam, m: str) -> str:
+    return ("Okulunda uygulanan Türkiye Yüzyılı Maarif Modeli değerler, eğilimler (merak, sorumluluk, empati gibi) ve beceriler "
+            "(iş birliği, karar verme gibi) tanımlar. Filizyol, her özelliğinin bu kavramlardan hangilerine yakın olduğunu gösterir: "
+            "Profilim'deki \"Güçlü yönlerinin Maarif Modeli'ndeki karşılıkları\" kartında ve katman sayfalarında. "
+            "Bu yorumsal bir ilişkilendirmedir; puanlarını ve bölüm önerilerini etkilemez.")
+
+
+def k_is_turu(b: Baglam, m: str) -> str:
+    return ("İş türü soruları (K5), ilk dört bölümü bitirdiğinde uyumu 70 ve üzerinde çıkan bölümlerin varsa açılır. Bu bölümlerde "
+            "yapılan işlerden hangilerini daha çok seçtiğine göre bölümler kendi aralarında yeniden sıralanır. Listeye yeni bölüm "
+            "girmez, listeden bölüm çıkmaz; asıl belirleyici ilk dört bölümdür.")
 
 
 # [2026-10-13] Yeni özellikler: mülakat simülasyonu, düşünme atölyesi, dil, sonuç e-postası
@@ -532,6 +546,8 @@ KONULAR = [
     (("dusunme atolye", "kok neden", "korelasyon", "algoritmik", "ikiye bol", "ogrenmeyi ogren", "ikinci olcum"), k_dusunme),
     (("dil degistir", "baska dil", "ingilizce kullan", "dilini degistir", "hangi dillerde", "dil sec"), k_dil),
     (("sonuc e-posta", "sonuc eposta", "sonuc maili", "e-posta gelmedi", "eposta gelmedi", "mail gelmedi", "raporum mail", "raporum e-posta"), k_eposta),
+    (("maarif",), k_maarif),
+    (("is turu soru", "is turu tercih", "k5 nedir", "k5 ne"), k_is_turu),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
     (("sistem nasil", "nasil calisiyor", "filizyol nedir", "ne ise yarar"), k_sistem),
     (("motivasyon", "isteksiz", "bikkin", "yoruldum", "canim istemiyor", "hevesim"), k_motivasyon),

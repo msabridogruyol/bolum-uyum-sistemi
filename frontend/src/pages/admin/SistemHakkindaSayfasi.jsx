@@ -226,6 +226,11 @@ export default function SistemHakkindaSayfasi() {
 
       <Bolum ikon="🧭" baslik="6. Aşama 5 — Koçluk Modülü (Hedef Bölüm)">
         <p style={{ marginBottom: 10 }}>
+          Koçluk her pakette bulunan çekirdek modüldür. Öğrenci ekranında üç grupta sunulur: <b>Durumum</b> (Özet, Sen ve Bölümün,
+          Gelişimin), <b>Adımlarım</b> (Yol Haritam, Güçlü Yönlerin, İlham Kaynakları) ve <b>Bölümünü Tanı</b> (Bölüm Rehberi,
+          Bir Günümü Yaşa).
+        </p>
+        <p style={{ marginBottom: 10 }}>
           Öğrencinin aynı anda <b>yalnızca 1 aktif hedef</b> bölümü olur (odaklanma ilkesi). İlk seçim serbesttir;
           sonraki her değişiklik 1 hak harcar (öğrenci başına varsayılan <b>3 değiştirme hakkı</b>,
           <code> hedef_degisim_hakki</code>). Okul yetkilisi/süper admin değişikliği hak harcamaz ve ek hak verebilir;
@@ -355,7 +360,8 @@ export default function SistemHakkindaSayfasi() {
       </Bolum>
 
       <Bolum ikon="🧩" baslik="11. Okul Modülleri ve Paketler">
-        <Madde><b>Paketler:</b> 20 modül; okulun paketi (Temel / Gelişim / Tam) + okula özel ekle/çıkar ile açılır (etkin = paket ∪ ekle − çıkar). Paket içerikleri veritabanındaki <code>paketler</code> tablosundadır (yerelde Temel 3, Gelişim 11, Tam 20 modül). Bağımlılık: okul denemeleri → net takibi, Filiz AI → Filiz. Okulsuz öğrenci tüm modülleri görür</Madde>
+        <Madde><b>Çekirdek (her pakette, çıkarılamaz):</b> değerlendirme, bölüm önerileri, profil, hedef bölüm ve <b>koçluk</b> (Koçluğum + haftalık görevler; <code>paketler.ZORUNLU</code>, 0080 göçü). Bölüm yönlendirme ve koçluk sistemin omurgasıdır; paket ve okul ekranlarında seçilebilir modül olarak gösterilmez</Madde>
+        <Madde><b>Paketler:</b> 19 seçilebilir modül; okulun paketi (Temel / Gelişim / Tam) + okula özel ekle/çıkar ile açılır (etkin = paket ∪ ekle − çıkar ∪ zorunlu). Paket içerikleri veritabanındaki <code>paketler</code> tablosundadır (yerelde Temel 3, Gelişim 11, Tam 20 modül). Bağımlılık: okul denemeleri → net takibi, Filiz AI → Filiz. Okulsuz öğrenci tüm modülleri görür</Madde>
         <Madde><b>Rehberlik ve erken uyarı:</b> görüşme/randevu/takip kayıtları (notlar öğrenciye gösterilmez) ve 8 kurallı dikkat listesi (giriş yok, uzak kaldı, test yarıda, teste başlamadı, net düşüşü, görevleri bıraktı, tarama formunda destek ihtiyacı, hedef yok); "görüştüm, N gün gösterme" ertelemesi</Madde>
         <Madde><b>Net takibi ve okul denemeleri:</b> deneme netleri, konu takibi, hedef programa son yerleşenin netleriyle kıyas (YÖK Atlas, 7 gün önbellek); okul denemeleri Excel şablonla toplu yüklenir, öğrencinin net takibine düşer, okul/şube/ders ortalamaları hesaplanır</Madde>
         <Madde><b>Çalışma programı:</b> haftalık ders programı (en çok 80 blok), günlük çalışma süresi, çözülen soru kaydı ve ders bazında isabet</Madde>
@@ -372,6 +378,9 @@ export default function SistemHakkindaSayfasi() {
       </Bolum>
 
       <Bolum ikon="🕓" baslik="12. Son Güncellemeler">
+        <Madde><b>Maarif Modeli karşılıkları (2026-10-19):</b> her özelliğin Türkiye Yüzyılı Maarif Modeli'ndeki ilişkili değer, eğilim ve becerileri (<code>app/data/maarif_eslesme.json</code>, <code>app/core/maarif.py</code>; ör. Yeniliğe açıklık → Merak · Açık fikirlilik). Profilim (güçlü yönler kartı), katman detayı, Koçluğum (odak alanları ve güçlü yönler), okul istatistikleri ve öğrenci / veli / yönetim / okul PDF raporlarında gösterilir. Yorumsaldır: puanlamayı etkilemez, MEB onayı iddiası yoktur; iş değerleri (gelir, güvence, statü) eşleştirilmedi</Madde>
+        <Madde><b>Koçluk her pakette zorunlu (2026-10-19, göç 0080):</b> bölüm yönlendirme + koçluk çekirdek; paketten ya da okuldan çıkarılamaz (bkz. 11. bölüm)</Madde>
+        <Madde><b>Ekranlar sadeleşti, koçluk yorumları sistem mantığına hizalandı (2026-10-18):</b> Profilim'de katman ortalaması yerine her katmanın öne çıkan özelliği; güçlü yönler / önem verilen değerler / gelişime açık ayrı listeler (değerler ve P4 güçlü-gelişim listelerine girmez). Koçluk 8 sekme yerine 3 grup (Durumum, Adımlarım, Bölümünü Tanı); okul paneli ve öğrenci detayı sekmeleri gruplandı; katman ortalaması grafikleri ve PDF'lerdeki katman ortalamaları kaldırıldı (katman içi puanlar göreli, ortalama hep ≈50). Koçluk metinlerinde fazlalık avantaj sayılmaz, değerler karar konusudur, puan dili görelidir</Madde>
         <Madde><b>Düşünme Atölyesi (2026-10-13, is_hayati):</b> İş Hayatı → "Düşünme Atölyesi" sekmesi; 6 etkileşimli modül: kök neden (5 Neden zinciri), korelasyon ≠ nedensellik (saçılım grafikli 3 vaka), algoritmik düşünme (adım sıralama + robotu çalıştır), ikiye bölerek arama (1–100 sayı bulma), veriyi doğru oku: tercih (kurgusal program tablosu, 5 soru) ve öğrenmeyi öğren (kendini sınama / tekrar okuma deneyi; en erken 12 saat sonra 2. ölçüm). Akış: durum → ilk deneme → araç → okulda → iş hayatında → bu hafta dene; özet puan değil "ilk deneme → aracı kullanınca". İçerik <code>app/data/dusunme_atolyesi.json</code>; uçlar <code>GET /ogrenci/is-hayati/dusunme</code>, <code>POST …/dusunme/&#123;kod&#125;</code>, <code>POST …/dusunme-deney</code>; göçler 0071–0072. Sonuçlar yalnızca öğrenciye görünür</Madde>
         <Madde><b>Mülakat Simülasyonu (2026-10-13, is_hayati):</b> 301 bölüm × 4 soru (2 alan durumu, 1 iletişim, 1 etik); mülakatçı sorar, iki aday cevap verir, öğrenci daha iyi cevabı seçer, ardından gerekçeler, mülakatçının tercihi (ya da "iki yaklaşım da savunulabilir") ve "alandan bir bilgi". İyi adayın yeri dengeli; içerik bağımsız denetimden geçti. 105 soru düşünme aracıyla etiketli ("Atölyede dene" bağlantısı). İçerik <code>app/data/mulakat_simulasyonu.json</code>; göç 0070</Madde>
         <Madde><b>Rapor yorumları (2026-10-12):</b> PDF raporlarında ve rapor ekranlarında sayıların yanında kural tabanlı yorumlar (<code>app/core/rapor/yorum.py</code>, <code>app/data/rapor_yorumlari.json</code>): "Kısaca", yapılmalı / yapılmamalı, güçlü yönleri kullanma, gelişim desteği, görüşme gündemi. Kitleye göre dil (öğrenci, veli, sınıf öğretmeni, rehber); sınıf öğretmeni kişilik ve duygusal hassasiyet görmez, okul düzeyinde kişilik kullanılmaz; düşük kutupta nötr adlar. Okul/sınıf/şube raporunda ve Tek Bakışta ekranında "Ne yapılmalı?" (öncelikli işler: kim / ne zaman). SWOT öğrenci ve veli raporunda kendi diliyle</Madde>

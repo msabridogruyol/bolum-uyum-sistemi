@@ -241,6 +241,16 @@ _YORUM_BASLIK = {
 }
 
 
+def _maarif_bolumu(st, satirlar: list[dict], baslik: str) -> list:
+    """[2026-10-19] Öne çıkan özelliklerin Türkiye Yüzyılı Maarif Modeli'nde ilişkili kavramları (yorumsal)."""
+    from app.core.maarif import NOT, kisa_metin
+    liste = [(x["ad"], kisa_metin(x.get("kod"))) for x in satirlar]
+    liste = [(a, m) for a, m in liste if m]
+    if not liste:
+        return []
+    return [KeepTogether([st.p(baslik, st.h2)] + [st.p(f"• <b>{_e(a)}</b>: {_e(m)}") for a, m in liste] + [st.p(NOT, st.not_)])]
+
+
 def _ozet_kutusu(st, cumleler: list[str], baslik="Kısaca"):
     if not cumleler:
         return []
@@ -419,15 +429,21 @@ def ogrenci_pdf(v: dict, netler: bool = True) -> bytes:
     h.append(Spacer(1, 6))
     h += _ozet_kutusu(st, y["ozet"], "Kısaca")
     if v["katmanlar"]:
+        # [2026-10-19] Katman ortalaması gösterilmez (katman içi puanlar göreli, ortalama hep ≈50); her katmanın öne çıkanları
         h.append(st.p("Profilin bir bakışta", st.h2))
-        h.append(_cubuklar([(f"{k['kod']} · {k['ad']}", k["ortalama"]) for k in v["katmanlar"]] +
-                           [(f"K5 · {x['ad']}", x["puan"]) for x in v["k5"][:2]], renk=st.vurgu))
+        for k in v["katmanlar"]:
+            ust = [x["ad"] for x in sorted(k["ozellikler"], key=lambda x: -x.get("ham", x["puan"])) if x.get("kod") != "P4"][:2]
+            if ust:
+                h.append(st.p(f"• <b>{_e(k['ad'])}</b>: " + " · ".join(_e(a) for a in ust)))
+        if v["k5"]:
+            h.append(st.p("• <b>İş türü tercihleri</b>: " + " · ".join(_e(x["ad"]) for x in v["k5"][:2])))
     if v["gucluler"]:
         h.append(st.p("Güçlü yönlerin", st.h2))
         for x in v["gucluler"]:
             h.append(KeepTogether([st.p(f"<b>{_e(x['ad'])}</b> · {x['seviye']} ({yuvarla(x.get('ham', x['puan']))})", st.h3),
                                    st.p(_e(x.get("yorum") or ozellik_anlami(x.get("kod"), "yuksek") or x.get("aciklama") or ""), st.govde),
                                    Spacer(1, 4)]))
+    h += _maarif_bolumu(st, v["gucluler"][:5], "Güçlü yönlerinin Maarif Modeli'ndeki karşılıkları")
     if v["gelisim"]:
         h.append(st.p("Daha az öne çıkan yönlerin", st.h2))
         h.append(st.p("Bunlar eksiklik değil; bir kısmı çalışma tarzın ya da ilgilerin, bir kısmı pratikle gelişebilen beceriler. "
@@ -512,6 +528,7 @@ def veli_pdf(v: dict, netler: bool = True) -> bytes:
         for x in v["gucluler"][:5]:
             m = destek_guclu.get(x["ad"]) or ozellik_anlami(x.get("kod"), "yuksek", "veli")
             h.append(st.p(f"• <b>{_e(x['ad'])}</b> — {_e(x['seviye'])}" + (f". {_e(m)}" if m else "")))
+    h += _maarif_bolumu(st, v["gucluler"][:5], "Güçlü yönlerinin Maarif Modeli'ndeki karşılıkları")
     if y["destek"]:
         h.append(st.p("Gelişebileceği alanlar ve evde nasıl destek olabilirsiniz", st.h2))
         for x in y["destek"]:
@@ -576,13 +593,14 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
     h += _yorum_bolumu(st, y, "rehber")
     if v["katmanlar"]:
         h.append(st.p("Katman sonuçları", st.h2))
-        h.append(_cubuklar([(f"{k['kod']} · {k['ad']}", k["ortalama"]) for k in v["katmanlar"]], renk=st.vurgu))
+        h.append(st.p("Puanlar her katmanda öğrencinin kendi özellikleri arasında görelidir; katman ortalaması bu yüzden gösterilmez.", st.not_))
         for k in v["katmanlar"]:
-            h.append(KeepTogether([st.p(f"{k['kod']} · {_e(k['ad'])} (ortalama {yuvarla(k['ortalama'])})", st.h3),
+            h.append(KeepTogether([st.p(f"{k['kod']} · {_e(k['ad'])}", st.h3),
                                    _cubuklar([(x["ad"], x.get("ham", x["puan"])) for x in k["ozellikler"]]), Spacer(1, 5)]))
     if v["k5"]:
         h.append(st.p("İş türü tercihleri (K5)", st.h2))
         h.append(_cubuklar([(x["ad"], x["puan"]) for x in v["k5"]]))
+    h += _maarif_bolumu(st, v["gucluler"][:6], "Güçlü yönlerin Maarif Modeli'ndeki karşılıkları")
     if v["bolumler"]:
         h.append(st.p("Bölüm önerileri (ilk 10)", st.h2))
         h.append(_tablo(st, ["#", "Bölüm", "Alan", "Uyum", "Örtüşen özellikler", "Dikkat"],
@@ -899,22 +917,9 @@ def okul_pdf(v: dict, netler: bool = True) -> bytes:
         satir = [[(sol[i]["bolum"] + sy(sol[i])) if i < len(sol) else "",
                   (sag[i]["bolum"] + sy(sag[i])) if i < len(sag) else ""] for i in range(max(len(sol), len(sag)))]
         h.append(_tablo(st, ["1. öneri olarak", "Hedef olarak"], satir, [87 * mm, 87 * mm]))
-    if v["katman_ort"] and v.get("okul_katman_ort"):
-        okul_ort = {k["kod"]: yuvarla(k["ortalama"]) for k in v["okul_katman_ort"]}
-
-        def katman_satiri(k):   # [2026-10-14] fark, GÖSTERİLEN yuvarlanmış değerlerden; okul değeri yoksa "—"
-            g, o = yuvarla(k["ortalama"]), okul_ort.get(k["kod"])
-            return [f"{k['kod']} · {k['ad']}", str(g), "—" if o is None else str(o), "—" if o is None else f"{g - o:+d}"]
-        h.append(st.p("Katman ortalamaları — okul ortalamasıyla karşılaştırma", st.h2))
-        h.append(_tablo(st, ["Katman", "Şube" if sube_mi else "Sınıf düzeyi", "Okul", "Fark"],
-                        [katman_satiri(k) for k in v["katman_ort"]],
-                        [86 * mm, 30 * mm, 30 * mm, 28 * mm]))
-        h.append(st.p("Fark ±5 puandan büyükse grup okul ortalamasından belirgin biçimde ayrışıyor demektir.", st.not_))
-    elif v["katman_ort"]:
-        h.append(st.p("Katman ortalamaları (testi tamamlayanlar; güven eşiğinin altındakiler hariç)", st.h2))
-        h.append(_cubuklar([(f"{k['kod']} · {k['ad']}", k["ortalama"]) for k in v["katman_ort"]], renk=st.vurgu))
-    elif kg.get("profil_gizli"):
-        h.append(st.p("Katman ortalamaları ve ortak güçlü yönler", st.h2))
+    # [2026-10-19] Katman ortalamaları gösterilmez: her öğrencinin katman içi puanları görelidir, ortalama hep ≈50.
+    if kg.get("profil_gizli"):
+        h.append(st.p("Ortak güçlü yönler", st.h2))
         h.append(st.p(f"Testi tamamlayan {GIZLI_METIN} olduğundan profil ortalamaları gösterilmez.", st.not_))
     if v["ortak_guclu"]:
         satir = [[f"{a['ad']} ({yuvarla(a['ortalama'])})", f"{b['ad']} ({yuvarla(b['ortalama'])})"] for a, b in zip(v["ortak_guclu"], v["ortak_gelisim"])]
@@ -922,7 +927,8 @@ def okul_pdf(v: dict, netler: bool = True) -> bytes:
             st.p(f"{birim} ortak güçlü yönleri ve gelişim alanları", st.h2),
             _tablo(st, ["En yüksek ortalama", "En düşük ortalama"], satir, [87 * mm, 87 * mm]),
             st.p("Düşük ortalamalı özellikler " + ("sınıf rehberlik saatinde" if sube_mi else "okul genelinde")
-                 + " planlanacak etkinlikler (kulüp, seminer, proje) için ipucu verir.", st.not_)]))
+                 + " planlanacak etkinlikler (kulüp, seminer, proje) için ipucu verir. Değerler ve duygusal hassasiyet bu listeye girmez.", st.not_)]))
+        h += _maarif_bolumu(st, v["ortak_guclu"][:6], f"{birim} öne çıkan özelliklerinin Maarif Modeli'ndeki karşılıkları")
     nt = v.get("net") or {}
     if netler and nt.get("giren"):
         h.append(st.p("Deneme ve net özeti", st.h2))

@@ -167,7 +167,11 @@ def plani_zenginlestir(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, plan:
         ters = {d.id: bool(d.ters_yonlu) for d in db.query(Degisken).filter(
             Degisken.id.in_([o["degisken_id"] for o in plan.get("odak_alanlari", [])] or [-1])).all()}
         tum = [x for a in plan.get("asamalar", []) for x in a["adimlar"]]
+        from app.core.maarif import karsiliklar as maarif_karsiliklari
+        for g in plan.get("guclu_yonler", []):
+            g["maarif"] = [x["ad"] for x in maarif_karsiliklari(g.get("degisken_kod"))]
         for o in plan.get("odak_alanlari", []):
+            o["maarif"] = [x["ad"] for x in maarif_karsiliklari(o.get("degisken_kod"))]
             tur = alan_turu(o["degisken_kod"])
             o["alan_turu"] = tur
             o["alan_turu_etiket"], o["alan_turu_aciklama"] = ALAN_TURU_BILGI.get(tur, (None, None))

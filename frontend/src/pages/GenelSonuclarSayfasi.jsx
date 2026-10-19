@@ -184,6 +184,21 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
               {!gelisim.length && <div className="gp-not">40'ın altında kalan bir özelliğin yok.</div>}
             </div>
           </div>
+          {[...gucluler, ...gorece].some((s) => s.maarif?.length) && (
+            <details className="card maarif-kart">
+              <summary>🏛 Güçlü yönlerinin Maarif Modeli'ndeki karşılıkları</summary>
+              <div className="gp-not" style={{ marginTop: 8 }}>
+                Okulda Türkiye Yüzyılı Maarif Modeli'nde geçen eğilim ve becerilerden hangilerine yakın olduğunu gösterir.
+                Yorumsal bir ilişkilendirmedir; puanlarını etkilemez.
+              </div>
+              {[...gucluler, ...gorece].filter((s) => s.maarif?.length).map((s) => (
+                <div key={s.degisken_id} className="gp-satir">
+                  <div className="gp-satir-ust"><span>{s.degisken_adi}</span></div>
+                  <div className="gp-satir-alt" translate="no">{s.maarif.join(' · ')}</div>
+                </div>
+              ))}
+            </details>
+          )}
         </>
       )}
 

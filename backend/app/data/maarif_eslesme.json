@@ -1,0 +1,32 @@
+{
+  "_aciklama": "[2026-10-19] Filizyol özelliklerinin Türkiye Yüzyılı Maarif Modeli (TYMM) çerçevesindeki ilişkili kavramlar. YORUMSAL bir ilişkilendirmedir: puanlamayı etkilemez, birebir ölçüm değildir, MEB onayı anlamına gelmez. Kaynak: tymm.meb.gov.tr (Öğrenci profili, Eğilimler, Sosyal-duygusal öğrenme becerileri, Kavramsal beceriler, Erdem-Değer-Eylem çerçevesi). İş değerleri (gelir, güvence, statü) Maarif değerleriyle örtüşmediği için eşleştirilmedi.",
+  "kaynak": "https://tymm.meb.gov.tr",
+  "ozellikler": {
+    "D5": [["deger", "Yardımseverlik"], ["deger", "Duyarlılık"]],
+    "D6": [["deger", "Özgürlük"], ["egilim", "Bağımsızlık", "E1.2"]],
+    "D7": [["deger", "Estetik"], ["egilim", "Yaratıcılık", "E3.3"]],
+    "P1": [["egilim", "Girişkenlik", "E2.3"], ["sdb", "İletişim", "SDB2.1"]],
+    "P2": [["egilim", "Empati", "E2.1"], ["sdb", "İş birliği", "SDB2.2"]],
+    "P3": [["egilim", "Sorumluluk", "E2.2"], ["egilim", "Azim ve kararlılık", "E1.3"], ["sdb", "Kendini düzenleme", "SDB1.2"]],
+    "P4": [["sdb", "Kendini tanıma", "SDB1.1"], ["sdb", "Uyum", "SDB3.1"]],
+    "P5": [["egilim", "Merak", "E1.1"], ["egilim", "Açık fikirlilik", "E3.5"]],
+    "P6": [["sdb", "Esneklik", "SDB3.2"]],
+    "P7": [["sdb", "Uyum", "SDB3.1"], ["egilim", "Kendine güvenme", "E1.5"]],
+    "P8": [["egilim", "Girişkenlik", "E2.3"], ["egilim", "Kendine güvenme", "E1.5"]],
+    "I1": [["sdb", "Kendini düzenleme", "SDB1.2"], ["egilim", "Odaklanma", "E3.2"]],
+    "I2": [["sdb", "İş birliği", "SDB2.2"], ["sdb", "İletişim", "SDB2.1"]],
+    "I3": [["kavramsal", "Karar verme", "KB3.1"], ["sdb", "Sorumlu karar verme", "SDB3.3"]],
+    "I4": [["deger", "Dürüstlük"], ["deger", "Adalet"], ["sdb", "Sorumlu karar verme", "SDB3.3"]],
+    "I5": [["egilim", "Girişkenlik", "E2.3"], ["egilim", "Bağımsızlık", "E1.2"]],
+    "I6": [["sdb", "Kendine uyarlama (öz yansıtma)", "SDB1.3"], ["egilim", "Açık fikirlilik", "E3.5"]],
+    "I7": [["kavramsal", "Problem çözme", "KB3.2"], ["egilim", "Muhakeme", "E3.1"]],
+    "A1": [["egilim", "Analitiklik", "E3.6"], ["kavramsal", "Çözümleme", "KB2.4"]],
+    "A2": [["kavramsal", "Yorumlama", "KB2.14"], ["kavramsal", "Tartışma", "KB2.18"]],
+    "A3": [["egilim", "Empati", "E2.1"], ["sdb", "Sosyal farkındalık", "SDB2.3"]],
+    "A4": [["egilim", "Yaratıcılık", "E3.3"], ["kavramsal", "Çizim yapma", "KB1.4"]],
+    "A5": [["egilim", "Gerçeği arama", "E3.4"], ["kavramsal", "Gözlemleme", "KB2.2"]],
+    "A7": [["egilim", "Sistematiklik", "E3.7"]],
+    "A8": [["kavramsal", "Sentezleme", "KB2.20"], ["egilim", "Yaratıcılık", "E3.3"]],
+    "A9": [["egilim", "Girişkenlik", "E2.3"], ["sdb", "İletişim", "SDB2.1"]]
+  }
+}
