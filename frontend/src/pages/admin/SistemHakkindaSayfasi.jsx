@@ -252,8 +252,11 @@ export default function SistemHakkindaSayfasi() {
         <p style={{ marginBottom: 10 }}>
           Veritabanı 4 soru tipine izin verir (<code>likert</code>, <code>sjt</code>, <code>kutup</code>,
           <code> kontrol</code>); SJT'nin ayrıca 2 cevap biçimi vardır (tek seçim / en çok–en az). Her biri farklı bir
-          puanlama formülüne dayanır. 2026-10-18 soru seti (<code>app/data/olcme_sorulari.json</code>): K1-K4'te katman başına
-          15 soru — 8 en çok / en az (4 şık), 3 tek seçim (4 şık), 4 uçlar (A / B). K5 soruları öğrenciye özel üretilir (yukarıda).
+          puanlama formülüne dayanır. Soru seti: <code>app/data/olcme_sorulari.json</code> (2026-10-18, 60 soru: katman başına 8 en çok / en az, 3 tek seçim,
+          4 uçlar) + <code>olcme_sorulari_ek.json</code> (2026-10-19, göç 0081: 16 en çok / en az + katman başına 2 dikkat
+          sorusu). Katman başına puanlanan soru: K1 18, K2 19, K3 18, K4 21; her özellik 8-10 kez ölçülür (önceden 5-8).
+          Puanlanan sorular her turda farklı (tur içinde sabit) bir sırayla gelir; dikkat soruları araya eşit aralıklarla
+          yerleşir. K5 soruları öğrenciye özel üretilir (yukarıda).
         </p>
 
         <div style={{ marginTop: 10, paddingTop: 10, borderTop: '1px solid var(--bor)' }}>
@@ -281,7 +284,7 @@ export default function SistemHakkindaSayfasi() {
 
         <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid var(--bor)' }}>
           <div className="ct" style={{ fontSize: 13 }}>Kontrol (Dikkat) Soruları</div>
-          <Madde>Hiçbir değişkene puan katmaz; <code>beklenen_secenek_sira</code> ile karşılaştırılır, doğruluk oranı × 100 güven puanının kontrol bileşeni olur (hiç kontrol sorusu yoksa güven yalnızca olay skorundan hesaplanır; şu anki soru setinde kontrol sorusu yok)</Madde>
+          <Madde>Hiçbir değişkene puan katmaz; <code>beklenen_secenek_sira</code> ile karşılaştırılır, doğruluk oranı × 100 güven puanının kontrol bileşeni olur (hiç kontrol sorusu yoksa güven yalnızca olay skorundan hesaplanır). 2026-10-19'dan beri her katmanda 2 dikkat sorusu var: biri açık yönerge ("Mavi şıkkını seç"), biri herkesin bildiği tek doğru cevaplı bir soru ("Bir yılda kaç ay vardır?"); beklenen şıkkın yeri sorudan soruya değişir. Şıkları karıştırılmaz</Madde>
         </div>
       </Bolum>
 
@@ -342,7 +345,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Tam ekran zorunluluğu:</b> değerlendirme tam ekran modunda yapılır; çıkılırsa uyarı gösterilir ve olay kaydedilir</Madde>
         <Madde><b>Kamera:</b> yalnızca öğrenci KVKK'da kamera iznini verdiyse ve başlamadan "ONAYLIYORUM" yazdıysa açılır; başlangıçtan kısa süre sonra ve <b>her 4 soruda bir</b> fotoğraf çekilir (yüz tanıma yapılmaz). İzni reddetmek cezasızdır, raporda "kamerasız" görünür. 180 günden eski fotoğraflar açılışta ve sunucu açıkken 6 saatte bir silinir</Madde>
         <Madde><b>Davranış izleme:</b> tam ekrandan çıkma, sekme değiştirme, pencere odağı kaybı, ikinci ekran, ekran görüntüsü tuşu, kopyalama denemesi ve kameranın kapanması zaman damgalı kaydedilir; ihlal öğrenciye anında gösterilir</Madde>
-        <Madde><b>Güven Skoru:</b> 0,5 × kontrol soru skoru + 0,5 × olay skoru (kontrol sorusu yoksa yalnızca olay skoru — 2026-10-19 düzeltmesi: önceden kontrol yokken 100 sayıldığı için puan 50'nin altına inemiyor, eşik hiç devreye girmiyordu); olay skoru = max(0, 100 − Σceza). Cezalar: tam ekrandan çıkma 10, sekme 10, odak kaybı 5, ikinci ekran 15, ekran görüntüsü tuşu 10, kopyalama 5, kamera kapandı 5; "geri dönüldü" olayları ve kamera reddi cezasız</Madde>
+        <Madde><b>Güven Skoru:</b> kontrol (dikkat) soru skoru ile olay skorundan <b>düşük olanı</b> (2026-10-20; önceden 0,5 × kontrol + 0,5 × olay idi: dikkat soruları tam doğruysa sınırsız ihlal, ihlal yoksa tamamen yanlış dikkat cevapları yine 50 alıp geçerli sayılıyordu). Kontrol sorusu yoksa yalnızca olay skoru. Katmanda 2 dikkat sorusundan biri yanlışsa kontrol 50 (eşikte, geçerli), ikisi de yanlışsa 0 (katman sorunlu); olay skoru = max(0, 100 − Σceza). Cezalar: tam ekrandan çıkma 10, sekme 10, odak kaybı 5, ikinci ekran 15, ekran görüntüsü tuşu 10, kopyalama 5, kamera kapandı 5; "geri dönüldü" olayları ve kamera reddi cezasız</Madde>
         <Madde>Eşik <code>guven_skoru_esigi</code> parametresinden okunur (varsayılan <b>50</b>); altında kalan tur "geçersiz" etiketlenir (silinmez). Geçersiz turda öğrenci sonuçlarını görür; Ana Sayfa ve sonuç ekranlarında "Bu değerlendirme doğrulanamadı" uyarısı çıkar öğrenci beklemeden yalnızca güveni düşük katmanı aynı turda yeniden yanıtlar; diğer katmanlar silinmez. Etiket okul paneli, raporlar ve Güvenlik / Tutarlılık ekranında da görünür.</Madde>
         <Madde>Tüm bu veriler admin panelindeki <b>Güvenlik / Tutarlılık</b> sayfasından, tur bazında incelenebilir</Madde>
       </Bolum>
@@ -356,7 +359,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Pipeline Sonuçları:</b> bilgisayarınızda üretilen bölüm profili çıktısı, önce taslak tabloya gider, istatistiksel önizleme sonrası yalnızca süper admin onayıyla canlıya (yeni bir versiyon olarak) yazılır</Madde>
         <Madde><b>Dosya formatları:</b> soru, pipeline ve geçerlilik yüklemeleri .xlsx (.xls/.csv de kabul); bölüm ve dal toplu yüklemesi hâlâ yalnızca .csv; okul yüklemeleri .xlsx/.csv (.xls desteklenmez)</Madde>
         <Madde><b>Audit Log:</b> durum değişikliği, rol değişikliği, pipeline onayı, parametre değişikliği, cevap analizi görüntüleme / indirme gibi kritik işlemler kalıcı olarak kaydedilir</Madde>
-        <Madde><b>Şema güncelleme:</b> sunucu her açılışta 0024–0080 göçlerinin tekrar çalıştırılabilir SQL'ini uygular (silme içeren adımlar tek_seferlik_gocler işaretiyle bir kez çalışır) (<code>sema_guncelleme.py</code>); daha eski göçler elle uygulanmış kabul edilir</Madde>
+        <Madde><b>Şema güncelleme:</b> sunucu her açılışta 0024–0081 göçlerinin tekrar çalıştırılabilir SQL'ini uygular (silme içeren adımlar tek_seferlik_gocler işaretiyle bir kez çalışır) (<code>sema_guncelleme.py</code>); daha eski göçler elle uygulanmış kabul edilir</Madde>
       </Bolum>
 
       <Bolum ikon="🧩" baslik="11. Okul Modülleri ve Paketler">
@@ -378,6 +381,7 @@ export default function SistemHakkindaSayfasi() {
       </Bolum>
 
       <Bolum ikon="🕓" baslik="12. Son Güncellemeler">
+        <Madde><b>Ek ölçme ve dikkat soruları (2026-10-19, göç 0081):</b> K1-K4'e 16 en çok / en az sorusu eklendi; her özellik 8-10 kez ölçülür (önceden 5-8, en zayıflar K4'te Büyük resmi görme ve Girişimcilik). Her katmana 2 dikkat sorusu eklendi; güven puanı artık dikkat ve olay skorlarından düşük olanıdır. Puanlanan soruların sırası tura göre karışır, dikkat soruları araya yerleşir. Yalnızca ekleme: hiçbir soru, cevap ya da tur silinmedi; yarıda kalan katman eski soru listesiyle biter. Yeni maddeler kör etiketlemede 64/64 doğru özelliğe atandı; gerçek öğrenci verisiyle madde analizi henüz yapılmadı</Madde>
         <Madde><b>Bağımsız denetim düzeltmeleri (2026-10-19):</b> seçmeli sorularda şıklar öğrenci turuna göre karıştırılır (1. şık hep en küçük kodlu özelliğe aitti); güven puanı kontrol sorusu yokken yalnızca olaylardan hesaplanır; 0076'daki tek seferlik silme kalıcı işarete bağlandı ve sürüm parametreleri elle değiştirilemez; değerlendirme ve yapay zekâ sohbeti sunucuda da güncel KVKK onayı ister; kamera rızası geri alınınca fotoğraflar hemen silinir; okul yetkilisi meslektaşının geçici şifresini göremez; canlıda varsayılan JWT anahtarıyla sunucu açılmaz ve /docs kapalı</Madde>
         <Madde><b>Maarif Modeli karşılıkları (2026-10-19):</b> her özelliğin Türkiye Yüzyılı Maarif Modeli'ndeki ilişkili değer, eğilim ve becerileri (<code>app/data/maarif_eslesme.json</code>, <code>app/core/maarif.py</code>; ör. Yeniliğe açıklık → Merak · Açık fikirlilik). Profilim (güçlü yönler kartı), katman detayı, Koçluğum (odak alanları ve güçlü yönler), okul istatistikleri ve öğrenci / veli / yönetim / okul PDF raporlarında gösterilir. Yorumsaldır: puanlamayı etkilemez, MEB onayı iddiası yoktur; iş değerleri (gelir, güvence, statü) eşleştirilmedi</Madde>
         <Madde><b>Koçluk her pakette zorunlu (2026-10-19, göç 0080):</b> bölüm yönlendirme + koçluk çekirdek; paketten ya da okuldan çıkarılamaz (bkz. 11. bölüm)</Madde>

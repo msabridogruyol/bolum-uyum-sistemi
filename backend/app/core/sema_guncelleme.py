@@ -42,6 +42,7 @@ OTOMATIK += ["0077_bolum_kisa_aciklama"]   # [2026-10-18] boş bölüm kısa aç
 OTOMATIK += ["0078_bolum_icerik_duzeltme"]   # [2026-10-18] bölüm tanıtımlarında doğrulanmış olgu düzeltmeleri (yalnızca değişmemiş metne)
 OTOMATIK += ["0079_yeniden_degerlendirme_sikligi"]   # [2026-10-19] yeniden değerlendirme sıklığı sınıfa göre (12. sınıf / mezun 70 gün, diğerleri yılda 2)
 OTOMATIK += ["0080_kocluk_cekirdek"]   # [2026-10-19] koçluk her pakette zorunlu (veri tutarlılığı)
+OTOMATIK += ["0081_ek_olcme_sorulari"]   # [2026-10-19] K1-K4 ek sorular + katman başına 2 dikkat sorusu (yalnızca ekleme)
 KILIT = 2026101001
 
 

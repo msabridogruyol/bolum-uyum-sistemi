@@ -259,7 +259,9 @@ def test_ogrenci_api_uclar_ve_k5_akisi(db, istemci, kisiler):
         r = istemci.post(f"/ogrenci/katmanlar/{kod}/basla", headers=h)
         assert r.status_code == 200, r.text
         sorular = r.json()["sorular"]
-        assert len(sorular) == 15
+        beklenen = db.execute(text("SELECT count(*) FROM sorular s JOIN katmanlar k ON k.id = s.katman_id WHERE k.kod = :k "
+                                   "AND s.aktif_mi AND s.ogrenci_id IS NULL"), {"k": kod}).scalar()
+        assert len(sorular) == beklenen >= 15      # 0076: 15; 0081 sonrası 20-23 (dikkat soruları dahil)
         for s in sorular:
             if s["soru_tipi"] == "kutup":
                 assert s["uc_a_metni"] and s["uc_b_metni"] and [x["secenek_metni"] for x in s["secenekler"]][0] == "Kesinlikle A"

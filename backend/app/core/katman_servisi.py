@@ -165,6 +165,22 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
     return yeni_tur
 
 
+def soru_sirasi(sorular: list, tur_id) -> list:
+    """[2026-10-19] Katmandaki soruların öğrenciye gösterilme sırası.
+    * Puanlanan sorular her tur için sabit ama turdan tura farklı bir sırayla karışır (sha256(tur:soru)): önceden
+      sıra soru id'siydi; yeni eklenen sorular hep sona yığılıyor, yorgunluk / sıra etkisi hep aynı özelliklere düşüyordu.
+      Yeniden açılan oturum aynı turda aynı sırayı alır (oturum zaten kilitli listeyi saklar).
+    * Dikkat (kontrol) soruları baştan ve sondan uzakta, araya eşit aralıklarla yerleşir."""
+    import hashlib
+    puanli = sorted((s for s in sorular if s.soru_tipi != "kontrol"),
+                    key=lambda s: hashlib.sha256(f"{tur_id}:{s.id}".encode()).hexdigest())
+    kontrol = sorted((s for s in sorular if s.soru_tipi == "kontrol"), key=lambda s: s.id)
+    toplam = len(puanli) + len(kontrol)
+    for i, k in enumerate(kontrol):
+        puanli.insert(min(len(puanli), round(toplam * (i + 1) / (len(kontrol) + 1))), k)
+    return puanli
+
+
 def katman_oturumu_baslat(
     db: Session, ogrenci: Ogrenci, katman: Katman, tur: OgrenciDegerlendirmeTuru
 ) -> tuple[OgrenciKatmanOturumu, list[Soru]]:
@@ -203,6 +219,7 @@ def katman_oturumu_baslat(
     if not aktif_sorular:
         raise IsKuraliHatasi(f"{katman.kod} bölümü şu an açılamıyor. Biraz sonra tekrar dene ya da rehber öğretmenine bildir.")
 
+    aktif_sorular = soru_sirasi(aktif_sorular, tur.id)
     soru_idler = [s.id for s in aktif_sorular]
 
     if oturum is None:

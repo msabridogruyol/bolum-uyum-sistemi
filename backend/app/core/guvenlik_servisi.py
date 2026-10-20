@@ -2,12 +2,14 @@
 Güven Skoru Hesaplama — kontrol soruları + güvenlik olayları (tam ekrandan
 çıkma, sekme değiştirme, pencere odağı kaybı) birleştirilerek hesaplanır.
 
-Formül [ÇIKARIM — kullanıcıyla netleştirildi]:
-    guven_skoru = 0.5 × kontrol_soru_skoru + 0.5 × guvenlik_olaylari_skoru
+Formül [2026-10-20 kullanıcı kararı — önceden 0,5 × kontrol + 0,5 × olay]:
+    guven_skoru = min(kontrol_soru_skoru, guvenlik_olaylari_skoru)
 
     kontrol_soru_skoru      = (doğru cevaplanan kontrol sorusu / toplam kontrol sorusu) × 100
-                               (hiç kontrol sorusu yoksa 100 varsayılır — ceza yok)
-    guvenlik_olaylari_skoru = max(0, 100 - OLAY_BASINA_CEZA × olay_sayısı)
+                               (hiç kontrol sorusu yoksa yok sayılır: güven = olay skoru)
+    guvenlik_olaylari_skoru = max(0, 100 - Σ OLAY_CEZASI)
+    Ortalama, iki göstergeden biri tamken diğerini hiç işlemez kılıyordu (dikkat soruları tam doğruysa sınırsız ihlal
+    yine ≥ 50; dikkat soruları tamamen yanlışsa ihlalsiz tur yine 50). Düşük olanı almak her birini tek başına eşiğe bağlar.
 
 Eşik altında kalan turlar `sonuc_gecerli_mi = False` olarak işaretlenir —
 ama VERİ SİLİNMEZ, yalnızca "geçersiz" etiketlenir (admin isterse inceler).
@@ -50,9 +52,10 @@ def parametre_oku_float(db: Session, anahtar: str, varsayilan: float) -> float:
 
 
 def birlesik_guven(kontrol: float | None, olay: float) -> float:
-    """[2026-10-19] Güven puanı = 0,5 × kontrol + 0,5 × olay. Kontrol sorusu yoksa (None) yalnızca olay skoru kullanılır.
-    Önceden kontrol yokken 100 sayılıyordu: puan hiçbir zaman 50'nin altına inemiyor, eşik (50) hiç devreye girmiyordu."""
-    return round(olay if kontrol is None else 0.5 * kontrol + 0.5 * olay, 2)
+    """[2026-10-20] Güven puanı = min(kontrol, olay); kontrol sorusu yoksa (None) yalnızca olay skoru.
+    Katman başına 2 dikkat sorusu: biri yanlışsa kontrol 50 (eşikte, geçerli), ikisi de yanlışsa 0 (katman sorunlu).
+    [2026-10-19] Önceden kontrol yokken 100 sayılıyordu; puan 50'nin altına inemiyordu."""
+    return round(olay if kontrol is None else min(kontrol, olay), 2)
 
 
 def kontrol_soru_skoru_hesapla(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> float | None:
@@ -94,8 +97,10 @@ def gecerli_mi(guven_skoru: float, esik: float) -> bool:
 
 
 def canli_guven_durumu(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> dict:
-    """[2026-10-10] Sınav sırasında öğrenciye gösterilen güven puanı (kontrol soruları + ihlaller)."""
-    kontrol = kontrol_soru_skoru_hesapla(db, ogrenci, tur)
+    """[2026-10-10] Sınav sırasında öğrenciye gösterilen güven puanı.
+    [2026-10-20] Yalnızca ihlallerden (olay skoru) hesaplanır: dikkat soruları anlık puana katılsaydı öğrenci yanlış
+    cevabını puanın düşmesinden anlayıp geri dönüp düzeltebilirdi (dikkat sorusu işlevini yitirir) ve ilk yanlışta
+    puan 0 görünürdü. Dikkat soruları tur bitince kayıtlı güven puanına (min(kontrol, olay)) katılır."""
     olay_skoru, ihlal = guvenlik_olaylari_skoru_hesapla(db, ogrenci, tur)
     sayim: dict[str, int] = {}
     for (t,) in db.query(GuvenlikOlayi.olay_tipi).filter(GuvenlikOlayi.ogrenci_id == ogrenci.id,
@@ -103,7 +108,7 @@ def canli_guven_durumu(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
         if OLAY_CEZASI.get(t, 0) > 0:
             sayim[t] = sayim.get(t, 0) + 1
     return {
-        "guven_puani": _goster(birlesik_guven(kontrol, olay_skoru)),   # kayıtla aynı hesap, aynı yuvarlama
+        "guven_puani": _goster(olay_skoru),   # kayıttaki olay bileşeniyle aynı hesap, aynı yuvarlama
         "esik": parametre_oku_float(db, "guven_skoru_esigi", 50.0),
         "ihlal_sayisi": ihlal,
         "ihlaller": [{"tip": t, "ad": OLAY_ADI.get(t, t), "sayi": n, "ceza": OLAY_CEZASI[t]} for t, n in sayim.items()],
@@ -112,8 +117,8 @@ def canli_guven_durumu(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeT
 
 def guven_skorunu_hesapla_ve_kaydet(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> float:
     """
-    Tur tamamlandığında çağrılır — kontrol soru skoru + güvenlik olayları
-    skorunu eşit ağırlıkla birleştirir, tur kaydına yazar, eşik altındaysa
+    Tur tamamlandığında çağrılır — kontrol soru skoru ile güvenlik olayları
+    skorundan düşük olanı alır, tur kaydına yazar, eşik altındaysa
     sonuc_gecerli_mi=False yapar.
     """
     kontrol_skoru = kontrol_soru_skoru_hesapla(db, ogrenci, tur)
@@ -141,7 +146,7 @@ def guven_skorunu_hesapla_ve_kaydet(db: Session, ogrenci: Ogrenci, tur: OgrenciD
 # ----------------------------------------------------------------------------- [2026-10-12] Katman bazında güven
 def katman_guven_durumlari(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> dict[str, dict]:
     """Ana katmanların (K1–K4) her biri için güven puanı: o katmanın kontrol soruları + o katmanda kaydedilen ihlaller.
-    Tur güven puanıyla aynı formül (0,5 × kontrol + 0,5 × olay); yalnızca o katmanın verisiyle hesaplanır."""
+    Tur güven puanıyla aynı formül (kontrol ile olaydan düşük olanı); yalnızca o katmanın verisiyle hesaplanır."""
     from app.models import Katman
     esik = parametre_oku_float(db, "guven_skoru_esigi", 50.0)
     katmanlar = db.query(Katman).filter(Katman.kosullu_mu.is_(False)).order_by(Katman.sira).all()

@@ -9,7 +9,9 @@ from tests.conftest import db_gerekli
 def test_guven_kontrol_yoksa_olaylara_gore():
     from app.core.guvenlik_servisi import birlesik_guven
     assert birlesik_guven(None, 100) == 100 and birlesik_guven(None, 40) == 40      # önceden 70 → hiç geçersiz olamıyordu
-    assert birlesik_guven(80, 40) == 60
+    # [2026-10-20] min(kontrol, olay): biri tamken diğeri tek başına eşiği belirler (ortalamada 100 + 0 = 50 geçerliydi)
+    assert birlesik_guven(80, 40) == 40 and birlesik_guven(100, 0) == 0 and birlesik_guven(0, 100) == 0
+    assert birlesik_guven(50, 100) == 50          # katmanda 2 dikkat sorusundan biri yanlış: eşikte, geçerli
 
 
 def test_sik_sirasi_tohumlu_ve_yalniz_sjt():
