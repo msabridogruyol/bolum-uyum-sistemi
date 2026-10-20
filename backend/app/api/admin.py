@@ -69,6 +69,9 @@ def parametreleri_listele(
     return db.query(SistemParametresi).order_by(SistemParametresi.anahtar).all()
 
 
+SALT_OKUNUR_PARAMETRELER = {"olcme_soru_seti", "k5_banka_surumu"}
+
+
 @router.put("/parametreler/{anahtar}", response_model=SistemParametresiOut)
 def parametreyi_guncelle(
     anahtar: str,
@@ -79,6 +82,9 @@ def parametreyi_guncelle(
     parametre = db.query(SistemParametresi).filter(SistemParametresi.anahtar == anahtar).first()
     if parametre is None:
         raise HTTPException(status_code=404, detail=f"Parametre bulunamadı: {anahtar}")
+    # [2026-10-19] Sürüm işaretleri sistemin kendi kaydıdır (hangi soru seti / K5 bankası yüklü); elle değiştirilemez.
+    if anahtar in SALT_OKUNUR_PARAMETRELER:
+        raise HTTPException(status_code=400, detail="Bu değer sistem tarafından tutulur, elle değiştirilemez.")
 
     # [2026-10-19] Yeniden değerlendirme sıklığı: tam sayı ve makul aralık zorunlu (yanlış değer öğrencileri kilitlemesin)
     sinirlar = {"yeniden_degerlendirme_gun_12": (7, 365), "yeniden_degerlendirme_yillik_hak": (1, 12)}

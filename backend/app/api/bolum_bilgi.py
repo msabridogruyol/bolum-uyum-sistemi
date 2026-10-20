@@ -11,7 +11,7 @@ from app.core.database import get_db
 from app.models import Bolum, BolumDalEslesme, Dal, BolumAgirligi, Degisken, Katman
 from app.core.katman_servisi import parametre_oku
 from app.core.yokatlas_servisi import bolum_universiteleri, baglanti_tani
-from app.api.deps import get_opsiyonel_ogrenci
+from app.api.deps import get_mevcut_super_admin, get_opsiyonel_ogrenci
 from app.core.meslek_dili_servisi import etkin_surum
 
 router = APIRouter()
@@ -34,7 +34,7 @@ def bolum_ada_gore(ad: str = Query(..., min_length=2), db: Session = Depends(get
 
 
 @router.get("/yokatlas-tani")
-def yokatlas_tani():
+def yokatlas_tani(_admin=Depends(get_mevcut_super_admin)):   # [2026-10-19] dış istek atan teknik tanı yalnızca süper admine
     """Teknik tanı: YÖK Atlas bağlantısının hangi adımda takıldığını gösterir."""
     return baglanti_tani()
 

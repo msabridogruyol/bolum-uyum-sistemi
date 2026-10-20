@@ -1,0 +1,98 @@
+{
+  "surum": "2026-10-19-ek1",
+  "aciklama": "2026-10-19 ek K1-K4 soruları: özellik başına görünme sayısını 8-10'a çıkaran 16 en çok/en az sorusu + katman başına 2 dikkat (kontrol) sorusu. Mevcut 60 soruya EKLENİR (0081_ek_olcme_sorulari; silme yok).",
+  "sorular": [
+    {"katman": "K1", "tip": "encok", "metin": "Okulda bir proje yarışması var ve hangi ödül için yarışacağını sen seçiyorsun. Hangisi seni daha çok çeker?", "secenekler": [
+      {"metin": "Birinciye verilen yüklü para ödülü.", "degisken": "D2"},
+      {"metin": "Kazananın adının okulda ve yerel gazetede duyurulması.", "degisken": "D3"},
+      {"metin": "Kazanan projenin mahalledeki ihtiyaç sahipleri için hayata geçirilmesi.", "degisken": "D5"},
+      {"metin": "En özgün ve en güzel tasarlanmış projeye verilen tasarım ödülü.", "degisken": "D7"}]},
+    {"katman": "K1", "tip": "encok", "metin": "Yirmi yıl sonraki hayatını düşün. Hangisi senin için daha önemli olur?", "secenekler": [
+      {"metin": "İşimi kaybetme kaygısı olmadan, düzenli ve güvenli bir hayatımın olması.", "degisken": "D1"},
+      {"metin": "Maddi açıdan çok rahat, yüksek gelirli bir hayatımın olması.", "degisken": "D2"},
+      {"metin": "Yaptığım işin bana anlamlı gelmesi, sabahları isteyerek kalkmam.", "degisken": "D4"},
+      {"metin": "Ne zaman, nerede ve nasıl çalışacağıma kendimin karar vermesi.", "degisken": "D6"}]},
+    {"katman": "K1", "tip": "encok", "metin": "Bu yıl okulda bir etkinlik ya da projede yer alacaksın. Hangisi sana daha değerli gelir?", "secenekler": [
+      {"metin": "Okulu dışarıda temsil eden, adı herkesçe bilinen saygın takımda olmak.", "degisken": "D3"},
+      {"metin": "Huzurevi ve hayvan barınağı ziyaretleri düzenleyen gönüllü grubunda olmak.", "degisken": "D5"},
+      {"metin": "Okulun koridorlarını resim ve fotoğraflarla güzelleştiren sanat grubunda olmak.", "degisken": "D7"},
+      {"metin": "Konusunu ve çalışma saatlerini tamamen kendimin belirlediği bağımsız bir projede olmak.", "degisken": "D6"}]},
+
+    {"katman": "K2", "tip": "encok", "metin": "Sınıfça bir okul gazetesi çıkaracaksınız. Sana en çok hangisi uyar?", "secenekler": [
+      {"metin": "Fikirler çatışınca ortayı bulur, herkesin anlaşmasını sağlarım.", "degisken": "P2"},
+      {"metin": "Bana verilen yazıyı söz verdiğim günde, eksiksiz teslim ederim.", "degisken": "P3"},
+      {"metin": "Gazetede daha önce hiç denenmemiş bölümler ve farklı konular öneririm.", "degisken": "P5"},
+      {"metin": "Kimin neyi yazacağına karar verir, ekibi yönlendiririm.", "degisken": "P8"}]},
+    {"katman": "K2", "tip": "encok", "metin": "Bir yabancı dil kursunun ilk haftasındasın. Sana en çok hangisi uyar?", "secenekler": [
+      {"metin": "Teneffüslerde hemen yanımdakilerle tanışır, sohbeti ben başlatırım.", "degisken": "P1"},
+      {"metin": "Grup çalışmalarında ortam tatlı geçsin diye arkadaşlarımla uyum içinde çalışmaya özen gösteririm.", "degisken": "P2"},
+      {"metin": "Kelime çalışmalarımı her gün belli bir saatte, düzenli yaparım.", "degisken": "P3"},
+      {"metin": "O dilin konuşulduğu ülkenin müziğini, filmlerini ve yemeklerini merakla araştırırım.", "degisken": "P5"}]},
+    {"katman": "K2", "tip": "encok", "metin": "Okul gezisinde otobüs yolda arızalandı ve iki saat bekleyeceksiniz. Sana en çok hangisi uyar?", "secenekler": [
+      {"metin": "Arkadaşlar arasında gerginlik çıkmasın diye herkesle iyi geçinmeye çalışırım.", "degisken": "P2"},
+      {"metin": "Eve geç kalacağımızı düşündükçe içim biraz huzursuz olur.", "degisken": "P4"},
+      {"metin": "Hareketsiz beklemek bana göre değil; hemen bir oyun ya da etkinlik başlatırım.", "degisken": "P6"},
+      {"metin": "Öğretmenle konuşup bekleme süresince ne yapacağımızı ben organize ederim.", "degisken": "P8"}]},
+    {"katman": "K2", "tip": "encok", "metin": "Okulun robotik takımına seçildin. Sana en çok hangisi uyar?", "secenekler": [
+      {"metin": "Her toplantıya zamanında gelir, bana düşen parçayı özenle bitiririm.", "degisken": "P3"},
+      {"metin": "Başka ülkelerdeki takımların neler yaptığını merakla inceler, yeni fikirler getiririm.", "degisken": "P5"},
+      {"metin": "Riskli ama kazandırabilecek cesur bir tasarımı denemeyi savunurum.", "degisken": "P7"},
+      {"metin": "Takım kaptanı olup kararları vermek isterim.", "degisken": "P8"}]},
+
+    {"katman": "K3", "tip": "encok", "metin": "Dönem projesinin teslimine iki gün kaldı ve işler yetişmiyor. Sana en çok hangisi uyar?", "secenekler": [
+      {"metin": "Kalan işleri önem sırasına dizer, her güne bir parça düşecek şekilde planlarım.", "degisken": "I1"},
+      {"metin": "Baskı altında bile sakin kalır, gereken kararları beklemeden veririm.", "degisken": "I3"},
+      {"metin": "Yetiştiremediğim kısmı öğretmene açıkça söylerim; bitmiş gibi göstermem.", "degisken": "I4"},
+      {"metin": "Öğretmenden taslağıma bakmasını ister, eleştirilerine göre düzeltirim.", "degisken": "I6"}]},
+    {"katman": "K3", "tip": "encok", "metin": "Kulübünüz bir hafta boyunca okulda kermes standı açacak. Hangi rol sana uyar?", "secenekler": [
+      {"metin": "Kimin hangi saatte nöbet tutacağını ve işlerin sırasını planlamak.", "degisken": "I1"},
+      {"metin": "Ekipte çıkan anlaşmazlıkları konuşarak çözmek, herkesi aynı hedefte tutmak.", "degisken": "I2"},
+      {"metin": "Kimse söylemeden eksik olanı fark edip hemen harekete geçmek.", "degisken": "I5"},
+      {"metin": "Hangi ürünün daha çok gelir getireceğini ve fiyatları nasıl belirleyeceğimizi düşünmek.", "degisken": "I7"}]},
+    {"katman": "K3", "tip": "encok", "metin": "Münazara yarışmasında takımınla finale kaldınız. Sana en çok hangisi uyar?", "secenekler": [
+      {"metin": "Konuşmayı kimin yapacağı konusunda arkadaşlarım tartışınca araya girip uzlaştırırım.", "degisken": "I2"},
+      {"metin": "Rakip beklemediğimiz bir soru sorunca hemen kararımı verip cevaba geçerim.", "degisken": "I3"},
+      {"metin": "Çok etkili olacak ama tam doğru olmayan bir bilgiyi, kazanmamıza yardım etse de konuşmamdan çıkarırım.", "degisken": "I4"},
+      {"metin": "Hazırlıkta öğretmenimizin sert eleştirilerini dinler, konuşmamı ona göre değiştiririm.", "degisken": "I6"}]},
+
+    {"katman": "K4", "tip": "encok", "metin": "Okulda bir bilim şenliği düzenlenecek. Hangi işi almak istersin?", "secenekler": [
+      {"metin": "Katılımcı sayılarını ve harcamaları tabloda tutup hesapları yapmak.", "degisken": "A1"},
+      {"metin": "Şenliğin davetiyelerini ve tanıtım yazılarını yazmak.", "degisken": "A2"},
+      {"metin": "Şenliğin ana temasını ve genel fikrini bulmak.", "degisken": "A8"},
+      {"metin": "Mahalledeki esnafı şenliğe destek vermeye ikna etmek.", "degisken": "A9"}]},
+    {"katman": "K4", "tip": "encok", "metin": "Mahallendeki kullanılmayan bir park yenilenecek ve gençlerden yardım isteniyor. Hangi işi almak istersin?", "secenekler": [
+      {"metin": "Parkı kullanacak yaşlılar ve çocuklarla konuşup neye ihtiyaç duyduklarını dinlemek.", "degisken": "A3"},
+      {"metin": "Parkın yeni yerleşimini ve oyun alanlarını çizerek tasarlamak.", "degisken": "A4"},
+      {"metin": "Parkın yıllar içinde mahalleye ne katacağını düşünüp genel bir fikir ortaya koymak.", "degisken": "A8"},
+      {"metin": "Projeyi belediyeye sunup yetkilileri desteklemeye ikna etmek.", "degisken": "A9"}]},
+    {"katman": "K4", "tip": "encok", "metin": "Okul bahçesinde küçük bir sebze bahçesi kurulacak. Hangi işi almak istersin?", "secenekler": [
+      {"metin": "Toprağı ve tohumları inceleyip bitkilerin nasıl büyüdüğünü gözlemlemek.", "degisken": "A5"},
+      {"metin": "Toprağı kazmak, fide dikmek, su taşımak gibi bedenen çalışılan işler.", "degisken": "A6"},
+      {"metin": "Bahçenin okula uzun vadede ne katacağını düşünüp genel fikri ortaya atmak.", "degisken": "A8"},
+      {"metin": "Çıkan ürünleri okul pazarında satmak, alıcı bulmak.", "degisken": "A9"}]},
+    {"katman": "K4", "tip": "encok", "metin": "Ailen internetten ürün satan küçük bir sayfa açacak. Hangi işi almak istersin?", "secenekler": [
+      {"metin": "Ziyaretçi ve satış sayılarını grafiğe döküp hangi gün neyin daha çok satıldığını çözmek.", "degisken": "A1"},
+      {"metin": "Gelen siparişleri belli bir düzene göre kaydedip her adımı eksiksiz takip etmek.", "degisken": "A7"},
+      {"metin": "Sayfanın genel yönünü ve benzerlerinden neyi farklı yapacağını belirlemek.", "degisken": "A8"},
+      {"metin": "Müşterilere ürünleri tanıtmak, onları almaya ikna etmek.", "degisken": "A9"}]},
+    {"katman": "K4", "tip": "encok", "metin": "Okul gezisiyle bir milli parka gidiyorsunuz. Sana en çok hangisi uyar?", "secenekler": [
+      {"metin": "Gezi boyunca gördüklerimi ilginç bir yazıya dönüştürmek.", "degisken": "A2"},
+      {"metin": "Gezilecek alanın krokisini ya da manzaranın çizimini yapmak.", "degisken": "A4"},
+      {"metin": "Rehberle birlikte kuşları, bitkileri ve kayaları incelemek.", "degisken": "A5"},
+      {"metin": "Zorlu bir parkurda uzun süre yürümek, tırmanmak.", "degisken": "A6"}]},
+    {"katman": "K4", "tip": "encok", "metin": "Okulun yıl sonu gösterisinde görev alacaksın. Hangisini seçersin?", "secenekler": [
+      {"metin": "Sahneye çıkacak küçük sınıflara destek olmak, heyecanlarını yatıştırmak.", "degisken": "A3"},
+      {"metin": "Dekoru ve kostümleri tasarlamak.", "degisken": "A4"},
+      {"metin": "Dans ve hareket gerektiren bir rolle sahnede olmak.", "degisken": "A6"},
+      {"metin": "Kimin ne zaman sahneye çıkacağını gösteren listeyi hazırlayıp sırayı eksiksiz yönetmek.", "degisken": "A7"}]},
+
+    {"katman": "K1", "tip": "kontrol", "metin": "Soruları dikkatle okuduğunu görmek istiyoruz. Bu soruda “Mavi” şıkkını seç.", "secenekler": ["Kırmızı", "Mavi", "Yeşil", "Sarı"], "beklenen": 2},
+    {"katman": "K1", "tip": "kontrol", "metin": "Bu sorunun tek bir doğru cevabı var: Bir yılda kaç ay vardır?", "secenekler": ["10", "11", "12", "13"], "beklenen": 3},
+    {"katman": "K2", "tip": "kontrol", "metin": "Bu bir dikkat sorusu. Lütfen son şıkkı işaretle.", "secenekler": ["Birinci şık", "İkinci şık", "Üçüncü şık", "Son şık"], "beklenen": 4},
+    {"katman": "K2", "tip": "kontrol", "metin": "Bu sorunun tek bir doğru cevabı var: Hangisi bir meyvedir?", "secenekler": ["Masa", "Elma", "Kalem", "Ayakkabı"], "beklenen": 2},
+    {"katman": "K3", "tip": "kontrol", "metin": "Dikkatle okuduğunu göstermek için bu soruda “Bunu okudum.” şıkkını seç.", "secenekler": ["Katılıyorum.", "Katılmıyorum.", "Bunu okudum.", "Kararsızım."], "beklenen": 3},
+    {"katman": "K3", "tip": "kontrol", "metin": "Bu sorunun tek bir doğru cevabı var: Hangisi haftanın bir günüdür?", "secenekler": ["Salı", "Ocak", "Bahar", "Akşam"], "beklenen": 1},
+    {"katman": "K4", "tip": "kontrol", "metin": "Bu bir dikkat sorusu. İçinde bir hayvan adı geçen şıkkı seç.", "secenekler": ["Bugün hava güneşli.", "Kedi bahçede uyuyor.", "Kitap masanın üstünde.", "Otobüs geç geldi."], "beklenen": 2},
+    {"katman": "K4", "tip": "kontrol", "metin": "Bu sorunun tek bir doğru cevabı var: 2 + 3 kaç eder?", "secenekler": ["4", "6", "7", "5"], "beklenen": 4}
+  ]
+}

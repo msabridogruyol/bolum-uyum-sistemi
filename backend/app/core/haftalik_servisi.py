@@ -100,7 +100,7 @@ def _yolculuk_gorevi(db: Session, ogrenci: Ogrenci) -> dict | None:
             kalan = len([k for k in katmanlar if k.id not in biten])
             from app.core.katman_adlari import katman_adi
             return {"tur": "katman", "baslik": f"{katman_adi(sonraki.kod, sonraki.ad)} bölümünü tamamla",
-                    "aciklama": f"Yaklaşık 5 dakika sürer. Bölüm önerilerin için {kalan} katman kaldı. Samimi cevap ver; doğru ya da yanlış cevap yok.",
+                    "aciklama": f"Yaklaşık 9–10 dakika sürer. Bölüm önerilerin için {kalan} katman kaldı. Samimi cevap ver; doğru ya da yanlış cevap yok.",
                     "ref_kod": sonraki.kod, "link": "/katmanlar"}
         return None
     if bekleyen_dal_var_mi(db, ogrenci, tur):
