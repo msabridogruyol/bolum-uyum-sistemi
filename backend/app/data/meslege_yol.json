@@ -1449,11 +1449,6 @@
    "regule": false,
    "oda_kaydi": true
   },
-  "AKSESUAR TASARIMI": {
-   "alan": "U12",
-   "ozel": "Moda markaları ve atölyelerde tasarım/üretim; kendi markasını kurmak da yaygındır.",
-   "regule": false
-  },
   "AKTÜERYA BİLİMLERİ": {
    "alan": "U10",
    "regule": true,
@@ -1622,11 +1617,6 @@
    "ozel": "Beste, düzenleme, film/oyun müziği ve şeflik; konservatuvar eğitimi uzun ve yoğundur.",
    "regule": false
   },
-  "BİLEŞİK SANATLAR": {
-   "alan": "U12",
-   "ozel": "Disiplinlerarası sanat üretimi, sergiler ve kültür kurumları.",
-   "regule": false
-  },
   "BİLGİ VE BELGE YÖNETİMİ": {
    "alan": "U08",
    "ozel": "Arşiv, kütüphane ve kurumların belge yönetimi birimleri; dijital arşivleme becerisi değerlidir.",
@@ -1713,11 +1703,6 @@
   "BİYOTEKNOLOJİ": {
    "alan": "U03",
    "ozel": "Biyoteknoloji şirketleri ve ar-ge laboratuvarları; yüksek lisans genellikle beklenir.",
-   "regule": false
-  },
-  "CAZ VE POPÜLER MÜZİK": {
-   "alan": "U13",
-   "ozel": "Sahne müzisyenliği, stüdyo, ders verme ve prodüksiyon.",
    "regule": false
   },
   "CEVHER HAZIRLAMA MÜHENDİSLİĞİ": {
@@ -2808,13 +2793,6 @@
    "regule": false,
    "oda_kaydi": true
   },
-  "HİDROLİK VE SU KAYNAKLARI MÜHENDİSLİĞİ": {
-   "alan": "U01",
-   "ozel": "Baraj, sulama ve kentsel su altyapısı projelerinde çalışılır; kamu kurumları önemli işverenlerdendir.",
-   "sablon": "tmmob",
-   "regule": false,
-   "oda_kaydi": true
-  },
   "JEOFİZİK MÜHENDİSLİĞİ": {
    "alan": "U01",
    "ozel": "Deprem, maden ve enerji aramalarında saha ve veri işleme ağırlıklı çalışılır.",
@@ -2907,11 +2885,6 @@
   "LOJİSTİK YÖNETİMİ": {
    "alan": "U10",
    "ozel": "Lojistik firmaları, depo ve tedarik zinciri yönetimi; yabancı dil ve Excel/ERP becerisi aranır.",
-   "regule": false
-  },
-  "LİDERLİK": {
-   "alan": "U10",
-   "ozel": "İşletme yönetimi, insan kaynakları ve kurumsal gelişim rolleri; yeni bir programdır.",
    "regule": false
   },
   "MADEN MÜHENDİSLİĞİ": {
@@ -3027,11 +3000,6 @@
    "ozel": "Sahne, eğitim, stüdyo ve kurum toplulukları.",
    "regule": false
   },
-  "MÜZİK SES VE PERFORMANS": {
-   "alan": "U13",
-   "ozel": "Sahne performansı, stüdyo kayıtları ve ses eğitmenliği.",
-   "regule": false
-  },
   "MÜZİK TEKNOLOJİSİ": {
    "alan": "U13",
    "ozel": "Ses mühendisliği, stüdyo, yayın ve oyun/film ses tasarımı.",
@@ -3040,11 +3008,6 @@
   "MÜZİK TEORİSİ": {
    "alan": "U13",
    "ozel": "Müzik eğitimi, akademi ve düzenleme.",
-   "regule": false
-  },
-  "MÜZİK ÇALGI": {
-   "alan": "U13",
-   "ozel": "Orkestralar ve topluluklar, ders verme; kurum kadroları kendi sınavlarıyla alınır.",
    "regule": false
   },
   "MÜZİK ÖĞRETMENLİĞİ": {
@@ -3720,11 +3683,6 @@
    "ozel": "Lise tarih öğretmenliği.",
    "son_kontrol": "2026-10-10"
   },
-  "TEKNOLOJİ GİRİŞİMCİLİĞİ": {
-   "alan": "U10",
-   "ozel": "Teknoloji girişimleri, kuluçka merkezleri ve ürün yönetimi rolleri.",
-   "regule": false
-  },
   "TEKSTİL MÜHENDİSLİĞİ": {
    "alan": "U01",
    "ozel": "Tekstil ve hazır giyim üretiminde planlama, kalite ve ar-ge; sektör belirli sanayi şehirlerinde yoğunlaşır.",
@@ -3980,40 +3938,10 @@
    "ozel": "Dramaturji, eleştiri, yayıncılık ve akademi.",
    "regule": false
   },
-  "ULAŞTIRMA VE TRAFİK MÜHENDİSLİĞİ": {
-   "alan": "U01",
-   "ozel": "Belediyeler, ulaşım planlama firmaları ve kamu kurumlarında trafik ve ulaşım projeleri.",
-   "sablon": "tmmob",
-   "regule": false,
-   "oda_kaydi": true
-  },
-  "ULUSLARARASI EKONOMİK İLİŞKİLER": {
-   "alan": "U10",
-   "ozel": "Dış ticaret, uluslararası şirketler ve kamu kurumları; yabancı dil şarttır.",
-   "regule": false
-  },
   "ULUSLARARASI FİNANS": {
    "alan": "U10",
    "ozel": "Finans kurumları ve uluslararası şirketlerin hazine birimleri; SPK lisansları ve yabancı dil önemlidir.",
    "regule": false
-  },
-  "ULUSLARARASI HUKUK": {
-   "alan": "U09",
-   "ozel": "Hukuk fakültesi değildir: avukat, hâkim ya da savcı olmak için hukuk fakültesi mezuniyeti, HMGS ve staj gerekir. Uluslararası kuruluşlar ve araştırma için genellikle yüksek lisans ve ileri dil beklenir.",
-   "regule": false,
-   "kaynaklar": [
-    {
-     "ad": "1136 sayılı Avukatlık Kanunu (m.3 mesleğe kabul, m.15 staj süresi)",
-     "url": "https://www.mevzuat.gov.tr/mevzuat?MevzuatNo=1136&MevzuatTur=1&MevzuatTertip=5",
-     "tarih": null
-    },
-    {
-     "ad": "Hukuk Mesleklerine Giriş Sınavı ve İdari Yargı Ön Sınavı Yönetmeliği (RG 08.05.2024) — özet ve 2026 sınav tarihleri",
-     "url": "https://kadimhukuk.com.tr/?p=22243",
-     "tarih": "2024-05-08"
-    }
-   ],
-   "son_kontrol": "2026-10-10"
   },
   "ULUSLARARASI TİCARET VE LOJİSTİK": {
    "alan": "U10",
@@ -4251,11 +4179,6 @@
    "sablon": "tmmob",
    "regule": false,
    "oda_kaydi": true
-  },
-  "ÇALGI TEKNOLOJİLERİ": {
-   "alan": "U13",
-   "ozel": "Çalgı yapımı ve onarımı atölyeleri; usta-çırak deneyimi önemlidir.",
-   "regule": false
   },
   "ÇALIŞMA EKONOMİSİ VE ENDÜSTRİ İLİŞKİLERİ": {
    "alan": "U10",

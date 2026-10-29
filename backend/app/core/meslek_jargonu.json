@@ -155,58 +155,6 @@
    "ornek": "CMK 134 kararı geldi, cihazların imajını savcılık huzurunda alacağız."
   }
  ],
- "AKSESUAR TASARIMI": [
-  {
-   "terim": "Moodboard",
-   "anlam": "Bir koleksiyonun ruhunu anlatmak için renk, doku, fotoğraf ve malzeme örneklerinin bir panoda bir araya getirilmesi.",
-   "ornek": "Yeni çanta serisi için moodboard'u toprak tonlarıyla hazırladım."
-  },
-  {
-   "terim": "Koleksiyon",
-   "anlam": "Belli bir sezon ya da tema için birlikte tasarlanan, birbiriyle uyumlu ürün grubu.",
-   "ornek": "Koleksiyonda on iki çanta, altı kemer ve dört şapka olacak."
-  },
-  {
-   "terim": "Numune",
-   "anlam": "Seri üretimden önce tasarımın denenmesi için elde yapılan ilk örnek ürün.",
-   "ornek": "Numune geldi ama toka beklediğimizden büyük, revize isteyelim."
-  },
-  {
-   "terim": "Tech pack",
-   "anlam": "Ürünün ölçülerini, malzemelerini, renklerini ve dikiş detaylarını üreticiye anlatan teknik dosya.",
-   "ornek": "Tech pack'e fermuar kodunu eklemeyi unutma, atölye soracak."
-  },
-  {
-   "terim": "Kalıp çıkarmak",
-   "anlam": "Tasarımı, kesilip dikilebilecek parçalara ayırarak her parçanın şablonunu hazırlamak.",
-   "ornek": "Çizim onaylandı, yarın sırt çantasının kalıbını çıkarıyoruz."
-  },
-  {
-   "terim": "Biye",
-   "anlam": "Çanta ve kemer gibi ürünlerin kenarlarını temiz bitirmek veya süslemek için kullanılan ince şerit.",
-   "ornek": "Kenarları siyah deri biyeyle bitirirsek daha şık durur."
-  },
-  {
-   "terim": "Astar",
-   "anlam": "Ürünün iç yüzeyini kaplayan kumaş. Hem içi düzgün gösterir hem de ana malzemeyi korur.",
-   "ornek": "Çantanın astarını desenli seçelim, açınca sürpriz gibi olsun."
-  },
-  {
-   "terim": "Eskitme",
-   "anlam": "Yeni bir ürüne zımpara, boya ya da kimyasallarla kullanılmış, vintage bir görünüm verme işlemi.",
-   "ornek": "Metal tokalara hafif eskitme yaparsak koleksiyona daha uygun olur."
-  },
-  {
-   "terim": "SS / AW",
-   "anlam": "Spring/Summer (İlkbahar/Yaz) ve Autumn/Winter (Sonbahar/Kış). Moda dünyasında sezonları belirtmek için kullanılan kısaltmalar.",
-   "ornek": "AW koleksiyonunu bitirdik, şimdi SS için trend araştırmasına başlıyoruz."
-  },
-  {
-   "terim": "MOQ",
-   "anlam": "Minimum Order Quantity, yani asgari sipariş miktarı. Tedarikçinin bir ürünü üretmek için kabul ettiği en düşük adet.",
-   "ornek": "Bu toka için MOQ beş yüz adetmiş, bizim için fazla."
-  }
- ],
  "AKTÜERYA BİLİMLERİ": [
   {
    "terim": "Muallak tazminat karşılığı",
@@ -1143,58 +1091,6 @@
    "ornek": "Bu bölümü 120 BPM'den 100'e indirip önce yavaş çalışalım."
   }
  ],
- "BİLEŞİK SANATLAR": [
-  {
-   "terim": "Enstalasyon",
-   "anlam": "Nesnelerin, ışığın, sesin ve görüntünün bir mekâna yerleştirilerek izleyicinin içine girebileceği bir sanat yapıtı oluşturulması.",
-   "ornek": "Enstalasyonu kurmak için galeriye üç gün önceden girmemiz lazım."
-  },
-  {
-   "terim": "Performans sanatı",
-   "anlam": "Sanatçının bedenini ve eylemini canlı olarak izleyici önünde sanat yapıtına dönüştürdüğü sanat biçimi.",
-   "ornek": "Performans dört saat sürecek, izleyiciler istedikleri zaman girip çıkabilir."
-  },
-  {
-   "terim": "Mekâna özgü",
-   "anlam": "Site-specific. Belirli bir mekân için tasarlanan ve başka yerde aynı anlamı taşımayan yapıt.",
-   "ornek": "Bu iş eski fabrikaya özgü, başka galeriye taşınamaz."
-  },
-  {
-   "terim": "Ready-made",
-   "anlam": "Hazır nesne. Gündelik bir eşyanın sanatçı tarafından seçilip sanat yapıtı olarak sergilenmesi.",
-   "ornek": "Duchamp'ın pisuvarından beri ready-made tartışması hiç bitmedi."
-  },
-  {
-   "terim": "Küratör",
-   "anlam": "Bir serginin konusunu belirleyen, eserleri seçen ve nasıl sergileneceğini planlayan kişi.",
-   "ornek": "Küratör, videonun karanlık bir odada gösterilmesini istedi."
-  },
-  {
-   "terim": "Sanatçı beyanı",
-   "anlam": "Artist statement. Sanatçının işlerinin ne anlattığını ve hangi yöntemle çalıştığını açıkladığı kısa metin.",
-   "ornek": "Başvuru için portfolyonun yanına bir sayfalık sanatçı beyanı ekle."
-  },
-  {
-   "terim": "Rezidans",
-   "anlam": "Sanatçıya belli bir süre konaklama ve çalışma alanı sağlanan sanat programı.",
-   "ornek": "Üç aylık rezidans için Berlin'e başvurdum, sonucu bekliyorum."
-  },
-  {
-   "terim": "White cube",
-   "anlam": "Beyaz duvarlı, yalın, eserin önüne hiçbir şeyin geçmediği klasik modern galeri mekânı.",
-   "ornek": "Bu işi white cube yerine terk edilmiş bir binada göstermek istiyorum."
-  },
-  {
-   "terim": "VR",
-   "anlam": "Virtual Reality, yani sanal gerçeklik. Özel gözlükle izleyiciyi tamamen dijital bir ortama sokan teknoloji.",
-   "ornek": "Sergide izleyiciler VR gözlüğüyle sanal bir ormanda yürüyecek."
-  },
-  {
-   "terim": "AR",
-   "anlam": "Augmented Reality, yani artırılmış gerçeklik. Gerçek dünyanın üzerine telefon ekranından dijital görüntüler ekleyen teknoloji.",
-   "ornek": "Duvardaki resme telefonu tutunca AR ile figürler hareket ediyor."
-  }
- ],
  "BİLGİ VE BELGE YÖNETİMİ": [
   {
    "terim": "Dosya planı",
@@ -1921,58 +1817,6 @@
    "terim": "Gece kültürü",
    "anlam": "Bakterilerin bir sonraki gün kullanılmak üzere bir gece boyunca çalkalayıcıda üretilmesi. Laboratuvarda overnight kültür diye de söylenir.",
    "ornek": "Çıkmadan gece kültürünü kur, sabah plazmit izolasyonu yapacağız."
-  }
- ],
- "CAZ VE POPÜLER MÜZİK": [
-  {
-   "terim": "Gig",
-   "anlam": "Müzisyenlerin dilinde ücretli konser ya da sahne işi.",
-   "ornek": "Cumartesi Kadıköy'de bir gig var, basçı arıyorlar."
-  },
-  {
-   "terim": "Jam session",
-   "anlam": "Müzisyenlerin önceden prova yapmadan bir araya gelip doğaçlama çaldığı buluşma.",
-   "ornek": "Salı akşamları kulüpte jam session oluyor, sen de gel."
-  },
-  {
-   "terim": "Standart",
-   "anlam": "Cazcıların hemen hepsinin bildiği, çok çalınan klasik caz şarkısı.",
-   "ornek": "Provasız çalacağız, sadece standartlardan seçelim."
-  },
-  {
-   "terim": "Real Book",
-   "anlam": "Caz standartlarının melodi ve akorlarını içeren, müzisyenlerin yaygın olarak kullandığı nota kitabı.",
-   "ornek": "Real Book'ta bu şarkının akorları biraz farklı yazılmış."
-  },
-  {
-   "terim": "Chorus",
-   "anlam": "Cazda şarkının formunun baştan sona bir kez çalınması. Solo süreleri chorus sayısıyla belirlenir.",
-   "ornek": "Saksafon iki chorus alsın, sonra piyanoya geçsin."
-  },
-  {
-   "terim": "Comping",
-   "anlam": "Piyano ya da gitarın solistin arkasında akorlarla eşlik etmesi.",
-   "ornek": "Solonun arkasında daha az comping yap, alan bırak."
-  },
-  {
-   "terim": "Walking bass",
-   "anlam": "Basın her vuruşta bir nota çalarak yürür gibi ilerlediği tipik caz bas çizgisi.",
-   "ornek": "İkinci chorusta walking bass'e geç, şarkı açılsın."
-  },
-  {
-   "terim": "Trading fours",
-   "anlam": "Müzisyenlerin, çoğunlukla davulcuyla, dörder ölçü sırayla solo atışması.",
-   "ornek": "Sonda davulla trading fours yapıp temaya döneriz."
-  },
-  {
-   "terim": "Groove",
-   "anlam": "Ritim bölümünün oluşturduğu, insanı sallandıran akış ve ritmik his.",
-   "ornek": "Tempo iyi ama groove oturmadı, davul biraz geride çalsın."
-  },
-  {
-   "terim": "Sideman",
-   "anlam": "Grubun lideri olmayan, başkasının projesinde ücretle çalan müzisyen.",
-   "ornek": "Bu yıl kendi albümüm yok, iki grupta sideman olarak çalıyorum."
   }
  ],
  "CEVHER HAZIRLAMA MÜHENDİSLİĞİ": [
@@ -5771,58 +5615,6 @@
    "ornek": "Sondaj altmış metrede artezyene geçti, su kuyu ağzından taşıyor."
   }
  ],
- "HİDROLİK VE SU KAYNAKLARI MÜHENDİSLİĞİ": [
-  {
-   "terim": "Memba ve mansap",
-   "anlam": "Memba bir akarsuyun kaynağa doğru olan yukarı tarafı, mansap ise suyun aktığı aşağı tarafıdır.",
-   "ornek": "Barajın mansabındaki köyler için taşkın uyarısı yapılması lazım."
-  },
-  {
-   "terim": "Tekerrür süresi",
-   "anlam": "Belirli büyüklükteki bir taşkının ortalama kaç yılda bir görülebileceği. Q100, yüz yılda bir beklenen taşkın debisidir.",
-   "ornek": "Köprüyü Q100 debisine göre tasarlıyoruz, açıklık buna yetmeli."
-  },
-  {
-   "terim": "Dolusavak",
-   "anlam": "Baraj dolduğunda fazla suyun yapıya zarar vermeden kontrollü biçimde aktarıldığı taşkın kanalı.",
-   "ornek": "Rezervuar dolmak üzere, dolusavak kapaklarını kademeli açıyoruz."
-  },
-  {
-   "terim": "Regülatör",
-   "anlam": "Akarsuyun seviyesini yükseltip suyu sulama kanalına veya santrale yönlendiren alçak bağlama yapısı.",
-   "ornek": "Regülatördeki kapaklarla sulama kanalına giden suyu ayarlıyoruz."
-  },
-  {
-   "terim": "İsale hattı",
-   "anlam": "Suyu kaynaktan veya barajdan şehre ya da depoya taşıyan büyük boru hattı.",
-   "ornek": "İsale hattında patlak var, şehrin yarısına su kesintisi yapılacak."
-  },
-  {
-   "terim": "Cazibeli",
-   "anlam": "Suyun pompa kullanılmadan, yükseklik farkıyla yani yer çekimiyle akmasını sağlayan sistemler için kullanılır.",
-   "ornek": "Depo köyden yüksekte, suyu cazibeli olarak verirsek pompa masrafı olmaz."
-  },
-  {
-   "terim": "Su darbesi",
-   "anlam": "Boruda akan su aniden durdurulduğunda oluşan ani basınç dalgası. Boruları patlatabilir; koç darbesi de denir.",
-   "ornek": "Vanayı hızlı kapatırsan su darbesi oluşur, yavaşça kapat."
-  },
-  {
-   "terim": "Kret kotu",
-   "anlam": "Baraj gövdesinin veya savağın en üst noktasının deniz seviyesine göre yüksekliği.",
-   "ornek": "Dolusavak kret kotunu iki metre yükseltirsek depolama hacmi ciddi artar."
-  },
-  {
-   "terim": "HES",
-   "anlam": "Hidroelektrik Santrali. Suyun düşü enerjisini türbinlerle elektriğe çeviren tesis.",
-   "ornek": "HES'e verilecek suyu azaltıp sulamaya öncelik vermemiz gerekiyor."
-  },
-  {
-   "terim": "Ölü hacim",
-   "anlam": "Barajda su alma yapısının altında kalan, kullanılamayan ve zamanla çamurla dolması beklenen hacim.",
-   "ornek": "Sediment ölçümlerine göre ölü hacim tahmin edilenden hızlı doluyor."
-  }
- ],
  "JEOFİZİK MÜHENDİSLİĞİ": [
   {
    "terim": "Jeofon",
@@ -6653,58 +6445,6 @@
    "terim": "FTL",
    "anlam": "Full Truck Load, komple araç yükü. Bir kamyonun tamamen tek bir müşterinin yüküyle doldurulduğu taşıma.",
    "ornek": "Sipariş yirmi palete çıktı, artık FTL göndermek daha ucuz."
-  }
- ],
- "LİDERLİK": [
-  {
-   "terim": "Birebir görüşme",
-   "anlam": "Yöneticinin ekip üyesiyle düzenli olarak baş başa yaptığı, gelişim ve sorunların konuşulduğu kısa toplantı; one-on-one da denir.",
-   "ornek": "Perşembe birebir görüşmemizde kariyer hedeflerini konuşalım."
-  },
-  {
-   "terim": "Geri bildirim",
-   "anlam": "Bir kişinin çalışması veya davranışı hakkında gelişmesine yardım edecek şekilde verilen yorum; feedback de denir.",
-   "ornek": "Sunumdan sonra sana kısa bir geri bildirim vermek istiyorum, beş dakikan var mı?"
-  },
-  {
-   "terim": "Yetki devri (delegasyon)",
-   "anlam": "Liderin bir işi ve o işle ilgili karar verme yetkisini ekipten birine bırakması.",
-   "ornek": "Bu projede yetki devri yapıyorum, müşteriyle ilgili kararları artık sen veriyorsun."
-  },
-  {
-   "terim": "Paydaş",
-   "anlam": "Bir projeden veya karardan etkilenen ya da onu etkileyebilen tüm kişi ve gruplar.",
-   "ornek": "Kararı açıklamadan önce tüm paydaşları bilgilendirelim, kimse sürpriz yaşamasın."
-  },
-  {
-   "terim": "Aksiyon maddesi",
-   "anlam": "Toplantı sonunda kimin neyi ne zamana kadar yapacağını gösteren somut görev.",
-   "ornek": "Toplantıyı bitirmeden aksiyon maddelerini ve sorumlularını yazalım."
-  },
-  {
-   "terim": "Mikro yönetim",
-   "anlam": "Yöneticinin ekibin her küçük işini sürekli kontrol etmesi; genellikle motivasyonu düşüren bir davranış olarak görülür.",
-   "ornek": "Her e-postayı kontrol etmeye başlarsam mikro yönetime kayarım, size güveniyorum."
-  },
-  {
-   "terim": "Koçluk",
-   "anlam": "Liderin cevabı doğrudan vermek yerine sorular sorarak kişinin kendi çözümünü bulmasına yardım etmesi.",
-   "ornek": "Hemen çözüm söylemeyeyim, koçluk yaklaşımıyla sen ne düşünüyorsun diye sorayım."
-  },
-  {
-   "terim": "OKR",
-   "anlam": "Objectives and Key Results, hedefler ve anahtar sonuçlar. Ekiplerin iddialı hedefler ve bunları ölçen sonuçlar belirlediği yönetim yöntemi.",
-   "ornek": "Bu çeyreğin OKR'larını cuma günü ekipçe belirleyeceğiz."
-  },
-  {
-   "terim": "KPI",
-   "anlam": "Key Performance Indicator, temel performans göstergesi. Bir işin başarısını ölçen sayısal gösterge.",
-   "ornek": "Müşteri memnuniyeti KPI'ımız düştü, nedenini birlikte bulalım."
-  },
-  {
-   "terim": "Asansör konuşması",
-   "anlam": "Bir fikri veya projeyi asansörde geçecek kadar kısa sürede, yaklaşık otuz saniyede etkileyici biçimde anlatma; elevator pitch de denir.",
-   "ornek": "Genel müdürle iki dakikan olacak, projen için bir asansör konuşması hazırla."
   }
  ],
  "MADEN MÜHENDİSLİĞİ": [
@@ -7695,58 +7435,6 @@
    "ornek": "D.C. gelince başa dönüp Fine yazan yerde bitiriyoruz."
   }
  ],
- "MÜZİK SES VE PERFORMANS": [
-  {
-   "terim": "Vokaliz",
-   "anlam": "Sesi ısıtmak ve geliştirmek için sözsüz, hecelerle yapılan ses egzersizleri.",
-   "ornek": "Provadan önce on dakika vokaliz yapmadan şarkıya girme."
-  },
-  {
-   "terim": "Göğüs sesi / Kafa sesi",
-   "anlam": "Sesin pes bölgede göğüste, tiz bölgede kafada tınlaması; şarkıcılar bunları ayrı yazmaçlar olarak çalışır.",
-   "ornek": "Bu notada göğüs sesini zorlama, kafa sesine geç."
-  },
-  {
-   "terim": "Pasaj",
-   "anlam": "Sesin bir yazmaçtan diğerine geçtiği, şarkıcıların en zorlandığı bölge.",
-   "ornek": "Pasajda sesin kırılıyor, o bölgeyi daha yumuşak al."
-  },
-  {
-   "terim": "Nefes desteği",
-   "anlam": "Diyafram ve karın kaslarıyla nefesi kontrol ederek sesin sabit ve güçlü çıkmasını sağlamak.",
-   "ornek": "Cümlenin sonunda nefes desteği bitiyor, ses düşüyor."
-  },
-  {
-   "terim": "Detone olmak",
-   "anlam": "Doğru perdeden kayarak hafif yanlış (pes ya da tiz) söylemek.",
-   "ornek": "Yüksek notaya çıkarken biraz detone oldun, tekrar alalım."
-  },
-  {
-   "terim": "Entonasyon",
-   "anlam": "Seslerin perde olarak ne kadar doğru söylendiği.",
-   "ornek": "Bugün entonasyonun çok temizdi, tebrikler."
-  },
-  {
-   "terim": "Tessitura",
-   "anlam": "Bir şarkıcının sesinin en rahat ve en güzel tınladığı aralık; bir eserin en çok kullandığı ses bölgesi.",
-   "ornek": "Bu aryanın tessiturası senin için fazla yüksek."
-  },
-  {
-   "terim": "Falsetto",
-   "anlam": "Özellikle erkek seslerinde kullanılan, hafif ve havalı tınlayan tiz ses tekniği.",
-   "ornek": "Nakarattaki son notayı falsetto ile bitirelim."
-  },
-  {
-   "terim": "IEM",
-   "anlam": "In-Ear Monitor, kulak içi monitör. Şarkıcının sahnede kendini ve müziği duyduğu kulaklık.",
-   "ornek": "IEM'de sesim az geliyor, monitörcüye söyler misin?"
-  },
-  {
-   "terim": "SATB",
-   "anlam": "Soprano, Alto, Tenor, Bas. Dört sesli koro düzenini gösteren kısaltma.",
-   "ornek": "Bu düzenleme SATB, sen alto partisini öğren."
-  }
- ],
  "MÜZİK TEKNOLOJİSİ": [
   {
    "terim": "DAW",
@@ -7849,58 +7537,6 @@
    "terim": "SATB",
    "anlam": "Soprano, Alto, Tenor, Bas. Armoni ödevlerinde yazılan dört sesli düzen.",
    "ornek": "Koral armonizasyonunu SATB olarak dört porteye yazın."
-  }
- ],
- "MÜZİK ÇALGI": [
-  {
-   "terim": "Etüt",
-   "anlam": "Belirli bir tekniği geliştirmek için yazılmış alıştırma parçası.",
-   "ornek": "Bu hafta Kreutzer'den iki etüt hazırla."
-  },
-  {
-   "terim": "Gam çalışması",
-   "anlam": "Dizilerin farklı ritim ve hızlarda tekrar tekrar çalınması; günlük teknik ısınmanın temeli.",
-   "ornek": "Güne yarım saat gam çalışmasıyla başlıyorum."
-  },
-  {
-   "terim": "Pozisyon",
-   "anlam": "Yaylı çalgılarda sol elin sap üzerindeki yeri; yüksek sesler için pozisyon değiştirilir.",
-   "ornek": "Bu pasajı üçüncü pozisyonda çalarsan daha temiz olur."
-  },
-  {
-   "terim": "Arşe",
-   "anlam": "Yaylı çalgılarda yayın yukarı veya aşağı çekiliş yönü ve tekniği.",
-   "ornek": "Burada arşeleri herkes aynı yapsın, aşağı yayla başlıyoruz."
-  },
-  {
-   "terim": "Doigté",
-   "anlam": "Hangi notanın hangi parmakla çalınacağını gösteren parmak numaraları.",
-   "ornek": "Doigté'yi değiştirirsen bu geçiş çok rahatlar."
-  },
-  {
-   "terim": "Parti",
-   "anlam": "Bir topluluk eserinde tek bir çalgıya ait nota.",
-   "ornek": "Orkestra provasından önce partini iyice çalışmış ol."
-  },
-  {
-   "terim": "Vibrato",
-   "anlam": "Sesin perdesini hafifçe titreterek ona sıcaklık ve canlılık katma tekniği.",
-   "ornek": "Uzun notalarda vibrato'yu biraz daha geniş yap."
-  },
-  {
-   "terim": "Kolofan",
-   "anlam": "Yayın kıllarına sürülen reçine; tellerin titreşmesi için gereklidir.",
-   "ornek": "Ses çok cılız çıkıyor, yayına kolofan sürdün mü?"
-  },
-  {
-   "terim": "pp / ff",
-   "anlam": "Pianissimo (çok hafif) ve fortissimo (çok güçlü) anlamına gelen nüans kısaltmaları.",
-   "ornek": "Burada pp yazıyor, neredeyse fısıltı gibi çalmalısın."
-  },
-  {
-   "terim": "8va",
-   "anlam": "Ottava. Notaların yazıldığından bir oktav yukarıda çalınacağını gösteren işaret.",
-   "ornek": "Burada 8va var, bir oktav yukarıdan al."
   }
  ],
  "MÜZİK ÖĞRETMENLİĞİ": [
@@ -11439,58 +11075,6 @@
    "ornek": "Atanmak için bu yıl ÖABT tarih testinde netlerimi artırmam şart."
   }
  ],
- "TEKNOLOJİ GİRİŞİMCİLİĞİ": [
-  {
-   "terim": "Pitch",
-   "anlam": "Girişimcinin fikrini yatırımcılara kısa sürede etkileyici şekilde anlattığı sunum.",
-   "ornek": "Demo günü pitch için sadece beş dakikamız var, slaytları kısaltalım."
-  },
-  {
-   "terim": "Tohum yatırım (Seed)",
-   "anlam": "Girişimin en erken aşamasında, ürün geliştirmek için aldığı ilk dış yatırım.",
-   "ornek": "Seed turunu kapattık, şimdi ilk mühendisleri işe alabiliriz."
-  },
-  {
-   "terim": "Runway",
-   "anlam": "Girişimin mevcut parasıyla, yeni gelir veya yatırım olmadan kaç ay daha ayakta kalabileceği.",
-   "ornek": "Sekiz aylık runwayimiz kaldı, yeni tura şimdiden başlamalıyız."
-  },
-  {
-   "terim": "Burn rate",
-   "anlam": "Girişimin her ay harcadığı nakit miktarı.",
-   "ornek": "Burn rate ayda iki milyona çıktı, giderleri gözden geçirelim."
-  },
-  {
-   "terim": "Pivot",
-   "anlam": "Mevcut iş modeli tutmayınca ürünün veya hedef kitlenin köklü biçimde değiştirilmesi.",
-   "ornek": "Bireysel kullanıcı ilgisi az, şirketlere satmak için pivot yapıyoruz."
-  },
-  {
-   "terim": "Cap table",
-   "anlam": "Şirketin hisselerinin kimin elinde ne oranda olduğunu gösteren ortaklık tablosu.",
-   "ornek": "Yatırımcı imzadan önce güncel cap table görmek istiyor."
-  },
-  {
-   "terim": "Unicorn",
-   "anlam": "Halka açılmadan değeri bir milyar doları aşan girişim.",
-   "ornek": "Türkiye'den çıkan oyun şirketleri arka arkaya unicorn oldu."
-  },
-  {
-   "terim": "MVP",
-   "anlam": "Minimum Viable Product. Fikri test etmek için en temel özelliklerle hızla çıkarılan ilk ürün sürümü.",
-   "ornek": "Her şeyi bekleme, iki haftada bir MVP çıkarıp kullanıcıya gösterelim."
-  },
-  {
-   "terim": "PMF",
-   "anlam": "Product-Market Fit. Ürünün gerçek bir ihtiyaca cevap verdiği ve pazarın onu istekle benimsediği durum.",
-   "ornek": "Kullanıcılar kendiliğinden geri geliyor, PMF'ye yaklaşıyoruz gibi."
-  },
-  {
-   "terim": "MRR",
-   "anlam": "Monthly Recurring Revenue. Abonelik gibi her ay düzenli gelen gelir.",
-   "ornek": "Bu ay MRR yüzde on beş büyüdü, yatırımcı sunumuna ekleyelim."
-  }
- ],
  "TEKSTİL MÜHENDİSLİĞİ": [
   {
    "terim": "Gramaj",
@@ -12271,110 +11855,6 @@
    "ornek": "IATC'nin genç eleştirmenler atölyesine başvurmayı düşünüyorum."
   }
  ],
- "ULAŞTIRMA VE TRAFİK MÜHENDİSLİĞİ": [
-  {
-   "terim": "Sinyalizasyon",
-   "anlam": "Kavşaklardaki trafik ışıklarının sistemi ve bu ışıkların sürelerinin planlanması.",
-   "ornek": "Bu kavşağın sinyalizasyonu eski, sabah kuyruk bir kilometreyi buluyor."
-  },
-  {
-   "terim": "Faz süresi",
-   "anlam": "Trafik ışığında bir yön veya hareket grubuna yeşil yanan süre.",
-   "ornek": "Sola dönüş fazının süresini on saniye artırırsak kuyruk erir."
-  },
-  {
-   "terim": "Dönel kavşak",
-   "anlam": "Araçların bir göbek etrafında dönerek yön değiştirdiği kavşak türü.",
-   "ornek": "Burayı ışıklı kavşak yerine dönel kavşak yapmayı öneriyoruz."
-  },
-  {
-   "terim": "Hizmet düzeyi",
-   "anlam": "Bir yolun veya kavşağın ne kadar akıcı çalıştığını A'dan F'ye harflerle gösteren ölçüt. A çok akıcı, F tıkalı demektir.",
-   "ornek": "Akşam zirvesinde bu kavşağın hizmet düzeyi F'ye düşüyor."
-  },
-  {
-   "terim": "Zirve saat",
-   "anlam": "Trafiğin gün içinde en yoğun olduğu saat dilimi; işe gidiş ve dönüş saatleri gibi.",
-   "ornek": "Sayımları sabah zirve saatinde, yedi buçukla dokuz arası yapacağız."
-  },
-  {
-   "terim": "Trafik sayımı",
-   "anlam": "Belirli bir noktadan geçen araç ve yaya sayısının kamera, sensör veya elle sayılması.",
-   "ornek": "Yarın üç kavşakta trafik sayımı var, kameraları bu gece kuruyoruz."
-  },
-  {
-   "terim": "Yeşil dalga",
-   "anlam": "Ardışık trafik ışıklarının, belirli hızla giden araçların hepsine yeşile denk gelecek şekilde ayarlanması.",
-   "ornek": "Caddede yeşil dalga kurduk, saatte elli ile giden hiç durmuyor."
-  },
-  {
-   "terim": "O-D matrisi",
-   "anlam": "Origin-Destination yani başlangıç-varış matrisi; insanların hangi bölgeden hangi bölgeye yolculuk ettiğini gösteren tablo.",
-   "ornek": "Anket verileriyle şehrin O-D matrisini güncelledik."
-  },
-  {
-   "terim": "YOGT",
-   "anlam": "Yıllık Ortalama Günlük Trafik; bir yoldan yıl boyunca günde ortalama kaç araç geçtiğini gösterir.",
-   "ornek": "Bu kesimin YOGT değeri otuz bini geçmiş, yol genişletilmeli."
-  },
-  {
-   "terim": "AUS",
-   "anlam": "Akıllı Ulaşım Sistemleri; sensör, kamera ve yazılımla trafiği anlık izleyip yöneten teknolojiler.",
-   "ornek": "AUS merkezinden kazayı görüp ışık sürelerini hemen değiştirdik."
-  }
- ],
- "ULUSLARARASI EKONOMİK İLİŞKİLER": [
-  {
-   "terim": "Cari açık",
-   "anlam": "Bir ülkenin dünyaya yaptığı ödemelerin, dünyadan elde ettiği gelirden fazla olması.",
-   "ornek": "Enerji fiyatları yükselince cari açık yine büyüdü."
-  },
-  {
-   "terim": "Ödemeler dengesi",
-   "anlam": "Bir ülkenin belirli bir dönemde dünyayla yaptığı tüm ekonomik işlemlerin kaydı.",
-   "ornek": "Merkez Bankası'nın ödemeler dengesi verisi bugün açıklanıyor."
-  },
-  {
-   "terim": "Gümrük birliği",
-   "anlam": "Ülkelerin aralarındaki gümrük vergilerini kaldırıp dışarıya karşı ortak gümrük vergisi uyguladığı anlaşma.",
-   "ornek": "Gümrük birliğinin güncellenmesi tarım ve hizmetleri de kapsayabilir."
-  },
-  {
-   "terim": "Serbest ticaret anlaşması",
-   "anlam": "İki veya daha fazla ülkenin aralarındaki ticarette gümrük vergilerini azaltıp kaldırdığı anlaşma.",
-   "ornek": "Yeni serbest ticaret anlaşması yürürlüğe girince tekstil ihracatı arttı."
-  },
-  {
-   "terim": "Korumacılık",
-   "anlam": "Bir ülkenin yerli üreticiyi korumak için ithalata yüksek vergi veya kota koyması.",
-   "ornek": "Büyük ekonomilerde korumacılık arttıkça küresel ticaret yavaşlıyor."
-  },
-  {
-   "terim": "Anti-damping vergisi",
-   "anlam": "Yabancı malların maliyetinin altında satılmasına karşı uygulanan ek gümrük vergisi.",
-   "ornek": "Çelik ithalatına anti-damping vergisi getirilmesi gündemde."
-  },
-  {
-   "terim": "Sıcak para",
-   "anlam": "Yüksek getiri için ülkeye hızla girip, risk artınca aynı hızla çıkabilen kısa vadeli yabancı sermaye.",
-   "ornek": "Faizler düşerse sıcak para çıkışı hızlanabilir."
-  },
-  {
-   "terim": "Kur",
-   "anlam": "Bir ülke parasının başka bir ülke parası cinsinden değeri; döviz kuru.",
-   "ornek": "Kurdaki dalgalanma ihracatçıların fiyat teklifini zorlaştırıyor."
-  },
-  {
-   "terim": "DTÖ",
-   "anlam": "Dünya Ticaret Örgütü. Ülkeler arası ticaret kurallarını belirleyen ve ticari anlaşmazlıkları çözen uluslararası kuruluş.",
-   "ornek": "Bu vergiler için DTÖ'ye şikâyet başvurusu yapıldı."
-  },
-  {
-   "terim": "DYY",
-   "anlam": "Doğrudan Yabancı Yatırım; yabancıların bir ülkede fabrika kurması veya şirket satın alması gibi kalıcı yatırımlar.",
-   "ornek": "Bu yıl gelen DYY'nin çoğu imalat sanayisine gitti."
-  }
- ],
  "ULUSLARARASI FİNANS": [
   {
    "terim": "Hedge",
@@ -12425,58 +11905,6 @@
    "terim": "CDS",
    "anlam": "Credit Default Swap; bir ülkenin borcunu ödememe riskine karşı alınan sigorta benzeri ürün. Primi yükseldikçe ülke riskli görülür.",
    "ornek": "Seçim sonrası CDS primleri hızla geriledi."
-  }
- ],
- "ULUSLARARASI HUKUK": [
-  {
-   "terim": "Antlaşma",
-   "anlam": "Devletler veya uluslararası kuruluşlar arasında yazılı olarak yapılan ve uluslararası hukuka tabi bağlayıcı anlaşma.",
-   "ornek": "Antlaşmanın 5. maddesi taraflara karşılıklı yardım yükümlülüğü getiriyor."
-  },
-  {
-   "terim": "Onay (ratifikasyon)",
-   "anlam": "Devletin imzaladığı antlaşmayı iç hukukundaki süreçlerle kesin olarak kabul edip bağlayıcı hale getirmesi.",
-   "ornek": "Sözleşme imzalandı ama meclis onayı olmadan yürürlüğe girmez."
-  },
-  {
-   "terim": "Çekince",
-   "anlam": "Bir devletin antlaşmayı kabul ederken bazı maddelerin kendisine uygulanmamasını istediğini bildirmesi.",
-   "ornek": "Türkiye bu maddeye çekince koyduğu için o hüküm bize uygulanmıyor."
-  },
-  {
-   "terim": "Teamül hukuku",
-   "anlam": "Yazılı olmayan, devletlerin uzun süre tekrarladığı ve bağlayıcı kabul ettiği davranışlardan oluşan kurallar; örf ve adet hukuku.",
-   "ornek": "Bu kural yazılı değil ama teamül hukuku olarak herkesi bağlıyor."
-  },
-  {
-   "terim": "Tahkim",
-   "anlam": "Taraflar arasındaki anlaşmazlığın mahkeme yerine tarafların seçtiği hakemlerce çözülmesi.",
-   "ornek": "Yatırım uyuşmazlığı uluslararası tahkime gitti, karar iki yıl sürebilir."
-  },
-  {
-   "terim": "Jus cogens",
-   "anlam": "Hiçbir antlaşmayla aksi kararlaştırılamayan emredici uluslararası hukuk kuralları; örneğin soykırım ve işkence yasağı.",
-   "ornek": "İşkence yasağı jus cogens niteliğinde, hiçbir antlaşma bunu ortadan kaldıramaz."
-  },
-  {
-   "terim": "Diplomatik dokunulmazlık",
-   "anlam": "Diplomatların görev yaptıkları ülkede yargılanmalarını ve tutuklanmalarını engelleyen koruma.",
-   "ornek": "Sanık diplomatik dokunulmazlığa sahip olduğu için yerel mahkeme yargılayamıyor."
-  },
-  {
-   "terim": "Persona non grata",
-   "anlam": "İstenmeyen kişi anlamında; bir devletin bir diplomatı kabul etmediğini ve ülkeden ayrılmasını istediğini bildirmesi.",
-   "ornek": "Casusluk iddiasıyla iki diplomat persona non grata ilan edildi."
-  },
-  {
-   "terim": "UAD",
-   "anlam": "Uluslararası Adalet Divanı; Lahey'de bulunan, devletler arası davalara bakan Birleşmiş Milletler mahkemesi.",
-   "ornek": "Sınır uyuşmazlığı UAD'ye taşındı, sözlü duruşmalar gelecek ay."
-  },
-  {
-   "terim": "AİHM",
-   "anlam": "Avrupa İnsan Hakları Mahkemesi; Strazburg'da bulunan ve insan hakları ihlali başvurularına bakan mahkeme.",
-   "ornek": "İç hukuk yolları tükendi, şimdi AİHM'e başvuru hazırlıyoruz."
   }
  ],
  "ULUSLARARASI TİCARET VE LOJİSTİK": [
@@ -13309,58 +12737,6 @@
    "terim": "Ağız sütü (kolostrum)",
    "anlam": "Doğumdan sonraki ilk saatlerde salgılanan, yavruya bağışıklık kazandıran koyu ve çok besleyici süt.",
    "ornek": "Buzağıya ilk iki saat içinde mutlaka ağız sütü içirin."
-  }
- ],
- "ÇALGI TEKNOLOJİLERİ": [
-  {
-   "terim": "Tekne",
-   "anlam": "Bağlama, ud gibi sazlarda sesin yankılandığı gövde kısmı. Tek parça oyularak ya da dilimler birleştirilerek yapılır.",
-   "ornek": "Bu bağlamanın teknesi dut ağacından, oyma tekne olduğu için sesi dolgun."
-  },
-  {
-   "terim": "Yaprak tekne",
-   "anlam": "İnce ağaç dilimlerinin yan yana bükülüp yapıştırılmasıyla yapılan gövde. Oyma teknenin alternatifidir.",
-   "ornek": "Müşteri hafif bir saz istiyor, yaprak tekne ile yapalım."
-  },
-  {
-   "terim": "Kapak",
-   "anlam": "Gövdenin üstünü kapatan ince ahşap yüzey. Çalgının sesini en çok etkileyen parçalardan biridir.",
-   "ornek": "Kapağı ladinden yapalım, kalınlığı her yerde eşit olsun."
-  },
-  {
-   "terim": "Perde bağlamak",
-   "anlam": "Bağlama gibi sazlarda sapın üzerine misinayı bağlayarak notaların yerini belirleyen perdeleri yerleştirmek.",
-   "ornek": "Yeni sazın perdelerini bağladım, akordunu kontrol edip teslim ederiz."
-  },
-  {
-   "terim": "Burgu (kulak)",
-   "anlam": "Tellerin gerginliğini ayarlamak için çevrilen, sapın ucundaki ahşap ya da metal parçalar.",
-   "ornek": "Burgular kayıyor, akort tutmuyor; yuvalarını yeniden açmamız lazım."
-  },
-  {
-   "terim": "Eşik",
-   "anlam": "Tellerin kapak üzerinde durduğu ve titreşimi gövdeye ileten küçük parça.",
-   "ornek": "Eşik biraz yüksek kalmış, teller parmağı acıtıyor; zımparalayalım."
-  },
-  {
-   "terim": "Can direği",
-   "anlam": "Keman ailesi çalgılarda kapak ile arka tablayı içeriden birbirine bağlayan küçük ahşap çubuk. Yeri sesi doğrudan değiştirir.",
-   "ornek": "Kemanın sesi boğuk, can direğinin yerini biraz oynatmayı deneyelim."
-  },
-  {
-   "terim": "Akort tutmak",
-   "anlam": "Çalgının ayarlanan seslerini uzun süre bozulmadan koruyabilmesi.",
-   "ornek": "Bu gitar sıcakta hiç akort tutmuyor, sapı kontrol edelim."
-  },
-  {
-   "terim": "La 440",
-   "anlam": "Akort için kullanılan uluslararası referans: La notasının saniyede 440 titreşim, yani 440 Hz olarak ayarlanması.",
-   "ornek": "Atölyedeki akort cihazı La 440'a ayarlı, sazları buna göre kontrol et."
-  },
-  {
-   "terim": "Vernik",
-   "anlam": "Ahşabı koruyan ve parlaklık veren cila katmanı. Çok kalın sürülürse sesi olumsuz etkileyebilir.",
-   "ornek": "Verniği ince katlar hâlinde sür, her kattan sonra iyice kurusun."
   }
  ],
  "ÇALIŞMA EKONOMİSİ VE ENDÜSTRİ İLİŞKİLERİ": [
