@@ -43,6 +43,7 @@ OTOMATIK += ["0078_bolum_icerik_duzeltme"]   # [2026-10-18] bölüm tanıtımlar
 OTOMATIK += ["0079_yeniden_degerlendirme_sikligi"]   # [2026-10-19] yeniden değerlendirme sıklığı sınıfa göre (12. sınıf / mezun 70 gün, diğerleri yılda 2)
 OTOMATIK += ["0080_kocluk_cekirdek"]   # [2026-10-19] koçluk her pakette zorunlu (veri tutarlılığı)
 OTOMATIK += ["0081_ek_olcme_sorulari"]   # [2026-10-19] K1-K4 ek sorular + katman başına 2 dikkat sorusu (yalnızca ekleme)
+OTOMATIK += ["0082_bolum_kaldirma"]   # [2026-10-29] lisans programı olmayan / 3'ten az üniversitedeki 12 bölüm kaldırıldı (278 → 266)
 KILIT = 2026101001
 
 
