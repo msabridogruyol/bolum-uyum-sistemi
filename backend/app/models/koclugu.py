@@ -162,6 +162,11 @@ class OgrenciKoclukMesaji(Base):
     rol: Mapped[str] = mapped_column(String, nullable=False)
     icerik: Mapped[str] = mapped_column(String, nullable=False)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    # [2026-10-30] Asistan cevabı yapay zekâdan mı geldi (rehber modu / sabit cevap değil). Günlük ve aylık sınırlar bunu sayar.
+    yapay_zeka: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
+    # [2026-10-31] Katmanlı Filiz ölçümü: cevabın kaynağı (yz | icerik | rehber | sabit | kriz | bilinmiyor) ve süresi (ms)
+    kaynak: Mapped[str | None] = mapped_column(String(12), nullable=True)
+    sure_ms: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 class GelisimKaynakOnerisi(Base):

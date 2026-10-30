@@ -23,7 +23,7 @@ from app.core.koclugu_servisi import aktif_hedef_getir, gap_analizi_hesapla, gap
 
 MAKSIMUM_TUR = 20  # bir oturumda bu kadar (öğrenci+asistan) mesajdan sonra oturum otomatik kapanır
 MODEL_ADI = os.environ.get("OPENAI_MODEL", "").strip() or "gpt-4o-mini"  # Render ortam değişkeniyle değiştirilebilir
-GUNLUK_MESAJ_LIMITI_VARSAYILAN = 30  # öğrenci başına günlük mesaj (sistem parametresi: filiz_gunluk_mesaj_limiti)
+GUNLUK_MESAJ_LIMITI_VARSAYILAN = 40  # [2026-10-31] Tam paket / okulsuz öğrenci günlük yapay zekâ mesajı (parametre: filiz_gunluk_mesaj_limiti)
 
 # [2026-10-04] Öğrenci güvenliği: kullanıcılar reşit olmayan öğrenciler. Kendine zarar / intihar / istismar
 # ifadesi geçen mesajlarda model ÇAĞRILMAZ; her zaman aynı, güvenli ve yönlendirici cevap verilir
@@ -215,56 +215,90 @@ KURALLAR (bunlara kesinlikle uy):
 """
 
 
+# [2026-10-31] Yapay zekâ çağrıları sunucuyu kilitlemesin: tüm sohbet çağrıları (öğrenci Filiz'i, mülakat geri
+# bildirimi, yönetim Filiz'i, oturum özeti) bu tek kapıdan geçer.
+#  * Aynı anda en fazla YZ_ESZAMANLI çağrı. Kapı doluysa BEKLENMEZ: AsistanMesgulHatasi → çağıran rehber moduna düşer.
+#    Böylece yapay zekâ beklerken sunucunun iş parçacıklarının en fazla bu kadarı dolu kalır; değerlendirme ekranı vb. etkilenmez.
+#  * Kısa zaman aşımı ve kütüphanenin kendi yeniden denemeleri kapalı (önceden 40 sn × 3 deneme = 2 dakikaya kadar bekleyebiliyordu).
+#  * Ana model hata verirse aynı sağlayıcıdaki yedek model bir kez denenir (KVKK metninde sağlayıcı OpenAI; değişmez).
+#  * İçerik çevirisi (ceviri_servisi) de bu kapıdan geçer.
+#  * Kapı SÜREÇ başınadır: birden fazla sunucu süreci / kopya varsa gerçek üst sınır = süreç sayısı × YZ_ESZAMANLI.
+import threading
+import logging
+
+YZ_ESZAMANLI = max(1, int(os.environ.get("FILIZ_YZ_ESZAMANLI", "10") or 10))
+YZ_ZAMAN_ASIMI_SN = 15.0        # ana model
+YZ_YEDEK_ZAMAN_ASIMI_SN = 10.0  # yedek model
+YEDEK_MODEL_ADI = os.environ.get("OPENAI_YEDEK_MODEL", "").strip() or "gpt-4.1-mini"
+_YZ_KAPI = threading.BoundedSemaphore(YZ_ESZAMANLI)
+_istemciler: dict = {}
+_istemci_kilit = threading.Lock()
+_log = logging.getLogger("ai_koc")
+
+
+class AsistanMesgulHatasi(AsistanKullanilamiyorHatasi):
+    """Aynı anda izin verilen yapay zekâ çağrısı sayısı dolu; beklenmeden rehber moduna geçilir."""
+
+
+def _yz_istemcisi(zaman_asimi: float):
+    """Bağlantı havuzu yeniden kullanılsın diye istemci (anahtar, zaman aşımı) başına bir kez kurulur."""
+    from openai import OpenAI  # yalnızca anahtar varsa import edilir
+    anahtar = os.environ["OPENAI_API_KEY"].strip()
+    k = (id(OpenAI), anahtar, zaman_asimi)
+    with _istemci_kilit:
+        if k not in _istemciler:
+            _istemciler.clear() if len(_istemciler) > 8 else None
+            _istemciler[k] = OpenAI(api_key=anahtar, timeout=zaman_asimi, max_retries=0)
+        return _istemciler[k]
+
+
+def yz_sohbet(mesajlar: list[dict], *, temperature: float, max_tokens: int | None, yedek: bool = True,
+              zaman_asimi: float | None = None, **ek) -> str:
+    """Tek kapı: eşzamanlılık sınırı + kısa zaman aşımı + (isteğe bağlı) yedek model. Hata → AsistanKullanilamiyorHatasi."""
+    if not _api_anahtari_var_mi():
+        raise AsistanKullanilamiyorHatasi("Filiz'e şu an ulaşılamıyor, biraz sonra tekrar dene.")
+    if not _YZ_KAPI.acquire(blocking=False):
+        raise AsistanMesgulHatasi("Filiz'in yapay zekâsı şu an çok yoğun; birkaç dakika sonra tekrar dene.")
+    try:
+        denemeler = [(MODEL_ADI, zaman_asimi or YZ_ZAMAN_ASIMI_SN)]
+        if yedek and YEDEK_MODEL_ADI and YEDEK_MODEL_ADI != MODEL_ADI:
+            denemeler.append((YEDEK_MODEL_ADI, YZ_YEDEK_ZAMAN_ASIMI_SN))
+        son_hata = None
+        for model, sure in denemeler:
+            try:
+                parametre = {"max_tokens": max_tokens} if max_tokens else {}
+                yanit = _yz_istemcisi(sure).chat.completions.create(
+                    model=model, messages=mesajlar, temperature=temperature, **parametre, **ek)
+                icerik = (yanit.choices[0].message.content or "").strip()
+                if icerik:
+                    return icerik
+                son_hata = ValueError("boş cevap")
+            except Exception as hata:  # yanlış anahtar, kota, ağ, zaman aşımı
+                son_hata = hata
+                _log.warning("Yapay zekâ çağrısı başarısız (%s): %s: %s", model, type(hata).__name__, hata)
+        raise AsistanKullanilamiyorHatasi("Filiz'e şu an ulaşılamıyor, biraz sonra tekrar dene.") from son_hata
+    finally:
+        _YZ_KAPI.release()
+
+
 def openai_ile_konus(sistem_promptu: str, mesaj_gecmisi: list[dict]) -> str:
     """
     mesaj_gecmisi: [{"role": "user"|"assistant", "content": "..."}]
     """
-    if not _api_anahtari_var_mi():
-        raise AsistanKullanilamiyorHatasi(
-            "Filiz'e şu an ulaşılamıyor, biraz sonra tekrar dene."
-        )
-
-    try:
-        from openai import OpenAI  # yalnızca anahtar varsa import edilir, gereksiz bağımlılık hatası önlenir
-        from app.core.ceviri_servisi import yapay_zeka_dil_talimati
-        client = OpenAI(api_key=os.environ["OPENAI_API_KEY"].strip(), timeout=40)
-        yanit = client.chat.completions.create(
-            model=MODEL_ADI,
-            messages=[{"role": "system", "content": sistem_promptu + yapay_zeka_dil_talimati()}] + mesaj_gecmisi,   # [2026-10-12] seçili dilde cevap
-            temperature=0.7,
-            max_tokens=500,
-        )
-        return yanit.choices[0].message.content
-    except AsistanKullanilamiyorHatasi:
-        raise
-    except Exception as hata:  # yanlış anahtar, kota, ağ hatası: öğrenciye 500 yerine anlaşılır mesaj
-        import logging
-        logging.getLogger("ai_koc").warning("OpenAI hatası: %s: %s", type(hata).__name__, hata)
-        raise AsistanKullanilamiyorHatasi("Filiz'e şu an ulaşılamıyor, biraz sonra tekrar dene.") from hata
+    from app.core.ceviri_servisi import yapay_zeka_dil_talimati
+    return yz_sohbet([{"role": "system", "content": sistem_promptu + yapay_zeka_dil_talimati()}] + mesaj_gecmisi,   # [2026-10-12] seçili dilde cevap
+                     temperature=0.7, max_tokens=500)
 
 
-def oturumu_ozetle(sistem_promptu: str, mesaj_gecmisi: list[dict]) -> str:
-    """Oturum kapanırken, ham geçmiş yerine bir sonraki oturuma taşınacak kısa özeti üretir."""
-    if not _api_anahtari_var_mi():
-        return "Özet çıkarılamadı (asistan aktif değil)."
-
-    try:
-        from openai import OpenAI
-        client = OpenAI(api_key=os.environ["OPENAI_API_KEY"].strip(), timeout=40)
-    except Exception:
-        return None
-
+def oturumu_ozetle(sistem_promptu: str, mesaj_gecmisi: list[dict]) -> str | None:
+    """Oturum kapanırken, ham geçmiş yerine bir sonraki oturuma taşınacak kısa özeti üretir.
+    Özet çıkmazsa (anahtar yok, yoğunluk, hata) oturum yine kapanır; None döner."""
     ozetleme_istegi = mesaj_gecmisi + [{
         "role": "user",
         "content": "Bu konuşmayı, bir sonraki oturumda hatırlaman için 2-3 cümlelik kısa bir özete çevir. Yalnızca özeti yaz, başka bir şey ekleme.",
     }]
     try:
-        yanit = client.chat.completions.create(
-            model=MODEL_ADI,
-            messages=[{"role": "system", "content": sistem_promptu}] + ozetleme_istegi,
-            temperature=0.3,
-            max_tokens=150,
-        )
-        return yanit.choices[0].message.content
-    except Exception:  # özet çıkmazsa oturum yine kapanır
+        return yz_sohbet([{"role": "system", "content": sistem_promptu}] + ozetleme_istegi,
+                         temperature=0.3, max_tokens=150, yedek=False)
+    except AsistanKullanilamiyorHatasi:
         return None
