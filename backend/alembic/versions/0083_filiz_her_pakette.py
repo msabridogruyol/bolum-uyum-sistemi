@@ -10,8 +10,8 @@ app/api/ai_koc.py (pakete göre sınır, okul aylık üst sınırı, sınır dol
 * Her paketin modül listesine 'filiz' ve 'filiz_ai' eklenir (yoksa).
 * Okullara özel "çıkarılan modüller"den 'filiz' silinir (zorunlu). Bir okul 'filiz_ai'yi bilerek çıkardıysa dokunulmaz.
 * ogrenci_koclugu_mesajlari.yapay_zeka: cevabın yapay zekâdan gelip gelmediği (sınırlar yalnızca bunları sayar).
-* Sistem parametreleri (süper admin değiştirebilir): günlük sınır Temel 5 / Gelişim 15 / Tam ve okulsuz 30,
-  okul aylık üst sınırı = öğrenci sayısı × 60 (0 = sınırsız).
+* Sistem parametreleri (süper admin değiştirebilir; yalnızca yoksa eklenir): günlük sınır Temel 5 / Gelişim 20 /
+  Tam ve okulsuz 40; okul aylık üst sınırı = öğrenci sayısı × (Temel 30 / Gelişim 60 / Tam 120) (0 = sınırsız).
 İdempotent: app/core/sema_guncelleme.py OTOMATIK listesinde, her açılışta yeniden çalışır.
 """
 from alembic import op
@@ -33,13 +33,19 @@ INSERT INTO sistem_parametreleri (anahtar, deger, aciklama, guncelleme_zamani)
 SELECT 'filiz_gunluk_mesaj_limiti_temel', '5', 'Filiz yapay zekâ: Temel paketteki öğrenci için günlük mesaj sınırı (dolunca Filiz rehber modunda cevaplar)', now()
 WHERE NOT EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'filiz_gunluk_mesaj_limiti_temel');
 INSERT INTO sistem_parametreleri (anahtar, deger, aciklama, guncelleme_zamani)
-SELECT 'filiz_gunluk_mesaj_limiti_gelisim', '15', 'Filiz yapay zekâ: Gelişim paketteki öğrenci için günlük mesaj sınırı (dolunca Filiz rehber modunda cevaplar)', now()
+SELECT 'filiz_gunluk_mesaj_limiti_gelisim', '20', 'Filiz yapay zekâ: Gelişim paketteki öğrenci için günlük mesaj sınırı (dolunca Filiz rehber modunda cevaplar)', now()
 WHERE NOT EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'filiz_gunluk_mesaj_limiti_gelisim');
 INSERT INTO sistem_parametreleri (anahtar, deger, aciklama, guncelleme_zamani)
-SELECT 'filiz_gunluk_mesaj_limiti', '30', 'Filiz yapay zekâ: Tam paketteki ve okula bağlı olmayan öğrenci için günlük mesaj sınırı (dolunca Filiz rehber modunda cevaplar)', now()
+SELECT 'filiz_gunluk_mesaj_limiti', '40', 'Filiz yapay zekâ: Tam paketteki ve okula bağlı olmayan öğrenci için günlük mesaj sınırı (dolunca Filiz rehber modunda cevaplar)', now()
 WHERE NOT EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'filiz_gunluk_mesaj_limiti');
 INSERT INTO sistem_parametreleri (anahtar, deger, aciklama, guncelleme_zamani)
-SELECT 'filiz_okul_aylik_ogrenci_basi', '60', 'Filiz yapay zekâ: okulun aylık üst sınırı = okuldaki öğrenci sayısı × bu değer (0 = sınırsız); dolunca ay sonuna kadar rehber modu', now()
+SELECT 'filiz_okul_aylik_ogrenci_basi_temel', '30', 'Filiz yapay zekâ, Temel paket: okulun aylık üst sınırı = okuldaki öğrenci sayısı × bu değer (0 = sınırsız); dolunca ay sonuna kadar rehber modu', now()
+WHERE NOT EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'filiz_okul_aylik_ogrenci_basi_temel');
+INSERT INTO sistem_parametreleri (anahtar, deger, aciklama, guncelleme_zamani)
+SELECT 'filiz_okul_aylik_ogrenci_basi_gelisim', '60', 'Filiz yapay zekâ, Gelişim paket: okulun aylık üst sınırı = okuldaki öğrenci sayısı × bu değer (0 = sınırsız); dolunca ay sonuna kadar rehber modu', now()
+WHERE NOT EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'filiz_okul_aylik_ogrenci_basi_gelisim');
+INSERT INTO sistem_parametreleri (anahtar, deger, aciklama, guncelleme_zamani)
+SELECT 'filiz_okul_aylik_ogrenci_basi', '120', 'Filiz yapay zekâ, Tam (ve diğer) paket: okulun aylık üst sınırı = okuldaki öğrenci sayısı × bu değer (0 = sınırsız); dolunca ay sonuna kadar rehber modu', now()
 WHERE NOT EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'filiz_okul_aylik_ogrenci_basi');
 UPDATE paketler SET aciklama = 'Değerlendirme, bölüm önerileri, profil, hedef bölüm ve koçluk, Filiz asistanı, okul paneli ve temel raporlar'
  WHERE kod = 'temel' AND aciklama = 'Değerlendirme, bölüm önerileri, profil, hedef bölüm ve koçluk, okul paneli ve temel raporlar';

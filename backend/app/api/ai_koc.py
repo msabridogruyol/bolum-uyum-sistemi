@@ -64,8 +64,10 @@ def _ai(db: Session, ogrenci: Ogrenci) -> bool:
 
 # [2026-10-30] Yapay zekâ her pakette; günlük sınır pakete göre (sistem parametresi, süper admin değiştirir).
 # Tam paket ve okula bağlı olmayan öğrenci eski parametreyi (filiz_gunluk_mesaj_limiti) kullanır.
-PAKET_LIMIT_PARAMETRESI = {"temel": ("filiz_gunluk_mesaj_limiti_temel", 5), "gelisim": ("filiz_gunluk_mesaj_limiti_gelisim", 15)}
-AYLIK_OGRENCI_BASI_VARSAYILAN = 60   # okulun aylık yapay zekâ üst sınırı = öğrenci sayısı × bu değer (0 = sınırsız)
+PAKET_LIMIT_PARAMETRESI = {"temel": ("filiz_gunluk_mesaj_limiti_temel", 5), "gelisim": ("filiz_gunluk_mesaj_limiti_gelisim", 20)}
+# [2026-10-31] Okulun aylık havuzu da pakete göre (öğrenci başına): Temel 30, Gelişim 60, Tam ve diğerleri 120.
+PAKET_AYLIK_PARAMETRESI = {"temel": ("filiz_okul_aylik_ogrenci_basi_temel", 30), "gelisim": ("filiz_okul_aylik_ogrenci_basi_gelisim", 60)}
+AYLIK_OGRENCI_BASI_VARSAYILAN = 120   # Tam paket: okulun aylık yapay zekâ üst sınırı = öğrenci sayısı × bu değer (0 = sınırsız)
 
 
 def _okul_paketi(db: Session, okul_id: int | None) -> str | None:
@@ -106,10 +108,12 @@ def _okul_aylik_doldu(db: Session, ogrenci: Ogrenci) -> bool:
     """[2026-10-30] Okulun bu ayki yapay zekâ kullanımı üst sınıra ulaştı mı (Türkiye saatine göre ay başından beri)."""
     if not ogrenci.okul_id:
         return False
+    anahtar, varsayilan = PAKET_AYLIK_PARAMETRESI.get(_okul_paketi(db, ogrenci.okul_id) or "",
+                                                      ("filiz_okul_aylik_ogrenci_basi", AYLIK_OGRENCI_BASI_VARSAYILAN))
     try:
-        kisi_basi = int(parametre_oku(db, "filiz_okul_aylik_ogrenci_basi", str(AYLIK_OGRENCI_BASI_VARSAYILAN)))
+        kisi_basi = int(parametre_oku(db, anahtar, str(varsayilan)))
     except (TypeError, ValueError):
-        kisi_basi = AYLIK_OGRENCI_BASI_VARSAYILAN
+        kisi_basi = varsayilan
     if kisi_basi <= 0:
         return False
     from sqlalchemy import text
@@ -266,19 +270,22 @@ def mesaj_gonder(
 
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, onceki_ozet, istek.sayfa)
 
+    yanit = None
+    if ai:
+        try:
+            yanit = openai_ile_konus(sistem_promptu, mesaj_gecmisi)
+            from app.core.filiz_gizlilik import ad_normalize
+            yanit = dizin.maskele(yanit, haric=ad_normalize(ogrenci.ad_soyad))   # son kontrol: yanıtta başka öğrenci adı olmasın
+        except AsistanKullanilamiyorHatasi:
+            # [2026-10-31] Yapay zekâ yoğun / hata / zaman aşımı: sohbet kesilmez (önceden 503), rehber modu cevap verir.
+            ai = False
+            sinir_notu = "Yapay zekâ şu an yoğun; bu cevabı sonuçlarına dayanan rehber modunda hazırladım."
     otomatik = not ai
     if otomatik:   # [2026-10-10] yapay zekâ bağlı değil: öğrencinin verilerine dayanan otomatik rehber cevabı
         from app.core.filiz_rehber import otomatik_yanit
         yanit = otomatik_yanit(db, ogrenci, metin)
         if sinir_notu:
             yanit = f"{sinir_notu}\n\n{yanit}"
-    else:
-        try:
-            yanit = openai_ile_konus(sistem_promptu, mesaj_gecmisi)
-        except AsistanKullanilamiyorHatasi as e:
-            raise HTTPException(status_code=503, detail=str(e))
-        from app.core.filiz_gizlilik import ad_normalize
-        yanit = dizin.maskele(yanit, haric=ad_normalize(ogrenci.ad_soyad))   # son kontrol: yanıtta başka öğrenci adı olmasın
 
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit, yapay_zeka=ai))

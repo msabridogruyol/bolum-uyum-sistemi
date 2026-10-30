@@ -1,5 +1,5 @@
 """[2026-10-30] Filiz her pakette (zorunlu, rehber modu); yapay zekâ her pakette, günlük sınır pakete göre
-(Temel 5, Gelişim 15, Tam ve okulsuz 30), okulun aylık üst sınırı (öğrenci başı); sınır dolunca hizmet kesilmez,
+(Temel 5, Gelişim 20, Tam ve okulsuz 40), okulun aylık üst sınırı (öğrenci başı Temel 30 / Gelişim 60 / Tam 120); sınır dolunca hizmet kesilmez,
 Filiz rehber modunda cevap verir. Sınırlar yalnızca yapay zekâdan gelen cevapları sayar."""
 import importlib.util
 import uuid
@@ -78,8 +78,8 @@ def test_sinirlar_pakete_gore_ve_rehber_moduna_gecis(db, monkeypatch):
     from app.api import ai_koc
     _goc(db)
     monkeypatch.setattr(ai_koc, "_ai", lambda db_, o: True)
-    db.execute(text("UPDATE sistem_parametreleri SET deger = '0' WHERE anahtar = 'filiz_okul_aylik_ogrenci_basi'"))
-    beklenen = {"temel": 5, "gelisim": 15, "tam": 30}
+    db.execute(text("UPDATE sistem_parametreleri SET deger = '0' WHERE anahtar LIKE 'filiz_okul_aylik_ogrenci_basi%'"))
+    beklenen = {"temel": 5, "gelisim": 20, "tam": 40}
     for kod, sinir in beklenen.items():
         o = _ogrenci(db, _okul(db, kod))
         assert ai_koc._gunluk_limit(db, o) == sinir
@@ -89,7 +89,7 @@ def test_sinirlar_pakete_gore_ve_rehber_moduna_gecis(db, monkeypatch):
         _yz_mesaj(db, o, 1)
         kullan, notu, *_ = ai_koc._yz_durumu(db, o)
         assert kullan is False and "rehber modunda" in notu
-    assert ai_koc._gunluk_limit(db, _ogrenci(db, None)) == 30    # okula bağlı olmayan öğrenci
+    assert ai_koc._gunluk_limit(db, _ogrenci(db, None)) == 40    # okula bağlı olmayan öğrenci
     db.rollback()
 
 
@@ -128,3 +128,95 @@ def test_sinir_dolunca_mesaj_kesilmez_rehber_cevap_gelir(istemci, kisiler, db, m
     assert r2.json()["otomatik"] is True and r2.json()["asistan_yaniti"].startswith("Bugünkü yapay zekâ mesaj hakkın doldu")
     d = istemci.get("/koclugu/asistan/durum", headers=h).json()
     assert d["mod"] == "otomatik" and d["gunluk_limit"] == 1
+
+
+@db_gerekli
+def test_aylik_havuz_pakete_gore(db, monkeypatch):
+    from app.api import ai_koc
+    _goc(db)
+    monkeypatch.setattr(ai_koc, "_ai", lambda db_, o: True)
+    for kod, kisi_basi in {"temel": 30, "gelisim": 60, "tam": 120}.items():
+        o = _ogrenci(db, _okul(db, kod))
+        db.execute(text("UPDATE sistem_parametreleri SET deger = '1000' WHERE anahtar LIKE 'filiz_gunluk_mesaj_limiti%'"))
+        _yz_mesaj(db, o, kisi_basi - 1)
+        assert ai_koc._yz_durumu(db, o)[0] is True, kod
+        _yz_mesaj(db, o, 1)
+        assert ai_koc._yz_durumu(db, o)[0] is False, kod
+    db.rollback()
+
+
+# ---------------------------------------------------------------- [2026-10-31] yük önlemleri (tek kapı: yz_sohbet)
+class _SahteIstemci:
+    def __init__(self, davranis):
+        self.davranis, self.cagrilar = davranis, []
+        self.chat = self
+        self.completions = self
+
+    def with_options(self, **_):
+        return self
+
+    def create(self, model, **_):
+        self.cagrilar.append(model)
+        sonuc = self.davranis(model)
+        if isinstance(sonuc, Exception):
+            raise sonuc
+        from types import SimpleNamespace as N
+        return N(choices=[N(message=N(content=sonuc))])
+
+
+def _kur_istemci(monkeypatch, davranis):
+    from app.core import ai_koc_servisi as s
+    ist = _SahteIstemci(davranis)
+    monkeypatch.setenv("OPENAI_API_KEY", "test")
+    monkeypatch.setattr(s, "_yz_istemcisi", lambda sure: ist)
+    return s, ist
+
+
+def test_ana_model_hata_verirse_yedek_model(monkeypatch):
+    s, ist = _kur_istemci(monkeypatch, lambda m: TimeoutError() if m == s.MODEL_ADI else "yedek cevap")
+    assert s.yz_sohbet([{"role": "user", "content": "x"}], temperature=0.5, max_tokens=10) == "yedek cevap"
+    assert ist.cagrilar == [s.MODEL_ADI, s.YEDEK_MODEL_ADI]
+
+
+def test_iki_model_de_hata_verirse_anlasilir_hata(monkeypatch):
+    s, ist = _kur_istemci(monkeypatch, lambda m: RuntimeError("kota"))
+    import pytest
+    with pytest.raises(s.AsistanKullanilamiyorHatasi):
+        s.yz_sohbet([{"role": "user", "content": "x"}], temperature=0.5, max_tokens=10)
+    assert s._YZ_KAPI.acquire(blocking=False)      # kapı serbest bırakılmış olmalı
+    s._YZ_KAPI.release()
+
+
+def test_kapi_doluysa_beklemeden_mesgul(monkeypatch):
+    import threading
+    import pytest
+    s, ist = _kur_istemci(monkeypatch, lambda m: "cevap")
+    monkeypatch.setattr(s, "_YZ_KAPI", threading.BoundedSemaphore(1))
+    s._YZ_KAPI.acquire()
+    try:
+        with pytest.raises(s.AsistanMesgulHatasi):
+            s.yz_sohbet([{"role": "user", "content": "x"}], temperature=0.5, max_tokens=10)
+        assert ist.cagrilar == [], "kapı doluyken model çağrılmamalı"
+    finally:
+        s._YZ_KAPI.release()
+
+
+@db_gerekli
+def test_yapay_zeka_hata_verince_sohbet_kesilmez(istemci, kisiler, db, monkeypatch):
+    from app.api import ai_koc
+    from app.core.ai_koc_servisi import AsistanMesgulHatasi
+    _goc(db)
+    db.commit()
+    monkeypatch.setattr(ai_koc, "_ai", lambda db_, o: True)
+
+    def mesgul(*_a, **_k):
+        raise AsistanMesgulHatasi("yoğun")
+    monkeypatch.setattr(ai_koc, "openai_ile_konus", mesgul)
+    h = kisiler["ogrenci"]
+    oturum = istemci.post("/koclugu/asistan/oturum/baslat", headers=h).json()["oturum_id"]
+    r = istemci.post(f"/koclugu/asistan/oturum/{oturum}/mesaj", headers=h, json={"mesaj": "Güçlü yönlerim neler?"})
+    assert r.status_code == 200, r.text
+    assert r.json()["otomatik"] is True and r.json()["asistan_yaniti"].startswith("Yapay zekâ şu an yoğun")
+    sayi = db.execute(text("""SELECT count(*) FROM ogrenci_koclugu_mesajlari m JOIN ogrenci_koclugu_oturumlari o ON o.id = m.oturum_id
+                              WHERE o.id = :o AND m.yapay_zeka"""), {"o": oturum}).scalar()
+    assert sayi == 0, "rehber cevabı yapay zekâ hakkından düşmemeli"

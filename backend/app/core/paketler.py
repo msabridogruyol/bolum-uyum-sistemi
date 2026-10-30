@@ -29,7 +29,7 @@ MODULLER = {
     "filiz": {"ad": "Filiz asistanı", "ikon": "💬", "aciklama": "Filiz sohbet asistanı (rehber modu / yapay zekâ); koçluğun parçası olarak her pakette", "zorunlu": True},
     "calisma": {"ad": "Çalışma programı ve soru takibi", "ikon": "⏱️", "aciklama": "Haftalık ders programı, günlük çalışma süresi ve çözülen soru kaydı, ders bazında isabet"},
     "portfolyo": {"ad": "e-Portfolyo", "ikon": "🗂️", "aciklama": "Sertifika, yarışma, gönüllülük, proje ve kulüp geçmişi; rehber doğrulaması ve PDF özgeçmiş"},
-    "filiz_ai": {"ad": "Filiz yapay zekâ", "ikon": "✨", "aciklama": "Filiz'in yapay zekâyla serbest sohbet etmesi; her pakette, günlük mesaj sınırı pakete göre (Temel 5, Gelişim 15, Tam 30). Bu modül kapalıysa ya da sınır dolduysa Filiz, öğrencinin sonuçlarına dayanan rehber modunda çalışır"},
+    "filiz_ai": {"ad": "Filiz yapay zekâ", "ikon": "✨", "aciklama": "Filiz'in yapay zekâyla serbest sohbet etmesi; her pakette, günlük mesaj sınırı pakete göre (Temel 5, Gelişim 20, Tam 40). Bu modül kapalıysa ya da sınır dolduysa Filiz, öğrencinin sonuçlarına dayanan rehber modunda çalışır"},
     "net_takibi": {"ad": "Net takibi", "ikon": "📈", "aciklama": "Deneme netleri, konu takibi, hedef üniversiteye göre net kıyası"},
     "okul_denemeleri": {"ad": "Okul denemesi yükleme", "ikon": "🏫", "aciklama": "Okulun yaptığı denemelerin sonuçlarını Excel şablonuyla tek seferde yükleme, şube ve okul ortalamaları (Net takibi ile çalışır)"},
     "akran": {"ad": "Şube ve akran analizi", "ikon": "🤝", "aciklama": "Benzer akranlar, şube dağılımı önerisi, aday öğrenci uyumu"},
