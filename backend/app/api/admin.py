@@ -87,7 +87,10 @@ def parametreyi_guncelle(
         raise HTTPException(status_code=400, detail="Bu değer sistem tarafından tutulur, elle değiştirilemez.")
 
     # [2026-10-19] Yeniden değerlendirme sıklığı: tam sayı ve makul aralık zorunlu (yanlış değer öğrencileri kilitlemesin)
-    sinirlar = {"yeniden_degerlendirme_gun_12": (7, 365), "yeniden_degerlendirme_yillik_hak": (1, 12)}
+    sinirlar = {"yeniden_degerlendirme_gun_12": (7, 365), "yeniden_degerlendirme_yillik_hak": (1, 12),
+                # [2026-10-30] Filiz yapay zekâ sınırları (0 = o pakette yapay zekâ kapalı, Filiz rehber modunda)
+                "filiz_gunluk_mesaj_limiti_temel": (0, 200), "filiz_gunluk_mesaj_limiti_gelisim": (0, 200),
+                "filiz_gunluk_mesaj_limiti": (0, 200), "filiz_okul_aylik_ogrenci_basi": (0, 5000)}
     if anahtar in sinirlar:
         alt, ust = sinirlar[anahtar]
         try:

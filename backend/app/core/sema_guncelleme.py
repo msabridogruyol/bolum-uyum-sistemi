@@ -44,6 +44,7 @@ OTOMATIK += ["0079_yeniden_degerlendirme_sikligi"]   # [2026-10-19] yeniden değ
 OTOMATIK += ["0080_kocluk_cekirdek"]   # [2026-10-19] koçluk her pakette zorunlu (veri tutarlılığı)
 OTOMATIK += ["0081_ek_olcme_sorulari"]   # [2026-10-19] K1-K4 ek sorular + katman başına 2 dikkat sorusu (yalnızca ekleme)
 OTOMATIK += ["0082_bolum_kaldirma"]   # [2026-10-29] lisans programı olmayan / 3'ten az üniversitedeki 12 bölüm kaldırıldı (278 → 266)
+OTOMATIK += ["0083_filiz_her_pakette"]   # [2026-10-30] Filiz her pakette; yapay zekâ sınırı pakete göre, okul aylık üst sınırı
 KILIT = 2026101001
 
 

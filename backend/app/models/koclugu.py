@@ -162,6 +162,8 @@ class OgrenciKoclukMesaji(Base):
     rol: Mapped[str] = mapped_column(String, nullable=False)
     icerik: Mapped[str] = mapped_column(String, nullable=False)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+    # [2026-10-30] Asistan cevabı yapay zekâdan mı geldi (rehber modu / sabit cevap değil). Günlük ve aylık sınırlar bunu sayar.
+    yapay_zeka: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False, server_default="false")
 
 
 class GelisimKaynakOnerisi(Base):

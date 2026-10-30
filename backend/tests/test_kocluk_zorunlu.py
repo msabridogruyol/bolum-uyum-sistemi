@@ -6,7 +6,7 @@ from tests.conftest import db_gerekli
 
 
 def test_kocluk_zorunlu_ve_secmeli_listede_yok():
-    assert ZORUNLU == ["kocluk"] and "kocluk" in MODULLER and "kocluk" not in SECMELI
+    assert set(ZORUNLU) == {"kocluk", "filiz"} and "kocluk" in MODULLER and "kocluk" not in SECMELI
 
 
 @db_gerekli

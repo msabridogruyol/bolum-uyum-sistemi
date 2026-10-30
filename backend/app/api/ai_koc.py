@@ -62,32 +62,84 @@ def _ai(db: Session, ogrenci: Ogrenci) -> bool:
     return "filiz_ai" in okul_modulleri(db, ogrenci.okul_id)
 
 
-def _gunluk_limit(db: Session) -> int:
+# [2026-10-30] Yapay zekâ her pakette; günlük sınır pakete göre (sistem parametresi, süper admin değiştirir).
+# Tam paket ve okula bağlı olmayan öğrenci eski parametreyi (filiz_gunluk_mesaj_limiti) kullanır.
+PAKET_LIMIT_PARAMETRESI = {"temel": ("filiz_gunluk_mesaj_limiti_temel", 5), "gelisim": ("filiz_gunluk_mesaj_limiti_gelisim", 15)}
+AYLIK_OGRENCI_BASI_VARSAYILAN = 60   # okulun aylık yapay zekâ üst sınırı = öğrenci sayısı × bu değer (0 = sınırsız)
+
+
+def _okul_paketi(db: Session, okul_id: int | None) -> str | None:
+    if not okul_id:
+        return None
+    from sqlalchemy import text
+    return db.execute(text("SELECT paket FROM okullar WHERE id = :o"), {"o": okul_id}).scalar()
+
+
+def _gunluk_limit(db: Session, ogrenci: Ogrenci) -> int:
+    anahtar, varsayilan = PAKET_LIMIT_PARAMETRESI.get(_okul_paketi(db, ogrenci.okul_id) or "",
+                                                      ("filiz_gunluk_mesaj_limiti", GUNLUK_MESAJ_LIMITI_VARSAYILAN))
     try:
-        return max(1, int(parametre_oku(db, "filiz_gunluk_mesaj_limiti", str(GUNLUK_MESAJ_LIMITI_VARSAYILAN))))
+        return max(0, int(parametre_oku(db, anahtar, str(varsayilan))))
     except (TypeError, ValueError):
-        return GUNLUK_MESAJ_LIMITI_VARSAYILAN
+        return varsayilan
 
 
-def _bugun_gonderilen(db: Session, ogrenci: Ogrenci) -> int:
-    """Türkiye saatine göre bugün öğrencinin gönderdiği mesaj sayısı."""
-    from app.core.haftalik_servisi import TR_SAAT
-    simdi = datetime.now(timezone.utc).astimezone(TR_SAAT)
-    gun_basi = simdi.replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
+def _yz_mesaj_sorgusu(db: Session, baslangic):
+    """Belirli bir andan bu yana yapay zekâdan gelen asistan cevapları (rehber modu ve sabit cevaplar sayılmaz)."""
     return (
         db.query(OgrenciKoclukMesaji)
         .join(OgrenciKoclukOturumu, OgrenciKoclukOturumu.id == OgrenciKoclukMesaji.oturum_id)
-        .filter(OgrenciKoclukOturumu.ogrenci_id == ogrenci.id, OgrenciKoclukMesaji.rol == "ogrenci",
-                OgrenciKoclukMesaji.olusturulma_zamani >= gun_basi.replace(tzinfo=None))
-        .count()
+        .filter(OgrenciKoclukMesaji.rol == "asistan", OgrenciKoclukMesaji.yapay_zeka.is_(True),
+                OgrenciKoclukMesaji.olusturulma_zamani >= baslangic.replace(tzinfo=None))
     )
+
+
+def _bugun_gonderilen(db: Session, ogrenci: Ogrenci) -> int:
+    """Türkiye saatine göre bugün öğrencinin yapay zekâyla yaptığı mesajlaşma sayısı."""
+    from app.core.haftalik_servisi import TR_SAAT
+    simdi = datetime.now(timezone.utc).astimezone(TR_SAAT)
+    gun_basi = simdi.replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
+    return _yz_mesaj_sorgusu(db, gun_basi).filter(OgrenciKoclukOturumu.ogrenci_id == ogrenci.id).count()
+
+
+def _okul_aylik_doldu(db: Session, ogrenci: Ogrenci) -> bool:
+    """[2026-10-30] Okulun bu ayki yapay zekâ kullanımı üst sınıra ulaştı mı (Türkiye saatine göre ay başından beri)."""
+    if not ogrenci.okul_id:
+        return False
+    try:
+        kisi_basi = int(parametre_oku(db, "filiz_okul_aylik_ogrenci_basi", str(AYLIK_OGRENCI_BASI_VARSAYILAN)))
+    except (TypeError, ValueError):
+        kisi_basi = AYLIK_OGRENCI_BASI_VARSAYILAN
+    if kisi_basi <= 0:
+        return False
+    from sqlalchemy import text
+    from app.core.haftalik_servisi import TR_SAAT
+    ogrenci_sayisi = db.execute(text("SELECT count(*) FROM ogrenciler WHERE okul_id = :o AND NOT coalesce(test_hesabi, FALSE)"),
+                                {"o": ogrenci.okul_id}).scalar() or 0
+    simdi = datetime.now(timezone.utc).astimezone(TR_SAAT)
+    ay_basi = simdi.replace(day=1, hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
+    kullanilan = (_yz_mesaj_sorgusu(db, ay_basi).join(Ogrenci, Ogrenci.id == OgrenciKoclukOturumu.ogrenci_id)
+                  .filter(Ogrenci.okul_id == ogrenci.okul_id).count())
+    return kullanilan >= max(1, ogrenci_sayisi) * kisi_basi
+
+
+def _yz_durumu(db: Session, ogrenci: Ogrenci) -> tuple[bool, str | None, int, int]:
+    """(yapay zekâ bu mesajda kullanılabilir mi, kullanılamıyorsa öğrenciye not, günlük sınır, bugün kullanılan).
+    Yapay zekâ kapalıysa (anahtar yok / okulda filiz_ai kapalı) not yoktur; sınır dolduysa Filiz rehber moduna geçer."""
+    limit, gonderilen = _gunluk_limit(db, ogrenci), _bugun_gonderilen(db, ogrenci)
+    if not _ai(db, ogrenci):
+        return False, None, limit, gonderilen
+    if gonderilen >= limit:
+        return False, "Bugünkü yapay zekâ mesaj hakkın doldu; yarına kadar sonuçlarına dayanan rehber modunda cevaplıyorum.", limit, gonderilen
+    if _okul_aylik_doldu(db, ogrenci):
+        return False, "Okulunun bu ayki yapay zekâ kullanımı doldu; ay sonuna kadar sonuçlarına dayanan rehber modunda cevaplıyorum.", limit, gonderilen
+    return True, None, limit, gonderilen
 
 
 @router.get("/durum", response_model=AsistanDurumOut)
 def asistan_durumu(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
-    limit, gonderilen = _gunluk_limit(db), _bugun_gonderilen(db, ogrenci)
+    ai, _not, limit, gonderilen = _yz_durumu(db, ogrenci)   # [2026-10-30] sınır dolduysa rehber modu gösterilir
     from app.core.filiz_rehber import ORNEK_SORULAR, SORU_KATEGORILERI
-    ai = _ai(db, ogrenci)
     return AsistanDurumOut(aktif=True, mod="ai" if ai else "otomatik", ornek_sorular=ORNEK_SORULAR[:6],
                            soru_kategorileri=SORU_KATEGORILERI,
                            gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen) if ai else limit)
@@ -170,9 +222,9 @@ def mesaj_gonder(
         db.commit()
         return MesajCevap(asistan_yaniti=ret, oturum_kapandi_mi=False, otomatik=not ai)
 
-    # [2026-10-10] Günlük sınır yapay zekâ maliyeti içindir; otomatik rehber modunda uygulanmaz
-    if ai and _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
-        raise HTTPException(status_code=429, detail="Bugünlük mesaj hakkın doldu. Yarın yine konuşalım! 🌱")
+    # [2026-10-30] Sınırlar yapay zekâ maliyeti içindir. Günlük (pakete göre) ya da okulun aylık sınırı dolunca hizmet
+    # kesilmez: Filiz, öğrencinin verilerine dayanan rehber modunda cevap verir (önceden 429 dönüyordu).
+    ai, sinir_notu, _limit, _gonderilen = _yz_durumu(db, ogrenci)
 
     onceki_mesajlar = (
         db.query(OgrenciKoclukMesaji)
@@ -218,6 +270,8 @@ def mesaj_gonder(
     if otomatik:   # [2026-10-10] yapay zekâ bağlı değil: öğrencinin verilerine dayanan otomatik rehber cevabı
         from app.core.filiz_rehber import otomatik_yanit
         yanit = otomatik_yanit(db, ogrenci, metin)
+        if sinir_notu:
+            yanit = f"{sinir_notu}\n\n{yanit}"
     else:
         try:
             yanit = openai_ile_konus(sistem_promptu, mesaj_gecmisi)
@@ -227,7 +281,7 @@ def mesaj_gonder(
         yanit = dizin.maskele(yanit, haric=ad_normalize(ogrenci.ad_soyad))   # son kontrol: yanıtta başka öğrenci adı olmasın
 
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
-    db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit))
+    db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit, yapay_zeka=ai))
     db.commit()
 
     toplam_mesaj = len(onceki_mesajlar) + 2

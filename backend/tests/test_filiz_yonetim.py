@@ -121,11 +121,12 @@ def test_ozet_yalniz_kendi_okulu_ve_isimsiz(istemci, kisiler, db):
 
 
 @db_gerekli
-def test_filiz_modulu_kapaliysa_403(istemci, kisiler, db):
+def test_filiz_zorunlu_okuldan_cikarilamaz(istemci, kisiler, db):
+    """[2026-10-30] Filiz her pakette zorunlu (önceden modül kapalıysa 403 dönüyordu): okulun çıkarma listesinde olsa da açık."""
     db.execute(text("""UPDATE okullar SET modul_cikar = '["filiz"]'::jsonb WHERE id = :o"""), {"o": kisiler["okul_a"]})
     db.commit()
-    assert istemci.get("/yonetim/filiz/ozet", headers=kisiler["yetkili"]).status_code == 403
-    assert istemci.post("/yonetim/filiz/sor", json={"metin": "rapor"}, headers=kisiler["yetkili"]).status_code == 403
+    assert istemci.get("/yonetim/filiz/ozet", headers=kisiler["yetkili"]).status_code == 200
+    assert istemci.post("/yonetim/filiz/sor", json={"metin": "rapor"}, headers=kisiler["yetkili"]).status_code == 200
     assert istemci.get("/yonetim/filiz/sss", headers=kisiler["yetkili"]).status_code == 200   # SSS sayfası Filiz'e bağlı değil
 
 

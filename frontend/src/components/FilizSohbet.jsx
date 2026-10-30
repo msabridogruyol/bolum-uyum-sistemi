@@ -120,7 +120,13 @@ export default function FilizSohbet() {
         cevap = await api.aiKocMesajGonder(id, metin, konum.pathname)
       }
       setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti, otomatik: cevap.otomatik }])
-      setDurum((d) => (d && d.mod !== 'otomatik' ? { ...d, kalan: Math.max(0, d.kalan - 1) } : d))
+      // [2026-10-30] Yapay zekâ sınırı dolunca hizmet kesilmez: sunucu rehber moduna geçer (cevap.otomatik); burada da
+      // hak bitince sohbet kilitlenmez, rehber moduna geçilir.
+      setDurum((d) => {
+        if (!d || d.mod === 'otomatik') return d
+        const kalan = Math.max(0, d.kalan - 1)
+        return cevap.otomatik || kalan <= 0 ? { ...d, mod: 'otomatik', kalan: d.gunluk_limit || 1 } : { ...d, kalan }
+      })
       if (cevap.oturum_kapandi_mi) {
         setOturumId(null)
         setMesajlar((m) => [...m, { rol: 'not', icerik: 'Bu sohbeti özetledim. Yeni bir sohbette kaldığımız yerden devam edebiliriz.' }])
