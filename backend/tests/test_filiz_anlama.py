@@ -200,3 +200,38 @@ def test_tam_bolum_adi_ve_yakin_yazim_once():
 def test_giris_sinavi_ders_baglami_degil():
     assert not fb.ders_baglami_mi("grafik tasarim icin yetenek sinavi var mi", None)
     assert fb.ders_baglami_mi("sinava nasil calisayim", None)
+
+
+def _kucuk_dizin():
+    B = fb.Belge
+    return fb.Dizin([
+        B("bolum", "İşletme bölümü", "Öğrenim süresi: 4 yıl. Puan türü: EA. İşletme yönetimi inceler.", "Bölümler › İşletme", None, "isletme"),
+        B("bolum_ders", "İşletme: neler öğrenilir, hangi dersler var", "İşletme matematiği, muhasebe.", "Bölümler › İşletme", None, "isletme"),
+        B("bolum", "Matematik bölümü", "Öğrenim süresi: 4 yıl. Puan türü: SAY. Sayıları inceler.", "Bölümler › Matematik", None, "matematik"),
+        B("bolum", "Ekonomi bölümü", "Öğrenim süresi: 4 yıl. Puan türü: EA. Ekonomi.", "Bölümler › Ekonomi", None, "ekonomi"),
+        B("bolum", "Politika ve Ekonomi bölümü", "Öğrenim süresi: 4 yıl. Puan türü: EA. Politika.", "Bölümler › Politika ve Ekonomi", None,
+          "politika ve ekonomi"),
+        B("meslek", "Akademisyen (Politika ve Ekonomi)", "Ders verir.", "Bölümler › Politika ve Ekonomi", None, "akademisyen"),
+        B("meslek", "Akademisyen (Ekonomi)", "Ders verir.", "Bölümler › Ekonomi", None, "akademisyen"),
+    ])
+
+
+def test_karsilastirma_kalip_ister_ve_ders_adi_bolum_sayilmaz():
+    from app.core import filiz_anlama as fa
+    d = _kucuk_dizin()
+    assert fa.karsilastirma(d, "isletmede matematik var mi") is None
+    assert [a for a, _ in d.varliklari_coz("isletmede matematik var mi")] == ["isletme"]
+    assert fa.karsilastirma(d, "isletme mi matematik mi") is not None
+
+
+def test_ortak_meslek_adi_sorulan_bolume_ait_sayfayi_one_alir():
+    d = _kucuk_dizin()
+    ilk = d.ara("ekonomi akademisyen ne is yapar", set())[0].belge
+    assert ilk.tur != "meslek" or ilk.baslik == "Akademisyen (Ekonomi)"
+    assert next(b for b in d.belgeler if b.baslik == "Akademisyen (Politika ve Ekonomi)").sahip == "politika ve ekonomi"
+
+
+def test_sure_sorusu_kunyeden_cevaplanir():
+    from app.core import filiz_anlama as fa
+    c = fa.kunye_sorusu(_kucuk_dizin(), "isletme kac yil")
+    assert c and "4 yıl" in c.yanit and "EA" in c.yanit and "Kaynak:" in c.yanit

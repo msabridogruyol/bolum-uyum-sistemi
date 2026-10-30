@@ -32,6 +32,7 @@ _MESLEK_YOLU = ("olmak ic", "olmak isti", "olacagim", "olabilirim", "olurum", "o
                 "ne okuma", "neyi okuma", "hangi bolum", "okumam lazim", "okumaliyim", "okumam gerek", "nasil olun",
                 "nasil olabil", "icin ne oku", "olmanin yolu", "olmak istersem", "olmak icin hangi")
 _KARSILASTIR = (" mi ", " mu ", " yoksa ", " fark", "karsilastir", " vs ", " hangisi", " arasinda", " ile ")
+_ACIK_KARSI = (" fark", "karsilastir", " vs ", " hangisi", " arasinda", " yoksa ", " ayni sey", " ayni mi", " benzer")
 
 
 def _gorunen(d: fb.Dizin, v: str) -> str:
@@ -129,14 +130,20 @@ def karsilastirma(d: fb.Dizin, soru: str) -> Cevap | None:
     if not any(k in t for k in _KARSILASTIR):
         return None
     bolumler: list[str] = []
-    parca = [p.strip() for p in re.split(r" (?:mi|mu|yoksa|veya|ya da) ", t) if p.strip()]
+    parca = [p.strip() for p in re.split(r" (?:mi|mu|yoksa|veya|ya da|ile) ", t) if p.strip()]
     ek = [_KISA_KARSI[p.split()[-1]] for p in parca if p.split() and p.split()[-1] in _KISA_KARSI
           and _KISA_KARSI[p.split()[-1]] in d.bolumler]
     for anahtar, hedef in d.varliklari_coz(soru) + [(e, {e}) for e in ek]:
-        bh = [h for h in hedef if h in d.bolumler]
-        if len(bh) == 1 and bh[0] not in bolumler:
+        bh = sorted((h for h in hedef if h in d.bolumler), key=lambda h: (not h.startswith(anahtar.split()[0]), len(h)))
+        # Ad birden çok bölüme çıkıyorsa ("bilgisayar", "siyaset bilimi") adla başlayan en kısa bölüm; seçenekler diğerlerini gösterir
+        if bh and (len(bh) == 1 or bh[0].startswith(anahtar.split()[0])) and bh[0] not in bolumler:
             bolumler.append(bh[0])
     if len(bolumler) < 2:
+        return None
+    # "X mi Y mi" kalıbı ya da açık karşılaştırma sözcüğü gerekir: "işletmede matematik var mı" karşılaştırma değil
+    ayri = sum(1 for p in parca if any(h in d.bolumler for _, hs in d.varliklari_coz(p) for h in hs)
+               or (p.split() and p.split()[-1] in _KISA_KARSI))
+    if ayri < 2 and not any(k in t for k in _ACIK_KARSI):
         return None
     bolumler = bolumler[:3]
     satir = []
@@ -173,6 +180,24 @@ def maas_sorusu(d: fb.Dizin, soru: str, moduller: set[str] | None) -> Cevap | No
                  f"{ad} mezunlarının hangi alanlarda çalıştığını ve bölümü anlatabilirim. 🌱", "icerik", secenek)
 
 
+_KUNYE = ("kac yil", "kac yilda", "suresi", "kac donem", "kac yillik", "puan turu", "hangi puan", "puan turuyle", "hangi alan")
+
+
+def kunye_sorusu(d: fb.Dizin, soru: str) -> Cevap | None:
+    """Süre / puan türü sorusu ve tek bölüm: bölüm sayfasındaki künye bilgisiyle doğrudan cevap."""
+    t = f" {fb.duzelt(soru)} "
+    if not any(k in t for k in _KUNYE):
+        return None
+    hedef = {h for _, hs in d.varliklari_coz(soru) for h in hs if h in d.bolumler}
+    if len(hedef) != 1:
+        return None
+    o = _bolum_ozet(d, next(iter(hedef)))
+    if not (o["sure"] or o["puan"]):
+        return None
+    parca = ([f"öğrenim süresi {o['sure']}"] if o["sure"] else []) + ([f"puan türü {o['puan']}"] if o["puan"] else [])
+    return Cevap(f"📖 {o['ad']}: {', '.join(parca)}.\n{o['ilk']}\n\nKaynak: {o['nerede']}", "icerik", _bolum_secenekleri(d, next(iter(hedef)))[1:])
+
+
 def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | None:
     """Kişisel konulardan ÖNCE denenir: karşılaştırma, meslek yolu, güçlü bilgi sorusu."""
     d = fb.dizin(db)
@@ -182,9 +207,10 @@ def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | N
         c = f(d, soru)
         if c:
             return c
-    c = maas_sorusu(d, soru, moduller)
-    if c:
-        return c
+    for f in (maas_sorusu, lambda d_, s_, m_: kunye_sorusu(d_, s_)):
+        c = f(d, soru, moduller)
+        if c:
+            return c
     # Tanım sorusu ve terim sözlükte aynen var: sözlük (soruda geçen bölüm adından daha uzun/özgülse)
     sb = fb.sozluk_bul(db, soru)
     if sb is not None:
@@ -217,6 +243,18 @@ def alan_bolumleri(d: fb.Dizin, soru: str, bolum_hedef: list[str]) -> list[str]:
         uyan = [v for v in d.bolumler if any(len(x) >= 5 and fb._ek_toleransli(w, x) for x in v.split())]
         if len(uyan) >= 2:
             return uyan
+    # Kısa alan sorusu ("saglik", "saglik alaninda neler var"): bölüm tanıtımlarında bu sözcük öne çıkan bölümler
+    if kel and len(kel) <= 2 and len(fb.sorgu_kokleri(soru)) <= 3 and not any(k in f" {fb.duzelt(soru)} " for k in fb._TANIM):
+        bol: list[str] = []
+        for s in d.ara(" ".join(kel), set(), adet=40):
+            if s.puan < 5.0 or s.belge.tur not in ("bolum", "bolum_ders", "bolum_is"):
+                continue                                   # bölümün kendi tanıtımı (meslek / bilmen gerekenler değil)
+            v = s.belge.varlik
+            for h in ([v] if v in d.bolumler else []):
+                if h not in bol:
+                    bol.append(h)
+        if len(bol) >= 2:
+            return bol[:8]
     return []
 
 
@@ -231,6 +269,9 @@ def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cev
         bulunan = fb.bilgi_ara(db, soru, moduller)
         # Soruda bir ad tanındıysa yalnızca o ada ait belgeyle cevap verilir (başka bölümün/mesleğin içeriği gösterilmez)
         if bulunan and hedefler and bulunan[0].belge.varlik not in hedefler:
+            bulunan = []
+        # Soruda ad yokken tek bir bölümün/mesleğin sayfası cevap olmaz ("mülakatta ne sorarlar" → rastgele bölümün mülakatı)
+        if bulunan and not hedefler and bulunan[0].belge.varlik:
             bulunan = []
         if bulunan and (bulunan[0].puan >= fb.BAGLAM_ESIK or d.soru_varliklari(soru)):
             ilk = bulunan[0].belge
@@ -247,9 +288,9 @@ def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cev
         if not kisisel:
             niyet = any(k in f" {fb.duzelt(soru)} " for k in fb._BILGI_NIYET)
             kendi = [x for x in d.ara(soru, moduller, adet=12) if x.belge.varlik == v
-                     or d.meslek_bolum.get(x.belge.varlik, set()) == {v}]
+                     or x.belge.sahip == v]
             # Bilgi niyeti varsa ya da bölümün kendi belgesi soruyla güçlü eşleşiyorsa ("grafik tasarım için yetenek sınavı var mı")
-            if kendi and (niyet or kendi[0].puan >= fb.BAGLAM_ESIK):
+            if kendi and (niyet or kendi[0].puan >= fb.BAGLAM_ESIK or fb._niyet_katsayisi(soru, kendi[0].belge.tur) > 1):
                 ilk = kendi[0].belge
                 return Cevap(fb.bilgi_cevabi(kendi[:1]), "icerik",
                              [o for o in _bolum_secenekleri(d, v) if o != soru_sablonu(ilk)][:2])
@@ -260,7 +301,7 @@ def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cev
     alan = [] if kisisel else alan_bolumleri(d, soru, bolum_hedef)
     if len(alan) >= 2:
         ornek = sorted(alan, key=len)[:4]
-        return Cevap(f"Bu alanda sistemde {len(alan)} bölüm var. Hangisini merak ediyorsun? 🌱 Tamamını Bölümler sayfasında görebilirsin.",
+        return Cevap("Bu alanla ilgili sistemde birden çok bölüm var. Hangisini merak ediyorsun? 🌱 Tamamını Bölümler sayfasında görebilirsin.",
                      "netlestirme", [f"{_gorunen(d, v)} bölümü hakkında bilgi verir misin?" for v in ornek])
     if kisisel or fb.ders_baglami_mi(soru, db):
         return None
@@ -273,6 +314,11 @@ def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cev
     # Zayıf adaylardan seçenek: soruda ad yoksa yalnızca genel türler (bir mesleğin günü / zor günleri rastgele önerilmez)
     # [kör ölçüm] alakasız tek terim önerilmesin ("kebap tarifi" → "Algoritmik düşünme"): en az iki ortak sözcük kökü
     kok = set(fb.sorgu_kokleri(soru)) - _GENEL_KOK
+    if not coz and any(k in f" {fb.duzelt(soru)} " for k in fb._TANIM):
+        ilgili = [s for s in d.ara(soru, moduller, adet=3) if s.belge.tur == "sozluk" and s.puan >= fb.ESIK]
+        return Cevap("Bu kavram sistemdeki sözlükte yok, o yüzden tanım veremiyorum. 🌱 Sözlükte benzer kavramlara bakabilirsin"
+                     + (":" if ilgili else "; rehber öğretmenine de sorabilirsin."), "bilinmiyor",
+                     [soru_sablonu(s.belge) for s in ilgili])
     hepsi = d.ara(soru, moduller, adet=8)
     # Soru bir bölüme/mesleğe bağlı içerik türünü soruyor ama ad yok ("iş görüşmesinde ne sorarlar"): adı sor
     ust = [s for s in hepsi[:3] if s.belge.varlik]

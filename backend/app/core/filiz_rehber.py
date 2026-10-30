@@ -588,7 +588,8 @@ KONULAR = [
     (("degistir", "degisebilir", "baska bolum sec"), k_hedef_degis),
     (("hakkinda bilgi", "ne okutuyor", "bolum hakkinda", "bolumu anlat", "mezunlar"), k_bolum_bilgi),
     (("siradaki adim", "yol harita", "sonraki adim", "adimim"), k_adim),
-    (("bu hafta", "hafta", "gorev", "ne yapay", "nereden basla", "simdi ne", "odaklan"), k_hafta),
+    (("bu hafta", "hafta", "gorev", "ne yapay", "nereden basla", "simdi ne", "odaklan", "calisma programi", "calisma plani",
+      "program yap", "plan yap", "planlayalim"), k_hafta),
     (("kutuphanem", "kutuphane"), k_kutuphane),
     (("kitap", "film", "belgesel", "dizi", "kaynak", "okuyabil", "izleyebil"), k_kaynak),
     (("kulup", "kulub", "topluluk", "ilgi testi"), k_kulup),
@@ -611,11 +612,13 @@ KONULAR = [
 # sayfasına, "ailem doktor olmamı istiyor" Tıp seçeneklerine gitmesin.
 _DUYGU_ONCE = [
     (("bikdim", "biktim", "bunaldim", "her sey cok zor", "her sey zor", "yapamiyorum", "basaramiyorum", "umutsuz",
-      "vazgecmek istiyorum", "birakmak istiyorum", "isteksizim", "motivasyonum yok", "motivasyonum dustu"), k_motivasyon),
+      "vazgecmek istiyorum", "birakmak istiyorum", "isteksizim", "motivasyonum yok", "motivasyonum dustu", "kendimi yetersiz",
+      "yetersizim", "yetersiz hissed", "beceriksiz", "basarisizim", "aptal gibi", "hicbir seyi beceremiyorum"), k_motivasyon),
     (("korkuyorum", "kaygim", "kaygiliyim", "stresliyim", "stres altindayim", "kazanamazsam", "kazanamayacagim",
       "geriliyorum", "panik oluyorum", "endiseliyim"), k_kaygi),
     (("ayrildi", "ayrildik", "uzgunum", "cok uzgun", "mutsuzum", "yalniz hissediyorum", "kimse anlamiyor", "aglamak istiyorum",
-      "moralim bozuk", "moralim cok bozuk", "kavga ettik", "dislaniyorum", "zorbalik"), k_duygu),
+      "moralim bozuk", "moralim cok bozuk", "kavga ettik", "dislaniyorum", "zorbalik", "kendimi kotu", "kotu hissediyorum",
+      "yalnizim", "kirgin", "kirildim"), k_duygu),
 ]
 _AILE = ("ailem", "annem", "babam", "ailemin", "ailemle")
 _AILE_BASKI = ("istiyor", "istiyo", "istemiyor", "istemiyo", "izin vermiyor", "baski", "zorluyor", "karsi", "kiziyor", "anlamiyor")
@@ -628,13 +631,8 @@ biraz nedir nasil bir bolumunu""".split())
 
 
 def _anahtar_var(a: str, t: str) -> bool:
-    """Anahtar sözcük başında eşleşir (alt dize değil): "koc" ≠ "kocaeli", "hey" ≠ "heyecanliyim", "soru" ≠ "sorulari"
-    (kısa anahtarlar en çok 3 harflik ekle)."""
-    a = a.strip()
-    if not a:
-        return False
-    kuyruk = (r"[a-z]{0,3}(?![a-z0-9])" if len(a) <= 3 else r"[a-z]{0,7}(?![a-z0-9])") if len(a) <= 4 and a[-1].isalnum() else ""
-    return re.search(rf"(?<![a-z0-9]){re.escape(a)}{kuyruk}", t) is not None
+    from app.core.filiz_bilgi import anahtar_var
+    return anahtar_var(a, t)
 
 
 def _konu_sec(t: str, varlik_var: bool) -> tuple:

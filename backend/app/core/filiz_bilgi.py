@@ -110,6 +110,16 @@ def _tekrarsiz(out: list[str], acilim: list[str]) -> None:
             return
 
 
+def anahtar_var(a: str, t: str) -> bool:
+    """Anahtar sözcük başında eşleşir, alt dize olarak değil: "koc" ≠ "kocaeli", "zor" ≠ "zorunlu", "hey" ≠ "heyecanliyim".
+    3 harf ve altı anahtarlara en çok 3, 4 harflilere en çok 7 harflik ek."""
+    a = a.strip()
+    if not a:
+        return False
+    kuyruk = (r"[a-z]{0,3}(?![a-z0-9])" if len(a) <= 3 else r"[a-z]{0,7}(?![a-z0-9])") if len(a) <= 4 and a[-1].isalnum() else ""
+    return re.search(rf"(?<![a-z0-9]){re.escape(a)}{kuyruk}", t) is not None
+
+
 def duzelt(m: str | None) -> str:
     """Sorgu metnini sadeleştirir ve konuşma dilini / kısaltmaları açar (yalnızca öğrenci sorusu için; belgeler değil)."""
     t = sade(m)
@@ -145,6 +155,9 @@ def sorgu_kokleri(m: str | None) -> list[str]:
     return [w[:5] for w in duzelt(m).split() if len(w) > 1 and w not in _DURAK]
 
 
+_BULUNMA_EKI = {"da", "de", "ta", "te", "nda", "nde", "inde", "inda", "unda", "unde"}
+_DERS_ADI = set("""matematik fizik kimya biyoloji tarih cografya felsefe istatistik edebiyat kimya sosyoloji psikoloji ekonomi
+muhasebe hukuk""".split())
 _KISA_EKLER = {"ta", "da", "te", "de", "tan", "dan", "ten", "den", "ti", "ci", "in", "nin", "a", "e", "i", "yi", "ya", "ye",
                "ci", "cu", "la", "le", "ki"}
 
@@ -162,7 +175,8 @@ def _ek_toleransli(q: str, e: str) -> bool:
     if (len(e) >= 5 and e[-1] in yumusama and len(q) > len(e) - 1 and q.startswith(e[:-1])
             and q[len(e) - 1] == yumusama[e[-1]] and len(q) - len(e) <= 6):    # hemsirelik → hemsireligi (k→ğ)
         return True
-    if len(e) >= 7 and len(q) >= 6 and q[:2] == e[:2] and abs(len(q) - len(e)) <= 2:
+    if len(e) >= 7 and len(q) >= 6 and q[:2] == e[:2] and abs(len(q) - len(e)) <= 2 and (
+            q not in _BILINEN or (e.startswith(q) and len(e) - len(q) <= 2)):   # "tasarim"~"tasarimi"; "programi"≠"programci"
         from difflib import SequenceMatcher
         return SequenceMatcher(None, q, e).ratio() >= 0.86              # tek harf hatası / eksik harf
     return False
@@ -178,6 +192,7 @@ class Belge:
     varlik: str = ""         # sadeleştirilmiş bölüm ya da meslek adı
     adlar: tuple = ()        # sözlük: terim ve eş anlamlıları (sadeleştirilmiş); yalnızca soruda aynen geçerse eşleşir
     kokler: Counter = field(default_factory=Counter)
+    sahip: str = ""          # meslek / gün sayfasının ait olduğu bölüm (Dizin kurulurken)
 
 
 @dataclass
@@ -210,6 +225,10 @@ class Dizin:
                 bv = next((k for k, v in self.bolumler.items() if v == bolum_gorunen), None)
                 if bv:
                     self.meslek_bolum[b.varlik].add(bv)
+                    b.sahip = bv                     # bu meslek sayfası hangi bölümün ("Akademisyen (Politika ve Ekonomi)")
+        for b in belgeler:
+            if b.tur in ("gun", "zorgun") and len(self.meslek_bolum.get(b.varlik, ())) == 1:
+                b.sahip = next(iter(self.meslek_bolum[b.varlik]))
         # Takma adlar → bölüm(ler): veriden türetilenler + onaylı gündelik eş anlamlılar (esanlam)
         self.takma: dict[str, set[str]] = defaultdict(set)
         for v in self.bolumler:
@@ -298,8 +317,14 @@ class Dizin:
                     hedef.add(anahtar)
                 hedef |= self.takma.get(anahtar, set())
             if hedef:
-                sonuc.append((anahtar, hedef))
-        return sonuc
+                sonuc.append((anahtar, hedef, i, n))
+        bulunma = [x for x in sonuc if any(h in self.bolumler for h in x[1])]
+        if len(bulunma) >= 2:
+            ekli = [x for x in bulunma if q[x[2] + x[3] - 1] != x[0].split()[-1]
+                    and q[x[2] + x[3] - 1][len(x[0].split()[-1]):] in _BULUNMA_EKI]
+            if ekli:
+                sonuc = [x for x in sonuc if not (x[0] in _DERS_ADI and x not in ekli)]
+        return [(a, h) for a, h, _, _ in sonuc]
 
     def soru_varliklari(self, soru: str) -> list[str]:
         """Belirsiz olmayan varlıklar (puanlamada öne alınır). Bir takma ad tek bölüme çıkıyorsa o bölüm de eklenir."""
@@ -317,6 +342,8 @@ class Dizin:
         if not sorgu:
             return []
         varliklar = set(self.soru_varliklari(soru))
+        # Takma adla sorulan bölümün kendi adı da aranır ("iktisat" → Ekonomi, "pdr" → Rehberlik ve Psikolojik Danışmanlık)
+        sorgu = sorgu + [w[:5] for v in varliklar if v in self.bolumler for w in v.split() if len(w) > 1 and w not in _DURAK]
         t_soru = f" {duzelt(soru)} "
         puan: dict[int, float] = defaultdict(float)
         for k in set(sorgu):
@@ -335,7 +362,7 @@ class Dizin:
             if varliklar:
                 if b.varlik in varliklar:
                     p *= VARLIK_KATSAYI      # adı soruda geçen bölüm/meslek
-                elif b.tur in ("meslek", "gun", "zorgun") and self.meslek_bolum.get(b.varlik, set()) & varliklar:
+                elif b.tur in ("meslek", "gun", "zorgun") and getattr(b, "sahip", "") in varliklar:
                     p *= VARLIK_KATSAYI * 0.6   # bölümün diğer meslekleri: o bölüme ait ama sorulan meslekten geride
                 elif b.varlik:
                     p *= 0.3      # başka bir bölüm/meslekten gelen belge geri plana
@@ -347,12 +374,19 @@ class Dizin:
 
 # ---------------------------------------------------------------------------------------------------------- niyet
 _NIYET = [
-    (("ders", "okut", "ogren", "mufredat", "egitim"), {"bolum_ders": 1.8}),
-    (("gunu", "gunum", "gunun", "bir gun", "ne yapar", "is gunu", "gunluk"), {"gun": 1.8, "meslek": 1.5}),
+    (("ders", "okut", "ogren", "mufredat", "egitim", "matematik var", "fizik var", "kimya var", "biyoloji var", "matematik agir",
+      "matematik cok", "kodlama var", "cizim var"), {"bolum_ders": 1.8}),
+    (("ne is yapar", "is yapar", "ne is yapiyor", "ne isi yapar", "ne yapiyor", "okuyan ne", "bitiren ne", "mezunu ne"),
+     {"meslek": 1.8, "bolum_is": 1.8}),
+    (("gunu", "gunum", "gunun", "bir gun", "ne yapar", "is gunu", "gunluk", "ne is yapar", "is yapar", "ne yapiyor",
+      "ne is yapiyor", "ne isi yapar", "gorevi ne", "isi ne"), {"gun": 1.8, "meslek": 1.8}),
+    (("yetenek sinav", "ozel yetenek", "giris sinav", "nasil girilir", "kimler girebilir", "erkek", "kiz ogrenci", "alim sart",
+      "sarti", "sartlari", "boy kilo", "saglik raporu"), {"bolum_bilmen": 2.2}),
     (("nasil olun", "nasil giri", "nasil bas", "girmek ici", "olmak ici", "yolu", "giden yol", "adim"), {"meslek": 1.4, "yol": 2.2}),
     (("calis", "nerede", "is bul", "is imkan", "kariyer", "mezun"), {"bolum_is": 1.6, "meslek": 1.3}),
     (("kimler", "uygun", "kime uyar", "ozellik"), {"bolum": 1.4}),
-    (("hakkinda", "bilgi", "anlat", "nedir", "nasil bir", "tanit", "kac yil", "suresi", "puan"), {"bolum": 1.6}),
+    (("hakkinda", "bilgi", "anlat", "nedir", "nasil bir", "tanit", "puan"), {"bolum": 1.6}),
+    (("kac yil", "suresi", "kac yilda", "kac donem", "kac yillik"), {"bolum": 2.5}),
     (("zor", "stres", "kotu yan", "zorluk"), {"zorgun": 1.8, "bolum_bilmen": 1.5}),
     (("mulakat", "gorusme sor", "is gorusmesi"), {"mulakat": 2.0}),
     (("cv", "ozgecmis"), {"cv": 2.0}),
@@ -366,9 +400,14 @@ def _niyet_katsayisi(soru: str, tur: str) -> float:
     t = duzelt(soru)
     k = 1.0
     for anahtarlar, turler in _NIYET:
-        if tur in turler and any(a in t for a in anahtarlar):
+        if tur in turler and any(anahtar_var(a, t) for a in anahtarlar):
             k = max(k, turler[tur])
+    if k == 1.0 and tur in _YALNIZ_NIYETLE:
+        k = _YALNIZ_NIYETLE[tur]     # mülakat / zor gün sayfaları yalnızca o sorulunca öne çıkar ("ebe ne iş yapar" ≠ mülakat)
     return k
+
+
+_YALNIZ_NIYETLE = {"mulakat": 0.3, "zorgun": 0.7}
 
 
 # ---------------------------------------------------------------------------------------------------------- belgeler
