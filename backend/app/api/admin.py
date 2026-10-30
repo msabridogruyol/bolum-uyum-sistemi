@@ -1468,3 +1468,32 @@ def sorulari_toplu_aktif_durumu_degistir(
     _audit_yaz(db, admin, "soru_toplu_durum_degistirme", "sorular", "toplu",
                f"{guncellenen} soru {etiket} yapıldı")
     db.commit()
+
+
+# [2026-10-31] Katmanlı Filiz ölçümü: cevapların hangi katmandan geldiği, süreleri ve okul bazında yapay zekâ kullanımı.
+# Pilotta mesaj sınırlarını ve eşzamanlılık değerini gerçek veriyle ayarlamak için. Öğrenci adı ya da mesaj içeriği dönmez.
+@router.get("/filiz/kullanim")
+def filiz_kullanim(gun: int = 30, db: Session = Depends(get_db), _admin: AdminKullanici = Depends(get_mevcut_super_admin)):
+    gun = max(1, min(int(gun), 365))
+    kaynaklar = db.execute(text("""
+        SELECT coalesce(m.kaynak, 'eski') AS kaynak, count(*) AS adet,
+               round(avg(m.sure_ms)) AS ort_ms,
+               percentile_cont(0.95) WITHIN GROUP (ORDER BY m.sure_ms) AS p95_ms
+          FROM ogrenci_koclugu_mesajlari m
+         WHERE m.rol = 'asistan' AND m.olusturulma_zamani >= now() - make_interval(days => :g)
+         GROUP BY 1 ORDER BY 2 DESC"""), {"g": gun}).mappings().all()
+    okullar = db.execute(text("""
+        SELECT o.id AS okul_id, o.ad AS okul, o.paket,
+               count(*) FILTER (WHERE m.yapay_zeka) AS yapay_zeka,
+               count(*) AS toplam_cevap,
+               count(DISTINCT t.ogrenci_id) AS aktif_ogrenci
+          FROM ogrenci_koclugu_mesajlari m
+          JOIN ogrenci_koclugu_oturumlari t ON t.id = m.oturum_id
+          JOIN ogrenciler g ON g.id = t.ogrenci_id
+          LEFT JOIN okullar o ON o.id = g.okul_id
+         WHERE m.rol = 'asistan' AND m.olusturulma_zamani >= now() - make_interval(days => :g)
+         GROUP BY o.id, o.ad, o.paket ORDER BY 4 DESC"""), {"g": gun}).mappings().all()
+    return {"gun": gun,
+            "kaynaklar": [{**dict(r), "p95_ms": int(r["p95_ms"]) if r["p95_ms"] is not None else None,
+                           "ort_ms": int(r["ort_ms"]) if r["ort_ms"] is not None else None} for r in kaynaklar],
+            "okullar": [dict(r) for r in okullar]}

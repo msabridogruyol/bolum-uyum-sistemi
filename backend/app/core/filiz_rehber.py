@@ -28,6 +28,10 @@ SORU_KATEGORILERI = [
     {"ad": "Hedef ve yol haritası", "ikon": "🎯", "sorular": [
         "Hedef bölümüm bana uygun mu?", "Hedef bölümüm hakkında bilgi verir misin?", "Yol haritamda sıradaki adım ne?",
         "Bu hafta neye odaklanmalıyım?", "Hedef bölümümü değiştirebilir miyim?"]},
+    # [2026-10-31] Bilgi katmanı (filiz_bilgi): sistemdeki bölüm ve meslek içeriğinden kaynaklı cevap
+    {"ad": "Bölümler ve meslekler", "ikon": "📖", "sorular": [
+        "Hukuk bölümünde hangi dersler var?", "Psikoloji mezunları nerelerde çalışır?",
+        "Mimarlık hakkında bilgi verir misin?", "Tekstil mühendisi bir günde ne yapar?"]},
     {"ad": "Gelişim", "ikon": "🌱", "sorular": [
         "Okuyabileceğim bir kitap önerir misin?", "İzleyebileceğim bir belgesel önerir misin?",
         "Mülakat Simülasyonu nedir?", "Düşünme Atölyesi nedir?",
@@ -552,7 +556,7 @@ KONULAR = [
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
     (("sistem nasil", "nasil calisiyor", "filizyol nedir", "ne ise yarar"), k_sistem),
     (("motivasyon", "isteksiz", "bikkin", "yoruldum", "canim istemiyor", "hevesim"), k_motivasyon),
-    (("kararsiz", "karar veremiyorum", "emin degilim", "secemiyorum"), k_kararsiz),
+    (("kararsiz", "karar veremiyorum", "emin degilim", "secemiyorum", "secmeli miyim", "secsem mi", "tercih etmeli"), k_kararsiz),
     (("sinav", "kaygi", "stres", "verimli", "ders calis", "nasil calis", "yks", "tyt", "ayt"), k_sinav),
     (("degistir", "degisebilir", "baska bolum sec"), k_hedef_degis),
     (("hakkinda bilgi", "ne okutuyor", "bolum hakkinda", "bolumu anlat", "mezunlar"), k_bolum_bilgi),
@@ -566,7 +570,7 @@ KONULAR = [
     (("takvim", "tarih", "ne zaman", "etkinlik"), k_takvim),
     (("guclu", "iyi oldugum", "yetenek", "avantaj"), k_guclu),
     (("gelistir", "gelisim", "zayif", "eksik", "zorlan"), k_gelisim),
-    (("uyum yuzde", "yuzde", "% ", "ne demek"), k_uyum),
+    (("uyum yuzde", "yuzde", "% ", "uyum puan", "uyum ne demek"), k_uyum),   # [2026-10-31] "ne demek" tek başına sözlük/bilgi sorusu
     (("hedef", "bana uygun mu", "dogru bolum", "uygun mu"), k_hedef),
     (("hangi bolum", "bolum oner", "uygun bolum", "meslek", "bolumler"), k_bolum_oner),
     (("test", "degerlendirme", "katman", "soru", "cevaplamali", "neredeyim"), k_test),
@@ -574,28 +578,56 @@ KONULAR = [
 ]
 
 
-def otomatik_yanit(db: Session, ogrenci: Ogrenci, metin: str) -> str:
+def otomatik_yanit_kaynakli(db: Session, ogrenci: Ogrenci, metin: str, moduller: set[str] | None = None) -> tuple[str, str]:
+    """[2026-10-31] Katmanlı rehber: (cevap, kaynak). kaynak: 'sabit' (gizlilik), 'icerik' (sistem içeriği), 'rehber' (öğrencinin
+    kendi verisine dayanan konu), 'bilinmiyor' (eşleşme yok).
+    Sıra: gizlilik → ilham kaynağı sorusu → soruda bölüm/meslek adı geçen bilgi sorusu (içerik) → kişisel konular →
+    içerik araması → bilinmiyor."""
     # [2026-10-11] Hiyerarşi koruması: başka bir öğrenciyi hedefleyen soruya sabit cevap (yapay zekâ moduyla aynı)
     from app.core.filiz_gizlilik import ogrenci_dizini, ogrenci_hiyerarsi_yaniti
+    from app.core import filiz_bilgi as fb
     ret = ogrenci_hiyerarsi_yaniti(metin, ogrenci_dizini(db, ogrenci), ogrenci.ad_soyad)
     if ret:
-        return ret
+        return ret, "sabit"
+    if moduller is None:
+        from app.core.paketler import okul_modulleri
+        moduller = set(okul_modulleri(db, ogrenci.okul_id))
     t = _sade(metin)
     b = Baglam(db, ogrenci)
     if _KAYNAK_SORU.search(metin or ""):
         try:
             c = k_kaynak_soru(b, metin)
             if c:
-                return c
+                return c, "rehber"
         except Exception:
             db.rollback()
+    icerik = None
+    try:
+        if fb.bilgi_sorusu_mu(db, metin) or fb.sozluk_sorusu_mu(db, metin):
+            icerik = fb.bilgi_cevabi(fb.bilgi_ara(db, metin, moduller))
+            if icerik:
+                return icerik, "icerik"
+    except Exception:
+        db.rollback()
     for anahtarlar, f in KONULAR:
         if any(a in t for a in anahtarlar):
             try:
-                return f(b, metin)
+                return f(b, metin), "rehber"
             except Exception:
                 db.rollback()
                 break
+    try:
+        if not fb.kisisel_mi(metin):
+            icerik = fb.bilgi_cevabi(fb.bilgi_ara(db, metin, moduller))
+            if icerik:
+                return icerik, "icerik"
+    except Exception:
+        db.rollback()
     ornek = random.sample(ORNEK_SORULAR, 3)
-    return ("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin, görevlerin ve gelişiminle ilgili sorularda yardım edebilirim. "
-            "Mesela şunları sorabilirsin: " + " · ".join(f"\"{x}\"" for x in ornek))
+    return ("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin, görevlerin ve gelişiminle ilgili sorularda; bölümler, meslekler ve "
+            "sözlükteki kavramlar hakkında da yardım edebilirim. Mesela şunları sorabilirsin: "
+            + " · ".join(f"\"{x}\"" for x in ornek)), "bilinmiyor"
+
+
+def otomatik_yanit(db: Session, ogrenci: Ogrenci, metin: str) -> str:
+    return otomatik_yanit_kaynakli(db, ogrenci, metin)[0]

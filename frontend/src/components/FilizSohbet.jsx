@@ -119,11 +119,13 @@ export default function FilizSohbet() {
         id = await yeniOturum()                                   // oturum kapanmışsa sessizce yenisini aç
         cevap = await api.aiKocMesajGonder(id, metin, konum.pathname)
       }
-      setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti, otomatik: cevap.otomatik }])
+      setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti, otomatik: cevap.otomatik, kaynak: cevap.kaynak }])
       // [2026-10-30] Yapay zekâ sınırı dolunca hizmet kesilmez: sunucu rehber moduna geçer (cevap.otomatik); burada da
       // hak bitince sohbet kilitlenmez, rehber moduna geçilir.
       setDurum((d) => {
         if (!d || d.mod === 'otomatik') return d
+        // [2026-10-31] Sistem içeriğinden, gizlilik ya da kriz cevabı: yapay zekâ kullanılmadı, hak düşmez, mod değişmez
+        if (['icerik', 'sabit', 'kriz'].includes(cevap.kaynak)) return d
         const kalan = Math.max(0, d.kalan - 1)
         return cevap.otomatik || kalan <= 0 ? { ...d, mod: 'otomatik', kalan: d.gunluk_limit || 1 } : { ...d, kalan }
       })
@@ -284,7 +286,8 @@ export default function FilizSohbet() {
                 : <div key={i} className={`filiz-mesaj ${m.rol === 'ogrenci' ? 'ogrenci' : 'asistan'}`}>
                     {m.icerik}
                     {m.rol === 'asistan' && m.sozluk && <button className="filiz-oto-etiket" style={{ border: 0, cursor: 'pointer' }} onClick={() => { setSozlukKelime(m.sozluk.ad); setGorunum('sozluk') }}>📖 Sözlükten · benzer kelimeler</button>}
-                    {m.rol === 'asistan' && !m.sozluk && (m.otomatik || (otomatik && m.otomatik !== false)) && <span className="filiz-oto-etiket">🤖 Otomatik yanıt</span>}
+                    {m.rol === 'asistan' && !m.sozluk && m.kaynak === 'icerik' && <span className="filiz-oto-etiket">📖 Sistemdeki içerikten</span>}
+                    {m.rol === 'asistan' && !m.sozluk && m.kaynak !== 'icerik' && (m.otomatik || (otomatik && m.otomatik !== false)) && <span className="filiz-oto-etiket">🤖 Otomatik yanıt</span>}
                   </div>
             ))}
             {gonderiliyor && <div className="filiz-mesaj asistan filiz-yaziyor"><span /><span /><span /></div>}
