@@ -144,12 +144,59 @@ def test_netlestirme_secenekleri_ve_anlasilamayan_listesi(istemci, kisiler, db, 
     r2 = istemci.post(f"/koclugu/asistan/oturum/{ot}/mesaj", headers=h, json={"mesaj": ders}).json()
     assert r2["kaynak"] == "icerik" and "Bağcılık" in r2["asistan_yaniti"], "seçenek düğmesi içeriğe götürmeli"
     istemci.post(f"/koclugu/asistan/oturum/{ot}/mesaj", headers=h, json={"mesaj": "qwzx ahmet@ornek.com 05551234567"})
+    istemci.post(f"/koclugu/asistan/oturum/{ot}/mesaj", headers=h, json={"mesaj": "Zeynep Hoca 11-B depresyondayim qwzx"})
     # Liste varsayılan kapalı
     assert istemci.get("/admin/filiz/anlasilamayan", headers=kisiler["super"]).status_code == 403
     db.execute(text("UPDATE sistem_parametreleri SET deger = '1' WHERE anahtar = 'filiz_anlasilamayan_listesi_acik'"))
     db.commit()
     v = istemci.get("/admin/filiz/anlasilamayan", headers=kisiler["super"]).json()
     metin = json.dumps(v, ensure_ascii=False)
-    assert "ahmet@ornek.com" not in metin and "05551234567" not in metin and "qwzx [e-posta] [telefon]" in metin
+    assert "ahmet@ornek.com" not in metin and "05551234567" not in metin and "▢ [e-posta] [telefon]" in metin
+    # Sistem içeriğinde geçmeyen ad / sınıf kodu ve özel nitelikli veri (sağlık) açık kalmaz
+    assert "zeynep" not in metin.lower() and "11" not in metin and "depres" not in metin.lower()
     assert istemci.get("/admin/filiz/anlasilamayan", headers=kisiler["yetkili"]).status_code in (401, 403)
     fb.dizini_sifirla()
+
+
+# ------------------------------------------------------------------- [2026-10-31] bağımsız kör ölçümün kök nedenleri
+def test_konusma_dili_duzeltmesi_normal_sozcukleri_bozmaz():
+    assert fb.duzelt("gercek hayatta ancak oyuncak") == "gercek hayatta ancak oyuncak"
+    assert fb.duzelt("iyi bir muhendis olmak istiyorum") == "iyi bir muhendis olmak istiyorum"
+    assert fb.duzelt("olcam") == "olacagim" and fb.duzelt("harita muh") == "harita muhendisligi"
+    assert fb.duzelt("elektrik elektronik muh") == "elektrik ve elektronik muhendisligi"
+
+
+def test_rehber_anahtarlari_sozcuk_basinda_eslesir():
+    from app.core import filiz_rehber as fr
+    assert not fr._anahtar_var("hey", "cok heyecanliyim") and fr._anahtar_var("hey", "hey filiz")
+    assert not fr._anahtar_var("kocum", "kocaeli universitesi") and fr._anahtar_var("test", "testlerimin sonucu")
+    f, _ = fr._konu_sec("koc universitesi nasil", False)
+    assert f is not fr.k_koc
+
+
+def test_hedef_bolum_cevabi_baska_bolum_sorusunda_verilmez():
+    from app.core import filiz_rehber as fr
+    assert fr._konu_sec("makina muhendisligi hakkinda bilgi verir misin", False)[0] is not fr.k_bolum_bilgi
+    assert fr._konu_sec("hedef bolumum hakkinda bilgi verir misin", False)[0] is fr.k_bolum_bilgi
+
+
+def test_duygu_ifadeleri_icerik_aramasindan_once():
+    from app.core import filiz_rehber as fr
+    for soru, konu in (("bikdim artik her sey cok zor", fr.k_motivasyon), ("kazanamazsam ne olcak cok korkuyorum", fr.k_kaygi),
+                       ("ailem doktor olmami istiyo ben istemiyorum", fr.k_aile), ("sevgilim benden ayrildi", fr.k_duygu)):
+        assert fr._rota(None, soru, set()) == ("konu", konu), soru
+
+
+def test_tam_bolum_adi_ve_yakin_yazim_once():
+    B = fb.Belge
+    d = fb.Dizin([B("bolum", "İşletme bölümü", "İşletme.", "Bölümler › İşletme", None, "isletme"),
+                  B("bolum", "İşletme Mühendisliği bölümü", "İşletme müh.", "Bölümler › İşletme Mühendisliği", None, "isletme muhendisligi"),
+                  B("bolum", "Grafik Tasarımı bölümü", "Grafik.", "Bölümler › Grafik Tasarımı", None, "grafik tasarimi"),
+                  B("meslek", "Grafik tasarımcı (Grafik Tasarımı)", "Tasarlar.", "Bölümler › Grafik Tasarımı", None, "grafik tasarimci")])
+    assert d.varliklari_coz("isletme mi") == [("isletme", {"isletme"})]
+    assert d.varliklari_coz("grafik tasarim icin")[0][0] == "grafik tasarimi"
+
+
+def test_giris_sinavi_ders_baglami_degil():
+    assert not fb.ders_baglami_mi("grafik tasarim icin yetenek sinavi var mi", None)
+    assert fb.ders_baglami_mi("sinava nasil calisayim", None)

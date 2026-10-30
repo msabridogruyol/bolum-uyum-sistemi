@@ -1503,7 +1503,8 @@ def filiz_kullanim(gun: int = 30, db: Session = Depends(get_db), _admin: AdminKu
 # [2026-10-31] Filiz'in anlayamadığı ya da netleştirme sorduğu öğrenci soruları (pilotta anlama katmanını geliştirmek için).
 # Varsayılan KAPALI (filiz_anlasilamayan_listesi_acik = 0): öğrenci mesajı içeriği gösterdiği için KVKK değerlendirmesinden
 # sonra açılır. Açıkken: yalnızca süper admin; öğrenci/okul kimliği dönmez; e-posta, telefon, TC, numara ve sistemdeki
-# öğrenci adları ile ad benzeri sözcükler maskelenir; aynı soru birleştirilip sayısı verilir.
+# öğrenci adları ile ad benzeri sözcükler maskelenir; ardından sistem içeriğinde geçmeyen her sözcük (öğretmen/arkadaş adı,
+# okul/semt adı) ve özel nitelikli veri sözcükleri (sağlık, din vb.) "▢" olur; aynı soru birleştirilip sayısı verilir.
 @router.get("/filiz/anlasilamayan")
 def filiz_anlasilamayan(gun: int = 30, adet: int = 200, db: Session = Depends(get_db),
                         _admin: AdminKullanici = Depends(get_mevcut_super_admin)):
@@ -1520,10 +1521,12 @@ def filiz_anlasilamayan(gun: int = 30, adet: int = 200, db: Session = Depends(ge
          WHERE a.rol = 'asistan' AND a.kaynak IN ('bilinmiyor', 'netlestirme', 'icerik_yok')
            AND a.olusturulma_zamani >= now() - make_interval(days => :g)
          ORDER BY a.id DESC LIMIT 5000"""), {"g": gun}).all()
+    from app.core import filiz_bilgi as fb
+    fb.dizin(db)                       # sistem sözcük dağarcığı (sistem_disi_maskele) yüklü olsun
     dz = dizin_yukle(db, tum_sistem=True)
     say: Counter = Counter()
     for kaynak, soru in satirlar:
         if soru:
-            m = ad_benzerlerini_maskele(dz.maskele(temel_maskele(soru)))
+            m = fb.sistem_disi_maskele(ad_benzerlerini_maskele(dz.maskele(temel_maskele(soru))))
             say[(kaynak, " ".join(m.split())[:300])] += 1
     return {"gun": gun, "sorular": [{"kaynak": k, "soru": s, "adet": n} for (k, s), n in say.most_common(adet)]}

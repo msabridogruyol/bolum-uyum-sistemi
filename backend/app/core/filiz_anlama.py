@@ -120,12 +120,19 @@ def meslek_yolu(d: fb.Dizin, soru: str) -> Cevap | None:
     return None
 
 
+# Yalnızca "X mi Y mi" kalıbında tek başına yazılan kısa adlar ("tip mi dis mi"): genel metinde "dis" dış/diş belirsiz
+_KISA_KARSI = {"dis": "dis hekimligi", "disci": "dis hekimligi", "eczane": "eczacilik"}
+
+
 def karsilastirma(d: fb.Dizin, soru: str) -> Cevap | None:
     t = f" {fb.duzelt(soru)} "
     if not any(k in t for k in _KARSILASTIR):
         return None
     bolumler: list[str] = []
-    for anahtar, hedef in d.varliklari_coz(soru):
+    parca = [p.strip() for p in re.split(r" (?:mi|mu|yoksa|veya|ya da) ", t) if p.strip()]
+    ek = [_KISA_KARSI[p.split()[-1]] for p in parca if p.split() and p.split()[-1] in _KISA_KARSI
+          and _KISA_KARSI[p.split()[-1]] in d.bolumler]
+    for anahtar, hedef in d.varliklari_coz(soru) + [(e, {e}) for e in ek]:
         bh = [h for h in hedef if h in d.bolumler]
         if len(bh) == 1 and bh[0] not in bolumler:
             bolumler.append(bh[0])
@@ -146,6 +153,26 @@ def karsilastirma(d: fb.Dizin, soru: str) -> Cevap | None:
     return Cevap(yanit, "icerik", secenek)
 
 
+# "kazanmak" üniversite için de kullanılır ("psikolojiyi kazanırsam"): yalnızca para anlamındaki kalıplar
+_MAAS = ("maas", "kazanilir", "ne kadar kazan", "ne kadar para", "para kazan", "cok kazandir", "ucreti", "aylik gelir")
+
+
+def maas_sorusu(d: fb.Dizin, soru: str, moduller: set[str] | None) -> Cevap | None:
+    """Sistemde meslek / bölüm bazında maaş verisi yok: uydurmadan söyler, var olan içeriğe yönlendirir."""
+    t = f" {fb.duzelt(soru)} "
+    if not any(k in t for k in _MAAS):
+        return None
+    hedef = [h for _, hs in d.varliklari_coz(soru) for h in sorted(hs) if h in d.bolumler]
+    if not hedef:
+        return None
+    ad = _gorunen(d, hedef[0])
+    secenek = [f"{ad} mezunları nerelerde çalışır?", f"{ad} bölümü hakkında bilgi verir misin?"]
+    if moduller and "is_hayati" in moduller:
+        secenek.append("Brüt ve net maaş farkı ne demek?")
+    return Cevap(f"Sistemde meslek ya da bölüm bazında maaş bilgisi yok; maaşlar kuruma, şehre, sektöre ve deneyime göre çok değişir. "
+                 f"{ad} mezunlarının hangi alanlarda çalıştığını ve bölümü anlatabilirim. 🌱", "icerik", secenek)
+
+
 def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | None:
     """Kişisel konulardan ÖNCE denenir: karşılaştırma, meslek yolu, güçlü bilgi sorusu."""
     d = fb.dizin(db)
@@ -155,11 +182,17 @@ def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | N
         c = f(d, soru)
         if c:
             return c
+    c = maas_sorusu(d, soru, moduller)
+    if c:
+        return c
     # Tanım sorusu ve terim sözlükte aynen var: sözlük (soruda geçen bölüm adından daha uzun/özgülse)
     sb = fb.sozluk_bul(db, soru)
     if sb is not None:
-        en_uzun_ad = max((len(a) for a, _ in d.varliklari_coz(soru)), default=0)
-        if max(len(a) for a in sb.adlar) >= en_uzun_ad:
+        coz = d.varliklari_coz(soru)
+        en_uzun_ad = max((len(a) for a, _ in coz), default=0)
+        tanim = any(k in f" {fb.duzelt(soru)} " for k in fb._TANIM)
+        # Tanım kalıbı yoksa ("hazırlık sınıfı zorunlu mu") sözlük yalnızca soruda bölüm/meslek adı geçmiyorsa
+        if (tanim or not coz) and max(len(a) for a in sb.adlar) >= en_uzun_ad:
             return Cevap(f"📖 {sb.baslik}\n{fb._kirp(sb.metin)}\n\nKaynak: {sb.nerede}", "icerik")
     if fb.bilgi_sorusu_mu(db, soru) or fb.sozluk_sorusu_mu(db, soru):
         bulunan = fb.bilgi_ara(db, soru, moduller)
@@ -168,6 +201,23 @@ def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | N
             diger = [soru_sablonu(s.belge) for s in bulunan[1:3] if s.belge.baslik != ilk.baslik]
             return Cevap(fb.bilgi_cevabi(bulunan[:1]), "icerik", list(dict.fromkeys(diger)))
     return None
+
+
+_GENEL_KOK = {w[:5] for w in "verir misin musun nasil neler nedir hangi olur olan icin gibi kadar zaman yapar yapmak".split()}
+
+
+def alan_bolumleri(d: fb.Dizin, soru: str, bolum_hedef: list[str]) -> list[str]:
+    """Soru bir alanı soruyorsa ("muhendislik", "ogretmenlik", "saglik alaninda neler var"): adında o sözcük geçen bölümler."""
+    if bolum_hedef and len(bolum_hedef) <= 6:
+        return []
+    if len(bolum_hedef) > 6:
+        return bolum_hedef
+    kel = [w for w in fb.duzelt(soru).split() if len(w) >= 5 and w not in fb._DURAK and w[:5] not in _GENEL_KOK]
+    for w in kel:
+        uyan = [v for v in d.bolumler if any(len(x) >= 5 and fb._ek_toleransli(w, x) for x in v.split())]
+        if len(uyan) >= 2:
+            return uyan
+    return []
 
 
 def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cevap | None:
@@ -194,10 +244,12 @@ def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cev
     if len(bolum_hedef) == 1:
         v = bolum_hedef[0]
         # Bilgi niyeti varsa (ör. seçenek düğmesinden gelen soru) o bölümün en iyi belgesiyle cevap: döngüye girilmez
-        if not kisisel and any(k in f" {fb.duzelt(soru)} " for k in fb._BILGI_NIYET):
+        if not kisisel:
+            niyet = any(k in f" {fb.duzelt(soru)} " for k in fb._BILGI_NIYET)
             kendi = [x for x in d.ara(soru, moduller, adet=12) if x.belge.varlik == v
                      or d.meslek_bolum.get(x.belge.varlik, set()) == {v}]
-            if kendi:
+            # Bilgi niyeti varsa ya da bölümün kendi belgesi soruyla güçlü eşleşiyorsa ("grafik tasarım için yetenek sınavı var mı")
+            if kendi and (niyet or kendi[0].puan >= fb.BAGLAM_ESIK):
                 ilk = kendi[0].belge
                 return Cevap(fb.bilgi_cevabi(kendi[:1]), "icerik",
                              [o for o in _bolum_secenekleri(d, v) if o != soru_sablonu(ilk)][:2])
@@ -205,6 +257,11 @@ def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cev
     if 1 < len(bolum_hedef) <= 6:
         return Cevap("Hangisini kastettin? 🌱", "netlestirme",
                      [f"{_gorunen(d, v)} bölümü hakkında bilgi verir misin?" for v in bolum_hedef[:4]])
+    alan = [] if kisisel else alan_bolumleri(d, soru, bolum_hedef)
+    if len(alan) >= 2:
+        ornek = sorted(alan, key=len)[:4]
+        return Cevap(f"Bu alanda sistemde {len(alan)} bölüm var. Hangisini merak ediyorsun? 🌱 Tamamını Bölümler sayfasında görebilirsin.",
+                     "netlestirme", [f"{_gorunen(d, v)} bölümü hakkında bilgi verir misin?" for v in ornek])
     if kisisel or fb.ders_baglami_mi(soru, db):
         return None
     # Konu İş Hayatı'ndaysa ama okulda bu modül kapalıysa: açıkça söyle (alakasız seçenek gösterme)
@@ -214,8 +271,20 @@ def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cev
             return Cevap("Bu konu İş Hayatı bölümünde anlatılıyor; okulunun paketinde bu bölüm yer almıyor. "
                          "Rehber öğretmenine sorabilirsin. 🌱", "icerik_yok", ["Rehber öğretmenime nasıl ulaşırım?"])
     # Zayıf adaylardan seçenek: soruda ad yoksa yalnızca genel türler (bir mesleğin günü / zor günleri rastgele önerilmez)
-    adaylar = [s for s in d.ara(soru, moduller, adet=8)
-               if s.puan >= 8.0 and not s.belge.varlik]
+    # [kör ölçüm] alakasız tek terim önerilmesin ("kebap tarifi" → "Algoritmik düşünme"): en az iki ortak sözcük kökü
+    kok = set(fb.sorgu_kokleri(soru)) - _GENEL_KOK
+    hepsi = d.ara(soru, moduller, adet=8)
+    # Soru bir bölüme/mesleğe bağlı içerik türünü soruyor ama ad yok ("iş görüşmesinde ne sorarlar"): adı sor
+    ust = [s for s in hepsi[:3] if s.belge.varlik]
+    if len(ust) == 3 and len({s.belge.tur for s in ust}) == 1 and fb._niyet_katsayisi(soru, ust[0].belge.tur) > 1:
+        tur = ust[0].belge.tur
+        ne = {"mulakat": "Mülakat soruları bölüm bölüm hazırlandı", "gun": "Bir gününü yaşa sayfaları meslek meslek hazırlandı",
+              "zorgun": "Zor günler meslek meslek anlatılıyor"}.get(tur, "Bu içerik bölüm bölüm hazırlandı")
+        return Cevap(f"{ne}. Hangi bölüm ya da meslek için soruyorsun? Adını yazarsan onu gösteririm; örnekler: 🌱",
+                     "netlestirme", list(dict.fromkeys(soru_sablonu(s.belge) for s in ust)))
+    adaylar = [s for s in hepsi
+               if s.puan >= 8.0 and not s.belge.varlik
+               and (len(kok & set(s.belge.kokler)) >= 2 or fb._niyet_katsayisi(soru, s.belge.tur) > 1)]
     secenek = list(dict.fromkeys(soru_sablonu(s.belge) for s in adaylar))[:3]
     if secenek:
         return Cevap("Tam anlayamadım; şunlardan birini mi soruyorsun? 🌱", "netlestirme", secenek)

@@ -272,6 +272,28 @@ def k_sinav(b: Baglam, m: str) -> str:
     ])
 
 
+def k_kaygi(b: Baglam, m: str) -> str:
+    return ("Bu kaygıyı hissetmen çok anlaşılır; sınav ve gelecek kaygısı bu yaşta çok yaygın. Kaygıyı azaltan küçük adımlar: "
+            "her gün yapabileceğin tek bir küçük hedef koy, denemeleri gerçek sınav gibi süre tutarak çöz, uykunu düzenli tut. "
+            "Tek bir sınav sonucu yolunu tamamen belirlemez; farklı bölümlere ve yollara giden birden çok seçenek vardır. "
+            "Kaygı günlük hayatını zorlaştırıyorsa rehber öğretmeninle konuş; Eğitim Koçları sayfasından da görüşme talebi bırakabilirsin.")
+
+
+def k_duygu(b: Baglam, m: str) -> str:
+    return ("Bunu yaşaman zor olmalı; böyle hissetmen çok anlaşılır. 💚 Bu tür konularda en iyi destek, güvendiğin biriyle "
+            "konuşmak: ailenden biri, bir arkadaşın ya da okulundaki rehber öğretmenin. Rehber öğretmeninle konuştuklarını gizli tutar. "
+            "Ben bölüm, meslek ve hedeflerin konusunda yanındayım; istersen sonra kaldığımız yerden devam ederiz.")
+
+
+def k_aile(b: Baglam, m: str) -> str:
+    ilk = b.ilk_bolumler(3)
+    ek = f" Sonuçlarına göre sana en uyumlu bölümler: {_liste([a for a, _ in ilk])}." if ilk else ""
+    return ("Ailenin beklentisiyle kendi isteğin farklı olabilir; bu çok yaygın bir durum ve konuşarak çözülebilir." + ek +
+            " Raporlarım sayfasından veli raporunu indirip ailenle birlikte bakabilirsin; neden bu bölümlerin sana uyduğunu "
+            "birlikte görmek konuşmayı kolaylaştırır. Bölümler › Karşılaştır ile ailenin istediği bölümü ve senin istediğin bölümü "
+            "yan yana koyabilirsin. Zorlanırsan rehber öğretmeninden aile görüşmesi için destek iste.")
+
+
 def k_kulup(b: Baglam, m: str) -> str:
     try:
         from app.core import kulup_servisi as ks
@@ -555,11 +577,14 @@ KONULAR = [
     (("is turu soru", "is turu tercih", "k5 nedir", "k5 ne"), k_is_turu),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
     (("sistem nasil", "nasil calisiyor", "filizyol nedir", "filizyol ne ise yarar", "sistem ne ise yarar", "bu site ne ise yarar"), k_sistem),
-    (("motivasyon", "motive", "motivem", "isteksiz", "bikkin", "yoruldum", "canim istemiyor", "hevesim", "istegim yok"), k_motivasyon),
+    (("motivasyon", "motive", "motivem", "isteksiz", "bikkin", "bikdim", "biktim", "bunaldim", "sikildim", "yoruldum",
+      "canim istemiyor", "hevesim", "istegim yok", "her sey cok zor", "her sey zor", "yapamiyorum", "basaramiyorum",
+      "umudum", "umutsuz", "vazgecmek", "birakmak istiyorum"), k_motivasyon),
+    (("kaygi", "stres", "korkuyorum", "korkum", "endise", "panik", "kazanamazsam", "kazanamayacagim", "geriliyorum", "gergin"), k_kaygi),
     (("kararsiz", "karar veremiyorum", "emin degilim", "secemiyorum", "secmeli miyim", "secsem mi", "tercih etmeli",
-      "bilmiyorum", "kafam karisik", "kafam cok karisik", "kafam", "karar veremedim", "emin olamiyorum", "hangisini secsem", "hangisi iyi",
+      "bilmiyorum", "kafam karisik", "kafam cok karisik", "kafam karis", "karar veremedim", "emin olamiyorum", "hangisini secsem", "hangisi iyi",
       "hangisi daha iyi", "ne secsem", "ne okusam", "hicbir sey bilmiyorum", "aklim karisik"), k_kararsiz),
-    (("sinav", "kaygi", "stres", "verimli", "ders calis", "nasil calis", "yks", "tyt", "ayt"), k_sinav),
+    (("sinav", "verimli", "ders calis", "nasil calis", "yks", "tyt", "ayt"), k_sinav),
     (("degistir", "degisebilir", "baska bolum sec"), k_hedef_degis),
     (("hakkinda bilgi", "ne okutuyor", "bolum hakkinda", "bolumu anlat", "mezunlar"), k_bolum_bilgi),
     (("siradaki adim", "yol harita", "sonraki adim", "adimim"), k_adim),
@@ -568,59 +593,118 @@ KONULAR = [
     (("kitap", "film", "belgesel", "dizi", "kaynak", "okuyabil", "izleyebil"), k_kaynak),
     (("kulup", "kulub", "topluluk", "ilgi testi"), k_kulup),
     (("rehber ogretmen", "rehberlik servis", "psikolojik danisman"), k_rehber),
-    (("koc", "kocla gorus", "koc ile gorus", "gorusme talebi", "randevu"), k_koc),   # [2026-10-31] "iş görüşmesi" koçluğa gitmesin
+    (("kocum", "kocumla", "kocla", "koc ile", "koc gorus", "koclar", "egitim koc", "kocluk gorus", "gorusme talebi", "randevu"), k_koc),
+    # [2026-10-31] bare "koc" yok: "Koç Üniversitesi", "Kocaeli"; "iş görüşmesi" koçluğa gitmesin
     (("takvim", "tarih", "ne zaman", "etkinlik"), k_takvim),
     (("guclu", "iyi oldugum", "yetenek", "avantaj"), k_guclu),
     (("gelistir", "gelisim", "zayif", "eksik", "zorlan"), k_gelisim),
     (("uyum yuzde", "yuzde", "% ", "uyum puan", "uyum ne demek"), k_uyum),   # [2026-10-31] "ne demek" tek başına sözlük/bilgi sorusu
     (("hedef", "bana uygun mu", "dogru bolum", "uygun mu"), k_hedef),
-    (("hangi bolum", "bolum oner", "uygun bolum", "meslek", "bolumler"), k_bolum_oner),
-    (("test", "degerlendirme", "katman", "soru", "cevaplamali", "neredeyim"), k_test),
+    (("hangi bolum", "bolum oner", "uygun bolum", "meslek", "bolumler", "onerirsin", "ne onerir", "bana ne uygun",
+      "ilgi alanlarim", "ilgi alanima"), k_bolum_oner),
+    (("test", "degerlendirme", "katman", "kac soru", "sorulari nasil cevap", "cevaplamali", "neredeyim"), k_test),
     (("merhaba", "selam", "gunaydin", "iyi aksam", "hey", "naber", "nasilsin"), k_selam),
 ]
+
+
+# [2026-10-31 kör ölçüm] Duygu ifadeleri içerik aramasından ÖNCE: "bıktım her şey çok zor" bir mesleğin "zor günler"
+# sayfasına, "ailem doktor olmamı istiyor" Tıp seçeneklerine gitmesin.
+_DUYGU_ONCE = [
+    (("bikdim", "biktim", "bunaldim", "her sey cok zor", "her sey zor", "yapamiyorum", "basaramiyorum", "umutsuz",
+      "vazgecmek istiyorum", "birakmak istiyorum", "isteksizim", "motivasyonum yok", "motivasyonum dustu"), k_motivasyon),
+    (("korkuyorum", "kaygim", "kaygiliyim", "stresliyim", "stres altindayim", "kazanamazsam", "kazanamayacagim",
+      "geriliyorum", "panik oluyorum", "endiseliyim"), k_kaygi),
+    (("ayrildi", "ayrildik", "uzgunum", "cok uzgun", "mutsuzum", "yalniz hissediyorum", "kimse anlamiyor", "aglamak istiyorum",
+      "moralim bozuk", "moralim cok bozuk", "kavga ettik", "dislaniyorum", "zorbalik"), k_duygu),
+]
+_AILE = ("ailem", "annem", "babam", "ailemin", "ailemle")
+_AILE_BASKI = ("istiyor", "istiyo", "istemiyor", "istemiyo", "izin vermiyor", "baski", "zorluyor", "karsi", "kiziyor", "anlamiyor")
+# İçerik adı (bölüm/meslek) geçen soruda bu genel konular içeriğe yol verir ("grafik tasarım için yetenek sınavı var mı")
+_ZAYIF_KONULAR = {"k_sinav", "k_takvim", "k_test", "k_kaynak", "k_kulup", "k_bolum_oner", "k_selam", "k_uyum", "k_dusunme",
+                  "k_kutuphane", "k_kaygi", "k_hafta", "k_guclu", "k_gelisim", "k_hedef_degis", "k_kararsiz"}
+_KENDI_HEDEF = ("hedef", "bolumum", "bolumumu", "bolumume", "bolumumde", "sectigim", "benim bolum")
+_GENEL = set("""hakkinda bilgi ne okutuyor okutulur bolum bolumu bolumler anlat anlatir mezunlar mezunlari verir ver misin musun
+biraz nedir nasil bir bolumunu""".split())
+
+
+def _anahtar_var(a: str, t: str) -> bool:
+    """Anahtar sözcük başında eşleşir (alt dize değil): "koc" ≠ "kocaeli", "hey" ≠ "heyecanliyim", "soru" ≠ "sorulari"
+    (kısa anahtarlar en çok 3 harflik ekle)."""
+    a = a.strip()
+    if not a:
+        return False
+    kuyruk = (r"[a-z]{0,3}(?![a-z0-9])" if len(a) <= 3 else r"[a-z]{0,7}(?![a-z0-9])") if len(a) <= 4 and a[-1].isalnum() else ""
+    return re.search(rf"(?<![a-z0-9]){re.escape(a)}{kuyruk}", t) is not None
+
+
+def _konu_sec(t: str, varlik_var: bool) -> tuple:
+    """(konu fonksiyonu, zayıf mı) ya da (None, False). t: tanınan bölüm/meslek adları çıkarılmış düzeltilmiş soru."""
+    for anahtarlar, f in KONULAR:
+        if any(_anahtar_var(a, t) for a in anahtarlar):
+            if f is k_bolum_bilgi:
+                # Öğrencinin hedef bölümü yalnızca kendi hedefi sorulduğunda anlatılır; başka bir ad geçiyorsa (tanınmasa da) değil
+                kalan = [w for w in t.split() if w not in _GENEL and w not in fb_durak()]
+                if varlik_var or not (any(_anahtar_var(k, t) for k in _KENDI_HEDEF) or not kalan):
+                    continue
+            return f, f.__name__ in _ZAYIF_KONULAR
+    return None, False
+
+
+def fb_durak() -> set:
+    from app.core import filiz_bilgi as fb
+    return fb._DURAK
+
+
+def _rota(db: Session, metin: str, moduller: set[str]):
+    """Tek yönlendirme sırası (canlı cevap ve ölçüm aynı yolu kullanır). Döner: ("cevap", Cevap) | ("konu", fonksiyon)."""
+    from app.core import filiz_bilgi as fb
+    from app.core.filiz_anlama import onceden_anla, sonradan_netlestir
+    t = fb.duzelt(metin)
+    if _KAYNAK_SORU.search(metin or ""):
+        return "konu", k_kaynak_soru
+    for anahtarlar, f in _DUYGU_ONCE:
+        if any(_anahtar_var(a, t) for a in anahtarlar):
+            return "konu", f
+    if any(_anahtar_var(a, t) for a in _AILE) and any(_anahtar_var(a, t) for a in _AILE_BASKI):
+        return "konu", k_aile
+    c = onceden_anla(db, metin, moduller)
+    if c:
+        return "cevap", c
+    d = fb.dizin(db)
+    varlik_var = bool(d.varliklari_coz(metin))
+    f, zayif = _konu_sec(d.varliksiz_metin(metin), varlik_var)
+    if f is not None and not (zayif and varlik_var):
+        return "konu", f
+    c = sonradan_netlestir(db, metin, moduller)
+    if c and (f is None or c.kaynak == "icerik"):
+        return "cevap", c
+    if f is not None:
+        return "konu", f
+    return "cevap", None
 
 
 def otomatik_yanit_kaynakli(db: Session, ogrenci: Ogrenci, metin: str, moduller: set[str] | None = None):
     """[2026-10-31] Katmanlı rehber. Döner: filiz_anlama.Cevap(yanit, kaynak, secenekler).
     kaynak: 'sabit' (gizlilik) | 'icerik' (sistem içeriği) | 'rehber' (öğrencinin kendi verisi) | 'netlestirme'
-    ("Şunu mu demek istedin?") | 'bilinmiyor'.
-    Sıra: gizlilik → ilham kaynağı sorusu → anlama (karşılaştırma, meslek yolu, bilgi sorusu) → kişisel konular →
-    netleştirme / içerik araması → bilinmiyor. Soru önce düzeltilir (konuşma dili, kısaltmalar)."""
+    ("Şunu mu demek istedin?") | 'icerik_yok' | 'bilinmiyor'.
+    Sıra (_rota): gizlilik → ilham kaynağı sorusu → duygu ifadeleri → anlama (karşılaştırma, meslek yolu, bilgi sorusu) →
+    kişisel konular (ad geçen soruda genel konular içeriğe yol verir) → netleştirme / içerik araması → bilinmiyor."""
     from app.core.filiz_gizlilik import ogrenci_dizini, ogrenci_hiyerarsi_yaniti
-    from app.core import filiz_bilgi as fb
-    from app.core.filiz_anlama import Cevap, onceden_anla, sonradan_netlestir
+    from app.core.filiz_anlama import Cevap
     ret = ogrenci_hiyerarsi_yaniti(metin, ogrenci_dizini(db, ogrenci), ogrenci.ad_soyad)
     if ret:
         return Cevap(ret, "sabit")
     if moduller is None:
         from app.core.paketler import okul_modulleri
         moduller = set(okul_modulleri(db, ogrenci.okul_id))
-    t = fb.duzelt(metin)
-    b = Baglam(db, ogrenci)
-    if _KAYNAK_SORU.search(metin or ""):
-        try:
-            c = k_kaynak_soru(b, metin)
+    try:
+        tur, x = _rota(db, metin, moduller)
+        if tur == "konu":
+            c = x(Baglam(db, ogrenci), metin)
             if c:
                 return Cevap(c, "rehber")
-        except Exception:
-            db.rollback()
-    try:
-        c = onceden_anla(db, metin, moduller)
-        if c:
-            return c
-    except Exception:
-        db.rollback()
-    for anahtarlar, f in KONULAR:
-        if any(a in t for a in anahtarlar):
-            try:
-                return Cevap(f(b, metin), "rehber")
-            except Exception:
-                db.rollback()
-                break
-    try:
-        c = sonradan_netlestir(db, metin, moduller)
-        if c:
-            return c
+        elif x is not None:
+            return x
     except Exception:
         db.rollback()
     ornek = random.sample(ORNEK_SORULAR, 3)
@@ -633,18 +717,11 @@ def otomatik_yanit(db: Session, ogrenci: Ogrenci, metin: str) -> str:
 
 
 def katman_tahmini(db: Session, metin: str, moduller: set[str] | None):
-    """[2026-10-31] Öğrenci olmadan yönlendirme (ölçüm testleri için): otomatik_yanit_kaynakli ile aynı sıra, kişisel
-    konularda konu fonksiyonu çağrılmaz. Döner: (kaynak, Cevap | konu_adı | None)."""
-    from app.core import filiz_bilgi as fb
-    from app.core.filiz_anlama import onceden_anla, sonradan_netlestir
-    c = onceden_anla(db, metin, moduller)
-    if c:
-        return c.kaynak, c
-    t = fb.duzelt(metin)
-    for anahtarlar, f in KONULAR:
-        if any(a in t for a in anahtarlar):
-            return "rehber", f.__name__
-    c = sonradan_netlestir(db, metin, moduller)
-    if c:
-        return c.kaynak, c
-    return "bilinmiyor", None
+    """[2026-10-31] Öğrenci olmadan yönlendirme (ölçüm testleri için): canlı cevapla aynı _rota; kişisel konularda konu
+    fonksiyonu çağrılmaz. Döner: (kaynak, Cevap | konu_adı | None)."""
+    tur, x = _rota(db, metin, moduller if moduller is not None else set())
+    if tur == "konu":
+        return "rehber", x.__name__
+    if x is None:
+        return "bilinmiyor", None
+    return x.kaynak, x
