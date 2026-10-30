@@ -161,7 +161,8 @@ def karsilastirma(d: fb.Dizin, soru: str) -> Cevap | None:
 
 
 # "kazanmak" üniversite için de kullanılır ("psikolojiyi kazanırsam"): yalnızca para anlamındaki kalıplar
-_MAAS = ("maas", "kazanilir", "ne kadar kazan", "ne kadar para", "para kazan", "cok kazandir", "ucreti", "aylik gelir")
+_MAAS = ("maas", "kazanilir", "ne kadar kazan", "ne kadar para", "para kazan", "cok kazandir", "ucreti", "aylik gelir",
+         "ne kazanir", "kazanci", "kac para", "iyi para", "para var mi")
 
 
 def maas_sorusu(d: fb.Dizin, soru: str, moduller: set[str] | None) -> Cevap | None:
@@ -180,7 +181,8 @@ def maas_sorusu(d: fb.Dizin, soru: str, moduller: set[str] | None) -> Cevap | No
                  f"{ad} mezunlarının hangi alanlarda çalıştığını ve bölümü anlatabilirim. 🌱", "icerik", secenek)
 
 
-_KUNYE = ("kac yil", "kac yilda", "suresi", "kac donem", "kac yillik", "puan turu", "hangi puan", "puan turuyle", "hangi alan")
+_KUNYE = ("kac yil", "kac yilda", "suresi", "kac donem", "kac yillik", "puan turu", "hangi puan", "puan turuyle", "hangi alan",
+          " yil mi", " yillik mi", "kac senede", "kac yilda biter", "yil surer", "yil okunur")
 
 
 def kunye_sorusu(d: fb.Dizin, soru: str) -> Cevap | None:
@@ -244,7 +246,9 @@ def alan_bolumleri(d: fb.Dizin, soru: str, bolum_hedef: list[str]) -> list[str]:
         if len(uyan) >= 2:
             return uyan
     # Kısa alan sorusu ("saglik", "saglik alaninda neler var"): bölüm tanıtımlarında bu sözcük öne çıkan bölümler
-    if kel and len(kel) <= 2 and len(fb.sorgu_kokleri(soru)) <= 3 and not any(k in f" {fb.duzelt(soru)} " for k in fb._TANIM):
+    alan_sozu = any(w.startswith("alan") for w in fb.duzelt(soru).split())
+    if kel and (len(kel) == 1 or (alan_sozu and len(kel) <= 2)) and len(fb.sorgu_kokleri(soru)) <= 3 \
+            and not any(k in f" {fb.duzelt(soru)} " for k in fb._TANIM):
         bol: list[str] = []
         for s in d.ara(" ".join(kel), set(), adet=40):
             if s.puan < 5.0 or s.belge.tur not in ("bolum", "bolum_ders", "bolum_is"):

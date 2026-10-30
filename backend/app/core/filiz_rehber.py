@@ -593,10 +593,10 @@ KONULAR = [
     (("kutuphanem", "kutuphane"), k_kutuphane),
     (("kitap", "film", "belgesel", "dizi", "kaynak", "okuyabil", "izleyebil"), k_kaynak),
     (("kulup", "kulub", "topluluk", "ilgi testi"), k_kulup),
-    (("rehber ogretmen", "rehberlik servis", "psikolojik danisman"), k_rehber),
+    (("rehber ogretmen", "rehberlik servis", "rehber hoca", "rehberlik ogretmen"), k_rehber),
     (("kocum", "kocumla", "kocla", "koc ile", "koc gorus", "koclar", "egitim koc", "kocluk gorus", "gorusme talebi", "randevu"), k_koc),
     # [2026-10-31] bare "koc" yok: "Koç Üniversitesi", "Kocaeli"; "iş görüşmesi" koçluğa gitmesin
-    (("takvim", "tarih", "ne zaman", "etkinlik"), k_takvim),
+    (("takvim", "etkinlik", "son basvuru", "hangi tarihte", "tarihleri ne", "ne zaman basliyor", "ne zaman bitiyor"), k_takvim),
     (("guclu", "iyi oldugum", "yetenek", "avantaj"), k_guclu),
     (("gelistir", "gelisim", "zayif", "eksik", "zorlan"), k_gelisim),
     (("uyum yuzde", "yuzde", "% ", "uyum puan", "uyum ne demek"), k_uyum),   # [2026-10-31] "ne demek" tek başına sözlük/bilgi sorusu
@@ -613,12 +613,14 @@ KONULAR = [
 _DUYGU_ONCE = [
     (("bikdim", "biktim", "bunaldim", "her sey cok zor", "her sey zor", "yapamiyorum", "basaramiyorum", "umutsuz",
       "vazgecmek istiyorum", "birakmak istiyorum", "isteksizim", "motivasyonum yok", "motivasyonum dustu", "kendimi yetersiz",
-      "yetersizim", "yetersiz hissed", "beceriksiz", "basarisizim", "aptal gibi", "hicbir seyi beceremiyorum"), k_motivasyon),
+      "yetersizim", "yetersiz hissed", "beceriksiz", "basarisizim", "aptal gibi", "hicbir seyi beceremiyorum",
+      "calisasim yok", "calisasim gelmiyor", "biraktim", "saldim", "hicbir sey yapmak istemiyorum"), k_motivasyon),
     (("korkuyorum", "kaygim", "kaygiliyim", "stresliyim", "stres altindayim", "kazanamazsam", "kazanamayacagim",
-      "geriliyorum", "panik oluyorum", "endiseliyim"), k_kaygi),
+      "geriliyorum", "panik oluyorum", "endiseliyim", "kalbim carpiyor", "uyuyamiyorum", "uyku tutmuyor", "elim titriyor",
+      "nefesim daraliyor"), k_kaygi),
     (("ayrildi", "ayrildik", "uzgunum", "cok uzgun", "mutsuzum", "yalniz hissediyorum", "kimse anlamiyor", "aglamak istiyorum",
       "moralim bozuk", "moralim cok bozuk", "kavga ettik", "dislaniyorum", "zorbalik", "kendimi kotu", "kotu hissediyorum",
-      "yalnizim", "kirgin", "kirildim"), k_duygu),
+      "yalnizim", "kirgin", "kirildim", "cok kotuyum", "kotuyum", "agladim", "agliyorum", "arkadaslarim beni", "dislandim"), k_duygu),
 ]
 _AILE = ("ailem", "annem", "babam", "ailemin", "ailemle")
 _AILE_BASKI = ("istiyor", "istiyo", "istemiyor", "istemiyo", "izin vermiyor", "baski", "zorluyor", "karsi", "kiziyor", "anlamiyor")
@@ -635,10 +637,11 @@ def _anahtar_var(a: str, t: str) -> bool:
     return anahtar_var(a, t)
 
 
-def _konu_sec(t: str, varlik_var: bool) -> tuple:
+def _konu_sec(t: str, varlik_var: bool, tam: str | None = None) -> tuple:
     """(konu fonksiyonu, zayıf mı) ya da (None, False). t: tanınan bölüm/meslek adları çıkarılmış düzeltilmiş soru."""
     for anahtarlar, f in KONULAR:
-        if any(_anahtar_var(a, t) for a in anahtarlar):
+        # Çok sözcüklü anahtar tam metinde de aranır: ad olarak tanınan "rehber öğretmen" silinmiş metinde kaybolmasın
+        if any(_anahtar_var(a, t) or (tam and " " in a.strip() and _anahtar_var(a, tam)) for a in anahtarlar):
             if f is k_bolum_bilgi:
                 # Öğrencinin hedef bölümü yalnızca kendi hedefi sorulduğunda anlatılır; başka bir ad geçiyorsa (tanınmasa da) değil
                 kalan = [w for w in t.split() if w not in _GENEL and w not in fb_durak()]
@@ -670,7 +673,9 @@ def _rota(db: Session, metin: str, moduller: set[str]):
         return "cevap", c
     d = fb.dizin(db)
     varlik_var = bool(d.varliklari_coz(metin))
-    f, zayif = _konu_sec(d.varliksiz_metin(metin), varlik_var)
+    if t.strip() in ("bolum", "bolumler", "meslek", "meslekler", "universite"):
+        return "konu", k_bolum_oner
+    f, zayif = _konu_sec(d.varliksiz_metin(metin), varlik_var, t)
     if f is not None and not (zayif and varlik_var):
         return "konu", f
     c = sonradan_netlestir(db, metin, moduller)

@@ -1,0 +1,1494 @@
+{
+ "gruplar": [
+  "Değerlendirme",
+  "Özelliklerin",
+  "Sınav ve tercih",
+  "Hedef ve takip",
+  "İş hayatı",
+  "Para ve çalışma hakları",
+  "Hesap ve gizlilik",
+  "Sayılar ve grafikler"
+ ],
+ "terimler": [
+  {
+   "k": "degerlendirme",
+   "ad": "Değerlendirme",
+   "g": "Değerlendirme",
+   "t": "Filizyol'daki sorulara verdiğin cevaplarla seni tanımaya çalışan bölüm. Bir sınav değildir; doğru ya da yanlış cevap yoktur.",
+   "es": [
+    "değerlendirme"
+   ]
+  },
+  {
+   "k": "katman",
+   "ad": "Katman",
+   "g": "Değerlendirme",
+   "t": "Değerlendirmenin her bir parçası. K1'den K4'e kadar dört ana katman, sonunda da K5 (İş türü tercihleri) vardır. Her katman seni başka bir yönden tanır.",
+   "o": "K1 seni değerlerinle, K2 kişiliğinle tanır. Dördünü bitirince bölüm önerilerin hazırlanır.",
+   "es": [
+    "katman"
+   ]
+  },
+  {
+   "k": "k1",
+   "ad": "K1 – Değerler / Motivasyon",
+   "g": "Değerlendirme",
+   "t": "Bir işte senin için neyin önemli olduğuna bakar: güvence mi, gelir mi, anlam mı, özgürlük mü?",
+   "es": [
+    "k1"
+   ]
+  },
+  {
+   "k": "k2",
+   "ad": "K2 – Kişilik ve Çalışma Tarzı",
+   "g": "Değerlendirme",
+   "t": "Nasıl bir ortamda rahat ettiğine ve insanlarla nasıl çalıştığına bakar.",
+   "es": [
+    "k2"
+   ]
+  },
+  {
+   "k": "k3",
+   "ad": "K3 – İş Ortamı ve Yetkinlik",
+   "g": "Değerlendirme",
+   "t": "Zor bir durumda nasıl davrandığına bakar: zamanı yönetmek, karar vermek, ekipte çalışmak gibi.",
+   "es": [
+    "k3"
+   ]
+  },
+  {
+   "k": "k4",
+   "ad": "K4 – Alan Eğilimi ve Düşünme Stili",
+   "g": "Değerlendirme",
+   "t": "Hangi konuların seni çektiğine (sayılar, dil, insanlar, tasarım, doğa…) ve nasıl düşündüğüne bakar.",
+   "es": [
+    "k4"
+   ]
+  },
+  {
+   "k": "k5",
+   "ad": "K5 – İş türü tercihleri",
+   "g": "Değerlendirme",
+   "t": "İlk dört katman bitince sana en yakın çıkan bölümlerin (uyumu 70 ve üzeri olanlar; en az 5, en fazla 20) işleriyle ilgili ek sorular. Yalnızca bu bölümleri kendi aralarında yeniden sıralar; bu yüzden ilk 10 listende küçük değişiklikler olabilir, diğer bölümler etkilenmez.",
+   "es": [
+    "k5",
+    "iş türü tercihleri",
+    "iş türü soruları"
+   ]
+  },
+  {
+   "k": "maarif",
+   "ad": "Maarif Modeli karşılığı",
+   "g": "Değerlendirme",
+   "t": "Okulda uygulanan Türkiye Yüzyılı Maarif Modeli'nde değerler, eğilimler (merak, sorumluluk, empati…) ve beceriler (iş birliği, karar verme…) tanımlanır. Filizyol, özelliklerinin bu kavramlardan hangilerine yakın olduğunu gösterir. Bu yorumsal bir ilişkilendirmedir; puanlarını etkilemez.",
+   "o": "\"Yeniliğe açıklık\" özelliğin Maarif Modeli'nde \"Merak\" ve \"Açık fikirlilik\" eğilimleriyle ilişkilidir.",
+   "es": [
+    "maarif modeli",
+    "maarif",
+    "türkiye yüzyılı maarif modeli"
+   ]
+  },
+  {
+   "k": "tur",
+   "ad": "Tur",
+   "g": "Değerlendirme",
+   "t": "Değerlendirmeyi baştan sona bir kez yapmak. Bir süre sonra yeni bir tur açılır; böylece zamanla nasıl değiştiğini görebilirsin.",
+   "o": "Ekim'de değerlendirmeyi bitirdin; birkaç ay sonra yeni tur açılınca tekrar yapıp neyin değiştiğini görürsün.",
+   "es": [
+    "tur",
+    "turu",
+    "turun",
+    "turda",
+    "turlar",
+    "turları",
+    "turdan",
+    "yeni tur",
+    "sonraki tur",
+    "önceki tur"
+   ]
+  },
+  {
+   "k": "durum_sorusu",
+   "ad": "Durum sorusu (en çok / en az)",
+   "g": "Değerlendirme",
+   "t": "Sana bir durum anlatılır ve seçenekler verilir. Sana en çok uyanı ve en az uyanı seçersin. Tek doğru cevap yoktur.",
+   "o": "\"Arkadaşın grup ödevini yapmadı. Ne yaparsın?\" — 4 seçenekten sana en çok ve en az uyanı seçersin.",
+   "es": [
+    "durum sorusu",
+    "durum soruları",
+    "en çok / en az",
+    "en çok/en az"
+   ]
+  },
+  {
+   "k": "guven_puani",
+   "ad": "Güven puanı",
+   "g": "Değerlendirme",
+   "t": "Değerlendirmeyi kurallara uygun, kendi başına yaptığını gösteren puan. Sekme değiştirmek, tam ekrandan çıkmak ya da kopyalamaya çalışmak gibi durumlar bu puanı düşürür. Kamerayı açmamak puanı düşürmez.",
+   "o": "Test sırasında 2 kez başka sekmeye geçtiysen güven puanın biraz düşer.",
+   "es": [
+    "güven puanı",
+    "güven puanın"
+   ]
+  },
+  {
+   "k": "uyum",
+   "ad": "Uyum (uyum puanı)",
+   "g": "Değerlendirme",
+   "t": "Bir bölümün, senin özelliklerine tüm bölümler içinde ne kadar yakın olduğu: 100 sana en yakın bölüm, 0 en uzak bölüm. Başarı ya da kazanma tahmini değildir; \"bu yol sana ne kadar benziyor\" sorusunun cevabıdır.",
+   "o": "Psikoloji için %82 uyum: Psikoloji, tüm bölümler içinde senin özelliklerine en yakın bölümler arasında.",
+   "es": [
+    "uyum puanı",
+    "uyum yüzdesi",
+    "uyum oranı",
+    "bölüm uyumu",
+    "% uyum"
+   ]
+  },
+  {
+   "k": "profil",
+   "ad": "Profil",
+   "g": "Değerlendirme",
+   "t": "Değerlendirmeden çıkan, seni anlatan özelliklerin tamamı. Zamanla değişebilir.",
+   "es": [
+    "profilin",
+    "profili",
+    "profil"
+   ]
+  },
+  {
+   "k": "ozellik",
+   "ad": "Özellik",
+   "g": "Değerlendirme",
+   "t": "Değerlendirmenin ölçtüğü her bir yönün. Örneğin \"Sorumluluk ve disiplin\" ya da \"Sayısal ve veri eğilimi\". Her birine 0–100 arasında bir puan verilir.",
+   "o": "\"Sorumluluk ve disiplin\" puanın 70 ise, bu yön kendi profilinde öne çıkıyor demektir.",
+   "es": [
+    "özelliklerin",
+    "özelliğin",
+    "özellik"
+   ]
+  },
+  {
+   "k": "egilim",
+   "ad": "Eğilim",
+   "g": "Değerlendirme",
+   "t": "Bir şeye kendiliğinden yönelme, ona yatkın olma. \"Sayısal eğilim\", sayılarla uğraşmayı sevme ve buna yatkın olma demektir.",
+   "o": "Boş zamanında hep bir şeyler çiziyorsan tasarım eğilimin olabilir.",
+   "es": [
+    "eğilim"
+   ]
+  },
+  {
+   "k": "guclu_yon",
+   "ad": "Güçlü yön",
+   "g": "Değerlendirme",
+   "t": "Kendi profilinde öne çıkan özelliklerin (62 ve üstü \"Güçlü\", 75 ve üstü \"Çok güçlü\"). Puanlar görelidir: başkalarıyla değil, kendi diğer özelliklerinle karşılaştırılır. Değerlerin (önem verdiklerin) ve duygusal hassasiyet güçlü yön sayılmaz.",
+   "o": "\"Sorumluluk ve disiplin\" puanın 80 → kendi profilinde çok öne çıkan bir yönün; planlı ve özenli çalışmak sende belirgin.",
+   "es": [
+    "güçlü yön",
+    "çok güçlü"
+   ]
+  },
+  {
+   "k": "gelisime_acik",
+   "ad": "Gelişime açık",
+   "g": "Değerlendirme",
+   "t": "Puanı 40'ın altında kalan, kendi profilinde geride kalan özelliklerin. Kötü olduğun anlamına gelmez. Becerilerse çalıştıkça gelişir, kişilik yönlerin küçük alışkanlıklarla esneyebilir, ilgileri deneyerek keşfedersin. Değerlerde ise bu yalnızca o şeyin senin için daha az önemli olduğunu gösterir; geliştirilecek bir eksik değildir.",
+   "o": "\"Zaman yönetimi\" puanın 35 → gelişime açık; plan yapmayı deneyerek güçlendirebilirsin.",
+   "es": [
+    "gelişime açık"
+   ]
+  },
+  {
+   "k": "ortanin_ustu",
+   "ad": "Ortanın üstü / Orta",
+   "g": "Değerlendirme",
+   "t": "\"Ortanın üstü\" 50–61, \"Orta\" 40–49 puan demek. Bu yönlerde davranışın duruma göre değişiyor.",
+   "es": [
+    "ortanın üstü"
+   ]
+  },
+  {
+   "k": "boyut",
+   "ad": "Boyut",
+   "g": "Değerlendirme",
+   "t": "Bir şeyi anlatırken baktığımız yönlerden biri. Bu sistemde \"özellik\" ile aynı anlamda kullanılır.",
+   "es": [
+    "boyut"
+   ]
+  },
+  {
+   "k": "yetkinlik",
+   "ad": "Yetkinlik",
+   "g": "Değerlendirme",
+   "t": "Bir işi iyi yapabilmek için gereken bilgi, beceri ve tutumun hepsi. Örneğin \"ekip çalışması yetkinliği\".",
+   "o": "Bir mühendisin hesap yapabilmesi bir yetkinliktir; ekiple çalışabilmesi de.",
+   "es": [
+    "yetkinlik"
+   ]
+  },
+  {
+   "k": "motivasyon",
+   "ad": "Motivasyon",
+   "g": "Değerlendirme",
+   "t": "Seni harekete geçiren, bir işi yapmak için isteklendiren şey.",
+   "o": "Yüksek puanlı bir bölüme girme isteği seni ders çalışmaya motive edebilir.",
+   "es": [
+    "motivasyon"
+   ]
+  },
+  {
+   "k": "bilissel",
+   "ad": "Bilişsel stil",
+   "g": "Değerlendirme",
+   "t": "\"Bilişsel\", düşünmeyle ilgili demek. Bilişsel stil, bilgiyi nasıl işlediğin ve problemleri nasıl çözdüğündür: adım adım mı, yoksa büyük resme bakarak mı?",
+   "es": [
+    "bilişsel"
+   ]
+  },
+  {
+   "k": "kisilik",
+   "ad": "Kişilik",
+   "g": "Değerlendirme",
+   "t": "Duygu, düşünce ve davranışlarında zaman içinde görece kararlı kalan özelliklerin bütünü.",
+   "es": [
+    "kişilik"
+   ]
+  },
+  {
+   "k": "ihlal",
+   "ad": "Kural dışı durum (ihlal)",
+   "g": "Değerlendirme",
+   "t": "Değerlendirme sırasında kurallara uymayan bir durum. Örneğin başka bir sekmeye geçmek. Güven puanını düşürür.",
+   "es": [
+    "ihlal"
+   ]
+  },
+  {
+   "k": "d_guvence",
+   "ad": "Güvence ve istikrar",
+   "g": "Özelliklerin",
+   "t": "İşinin sağlam, düzenli ve uzun süreli olmasını önemsemek. Belirsizlik yerine öngörülebilir bir hayatı tercih etmek.",
+   "es": [
+    "güvence ve istikrar"
+   ]
+  },
+  {
+   "k": "d_gelir",
+   "ad": "Yüksek gelir",
+   "g": "Özelliklerin",
+   "t": "Bir işte iyi para kazanmayı önemli bir hedef olarak görmek.",
+   "es": [
+    "yüksek gelir"
+   ]
+  },
+  {
+   "k": "d_statu",
+   "ad": "Statü ve prestij",
+   "g": "Özelliklerin",
+   "t": "Statü, toplumdaki konum demek; prestij ise saygınlık. Bu özellik, işinin insanlar tarafından saygın görülmesini önemsemeni anlatır.",
+   "o": "Toplumda saygın görülen bir mesleği (hâkimlik, doktorluk gibi) seçmek senin için önemliyse bu puanın yüksek çıkar.",
+   "es": [
+    "statü ve prestij",
+    "statü",
+    "prestij"
+   ]
+  },
+  {
+   "k": "d_anlam",
+   "ad": "Anlam ve amaç",
+   "g": "Özelliklerin",
+   "t": "Yaptığın işin sana anlamlı gelmesini, bir amaca hizmet etmesini önemsemek.",
+   "es": [
+    "anlam ve amaç"
+   ]
+  },
+  {
+   "k": "d_katki",
+   "ad": "Topluma katkı",
+   "g": "Özelliklerin",
+   "t": "İşinle başkalarına ve topluma yararlı olmayı önemsemek.",
+   "es": [
+    "topluma katkı"
+   ]
+  },
+  {
+   "k": "d_ozerklik",
+   "ad": "Özerklik ve özgürlük",
+   "g": "Özelliklerin",
+   "t": "Özerklik, kendi kararlarını kendin verebilmek demek. Bu özellik, nasıl ve ne zaman çalışacağına kendin karar vermeyi istemeni anlatır.",
+   "o": "Saatlerini kendin belirleyebileceğin bir işi, her şeyin söylendiği bir işe tercih etmek.",
+   "es": [
+    "özerklik ve özgürlük",
+    "özerklik"
+   ]
+  },
+  {
+   "k": "d_estetik",
+   "ad": "Estetik ve yaratıcılık",
+   "g": "Özelliklerin",
+   "t": "Estetik, güzellik ve görünüşle ilgili duyarlılık demek. Bu özellik, güzel ve özgün şeyler ortaya koymayı önemsemeni anlatır.",
+   "es": [
+    "estetik ve yaratıcılık",
+    "estetik"
+   ]
+  },
+  {
+   "k": "p_disadonuk",
+   "ad": "İnsanlarla çalışma (dışadönüklük)",
+   "g": "Özelliklerin",
+   "t": "Dışadönüklük, insanlarla birlikte olmaktan enerji almak demek. Kalabalık ve konuşmalı ortamlarda rahat etmeyi anlatır.",
+   "es": [
+    "insanlarla çalışma",
+    "dışadönüklük",
+    "dışa dönüklük"
+   ]
+  },
+  {
+   "k": "p_uyum",
+   "ad": "Uyum ve işbirliği",
+   "g": "Özelliklerin",
+   "t": "Başkalarıyla anlaşarak, birlikte iş yapmaya yatkın olmak.",
+   "es": [
+    "uyum ve işbirliği"
+   ]
+  },
+  {
+   "k": "p_sorumluluk",
+   "ad": "Sorumluluk ve disiplin",
+   "g": "Özelliklerin",
+   "t": "İşini zamanında, planlı ve özenle yapmaya yatkın olmak.",
+   "es": [
+    "sorumluluk ve disiplin"
+   ]
+  },
+  {
+   "k": "p_hassasiyet",
+   "ad": "Duygusal hassasiyet",
+   "g": "Özelliklerin",
+   "t": "Duyguları güçlü yaşamak; stres ve gerginlikten daha çabuk etkilenmek. Başkalarının duygularını fark etmekte de yardımcı olabilir.",
+   "es": [
+    "duygusal hassasiyet"
+   ]
+  },
+  {
+   "k": "p_yenilik",
+   "ad": "Yeniliğe açıklık",
+   "g": "Özelliklerin",
+   "t": "Yeni fikirleri, deneyimleri ve farklı yolları denemeye istekli olmak.",
+   "es": [
+    "yeniliğe açıklık"
+   ]
+  },
+  {
+   "k": "p_dinamik",
+   "ad": "Dinamik ortam tercihi",
+   "g": "Özelliklerin",
+   "t": "Dinamik, hareketli ve sürekli değişen demek. Bu özellik, her günü aynı geçmeyen, tempolu ortamlarda çalışmayı sevmeni anlatır.",
+   "es": [
+    "dinamik ortam"
+   ]
+  },
+  {
+   "k": "p_belirsizlik",
+   "ad": "Belirsizlik ve risk toleransı",
+   "g": "Özelliklerin",
+   "t": "Tolerans, bir şeye katlanabilme ve onu kaldırabilme demek. Bu özellik, sonucu belli olmayan durumlarda ve risk alırken ne kadar rahat olduğunu anlatır.",
+   "o": "Sonucu belli olmayan yeni bir projeye girmekten çekinmiyorsan bu puanın yüksek çıkar.",
+   "es": [
+    "belirsizlik ve risk toleransı",
+    "risk toleransı",
+    "tolerans"
+   ]
+  },
+  {
+   "k": "p_liderlik",
+   "ad": "Liderlik isteği",
+   "g": "Özelliklerin",
+   "t": "Bir grubu yönlendirmek, sorumluluk alıp karar vermek istemek.",
+   "es": [
+    "liderlik isteği"
+   ]
+  },
+  {
+   "k": "i_zaman",
+   "ad": "Zaman yönetimi ve önceliklendirme",
+   "g": "Özelliklerin",
+   "t": "Önceliklendirme, işleri önem sırasına koymak demek. Bu özellik, zamanını planlamayı ve önce önemli olanı yapmayı anlatır.",
+   "es": [
+    "zaman yönetimi ve önceliklendirme",
+    "önceliklendirme"
+   ]
+  },
+  {
+   "k": "i_catisma",
+   "ad": "Ekip ve çatışma yönetimi",
+   "g": "Özelliklerin",
+   "t": "Ekipte anlaşmazlık çıkınca bunu sakin ve adil bir şekilde çözebilmek.",
+   "es": [
+    "ekip ve çatışma yönetimi",
+    "çatışma yönetimi"
+   ]
+  },
+  {
+   "k": "i_baski",
+   "ad": "Baskı altında karar verme",
+   "g": "Özelliklerin",
+   "t": "Zaman az ya da durum zorken soğukkanlı kalıp doğru kararı verebilmek.",
+   "es": [
+    "baskı altında karar verme"
+   ]
+  },
+  {
+   "k": "i_etik",
+   "ad": "Etik ve dürüstlük",
+   "g": "Özelliklerin",
+   "t": "Etik, neyin doğru neyin yanlış olduğuna dair ahlak kuralları demek. Bu özellik, zor durumda bile dürüst ve kurallara uygun davranmayı anlatır.",
+   "o": "Sınavda kopya imkânı olsa da kopya çekmemek.",
+   "es": [
+    "etik ve dürüstlük",
+    "etik",
+    "etiği",
+    "etiğe"
+   ]
+  },
+  {
+   "k": "i_inisiyatif",
+   "ad": "İnisiyatif alma",
+   "g": "Özelliklerin",
+   "t": "Kimse söylemeden, gerektiğinde kendiliğinden harekete geçmek ve sorumluluk almak.",
+   "o": "Sınıfta bir sorun gördüğünde kimse söylemeden çözmek için harekete geçmek.",
+   "es": [
+    "inisiyatif"
+   ]
+  },
+  {
+   "k": "i_elestiri",
+   "ad": "Eleştiriye açıklık",
+   "g": "Özelliklerin",
+   "t": "Sana yapılan eleştiriyi kişisel algılamadan dinleyip ondan ders çıkarabilmek.",
+   "es": [
+    "eleştiriye açıklık"
+   ]
+  },
+  {
+   "k": "i_strateji",
+   "ad": "Strateji ve iş dünyası yetkinliği",
+   "g": "Özelliklerin",
+   "t": "Strateji, bir hedefe ulaşmak için yapılan uzun vadeli plan demek. Bu özellik, büyük resmi düşünüp plan yapmayı ve iş dünyasının nasıl işlediğini anlamayı anlatır.",
+   "o": "Bir oyunda tek hamleyi değil, 5 hamle sonrasını düşünmek.",
+   "es": [
+    "strateji ve iş dünyası",
+    "strateji"
+   ]
+  },
+  {
+   "k": "a_sayisal",
+   "ad": "Sayısal ve veri eğilimi",
+   "g": "Özelliklerin",
+   "t": "Sayılarla, hesapla ve verilerle uğraşmayı sevmek.",
+   "es": [
+    "sayısal ve veri eğilimi"
+   ]
+  },
+  {
+   "k": "a_sozel",
+   "ad": "Sözel ve dil eğilimi",
+   "g": "Özelliklerin",
+   "t": "Okumayı, yazmayı, dilleri ve kelimelerle düşünmeyi sevmek.",
+   "es": [
+    "sözel ve dil eğilimi"
+   ]
+  },
+  {
+   "k": "a_insan",
+   "ad": "İnsan odaklı eğilim",
+   "g": "Özelliklerin",
+   "t": "İnsanlara yardım etmek, onları anlamak ve onlarla çalışmak isteği.",
+   "es": [
+    "insan odaklı eğilim",
+    "insan odaklı"
+   ]
+  },
+  {
+   "k": "a_tasarim",
+   "ad": "Tasarım ve uzamsal eğilim",
+   "g": "Özelliklerin",
+   "t": "Uzamsal, boşluk ve şekillerle ilgili demek. Bu özellik, şekilleri zihninde döndürmeyi, çizmeyi, tasarlamayı ve mekânı düşünmeyi sevmeni anlatır.",
+   "o": "Bir odayı kafanda farklı şekilde düzenleyebilmek ya da harita okumakta iyi olmak.",
+   "es": [
+    "tasarım ve uzamsal eğilim",
+    "uzamsal"
+   ]
+  },
+  {
+   "k": "a_doga",
+   "ad": "Doğa ve laboratuvar eğilimi",
+   "g": "Özelliklerin",
+   "t": "Canlıları, doğayı ve deneyleri merak etmek; laboratuvarda çalışmayı sevmek.",
+   "es": [
+    "doğa ve laboratuvar eğilimi"
+   ]
+  },
+  {
+   "k": "a_fiziksel",
+   "ad": "Fiziksel ve hareket eğilimi",
+   "g": "Özelliklerin",
+   "t": "Elle, bedenle ve hareket ederek çalışmayı masa başına tercih etmek.",
+   "es": [
+    "fiziksel ve hareket eğilimi"
+   ]
+  },
+  {
+   "k": "a_yapili",
+   "ad": "Yapılandırılmış çalışma stili",
+   "g": "Özelliklerin",
+   "t": "Yapılandırılmış, kuralları ve adımları belli demek. Bu özellik, ne yapacağının açıkça tanımlandığı, düzenli işlerde rahat etmeni anlatır.",
+   "es": [
+    "yapılandırılmış çalışma stili",
+    "yapılandırılmış"
+   ]
+  },
+  {
+   "k": "a_sezgisel",
+   "ad": "Büyük resmi görme (sezgisel stil)",
+   "g": "Özelliklerin",
+   "t": "Sezgisel, ayrıntıdan çok bütüne ve olasılıklara bakan düşünme demek. Bu özellik, parçalar arasındaki bağlantıyı hızlıca görmeni anlatır.",
+   "o": "Bir romanın sonunu erkenden tahmin etmek ya da bir konunun ana fikrini hemen yakalamak.",
+   "es": [
+    "büyük resmi görme",
+    "sezgisel"
+   ]
+  },
+  {
+   "k": "a_girisim",
+   "ad": "Girişimcilik ve ikna eğilimi",
+   "g": "Özelliklerin",
+   "t": "Girişimcilik, risk alıp yeni bir iş ya da fikir başlatmak demek. Bu özellik, insanları bir fikre ikna etmeyi ve yeni bir şey kurmayı sevmeni anlatır.",
+   "es": [
+    "girişimcilik ve ikna eğilimi",
+    "girişimcilik"
+   ]
+  },
+  {
+   "k": "yks",
+   "ad": "YKS",
+   "g": "Sınav ve tercih",
+   "t": "Yükseköğretim Kurumları Sınavı. Üniversiteye girmek için ÖSYM'nin yaptığı sınav. TYT, AYT ve YDT oturumlarından oluşur.",
+   "o": "Haziranda YKS'ye girersin; puanınla temmuzda tercih yaparsın.",
+   "es": [
+    "yks"
+   ]
+  },
+  {
+   "k": "tyt",
+   "ad": "TYT",
+   "g": "Sınav ve tercih",
+   "t": "Temel Yeterlilik Testi. YKS'nin herkesin girdiği ilk oturumu: Türkçe, matematik, fen ve sosyal bilimler soruları.",
+   "o": "TYT'de 120 soru var; önlisans bölümlerine yalnızca TYT puanıyla girilir.",
+   "es": [
+    "tyt"
+   ]
+  },
+  {
+   "k": "ayt",
+   "ad": "AYT",
+   "g": "Sınav ve tercih",
+   "t": "Alan Yeterlilik Testleri. Gitmek istediğin bölümün puan türüne göre (sayısal, eşit ağırlık, sözel) çözdüğün YKS oturumu.",
+   "o": "Tıp okumak istiyorsan sayısal (SAY) AYT testlerini çözersin.",
+   "es": [
+    "ayt"
+   ]
+  },
+  {
+   "k": "ydt",
+   "ad": "YDT",
+   "g": "Sınav ve tercih",
+   "t": "Yabancı Dil Testi. Dil bölümlerine (ör. İngilizce öğretmenliği, mütercim-tercümanlık) girmek isteyenlerin girdiği YKS oturumu.",
+   "es": [
+    "ydt"
+   ]
+  },
+  {
+   "k": "osym",
+   "ad": "ÖSYM",
+   "g": "Sınav ve tercih",
+   "t": "Ölçme, Seçme ve Yerleştirme Merkezi. YKS'yi yapan ve öğrencileri üniversitelere yerleştiren devlet kurumu.",
+   "es": [
+    "ösym"
+   ]
+  },
+  {
+   "k": "yok_atlas",
+   "ad": "YÖK Atlas",
+   "g": "Sınav ve tercih",
+   "t": "Yükseköğretim Kurulu'nun resmî bilgi sitesi. Her bölümün taban puanını, başarı sırasını ve yerleşen öğrencilerin netlerini gösterir.",
+   "es": [
+    "yök atlas"
+   ]
+  },
+  {
+   "k": "net",
+   "ad": "Net",
+   "g": "Sınav ve tercih",
+   "t": "Doğru sayından yanlışlarının dörtte birinin çıkarılmasıyla bulunan sayı. Yani 4 yanlış 1 doğruyu götürür.",
+   "o": "30 doğru, 8 yanlış → 30 − 8 ÷ 4 = 28 net",
+   "es": [
+    "net",
+    "neti",
+    "netin",
+    "netini",
+    "netim",
+    "netler",
+    "netlerin",
+    "netlerini",
+    "netlerim",
+    "netlerimi",
+    "netleri",
+    "netinle",
+    "netlerinle"
+   ]
+  },
+  {
+   "k": "puan_turu",
+   "ad": "Puan türü",
+   "g": "Sınav ve tercih",
+   "t": "Bir bölüme yerleştirmede hangi derslerin daha çok sayıldığını gösterir: SAY (sayısal), EA (eşit ağırlık), SÖZ (sözel) ve DİL (yabancı dil).",
+   "o": "Hukuk EA ile, bilgisayar mühendisliği SAY ile öğrenci alır.",
+   "es": [
+    "puan türü",
+    "puan türün",
+    "puan türüne"
+   ]
+  },
+  {
+   "k": "say",
+   "ad": "SAY (Sayısal)",
+   "g": "Sınav ve tercih",
+   "t": "Matematik ve fen derslerinin ağırlıklı olduğu puan türü. Mühendislik, tıp gibi bölümler bu puanla öğrenci alır.",
+   "es": [
+    "say"
+   ]
+  },
+  {
+   "k": "ea",
+   "ad": "EA (Eşit Ağırlık)",
+   "g": "Sınav ve tercih",
+   "t": "Matematik ile edebiyat ve sosyal bilimler derslerinin birlikte sayıldığı puan türü. Hukuk, işletme, psikoloji gibi bölümler bu puanla öğrenci alır.",
+   "es": [
+    "ea",
+    "eşit ağırlık"
+   ]
+  },
+  {
+   "k": "soz",
+   "ad": "SÖZ (Sözel)",
+   "g": "Sınav ve tercih",
+   "t": "Türk dili ve edebiyatı ile sosyal bilimler derslerinin ağırlıklı olduğu puan türü. Tarih, edebiyat gibi bölümler bu puanla öğrenci alır.",
+   "es": [
+    "söz"
+   ]
+  },
+  {
+   "k": "dil",
+   "ad": "DİL (Yabancı Dil)",
+   "g": "Sınav ve tercih",
+   "t": "Yabancı Dil Testi'ne (YDT) göre hesaplanan puan türü. Dil bölümleri bu puanla öğrenci alır.",
+   "es": [
+    "dil puanı"
+   ]
+  },
+  {
+   "k": "taban_puan",
+   "ad": "Taban puan",
+   "g": "Sınav ve tercih",
+   "t": "Bir bölüme o yıl yerleşen en düşük puanlı öğrencinin puanı. Her yıl değişir.",
+   "o": "Bir bölümün taban puanı 450 ise, o yıl 450'nin altında puanı olan kimse oraya yerleşemedi.",
+   "es": [
+    "taban puan"
+   ]
+  },
+  {
+   "k": "basari_sirasi",
+   "ad": "Başarı sırası",
+   "g": "Sınav ve tercih",
+   "t": "Sınavda o puan türünde Türkiye genelinde kaçıncı olduğun. Sayı ne kadar küçükse o kadar iyidir. \"Taban sırası\", bölüme yerleşen son öğrencinin başarı sırasıdır.",
+   "o": "Başarı sıran 25.000 ise, o puan türünde senden önce 24.999 kişi var.",
+   "es": [
+    "başarı sırası",
+    "başarı sıran",
+    "taban sıra",
+    "taban sırası"
+   ]
+  },
+  {
+   "k": "kontenjan",
+   "ad": "Kontenjan",
+   "g": "Sınav ve tercih",
+   "t": "Bir bölümün o yıl alacağı öğrenci sayısı.",
+   "o": "Kontenjanı 60 olan bir bölüme o yıl 60 öğrenci yerleşir.",
+   "es": [
+    "kontenjan"
+   ]
+  },
+  {
+   "k": "tercih",
+   "ad": "Tercih",
+   "g": "Sınav ve tercih",
+   "t": "Sınavdan sonra girmek istediğin bölümleri öncelik sırasıyla ÖSYM'ye bildirmen. Yerleştirme bu sıraya ve puanına göre yapılır.",
+   "o": "Tercih listenin en üstüne en çok istediğin bölümü, altına diğerlerini sırayla yazarsın.",
+   "es": [
+    "tercih listesi",
+    "tercih dönemi",
+    "tercih sayfası"
+   ]
+  },
+  {
+   "k": "yerlesme",
+   "ad": "Yerleşme",
+   "g": "Sınav ve tercih",
+   "t": "Puanına ve tercih sıralamana göre bir bölüme kaydının yapılmaya hak kazanması.",
+   "o": "Puanın ilk 3 tercihine yetmedi ama 4.'ye yetti → 4. tercihine yerleştin.",
+   "es": [
+    "yerleşme",
+    "yerleşen",
+    "yerleştin"
+   ]
+  },
+  {
+   "k": "bolum",
+   "ad": "Bölüm",
+   "g": "Sınav ve tercih",
+   "t": "Üniversitede okuyacağın alan. Örneğin Psikoloji, Bilgisayar Mühendisliği ya da Hukuk. Filizyol sana uygun bölümleri önerir.",
+   "o": "Aynı bölüm (ör. Hukuk) birçok üniversitede vardır; her biri ayrı bir programdır.",
+   "es": [
+    "bölüm",
+    "üniversite bölümü"
+   ]
+  },
+  {
+   "k": "lisans",
+   "ad": "Lisans",
+   "g": "Sınav ve tercih",
+   "t": "Üniversitede genellikle 4 yıl süren eğitim (tıp gibi bazı bölümlerde daha uzun). Bitirince lisans diploması alırsın.",
+   "es": [
+    "lisans"
+   ]
+  },
+  {
+   "k": "onlisans",
+   "ad": "Önlisans",
+   "g": "Sınav ve tercih",
+   "t": "Genellikle 2 yıl süren yükseköğretim programı (meslek yüksekokulları). TYT puanıyla öğrenci alır.",
+   "es": [
+    "önlisans",
+    "ön lisans"
+   ]
+  },
+  {
+   "k": "program",
+   "ad": "Program",
+   "g": "Sınav ve tercih",
+   "t": "Bir üniversitedeki belirli bir bölüm seçeneği. Aynı bölümün farklı üniversitelerde, burslu ya da ücretli seçenekleri ayrı programlardır.",
+   "es": [
+    "program kodu"
+   ]
+  },
+  {
+   "k": "burs",
+   "ad": "Burs",
+   "g": "Sınav ve tercih",
+   "t": "Öğrenciye karşılıksız verilen destek. Vakıf üniversitelerinde \"burslu\" program, ücretin tamamını ya da bir kısmını ödemeden okuyabileceğin anlamına gelir.",
+   "es": [
+    "burslu",
+    "burs"
+   ]
+  },
+  {
+   "k": "vakif",
+   "ad": "Vakıf üniversitesi",
+   "g": "Sınav ve tercih",
+   "t": "Bir vakfın kurduğu, kâr amacı gütmeyen, genelde ücretli üniversite. Burslu ve indirimli kontenjanları da olur.",
+   "es": [
+    "vakıf üniversite",
+    "vakıf"
+   ]
+  },
+  {
+   "k": "obp",
+   "ad": "OBP",
+   "g": "Sınav ve tercih",
+   "t": "Ortaöğretim Başarı Puanı. Lise diploma notundan hesaplanır ve YKS yerleştirme puanına eklenir.",
+   "o": "Diploma notun 85 ise OBP'n 425 olur; bunun belli bir kısmı YKS puanına eklenir.",
+   "es": [
+    "obp"
+   ]
+  },
+  {
+   "k": "ozel_yetenek",
+   "ad": "Özel yetenek sınavı",
+   "g": "Sınav ve tercih",
+   "t": "Beden eğitimi, resim, müzik gibi bölümlerin YKS'ye ek olarak kendi yaptığı uygulamalı sınav.",
+   "es": [
+    "özel yetenek"
+   ]
+  },
+  {
+   "k": "kktc",
+   "ad": "KKTC",
+   "g": "Sınav ve tercih",
+   "t": "Kuzey Kıbrıs Türk Cumhuriyeti. Oradaki bazı üniversiteler de YKS ile öğrenci alır.",
+   "es": [
+    "kktc"
+   ]
+  },
+  {
+   "k": "deneme",
+   "ad": "Deneme sınavı",
+   "g": "Sınav ve tercih",
+   "t": "YKS'ye hazırlanmak için gerçek sınav gibi çözülen alıştırma sınavı.",
+   "es": [
+    "deneme sınavı",
+    "deneme sonuçları"
+   ]
+  },
+  {
+   "k": "hedef_bolum",
+   "ad": "Hedef bölüm",
+   "g": "Hedef ve takip",
+   "t": "Girmek istediğin ve sana özel planı hazırlanan bölüm. Değiştirme hakkın sınırlıdır; hakkın bitince okulun ek hak verebilir.",
+   "o": "Hedefini \"Bilgisayar Mühendisliği\" seçince Koçluğum sayfasında sana özel adımlar çıkar.",
+   "es": [
+    "hedef bölüm"
+   ]
+  },
+  {
+   "k": "gelisim_plani",
+   "ad": "Gelişim planı (yol haritası)",
+   "g": "Hedef ve takip",
+   "t": "Hedef bölümüne göre hangi özelliklerini geliştirebileceğini gösteren, adım adım hazırlanmış öneri listesi.",
+   "o": "\"Ekip çalışmanı güçlendir\" adımı: bu hafta bir grup projesinde görev al.",
+   "es": [
+    "gelişim planı",
+    "yol haritası",
+    "yol haritan"
+   ]
+  },
+  {
+   "k": "kocluk",
+   "ad": "Koçluk",
+   "g": "Hedef ve takip",
+   "t": "Hedefine ulaşman için seni yönlendiren, plan yapmana yardım eden destek.",
+   "es": [
+    "koçluk"
+   ]
+  },
+  {
+   "k": "egitim_kocu",
+   "ad": "Eğitim koçu",
+   "g": "Hedef ve takip",
+   "t": "Ders çalışma ve hedef belirleme konusunda seninle görüşen uzman. Görüşme talebin incelenir, uygunsa görüşme günü planlanır.",
+   "es": [
+    "eğitim koçu",
+    "eğitim koçları"
+   ]
+  },
+  {
+   "k": "filiz",
+   "ad": "Filiz",
+   "g": "Hedef ve takip",
+   "t": "Filizyol'un maskotu ve sana yol gösteren asistanı. Sorularını cevaplar. Önemli kararlarını yine de rehber öğretmeninle ver.",
+   "es": [
+    "filiz"
+   ]
+  },
+  {
+   "k": "seri",
+   "ad": "Seri",
+   "g": "Hedef ve takip",
+   "t": "Haftalık görevlerini art arda kaç hafta yaptığını gösterir. Bir haftada en az 2 görevi bitirirsen o hafta seriye sayılır; bir hafta eksik kalırsa seri yeniden başlar.",
+   "es": [
+    "hafta seri",
+    "serin"
+   ]
+  },
+  {
+   "k": "rozet",
+   "ad": "Rozet",
+   "g": "Hedef ve takip",
+   "t": "Belirli bir şeyi başardığında kazandığın küçük ödül işareti. Örneğin değerlendirmeni bitirince ya da bir hedef bölüm seçince.",
+   "es": [
+    "rozet"
+   ]
+  },
+  {
+   "k": "haftalik_gorev",
+   "ad": "Haftalık görev",
+   "g": "Hedef ve takip",
+   "t": "Her hafta sana verilen küçük ve kısa görevler. Kendini tanımana ve hedefine yaklaşmana yardım eder.",
+   "es": [
+    "haftalık görev"
+   ]
+  },
+  {
+   "k": "yansitma",
+   "ad": "Yansıtma",
+   "g": "Hedef ve takip",
+   "t": "Yaptığın bir şeyi durup düşünmek: Ne öğrendim, nasıl hissettim, bir dahaki sefere ne yaparım?",
+   "es": [
+    "yansıtma"
+   ]
+  },
+  {
+   "k": "portfolyo",
+   "ad": "Portfolyo",
+   "g": "Hedef ve takip",
+   "t": "Yaptığın etkinlikleri, projeleri, aldığın belgeleri ve başarılarını bir arada topladığın dosya. CV hazırlarken işine yarar.",
+   "o": "Katıldığın bilim fuarını, aldığın sertifikayı ve gönüllü çalışmanı portfolyona eklersin.",
+   "es": [
+    "portfolyo",
+    "e-portfolyo"
+   ]
+  },
+  {
+   "k": "kulup",
+   "ad": "Kulüp",
+   "g": "Hedef ve takip",
+   "t": "Okulundaki ortak ilgi grupları (ör. robotik, tiyatro). Talep gönderirsin; rehber öğretmenin onaylayınca üye olursun.",
+   "es": [
+    "kulüp"
+   ]
+  },
+  {
+   "k": "akran",
+   "ad": "Akran",
+   "g": "Hedef ve takip",
+   "t": "Senin yaşında ve sınıf düzeyindeki diğer öğrenciler.",
+   "es": [
+    "akran"
+   ]
+  },
+  {
+   "k": "simulasyon",
+   "ad": "Simülasyon (Bir Günümü Yaşa)",
+   "g": "Hedef ve takip",
+   "t": "Bir mesleği gerçekte yapmadan, örnek durumlar üzerinden denemek. \"Bir Günümü Yaşa\" o meslekten bir günü karar anlarıyla yaşatır.",
+   "es": [
+    "simülasyon"
+   ]
+  },
+  {
+   "k": "anket",
+   "ad": "Anket",
+   "g": "Hedef ve takip",
+   "t": "Okulunun sana sorduğu kısa soru formu. Bazı anketlerde adın görünmez (anonim).",
+   "es": [
+    "anket"
+   ]
+  },
+  {
+   "k": "anonim",
+   "ad": "Anonim",
+   "g": "Hedef ve takip",
+   "t": "Kim olduğunun belli olmaması. Anonim bir ankette cevapların adınla eşleştirilmez.",
+   "es": [
+    "anonim"
+   ]
+  },
+  {
+   "k": "cv",
+   "ad": "CV (özgeçmiş)",
+   "g": "İş hayatı",
+   "t": "Eğitimini, deneyimlerini ve becerilerini kısaca anlatan, iş ya da staj başvurusunda verdiğin belge.",
+   "o": "Bir yaz stajına başvururken adını, okulunu, becerilerini ve projelerini yazdığın 1 sayfalık belge.",
+   "es": [
+    "cv",
+    "özgeçmiş"
+   ]
+  },
+  {
+   "k": "ats",
+   "ad": "ATS",
+   "g": "İş hayatı",
+   "t": "Aday Takip Sistemi (İngilizce \"Applicant Tracking System\"). Şirketlerin başvuruları toplayıp CV'leri otomatik taradığı yazılım. CV'n bu sistemin okuyabileceği biçimde olmalı.",
+   "o": "Şirket \"Excel\" kelimesini arıyorsa ve CV'nde yoksa, ATS seni listenin altına atabilir.",
+   "es": [
+    "ats"
+   ]
+  },
+  {
+   "k": "on_yazi",
+   "ad": "Ön yazı",
+   "g": "İş hayatı",
+   "t": "CV'nin yanında gönderilen kısa mektup. Neden bu işe başvurduğunu ve neden uygun olduğunu anlatır.",
+   "o": "\"Robotik kulübünde 2 yıl çalıştım, bu yüzden bu staja uygun olduğumu düşünüyorum\" gibi cümleler yazarsın.",
+   "es": [
+    "ön yazı"
+   ]
+  },
+  {
+   "k": "mulakat",
+   "ad": "Mülakat",
+   "g": "İş hayatı",
+   "t": "İş ya da okul başvurusunda yapılan yüz yüze veya çevrim içi görüşme.",
+   "o": "\"Kendinden bahseder misin?\" mülakatta en sık sorulan sorulardan biridir.",
+   "es": [
+    "mülakat"
+   ]
+  },
+  {
+   "k": "star",
+   "ad": "STAR yöntemi",
+   "g": "İş hayatı",
+   "t": "Mülakatta bir deneyimini anlatmak için dört adım: Durum (Situation), Görev (Task), Yaptığın (Action), Sonuç (Result).",
+   "es": [
+    "star"
+   ]
+  },
+  {
+   "k": "davranissal",
+   "ad": "Davranışsal soru",
+   "g": "İş hayatı",
+   "t": "\"Daha önce şöyle bir durumda ne yaptın?\" diye geçmiş deneyimini soran mülakat sorusu.",
+   "es": [
+    "davranışsal"
+   ]
+  },
+  {
+   "k": "mulakat_sim",
+   "ad": "Mülakat Simülasyonu",
+   "g": "İş hayatı",
+   "t": "İş Hayatı'nda, seçtiğin bölüm için canlandırılan kısa iş görüşmesi: iki adaydan daha iyi cevabı seçer, gerekçelerini ve o meslekte işin nasıl yapıldığını görürsün.",
+   "es": [
+    "mülakat simülasyonu"
+   ]
+  },
+  {
+   "k": "dusunme_atolyesi",
+   "ad": "Düşünme Atölyesi",
+   "g": "İş hayatı",
+   "t": "Her derste ve meslekte işe yarayan düşünme araçlarını (kök neden, korelasyon, algoritma, ikiye bölerek arama…) 5–7 dakikalık alıştırmalarla yaparak öğrendiğin bölüm.",
+   "es": [
+    "düşünme atölyesi"
+   ]
+  },
+  {
+   "k": "kok_neden",
+   "ad": "Kök neden",
+   "g": "İş hayatı",
+   "t": "Bir sorunu gerçekten doğuran, düzeltilince sorunun geri gelmediği neden. Görünen belirtiye değil, ona yol açan şeye odaklanır.",
+   "o": "Telefonun şarjı her gün bitiyorsa powerbank yalnızca belirtiyi giderir; şarjı neyin tükettiğini bulup onu değiştirmek kökü çözer.",
+   "es": [
+    "kök neden"
+   ]
+  },
+  {
+   "k": "korelasyon",
+   "ad": "Korelasyon",
+   "g": "İş hayatı",
+   "t": "İki şeyin birlikte artıp azalması. Birinin ötekine yol açtığını tek başına göstermez; ikisini birden etkileyen üçüncü bir etken olabilir.",
+   "o": "Dondurma satışı ile güneş yanığı birlikte artar; ikisinin de nedeni sıcak ve güneşli havadır.",
+   "es": [
+    "korelasyon"
+   ]
+  },
+  {
+   "k": "algoritma",
+   "ad": "Algoritma",
+   "g": "İş hayatı",
+   "t": "Bir işi kimseye bir şey sormadan yapılabilecek kadar açık, sıralı adımlarla tarif etmek. Koşullar (\"eğer… ise\") ve tekrarlar içerebilir.",
+   "es": [
+    "algoritma"
+   ]
+  },
+  {
+   "k": "kendini_sinama",
+   "ad": "Kendini sınama",
+   "g": "İş hayatı",
+   "t": "Okuduğunu yeniden okumak yerine kitabı kapatıp hatırlamaya çalışmak. Bilgiyi hafızadan çekip çıkarmak, onu genellikle daha kalıcı hâle getirir.",
+   "es": [
+    "kendini sınama",
+    "kendini sınayarak"
+   ]
+  },
+  {
+   "k": "staj",
+   "ad": "Staj",
+   "g": "İş hayatı",
+   "t": "Okurken ya da mezun olurken bir iş yerinde belirli bir süre çalışarak işi öğrenmek.",
+   "o": "Mühendislik öğrencileri yazın birkaç hafta bir fabrikada staj yapabilir.",
+   "es": [
+    "staj"
+   ]
+  },
+  {
+   "k": "referans",
+   "ad": "Referans",
+   "g": "İş hayatı",
+   "t": "Seni tanıyan ve gerektiğinde senin hakkında bilgi verebilecek kişi (ör. öğretmenin, eski yöneticin).",
+   "es": [
+    "referans"
+   ]
+  },
+  {
+   "k": "istihdam",
+   "ad": "İstihdam",
+   "g": "İş hayatı",
+   "t": "İnsanların bir işte çalışıyor olması. \"İstihdam oranı\", mezunların ne kadarının iş bulduğunu gösterir.",
+   "o": "Mezunların %80'i 1 yıl içinde iş bulduysa istihdam oranı %80'dir.",
+   "es": [
+    "istihdam"
+   ]
+  },
+  {
+   "k": "issizlik",
+   "ad": "İşsizlik",
+   "g": "İş hayatı",
+   "t": "Çalışmak isteyip iş arayan ama iş bulamayan kişilerin durumu.",
+   "es": [
+    "işsizlik"
+   ]
+  },
+  {
+   "k": "sektor",
+   "ad": "Sektör",
+   "g": "İş hayatı",
+   "t": "Aynı alanda çalışan işlerin ve şirketlerin bütünü (ör. sağlık sektörü, yazılım sektörü).",
+   "es": [
+    "sektör"
+   ]
+  },
+  {
+   "k": "kamu",
+   "ad": "Kamu / Özel sektör",
+   "g": "İş hayatı",
+   "t": "Kamu, devlete ait kurumlar (okul, hastane, bakanlık). Özel sektör, kişilere ya da şirketlere ait iş yerleri.",
+   "es": [
+    "kamu",
+    "özel sektör"
+   ]
+  },
+  {
+   "k": "serbest",
+   "ad": "Serbest çalışma",
+   "g": "İş hayatı",
+   "t": "Bir şirkete bağlı olmadan, kendi müşterilerine iş yaparak çalışmak.",
+   "es": [
+    "serbest çalış",
+    "serbest meslek"
+   ]
+  },
+  {
+   "k": "tuik",
+   "ad": "TÜİK",
+   "g": "İş hayatı",
+   "t": "Türkiye İstatistik Kurumu. Kazanç, istihdam gibi resmî istatistikleri yayınlayan devlet kurumu.",
+   "es": [
+    "tüik"
+   ]
+  },
+  {
+   "k": "otomasyon",
+   "ad": "Otomasyon",
+   "g": "İş hayatı",
+   "t": "Bir işin insan yerine makine ya da yazılım tarafından yapılması.",
+   "es": [
+    "otomasyon"
+   ]
+  },
+  {
+   "k": "yapay_zeka",
+   "ad": "Yapay zekâ",
+   "g": "İş hayatı",
+   "t": "Öğrenme, dil anlama, karar verme gibi işleri yapabilen bilgisayar sistemleri.",
+   "es": [
+    "yapay zekâ",
+    "yapay zeka"
+   ]
+  },
+  {
+   "k": "meslek_odasi",
+   "ad": "Meslek odası",
+   "g": "İş hayatı",
+   "t": "Aynı mesleği yapanların üye olduğu kurum (ör. Mühendis Odası, Baro). Bazı meslekleri yapabilmek için odaya kayıt zorunludur.",
+   "es": [
+    "meslek odası",
+    "oda kaydı"
+   ]
+  },
+  {
+   "k": "yasal_meslek",
+   "ad": "Yasayla düzenlenen meslek",
+   "g": "İş hayatı",
+   "t": "Yapılabilmesi için yasada belirli bir diploma, izin ya da belge istenen meslek (ör. doktorluk, avukatlık).",
+   "es": [
+    "yasayla düzenlenen"
+   ]
+  },
+  {
+   "k": "surdurulebilirlik",
+   "ad": "Sürdürülebilirlik",
+   "g": "İş hayatı",
+   "t": "Bugünün ihtiyaçlarını, gelecek nesillerin kaynaklarını tüketmeden karşılamak.",
+   "es": [
+    "sürdürülebilir"
+   ]
+  },
+  {
+   "k": "brut",
+   "ad": "Brüt maaş",
+   "g": "Para ve çalışma hakları",
+   "t": "Vergi ve sigorta kesintilerinden ÖNCEKİ maaş. İş ilanlarında ve sözleşmede genelde bu yazar.",
+   "o": "İlanda brüt 40.000 TL yazıyorsa, kesintilerden sonra eline daha az geçer.",
+   "es": [
+    "brüt"
+   ]
+  },
+  {
+   "k": "net_maas",
+   "ad": "Net maaş",
+   "g": "Para ve çalışma hakları",
+   "t": "Kesintilerden SONRA hesabına yatan para. Brüt maaştan her zaman daha azdır.",
+   "o": "Brüt maaşın 40.000 TL ise, net maaşın kesintilerden sonra daha düşük olur.",
+   "es": [
+    "net maaş",
+    "net ücret",
+    "eline geçen"
+   ]
+  },
+  {
+   "k": "asgari",
+   "ad": "Asgari ücret",
+   "g": "Para ve çalışma hakları",
+   "t": "Yasaya göre bir çalışana ödenebilecek en düşük ücret. Her yıl devlet belirler.",
+   "o": "İş yeri sana asgari ücretten daha az ödeyemez.",
+   "es": [
+    "asgari ücret"
+   ]
+  },
+  {
+   "k": "sgk",
+   "ad": "SGK (sigorta)",
+   "g": "Para ve çalışma hakları",
+   "t": "Sosyal Güvenlik Kurumu. Çalışırken maaşından kesilen sigorta primleri sağlık hizmeti ve ileride emeklilik hakkı sağlar.",
+   "o": "İlk işine başladığında işveren seni SGK'ya kaydeder; sigortalı olursun.",
+   "es": [
+    "sgk",
+    "sigorta primi",
+    "prim"
+   ]
+  },
+  {
+   "k": "vergi",
+   "ad": "Vergi dilimi",
+   "g": "Para ve çalışma hakları",
+   "t": "Gelir arttıkça daha yüksek oranda vergi ödenir; her oran bir \"dilim\"dir. Matrah, verginin hesaplandığı tutardır. Kümülatif, yıl başından beri toplanan demektir.",
+   "es": [
+    "vergi dilimi",
+    "matrah",
+    "kümülatif"
+   ]
+  },
+  {
+   "k": "bordro",
+   "ad": "Bordro",
+   "g": "Para ve çalışma hakları",
+   "t": "Maaşının brüt tutarını, kesintileri ve eline geçen net tutarı gösteren belge.",
+   "es": [
+    "bordro"
+   ]
+  },
+  {
+   "k": "kidem",
+   "ad": "Kıdem tazminatı",
+   "g": "Para ve çalışma hakları",
+   "t": "Belirli bir süre çalıştıktan sonra, yasada sayılan durumlarda işten ayrılınca işverenin ödediği para.",
+   "o": "Bir iş yerinde 5 yıl çalıştıktan sonra emekli olursan kıdem tazminatı alırsın.",
+   "es": [
+    "kıdem"
+   ]
+  },
+  {
+   "k": "ihbar",
+   "ad": "İhbar süresi ve tazminatı",
+   "g": "Para ve çalışma hakları",
+   "t": "İşi bırakmadan ya da işten çıkarmadan önce karşı tarafa önceden haber verme süresi. Bu süreye uyulmazsa ödenen paraya ihbar tazminatı denir.",
+   "es": [
+    "ihbar",
+    "bildirim süresi"
+   ]
+  },
+  {
+   "k": "fesih",
+   "ad": "Fesih",
+   "g": "Para ve çalışma hakları",
+   "t": "Bir sözleşmeyi sona erdirmek.",
+   "es": [
+    "fesih"
+   ]
+  },
+  {
+   "k": "deneme_suresi",
+   "ad": "Deneme süresi",
+   "g": "Para ve çalışma hakları",
+   "t": "İşe başladıktan sonraki ilk dönem. Bu sürede iki taraf da sözleşmeyi beklemeden bitirebilir; çalıştığın günlerin ücreti yine ödenir.",
+   "es": [
+    "deneme süresi"
+   ]
+  },
+  {
+   "k": "toplu_sozlesme",
+   "ad": "Toplu iş sözleşmesi",
+   "g": "Para ve çalışma hakları",
+   "t": "Sendika ile işveren arasında, çalışanların ücret ve haklarını belirlemek için yapılan anlaşma.",
+   "es": [
+    "toplu iş sözleşmesi"
+   ]
+  },
+  {
+   "k": "ekstre",
+   "ad": "Ekstre",
+   "g": "Para ve çalışma hakları",
+   "t": "Kredi kartıyla ya da hesabınla yaptığın harcamaları ve ödemen gereken tutarı gösteren dönem özeti.",
+   "es": [
+    "ekstre"
+   ]
+  },
+  {
+   "k": "kredi_notu",
+   "ad": "Kredi notu",
+   "g": "Para ve çalışma hakları",
+   "t": "Borçlarını zamanında ödeyip ödemediğine göre bankaların sana verdiği puan.",
+   "es": [
+    "kredi notu"
+   ]
+  },
+  {
+   "k": "vade",
+   "ad": "Vade farkı",
+   "g": "Para ve çalışma hakları",
+   "t": "Vade, ödemenin yapılacağı zaman. Vade farkı, ödemeyi ileriye ya da taksitlere bölünce fiyata eklenen ek tutar.",
+   "es": [
+    "vade farkı",
+    "vade"
+   ]
+  },
+  {
+   "k": "kvkk",
+   "ad": "KVKK",
+   "g": "Hesap ve gizlilik",
+   "t": "Kişisel Verilerin Korunması Kanunu. Bilgilerinin nasıl toplanacağını, saklanacağını ve kimlerle paylaşılabileceğini belirleyen yasa.",
+   "o": "Okulun senin bilgilerini başka bir şirketle izinsiz paylaşamaz.",
+   "es": [
+    "kvkk"
+   ]
+  },
+  {
+   "k": "kisisel_veri",
+   "ad": "Kişisel veri",
+   "g": "Hesap ve gizlilik",
+   "t": "Seni tanımlayan her bilgi: adın, e-postan, cevapların, sonuçların gibi.",
+   "es": [
+    "kişisel veri",
+    "kişisel bilgi"
+   ]
+  },
+  {
+   "k": "acik_riza",
+   "ad": "Açık rıza",
+   "g": "Hesap ve gizlilik",
+   "t": "Bir konuda bilgilendirildikten sonra kendi isteğinle verdiğin açık izin. İstediğin zaman geri alabilirsin.",
+   "o": "\"Sonuçlarım rehber öğretmenimle paylaşılsın\" kutusunu işaretlemen bir açık rızadır.",
+   "es": [
+    "açık rıza"
+   ]
+  },
+  {
+   "k": "aydinlatma",
+   "ad": "Aydınlatma metni",
+   "g": "Hesap ve gizlilik",
+   "t": "Bilgilerinin hangi amaçla, nasıl kullanıldığını ve haklarını anlatan metin.",
+   "es": [
+    "aydınlatma metni"
+   ]
+  },
+  {
+   "k": "iki_adim",
+   "ad": "İki adımlı doğrulama",
+   "g": "Hesap ve gizlilik",
+   "t": "Girişte şifrenden sonra e-postana gelen kodu da yazman. Şifren başkasının eline geçse bile hesabını korur.",
+   "es": [
+    "iki adımlı",
+    "2 adımlı"
+   ]
+  },
+  {
+   "k": "gecici_sifre",
+   "ad": "Geçici şifre",
+   "g": "Hesap ve gizlilik",
+   "t": "Okulunun ilk girişin için verdiği şifre. İlk girişte kendi şifreni belirlemen istenir.",
+   "es": [
+    "geçici şifre"
+   ]
+  },
+  {
+   "k": "koordinator",
+   "ad": "Koordinatör",
+   "g": "Hesap ve gizlilik",
+   "t": "Bir işin düzenli yürümesini sağlayan ve kişiler arasında bağlantıyı kuran sorumlu kişi.",
+   "es": [
+    "koordinatör"
+   ]
+  },
+  {
+   "k": "ortalama",
+   "ad": "Ortalama",
+   "g": "Sayılar ve grafikler",
+   "t": "Sayıların toplamının sayı adedine bölünmesi. Grubun genel düzeyini gösterir.",
+   "o": "70, 80 ve 90 → ortalama (70+80+90) ÷ 3 = 80.",
+   "es": [
+    "ortalama"
+   ]
+  },
+  {
+   "k": "medyan",
+   "ad": "Medyan (ortanca)",
+   "g": "Sayılar ve grafikler",
+   "t": "Sayılar küçükten büyüğe dizilince tam ortada kalan değer. Çok uç değerlerden ortalama kadar etkilenmez.",
+   "o": "5 kişinin maaşı: 20, 22, 25, 30, 90 bin TL → medyan 25 bin TL (ortalama ise 37,4 bin TL).",
+   "es": [
+    "medyan",
+    "ortanca"
+   ]
+  },
+  {
+   "k": "yuzdelik",
+   "ad": "Yüzdelik dilim",
+   "g": "Sayılar ve grafikler",
+   "t": "\"İlk %10\" gibi, bir grubun içinde nerede olduğunu gösterir. Örneğin ilk %10'luk dilim, en yüksek puanlı onda bir kişidir.",
+   "o": "İlk %10'luk dilimdeysen, 100 kişiden yalnızca 10'u senden iyi ya da senin kadar.",
+   "es": [
+    "yüzdelik"
+   ]
+  },
+  {
+   "k": "isabet",
+   "ad": "İsabet",
+   "g": "Sayılar ve grafikler",
+   "t": "Çözdüğün sorular içinde doğru cevapladıklarının oranı.",
+   "es": [
+    "isabet"
+   ]
+  },
+  {
+   "k": "tahmin",
+   "ad": "Tahmin",
+   "g": "Sayılar ve grafikler",
+   "t": "Kesin bilgi değil, eldeki verilere göre yapılan yaklaşık hesap. Filizyol tahmin olan sayıları bu kelimeyle işaretler.",
+   "es": [
+    "tahmini",
+    "tahmin"
+   ]
+  }
+ ]
+}

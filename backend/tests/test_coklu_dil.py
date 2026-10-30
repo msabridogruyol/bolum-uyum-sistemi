@@ -133,3 +133,21 @@ def test_sozluk_kopyasi_frontend_ile_ayni():
     if not fe.exists():
         pytest.skip("frontend klasörü yok")
     assert json.loads(fe.read_text("utf-8")) == json.loads(be.read_text("utf-8"))
+
+
+def test_ana_sozluk_kopyasi_sozluk_js_ile_ayni():
+    """[2026-10-31] Filiz, Sözlük sayfasındaki ana terimleri backend kopyasından okur (scripts/sozluk_temel_kopyala.mjs).
+    sozluk.js değişip betik çalıştırılmazsa Filiz ile Sözlük sayfası farklı tanım verir."""
+    import shutil
+    import subprocess
+    kok = pathlib.Path(__file__).resolve().parents[2]
+    js = kok / "frontend" / "src" / "yardimci" / "sozluk.js"
+    be = kok / "backend" / "app" / "data" / "sozluk_temel.json"
+    if not js.exists() or not shutil.which("node"):
+        pytest.skip("frontend klasörü ya da node yok")
+    kod = ("import('" + js.as_uri() + "').then(m => console.log(JSON.stringify(m.SOZLUK.map(({k, ad, g, t, o, es}) => "
+           "({k, ad, g, t, ...(o ? {o} : {}), es: es || []})))))")
+    cikti = subprocess.run(["node", "--input-type=module", "-e", kod], capture_output=True, text=True, timeout=60)
+    assert cikti.returncode == 0, cikti.stderr
+    assert json.loads(cikti.stdout) == json.loads(be.read_text("utf-8"))["terimler"], \
+        "sozluk.js değişmiş: node scripts/sozluk_temel_kopyala.mjs çalıştırın"

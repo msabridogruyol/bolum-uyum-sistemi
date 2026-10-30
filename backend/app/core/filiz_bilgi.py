@@ -357,8 +357,8 @@ class Dizin:
             b = self.belgeler[i]
             if b.modul and (moduller is None or b.modul not in moduller):
                 continue          # paket kuralı: kapalı modülün içeriği yok
-            if b.adlar and not any(f" {a} " in t_soru for a in b.adlar):
-                continue          # sözlük: terim soruda aynen geçmiyorsa ("taban puan" ≠ "taban suyu")
+            if b.adlar and not any(f" {a} " in t_soru and _sozluk_kapsar(a, t_soru) for a in b.adlar):
+                continue          # sözlük: terim soruda aynen geçmiyorsa ("taban puan" ≠ "taban suyu") ya da sorulanı kapsamıyorsa
             if varliklar:
                 if b.varlik in varliklar:
                     p *= VARLIK_KATSAYI      # adı soruda geçen bölüm/meslek
@@ -484,9 +484,21 @@ def _dosya_belgeleri() -> list[Belge]:
         if anlar:
             out.append(Belge("gun", f"Bir gününü yaşa: {meslek}", " ".join(anlar),
                              "Bölüm sayfası › Meslekler › 🎬 Bir gününü yaşa", None, sade(meslek).strip()))
+    # Ana sözlük: Sözlük sayfasındaki sistem terimleri (frontend/src/yardimci/sozluk.js → scripts/sozluk_temel_kopyala.mjs).
+    # Sayfadaki gibi önceliklidir: aynı adlı genişletilmiş terim eklenmez.
+    ana: set[str] = set()
+    for t in (_oku("sozluk_temel.json") or {}).get("terimler") or []:
+        if isinstance(t, dict) and t.get("ad") and t.get("t"):
+            ham = [str(t["ad"]), str(t["ad"]).split("(")[0], *(t.get("es") or [])]
+            adlar = tuple(a for a in {" ".join(sade(x).split()) for x in ham} if len(a) >= 2)
+            ana |= set(adlar)
+            ornek = f" Örnek: {t['o']}" if t.get("o") else ""
+            b = Belge("sozluk", str(t["ad"]), f"{t['t']}{ornek}", "Sözlük", None, "", adlar)
+            b.sahip = "ana"
+            out.append(b)
     soz = _oku("sozluk_genis.json") or {}
     for t in soz.get("terimler") or []:
-        if isinstance(t, list) and len(t) >= 3 and t[0] and t[2]:
+        if isinstance(t, list) and len(t) >= 3 and t[0] and t[2] and " ".join(sade(str(t[0])).split()) not in ana:
             ornek = f" Örnek: {t[3]}" if len(t) > 3 and t[3] else ""
             ham = [str(t[0]), str(t[0]).split("(")[0], *(t[4] if len(t) > 4 and isinstance(t[4], list) else [])]
             adlar = tuple(a for a in {" ".join(sade(x).split()) for x in ham} if len(a) >= 2)
@@ -597,6 +609,19 @@ def bilgi_ara(db: Session, soru: str, moduller: set[str] | None) -> list[Sonuc]:
 _TANIM = ("ne demek", "nedir", "anlami", "ne anlama", "ne demektir", "nedemek")
 
 
+_KISALTMA_SORU = {"nasil", "hesaplanir", "hesaplaniyor", "hesaplanir mi", "ise", "yarar", "onemli", "neye", "gore", "acilimi"}
+
+
+def _sozluk_kapsar(a: str, t: str) -> bool:
+    """Tanım sorusunda sorulan şeyin tamamı terim olmalı: "ek yerleştirme nedir" ≠ "Yerleştirme (enstalasyon)",
+    "brüt ve net maaş farkı nedir" ≠ "Net maaş"."""
+    anahtar = next((k for k in _TANIM if k in t), None)
+    if not anahtar:
+        return True
+    konu = [w for w in t.split(anahtar)[0].split() if w not in _DURAK]
+    return not [w for w in konu if w not in a.split()]
+
+
 def sozluk_bul(db: Session, soru: str) -> Belge | None:
     """Tanım sorusunda ("X ne demek / nedir") sözlükte X aynen geçen en uzun terim."""
     t = f" {duzelt(soru)} "
@@ -608,9 +633,13 @@ def sozluk_bul(db: Session, soru: str) -> Belge | None:
     for b in dizin(db).belgeler:
         if b.tur == "sozluk":
             for a in b.adlar:
-                # Tanım kalıbı yoksa yalnızca çok sözcüklü terim ("hazirlik sinifi", "taban puan"): tek sözcük her soruda geçebilir
-                if len(a) > uz and f" {a} " in f"{t} " and (tanim or " " in a):
-                    en, uz = b, len(a)
+                # Tanım kalıbı yoksa yalnızca çok sözcüklü terim ("hazirlik sinifi", "taban puan") ya da ana sözlükteki
+                # kısaltma ("OBP", "KKTC"): sıradan tek sözcük her soruda geçebilir
+                kisaltma = (b.sahip == "ana" and str(b.baslik).split()[0].isupper() and len(a) >= 3
+                            and not [w for w in t.split() if w not in _DURAK and w not in a.split() and w not in _KISALTMA_SORU])
+                if not (len(a) > uz and f" {a} " in f"{t} " and (tanim or " " in a or kisaltma)) or not _sozluk_kapsar(a, t):
+                    continue
+                en, uz = b, len(a)
     return en
 
 

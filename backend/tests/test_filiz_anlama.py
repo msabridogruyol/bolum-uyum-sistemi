@@ -235,3 +235,10 @@ def test_sure_sorusu_kunyeden_cevaplanir():
     from app.core import filiz_anlama as fa
     c = fa.kunye_sorusu(_kucuk_dizin(), "isletme kac yil")
     assert c and "4 yıl" in c.yanit and "EA" in c.yanit and "Kaynak:" in c.yanit
+
+
+def test_ana_sozluk_terimleri_filizde_ve_sorulan_kapsanir():
+    from app.core.filiz_bilgi import _dosya_belgeleri, _sozluk_kapsar
+    adlar = {a for b in _dosya_belgeleri() if b.tur == "sozluk" for a in b.adlar}
+    assert {"taban puan", "obp", "kontenjan"} <= adlar, "Sözlük sayfasındaki ana terimler Filiz'de de olmalı"
+    assert not _sozluk_kapsar("yerlestirme", "ek yerlestirme nedir") and _sozluk_kapsar("taban puan", "taban puan ne demek")
