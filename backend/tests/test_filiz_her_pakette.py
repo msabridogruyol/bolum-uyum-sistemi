@@ -220,3 +220,37 @@ def test_yapay_zeka_hata_verince_sohbet_kesilmez(istemci, kisiler, db, monkeypat
     sayi = db.execute(text("""SELECT count(*) FROM ogrenci_koclugu_mesajlari m JOIN ogrenci_koclugu_oturumlari o ON o.id = m.oturum_id
                               WHERE o.id = :o AND m.yapay_zeka"""), {"o": oturum}).scalar()
     assert sayi == 0, "rehber cevabı yapay zekâ hakkından düşmemeli"
+
+
+# ---------------------------------------------------------------------------------- [2026-10-31] bağımsız inceleme
+@db_gerekli
+def test_mulakat_yapay_zeka_durumu_calisir(db, monkeypatch):
+    from app.api import ai_koc, is_hayati_mulakat as m
+    _goc(db)
+    monkeypatch.setattr(ai_koc, "_ai", lambda db_, o: True)
+    o = _ogrenci(db, _okul(db, "gelisim"))
+    d = m._ai_durum(db, o)
+    assert d["acik"] is True and d["limit"] == 20, d
+    db.rollback()
+
+
+@db_gerekli
+def test_sinir_sifir_yapay_zeka_kapali_kilit_ve_not_yok(db, monkeypatch):
+    from app.api import ai_koc
+    _goc(db)
+    monkeypatch.setattr(ai_koc, "_ai", lambda db_, o: True)
+    db.execute(text("UPDATE sistem_parametreleri SET deger = '0' WHERE anahtar = 'filiz_gunluk_mesaj_limiti_temel'"))
+    o = _ogrenci(db, _okul(db, "temel"))
+    kullan, notu, *_ = ai_koc._yz_durumu(db, o)
+    assert kullan is False and notu is None
+    db.rollback()
+
+
+@db_gerekli
+def test_goc_yonetici_cikardigi_filiz_ai_yi_geri_eklemez(db):
+    _goc(db)
+    db.execute(text("""UPDATE paketler SET moduller = moduller - 'filiz_ai' WHERE kod = 'temel'"""))
+    _goc(db)      # açılışta yeniden çalışır
+    assert not db.execute(text("SELECT moduller ? 'filiz_ai' FROM paketler WHERE kod = 'temel'")).scalar()
+    assert db.execute(text("SELECT moduller ? 'filiz' FROM paketler WHERE kod = 'temel'")).scalar(), "zorunlu filiz geri gelir"
+    db.rollback()

@@ -7,7 +7,8 @@ Create Date: 2026-10-30
 [2026-10-30] Karar (B seçeneği): Filiz koçluğun sesi olduğu için her pakette zorunlu (rehber modu); yapay zekâ modu
 (filiz_ai) her pakete eklenir, fark günlük mesaj sınırıyla korunur. Kod tarafı: app/core/paketler.py (filiz zorunlu),
 app/api/ai_koc.py (pakete göre sınır, okul aylık üst sınırı, sınır dolunca rehber moduna geçiş).
-* Her paketin modül listesine 'filiz' ve 'filiz_ai' eklenir (yoksa).
+* Her paketin modül listesine 'filiz' eklenir (yoksa, her açılışta: zorunlu). 'filiz_ai' TEK SEFER eklenir
+  (tek_seferlik_gocler işareti): süper admin sonra bir paketten çıkarırsa açılışta geri eklenmez.
 * Okullara özel "çıkarılan modüller"den 'filiz' silinir (zorunlu). Bir okul 'filiz_ai'yi bilerek çıkardıysa dokunulmaz.
 * ogrenci_koclugu_mesajlari.yapay_zeka: cevabın yapay zekâdan gelip gelmediği (sınırlar yalnızca bunları sayar).
 * Sistem parametreleri (süper admin değiştirebilir; yalnızca yoksa eklenir): günlük sınır Temel 5 / Gelişim 20 /
@@ -24,8 +25,13 @@ depends_on = None
 SQL = """
 UPDATE paketler SET moduller = coalesce(moduller, '[]'::jsonb) || '["filiz"]'::jsonb
  WHERE NOT coalesce(moduller, '[]'::jsonb) ? 'filiz';
-UPDATE paketler SET moduller = coalesce(moduller, '[]'::jsonb) || '["filiz_ai"]'::jsonb
- WHERE NOT coalesce(moduller, '[]'::jsonb) ? 'filiz_ai';
+CREATE TABLE IF NOT EXISTS tek_seferlik_gocler (ad VARCHAR PRIMARY KEY, uygulanma_zamani TIMESTAMPTZ NOT NULL DEFAULT now());
+DO $$ BEGIN
+  IF NOT EXISTS (SELECT 1 FROM tek_seferlik_gocler WHERE ad = '0083_filiz_ai_her_pakette') THEN
+    UPDATE paketler SET moduller = coalesce(moduller, '[]'::jsonb) || '["filiz_ai"]'::jsonb WHERE NOT coalesce(moduller, '[]'::jsonb) ? 'filiz_ai'; 
+    INSERT INTO tek_seferlik_gocler (ad) VALUES ('0083_filiz_ai_her_pakette') ON CONFLICT (ad) DO NOTHING; 
+  END IF; 
+END $$;
 UPDATE okullar SET modul_cikar = modul_cikar - 'filiz' WHERE modul_cikar ? 'filiz';
 UPDATE okullar SET modul_ekle = modul_ekle - 'filiz' WHERE modul_ekle ? 'filiz';
 ALTER TABLE ogrenci_koclugu_mesajlari ADD COLUMN IF NOT EXISTS yapay_zeka BOOLEAN NOT NULL DEFAULT FALSE;

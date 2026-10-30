@@ -333,9 +333,28 @@ def sozluk_sorusu_mu(db: Session, soru: str) -> bool:
     return bool(r) and r[0].belge.tur == "sozluk" and r[0].puan >= ESIK
 
 
+# Bilgi niyeti: bölüm / meslek hakkında soru. Ders / sınav çalışması bağlamı değil ("Matematik netimi nasıl artırırım",
+# "tarih dersine nasıl çalışayım", "biyoloji için kaynak öner" bölüm tanıtımına gitmemeli). [bağımsız inceleme 2026-10-31]
+_BILGI_NIYET = ("bolum", "fakulte", "mezun", "meslek", "hangi ders", "dersler", "neler ogren", "ne ogren", "okutul", "is gunu",
+                "bir gunu", "bir gunde", "gununde", "ne yapar", "ne is yapar", "nasil olun", "nerede calis", "nerelerde",
+                "hakkinda", "nedir", "nasil bir", "kac yil", "suresi", "puan tur", "kimler", "mulakat", "zor gun", "zor mu",
+                "is imkan", "is bul", "kariyer", "olmak icin", "giden yol", "anlat")
+_DERS_BAGLAMI = ("net", "calisay", "calismali", "nasil calis", "ders calis", "deneme", "konu", "tyt", "ayt", "yks", "kaynak",
+                 "kitap", "soru coz", "test coz", "sinav", "odev", "not ort", "karne", "ogretmen bana")
+
+
+def ders_baglami_mi(soru: str) -> bool:
+    t = f" {sade(soru)} "
+    return any(f" {k}" in t for k in _DERS_BAGLAMI)
+
+
 def bilgi_sorusu_mu(db: Session, soru: str) -> bool:
-    """Soruda bir bölüm / meslek adı geçiyor ve soru öğrencinin kendisine dair değil: önce içerikten cevaplanır."""
-    return bool(dizin(db).soru_varliklari(soru)) and not kisisel_mi(soru)
+    """Soruda bir bölüm / meslek adı geçiyor, bilgi niyeti var, soru öğrencinin kendisine ya da ders çalışmaya dair değil:
+    önce içerikten cevaplanır."""
+    t = f" {sade(soru)} "
+    if kisisel_mi(soru) or any(f" {k}" in t for k in _DERS_BAGLAMI):
+        return False
+    return any(k in t for k in _BILGI_NIYET) and bool(dizin(db).soru_varliklari(soru))
 
 
 def bilgi_cevabi(sonuclar: list[Sonuc]) -> str | None:

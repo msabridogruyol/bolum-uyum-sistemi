@@ -123,3 +123,16 @@ def test_admin_kullanim_ozeti(istemci, kisiler, db):
     r = istemci.get("/admin/filiz/kullanim?gun=7", headers=kisiler["super"])
     assert r.status_code == 200 and set(r.json()) == {"gun", "kaynaklar", "okullar"}
     assert istemci.get("/admin/filiz/kullanim", headers=kisiler["yetkili"]).status_code in (401, 403)
+
+
+# ---------------------------------------------------------------------------------- [2026-10-31] bağımsız inceleme
+def test_ders_calisma_sorusu_bolum_tanitimina_gitmez(monkeypatch):
+    B = fb.Belge
+    d = fb.Dizin([B("bolum_is", "Matematik mezunları nerelerde çalışır", "Bankalar, yazılım şirketleri.", "Bölümler › Matematik", None, "matematik"),
+                  B("bolum", "Tarih bölümü", "Geçmişi kaynaklarla inceler.", "Bölümler › Tarih", None, "tarih")])
+    monkeypatch.setattr(fb, "dizin", lambda db: d)
+    for q in ("Matematik netimi nasıl artırırım", "tarih dersine nasıl çalışayım", "biyoloji için kaynak önerir misin",
+              "matematik konularını nasıl çalışmalıyım"):
+        assert not fb.bilgi_sorusu_mu(None, q), q
+    for q in ("Matematik mezunları nerelerde çalışır?", "Tarih bölümü hakkında bilgi verir misin?"):
+        assert fb.bilgi_sorusu_mu(None, q), q

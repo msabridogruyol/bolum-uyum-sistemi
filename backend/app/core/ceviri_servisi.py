@@ -160,9 +160,8 @@ def _anahtar_var() -> bool:
 
 def _parti_cevir(metinler: list[str], dil: str) -> list[str | None]:
     """OpenAI ile toplu çeviri. Test ortamında bu fonksiyon değiştirilebilir (monkeypatch)."""
-    from openai import OpenAI
-    from app.core.ai_koc_servisi import MODEL_ADI
-    client = OpenAI(api_key=os.environ["OPENAI_API_KEY"].strip(), timeout=SURE_SN)
+    # [2026-10-31] Filiz'le aynı yapay zekâ kapısı: eşzamanlılık sınırı, yeniden deneme yok; kapı doluysa çeviri atlanır (Türkçe kalır)
+    from app.core.ai_koc_servisi import yz_sohbet
     istem = (
         f"Translate each Turkish text in the JSON array into {DIL_INGILIZCE[dil]}. The texts are content of a career-guidance "
         "app for high-school students (university majors, occupations, glossary). Keep emojis, numbers, URLs, markdown and "
@@ -170,13 +169,9 @@ def _parti_cevir(metinler: list[str], dil: str) -> list[str | None]:
         "(universities, cities, institutions). Address the student informally, as the Turkish does. "
         'Return ONLY a JSON object {"t": [...]} with the translations in the same order and the same count.'
     )
-    yanit = client.chat.completions.create(
-        model=MODEL_ADI,
-        messages=[{"role": "system", "content": istem}, {"role": "user", "content": json.dumps(metinler, ensure_ascii=False)}],
-        temperature=0.2,
-        response_format={"type": "json_object"},
-    )
-    veri = json.loads(yanit.choices[0].message.content or "{}")
+    icerik = yz_sohbet([{"role": "system", "content": istem}, {"role": "user", "content": json.dumps(metinler, ensure_ascii=False)}],
+                       temperature=0.2, max_tokens=None, yedek=False, zaman_asimi=SURE_SN, response_format={"type": "json_object"})
+    veri = json.loads(icerik or "{}")
     t = veri.get("t") if isinstance(veri, dict) else None
     if not isinstance(t, list) or len(t) != len(metinler):
         return [None] * len(metinler)

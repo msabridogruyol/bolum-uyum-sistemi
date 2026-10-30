@@ -221,6 +221,8 @@ KURALLAR (bunlara kesinlikle uy):
 #    Böylece yapay zekâ beklerken sunucunun iş parçacıklarının en fazla bu kadarı dolu kalır; değerlendirme ekranı vb. etkilenmez.
 #  * Kısa zaman aşımı ve kütüphanenin kendi yeniden denemeleri kapalı (önceden 40 sn × 3 deneme = 2 dakikaya kadar bekleyebiliyordu).
 #  * Ana model hata verirse aynı sağlayıcıdaki yedek model bir kez denenir (KVKK metninde sağlayıcı OpenAI; değişmez).
+#  * İçerik çevirisi (ceviri_servisi) de bu kapıdan geçer.
+#  * Kapı SÜREÇ başınadır: birden fazla sunucu süreci / kopya varsa gerçek üst sınır = süreç sayısı × YZ_ESZAMANLI.
 import threading
 import logging
 
@@ -250,21 +252,23 @@ def _yz_istemcisi(zaman_asimi: float):
         return _istemciler[k]
 
 
-def yz_sohbet(mesajlar: list[dict], *, temperature: float, max_tokens: int, yedek: bool = True) -> str:
+def yz_sohbet(mesajlar: list[dict], *, temperature: float, max_tokens: int | None, yedek: bool = True,
+              zaman_asimi: float | None = None, **ek) -> str:
     """Tek kapı: eşzamanlılık sınırı + kısa zaman aşımı + (isteğe bağlı) yedek model. Hata → AsistanKullanilamiyorHatasi."""
     if not _api_anahtari_var_mi():
         raise AsistanKullanilamiyorHatasi("Filiz'e şu an ulaşılamıyor, biraz sonra tekrar dene.")
     if not _YZ_KAPI.acquire(blocking=False):
         raise AsistanMesgulHatasi("Filiz'in yapay zekâsı şu an çok yoğun; birkaç dakika sonra tekrar dene.")
     try:
-        denemeler = [(MODEL_ADI, YZ_ZAMAN_ASIMI_SN)]
+        denemeler = [(MODEL_ADI, zaman_asimi or YZ_ZAMAN_ASIMI_SN)]
         if yedek and YEDEK_MODEL_ADI and YEDEK_MODEL_ADI != MODEL_ADI:
             denemeler.append((YEDEK_MODEL_ADI, YZ_YEDEK_ZAMAN_ASIMI_SN))
         son_hata = None
         for model, sure in denemeler:
             try:
+                parametre = {"max_tokens": max_tokens} if max_tokens else {}
                 yanit = _yz_istemcisi(sure).chat.completions.create(
-                    model=model, messages=mesajlar, temperature=temperature, max_tokens=max_tokens)
+                    model=model, messages=mesajlar, temperature=temperature, **parametre, **ek)
                 icerik = (yanit.choices[0].message.content or "").strip()
                 if icerik:
                     return icerik

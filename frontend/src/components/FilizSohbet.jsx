@@ -125,9 +125,10 @@ export default function FilizSohbet() {
       setDurum((d) => {
         if (!d || d.mod === 'otomatik') return d
         // [2026-10-31] Sistem içeriğinden, gizlilik ya da kriz cevabı: yapay zekâ kullanılmadı, hak düşmez, mod değişmez
-        if (['icerik', 'sabit', 'kriz'].includes(cevap.kaynak)) return d
+        if (cevap.sinir_doldu) return { ...d, mod: 'otomatik', kalan: Math.max(1, d.gunluk_limit || 1) }
+        if (cevap.kaynak !== 'yz') return d   // içerik / rehber (yoğunluk) / sabit / kriz: hak düşmez, mod değişmez
         const kalan = Math.max(0, d.kalan - 1)
-        return cevap.otomatik || kalan <= 0 ? { ...d, mod: 'otomatik', kalan: d.gunluk_limit || 1 } : { ...d, kalan }
+        return kalan <= 0 ? { ...d, mod: 'otomatik', kalan: Math.max(1, d.gunluk_limit || 1) } : { ...d, kalan }
       })
       if (cevap.oturum_kapandi_mi) {
         setOturumId(null)
@@ -173,7 +174,7 @@ export default function FilizSohbet() {
   const otomatik = durum?.mod === 'otomatik'   // [2026-10-10] yapay zekâ bağlı değil: kural tabanlı rehber
   const oneriler = otomatik ? (durum.ornek_sorular || []).slice(0, 5) : [...(ONERILER_SAYFA[konum.pathname] || []), ...ONERILER_GENEL].slice(0, 4)
   const pasif = hazir && durum && !durum.aktif
-  const hakBitti = durum?.aktif && durum.kalan <= 0
+  const hakBitti = durum?.aktif && durum.mod !== 'otomatik' && durum.kalan <= 0   // [2026-10-31] rehber modunda hak yok, kilit yok
 
   return (
     <>
