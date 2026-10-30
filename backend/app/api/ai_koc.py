@@ -157,6 +157,7 @@ class MesajCevap(BaseModel):
     otomatik: bool = False             # [2026-10-10] cevap kural tabanlı rehberden geldiyse
     kaynak: str = "yz"                 # [2026-10-31] yz | icerik | rehber | sabit | kriz | bilinmiyor (katmanlı Filiz)
     sinir_doldu: bool = False          # [2026-10-31] günlük ya da okulun aylık yapay zekâ sınırı doldu (arayüz rehber moduna geçer)
+    secenekler: list[str] = []         # [2026-10-31] tıklanabilir öneri / "Şunu mu demek istedin?" soruları
 
 
 class GecmisOturumOut(BaseModel):
@@ -284,19 +285,26 @@ def mesaj_gonder(
     #  2) Yapay zekâ açıksa: ilgili içerik parçaları sistem istemine eklenir (cevap sistemle tutarlı, uydurma azalır).
     #  3) Yapay zekâ kapalı / sınır dolu / yoğun / hata: rehber (öğrencinin verisi + içerik araması).
     from app.core import filiz_bilgi as fb
+    from app.core.filiz_anlama import onceden_anla
     from app.core.paketler import okul_modulleri
     moduller = set(okul_modulleri(db, ogrenci.okul_id))
-    try:
-        bulunan = fb.bilgi_ara(db, metin, moduller)
-        bilgi_sorusu = fb.bilgi_sorusu_mu(db, metin) or fb.sozluk_sorusu_mu(db, metin)
-    except Exception:
-        db.rollback()
-        bulunan, bilgi_sorusu = [], False
-    yanit, kaynak, yz_mesgul = None, "yz", False
-    if ai and bilgi_sorusu and bulunan and bulunan[0].puan >= fb.BAGLAM_ESIK:
-        yanit, kaynak, ai = fb.bilgi_cevabi(bulunan), "icerik", False
-    elif ai:
-        baglam_icerik = "" if fb.ders_baglami_mi(metin) else fb.baglam_metni(bulunan)
+    yanit, kaynak, yz_mesgul, secenekler = None, "yz", False, []
+    if ai:
+        # Anlama katmanı: karşılaştırma, meslek yolu ve güçlü bilgi soruları içerikten (yapay zekâya gitmez, haktan düşmez)
+        try:
+            c = onceden_anla(db, metin, moduller)
+        except Exception:
+            db.rollback()
+            c = None
+        if c is not None and c.kaynak == "icerik":
+            yanit, kaynak, secenekler, ai = c.yanit, c.kaynak, c.secenekler, False
+    if ai:
+        try:
+            bulunan = [] if fb.ders_baglami_mi(metin, db) else fb.bilgi_ara(db, metin, moduller)
+        except Exception:
+            db.rollback()
+            bulunan = []
+        baglam_icerik = fb.baglam_metni(bulunan)
         if baglam_icerik:
             sistem_promptu += ("\n\nSİSTEMDEKİ İLGİLİ İÇERİK (soruyla ilgili olabilir; yalnızca soruya uyuyorsa kullan, buna dayan ve "
                                "uydurma; kullandığın bilginin sistemde nerede olduğunu kısaca söyle):\n" + baglam_icerik)
@@ -310,7 +318,8 @@ def mesaj_gonder(
             sinir_notu = "Yapay zekâ şu an yoğun; bu cevabı sonuçlarına dayanan rehber modunda hazırladım."
     if yanit is None:   # [2026-10-10] yapay zekâ bağlı değil: öğrencinin verilerine ve sistem içeriğine dayanan rehber cevabı
         from app.core.filiz_rehber import otomatik_yanit_kaynakli
-        yanit, kaynak = otomatik_yanit_kaynakli(db, ogrenci, metin, moduller)
+        c = otomatik_yanit_kaynakli(db, ogrenci, metin, moduller)
+        yanit, kaynak, secenekler = c.yanit, c.kaynak, c.secenekler
         if sinir_notu:
             yanit = f"{sinir_notu}\n\n{yanit}"
     otomatik = kaynak != "yz"
@@ -327,7 +336,7 @@ def mesaj_gonder(
         kapandi = True
 
     return MesajCevap(asistan_yaniti=yanit, oturum_kapandi_mi=kapandi, otomatik=otomatik, kaynak=kaynak,
-                      sinir_doldu=bool(sinir_notu) and not yz_mesgul)
+                      sinir_doldu=bool(sinir_notu) and not yz_mesgul, secenekler=secenekler[:4])
 
 
 @router.post("/oturum/{oturum_id}/bitir", status_code=204)

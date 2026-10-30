@@ -1,0 +1,284 @@
+{
+ "aciklama": "Filiz anlama katmanı: öğrencilerin gündelik dilde kullandığı meslek / alan adlarının bölümlere karşılığı (kullanıcı onayıyla, 2026-10-31). Bölüm sayfalarındaki meslek listelerinden ve bölüm adlarından türetilen eşleşmelere ek olarak kullanılır. Hedef bölüm adları bolumler.ad ile birebir aynı olmalı (test denetler). Bir kelime birden çok bölüme gidiyorsa Filiz öğrenciye hangisini kastettiğini sorar.",
+ "esanlam": {
+  "doktor": [
+   "TIP"
+  ],
+  "hekim": [
+   "TIP"
+  ],
+  "doktorluk": [
+   "TIP"
+  ],
+  "cerrah": [
+   "TIP"
+  ],
+  "tip fakultesi": [
+   "TIP"
+  ],
+  "dis doktoru": [
+   "DİŞ HEKİMLİĞİ"
+  ],
+  "disci": [
+   "DİŞ HEKİMLİĞİ"
+  ],
+  "dis hekimi": [
+   "DİŞ HEKİMLİĞİ"
+  ],
+  "avukat": [
+   "HUKUK"
+  ],
+  "avukatlik": [
+   "HUKUK"
+  ],
+  "hakim": [
+   "HUKUK"
+  ],
+  "savci": [
+   "HUKUK"
+  ],
+  "noter": [
+   "HUKUK"
+  ],
+  "hukukcu": [
+   "HUKUK"
+  ],
+  "yazilimci": [
+   "BİLGİSAYAR MÜHENDİSLİĞİ",
+   "YAZILIM MÜHENDİSLİĞİ"
+  ],
+  "programci": [
+   "BİLGİSAYAR MÜHENDİSLİĞİ",
+   "YAZILIM MÜHENDİSLİĞİ"
+  ],
+  "kodlama": [
+   "BİLGİSAYAR MÜHENDİSLİĞİ",
+   "YAZILIM MÜHENDİSLİĞİ"
+  ],
+  "yazilim": [
+   "BİLGİSAYAR MÜHENDİSLİĞİ",
+   "YAZILIM MÜHENDİSLİĞİ"
+  ],
+  "bilgisayarci": [
+   "BİLGİSAYAR MÜHENDİSLİĞİ",
+   "YAZILIM MÜHENDİSLİĞİ"
+  ],
+  "oyun yapimcisi": [
+   "DİJİTAL OYUN TASARIMI",
+   "ANİMASYON VE OYUN TASARIMI"
+  ],
+  "psikolog": [
+   "PSİKOLOJİ"
+  ],
+  "terapist": [
+   "PSİKOLOJİ"
+  ],
+  "rehber ogretmen": [
+   "REHBERLİK VE PSİKOLOJİK DANIŞMANLIK"
+  ],
+  "pilot": [
+   "PİLOTAJ"
+  ],
+  "kaptan pilot": [
+   "PİLOTAJ"
+  ],
+  "ucak muhendisi": [
+   "HAVACILIK VE UZAY MÜHENDİSLİĞİ"
+  ],
+  "hemsire": [
+   "HEMŞİRELİK"
+  ],
+  "eczaci": [
+   "ECZACILIK"
+  ],
+  "veteriner": [
+   "VETERİNERLİK"
+  ],
+  "veteriner hekim": [
+   "VETERİNERLİK"
+  ],
+  "mimar": [
+   "MİMARLIK"
+  ],
+  "ic mimar": [
+   "İÇ MİMARLIK VE ÇEVRE TASARIMI"
+  ],
+  "diyetisyen": [
+   "BESLENME VE DİYETETİK"
+  ],
+  "fizyoterapist": [
+   "FİZYOTERAPİ VE REHABİLİTASYON"
+  ],
+  "fizik tedavi": [
+   "FİZYOTERAPİ VE REHABİLİTASYON"
+  ],
+  "ebe": [
+   "EBELİK"
+  ],
+  "odyolog": [
+   "ODYOLOJİ"
+  ],
+  "dil terapisti": [
+   "DİL VE KONUŞMA TERAPİSİ"
+  ],
+  "paramedik": [
+   "ACİL YARDIM VE AFET YÖNETİMİ"
+  ],
+  "muhasebeci": [
+   "MUHASEBE VE DENETİM",
+   "MUHASEBE VE FİNANS YÖNETİMİ"
+  ],
+  "mali musavir": [
+   "MUHASEBE VE DENETİM",
+   "MUHASEBE VE FİNANS YÖNETİMİ"
+  ],
+  "gazeteci": [
+   "GAZETECİLİK",
+   "YENİ MEDYA VE GAZETECİLİK"
+  ],
+  "muhabir": [
+   "GAZETECİLİK",
+   "YENİ MEDYA VE GAZETECİLİK"
+  ],
+  "diplomat": [
+   "ULUSLARARASI İLİŞKİLER",
+   "SİYASET BİLİMİ VE ULUSLARARASI İLİŞKİLER"
+  ],
+  "kaymakam": [
+   "SİYASET BİLİMİ VE KAMU YÖNETİMİ"
+  ],
+  "tercuman": [
+   "MÜTERCİM VE TERCÜMANLIK"
+  ],
+  "cevirmen": [
+   "MÜTERCİM VE TERCÜMANLIK"
+  ],
+  "asci": [
+   "GASTRONOMİ VE MUTFAK SANATLARI"
+  ],
+  "sef": [
+   "GASTRONOMİ VE MUTFAK SANATLARI"
+  ],
+  "grafiker": [
+   "GRAFİK TASARIMI"
+  ],
+  "tasarimci": [
+   "GRAFİK TASARIMI",
+   "ENDÜSTRİYEL TASARIM",
+   "GÖRSEL İLETİŞİM TASARIMI"
+  ],
+  "antrenor": [
+   "ANTRENÖRLÜK EĞİTİMİ"
+  ],
+  "beden egitimi ogretmeni": [
+   "SPOR ÖĞRETMENLİĞİ"
+  ],
+  "spor hocasi": [
+   "SPOR ÖĞRETMENLİĞİ"
+  ],
+  "oyuncu": [
+   "OYUNCULUK"
+  ],
+  "aktor": [
+   "OYUNCULUK"
+  ],
+  "yonetmen": [
+   "RADYO, TELEVİZYON VE SİNEMA",
+   "SİNEMA VE DİJİTAL MEDYA"
+  ],
+  "muzisyen": [
+   "MÜZİK"
+  ],
+  "astronom": [
+   "ASTRONOMİ VE UZAY BİLİMLERİ"
+  ],
+  "genetikci": [
+   "MOLEKÜLER BİYOLOJİ VE GENETİK",
+   "GENETİK VE BİYOMÜHENDİSLİK"
+  ],
+  "ekonomist": [
+   "EKONOMİ"
+  ],
+  "iktisat": [
+   "EKONOMİ"
+  ],
+  "iktisatci": [
+   "EKONOMİ"
+  ],
+  "bankaci": [
+   "FİNANS VE BANKACILIK",
+   "BANKACILIK VE SİGORTACILIK"
+  ],
+  "sinif ogretmeni": [
+   "SINIF ÖĞRETMENLİĞİ"
+  ],
+  "okul oncesi ogretmeni": [
+   "OKUL ÖNCESİ ÖĞRETMENLİĞİ"
+  ],
+  "ingilizce ogretmeni": [
+   "DİL ÖĞRETMENLİĞİ"
+  ],
+  "matematik ogretmeni": [
+   "MATEMATİK ÖĞRETMENLİĞİ"
+  ],
+  "edebiyat ogretmeni": [
+   "DİL VE EDEBİYAT"
+  ],
+  "tarih ogretmeni": [
+   "TARİH ÖĞRETMENLİĞİ"
+  ],
+  "kimyager": [
+   "KİMYA"
+  ],
+  "fizikci": [
+   "FİZİK"
+  ],
+  "biyolog": [
+   "BİYOLOJİ"
+  ],
+  "matematikci": [
+   "MATEMATİK"
+  ],
+  "sosyolog": [
+   "SOSYOLOJİ"
+  ],
+  "tarihci": [
+   "TARİH"
+  ],
+  "arkeolog": [
+   "ARKEOLOJİ"
+  ],
+  "isletmeci": [
+   "İŞLETME"
+  ],
+  "girisimci": [
+   "İŞLETME"
+  ],
+  "pazarlamaci": [
+   "PAZARLAMA"
+  ],
+  "reklamci": [
+   "REKLAMCILIK",
+   "HALKLA İLİŞKİLER VE REKLAMCILIK"
+  ],
+  "halkla iliskiler": [
+   "HALKLA İLİŞKİLER VE REKLAMCILIK"
+  ],
+  "turizmci": [
+   "TURİZM İŞLETMECİLİĞİ"
+  ],
+  "sosyal hizmet uzmani": [
+   "SOSYAL HİZMET"
+  ],
+  "almanca ogretmeni": [
+   "DİL ÖĞRETMENLİĞİ"
+  ],
+  "edebiyatci": [
+   "DİL VE EDEBİYAT"
+  ],
+  "turist rehberi": [
+   "TURİZM REHBERLİĞİ",
+   "SEYAHAT İŞLETMECİLİĞİ VE TURİZM REHBERLİĞİ"
+  ]
+ }
+}

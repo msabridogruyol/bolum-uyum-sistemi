@@ -544,7 +544,7 @@ def k_net(b: Baglam, m: str) -> str:
 
 
 KONULAR = [
-    (("netlerim", "netim ", "denemelerim", "deneme sonuc", "net takib", "kac net", "hedef net"), k_net),
+    (("netlerim", "netim ", "netimi", "netlerimi", "net artir", "denemelerim", "deneme sonuc", "net takib", "kac net", "hedef net"), k_net),
     (("yks'ye kac", "yksye kac", "yks kac", "yks ne zaman", "yks'ye ne kadar", "sinava kac", "sinava ne kadar", "yks geri sayim"), k_yks),
     (("tesekkur", "sagol", "sag ol", "eyvallah", "cok iyi", "super"), k_tesekkur),
     (("mulakat simul", "iki aday", "mulakat oyun"), k_mulakat_sim),
@@ -554,9 +554,11 @@ KONULAR = [
     (("maarif",), k_maarif),
     (("is turu soru", "is turu tercih", "k5 nedir", "k5 ne"), k_is_turu),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
-    (("sistem nasil", "nasil calisiyor", "filizyol nedir", "ne ise yarar"), k_sistem),
-    (("motivasyon", "isteksiz", "bikkin", "yoruldum", "canim istemiyor", "hevesim"), k_motivasyon),
-    (("kararsiz", "karar veremiyorum", "emin degilim", "secemiyorum", "secmeli miyim", "secsem mi", "tercih etmeli"), k_kararsiz),
+    (("sistem nasil", "nasil calisiyor", "filizyol nedir", "filizyol ne ise yarar", "sistem ne ise yarar", "bu site ne ise yarar"), k_sistem),
+    (("motivasyon", "motive", "motivem", "isteksiz", "bikkin", "yoruldum", "canim istemiyor", "hevesim", "istegim yok"), k_motivasyon),
+    (("kararsiz", "karar veremiyorum", "emin degilim", "secemiyorum", "secmeli miyim", "secsem mi", "tercih etmeli",
+      "bilmiyorum", "kafam karisik", "kafam cok karisik", "kafam", "karar veremedim", "emin olamiyorum", "hangisini secsem", "hangisi iyi",
+      "hangisi daha iyi", "ne secsem", "ne okusam", "hicbir sey bilmiyorum", "aklim karisik"), k_kararsiz),
     (("sinav", "kaygi", "stres", "verimli", "ders calis", "nasil calis", "yks", "tyt", "ayt"), k_sinav),
     (("degistir", "degisebilir", "baska bolum sec"), k_hedef_degis),
     (("hakkinda bilgi", "ne okutuyor", "bolum hakkinda", "bolumu anlat", "mezunlar"), k_bolum_bilgi),
@@ -566,7 +568,7 @@ KONULAR = [
     (("kitap", "film", "belgesel", "dizi", "kaynak", "okuyabil", "izleyebil"), k_kaynak),
     (("kulup", "kulub", "topluluk", "ilgi testi"), k_kulup),
     (("rehber ogretmen", "rehberlik servis", "psikolojik danisman"), k_rehber),
-    (("koc", "gorusme", "randevu"), k_koc),
+    (("koc", "kocla gorus", "koc ile gorus", "gorusme talebi", "randevu"), k_koc),   # [2026-10-31] "iş görüşmesi" koçluğa gitmesin
     (("takvim", "tarih", "ne zaman", "etkinlik"), k_takvim),
     (("guclu", "iyi oldugum", "yetenek", "avantaj"), k_guclu),
     (("gelistir", "gelisim", "zayif", "eksik", "zorlan"), k_gelisim),
@@ -578,56 +580,71 @@ KONULAR = [
 ]
 
 
-def otomatik_yanit_kaynakli(db: Session, ogrenci: Ogrenci, metin: str, moduller: set[str] | None = None) -> tuple[str, str]:
-    """[2026-10-31] Katmanlı rehber: (cevap, kaynak). kaynak: 'sabit' (gizlilik), 'icerik' (sistem içeriği), 'rehber' (öğrencinin
-    kendi verisine dayanan konu), 'bilinmiyor' (eşleşme yok).
-    Sıra: gizlilik → ilham kaynağı sorusu → soruda bölüm/meslek adı geçen bilgi sorusu (içerik) → kişisel konular →
-    içerik araması → bilinmiyor."""
-    # [2026-10-11] Hiyerarşi koruması: başka bir öğrenciyi hedefleyen soruya sabit cevap (yapay zekâ moduyla aynı)
+def otomatik_yanit_kaynakli(db: Session, ogrenci: Ogrenci, metin: str, moduller: set[str] | None = None):
+    """[2026-10-31] Katmanlı rehber. Döner: filiz_anlama.Cevap(yanit, kaynak, secenekler).
+    kaynak: 'sabit' (gizlilik) | 'icerik' (sistem içeriği) | 'rehber' (öğrencinin kendi verisi) | 'netlestirme'
+    ("Şunu mu demek istedin?") | 'bilinmiyor'.
+    Sıra: gizlilik → ilham kaynağı sorusu → anlama (karşılaştırma, meslek yolu, bilgi sorusu) → kişisel konular →
+    netleştirme / içerik araması → bilinmiyor. Soru önce düzeltilir (konuşma dili, kısaltmalar)."""
     from app.core.filiz_gizlilik import ogrenci_dizini, ogrenci_hiyerarsi_yaniti
     from app.core import filiz_bilgi as fb
+    from app.core.filiz_anlama import Cevap, onceden_anla, sonradan_netlestir
     ret = ogrenci_hiyerarsi_yaniti(metin, ogrenci_dizini(db, ogrenci), ogrenci.ad_soyad)
     if ret:
-        return ret, "sabit"
+        return Cevap(ret, "sabit")
     if moduller is None:
         from app.core.paketler import okul_modulleri
         moduller = set(okul_modulleri(db, ogrenci.okul_id))
-    t = _sade(metin)
+    t = fb.duzelt(metin)
     b = Baglam(db, ogrenci)
     if _KAYNAK_SORU.search(metin or ""):
         try:
             c = k_kaynak_soru(b, metin)
             if c:
-                return c, "rehber"
+                return Cevap(c, "rehber")
         except Exception:
             db.rollback()
-    icerik = None
     try:
-        if fb.bilgi_sorusu_mu(db, metin) or fb.sozluk_sorusu_mu(db, metin):
-            icerik = fb.bilgi_cevabi(fb.bilgi_ara(db, metin, moduller))
-            if icerik:
-                return icerik, "icerik"
+        c = onceden_anla(db, metin, moduller)
+        if c:
+            return c
     except Exception:
         db.rollback()
     for anahtarlar, f in KONULAR:
         if any(a in t for a in anahtarlar):
             try:
-                return f(b, metin), "rehber"
+                return Cevap(f(b, metin), "rehber")
             except Exception:
                 db.rollback()
                 break
     try:
-        if not fb.kisisel_mi(metin):
-            icerik = fb.bilgi_cevabi(fb.bilgi_ara(db, metin, moduller))
-            if icerik:
-                return icerik, "icerik"
+        c = sonradan_netlestir(db, metin, moduller)
+        if c:
+            return c
     except Exception:
         db.rollback()
     ornek = random.sample(ORNEK_SORULAR, 3)
-    return ("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin, görevlerin ve gelişiminle ilgili sorularda; bölümler, meslekler ve "
-            "sözlükteki kavramlar hakkında da yardım edebilirim. Mesela şunları sorabilirsin: "
-            + " · ".join(f"\"{x}\"" for x in ornek)), "bilinmiyor"
+    return Cevap("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin, görevlerin ve gelişiminle ilgili sorularda; bölümler, meslekler ve "
+                 "sözlükteki kavramlar hakkında da yardım edebilirim. Şunlardan birini deneyebilirsin:", "bilinmiyor", ornek)
 
 
 def otomatik_yanit(db: Session, ogrenci: Ogrenci, metin: str) -> str:
-    return otomatik_yanit_kaynakli(db, ogrenci, metin)[0]
+    return otomatik_yanit_kaynakli(db, ogrenci, metin).yanit
+
+
+def katman_tahmini(db: Session, metin: str, moduller: set[str] | None):
+    """[2026-10-31] Öğrenci olmadan yönlendirme (ölçüm testleri için): otomatik_yanit_kaynakli ile aynı sıra, kişisel
+    konularda konu fonksiyonu çağrılmaz. Döner: (kaynak, Cevap | konu_adı | None)."""
+    from app.core import filiz_bilgi as fb
+    from app.core.filiz_anlama import onceden_anla, sonradan_netlestir
+    c = onceden_anla(db, metin, moduller)
+    if c:
+        return c.kaynak, c
+    t = fb.duzelt(metin)
+    for anahtarlar, f in KONULAR:
+        if any(a in t for a in anahtarlar):
+            return "rehber", f.__name__
+    c = sonradan_netlestir(db, metin, moduller)
+    if c:
+        return c.kaynak, c
+    return "bilinmiyor", None

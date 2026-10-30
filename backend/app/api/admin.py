@@ -91,7 +91,8 @@ def parametreyi_guncelle(
                 # [2026-10-30] Filiz yapay zekâ sınırları (0 = o pakette yapay zekâ kapalı, Filiz rehber modunda)
                 "filiz_gunluk_mesaj_limiti_temel": (0, 200), "filiz_gunluk_mesaj_limiti_gelisim": (0, 200),
                 "filiz_gunluk_mesaj_limiti": (0, 200), "filiz_okul_aylik_ogrenci_basi": (0, 5000),
-                "filiz_okul_aylik_ogrenci_basi_temel": (0, 5000), "filiz_okul_aylik_ogrenci_basi_gelisim": (0, 5000)}
+                "filiz_okul_aylik_ogrenci_basi_temel": (0, 5000), "filiz_okul_aylik_ogrenci_basi_gelisim": (0, 5000),
+                "filiz_anlasilamayan_listesi_acik": (0, 1)}
     if anahtar in sinirlar:
         alt, ust = sinirlar[anahtar]
         try:
@@ -1497,3 +1498,32 @@ def filiz_kullanim(gun: int = 30, db: Session = Depends(get_db), _admin: AdminKu
             "kaynaklar": [{**dict(r), "p95_ms": int(r["p95_ms"]) if r["p95_ms"] is not None else None,
                            "ort_ms": int(r["ort_ms"]) if r["ort_ms"] is not None else None} for r in kaynaklar],
             "okullar": [dict(r) for r in okullar]}
+
+
+# [2026-10-31] Filiz'in anlayamadığı ya da netleştirme sorduğu öğrenci soruları (pilotta anlama katmanını geliştirmek için).
+# Varsayılan KAPALI (filiz_anlasilamayan_listesi_acik = 0): öğrenci mesajı içeriği gösterdiği için KVKK değerlendirmesinden
+# sonra açılır. Açıkken: yalnızca süper admin; öğrenci/okul kimliği dönmez; e-posta, telefon, TC, numara ve sistemdeki
+# öğrenci adları ile ad benzeri sözcükler maskelenir; aynı soru birleştirilip sayısı verilir.
+@router.get("/filiz/anlasilamayan")
+def filiz_anlasilamayan(gun: int = 30, adet: int = 200, db: Session = Depends(get_db),
+                        _admin: AdminKullanici = Depends(get_mevcut_super_admin)):
+    from app.core.katman_servisi import parametre_oku
+    if str(parametre_oku(db, "filiz_anlasilamayan_listesi_acik", "0")).strip() != "1":
+        raise HTTPException(status_code=403, detail="Bu liste kapalı. KVKK değerlendirmesinden sonra Parametreler'den açılabilir.")
+    from collections import Counter
+    from app.core.filiz_gizlilik import ad_benzerlerini_maskele, dizin_yukle, temel_maskele
+    gun, adet = max(1, min(int(gun), 365)), max(1, min(int(adet), 1000))
+    satirlar = db.execute(text("""
+        SELECT a.kaynak, (SELECT o.icerik FROM ogrenci_koclugu_mesajlari o
+                           WHERE o.oturum_id = a.oturum_id AND o.rol = 'ogrenci' AND o.id < a.id ORDER BY o.id DESC LIMIT 1) AS soru
+          FROM ogrenci_koclugu_mesajlari a
+         WHERE a.rol = 'asistan' AND a.kaynak IN ('bilinmiyor', 'netlestirme', 'icerik_yok')
+           AND a.olusturulma_zamani >= now() - make_interval(days => :g)
+         ORDER BY a.id DESC LIMIT 5000"""), {"g": gun}).all()
+    dz = dizin_yukle(db, tum_sistem=True)
+    say: Counter = Counter()
+    for kaynak, soru in satirlar:
+        if soru:
+            m = ad_benzerlerini_maskele(dz.maskele(temel_maskele(soru)))
+            say[(kaynak, " ".join(m.split())[:300])] += 1
+    return {"gun": gun, "sorular": [{"kaynak": k, "soru": s, "adet": n} for (k, s), n in say.most_common(adet)]}
