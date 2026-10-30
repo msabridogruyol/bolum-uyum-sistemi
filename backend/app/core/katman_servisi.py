@@ -200,15 +200,19 @@ def katman_oturumu_baslat(
         .first()
     )
 
+    # [2026-10-30] Bitmiş katman aynı turda yeniden açılmaz. Bu kontrol önceden donmuş soru setini döndüren
+    # satırın ALTINDAYDI ve hiç çalışmıyordu: öğrenci bitirdiği katmana dönüp soruları ve kendi cevaplarını
+    # görebiliyor, cevap değiştirip katmanı yeniden puanlatabiliyordu. Güven sorunu / yönetim isteğiyle tekrar
+    # çözme katmani_tekrara_ac ile oturumu silerek yapılır; bu kontrol onu etkilemez.
+    if oturum is not None and oturum.durum == "tamamlandi":
+        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
+
     if oturum is not None and oturum.kilitlenen_soru_id_listesi:
         soru_idler = oturum.kilitlenen_soru_id_listesi
         sorular = db.query(Soru).filter(Soru.id.in_(soru_idler)).all()
         # DB sırası garanti değildir — kilitlenen sırayı koru
         sirali = sorted(sorular, key=lambda s: soru_idler.index(s.id))
         return oturum, sirali
-
-    if oturum is not None and oturum.durum == "tamamlandi":
-        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
 
     aktif_sorular = (
         db.query(Soru)
@@ -272,6 +276,13 @@ def cevabi_kaydet(
             raise IsKuraliHatasi("'En çok' ve 'en az' aynı şık olamaz.")
     else:
         en_az_secenek_id = None
+    # [2026-10-30] Bitmiş katmanın cevabı değiştirilemez (aynı turda).
+    if soru is not None and soru.katman_id is not None:
+        k_oturum = (db.query(OgrenciKatmanOturumu)
+                    .filter(OgrenciKatmanOturumu.ogrenci_id == ogrenci.id, OgrenciKatmanOturumu.tur_id == tur.id,
+                            OgrenciKatmanOturumu.katman_id == soru.katman_id).first())
+        if k_oturum is not None and k_oturum.durum == "tamamlandi":
+            raise IsKuraliHatasi("Bu bölümü bitirdin; cevapların artık değiştirilemez.")
 
     mevcut = (
         db.query(OgrenciCevap)
@@ -406,6 +417,8 @@ def katmani_tamamla(
     bunlar hiçbir değişken puanına katkı yapmaz, yalnızca güven skoru
     hesaplamasında (guvenlik_servisi.py) kullanılır.
     """
+    if oturum.durum == "tamamlandi":   # [2026-10-30] aynı katman ikinci kez puanlanmaz
+        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
     soru_idler = oturum.kilitlenen_soru_id_listesi or []
     sorular = {s.id: s for s in db.query(Soru).filter(Soru.id.in_(soru_idler)).all()}
 

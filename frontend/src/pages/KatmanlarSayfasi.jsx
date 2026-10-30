@@ -151,6 +151,8 @@ export default function KatmanlarSayfasi() {
                     else if (ilkDal) navigate(`/k5/${ilkDal.dal_kodu}`)
                     return
                   }
+                  // [2026-10-30] Bitmiş bölüm aynı turda yeniden açılmaz: soruları değil, o bölümün sonucunu göster
+                  if (k.durum === 'tamamlandi') { navigate(`/profilim/${k.kod}`); return }
                   navigate(`/katmanlar/${k.kod}`)
                 }}
               >
