@@ -519,58 +519,6 @@
    "ornek": "Dosya önce COREPER'de görüşülecek, sonra Konsey'e gidecek."
   }
  ],
- "AYAKKABI TASARIMI VE ÜRETİMİ": [
-  {
-   "terim": "Saya",
-   "anlam": "Ayakkabının tabanın üstünde kalan, ayağı saran deri ya da kumaştan yüzü.",
-   "ornek": "Sayayı süet yapalım, taban kauçuk kalsın."
-  },
-  {
-   "terim": "Kalıp",
-   "anlam": "Ayakkabının şeklini ve numarasını belirleyen, ayak biçimindeki plastik veya ahşap model. Saya bunun üzerine gerilir.",
-   "ornek": "Bu modelin burnu sivri, yeni kalıp sipariş etmemiz lazım."
-  },
-  {
-   "terim": "Monte etmek",
-   "anlam": "Sayayı kalıbın üzerine gerip tabana sabitleme işlemi.",
-   "ornek": "Sayalar hazır, öğleden sonra monte bandına veriyoruz."
-  },
-  {
-   "terim": "Sayacı",
-   "anlam": "Saya parçalarını birleştirip diken usta. Ayakkabı atölyelerinde en çok aranan ustalardan biridir.",
-   "ornek": "Sayacı usta bu dikişin çift sıra olmasını önerdi."
-  },
-  {
-   "terim": "Kesimhane",
-   "anlam": "Deri ve diğer malzemelerin kalıplara göre kesildiği üretim bölümü.",
-   "ornek": "Kesimhaneye söyle, derideki çizik yerlerden parça çıkarmasınlar."
-  },
-  {
-   "terim": "Vardola",
-   "anlam": "Sayanın kenarı ile taban arasında dolaşan ince şerit. Hem sağlamlık sağlar hem de dekoratif görünür.",
-   "ornek": "Bu botta vardolayı dikişli yaparsak daha klasik durur."
-  },
-  {
-   "terim": "Fort",
-   "anlam": "Ayakkabının topuk arkasına konan, şeklini korumasını ve topuğu desteklemesini sağlayan sertlik malzemesi.",
-   "ornek": "Fort çok yumuşak kalmış, topuk arkası hemen çöküyor."
-  },
-  {
-   "terim": "Numune çifti",
-   "anlam": "Seri üretimden önce modelin denenmesi ve müşteriye gösterilmesi için yapılan ilk çift.",
-   "ornek": "Numune çiftini fuardan önce mutlaka bitirmemiz gerekiyor."
-  },
-  {
-   "terim": "PU",
-   "anlam": "Poliüretan. Hafif ve esnek olduğu için taban yapımında, ayrıca suni deri olarak sıkça kullanılan malzeme.",
-   "ornek": "Maliyeti düşürmek için PU taban kullanalım."
-  },
-  {
-   "terim": "EVA",
-   "anlam": "Etilen Vinil Asetat. Spor ayakkabı ve terliklerde kullanılan çok hafif, yumuşak köpük malzeme.",
-   "ornek": "Koşu ayakkabısında ara tabanı EVA yapacağız, hafif olsun."
-  }
- ],
  "AĞAÇ İŞLERİ ENDÜSTRİ MÜHENDİSLİĞİ": [
   {
    "terim": "Masif",
@@ -4731,58 +4679,6 @@
    "ornek": "Sözleşme FOB İzmir, yani navlunu ve sigortayı alıcı ödeyecek."
   }
  ],
- "GÜVERTE": [
-  {
-   "terim": "Köprüüstü",
-   "anlam": "Geminin yönetildiği, dümen ve seyir cihazlarının bulunduğu üst bölüm.",
-   "ornek": "Kaptan köprüüstüne çıkana kadar seyir sende, dikkatli izle."
-  },
-  {
-   "terim": "Vardiya",
-   "anlam": "Gemide zabitlerin dönüşümlü olarak köprüüstünde görev yaptığı süre, genelde dört saatlik nöbetler.",
-   "ornek": "Sıfır dört vardiyası bende, gece yarısı köprüüstünde olacağım."
-  },
-  {
-   "terim": "Pruva ve pupa",
-   "anlam": "Pruva geminin ön ucu, pupa ise arka ucudur.",
-   "ornek": "Pruvadan rüzgâr sert geliyor, hızı biraz düşürelim."
-  },
-  {
-   "terim": "İskele ve sancak",
-   "anlam": "Gemide ileriye bakarken sol taraf iskele, sağ taraf sancaktır. Karışıklık olmasın diye sağ-sol yerine bu sözcükler kullanılır.",
-   "ornek": "Sancak tarafından bir balıkçı teknesi yaklaşıyor, rotayı iskeleye beş derece çevir."
-  },
-  {
-   "terim": "Palamar",
-   "anlam": "Gemiyi rıhtıma bağlamak için kullanılan kalın halat.",
-   "ornek": "Pruva palamarlarını ver, rıhtıma yanaşıyoruz."
-  },
-  {
-   "terim": "Kılavuz kaptan",
-   "anlam": "Liman ve boğaz gibi zor bölgeleri iyi bilen, gemiye binip geçişte kaptana yol gösteren uzman kaptan.",
-   "ornek": "Boğaz girişinde kılavuz kaptan alacağız, iskele merdivenini hazırla."
-  },
-  {
-   "terim": "Seyir defteri",
-   "anlam": "Gemide rota, hava durumu, olaylar ve vardiya bilgilerinin düzenli olarak yazıldığı resmî defter.",
-   "ornek": "Demirlediğimiz saati ve mevkiyi seyir defterine işlemeyi unutma."
-  },
-  {
-   "terim": "ETA",
-   "anlam": "Estimated Time of Arrival, yani tahmini varış zamanı. Limana ve acenteye sık sık bildirilir.",
-   "ornek": "Acenteye haber ver, hava yüzünden ETA'mız yarın sabah altıya kaydı."
-  },
-  {
-   "terim": "COLREG",
-   "anlam": "Denizde Çatışmayı Önleme Tüzüğü. Gemilerin birbirine karşı nasıl manevra yapacağını belirleyen uluslararası trafik kuralları.",
-   "ornek": "COLREG'e göre sağımızdan gelen gemiye yol vermemiz gerekiyor."
-  },
-  {
-   "terim": "Demir taramak",
-   "anlam": "Demirli geminin demirinin deniz dibinde tutmayıp sürüklenmesi. Gemi istemeden yer değiştirdiği için tehlikelidir.",
-   "ornek": "Rüzgâr arttı, gemi demir tarıyor, makineyi hazır ettirin."
-  }
- ],
  "GİRİŞİMCİLİK": [
   {
    "terim": "Pitch",
@@ -5769,58 +5665,6 @@
    "terim": "KPSS",
    "anlam": "Kamu Personeli Seçme Sınavı. Devlet kurumlarına memur olarak girmek için alınması gereken merkezi sınav.",
    "ornek": "Kurumumuza bu yıl KPSS puanıyla on yeni memur atanacak."
-  }
- ],
- "KANATLI HAYVAN YETİŞTİRİCİLİĞİ": [
-  {
-   "terim": "Broiler",
-   "anlam": "Et üretimi için yetiştirilen, kısa sürede hızla kilo alan etlik piliç.",
-   "ornek": "Bu kümeste otuz bin broiler var, kırk ikinci günde kesime gidecek."
-  },
-  {
-   "terim": "Günlük civciv",
-   "anlam": "Kuluçkahaneden yumurtadan çıktığı gün çiftliğe gönderilen civciv.",
-   "ornek": "Yarın sabah günlük civcivler geliyor, kümesi otuz iki dereceye ısıtın."
-  },
-  {
-   "terim": "Kuluçkahane",
-   "anlam": "Yumurtaların makinelerde kontrollü sıcaklık ve nemde bekletilerek civciv çıkarıldığı tesis.",
-   "ornek": "Kuluçkahanede çıkış oranı bu hafta yüzde seksen beşe düştü, nemi kontrol edin."
-  },
-  {
-   "terim": "Altlık",
-   "anlam": "Kümes zeminine serilen talaş veya saman gibi malzeme; ıslanırsa hastalık ve ayak sorunları artar.",
-   "ornek": "Suluk altındaki altlık ıslanmış, hemen kuru talaş serpelim."
-  },
-  {
-   "terim": "Isıtma dönemi",
-   "anlam": "İngilizcede brooding. Civcivlerin ilk günlerinde kendi vücut sıcaklıklarını koruyamadıkları için kümesin özel olarak ısıtıldığı dönem.",
-   "ornek": "Isıtma döneminde civcivler bir yere toplanıyorsa üşüyorlar demektir."
-  },
-  {
-   "terim": "Biyogüvenlik",
-   "anlam": "Hastalıkların kümese girmesini önlemek için alınan önlemler: ayak dezenfeksiyonu, ziyaretçi kısıtlaması, özel kıyafet gibi.",
-   "ornek": "Biyogüvenlik gereği kümese girmeden önce duş alıp çiftlik kıyafeti giyiyoruz."
-  },
-  {
-   "terim": "Mortalite",
-   "anlam": "Bir sürüde belirli sürede ölen hayvanların oranı.",
-   "ornek": "Üçüncü haftada mortalite yükseldi, veterinere numune gönderelim."
-  },
-  {
-   "terim": "FCR",
-   "anlam": "Feed Conversion Ratio, yani yem dönüşüm oranı. Bir kilo canlı ağırlık için kaç kilo yem harcandığını gösterir; düşük olması iyidir.",
-   "ornek": "Bu dönemde FCR 1,6 çıktı, yem maliyetinde ciddi kazanç var."
-  },
-  {
-   "terim": "EPEF",
-   "anlam": "European Production Efficiency Factor. Canlı ağırlık, yaşam gücü, kesim yaşı ve yem dönüşümünü tek sayıda birleştiren verimlilik puanı.",
-   "ornek": "Bu sürünün EPEF'i dört yüzü geçti, son yılların en iyi dönemi."
-  },
-  {
-   "terim": "Pik verim",
-   "anlam": "Yumurtacı tavukların yumurta veriminin en yüksek seviyeye ulaştığı dönem.",
-   "ornek": "Sürü yirmi yedinci haftada pik verime ulaştı, yüzde doksan beş yumurta alıyoruz."
   }
  ],
  "KARŞILAŞTIRMALI EDEBİYAT": [
@@ -9461,58 +9305,6 @@
    "terim": "STK",
    "anlam": "Sivil Toplum Kuruluşu. Kâr amacı gütmeyen dernek ve vakıflar; kültür projelerinin önemli bir kısmını yürütür.",
    "ornek": "Atölyeleri yerel bir STK ile ortak yürüteceğiz."
-  }
- ],
- "SAÇ VE GÜZELLİK UYGULAMALARI": [
-  {
-   "terim": "Fön",
-   "anlam": "Saçı fırça ve kurutma makinesiyle şekillendirerek kurutma işlemi.",
-   "ornek": "Boyadan sonra hafif dalgalı bir fön yapalım mı?"
-  },
-  {
-   "terim": "Dip boya",
-   "anlam": "Saçın yalnızca yeni çıkan kök kısmının, önceki renkle eşitlemek için boyanması.",
-   "ornek": "Dipler iki santim çıkmış, bugün sadece dip boya yeterli."
-  },
-  {
-   "terim": "Balyaj",
-   "anlam": "Açıcının saça elle, fırçayla serbestçe sürülerek doğal görünen açık tonlar verildiği renklendirme tekniği.",
-   "ornek": "Uçlara doğru yumuşak bir balyaj yaparsak yüzün aydınlanır."
-  },
-  {
-   "terim": "Röfle",
-   "anlam": "Saçın ince tutamlarının seçilip açılarak ana renkten açık çizgiler oluşturulması.",
-   "ornek": "Röfleleri ince alalım, çizgili durmasın."
-  },
-  {
-   "terim": "Oksidan",
-   "anlam": "Saç boyası ya da açıcıyla karıştırılan, rengin işlemesini sağlayan krem kıvamlı karışım.",
-   "ornek": "Boyayı bire bir oranında oksidanla karıştır, kaseyi bana ver."
-  },
-  {
-   "terim": "Volüm",
-   "anlam": "Oksidanın gücünü belirten ölçü; 20 volüm, 30 volüm gibi. Volüm arttıkça saçı daha çok açar.",
-   "ornek": "Saç ince ve hassas, 30 değil 20 volüm kullanalım."
-  },
-  {
-   "terim": "Keratin bakımı",
-   "anlam": "Saçı düzleştirip kabarmayı azaltan, ısıyla saça işlenen bakım uygulaması.",
-   "ornek": "Keratin bakımından sonra üç gün saçını yıkamaman gerekiyor."
-  },
-  {
-   "terim": "Perma",
-   "anlam": "Saça kimyasal işlemle uzun süre kalıcı bukle veya dalga verme.",
-   "ornek": "Perma yapmadan önce saçın boyalı olup olmadığını kontrol etmeliyim."
-  },
-  {
-   "terim": "Renk kartelası",
-   "anlam": "Saç boyası renklerinin numaralarıyla birlikte örnek tutamlarda gösterildiği katalog.",
-   "ornek": "Kartelada 7.1 numaraya bakalım, istediğin küllü ton o."
-  },
-  {
-   "terim": "Alerji testi",
-   "anlam": "Boyadan önce az miktarda ürünün cilde sürülerek reaksiyon olup olmadığına bakılması.",
-   "ornek": "İlk kez boyatıyorsun, önce kulak arkasına alerji testi yapalım."
   }
  ],
  "SAĞLIK YÖNETİMİ": [

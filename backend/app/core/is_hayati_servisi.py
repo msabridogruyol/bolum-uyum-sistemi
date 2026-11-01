@@ -126,7 +126,7 @@ def program_anahtari(ad: str) -> str:
 # [2026-11-01] Bölüm adlarında çok geçen genel sözcükler: yalnızca bunlar ortaksa ad benzer sayılmaz
 # ("Elektrik mühendisliği" ≠ "Mekatronik mühendisliği", "Uzay mühendisliği" ≠ "Gıda mühendisliği").
 _GENEL_SOZCUK = frozenset("""ve muhendisligi ogretmenligi bilimleri bilimi teknolojisi teknolojileri yonetimi isletmeciligi
-isletmesi sanatlari tasarimi egitimi""".split())
+isletmesi sanatlari sanatlar tasarimi egitimi uygulamalari hizmetleri yetistiriciligi teknikleri""".split())
 
 
 def _ayni_sozcuk(x: str, y: str) -> bool:
@@ -142,9 +142,13 @@ def _benzerlik(a: str, b: str) -> float:
     oran = SequenceMatcher(None, a, b).ratio()
     ortak = len(ka & kb) / max(1, len(ka | kb))
     if not ozel:
-        return min(max(oran, ortak), 0.6)        # yalnızca genel sözcük ortak (ya da hiç ortak sözcük yok): öneri olamaz
+        return min(max(oran, ortak), 0.45)       # yalnızca genel sözcük ortak (ya da hiç): öneri de aday da olmaz
     # Program adının ayırt edici sözcüklerinin tamamı bölüm adında var: "Elektrik mühendisliği" → "Elektrik ve Elektronik Müh."
     icerme = 0.88 if qa and ozel == qa else 0.0
+    # Bölüm adının ayırt edici sözcükleri programda var, program en çok bir sözcük fazla: "Basım ve yayım teknolojileri" → "Basım Teknolojileri"
+    ters = {y for y in qb if any(_ayni_sozcuk(x, y) for x in qa)}
+    if qb and ters == qb and len(qa) - len(qb) <= 1:
+        icerme = max(icerme, 0.86)
     return max(oran, ortak, icerme)
 
 
@@ -168,6 +172,19 @@ def _birlesen_bolumler() -> dict[str, str]:
         return {}
 
 
+def bolum_duzeyleri(ogrenim_suresi) -> set[str]:
+    """[2026-11-01] Bölümün öğrenim süresinden düzeyleri: "2 yıl" → ön lisans; "Programa göre 2 veya 4 yıl",
+    "Lisansta 4 yıl; önlisans programlarında 2 yıl" → ikisi; diğerleri (4–6 yıl ya da boş) → lisans."""
+    t = _normalize(str(ogrenim_suresi or ""))
+    iki = bool(re.search(r"\b2\b", t)) or "onlisans" in t or "on lisans" in t
+    dort = bool(re.search(r"\b[3-6]\b", t)) or bool(re.search(r"(?<!on )(?<!on)lisans", t))
+    if iki and not dort:
+        return {"onlisans"}
+    if iki:
+        return {"lisans", "onlisans"}
+    return {"lisans"}
+
+
 def bolum_adaylari(db: Session) -> list[dict]:
     """Eşleştirme için bölüm adları: bölüm adı + elle girilmiş YÖK Atlas program grupları (detay.yokatlas_gruplari)."""
     out = []
@@ -176,14 +193,17 @@ def bolum_adaylari(db: Session) -> list[dict]:
         d = r.detay if isinstance(r.detay, dict) else json.loads(r.detay or "{}")
         adlar = [r.ad] + [x for x in (d.get("yokatlas_gruplari") or []) if isinstance(x, str)] \
             + [eski for eski, ana in birlesen.items() if _anahtar(ana) == _anahtar(r.ad)]
-        out.append({"id": r.id, "ad": tr_baslik(r.ad), "anahtarlar": list({program_anahtari(a) for a in adlar if a})})
+        out.append({"id": r.id, "ad": tr_baslik(r.ad), "anahtarlar": list({program_anahtari(a) for a in adlar if a}),
+                    "duzeyler": bolum_duzeyleri(d.get("ogrenim_suresi"))})
     return out
 
 
-def program_eslestir(program_adi: str, adaylar: list[dict], n: int = 4) -> dict:
+def program_eslestir(program_adi: str, adaylar: list[dict], n: int = 4, duzey: str | None = None) -> dict:
     """{'bolum_id', 'bolum_ad', 'skor', 'durum': 'otomatik'|'oneri'|'yok', 'adaylar': [...]}.
     otomatik: anahtar birebir aynı (Türkçe-normalize, parantez içi ve '(İngilizce)' vb. atılmış) ya da aynı kelime kümesi.
     oneri: bulanık skor ≥ 0.85 (ön seçili gelir, yönetici onaylar). Altı: yalnızca aday listesi."""
+    if duzey:   # ön lisans programı yalnızca ön lisansı olan bölüme, lisans programı lisansı olan bölüme bağlanır
+        adaylar = [b for b in adaylar if duzey in b.get("duzeyler", {"lisans"})]
     a = program_anahtari(program_adi)
     if not a:
         return {"bolum_id": None, "bolum_ad": None, "skor": 0, "durum": "yok", "adaylar": []}

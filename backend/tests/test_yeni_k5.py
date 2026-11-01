@@ -330,4 +330,4 @@ def test_goc_sql_uretimi_ve_veri_dosyalari():
     d = json.loads((kok / "app" / "data" / "bolum_detay_duzeltme.json").read_text(encoding="utf-8"))["duzeltmeler"]
     assert d and all(x["eski"] != x["yeni"] and x["yol"] and x["bolum"] for x in d)
     a = json.loads((kok / "app" / "data" / "bolum_kisa_aciklama.json").read_text(encoding="utf-8"))["bolumler"]
-    assert len(a) >= 260 and all(v.strip() for v in a.values())   # [2026-10-29] 278 → 266 (0082)
+    assert len(a) >= 255 and all(v.strip() for v in a.values())   # [2026-10-29] 278 → 266 (0082); [2026-11-01] 266 → 262 (0086)
