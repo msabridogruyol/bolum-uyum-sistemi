@@ -162,7 +162,7 @@ def _k5_baglari(db: Session, bugun: date):
         return None
     from app.core.veri_yukleme import son_yukleme
     toplam = (_tek(db, "SELECT COUNT(*) n FROM bolumler WHERE durum = 'yayinda'") or {}).get("n") or 0
-    return {"kayit": r["n"], "son_guncelleme": son_yukleme(db, "k5_baglari"), "kaynak": "Offline pipeline (a8)",
+    return {"kayit": r["n"], "son_guncelleme": son_yukleme(db, "k5_baglari"), "kaynak": "Offline pipeline (b5_k5_baglari)",
             "ayrinti": f"{r['b']}/{toplam} yayındaki bölümün iş türü bağı var" if r["n"] else None,
             "bekleniyor": f"{toplam - r['b']} yayındaki bölümün iş türü bağı yok" if r["n"] and r["b"] < toplam else None}
 
@@ -173,7 +173,7 @@ def _ornek_meslekler(db: Session, bugun: date):
         return None
     from app.core.veri_yukleme import son_yukleme
     toplam = (_tek(db, "SELECT COUNT(*) n FROM bolumler WHERE durum = 'yayinda'") or {}).get("n") or 0
-    return {"kayit": r["n"], "son_guncelleme": son_yukleme(db, "ornek_meslekler"), "kaynak": "Offline pipeline (b3)",
+    return {"kayit": r["n"], "son_guncelleme": son_yukleme(db, "ornek_meslekler"), "kaynak": "Offline pipeline (b6_ornek_meslekler)",
             "ayrinti": f"{r['b']}/{toplam} yayındaki bölümün örnek meslek listesi var" if r["n"] else None,
             "bekleniyor": f"{toplam - r['b']} yayındaki bölümün örnek meslek listesi yok" if r["n"] and r["b"] < toplam else None}
 
@@ -279,7 +279,8 @@ KAYNAKLAR = [
     ("kaynakca", "Kaynakça", "İçerik", "Kaynakça sayfası, Sistem Hakkında", 365, "/admin/kaynakca", _kaynakca),
 ]
 # [2026-11-01] "Nasıl güncellenir?" — Veri Kaynakları ekranında her kaynağın ayrıntısında numaralı adımlar olarak görünür.
-_PIPELINE_ADIM = ["Bilgisayarınızda Komut İstemi'ni açıp pipeline çalıştırma komutunu yapıştırın (Claude son komutu verir).",
+_PIPELINE_KOMUT = "powershell -ExecutionPolicy Bypass -File C:\\pipeline\\pipeline_calistir.ps1"
+_PIPELINE_ADIM = [f"Bilgisayarınızda Komut İstemi'ni açıp şu komutu yapıştırın: {_PIPELINE_KOMUT} (adımlar: C:\\pipeline\\CALISTIR.md).",
                   "Çalıştırma bitince çıktıları kontrol ettirin; \"yükleyebilirsiniz\" onayını bekleyin."]
 ADIMLAR = {
     "tuik_istihdam": ["data.tuik.gov.tr › Eğitim, Kültür, Spor ve Turizm › Yükseköğretim İstihdam Göstergeleri sayfasını açın.",
@@ -297,7 +298,8 @@ ADIMLAR = {
     "bolum_profili": _PIPELINE_ADIM + ["Pipeline Sonuçları › 1. adım: C:\\pipeline\\cikti\\bolum_agirliklari.xlsx dosyasını yükleyin, önizlemeye bakıp \"Yayına Al\" deyin. Tüm öğrencilerin sonuçları kendiliğinden yeniden hesaplanır."],
     "k5_baglari": _PIPELINE_ADIM + ["Pipeline Sonuçları › 2. adım: C:\\pipeline\\cikti\\k5_baglari_veri.sql dosyasını seçin, önizlemeye bakıp \"Canlıya al\" deyin. Önceki hâl yedeklenir; gerekirse aynı ekrandan geri dönülür."],
     "ornek_meslekler": _PIPELINE_ADIM + ["Pipeline Sonuçları › 3. adım: C:\\pipeline\\cikti\\ornek_meslekler_veri.sql dosyasını seçin, önizlemeye bakıp \"Canlıya al\" deyin. Önceki hâl yedeklenir."],
-    "meslekler": _PIPELINE_ADIM + ["Pipeline Sonuçları › Gelişmiş › Meslek listesi alanından meslek dosyasını yükleyin (yalnızca meslek listesi değiştiyse)."],
+    "meslekler": [f"ESCO meslek listesi değiştiyse Komut İstemi'ne şu komutu yapıştırın: {_PIPELINE_KOMUT} -MeslekHazirla (önce meslek hazırlığı m1–m5, ardından bölüm adımları b1–b7 çalışır).",
+                  _PIPELINE_ADIM[1], "Pipeline Sonuçları › Gelişmiş › Meslek listesi alanından C:\\pipeline\\veri\\meslekler_esco.csv dosyasını yükleyin."],
     "meslek_isco": ["İş Hayatı Verileri › 🔗 Meslek – ISCO sekmesinde eşleşmeyen meslekleri listeden bir ISCO grubuna bağlayın."],
     "ai_etkisi": ["İş Hayatı Verileri › 🔭 Yapay zekâ etkisi sekmesinde meslek grubu satırlarını yeni çalışmanın verisiyle ve kaynağıyla güncelleyin."],
     "bolum_icerik": ["Bölümler ekranında ilgili bölümü açın, tanıtım metnini düzenleyip kaydedin."],
