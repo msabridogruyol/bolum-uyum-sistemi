@@ -69,6 +69,9 @@ def parametreleri_listele(
     return db.query(SistemParametresi).order_by(SistemParametresi.anahtar).all()
 
 
+SALT_OKUNUR_PARAMETRELER = {"olcme_soru_seti", "k5_banka_surumu"}
+
+
 @router.put("/parametreler/{anahtar}", response_model=SistemParametresiOut)
 def parametreyi_guncelle(
     anahtar: str,
@@ -79,9 +82,17 @@ def parametreyi_guncelle(
     parametre = db.query(SistemParametresi).filter(SistemParametresi.anahtar == anahtar).first()
     if parametre is None:
         raise HTTPException(status_code=404, detail=f"Parametre bulunamadı: {anahtar}")
+    # [2026-10-19] Sürüm işaretleri sistemin kendi kaydıdır (hangi soru seti / K5 bankası yüklü); elle değiştirilemez.
+    if anahtar in SALT_OKUNUR_PARAMETRELER:
+        raise HTTPException(status_code=400, detail="Bu değer sistem tarafından tutulur, elle değiştirilemez.")
 
     # [2026-10-19] Yeniden değerlendirme sıklığı: tam sayı ve makul aralık zorunlu (yanlış değer öğrencileri kilitlemesin)
-    sinirlar = {"yeniden_degerlendirme_gun_12": (7, 365), "yeniden_degerlendirme_yillik_hak": (1, 12)}
+    sinirlar = {"yeniden_degerlendirme_gun_12": (7, 365), "yeniden_degerlendirme_yillik_hak": (1, 12),
+                # [2026-10-30] Filiz yapay zekâ sınırları (0 = o pakette yapay zekâ kapalı, Filiz rehber modunda)
+                "filiz_gunluk_mesaj_limiti_temel": (0, 200), "filiz_gunluk_mesaj_limiti_gelisim": (0, 200),
+                "filiz_gunluk_mesaj_limiti": (0, 200), "filiz_okul_aylik_ogrenci_basi": (0, 5000),
+                "filiz_okul_aylik_ogrenci_basi_temel": (0, 5000), "filiz_okul_aylik_ogrenci_basi_gelisim": (0, 5000),
+                "filiz_anlasilamayan_listesi_acik": (0, 1)}
     if anahtar in sinirlar:
         alt, ust = sinirlar[anahtar]
         try:
@@ -1458,3 +1469,64 @@ def sorulari_toplu_aktif_durumu_degistir(
     _audit_yaz(db, admin, "soru_toplu_durum_degistirme", "sorular", "toplu",
                f"{guncellenen} soru {etiket} yapıldı")
     db.commit()
+
+
+# [2026-10-31] Katmanlı Filiz ölçümü: cevapların hangi katmandan geldiği, süreleri ve okul bazında yapay zekâ kullanımı.
+# Pilotta mesaj sınırlarını ve eşzamanlılık değerini gerçek veriyle ayarlamak için. Öğrenci adı ya da mesaj içeriği dönmez.
+@router.get("/filiz/kullanim")
+def filiz_kullanim(gun: int = 30, db: Session = Depends(get_db), _admin: AdminKullanici = Depends(get_mevcut_super_admin)):
+    gun = max(1, min(int(gun), 365))
+    kaynaklar = db.execute(text("""
+        SELECT coalesce(m.kaynak, 'eski') AS kaynak, count(*) AS adet,
+               round(avg(m.sure_ms)) AS ort_ms,
+               percentile_cont(0.95) WITHIN GROUP (ORDER BY m.sure_ms) AS p95_ms
+          FROM ogrenci_koclugu_mesajlari m
+         WHERE m.rol = 'asistan' AND m.olusturulma_zamani >= now() - make_interval(days => :g)
+         GROUP BY 1 ORDER BY 2 DESC"""), {"g": gun}).mappings().all()
+    okullar = db.execute(text("""
+        SELECT o.id AS okul_id, o.ad AS okul, o.paket,
+               count(*) FILTER (WHERE m.yapay_zeka) AS yapay_zeka,
+               count(*) AS toplam_cevap,
+               count(DISTINCT t.ogrenci_id) AS aktif_ogrenci
+          FROM ogrenci_koclugu_mesajlari m
+          JOIN ogrenci_koclugu_oturumlari t ON t.id = m.oturum_id
+          JOIN ogrenciler g ON g.id = t.ogrenci_id
+          LEFT JOIN okullar o ON o.id = g.okul_id
+         WHERE m.rol = 'asistan' AND m.olusturulma_zamani >= now() - make_interval(days => :g)
+         GROUP BY o.id, o.ad, o.paket ORDER BY 4 DESC"""), {"g": gun}).mappings().all()
+    return {"gun": gun,
+            "kaynaklar": [{**dict(r), "p95_ms": int(r["p95_ms"]) if r["p95_ms"] is not None else None,
+                           "ort_ms": int(r["ort_ms"]) if r["ort_ms"] is not None else None} for r in kaynaklar],
+            "okullar": [dict(r) for r in okullar]}
+
+
+# [2026-10-31] Filiz'in anlayamadığı ya da netleştirme sorduğu öğrenci soruları (pilotta anlama katmanını geliştirmek için).
+# Varsayılan KAPALI (filiz_anlasilamayan_listesi_acik = 0): öğrenci mesajı içeriği gösterdiği için KVKK değerlendirmesinden
+# sonra açılır. Açıkken: yalnızca süper admin; öğrenci/okul kimliği dönmez; e-posta, telefon, TC, numara ve sistemdeki
+# öğrenci adları ile ad benzeri sözcükler maskelenir; ardından sistem içeriğinde geçmeyen her sözcük (öğretmen/arkadaş adı,
+# okul/semt adı) ve özel nitelikli veri sözcükleri (sağlık, din vb.) "▢" olur; aynı soru birleştirilip sayısı verilir.
+@router.get("/filiz/anlasilamayan")
+def filiz_anlasilamayan(gun: int = 30, adet: int = 200, db: Session = Depends(get_db),
+                        _admin: AdminKullanici = Depends(get_mevcut_super_admin)):
+    from app.core.katman_servisi import parametre_oku
+    if str(parametre_oku(db, "filiz_anlasilamayan_listesi_acik", "0")).strip() != "1":
+        raise HTTPException(status_code=403, detail="Bu liste kapalı. KVKK değerlendirmesinden sonra Parametreler'den açılabilir.")
+    from collections import Counter
+    from app.core.filiz_gizlilik import ad_benzerlerini_maskele, dizin_yukle, temel_maskele
+    gun, adet = max(1, min(int(gun), 365)), max(1, min(int(adet), 1000))
+    satirlar = db.execute(text("""
+        SELECT a.kaynak, (SELECT o.icerik FROM ogrenci_koclugu_mesajlari o
+                           WHERE o.oturum_id = a.oturum_id AND o.rol = 'ogrenci' AND o.id < a.id ORDER BY o.id DESC LIMIT 1) AS soru
+          FROM ogrenci_koclugu_mesajlari a
+         WHERE a.rol = 'asistan' AND a.kaynak IN ('bilinmiyor', 'netlestirme', 'icerik_yok')
+           AND a.olusturulma_zamani >= now() - make_interval(days => :g)
+         ORDER BY a.id DESC LIMIT 5000"""), {"g": gun}).all()
+    from app.core import filiz_bilgi as fb
+    fb.dizin(db)                       # sistem sözcük dağarcığı (sistem_disi_maskele) yüklü olsun
+    dz = dizin_yukle(db, tum_sistem=True)
+    say: Counter = Counter()
+    for kaynak, soru in satirlar:
+        if soru:
+            m = fb.sistem_disi_maskele(ad_benzerlerini_maskele(dz.maskele(temel_maskele(soru))))
+            say[(kaynak, " ".join(m.split())[:300])] += 1
+    return {"gun": gun, "sorular": [{"kaynak": k, "soru": s, "adet": n} for (k, s), n in say.most_common(adet)]}

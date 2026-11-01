@@ -59,12 +59,20 @@ def bolum_on_cikan_degiskenler(db: Session, bolum_id: int, adet: int = 5) -> lis
     ayıran özellikleri (örn. "Bu bölüm özellikle Analitik Düşünme ve
     Sayısal Yetkinlik istiyor") ortaya çıkarır.
     """
+    # [2026-10-22] Yalnızca eşleşmede kullanılan K1-K4 özellikleri (bölüm sayfası / skor motoru ile aynı küme).
+    # Önceden tüm değişkenler alınıyordu: eski K5 dal sütunları (artık ölçülmüyor, eski a4 çıktısı) ve
+    # eşleşme dışı P4 de "öne çıkan" listesine girebiliyordu.
+    from app.core.katman_servisi import parametre_oku
+    from app.models import Katman
+    haric = {x.strip() for x in (parametre_oku(db, "eslesme_disi_degiskenler", "P4") or "").split(",") if x.strip()}
     satirlar = (
         db.query(BolumAgirligi, Degisken.kod, Degisken.ad)
         .join(Degisken, Degisken.id == BolumAgirligi.degisken_id)
-        .filter(BolumAgirligi.bolum_id == bolum_id)
+        .join(Katman, Katman.id == Degisken.katman_id)
+        .filter(BolumAgirligi.bolum_id == bolum_id, Katman.kosullu_mu.is_(False), Degisken.dal_id.is_(None))
         .all()
     )
+    satirlar = [s for s in satirlar if s[1] not in haric]
     en_guncel: dict[int, tuple] = {}  # degisken_id -> (agirlik, kod, ad)
     for agirlik, kod, ad in satirlar:
         anahtar = agirlik.degisken_id

@@ -20,7 +20,11 @@ SQL = """
 UPDATE paketler SET moduller = coalesce(moduller, '[]'::jsonb) || '["kocluk"]'::jsonb
  WHERE NOT coalesce(moduller, '[]'::jsonb) ? 'kocluk';
 UPDATE okullar SET modul_cikar = modul_cikar - 'kocluk' WHERE modul_cikar ? 'kocluk';
-UPDATE okullar SET modul_ekle = modul_ekle - 'kocluk' WHERE modul_ekle ? 'kocluk'
+UPDATE okullar SET modul_ekle = modul_ekle - 'kocluk' WHERE modul_ekle ? 'kocluk';
+UPDATE paketler SET aciklama = 'Değerlendirme, bölüm önerileri, profil, hedef bölüm ve koçluk, okul paneli ve temel raporlar'
+ WHERE kod = 'temel' AND aciklama = 'Değerlendirme, bölüm önerileri, profil, okul paneli ve temel raporlar';
+UPDATE paketler SET aciklama = 'Temel + kütüphane, kulüpler, Filiz ve diğer gelişim modülleri'
+ WHERE kod = 'gelisim' AND aciklama = 'Temel + kişisel koçluk, haftalık görevler, kütüphane, kulüpler ve Filiz'
 """
 
 

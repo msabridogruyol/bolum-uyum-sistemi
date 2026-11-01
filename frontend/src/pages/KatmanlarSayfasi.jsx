@@ -13,7 +13,9 @@ const KATMAN_IKON = Object.fromEntries(Object.entries(KATMAN_BILGI).map(([k, v])
 // — bu teknik bir detay, öğrencinin bilmesine gerek yok, kaldırıldı.
 // Süre artık backend'den gelen GERÇEK aktif soru sayısına göre hesaplanıyor
 // (sabit/tahmini bir tablo değil).
-const SANIYE_BASINA_SORU_TAHMINI = 20 // Likert+SJT karışık ortalama kaba tahmin
+// [2026-10-20] Soru ekranındaki tip bazlı tahminle (SoruSayfasi: durum 30 sn, uçlar 20 sn, dikkat 10 sn) aynı sonucu
+// verecek ortalama: K1-K4 karışımında ≈ 26 sn (önceden 20 → liste 7 dk, soru ekranı 9 dk diyordu). Gerçek süre verisi yok.
+const SANIYE_BASINA_SORU_TAHMINI = 26
 function tahminiSureDk(soruSayisi) {
   if (!soruSayisi) return null
   return Math.max(1, Math.round((soruSayisi * SANIYE_BASINA_SORU_TAHMINI) / 60))
@@ -76,7 +78,7 @@ export default function KatmanlarSayfasi() {
       <div className="ph">
         <div className="pt">Değerlendirme</div>
         <div className="ps">
-          Kendini 4 kısa bölümde tanı. Dördü bitince sana en uygun bölümleri karşılaştıran, sana özel iş türü soruları açılır. Her bölüm yaklaşık 5 dakika sürer. İstediğin an ara verebilirsin.
+          Kendini 4 kısa bölümde tanı. Dördü bitince sana en uygun bölümleri karşılaştıran, sana özel iş türü soruları açılır. Her bölüm yaklaşık 9–10 dakika sürer. İstediğin an ara verebilirsin.
         </div>
       </div>
 
@@ -149,6 +151,8 @@ export default function KatmanlarSayfasi() {
                     else if (ilkDal) navigate(`/k5/${ilkDal.dal_kodu}`)
                     return
                   }
+                  // [2026-10-30] Bitmiş bölüm aynı turda yeniden açılmaz: soruları değil, o bölümün sonucunu göster
+                  if (k.durum === 'tamamlandi') { navigate(`/profilim/${k.kod}`); return }
                   navigate(`/katmanlar/${k.kod}`)
                 }}
               >

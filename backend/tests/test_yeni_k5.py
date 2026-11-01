@@ -259,7 +259,9 @@ def test_ogrenci_api_uclar_ve_k5_akisi(db, istemci, kisiler):
         r = istemci.post(f"/ogrenci/katmanlar/{kod}/basla", headers=h)
         assert r.status_code == 200, r.text
         sorular = r.json()["sorular"]
-        assert len(sorular) == 15
+        beklenen = db.execute(text("SELECT count(*) FROM sorular s JOIN katmanlar k ON k.id = s.katman_id WHERE k.kod = :k "
+                                   "AND s.aktif_mi AND s.ogrenci_id IS NULL"), {"k": kod}).scalar()
+        assert len(sorular) == beklenen >= 15      # 0076: 15; 0081 sonrası 20-23 (dikkat soruları dahil)
         for s in sorular:
             if s["soru_tipi"] == "kutup":
                 assert s["uc_a_metni"] and s["uc_b_metni"] and [x["secenek_metni"] for x in s["secenekler"]][0] == "Kesinlikle A"
@@ -328,4 +330,4 @@ def test_goc_sql_uretimi_ve_veri_dosyalari():
     d = json.loads((kok / "app" / "data" / "bolum_detay_duzeltme.json").read_text(encoding="utf-8"))["duzeltmeler"]
     assert d and all(x["eski"] != x["yeni"] and x["yol"] and x["bolum"] for x in d)
     a = json.loads((kok / "app" / "data" / "bolum_kisa_aciklama.json").read_text(encoding="utf-8"))["bolumler"]
-    assert len(a) >= 270 and all(v.strip() for v in a.values())
+    assert len(a) >= 260 and all(v.strip() for v in a.values())   # [2026-10-29] 278 → 266 (0082)

@@ -141,6 +141,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
         <ul>
           <li>Değerlendirme <b>tam ekranda</b> yapılır. Sistem şunları kaydeder: tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşuna</b> basmak ve <b>kopyalama denemeleri</b>.</li>
           <li>Bunların her biri <b>güven puanını</b> düşürür. Bu puanı ekranın üstünde anlık görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b>. O zaman yalnızca güven sorunu çıkan bölümü yeniden çözmen gerekir; diğer bölümlerdeki cevapların korunur.</li>
+          <li>Arada birkaç kısa <b>dikkat sorusu</b> var. Bunlara verdiğin cevaplar da güven puanına katılır; ekranda anlık görünmez, değerlendirme bitince hesaba katılır.</li>
           <li>Ekran kaydı almak ya da başkasından yardım almak da kurallara aykırı. Soruları kendin cevapla. Sonuçların ancak <b>yalnızca seni</b> anlatırsa işine yarar.</li>
           <li>Ara vermen gerekirse çıkabilirsin. Cevapların kayıtlı kalır. Döndüğünde <b>kaldığın sorudan</b> devam edersin.</li>
         </ul>

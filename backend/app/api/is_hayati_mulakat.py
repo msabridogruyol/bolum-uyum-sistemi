@@ -51,7 +51,7 @@ def _ai_durum(db: Session, o: Ogrenci) -> dict:
         from app.api.ai_koc import _ai, _bugun_gonderilen, _gunluk_limit
         if not _ai(db, o):
             return {"acik": False}
-        limit = _gunluk_limit(db)
+        limit = _gunluk_limit(db, o)   # [2026-10-31] sınır pakete göre
         kullanilan = _bugun_gonderilen(db, o) + _bugun_mulakat_ai(db, o)
         return {"acik": True, "limit": limit, "kalan": max(0, limit - kullanilan)}
     except Exception:

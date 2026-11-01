@@ -9,12 +9,14 @@ POST /koclugu/asistan/oturum/{id}/bitir    — oturumu kapatır, özet çıkarı
 GET  /koclugu/asistan/gecmis               — geçmiş oturum özetlerini listeler
 """
 from datetime import datetime, timezone
+import time
 from pydantic import BaseModel
+from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.database import get_db
-from app.api.deps import get_mevcut_ogrenci
+from app.api.deps import get_kvkk_onayli_ogrenci, get_mevcut_ogrenci
 from app.models import Ogrenci, OgrenciKoclukOturumu, OgrenciKoclukMesaji
 from app.core.ai_koc_servisi import (
     sistem_promptu_olustur, openai_ile_konus, oturumu_ozetle,
@@ -62,41 +64,100 @@ def _ai(db: Session, ogrenci: Ogrenci) -> bool:
     return "filiz_ai" in okul_modulleri(db, ogrenci.okul_id)
 
 
-def _gunluk_limit(db: Session) -> int:
+# [2026-10-30] Yapay zekâ her pakette; günlük sınır pakete göre (sistem parametresi, süper admin değiştirir).
+# Tam paket ve okula bağlı olmayan öğrenci eski parametreyi (filiz_gunluk_mesaj_limiti) kullanır.
+PAKET_LIMIT_PARAMETRESI = {"temel": ("filiz_gunluk_mesaj_limiti_temel", 5), "gelisim": ("filiz_gunluk_mesaj_limiti_gelisim", 20)}
+# [2026-10-31] Okulun aylık havuzu da pakete göre (öğrenci başına): Temel 30, Gelişim 60, Tam ve diğerleri 120.
+PAKET_AYLIK_PARAMETRESI = {"temel": ("filiz_okul_aylik_ogrenci_basi_temel", 30), "gelisim": ("filiz_okul_aylik_ogrenci_basi_gelisim", 60)}
+AYLIK_OGRENCI_BASI_VARSAYILAN = 120   # Tam paket: okulun aylık yapay zekâ üst sınırı = öğrenci sayısı × bu değer (0 = sınırsız)
+
+
+def _okul_paketi(db: Session, okul_id: int | None) -> str | None:
+    if not okul_id:
+        return None
+    from sqlalchemy import text
+    return db.execute(text("SELECT paket FROM okullar WHERE id = :o"), {"o": okul_id}).scalar()
+
+
+def _gunluk_limit(db: Session, ogrenci: Ogrenci) -> int:
+    anahtar, varsayilan = PAKET_LIMIT_PARAMETRESI.get(_okul_paketi(db, ogrenci.okul_id) or "",
+                                                      ("filiz_gunluk_mesaj_limiti", GUNLUK_MESAJ_LIMITI_VARSAYILAN))
     try:
-        return max(1, int(parametre_oku(db, "filiz_gunluk_mesaj_limiti", str(GUNLUK_MESAJ_LIMITI_VARSAYILAN))))
+        return max(0, int(parametre_oku(db, anahtar, str(varsayilan))))
     except (TypeError, ValueError):
-        return GUNLUK_MESAJ_LIMITI_VARSAYILAN
+        return varsayilan
 
 
-def _bugun_gonderilen(db: Session, ogrenci: Ogrenci) -> int:
-    """Türkiye saatine göre bugün öğrencinin gönderdiği mesaj sayısı."""
-    from app.core.haftalik_servisi import TR_SAAT
-    simdi = datetime.now(timezone.utc).astimezone(TR_SAAT)
-    gun_basi = simdi.replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
+def _yz_mesaj_sorgusu(db: Session, baslangic):
+    """Belirli bir andan bu yana yapay zekâdan gelen asistan cevapları (rehber modu ve sabit cevaplar sayılmaz)."""
     return (
         db.query(OgrenciKoclukMesaji)
         .join(OgrenciKoclukOturumu, OgrenciKoclukOturumu.id == OgrenciKoclukMesaji.oturum_id)
-        .filter(OgrenciKoclukOturumu.ogrenci_id == ogrenci.id, OgrenciKoclukMesaji.rol == "ogrenci",
-                OgrenciKoclukMesaji.olusturulma_zamani >= gun_basi.replace(tzinfo=None))
-        .count()
+        .filter(OgrenciKoclukMesaji.rol == "asistan", OgrenciKoclukMesaji.yapay_zeka.is_(True),
+                OgrenciKoclukMesaji.olusturulma_zamani >= baslangic.replace(tzinfo=None))
     )
+
+
+def _bugun_gonderilen(db: Session, ogrenci: Ogrenci) -> int:
+    """Türkiye saatine göre bugün öğrencinin yapay zekâyla yaptığı mesajlaşma sayısı."""
+    from app.core.haftalik_servisi import TR_SAAT
+    simdi = datetime.now(timezone.utc).astimezone(TR_SAAT)
+    gun_basi = simdi.replace(hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
+    return _yz_mesaj_sorgusu(db, gun_basi).filter(OgrenciKoclukOturumu.ogrenci_id == ogrenci.id).count()
+
+
+def _okul_aylik_doldu(db: Session, ogrenci: Ogrenci) -> bool:
+    """[2026-10-30] Okulun bu ayki yapay zekâ kullanımı üst sınıra ulaştı mı (Türkiye saatine göre ay başından beri)."""
+    if not ogrenci.okul_id:
+        return False
+    anahtar, varsayilan = PAKET_AYLIK_PARAMETRESI.get(_okul_paketi(db, ogrenci.okul_id) or "",
+                                                      ("filiz_okul_aylik_ogrenci_basi", AYLIK_OGRENCI_BASI_VARSAYILAN))
+    try:
+        kisi_basi = int(parametre_oku(db, anahtar, str(varsayilan)))
+    except (TypeError, ValueError):
+        kisi_basi = varsayilan
+    if kisi_basi <= 0:
+        return False
+    from sqlalchemy import text
+    from app.core.haftalik_servisi import TR_SAAT
+    ogrenci_sayisi = db.execute(text("SELECT count(*) FROM ogrenciler WHERE okul_id = :o AND NOT coalesce(test_hesabi, FALSE)"),
+                                {"o": ogrenci.okul_id}).scalar() or 0
+    simdi = datetime.now(timezone.utc).astimezone(TR_SAAT)
+    ay_basi = simdi.replace(day=1, hour=0, minute=0, second=0, microsecond=0).astimezone(timezone.utc)
+    kullanilan = (_yz_mesaj_sorgusu(db, ay_basi).join(Ogrenci, Ogrenci.id == OgrenciKoclukOturumu.ogrenci_id)
+                  .filter(Ogrenci.okul_id == ogrenci.okul_id, func.coalesce(Ogrenci.test_hesabi, False).is_(False)).count())
+    return kullanilan >= max(1, ogrenci_sayisi) * kisi_basi
+
+
+def _yz_durumu(db: Session, ogrenci: Ogrenci) -> tuple[bool, str | None, int, int]:
+    """(yapay zekâ bu mesajda kullanılabilir mi, kullanılamıyorsa öğrenciye not, günlük sınır, bugün kullanılan).
+    Yapay zekâ kapalıysa (anahtar yok / okulda filiz_ai kapalı) not yoktur; sınır dolduysa Filiz rehber moduna geçer."""
+    limit, gonderilen = _gunluk_limit(db, ogrenci), _bugun_gonderilen(db, ogrenci)
+    if not _ai(db, ogrenci) or limit <= 0:   # 0 = bu pakette yapay zekâ kapalı (not yok, rehber modu)
+        return False, None, limit, gonderilen
+    if gonderilen >= limit:
+        return False, "Bugünkü yapay zekâ mesaj hakkın doldu; yarına kadar sonuçlarına dayanan rehber modunda cevaplıyorum.", limit, gonderilen
+    if _okul_aylik_doldu(db, ogrenci):
+        return False, "Okulunun bu ayki yapay zekâ kullanımı doldu; ay sonuna kadar sonuçlarına dayanan rehber modunda cevaplıyorum.", limit, gonderilen
+    return True, None, limit, gonderilen
 
 
 @router.get("/durum", response_model=AsistanDurumOut)
 def asistan_durumu(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
-    limit, gonderilen = _gunluk_limit(db), _bugun_gonderilen(db, ogrenci)
+    ai, _not, limit, gonderilen = _yz_durumu(db, ogrenci)   # [2026-10-30] sınır dolduysa rehber modu gösterilir
     from app.core.filiz_rehber import ORNEK_SORULAR, SORU_KATEGORILERI
-    ai = _ai(db, ogrenci)
     return AsistanDurumOut(aktif=True, mod="ai" if ai else "otomatik", ornek_sorular=ORNEK_SORULAR[:6],
                            soru_kategorileri=SORU_KATEGORILERI,
-                           gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen) if ai else limit)
+                           gunluk_limit=limit, bugun_gonderilen=gonderilen, kalan=max(0, limit - gonderilen) if ai else max(1, limit))
 
 
 class MesajCevap(BaseModel):
     asistan_yaniti: str
     oturum_kapandi_mi: bool = False
     otomatik: bool = False             # [2026-10-10] cevap kural tabanlı rehberden geldiyse
+    kaynak: str = "yz"                 # [2026-10-31] yz | icerik | rehber | sabit | kriz | bilinmiyor (katmanlı Filiz)
+    sinir_doldu: bool = False          # [2026-10-31] günlük ya da okulun aylık yapay zekâ sınırı doldu (arayüz rehber moduna geçer)
+    secenekler: list[str] = []         # [2026-10-31] tıklanabilir öneri / "Şunu mu demek istedin?" soruları
 
 
 class GecmisOturumOut(BaseModel):
@@ -111,7 +172,7 @@ class GecmisOturumOut(BaseModel):
 @router.post("/oturum/baslat", response_model=OturumOut)
 def oturum_baslat(
     db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+    ogrenci: Ogrenci = Depends(get_kvkk_onayli_ogrenci),
 ):
     aktif = (
         db.query(OgrenciKoclukOturumu)
@@ -140,13 +201,14 @@ def mesaj_gonder(
     oturum_id: int,
     istek: MesajIstek,
     db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+    ogrenci: Ogrenci = Depends(get_kvkk_onayli_ogrenci),
 ):
     oturum = db.get(OgrenciKoclukOturumu, oturum_id)
     if oturum is None or oturum.ogrenci_id != ogrenci.id:
         raise HTTPException(status_code=404, detail="Oturum bulunamadı.")
     if oturum.durum != "aktif":
         raise HTTPException(status_code=400, detail="Bu oturum kapatılmış, yeni bir oturum başlatın.")
+    t0 = time.monotonic()   # [2026-10-31] ölçüm: her cevabın süresi ve hangi katmandan geldiği kaydedilir
     metin = istek.mesaj.strip()[:2000]
     if not metin:
         raise HTTPException(status_code=400, detail="Mesaj boş olamaz.")
@@ -154,9 +216,10 @@ def mesaj_gonder(
     # [2026-10-04] Kriz ifadesi: model çağrılmaz, güvenli yönlendirme cevabı verilir (limit ve anahtardan bağımsız)
     if kriz_mesaji_mi(metin):
         db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
-        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=KRIZ_YANITI))
+        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=KRIZ_YANITI, kaynak="kriz",
+                                   sure_ms=int((time.monotonic() - t0) * 1000)))
         db.commit()
-        return MesajCevap(asistan_yaniti=KRIZ_YANITI, oturum_kapandi_mi=False)
+        return MesajCevap(asistan_yaniti=KRIZ_YANITI, oturum_kapandi_mi=False, kaynak="kriz")
 
     # [2026-10-11] Hiyerarşi koruması (yapay zekâ ve otomatik rehber): başka bir öğrenciyi hedefleyen soru (okuldaki başka
     # bir öğrencinin adı, "arkadaşımın puanı", "en yüksek net kimde", okul/sınıf ortalaması) modele GİTMEZ; sabit cevap.
@@ -166,13 +229,15 @@ def mesaj_gonder(
     ret = ogrenci_hiyerarsi_yaniti(metin, dizin, ogrenci.ad_soyad)
     if ret:
         db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
-        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=ret))
+        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=ret, kaynak="sabit",
+                                   sure_ms=int((time.monotonic() - t0) * 1000)))
         db.commit()
-        return MesajCevap(asistan_yaniti=ret, oturum_kapandi_mi=False, otomatik=not ai)
+        return MesajCevap(asistan_yaniti=ret, oturum_kapandi_mi=False, otomatik=not ai, kaynak="sabit")
 
-    # [2026-10-10] Günlük sınır yapay zekâ maliyeti içindir; otomatik rehber modunda uygulanmaz
-    if ai and _bugun_gonderilen(db, ogrenci) >= _gunluk_limit(db):
-        raise HTTPException(status_code=429, detail="Bugünlük mesaj hakkın doldu. Yarın yine konuşalım! 🌱")
+    # [2026-10-30] Sınırlar yapay zekâ maliyeti içindir. Günlük (pakete göre) ya da okulun aylık sınırı dolunca hizmet
+    # kesilmez: Filiz, öğrencinin verilerine dayanan rehber modunda cevap verir (önceden 429 dönüyordu).
+    ai, sinir_notu, _limit, _gonderilen = _yz_durumu(db, ogrenci)
+    yz_acik = _ai(db, ogrenci)   # oturum özeti: sınır ya da içerik cevabından bağımsız, yapay zekâ erişimi varsa özetlenir
 
     onceki_mesajlar = (
         db.query(OgrenciKoclukMesaji)
@@ -214,29 +279,64 @@ def mesaj_gonder(
 
     sistem_promptu = sistem_promptu_olustur(db, ogrenci, onceki_ozet, istek.sayfa)
 
-    otomatik = not ai
-    if otomatik:   # [2026-10-10] yapay zekâ bağlı değil: öğrencinin verilerine dayanan otomatik rehber cevabı
-        from app.core.filiz_rehber import otomatik_yanit
-        yanit = otomatik_yanit(db, ogrenci, metin)
-    else:
+    # [2026-10-31] Katmanlı Filiz.
+    #  1) Bilgi sorusu (soruda bölüm / meslek adı geçiyor, soru öğrencinin kendisine dair değil) ve sistem içeriğinde güçlü
+    #     eşleşme varsa: içerikten, kaynak göstererek cevap. Yapay zekâya gitmez, hakkından düşmez.
+    #  2) Yapay zekâ açıksa: ilgili içerik parçaları sistem istemine eklenir (cevap sistemle tutarlı, uydurma azalır).
+    #  3) Yapay zekâ kapalı / sınır dolu / yoğun / hata: rehber (öğrencinin verisi + içerik araması).
+    from app.core import filiz_bilgi as fb
+    from app.core.filiz_anlama import onceden_anla
+    from app.core.paketler import okul_modulleri
+    moduller = set(okul_modulleri(db, ogrenci.okul_id))
+    yanit, kaynak, yz_mesgul, secenekler = None, "yz", False, []
+    if ai:
+        # Anlama katmanı: karşılaştırma, meslek yolu ve güçlü bilgi soruları içerikten (yapay zekâya gitmez, haktan düşmez)
+        try:
+            c = onceden_anla(db, metin, moduller)
+        except Exception:
+            db.rollback()
+            c = None
+        if c is not None and c.kaynak == "icerik":
+            yanit, kaynak, secenekler, ai = c.yanit, c.kaynak, c.secenekler, False
+    if ai:
+        try:
+            bulunan = [] if fb.ders_baglami_mi(metin, db) else fb.bilgi_ara(db, metin, moduller)
+        except Exception:
+            db.rollback()
+            bulunan = []
+        baglam_icerik = fb.baglam_metni(bulunan)
+        if baglam_icerik:
+            sistem_promptu += ("\n\nSİSTEMDEKİ İLGİLİ İÇERİK (soruyla ilgili olabilir; yalnızca soruya uyuyorsa kullan, buna dayan ve "
+                               "uydurma; kullandığın bilginin sistemde nerede olduğunu kısaca söyle):\n" + baglam_icerik)
         try:
             yanit = openai_ile_konus(sistem_promptu, mesaj_gecmisi)
-        except AsistanKullanilamiyorHatasi as e:
-            raise HTTPException(status_code=503, detail=str(e))
-        from app.core.filiz_gizlilik import ad_normalize
-        yanit = dizin.maskele(yanit, haric=ad_normalize(ogrenci.ad_soyad))   # son kontrol: yanıtta başka öğrenci adı olmasın
+            from app.core.filiz_gizlilik import ad_normalize
+            yanit = dizin.maskele(yanit, haric=ad_normalize(ogrenci.ad_soyad))   # son kontrol: yanıtta başka öğrenci adı olmasın
+        except AsistanKullanilamiyorHatasi:
+            # [2026-10-31] Yapay zekâ yoğun / hata / zaman aşımı: sohbet kesilmez (önceden 503), rehber modu cevap verir.
+            ai, yz_mesgul = False, True
+            sinir_notu = "Yapay zekâ şu an yoğun; bu cevabı sonuçlarına dayanan rehber modunda hazırladım."
+    if yanit is None:   # [2026-10-10] yapay zekâ bağlı değil: öğrencinin verilerine ve sistem içeriğine dayanan rehber cevabı
+        from app.core.filiz_rehber import otomatik_yanit_kaynakli
+        c = otomatik_yanit_kaynakli(db, ogrenci, metin, moduller)
+        yanit, kaynak, secenekler = c.yanit, c.kaynak, c.secenekler
+        if sinir_notu:
+            yanit = f"{sinir_notu}\n\n{yanit}"
+    otomatik = kaynak != "yz"
 
     db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
-    db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit))
+    db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit, yapay_zeka=ai, kaynak=kaynak,
+                               sure_ms=int((time.monotonic() - t0) * 1000)))
     db.commit()
 
     toplam_mesaj = len(onceki_mesajlar) + 2
     kapandi = False
     if toplam_mesaj >= MAKSIMUM_TUR:
-        _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi + [{"role": "assistant", "content": yanit}], ai)
+        _oturumu_kapat_ve_ozetle(db, oturum, sistem_promptu, mesaj_gecmisi + [{"role": "assistant", "content": yanit}], yz_acik)
         kapandi = True
 
-    return MesajCevap(asistan_yaniti=yanit, oturum_kapandi_mi=kapandi, otomatik=otomatik)
+    return MesajCevap(asistan_yaniti=yanit, oturum_kapandi_mi=kapandi, otomatik=otomatik, kaynak=kaynak,
+                      sinir_doldu=bool(sinir_notu) and not yz_mesgul, secenekler=secenekler[:4])
 
 
 @router.post("/oturum/{oturum_id}/bitir", status_code=204)

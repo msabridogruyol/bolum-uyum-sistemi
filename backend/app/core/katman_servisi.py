@@ -165,6 +165,22 @@ def aktif_veya_yeni_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlend
     return yeni_tur
 
 
+def soru_sirasi(sorular: list, tur_id) -> list:
+    """[2026-10-19] Katmandaki soruların öğrenciye gösterilme sırası.
+    * Puanlanan sorular her tur için sabit ama turdan tura farklı bir sırayla karışır (sha256(tur:soru)): önceden
+      sıra soru id'siydi; yeni eklenen sorular hep sona yığılıyor, yorgunluk / sıra etkisi hep aynı özelliklere düşüyordu.
+      Yeniden açılan oturum aynı turda aynı sırayı alır (oturum zaten kilitli listeyi saklar).
+    * Dikkat (kontrol) soruları baştan ve sondan uzakta, araya eşit aralıklarla yerleşir."""
+    import hashlib
+    puanli = sorted((s for s in sorular if s.soru_tipi != "kontrol"),
+                    key=lambda s: hashlib.sha256(f"{tur_id}:{s.id}".encode()).hexdigest())
+    kontrol = sorted((s for s in sorular if s.soru_tipi == "kontrol"), key=lambda s: s.id)
+    toplam = len(puanli) + len(kontrol)
+    for i, k in enumerate(kontrol):
+        puanli.insert(min(len(puanli), round(toplam * (i + 1) / (len(kontrol) + 1))), k)
+    return puanli
+
+
 def katman_oturumu_baslat(
     db: Session, ogrenci: Ogrenci, katman: Katman, tur: OgrenciDegerlendirmeTuru
 ) -> tuple[OgrenciKatmanOturumu, list[Soru]]:
@@ -184,15 +200,19 @@ def katman_oturumu_baslat(
         .first()
     )
 
+    # [2026-10-30] Bitmiş katman aynı turda yeniden açılmaz. Bu kontrol önceden donmuş soru setini döndüren
+    # satırın ALTINDAYDI ve hiç çalışmıyordu: öğrenci bitirdiği katmana dönüp soruları ve kendi cevaplarını
+    # görebiliyor, cevap değiştirip katmanı yeniden puanlatabiliyordu. Güven sorunu / yönetim isteğiyle tekrar
+    # çözme katmani_tekrara_ac ile oturumu silerek yapılır; bu kontrol onu etkilemez.
+    if oturum is not None and oturum.durum == "tamamlandi":
+        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
+
     if oturum is not None and oturum.kilitlenen_soru_id_listesi:
         soru_idler = oturum.kilitlenen_soru_id_listesi
         sorular = db.query(Soru).filter(Soru.id.in_(soru_idler)).all()
         # DB sırası garanti değildir — kilitlenen sırayı koru
         sirali = sorted(sorular, key=lambda s: soru_idler.index(s.id))
         return oturum, sirali
-
-    if oturum is not None and oturum.durum == "tamamlandi":
-        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
 
     aktif_sorular = (
         db.query(Soru)
@@ -203,6 +223,7 @@ def katman_oturumu_baslat(
     if not aktif_sorular:
         raise IsKuraliHatasi(f"{katman.kod} bölümü şu an açılamıyor. Biraz sonra tekrar dene ya da rehber öğretmenine bildir.")
 
+    aktif_sorular = soru_sirasi(aktif_sorular, tur.id)
     soru_idler = [s.id for s in aktif_sorular]
 
     if oturum is None:
@@ -255,6 +276,13 @@ def cevabi_kaydet(
             raise IsKuraliHatasi("'En çok' ve 'en az' aynı şık olamaz.")
     else:
         en_az_secenek_id = None
+    # [2026-10-30] Bitmiş katmanın cevabı değiştirilemez (aynı turda).
+    if soru is not None and soru.katman_id is not None:
+        k_oturum = (db.query(OgrenciKatmanOturumu)
+                    .filter(OgrenciKatmanOturumu.ogrenci_id == ogrenci.id, OgrenciKatmanOturumu.tur_id == tur.id,
+                            OgrenciKatmanOturumu.katman_id == soru.katman_id).first())
+        if k_oturum is not None and k_oturum.durum == "tamamlandi":
+            raise IsKuraliHatasi("Bu bölümü bitirdin; cevapların artık değiştirilemez.")
 
     mevcut = (
         db.query(OgrenciCevap)
@@ -389,6 +417,8 @@ def katmani_tamamla(
     bunlar hiçbir değişken puanına katkı yapmaz, yalnızca güven skoru
     hesaplamasında (guvenlik_servisi.py) kullanılır.
     """
+    if oturum.durum == "tamamlandi":   # [2026-10-30] aynı katman ikinci kez puanlanmaz
+        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
     soru_idler = oturum.kilitlenen_soru_id_listesi or []
     sorular = {s.id: s for s in db.query(Soru).filter(Soru.id.in_(soru_idler)).all()}
 
