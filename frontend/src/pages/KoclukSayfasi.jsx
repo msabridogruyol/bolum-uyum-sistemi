@@ -6,6 +6,7 @@ import { useBolumBilgi } from '../context/BolumBilgiContext'
 import { AlanTuruRozeti, GeriBildirimOzeti, OlcumKarti, OlcumPenceresi, TamamlaFormu } from '../components/kocluk/KoclukMotoru'
 import { useModuller } from '../yardimci/moduller'
 import { BirGunumSekmesi, BolumunuTani } from '../components/kocluk/BirGunum'
+import { puanTuruMetni } from '../yardimci/puanTuru'
 
 // ============================================================
 // Ana sayfa
@@ -596,7 +597,7 @@ function HedefKarti({ hedef, plan }) {
           <div className="koc-hedef-ad">{hedef.bolum_adi}</div>
           <div className="koc-hedef-cipler">
             {b?.ust_alan && <span>{b.ust_alan}</span>}
-            {d?.puan_turu && <span>📝 {d.puan_turu}</span>}
+            {d?.puan_turu && <span>📝 {puanTuruMetni(d.puan_turu)}</span>}
             {d?.ogrenim_suresi && <span>⏱ {d.ogrenim_suresi}</span>}
           </div>
         </div>

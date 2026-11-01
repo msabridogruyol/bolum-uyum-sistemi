@@ -128,7 +128,7 @@ export default function OkuldaOgretilmeyenler() {
           <span className="ihz-buyuk-ikon" aria-hidden="true">🧰</span>
           <div style={{ flex: 1 }}>
             <div className="ihz-baslik">Okulda öğretilmeyenler</div>
-            <div className="ihz-metin">Maaş bordrosu, sözleşme, izin hakları, iş e-postası… İşe başlamadan önce bilmen gereken pratik bilgiler burada.
+            <div className="ihz-metin">Maaş bordrosu (maaş dökümü), sözleşme, izin hakları, iş e-postası… İşe başlamadan önce bilmen gereken pratik bilgiler burada.
               Her ders birkaç dakika sürer.</div>
             <div className="ihd-ilerleme"><span style={{ width: `${(100 * tamam) / v.dersler.length}%` }} /></div>
             <div className="yp-ince">{tamam} / {v.dersler.length} ders tamamlandı</div>

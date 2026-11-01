@@ -8,7 +8,7 @@ export const DURUM = {
 }
 
 // [2026-10-11] Bu maddelerin PDF'ten çıkan metne göre karşılığı "ATS kontrolü" alt sekmesinde de var; iki yön de birbirine bağlantı verir.
-const ATS_DE = { tarih: 'Tarih biçimi tutarlı', tek_sayfa: 'Tek sayfa', iletisim: 'İletişim bilgisi ayrıştırılabiliyor' }
+const ATS_DE = { tarih: 'Tarih biçimi tutarlı', tek_sayfa: 'Tek sayfa', iletisim: 'İletişim bilgisi sistem tarafından okunabiliyor' }
 
 export function puanRengi(p) {
   return p >= 80 ? 'var(--gr)' : p >= 55 ? 'var(--am)' : 'var(--re)'

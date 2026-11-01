@@ -26,14 +26,14 @@ ICERIK = {
     # ============================ K1 — DEĞERLER / MOTİVASYON ============================
     "D1": {
         "nedir": "İş güvencesi, düzenli gelir ve öngörülebilir bir hayat düzenine verdiğin önem.",
-        "gelisim_neden": "{bolum} alanında güvenceli, kurumsal yollar önemli bir yer tutuyor; sen ise güvenceyi daha az önceliyorsun. Bu bir eksiklik değil. Ama mezun olunca önüne çıkacak işler esneklik beklentinle çatışabilir. Bunu şimdiden sınamak, ileride hayal kırıklığı yaşamanı önler.",
+        "gelisim_neden": "{bolum} alanında güvenceli, kurumsal yollar önemli bir yer tutuyor; sen ise güvenceye daha az önem veriyorsun. Bu bir eksiklik değil. Ama mezun olunca önüne çıkacak işler esneklik beklentinle çatışabilir. Bunu şimdiden sınamak, ileride hayal kırıklığı yaşamanı önler.",
         "guclu_neden": "Güvence ve düzen senin için önemli; {bolum} alanında da benzer ölçüde önemseniyor. Planlı ilerlemek istiyorsan sınav, staj ve kadro gibi adımları erkenden takvime bağlayabilirsin; yine de bu alandaki her kariyer yolunun aynı güvenceyi sunmadığını araştır.",
         "gelisim": [
             ("simdi", "Mezunlar nerede çalışıyor?", "{bolum} mezunlarının ilk 5 yılda hangi kurumlarda (kamu, özel, serbest) çalıştığını araştır. Üniversitelerin mezun takip sayfaları ve LinkedIn bu iş için iyi bir başlangıç.", "arastirma", "1 saat", "En az 5 mezunun kariyer yolunu bir tabloya not ettin."),
             ("simdi", "Kendine 3 soru", "Bir kâğıda yaz: \"İşimi kaybetme riski beni ne kadar rahatsız eder?\", \"Esnek ama belirsiz bir iş mi, sabit ama sıkıcı bir iş mi?\", \"5 yıl sonra nasıl bir düzende yaşamak isterim?\"", "yansitma", "20 dk", "Üç soruya da en az ikişer cümlelik cevap yazdın."),
             ("bu_donem", "Bir mezunla konuş", "{bolum} okumuş birine (aile çevresi, öğretmen, okulun mezunları) ailenin ya da öğretmeninin bilgisiyle ulaş ve işinin ne kadar istikrarlı olduğunu sor. Görüşmeyi okulda, ailenin yanında ya da görüntülü yap; görüşmeden önce 5 soru hazırla.", "gorusme", "30-45 dk", "Görüşmeyi yaptın ve en önemli 3 bilgiyi not ettin."),
             ("bu_donem", "İki kariyer yolunu karşılaştır", "{bolum} ile girilebilecek bir güvenceli (ör. kamu kadrosu) ve bir esnek (ör. serbest/girişim) yolu yan yana koy: gelir, istikrar, özgürlük ve sana uygunluk açısından puanla.", "arastirma", "1-2 saat", "İki yolu 1-5 arası puanladığın bir karşılaştırma tablon var."),
-            ("uzun_vadede", "Kısa bir iş deneyimi", "Yaz tatilinde ya da hafta sonları kurumsal düzende kısa süreli bir deneyim edin (okulun yönlendirdiği staj, gönüllülük ya da ailenin onayıyla yaşına uygun, yasal izinli hafif bir iş) ve düzenli mesai sana nasıl hissettiriyor, gözlemle.", "deneyim", "2-4 hafta", "Deneyim sonunda \"bu düzende mutlu olur muyum?\" sorusuna net bir cevabın var."),
+            ("uzun_vadede", "Kısa bir iş deneyimi", "Yaz tatilinde ya da hafta sonları kurumsal düzende kısa süreli bir deneyim edin. Bu, okulun yönlendirdiği bir staj, gönüllülük ya da ailenin onayıyla yaşına uygun, yasal izinli hafif bir iş olabilir. Düzenli mesainin sana nasıl hissettirdiğini gözlemle.", "deneyim", "2-4 hafta", "Deneyim sonunda \"bu düzende mutlu olur muyum?\" sorusuna net bir cevabın var."),
             ("uzun_vadede", "B planı oluştur", "Bu bölümün güvenceli yolları sana dar gelirse diye esneklik sağlayacak yan beceriler (dil, sertifika, ikinci uzmanlık) belirle ve hangisine ne zaman başlayacağını planla.", "proje", "1 dönem", "Yazılı bir B planın ve ilk adımın tarihi belli."),
         ],
         "guclu": [
@@ -82,7 +82,7 @@ ICERIK = {
         "gelisim": [
             ("simdi", "\"Neden\" cümleni yaz", "\"{bolum} okumak istiyorum çünkü...\" cümlesini 3 farklı şekilde tamamla. En samimi bulduğunu işaretle.", "yansitma", "15 dk", "Sana en doğru gelen bir \"neden\" cümlen var."),
             ("simdi", "Etkiyi gör", "Bu alanda çalışan birinin yaptığı işin insanlara/dünyaya etkisini anlatan bir hikâye, haber ya da belgesel bul.", "okuma", "30 dk", "Bu alanın yarattığı bir etkiyi kendi cümlelerinle anlatabiliyorsun."),
-            ("bu_donem", "Mezuna anlamı sor", "Bir {bolum} mezununa \"İşinde seni en çok ne tatmin ediyor?\" diye sor.", "gorusme", "30 dk", "Aldığın cevabı not ettin ve seninle örtüşüp örtüşmediğini düşündün."),
+            ("bu_donem", "Mezuna anlamı sor", "Bir {bolum} mezununa \"İşinde seni en çok ne tatmin ediyor?\" diye sor.", "gorusme", "30 dk", "Aldığın cevabı not ettin ve sana uyup uymadığını düşündün."),
             ("bu_donem", "Değer haritası", "Hayatta önemli bulduğun 5 şeyi sırala ve her birinin bu bölümde nasıl karşılık bulabileceğini yaz.", "yansitma", "45 dk", "5 değerin bölümdeki karşılığını eşleştirdin."),
             ("uzun_vadede", "Küçük bir anlamlı proje", "Bu alanla ilgili, birine faydası dokunacak küçük bir proje yap (ör. bir konuyu arkadaşlarına anlatan bir sunum, bir okul kulübü etkinliği).", "proje", "1-2 ay", "Projeyi tamamladın ve sana nasıl hissettirdiğini yazdın."),
             ("uzun_vadede", "Anlam günlüğü", "Bir ay boyunca, bu alana dair seni heyecanlandıran ya da sıkan anları haftada bir not et.", "aliskanlik", "4 hafta", "4 haftalık notun var ve bir örüntü fark ettin."),
@@ -314,7 +314,7 @@ ICERIK = {
         ],
         "guclu": [
             ("simdi", "Ekip kurallarını sen yaz", "Yeni bir grup çalışmasında ekip için anlaşmazlık çözüm yöntemi öner.", "deneyim", "1 hafta", "Ekip önerini benimsedi."),
-            ("bu_donem", "Akran arabuluculuğu", "Okulda akran arabuluculuğu ya da öğrenci temsilciliği gibi bir rol üstlen.", "deneyim", "1 dönem", "Bir rol üstlendin."),
+            ("bu_donem", "Akran arabuluculuğu", "Okulda akran arabuluculuğu (arkadaşlar arasındaki anlaşmazlığı çözmeye yardım etme) ya da öğrenci temsilciliği gibi bir rol üstlen.", "deneyim", "1 dönem", "Bir rol üstlendin."),
         ],
     },
     "I3": {
@@ -456,12 +456,12 @@ ICERIK = {
         ],
     },
     "A4": {
-        "nedir": "Tasarım, çizim, görsel üretim ve görsel-uzamsal problem çözme eğilimi.",
-        "gelisim_neden": "{bolum} alanında görsel düşünme, tasarım ve uzamsal problem çözme önemli bir yer tutuyor. Bu eğilimin bölümün beklentisinin altında; çizim, maket ve dijital tasarım denemeleriyle bu alana ilgini sınayabilirsin.",
+        "nedir": "Tasarım, çizim, görsel üretim ve şekil ile konumu zihinde canlandırmaya dayalı (görsel-uzamsal) problem çözme eğilimi.",
+        "gelisim_neden": "{bolum} alanında görsel düşünme, tasarım ve uzamsal (şekil ve konumla ilgili) problem çözme önemli bir yer tutuyor. Bu eğilimin bölümün beklentisinin altında; çizim, maket ve dijital tasarım denemeleriyle bu alana ilgini sınayabilirsin.",
         "guclu_neden": "Görsel düşünme ve tasarım eğilimin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Sunumlarda, projelerde ve portfolyonda bu eğilimini kullanabilirsin.",
         "gelisim": [
             ("simdi", "Günlük eskiz", "Her gün 10 dakika çevrendeki bir nesneyi çiz.", "aliskanlik", "1 hafta", "7 eskizin var."),
-            ("simdi", "Uzamsal bulmacalar", "3D bulmaca, origami ya da uzamsal zeka oyunlarıyla pratik yap.", "aliskanlik", "1 hafta", "En az 3 bulmaca tamamladın."),
+            ("simdi", "Uzamsal bulmacalar", "3D bulmaca, origami ya da uzamsal zeka (şekilleri zihinde canlandırma) oyunlarıyla pratik yap.", "aliskanlik", "1 hafta", "En az 3 bulmaca tamamladın."),
             ("bu_donem", "Dijital tasarım aracı", "Ücretsiz bir tasarım aracı öğren (Canva, Figma, Tinkercad) ve basit bir tasarım yap.", "kurs", "2-4 hafta", "Araçla bir tasarım tamamladın."),
             ("bu_donem", "Maket ya da model", "{bolum} ile ilgili bir yapının ya da nesnenin basit bir maketini yap.", "proje", "1 ay", "Maketin hazır."),
             ("uzun_vadede", "Tasarım atölyesi", "Halk eğitim merkezi ya da üniversite yaz okulunda bir tasarım/çizim atölyesine katıl.", "kurs", "1-2 ay", "Atölyeyi tamamladın."),
@@ -524,7 +524,7 @@ ICERIK = {
         ],
     },
     "A8": {
-        "nedir": "Önce büyük resmi görme, sezgiyle ilerleme ve görsel/şematik düşünme eğilimi.",
+        "nedir": "Önce büyük resmi görme, sezgiyle ilerleme ve görsellerle, şemalarla düşünme eğilimi.",
         "gelisim_neden": "{bolum} alanında ayrıntılara boğulmadan büyük resmi görmek, kavramlar arası bağlantı kurmak ve sezgisel çözümler üretmek önemli. Bu eğilimin bölümün beklentisinin altında; zihin haritaları ve bağlantı kurma alıştırmalarıyla bu düşünme biçimini deneyip sana uyup uymadığını görebilirsin.",
         "guclu_neden": "Büyük resmi görme ve sezgisel düşünme eğilimin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Yeni çözümler ararken ve konular arasında bağlantı kurarken bu eğilimini kullanabilirsin.",
         "gelisim": [
@@ -617,7 +617,7 @@ _EK_GELISIM = {
         ("bu_donem", "Okula bir öneri sun", "Okulda iyileştirilebilecek bir şey seç (kütüphane saatleri, kulüp etkinliği, geri dönüşüm), kısa bir öneri hazırla ve ilgili öğretmene ya da okul yönetimine sun.", "deneyim", "2-3 hafta", "Önerini yazılı olarak hazırladın ve ilgili kişiye ilettin."),
     ],
     "P5": [
-        ("simdi", "Sorgulayan okur", "Hedef bölümünle ilgili merak ettiğin bir konu seç, hakkında 5 \"neden?\" ya da \"nasıl?\" sorusu yaz ve cevapları en az iki farklı kaynaktan ara. Kaynakların birbirini tutmadığı noktayı not et.", "arastirma", "1 saat", "5 soru, cevapları ve kaynakların ayrıştığı en az 1 nokta yazılı."),
+        ("simdi", "Sorgulayan okur", "Hedef bölümünle ilgili merak ettiğin bir konu seç, hakkında 5 \"neden?\" ya da \"nasıl?\" sorusu yaz ve cevapları en az iki farklı kaynaktan ara. Kaynakların birbirini tutmadığı noktayı not et.", "arastirma", "1 saat", "5 soru, cevapları ve kaynakların farklı şeyler söylediği en az 1 nokta yazılı."),
     ],
     "I1": [
         ("simdi", "25 dakikalık odak bloğu", "Ders çalışırken 25 dakika boyunca tek bir işe odaklan, telefonu başka odaya koy, sonra 5 dakika ara ver. Her gün en az 2 odak bloğu yap ve kaç blok yaptığını işaretle.", "aliskanlik", "2 hafta", "2 hafta boyunca günlük blok sayını işaretledin ve günlerin çoğunda en az 2 blok var."),

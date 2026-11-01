@@ -10,6 +10,7 @@ import FavoriYildiz, { useListem } from '../components/FavoriYildiz'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import { sepetAyarla, useSepet, SEPET_SINIRI } from '../components/KarsilastirSepeti'
 import { simulasyonAc } from '../components/MeslekSimulasyonu'
+import { puanTuruMetni } from '../yardimci/puanTuru'
 
 const liste = (v) => (Array.isArray(v) ? v : [])
 const sayi = (v, k = 0) => (v == null ? '—' : Number(v).toLocaleString('tr-TR', { maximumFractionDigits: k }))
@@ -195,7 +196,7 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
       </div>
     ), veri.profil_var ? '✓ sende de güçlü' : 'bölümde öne çıkanlar')
     satir('alan', 'Alan', (b) => b.alt_alan || b.ust_alan || <Yok />)
-    satir('puan', 'Puan türü', (b) => b.puan_turu || <Yok neden="Bilgi yok" />)
+    satir('puan', 'Puan türü', (b) => puanTuruMetni(b.puan_turu) || <Yok neden="Bilgi yok" />)
     satir('sure', 'Öğrenim süresi', (b) => b.ogrenim_suresi || <Yok neden="Bilgi yok" />)
     satir('taban', 'Taban puan', (b) => {
       const o = yok(b)

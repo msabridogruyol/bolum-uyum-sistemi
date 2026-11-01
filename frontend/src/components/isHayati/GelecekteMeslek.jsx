@@ -201,7 +201,7 @@ export default function GelecekteMeslek({ bolum }) {
 
       <div className="yp-ince" style={{ lineHeight: 1.6, marginTop: 4 }}>
         <b>Nasıl hesaplandı?</b> ILO, 2025 çalışmasında her mesleğin görevlerine puan verdi. Bu puanlar, görevlerin ne kadarının yapay zekâyla yapılabileceğini gösterir.
-        Puana göre her meslek “maruz değil”, “minimal” ya da giderek artan dört dereceden birine konur. {v.duzey_kurali}
+        Puana göre her meslek “maruz değil”, “çok az” ya da giderek artan dört dereceden birine konur. {v.duzey_kurali}
         {v.kaynaklar?.length > 0 && (
           <ul style={{ margin: '4px 0 6px', paddingLeft: 18 }}>
             {v.kaynaklar.map((k, i) => (

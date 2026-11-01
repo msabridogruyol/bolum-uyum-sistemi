@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client'
 import FavoriYildiz from './FavoriYildiz'
 import { KarsilastirDugmesi } from './KarsilastirSepeti'
+import { puanTuruMetni } from '../yardimci/puanTuru'
 
 const SEKMELER = [
   { kod: 'genel', ad: 'Genel Bakış' },
@@ -371,7 +372,7 @@ export function BolumBilgiIcerik({ bolumId, ad, baslangicSekme = 'genel', onKapa
             {d && (
               <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginTop: 6 }}>
                 {d.ogrenim_suresi && <span style={etiket}>⏱ {d.ogrenim_suresi}</span>}
-                {d.puan_turu && <span style={etiket}>📝 {d.puan_turu}</span>}
+                {d.puan_turu && <span style={etiket}>📝 {puanTuruMetni(d.puan_turu)}</span>}
               </div>
             )}
           </div>

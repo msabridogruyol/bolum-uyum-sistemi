@@ -3,7 +3,7 @@
   {
    "terim": "Triyaj",
    "anlam": "Çok sayıda yaralı olduğunda hastaları durumlarının ağırlığına göre sıralayıp önce kime müdahale edileceğine karar verme işlemi.",
-   "ornek": "Kaza yerinde önce triyaj yaptık, iki kırmızı hastayı hemen ambulansa aldık."
+   "ornek": "Kaza yerinde önce triyaj yaptık, en acil iki hastayı hemen ambulansa aldık."
   },
   {
    "terim": "Vakaya çıkmak",
@@ -37,7 +37,7 @@
   },
   {
    "terim": "KPR",
-   "anlam": "Kardiyopulmoner Resüsitasyon. Kalbi durmuş birine göğüs basısı ve solunum desteğiyle yapılan temel canlandırma işlemi.",
+   "anlam": "Kardiyopulmoner Resüsitasyon, yani kalp-akciğer canlandırması. Kalbi durmuş birine göğüs basısı ve solunum desteğiyle yapılan temel canlandırma işlemi.",
    "ornek": "Yirmi dakikadır KPR yapıyoruz, ritim hâlâ dönmedi."
   },
   {
@@ -169,7 +169,7 @@
   {
    "terim": "Mortalite tablosu",
    "anlam": "Her yaştaki kişilerin belli bir yıl içinde ölme olasılıklarını gösteren tablo. Hayat sigortası ve emeklilik hesaplarının temelidir.",
-   "ornek": "Yeni mortalite tablosuyla hesaplayınca emeklilik yükümlülüğü arttı."
+   "ornek": "Yeni mortalite tablosuyla hesaplayınca ileride ödenecek emeklilik borcumuz arttı."
   },
   {
    "terim": "Hasar üçgeni",
@@ -193,8 +193,8 @@
   },
   {
    "terim": "Aktüeryal değerleme",
-   "anlam": "Gelecekte ödenecek yükümlülüklerin bugünkü değerini istatistik ve faiz varsayımlarıyla hesaplama işlemi.",
-   "ornek": "Şirketin kıdem tazminatı yükümlülüğü için aktüeryal değerleme raporu istendi."
+   "anlam": "Gelecekte ödenecek borçların bugün ne kadar ettiğini istatistik ve faiz tahminleriyle hesaplama işi.",
+   "ornek": "Şirketin kıdem tazminatı borcu için aktüeryal değerleme raporu istendi."
   },
   {
    "terim": "IBNR",
@@ -255,7 +255,7 @@
   },
   {
    "terim": "VO2max",
-   "anlam": "Maksimal oksijen tüketimi. Vücudun egzersiz sırasında kullanabildiği en yüksek oksijen miktarı; dayanıklılığın önemli bir ölçüsü.",
+   "anlam": "En yüksek oksijen tüketimi; vücudun egzersizde kullanabildiği en fazla oksijen miktarı. Vücudun egzersiz sırasında kullanabildiği en yüksek oksijen miktarı; dayanıklılığın önemli bir ölçüsü.",
    "ornek": "Test sonuçlarına göre VO2max değerin sezon başına göre arttı."
   }
  ],
@@ -307,7 +307,7 @@
   },
   {
    "terim": "MNI",
-   "anlam": "Minimum Number of Individuals. Fiziki antropolojide karışık kemik buluntularından en az kaç kişiye ait olduğunun hesabı.",
+   "anlam": "Minimum Number of Individuals. Fiziki antropolojide, karışık hâlde bulunan kemiklerin en az kaç kişiye ait olduğunun hesabı.",
    "ornek": "Mezardaki kemiklere göre MNI en az yedi kişi çıkıyor."
   }
  ],
@@ -371,7 +371,7 @@
   },
   {
    "terim": "Plankare",
-   "anlam": "Kazı alanını harita üzerinde bölen, genellikle 10x10 metrelik koordinatlı kareler. Her buluntu bulunduğu plankareyle kaydedilir.",
+   "anlam": "Kazı alanını harita üzerinde bölen, genellikle 10x10 metrelik koordinatlı kareler. Bulunan her parça, çıktığı plankareyle birlikte kaydedilir.",
    "ornek": "Sikke K-12 plankaresinden çıktı, koordinatını hemen yaz."
   },
   {
@@ -396,12 +396,12 @@
   },
   {
    "terim": "Envanterlik eser",
-   "anlam": "Müzeye kaydedilecek kadar sağlam ve önemli buluntu. Daha az önemli olanlara etütlük eser denir ve bilimsel inceleme için saklanır.",
+   "anlam": "Kazıda çıkan, müzeye kaydedilecek kadar sağlam ve önemli parça. Daha az önemli olanlara etütlük eser denir ve bilimsel inceleme için saklanır.",
    "ornek": "Bu kandil sağlam çıktı, envanterlik olarak müzeye teslim edilecek."
   },
   {
    "terim": "In situ",
-   "anlam": "Latince yerinde demek. Buluntunun hiç yerinden oynatılmadan, ilk bulunduğu konumda olması.",
+   "anlam": "Latince yerinde demek. Kazıda bulunan bir parçanın hiç yerinden oynatılmadan, ilk bulunduğu yerde durması.",
    "ornek": "Kemikleri kaldırmayın, in situ fotoğraflanıp çizilmeden kimse dokunmasın."
   },
   {
@@ -438,7 +438,7 @@
   },
   {
    "terim": "Fotometri",
-   "anlam": "Gök cisimlerinden gelen ışığın parlaklığını ölçme işi. Değişen yıldızların ve ötegezegenlerin incelenmesinde kullanılır.",
+   "anlam": "Gök cisimlerinden gelen ışığın parlaklığını ölçme işi. Parlaklığı değişen yıldızları ve başka yıldızların çevresindeki gezegenleri incelemekte kullanılır.",
    "ornek": "Fotometri sonuçlarına göre yıldızın parlaklığı her üç günde bir azalıyor."
   },
   {
@@ -448,7 +448,7 @@
   },
   {
    "terim": "Kırmızıya kayma",
-   "anlam": "Bizden uzaklaşan cisimlerin ışığının daha uzun dalgaboylarına kayması. Galaksilerin uzaklığını ölçmekte kullanılır.",
+   "anlam": "Bizden uzaklaşan cisimlerin ışığının daha uzun dalga boylarına, yani kırmızıya doğru kayması. Galaksilerin uzaklığını ölçmekte kullanılır.",
    "ornek": "Bu galaksinin kırmızıya kayması yüksek, çok uzakta olmalı."
   },
   {
@@ -523,12 +523,12 @@
   {
    "terim": "Masif",
    "anlam": "Yonga veya lif levha değil, doğrudan ağaç gövdesinden kesilmiş doğal ahşap.",
-   "ornek": "Müşteri masa tablasını masif meşe istiyor, sunta olmaz."
+   "ornek": "Müşteri masanın üst yüzeyini masif meşe istiyor, sunta olmaz."
   },
   {
    "terim": "Sunta",
    "anlam": "Yonga levhanın halk arasında yaygın adı. Ağaç talaşlarının tutkalla preslenmesiyle üretilir.",
-   "ornek": "Dolap gövdesini melaminli suntadan yapıp maliyeti düşürelim."
+   "ornek": "Dolap gövdesini kaplamalı suntadan yapıp maliyeti düşürelim."
   },
   {
    "terim": "Ebatlama",
@@ -657,7 +657,7 @@
   {
    "terim": "Var yılı - yok yılı",
    "anlam": "Zeytin ve elma gibi bazı ağaçların bir yıl çok, ertesi yıl az ürün vermesi. Bilimsel adı periyodisitedir.",
-   "ornek": "Zeytinde bu sene yok yılı, rekolte düşük olacak."
+   "ornek": "Zeytinde bu sene yok yılı, hasat az olacak."
   },
   {
    "terim": "Fertigasyon",
@@ -703,7 +703,7 @@
   },
   {
    "terim": "Gırgır",
-   "anlam": "Balık sürüsünün etrafı çevrilerek alttan büzülen büyük ağ ve bu ağla avlanan tekne. Hamsi avında yaygındır.",
+   "anlam": "Balık sürüsünün etrafını çevirip alttan torba gibi kapatılan büyük ağ; bu ağla avlanan tekneye de bu ad verilir. Hamsi avında yaygındır.",
    "ornek": "Gırgırlar bu sezon Karadeniz'de bol hamsi yakaladı."
   },
   {
@@ -798,7 +798,7 @@
   {
    "terim": "Gramaj",
    "anlam": "Kâğıdın metrekaresinin gram cinsinden ağırlığı. Kâğıdın kalınlığı ve dayanıklılığı hakkında fikir verir.",
-   "ornek": "Kartvizit için 350 gramaj kuşe kullanalım."
+   "ornek": "Kartvizit için 350 gramaj kuşe kâğıt kullanalım."
   },
   {
    "terim": "Selefon",
@@ -818,7 +818,7 @@
   {
    "terim": "Mücellit",
    "anlam": "Basılmış formaları katlayan, birleştiren ve kitap haline getiren cilt atölyesi ya da cilt ustası.",
-   "ornek": "Baskı bitti, formalar yarın mücellite gidiyor."
+   "ornek": "Baskı bitti, basılı sayfalar yarın mücellite gidiyor."
   },
   {
    "terim": "CMYK",
@@ -864,7 +864,7 @@
   },
   {
    "terim": "Haber masası",
-   "anlam": "Haberlerin toplanıp düzenlendiği ve hangi haberin yayına gireceğine karar verilen editoryal birim.",
+   "anlam": "Haberlerin toplanıp düzenlendiği ve hangi haberin yayına gireceğine karar verilen bölüm.",
    "ornek": "Haberini masaya gönder, editör kontrol edip siteye koysun."
   },
   {
@@ -891,7 +891,7 @@
   },
   {
    "terim": "Linol baskı",
-   "anlam": "Linolyum yüzeyin oyularak çıkıntıda kalan kısımların mürekkeplenip basıldığı baskı tekniği.",
+   "anlam": "Linolyum adlı yumuşak bir yüzeyin oyulup, çıkıntıda kalan kısımlarına mürekkep sürülerek basıldığı baskı tekniği.",
    "ornek": "Linol baskıda ince çizgiler için yeni bir oyma kalemi aldım."
   },
   {
@@ -901,13 +901,13 @@
   },
   {
    "terim": "Asitle aşındırma",
-   "anlam": "Metal levha koruyucu bir verniğe kaplanıp çizildikten sonra aside batırılarak çizgilerin yüzeye işlenmesi. Etching de denir.",
+   "anlam": "Metal levha koruyucu bir cilayla kaplanır ve üzerine çizim yapılır. Sonra levha aside batırılır; asit çizilen yerleri aşındırır ve çizgiler levhaya işlenir. Etching de denir.",
    "ornek": "Levhayı on beş dakika asitte tuttum, çizgiler daha derin oldu."
   },
   {
    "terim": "Akuatint",
-   "anlam": "Metal levhaya reçine tozu serpilip asitlenerek gri ton ve gölge alanları elde etme tekniği.",
-   "ornek": "Gökyüzündeki geçişleri akuatintle vermeyi düşünüyorum."
+   "anlam": "Metal levhaya reçine tozu serpip asitle aşındırarak gri tonlar ve gölgeli alanlar elde etme tekniği.",
+   "ornek": "Gökyüzündeki ton geçişlerini akuatintle vermeyi düşünüyorum."
   },
   {
    "terim": "Merdane",
@@ -926,13 +926,13 @@
   },
   {
    "terim": "A.P.",
-   "anlam": "Artist's Proof, yani sanatçı kopyası. Edisyon dışında sanatçının kendisi için ayırdığı baskılar; E.A. olarak da yazılır.",
+   "anlam": "Artist's Proof, yani sanatçı kopyası. Satışa çıkan numaralı baskıların dışında, sanatçının kendisi için ayırdığı baskılar; E.A. olarak da yazılır.",
    "ornek": "Satışa yirmi baskı çıkacak, iki tanesini A.P. olarak ayırdım."
   },
   {
    "terim": "B.A.T.",
-   "anlam": "Bon à tirer, Fransızca basılmaya hazır. Sanatçının onayladığı ve tüm edisyonun ona göre basılacağı örnek baskı.",
-   "ornek": "B.A.T. baskısını onayladım, edisyonun tamamı bu renkte olacak."
+   "anlam": "Bon à tirer; Fransızca \"basılmaya hazır\" demek. Sanatçının onayladığı ve bütün baskıların ona göre basılacağı örnek baskı.",
+   "ornek": "B.A.T. baskısını onayladım, bütün baskılar bu renkte olacak."
   }
  ],
  "BESLENME VE DİYETETİK": [
@@ -964,7 +964,7 @@
   {
    "terim": "Enteral beslenme",
    "anlam": "Ağızdan yeterince yiyemeyen hastanın, sindirim sistemine bir tüple sıvı mama verilerek beslenmesi.",
-   "ornek": "Yoğun bakımdaki hastaya nazogastrik tüple enteral beslenme başladık."
+   "ornek": "Yoğun bakımdaki hastaya burundan mideye uzanan bir tüple enteral beslenme başladık."
   },
   {
    "terim": "Biyoimpedans",
@@ -1021,11 +1021,11 @@
   {
    "terim": "Orkestrasyon",
    "anlam": "Bir müziğin hangi bölümünün hangi çalgılarla çalınacağını belirleyerek orkestra için yazılması.",
-   "ornek": "Şarkı güzel ama orkestrasyonda bakırlar melodiyi bastırıyor."
+   "ornek": "Şarkı güzel ama orkestrasyonda bakır üflemeliler melodiyi bastırıyor."
   },
   {
    "terim": "Prova harfi",
-   "anlam": "Provada kolayca yer bulmak için partisyonlarda belli aralıklarla konulan A, B, C gibi harfler.",
+   "anlam": "Provada kolayca yer bulmak için notalarda belli aralıklarla konulan A, B, C gibi harfler.",
    "ornek": "C harfinden dört ölçü önceden alalım, lütfen."
   },
   {
@@ -1073,7 +1073,7 @@
   {
    "terim": "Menşe ilkesi",
    "anlam": "Provenance. Arşivde belgelerin, onları oluşturan kuruma göre ve bir arada tutulması gerektiğini söyleyen temel kural.",
-   "ornek": "Menşe ilkesi gereği bu belgeleri valilik fonundan ayırmamalıyız."
+   "ornek": "Menşe ilkesi gereği bu belgeleri valilikten gelen diğer belgelerden ayırmamalıyız."
   },
   {
    "terim": "E-imza",
@@ -1088,14 +1088,14 @@
   {
    "terim": "KEP",
    "anlam": "Kayıtlı Elektronik Posta. Gönderimi ve teslimi hukuken ispatlanabilen resmi e-posta sistemi.",
-   "ornek": "Firmaya ihtarnameyi KEP ile gönderdik, teslim kaydı elimizde."
+   "ornek": "Firmaya resmî uyarı yazısını KEP ile gönderdik, teslim kaydı elimizde."
   }
  ],
  "BİLGİSAYAR MÜHENDİSLİĞİ": [
   {
    "terim": "Deploy",
    "anlam": "Yazılan kodun sunucuya yüklenip kullanıcıların erişebileceği şekilde yayına alınması.",
-   "ornek": "Yeni özelliği bu akşam production'a deploy ediyoruz."
+   "ornek": "Yeni özelliği bu akşam canlı sisteme deploy ediyoruz."
   },
   {
    "terim": "Bug",
@@ -1125,7 +1125,7 @@
   {
    "terim": "Merge conflict",
    "anlam": "İki kişi aynı dosyanın aynı yerini değiştirdiğinde kodların otomatik birleştirilememesi durumu.",
-   "ornek": "Branch'i main ile birleştirirken merge conflict çıktı, birlikte bakalım."
+   "ornek": "Kendi kod dalımı ana dalla birleştirirken merge conflict çıktı, birlikte bakalım."
   },
   {
    "terim": "Rubber duck debugging",
@@ -1135,12 +1135,12 @@
   {
    "terim": "PR",
    "anlam": "Pull Request. Yapılan değişikliklerin incelenip ana koda eklenmesi için açılan istek.",
-   "ornek": "PR'ı açtım, onaylarsan main'e merge edebilirim."
+   "ornek": "PR'ı açtım, onaylarsan ana koda ekleyebilirim."
   },
   {
    "terim": "CI/CD",
    "anlam": "Continuous Integration / Continuous Delivery. Kodun otomatik test edilip otomatik olarak yayına hazırlandığı süreç.",
-   "ornek": "CI/CD hattında testler kırmızı, deploy otomatik olarak durdu."
+   "ornek": "CI/CD hattında testler kırmızı, canlıya çıkış otomatik olarak durdu."
   }
  ],
  "BİLGİSAYAR VE ÖĞRETİM TEKNOLOJİLERİ ÖĞRETMENLİĞİ": [
@@ -1229,7 +1229,7 @@
   {
    "terim": "Anakronizm",
    "anlam": "Geçmişteki bir olayı ya da kişiyi, o dönemde olmayan bugünkü kavramlarla değerlendirme hatası.",
-   "ornek": "Ona orta çağ fizikçisi demek biraz anakronizm olur, dönemin deyişiyle tabii filozof."
+   "ornek": "Ona orta çağ fizikçisi demek biraz anakronizm olur, o dönemin deyişiyle doğa filozofu."
   },
   {
    "terim": "Paradigma değişimi",
@@ -1302,18 +1302,18 @@
  "BİTKİ KORUMA": [
   {
    "terim": "Zararlı",
-   "anlam": "Bitkilere zarar veren böcek, akar, nematod gibi canlılar için kullanılan genel ad.",
+   "anlam": "Bitkilere zarar veren böcekler, akarlar ve nematodlar (çok küçük solucanlar) gibi canlılar için kullanılan genel ad.",
    "ornek": "Bu bahçede ana zararlı elma iç kurdu, ona göre program yapacağız."
   },
   {
    "terim": "Etmen",
    "anlam": "Bitkide hastalığa yol açan mantar, bakteri ya da virüs gibi canlı. Hastalık etmeni diye de söylenir.",
-   "ornek": "Yapraktaki lekelerin etmenini laboratuvarda tanılatalım."
+   "ornek": "Yapraktaki lekelerin etmenini laboratuvarda belirletelim."
   },
   {
    "terim": "Konukçu",
    "anlam": "Bir zararlının ya da hastalık etmeninin üzerinde yaşayıp beslendiği bitki.",
-   "ornek": "Bu böceğin konukçusu sadece patlıgiller, buğdaya geçmez."
+   "ornek": "Bu böceğin konukçusu sadece patlıcangiller, buğdaya geçmez."
   },
   {
    "terim": "Ekonomik zarar eşiği",
@@ -1463,7 +1463,7 @@
   },
   {
    "terim": "Örnekleme",
-   "anlam": "Bir bölgedeki canlıları ya da popülasyonu temsil edecek şekilde örnek toplama işi.",
+   "anlam": "Bir bölgedeki canlıları ya da bir topluluğu iyi yansıtacak şekilde örnek toplama işi.",
    "ornek": "Göl kıyısında her istasyondan üç örnekleme yapacağız."
   },
   {
@@ -1562,7 +1562,7 @@
  "BİYOMEDİKAL MÜHENDİSLİĞİ": [
   {
    "terim": "Kalibrasyon",
-   "anlam": "Bir ölçüm cihazının doğru ölçüp ölçmediğini referans değerlerle kontrol edip ayarlama işi.",
+   "anlam": "Bir ölçüm cihazının doğru ölçüp ölçmediğini, doğruluğu bilinen değerlerle kontrol edip ayarlama işi.",
    "ornek": "Yoğun bakımdaki monitörlerin kalibrasyon tarihi geçmiş, bu hafta yapılmalı."
   },
   {
@@ -1573,7 +1573,7 @@
   {
    "terim": "Arıza kaydı",
    "anlam": "Hastanede bozulan bir cihaz için açılan bildirim. Teknik ekip işi bu kayıt üzerinden takip eder.",
-   "ornek": "Ameliyathanedeki koter için arıza kaydı açılmış, şimdi bakıyorum."
+   "ornek": "Ameliyathanedeki koter cihazı için arıza kaydı açılmış, şimdi bakıyorum."
   },
   {
    "terim": "Elektriksel güvenlik testi",
@@ -1608,7 +1608,7 @@
   {
    "terim": "Kullanıcı eğitimi",
    "anlam": "Yeni bir tıbbi cihaz geldiğinde hemşire ve doktorlara cihazın nasıl kullanılacağının gösterilmesi.",
-   "ornek": "Yeni infüzyon pompaları için yarın servislerde kullanıcı eğitimi var."
+   "ornek": "Yeni serum pompaları için yarın servislerde kullanıcı eğitimi var."
   }
  ],
  "BİYOMÜHENDİSLİK": [
@@ -1815,7 +1815,7 @@
   },
   {
    "terim": "Hidrosiklon",
-   "anlam": "Pülpü hızla döndürerek iri ve ince taneleri ayıran, hareketli parçası olmayan huni şeklinde cihaz.",
+   "anlam": "Su ile öğütülmüş cevher karışımını hızla döndürerek iri ve ince taneleri ayıran, hareketli parçası olmayan huni şeklinde cihaz.",
    "ornek": "Hidrosiklonun alt akışı tıkanmış, iri taneler değirmene dönmüyor."
   }
  ],
@@ -1823,7 +1823,7 @@
   {
    "terim": "CBS",
    "anlam": "Coğrafi Bilgi Sistemleri: konumla ilgili verileri bilgisayarda harita katmanları halinde toplayıp analiz eden sistem. İngilizcede GIS.",
-   "ornek": "Taşkın riskli alanları CBS'de katman katman çakıştırdık."
+   "ornek": "Taşkın riskli alanları CBS'de katman katman üst üste koyduk."
   },
   {
    "terim": "Katman",
@@ -1833,7 +1833,7 @@
   {
    "terim": "Sayısallaştırma",
    "anlam": "Kâğıt harita ya da uydu görüntüsündeki nesneleri bilgisayarda çizerek dijital veriye dönüştürme.",
-   "ornek": "Eski kadastro paftalarını sayısallaştırmak bir haftamızı alır."
+   "ornek": "Eski tapu haritalarını sayısallaştırmak bir haftamızı alır."
   },
   {
    "terim": "Uzaktan algılama",
@@ -1927,11 +1927,11 @@
   {
    "terim": "Köprüüstü",
    "anlam": "Geminin yönetildiği, dümen ve seyir cihazlarının bulunduğu üst bölüm.",
-   "ornek": "Kaptan köprüüstüne çağırıyor, liman yaklaşması başlıyor."
+   "ornek": "Kaptan köprüüstüne çağırıyor, limana yaklaşma başlıyor."
   },
   {
    "terim": "Vardiya",
-   "anlam": "Gemide zabitlerin sırayla köprüüstünde nöbet tuttuğu çalışma dönemi. Genelde dört saatlik nöbetlerdir.",
+   "anlam": "Gemide gemi subaylarının sırayla köprüüstünde nöbet tuttuğu çalışma dönemi. Genelde dört saatlik nöbetlerdir.",
    "ornek": "Dörtten sekize vardiya bende, ondan sonra ikinci zabite devrederim."
   },
   {
@@ -1967,7 +1967,7 @@
   {
    "terim": "Palamar",
    "anlam": "Gemiyi rıhtıma bağlamakta kullanılan kalın halat.",
-   "ornek": "Baş palamarları verildi, kıçtakileri de sıkın."
+   "ornek": "Öndeki palamarlar verildi, arkadakileri de sıkın."
   },
   {
    "terim": "Gemi jurnali",
@@ -2009,7 +2009,7 @@
   {
    "terim": "TEU",
    "anlam": "Twenty-foot Equivalent Unit: 20 fitlik konteyner eşdeğeri. Gemi ve liman kapasitesi bu birimle ölçülür.",
-   "ornek": "Liman bu yıl iki milyon TEU elleçledi."
+   "ornek": "Liman bu yıl iki milyon TEU konteyner yükleyip boşalttı."
   },
   {
    "terim": "Broker",
@@ -2023,7 +2023,7 @@
   },
   {
    "terim": "P&I Kulübü",
-   "anlam": "Protection and Indemnity: armatörlerin, üçüncü kişilere verdikleri zararlara karşı birlikte oluşturduğu sigorta birliği.",
+   "anlam": "Protection and Indemnity: gemi sahiplerinin, başkalarına verdikleri zararlara karşı birlikte kurduğu sigorta birliği.",
    "ornek": "Rıhtıma verilen hasar için P&I Kulübüne bildirim yaptık."
   }
  ],
@@ -2035,7 +2035,7 @@
   },
   {
    "terim": "Kireçlik",
-   "anlam": "Derinin kireç ve kimyasallarla işlenerek kıllarından arındırıldığı ve şişirildiği aşama.",
+   "anlam": "Derinin kireç ve kimyasallarla işlenerek kıllarından temizlendiği ve şişirildiği aşama.",
    "ornek": "Partiyi akşam kireçliğe aldık, sabah kontrol edeceğiz."
   },
   {
@@ -2050,7 +2050,7 @@
   },
   {
    "terim": "Wet blue",
-   "anlam": "Kromla tabaklanmış, mavimsi renkte ve ıslak haldeki yarı mamul deri.",
+   "anlam": "Kromla tabaklanmış, mavimsi renkte ve ıslak hâldeki yarı işlenmiş deri.",
    "ornek": "İhtiyacımızı karşılamak için dışarıdan wet blue alıyoruz."
   },
   {
@@ -2070,7 +2070,7 @@
   },
   {
    "terim": "Nubuk",
-   "anlam": "Damar yüzü hafifçe zımparalanarak kadifemsi hale getirilmiş deri.",
+   "anlam": "Derinin dış yüzü hafifçe zımparalanarak kadife gibi yapılmış deri.",
    "ornek": "Nubuk siparişinde zımpara izi kalmaması lazım."
   },
   {
@@ -2179,7 +2179,7 @@
   },
   {
    "terim": "Eylem",
-   "anlam": "Dramaturjide karakterin bir sahnede yapmaya, elde etmeye çalıştığı şey. Oyuncu ve yazar sahneyi buna göre kurar.",
+   "anlam": "Oyun yazımı ve sahnelemede, karakterin bir sahnede yapmaya, elde etmeye çalıştığı şey. Oyuncu ve yazar sahneyi buna göre kurar.",
    "ornek": "Bu sahnede annenin eylemi ne, oğlunu ikna etmek mi, cezalandırmak mı?"
   }
  ],
@@ -2197,12 +2197,12 @@
   {
    "terim": "Organik erişim",
    "anlam": "Reklam parası ödemeden bir paylaşımın kendiliğinden ulaştığı kişi sayısı.",
-   "ornek": "Organik erişim düştü, bu gönderiyi biraz boost edelim."
+   "ornek": "Organik erişim düştü, bu gönderiyi biraz parayla öne çıkaralım."
   },
   {
    "terim": "Boost",
    "anlam": "Sosyal medyadaki bir gönderiyi ücret ödeyerek daha çok kişiye gösterme.",
-   "ornek": "Lansman postuna iki bin liralık boost yapalım."
+   "ornek": "Tanıtım gönderisine iki bin liralık boost yapalım."
   },
   {
    "terim": "Retargeting",
@@ -2320,7 +2320,7 @@
   },
   {
    "terim": "Tashih",
-   "anlam": "Dizgiye girmiş metindeki yazım ve baskı hatalarını düzeltme işi. Düzelti de denir.",
+   "anlam": "Basılmak üzere sayfaya dizilmiş metindeki yazım ve baskı hatalarını düzeltme işi. Düzelti de denir.",
    "ornek": "Kitabın son tashihini yarın yayınevine teslim ediyorum."
   },
   {
@@ -2343,7 +2343,7 @@
   {
    "terim": "DKT",
    "anlam": "Dil ve Konuşma Terapisti: konuşma, dil, ses ve yutma sorunlarını değerlendirip tedavi eden uzman.",
-   "ornek": "Nöroloji servisi hasta için DKT konsültasyonu istedi."
+   "ornek": "Nöroloji servisi hasta için DKT'den görüş istedi."
   },
   {
    "terim": "Seans",
@@ -2373,7 +2373,7 @@
   {
    "terim": "Disfaji",
    "anlam": "Yutma güçlüğü. Konuşma terapistleri yutma değerlendirmesi ve terapisi de yapar.",
-   "ornek": "Disfajisi olan hastaya sıvıları kıvamlandırarak vermeliyiz."
+   "ornek": "Disfajisi olan hastaya sıvıları koyulaştırarak vermeliyiz."
   },
   {
    "terim": "AAC",
@@ -2565,7 +2565,7 @@
   },
   {
    "terim": "Medula",
-   "anlam": "Eczanelerin reçeteleri SGK'ya bağlı olarak işlediği ve provizyon aldığı elektronik sistem.",
+   "anlam": "Eczanelerin reçeteleri SGK'ya bağlı olarak işlediği ve onay aldığı elektronik sistem.",
    "ornek": "Medula yine yavaş, reçeteleri biraz sonra gireceğim."
   },
   {
@@ -2596,7 +2596,7 @@
   {
    "terim": "Majistral ilaç",
    "anlam": "Eczacının reçeteye göre eczanede kendi hazırladığı ilaç, örneğin özel krem ya da merhem.",
-   "ornek": "Dermatoloğun yazdığı majistral kremi yarın öğlene hazırlarım."
+   "ornek": "Cilt doktorunun yazdığı majistral kremi yarın öğlene hazırlarım."
   }
  ],
  "EGZERSİZ VE SPOR BİLİMLERİ": [
@@ -2618,7 +2618,7 @@
   {
    "terim": "Periyotlama",
    "anlam": "Antrenman yükünü yıl boyunca dönemlere bölerek sezonda en iyi performansa ulaşacak şekilde planlama.",
-   "ornek": "Periyotlamaya göre şu an hazırlık dönemindeyiz, hacim yüksek."
+   "ornek": "Periyotlamaya göre şu an hazırlık dönemindeyiz, antrenman miktarı yüksek."
   },
   {
    "terim": "Laktat eşiği",
@@ -2674,7 +2674,7 @@
   },
   {
    "terim": "Durağanlık",
-   "anlam": "Bir zaman serisinin ortalama ve varyansının zamanla değişmemesi. Durağan olmayan serilerle kurulan model yanıltıcı olabilir.",
+   "anlam": "Zaman içinde ölçülen bir verinin ortalamasının ve ne kadar dalgalandığının (varyansının) zamanla değişmemesi. Durağan olmayan serilerle kurulan model yanıltıcı olabilir.",
    "ornek": "Enflasyon serisi durağan değil, önce farkını alalım."
   },
   {
@@ -2751,7 +2751,7 @@
   },
   {
    "terim": "Şahin / güvercin",
-   "anlam": "Enflasyonla mücadelede sıkı ve yüksek faizi savunan para politikası şahin, büyümeyi önceleyip gevşek politikayı savunan güvercin olarak adlandırılır.",
+   "anlam": "Enflasyonla mücadelede sıkı para politikasını ve yüksek faizi savunanlara şahin denir. Büyümeyi öne alıp gevşek politikayı savunanlara ise güvercin denir.",
    "ornek": "Başkanın konuşması beklenenden şahin çıktı, piyasa faiz indirimi beklentisini erteledi."
   }
  ],
@@ -2764,7 +2764,7 @@
   {
    "terim": "Volatilite",
    "anlam": "Bir varlığın fiyatının ne kadar sert ve sık dalgalandığını gösteren ölçü. Oynaklık da denir.",
-   "ornek": "Seçim haftası volatilite yüksek, pozisyonları küçük tutalım."
+   "ornek": "Seçim haftası volatilite yüksek, alım satımları küçük tutalım."
   },
   {
    "terim": "Likidite",
@@ -2794,7 +2794,7 @@
   {
    "terim": "Spread",
    "anlam": "İki fiyat ya da faiz arasındaki fark; örneğin alış ve satış fiyatı arasındaki makas.",
-   "ornek": "Piyasa sığ olunca kurda spread açıldı."
+   "ornek": "Piyasada işlem az olunca kurda spread açıldı."
   },
   {
    "terim": "Boğa / ayı piyasası",
@@ -2803,7 +2803,7 @@
   },
   {
    "terim": "Due diligence",
-   "anlam": "Bir şirketi satın almadan ya da yatırım yapmadan önce mali, hukuki ve operasyonel durumunun ayrıntılı incelenmesi. Türkçede durum tespiti çalışması.",
+   "anlam": "Bir şirketi satın almadan ya da yatırım yapmadan önce mali, hukuki ve işleyişle ilgili durumunun ayrıntılı incelenmesi. Türkçede durum tespiti çalışması.",
    "ornek": "Satın alma öncesi due diligence iki ay sürecek."
   }
  ],
@@ -2816,7 +2816,7 @@
   {
    "terim": "Atkı",
    "anlam": "Çözgü ipleri arasından enine geçirilen iptir. Kilimde deseni ve rengi çoğunlukla atkı iplikleri oluşturur.",
-   "ornek": "Her sıra düğümden sonra iki atkı atıp kirkitle sıkıştırıyoruz."
+   "ornek": "Her sıra düğümden sonra iki atkı atıp tarakla sıkıştırıyoruz."
   },
   {
    "terim": "Gördes düğümü",
@@ -2882,13 +2882,13 @@
   },
   {
    "terim": "Buybox",
-   "anlam": "Pazaryerinde aynı ürünü birçok satıcı sattığında, ürün sayfasında öne çıkan ve Sepete Ekle butonunu alan satıcı konumudur.",
+   "anlam": "Pazaryerinde aynı ürünü birçok satıcı satabilir. Bu durumda ürün sayfasında öne çıkan ve Sepete Ekle butonunu alan satıcının konumudur.",
    "ornek": "Rakip fiyatı beş lira düşürünce buybox'ı kaybettik, satışlar durdu."
   },
   {
    "terim": "Fulfillment",
    "anlam": "Siparişin depolanması, paketlenmesi ve kargoya verilmesi işlerinin bütünüdür. Bazı firmalar bu işi dışarıdaki bir lojistik şirketine bırakır.",
-   "ornek": "Kasım indirimleri için fulfillment firmasına ek personel talebi ilettik."
+   "ornek": "Kasım indirimleri için fulfillment firmasına ek eleman isteğimizi ilettik."
   },
   {
    "terim": "SKU",
@@ -2925,7 +2925,7 @@
   {
    "terim": "Datasheet",
    "anlam": "Bir elektronik parçanın üreticisi tarafından yayınlanan teknik bilgi belgesidir. Gerilim sınırları, bacak bağlantıları gibi her şey burada yazar.",
-   "ornek": "Entegreyi takmadan önce datasheet'ten besleme gerilimine bir bak."
+   "ornek": "Çipi takmadan önce datasheet'ten besleme gerilimine bir bak."
   },
   {
    "terim": "Gerber dosyası",
@@ -2935,7 +2935,7 @@
   {
    "terim": "Soğuk lehim",
    "anlam": "Dışarıdan bağlı görünen ama yeterince ısınmadığı için iyi temas sağlamayan hatalı lehimdir. Devrede kesik kesik arızalara yol açar.",
-   "ornek": "Cihaz arada bir kapanıyorsa büyük ihtimalle konnektörde soğuk lehim var."
+   "ornek": "Cihaz arada bir kapanıyorsa büyük ihtimalle bağlantı soketinde soğuk lehim var."
   },
   {
    "terim": "Topraklama",
@@ -2949,13 +2949,13 @@
   },
   {
    "terim": "Firmware",
-   "anlam": "Bir cihazın içindeki mikrodenetleyiciye yüklenen ve donanımı doğrudan çalıştıran yazılımdır. Türkçede gömülü yazılım da denir.",
+   "anlam": "Bir cihazın içindeki denetleyici çipe yüklenen ve donanımı doğrudan çalıştıran yazılımdır. Türkçede gömülü yazılım da denir.",
    "ornek": "Firmware güncellemesinden sonra sensör okumaları düzeldi."
   },
   {
    "terim": "EMC",
    "anlam": "Electromagnetic Compatibility, yani elektromanyetik uyumluluk. Cihazın başka cihazları bozacak parazit yaymaması ve parazitten etkilenmemesidir; satıştan önce test edilir.",
-   "ornek": "Ürün EMC testinden kaldı, kablolara ferrit eklememiz gerekecek."
+   "ornek": "Ürün EMC testinden kaldı, kablolara ferrit halka takmamız gerekecek."
   },
   {
    "terim": "Pano",
@@ -2967,7 +2967,7 @@
   {
    "terim": "Darboğaz",
    "anlam": "Üretim hattında en yavaş çalışan ve tüm sistemin hızını sınırlayan istasyon ya da kaynaktır.",
-   "ornek": "Boyahane darboğaz olmuş, önünde yarı mamuller birikiyor."
+   "ornek": "Boyahane darboğaz olmuş, önünde yarım kalmış ürünler birikiyor."
   },
   {
    "terim": "Takt zamanı",
@@ -2987,7 +2987,7 @@
   {
    "terim": "5S",
    "anlam": "Japonca beş kelimeden gelen; ayıklama, düzenleme, temizlik, standartlaştırma ve disiplin adımlarıyla çalışma alanını düzenli tutma yöntemidir.",
-   "ornek": "5S denetiminde takımhanenin puanı düşük çıktı."
+   "ornek": "5S denetiminde alet odasının puanı düşük çıktı."
   },
   {
    "terim": "Zaman etüdü",
@@ -3007,7 +3007,7 @@
   {
    "terim": "Poka-yoke",
    "anlam": "Japonca hata önleyici demektir. Parçanın yanlış takılmasını ya da yanlış işlemin yapılmasını fiziksel olarak imkânsız kılan basit düzeneklerdir.",
-   "ornek": "Fikstüre bir pim ekleyip poka-yoke yaptık, parça artık ters takılamıyor."
+   "ornek": "Parçayı tutan aparata bir pim ekleyip poka-yoke yaptık, parça artık ters takılamıyor."
   },
   {
    "terim": "Gemba",
@@ -3018,7 +3018,7 @@
  "ENDÜSTRİYEL TASARIM": [
   {
    "terim": "Brief",
-   "anlam": "Müşterinin ya da firmanın tasarımdan ne beklediğini, hedef kitleyi ve kısıtları anlatan kısa görev tanımıdır. Her proje brief ile başlar.",
+   "anlam": "Müşterinin ya da firmanın tasarımdan ne beklediğini, hedef kitleyi ve uyulması gereken sınırları anlatan kısa görev tanımıdır. Her proje brief ile başlar.",
    "ornek": "Brief'te hedef kitle gençler yazıyor, formu biraz daha cesur yapalım."
   },
   {
@@ -3096,11 +3096,11 @@
   {
    "terim": "FEA",
    "anlam": "Finite Element Analysis, yani sonlu elemanlar analizi. Parçanın kuvvet altında nerede zorlanacağını bilgisayarda hesaplayan simülasyon yöntemidir.",
-   "ornek": "FEA sonucuna göre menteşe bölgesi zorlanıyor, et kalınlığını artıralım."
+   "ornek": "FEA sonucuna göre menteşe bölgesi zorlanıyor, malzeme kalınlığını artıralım."
   },
   {
    "terim": "Enjeksiyon kalıbı",
-   "anlam": "Eriyik plastiğin basınçla içine doldurulup şekil aldığı çelik kalıptır. Plastik ürünlerin çoğu bu yöntemle seri üretilir.",
+   "anlam": "Erimiş plastiğin basınçla içine doldurulup şekil aldığı çelik kalıptır. Plastik ürünlerin çoğu bu yöntemle seri üretilir.",
    "ornek": "Enjeksiyon kalıbı pahalı, o yüzden tasarımı kalıba gitmeden kesinleştirelim."
   },
   {
@@ -3116,7 +3116,7 @@
   {
    "terim": "Çapak",
    "anlam": "Kalıp parçalarının birleştiği yerden taşan ince fazla malzemedir. Üretim kusuru sayılır ve temizlenmesi gerekir.",
-   "ornek": "Numunelerin kenarında çapak var, kalıpçıya ayırma yüzeyini kontrol ettirelim."
+   "ornek": "Numunelerin kenarında çapak var, kalıpçıya kalıbın birleşme yüzeyini kontrol ettirelim."
   }
  ],
  "ENERJİ SİSTEMLERİ MÜHENDİSLİĞİ": [
@@ -3143,7 +3143,7 @@
   {
    "terim": "İnverter",
    "anlam": "Güneş panellerinin ürettiği doğru akımı şebekeye verilebilecek alternatif akıma çeviren cihazdır. Türkçede evirici de denir.",
-   "ornek": "Sahadaki inverterlerden biri arıza verdi, o dizinin üretimi sıfır."
+   "ornek": "Sahadaki inverterlerden biri arıza verdi, o panel dizisinin üretimi sıfır."
   },
   {
    "terim": "MWp",
@@ -3158,7 +3158,7 @@
   {
    "terim": "YEKA",
    "anlam": "Yenilenebilir Enerji Kaynak Alanı. Devletin büyük güneş ve rüzgâr projeleri için belirleyip ihaleye çıkardığı alanlardır.",
-   "ornek": "Yeni YEKA yarışmasına girmek için fizibilite hazırlıyoruz."
+   "ornek": "Yeni YEKA yarışmasına girmek için fizibilite (yapılabilirlik çalışması) hazırlıyoruz."
   },
   {
    "terim": "Devreye alma",
@@ -3323,7 +3323,7 @@
   },
   {
    "terim": "a.g.e.",
-   "anlam": "Adı geçen eser. Akademik metinlerde daha önce kaynak gösterilen esere tekrar atıf yaparken kullanılan kısaltmadır.",
+   "anlam": "Adı geçen eser. Akademik metinlerde, daha önce kaynak gösterilen bir esere tekrar başvururken kullanılan kısaltmadır.",
    "ornek": "Dipnotta kitabın adını tekrar yazma, a.g.e. ve sayfa numarası yeter."
   }
  ],
@@ -3439,7 +3439,7 @@
   },
   {
    "terim": "Optik masa",
-   "anlam": "Üzerinde vida delikleri olan, titreşimi sönümleyen ağır laboratuvar masasıdır. Lazer düzenekleri bunun üzerine kurulur.",
+   "anlam": "Üzerinde vida delikleri olan, titreşimi emen ağır laboratuvar masasıdır. Lazer düzenekleri bunun üzerine kurulur.",
    "ornek": "Optik masanın hava ayaklarını açmadan ölçüme başlama."
   },
   {
@@ -3455,7 +3455,7 @@
   {
    "terim": "Zayıflama",
    "anlam": "Işığın fiberden veya bir optik parçadan geçerken gücünün azalmasıdır. Genelde desibel (dB) cinsinden ölçülür.",
-   "ornek": "Bu bağlantıda zayıflama beklenenden yüksek, konnektörleri temizleyelim."
+   "ornek": "Bu bağlantıda zayıflama beklenenden yüksek, konnektörleri (bağlantı uçlarını) temizleyelim."
   },
   {
    "terim": "Lazer sınıfı",
@@ -3480,7 +3480,7 @@
   {
    "terim": "Benek",
    "anlam": "Lazer ışığı pürüzlü bir yüzeye düştüğünde görülen kumlu, parlak-karanlık noktacık desenidir. İngilizcesi speckle'dır.",
-   "ornek": "Görüntüde benek gürültüsü çok, difüzör ekleyip tekrar deneyelim."
+   "ornek": "Görüntüde benek gürültüsü çok, difüzör (ışığı dağıtan parça) ekleyip tekrar deneyelim."
   }
  ],
  "FOTOĞRAF VE VİDEO": [
@@ -3496,7 +3496,7 @@
   },
   {
    "terim": "Enstantane",
-   "anlam": "Deklanşöre basıldığında sensörün ışığa açık kaldığı süredir. Hızlı enstantane hareketi dondurur, yavaşı iz bırakır.",
+   "anlam": "Deklanşöre (çekim düğmesine) basıldığında sensörün ışığa açık kaldığı süredir. Hızlı enstantane hareketi dondurur, yavaşı iz bırakır.",
    "ornek": "Koşan çocuklar flu çıkmasın, enstantaneyi 1/1000'e çıkar."
   },
   {
@@ -3747,7 +3747,7 @@
   {
    "terim": "EHA",
    "anlam": "Eklem Hareket Açıklığı. Bir eklemin ne kadar açılıp kapanabildiğini gösterir; İngilizcesinden ROM olarak da kısaltılır.",
-   "ornek": "Ameliyattan sonra diz fleksiyonunda EHA 90 dereceye ulaştı."
+   "ornek": "Ameliyattan sonra diz fleksiyonunda (dizi bükme hareketinde) EHA 90 dereceye ulaştı."
   },
   {
    "terim": "Gonyometre",
@@ -3757,7 +3757,7 @@
   {
    "terim": "Manuel kas testi",
    "anlam": "Fizyoterapistin elle direnç uygulayarak bir kasın gücünü 0 ile 5 arasında puanladığı testtir.",
-   "ornek": "Manuel kas testinde quadriseps gücü 3 çıktı, yer çekimine karşı kaldırabiliyor."
+   "ornek": "Manuel kas testinde quadriseps (ön uyluk kası) gücü 3 çıktı, yer çekimine karşı kaldırabiliyor."
   },
   {
    "terim": "Mobilizasyon",
@@ -3833,7 +3833,7 @@
   },
   {
    "terim": "Işın zamanı",
-   "anlam": "Hızlandırıcı veya sinkrotron gibi büyük tesislerde bir araştırma grubuna deney yapması için ayrılan süredir. Başvuruyla ve rekabetle alınır.",
+   "anlam": "Hızlandırıcı veya sinkrotron (bir tür parçacık hızlandırıcısı) gibi büyük tesislerde bir araştırma grubuna deney yapması için ayrılan süredir. Başvuruyla ve rekabetle alınır.",
    "ornek": "Sinkrotronda üç günlük ışın zamanı aldık, numuneler hazır olmalı."
   },
   {
@@ -3886,7 +3886,7 @@
   {
    "terim": "Numune",
    "anlam": "Ölçüm ya da deney için hazırlanan küçük malzeme parçasıdır. Laboratuvarda örnek yerine bu kelime kullanılır.",
-   "ornek": "Numuneleri etiketleyip desikatöre koy, nem kapmasınlar."
+   "ornek": "Numuneleri etiketleyip desikatöre (nemi çeken kurutma kabına) koy, nem kapmasınlar."
   },
   {
    "terim": "XRD",
@@ -3960,7 +3960,7 @@
   {
    "terim": "Brigad sistemi",
    "anlam": "Profesyonel mutfakta herkesin görevinin ve rütbesinin belli olduğu, askerî düzene benzeyen çalışma hiyerarşisidir.",
-   "ornek": "Bizim mutfakta brigad sistemi var, sorunu önce şef de partine söylersin."
+   "ornek": "Bizim mutfakta brigad sistemi var, sorunu önce şef de partine (bölüm şefine) söylersin."
   },
   {
    "terim": "Komi",
@@ -4046,7 +4046,7 @@
   },
   {
    "terim": "Kira çarpanı",
-   "anlam": "Bir mülkün fiyatının yıllık ya da aylık kirasına oranıdır. Mülkün kendini kaç yılda amorti edeceğini anlamak için kullanılır.",
+   "anlam": "Bir mülkün fiyatının yıllık ya da aylık kirasına oranıdır. Mülkün, alınırken ödenen parayı kirayla kaç yılda geri kazandıracağını anlamak için kullanılır.",
    "ornek": "Bu dairenin kira çarpanı çok yüksek, yatırım için cazip değil."
   },
   {
@@ -4088,7 +4088,7 @@
   },
   {
    "terim": "Off the record",
-   "anlam": "Kayıt dışı demektir. Kaynağın verdiği bilginin yayımlanmaması ya da kendisine atfedilmemesi şartıyla yapılan konuşmayı anlatır.",
+   "anlam": "Kayıt dışı demektir. Kaynağın verdiği bilginin yayımlanmaması ya da bilginin ondan geldiğinin söylenmemesi şartıyla yapılan konuşmayı anlatır.",
    "ornek": "Bunu sana off the record söylüyorum, haberde adım geçmeyecek."
   },
   {
@@ -4116,7 +4116,7 @@
   {
    "terim": "İcazet",
    "anlam": "Hat, tezhip gibi sanatlarda hocanın öğrencisine verdiği, artık eserine imza atabileceğini gösteren ustalık belgesidir.",
-   "ornek": "Sülüs ve nesihten icazet almam yaklaşık on yıl sürdü."
+   "ornek": "Sülüs ve nesihten (iki hat yazısı türünden) icazet almam yaklaşık on yıl sürdü."
   },
   {
    "terim": "Kamış kalem",
@@ -4126,32 +4126,32 @@
   {
    "terim": "Makta",
    "anlam": "Kamış kalemin ucunu kesmek için altına konan, genelde kemik ya da sert ağaçtan yapılan küçük kesme altlığıdır.",
-   "ornek": "Maktayı getir de kalemin ucunu düzgünce kat edeyim."
+   "ornek": "Maktayı getir de kalemin ucunu düzgünce keseyim."
   },
   {
    "terim": "Ahar",
    "anlam": "Kâğıdın mürekkebi emmemesi ve yazı silinebilsin diye üzerine sürülen, yumurta akı ve nişastadan hazırlanan kaplamadır.",
-   "ornek": "Kâğıdı dün aharladım, mühreledikten sonra üzerine yazabiliriz."
+   "ornek": "Kâğıdı dün aharladım, mühreledikten (parlattıktan) sonra üzerine yazabiliriz."
   },
   {
    "terim": "Mühre",
-   "anlam": "Aharlı kâğıdı ya da altını parlatmak ve pürüzsüzleştirmek için kullanılan cilalı taş veya camdan alettir.",
+   "anlam": "Aharlı (üzeri özel bir karışımla kaplanmış) kâğıdı ya da altını parlatmak ve pürüzsüzleştirmek için kullanılan cilalı taş veya camdan alettir.",
    "ornek": "Altın kuruyunca mühreyle bastır, ışıl ışıl parlasın."
   },
   {
    "terim": "Zer",
-   "anlam": "Tezhipte kullanılan, ezilmiş varak altının jelatinle karıştırılmasıyla elde edilen altın boyadır.",
+   "anlam": "Tezhipte (el yazması kitap süsleme sanatında) kullanılan, ezilmiş varak altının (çok ince altın yaprağın) jelatinle karıştırılmasıyla elde edilen altın boyadır.",
    "ornek": "Zer hazırlarken altını iyice ezmezsen yüzeyde pürüz kalır."
   },
   {
    "terim": "Tahrir",
-   "anlam": "Tezhipte ve minyatürde motiflerin dış hatlarının ince fırçayla çizilmesidir. Eserin netliğini sağlar.",
+   "anlam": "Tezhipte (kitap süsleme sanatında) ve minyatürde motiflerin dış hatlarının ince fırçayla çizilmesidir. Eserin netliğini sağlar.",
    "ornek": "Renkler bitti, şimdi motiflerin tahririni çekeceğim."
   },
   {
    "terim": "Rumi ve hatayi",
-   "anlam": "Tezhip ve çinide en çok kullanılan iki geleneksel motif grubudur. Rumi kıvrık hayvan formundan, hatayi stilize çiçeklerden gelir.",
-   "ornek": "Bu kenar suyunda rumi ve hatayi motiflerini birlikte kullanacağım."
+   "anlam": "Tezhip ve çinide en çok kullanılan iki geleneksel motif grubudur. Rumi kıvrık hayvan biçiminden, hatayi sadeleştirilmiş çiçek çizimlerinden gelir.",
+   "ornek": "Bu kenar suyunda (kenar şeridinde) rumi ve hatayi motiflerini birlikte kullanacağım."
   },
   {
    "terim": "Battal ebru",
@@ -4187,7 +4187,7 @@
   },
   {
    "terim": "Sintine",
-   "anlam": "Geminin en alt bölümünde su, yağ ve sızıntıların toplandığı alandır. Sintine suyu çevreyi kirletmeden işlenip boşaltılmalıdır.",
+   "anlam": "Geminin en alt bölümünde su, yağ ve sızıntıların toplandığı alandır. Sintine suyu çevreyi kirletmeden arıtılıp boşaltılmalıdır.",
    "ornek": "Sintine alarmı çaldı, bir yerde kaçak var, kontrol edelim."
   },
   {
@@ -4240,7 +4240,7 @@
   {
    "terim": "GA planı",
    "anlam": "General Arrangement, yani genel yerleşim planı. Kamaraların, salonların, makine dairesinin ve donanımın gemideki yerini gösteren çizimdir.",
-   "ornek": "Müşteri GA planında master kamarayı kıça almak istedi."
+   "ornek": "Müşteri GA planında master kamarayı kıça (geminin arka tarafına) almak istedi."
   },
   {
    "terim": "Stabilite",
@@ -4267,7 +4267,7 @@
   {
    "terim": "Blok",
    "anlam": "Gemi gövdesinin tersanede ayrı ayrı imal edilen büyük parçalarıdır. Bloklar sonra vinçlerle birleştirilerek gemi oluşturulur.",
-   "ornek": "Üç numaralı blok bu hafta boyahaneden çıkıp kızağa alınacak."
+   "ornek": "Üç numaralı blok bu hafta boyahaneden çıkıp kızağa (geminin üzerinde yapıldığı eğimli zemine) alınacak."
   },
   {
    "terim": "Kızak",
@@ -4311,7 +4311,7 @@
   },
   {
    "terim": "NDT",
-   "anlam": "Non-Destructive Testing, yani tahribatsız muayene. Kaynakları parçaya zarar vermeden ultrason veya radyografiyle kontrol etme yöntemleridir.",
+   "anlam": "Non-Destructive Testing, yani tahribatsız muayene. Kaynakları parçaya zarar vermeden ultrason veya radyografiyle (röntgen çekimiyle) kontrol etme yöntemleridir.",
    "ornek": "Bu kaynak dikişlerinin hepsine NDT yapılacak, sonuç gelmeden boyamayın."
   }
  ],
@@ -4328,7 +4328,7 @@
   },
   {
    "terim": "Jele yüklemek",
-   "anlam": "DNA örneklerini jel elektroforezi için jeldeki küçük çukurlara koymak. Elektrik akımıyla DNA parçaları boyuna göre ayrılır ve bant olarak görünür.",
+   "anlam": "DNA örneklerini jel elektroforezi (DNA parçalarını elektrikle jelde ayırma) için jeldeki küçük çukurlara koymak. Elektrik akımıyla DNA parçaları boyuna göre ayrılır ve bant olarak görünür.",
    "ornek": "Örnekleri jele yükledim, bantlar net çıkarsa klonlamaya geçeriz."
   },
   {
@@ -4339,11 +4339,11 @@
   {
    "terim": "Kontaminasyon",
    "anlam": "Hücre kültürüne veya örneğe bakteri, mantar gibi istenmeyen bir şeyin bulaşması. Haftalarca emek bir anda çöpe gidebilir.",
-   "ornek": "Flasklarda kontaminasyon var, hepsini atıp baştan başlamamız gerekecek."
+   "ornek": "Flasklarda (hücre kültürü kaplarında) kontaminasyon var, hepsini atıp baştan başlamamız gerekecek."
   },
   {
    "terim": "Otoklavlamak",
-   "anlam": "Malzemeleri ve besiyerlerini otoklav denen cihazda yüksek basınçlı buharla mikroplardan arındırmak.",
+   "anlam": "Malzemeleri ve besiyerlerini (mikrop ya da hücre üretmek için kullanılan besin ortamlarını) otoklav denen cihazda yüksek basınçlı buharla mikroplardan temizlemek.",
    "ornek": "Besiyerini hazırladım, otoklavlayıp soğuyunca petrilere dökeceğim."
   },
   {
@@ -4415,7 +4415,7 @@
   },
   {
    "terim": "Gün batımı sendromu",
-   "anlam": "İngilizcede sundowning. Demanslı bazı kişilerin akşamüstü saatlerinde huzursuzlaşması, kafasının karışması ve sinirlenmesi durumu.",
+   "anlam": "İngilizcede sundowning. Demans (ileri unutkanlık hastalığı) yaşayan bazı kişilerin akşamüstü saatlerinde huzursuzlaşması, kafasının karışması ve sinirlenmesi durumu.",
    "ornek": "Akşam beşten sonra gün batımı sendromu başlıyor, o saatlerde odayı sakin tutalım."
   }
  ],
@@ -4536,7 +4536,7 @@
   },
   {
    "terim": "Astar",
-   "anlam": "Boyanın tuvale iyi tutunması ve bezi korumak için resimden önce sürülen ilk kat, genelde gesso kullanılır.",
+   "anlam": "Boyanın tuvale iyi tutunması ve bezi korumak için resimden önce sürülen ilk kat; genelde gesso denen beyaz astar kullanılır.",
    "ornek": "Tuvali iki kat astarladım, kuruyunca boyamaya başlarım."
   },
   {
@@ -4562,7 +4562,7 @@
   {
    "terim": "Portfolyo",
    "anlam": "Sanatçının en iyi işlerinden oluşan seçki. Galeri, burs ve iş başvurularında istenir.",
-   "ornek": "Rezidans başvurusu için portfolyoma son yılın işlerini ekledim."
+   "ornek": "Rezidans (sanatçıların bir süre kalıp üretim yaptığı program) başvurusu için portfolyoma son yılın işlerini ekledim."
   },
   {
    "terim": "Vernisaj",
@@ -4599,7 +4599,7 @@
   {
    "terim": "Key visual",
    "anlam": "Ana görsel. Bir kampanyanın afişten sosyal medyaya kadar her yerde kullanılan temel görsel fikri.",
-   "ornek": "Key visual onaylandı, şimdi tüm mecralara uyarlamalarını çıkaracağız."
+   "ornek": "Key visual onaylandı, şimdi her mecraya (yayın kanalına) uygun hallerini çıkaracağız."
   },
   {
    "terim": "Motion",
@@ -4651,7 +4651,7 @@
   {
    "terim": "Antrepo",
    "anlam": "Gümrük vergisi henüz ödenmemiş eşyanın gözetim altında bekletildiği depo.",
-   "ornek": "Mallar antrepoda bekliyor, vergiyi ödeyince serbest dolaşıma alacağız."
+   "ornek": "Mallar antrepoda bekliyor, vergiyi ödeyince serbest dolaşıma (ülke içinde satılabilir hale) alacağız."
   },
   {
    "terim": "Konşimento",
@@ -4666,7 +4666,7 @@
   {
    "terim": "Menşe şahadetnamesi",
    "anlam": "Bir malın hangi ülkede üretildiğini gösteren resmî belge. Vergi indirimi gibi haklar buna bağlı olabilir.",
-   "ornek": "Alıcı ülke menşe şahadetnamesi istiyor, odadan onaylatmamız lazım."
+   "ornek": "Alıcı ülke menşe şahadetnamesi istiyor, ticaret odasından onaylatmamız lazım."
   },
   {
    "terim": "A.TR",
@@ -4676,14 +4676,14 @@
   {
    "terim": "Incoterms",
    "anlam": "Uluslararası ticarette taşıma masrafı ve riskin satıcıda mı alıcıda mı olduğunu belirleyen kısaltmalı kurallar, örneğin FOB ve CIF.",
-   "ornek": "Sözleşme FOB İzmir, yani navlunu ve sigortayı alıcı ödeyecek."
+   "ornek": "Sözleşme FOB İzmir, yani navlunu (taşıma ücretini) ve sigortayı alıcı ödeyecek."
   }
  ],
  "GİRİŞİMCİLİK": [
   {
    "terim": "Pitch",
    "anlam": "Girişimcinin fikrini ve şirketini yatırımcılara birkaç dakikada ikna edici biçimde anlattığı kısa sunum.",
-   "ornek": "Demo day'de pitch için sadece beş dakikamız var, slaytları azaltalım."
+   "ornek": "Demo day'de (yatırımcılara sunum gününde) pitch için sadece beş dakikamız var, slaytları azaltalım."
   },
   {
    "terim": "MVP",
@@ -4728,7 +4728,7 @@
   {
    "terim": "Unicorn",
    "anlam": "Halka açılmadan değeri 1 milyar doları aşan girişime verilen ad, Türkçede tek boynuzlu at.",
-   "ornek": "Türkiye'den çıkan oyun şirketleri unicorn olunca ekosisteme yatırımcı ilgisi arttı."
+   "ornek": "Türkiye'den çıkan oyun şirketleri unicorn olunca girişim dünyasına yatırımcı ilgisi arttı."
   }
  ],
  "HALI TASARIMI": [
@@ -4764,7 +4764,7 @@
   },
   {
    "terim": "Su",
-   "anlam": "Halının kenarlarını çevreleyen bordür şeritleri. Ana su ve ara su gibi adlarla anılır.",
+   "anlam": "Halının kenarlarını çevreleyen süslü şeritler. Ana su ve ara su gibi adlarla anılır.",
    "ornek": "Ana su çok kalın oldu, zemini sıkıştırıyor, bir ara su eksiltelim."
   },
   {
@@ -4806,7 +4806,7 @@
   },
   {
    "terim": "Kök boya",
-   "anlam": "Bitki kökleri, kabukları ve böceklerden elde edilen doğal boya. Kökboya bitkisi kırmızı, cehri sarı renk verir.",
+   "anlam": "Bitki kökleri, kabukları ve böceklerden elde edilen doğal boya. Kökboya bitkisi kırmızı, cehri bitkisi sarı renk verir.",
    "ornek": "Bu kilimde kök boya kullanılmış, renkler yıllar içinde yumuşamış ama solmamış."
   },
   {
@@ -4844,12 +4844,12 @@
   {
    "terim": "Brif",
    "anlam": "Müşterinin kampanyanın amacını, hedef kitlesini, bütçesini ve beklentilerini anlattığı iş tanımı.",
-   "ornek": "Müşteriden brif geldi, yarın kreatif ekiple ilk toplantıyı yapıyoruz."
+   "ornek": "Müşteriden brif geldi, yarın yaratıcı ekiple ilk toplantıyı yapıyoruz."
   },
   {
    "terim": "Mecra",
    "anlam": "Reklamın yayınlandığı ortam: televizyon, açık hava panosu, sosyal medya, radyo gibi.",
-   "ornek": "Bu bütçeyle tüm mecralara giremeyiz, dijital ve açık havaya odaklanalım."
+   "ornek": "Bu bütçeyle tüm mecralara giremeyiz, dijital ve açık hava reklamlarına odaklanalım."
   },
   {
    "terim": "Kreatif",
@@ -4868,13 +4868,13 @@
   },
   {
    "terim": "Kriz iletişimi",
-   "anlam": "Bir kurumun itibarını zedeleyen olay yaşandığında yapılacak açıklamaların hızlıca ve planlı yönetilmesi.",
+   "anlam": "Bir kurumun adını ve saygınlığını zedeleyen bir olay yaşandığında yapılacak açıklamaların hızlı ve planlı yönetilmesi.",
    "ornek": "Sosyal medyada şikâyet yayılıyor, kriz iletişimi planını devreye alalım."
   },
   {
    "terim": "Kupür",
    "anlam": "Gazete ve dergilerde markayla ilgili çıkan haberlerin kesilip arşivlenmiş hali; bugün dijital haber kayıtları için de kullanılır.",
-   "ornek": "Lansmandan sonra kırk iki kupür çıktı, raporu müşteriye gönderiyoruz."
+   "ornek": "Lansmandan (ürünün tanıtım etkinliğinden) sonra kırk iki kupür çıktı, raporu müşteriye gönderiyoruz."
   },
   {
    "terim": "PR",
@@ -4896,7 +4896,7 @@
   {
    "terim": "Kadastro",
    "anlam": "Taşınmazların sınırlarının ölçülüp haritaya geçirilmesi ve tapuya kaydedilmesi işi ve bu kayıtların bütünü.",
-   "ornek": "Kadastro paftasıyla arazideki duvar uyuşmuyor, sınırı yeniden ölçmeliyiz."
+   "ornek": "Kadastro paftasıyla (resmî harita sayfasıyla) arazideki duvar uyuşmuyor, sınırı yeniden ölçmeliyiz."
   },
   {
    "terim": "Ada-parsel",
@@ -4906,7 +4906,7 @@
   {
    "terim": "İfraz",
    "anlam": "Bir parselin ölçülerek iki veya daha fazla parsele bölünmesi işlemi.",
-   "ornek": "Kardeşler tarlayı paylaşmak istiyor, ifraz için önce imar durumuna bakalım."
+   "ornek": "Kardeşler tarlayı paylaşmak istiyor, ifraz için önce imar durumuna (o araziye neyin yapılabileceğine) bakalım."
   },
   {
    "terim": "Tevhit",
@@ -4916,7 +4916,7 @@
   {
    "terim": "Total station",
    "anlam": "Açı ve mesafeyi elektronik olarak ölçen, sahada en çok kullanılan ölçüm cihazı. Türkçede elektronik takeometre de denir.",
-   "ornek": "Total station'ı nirengi noktasına kur, ben prizmayla köşelere gidiyorum."
+   "ornek": "Total station'ı nirengi noktasına (sabit ölçüm noktasına) kur, ben prizmayla köşelere gidiyorum."
   },
   {
    "terim": "Jalon",
@@ -4926,7 +4926,7 @@
   {
    "terim": "Nirengi noktası",
    "anlam": "Koordinatı çok hassas biçimde bilinen, ölçümlerin dayandırıldığı sabit referans noktası.",
-   "ornek": "Yakındaki nirengi noktası tahrip olmuş, başka bir noktadan başlayalım."
+   "ornek": "Yakındaki nirengi noktası bozulmuş, başka bir noktadan başlayalım."
   },
   {
    "terim": "RTK",
@@ -4973,7 +4973,7 @@
   {
    "terim": "ISOBUS",
    "anlam": "Farklı markalardaki traktör ve tarım ekipmanlarının birbiriyle aynı dilde haberleşmesini sağlayan uluslararası standart.",
-   "ornek": "Yeni pülverizatör ISOBUS uyumlu, traktörün ekranından kontrol edebiliyoruz."
+   "ornek": "Yeni pülverizatör (ilaçlama makinesi) ISOBUS uyumlu, traktörün ekranından kontrol edebiliyoruz."
   },
   {
    "terim": "Yönetim bölgesi",
@@ -4995,7 +4995,7 @@
   {
    "terim": "Meşk",
    "anlam": "Hocanın öğrencisine örnek olarak yazdığı yazı ve öğrencinin bunu taklit ederek çalışması; hat dersinin kendisi.",
-   "ornek": "Bu hafta meşkin sülüs elif-ba dizisi, her harfi elli kere yaz."
+   "ornek": "Bu hafta meşkin sülüs (bir hat yazısı türü) elif-ba dizisi, her harfi elli kere yaz."
   },
   {
    "terim": "İcazet",
@@ -5024,12 +5024,12 @@
   },
   {
    "terim": "Mühre",
-   "anlam": "Aharlanmış kâğıdın yüzeyini parlatıp düzleştirmek için kullanılan, genelde taş veya camdan yapılmış perdah aleti.",
-   "ornek": "Kâğıdı yazmadan önce mühreyle iyice perdahla, kalem daha akıcı kayar."
+   "anlam": "Aharlanmış kâğıdın yüzeyini parlatıp düzleştirmek için kullanılan, genelde taş veya camdan yapılmış parlatma aleti.",
+   "ornek": "Kâğıdı yazmadan önce mühreyle iyice perdahla (parlat), kalem daha akıcı kayar."
   },
   {
    "terim": "Lika",
-   "anlam": "Hokkanın içine konulan ham ipek lifi. Mürekkebi emer, kaleme dengeli miktarda mürekkep alınmasını sağlar.",
+   "anlam": "Hokkanın (mürekkep kabının) içine konulan ham ipek lifi. Mürekkebi emer, kaleme dengeli miktarda mürekkep alınmasını sağlar.",
    "ornek": "Hokkadaki lika kurumuş, biraz mürekkep ekle, sonra yazmaya başla."
   },
   {
@@ -5046,7 +5046,7 @@
  "HAVA TRAFİK KONTROLÜ": [
   {
    "terim": "Clearance",
-   "anlam": "Kontrolörün pilota verdiği resmî müsaade, örneğin kalkış, iniş veya belirli bir irtifaya çıkış izni.",
+   "anlam": "Kontrolörün pilota verdiği resmî izin, örneğin kalkış, iniş veya belirli bir yüksekliğe çıkış izni.",
    "ornek": "THY 1234 için kalkış clearance'ı verdim, pist boşalınca diğerini hizalarız."
   },
   {
@@ -5066,7 +5066,7 @@
   },
   {
    "terim": "Squawk",
-   "anlam": "Uçaktaki transponder cihazına girilen dört haneli kod. Radar ekranında uçağın kimliğini gösterir; 7700 acil durum kodudur.",
+   "anlam": "Uçaktaki transponder (uçağın kimliğini radara bildiren) cihazına girilen dört haneli kod. Radar ekranında uçağın kimliğini gösterir; 7700 acil durum kodudur.",
    "ornek": "Ekranda squawk 7700 çıktı, uçağa öncelik ver, acil ekibi uyar."
   },
   {
@@ -5123,7 +5123,7 @@
   },
   {
    "terim": "Hat bakım",
-   "anlam": "Uçağın uçuşlar arasında apronda yapılan kısa kontrol ve küçük onarımları. Büyük bakımlar hangarda yapılır.",
+   "anlam": "Uçağın uçuşlar arasında apronda (uçakların park ettiği alanda) yapılan kısa kontrol ve küçük onarımları. Büyük bakımlar hangarda yapılır.",
    "ornek": "Bu gece hat bakımdayım, son seferden gelen uçakların kontrolü bende."
   },
   {
@@ -5150,7 +5150,7 @@
  "HAVACILIK VE UZAY MÜHENDİSLİĞİ": [
   {
    "terim": "CFD",
-   "anlam": "Computational Fluid Dynamics, yani hesaplamalı akışkanlar dinamiği. Havanın bir cisim etrafında nasıl aktığını bilgisayarda simüle etme yöntemi.",
+   "anlam": "Computational Fluid Dynamics, yani hesaplamalı akışkanlar dinamiği. Havanın bir cisim etrafında nasıl aktığını bilgisayarda hesaplayıp canlandırma yöntemi.",
    "ornek": "Yeni kanat ucunu CFD'de denedik, sürüklemede yüzde üç azalma var."
   },
   {
@@ -5181,7 +5181,7 @@
   {
    "terim": "Layup",
    "anlam": "Kompozit parçalarda karbon elyaf katmanlarının hangi yönde ve hangi sırayla serileceğini gösteren dizilim planı.",
-   "ornek": "Layup sırasını değiştirdik, panel aynı ağırlıkta daha rijit çıktı."
+   "ornek": "Layup sırasını değiştirdik, panel aynı ağırlıkta daha sert ve sağlam çıktı."
   },
   {
    "terim": "TRL",
@@ -5259,7 +5259,7 @@
   },
   {
    "terim": "TMR",
-   "anlam": "Total Mixed Ration, yani toplam karma rasyon. Kaba yem ve kesif yemin makinede karıştırılıp hayvana tek seferde verilmesi.",
+   "anlam": "Total Mixed Ration, yani toplam karma rasyon. Kaba yem (ot, saman gibi) ve kesif yemin (yoğun besinli yemin) makinede karıştırılıp hayvana tek seferde verilmesi.",
    "ornek": "TMR'ı sabah hazırlayıp yemliğe dağıt, ineklerin seçerek yemesini önler."
   },
   {
@@ -5280,11 +5280,11 @@
   {
    "terim": "Kızgınlık takibi",
    "anlam": "Dişi hayvanın çiftleşmeye hazır olduğu dönemin belirtilerinin izlenmesi; bugün çoğunlukla boyun tasması gibi sensörlerle yapılır.",
-   "ornek": "Kızgınlık takibi sistemi üç düveyi işaretledi, öğleden sonra tohumlatalım."
+   "ornek": "Kızgınlık takibi sistemi üç düveyi (henüz doğurmamış genç dişi sığırı) işaretledi, öğleden sonra tohumlatalım."
   },
   {
    "terim": "Suni tohumlama",
-   "anlam": "Seçilmiş damızlık boğadan alınan spermanın uzman tarafından ineğe aktarılması; ırk ıslahının temel yöntemidir.",
+   "anlam": "Seçilmiş damızlık boğadan alınan spermanın uzman tarafından ineğe aktarılması; ırkı iyileştirmenin temel yöntemidir.",
    "ornek": "Suni tohumlamada bu yıl daha yüksek süt verimli boğa spermasını seçtik."
   },
   {
@@ -5311,12 +5311,12 @@
   },
   {
    "terim": "Damar yolu açmak",
-   "anlam": "Serum ve ilaç verebilmek için hastanın toplardamarına ince bir plastik kanül yerleştirmek.",
+   "anlam": "Serum ve ilaç verebilmek için hastanın toplardamarına ince bir plastik tüp (kanül) yerleştirmek.",
    "ornek": "Hastanın damarları çok ince, damar yolu açmak için deneyimli birini çağıralım."
   },
   {
    "terim": "Order",
-   "anlam": "Doktorun hasta için yazdığı ilaç, tetkik ve tedavi istemi. Hemşire uygulamaları buna göre yapar.",
+   "anlam": "Doktorun hasta için yazdığı ilaç, test ve tedavi isteği. Hemşire uygulamaları buna göre yapar.",
    "ornek": "Yeni order'da antibiyotik değişmiş, akşam dozundan itibaren yenisini başlıyoruz."
   },
   {
@@ -5332,7 +5332,7 @@
   {
    "terim": "Dekübit",
    "anlam": "Uzun süre aynı pozisyonda yatan hastalarda basınç nedeniyle oluşan yara; bası yarası da denir.",
-   "ornek": "Hastaya iki saatte bir pozisyon verelim, sakrumda dekübit başlıyor."
+   "ornek": "Hastaya iki saatte bir pozisyon verelim, sakrumda (kuyruk sokumunda) dekübit başlıyor."
   },
   {
    "terim": "Aseptik teknik",
@@ -5346,13 +5346,13 @@
   },
   {
    "terim": "NG sonda",
-   "anlam": "Nazogastrik sonda. Burundan mideye uzanan, beslenme ya da mideyi boşaltma için kullanılan ince tüp.",
+   "anlam": "Nazogastrik sonda; burundan mideye uzanan ince tüp. Burundan mideye uzanan, beslenme ya da mideyi boşaltma için kullanılan ince tüp.",
    "ornek": "Hastanın NG sondasından beslenme saati geldi, önce yerini kontrol et."
   },
   {
    "terim": "Mavi kod",
    "anlam": "Hastanede kalbi ya da solunumu duran hasta için ekibi acilen çağıran uyarı sistemi.",
-   "ornek": "Koridorda mavi kod anonsu var, defibrilatörü hemen getir."
+   "ornek": "Koridorda mavi kod anonsu var, defibrilatörü (kalp şok cihazını) hemen getir."
   }
  ],
  "HEYKEL": [
@@ -5420,8 +5420,8 @@
   },
   {
    "terim": "Tebligat",
-   "anlam": "Dava belgelerinin ve kararların ilgili kişilere resmî yolla ulaştırılması. Süreler çoğunlukla tebliğ tarihinden başlar.",
-   "ornek": "Karar dün tebliğ edildi, istinaf süresi bugünden işlemeye başladı."
+   "anlam": "Dava belgelerinin ve kararların ilgili kişilere resmî yolla ulaştırılması. Süreler çoğunlukla tebliğ tarihinden, yani belgenin resmî olarak bildirildiği günden başlar.",
+   "ornek": "Karar dün tebliğ edildi, istinaf (üst mahkemeye itiraz) süresi bugünden işlemeye başladı."
   },
   {
    "terim": "Tensip zaptı",
@@ -5567,7 +5567,7 @@
   {
    "terim": "Mostra",
    "anlam": "Kayanın toprakla örtülmeden yeryüzünde açıkça görülebildiği yer; jeologlar ölçümlerini buralarda yapar.",
-   "ornek": "Yol yarmasındaki mostrada katmanlar çok net görünüyor, örnek alalım."
+   "ornek": "Yol açılırken kesilen yamaçtaki mostrada katmanlar çok net görünüyor, örnek alalım."
   },
   {
    "terim": "Doğrultu-eğim",
@@ -5592,7 +5592,7 @@
   {
    "terim": "Diri fay",
    "anlam": "Yakın jeolojik dönemde hareket etmiş ve deprem üretme potansiyeli taşıyan fay.",
-   "ornek": "Parsel diri fay zonunda kalıyor, buraya yapılaşma önermeyiz."
+   "ornek": "Parsel diri fay bölgesinde kalıyor, buraya bina yapılmasını önermeyiz."
   },
   {
    "terim": "RQD",
@@ -5711,7 +5711,7 @@
   {
    "terim": "Bildiri",
    "anlam": "Akademik bir kongre veya sempozyumda sunulan araştırma çalışması.",
-   "ornek": "Kongreye çeviri ve oryantalizm üzerine bir bildiri özeti gönderdim."
+   "ornek": "Kongreye çeviri ve oryantalizm (Batı'nın Doğu'ya bakışı) üzerine bir bildiri özeti gönderdim."
   },
   {
    "terim": "MLA",
@@ -5767,7 +5767,7 @@
   },
   {
    "terim": "Kent mobilyası",
-   "anlam": "Bank, çöp kutusu, aydınlatma direği, bisiklet park yeri gibi şehirde açık alanlarda kullanılan tüm donatıların ortak adı.",
+   "anlam": "Bank, çöp kutusu, aydınlatma direği, bisiklet park yeri gibi şehirde açık alanlarda kullanılan tüm eşyaların ortak adı.",
    "ornek": "Kent mobilyalarını aynı seriden seçelim ki sahil boyunca bütünlüklü görünsün."
   }
  ],
@@ -5814,7 +5814,7 @@
   },
   {
    "terim": "Pano",
-   "anlam": "İçinde PLC, sigorta, kontaktör ve kabloların bulunduğu elektrik ve kumanda dolabı.",
+   "anlam": "İçinde PLC, sigorta, kontaktör (elektrikle çalışan anahtar) ve kabloların bulunduğu elektrik ve kumanda dolabı.",
    "ornek": "Panoda kablolar etiketsiz bırakılmış, arıza ararken çok vakit kaybettik."
   },
   {
@@ -6070,7 +6070,7 @@
   {
    "terim": "Rotavap",
    "anlam": "Döner buharlaştırıcı. Çözücüyü düşük basınçta ve hızla uçurarak ürünü geride bırakan cihaz.",
-   "ornek": "Ekstraksiyon bitti, çözücüyü rotavapta uçurup ürünü tartalım."
+   "ornek": "Ekstraksiyon (özütleme) bitti, çözücüyü rotavapta uçurup ürünü tartalım."
   },
   {
    "terim": "SDS",
@@ -6117,21 +6117,21 @@
   {
    "terim": "Bakım duruşu",
    "anlam": "Tesisin planlı olarak tamamen durdurulup ekipmanların bakım ve onarımının yapıldığı dönem.",
-   "ornek": "Nisandaki bakım duruşunda eşanjörlerin hepsini açıp temizleyeceğiz."
+   "ornek": "Nisandaki bakım duruşunda eşanjörlerin (ısı değiştiricilerin) hepsini açıp temizleyeceğiz."
   },
   {
    "terim": "Fouling",
    "anlam": "Kirlenme. Boru ve ısı değiştiricilerin iç yüzeyinde zamanla tortu birikmesi; ısı transferini düşürür.",
-   "ornek": "Eşanjörde fouling başlamış, çıkış sıcaklığı her hafta biraz daha düşüyor."
+   "ornek": "Eşanjörde (ısı değiştiricide) fouling başlamış, çıkış sıcaklığı her hafta biraz daha düşüyor."
   },
   {
    "terim": "P&ID",
-   "anlam": "Piping and Instrumentation Diagram. Tesisteki borular, vanalar, pompalar ve ölçüm cihazlarının ayrıntılı şeması.",
+   "anlam": "Piping and Instrumentation Diagram, yani boru ve ölçüm cihazları şeması. Tesisteki borular, vanalar, pompalar ve ölçüm cihazlarının ayrıntılı şeması.",
    "ornek": "Yeni vanayı P&ID'ye işlemeden sahaya montaj talimatı vermeyelim."
   },
   {
    "terim": "HAZOP",
-   "anlam": "Hazard and Operability Study. Bir prosesteki olası tehlikeleri ve işletme sorunlarını ekipçe adım adım inceleyen güvenlik çalışması.",
+   "anlam": "Hazard and Operability Study, yani tesisteki tehlikeleri ve işleyiş sorunlarını inceleme çalışması. Bir prosesteki olası tehlikeleri ve işletme sorunlarını ekipçe adım adım inceleyen güvenlik çalışması.",
    "ornek": "Yeni ünite için HAZOP toplantıları üç gün sürecek, herkes katılsın."
   }
  ],
@@ -6153,7 +6153,7 @@
   },
   {
    "terim": "Gösteri deneyi",
-   "anlam": "Öğretmenin sınıfın önünde yaptığı, öğrencilerin izlediği deney. Güvenlik veya malzeme kısıtı olan durumlarda tercih edilir.",
+   "anlam": "Öğretmenin sınıfın önünde yaptığı, öğrencilerin izlediği deney. Güvenlik riski olan ya da malzemenin yetersiz olduğu durumlarda tercih edilir.",
    "ornek": "Sodyumun suyla tepkimesini öğrencilere yaptırmam, gösteri deneyi olarak ben yaparım."
   },
   {
@@ -6211,7 +6211,7 @@
   {
    "terim": "Aseptik çalışma",
    "anlam": "Ortama mikrop bulaşmasını önleyen steril çalışma teknikleri; örneğin alev yanında ya da steril kabinde çalışmak.",
-   "ornek": "Aşılamayı kabinde aseptik çalışarak yap, geçen seferki gibi olmasın."
+   "ornek": "Aşılamayı (mikrobu besi yerine ekmeyi) kabinde aseptik çalışarak yap, geçen seferki gibi olmasın."
   },
   {
    "terim": "Otoklav",
@@ -6262,7 +6262,7 @@
   },
   {
    "terim": "Cross-dock",
-   "anlam": "Gelen ürünlerin depoda stoklanmadan hemen ayrıştırılıp çıkış araçlarına aktarıldığı yöntem.",
+   "anlam": "Gelen ürünlerin depoda bekletilmeden hemen ayrılıp çıkış araçlarına aktarıldığı yöntem.",
    "ornek": "Bu ürünleri cross-dock yapalım, raflara girmeden akşam bölgelere dağılsın."
   },
   {
@@ -6294,7 +6294,7 @@
  "MADEN MÜHENDİSLİĞİ": [
   {
    "terim": "Cevher",
-   "anlam": "İçinden ekonomik olarak değerli maden çıkarılabilecek kayaç.",
+   "anlam": "İçinden ekonomik olarak değerli maden çıkarılabilecek kaya.",
    "ornek": "Bu damardaki cevher beklediğimizden zengin çıktı."
   },
   {
@@ -6381,35 +6381,35 @@
   },
   {
    "terim": "Salgı",
-   "anlam": "Dönen bir milin veya parçanın eksenine göre yalpalaması, yani tam merkezinde dönmemesi.",
-   "ornek": "Milde salgı var, komparatörle ölçtüm, beş yüzde bir çıktı."
+   "anlam": "Dönen bir milin veya parçanın kendi eksenine göre sallanarak dönmesi, yani tam merkezinde dönmemesi.",
+   "ornek": "Milde salgı var, komparatörle (hassas ölçü saatiyle) ölçtüm, beş yüzde bir çıktı."
   },
   {
    "terim": "CNC",
    "anlam": "Computer Numerical Control, bilgisayarlı sayısal denetim. Parçaları programa göre otomatik işleyen tezgah.",
-   "ornek": "Programı CNC'ye yükledim, ilk parçayı ölçüp seriye bağlayacağız."
+   "ornek": "Programı CNC'ye yükledim, ilk parçayı ölçüp seri üretime geçeceğiz."
   },
   {
    "terim": "FEA",
    "anlam": "Finite Element Analysis, sonlu elemanlar analizi. Bir parçanın yük altında nasıl davranacağını bilgisayarda hesaplama yöntemi.",
-   "ornek": "FEA'ya göre köşede gerilme yığılıyor, oraya radyüs verelim."
+   "ornek": "FEA'ya göre köşede gerilme yığılıyor, oraya radyüs (yuvarlatma) verelim."
   }
  ],
  "MALZEME BİLİMİ VE MÜHENDİSLİĞİ": [
   {
    "terim": "Mikroyapı",
    "anlam": "Malzemenin mikroskop altında görülen iç yapısı; taneler, fazlar ve kusurlar. Malzemenin özelliklerini büyük ölçüde belirler.",
-   "ornek": "Isıl işlemden sonra mikroyapı tamamen değişmiş, taneler belirgin şekilde incelmiş."
+   "ornek": "Isıl işlemden sonra mikroyapı tamamen değişmiş, taneler (küçük kristaller) belirgin şekilde incelmiş."
   },
   {
    "terim": "Çekme testi",
-   "anlam": "Bir numuneyi kopana kadar çekerek dayanımını ve ne kadar uzayabildiğini ölçen temel mekanik deney.",
+   "anlam": "Bir örnek parçayı kopana kadar çekerek ne kadar dayanıklı olduğunu ve ne kadar uzayabildiğini ölçen temel mekanik deney.",
    "ornek": "Üç numuneyi çekme testine soktuk, hepsi beklenenden önce koptu."
   },
   {
    "terim": "Gerilim-gerinim eğrisi",
    "anlam": "Malzemeye uygulanan kuvvetle şekil değişimi arasındaki ilişkiyi gösteren grafik; çekme testinden elde edilir.",
-   "ornek": "Gerilim-gerinim eğrisinden bakınca bu polimer çok sünek davranıyor."
+   "ornek": "Gerilim-gerinim eğrisinden bakınca bu polimer çok sünek (kırılmadan uzayabilen) davranıyor."
   },
   {
    "terim": "Sertlik ölçümü",
@@ -6433,13 +6433,13 @@
   },
   {
    "terim": "Ashby diyagramı",
-   "anlam": "Malzemeleri dayanım, yoğunluk, fiyat gibi özelliklere göre aynı grafikte gösteren malzeme seçim haritası.",
-   "ornek": "Ashby diyagramına bakınca hafiflik ve dayanım için magnezyum alaşımı öne çıkıyor."
+   "anlam": "Malzemeleri dayanıklılık, yoğunluk, fiyat gibi özelliklere göre aynı grafikte gösteren malzeme seçim haritası.",
+   "ornek": "Ashby diyagramına bakınca hafiflik ve sağlamlık için magnezyum alaşımı öne çıkıyor."
   },
   {
    "terim": "SEM",
    "anlam": "Scanning Electron Microscope, taramalı elektron mikroskobu. Yüzeyleri binlerce kez büyüterek görüntüleyen cihaz.",
-   "ornek": "Kırık yüzeyi SEM'de inceledim, çatlak bir inklüzyondan başlamış."
+   "ornek": "Kırık yüzeyi SEM'de inceledim, çatlak bir inklüzyondan (metalin içindeki yabancı bir parçacıktan) başlamış."
   },
   {
    "terim": "XRD",
@@ -6466,7 +6466,7 @@
   {
    "terim": "Tahsilat",
    "anlam": "Kamunun alacağı olan vergi veya borcun fiilen toplanması.",
-   "ornek": "Tahakkuk yüksek ama tahsilat oranı hâlâ yüzde yetmişte."
+   "ornek": "Tahakkuk (ödenmesi gereken vergi) yüksek ama tahsilat oranı hâlâ yüzde yetmişte."
   },
   {
    "terim": "Beyanname",
@@ -6537,7 +6537,7 @@
   },
   {
    "terim": "LaTeX",
-   "anlam": "Matematiksel formülleri düzgün yazmak için kullanılan dizgi sistemi. Matematik makalelerinin neredeyse hepsi bununla yazılır.",
+   "anlam": "Matematiksel formülleri düzgün yazmak için kullanılan bir yazı düzenleme sistemi. Matematik makalelerinin neredeyse hepsi bununla yazılır.",
    "ornek": "Ödevi elle değil LaTeX'te yazarsan formüller çok daha okunaklı olur."
   },
   {
@@ -6595,7 +6595,7 @@
   {
    "terim": "PDE",
    "anlam": "Partial Differential Equation, kısmi türevli diferansiyel denklem. Isı yayılımı, akışkanlar gibi olayları modellemekte kullanılır.",
-   "ornek": "Isı dağılımı bir PDE ile veriliyor, sonlu farklarla nümerik çözeceğiz."
+   "ornek": "Isı dağılımı bir PDE ile veriliyor, sonlu farklar yöntemiyle sayısal olarak çözeceğiz."
   },
   {
    "terim": "MATLAB",
@@ -6617,7 +6617,7 @@
   {
    "terim": "Özyineleme",
    "anlam": "Bir fonksiyonun problemi küçültüp kendini tekrar çağırarak çözmesi; rekürsiyon da denir.",
-   "ornek": "Ağacı gezmek için özyineleme en temiz çözüm ama yığın taşmasına dikkat."
+   "ornek": "Ağaç yapısını gezmek için özyineleme en temiz çözüm ama yığın taşmasına (belleğin dolup programın çökmesine) dikkat."
   },
   {
    "terim": "Uç durum",
@@ -6636,7 +6636,7 @@
   },
   {
    "terim": "Repo",
-   "anlam": "Repository kısaltması. Bir projenin tüm kodlarının ve değişiklik geçmişinin tutulduğu depo.",
+   "anlam": "Repository, yani kod deposu sözcüğünün kısaltması. Bir projenin tüm kodlarının ve değişiklik geçmişinin tutulduğu depo.",
    "ornek": "Ödevin kodlarını ortak repoya yükle, ben de üzerinde çalışayım."
   },
   {
@@ -6773,7 +6773,7 @@
   {
    "terim": "Enkoder",
    "anlam": "Bir motorun veya milin ne kadar ve hangi yönde döndüğünü ölçüp sinyale çeviren sensör.",
-   "ornek": "Enkoder sinyali gelmiyor, kablosu konnektörden çıkmış olabilir."
+   "ornek": "Enkoder sinyali gelmiyor, kablosu konnektörden (fişinden) çıkmış olabilir."
   },
   {
    "terim": "Mikrodenetleyici",
@@ -6792,7 +6792,7 @@
   },
   {
    "terim": "Pick and place",
-   "anlam": "Bir robotun nesneyi bir yerden alıp başka bir yere hassas şekilde yerleştirdiği işlem; elektronik kart dizgisinde de kullanılır.",
+   "anlam": "Bir robotun nesneyi bir yerden alıp başka bir yere hassas şekilde yerleştirdiği işlem; elektronik kartlara parça dizerken de kullanılır.",
    "ornek": "Pick and place hızını artırınca robot bazı parçaları düşürmeye başladı."
   },
   {
@@ -6814,12 +6814,12 @@
  "METALURJİ VE MALZEME MÜHENDİSLİĞİ": [
   {
    "terim": "Şarj",
-   "anlam": "Ergitme ocağına yüklenen hurda, cevher ve katkı malzemelerinin tamamı; ocağa yükleme işine de şarj etmek denir.",
-   "ornek": "Şarja fazla paslı hurda girmiş, cüruf miktarı arttı."
+   "anlam": "Eritme ocağına yüklenen hurda, cevher ve katkı malzemelerinin tamamı; ocağa yükleme işine de şarj etmek denir.",
+   "ornek": "Şarja fazla paslı hurda girmiş, cüruf (sıvı metalin üstünde biriken atık tabaka) miktarı arttı."
   },
   {
    "terim": "Cüruf",
-   "anlam": "Ergitme sırasında sıvı metalin üzerinde biriken, safsızlıkları içeren tabaka.",
+   "anlam": "Eritme sırasında sıvı metalin üzerinde biriken, yabancı maddeleri içeren tabaka.",
    "ornek": "Döküme geçmeden cürufu iyice alın, yoksa parçada kalıntı olur."
   },
   {
@@ -6830,12 +6830,12 @@
   {
    "terim": "Su verme",
    "anlam": "Isıtılmış çeliği suya veya yağa daldırıp hızla soğutarak sertleştirme işlemi.",
-   "ornek": "Su vermeden sonra parçalar çok sert ama kırılgan, menevişlemeye gönderelim."
+   "ornek": "Su vermeden sonra parçalar çok sert ama kırılgan, menevişlemeye (yeniden ısıtma işlemine) gönderelim."
   },
   {
    "terim": "Menevişleme",
    "anlam": "Su verilmiş çeliği tekrar orta sıcaklıkta ısıtarak kırılganlığını azaltma işlemi.",
-   "ornek": "Menevişleme sıcaklığını biraz düşürürsek sertliği koruyup tokluğu artırabiliriz."
+   "ornek": "Menevişleme sıcaklığını biraz düşürürsek sertliği koruyup tokluğu (kırılmaya direnci) artırabiliriz."
   },
   {
    "terim": "Haddeleme",
@@ -6845,11 +6845,11 @@
   {
    "terim": "Tufal",
    "anlam": "Sıcak çelik yüzeyinde havayla temas sonucu oluşan, pul pul dökülen oksit tabakası.",
-   "ornek": "Haddeden önce tufalı iyi temizlemezsek yüzey kalitesi bozulur."
+   "ornek": "Haddeden (silindirler arasında inceltmeden) önce tufalı iyi temizlemezsek yüzey kalitesi bozulur."
   },
   {
    "terim": "Kütük",
-   "anlam": "Döküm sonrası elde edilen, haddelenip çubuk veya profile dönüştürülecek kare kesitli yarı mamul çelik.",
+   "anlam": "Dökümden sonra elde edilen, silindirlerle ezilip çubuk veya profile dönüştürülecek, kare kesitli yarı işlenmiş çelik.",
    "ornek": "Sürekli döküm makinesi saatte yüz ton kütük çıkarıyor."
   },
   {
@@ -6892,7 +6892,7 @@
   {
    "terim": "Numune",
    "anlam": "Seri üretimden önce tasarımın onaylanması için dikilen ilk örnek ürün.",
-   "ornek": "Atölyeden numune geldi, kol boyu teknik föyle uyuşmuyor."
+   "ornek": "Atölyeden numune geldi, kol boyu teknik föyle (ölçülerin yazılı olduğu belgeyle) uyuşmuyor."
   },
   {
    "terim": "Tech pack",
@@ -6944,7 +6944,7 @@
   {
    "terim": "Graham tekniği",
    "anlam": "Martha Graham'ın geliştirdiği, gövdenin kasılıp açılmasına (contraction ve release) dayanan temel modern dans tekniği.",
-   "ornek": "Graham tekniği dersinde kontraksiyonu karından başlatmayı çalıştık."
+   "ornek": "Graham tekniği dersinde kontraksiyonu (gövdeyi içe doğru kasmayı) karından başlatmayı çalıştık."
   },
   {
    "terim": "Kanon",
@@ -7006,7 +7006,7 @@
   {
    "terim": "Western blot",
    "anlam": "Bir örnekte belirli bir proteinin bulunup bulunmadığını antikorlarla tespit eden yöntem.",
-   "ornek": "Proteinin gerçekten susturulduğunu western blot ile göstermemiz gerekiyor."
+   "ornek": "Proteinin gerçekten susturulduğunu (üretiminin durdurulduğunu) western blot ile göstermemiz gerekiyor."
   },
   {
    "terim": "PCR",
@@ -7015,7 +7015,7 @@
   },
   {
    "terim": "CRISPR",
-   "anlam": "Clustered Regularly Interspaced Short Palindromic Repeats. DNA'da belirli bir noktayı kesip değiştirmeyi sağlayan gen düzenleme aracı.",
+   "anlam": "Clustered Regularly Interspaced Short Palindromic Repeats, yani DNA'da düzenli aralıklarla tekrar eden kısa diziler. DNA'da belirli bir noktayı kesip değiştirmeyi sağlayan gen düzenleme aracı.",
    "ornek": "Bu geni CRISPR ile susturup hücrenin davranışını izleyeceğiz."
   }
  ],
@@ -7080,7 +7080,7 @@
   {
    "terim": "Mahsup fişi",
    "anlam": "Nakit hareketi olmayan işlemleri, örneğin hesaplar arası aktarımları kaydetmek için kesilen muhasebe fişi.",
-   "ornek": "Amortisman için ay sonunda mahsup fişi keseceğim."
+   "ornek": "Amortisman (eşyanın zamanla yıpranma payı) için ay sonunda mahsup fişi keseceğim."
   },
   {
    "terim": "Cari hesap",
@@ -7171,7 +7171,7 @@
   },
   {
    "terim": "MTPE",
-   "anlam": "Machine Translation Post-Editing. Makine çevirisiyle üretilen metni insan çevirmenin düzeltmesi.",
+   "anlam": "Machine Translation Post-Editing, yani makine çevirisini sonradan düzeltme. Makine çevirisiyle üretilen metni insan çevirmenin düzeltmesi.",
    "ornek": "Bu iş MTPE, ücret tam çeviriden düşük olacak."
   }
  ],
@@ -7287,7 +7287,7 @@
   },
   {
    "terim": "MIDI",
-   "anlam": "Musical Instrument Digital Interface. Çalgılar ve bilgisayar arasında nota bilgisini taşıyan dijital dil.",
+   "anlam": "Musical Instrument Digital Interface, yani müzik aletleri için dijital bağlantı dili. Çalgılar ve bilgisayar arasında nota bilgisini taşıyan dijital dil.",
    "ornek": "Piyanoyu MIDI olarak kaydet, sesi sonra değiştiririz."
   },
   {
@@ -7318,17 +7318,17 @@
   {
    "terim": "Latency",
    "anlam": "Gecikme. Ses girişinin bilgisayarda işlenip kulaklığa ulaşması arasında geçen süre.",
-   "ornek": "Kayıtta latency var, buffer değerini düşürelim."
+   "ornek": "Kayıtta latency var, buffer (ara bellek) değerini düşürelim."
   },
   {
    "terim": "Clipping",
    "anlam": "Ses seviyesi sınırı aşınca oluşan kırpılma ve cızırtılı bozulma.",
-   "ornek": "Davul kanalı kırmızıya vuruyor, clipping var, gain'i düşür."
+   "ornek": "Davul kanalı kırmızıya vuruyor, clipping var, gain'i (giriş seviyesini) düşür."
   },
   {
    "terim": "Sidechain",
    "anlam": "Bir kanalın sesine göre diğer kanaldaki efektin tetiklenmesi; örneğin davul vurunca basın kısılması.",
-   "ornek": "Kick ile bası sidechain yapınca alt frekanslar temizlendi."
+   "ornek": "Kick (bas davul) ile bası sidechain yapınca alt frekanslar temizlendi."
   }
  ],
  "MÜZİK TEORİSİ": [
@@ -7483,7 +7483,7 @@
   },
   {
    "terim": "RISM",
-   "anlam": "Répertoire International des Sources Musicales. Dünyadaki müzik el yazmalarını ve kaynaklarını listeleyen uluslararası katalog.",
+   "anlam": "Répertoire International des Sources Musicales, yani Uluslararası Müzik Kaynakları Kataloğu. Dünyadaki müzik el yazmalarını ve kaynaklarını listeleyen uluslararası katalog.",
    "ornek": "El yazmasının diğer kopyalarını RISM'de aradım."
   }
  ],
@@ -7578,7 +7578,7 @@
   {
    "terim": "Glovebox",
    "anlam": "İçine eldivenlerle uzanılan, havaya veya neme duyarlı maddelerle çalışılan kapalı kutu.",
-   "ornek": "Bu öncül maddeyi sadece glovebox içinde açabilirsin."
+   "ornek": "Bu başlangıç maddesini sadece glovebox içinde açabilirsin."
   },
   {
    "terim": "SEM",
@@ -7743,7 +7743,7 @@
   },
   {
    "terim": "OAE",
-   "anlam": "Otoakustik Emisyon. İç kulağın sese verdiği zayıf yankıyı ölçen hızlı tarama testi.",
+   "anlam": "Otoakustik Emisyon, yani iç kulağın kendi ürettiği çok zayıf sesler. İç kulağın sese verdiği zayıf yankıyı ölçen hızlı tarama testi.",
    "ornek": "OAE sol kulakta geçti, sağda kaldı."
   }
  ],
@@ -7807,7 +7807,7 @@
   },
   {
    "terim": "Optik masa",
-   "anlam": "Titreşimi sönümleyen, üzerinde delik düzeni olan ve optik deneylerin kurulduğu ağır masa.",
+   "anlam": "Titreşimi emen, üzerinde delik düzeni olan ve optik deneylerin kurulduğu ağır masa.",
    "ornek": "Aynaları optik masaya vidalamadan ölçüme başlama."
   },
   {
@@ -7875,7 +7875,7 @@
   {
    "terim": "Yeşil gübreleme",
    "anlam": "Baklagil gibi bitkileri yetiştirip toprağa karıştırarak toprağı doğal yoldan besleme.",
-   "ornek": "Sonbaharda fiğ ekip baharda yeşil gübreleme yapacağız."
+   "ornek": "Sonbaharda fiğ (bir baklagil bitkisi) ekip baharda yeşil gübreleme yapacağız."
   },
   {
    "terim": "Kompost",
@@ -7932,7 +7932,7 @@
   {
    "terim": "Konsertmayster",
    "anlam": "Orkestranın birinci keman şefi; akordu başlatır ve şefle müzisyenler arasında köprü olur.",
-   "ornek": "Arşeleri konsertmaysterle birlikte belirledik."
+   "ornek": "Arşeleri (yay hareketlerini) konsertmaysterle birlikte belirledik."
   },
   {
    "terim": "Grup provası",
@@ -7946,7 +7946,7 @@
   },
   {
    "terim": "rit.",
-   "anlam": "Ritardando. Notada temponun yavaş yavaş yavaşlatılacağını gösteren kısaltma.",
+   "anlam": "Ritardando, yani giderek yavaşlayarak. Notada temponun yavaş yavaş yavaşlatılacağını gösteren kısaltma.",
    "ornek": "Rit. yazan yerde gözünüz bende olsun, birlikte yavaşlayalım."
   },
   {
@@ -8003,7 +8003,7 @@
   },
   {
    "terim": "OSB",
-   "anlam": "Oriented Strand Board. Yönlendirilmiş uzun yongalardan yapılan, inşaatta kullanılan dayanıklı levha.",
+   "anlam": "Oriented Strand Board, yani yönlendirilmiş yonga levha. Yönlendirilmiş uzun yongalardan yapılan, inşaatta kullanılan dayanıklı levha.",
    "ornek": "Çatı kaplaması için OSB siparişi geldi."
   }
  ],
@@ -8062,8 +8062,8 @@
  "ORTEZ VE PROTEZ": [
   {
    "terim": "Güdük",
-   "anlam": "Amputasyon sonrası kalan uzuv parçası; protezin oturduğu bölüm.",
-   "ornek": "Güdükte ödem azalmış, yeni ölçü alabiliriz."
+   "anlam": "Kol ya da bacak ameliyatla alındıktan sonra kalan kısım; protezin oturduğu bölüm.",
+   "ornek": "Güdükte ödem (şişlik) azalmış, yeni ölçü alabiliriz."
   },
   {
    "terim": "Soket",
@@ -8139,7 +8139,7 @@
   },
   {
    "terim": "NVH",
-   "anlam": "Noise, Vibration, Harshness. Araçtaki gürültü, titreşim ve sarsıntıyla ilgilenen mühendislik alanı.",
+   "anlam": "Noise, Vibration, Harshness, yani gürültü, titreşim ve sarsıntı. Araçtaki gürültü, titreşim ve sarsıntıyla ilgilenen mühendislik alanı.",
    "ornek": "Kabin içi uğultu için NVH ekibi ölçüm yapacak."
   },
   {
@@ -8160,7 +8160,7 @@
   {
    "terim": "ECU",
    "anlam": "Engine Control Unit, motor kontrol ünitesi. Motoru yöneten araç bilgisayarı.",
-   "ornek": "ECU yazılımı güncellenince rölanti titremesi geçti."
+   "ornek": "ECU yazılımı güncellenince rölanti (motorun boşta çalışması) titremesi geçti."
   }
  ],
  "OYUNCULUK": [
@@ -8271,12 +8271,12 @@
   {
    "terim": "Pompaya girmek",
    "anlam": "Ameliyatta hastanın kalp ve akciğer işlevinin kalp-akciğer makinesine devredilmesi.",
-   "ornek": "Kanüller hazır, hocam izin verirse pompaya giriyoruz."
+   "ornek": "Kanüller (damara takılan tüpler) hazır, hocam izin verirse pompaya giriyoruz."
   },
   {
    "terim": "Kanülasyon",
    "anlam": "Hastanın büyük damarlarına makineyle bağlantı sağlayan tüplerin yerleştirilmesi.",
-   "ornek": "Aort kanülasyonu tamam, venöz hattı bekliyoruz."
+   "ornek": "Aort kanülasyonu tamam, venöz (toplardamar) hattı bekliyoruz."
   },
   {
    "terim": "Oksijenatör",
@@ -8295,7 +8295,7 @@
   },
   {
    "terim": "Kros klemp",
-   "anlam": "Aortun klemple kapatılarak kalbin dolaşımdan ayrıldığı an; süresi kayıt altına alınır.",
+   "anlam": "Aortun klemple (kıskaçla) kapatılarak kalbin dolaşımdan ayrıldığı an; süresi kayıt altına alınır.",
    "ornek": "Kros klemp süresi 65 dakika, not alındı."
   },
   {
@@ -8305,7 +8305,7 @@
   },
   {
    "terim": "ECMO",
-   "anlam": "Ekstrakorporeal Membran Oksijenasyonu. Yoğun bakımda kalp veya akciğeri günlerce destekleyen cihaz.",
+   "anlam": "Ekstrakorporeal Membran Oksijenasyonu, yani kanın vücut dışındaki bir makinede oksijenlendirilmesi. Yoğun bakımda kalp veya akciğeri günlerce destekleyen cihaz.",
    "ornek": "Yoğun bakımdaki hastanın ECMO kontrolüne gidiyorum."
   },
   {
@@ -8315,7 +8315,7 @@
   },
   {
    "terim": "CPB",
-   "anlam": "Cardiopulmonary Bypass. Kalp-akciğer makinesiyle sağlanan vücut dışı dolaşım.",
+   "anlam": "Cardiopulmonary Bypass, yani kalbin ve akciğerlerin işini ameliyat sırasında geçici olarak bir makinenin yapması. Kalp-akciğer makinesiyle sağlanan vücut dışı dolaşım.",
    "ornek": "Toplam CPB süresi iki saati geçti."
   }
  ],
@@ -8342,8 +8342,8 @@
   },
   {
    "terim": "Kuyu logu",
-   "anlam": "Kuyuya indirilen cihazlarla kayaçların özelliklerinin derinliğe göre kaydedilmesi.",
-   "ornek": "Kuyu logu sonuçlarına göre 2400 metrede gazlı zon var."
+   "anlam": "Kuyuya indirilen cihazlarla kayaların özelliklerinin derinliğe göre kaydedilmesi.",
+   "ornek": "Kuyu logu sonuçlarına göre 2400 metrede gazlı bölge var."
   },
   {
    "terim": "Kuyu tamamlama",
@@ -8352,7 +8352,7 @@
   },
   {
    "terim": "Rezervuar",
-   "anlam": "Petrol veya gazın biriktiği gözenekli yer altı kayaç bölgesi.",
+   "anlam": "Petrol veya gazın biriktiği gözenekli yer altı kaya bölgesi.",
    "ornek": "Rezervuar basıncı beklenenden hızlı düşüyor."
   },
   {
@@ -8479,12 +8479,12 @@
   {
    "terim": "Enjeksiyon",
    "anlam": "Eritilmiş plastiğin kalıba basınçla doldurulup parça üretildiği yöntem.",
-   "ornek": "Kapak parçası enjeksiyonda çekme yapıyor, kalıp sıcaklığını artıralım."
+   "ornek": "Kapak parçası enjeksiyonda çekme yapıyor (soğurken küçülüyor), kalıp sıcaklığını artıralım."
   },
   {
    "terim": "Ekstrüzyon",
-   "anlam": "Eriyik plastiğin bir kalıptan sürekli geçirilerek boru, film veya profil üretilmesi.",
-   "ornek": "Ekstrüzyon hattında boru et kalınlığı dalgalanıyor."
+   "anlam": "Erimiş plastiğin bir kalıptan sürekli geçirilerek boru, film veya profil üretilmesi.",
+   "ornek": "Ekstrüzyon hattında boru et kalınlığı (duvar kalınlığı) dalgalanıyor."
   },
   {
    "terim": "Granül",
@@ -8499,7 +8499,7 @@
   {
    "terim": "Kompaund",
    "anlam": "Polimere dolgu, katkı ve renklendiricilerin karıştırılmasıyla hazırlanan özel karışım.",
-   "ornek": "Müşteri için cam elyaf takviyeli bir kompaund geliştiriyoruz."
+   "ornek": "Müşteri için cam elyaf (cam lifi) takviyeli bir kompaund geliştiriyoruz."
   },
   {
    "terim": "Çapak",
@@ -8518,12 +8518,12 @@
   },
   {
    "terim": "MFI",
-   "anlam": "Melt Flow Index, erime akış indeksi. Eriyik plastiğin ne kadar kolay aktığını gösteren değer.",
-   "ornek": "Yeni gelen partinin MFI değeri spesifikasyon dışında."
+   "anlam": "Melt Flow Index, erime akış indeksi. Erimiş plastiğin ne kadar kolay aktığını gösteren değer.",
+   "ornek": "Yeni gelen partinin MFI değeri spesifikasyon (istenen değer aralığı) dışında."
   },
   {
    "terim": "DSC",
-   "anlam": "Differential Scanning Calorimetry. Polimerin erime ve camsı geçiş sıcaklıklarını ölçen analiz.",
+   "anlam": "Differential Scanning Calorimetry, yani diferansiyel taramalı kalorimetri; ısıtılan malzemenin aldığı ya da verdiği ısıyı ölçer. Polimerin erime ve camsı geçiş sıcaklıklarını ölçen analiz.",
    "ornek": "Malzemenin erime noktasını DSC ile kontrol edelim."
   }
  ],
@@ -8650,7 +8650,7 @@
   {
    "terim": "ATC",
    "anlam": "Air Traffic Control, yani hava trafik kontrol. Uçakları yönlendiren kontrolörlerin genel adı.",
-   "ornek": "ATC bizi 10 dakika bekleme paternine aldı, yakıtı kontrol et."
+   "ornek": "ATC bizi 10 dakika bekleme turuna aldı, yakıtı kontrol et."
   },
   {
    "terim": "METAR",
@@ -8659,12 +8659,12 @@
   },
   {
    "terim": "NOTAM",
-   "anlam": "Notice to Airmen. Pist kapanması, arızalı cihaz gibi uçuşu etkileyen geçici durumları bildiren duyuru.",
+   "anlam": "Notice to Airmen, yani pilotlara yönelik resmî bildirim. Pist kapanması, arızalı cihaz gibi uçuşu etkileyen geçici durumları bildiren duyuru.",
    "ornek": "NOTAM'a göre ana pist bakımda, kısa piste ineceğiz."
   },
   {
    "terim": "Squawk",
-   "anlam": "Uçağın radarda tanınması için transpondere girilen dört haneli kod.",
+   "anlam": "Uçağın radarda tanınması için transpondere (radara kimlik bildiren cihaza) girilen dört haneli kod.",
    "ornek": "Kule squawk 4521 dedi, kodu girdim."
   },
   {
@@ -8753,7 +8753,7 @@
   },
   {
    "terim": "Balast",
-   "anlam": "Rayların altındaki traverslerin yerleştirildiği kırma taş tabakası; yükü dağıtır ve suyu drene eder.",
+   "anlam": "Rayların altındaki traverslerin (enine kirişlerin) yerleştirildiği kırma taş tabakası; yükü dağıtır ve suyun akıp gitmesini sağlar.",
    "ornek": "Bu kesimde balast kirlenmiş, su tutuyor, temizlik planlayalım."
   },
   {
@@ -8768,7 +8768,7 @@
   },
   {
    "terim": "CBTC",
-   "anlam": "Communication-Based Train Control. Trenlerin konumunu sürekli telsizle izleyerek daha sık sefer sağlayan metro sinyalizasyon sistemi.",
+   "anlam": "Communication-Based Train Control, yani iletişime dayalı tren kontrolü. Trenlerin konumunu sürekli telsizle izleyerek daha sık sefer sağlayan metro sinyalizasyon sistemi.",
    "ornek": "Yeni metro hattı CBTC ile sürücüsüz işletilecek."
   },
   {
@@ -8910,7 +8910,7 @@
   {
    "terim": "Team building",
    "anlam": "Şirket çalışanlarının birlikte çalışma becerilerini geliştirmek için yapılan ortak oyun ve etkinlikler.",
-   "ornek": "Hafta sonu bir şirketin team building organizasyonu var, oryantiring kuracağız."
+   "ornek": "Hafta sonu bir şirketin team building organizasyonu var, oryantiring (harita ve pusulayla yön bulma yarışı) kuracağız."
   },
   {
    "terim": "Outdoor etkinlik",
@@ -8934,7 +8934,7 @@
   },
   {
    "terim": "MICE",
-   "anlam": "Meeting, Incentive, Conference, Exhibition. Toplantı, ödül gezisi, kongre ve fuar turizmini anlatan sektör kısaltması.",
+   "anlam": "Meeting, Incentive, Conference, Exhibition, yani toplantı, ödül gezisi, konferans ve fuar turizmi. Toplantı, ödül gezisi, kongre ve fuar turizmini anlatan sektör kısaltması.",
    "ornek": "Otelin MICE gelirleri arttı, kongre dönemlerinde aktivite paketleri satalım."
   },
   {
@@ -9029,12 +9029,12 @@
   {
    "terim": "BİLSEM",
    "anlam": "Bilim ve Sanat Merkezi. Özel yetenekli öğrencilere, resim dahil, ek eğitim veren MEB kurumu.",
-   "ornek": "Sınıfta yetenekli bir öğrenci var, BİLSEM resim tanılamasına önerdim."
+   "ornek": "Sınıfta yetenekli bir öğrenci var, BİLSEM resim tanılamasına (yetenek belirleme sürecine) önerdim."
   },
   {
    "terim": "Yıl sonu sergisi",
    "anlam": "Öğrencilerin yıl boyunca yaptığı çalışmaların okulda velilere ve ziyaretçilere sergilendiği etkinlik.",
-   "ornek": "Yıl sonu sergisi için panoları ve paspartuları şimdiden hazırlayalım."
+   "ornek": "Yıl sonu sergisi için panoları ve paspartuları (resimlerin etrafındaki karton çerçeveleri) şimdiden hazırlayalım."
   },
   {
    "terim": "Renk çemberi",
@@ -9195,7 +9195,7 @@
   {
    "terim": "Sezon programı",
    "anlam": "Bir tiyatro, opera ya da konser salonunun bir yıl boyunca sahneleyeceği gösterilerin takvimi.",
-   "ornek": "Sezon programını haziranda açıklamazsak abonman satışları gecikir."
+   "ornek": "Sezon programını haziranda açıklamazsak abonman (sezonluk bilet) satışları gecikir."
   },
   {
    "terim": "MESAM",
@@ -9237,7 +9237,7 @@
   {
    "terim": "Terminus post quem",
    "anlam": "Latince bir ifade; bir eserin en erken hangi tarihten sonra yapılmış olabileceğini gösteren sınır tarih.",
-   "ornek": "Kitabedeki sultan adı bize bir terminus post quem veriyor."
+   "ornek": "Kitabedeki (yapının üzerindeki yazıttaki) sultan adı bize bir terminus post quem veriyor."
   },
   {
    "terim": "Envanter kaydı",
@@ -9346,7 +9346,7 @@
   {
    "terim": "Fatura kesintisi",
    "anlam": "SGK'nın kurallara uymayan ya da eksik belgelenen işlemler için hastane faturasından ödeme yapmaması.",
-   "ornek": "Bu ay epikriz eksikliğinden ciddi fatura kesintisi yedik."
+   "ornek": "Bu ay epikriz (hasta çıkış raporu) eksikliğinden ciddi fatura kesintisi yedik."
   },
   {
    "terim": "Döner sermaye",
@@ -9355,7 +9355,7 @@
   },
   {
    "terim": "Mavi kod",
-   "anlam": "Hastanede kalp ya da solunum durması gibi acil durumda resüsitasyon ekibini çağırmak için verilen alarm.",
+   "anlam": "Hastanede kalp ya da solunum durması gibi acil durumda canlandırma ekibini çağırmak için verilen alarm.",
    "ornek": "Mavi kod ekibinin müdahale süresini her ay raporluyoruz."
   }
  ],
@@ -9440,7 +9440,7 @@
   {
    "terim": "SPK",
    "anlam": "Sermaye Piyasası Kurulu. Türkiye'de borsa ve yatırım kuruluşlarını denetleyen kurum.",
-   "ornek": "Halka arz izahnamesi SPK onayı bekliyor."
+   "ornek": "Halka arz izahnamesi (şirketi yatırımcıya tanıtan resmî belge) SPK onayı bekliyor."
   },
   {
    "terim": "Devre kesici",
@@ -9455,7 +9455,7 @@
   {
    "terim": "Spread",
    "anlam": "Bir varlığın alış fiyatı ile satış fiyatı arasındaki fark.",
-   "ornek": "Bu kağıtta işlem az, spread çok açık, dikkatli emir girin."
+   "ornek": "Bu kağıtta (hissede) işlem az, spread çok açık, dikkatli emir girin."
   },
   {
    "terim": "Temettü",
@@ -9523,7 +9523,7 @@
   },
   {
    "terim": "PNR",
-   "anlam": "Passenger Name Record. Uçuş rezervasyonuna ait yolcu ve uçuş bilgilerinin tutulduğu kayıt ve kodu.",
+   "anlam": "Passenger Name Record, yani yolcu rezervasyon kaydı. Uçuş rezervasyonuna ait yolcu ve uçuş bilgilerinin tutulduğu kayıt ve kodu.",
    "ornek": "PNR'ı bana atar mısın, isim düzeltmesi yapacağım."
   },
   {
@@ -9549,7 +9549,7 @@
   {
    "terim": "Kokart",
    "anlam": "Turist rehberlerinin resmî çalışma iznini gösteren, yakaya takılan kimlik kartı.",
-   "ornek": "Ören yerinde kokartın yoksa grup anlatımı yapamazsın."
+   "ornek": "Tarihi kalıntıların olduğu alanlarda kokartın yoksa grup anlatımı yapamazsın."
   },
   {
    "terim": "TÜRSAB",
@@ -9715,12 +9715,12 @@
   {
    "terim": "Savunuculuk",
    "anlam": "Danışanın haklarını savunmak ve onun sesini kurumlara duyurmak için yapılan çalışmalar.",
-   "ornek": "Engelli bireylerin ulaşım hakkı için belediye nezdinde savunuculuk yapıyoruz."
+   "ornek": "Engelli bireylerin ulaşım hakkı için belediyede savunuculuk yapıyoruz."
   },
   {
    "terim": "Tükenmişlik",
    "anlam": "Ağır vakalarla uzun süre çalışmanın yarattığı duygusal ve fiziksel yorgunluk; mesleğin bilinen riski.",
-   "ornek": "Üst üste istismar vakaları aldım, tükenmişlik yaşamamak için süpervizyon istedim."
+   "ornek": "Üst üste istismar vakaları aldım, tükenmişlik yaşamamak için süpervizyon (deneyimli bir uzmandan destek) istedim."
   }
  ],
  "SOSYOLOJİ": [
@@ -9922,7 +9922,7 @@
   },
   {
    "terim": "Pompaj testi",
-   "anlam": "Kuyudan belli süre su çekilerek kuyunun verimini ve akiferin özelliklerini ölçme deneyi.",
+   "anlam": "Kuyudan belli süre su çekilerek kuyunun verimini ve akiferin (yer altındaki su katmanının) özelliklerini ölçme deneyi.",
    "ornek": "Yeni kuyuda 72 saatlik pompaj testi yapacağız."
   },
   {
@@ -10012,7 +10012,7 @@
   {
    "terim": "Separatör",
    "anlam": "Sütü hızla döndürerek yağını ve kremasını ayıran makine.",
-   "ornek": "Separatörün ayarını değiştirdik, yağ standardizasyonu daha tutarlı."
+   "ornek": "Separatörün ayarını değiştirdik, sütün yağ oranını artık daha düzgün tutturuyoruz."
   },
   {
    "terim": "CIP",
@@ -10069,7 +10069,7 @@
   {
    "terim": "Log incelemek",
    "anlam": "Sistemlerin tuttuğu olay kayıtlarını şüpheli hareket arayarak tek tek gözden geçirmek.",
-   "ornek": "Saldırı saatini bulmak için firewall loglarını incelemem lazım."
+   "ornek": "Saldırı saatini bulmak için firewall (güvenlik duvarı) loglarını incelemem lazım."
   },
   {
    "terim": "SOC",
@@ -10334,7 +10334,7 @@
   {
    "terim": "Müktesebat",
    "anlam": "Avrupa Birliği'nin tüm kuralları ve mevzuatı. Aday ülkelerin kendi yasalarını buna uyumlu hale getirmesi beklenir.",
-   "ornek": "Bu fasılda AB müktesebatına uyum için daha çok yasa değişmesi gerekiyor."
+   "ornek": "Bu fasılda (müzakere başlığında) AB müktesebatına uyum için daha çok yasa değişmesi gerekiyor."
   },
   {
    "terim": "Yumuşak güç",
@@ -10385,7 +10385,7 @@
   },
   {
    "terim": "Fire",
-   "anlam": "Üretim sırasında kesme, eğeleme ve cila ile kaybolan metal miktarı.",
+   "anlam": "Üretim sırasında kesme, törpüleme ve cila ile kaybolan metal miktarı.",
    "ornek": "Bu modelde fire yüksek çıktı, maliyet hesabına ekleyelim."
   },
   {
@@ -10422,7 +10422,7 @@
   },
   {
    "terim": "Lisanslı depo",
-   "anlam": "Ürünlerin güvenle saklandığı, karşılığında alınıp satılabilen belge verilen resmi denetimli depo.",
+   "anlam": "Ürünlerin güvenle saklandığı, resmi olarak denetlenen depo; ürün karşılığında alınıp satılabilen bir belge verilir.",
    "ornek": "Fiyat düşük, buğdayı lisanslı depoya koyup birkaç ay bekleyelim."
   },
   {
@@ -10469,7 +10469,7 @@
   },
   {
    "terim": "Ekim normu",
-   "anlam": "Bir dekara atılacak tohum miktarı. Mibzer bu değere göre ayarlanır.",
+   "anlam": "Bir dekara atılacak tohum miktarı. Mibzer (tohum ekme makinesi) bu değere göre ayarlanır.",
    "ornek": "Buğdayda ekim normunu yirmi iki kiloya çektik, makineyi kalibre edelim."
   },
   {
@@ -10494,7 +10494,7 @@
   },
   {
    "terim": "RTK",
-   "anlam": "Real Time Kinematic. Traktörlerin otomatik dümenlemesinde kullanılan, santimetre hassasiyetinde konum veren GPS düzeltme sistemi.",
+   "anlam": "Real Time Kinematic. Traktörlerin kendi kendine yön bularak gitmesinde kullanılan, konumu santimetre doğruluğunda veren GPS düzeltme sistemi.",
    "ornek": "RTK sinyali gelince traktör sırayı santim şaşmadan takip ediyor."
   },
   {
@@ -10512,7 +10512,7 @@
   {
    "terim": "Künye",
    "anlam": "Halde satılan her ürün partisine verilen, ürünün nereden geldiğini ve kime satıldığını gösteren kayıt numarası.",
-   "ornek": "Künyesi olmayan ürün markete giremiyor, irsaliyeye numarayı yaz."
+   "ornek": "Künyesi olmayan ürün markete giremiyor, irsaliyeye (sevk belgesine) numarayı yaz."
   },
   {
    "terim": "Soğuk zincir",
@@ -10547,7 +10547,7 @@
   {
    "terim": "FOB",
    "anlam": "Free On Board. Satıcının ürünü gemiye yüklemekle yükümlü olduğu, sonrasındaki masrafın alıcıya ait olduğu teslim şekli.",
-   "ornek": "Fındığı FOB Giresun fiyatından teklif ettik, navlun alıcıda."
+   "ornek": "Fındığı FOB Giresun fiyatından teklif ettik, navlun (taşıma ücreti) alıcıda."
   },
   {
    "terim": "GlobalGAP",
@@ -10559,7 +10559,7 @@
   {
    "terim": "Eksplant",
    "anlam": "Doku kültüründe yeni bitki üretmek için bitkiden kesilip besi ortamına konan küçük parça.",
-   "ornek": "Eksplantları yaprak sapından alalım, o kısım daha iyi rejenere oluyor."
+   "ornek": "Eksplantları yaprak sapından alalım, o kısımdan daha kolay yeni bitki gelişiyor."
   },
   {
    "terim": "Kallus",
@@ -10569,7 +10569,7 @@
   {
    "terim": "MS ortamı",
    "anlam": "Murashige ve Skoog besi ortamı. Bitki doku kültüründe en sık kullanılan hazır besin karışımı.",
-   "ornek": "Yarın için iki litre MS ortamı hazırlayıp otoklava koyar mısın?"
+   "ornek": "Yarın için iki litre MS ortamı hazırlayıp otoklava (buharla mikrop öldüren cihaza) koyar mısın?"
   },
   {
    "terim": "Subkültür",
@@ -10625,7 +10625,7 @@
   },
   {
    "terim": "Genotipleme",
-   "anlam": "Bitkilerin DNA'sına bakarak hangi gen varyantlarını taşıdığını belirleme işlemi.",
+   "anlam": "Bitkilerin DNA'sına bakarak genlerinin hangi çeşitlerini taşıdığını belirleme işlemi.",
    "ornek": "Beş yüz bitkinin genotiplemesi bitti, sonuçları tabloya aktarıyorum."
   },
   {
@@ -10635,7 +10635,7 @@
   },
   {
    "terim": "Double haploid",
-   "anlam": "Tek kromozom takımından elde edilip katlanan, tek kuşakta saf hat oluşturan bitkiler; ıslahı yıllarca kısaltır.",
+   "anlam": "Tek kromozom takımından elde edilip kromozomları ikiye katlanan bitkiler. Tek kuşakta saf hat (genetik olarak tek tip bitki soyu) oluşturur; yeni çeşit geliştirme (ıslah) süresini yıllarca kısaltır.",
    "ornek": "Double haploid tekniğiyle altı yıllık işi iki yılda bitirdik."
   },
   {
@@ -10697,12 +10697,12 @@
   },
   {
    "terim": "Fan-ped sistemi",
-   "anlam": "Serada bir duvardaki ıslak petlerden hava çekip diğer taraftaki fanlarla atarak içeriyi serinleten sistem.",
+   "anlam": "Seranın bir duvarındaki ıslak petlerden (su emmiş panellerden) havayı çekip karşı taraftaki fanlarla dışarı atarak içeriyi serinleten sistem.",
    "ornek": "Yazın serayı fan-ped sistemi olmadan otuz dereceye indiremeyiz."
   },
   {
    "terim": "ET",
-   "anlam": "Evapotranspirasyon. Topraktan buharlaşan ve bitkiden terlemeyle kaybolan toplam su; sulama miktarı buna göre hesaplanır.",
+   "anlam": "Evapotranspirasyon (topraktan buharlaşan ve bitkilerden terlemeyle çıkan toplam su). Topraktan buharlaşan ve bitkiden terlemeyle kaybolan toplam su; sulama miktarı buna göre hesaplanır.",
    "ornek": "Temmuzda günlük ET yedi milimetre, sulama aralığını kısaltalım."
   },
   {
@@ -10881,12 +10881,12 @@
   {
    "terim": "Terbiye",
    "anlam": "Kumaşın ağartma, boyama, baskı ve son işlemlerden geçirildiği üretim aşamasının genel adı.",
-   "ornek": "Bu sipariş terbiyede takıldı, termin bir hafta kayabilir."
+   "ornek": "Bu sipariş terbiyede takıldı, termin (teslim tarihi) bir hafta kayabilir."
   },
   {
    "terim": "Apre",
    "anlam": "Kumaşa yumuşaklık, su iticilik gibi özellikler kazandırmak için yapılan son işlem.",
-   "ornek": "Müşteri daha yumuşak tuşe istiyor, silikon apre ekleyelim."
+   "ornek": "Müşteri daha yumuşak tuşe (kumaşın elde bıraktığı his) istiyor, silikon apre ekleyelim."
   },
   {
    "terim": "Haslık",
@@ -10896,7 +10896,7 @@
   {
    "terim": "Çekmezlik",
    "anlam": "Kumaşın yıkamadan sonra ne kadar çektiğini, yani küçüldüğünü gösteren değer.",
-   "ornek": "Çekmezlik yüzde beş çıktı, sınır üç, sanforu tekrar ayarlayın."
+   "ornek": "Çekmezlik yüzde beş çıktı, sınır üç, sanforu (kumaşın çekmesini önleyen makineyi) tekrar ayarlayın."
   },
   {
    "terim": "En",
@@ -10985,7 +10985,7 @@
   {
    "terim": "Pastal",
    "anlam": "Kesimden önce kumaş katlarının üst üste serilmesi ve kalıpların üzerine en az fire verecek şekilde yerleştirilmesi.",
-   "ornek": "Pastal planında fire yüksek çıktı, kalıpları yeniden yerleştir."
+   "ornek": "Pastal planında fire (boşa giden kumaş) yüksek çıktı, kalıpları yeniden yerleştir."
   },
   {
    "terim": "Fit numunesi",
@@ -11093,12 +11093,12 @@
   },
   {
    "terim": "Epikriz",
-   "anlam": "Hastanın yatış süresince yapılan tetkik ve tedavilerini özetleyen, taburculukta verilen rapor.",
+   "anlam": "Hastanın hastanede yattığı sürede yapılan tahlil ve tedavileri özetleyen, taburcu olurken verilen rapor.",
    "ornek": "Taburcu olacak hastanın epikrizini öğlene kadar yazar mısın?"
   },
   {
    "terim": "Order",
-   "anlam": "Doktorun hasta için yazdığı ilaç, tetkik ve bakım talimatları.",
+   "anlam": "Doktorun hasta için yazdığı ilaç, tahlil ve bakım talimatları.",
    "ornek": "Yeni hastaya serum ve ağrı kesici order ettim, hemşireye haber ver."
   },
   {
@@ -11151,7 +11151,7 @@
   {
    "terim": "Fantom",
    "anlam": "Görüntüleme veya tedavi cihazlarını test etmek için insan dokusunu taklit eden yapay model.",
-   "ornek": "Yeni ultrason probunu önce fantom üzerinde deneyelim."
+   "ornek": "Yeni ultrason probunu (cihazın vücuda değen ucunu) önce fantom üzerinde deneyelim."
   },
   {
    "terim": "Saha servisi",
@@ -11193,7 +11193,7 @@
   {
    "terim": "Safiyet",
    "anlam": "Tohum partisinde yabancı ot tohumu, taş ve diğer maddeler hariç saf tohumun oranı.",
-   "ornek": "Safiyet analizinde yabani yulaf tohumu çıktı, parti selektöre dönmeli."
+   "ornek": "Safiyet analizinde yabani yulaf tohumu çıktı, parti selektöre (tohum ayıklama makinesine) dönmeli."
   },
   {
    "terim": "Lot",
@@ -11426,7 +11426,7 @@
   {
    "terim": "Her şey dahil (All inclusive)",
    "anlam": "Konaklama fiyatına yemeklerin ve çoğu içeceğin dahil olduğu pansiyon türü.",
-   "ornek": "Antalya'da talebin çoğu hâlâ her şey dahil konseptinde."
+   "ornek": "Antalya'da talebin çoğu hâlâ her şey dahil sistemde."
   },
   {
    "terim": "GDS",
@@ -11651,7 +11651,7 @@
   {
    "terim": "Hedge",
    "anlam": "Kur, faiz veya fiyat değişimlerinden doğabilecek zararlara karşı finansal araçlarla korunma.",
-   "ornek": "Dolar borcumuzun yarısını forward ile hedge ettik."
+   "ornek": "Dolar borcumuzun yarısını forward (ileri tarihli kur sözleşmesi) ile hedge ettik."
   },
   {
    "terim": "Forward",
@@ -11661,12 +11661,12 @@
   {
    "terim": "Swap",
    "anlam": "İki tarafın belirli süre boyunca farklı para birimleri veya faiz ödemelerini karşılıklı takas ettiği anlaşma.",
-   "ornek": "Banka ile dolar-TL swap yaparak likidite ihtiyacını karşıladık."
+   "ornek": "Banka ile dolar-TL swap yaparak nakit ihtiyacımızı karşıladık."
   },
   {
    "terim": "Eurobond",
    "anlam": "Bir ülke veya şirketin uluslararası piyasalarda kendi para birimi dışındaki bir parayla çıkardığı tahvil.",
-   "ornek": "Hazine bu hafta beş yıl vadeli dolar cinsi eurobond ihraç etti."
+   "ornek": "Hazine bu hafta beş yıl vadeli, dolar cinsinden eurobond çıkardı."
   },
   {
    "terim": "Spread",
@@ -11717,7 +11717,7 @@
   },
   {
    "terim": "FOB / CIF",
-   "anlam": "İki yaygın teslim şekli. FOB'da satıcı malı gemiye yükleyene kadar sorumludur; CIF'te navlun ve sigortayı da satıcı öder.",
+   "anlam": "İki yaygın teslim şekli. FOB'da satıcı malı gemiye yükleyene kadar sorumludur; CIF'te navlunu (taşıma ücretini) ve sigortayı da satıcı öder.",
    "ornek": "Müşteri FOB değil CIF fiyat istiyor, sigortayı da hesaba katalım."
   },
   {
@@ -11728,12 +11728,12 @@
   {
    "terim": "Antrepo",
    "anlam": "Gümrük vergisi henüz ödenmemiş malların gümrük gözetiminde bekletildiği depo.",
-   "ornek": "Mallar şu an antrepoda, vergiyi ödeyince serbest dolaşıma girecek."
+   "ornek": "Mallar şu an antrepoda, vergiyi ödeyince ülke içinde serbestçe satılabilecek."
   },
   {
    "terim": "Forwarder",
    "anlam": "Taşımayı kendi aracıyla yapmasa da tüm lojistik süreci organize eden taşıma organizatörü firma.",
-   "ornek": "Forwarder'dan Hamburg'a parsiyel yükleme için fiyat istedim."
+   "ornek": "Forwarder'dan Hamburg'a parsiyel (başka yüklerle paylaşılan) yükleme için fiyat istedim."
   },
   {
    "terim": "Demuraj",
@@ -12176,7 +12176,7 @@
   {
    "terim": "Deploy",
    "anlam": "Yazılımın yeni sürümünü sunucuya yükleyip kullanıcılara açmak.",
-   "ornek": "Akşam altıda deploy var, o saatte merge yapmayın."
+   "ornek": "Akşam altıda deploy var, o saatte merge (kod birleştirme) yapmayın."
   },
   {
    "terim": "Sprint",
@@ -12206,11 +12206,11 @@
   {
    "terim": "PR",
    "anlam": "Pull Request; yapılan kod değişikliğinin ana koda eklenmesi için açılan inceleme isteği.",
-   "ornek": "PR'ı açtım, onay gelince merge ederim."
+   "ornek": "PR'ı açtım, onay gelince merge ederim (ana koda eklerim)."
   },
   {
    "terim": "CI/CD",
-   "anlam": "Continuous Integration / Continuous Delivery; kodun otomatik test edilip otomatik olarak canlıya alınmasını sağlayan süreç.",
+   "anlam": "Continuous Integration / Continuous Delivery; kodun otomatik test edilip otomatik olarak yayına alınmasını sağlayan süreç.",
    "ornek": "CI/CD testleri kırmızı yandı, birinin değişikliği bozmuş."
   },
   {
@@ -12483,11 +12483,11 @@
   {
    "terim": "Rasyon",
    "anlam": "Bir hayvanın bir günde yemesi gereken, besin ihtiyacına göre hesaplanmış yem karışımı.",
-   "ornek": "Süt verimi düştü, sağmal ineklerin rasyonunu yeniden hesaplayalım."
+   "ornek": "Süt verimi düştü, süt veren ineklerin rasyonunu yeniden hesaplayalım."
   },
   {
    "terim": "TMR",
-   "anlam": "Total Mixed Ration, yani tam karışım rasyon. Kaba ve kesif yemlerin makinede karıştırılıp hayvana tek seferde verilmesi.",
+   "anlam": "Total Mixed Ration, yani tam karışım rasyon. Kaba yemlerle kesif (yoğun, besin değeri yüksek) yemlerin makinede karıştırılıp hayvana tek seferde verilmesi.",
    "ornek": "TMR makinesi arızalandı, öğlen yemlemesini elle yapacağız."
   },
   {
@@ -12498,7 +12498,7 @@
   {
    "terim": "Suni tohumlama",
    "anlam": "Damızlık erkekten alınan spermanın veteriner ya da teknisyen tarafından dişi hayvana yapay yolla verilmesi.",
-   "ornek": "Kızgınlık görülen üç düveyi yarın sabah suni tohumlamaya alıyoruz."
+   "ornek": "Kızgınlık görülen üç düveyi (genç dişi sığırı) yarın sabah suni tohumlamaya alıyoruz."
   },
   {
    "terim": "Laktasyon",
@@ -12508,7 +12508,7 @@
   {
    "terim": "Kuru dönem",
    "anlam": "İneğin bir sonraki doğumdan önce sağılmayıp dinlendirildiği yaklaşık iki aylık dönem.",
-   "ornek": "Doğuma iki ay kalanları kuru döneme ayırıp ayrı padoka alalım."
+   "ornek": "Doğuma iki ay kalanları kuru döneme ayırıp ayrı padoka (çitle çevrili alana) alalım."
   },
   {
    "terim": "Damızlık",
@@ -12743,7 +12743,7 @@
   {
    "terim": "Storyboard",
    "anlam": "Filmin sahnelerinin kare kare çizildiği, çizgi roman benzeri plan. Kamera açıları ve hareketler burada belirlenir.",
-   "ornek": "Kovalamaca sahnesinin storyboard'u hazır, yönetmen onaylarsa animatiğe geçeriz."
+   "ornek": "Kovalamaca sahnesinin storyboard'u hazır, yönetmen onaylarsa animatiğe (hareketli taslak videoya) geçeriz."
   },
   {
    "terim": "Animatik",
@@ -13018,7 +13018,7 @@
   {
    "terim": "Moodboard",
    "anlam": "Bir projenin havasını göstermek için renk, fotoğraf ve doku örneklerinin bir araya getirildiği görsel pano.",
-   "ornek": "Konsepti anlatmak için önce iki farklı moodboard hazırlayalım."
+   "ornek": "Tasarım fikrini anlatmak için önce iki farklı moodboard hazırlayalım."
   },
   {
    "terim": "Mockup",
@@ -13100,7 +13100,7 @@
   {
    "terim": "Poka-yoke",
    "anlam": "Japonca hata önleme demek. Parçanın yanlış takılmasını ya da hatanın oluşmasını fiziksel olarak imkânsız kılan basit düzenek.",
-   "ornek": "Parça ters takılıyordu, fikstüre bir poka-yoke pimi ekledik."
+   "ornek": "Parça ters takılıyordu, fikstüre (parçayı tutan aparata) bir poka-yoke pimi ekledik."
   }
  ],
  "İNSAN KAYNAKLARI YÖNETİMİ": [
@@ -13164,7 +13164,7 @@
   {
    "terim": "Hakediş",
    "anlam": "Yüklenicinin belirli bir dönemde yaptığı iş miktarına göre işverenden alacağı ödemenin hesaplandığı belge.",
-   "ornek": "Bu ayın hakedişini hazırlıyorum, metrajları bana bugün gönderin."
+   "ornek": "Bu ayın hakedişini hazırlıyorum, metrajları (iş miktarı ölçümlerini) bana bugün gönderin."
   },
   {
    "terim": "Metraj",
@@ -13198,8 +13198,8 @@
   },
   {
    "terim": "C30",
-   "anlam": "Beton sınıfı. C harfi betonu, 30 ise silindir numunede megapaskal cinsinden karakteristik basınç dayanımını gösterir.",
-   "ornek": "Projede C30 yazıyor, santrale C25 gönderdikleri irsaliyeyi geri çevirdik."
+   "anlam": "Beton sınıfı. C harfi betonu, 30 ise silindir şeklindeki deney örneğinde megapaskal cinsinden beklenen en düşük basınç dayanımını gösterir.",
+   "ornek": "Projede C30 yazıyor, santrale C25 gönderdikleri irsaliyeyi (sevk belgesini) geri çevirdik."
   },
   {
    "terim": "TBDY",
@@ -13230,8 +13230,8 @@
   },
   {
    "terim": "Mütevatir",
-   "anlam": "Yalan üzerinde birleşmeleri düşünülemeyecek kadar çok kişi tarafından nakledilmiş haber ya da rivayet.",
-   "ornek": "Kur'an'ın nakli mütevatir olduğu için en güçlü delil kabul edilir."
+   "anlam": "Yalan söylemek için bir araya gelmeleri düşünülemeyecek kadar çok kişinin aktardığı haber ya da rivayet.",
+   "ornek": "Kur'an'ın aktarılışı mütevatir olduğu için en güçlü delil kabul edilir."
   },
   {
    "terim": "Şerh",
@@ -13246,7 +13246,7 @@
   {
    "terim": "Tahkik",
    "anlam": "Eski bir yazmanın nüshaları karşılaştırılarak en doğru metninin bilimsel yöntemle yayına hazırlanması.",
-   "ornek": "Tezimde bu risalenin üç yazma nüshasından tahkikini yapıyorum."
+   "ornek": "Tezimde bu risalenin (kısa eserin) üç el yazması nüshasından tahkikini yapıyorum."
   },
   {
    "terim": "DİA",
@@ -13303,7 +13303,7 @@
   {
    "terim": "AAOIFI",
    "anlam": "Accounting and Auditing Organization for Islamic Financial Institutions. Faizsiz finans kurumları için uluslararası muhasebe ve uyum standartları yayımlayan kuruluş.",
-   "ornek": "Sukuk yapısını AAOIFI standartlarına göre yeniden kontrol edelim."
+   "ornek": "Sukuk (faizsiz tahvil) yapısını AAOIFI standartlarına göre yeniden kontrol edelim."
   },
   {
    "terim": "Garar",
@@ -13377,7 +13377,7 @@
   {
    "terim": "Uygulama projesi",
    "anlam": "Ustaların sahada birebir uygulayabileceği ölçülü ve detaylı çizimlerin tamamı.",
-   "ornek": "Konsept onaylandı, şimdi uygulama projesine geçiyoruz."
+   "ornek": "Tasarım fikri onaylandı, şimdi uygulama projesine geçiyoruz."
   },
   {
    "terim": "Kot",
@@ -13439,7 +13439,7 @@
   {
    "terim": "LOTO",
    "anlam": "Lockout/Tagout, yani kilitleme ve etiketleme. Bakım sırasında makinenin enerjisini kesip kilitleyerek yanlışlıkla çalışmasını önleme yöntemi.",
-   "ornek": "Konveyörde bakım var, LOTO uygulanmadan kimse içeri girmesin."
+   "ornek": "Konveyörde (taşıyıcı bantta) bakım var, LOTO uygulanmadan kimse içeri girmesin."
   },
   {
    "terim": "İş izni",
@@ -13470,7 +13470,7 @@
  "İŞLETME": [
   {
    "terim": "Ciro",
-   "anlam": "Bir işletmenin belli bir dönemde yaptığı toplam satış tutarı. Gider düşülmeden önceki hasılattır.",
+   "anlam": "Bir işletmenin belli bir dönemde yaptığı toplam satış tutarı. Giderler düşülmeden önceki toplam satış geliridir.",
    "ornek": "Bu çeyrekte ciro arttı ama maliyetler de aynı hızla yükseldi."
   },
   {

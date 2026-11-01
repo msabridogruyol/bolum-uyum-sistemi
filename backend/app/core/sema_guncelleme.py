@@ -50,6 +50,7 @@ OTOMATIK += ["0085_veri_kaynagi_kontrol"]   # [2026-11-01] Veri Kaynakları ekra
 OTOMATIK += ["0086_onlisans_bolum_kaldirma"]   # [2026-11-01] yalnızca ön lisans olan 4 bölüm kaldırıldı (266 → 262); ön lisans sonraki geliştirme
 OTOMATIK += ["0087_veri_yonetimi_demo"]   # [2026-11-01] Pipeline ekranından K5 bağı / örnek meslek yükleme (yedekli) + demo okul
 OTOMATIK += ["0088_pipeline_paketi"]   # [2026-11-01] pipeline'ı sistemden kurma: bilgisayar anahtarları + veri sürümleri (Storage)
+OTOMATIK += ["0089_icerik_sadelestirme"]   # [2026-11-02] öğrenciye görünen içerikte lise düzeyine uygun dil (yalnızca değişmemiş metne)
 KILIT = 2026101001
 
 
