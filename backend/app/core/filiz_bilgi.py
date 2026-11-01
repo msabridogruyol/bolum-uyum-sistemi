@@ -67,6 +67,9 @@ _KELIME = {
     "psk": "psikoloji", "pdr": "rehberlik ve psikolojik danismanlik", "ybs": "yonetim bilisim sistemleri",
     "uluslararasi": "uluslararasi", "ui": "uluslararasi iliskiler", "iibf": "iktisadi ve idari bilimler",
     "dt": "dis hekimligi", "makina": "makine", "dishekimligi": "dis hekimligi", "tipfakultesi": "tip",
+    # [2026-11-02 simülasyon] bitişik yazılan sık soru kalıpları
+    "kacyil": "kac yil", "kacyillik": "kac yillik", "kacsene": "kac yil", "kacsenelik": "kac yillik", "nekadar": "ne kadar",
+    "nerde": "nerede", "nedemek": "ne demek", "hangibolum": "hangi bolum",
 }
 _IKILI = {   # kısaltma + "muh"
     "bil": "bilgisayar", "bilg": "bilgisayar", "bilgi": "bilgisayar", "end": "endustri", "endus": "endustri",
@@ -89,6 +92,24 @@ hicbir pecete""".split())
 _CAPA: set[str] = set()
 _SILME: dict[str, str | None] = {}     # çapa sözcüğünden bir harf silinmiş biçim → çapa (öğrenci bir harfi atlamış)
 _DEGIS: dict[str, str | None] = {}     # bir harfi "?" olan biçim → çapa (öğrenci bir harfi yanlış yazmış)
+
+
+_KALICI_CAPA: list[tuple[list[str], bool]] = []   # Filiz'in konu sözcükleri: dizin yenilenince yeniden eklenir
+
+
+def capa_kalici_ekle(sozcukler, degisim: bool = False) -> None:
+    _KALICI_CAPA.append((list(sozcukler), degisim))
+    capa_ekle(sozcukler, degisim)
+
+
+def _capa_sifirla() -> None:
+    """Dizin her kurulduğunda çapalar yalnızca o dizinin adlarından + kalıcı konu sözcüklerinden yeniden kurulur
+    (eski içerikten kalan adlar düzeltmeyi yanlış yöne çekmesin)."""
+    _CAPA.clear()
+    _SILME.clear()
+    _DEGIS.clear()
+    for sozcukler, degisim in _KALICI_CAPA:
+        capa_ekle(sozcukler, degisim)
 
 
 def capa_ekle(sozcukler, degisim: bool = True) -> None:
@@ -293,6 +314,7 @@ class Dizin:
                 self.takma["ogretmenlik"].add(v)
         for meslek, bolumler in self.meslek_bolum.items():
             self.takma[meslek] |= bolumler
+        _capa_sifirla()
         capa_ekle(list(self.bolumler) + list(self.varliklar) + [a for b in belgeler if b.tur == "sozluk" for a in b.adlar])
         for k, hedefler in (esanlam or {}).items():
             for h in hedefler:
@@ -573,6 +595,23 @@ def _dosya_belgeleri() -> list[Belge]:
             ham = [str(t[0]), str(t[0]).split("(")[0], *(t[4] if len(t) > 4 and isinstance(t[4], list) else [])]
             adlar = tuple(a for a in {" ".join(sade(x).split()) for x in ham} if len(a) >= 2)
             out.append(Belge("sozluk", str(t[0]), f"{t[2]}{ornek}", "Sözlük", None, "", adlar))
+    # [2026-11-02 simülasyon] Meslek dili (bölüm penceresindeki "Meslek dili" sekmesi: meslekte kullanılan terimler) Filiz'in
+    # dizininde yoktu. Sözlükte aynı adlı terim yoksa sözlük maddesi gibi eklenir ("triyaj ne demek").
+    var_olan = {a for b in out if b.tur == "sozluk" for a in b.adlar}
+    try:
+        jargon = json.loads((Path(__file__).resolve().parent / "meslek_jargonu.json").read_text(encoding="utf-8"))
+    except Exception:
+        jargon = {}
+    for bolum, liste in (jargon or {}).items():
+        for t in liste or []:
+            if not isinstance(t, dict) or not t.get("terim") or not t.get("anlam"):
+                continue
+            ad = " ".join(sade(str(t["terim"]).split("(")[0]).split())
+            if len(ad) < 3 or ad in var_olan:
+                continue
+            var_olan.add(ad)
+            ornek = f" Örnek: {t['ornek']}" if t.get("ornek") else ""
+            out.append(Belge("sozluk", str(t["terim"]), f"{t['anlam']}{ornek}", f"Bölümler › {_ad(bolum)} › Meslek dili", None, "", (ad,)))
     # ---- İş Hayatı (yalnızca is_hayati modülü açık okullarda)
     ders = _oku("is_hayati_dersler.json") or {}
     for d in ders.get("dersler") or []:

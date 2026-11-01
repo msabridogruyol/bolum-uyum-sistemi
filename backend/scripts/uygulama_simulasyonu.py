@@ -179,7 +179,7 @@ def metin_denetle(rapor, uc: str, veri):
         if b and not yol.endswith((".id", ".kod", ".url", "_id")):
             rapor.ekle("bozuk_metin", {"uc": uc, "yol": yol, "eslesen": b.group(0), "metin": m[:240]})
         agir = {w for w in re.findall(r"\w+", m.lower()) if w in AGIR}
-        if agir and "/sozluk" not in uc:   # sözlük terimin kendisini tanımlar
+        if agir and "/sozluk" not in uc and " " in m.strip():   # sözlük terimin kendisini tanımlar; tek sözcük = kod
             rapor.ekle("agir_sozcuk", {"uc": uc, "yol": yol, "sozcuk": sorted(agir), "metin": m[:200]})
 
 
@@ -507,12 +507,62 @@ def ogrenci_akisi(c, db, banka, o, rnd, rapor, hedef_bolum, digerleri, okul_ogre
     get("/koclugu/asistan/gecmis")
 
 
+def kapsam_taramasi(c, banka, o, rapor, sifirla=lambda: None):
+    """Rastgelelikten bağımsız tam tarama: TAM paketli bir öğrenciyle BÜTÜN yayındaki bölümlerin tanıtımı, bütün meslek
+    simülasyonları ("Bir günümü yaşa"), mülakat simülasyonu, zor günler, mesleğe giden yol, gelecekte bu meslek ve iş hayatı
+    gerçekleri açılır; her bölümün mülakat simülasyonu bir kez baştan sona yanıtlanır."""
+    from app.core.security import erisim_tokeni_uret
+    bas = {"Authorization": f"Bearer {erisim_tokeni_uret(o['id'], 'ogrenci')}"}
+    rnd = random.Random(99)
+    for bid, ad, _d in banka.bolumler:
+        sifirla()   # hız sınırı: tek öğrenciyle binlerce istek
+        for yol in (f"/ogrenci/bolum/{bid}/tanit", f"/ogrenci/is-hayati/bolum/{bid}", f"/ogrenci/is-hayati/zor-gun/{bid}",
+                    f"/ogrenci/is-hayati/yol/{bid}", f"/ogrenci/is-hayati/gelecek/{bid}", f"/ogrenci/is-hayati/gercek/{bid}",
+                    f"/ogrenci/is-hayati/mulakat-sim/{bid}", f"/bolumler/{bid}/bilgi"):
+            r = c.get(yol, headers=bas)
+            rapor.say["tarama_istek"] += 1
+            if r.status_code >= 500:
+                rapor.ekle("tarama_sunucu_hatasi", {"uc": yol, "bolum": ad, "kod": r.status_code, "yanit": r.text[:300]})
+            elif r.status_code != 200:
+                rapor.ekle("tarama_eksik_icerik", {"uc": re.sub(r"/\d+", "/{id}", yol), "bolum": ad, "kod": r.status_code,
+                                                   "yanit": r.text[:160]})
+            else:
+                metin_denetle(rapor, "TARAMA " + re.sub(r"/\d+", "/{id}", yol), r.json())
+                if "/mulakat-sim/" in yol:
+                    sor = r.json()["sorular"]
+                    sec = {str(q["no"]): rnd.randrange(len(q["adaylar"])) for q in sor if q.get("adaylar")}
+                    rr = c.post("/ogrenci/is-hayati/mulakat-sim", headers=bas, json={"bolum_id": bid, "secimler": sec})
+                    rapor.say["tarama_mulakat_sim"] += 1
+                    if rr.status_code != 200:
+                        rapor.ekle("tarama_mulakat_sim_hatasi", {"bolum": ad, "kod": rr.status_code, "yanit": rr.text[:300]})
+                if yol.endswith("/tanit"):
+                    for m in r.json().get("meslekler") or []:
+                        if not m.get("simulasyon"):
+                            rapor.ekle("tarama_simulasyonsuz_meslek", {"bolum": ad, "meslek": m.get("ad")})
+                            continue
+                        s_ = c.get(f"/ogrenci/bolum/{bid}/simulasyon?meslek={m['no']}", headers=bas)
+                        if s_.status_code != 200:
+                            rapor.ekle("tarama_simulasyon_hatasi", {"bolum": ad, "meslek": m.get("ad"), "kod": s_.status_code})
+                            continue
+                        sah = s_.json()["sahneler"]
+                        metin_denetle(rapor, "TARAMA simulasyon", s_.json())
+                        if not any(x["tur"] == "karar" for x in sah):
+                            rapor.ekle("tarama_kararsiz_simulasyon", {"bolum": ad, "meslek": m.get("ad")})
+                        tep = {x["id"]: rnd.choice([0, 1, 2]) for x in sah if x["tur"] == "is"}
+                        kar = {x["id"]: rnd.randrange(len(x["secenekler"])) for x in sah if x["tur"] == "karar" and x.get("secenekler")}
+                        rr = c.post("/ogrenci/simulasyon", headers=bas, json={"bolum_id": bid, "meslek": m["no"], "tepkiler": tep, "kararlar": kar})
+                        rapor.say["tarama_meslek_simulasyonu"] += 1
+                        if rr.status_code != 200:
+                            rapor.ekle("tarama_simulasyon_hatasi", {"bolum": ad, "meslek": m.get("ad"), "kod": rr.status_code, "yanit": rr.text[:200]})
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--ogrenci", type=int, default=500)
     ap.add_argument("--tohum", type=int, default=1)
     ap.add_argument("--rapor", default="sim_raporu.json")
     ap.add_argument("--dokum", default=None, help="Filiz soru-cevaplarının tamamı (jsonl)")
+    ap.add_argument("--tarama-yok", action="store_true", help="bütün bölümlerin tam taramasını atla")
     a = ap.parse_args()
     if "DATABASE_URL" not in os.environ:
         sys.exit("DATABASE_URL (kopya veritabanı) gerekli.")
@@ -563,6 +613,10 @@ def main():
             print(f"{i + 1}/{len(ogr)} öğrenci · {time.time() - t0:.0f} sn · hatalar: "
                   f"{ {k: v for k, v in rapor.say.items() if not k.startswith(('filiz_kaynak', 'filiz_kisisel', 'filiz_bolum', 'filiz_meslek', 'filiz_karsi', 'filiz_sozluk', 'filiz_duygu', 'filiz_konu', 'filiz_kriz', 'filiz_gizlilik', 'filiz_paket', 'filiz_enjeksiyon', 'meslek_sim', 'mulakat_sim', 'dusunme'))} }",
                   flush=True)
+    tam_paket = next((o for o in ogr if o["paket"] == "tam" and o["hedef_durum"] == "tam"), None)
+    if tam_paket and not a.tarama_yok:
+        sinir_sifirla()
+        kapsam_taramasi(c, banka, tam_paket, rapor, sinir_sifirla)
     kapsanan = {hedefler[o["id"]][0] for o in tam}
     sonuc = rapor.json()
     sonuc["kapsam"] = {"ogrenci": len(ogr), "paket": Counter(str(o["paket"]) for o in ogr), "durum": Counter(o["hedef_durum"] for o in ogr),

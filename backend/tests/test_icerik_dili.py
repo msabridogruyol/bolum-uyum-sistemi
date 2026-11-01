@@ -44,6 +44,12 @@ def _metinler(x, yol=()):
 def _tum():
     for ad in DOSYALAR:
         yield from ((ad, yol, m) for yol, m in _metinler(json.loads((VERI / ad).read_text(encoding="utf-8"))))
+    jargon = json.loads((VERI.parent / "core" / "meslek_jargonu.json").read_text(encoding="utf-8"))
+    for bolum, liste in jargon.items():
+        for i, t in enumerate(liste):
+            for k in ("anlam", "ornek"):
+                if t.get(k):
+                    yield "meslek_jargonu.json", (bolum, i, k, t.get("terim", "")), t[k]
     veri = json.loads((VERI / "icerik_sadelestirme.json").read_text(encoding="utf-8"))
     for i, x in enumerate(veri["bolum_detay"] + veri["kisa_aciklama"] + veri["tablo"]):
         yield "icerik_sadelestirme.json", (i, "yeni"), x["yeni"]
@@ -83,6 +89,8 @@ def test_agir_sozcuk_aciklamasiz_kullanilmaz():
             w = _kucuk(t.group(0))
             if ad == "sozluk_genis.json" and len(yol) >= 2 and any(w.startswith(x[:6]) for x in terim.get(yol[1], ()) if len(x) >= 6):
                 continue   # sözlük maddesinin örnek cümlesinde tanımlanan terimin kendisi
+            if ad == "meslek_jargonu.json" and any(w.startswith(_kucuk(x)[:6]) for x in TOK.findall(yol[3]) if len(x) >= 6):
+                continue   # meslek dili maddesinin tanımında / örneğinde tanımlanan terimin kendisi
             if any(w.startswith(a) for a in AGIR) and not _aciklamali(m, t.start(), t.end()):
                 # Ders adı içinde ("Tarih Metodolojisi dersinde") ya da resmî ad ("Tebliğ") olarak büyük harfle geçiyorsa geçer
                 if t.group(0)[0].isupper() and t.start() > 0 and m[t.start() - 2] not in ".!?":

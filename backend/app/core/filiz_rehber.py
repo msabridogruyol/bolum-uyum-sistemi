@@ -849,7 +849,7 @@ def _capalari_kaydet():
     from app.core import filiz_bilgi as fb
     sozler = [a for anahtarlar, _ in KONULAR + _DUYGU_ONCE for a in anahtarlar] + list(_AILE) + list(_ODEV)
     sozler += [q for k in SORU_KATEGORILERI for q in k["sorular"]]
-    fb.capa_ekle(sozler, degisim=False)
+    fb.capa_kalici_ekle(sozler, degisim=False)
 
 
 _capalari_kaydet()
