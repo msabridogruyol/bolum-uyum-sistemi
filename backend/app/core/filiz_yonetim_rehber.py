@@ -140,6 +140,15 @@ NIYETLER: list[dict] = [
     {"k": "tuik", "rol": (SUPER,), "kalip": ["tuik", "istihdam", "maas", "kazanc", "is hayati veri", "asgari ucret"],
      "metin": "TÜİK istihdam göstergeleri, Kazanç Yapısı, kamu maaşları ve asgari ücret İş Hayatı Verileri sayfasından yüklenir/güncellenir.",
      "bag": [("İş Hayatı Verileri", "/admin/is-hayati-verileri")]},
+    # [2026-11-02 simülasyon] Okul yetkilisi sistem yöneticisinin işlerini sorduğunda "anlamadım" yerine kimin yaptığı söylenir
+    {"k": "sistem_yoneticisi", "rol": (OKUL,), "kalip": ["bolum ekle", "bolum yukle", "soru ekle", "soru yukle", "pipeline", "sayac",
+                                                       "hata kayit", "kvkk onay", "kamera fotograf", "guvenlik fotograf", "yedek al",
+                                                       "okul ekle", "paket degis"],
+     "metin": "Bu işlemleri Filizyol sistem yöneticisi yapar: bölüm ve soru içeriği, bölüm verisinin yıllık güncellemesi, sistem kayıtları, "
+              "yedekler ve paket değişikliği. KVKK onayları ve güvenlik fotoğrafları yalnızca yasal saklama amacıyla tutulur; okul "
+              "panelinde gösterilmez. Bir öğrencinin güven puanını ve tekrar yanıtlama durumunu öğrenci detayında görebilirsiniz. "
+              "Bir talebiniz varsa sistem yöneticisine iletin.",
+     "bag": [("Öğrenciler", "ogrenciler")]},
     {"k": "pipeline", "rol": (SUPER,), "kalip": ["pipeline", "agirlik", "taslak", "esco", "sayac", "bilgisayara kur"],
      "metin": "Bölüm verisi yılda bir yenilenir: Pipeline Sonuçları'ndaki sayaç ne zaman gerektiğini söyler. Pipeline kurulu bilgisayarda "
               "çalıştırılır, çıktılar aynı sayfada 3 adımla canlıya alınır; yeni bilgisayar kurulumu da oradan yapılır. "

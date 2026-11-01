@@ -35,7 +35,9 @@ def test_super_niyetleri(soru, kod):
 
 
 def test_super_niyetleri_okul_yetkilisine_cikmaz():
-    assert R.niyet_bul("hata kayıtları", "okul_yetkilisi") == []
+    # [2026-11-02] Okul yetkilisine süper admin cevabı/bağlantısı çıkmaz; sistem yöneticisinin işiyse yalnızca bu söylenir
+    n = R.niyet_bul("hata kayıtları", "okul_yetkilisi")
+    assert [x["k"] for x in n] == ["sistem_yoneticisi"] and all(not s.startswith("/") for x in n for _, s in x["bag"])
     assert R.niyet_bul("TÜİK verisi", "okul_yetkilisi") == []
 
 

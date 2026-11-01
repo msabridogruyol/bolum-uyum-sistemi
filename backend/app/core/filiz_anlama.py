@@ -55,8 +55,16 @@ def _bolum_ozet(d: fb.Dizin, v: str) -> dict:
             "nerede": g.nerede if g else f"Bölümler › {_gorunen(d, v)}"}
 
 
+def _puan_metni(p: str | None) -> str | None:
+    """[2026-11-02] "Değişken" puan türü öğrenciye açık değil: üniversiteye / programa göre değiştiği söylenir."""
+    if p and (p.strip().lower().startswith("değişken") or p.strip().lower().startswith("üniversiteye göre")):
+        return "üniversiteye göre değişen"
+    return p
+
+
 def _kunye(o: dict) -> str:
-    parca = [x for x in (f"{o['sure']}" if o["sure"] else "", f"{o['puan']} puan türü" if o["puan"] else "") if x]
+    p = _puan_metni(o["puan"])
+    parca = [x for x in (f"{o['sure']}" if o["sure"] else "", f"{p} puan türü" if p else "") if x]
     return f" ({', '.join(parca)})" if parca else ""
 
 
@@ -76,9 +84,9 @@ def soru_sablonu(b: fb.Belge) -> str:
     if b.tur == "meslek":
         return f"{ad.rsplit(' (', 1)[0]} bir iş gününde ne yapar?"
     if b.tur == "gun":
-        return f"{ad.removeprefix('Bir gününü yaşa: ').capitalize()} olarak bir gün nasıl geçer?"
+        return f"{ad.removeprefix('Bir gününü yaşa: ')} olarak bir gün nasıl geçer?"
     if b.tur == "zorgun":
-        return f"{ad.removesuffix(': zor günler').removesuffix(' alanında zor günler').capitalize()} için zor günler nasıl geçer?"
+        return f"{ad.removesuffix(': zor günler').removesuffix(' alanında zor günler')} için zor günler nasıl geçer?"
     if b.tur == "mulakat":
         return f"{ad.removesuffix(' mülakat simülasyonu')} mülakatında ne sorulur?"
     if b.tur == "sozluk":
@@ -220,15 +228,50 @@ def kunye_sorusu(d: fb.Dizin, soru: str) -> Cevap | None:
     o = _bolum_ozet(d, next(iter(hedef)))
     if not (o["sure"] or o["puan"]):
         return None
-    parca = ([f"öğrenim süresi {o['sure']}"] if o["sure"] else []) + ([f"puan türü {o['puan']}"] if o["puan"] else [])
+    p = _puan_metni(o["puan"])
+    parca = ([f"öğrenim süresi {o['sure']}"] if o["sure"] else []) + (
+        [("puan türü üniversiteye göre değişiyor" if p != o["puan"] else f"puan türü {p}")] if p else [])
     return Cevap(f"📖 {o['ad']}: {', '.join(parca)}.\n{o['ilk']}\n\nKaynak: {o['nerede']}", "icerik", _bolum_secenekleri(d, next(iter(hedef)))[1:])
+
+
+# [2026-11-02 simülasyon] İş Hayatı'na özgü içerik türleri: soru açıkça bunlardan birini istiyorsa ve okulun paketinde
+# İş Hayatı yoksa, başka bir sayfayla (ör. bölümün "mezunlar nerede çalışır" sayfası) cevap verilmez; durum söylenir.
+_IS_HAYATI_NIYET = {
+    "mulakat": (("mulakat", "is gorusmesi", "is gorusmesinde", "gorusmede ne sor"), "Mülakat simülasyonu ve mülakat pratiği"),
+    "cv": ((" cv ", " cv'", "ozgecmis", "on yazi"), "CV ve ön yazı atölyesi"),
+    "ders": (("brut", "net maas", "bordro", "sgk prim", "kidem tazminat", "ihbar sure"), "Maaş, bordro ve çalışma hakları dersleri"),
+}
+
+
+def kapali_modul_cevabi(d: fb.Dizin, soru: str, moduller: set[str] | None) -> Cevap | None:
+    if moduller is None or "is_hayati" in moduller:
+        return None
+    t = f" {fb.duzelt(soru)} "
+    for anahtarlar, ad in _IS_HAYATI_NIYET.values():
+        if any(k in t for k in anahtarlar):
+            bolum = [h for _, hs in d.varliklari_coz(soru) for h in sorted(hs) if h in d.bolumler]
+            secenek = _bolum_secenekleri(d, bolum[0]) if bolum else ["Rehber öğretmenime nasıl ulaşırım?"]
+            ek = f" {_gorunen(d, bolum[0])} bölümünü ve mezunlarının nerelerde çalıştığını anlatabilirim." if bolum else \
+                " Bu konuda rehber öğretmenin de yardımcı olabilir."
+            return Cevap(f"{ad} İş Hayatı bölümünde yer alıyor; okulunun paketinde bu bölüm yok.{ek} 🌱", "icerik_yok", secenek)
+    return None
 
 
 def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | None:
     """Kişisel konulardan ÖNCE denenir: karşılaştırma, meslek yolu, güçlü bilgi sorusu."""
     d = fb.dizin(db)
-    if fb.kisisel_mi(soru) and not any(k in f" {fb.duzelt(soru)} " for k in _MESLEK_YOLU):
+    t = f" {fb.duzelt(soru)} "
+    # [2026-11-02 simülasyon] "Güçlü yön ne demek?", "hedef bölüm ne anlama geliyor": kişisel sözcük geçse de bu bir
+    # tanım sorusudur; terim sözlükte aynen varsa sözlükten cevaplanır (öğrencinin kendi sonucuna gidilmez).
+    if any(k in t for k in fb._TANIM) and not any(k in t for k in (" benim ", " bana ", " hedefim", " sonucum", " puanim")):
+        sb = fb.sozluk_bul(db, soru)
+        if sb is not None and not d.varliklari_coz(soru):
+            return Cevap(f"📖 {sb.baslik}\n{fb._kirp(sb.metin)}\n\nKaynak: {sb.nerede}", "icerik")
+    if fb.kisisel_mi(soru) and not any(k in t for k in _MESLEK_YOLU):
         return None
+    c = kapali_modul_cevabi(d, soru, moduller)
+    if c:
+        return c
     for f in (karsilastirma, meslek_yolu):
         c = f(d, soru)
         if c:
@@ -348,14 +391,24 @@ def sonradan_netlestir(db: Session, soru: str, moduller: set[str] | None) -> Cev
                      + (":" if ilgili else "; rehber öğretmenine de sorabilirsin."), "bilinmiyor",
                      [soru_sablonu(s.belge) for s in ilgili])
     hepsi = d.ara(soru, moduller, adet=8)
+    # [2026-11-02 simülasyon] Genel (bir bölüme bağlı olmayan) belge soruyla en az iki kökte örtüşüyorsa doğrudan o
+    # ("mülakata nasıl hazırlanırım" → Mülakat Pratiği ipuçları; bölüm adı sorulmaz)
+    genel = [] if coz else [s for s in d.ara(soru, moduller, adet=60) if not s.belge.varlik and s.belge.tur != "sozluk"
+                            and s.puan >= 8.0 and len(kok & set(s.belge.kokler)) >= 2
+                            and fb._niyet_katsayisi(soru, s.belge.tur) > 1]
+    if genel:
+        diger = [soru_sablonu(s.belge) for s in genel[1:3] if s.belge.baslik != genel[0].belge.baslik]
+        return Cevap(fb.bilgi_cevabi(genel[:1]), "icerik", list(dict.fromkeys(diger)))
     # Soru bir bölüme/mesleğe bağlı içerik türünü soruyor ama ad yok ("iş görüşmesinde ne sorarlar"): adı sor
     ust = [s for s in hepsi[:3] if s.belge.varlik]
     if len(ust) == 3 and len({s.belge.tur for s in ust}) == 1 and fb._niyet_katsayisi(soru, ust[0].belge.tur) > 1:
         tur = ust[0].belge.tur
         ne = {"mulakat": "Mülakat soruları bölüm bölüm hazırlandı", "gun": "Bir gününü yaşa sayfaları meslek meslek hazırlandı",
               "zorgun": "Zor günler meslek meslek anlatılıyor"}.get(tur, "Bu içerik bölüm bölüm hazırlandı")
+        genel_ad = [soru_sablonu(s.belge) for s in d.ara(soru, moduller, adet=60)
+                    if not s.belge.varlik and s.belge.tur != "sozluk" and s.puan >= 8.0][:1]
         return Cevap(f"{ne}. Hangi bölüm ya da meslek için soruyorsun? Adını yazarsan onu gösteririm; örnekler: 🌱",
-                     "netlestirme", list(dict.fromkeys(soru_sablonu(s.belge) for s in ust)))
+                     "netlestirme", list(dict.fromkeys(genel_ad + [soru_sablonu(s.belge) for s in ust]))[:4])
     adaylar = [s for s in hepsi
                if s.puan >= 8.0 and not s.belge.varlik
                and (len(kok & set(s.belge.kokler)) >= 2 or fb._niyet_katsayisi(soru, s.belge.tur) > 1)]

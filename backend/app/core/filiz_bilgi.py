@@ -83,6 +83,41 @@ _BILINEN: set[str] = set("""ancak gercek gercekten oyuncak kucak bucak sucuk bic
 hicbir pecete""".split())
 
 
+# [2026-11-02 simülasyon] Tek harf hatası düzeltme: "petrl" → petrol, "gretmenligi" → ogretmenligi, "bolmler" → bolumler,
+# "maari" → maarif. Yalnızca "çapa" sözcüklerine (bölüm / meslek adları, takma adlar, sözlük terimleri ve Filiz'in konu
+# anahtarları) ve yalnızca sorgu sözcüğü sistemin hiçbir metninde geçmiyorsa uygulanır; tek aday yoksa dokunulmaz.
+_CAPA: set[str] = set()
+_SILME: dict[str, str | None] = {}     # çapa sözcüğünden bir harf silinmiş biçim → çapa (öğrenci bir harfi atlamış)
+_DEGIS: dict[str, str | None] = {}     # bir harfi "?" olan biçim → çapa (öğrenci bir harfi yanlış yazmış)
+
+
+def capa_ekle(sozcukler, degisim: bool = True) -> None:
+    """degisim=False: yalnızca atlanan harf düzeltilir (Filiz'in konu sözcükleri; "okumam" → "okusam" gibi geçerli bir
+    sözcüğü başka bir sözcüğe çevirmemek için yanlış harf düzeltmesi yalnızca bölüm / meslek / terim adlarına yapılır)."""
+    for x in sozcukler:
+        for w in sade(x).split():
+            if len(w) < 4 or w in _DURAK:
+                continue
+            _CAPA.add(w)
+            for i in range(len(w)):
+                k = w[:i] + w[i + 1:]
+                if len(k) >= 4:
+                    _SILME[k] = w if _SILME.get(k, w) == w else None
+                if degisim and len(w) >= 6:
+                    k = w[:i] + "?" + w[i + 1:]
+                    _DEGIS[k] = w if _DEGIS.get(k, w) == w else None
+
+
+def _yazim(w: str) -> str:
+    if len(w) < 4 or not _CAPA or w in _CAPA or w in _BILINEN or w in _DURAK or w in _KELIME or not w.isalpha():
+        return w
+    if _SILME.get(w):                   # en sık hata atlanan harf: tek adayı varsa o
+        return _SILME[w]
+    aday = {_DEGIS.get(w[:i] + "?" + w[i + 1:]) for i in range(len(w))}
+    aday.discard(None)
+    return aday.pop() if len(aday) == 1 else w
+
+
 def _konusma_eki(w: str) -> str:
     if len(w) < 4 or w in _BILINEN:
         return w
@@ -146,7 +181,10 @@ def duzelt(m: str | None) -> str:
             i += 1
             continue
         w = _KELIME.get(w, w)
-        out.append(_konusma_eki(w) if w and " " not in w else w)
+        if w and " " not in w:
+            k = _konusma_eki(w)
+            w = k if k != w else _yazim(w)     # konuşma dili ("olcam") yazım hatası sayılmaz
+        out.append(w)
         i += 1
     return " ".join(x for x in out if x)
 
@@ -184,7 +222,7 @@ def _ek_toleransli(q: str, e: str) -> bool:
 
 @dataclass
 class Belge:
-    tur: str                 # bolum | bolum_ders | bolum_is | bolum_bilmen | meslek | gun | sozluk | ders | yol | zorgun | dusunme | cv | mulakat
+    tur: str                 # bolum | bolum_ders | bolum_is | bolum_bilmen | meslek | gun | sozluk | ders | yol | zorgun | dusunme | cv | mulakat | mulakat_pratik
     baslik: str
     metin: str
     nerede: str              # öğrenciye gösterilen yer: "Bölümler › Hukuk › Meslekler"
@@ -255,6 +293,7 @@ class Dizin:
                 self.takma["ogretmenlik"].add(v)
         for meslek, bolumler in self.meslek_bolum.items():
             self.takma[meslek] |= bolumler
+        capa_ekle(list(self.bolumler) + list(self.varliklar) + [a for b in belgeler if b.tur == "sozluk" for a in b.adlar])
         for k, hedefler in (esanlam or {}).items():
             for h in hedefler:
                 if sade(h).strip() in self.bolumler:
@@ -262,6 +301,7 @@ class Dizin:
                     self.takma[k2].add(sade(h).strip())
                     if k2.endswith(" ogretmeni"):
                         self.takma[k2.removesuffix("ogretmeni") + "ogretmenligi"].add(sade(h).strip())   # ingilizce ogretmenligi
+        capa_ekle(list(self.takma))
         # Aday dizini: ilk iki harfe göre (hız)
         self._aday: dict[str, list[tuple[str, tuple[str, ...]]]] = defaultdict(list)
         for anahtar in set(self.varliklar) | set(self.takma):
@@ -281,10 +321,32 @@ class Dizin:
         self.varliklari_coz(soru, _konum=silinecek)
         return " ".join(w for i, w in enumerate(q) if i not in silinecek)
 
+    def _birlesikleri_ayir(self, q: list[str]) -> list[str]:
+        """[2026-11-02 simülasyon] Boşluksuz yazılan çok sözcüklü ad ("turizmrehberligi", "bilgisayarmuhendisligi") ayrılır.
+        Yalnızca sözcük hiçbir ada uymuyorsa ve birleşik biçim en az 10 harfse denenir."""
+        if not hasattr(self, "_birlesik"):
+            b: dict[str, dict[str, tuple]] = {}
+            for liste in self._aday.values():
+                for _anahtar, tok in liste:
+                    if len(tok) >= 2 and len("".join(tok)) >= 10:
+                        b.setdefault("".join(tok)[:5], {})["".join(tok)] = tok
+            self._birlesik = b
+        out = []
+        for w in q:
+            ad = None
+            if len(w) >= 10:
+                for birlesik, tok in self._birlesik.get(w[:5], {}).items():
+                    if w == birlesik or (w.startswith(birlesik) and w[len(birlesik):] in _KISA_EKLER) \
+                            or _ek_toleransli(w, birlesik):
+                        ad = tok
+                        break
+            out.extend(ad if ad else [w])
+        return out
+
     def varliklari_coz(self, soru: str, _konum: set[int] | None = None) -> list[tuple[str, set[str]]]:
         """Soruda geçen bölüm / meslek / takma adlar: [(sorudaki anahtar, hedef varlıklar)]. Ekli ve hafif hatalı yazım tanınır.
         Uzun eşleşme öncelikli; aynı sözcük iki kez kullanılmaz. Hedef birden çoksa ad belirsizdir (ör. "ogretmen")."""
-        q = duzelt(soru).split()
+        q = self._birlesikleri_ayir(duzelt(soru).split())
         adaylar = []
         for i, w in enumerate(q):
             for anahtar, tok in self._aday.get(w[:2], ()):
@@ -388,7 +450,7 @@ _NIYET = [
     (("hakkinda", "bilgi", "anlat", "nedir", "nasil bir", "tanit", "puan"), {"bolum": 1.6}),
     (("kac yil", "suresi", "kac yilda", "kac donem", "kac yillik"), {"bolum": 2.5}),
     (("zor", "stres", "kotu yan", "zorluk"), {"zorgun": 1.8, "bolum_bilmen": 1.5}),
-    (("mulakat", "gorusme sor", "is gorusmesi"), {"mulakat": 2.0}),
+    (("mulakat", "gorusme sor", "is gorusmesi"), {"mulakat": 2.0, "mulakat_pratik": 1.6}),
     (("cv", "ozgecmis"), {"cv": 2.0}),
     (("ne demek", "anlami", "nedir", "tanim"), {"sozluk": 1.6}),
     (("brut", "net maas", "bordro", "sgk", "kidem", "ihbar", "izin", "mesai", "sozlesme", "staj", "para yonet", "sigorta"), {"ders": 2.0}),
@@ -407,7 +469,7 @@ def _niyet_katsayisi(soru: str, tur: str) -> float:
     return k
 
 
-_YALNIZ_NIYETLE = {"mulakat": 0.3, "zorgun": 0.7}
+_YALNIZ_NIYETLE = {"mulakat": 0.3, "zorgun": 0.7, "mulakat_pratik": 0.4}
 
 
 # ---------------------------------------------------------------------------------------------------------- belgeler
@@ -440,7 +502,8 @@ def _bolum_belgeleri(db: Session) -> list[Belge]:
         yer = f"Bölümler › {ad}"
         # Kısa olgular başta: cevap kırpıldığında da süre ve puan türü görünsün
         genel = " ".join(x for x in [f"Öğrenim süresi: {d.get('ogrenim_suresi')}." if d.get("ogrenim_suresi") else "",
-                                     f"Puan türü: {d.get('puan_turu')}." if d.get("puan_turu") else "",
+                                     (f"Puan türü: {d.get('puan_turu')}." if not str(d.get("puan_turu")).lower().startswith("değişken")
+                                      else "Puan türü: üniversiteye göre değişir.") if d.get("puan_turu") else "",
                                      d.get("ozet") or b.kisa_aciklama or "",
                                      f"Kimler için uygun: {_liste(d.get('kimler_icin_uygun'))}" if d.get("kimler_icin_uygun") else ""] if x)
         if genel:
@@ -474,6 +537,13 @@ def _bolum_belgeleri(db: Session) -> list[Belge]:
     return out
 
 
+def _meslek_goster(anahtar: str) -> str:
+    """[2026-11-02] Veri dosyalarındaki meslek anahtarları küçük harfli ve "İ" harfi Python'un lower() çıktısıyla
+    ("i̇", birleşik nokta) yazılı: ekranda "Ağaç işleri endüstri mühendisi" biçiminde gösterilir."""
+    a = (anahtar or "").replace("i̇", "i").strip()
+    return (a[:1].replace("i", "İ").upper() + a[1:]) if a else a
+
+
 def _dosya_belgeleri() -> list[Belge]:
     out: list[Belge] = []
     sen = _oku("meslek_senaryolari.json") or {}
@@ -482,7 +552,7 @@ def _dosya_belgeleri() -> list[Belge]:
             continue
         anlar = [f"{s.get('saat', '')} {s.get('baslik', '')}: {s.get('durum', '')}" for s in liste if isinstance(s, dict)]
         if anlar:
-            out.append(Belge("gun", f"Bir gününü yaşa: {meslek}", " ".join(anlar),
+            out.append(Belge("gun", f"Bir gününü yaşa: {_meslek_goster(meslek)}", " ".join(anlar),
                              "Bölüm sayfası › Meslekler › 🎬 Bir gününü yaşa", None, sade(meslek).strip()))
     # Ana sözlük: Sözlük sayfasındaki sistem terimleri (frontend/src/yardimci/sozluk.js → scripts/sozluk_temel_kopyala.mjs).
     # Sayfadaki gibi önceliklidir: aynı adlı genişletilmiş terim eklenmez.
@@ -524,7 +594,8 @@ def _dosya_belgeleri() -> list[Belge]:
     for meslek, liste in (zg.get("meslekler") or {}).items():
         sen_ = [f"{s.get('baslik', '')}: {s.get('durum', '')} {s.get('basa_cikma', '')}" for s in liste or [] if isinstance(s, dict)]
         if sen_:
-            out.append(Belge("zorgun", f"{meslek}: zor günler", " ".join(sen_), "İş Hayatı › Zor Günler", "is_hayati", sade(meslek).strip()))
+            out.append(Belge("zorgun", f"{_meslek_goster(meslek)}: zor günler", " ".join(sen_), "İş Hayatı › Zor Günler", "is_hayati",
+                             sade(meslek).strip()))
     du = _oku("dusunme_atolyesi.json") or {}
     for a in du.get("araclar") or []:
         arac = a.get("arac") or {}
@@ -535,6 +606,23 @@ def _dosya_belgeleri() -> list[Belge]:
         if isinstance(k, dict) and k.get("baslik"):
             bloklar = " ".join(str(x.get("metin", "")) for x in k.get("bloklar") or [] if isinstance(x, dict) and x.get("metin"))
             out.append(Belge("cv", k["baslik"], f"{k.get('ozet', '')} {bloklar}".strip(), "İş Hayatı › CV Atölyesi › CV Rehberi", "is_hayati", ""))
+    # [2026-11-02 simülasyon] Mülakat Pratiği (genel mülakat soruları, ipuçları, STAR) Filiz'in dizininde yoktu:
+    # "mülakatta kendimden nasıl bahsederim" gibi sorular cevapsız kalıyordu.
+    mp = _oku("is_hayati_mulakat.json") or {}
+    st = mp.get("star") or {}
+    if st.get("baslik"):
+        oge = " ".join(f"{o.get('ad', '')}: {o.get('aciklama', '')}" for o in st.get("ogeler") or [] if isinstance(o, dict))
+        out.append(Belge("mulakat_pratik", f"Mülakatta {st['baslik']}", f"{st.get('aciklama', '')} {oge}".strip(),
+                         "İş Hayatı › Mülakat Pratiği", "is_hayati", ""))
+    if mp.get("ipuclari_genel"):
+        out.append(Belge("mulakat_pratik", "Mülakata hazırlanma ipuçları", _liste(mp["ipuclari_genel"]), "İş Hayatı › Mülakat Pratiği",
+                         "is_hayati", ""))
+    for kat in mp.get("kategoriler") or []:
+        for q in kat.get("sorular") or [] if isinstance(kat, dict) else []:
+            if isinstance(q, dict) and q.get("soru"):
+                out.append(Belge("mulakat_pratik", f"Mülakat sorusu: {q['soru']}",
+                                 f"Neden sorulur: {q.get('neden', '')} Nasıl cevaplarsın: {_liste(q.get('ipuclari'))}".strip(),
+                                 f"İş Hayatı › Mülakat Pratiği › {kat.get('ad', '')}", "is_hayati", ""))
     ms = _oku("mulakat_simulasyonu.json") or {}
     for bolum, m in (ms.get("bolumler") or {}).items():
         if not isinstance(m, dict):

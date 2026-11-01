@@ -387,8 +387,9 @@ def k_mulakat_sim(b: Baglam, m: str) -> str:
 
 
 def k_dusunme(b: Baglam, m: str) -> str:
-    return ("Düşünme Atölyesi'nde her derste ve meslekte işine yarayacak araçları yaparak öğrenirsin: kök nedeni bulmak, birlikte değişmek ile "
-            "neden olmayı ayırmak, algoritmik düşünmek, ikiye bölerek aramak, tercih verisini doğru okumak ve kendini sınayarak öğrenmek. "
+    return ("Düşünme Atölyesi'nde her derste ve meslekte işine yarayacak araçları yaparak öğrenirsin. Bunlar: kök nedeni bulmak, "
+            "birlikte değişmek ile neden olmayı ayırmak, algoritmik düşünmek (bir işi adım adım tarif etmek), ikiye bölerek aramak, "
+            "tercih verisini doğru okumak ve kendini sınayarak öğrenmek. "
             "Her biri 5–7 dakika; önce kendin denersin, sonra aracı öğrenirsin. \"Öğrenmeyi öğren\" deneyinin ikinci ölçümü en erken 12 saat sonra açılır. "
             "İş Hayatı sayfasında (okulunda açıksa).")
 
@@ -396,6 +397,87 @@ def k_dusunme(b: Baglam, m: str) -> str:
 def k_dil(b: Baglam, m: str) -> str:
     return ("Filizyol'u Türkçe dışında 12 dilde daha kullanabilirsin. Dilini giriş ekranından ya da Ayarlar'dan seçebilirsin; seçimin hesabına kaydedilir. "
             "PDF raporlar, e-postalar ve KVKK metinlerinin asılları Türkçedir.")
+
+
+# [2026-11-02 simülasyon] Öğrencilerin sık sorduğu ama Filiz'in cevapsız bıraktığı konular
+def _moduller(b: Baglam) -> set[str]:
+    try:
+        from app.core.paketler import okul_modulleri
+        return set(okul_modulleri(b.db, b.o.okul_id))
+    except Exception:
+        b.db.rollback()
+        return set()
+
+
+def k_sonuc(b: Baglam, m: str) -> str:
+    d = b.degerlendirme()
+    if d["durum"] != "tamamlandi":
+        return _hedefsiz(b)
+    ilk = b.ilk_bolumler(3)
+    parca = ["Sonuçların hazır."]
+    if ilk:
+        parca.append(f"Sana en uyumlu bölümler: {_liste([f'{a} (%{p})' for a, p in ilk])}.")
+    if b.plan and b.plan.get("guclu_yonler"):
+        parca.append(f"Hedefin {b.hedef['ad']} için öne çıkan güçlü yönlerin: {_liste([x['degisken_adi'] for x in b.plan['guclu_yonler'][:3]])}.")
+    parca.append("Bütün özelliklerini ve önem verdiğin değerleri Profilim sayfasında, bölümlerin neden sana uyduğunu Bölümler sayfasında görebilirsin.")
+    return " ".join(parca)
+
+
+def k_rapor(b: Baglam, m: str) -> str:
+    if "ogrenci_raporlari" in _moduller(b):
+        return ("Raporlarını sol menüdeki 📄 Raporlarım sayfasından PDF olarak indirebilirsin. Orada kendi raporun ve ailene "
+                "göstereceğin veli raporu var. Raporlar, değerlendirmeni bitirdikten sonra hazır olur.")
+    return ("Öğrenci ve veli raporlarını indirme okulunun paketinde yer almıyor. Rehber öğretmenin senin raporunu sistemden "
+            "indirip seninle ve ailenle paylaşabilir. Sonuçlarını Profilim ve Bölümler sayfalarında her zaman görebilirsin.")
+
+
+def k_sifre(b: Baglam, m: str) -> str:
+    return ("Şifreni değiştirmek için ⚙️ Ayarlar sayfasındaki \"Şifreni Değiştir\" kartını kullan. Şifreni unuttuysan giriş "
+            "ekranındaki \"Şifremi unuttum\" bağlantısıyla e-postana sıfırlama bağlantısı gelir. Yine giremezsen rehber öğretmenin "
+            "şifreni sıfırlayabilir. Şifreni kimseyle paylaşma.")
+
+
+def k_bildirim(b: Baglam, m: str) -> str:
+    if "bildirimler" not in _moduller(b):
+        return "Bildirimler okulunun paketinde açık değil; önemli duyurular okulun aracılığıyla sana ulaşır."
+    return ("Bildirimlerini sayfanın üstündeki 🔔 zil simgesinden görebilirsin. Hangi konularda e-posta almak istediğini de "
+            "aynı yerden seçebilirsin.")
+
+
+def k_hesap_sil(b: Baglam, m: str) -> str:
+    return ("Hesabının kapatılması ya da kişisel verilerinle ilgili bir istek için okul yönetimine ya da rehber öğretmenine "
+            "başvurabilirsin. Kişisel verilerinin nasıl korunduğunu ve haklarını ⚙️ Ayarlar sayfasındaki KVKK bölümünde okuyabilirsin. "
+            "İsteğe bağlı izinlerini de orada değiştirebilirsin.")
+
+
+def k_tercih(b: Baglam, m: str) -> str:
+    if "tercih" in _moduller(b):
+        return ("Tercih listeni 🎓 Tercih sayfasında hazırlayabilirsin: programları güvenli, dengeli ve riskli olarak ayırır, "
+                "her birinin sana uyumunu görürsün; bitince rehber öğretmeninin onayına gönderirsin. Bu sayfa 12. sınıf ve "
+                "mezunlar için açılır. Taban puan ve başarı sıralarını bölüm penceresindeki Üniversiteler sekmesinde görebilirsin.")
+    return ("Tercih listesi hazırlama okulunun paketinde yer almıyor. Bölümlerin üniversitelerini, taban puanlarını ve başarı "
+            "sıralarını bölüm penceresindeki Üniversiteler sekmesinde görebilirsin. Tercih döneminde rehber öğretmeninden destek iste.")
+
+
+def k_universite(b: Baglam, m: str) -> str:
+    from app.core import filiz_bilgi as fb
+    try:
+        d = fb.dizin(b.db)
+        bolum = next((d.bolumler[h] for _, hs in d.varliklari_coz(m) for h in sorted(hs) if h in d.bolumler), None)
+    except Exception:
+        b.db.rollback()
+        bolum = None
+    nerede = f"{bolum} bölümünün penceresindeki" if bolum else "Bölümler sayfasında bir bölümün adına tıklayınca açılan pencerede,"
+    return (f"{nerede} Üniversiteler sekmesinde programları, kontenjanları, taban puanlarını ve başarı sıralarını görebilirsin "
+            "(YÖK Atlas verisi). \"En iyi üniversite\" herkes için aynı değildir: şehir, burs, programın dersleri ve senin "
+            "başarı sıran birlikte düşünülmeli. Net Takibi açıksa hedef programını seçip netlerini o programa yerleşen son "
+            "öğrenciyle karşılaştırabilirsin.")
+
+
+def k_burs_yurt(b: Baglam, m: str) -> str:
+    return ("Burs ve yurt bilgileri Filizyol'da yer almıyor. Devlet yurtları ve burslar için KYK'nin resmî duyurularını, "
+            "üniversitelerin kendi burslarını da üniversitenin internet sitesini takip edebilirsin. Rehber öğretmenin bu "
+            "konuda da yol gösterebilir.")
 
 
 def k_eposta(b: Baglam, m: str) -> str:
@@ -567,12 +649,23 @@ def k_net(b: Baglam, m: str) -> str:
 
 KONULAR = [
     (("netlerim", "netim ", "netimi", "netlerimi", "net artir", "denemelerim", "deneme sonuc", "net takib", "kac net", "hedef net"), k_net),
-    (("yks'ye kac", "yksye kac", "yks kac", "yks ne zaman", "yks'ye ne kadar", "sinava kac", "sinava ne kadar", "yks geri sayim"), k_yks),
+    (("yks'ye kac", "yksye kac", "yks ye kac", "yks ye ne kadar", "yks kac", "yks ne zaman", "yks'ye ne kadar", "sinava kac", "sinava ne kadar", "yks geri sayim"), k_yks),
     (("tesekkur", "sagol", "sag ol", "eyvallah", "cok iyi", "super"), k_tesekkur),
     (("mulakat simul", "iki aday", "mulakat oyun"), k_mulakat_sim),
     (("dusunme atolye", "kok neden", "korelasyon", "algoritmik", "ikiye bol", "ogrenmeyi ogren", "ikinci olcum"), k_dusunme),
     (("dil degistir", "baska dil", "ingilizce kullan", "dilini degistir", "hangi dillerde", "dil sec"), k_dil),
     (("sonuc e-posta", "sonuc eposta", "sonuc maili", "e-posta gelmedi", "eposta gelmedi", "mail gelmedi", "raporum mail", "raporum e-posta"), k_eposta),
+    (("sifremi unuttum", "sifremi degistir", "sifre degistir", "sifremi nasil", "sifre unuttum", "sifremi hatirlamiyorum",
+      "giris yapamiyorum", "sifre sifirla", "sifremi sifirla"), k_sifre),
+    (("hesabimi sil", "hesabimi kapat", "verilerimi sil", "kaydimi sil", "hesap silme"), k_hesap_sil),
+    (("raporum", "raporlarim", "veli raporu", "rapor indir", "raporu indir", "raporumu", "raporu nerede", "pdf indir"), k_rapor),
+    (("bildirim",), k_bildirim),
+    (("sonuclarim", "sonucum", "sonuclarimi", "profilim nasil", "profilim ne", "test sonucum", "sonuc ne cikti",
+      "sonuclar ne zaman"), k_sonuc),
+    (("tercih nasil", "tercih listesi", "tercih donemi", "tercih yapmak", "tercih robotu", "tercihlerim"), k_tercih),
+    (("taban puan", "basari sirasi", "hangi universite", "universite iyi", "universiteler hangi", "kontenjan", "siralama kac",
+      "kacinci siradan", "en iyi universite"), k_universite),
+    (("burs", "kyk", "yurt imkan", "yurt basvuru", "yurtta kal", "yurtlari", "yurdu", "yurt var", "yurt ucret", "yurt bul"), k_burs_yurt),
     (("maarif",), k_maarif),
     (("is turu soru", "is turu tercih", "k5 nedir", "k5 ne"), k_is_turu),
     (("kimsin", "sen kim", "nesin", "yapay zeka"), k_kim),
@@ -614,7 +707,8 @@ _DUYGU_ONCE = [
     (("bikdim", "biktim", "bunaldim", "her sey cok zor", "her sey zor", "yapamiyorum", "basaramiyorum", "umutsuz",
       "vazgecmek istiyorum", "birakmak istiyorum", "isteksizim", "motivasyonum yok", "motivasyonum dustu", "kendimi yetersiz",
       "yetersizim", "yetersiz hissed", "beceriksiz", "basarisizim", "aptal gibi", "hicbir seyi beceremiyorum",
-      "calisasim yok", "calisasim gelmiyor", "biraktim", "saldim", "hicbir sey yapmak istemiyorum"), k_motivasyon),
+      "calisasim yok", "calisasim gelmiyor", "biraktim", "saldim", "hicbir sey yapmak istemiyorum", "calismak istemiyorum",
+      "ders calismak istemiyorum", "ders calisamiyorum", "odaklanamiyorum"), k_motivasyon),
     (("korkuyorum", "kaygim", "kaygiliyim", "stresliyim", "stres altindayim", "kazanamazsam", "kazanamayacagim",
       "geriliyorum", "panik oluyorum", "endiseliyim", "kalbim carpiyor", "uyuyamiyorum", "uyku tutmuyor", "elim titriyor",
       "nefesim daraliyor"), k_kaygi),
@@ -622,6 +716,17 @@ _DUYGU_ONCE = [
       "moralim bozuk", "moralim cok bozuk", "kavga ettik", "dislaniyorum", "zorbalik", "kendimi kotu", "kotu hissediyorum",
       "yalnizim", "kirgin", "kirildim", "cok kotuyum", "kotuyum", "agladim", "agliyorum", "arkadaslarim beni", "dislandim"), k_duygu),
 ]
+# [2026-11-02 simülasyon] "matematik ödevimi yapar mısın": Matematik bölümü seçenekleri değil, açık ve yardımsever bir cevap
+_ODEV = ("odevimi yap", "odevimi coz", "odevimi sen", "odevi yap", "odevimi yazar", "odev yapar misin", "odevimi yapar",
+         "odevimi yazar misin", "odevlerimi yap", "sorularimi coz", "testimi coz", "cevaplarini soyle", "cevap anahtari")
+
+
+def k_odev(b: Baglam, m: str) -> str:
+    return ("Ödevini senin yerine yapamam; ama nasıl yapacağını planlamana yardım edebilirim. 🌱 Ödevi küçük parçalara böl, "
+            "takıldığın yeri bir cümleyle yaz ve öğretmenine ya da bir arkadaşına o noktayı sor. Konuyu anladıktan sonra benzer bir "
+            "soruyu kendin çözmeyi dene. İstersen bu hafta neye odaklanman gerektiğine birlikte bakalım.")
+
+
 _AILE = ("ailem", "annem", "babam", "ailemin", "ailemle")
 _AILE_BASKI = ("istiyor", "istiyo", "istemiyor", "istemiyo", "izin vermiyor", "baski", "zorluyor", "karsi", "kiziyor", "anlamiyor")
 # İçerik adı (bölüm/meslek) geçen soruda bu genel konular içeriğe yol verir ("grafik tasarım için yetenek sınavı var mı")
@@ -632,9 +737,16 @@ _GENEL = set("""hakkinda bilgi ne okutuyor okutulur bolum bolumu bolumler anlat 
 biraz nedir nasil bir bolumunu""".split())
 
 
+_ANAHTAR_SADE: dict[str, str] = {}
+
+
 def _anahtar_var(a: str, t: str) -> bool:
-    from app.core.filiz_bilgi import anahtar_var
-    return anahtar_var(a, t)
+    """[2026-11-02] Anahtar da sorgu gibi sadeleştirilir: "sonuc e-posta", "yks'ye kac" gibi anahtarlar sorgu metninde
+    "e posta", "yks ye" biçimine dönüştüğü için önceden hiç eşleşmiyordu."""
+    from app.core.filiz_bilgi import anahtar_var, sade
+    if a not in _ANAHTAR_SADE:
+        _ANAHTAR_SADE[a] = " ".join(sade(a).split()) + (" " if a.endswith(" ") else "")
+    return anahtar_var(_ANAHTAR_SADE[a], t)
 
 
 def _konu_sec(t: str, varlik_var: bool, tam: str | None = None) -> tuple:
@@ -666,6 +778,8 @@ def _rota(db: Session, metin: str, moduller: set[str]):
     for anahtarlar, f in _DUYGU_ONCE:
         if any(_anahtar_var(a, t) for a in anahtarlar):
             return "konu", f
+    if any(_anahtar_var(a, t) for a in _ODEV):
+        return "konu", k_odev
     if any(_anahtar_var(a, t) for a in _AILE) and any(_anahtar_var(a, t) for a in _AILE_BASKI):
         return "konu", k_aile
     c = onceden_anla(db, metin, moduller)
@@ -728,3 +842,14 @@ def katman_tahmini(db: Session, metin: str, moduller: set[str] | None):
     if x is None:
         return "bilinmiyor", None
     return x.kaynak, x
+
+
+# [2026-11-02] Konu anahtarları tek harf hatası düzeltmesinin "çapa" sözcükleridir ("guçl yonlerim" → güçlü yönlerim)
+def _capalari_kaydet():
+    from app.core import filiz_bilgi as fb
+    sozler = [a for anahtarlar, _ in KONULAR + _DUYGU_ONCE for a in anahtarlar] + list(_AILE) + list(_ODEV)
+    sozler += [q for k in SORU_KATEGORILERI for q in k["sorular"]]
+    fb.capa_ekle(sozler, degisim=False)
+
+
+_capalari_kaydet()
