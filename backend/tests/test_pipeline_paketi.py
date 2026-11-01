@@ -262,7 +262,8 @@ def test_supabase_anahtar_turleri_ve_adres(monkeypatch):
     assert depo._kimlik_basliklari() == {"apikey": "sb_secret_abc"}
     monkeypatch.setattr(settings, "SUPABASE_SERVICE_KEY", "eyJhbGciOi.x.y")
     assert depo._kimlik_basliklari() == {"Authorization": "Bearer eyJhbGciOi.x.y", "apikey": "eyJhbGciOi.x.y"}
-    for adres in ("https://abcd.supabase.co", "https://abcd.supabase.co/", "https://abcd.supabase.co/rest/v1/", " abcd.supabase.co "):
+    for adres in ("https://abcd.supabase.co", "https://abcd.supabase.co/", "https://abcd.supabase.co/rest/v1/", " abcd.supabase.co ",
+                  "abcd", ' "https://abcd.supabase.co" ', "'abcd.supabase.co/'"):
         monkeypatch.setattr(settings, "SUPABASE_URL", adres)
         assert depo._taban() == "https://abcd.supabase.co/storage/v1", adres
 
