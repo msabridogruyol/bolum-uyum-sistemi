@@ -67,3 +67,11 @@ def test_yeni_konular_ve_sade_anahtarlar(monkeypatch):
 def test_meslek_basligi_duzgun_yazilir():
     assert fb._meslek_goster("ağaç i̇şleri endüstri mühendisi") == "Ağaç işleri endüstri mühendisi"
     assert fb._meslek_goster("i̇statistikçi") == "İstatistikçi"
+
+
+def test_bitisik_yazim_ve_meslek_adi_turkce():
+    d = _dizin()
+    fb.capa_ekle(["halk oyunlari", "teknolojisi"])
+    assert fb.duzelt("halkoyunlari okumak istiyorum").startswith("halk oyunlari")
+    assert fb.duzelt("Filiz senkimsin") == "filiz sen kimsin"
+    assert fa._meslek_gorunen(d, "tasarimci", "tasarımcı olmak istiyorum") == "Tasarımcı"

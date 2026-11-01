@@ -69,7 +69,8 @@ _KELIME = {
     "dt": "dis hekimligi", "makina": "makine", "dishekimligi": "dis hekimligi", "tipfakultesi": "tip",
     # [2026-11-02 simülasyon] bitişik yazılan sık soru kalıpları
     "kacyil": "kac yil", "kacyillik": "kac yillik", "kacsene": "kac yil", "kacsenelik": "kac yillik", "nekadar": "ne kadar",
-    "nerde": "nerede", "nedemek": "ne demek", "hangibolum": "hangi bolum",
+    "nerde": "nerede", "nedemek": "ne demek", "hangibolum": "hangi bolum", "kac il": "kac yil", "kac yl": "kac yil",
+    "pan turu": "puan turu", "pan turuyle": "puan turuyle", "senkimsin": "sen kimsin",
 }
 _IKILI = {   # kısaltma + "muh"
     "bil": "bilgisayar", "bilg": "bilgisayar", "bilgi": "bilgisayar", "end": "endustri", "endus": "endustri",
@@ -127,6 +128,20 @@ def capa_ekle(sozcukler, degisim: bool = True) -> None:
                 if degisim and len(w) >= 6:
                     k = w[:i] + "?" + w[i + 1:]
                     _DEGIS[k] = w if _DEGIS.get(k, w) == w else None
+
+
+def _bitisik_ayir(w: str) -> str:
+    """[2026-11-02 simülasyon] Boşluğu unutulmuş iki sözcük ("halkoyunlari", "teknolojisimuhendisligi"): sözcük sistemde
+    yoksa ve iki parçası da sistemin bildiği sözcüklerse ayrılır (en dengeli bölünme)."""
+    if len(w) < 8 or w in _BILINEN or w in _CAPA or not w.isalpha():
+        return w
+    en = None
+    for i in range(3, len(w) - 3):
+        a, b = w[:i], w[i:]
+        if (a in _CAPA or a in _BILINEN) and (b in _CAPA or b in _BILINEN) and len(a) >= 4 and len(b) >= 4:
+            if en is None or min(len(a), len(b)) > min(len(en[0]), len(en[1])):
+                en = (a, b)
+    return f"{en[0]} {en[1]}" if en else w
 
 
 def _yazim(w: str) -> str:
@@ -205,6 +220,8 @@ def duzelt(m: str | None) -> str:
         if w and " " not in w:
             k = _konusma_eki(w)
             w = k if k != w else _yazim(w)     # konuşma dili ("olcam") yazım hatası sayılmaz
+            if " " not in w:
+                w = _bitisik_ayir(w)
         out.append(w)
         i += 1
     return " ".join(x for x in out if x)

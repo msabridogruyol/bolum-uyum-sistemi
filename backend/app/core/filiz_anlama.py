@@ -99,6 +99,22 @@ def _bolum_secenekleri(d: fb.Dizin, v: str) -> list[str]:
     return [f"{ad} bölümü hakkında bilgi verir misin?", f"{ad} bölümünde hangi dersler var?", f"{ad} mezunları nerelerde çalışır?"]
 
 
+def _meslek_gorunen(d: fb.Dizin, anahtar: str, soru: str) -> str:
+    """[2026-11-02 simülasyon] Meslek adı ekranda Türkçe harflerle: önce sistemdeki meslek sayfasının adı, yoksa öğrencinin
+    yazdığı sözcük(ler) (önceden sadeleştirilmiş anahtar "Tasarimci" diye gösteriliyordu)."""
+    m = next((b.baslik.rsplit(" (", 1)[0] for b in d.belgeler if b.tur == "meslek" and b.varlik == anahtar), None)
+    if m:
+        return m
+    kel = anahtar.split()
+    soz = re.findall(r"[\wçğıöşüÇĞİÖŞÜâîû]+", soru or "")
+    for i in range(len(soz) - len(kel) + 1):
+        parca = soz[i:i + len(kel)]
+        if all(fb.sade(p).strip().startswith(k[: max(3, len(k) - 2)]) for p, k in zip(parca, kel)):
+            ad = " ".join(parca)
+            return ad[:1].replace("i", "İ").upper() + ad[1:]
+    return anahtar.capitalize()
+
+
 # ---------------------------------------------------------------------------------------------------- niyetler
 def meslek_yolu(d: fb.Dizin, soru: str) -> Cevap | None:
     t = f" {fb.duzelt(soru)} "
@@ -108,7 +124,7 @@ def meslek_yolu(d: fb.Dizin, soru: str) -> Cevap | None:
         bolumler = sorted(h for h in hedef if h in d.bolumler)
         if not bolumler or anahtar in d.bolumler:      # soruda doğrudan bölüm adı varsa bu niyet değil
             continue
-        meslek_adi = anahtar.capitalize()
+        meslek_adi = _meslek_gorunen(d, anahtar, soru)
         if len(bolumler) > 6:
             ornek = bolumler[:6]
             return Cevap(f"“{meslek_adi}” birçok bölümle yapılabiliyor ({len(bolumler)} bölüm). Hangi alanda olmak istersin? "
