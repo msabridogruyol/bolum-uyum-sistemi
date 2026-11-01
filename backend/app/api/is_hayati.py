@@ -53,13 +53,11 @@ def ozet(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)
     ilgili = ([hedef["id"]] if hedef else []) + [x["id"] for x in oneriler if not hedef or x["id"] != hedef["id"]]
     kisa = {}
     if ilgili:
-        for r in db.execute(text("""SELECT DISTINCT ON (bolum_id) bolum_id, istihdam_orani, is_bulma_suresi_ay, alan_uyum_orani,
-                                           kazanc_grubu, veri_yili
-                                      FROM istihdam_gostergeleri WHERE bolum_id = ANY(:i)
-                                     ORDER BY bolum_id, veri_yili DESC, (duzey = 'lisans') DESC NULLS LAST, id"""), {"i": ilgili}).mappings().all():
-            kisa[r["bolum_id"]] = {"istihdam_orani": ihs._f(r["istihdam_orani"]), "is_bulma_suresi_ay": ihs._f(r["is_bulma_suresi_ay"]),
-                                   "alan_uyum_orani": ihs._f(r["alan_uyum_orani"]), "kazanc_grubu": r["kazanc_grubu"],
-                                   "kazanc_grubu_ad": ihs.KAZANC_GRUPLARI.get(r["kazanc_grubu"]), "veri_yili": r["veri_yili"]}
+        for bid in ilgili:   # [2026-11-01] bölüm sayfasıyla aynı özet (çok programlı bölümde aralık)
+            v = ihs.istihdam_bolum(db, bid)
+            if v:
+                kisa[bid] = {k: v.get(k) for k in ("istihdam_orani", "is_bulma_suresi_ay", "alan_uyum_orani", "kazanc_grubu",
+                                                   "kazanc_grubu_ad", "veri_yili", "aralik", "coklu_program")}
     bolumler = [{"id": r.id, "ad": ihs.tr_baslik(r.ad)} for r in db.execute(text("SELECT id, ad FROM bolumler WHERE durum = 'yayinda' ORDER BY ad")).all()]
     varsayilan = hedef["id"] if hedef else (oneriler[0]["id"] if oneriler else None)
     return {

@@ -65,12 +65,16 @@ function KisaSerit({ veri }) {
       </div>
     )
   }
+  // [2026-11-01] Bölüme birden çok TÜİK programı bağlıysa (ör. Dil ve Edebiyat) tek değer yerine en düşük–en yüksek aralığı
+  const ar = i.aralik || {}
+  const aralik = (k, f) => (ar[k] ? (ar[k][0] === ar[k][1] ? f(ar[k][0]) : `${f(ar[k][0])} – ${f(ar[k][1])}`) : f(i[k]))
+  const cok = i.coklu_program ? ` · ${i.coklu_program} program` : ''
   return (
     <div className="yp-kpi-grid" style={{ marginBottom: 0 }}>
-      <Seritte etiket="Mezun istihdamı" deger={yuzde(i.istihdam_orani)} alt={`TÜİK · ${i.veri_yili}`} />
-      <Seritte etiket="İş bulma süresi" deger={ay(i.is_bulma_suresi_ay)} alt="ortalama" />
-      <Seritte etiket="Alanında çalışan" deger={yuzde(i.alan_uyum_orani)} alt="mezunlar içinde" />
-      <Seritte etiket="Kazanç düzeyi" deger={i.kazanc_grubu_ad || '—'} renk={KAZANC_GRUBU_RENK[i.kazanc_grubu]} alt="diğer programlara göre" />
+      <Seritte etiket="Mezun istihdamı" deger={aralik('istihdam_orani', yuzde)} alt={`TÜİK · ${i.veri_yili}${cok}`} />
+      <Seritte etiket="İş bulma süresi" deger={aralik('is_bulma_suresi_ay', ay)} alt={i.coklu_program ? 'programlara göre' : 'ortalama'} />
+      <Seritte etiket="Alanında çalışan" deger={aralik('alan_uyum_orani', yuzde)} alt="mezunlar içinde" />
+      <Seritte etiket="Kazanç düzeyi" deger={i.kazanc_grubu_ad || (i.coklu_program ? 'Programa göre değişir' : '—')} renk={KAZANC_GRUBU_RENK[i.kazanc_grubu]} alt="diğer programlara göre" />
     </div>
   )
 }

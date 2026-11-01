@@ -164,10 +164,20 @@ def dosya_oku(istek: DosyaIstek, db: Session = Depends(get_db), yon: AdminKullan
     }
 
 
+_EKSIK_ISARET = {".", "..", "-", "–", "—", "x", "X", ":"}   # TÜİK: gizli / yok / az sayıda gözlem
+
+
 def _hucre(r: list, i: int | None):
+    """Hücre değeri. [2026-11-01] TÜİK tabloları iki dillidir ("Tıp\r\nMedicine", "Çok yüksek\r\nVery high"): ilk (Türkçe)
+    satır alınır. "." gibi eksik veri işaretleri boş sayılır."""
     if i is None or i < 0 or i >= len(r):
         return None
     v = r[i]
+    if isinstance(v, str):
+        satirlar = [x.strip() for x in v.replace("\r", "\n").split("\n") if x.strip()]
+        v = satirlar[0] if satirlar else ""
+        if v in _EKSIK_ISARET:
+            return None
     return None if v is None or (isinstance(v, str) and not v.strip()) else v
 
 
@@ -201,6 +211,9 @@ def istihdam_onizle(istek: OnizleIstek, db: Session = Depends(get_db), yon: Admi
         if ad is None or _TOPLAM.match(_normalize(str(ad))):
             continue
         ad = " ".join(str(ad).split())
+        olcu = ("istihdam_orani", "alan_uyum_orani", "is_bulma_suresi_ay", "kazanc_grubu", "kazanc_tl")
+        if not any(_hucre(r, e.get(k)) is not None for k in olcu if e.get(k) is not None):
+            continue          # [2026-11-01] değersiz satır: dipnot ("Mezun sayısı … altında olan bölümler"), eksik veri
         hatalar = []
         duzey = ihs.duzey_coz(_hucre(r, e.get("duzey"))) if e.get("duzey") is not None else None
         duzey = duzey or istek.varsayilan_duzey
@@ -222,6 +235,10 @@ def istihdam_onizle(istek: OnizleIstek, db: Session = Depends(get_db), yon: Admi
         v = ihs.sayi(_hucre(r, e.get("kazanc_tl")))
         s["kazanc_tl"] = v if v is None or v >= 0 else None
         s.update(ihs.program_eslestir(ad, adaylar))
+        if duzey == "onlisans" and s.get("bolum_id"):
+            # [2026-11-01] Sistemdeki bölümler lisans bölümleri: ön lisans programı otomatik bağlanmaz (aynı ad bile olsa farklı
+            # programdır, ör. ön lisans "İş sağlığı ve güvenliği"); yönetici gerekirse adaylardan seçer.
+            s.update({"bolum_id": None, "bolum_ad": None, "durum": "yok"})
         s["hatalar"] = hatalar
         satirlar.append(s)
     if not satirlar:

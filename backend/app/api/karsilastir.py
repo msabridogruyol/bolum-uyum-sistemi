@@ -102,7 +102,7 @@ def _istihdam(db: Session, bolum_id: int) -> dict | None:
     if not v:
         return None
     return {k: v.get(k) for k in ("istihdam_orani", "is_bulma_suresi_ay", "alan_uyum_orani", "kazanc_grubu", "kazanc_grubu_ad",
-                                  "veri_yili", "kaynak", "duzey_ad")}
+                                  "veri_yili", "kaynak", "duzey_ad", "aralik", "coklu_program")}
 
 
 def _yol(db: Session, b: Bolum, d: dict) -> dict | None:
