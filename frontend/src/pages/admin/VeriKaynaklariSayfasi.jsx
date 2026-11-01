@@ -1,6 +1,7 @@
 // [2026-11-01] Veri Kaynakları (süper admin): sistemdeki dış veriler (TÜİK, YÖK Atlas, asgari ücret, kamu maaşları, bölüm
 // profilleri, YKS tarihi…) sistemde var mı, hangi döneme ait, en son ne zaman güncellendi, en son kim ne zaman kontrol etti.
 // "Kontrol ettim / Güncelledim / Sorun var" kaydı bırakılır; kayıtlar Audit Log'a da yazılır. Hesap: backend/app/core/veri_kaynaklari.py
+// [2026-11-01] Her kaynağın ayrıntısında "Nasıl güncellenir?" adımları (backend ADIMLAR) ve güncelleme ekranına bağlantı.
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../api/client'
@@ -74,6 +75,15 @@ function Satir({ k, acik, onAc, onKaydet }) {
         <tr>
           <td colSpan={6} style={{ background: 'var(--sur2)' }}>
             <div style={{ display: 'grid', gap: 10 }}>
+              {k.adimlar?.length > 0 && (
+                <div style={{ background: 'var(--sur)', border: '1px solid var(--bor)', borderRadius: 10, padding: '10px 14px' }}>
+                  <div style={{ fontWeight: 700, marginBottom: 6 }}>Nasıl güncellenir?</div>
+                  <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 4, fontSize: 13 }}>
+                    {k.adimlar.map((a, i) => <li key={i}>{a}</li>)}
+                  </ol>
+                  {k.ekran && <Link className="btn" style={{ marginTop: 10, display: 'inline-block', textDecoration: 'none' }} to={k.ekran}>Güncelleme ekranına git →</Link>}
+                </div>
+              )}
               <div className="yp-ince" style={{ fontSize: 12.5 }}>
                 {k.kaynak && <div><b>Kaynak:</b> {k.kaynak}</div>}
                 {k.ayrinti && <div>{k.ayrinti}</div>}
@@ -114,7 +124,7 @@ export default function VeriKaynaklariSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Veri Kaynakları</div>
-        <div className="ps">Sistemin kullandığı dış veriler: sistemde var mı, hangi döneme ait, en son ne zaman güncellendi ve en son ne zaman kontrol edildi. "Son güncelleme" verinin kendi kaydından okunur; "Son kontrol" burada bıraktığınız kayıttır (Audit Log'a da yazılır). Eksik ya da kontrol zamanı geçen kaynaklar için ayda bir bildirim gelir.</div>
+        <div className="ps">Sistemin kullandığı dış veriler: sistemde var mı, hangi döneme ait, en son ne zaman güncellendi ve en son ne zaman kontrol edildi. "Son güncelleme" verinin kendi kaydından okunur; "Son kontrol" burada bıraktığınız kayıttır (Audit Log'a da yazılır). Eksik ya da kontrol zamanı geçen kaynaklar için ayda bir bildirim gelir. Bir kaynağı güncellemek için satırdaki "Ayrıntı / kontrol"a basın: adım adım ne yapacağınız ve hangi ekrana gideceğiniz yazar.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
       {!v && !hata && <div className="bos-durum">Yükleniyor…</div>}

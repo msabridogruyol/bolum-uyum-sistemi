@@ -155,6 +155,29 @@ def _bolum_profili(db: Session, bugun: date):
             "bekleniyor": f"{toplam - r['b']} yayındaki bölümün profili yok" if r["n"] and r["b"] < toplam else None}
 
 
+def _k5_baglari(db: Session, bugun: date):
+    r = _tek(db, "SELECT COUNT(*) n, COUNT(DISTINCT kb.bolum_id) b FROM bolum_k5_baglari kb "
+                 "JOIN degiskenler d ON d.id = kb.degisken_id WHERE d.kod ~ '^U[0-9]{2}_'")
+    if r is None:
+        return None
+    from app.core.veri_yukleme import son_yukleme
+    toplam = (_tek(db, "SELECT COUNT(*) n FROM bolumler WHERE durum = 'yayinda'") or {}).get("n") or 0
+    return {"kayit": r["n"], "son_guncelleme": son_yukleme(db, "k5_baglari"), "kaynak": "Offline pipeline (a8)",
+            "ayrinti": f"{r['b']}/{toplam} yayındaki bölümün iş türü bağı var" if r["n"] else None,
+            "bekleniyor": f"{toplam - r['b']} yayındaki bölümün iş türü bağı yok" if r["n"] and r["b"] < toplam else None}
+
+
+def _ornek_meslekler(db: Session, bugun: date):
+    r = _tek(db, "SELECT COUNT(*) n, COUNT(DISTINCT bolum_id) b FROM bolum_ornek_meslekler")
+    if r is None:
+        return None
+    from app.core.veri_yukleme import son_yukleme
+    toplam = (_tek(db, "SELECT COUNT(*) n FROM bolumler WHERE durum = 'yayinda'") or {}).get("n") or 0
+    return {"kayit": r["n"], "son_guncelleme": son_yukleme(db, "ornek_meslekler"), "kaynak": "Offline pipeline (b3)",
+            "ayrinti": f"{r['b']}/{toplam} yayındaki bölümün örnek meslek listesi var" if r["n"] else None,
+            "bekleniyor": f"{toplam - r['b']} yayındaki bölümün örnek meslek listesi yok" if r["n"] and r["b"] < toplam else None}
+
+
 def _meslekler(db: Session, bugun: date):
     r = _tek(db, "SELECT (SELECT COUNT(*) FROM meslekler) n, (SELECT MAX(olusturulma_zamani) FROM meslek_degisken_skorlari) z, "
                  "(SELECT COUNT(DISTINCT meslek_id) FROM meslek_degisken_skorlari) s")
@@ -237,6 +260,10 @@ KAYNAKLAR = [
      "Net Takibi › Konu Takibi", 365, "/admin/konular", _sinav_konulari),
     ("bolum_profili", "Bölüm profilleri (uyum hesabının özellik ağırlıkları)", "Pipeline",
      "Uyum yüzdesi, öneriler, raporlar", 365, "/admin/pipeline", _bolum_profili),
+    ("k5_baglari", "K5 iş türü bağları (bölüm → iş türü)", "Pipeline",
+     "K5 iş türü soruları ve sıralamadaki küme içi düzenleme", 365, "/admin/pipeline", _k5_baglari),
+    ("ornek_meslekler", "Bölümlerin örnek meslekleri", "Pipeline",
+     "Bölüm sayfası › Meslekler, Karşılaştır", 365, "/admin/pipeline", _ornek_meslekler),
     ("meslekler", "Meslekler ve özellik puanları", "Pipeline",
      "Bölüm profillerinin hesaplanması", 365, "/admin/pipeline", _meslekler),
     ("meslek_isco", "Meslek → ISCO eşleşmesi", "İş Hayatı",
@@ -251,6 +278,32 @@ KAYNAKLAR = [
                    "Sistem içerik dosyaları")),
     ("kaynakca", "Kaynakça", "İçerik", "Kaynakça sayfası, Sistem Hakkında", 365, "/admin/kaynakca", _kaynakca),
 ]
+# [2026-11-01] "Nasıl güncellenir?" — Veri Kaynakları ekranında her kaynağın ayrıntısında numaralı adımlar olarak görünür.
+_PIPELINE_ADIM = ["Bilgisayarınızda Komut İstemi'ni açıp pipeline çalıştırma komutunu yapıştırın (Claude son komutu verir).",
+                  "Çalıştırma bitince çıktıları kontrol ettirin; \"yükleyebilirsiniz\" onayını bekleyin."]
+ADIMLAR = {
+    "tuik_istihdam": ["data.tuik.gov.tr › Eğitim, Kültür, Spor ve Turizm › Yükseköğretim İstihdam Göstergeleri sayfasını açın.",
+                      "\"Lisans mezunlarının bölümlere göre…\" ile başlayan 3 tabloyu (.xls) indirin: kayıtlı istihdam oranı, ilk iş bulma süresi, aylık ortalama kazanç grupları.",
+                      "İş Hayatı Verileri › 📊 TÜİK İstihdam Göstergeleri sekmesinde \"TÜİK istihdam göstergelerini yükle\" kutusunda 3 dosyayı birlikte seçin; önizlemeye bakıp kaydedin."],
+    "tuik_kazanc": ["TÜİK Kazanç Yapısı Araştırması'nın meslek gruplarına göre kazanç tablosunu indirin (4 yılda bir yayımlanır).",
+                    "İş Hayatı Verileri › 💰 Kazanç Yapısı sekmesinden tabloyu yükleyin; o yılın asgari brüt ücretini girip önizlemeyi kontrol edin."],
+    "asgari_ucret": ["Resmî Gazete'de yeni asgari ücret yayımlandığında İş Hayatı Verileri › 🧾 Asgari Ücret ve Yaşam Giderleri sekmesinde \"Asgari ücret\" tablosuna yeni dönemi (yürürlük tarihi, brüt, net, kaynak) ekleyin."],
+    "kamu_maaslari": ["Yeni memur maaş dönemi (Ocak / Temmuz) açıklandığında İş Hayatı Verileri › 🏛️ Kamu Maaşları sekmesinde kadroların net tutarlarını ve kaynağını güncelleyin."],
+    "yasam_giderleri": ["İş Hayatı Verileri › 🧾 Asgari Ücret ve Yaşam Giderleri sekmesinde \"Yaşam giderleri\" tablosuna kira ve temel gider kalemlerini kaynağıyla girin."],
+    "yokatlas": ["YÖK Atlas verisi elle yüklenmez: bölüm penceresi açıldıkça YÖK Atlas'tan çekilir ve 7 günde bir yenilenir.",
+                 "YÖK Atlas Eşleştirme ekranında \"✗ Eşleşmedi\" görünen bölümleri önerilen program grubuna bağlayın."],
+    "yks_tarihi": ["ÖSYM yeni YKS tarihini açıklayınca Genel Takvim › \"+ Etkinlik ekle\" ile sınav türünde, başlığında YKS ya da TYT geçen etkinlikleri (TYT ve AYT/YDT günleri) ekleyin."],
+    "sinav_konulari": ["ÖSYM konu listesi değişirse Konu Listesi ekranında dersleri ve konuları güncelleyin."],
+    "bolum_profili": _PIPELINE_ADIM + ["Pipeline Sonuçları › 1. adım: C:\\pipeline\\cikti\\bolum_agirliklari.xlsx dosyasını yükleyin, önizlemeye bakıp \"Yayına Al\" deyin. Tüm öğrencilerin sonuçları kendiliğinden yeniden hesaplanır."],
+    "k5_baglari": _PIPELINE_ADIM + ["Pipeline Sonuçları › 2. adım: C:\\pipeline\\cikti\\k5_baglari_veri.sql dosyasını seçin, önizlemeye bakıp \"Canlıya al\" deyin. Önceki hâl yedeklenir; gerekirse aynı ekrandan geri dönülür."],
+    "ornek_meslekler": _PIPELINE_ADIM + ["Pipeline Sonuçları › 3. adım: C:\\pipeline\\cikti\\ornek_meslekler_veri.sql dosyasını seçin, önizlemeye bakıp \"Canlıya al\" deyin. Önceki hâl yedeklenir."],
+    "meslekler": _PIPELINE_ADIM + ["Pipeline Sonuçları › Gelişmiş › Meslek listesi alanından meslek dosyasını yükleyin (yalnızca meslek listesi değiştiyse)."],
+    "meslek_isco": ["İş Hayatı Verileri › 🔗 Meslek – ISCO sekmesinde eşleşmeyen meslekleri listeden bir ISCO grubuna bağlayın."],
+    "ai_etkisi": ["İş Hayatı Verileri › 🔭 Yapay zekâ etkisi sekmesinde meslek grubu satırlarını yeni çalışmanın verisiyle ve kaynağıyla güncelleyin."],
+    "bolum_icerik": ["Bölümler ekranında ilgili bölümü açın, tanıtım metnini düzenleyip kaydedin."],
+    "is_hayati_icerik": ["Bu içerikler sistemle birlikte gelir; değişiklik için Claude'dan güncelleme isteyin (kod değişikliğiyle yayınlanır)."],
+    "kaynakca": ["Kaynakça ekranından kaynak ekleyin ya da düzenleyin."],
+}
 _SIRA = {"yok": 0, "sorun": 1, "bekleniyor": 2, "kontrol_zamani": 3, "guncel": 4}
 
 
@@ -307,7 +360,8 @@ def liste(db: Session, bugun: date | None = None) -> dict:
         out.append({"kod": kod, "ad": ad, "grup": grup, "kullanim": kullanim, "kontrol_araligi_gun": aralik, "ekran": ekran,
                     "kayit": o.get("kayit") or 0, "donem": o.get("donem"), "kaynak": o.get("kaynak"), "ayrinti": o.get("ayrinti"),
                     "son_guncelleme": _zaman(o.get("son_guncelleme")).isoformat() if _zaman(o.get("son_guncelleme")) else None,
-                    "son_kontrol": ks[0] if ks else None, "kontroller": ks, "durum": durum, "aciklama": aciklama})
+                    "son_kontrol": ks[0] if ks else None, "kontroller": ks, "durum": durum, "aciklama": aciklama,
+                    "adimlar": ADIMLAR.get(kod, [])})
     ozet = {d: sum(1 for x in out if x["durum"] == d) for d in _SIRA}
     out.sort(key=lambda x: (_SIRA[x["durum"]], KAYNAKLAR.index(next(k for k in KAYNAKLAR if k[0] == x["kod"]))))
     return {"kaynaklar": out, "ozet": ozet, "zaman": simdi.isoformat()}

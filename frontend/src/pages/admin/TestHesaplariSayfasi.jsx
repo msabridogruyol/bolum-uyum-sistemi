@@ -184,6 +184,80 @@ function BaglantiHucresi({ tip, h, yenile }) {
   )
 }
 
+
+// [2026-11-01] Demo (tanıtım) okulu: okul + okul yetkilisi + verisi dolu öğrenciler tek tuşla. Öğrencilerin sonuçları gerçek
+// akışla oluşur (elle puan yok). İçine okul yetkilisi hesabıyla kulüp, deneme, duyuru gibi veriler normal ekranlardan eklenir.
+function DemoOkulKarti({ d, yenile }) {
+  const [f, setF] = useState({ okul_adi: 'Demo Koleji', paket: 'tam', ogrenci_sayisi: 12, yetkili_adi: 'Demo Okul Yetkilisi' })
+  const [bekle, setBekle] = useState(false)
+  const [hata, setHata] = useState(null)
+  const [sonuc, setSonuc] = useState(null)
+  const [silinecek, setSilinecek] = useState(null)
+  const tam = sonuc ? `${window.location.origin}${sonuc.yetkili.yol}` : null
+
+  async function ac(e) {
+    e.preventDefault()
+    setBekle(true); setHata(null); setSonuc(null)
+    try {
+      const r = await api.demoOkulAc({ ...f, ogrenci_sayisi: Number(f.ogrenci_sayisi) })
+      setSonuc(r); yenile()
+    } catch (err) { setHata(err.detail || 'Demo okul açılamadı.') }
+    setBekle(false)
+  }
+  async function sil(o) {
+    if (silinecek !== o.id) { setSilinecek(o.id); return }
+    setBekle(true); setHata(null)
+    try { await api.demoOkulSil(o.id); setSilinecek(null); if (sonuc?.okul_id === o.id) setSonuc(null); yenile() }
+    catch (err) { setHata(err.detail || 'Demo okul silinemedi.') }
+    setBekle(false)
+  }
+  return (
+    <div className="card" style={{ marginBottom: 18, borderColor: 'var(--pu)' }}>
+      <div className="ct">🏫 Demo okul (tanıtım için hazır veriyle)</div>
+      <div className="ps" style={{ margin: '0 0 12px' }}>
+        Bir kişiye sistemi göstermek için tek tuşla: okul, okul yetkilisi hesabı ve değerlendirmeyi farklı aşamalarda bitirmiş
+        öğrenciler oluşur. Sonuçlar gerçek hesaplamayla üretilir. Okul yetkilisi bağlantısıyla girip içine kulüp, deneme, duyuru gibi
+        verileri normal ekranlardan ekleyebilirsiniz. Gerçek okullar etkilenmez; demo okul tek tuşla tamamen silinir.
+      </div>
+      <form className="yp-form-satir" onSubmit={ac}>
+        <input className="auth-input" style={{ margin: 0 }} value={f.okul_adi} onChange={(e) => setF({ ...f, okul_adi: e.target.value })} placeholder="Okul adı" required minLength={3} maxLength={80} />
+        <select className="yp-sec" value={f.paket} onChange={(e) => setF({ ...f, paket: e.target.value })}>
+          <option value="temel">Temel paket</option><option value="gelisim">Gelişim paketi</option><option value="tam">Tam paket</option>
+        </select>
+        <label className="yp-ince">Öğrenci sayısı{' '}
+          <input className="yp-sec" type="number" min={1} max={30} style={{ width: 70 }} value={f.ogrenci_sayisi} onChange={(e) => setF({ ...f, ogrenci_sayisi: e.target.value })} />
+        </label>
+        <input className="auth-input" style={{ margin: 0 }} value={f.yetkili_adi} onChange={(e) => setF({ ...f, yetkili_adi: e.target.value })} placeholder="Yetkili adı" required minLength={3} maxLength={80} />
+        <button className="btn" type="submit" disabled={bekle}>{bekle ? <span className="spin" /> : '+ Demo okul oluştur'}</button>
+      </form>
+      {bekle && !silinecek && <div className="yp-ince" style={{ marginTop: 8 }}>Öğrencilerin değerlendirmeleri gerçek akışla cevaplanıyor; öğrenci başına 1–2 saniye sürer.</div>}
+      {hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
+      {sonuc && (
+        <div className="yp-uyari" style={{ marginTop: 10, display: 'grid', gap: 6 }}>
+          <div><b>{sonuc.okul_adi}</b> hazır: {sonuc.ogrenci} öğrenci ({sonuc.senaryolu} öğrencinin verisi kuruldu){sonuc.hatalar?.length ? ` · kurulamayan: ${sonuc.hatalar.join(', ')}` : ''}.</div>
+          <div>Okul yetkilisi giriş bağlantısı ({tarih(sonuc.yetkili.bitis)}'e kadar geçerli):</div>
+          <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
+            <code className="yp-sifre" style={{ wordBreak: 'break-all' }}>{tam}</code>
+            <button className="yp-mini" type="button" onClick={() => navigator.clipboard?.writeText(tam)}>Kopyala</button>
+          </div>
+          <div className="yp-ince">Şifreyle giriş: <code className="yp-sifre">{sonuc.yetkili.email}</code> <code className="yp-sifre">{sonuc.yetkili.sifre}</code> (şifre yalnızca şimdi gösterilir). Bağlantıyı gizli pencerede açın; öğrenci hesaplarının bağlantıları aşağıdaki listede.</div>
+        </div>
+      )}
+      {d?.demo_okullar?.length > 0 && (
+        <div style={{ marginTop: 12 }}>
+          <div className="yp-ince" style={{ fontWeight: 700, marginBottom: 4 }}>Demo okullar</div>
+          {d.demo_okullar.map((o) => (
+            <div key={o.id} style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 4 }}>
+              <span><b>{o.ad}</b> <span className="yp-ince">· {o.paket} · {o.ogrenci} öğrenci · {o.yetkili} yetkili · {tarih(o.olusturulma_zamani)}</span></span>
+              <button className="yp-mini" type="button" disabled={bekle} onClick={() => sil(o)}>{silinecek === o.id ? 'Eminim, okulu ve tüm verisini sil' : 'Sil'}</button>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
 export default function TestHesaplariSayfasi() {
   const [d, setD] = useState(null)
   const [hata, setHata] = useState(null)
@@ -227,6 +301,9 @@ export default function TestHesaplariSayfasi() {
         <div className="ps">Deneme ve tanıtım için öğrenci / okul yetkilisi hesapları. 2 adımlı doğrulama istenmez; süreli giriş bağlantısıyla tek tıkla açılır. Öğrencinin ilerlemesini istediğin aşamaya getirebilirsin.</div>
       </div>
 
+      <DemoOkulKarti d={d} yenile={yenile} />
+
+      <div className="ct">Tek tek test hesabı</div>
       <form className="yp-kutu yp-form-satir" style={{ marginBottom: 14 }} onSubmit={ac}>
         <select className="yp-sec" value={form.tip} onChange={(e) => setForm({ ...form, tip: e.target.value })}>
           <option value="ogrenci">Öğrenci</option>
@@ -245,7 +322,7 @@ export default function TestHesaplariSayfasi() {
         <button className="btn" type="submit" disabled={bekle}>+ Test hesabı aç</button>
       </form>
       {form.tip === 'okul_yetkilisi' && (
-        <div className="yp-uyari">Okul yetkilisi test hesabı, seçtiğin okulun <b>gerçek öğrencilerini</b> de görür. Tanıtım için ayrı bir “Demo Okulu” açıp test öğrencilerini oraya koyman önerilir.</div>
+        <div className="yp-uyari">Okul yetkilisi test hesabı, seçtiğin okulun <b>gerçek öğrencilerini</b> de görür. Tanıtım için yukarıdaki <b>Demo okul</b> kutusunu kullanman önerilir.</div>
       )}
       {yeni && (
         <div className="yp-uyari" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>

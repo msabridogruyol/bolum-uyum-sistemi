@@ -476,6 +476,11 @@ export const api = {
   yokatlasEslestir: (bolumId, gruplar) => aput(`/admin/yokatlas/bolum/${bolumId}`, { gruplar }),
   veriKaynaklari: () => aget('/admin/veri-kaynaklari'),   // [2026-11-01] Veri Kaynakları (süper admin)
   veriKaynagiKontrol: (kod, sonuc, notlar) => apost(`/admin/veri-kaynaklari/${kod}/kontrol`, { sonuc, notlar: notlar || null }),
+  // [2026-11-01] Pipeline çıktıları (K5 bağları, örnek meslekler): önizle → canlıya al; önceki hâl yedeklenir
+  veriYuklemeOnizle: (tur, metin, dosyaAdi) => apost(`/admin/veri-yukleme/${tur}/onizle`, { metin, dosya_adi: dosyaAdi || null }),
+  veriYuklemeUygula: (tur, metin, dosyaAdi) => apost(`/admin/veri-yukleme/${tur}/uygula`, { metin, dosya_adi: dosyaAdi || null }),
+  veriYuklemeYedekler: (tur) => aget(`/admin/veri-yukleme/${tur}/yedekler`),
+  veriYuklemeGeriYukle: (id) => apost(`/admin/veri-yukleme/yedekler/${id}/geri-yukle`),
   // [2026-10-10] Takvim, Kütüphanem, görev geçmişi
   takvim: () => get('/ogrenci/takvim'),
   takvimEkle: (veri) => post('/ogrenci/takvim', veri),
@@ -683,6 +688,8 @@ export const api = {
   testSifreYenile: (tip, id) => apost(`/yonetim/test-hesaplari/${tip}/${id}/sifre`),
   testSenaryo: (id, ayar) => apost(`/yonetim/test-hesaplari/ogrenci/${id}/senaryo`, ayar),
   testHesabiSil: (tip, id) => adel(`/yonetim/test-hesaplari/${tip}/${id}`),
+  demoOkulAc: (veri) => apost('/yonetim/test-hesaplari/demo-okul', veri),   // [2026-11-01] tanıtım okulu
+  demoOkulSil: (okulId) => adel(`/yonetim/test-hesaplari/demo-okul/${okulId}`),
   // [2026-10-17] süper admin + okul yetkilisi; bolumler: uyum matrisinde gösterilecek bölüm id'leri (boşsa ilk 10 + hedef + son 3)
   cevapAnalizi: (ogrenciId, turNo, bolumler) => aget(`/yonetim/ogrenci/${ogrenciId}/cevap-analizi?${new URLSearchParams({
     ...(turNo ? { tur_no: turNo } : {}), ...(bolumler?.length ? { bolumler: bolumler.join(',') } : {}) })}`),

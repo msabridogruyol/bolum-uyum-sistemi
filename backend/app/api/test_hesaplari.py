@@ -9,6 +9,8 @@ DELETE /yonetim/test-hesaplari/{tip}/{id}/baglanti      — bağlantıyı iptal 
 POST   /yonetim/test-hesaplari/{tip}/{id}/sifre         — yeni şifre (2 adımsız normal giriş için)
 POST   /yonetim/test-hesaplari/ogrenci/{id}/senaryo     — ilerlemeyi senaryoya göre kur (gerçek akışla cevaplar)
 DELETE /yonetim/test-hesaplari/{tip}/{id}               — test hesabını sil
+POST   /yonetim/test-hesaplari/demo-okul                — [2026-11-01] tanıtım okulu: okul + yetkili + verisi dolu öğrenciler
+DELETE /yonetim/test-hesaplari/demo-okul/{okul_id}      — demo okulu ve içindeki her şeyi sil (yalnızca demo=True okul)
 POST   /auth/test-giris                                 — bağlantı anahtarıyla giriş (herkese açık uç; yalnızca test hesapları)
 
 Güvenlik: bağlantı anahtarı rastgele 32 karakter, veritabanında yalnızca SHA-256 özeti tutulur, süresi dolar,
@@ -104,6 +106,7 @@ def test_hesaplari(db: Session = Depends(get_db), admin: AdminKullanici = Depend
                         "okul_ad": okullar.get(y.okul_id, "—"), "son_giris_zamani": y.son_giris_zamani, **_baglanti_durumu(y)}
                        for y in yet],
         "okullar": [{"id": k, "ad": v} for k, v in okullar.items()],
+        "demo_okullar": _demo_okullar(db),
         "asamalar": [{"kod": k, "ad": v} for k, v in ASAMA_ADI.items()],
     }
 
@@ -188,6 +191,122 @@ def senaryo(hesap_id: str, istek: SenaryoIstek, db: Session = Depends(get_db), a
     denetim_yaz(db, admin, "test_senaryo", "ogrenciler", o.id, f"{o.ad_soyad}: {ozet['asama']}", o.okul_id)
     db.commit()
     return {**ozet, "ilerleme": ilerleme_ozeti(db, o)}
+
+
+# ----------------------------------------------------------------------------- [2026-11-01] demo (tanıtım) okulu
+# Kişilere sistemi göstermek için: okul + okul yetkilisi + gerçek akışla değerlendirmeyi tamamlamış öğrenciler. Öğrenciler
+# farklı aşamalarda ve farklı eğilimlerde kurulur (sonuçlar gerçek hesaplamayla oluşur; elle puan yok). Demo okulun içine
+# okul yetkilisi hesabıyla kulüp, deneme, duyuru gibi veriler normal ekranlardan eklenebilir. Ad listesi kurgusaldır.
+DEMO_ADLAR = ["Ada Yıldız", "Mert Kaya", "Elif Demir", "Can Aydın", "Zeynep Şahin", "Ege Çelik", "Defne Arslan", "Kerem Doğan",
+              "Ece Koç", "Arda Kurt", "Duru Öztürk", "Emir Aksoy", "Nehir Polat", "Deniz Erdem", "Lina Güneş", "Alp Tekin",
+              "Ceren Bulut", "Kaan Uçar", "Mira Akın", "Efe Karaca", "İpek Turan", "Yusuf Kılıç", "Asya Taş", "Batu Yalçın",
+              "Selin Ateş", "Onur Bilgin", "Azra Keskin", "Tuna Sezer", "Melis Uysal", "Rüzgar Eren"]
+DEMO_SINIFLAR = ["9", "10", "11", "12"]
+
+
+class DemoOkulIstek(BaseModel):
+    okul_adi: str = Field(min_length=3, max_length=80)
+    paket: str = "tam"
+    ogrenci_sayisi: int = Field(12, ge=1, le=30)
+    yetkili_adi: str = Field("Demo Okul Yetkilisi", min_length=3, max_length=80)
+    baglanti_saat: int = Field(168, ge=1, le=720)
+
+
+def _demo_okullar(db: Session) -> list[dict]:
+    from sqlalchemy import text
+    try:
+        rows = db.execute(text("""SELECT o.id, o.ad, o.paket, o.olusturulma_zamani,
+                (SELECT COUNT(*) FROM ogrenciler g WHERE g.okul_id = o.id) ogrenci,
+                (SELECT COUNT(*) FROM admin_kullanicilar a WHERE a.okul_id = o.id) yetkili
+            FROM okullar o WHERE o.demo ORDER BY o.olusturulma_zamani DESC""")).mappings().all()
+    except Exception:
+        db.rollback()
+        return []
+    return [{"id": r["id"], "ad": r["ad"], "paket": r["paket"], "ogrenci": r["ogrenci"], "yetkili": r["yetkili"],
+             "olusturulma_zamani": r["olusturulma_zamani"]} for r in rows]
+
+
+def _demo_senaryo(i: int, rnd) -> dict:
+    """Çeşitli ama gerçekçi durumlar: çoğu tamamlanmış, bir kısmı yarım / K5 bekliyor; bazılarında önceki tur ve hedef."""
+    asama = "tamamlandi" if i % 6 not in (4, 5) else ("k5_bekliyor" if i % 6 == 4 else "k3")
+    return {"asama": asama, "yarim": asama == "k3", "egilim": "rastgele" if i % 3 else "dengeli", "gun_once": rnd.randint(2, 40),
+            "onceki_tur": asama == "tamamlandi" and i % 4 == 0, "hedef": "otomatik" if asama == "tamamlandi" and i % 5 != 3 else "yok",
+            "tamamlanan_adim": rnd.randint(0, 6) if asama == "tamamlandi" else 0, "listem_otomatik": True, "tohum": 1000 + i}
+
+
+@router.post("/demo-okul", status_code=201)
+def demo_okul_ac(istek: DemoOkulIstek, db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
+    import random
+    from sqlalchemy import text
+    from app.core.test_hesabi_servisi import ASAMALAR
+    if admin.rol != "super_admin":
+        raise HTTPException(status_code=403, detail="Yalnızca süper admin demo okul açabilir.")
+    paketler = {r[0] for r in db.execute(text("SELECT kod FROM paketler"))}
+    if istek.paket not in paketler:
+        raise HTTPException(status_code=400, detail="Geçersiz paket.")
+    ad = re.sub(r"\s+", " ", istek.okul_adi).strip()
+    okul = Okul(ad=ad, aktif_mi=True, paket=istek.paket, demo=True, erisim_acik=True, olusturulma_zamani=simdi())
+    db.add(okul); db.flush()
+    sifre = gecici_sifre()
+    yet = AdminKullanici(ad_soyad=re.sub(r"\s+", " ", istek.yetkili_adi).strip(), email=f"demo.yetkili.{secrets.token_hex(3)}@test.filizyol.app",
+                         sifre_hash=sifre_hashle(sifre), rol="okul_yetkilisi", okul_id=okul.id, aktif_mi=True,
+                         sifre_degistirmeli=False, test_hesabi=True, olusturulma_zamani=simdi())
+    db.add(yet); db.flush()
+    _kvkk_onayla(db, "yonetim", yet.id)
+    anahtar = giris_anahtari_uret(yet, istek.baglanti_saat)
+    denetim_yaz(db, admin, "demo_okul_ac", "okullar", okul.id, f"{ad} ({istek.paket}, {istek.ogrenci_sayisi} öğrenci)", okul.id)
+    db.commit()
+    rnd = random.Random(okul.id)
+    olusan, hatalar = 0, []
+    for i in range(istek.ogrenci_sayisi):
+        ad_o = DEMO_ADLAR[i % len(DEMO_ADLAR)] + (f" {i // len(DEMO_ADLAR) + 1}" if i >= len(DEMO_ADLAR) else "")
+        o = Ogrenci(ad_soyad=ad_o, email=f"demo.ogrenci.{secrets.token_hex(3)}@test.filizyol.app", sifre_hash=sifre_hashle(gecici_sifre()),
+                    okul_id=okul.id, okul=okul.ad, sinif=_sinif(DEMO_SINIFLAR[i % len(DEMO_SINIFLAR)]),
+                    sifre_degistirmeli=False, test_hesabi=True, olusturulma_zamani=simdi())
+        db.add(o); db.flush()
+        _kvkk_onayla(db, "ogrenci", o.id)
+        db.commit()
+        ayar = _demo_senaryo(i, rnd)
+        if ayar["asama"] not in ASAMALAR:
+            ayar["asama"] = "tamamlandi"
+        try:
+            senaryo_uygula(db, o, ayar)
+            db.commit()
+            olusan += 1
+        except Exception as e:   # bir öğrencinin senaryosu kurulamazsa hesap boş kalır, diğerleri devam eder
+            db.rollback()
+            hatalar.append(f"{ad_o}: {type(e).__name__}")
+    return {"okul_id": okul.id, "okul_adi": ad, "paket": istek.paket, "ogrenci": istek.ogrenci_sayisi, "senaryolu": olusan,
+            "hatalar": hatalar[:5], "yetkili": {"id": str(yet.id), "ad_soyad": yet.ad_soyad, "email": yet.email, "sifre": sifre,
+                                                 "yol": f"/test-giris?k={anahtar}", "bitis": yet.test_giris_bitis}}
+
+
+@router.delete("/demo-okul/{okul_id}", status_code=204)
+def demo_okul_sil(okul_id: int, db: Session = Depends(get_db), admin: AdminKullanici = Depends(get_mevcut_admin)):
+    if admin.rol != "super_admin":
+        raise HTTPException(status_code=403, detail="Yalnızca süper admin demo okul silebilir.")
+    okul = db.get(Okul, okul_id)
+    if okul is None or not getattr(okul, "demo", False):
+        raise HTTPException(status_code=404, detail="Demo okul bulunamadı (gerçek okullar bu ekrandan silinemez).")
+    ad = okul.ad
+    try:
+        for o in db.query(Ogrenci).filter(Ogrenci.okul_id == okul_id).all():
+            ilerlemeyi_sifirla(db, o)
+            from sqlalchemy import text
+            with db.begin_nested():
+                db.execute(text("DELETE FROM ogrenci_hesap_olaylari WHERE ogrenci_id = :id"), {"id": o.id})
+            ogrenciyi_sil(db, o)
+        for y in db.query(AdminKullanici).filter(AdminKullanici.okul_id == okul_id).all():
+            _yonetici_baglarini_coz(db, y.id, admin.id)
+            db.delete(y)
+        db.flush()
+        db.delete(okul)
+        db.flush()
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Demo okul silinemedi: {type(e).__name__}: {str(e).splitlines()[0][:200]}")
+    denetim_yaz(db, admin, "demo_okul_sil", "okullar", okul_id, ad, None)
+    db.commit()
 
 
 @router.delete("/{tip}/{hesap_id}", status_code=204)
