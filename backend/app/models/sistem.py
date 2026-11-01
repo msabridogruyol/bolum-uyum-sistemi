@@ -105,6 +105,8 @@ class Okul(Base):
     erisim_acik: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default='true', default=True)
     kapali_mesaji: Mapped[str | None] = mapped_column(String, nullable=True)
     erisim_guncelleme_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
+    # [2026-11-01] (0087) Test Hesapları ekranından açılan tanıtım (demo) okulu; yalnızca demo okul tek tuşla silinir
+    demo: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default='false', default=False)
 
 
 class MeslekDili(Base):

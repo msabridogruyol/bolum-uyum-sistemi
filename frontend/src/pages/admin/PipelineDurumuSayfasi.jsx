@@ -129,6 +129,130 @@ function MeslekYuklemeKarti() {
   )
 }
 
+
+// ============================================================
+// [2026-11-01] 2. ve 3. adım: K5 iş türü bağları ve örnek meslekler (önceden Supabase SQL ekranında çalıştırılıyordu).
+// Dosya çalıştırılmaz; içindeki değerler okunur → önizleme → "Canlıya al". Önceki hâl yedeklenir, geri dönülebilir.
+// ============================================================
+function VeriAdimKarti({ no, tur, baslik, dosyaYolu, aciklama }) {
+  const [dosyaAdi, setDosyaAdi] = useState(null)
+  const [metin, setMetin] = useState(null)
+  const [onizleme, setOnizleme] = useState(null)
+  const [bekle, setBekle] = useState(false)
+  const [onay, setOnay] = useState(false)
+  const [hata, setHata] = useState(null)
+  const [sonuc, setSonuc] = useState(null)
+  const [yedekler, setYedekler] = useState([])
+  const [donus, setDonus] = useState(null)
+
+  const yedekleriYukle = useCallback(() => {
+    api.veriYuklemeYedekler(tur).then((v) => setYedekler(v.yedekler || [])).catch(() => {})
+  }, [tur])
+  useEffect(() => { yedekleriYukle() }, [yedekleriYukle])
+
+  async function dosyaSecildi(e) {
+    const dosya = e.target.files?.[0]
+    e.target.value = ''
+    if (!dosya) return
+    setHata(null); setSonuc(null); setOnizleme(null); setOnay(false); setBekle(true)
+    try {
+      const m = await dosya.text()
+      setDosyaAdi(dosya.name); setMetin(m)
+      setOnizleme(await api.veriYuklemeOnizle(tur, m, dosya.name))
+    } catch (err) {
+      setHata(err.detail || err.message || 'Dosya okunamadı.')
+    }
+    setBekle(false)
+  }
+
+  async function canliyaAl() {
+    if (!onay) { setOnay(true); return }
+    setBekle(true); setHata(null)
+    try {
+      const r = await api.veriYuklemeUygula(tur, metin, dosyaAdi)
+      setSonuc(r); setOnizleme(null); setMetin(null); setOnay(false); yedekleriYukle()
+    } catch (err) {
+      setHata(err.detail || 'Canlıya alınamadı.')
+    }
+    setBekle(false)
+  }
+
+  async function geriDon(id) {
+    if (donus !== id) { setDonus(id); return }
+    setBekle(true); setHata(null)
+    try {
+      const r = await api.veriYuklemeGeriYukle(id)
+      setSonuc({ ...r, geri: id }); setDonus(null); yedekleriYukle()
+    } catch (err) {
+      setHata(err.detail || 'Geri dönülemedi.')
+    }
+    setBekle(false)
+  }
+
+  const o = onizleme
+  return (
+    <div className="card">
+      <div className="ct">{no}. adım · {baslik}</div>
+      <div className="ps" style={{ margin: '0 0 10px' }}>{aciklama}</div>
+      <div className="yp-ince" style={{ marginBottom: 10 }}>Seçilecek dosya: <b>{dosyaYolu}</b></div>
+      <label className="btn" style={{ cursor: bekle ? 'not-allowed' : 'pointer', opacity: bekle ? 0.6 : 1 }}>
+        {bekle ? <span className="spin" /> : '⬆ Dosyayı seç'}
+        <input type="file" accept=".sql,.csv,.txt" onChange={dosyaSecildi} disabled={bekle} style={{ display: 'none' }} />
+      </label>
+      {hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
+      {sonuc && (
+        <div className="kayit-ok" style={{ marginTop: 10, padding: 10, borderRadius: 8, background: 'var(--grl)', color: 'var(--gr)' }}>
+          ✓ {sonuc.geri ? `${sonuc.geri} numaralı yedeğe dönüldü` : 'Canlıya alındı'}: {sonuc.yazilan} satır
+          {sonuc.bolum_sayisi ? `, ${sonuc.bolum_sayisi} bölüm` : ''}. Önceki hâl yedek #{sonuc.yedek_id} olarak saklandı.
+        </div>
+      )}
+      {o && (
+        <div style={{ marginTop: 12 }}>
+          <div className="sg" style={{ marginBottom: 10 }}>
+            <div className="sc"><div className="sl">Dosyadaki satır</div><div className="sv">{o.satir}</div></div>
+            <div className="sc"><div className="sl">Bölüm</div><div className="sv">{o.bolum_sayisi} / {o.yayindaki_bolum}</div></div>
+            <div className="sc"><div className="sl">Şu an canlıda</div><div className="sv">{o.mevcut_satir}</div></div>
+            <div className="sc"><div className="sl">Değişecek bölüm</div><div className="sv">{o.degisen_bolum}</div></div>
+          </div>
+          {o.eslesmeyen_bolumler.length > 0 && (
+            <div className="auth-error">Sistemde olmayan bölüm adları ({o.eslesmeyen_bolumler.length}): {o.eslesmeyen_bolumler.slice(0, 8).join(', ')}
+              {o.eslesmeyen_bolumler.length > 8 ? ' …' : ''}. Bu dosya canlıya alınamaz; pipeline'ın güncel bölüm listesiyle çalıştığından emin olun.</div>
+          )}
+          {o.eslesmeyen_kodlar.length > 0 && (
+            <div className="auth-error">Sistemde olmayan iş türü kodları: {o.eslesmeyen_kodlar.slice(0, 8).join(', ')}. Bu dosya canlıya alınamaz.</div>
+          )}
+          {o.kapsanmayan_bolumler.length > 0 && o.canliya_alinabilir && (
+            <div className="yp-ince" style={{ color: 'var(--am)', marginBottom: 8 }}>
+              ⚠ Dosyada olmayan {o.kapsanmayan_bolumler.length} yayındaki bölüm canlıya alınınca boş kalır: {o.kapsanmayan_bolumler.slice(0, 6).join(', ')}{o.kapsanmayan_bolumler.length > 6 ? ' …' : ''}
+            </div>
+          )}
+          {o.ornek.length > 0 && (
+            <table className="yp-tablo" style={{ marginBottom: 10 }}>
+              <thead><tr><th>Değişen bölüm (örnek)</th><th>Şu an</th><th>Yeni</th></tr></thead>
+              <tbody>{o.ornek.map((x) => <tr key={x.bolum}><td>{x.bolum}</td><td className="yp-ince">{x.eski}</td><td className="yp-ince">{x.yeni}</td></tr>)}</tbody>
+            </table>
+          )}
+          <button className="btn" disabled={bekle || !o.canliya_alinabilir} onClick={canliyaAl}>
+            {onay ? 'Eminim, canlıya al' : 'Canlıya al'}
+          </button>
+          {onay && <span className="yp-ince" style={{ marginLeft: 8 }}>Şu anki {o.mevcut_satir} satır yedeklenip yerine dosyadaki satırlar yazılacak.</span>}
+        </div>
+      )}
+      {yedekler.length > 0 && (
+        <details style={{ marginTop: 12 }}>
+          <summary className="yp-ince" style={{ cursor: 'pointer', fontWeight: 700 }}>Önceki sürümler ({yedekler.length})</summary>
+          {yedekler.map((y) => (
+            <div key={y.id} className="yp-ince" style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 6, flexWrap: 'wrap' }}>
+              <span>#{y.id} · {new Date(y.zaman).toLocaleString('tr-TR')} · {y.satir_sayisi} satır · {y.aciklama}{y.kaydeden ? ` · ${y.kaydeden}` : ''}</span>
+              <button className="yp-mini" disabled={bekle} onClick={() => geriDon(y.id)}>{donus === y.id ? 'Eminim, bu sürüme dön' : 'Bu sürüme dön'}</button>
+            </div>
+          ))}
+        </details>
+      )}
+    </div>
+  )
+}
+
 export default function PipelineDurumuSayfasi() {
   const { rol } = useAdminAuth()
   const suAdminMi = rol === 'super_admin'
@@ -207,25 +331,23 @@ export default function PipelineDurumuSayfasi() {
       <div className="ph">
         <div className="pt">Pipeline Sonuçları</div>
         <div className="ps">
-          Meslek↔bölüm eşleştirme pipeline'ı kendi bilgisayarınızda çalışır. Çıktı CSV'sini buradan yükleyin —
-          canlıya yansımadan önce burada önizleyip onaylarsınız.
+          Bölüm verileri bilgisayarınızdaki pipeline'da üretilir. Çıktıları buradan <b>üç adımda</b> canlıya alırsınız; Supabase SQL
+          ekranı gerekmez. Her adımda önce önizleme görürsünüz, canlıya almadan önceki hâl saklanır.
         </div>
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
 
-      <div style={{ marginBottom: 20 }}>
-        <MeslekYuklemeKarti />
-      </div>
-
       <div className="card">
-        <div className="ct">Yeni Çıktı Yükle</div>
-        <div className="ps" style={{ margin: '0 0 12px' }}>
-          bolum_agirliklari.csv dosyasını (bolum_adi, degisken_kod, agirlik_degeri, yakinsama_skoru,
-          agirlikli_varyans, etkin_meslek_sayisi sütunlarıyla) seçin. Bu adım canlı veriye hiç dokunmaz.
+        <div className="ct">1. adım · Bölüm profilleri</div>
+        <div className="ps" style={{ margin: '0 0 10px' }}>
+          Uyum hesabının bölüm tarafı (31 özellik). Yüklemek canlıya dokunmaz: dosya taslak olarak gelir, aşağıdaki
+          "Geçmiş Yüklemeler"de <b>Yayına Al</b> deyince canlıya geçer ve tüm öğrencilerin sonuçları yeniden hesaplanır.
+          Önceki sürümler silinmez.
         </div>
+        <div className="yp-ince" style={{ marginBottom: 10 }}>Seçilecek dosya: <b>C:\pipeline\cikti\bolum_agirliklari.xlsx</b></div>
         <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
-          {yukleniyor ? <span className="spin" /> : '⬆ CSV Seç ve Yükle'}
+          {yukleniyor ? <span className="spin" /> : '⬆ Dosyayı seç'}
           <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
         </label>
       </div>
@@ -266,7 +388,7 @@ export default function PipelineDurumuSayfasi() {
         </div>
       )}
 
-      <div className="ct" style={{ marginTop: 20 }}>Geçmiş Yüklemeler</div>
+      <div className="ct" style={{ marginTop: 20 }}>1. adım · Geçmiş Yüklemeler</div>
       {!taslaklar ? (
         <div className="bos-durum yukleniyor">Yükleniyor…</div>
       ) : taslaklar.length === 0 ? (
@@ -298,6 +420,18 @@ export default function PipelineDurumuSayfasi() {
           ))}
         </div>
       )}
+
+      <div style={{ marginTop: 20 }}>
+        <VeriAdimKarti no={2} tur="k5_baglari" baslik="K5 iş türü bağları" dosyaYolu="C:\pipeline\cikti\k5_baglari_veri.sql"
+          aciklama="Her bölümün hangi iş türlerine bağlı olduğu (K5 soruları ve küme içi sıralama bu bağlarla çalışır)." />
+        <VeriAdimKarti no={3} tur="ornek_meslekler" baslik="Örnek meslekler" dosyaYolu="C:\pipeline\cikti\ornek_meslekler_veri.sql"
+          aciklama="Bölüm sayfasında ve Karşılaştır'da görünen örnek meslek listeleri (bölüm başına en fazla 5)." />
+      </div>
+
+      <details style={{ marginTop: 20 }}>
+        <summary className="yp-ince" style={{ cursor: 'pointer', fontWeight: 700 }}>Gelişmiş: meslek listesi (yalnızca meslek listesi değiştiyse)</summary>
+        <div style={{ marginTop: 10 }}><MeslekYuklemeKarti /></div>
+      </details>
     </div>
   )
 }
