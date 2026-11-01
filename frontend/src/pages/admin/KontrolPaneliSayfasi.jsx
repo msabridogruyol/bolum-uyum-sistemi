@@ -25,7 +25,8 @@ const HIZLI = [
   ['/admin/okullar', '🏫', 'Okullar', 'Okul, yetkili ve öğrenci yönetimi'],
   ['/admin/karsilastirma', '⚖️', 'Okul Karşılaştırması', 'Okulları yan yana kıyasla'],
   ['/admin/paketler', '📦', 'Paketler', 'Paket ve modüller'],
-  ['/admin/pipeline', '⚙️', 'Pipeline Durumu', 'Bölüm ağırlığı yükleme ve onay'],
+  ['/admin/pipeline', '⚙️', 'Pipeline Sonuçları', 'Yıllık bölüm verisi: sayaç, canlıya alma, bilgisayar kurulumu'],
+  ['/admin/yonetim-rehberi', '🧭', 'Yönetim Rehberi', 'Neyin nasıl yapıldığı, adım adım'],
   ['/admin/guvenlik', '🛡️', 'Güvenlik / Tutarlılık', 'Geçersiz ve şüpheli turlar'],
   ['/admin/audit-log', '📜', 'Audit Log', 'Yönetim işlemleri kaydı'],
 ]
