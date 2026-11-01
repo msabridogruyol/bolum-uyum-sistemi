@@ -279,3 +279,13 @@ def test_canli_k5_yalnizca_yeni_is_turleri(db):
     kodlar = {e["kod"] for e in c["k5_eksenleri"]}
     assert "C9TEST" not in kodlar and all(re.match(r"^U[0-9]{2}_", k) for k in kodlar)
     assert {x["kod"] for x in c["k5_cumleleri"]} <= kodlar
+
+
+@db_gerekli
+def test_depo_ayarli_ama_baglanamiyor_ekranda_gorunur(istemci, kisiler, db, sahte_depo, monkeypatch):
+    """Ortam değişkenleri girilmiş ama anahtar yanlışsa panel "bağlı ✓" demez; Supabase'in yanıtı gösterilir."""
+    def kirik():
+        raise depo.DepoHatasi("Depo kovası oluşturulamadı (403): {'message': 'Invalid Compact JWS'}")
+    monkeypatch.setattr(depo, "kova_hazirla", kirik)
+    v = istemci.get("/admin/pipeline-paketi/durum", headers=kisiler["super"]).json()
+    assert v["depo_ayarli"] and not v["depo_hazir"] and "Invalid Compact JWS" in v["depo_eksik"]

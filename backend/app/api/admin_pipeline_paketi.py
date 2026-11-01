@@ -29,9 +29,10 @@ _API_DESENI = re.compile(r"^(https://[A-Za-z0-9.\-]+(:\d+)?|http://(localhost|12
 @router.get("/durum")
 def durum(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
     kod = pp.kod_manifesti()
-    hazir = depo.hazir_mi()
-    return {"sayac": pp.sayac_durumu(db), "depo_hazir": hazir, "depo_turu": depo.tur(),
-            "depo_eksik": None if hazir else depo.eksik_ayar_metni(), "kod_surumu": pp.kod_surumu(kod),
+    ayarli = depo.hazir_mi()
+    sorun = depo.baglanti_sina()        # ayar var ama anahtar / adres yanlışsa da "bağlı" görünmesin
+    return {"sayac": pp.sayac_durumu(db), "depo_hazir": sorun is None, "depo_ayarli": ayarli, "depo_turu": depo.tur(),
+            "depo_eksik": sorun, "kod_surumu": pp.kod_surumu(kod),
             "kod_dosya_sayisi": len(kod), "cihazlar": pp.cihazlar(db), "surumler": pp.surumler(db)}
 
 
