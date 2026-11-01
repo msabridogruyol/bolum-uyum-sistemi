@@ -1091,7 +1091,7 @@ ISLEM_ETIKET = {
     "is_hayati_kazanc_yukle": "Kazanç verisi yüklendi", "is_hayati_kayit_ekle": "İş hayatı kaydı eklendi",
     "is_hayati_kayit_duzenle": "İş hayatı kaydı düzenlendi", "is_hayati_kayit_sil": "İş hayatı kaydı silindi",
     "is_hayati_meslek_isco": "Meslek grubu eşleştirmesi değiştirildi", "is_hayati_meslek_isco_json": "Meslek grubu eşleştirmeleri yüklendi",
-    "is_hayati_yukleme_sil": "Veri yüklemesi silindi", "istatistik_excel": "İstatistikler indirildi (Excel)",
+    "is_hayati_yukleme_sil": "Veri yüklemesi silindi", "veri_kaynagi_kontrol": "Veri kaynağı kontrol kaydı bırakıldı", "istatistik_excel": "İstatistikler indirildi (Excel)",
     "katman_agirlik_guncelleme": "Katman ağırlıkları güncellendi", "katman_sorulari_komple_silme": "Katman soruları silindi",
     "koc_ekle": "Eğitim koçu eklendi", "koc_duzenle": "Eğitim koçu düzenlendi", "koc_sil": "Eğitim koçu silindi",
     "koc_okullari": "Eğitim koçunun okulları güncellendi", "koc_talep_guncelle": "Koçluk talebi güncellendi",
