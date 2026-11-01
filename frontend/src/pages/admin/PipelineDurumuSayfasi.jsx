@@ -221,6 +221,11 @@ function VeriAdimKarti({ no, tur, baslik, dosyaYolu, aciklama }) {
           {o.eslesmeyen_kodlar.length > 0 && (
             <div className="auth-error">Sistemde olmayan iş türü kodları: {o.eslesmeyen_kodlar.slice(0, 8).join(', ')}. Bu dosya canlıya alınamaz.</div>
           )}
+          {o.yayinda_olmayan_bolum > 0 && (
+            <div className="yp-ince" style={{ marginBottom: 8 }}>
+              ℹ Dosyada yayında olmayan (taslak / test ediliyor) {o.yayinda_olmayan_bolum} bölüm de var; onların verisi de yazılır, yayına alınınca hazır olur.
+            </div>
+          )}
           {o.kapsanmayan_bolumler.length > 0 && o.canliya_alinabilir && (
             <div className="yp-ince" style={{ color: 'var(--am)', marginBottom: 8 }}>
               ⚠ Dosyada olmayan {o.kapsanmayan_bolumler.length} yayındaki bölüm canlıya alınınca boş kalır: {o.kapsanmayan_bolumler.slice(0, 6).join(', ')}{o.kapsanmayan_bolumler.length > 6 ? ' …' : ''}
@@ -253,6 +258,155 @@ function VeriAdimKarti({ no, tur, baslik, dosyaYolu, aciklama }) {
   )
 }
 
+// ============================================================
+// [2026-11-01] Pipeline sayacı + "bu bilgisayara kur" + kayıtlı bilgisayarlar (süper admin)
+// Kod sistemin deposunda, veri Supabase Storage'da; her bilgisayar buradan indirilen tek dosyayla kurulur.
+// ============================================================
+const tarih = (z) => (z ? new Date(z).toLocaleDateString('tr-TR') : '—')
+const tarihSaat = (z) => (z ? new Date(z).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '—')
+const SAYAC_GORUNUM = {
+  guncel: { etiket: 'Güncel', renk: 'var(--gr)', zemin: 'var(--grl)' },
+  yaklasiyor: { etiket: 'Yaklaşıyor', renk: 'var(--am)', zemin: 'var(--aml)' },
+  gerekli: { etiket: 'Pipeline çalıştırılmalı', renk: 'var(--re)', zemin: 'var(--rel)' },
+  canliya_al: { etiket: 'Çıktılar canlıya alınmalı', renk: 'var(--am)', zemin: 'var(--aml)' },
+}
+const CALISTIR_KOMUTU = 'powershell -ExecutionPolicy Bypass -File C:\\pipeline\\pipeline_calistir.ps1'
+const KURULUM_KOMUTU = 'powershell -ExecutionPolicy Bypass -File "%USERPROFILE%\\Downloads\\pipeline_kurulum.ps1"'
+
+function Komut({ metin }) {
+  const [kopyalandi, setKopyalandi] = useState(false)
+  return (
+    <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', margin: '6px 0' }}>
+      <code style={{ background: 'var(--bg)', border: '1px solid var(--bor)', borderRadius: 6, padding: '6px 8px', fontSize: 12, wordBreak: 'break-all', flex: '1 1 320px' }}>{metin}</code>
+      <button className="yp-mini" onClick={() => { navigator.clipboard?.writeText(metin).then(() => { setKopyalandi(true); setTimeout(() => setKopyalandi(false), 1500) }).catch(() => {}) }}>
+        {kopyalandi ? '✓ Kopyalandı' : 'Kopyala'}
+      </button>
+    </div>
+  )
+}
+
+function PipelineSayacKarti({ durum }) {
+  const s = durum.sayac
+  const g = SAYAC_GORUNUM[s.durum] || SAYAC_GORUNUM.gerekli
+  const kalan = s.kalan_gun
+  return (
+    <div className="card">
+      <div className="ct">Pipeline sayacı · yılda bir güncelleme</div>
+      <div style={{ display: 'flex', gap: 12, alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
+        <span style={{ background: g.zemin, color: g.renk, fontWeight: 800, borderRadius: 999, padding: '6px 14px' }}>{g.etiket}</span>
+        <span className="ps" style={{ margin: 0 }}>
+          {s.son_guncelleme
+            ? <>Son güncelleme <b>{tarih(s.son_guncelleme)}</b> · sonraki <b>{tarih(s.sonraki_guncelleme)}</b>
+              {' '}({kalan > 0 ? <><b>{kalan}</b> gün kaldı</> : <b>{-kalan} gün geçti</b>})</>
+            : 'Bölüm profilleri henüz hiç canlıya alınmadı.'}
+        </span>
+      </div>
+      {s.nedenler.length > 0 && (
+        <ul style={{ margin: '0 0 8px', paddingLeft: 18, color: g.renk }}>
+          {s.nedenler.map((n) => <li key={n} className="yp-ince" style={{ color: g.renk }}>{n}</li>)}
+        </ul>
+      )}
+      {s.notlar.length > 0 && (
+        <ul style={{ margin: '0 0 8px', paddingLeft: 18 }}>
+          {s.notlar.map((n) => <li key={n} className="yp-ince">{n}</li>)}
+        </ul>
+      )}
+      <div className="yp-ince" style={{ marginBottom: 6 }}>
+        Canlıya alma: bölüm profilleri {tarih(s.canliya_alma.bolum_profili)} · K5 bağları {tarih(s.canliya_alma.k5_baglari)} ·
+        örnek meslekler {tarih(s.canliya_alma.ornek_meslekler)}
+      </div>
+      {(s.durum === 'gerekli' || s.durum === 'yaklasiyor') && (
+        <div className="yp-ince">Pipeline'ın kurulu olduğu bilgisayarda cmd'ye yapıştırın, bitince aşağıdaki 3 adımla canlıya alın:<Komut metin={CALISTIR_KOMUTU} /></div>
+      )}
+    </div>
+  )
+}
+
+function PipelineKurulumKarti({ durum, yenile }) {
+  const [ad, setAd] = useState('')
+  const [bekle, setBekle] = useState(false)
+  const [hata, setHata] = useState(null)
+  const [indirildi, setIndirildi] = useState(null)
+  const [kaldir, setKaldir] = useState(null)
+
+  async function indir() {
+    setBekle(true); setHata(null); setIndirildi(null)
+    try {
+      await api.pipelineKurulumDosyasi(ad.trim(), `${window.location.origin}/api`)
+      setIndirildi(ad.trim()); setAd(''); yenile()
+    } catch (err) {
+      setHata(err.detail || 'Kurulum dosyası hazırlanamadı.')
+    }
+    setBekle(false)
+  }
+
+  async function cihazKaldir(id) {
+    if (kaldir !== id) { setKaldir(id); return }
+    setBekle(true); setHata(null)
+    try { await api.pipelineCihazKaldir(id); setKaldir(null); yenile() } catch (err) { setHata(err.detail || 'Kaldırılamadı.') }
+    setBekle(false)
+  }
+
+  return (
+    <div className="card">
+      <div className="ct">Pipeline'ı bir bilgisayara kur</div>
+      <div className="ps" style={{ margin: '0 0 10px' }}>
+        Pipeline'ın kodu sistemde, verisi sistemin deposunda durur. Herhangi bir Windows bilgisayara buradan indirilen tek dosyayla
+        kurulur. Her çalıştırmada güncel kodu ve en son veriyi kendisi alır, bitince sonuçları depoya gönderir.
+        Canlıya alma yine aşağıdaki 3 adımla yapılır.
+      </div>
+      {!durum.depo_hazir && (
+        <div className="auth-error" style={{ marginBottom: 10 }}>
+          <b>Pipeline deposu henüz bağlı değil.</b> Kurulum dosyası indirilebilir, ancak veri gönderip almak için bir kez şunlar yapılmalı:
+          <ol style={{ margin: '6px 0 0', paddingLeft: 18 }}>
+            <li>Supabase → projeniz → <b>Project Settings → API</b>: <b>Project URL</b> ve <b>service_role</b> anahtarını kopyalayın.</li>
+            <li>Render → backend servisi → <b>Environment</b>: <code>SUPABASE_URL</code> = Project URL, <code>SUPABASE_SERVICE_KEY</code> = service_role anahtarı → <b>Save</b> (servis yeniden başlar).</li>
+          </ol>
+        </div>
+      )}
+      <div className="yp-ince" style={{ marginBottom: 6 }}>
+        <b>1.</b> Bilgisayarda <b>Python 3.14</b> kurulu olmalı. Kurulu değilse <a href="https://www.python.org/downloads/" target="_blank" rel="noreferrer">python.org</a>'dan
+        kurun ve "Add python.exe to PATH" kutusunu işaretleyin.
+      </div>
+      <div className="yp-ince" style={{ marginBottom: 6 }}><b>2.</b> Bilgisayara bir ad verin ve kurulum dosyasını indirin. Dosya 24 saat geçerlidir ve tek kullanımlıktır.</div>
+      <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 6 }}>
+        <input className="auth-input" style={{ flex: "1 1 220px", marginBottom: 0 }} placeholder="Bilgisayar adı (ör. Ofis bilgisayarı)" value={ad} maxLength={60}
+          onChange={(e) => setAd(e.target.value)} />
+        <button className="btn" disabled={bekle || ad.trim().length < 2} onClick={indir}>{bekle ? <span className="spin" /> : '⬇ Kurulum dosyasını indir'}</button>
+      </div>
+      {indirildi && <div className="yp-ince" style={{ color: 'var(--gr)' }}>✓ "{indirildi}" için <b>pipeline_kurulum.ps1</b> indirildi.</div>}
+      <div className="yp-ince"><b>3.</b> İndirdiğiniz dosyayı o bilgisayarda çalıştırın (cmd'ye yapıştırın):<Komut metin={KURULUM_KOMUTU} /></div>
+      <div className="yp-ince"><b>4.</b> Kurulum bitince pipeline'ı çalıştırmak için:<Komut metin={CALISTIR_KOMUTU} /></div>
+      {hata && <div className="auth-error" style={{ marginTop: 8 }}>{hata}</div>}
+
+      <div style={{ fontWeight: 700, margin: '14px 0 6px' }}>Kayıtlı bilgisayarlar ({durum.cihazlar.length})</div>
+      {durum.cihazlar.length === 0 ? <div className="yp-ince">Henüz kurulum yapılmadı.</div> : (
+        <table className="yp-tablo">
+          <thead><tr><th>Bilgisayar</th><th>Kuran</th><th>Kurulum</th><th>Son bağlantı</th><th /></tr></thead>
+          <tbody>{durum.cihazlar.map((c) => (
+            <tr key={c.id}>
+              <td>{c.cihaz_adi}</td><td className="yp-ince">{c.olusturan || '—'}</td>
+              <td className="yp-ince">{tarihSaat(c.olusturma_zamani)}</td><td className="yp-ince">{tarihSaat(c.son_kullanim)}</td>
+              <td><button className="yp-mini" disabled={bekle} onClick={() => cihazKaldir(c.id)}>{kaldir === c.id ? 'Eminim, erişimi kaldır' : 'Erişimi kaldır'}</button></td>
+            </tr>
+          ))}</tbody>
+        </table>
+      )}
+      <div style={{ fontWeight: 700, margin: '14px 0 6px' }}>Depodaki veri sürümleri</div>
+      {durum.surumler.length === 0 ? <div className="yp-ince">Henüz gönderilmiş veri yok. İlk çalıştırmanın sonunda gönderilir.</div> : (
+        <table className="yp-tablo">
+          <thead><tr><th>Sürüm</th><th>Tarih</th><th>Bilgisayar</th><th>Dosya</th><th>Boyut</th></tr></thead>
+          <tbody>{durum.surumler.map((v) => (
+            <tr key={v.id}><td>#{v.id}</td><td className="yp-ince">{tarihSaat(v.zaman)}</td><td>{v.cihaz_adi || '—'}</td>
+              <td className="yp-ince">{v.dosya_sayisi}</td><td className="yp-ince">{Math.round((v.toplam_bayt || 0) / 1e6)} MB</td></tr>
+          ))}</tbody>
+        </table>
+      )}
+      <div className="yp-ince" style={{ marginTop: 8 }}>Kod sürümü {durum.kod_surumu} · {durum.kod_dosya_sayisi} dosya · son 5 veri sürümü saklanır.</div>
+    </div>
+  )
+}
+
 export default function PipelineDurumuSayfasi() {
   const { rol } = useAdminAuth()
   const suAdminMi = rol === 'super_admin'
@@ -272,6 +426,12 @@ export default function PipelineDurumuSayfasi() {
   const [sonYukleme, setSonYukleme] = useState(null)
   const [hata, setHata] = useState(null)
   const [islemGrubu, setIslemGrubu] = useState(null)
+  const [paket, setPaket] = useState(null)
+  const paketiYenile = useCallback(() => {
+    if (!suAdminMi) return
+    api.pipelinePaketDurumu().then(setPaket).catch(() => setPaket(null))
+  }, [suAdminMi])
+  useEffect(() => { paketiYenile() }, [paketiYenile])
 
   const listeyiYenile = useCallback(() => {
     api.pipelineTaslaklariListele().then(setTaslaklar).catch((e) => setHata(e.detail || 'Liste alınamadı.'))
@@ -337,6 +497,9 @@ export default function PipelineDurumuSayfasi() {
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
+
+      {paket && <PipelineSayacKarti durum={paket} />}
+      {paket && <PipelineKurulumKarti durum={paket} yenile={paketiYenile} />}
 
       <div className="card">
         <div className="ct">1. adım · Bölüm profilleri</div>

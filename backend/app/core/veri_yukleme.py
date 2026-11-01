@@ -107,7 +107,14 @@ def ayristir(tur: str, metin: str) -> list[dict]:
 
 
 def _bolumler(db: Session) -> dict[str, int]:
-    return {r.ad: r.id for r in db.execute(text("SELECT id, ad FROM bolumler WHERE durum = 'yayinda'"))}
+    """[2026-11-01] Sistemdeki TÜM bölümler (taslak / test ediliyor dahil). Pipeline bölüm listesini canlıdan aldığı için
+    çıktıda yayında olmayan bölümler de bulunur; onların verisi yayına alınmadan önce test edilebilsin diye kabul edilir
+    (1. adımın bölüm profili yüklemesiyle aynı kural). Kapsama uyarısı yalnızca yayındaki bölümlere bakar."""
+    return {r.ad: r.id for r in db.execute(text("SELECT id, ad FROM bolumler"))}
+
+
+def _yayindaki(db: Session) -> set[str]:
+    return set(db.execute(text("SELECT ad FROM bolumler WHERE durum = 'yayinda'")).scalars())
 
 
 def _k5_kodlari(db: Session) -> dict[str, int]:
@@ -139,7 +146,8 @@ def onizle(db: Session, tur: str, satirlar: list[dict]) -> dict:
     for s in gecerli:
         yeni_b.setdefault(s["bolum"], set()).add(anahtar(s))
     degisen = sorted(b for b in set(eski_b) | set(yeni_b) if eski_b.get(b) != yeni_b.get(b))
-    kapsanmayan = sorted(set(bol) - set(yeni_b))
+    yayinda = _yayindaki(db)
+    kapsanmayan = sorted(yayinda - set(yeni_b))
     ornek = []
     for b in degisen[:6]:
         if tur == "k5_baglari":
@@ -148,7 +156,8 @@ def onizle(db: Session, tur: str, satirlar: list[dict]) -> dict:
             ad = lambda xs: ", ".join(m for _, m in sorted(xs))[:160] or "—"
         ornek.append({"bolum": b, "eski": ad(eski_b.get(b, set())), "yeni": ad(yeni_b.get(b, set()))})
     return {"tur": tur, "tur_ad": TURLER[tur], "satir": len(satirlar), "gecerli_satir": len(gecerli),
-            "bolum_sayisi": len(yeni_b), "yayindaki_bolum": len(bol), "eslesmeyen_bolumler": eslesmeyen_bolum,
+            "bolum_sayisi": len(set(yeni_b) & yayinda), "yayindaki_bolum": len(yayinda),
+            "yayinda_olmayan_bolum": len(set(yeni_b) - yayinda), "eslesmeyen_bolumler": eslesmeyen_bolum,
             "eslesmeyen_kodlar": eslesmeyen_kod, "kapsanmayan_bolumler": kapsanmayan,
             "mevcut_satir": len(eski), "mevcut_bolum": len(eski_b), "degisen_bolum": len(degisen), "ornek": ornek,
             "canliya_alinabilir": bool(gecerli) and not eslesmeyen_bolum and not eslesmeyen_kod}
