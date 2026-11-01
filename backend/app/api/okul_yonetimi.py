@@ -233,8 +233,29 @@ def _dosyadan_satirlar(dosya_adi: str, icerik_b64: str) -> list[list]:
             raise HTTPException(status_code=400, detail="Excel dosyası açılamadı. .xlsx olarak kaydedip tekrar deneyin.")
         satir_siniri(len([r for r in satirlar if any(str(c).strip() for c in r)]) - 1)
         return satirlar
-    if ad.endswith(".xls"):
-        raise HTTPException(status_code=400, detail="Eski .xls biçimi desteklenmiyor; dosyayı .xlsx olarak kaydedin.")
+    if ad.endswith(".xls") or veri[:8] == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1":
+        # [2026-11-01] Eski Excel (.xls): TÜİK Veri Portalı tabloları bu biçimde iner. xlrd yalnızca hücre değerlerini okur
+        # (makro / formül çalıştırmaz). Tam sayıya eşit ondalıklar ("2025.0") tam sayı olarak döner.
+        try:
+            import xlrd
+            wb = xlrd.open_workbook(file_contents=veri, on_demand=True)
+            ws = wb.sheet_by_index(0)
+            if ws.nrows > TABLO_EN_FAZLA_SATIR + 50:
+                satir_siniri(ws.nrows)
+            satirlar = []
+            for i in range(ws.nrows):
+                satir = []
+                for c in ws.row_values(i):
+                    if isinstance(c, float) and c.is_integer():
+                        c = int(c)
+                    satir.append("" if c is None else c)
+                satirlar.append(satir)
+        except HTTPException:
+            raise
+        except Exception:
+            raise HTTPException(status_code=400, detail="Excel (.xls) dosyası açılamadı. .xlsx olarak kaydedip tekrar deneyin.")
+        satir_siniri(len([r for r in satirlar if any(str(c).strip() for c in r)]) - 1)
+        return satirlar
     for kod in ("utf-8-sig", "cp1254", "latin-1"):
         try:
             metin = veri.decode(kod)

@@ -123,20 +123,59 @@ def program_anahtari(ad: str) -> str:
     return " ".join(_PROGRAM_GURULTU.sub(" ", t).split())
 
 
+# [2026-11-01] Bölüm adlarında çok geçen genel sözcükler: yalnızca bunlar ortaksa ad benzer sayılmaz
+# ("Elektrik mühendisliği" ≠ "Mekatronik mühendisliği", "Uzay mühendisliği" ≠ "Gıda mühendisliği").
+_GENEL_SOZCUK = frozenset("""ve muhendisligi ogretmenligi bilimleri bilimi teknolojisi teknolojileri yonetimi isletmeciligi
+isletmesi sanatlari tasarimi egitimi""".split())
+
+
+def _ayni_sozcuk(x: str, y: str) -> bool:
+    """Aynı sözcük ya da biri diğerinin başı (≥ 6 harf): "veteriner" ~ "veterinerlik"; "elektrik" ≁ "elektronik"."""
+    return x == y or (min(len(x), len(y)) >= 6 and (x.startswith(y) or y.startswith(x)))
+
+
 def _benzerlik(a: str, b: str) -> float:
+    """a: yüklenen program adı, b: sistemdeki bölüm adı (anahtar)."""
     ka, kb = frozenset(a.split()) - {"ve"}, frozenset(b.split()) - {"ve"}
+    qa, qb = ka - _GENEL_SOZCUK, kb - _GENEL_SOZCUK
+    ozel = {x for x in qa if any(_ayni_sozcuk(x, y) for y in qb)}
     oran = SequenceMatcher(None, a, b).ratio()
     ortak = len(ka & kb) / max(1, len(ka | kb))
-    icerme = 0.6 if ka and kb and (ka <= kb or kb <= ka) else 0.0
+    if not ozel:
+        return min(max(oran, ortak), 0.6)        # yalnızca genel sözcük ortak (ya da hiç ortak sözcük yok): öneri olamaz
+    # Program adının ayırt edici sözcüklerinin tamamı bölüm adında var: "Elektrik mühendisliği" → "Elektrik ve Elektronik Müh."
+    icerme = 0.88 if qa and ozel == qa else 0.0
     return max(oran, ortak, icerme)
+
+
+def _birlesen_bolumler() -> dict[str, str]:
+    """0075 göçünde birleştirilen bölümler: silinen ad → kalan (ana) bölüm adı. TÜİK / YÖK listelerinde eski adlar
+    sürer ("İktisat" → Ekonomi, "Uçak mühendisliği" → Havacılık ve Uzay Mühendisliği)."""
+    try:
+        import importlib.util
+        from pathlib import Path
+        yol = Path(__file__).resolve().parents[2] / "alembic" / "versions" / "0075_bolum_birlestirme.py"
+        spec = importlib.util.spec_from_file_location("_bb0075", yol)
+        m = importlib.util.module_from_spec(spec)
+        spec.loader.exec_module(m)
+        out = {}
+        for g in m.GRUPLAR:
+            ana, *uyeler = g.split("|")
+            for u in uyeler:
+                out[u] = ana
+        return out
+    except Exception:
+        return {}
 
 
 def bolum_adaylari(db: Session) -> list[dict]:
     """Eşleştirme için bölüm adları: bölüm adı + elle girilmiş YÖK Atlas program grupları (detay.yokatlas_gruplari)."""
     out = []
+    birlesen = _birlesen_bolumler()
     for r in db.execute(text("SELECT id, ad, detay FROM bolumler WHERE durum = 'yayinda' ORDER BY ad")).all():
         d = r.detay if isinstance(r.detay, dict) else json.loads(r.detay or "{}")
-        adlar = [r.ad] + [x for x in (d.get("yokatlas_gruplari") or []) if isinstance(x, str)]
+        adlar = [r.ad] + [x for x in (d.get("yokatlas_gruplari") or []) if isinstance(x, str)] \
+            + [eski for eski, ana in birlesen.items() if _anahtar(ana) == _anahtar(r.ad)]
         out.append({"id": r.id, "ad": tr_baslik(r.ad), "anahtarlar": list({program_anahtari(a) for a in adlar if a})})
     return out
 
@@ -148,6 +187,19 @@ def program_eslestir(program_adi: str, adaylar: list[dict], n: int = 4) -> dict:
     a = program_anahtari(program_adi)
     if not a:
         return {"bolum_id": None, "bolum_ad": None, "skor": 0, "durum": "yok", "adaylar": []}
+    # Sistemdeki çatı bölümler: dil ve edebiyat programları "Dil ve Edebiyat", yabancı dil öğretmenlikleri "Dil Öğretmenliği"
+    # altında. Kural öneri olarak gelir (yönetici onaylar); bölüm sistemde yoksa uygulanmaz.
+    ham = _anahtar(program_adi)
+    cati = None
+    if ham.endswith("dili ve edebiyati"):
+        cati = "dil ve edebiyat"
+    elif ham.endswith("ogretmenligi") and len(ham.split()) == 2 and re.search(r"(ce|ca)$", ham.split()[0]) and ham.split()[0] != "turkce":
+        cati = "dil ogretmenligi"
+    if cati:
+        b = next((x for x in adaylar if cati in x["anahtarlar"]), None)
+        if b:
+            return {"bolum_id": b["id"], "bolum_ad": b["ad"], "skor": 95, "durum": "oneri",
+                    "adaylar": [{"id": b["id"], "ad": b["ad"], "skor": 95}]}
     ka = frozenset(a.split())
     puanli = []
     for b in adaylar:
@@ -163,8 +215,10 @@ def program_eslestir(program_adi: str, adaylar: list[dict], n: int = 4) -> dict:
     adaylar_cikti = [{"id": b["id"], "ad": b["ad"], "skor": round(p * 100)} for p, b in puanli[:n] if p >= 0.5]
     if ilk[1] is not None and ilk[0] >= 0.999:
         return {"bolum_id": ilk[1]["id"], "bolum_ad": ilk[1]["ad"], "skor": 100, "durum": "otomatik", "adaylar": adaylar_cikti}
-    if ilk[1] is not None and ilk[0] >= 0.85:
+    ikinci = puanli[1][0] if len(puanli) > 1 else 0.0
+    if ilk[1] is not None and ilk[0] >= 0.85 and ilk[0] - ikinci >= 0.02:
         return {"bolum_id": ilk[1]["id"], "bolum_ad": ilk[1]["ad"], "skor": round(ilk[0] * 100), "durum": "oneri", "adaylar": adaylar_cikti}
+    # Eşit puanlı birden çok aday ("Ses eğitimi" → iki "ses" bölümü): ön seçim yapılmaz, yönetici adaylardan seçer
     return {"bolum_id": None, "bolum_ad": None, "skor": round(ilk[0] * 100), "durum": "yok", "adaylar": adaylar_cikti}
 
 
@@ -201,6 +255,12 @@ def kazanc_tablosu(db: Session) -> dict:
 
 
 def istihdam_bolum(db: Session, bolum_id: int) -> dict | None:
+    """Bölümün en son yıla ait TÜİK göstergeleri. [2026-11-01] Bir bölüme birden çok TÜİK programı bağlanabilir (çatı bölümler:
+    "Dil ve Edebiyat" ← İngiliz / Alman / … dili ve edebiyatı; birleştirilen bölümler). Özet değer:
+      * lisans programları varsa yalnızca onlar,
+      * programın adı bölüm adıyla aynıysa o program; tek program varsa o,
+      * aksi hâlde tek bir program seçilmez: sayılar boş, "aralik" en düşük–en yüksek değeri, "coklu_program" program sayısını
+        verir (bir programın değeri bölümün değeriymiş gibi gösterilmez)."""
     rows = db.execute(text("""SELECT program_adi_kaynak, duzey, istihdam_orani, is_bulma_suresi_ay, alan_uyum_orani, kazanc_grubu,
                                      kazanc_tl, veri_yili, kaynak
                                 FROM istihdam_gostergeleri WHERE bolum_id = :b
@@ -212,10 +272,26 @@ def istihdam_bolum(db: Session, bolum_id: int) -> dict | None:
         "program_adi_kaynak": r["program_adi_kaynak"], "duzey": r["duzey"], "duzey_ad": DUZEYLER.get(r["duzey"]),
         "istihdam_orani": _f(r["istihdam_orani"]), "is_bulma_suresi_ay": _f(r["is_bulma_suresi_ay"]),
         "alan_uyum_orani": _f(r["alan_uyum_orani"]), "kazanc_grubu": r["kazanc_grubu"],
-        "kazanc_grubu_ad": KAZANC_GRUPLARI.get(r["kazanc_grubu"]), "kazanc_tl": _f(r["kazanc_tl"]), "kaynak": r["kaynak"],
+        "kazanc_grubu_ad": KAZANC_GRUPLARI.get(r["kazanc_grubu"]), "kazanc_tl": _f(r["kazanc_tl"]),
+        "kaynak": (r["kaynak"] or "").split(" | ")[0] or None,
     } for r in rows if r["veri_yili"] == yil]
     onceki = sorted({r["veri_yili"] for r in rows if r["veri_yili"] != yil}, reverse=True)
-    return {**programlar[0], "veri_yili": yil, "programlar": programlar, "onceki_yillar": onceki, "tahmin": False}
+    aday = [p for p in programlar if p["duzey"] == "lisans"] or programlar
+    ad = db.execute(text("SELECT ad FROM bolumler WHERE id = :b"), {"b": bolum_id}).scalar() or ""
+    ayni = [p for p in aday if program_anahtari(p["program_adi_kaynak"]) == program_anahtari(ad)]
+    ortak = {"veri_yili": yil, "programlar": programlar, "onceki_yillar": onceki, "tahmin": False}
+    if ayni or len(aday) == 1:
+        return {**(ayni or aday)[0], **ortak}
+    aralik = {}
+    for k in ("istihdam_orani", "is_bulma_suresi_ay", "alan_uyum_orani"):
+        d = [p[k] for p in aday if p[k] is not None]
+        if d:
+            aralik[k] = [min(d), max(d)]
+    gruplar = {p["kazanc_grubu"] for p in aday if p["kazanc_grubu"]}
+    tek_grup = next(iter(gruplar)) if len(gruplar) == 1 else None
+    return {"program_adi_kaynak": None, "duzey": aday[0]["duzey"], "duzey_ad": aday[0]["duzey_ad"], "istihdam_orani": None,
+            "is_bulma_suresi_ay": None, "alan_uyum_orani": None, "kazanc_grubu": tek_grup, "kazanc_grubu_ad": KAZANC_GRUPLARI.get(tek_grup),
+            "kazanc_tl": None, "kaynak": aday[0]["kaynak"], "aralik": aralik, "coklu_program": len(aday), **ortak}
 
 
 def kazanc_meslekleri(db: Session, meslekler: list[dict], asgari: dict | None) -> list[dict]:

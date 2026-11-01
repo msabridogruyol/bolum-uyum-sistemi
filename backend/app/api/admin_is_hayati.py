@@ -164,10 +164,20 @@ def dosya_oku(istek: DosyaIstek, db: Session = Depends(get_db), yon: AdminKullan
     }
 
 
+_EKSIK_ISARET = {".", "..", "-", "–", "—", "x", "X", ":"}   # TÜİK: gizli / yok / az sayıda gözlem
+
+
 def _hucre(r: list, i: int | None):
+    """Hücre değeri. [2026-11-01] TÜİK tabloları iki dillidir ("Tıp\r\nMedicine", "Çok yüksek\r\nVery high"): ilk (Türkçe)
+    satır alınır. "." gibi eksik veri işaretleri boş sayılır."""
     if i is None or i < 0 or i >= len(r):
         return None
     v = r[i]
+    if isinstance(v, str):
+        satirlar = [x.strip() for x in v.replace("\r", "\n").split("\n") if x.strip()]
+        v = satirlar[0] if satirlar else ""
+        if v in _EKSIK_ISARET:
+            return None
     return None if v is None or (isinstance(v, str) and not v.strip()) else v
 
 
@@ -201,6 +211,9 @@ def istihdam_onizle(istek: OnizleIstek, db: Session = Depends(get_db), yon: Admi
         if ad is None or _TOPLAM.match(_normalize(str(ad))):
             continue
         ad = " ".join(str(ad).split())
+        olcu = ("istihdam_orani", "alan_uyum_orani", "is_bulma_suresi_ay", "kazanc_grubu", "kazanc_tl")
+        if not any(_hucre(r, e.get(k)) is not None for k in olcu if e.get(k) is not None):
+            continue          # [2026-11-01] değersiz satır: dipnot ("Mezun sayısı … altında olan bölümler"), eksik veri
         hatalar = []
         duzey = ihs.duzey_coz(_hucre(r, e.get("duzey"))) if e.get("duzey") is not None else None
         duzey = duzey or istek.varsayilan_duzey
@@ -222,6 +235,10 @@ def istihdam_onizle(istek: OnizleIstek, db: Session = Depends(get_db), yon: Admi
         v = ihs.sayi(_hucre(r, e.get("kazanc_tl")))
         s["kazanc_tl"] = v if v is None or v >= 0 else None
         s.update(ihs.program_eslestir(ad, adaylar))
+        if duzey == "onlisans" and s.get("bolum_id"):
+            # [2026-11-01] Sistemdeki bölümler lisans bölümleri: ön lisans programı otomatik bağlanmaz (aynı ad bile olsa farklı
+            # programdır, ör. ön lisans "İş sağlığı ve güvenliği"); yönetici gerekirse adaylardan seçer.
+            s.update({"bolum_id": None, "bolum_ad": None, "durum": "yok"})
         s["hatalar"] = hatalar
         satirlar.append(s)
     if not satirlar:
@@ -250,7 +267,10 @@ class IstihdamKaydet(BaseModel):
     dosya_adi: str | None = Field(None, max_length=200)
     veri_yili: int = Field(ge=2000, le=2100)
     kaynak: str = Field(min_length=3, max_length=500)
-    ayni_yili_degistir: bool = True
+    # [2026-11-01] TÜİK aynı yılın verisini ayrı tablolarda yayımlar (lisans / ön lisans × istihdam oranı / ilk iş bulma süresi /
+    # kazanç grubu). Varsayılan: BİRLEŞTİR — aynı yıl + düzey + program adındaki satırın yalnızca bu dosyada dolu olan sütunları
+    # güncellenir, yoksa yeni satır eklenir. ayni_yili_degistir=True yalnızca o yılı baştan yüklerken: önce o yılın tüm satırları silinir.
+    ayni_yili_degistir: bool = False
     satirlar: list[IstihdamSatiri] = Field(min_length=1, max_length=20000)
 
 
@@ -274,16 +294,47 @@ def istihdam_kaydet(istek: IstihdamKaydet, db: Session = Depends(get_db), yon: A
     eslesmeyen = [s.program_adi_kaynak for s in istek.satirlar if s.bolum_id is None]
     yid = _yukleme(db, yon, "istihdam", istek.dosya_adi, len(istek.satirlar), len(istek.satirlar) - len(eslesmeyen), eslesmeyen,
                    istek.veri_yili, kaynak)
-    db.execute(text("""INSERT INTO istihdam_gostergeleri (bolum_id, program_adi_kaynak, duzey, istihdam_orani, is_bulma_suresi_ay,
-                          alan_uyum_orani, kazanc_grubu, kazanc_tl, veri_yili, kaynak, yukleme_id)
-                       VALUES (:bolum_id, :program_adi_kaynak, :duzey, :istihdam_orani, :is_bulma_suresi_ay, :alan_uyum_orani,
-                          :kazanc_grubu, :kazanc_tl, :y, :k, :yid)"""),
-               [{**s.model_dump(), "y": istek.veri_yili, "k": kaynak, "yid": yid} for s in istek.satirlar])
+    # Var olan satırlar: aynı yıl + düzey + program adı (boşluk / büyük-küçük harf farkı yok sayılır)
+    mevcut = {(r.duzey or "", _program_anahtari(r.program_adi_kaynak)): r.id for r in db.execute(text(
+        "SELECT id, duzey, program_adi_kaynak FROM istihdam_gostergeleri WHERE veri_yili = :y ORDER BY id"), {"y": istek.veri_yili}).all()}
+    eklenen = guncellenen = 0
+    alanlar = ("bolum_id", "istihdam_orani", "is_bulma_suresi_ay", "alan_uyum_orani", "kazanc_grubu", "kazanc_tl")
+    for s in istek.satirlar:
+        d = s.model_dump()
+        anahtar = (d["duzey"] or "", _program_anahtari(d["program_adi_kaynak"]))
+        if anahtar in mevcut:
+            dolu = {a: d[a] for a in alanlar if d[a] is not None}
+            if dolu:
+                ayar = ", ".join(f"{a} = :{a}" for a in dolu)
+                db.execute(text(f"UPDATE istihdam_gostergeleri SET {ayar}, kaynak = :k WHERE id = :i"),
+                           {**dolu, "k": _kaynak_birlestir(db, mevcut[anahtar], kaynak), "i": mevcut[anahtar]})
+            guncellenen += 1
+            continue
+        mevcut[anahtar] = db.execute(text("""INSERT INTO istihdam_gostergeleri (bolum_id, program_adi_kaynak, duzey, istihdam_orani,
+                              is_bulma_suresi_ay, alan_uyum_orani, kazanc_grubu, kazanc_tl, veri_yili, kaynak, yukleme_id)
+                           VALUES (:bolum_id, :program_adi_kaynak, :duzey, :istihdam_orani, :is_bulma_suresi_ay, :alan_uyum_orani,
+                              :kazanc_grubu, :kazanc_tl, :y, :k, :yid) RETURNING id"""),
+                                         {**d, "y": istek.veri_yili, "k": kaynak, "yid": yid}).scalar()
+        eklenen += 1
     denetim_yaz(db, yon, "is_hayati_istihdam_yukle", "istihdam_gostergeleri", yid,
-                f"{istek.veri_yili} · {len(istek.satirlar)} satır ({len(eslesmeyen)} eşleşmesiz) · önceki {silinen} satır silindi · {kaynak[:120]}")
+                f"{istek.veri_yili} · {len(istek.satirlar)} satır ({len(eslesmeyen)} eşleşmesiz) · {eklenen} yeni, {guncellenen} birleştirildi"
+                f" · önceki {silinen} satır silindi · {kaynak[:120]}")
     db.commit()
-    return {"yukleme_id": yid, "eklenen": len(istek.satirlar), "eslesen": len(istek.satirlar) - len(eslesmeyen),
+    return {"yukleme_id": yid, "eklenen": eklenen, "guncellenen": guncellenen, "eslesen": len(istek.satirlar) - len(eslesmeyen),
             "eslesmeyen": len(eslesmeyen), "silinen": silinen}
+
+
+def _program_anahtari(ad: str | None) -> str:
+    return " ".join(str(ad or "").replace("İ", "i").replace("I", "ı").lower().split())
+
+
+def _kaynak_birlestir(db: Session, satir_id: int, yeni: str) -> str:
+    """Satır birden çok TÜİK tablosundan doldurulunca kaynak alanı hepsini gösterir (aynı metin tekrar eklenmez)."""
+    eski = db.execute(text("SELECT kaynak FROM istihdam_gostergeleri WHERE id = :i"), {"i": satir_id}).scalar() or ""
+    parcalar = [p for p in eski.split(" | ") if p]
+    if yeni not in parcalar:
+        parcalar.append(yeni)
+    return " | ".join(parcalar)[:500]
 
 
 def _isco_bul(kod_hucre, ad: str) -> str | None:

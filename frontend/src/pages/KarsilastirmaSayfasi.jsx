@@ -220,18 +220,21 @@ export default function KarsilastirmaSayfasi({ gomulu = false }) {
       const sEn = enIyi((b) => ist(b, 'is_bulma_suresi_ay'), -1)
       const aEn = enIyi((b) => ist(b, 'alan_uyum_orani'))
       const istYok = <Yok neden="Bu bölüm için istihdam verisi henüz yok" />
-      satir('istihdam', 'Mezun istihdamı', (b) => (ist(b, 'istihdam_orani') == null ? istYok : (
+      // [2026-11-01] Çok programlı bölüm: aralık gösterilir, "en iyi" karşılaştırmasına girmez
+      const arl = (b, k, f) => { const r = b.istihdam?.aralik?.[k]; return r ? <b>{f(r[0])} – {f(r[1])}</b> : null }
+      satir('istihdam', 'Mezun istihdamı', (b) => (ist(b, 'istihdam_orani') == null ? (arl(b, 'istihdam_orani', (x) => `%${sayi(x)}`)
+        ? <span>{arl(b, 'istihdam_orani', (x) => `%${sayi(x)}`)}<small className="yp-ince"> · {b.istihdam.coklu_program} program · {b.istihdam.veri_yili}</small></span> : istYok) : (
         <span className={vurgu(ist(b, 'istihdam_orani'), iEn)}><b>%{sayi(ist(b, 'istihdam_orani'))}</b>
           <small className="yp-ince"> · {[b.istihdam.kaynak, b.istihdam.veri_yili].filter(Boolean).join(' ')}</small></span>
       )), 'İş Hayatı · mezunların çalışma oranı')
       const istVar = kol.some((b) => b.istihdam)   // hiçbir bölümde veri yoksa yalnızca ilk satır (açıklamalı)
-      if (istVar) satir('isbulma', 'İş bulma süresi', (b) => (ist(b, 'is_bulma_suresi_ay') == null ? <Yok /> : (
+      if (istVar) satir('isbulma', 'İş bulma süresi', (b) => (ist(b, 'is_bulma_suresi_ay') == null ? (arl(b, 'is_bulma_suresi_ay', (x) => `${sayi(x, 1)} ay`) || <Yok />) : (
         <span className={vurgu(ist(b, 'is_bulma_suresi_ay'), sEn)}><b>{sayi(ist(b, 'is_bulma_suresi_ay'), 1)} ay</b></span>
       )), 'ortalama · en kısası vurgulu')
-      if (istVar) satir('alanuyum', 'Alanında çalışan', (b) => (ist(b, 'alan_uyum_orani') == null ? <Yok /> : (
+      if (istVar) satir('alanuyum', 'Alanında çalışan', (b) => (ist(b, 'alan_uyum_orani') == null ? (arl(b, 'alan_uyum_orani', (x) => `%${sayi(x)}`) || <Yok />) : (
         <span className={vurgu(ist(b, 'alan_uyum_orani'), aEn)}><b>%{sayi(ist(b, 'alan_uyum_orani'))}</b></span>
       )))
-      if (istVar) satir('kazanc', 'Kazanç grubu', (b) => ist(b, 'kazanc_grubu_ad') || <Yok />, 'TÜİK gruplaması')
+      if (istVar) satir('kazanc', 'Kazanç grubu', (b) => ist(b, 'kazanc_grubu_ad') || (b.istihdam?.coklu_program ? 'Programa göre değişir' : <Yok />), 'TÜİK gruplaması')
       satir('yol', 'Mesleğe giden yol', (b) => (b.yol ? (
         <>
           <ol className="ks-yol">{b.yol.adimlar.map((x) => <li key={x}>{x}</li>)}</ol>

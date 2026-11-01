@@ -12,6 +12,7 @@ numpy==2.4.4
 openai
 yokatlas-py==0.7.0
 openpyxl==3.1.5
+xlrd==2.0.2  # [2026-11-01] TÜİK Veri Portalı .xls tabloları
 reportlab>=4.2
 python-pptx==1.0.2
 pypdf>=4.0
