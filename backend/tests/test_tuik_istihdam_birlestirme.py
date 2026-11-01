@@ -83,3 +83,53 @@ def test_cok_programli_bolum_tek_program_degeri_gostermez(db):
     assert ihs.istihdam_bolum(db, bid)["istihdam_orani"] == 61.0, "adı bölümle aynı program varsa o gösterilir"
     db.execute(text("DELETE FROM istihdam_gostergeleri WHERE veri_yili = 2092"))
     db.commit()
+
+
+def _tuik_xlsx(baslik: str, satirlar: list[tuple]) -> str:
+    """TÜİK Veri Portalı tablosunun biçimi: iki dilli başlık, 'Bölüm\\nProgramme' + yıl sütunları (arada boş sütun), dipnot."""
+    import base64
+    import io
+    import openpyxl
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append([baslik])
+    ws.append(["English title"])
+    ws.append([])
+    ws.append(["Bölüm\nProgramme", 2024, None, 2025])
+    for ad, d24, d25 in satirlar:
+        ws.append([ad, d24, None, d25])
+    ws.append(["TÜİK, Yükseköğretim İstihdam Göstergeleri, 2025"])
+    ws.append([". Medyan (ortanca) değerin altında mezunu olan bölümlere tablolarda yer verilmemiştir."])
+    b = io.BytesIO()
+    wb.save(b)
+    return base64.b64encode(b.getvalue()).decode()
+
+
+@db_gerekli
+def test_tuik_paketi_dosyalari_tanir_ve_birlestirir(istemci, kisiler, db):
+    ad = f"PAKET BÖLÜMÜ {uuid.uuid4().hex[:5].upper()}"
+    db.execute(text("INSERT INTO bolumler (ad, durum) VALUES (:a, 'yayinda')"), {"a": ad})
+    db.commit()
+    p = ad.capitalize()
+    dosyalar = [
+        {"dosya_adi": "a.xlsx", "icerik_base64": _tuik_xlsx("Lisans mezunlarının bölümlere göre kayıtlı istihdam oranı",
+                                                            [("Toplam\nTotal", 75, 74), (f"{p}\r\nEnglish", 80.1, 81.2)])},
+        {"dosya_adi": "b.xlsx", "icerik_base64": _tuik_xlsx("Lisans mezunlarının bölümlere göre ilk iş bulma süresi",
+                                                            [(f"{p}\r\nEnglish", 5.0, "."), ("Başka bölüm\r\nOther", 6, 7)])},
+        {"dosya_adi": "c.xlsx", "icerik_base64": _tuik_xlsx("Lisans mezunlarının bölümlere göre aylık ortalama kazanç grupları",
+                                                            [(f"{p}\r\nEnglish", "Yüksek\r\nHigh", "Çok yüksek\r\nVery high")])},
+        {"dosya_adi": "d.xlsx", "icerik_base64": _tuik_xlsx("Ön lisans mezunlarının bölümlere göre kayıtlı istihdam oranı",
+                                                            [("Makine\r\nMachinery", 70, 71)])},
+        {"dosya_adi": "e.xlsx", "icerik_base64": _tuik_xlsx(
+            "Lisans mezunlarının eğitim ve öğretim alanları ile uyumlu bir meslek grubunda çalışma oranı", [("Eğitim\nEducation", 60, 61)])},
+    ]
+    r = istemci.post("/admin/is-hayati/istihdam/tuik-paket", headers=kisiler["super"], json={"dosyalar": dosyalar})
+    assert r.status_code == 200, r.text
+    v = r.json()
+    durum = {d["dosya_adi"]: d["durum"] for d in v["dosyalar"]}
+    assert durum == {"a.xlsx": "kullanilacak", "b.xlsx": "kullanilacak", "c.xlsx": "kullanilacak", "d.xlsx": "atlandi", "e.xlsx": "atlandi"}
+    assert v["yil"] == 2025 and v["kaynak"] == "TÜİK, Yükseköğretim İstihdam Göstergeleri, 2025"
+    assert len(v["satirlar"]) == 2, "Toplam satırı ve dipnotlar program değildir"
+    s = next(x for x in v["satirlar"] if x["program_adi_kaynak"] == p)
+    assert s["istihdam_orani"] == 81.2 and s["is_bulma_suresi_ay"] is None and s["kazanc_grubu"] == "cok_yuksek"
+    assert s["bolum_id"] and s["durum"] == "otomatik"
