@@ -57,7 +57,7 @@ Admin paneli → **Pipeline Sonuçları** ekranında üç adım sırayla yapıl�
 
 Veri, önbellek ve çıktılar sistemin deposunda durur. Depo türü sunucudaki `PIPELINE_DEPO` ayarıyla seçilir:
 
-- `supabase` (varsayılan): Supabase Storage. `SUPABASE_URL` ve `SUPABASE_SERVICE_KEY` gerekir.
+- `supabase` (varsayılan): Supabase Storage. `SUPABASE_URL` (`https://<proje-kodu>.supabase.co`) ve `SUPABASE_SERVICE_KEY` gerekir. Anahtar olarak Supabase → Project Settings → API Keys sayfasındaki gizli anahtar (`sb_secret_…`) ya da eski service_role anahtarı (`eyJ…`) kullanılabilir.
 - `disk`: kendi sunucuda bir klasör (`PIPELINE_DEPO_DIZINI`). Bilgisayar parçaları backend üzerinden gönderir ve alır.
 
 Bilgisayardaki pipeline için ikisi arasında fark yoktur. Depo değiştirildikten sonra pipeline'ı en son veri gönderen bilgisayarda bir kez çalıştırmak bütün veriyi yeni depoya taşır.

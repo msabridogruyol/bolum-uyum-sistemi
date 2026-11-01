@@ -367,8 +367,9 @@ function PipelineKurulumKarti({ durum, yenile }) {
         <div className="auth-error" style={{ marginBottom: 10 }}>
           <b>Pipeline deposu henüz bağlı değil.</b> Kurulum dosyası indirilebilir, ancak veri gönderip almak için bir kez şunlar yapılmalı:
           <ol style={{ margin: '6px 0 0', paddingLeft: 18 }}>
-            <li>Supabase → projeniz → <b>Project Settings → API</b>: <b>Project URL</b> ve <b>service_role</b> anahtarını kopyalayın.</li>
-            <li>Render → backend servisi → <b>Environment</b>: <code>SUPABASE_URL</code> = Project URL, <code>SUPABASE_SERVICE_KEY</code> = service_role anahtarı → <b>Save</b> (servis yeniden başlar).</li>
+            <li><b>Proje adresi:</b> <code>https://proje-kodu.supabase.co</code>. Proje kodu, Supabase'de projeyi açınca adres çubuğundaki <code>dashboard/project/…</code> kısmıdır.</li>
+            <li><b>Gizli anahtar:</b> Supabase → Project Settings → <b>API Keys</b> → <b>Secret keys</b> (<code>sb_secret_…</code>). Yoksa <b>Legacy API Keys</b> sekmesindeki <b>service_role</b> anahtarı (<code>eyJ…</code>). anon / publishable anahtarı çalışmaz.</li>
+            <li>Render → backend servisi → <b>Environment</b>: <code>SUPABASE_URL</code> = proje adresi, <code>SUPABASE_SERVICE_KEY</code> = gizli anahtar → <b>Save Changes</b> (servis yeniden başlar).</li>
           </ol>
         </div>
       ))}
