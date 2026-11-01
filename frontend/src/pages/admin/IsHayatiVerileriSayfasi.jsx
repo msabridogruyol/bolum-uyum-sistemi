@@ -152,7 +152,7 @@ function Sihirbaz({ tur, ozet, onBitti }) {
                 <li>Lisans mezunlarının <b>bölümlere göre</b> ilk iş bulma süresi</li>
                 <li>Lisans mezunlarının <b>bölümlere göre</b> aylık ortalama kazanç grupları</li>
               </ul>
-              <span className="yp-ince">Ön lisans tabloları ve "eğitim ve öğretim alanlarına göre" tablolar gerekmez; seçerseniz neden kullanılmadığı yazılır.</span>
+              <span className="yp-ince">Ön lisans tabloları gerekmez: sistemde şimdilik yalnızca lisans bölümleri var (ön lisans sonraki bir geliştirmeyle eklenecek). "Eğitim ve öğretim alanlarına göre" tablolar da bölüm bazında olmadığı için kullanılmaz. Bunları seçerseniz nedeni yazılır.</span>
             </li>
             <li>Üç dosyayı <b>birlikte</b> seçin (Ctrl / Cmd ile çoklu seçim). Hangi dosyanın ne olduğu ve yılı otomatik tanınır; sütun seçmeniz gerekmez.</li>
             <li>Aşağıdaki listede bölüm eşleşmelerini kontrol edin: <b>"Öneri — kontrol et"</b> ve <b>"Bölümsüz"</b> filtrelerine bakın.</li>

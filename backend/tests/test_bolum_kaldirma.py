@@ -71,3 +71,22 @@ def test_bolumu_ve_bagli_satirlari_siler_digerine_dokunmaz_tekrar_calistirmada_d
     assert ilk[0] == ["TST KALDIR KAL"] and ilk[1] == 1 and ilk[2] == 1 and tuple(ilk[3]) == (1, 2)
     calistir()
     assert durum() == ilk
+
+
+# ---------------------------------------------------------------- [2026-11-01] 0086: yalnızca ön lisans olan 4 bölüm
+_s86 = importlib.util.spec_from_file_location("g0086", KOK / "alembic/versions/0086_onlisans_bolum_kaldirma.py")
+GOC86 = importlib.util.module_from_spec(_s86)
+_s86.loader.exec_module(GOC86)
+
+
+def test_onlisans_kaldirma_listesi_icerik_ve_sira():
+    from app.core import sema_guncelleme as sg
+    assert len(GOC86.KALDIRILAN) == 4 and not set(GOC86.KALDIRILAN) & set(GOC.KALDIRILAN)
+    assert sg.OTOMATIK.index("0086_onlisans_bolum_kaldirma") > sg.OTOMATIK.index("0082_bolum_kaldirma")
+    assert len(sg._komutlar(GOC86.SQL)) == 2
+    for yol, anahtar in {"app/data/mulakat_simulasyonu.json": "bolumler", "app/data/meslege_yol.json": "bolumler",
+                         "app/data/bolum_kisa_aciklama.json": "bolumler", "app/core/meslek_jargonu.json": None}.items():
+        d = json.loads((KOK / yol).read_text("utf-8"))
+        assert not set(GOC86.KALDIRILAN) & set(d[anahtar] if anahtar else d), yol
+    for yol in (KOK.parent / "frontend/src/dil").glob("*.json"):
+        assert not set(GOC86.KALDIRILAN) & set(json.loads(yol.read_text("utf-8"))), yol.name

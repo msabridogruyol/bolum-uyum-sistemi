@@ -1554,11 +1554,6 @@
    "ozel": "Kamu kurumlarının AB birimleri, proje ofisleri ve uluslararası kuruluşlar; AB proje yazımı değerli bir beceridir.",
    "regule": false
   },
-  "AYAKKABI TASARIMI VE ÜRETİMİ": {
-   "alan": "U12",
-   "ozel": "Ayakkabı üreticileri ve atölyeler; sektör belirli bölgelerde yoğunlaşır.",
-   "regule": false
-  },
   "AĞAÇ İŞLERİ ENDÜSTRİ MÜHENDİSLİĞİ": {
    "alan": "U01",
    "ozel": "Mobilya ve ahşap ürünleri üretiminde tasarım, üretim planlama ve kalite işleri ağırlıklıdır; sektör bazı illerde yoğunlaşır.",
@@ -2363,87 +2358,6 @@
    "ozel": "Gümrük müşavirliği firmaları ve dış ticaret şirketleri; gümrük müşavirliği için ayrıca sınav ve staj süreçleri vardır.",
    "regule": false
   },
-  "GÜVERTE": {
-   "alan": "U16",
-   "ozel": "Önlisans programıdır: deniz stajı ve Bakanlığın yeterlik sınavıyla vardiya zabiti belgesi alınabilir; yetki sınırları lisans mezunlarından farklı olabilir.",
-   "regule": true,
-   "adimlar": [
-    {
-     "baslik": "YKS ve tercih",
-     "aciklama": "Lise son sınıfta YKS'ye girip bölümü tercih edersin. Puan türü ve sıralama bölümden bölüme değişir.",
-     "zorunlu": true,
-     "sure": null
-    },
-    {
-     "baslik": "Lisans + deniz stajları",
-     "aciklama": "Programlar STCW müfredatına göre yürütülür; örneğin bir programda üçer aylık iki yaz stajı ve altı aylık açık deniz stajı vardır (toplam süre okula göre değişir).",
-     "zorunlu": true,
-     "sure": "4 yıl"
-    },
-    {
-     "baslik": "Yeterlik sınavı",
-     "aciklama": "Ulaştırma ve Altyapı Bakanlığına bağlı birimlerin yaptığı yeterlik sınavlarını geçerek 'Uzakyol Vardiya Zabiti' olunur; sağlık şartları ve zorunlu eğitim sertifikaları gerekir.",
-     "zorunlu": true,
-     "sure": null
-    },
-    {
-     "baslik": "Ehliyet yükseltme",
-     "aciklama": "Denizde geçen hizmet süresi ve sınavlarla birinci zabit ve uzakyol kaptanlığına kadar yükselinir.",
-     "zorunlu": false,
-     "sure": null
-    }
-   ],
-   "basamaklar": [
-    {
-     "ad": "Giriş",
-     "donem": "ilk yıllar",
-     "aciklama": "Vardiya zabiti (güverte)."
-    },
-    {
-     "ad": "Orta",
-     "donem": "deniz hizmeti biriktikçe",
-     "aciklama": "Birinci zabit."
-    },
-    {
-     "ad": "Kıdemli",
-     "donem": "uzun vadede",
-     "aciklama": "Kaptan; ya da karada liman, filo ve denizcilik şirketi yöneticiliği."
-    }
-   ],
-   "zorlayanlar": [
-    {
-     "zor": "Aylarca denizde, ailenden uzakta kalmak.",
-     "nasil": "Seferler arası uzun izinler; birçok denizci bir süre sonra karada yöneticiliğe geçiyor."
-    },
-    {
-     "zor": "Fiziksel ve psikolojik dayanıklılık ister.",
-     "nasil": "Gemi içi ekip kültürü ve düzenli rutin."
-    }
-   ],
-   "neden_seviyor": [
-    "Dünyayı görmek.",
-    "Uluslararası geçerli bir meslek ve sorumluluk."
-   ],
-   "hazirlik": [
-    "İngilizce.",
-    "Yüzme ve temel sağlık şartları.",
-    "Matematik ve fizik."
-   ],
-   "kaynaklar": [
-    {
-     "ad": "İTÜ (KKTC) Deniz Ulaştırma İşletme Mühendisliği: Uzakyol Vardiya Zabiti yeterliği, GASM sınavları, STCW",
-     "url": "https://kktc.itu.edu.tr/index.php/tr/mtme",
-     "tarih": null
-    },
-    {
-     "ad": "Ulaştırma ve Altyapı Bakanlığı — Gemiadamları ve Kılavuz Kaptanlar Yönetmeliği",
-     "url": "https://denizcilik.uab.gov.tr/",
-     "tarih": null
-    }
-   ],
-   "temel_bolum": "DENİZ ULAŞTIRMA İŞLETME MÜHENDİSLİĞİ",
-   "son_kontrol": "2026-10-10"
-  },
   "GİRİŞİMCİLİK": {
    "alan": "U10",
    "ozel": "Kendi işini kurmanın yanında start-up'larda ve şirketlerin yeni iş birimlerinde çalışılır.",
@@ -2810,11 +2724,6 @@
   "KAMU YÖNETİMİ": {
    "alan": "U09",
    "ozel": "KPSS A grubu, kaymakamlık ve kurumların uzman yardımcılığı sınavları başlıca yollardır; özel sektörde idari işler.",
-   "regule": false
-  },
-  "KANATLI HAYVAN YETİŞTİRİCİLİĞİ": {
-   "alan": "U15",
-   "ozel": "Tavuk ve kanatlı işletmelerinde teknik personel; önlisans programıdır.",
    "regule": false
   },
   "KARŞILAŞTIRMALI EDEBİYAT": {
@@ -3395,11 +3304,6 @@
   "SANAT VE KÜLTÜR YÖNETİMİ": {
    "alan": "U12",
    "ozel": "Müzeler, galeriler, festivaller ve kültür kurumlarında yönetim ve proje koordinasyonu.",
-   "regule": false
-  },
-  "SAÇ VE GÜZELLİK UYGULAMALARI": {
-   "alan": "U17",
-   "ozel": "Kuaför ve güzellik salonları; kendi işyerini açmak için ilgili mevzuattaki belge şartlarını kontrol et. Önlisans programıdır.",
    "regule": false
   },
   "SAĞLIK YÖNETİMİ": {
