@@ -12,7 +12,7 @@ AD = "BİLGİSAYAR MÜHENDİSLİĞİ"
 
 
 def test_icerik_her_bolumde_dort_soru_ve_iki_aday():
-    assert len(VERI) >= 275   # [2026-10-18] 23 bölüm birleştirildi (301 → 278)
+    assert len(VERI) >= 260   # [2026-10-18] 301 → 278 (birleştirme); [2026-10-29] 278 → 266 (0082)
     ilk = ikinci = 0
     for ad, b in VERI.items():
         assert b["mulakatci"].strip() and b["pozisyon"].strip(), ad
