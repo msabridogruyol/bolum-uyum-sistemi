@@ -1,5 +1,5 @@
 ﻿# Filizyol pipeline — bu bilgisayara kurulum (admin panelinden indirildi: __OLUSTURMA__, bilgisayar: __CIHAZ_ADI__)
-# Çalıştırma (cmd):  powershell -ExecutionPolicy Bypass -File "%USERPROFILE%\Downloads\pipeline_kurulum.ps1"
+# Çalıştırma: admin paneli → Pipeline Sonuçları → "Bilgisayarlar ve veri deposu" kartındaki 3. adımın komutu (Kopyala)
 # Bu dosya 24 saat geçerlidir ve bir kez kullanılabilir. Başka bir bilgisayar için admin panelinden yeni dosya indirin.
 # Ne yapar: 1) Python 3.14'ü bulur  2) bu bilgisayarı sisteme bağlar  3) pipeline kodunu indirir
 #           4) Python ortamını sabit sürümlerle kurar  5) en son veri sürümünü ve canlı listeleri indirir

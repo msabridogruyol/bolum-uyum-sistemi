@@ -383,8 +383,8 @@ function PipelineKurulumKarti({ durum, yenile }) {
           onChange={(e) => setAd(e.target.value)} />
         <button className="btn" disabled={bekle || ad.trim().length < 2} onClick={indir}>{bekle ? <span className="spin" /> : '⬇ Kurulum dosyasını indir'}</button>
       </div>
-      {indirildi && <div className="yp-ince" style={{ color: 'var(--gr)' }}>✓ "{indirildi}" için <b>pipeline_kurulum.ps1</b> indirildi.</div>}
-      <div className="yp-ince"><b>3.</b> İndirdiğiniz dosyayı o bilgisayarda çalıştırın (cmd'ye yapıştırın):<Komut metin={KURULUM_KOMUTU} /></div>
+      {indirildi && <div className="yp-ince" style={{ color: 'var(--gr)' }}>✓ "{indirildi}" için <b>pipeline_kurulum.ps1</b> indirildi. Tarayıcı "tehlikeli olabilir" uyarısı verirse İndirilenler listesinden <b>Sakla / Keep</b> seçin.</div>}
+      <div className="yp-ince"><b>3.</b> O bilgisayarda cmd'ye yapıştırın (İndirilenler'deki en yeni kurulum dosyasını bulup çalıştırır):<Komut metin={KURULUM_KOMUTU} /></div>
       <div className="yp-ince"><b>4.</b> Kurulum bitince pipeline'ı çalıştırmak için:<Komut metin={CALISTIR_KOMUTU} /></div>
       {hata && <div className="auth-error" style={{ marginTop: 8 }}>{hata}</div>}
 

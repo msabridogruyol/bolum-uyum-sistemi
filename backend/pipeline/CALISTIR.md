@@ -6,8 +6,10 @@ Pipeline'ın kodu sistemin deposunda (`backend/pipeline/`), verisi sistemin depo
 
 1. Bilgisayarda **Python 3.14** kurulu olmalı. Kurulu değilse <https://www.python.org/downloads/> adresinden kurun ve kurulumda "Add python.exe to PATH" kutusunu işaretleyin.
 2. Admin paneli → **Pipeline Sonuçları** → **Bu bilgisayara kur** → bilgisayara bir ad verin → `pipeline_kurulum.ps1` iner.
-3. cmd'ye yapıştırın:
-   `powershell -ExecutionPolicy Bypass -File "%USERPROFILE%\Downloads\pipeline_kurulum.ps1"`
+3. cmd'ye yapıştırın (İndirilenler'deki en yeni `pipeline_kurulum*.ps1` dosyasını çalıştırır; tarayıcı dosyayı `pipeline_kurulum (1).ps1` diye kaydetmiş olsa da bulur):
+   `powershell -ExecutionPolicy Bypass -Command "$f = Get-ChildItem (Join-Path $env:USERPROFILE 'Downloads') -Filter 'pipeline_kurulum*.ps1' | Sort-Object LastWriteTime -Descending | Select-Object -First 1; if ($f) { & $f.FullName } else { Write-Host 'pipeline_kurulum.ps1 Indirilenler klasorunde yok: once admin panelinden indirin.' -ForegroundColor Red }"`
+
+   Tarayıcı `.ps1` dosyası için "tehlikeli olabilir" uyarısı verirse İndirilenler listesinden **Sakla / Keep** seçin.
 
 Kurulum dosyası 24 saat geçerlidir ve tek kullanımlıktır. İlk kurulumda kütüphaneler (~2–3 GB) ve ilk çalıştırmada embedding modelleri (~3–4 GB) iner. Kurulum varsayılan olarak `C:\pipeline` klasörüne yapılır. Bilgisayarın erişimi admin panelindeki **Kayıtlı bilgisayarlar** listesinden kaldırılabilir.
 
