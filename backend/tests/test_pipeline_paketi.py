@@ -252,3 +252,16 @@ def test_kontrol_paneli_sayac_maddesi(db):
     db.execute(text("UPDATE bolum_agirliklari SET olusturulma_zamani = now() - interval '5 days'"))
     db.commit()
     assert pp.sayac_durumu(db)["durum"] != "guncel" or _pipeline_sayac_maddesi(db) == []
+
+
+def test_supabase_anahtar_turleri_ve_adres(monkeypatch):
+    """Yeni gizli anahtar (sb_secret_) yalnızca apikey başlığında; eski service_role (JWT) Bearer ile de. Proje adresine
+    yapıştırılmış ekler (/rest/v1, /) yok sayılır."""
+    from app.core.config import settings
+    monkeypatch.setattr(settings, "SUPABASE_SERVICE_KEY", "sb_secret_abc")
+    assert depo._kimlik_basliklari() == {"apikey": "sb_secret_abc"}
+    monkeypatch.setattr(settings, "SUPABASE_SERVICE_KEY", "eyJhbGciOi.x.y")
+    assert depo._kimlik_basliklari() == {"Authorization": "Bearer eyJhbGciOi.x.y", "apikey": "eyJhbGciOi.x.y"}
+    for adres in ("https://abcd.supabase.co", "https://abcd.supabase.co/", "https://abcd.supabase.co/rest/v1/", " abcd.supabase.co "):
+        monkeypatch.setattr(settings, "SUPABASE_URL", adres)
+        assert depo._taban() == "https://abcd.supabase.co/storage/v1", adres

@@ -113,8 +113,9 @@ const KONULAR = [
     id: 'depo', grup: 'Sistem ve sunucu', baslik: 'Pipeline veri deposunu bağlamak (Supabase)',
     ne_zaman: <>Pipeline Sonuçları <b>"Pipeline deposu henüz bağlı değil"</b> dediğinde (bir kez).</>,
     adimlar: [
-      { m: <>Supabase → projeniz → <b>Project Settings → API</b>: <b>Project URL</b> ve <b>service_role</b> anahtarını kopyalayın.</> },
-      { m: <>Render → backend servisi → <b>Environment</b>: <code>SUPABASE_URL</code> = Project URL, <code>SUPABASE_SERVICE_KEY</code> = service_role anahtarı → <b>Save</b>. Servis yeniden başlar.</> },
+      { m: <><b>Proje adresi:</b> Supabase'de projenizi açın. Tarayıcının adres çubuğunda <code>supabase.com/dashboard/project/<b>proje-kodu</b></code> yazar. Proje adresiniz <code>https://<b>proje-kodu</b>.supabase.co</code> olur.</> },
+      { m: <><b>Gizli anahtar:</b> Project Settings → <b>API Keys</b> → <b>Secret keys</b> bölümündeki <code>sb_secret_…</code> ile başlayan anahtarı kopyalayın. (Yoksa aynı sayfanın <b>Legacy API Keys</b> sekmesindeki <b>service_role</b> anahtarı da olur; <code>eyJ…</code> ile başlar.) <b>anon / publishable</b> anahtarı çalışmaz.</> },
+      { m: <>Render → backend servisi → <b>Environment</b> → <b>Add Environment Variable</b>: <code>SUPABASE_URL</code> = proje adresi, <code>SUPABASE_SERVICE_KEY</code> = gizli anahtar → <b>Save Changes</b>. Servis yeniden başlar (birkaç dakika).</> },
       { m: <>Pipeline Sonuçları'nda <b>"Veri deposu: Supabase Storage · bağlı ✓"</b> görünür.</> },
     ],
     not: 'Anahtarlar yalnızca sunucu ortam değişkenlerinde durur; koda ya da bu ekrana yazılmaz.',

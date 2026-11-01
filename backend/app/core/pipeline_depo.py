@@ -62,17 +62,27 @@ def _kova() -> str:
 
 
 def _taban() -> str:
-    return settings.SUPABASE_URL.strip().rstrip("/") + "/storage/v1"
+    """Yalnızca proje adresi kullanılır: sonuna /rest/v1, / gibi ekler yapıştırılmış olsa da https://<proje>.supabase.co."""
+    u = urllib.parse.urlparse(settings.SUPABASE_URL.strip())
+    return f"{u.scheme or 'https'}://{u.netloc or u.path.strip('/')}/storage/v1"
+
+
+def _kimlik_basliklari() -> dict:
+    """Supabase iki tür sunucu anahtarı verir:
+      * eski service_role anahtarı (JWT, "eyJ..." ile başlar): apikey + Authorization: Bearer
+      * yeni gizli anahtar ("sb_secret_..."): YALNIZCA apikey başlığında (Supabase belgesi: Bearer'da kullanılmaz)."""
+    anahtar = settings.SUPABASE_SERVICE_KEY.strip()
+    if anahtar.startswith("eyJ"):
+        return {"Authorization": f"Bearer {anahtar}", "apikey": anahtar}
+    return {"apikey": anahtar}
 
 
 def _istek(yontem: str, yol: str, govde=None, zaman_asimi: int = 30, ek_baslik: dict | None = None):
     if not hazir_mi():
         raise DepoHatasi("Pipeline deposu yapılandırılmamış (Render → Environment: SUPABASE_URL ve SUPABASE_SERVICE_KEY).")
-    anahtar = settings.SUPABASE_SERVICE_KEY.strip()
     veri = None if govde is None else json.dumps(govde).encode("utf-8")
     istek = urllib.request.Request(_taban() + yol, data=veri, method=yontem,
-                                   headers={"Authorization": f"Bearer {anahtar}", "apikey": anahtar,
-                                            "Content-Type": "application/json", **(ek_baslik or {})})
+                                   headers={**_kimlik_basliklari(), "Content-Type": "application/json", **(ek_baslik or {})})
     try:
         with urllib.request.urlopen(istek, timeout=zaman_asimi) as yanit:
             ham = yanit.read()
@@ -178,9 +188,7 @@ def parca_bozuk_mu(sha256: str) -> bool:
     if _disk_mi():
         return _disk().parca_bozuk_mu(sha256)
     import hashlib
-    anahtar = settings.SUPABASE_SERVICE_KEY.strip()
-    istek = urllib.request.Request(f"{_taban()}/object/{_kova()}/{parca_yolu(sha256)}",
-                                   headers={"Authorization": f"Bearer {anahtar}", "apikey": anahtar})
+    istek = urllib.request.Request(f"{_taban()}/object/{_kova()}/{parca_yolu(sha256)}", headers=_kimlik_basliklari())
     h = hashlib.sha256()
     try:
         with urllib.request.urlopen(istek, timeout=120) as y:

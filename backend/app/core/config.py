@@ -40,7 +40,8 @@ class Settings(BaseSettings):
     IKI_ADIM_KAPALI: str = ""
 
     # --- [2026-11-01] Pipeline veri deposu (Supabase Storage). Render → Environment'a girilir; koda yazılmaz.
-    # SUPABASE_URL: https://<proje>.supabase.co   SUPABASE_SERVICE_KEY: Project Settings → API → service_role anahtarı
+    # SUPABASE_URL: https://<proje-kodu>.supabase.co   SUPABASE_SERVICE_KEY: Supabase → Project Settings → API Keys →
+    # "Secret keys" (sb_secret_...) ya da "Legacy API Keys" sekmesindeki service_role (eyJ...). İkisi de çalışır.
     SUPABASE_URL: str = ""
     SUPABASE_SERVICE_KEY: str = ""
     PIPELINE_DEPO_KOVA: str = "pipeline"
