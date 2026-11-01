@@ -76,10 +76,21 @@ def _kova() -> str:
     return (settings.PIPELINE_DEPO_KOVA or "pipeline").strip()
 
 
+def _sunucu() -> str:
+    """SUPABASE_URL'den sunucu adı. Kabul edilen biçimler (hepsi https://<proje>.supabase.co olur):
+      https://<proje>.supabase.co · sonuna /rest/v1 ya da / eklenmiş hâli · https:// olmadan · yalnızca proje kodu
+      (Supabase'de "Project ID" / "Reference ID" olarak görünen, nokta içermeyen kod). Tırnak ve boşluklar atılır.
+    Kendi sunucuda çalışan Supabase için tam adres (ör. https://depo.ornek.com) olduğu gibi kullanılır."""
+    ham = settings.SUPABASE_URL.strip().strip('"\'').strip()
+    u = urllib.parse.urlparse(ham if "://" in ham else "https://" + ham)
+    sunucu = u.netloc
+    if sunucu and "." not in sunucu and ":" not in sunucu and sunucu != "localhost":
+        sunucu += ".supabase.co"
+    return f"{u.scheme or 'https'}://{sunucu}"
+
+
 def _taban() -> str:
-    """Yalnızca proje adresi kullanılır: sonuna /rest/v1, / gibi ekler yapıştırılmış olsa da https://<proje>.supabase.co."""
-    u = urllib.parse.urlparse(settings.SUPABASE_URL.strip())
-    return f"{u.scheme or 'https'}://{u.netloc or u.path.strip('/')}/storage/v1"
+    return _sunucu() + "/storage/v1"
 
 
 def _kimlik_basliklari() -> dict:
@@ -110,7 +121,8 @@ def _istek(yontem: str, yol: str, govde=None, zaman_asimi: int = 30, ek_baslik: 
             icerik = {"message": ham[:200].decode("utf-8", "replace")}
         return e.code, icerik
     except (urllib.error.URLError, TimeoutError) as e:
-        raise DepoHatasi(f"Depoya ulaşılamadı: {e}")
+        raise DepoHatasi(f"Depoya ulaşılamadı ({_sunucu()}): {e}. Adres yanlış yazılmış olabilir: SUPABASE_URL "
+                         "https://<proje-kodu>.supabase.co olmalı (proje kodu Supabase → Project Settings → General → Project ID).")
 
 
 def _mutlak(adres: str) -> str:
