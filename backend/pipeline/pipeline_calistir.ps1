@@ -39,12 +39,12 @@ if (-not (Test-Path (Join-Path $Kok "ayar.json"))) {
 }
 "Filizyol pipeline kaydı — $(Get-Date -Format s)" | Out-File $Log -Encoding utf8
 
-# s1: sistemden güncel kod + veri + canlı listeler. Bu dosya güncellendiyse yeni hâliyle yeniden başlar (çıkış kodu 10).
+# s1: sistemden güncel kod + veri + canlı listeler. Bu dosya ya da s1 güncellendiyse yeni hâliyle yeniden başlar (çıkış kodu 10).
 Yaz "`n========== s1) Sistemden güncel kod, veri ve canlı listeler  ($(Get-Date -Format 'HH:mm:ss')) ==========" "Cyan"
 $s1 = @("src\s1_sistemden_al.py"); if ($SistemdekiniAl) { $s1 += "--sistemdekini-al" }
 $kod = Calistir $s1
 if ($kod -eq 10) {
-  Yaz "Çalıştırma dosyası güncellendi; yeni hâliyle yeniden başlatılıyor." "Yellow"
+  Yaz "Pipeline kodu güncellendi; yeni hâliyle yeniden başlatılıyor." "Yellow"
   $yeniden = @("-ExecutionPolicy", "Bypass", "-File", $MyInvocation.MyCommand.Path)
   if ($MeslekHazirla) { $yeniden += "-MeslekHazirla" }
   if ($SistemdekiniAl) { $yeniden += "-SistemdekiniAl" }

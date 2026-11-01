@@ -4,7 +4,7 @@ S1 — Sistemden güncel kodu, en son veri sürümünü ve canlı listeleri alı
 
 1) Kod: sistemdeki pipeline kodu (backend/pipeline/) bu bilgisayardakiyle karşılaştırılır; değişen / eksik dosya indirilir.
    Sistemde artık olmayan src/*.py dosyaları silinmez, _silinecek/ klasörüne taşınır.
-   pipeline_calistir.ps1 değiştiyse çıkış kodu 10 olur; çalıştırma dosyası kendini yeni hâliyle yeniden başlatır.
+   pipeline_calistir.ps1 ya da s1'in kendisi değiştiyse çıkış kodu 10 olur; çalıştırma dosyası kendini yeni hâliyle yeniden başlatır.
 2) Veri: başka bir bilgisayar daha yeni bir veri sürümü gönderdiyse değişen dosyalar indirilir (parça özetleriyle doğrulanır).
    Bu bilgisayarda gönderilmemiş sonuç varken sistemde daha yeni sürüm varsa DURULUR (biri ötekinin üzerine yazmasın);
    sistemdekini almak için: pipeline_calistir.ps1 -SistemdekiniAl (bu bilgisayardakiler önce yedekler/ klasörüne kopyalanır).
@@ -34,6 +34,8 @@ from sistem_baglanti import (KOK, BaglantiHatasi, api, durum_oku, durum_yaz, dos
 VERI = KOK / "veri"
 DAMGA = f"{datetime.now():%Y%m%d_%H%M%S}"
 KOD_YENIDEN_BASLAT = 10
+# Bunlardan biri güncellenirse çalışma yeni koduyla baştan başlar (çalışan s1 eski kodu bellekte tutar)
+YENIDEN_BASLATAN = {"pipeline_calistir.ps1", "src/s1_sistemden_al.py", "src/sistem_baglanti.py"}
 # s1'in her çalıştırmada canlıdan yeniden ürettiği dosyalar: "gönderilmemiş iş" sayılmaz (çakışma denetimine girmez)
 TURETILEN = {"veri/canli_ozet.json", "veri/canli_degiskenler.csv", "veri/bolum_kimlik.csv", "veri/bolum_ad_degisiklikleri.csv",
              "veri/bolumler.csv", "veri/bolumler_en.csv", "veri/k5_eksenleri.csv", "veri/k5_cumleleri.csv"}
@@ -91,7 +93,7 @@ def kodu_guncelle(manifest: dict) -> bool:
             shutil.copy(yol, yedek)
         yol.write_bytes(veri)
         degisen.append(d["yol"])
-        calistirici_degisti |= d["yol"] == "pipeline_calistir.ps1"
+        calistirici_degisti |= d["yol"] in YENIDEN_BASLATAN
     for p in sorted((KOK / "src").glob("*.py")):
         yol = p.relative_to(KOK).as_posix()
         if yol not in sistemdeki:
@@ -272,7 +274,7 @@ def main():
         manifest = api("GET", "/pipeline-istemci/manifest")
         calistirici = kodu_guncelle(manifest)
         if calistirici and not kurulum:
-            print("pipeline_calistir.ps1 güncellendi; çalıştırma yeni hâliyle yeniden başlıyor.")
+            print("Çalıştırma dosyası ya da s1 güncellendi; çalıştırma yeni hâliyle yeniden başlıyor.")
             sys.exit(KOD_YENIDEN_BASLAT)
         veriyi_al(manifest, kurulum, sistemdekini_al)
         canli = api("GET", "/pipeline-istemci/canli")
