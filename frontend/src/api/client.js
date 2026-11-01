@@ -176,6 +176,33 @@ async function dosyaIndir(yol, kapsam = 'ogrenci') {
   setTimeout(() => URL.revokeObjectURL(url), 2000)
 }
 
+// [2026-11-01] POST ile dosya indirme (ör. pipeline kurulum dosyası): gövde JSON, yanıt dosya
+async function dosyaIndirPost(yol, govde, kapsam = 'admin') {
+  const token = tokenAl(kapsam)
+  let yanit
+  try {
+    yanit = await fetch(`${TABAN_URL}${yol}`, {
+      method: 'POST', body: JSON.stringify(govde),
+      headers: { 'Content-Type': 'application/json', ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+    })
+  } catch {
+    throw geciciHata(0)
+  }
+  if (!yanit.ok) {
+    if (yanit.status >= 500) throw geciciHata(yanit.status)
+    let detay = null
+    try { detay = (await yanit.json()).detail } catch { throw geciciHata(503) }
+    throw new ApiHatasi(yanit.status, detay ? dostMesaj(yanit.status, detay) : 'Dosya hazırlanamadı.')
+  }
+  sunucuDurumu(false)
+  const ad = /filename="([^"]+)"/.exec(yanit.headers.get('Content-Disposition') || '')?.[1] || 'dosya'
+  const url = URL.createObjectURL(await yanit.blob())
+  const a = document.createElement('a')
+  a.href = url; a.download = ad
+  document.body.appendChild(a); a.click(); a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 2000)
+}
+
 // [2026-10-10] Okul istatistikleri filtresi → sorgu metni (?sinif=&sube=&bas=&bit=)
 function istatistikSorgu(f = {}) {
   const q = new URLSearchParams()
@@ -481,6 +508,10 @@ export const api = {
   veriYuklemeUygula: (tur, metin, dosyaAdi) => apost(`/admin/veri-yukleme/${tur}/uygula`, { metin, dosya_adi: dosyaAdi || null }),
   veriYuklemeYedekler: (tur) => aget(`/admin/veri-yukleme/${tur}/yedekler`),
   veriYuklemeGeriYukle: (id) => apost(`/admin/veri-yukleme/yedekler/${id}/geri-yukle`),
+  // [2026-11-01] Pipeline sayacı, "bu bilgisayara kur" dosyası, kayıtlı bilgisayarlar
+  pipelinePaketDurumu: () => aget('/admin/pipeline-paketi/durum'),
+  pipelineKurulumDosyasi: (cihazAdi, apiAdresi) => dosyaIndirPost('/admin/pipeline-paketi/kurulum-dosyasi', { cihaz_adi: cihazAdi, api_adresi: apiAdresi }),
+  pipelineCihazKaldir: (id) => adel(`/admin/pipeline-paketi/cihazlar/${id}`),
   // [2026-10-10] Takvim, Kütüphanem, görev geçmişi
   takvim: () => get('/ogrenci/takvim'),
   takvimEkle: (veri) => post('/ogrenci/takvim', veri),

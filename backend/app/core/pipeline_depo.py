@@ -1,0 +1,131 @@
+# -*- coding: utf-8 -*-
+"""
+[2026-11-01] Pipeline veri deposu: Supabase Storage (gizli kova).
+
+Pipeline'ın veri, önbellek ve çıktı dosyaları (~220 MB) kod deposunda değil, Storage'da tutulur.
+  * Dosyalar en fazla PARCA_BOYUTU'luk parçalara bölünür. Supabase ücretsiz planında tek dosya sınırı 50 MB;
+    en büyük önbellek dosyası bu sınıra yakın ve büyüyor.
+  * Her parça içeriğinin SHA-256 özetiyle saklanır: parca/<sha256>. Değişmeyen parça bir daha gönderilmez.
+    Hangi dosyanın hangi parçalardan oluştuğu pipeline_surumleri tablosunda durur.
+  * Bilgisayar dosyaları sunucu üzerinden geçirmez; sunucu kısa süreli imzalı adres verir, bilgisayar doğrudan
+    Storage'a yükler ya da Storage'dan indirir (Render'ın bellek ve süre sınırına takılmaz).
+Anahtarlar yalnızca Render Environment'tadır (SUPABASE_URL, SUPABASE_SERVICE_KEY). Ek kütüphane gerekmez.
+"""
+import json
+import urllib.error
+import urllib.parse
+import urllib.request
+
+from app.core.config import settings
+
+PARCA_BOYUTU = 20 * 1024 * 1024
+PARCA_ONEKI = "parca/"
+
+
+class DepoHatasi(Exception):
+    pass
+
+
+def hazir_mi() -> bool:
+    return bool(settings.SUPABASE_URL.strip() and settings.SUPABASE_SERVICE_KEY.strip())
+
+
+def _kova() -> str:
+    return (settings.PIPELINE_DEPO_KOVA or "pipeline").strip()
+
+
+def _taban() -> str:
+    return settings.SUPABASE_URL.strip().rstrip("/") + "/storage/v1"
+
+
+def _istek(yontem: str, yol: str, govde=None, zaman_asimi: int = 30):
+    if not hazir_mi():
+        raise DepoHatasi("Pipeline deposu yapılandırılmamış (Render → Environment: SUPABASE_URL ve SUPABASE_SERVICE_KEY).")
+    anahtar = settings.SUPABASE_SERVICE_KEY.strip()
+    veri = None if govde is None else json.dumps(govde).encode("utf-8")
+    istek = urllib.request.Request(_taban() + yol, data=veri, method=yontem,
+                                   headers={"Authorization": f"Bearer {anahtar}", "apikey": anahtar,
+                                            "Content-Type": "application/json"})
+    try:
+        with urllib.request.urlopen(istek, timeout=zaman_asimi) as yanit:
+            ham = yanit.read()
+            return yanit.status, (json.loads(ham) if ham else None)
+    except urllib.error.HTTPError as e:
+        ham = e.read()
+        try:
+            icerik = json.loads(ham) if ham else None
+        except ValueError:
+            icerik = {"message": ham[:200].decode("utf-8", "replace")}
+        return e.code, icerik
+    except (urllib.error.URLError, TimeoutError) as e:
+        raise DepoHatasi(f"Depoya ulaşılamadı: {e}")
+
+
+def _mutlak(adres: str) -> str:
+    """Storage bazen tam, bazen /object/... biçiminde göreli adres döner; ikisi de tam adrese çevrilir."""
+    if adres.startswith("http://") or adres.startswith("https://"):
+        return adres
+    return _taban() + (adres if adres.startswith("/") else "/" + adres)
+
+
+def kova_hazirla() -> None:
+    """Kova yoksa gizli olarak oluşturur (tekrar çağırmak güvenli)."""
+    durum, _ = _istek("GET", f"/bucket/{_kova()}")
+    if durum == 200:
+        return
+    durum, icerik = _istek("POST", "/bucket", {"id": _kova(), "name": _kova(), "public": False})
+    if durum not in (200, 201) and "already exists" not in json.dumps(icerik or {}).lower():
+        raise DepoHatasi(f"Depo kovası oluşturulamadı ({durum}): {icerik}")
+
+
+def parca_yolu(sha256: str) -> str:
+    return PARCA_ONEKI + sha256
+
+
+def mevcut_parcalar() -> set[str]:
+    """Depodaki tüm parçaların özetleri."""
+    sonuc, kayma = set(), 0
+    while True:
+        durum, icerik = _istek("POST", f"/object/list/{_kova()}",
+                               {"prefix": PARCA_ONEKI.rstrip("/"), "limit": 1000, "offset": kayma,
+                                "sortBy": {"column": "name", "order": "asc"}})
+        if durum != 200:
+            raise DepoHatasi(f"Depo listelenemedi ({durum}): {icerik}")
+        adlar = [x.get("name", "") for x in (icerik or []) if x.get("name")]
+        sonuc.update(a.rsplit("/", 1)[-1] for a in adlar)
+        if len(adlar) < 1000:
+            return sonuc
+        kayma += 1000
+
+
+def indirme_adresleri(ozetler: list[str], sure_sn: int = 3600) -> dict[str, str]:
+    sonuc = {}
+    for i in range(0, len(ozetler), 200):
+        grup = ozetler[i:i + 200]
+        durum, icerik = _istek("POST", f"/object/sign/{_kova()}",
+                               {"expiresIn": sure_sn, "paths": [parca_yolu(o) for o in grup]})
+        if durum != 200 or not isinstance(icerik, list):
+            raise DepoHatasi(f"İndirme adresi alınamadı ({durum}): {icerik}")
+        for o, kayit in zip(grup, icerik):
+            adres = kayit.get("signedURL") or kayit.get("signedUrl")
+            if not adres:
+                raise DepoHatasi(f"Parça depoda yok: {o[:12]}… ({kayit.get('error')})")
+            sonuc[o] = _mutlak(adres)
+    return sonuc
+
+
+def yukleme_adresi(sha256: str) -> str:
+    durum, icerik = _istek("POST", f"/object/upload/sign/{_kova()}/{parca_yolu(sha256)}", {})
+    adres = (icerik or {}).get("url") or (icerik or {}).get("signedURL")
+    if durum != 200 or not adres:
+        raise DepoHatasi(f"Yükleme adresi alınamadı ({durum}): {icerik}")
+    return _mutlak(adres)
+
+
+def parcalari_sil(ozetler: list[str]) -> int:
+    for i in range(0, len(ozetler), 500):
+        grup = [parca_yolu(o) for o in ozetler[i:i + 500]]
+        durum, icerik = _istek("DELETE", f"/object/{_kova()}", {"prefixes": grup})
+        if durum != 200:
+            raise DepoHatasi(f"Eski parçalar silinemedi ({durum}): {icerik}")
+    return len(ozetler)

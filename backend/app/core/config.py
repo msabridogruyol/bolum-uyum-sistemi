@@ -39,6 +39,12 @@ class Settings(BaseSettings):
     # Acil durum anahtarı: "1" ise 2 adımlı doğrulama tamamen atlanır (e-posta çalışmazsa kilitlenmeyi önler)
     IKI_ADIM_KAPALI: str = ""
 
+    # --- [2026-11-01] Pipeline veri deposu (Supabase Storage). Render → Environment'a girilir; koda yazılmaz.
+    # SUPABASE_URL: https://<proje>.supabase.co   SUPABASE_SERVICE_KEY: Project Settings → API → service_role anahtarı
+    SUPABASE_URL: str = ""
+    SUPABASE_SERVICE_KEY: str = ""
+    PIPELINE_DEPO_KOVA: str = "pipeline"
+
     # --- Sistem varsayılanları (E8'deki varsayılanlarla birebir aynı;
     #     gerçek değerler sistem_parametreleri tablosunda tutulur, bunlar
     #     yalnızca tablo boşsa kullanılacak "ilk kurulum" değerleridir) ---

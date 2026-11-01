@@ -1,0 +1,131 @@
+# -*- coding: utf-8 -*-
+"""
+Sistemle bağlantı (s1 ve s2 kullanır). Yalnızca Python'un kendi kütüphaneleri; ek kurulum gerekmez.     [2026-11-01]
+
+  ayar.json            — kurulumda yazılır: {"api": sistem adresi, "anahtar": bilgisayar anahtarı, "cihaz_adi": ...}
+  .senkron_durumu.json — bu bilgisayarın en son aldığı / gönderdiği veri sürümü ve dosya özetleri
+Veri dosyaları sistemde (Supabase Storage) PARCA_BOYUTU'luk parçalar hâlinde, içerik özetiyle saklanır;
+değişmeyen parça bir daha gönderilmez ve indirilmez.
+"""
+import hashlib
+import json
+import os
+import sys
+import time
+import urllib.error
+import urllib.request
+from pathlib import Path
+
+KOK = Path(sys.argv[1]) if len(sys.argv) > 1 and not sys.argv[1].startswith("-") else Path(__file__).resolve().parents[1]
+AYAR = KOK / "ayar.json"
+DURUM = KOK / ".senkron_durumu.json"
+PARCA_BOYUTU = 20 * 1024 * 1024
+# Sistemde saklanan klasörler (kod hariç: kod sistemden ayrıca gelir)
+KAPSAM = ("veri", "onet", "onbellek", "cikti")
+HARIC_AD = {"calistirma_log.txt", "_esco_ad_tr_checkpoint.json", "_esco_aciklama_tr_checkpoint.json"}
+HARIC_UZANTI = {".pyc", ".tmp"}
+
+
+class BaglantiHatasi(Exception):
+    pass
+
+
+def ayar() -> dict:
+    if not AYAR.exists():
+        raise BaglantiHatasi("Bu bilgisayar sisteme bağlı değil (ayar.json yok). Admin paneli → Pipeline Sonuçları → "
+                             "'Bu bilgisayara kur' ile kurulum dosyasını indirip çalıştırın.")
+    return json.loads(AYAR.read_text(encoding="utf-8-sig"))
+
+
+def _yeniden_dene(fn, deneme: int = 4):
+    for i in range(deneme):
+        try:
+            return fn()
+        except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
+            if isinstance(e, urllib.error.HTTPError) and e.code < 500:
+                raise
+            if i == deneme - 1:
+                raise BaglantiHatasi(f"Sisteme ulaşılamadı: {e}")
+            time.sleep(2 * (i + 1))
+
+
+def api(yontem: str, yol: str, govde=None, ham: bool = False, zaman_asimi: int = 120):
+    a = ayar()
+    veri = None if govde is None else json.dumps(govde, ensure_ascii=False).encode("utf-8")
+    istek = urllib.request.Request(a["api"].rstrip("/") + yol, data=veri, method=yontem,
+                                   headers={"X-Pipeline-Anahtari": a["anahtar"], "Content-Type": "application/json"})
+
+    def cagir():
+        with urllib.request.urlopen(istek, timeout=zaman_asimi) as y:
+            icerik = y.read()
+            return icerik if ham else (json.loads(icerik) if icerik else None)
+    try:
+        return _yeniden_dene(cagir)
+    except urllib.error.HTTPError as e:
+        try:
+            ayrinti = json.loads(e.read()).get("detail")
+        except Exception:
+            ayrinti = None
+        raise BaglantiHatasi(f"Sistem isteği reddetti ({e.code}): {ayrinti or e.reason}")
+
+
+def indir(adres: str) -> bytes:
+    def cagir():
+        with urllib.request.urlopen(adres, timeout=300) as y:
+            return y.read()
+    return _yeniden_dene(cagir)
+
+
+def yukle(adres: str, veri: bytes) -> None:
+    istek = urllib.request.Request(adres, data=veri, method="PUT",
+                                   headers={"Content-Type": "application/octet-stream", "x-upsert": "true"})
+
+    def cagir():
+        with urllib.request.urlopen(istek, timeout=600) as y:
+            y.read()
+    try:
+        _yeniden_dene(cagir)
+    except urllib.error.HTTPError as e:
+        raise BaglantiHatasi(f"Depoya yükleme reddedildi ({e.code}): {e.read()[:200]!r}")
+
+
+def sha256(veri: bytes) -> str:
+    return hashlib.sha256(veri).hexdigest()
+
+
+def dosya_ozeti(yol: Path) -> dict:
+    """Dosyanın tam özeti + parça özetleri."""
+    h, parcalar, boyut = hashlib.sha256(), [], 0
+    with open(yol, "rb") as f:
+        while True:
+            parca = f.read(PARCA_BOYUTU)
+            if not parca:
+                break
+            h.update(parca); parcalar.append(sha256(parca)); boyut += len(parca)
+    return {"sha256": h.hexdigest(), "boyut": boyut, "parcalar": parcalar}
+
+
+def parca_oku(yol: Path, sira: int) -> bytes:
+    with open(yol, "rb") as f:
+        f.seek(sira * PARCA_BOYUTU)
+        return f.read(PARCA_BOYUTU)
+
+
+def yerel_dosyalar() -> dict[str, Path]:
+    sonuc = {}
+    for klasor in KAPSAM:
+        for p in sorted((KOK / klasor).rglob("*")):
+            if p.is_file() and p.name not in HARIC_AD and p.suffix not in HARIC_UZANTI and "__pycache__" not in p.parts:
+                sonuc[p.relative_to(KOK).as_posix()] = p
+    return sonuc
+
+
+def durum_oku() -> dict | None:
+    return json.loads(DURUM.read_text(encoding="utf-8")) if DURUM.exists() else None
+
+
+def durum_yaz(surum_id, dosyalar: dict) -> None:
+    gecici = DURUM.with_suffix(".yaziliyor")
+    gecici.write_text(json.dumps({"surum_id": surum_id, "dosyalar": {y: d["sha256"] for y, d in dosyalar.items()}},
+                                 ensure_ascii=False, indent=1), encoding="utf-8")
+    os.replace(gecici, DURUM)
