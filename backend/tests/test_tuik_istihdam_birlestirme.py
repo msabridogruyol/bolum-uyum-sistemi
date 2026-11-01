@@ -127,9 +127,22 @@ def test_tuik_paketi_dosyalari_tanir_ve_birlestirir(istemci, kisiler, db):
     assert r.status_code == 200, r.text
     v = r.json()
     durum = {d["dosya_adi"]: d["durum"] for d in v["dosyalar"]}
-    assert durum == {"a.xlsx": "kullanilacak", "b.xlsx": "kullanilacak", "c.xlsx": "kullanilacak", "d.xlsx": "atlandi", "e.xlsx": "atlandi"}
+    assert durum == {"a.xlsx": "kullanilacak", "b.xlsx": "kullanilacak", "c.xlsx": "kullanilacak", "d.xlsx": "kullanilacak", "e.xlsx": "atlandi"}
     assert v["yil"] == 2025 and v["kaynak"] == "TÜİK, Yükseköğretim İstihdam Göstergeleri, 2025"
-    assert len(v["satirlar"]) == 2, "Toplam satırı ve dipnotlar program değildir"
+    assert len(v["satirlar"]) == 3, "Toplam satırı ve dipnotlar program değildir"
+    on = next(x for x in v["satirlar"] if x["duzey"] == "onlisans")
+    assert on["program_adi_kaynak"] == "Makine" and not on["bolum_id"], "ön lisans programı lisans bölümüne bağlanmaz"
     s = next(x for x in v["satirlar"] if x["program_adi_kaynak"] == p)
     assert s["istihdam_orani"] == 81.2 and s["is_bulma_suresi_ay"] is None and s["kazanc_grubu"] == "cok_yuksek"
     assert s["bolum_id"] and s["durum"] == "otomatik"
+
+
+def test_bolum_duzeyleri_ve_duzeye_gore_eslestirme():
+    from app.core import is_hayati_servisi as ihs
+    assert ihs.bolum_duzeyleri("2 yıl") == {"onlisans"} and ihs.bolum_duzeyleri("4 yıl") == {"lisans"}
+    assert ihs.bolum_duzeyleri("Programa göre 2 veya 4 yıl") == {"lisans", "onlisans"}
+    ad = [{"id": 1, "ad": "İş Sağlığı ve Güvenliği", "anahtarlar": ["is sagligi ve guvenligi"], "duzeyler": {"lisans"}},
+          {"id": 2, "ad": "Basım Teknolojileri", "anahtarlar": ["basim teknolojileri"], "duzeyler": {"lisans", "onlisans"}}]
+    assert ihs.program_eslestir("İş sağlığı ve güvenliği", ad, duzey="onlisans")["bolum_id"] is None
+    assert ihs.program_eslestir("İş sağlığı ve güvenliği", ad, duzey="lisans")["bolum_id"] == 1
+    assert ihs.program_eslestir("Basım ve yayım teknolojileri", ad, duzey="onlisans")["bolum_id"] == 2
