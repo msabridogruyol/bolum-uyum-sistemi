@@ -234,11 +234,9 @@ def istihdam_onizle(istek: OnizleIstek, db: Session = Depends(get_db), yon: Admi
             hatalar.append(f"Kazanç grubu tanınmadı: “{ham_grup}”")
         v = ihs.sayi(_hucre(r, e.get("kazanc_tl")))
         s["kazanc_tl"] = v if v is None or v >= 0 else None
-        s.update(ihs.program_eslestir(ad, adaylar))
-        if duzey == "onlisans" and s.get("bolum_id"):
-            # [2026-11-01] Sistemdeki bölümler lisans bölümleri: ön lisans programı otomatik bağlanmaz (aynı ad bile olsa farklı
-            # programdır, ör. ön lisans "İş sağlığı ve güvenliği"); yönetici gerekirse adaylardan seçer.
-            s.update({"bolum_id": None, "bolum_ad": None, "durum": "yok"})
+        # [2026-11-01] Ön lisans programı yalnızca ön lisans programı olan bölümlere (öğrenim süresi 2 yıl ya da "2 veya 4 yıl"),
+        # lisans programı lisans bölümlerine bağlanır (aynı adlı ön lisans "İş sağlığı ve güvenliği" lisans bölümüne gitmez).
+        s.update(ihs.program_eslestir(ad, adaylar, duzey=duzey))
         s["hatalar"] = hatalar
         satirlar.append(s)
     if not satirlar:
@@ -293,8 +291,6 @@ def _tuik_tani(ad: str, satirlar: list[list]) -> dict:
         sonuc.update(durum="atlandi", neden="Bölüm bazında değil, eğitim alanı bazında; bölümlere bağlanamaz.")
     elif "bolumlere gore" not in t or olcu[0] is None:
         sonuc.update(durum="atlandi", neden="Tanınan bir TÜİK bölüm tablosu değil. Tek dosya yükleme bölümünü kullanın.")
-    elif duzey == "onlisans":
-        sonuc.update(durum="atlandi", neden="Ön lisans tablosu: sistemdeki bölümler lisans bölümleri olduğu için kullanılmaz.")
     elif not yillar:
         sonuc.update(durum="atlandi", neden="Yıl sütunları bulunamadı.")
     return sonuc
@@ -309,10 +305,11 @@ def istihdam_tuik_paket(istek: TuikPaketIstek, db: Session = Depends(get_db), yo
     kullan = [(d, t) for d, t in taninan if t["durum"] == "kullanilacak"]
     gorulen = {}
     for d, t in kullan:
-        if t["olcu"] in gorulen:
-            t.update(durum="atlandi", neden=f"Aynı ölçü ikinci kez seçildi ({gorulen[t['olcu']]}).")
+        anahtar = (t["olcu"], t["duzey"])
+        if anahtar in gorulen:
+            t.update(durum="atlandi", neden=f"Aynı tablo ikinci kez seçildi ({gorulen[anahtar]}).")
         else:
-            gorulen[t["olcu"]] = t["dosya_adi"]
+            gorulen[anahtar] = t["dosya_adi"]
     kullan = [(d, t) for d, t in kullan if t["durum"] == "kullanilacak"]
     if not kullan:
         return {"dosyalar": [t for _, t in taninan], "yil": None, "satirlar": [], "uyarilar": ["Kullanılabilecek tablo yok."],
@@ -344,7 +341,8 @@ def istihdam_tuik_paket(istek: TuikPaketIstek, db: Session = Depends(get_db), yo
                 b[t["olcu"]] = s[t["olcu"]]
                 b["hatalar"] = (b.get("hatalar") or []) + (s.get("hatalar") or [])
     satirlar = list(birlesik.values())
-    eksik = [ad_ for _, k, ad_ in _TUIK_OLCU if k not in gorulen]
+    eksik = [f"{ad_} ({'ön lisans' if dz == 'onlisans' else 'lisans'})" for dz in sorted({dz for _, dz in gorulen})
+             for _, k, ad_ in _TUIK_OLCU if (k, dz) not in gorulen]
     if eksik:
         uyarilar.append("Seçilmeyen tablo: " + ", ".join(eksik) + ". Sonra ayrıca yükleyebilirsiniz; aynı satırlara eklenir.")
     say = {k: sum(1 for s in satirlar if s["durum"] == k) for k in ("otomatik", "oneri", "yok")}
