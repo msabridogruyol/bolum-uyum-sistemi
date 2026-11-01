@@ -661,7 +661,7 @@ KONULAR = [
     (("raporum", "raporlarim", "veli raporu", "rapor indir", "raporu indir", "raporumu", "raporu nerede", "pdf indir"), k_rapor),
     (("bildirim",), k_bildirim),
     (("sonuclarim", "sonucum", "sonuclarimi", "profilim nasil", "profilim ne", "test sonucum", "sonuc ne cikti",
-      "sonuclar ne zaman"), k_sonuc),
+      "sonuclar ne zaman", "sonuclari ne", "sonuclari nasil"), k_sonuc),
     (("tercih nasil", "tercih listesi", "tercih donemi", "tercih yapmak", "tercih robotu", "tercihlerim"), k_tercih),
     (("taban puan", "basari sirasi", "hangi universite", "universite iyi", "universiteler hangi", "kontenjan", "siralama kac",
       "kacinci siradan", "en iyi universite"), k_universite),

@@ -247,6 +247,8 @@ def _ek_toleransli(q: str, e: str) -> bool:
         return q.startswith(e) and q[len(e):] in _KISA_EKLER          # tip → tipta, tipin
     if q.startswith(e) and len(q) - len(e) <= 6:
         return True
+    if len(e) >= 6 and (e[:-1] == q and e[-1] in "iu" or e.endswith("si") and e[:-2] == q):
+        return True                                                    # "kalite kontrol uzman" ~ "uzmani" (iyelik eki yazılmamış)
     yumusama = {"k": "g", "p": "b", "t": "d", "c": "c"}
     if (len(e) >= 5 and e[-1] in yumusama and len(q) > len(e) - 1 and q.startswith(e[:-1])
             and q[len(e) - 1] == yumusama[e[-1]] and len(q) - len(e) <= 6):    # hemsirelik → hemsireligi (k→ğ)

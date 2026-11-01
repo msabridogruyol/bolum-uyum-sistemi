@@ -136,7 +136,10 @@ def meslek_yolu(d: fb.Dizin, soru: str) -> Cevap | None:
             satirlar.append(f"• {o['ad']}{_kunye(o)}")
         nasil = next((b for b in d.belgeler if b.tur == "meslek" and b.varlik == anahtar), None)
         nasil_metin = re.search(r"Nasıl olunur: (.+)$", nasil.metin) if nasil else None
-        yanit = f"📖 {meslek_adi} olmak için okunabilecek bölüm{'ler' if len(bolumler) > 1 else ''}:\n" + "\n".join(satirlar)
+        # Anahtar bir meslek değil de bölüm adının bir parçasıysa ("yazılım", "kontrol"): "X olmak için" denmez
+        bas = (f"{meslek_adi} olmak için" if anahtar in d.meslek_bolum or anahtar in d.takma and not any(anahtar in v for v in bolumler)
+               else f"“{meslek_adi}” alanında")
+        yanit = f"📖 {bas} okunabilecek bölüm{'ler' if len(bolumler) > 1 else ''}:\n" + "\n".join(satirlar)
         if nasil_metin:
             yanit += f"\n\nNasıl olunur: {fb._kirp(nasil_metin.group(1), 300)}"
         yanit += f"\n\nKaynak: {_bolum_ozet(d, bolumler[0])['nerede']}" + (" ve ilgili bölüm sayfaları" if len(bolumler) > 1 else "")
