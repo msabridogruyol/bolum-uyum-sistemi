@@ -316,7 +316,7 @@ function PipelineSayacKarti({ durum }) {
         örnek meslekler {tarih(s.canliya_alma.ornek_meslekler)}
       </div>
       {(s.durum === 'gerekli' || s.durum === 'yaklasiyor') && (
-        <div className="yp-ince">Pipeline'ın kurulu olduğu bilgisayarda cmd'ye yapıştırın, bitince aşağıdaki 3 adımla canlıya alın:<Komut metin={CALISTIR_KOMUTU} /></div>
+        <div className="yp-ince">Pipeline'ın kurulu olduğu bilgisayarda masaüstündeki <b>Filizyol Pipeline</b> kısayoluna çift tıklayın (ya da komutu cmd'ye yapıştırın); bitince aşağıdaki 3 adımla canlıya alın:<Komut metin={CALISTIR_KOMUTU} /></div>
       )}
     </div>
   )
@@ -384,8 +384,8 @@ function PipelineKurulumKarti({ durum, yenile }) {
         <button className="btn" disabled={bekle || ad.trim().length < 2} onClick={indir}>{bekle ? <span className="spin" /> : '⬇ Kurulum dosyasını indir'}</button>
       </div>
       {indirildi && <div className="yp-ince" style={{ color: 'var(--gr)' }}>✓ "{indirildi}" için <b>pipeline_kurulum.ps1</b> indirildi. Tarayıcı "tehlikeli olabilir" uyarısı verirse İndirilenler listesinden <b>Sakla / Keep</b> seçin.</div>}
-      <div className="yp-ince"><b>3.</b> O bilgisayarda cmd'ye yapıştırın (İndirilenler'deki en yeni kurulum dosyasını bulup çalıştırır):<Komut metin={KURULUM_KOMUTU} /></div>
-      <div className="yp-ince"><b>4.</b> Kurulum bitince pipeline'ı çalıştırmak için:<Komut metin={CALISTIR_KOMUTU} /></div>
+      <div className="yp-ince"><b>3.</b> İndirilen dosyaya sağ tıklayıp <b>PowerShell ile çalıştır</b> deyin (Windows 11'de önce "Diğer seçenekleri göster"). Ya da cmd'ye yapıştırın (İndirilenler'deki en yeni kurulum dosyasını bulup çalıştırır):<Komut metin={KURULUM_KOMUTU} /></div>
+      <div className="yp-ince"><b>4.</b> Kurulum masaüstüne <b>Filizyol Pipeline</b> kısayolu koyar; pipeline'ı çalıştırmak için ona çift tıklayın. Ya da cmd'ye yapıştırın:<Komut metin={CALISTIR_KOMUTU} /></div>
       {hata && <div className="auth-error" style={{ marginTop: 8 }}>{hata}</div>}
 
       <div style={{ fontWeight: 700, margin: '14px 0 6px' }}>Kayıtlı bilgisayarlar ({durum.cihazlar.length})</div>

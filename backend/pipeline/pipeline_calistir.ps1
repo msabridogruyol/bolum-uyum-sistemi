@@ -37,6 +37,18 @@ if (-not (Test-Path (Join-Path $Kok "ayar.json"))) {
   Write-Host "Bu bilgisayar sisteme bağlı değil. Admin paneli → Pipeline Sonuçları → 'Bu bilgisayara kur' ile kurulum dosyasını indirip çalıştırın." -ForegroundColor Red
   exit 1
 }
+# Masaüstü kısayolu yoksa oluşturulur (eski kurulumlar da kod güncellemesiyle çift tıklamaya geçer).
+try {
+  $Cmd = Join-Path $Kok "pipeline_calistir.cmd"
+  $Kisayol = Join-Path ([Environment]::GetFolderPath("Desktop")) "Filizyol Pipeline.lnk"
+  if ((Test-Path $Cmd) -and -not (Test-Path $Kisayol)) {
+    $k = (New-Object -ComObject WScript.Shell).CreateShortcut($Kisayol)
+    $k.TargetPath = $Cmd; $k.WorkingDirectory = $Kok
+    $k.Description = "Filizyol pipeline'ını çalıştırır (canlıya yükleme yapmaz)"
+    $k.Save()
+    Write-Host "Masaüstüne 'Filizyol Pipeline' kısayolu kondu: bundan sonra çift tıklayarak çalıştırabilirsiniz." -ForegroundColor Green
+  }
+} catch {}
 if (-not $Devam) { "Filizyol pipeline kaydı — $(Get-Date -Format s)" | Out-File $Log -Encoding utf8 }
 
 # s1: sistemden güncel kod + veri + canlı listeler. Bu dosya ya da s1 güncellendiyse yeni hâliyle yeniden başlar (çıkış kodu 10).
