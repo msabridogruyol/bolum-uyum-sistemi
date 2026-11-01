@@ -1,5 +1,6 @@
 ﻿# Filizyol pipeline — bu bilgisayara kurulum (admin panelinden indirildi: __OLUSTURMA__, bilgisayar: __CIHAZ_ADI__)
-# Çalıştırma: admin paneli → Pipeline Sonuçları → "Bilgisayarlar ve veri deposu" kartındaki 3. adımın komutu (Kopyala)
+# Çalıştırma: dosyaya sağ tıklayıp "PowerShell ile çalıştır" deyin; ya da admin paneli → Pipeline Sonuçları → "Bilgisayarlar ve
+# veri deposu" kartındaki 3. adımın komutunu (Kopyala) cmd'ye yapıştırın.
 # Bu dosya 24 saat geçerlidir ve bir kez kullanılabilir. Başka bir bilgisayar için admin panelinden yeni dosya indirin.
 # Ne yapar: 1) Python 3.14'ü bulur  2) bu bilgisayarı sisteme bağlar  3) pipeline kodunu indirir
 #           4) Python ortamını sabit sürümlerle kurar  5) en son veri sürümünü ve canlı listeleri indirir
@@ -14,7 +15,8 @@ $PythonSurumu = "3.14"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $ProgressPreference = "SilentlyContinue"
 function Adim($m) { Write-Host "`n== $m" -ForegroundColor Cyan }
-function Dur($m) { Write-Host "`n!!! $m" -ForegroundColor Red; exit 1 }
+function Bekle { try { Read-Host "`nPencereyi kapatmak için Enter tuşuna basın" | Out-Null } catch {} }   # çift tıklayınca pencere hemen kapanmasın
+function Dur($m) { Write-Host "`n!!! $m" -ForegroundColor Red; Bekle; exit 1 }
 
 Adim "1/5 Python $PythonSurumu aranıyor"
 $Python = $null
@@ -92,7 +94,20 @@ $env:PYTHONIOENCODING = "utf-8"
 & $VenvPy (Join-Path $Klasor "src\s1_sistemden_al.py") --kurulum
 if ($LASTEXITCODE -ne 0) { Dur "Veri alınamadı (yukarıdaki mesaj). Bağlantı kuruldu; sorunu giderip pipeline_calistir.ps1 ile devam edebilirsiniz." }
 
+# Masaüstüne çift tıklanarak çalıştırılan kısayol: "Filizyol Pipeline" → pipeline_calistir.cmd
+$Kisayol = $null
+try {
+  $Masaustu = [Environment]::GetFolderPath("Desktop")
+  $Kisayol = Join-Path $Masaustu "Filizyol Pipeline.lnk"
+  $k = (New-Object -ComObject WScript.Shell).CreateShortcut($Kisayol)
+  $k.TargetPath = Join-Path $Klasor "pipeline_calistir.cmd"
+  $k.WorkingDirectory = $Klasor
+  $k.Description = "Filizyol pipeline'ını çalıştırır (canlıya yükleme yapmaz)"
+  $k.Save()
+} catch { $Kisayol = $null }
+
 Write-Host "`nKURULUM TAMAM." -ForegroundColor Green
 Write-Host "Embedding modelleri (~3-4 GB) ilk çalıştırmada kendiliğinden iner." -ForegroundColor Green
-Write-Host "Çalıştırmak için cmd'ye yapıştırın:" -ForegroundColor Green
-Write-Host "  powershell -ExecutionPolicy Bypass -File $Klasor\pipeline_calistir.ps1" -ForegroundColor Green
+if ($Kisayol) { Write-Host "Çalıştırmak için masaüstündeki 'Filizyol Pipeline' kısayoluna çift tıklayın." -ForegroundColor Green }
+Write-Host "Ya da cmd'ye yapıştırın:  powershell -ExecutionPolicy Bypass -File $Klasor\pipeline_calistir.ps1" -ForegroundColor Green
+Bekle

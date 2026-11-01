@@ -15,7 +15,7 @@ const KONULAR = [
     id: 'yillik', grup: 'Bölüm verisi (pipeline)', baslik: 'Yıllık bölüm verisi güncellemesi',
     ne_zaman: <>Pipeline Sonuçları'ndaki sayaç <b>"Yaklaşıyor"</b> ya da <b>"Pipeline çalıştırılmalı"</b> dediğinde (yılda bir, ayrıca bölüm / K5 değişikliğinde).</>,
     adimlar: [
-      { m: <>Pipeline'ın kurulu olduğu bilgisayarda Komut İstemi'ni (cmd) açıp şu komutu yapıştırın. Güncel kodu, en son veriyi ve canlı bölüm / K5 listelerini kendisi alır.</>, k: CALISTIR_KOMUTU },
+      { m: <>Pipeline'ın kurulu olduğu bilgisayarda masaüstündeki <b>Filizyol Pipeline</b> kısayoluna çift tıklayın (ya da Komut İstemi'ne şu komutu yapıştırın). Güncel kodu, en son veriyi ve canlı bölüm / K5 listelerini kendisi alır.</>, k: CALISTIR_KOMUTU },
       { m: <>Bitmesini bekleyin (genellikle 10–20 dakika; bir bilgisayardaki ilk gönderim daha uzun sürer). Sonda yeşil <b>"HEPSİ TAMAM"</b> yazar. Kırmızı bir hata çıkarsa adımlar durur; ekrandaki mesajı ve <code>{CIKTI.kayit}</code> dosyasını kontrol edin.</> },
       { m: <><E to="/admin/pipeline">Pipeline Sonuçları</E> → <b>1. adım</b>: <code>{CIKTI.profil}</code> dosyasını seçin. Önizlemeye bakın, ardından aşağıdaki <b>Geçmiş Yüklemeler</b> listesinde <b>Yayına Al</b> deyin. Tüm öğrencilerin sonuçları kendiliğinden yeniden hesaplanır.</> },
       { m: <><b>2. adım</b>: <code>{CIKTI.k5}</code> → önizleme → <b>Canlıya al</b> → <b>Eminim, canlıya al</b>.</> },
@@ -30,8 +30,8 @@ const KONULAR = [
     adimlar: [
       { m: <>O bilgisayarda <b>Python 3.14</b> kurulu olmalı. Değilse <a href="https://www.python.org/downloads/" target="_blank" rel="noreferrer" className="ak-link">python.org</a>'dan kurun; kurulumda <b>"Add python.exe to PATH"</b> kutusunu işaretleyin.</> },
       { m: <><E to="/admin/pipeline">Pipeline Sonuçları</E> → <b>Bilgisayarlar ve veri deposu</b> → bilgisayara bir ad verin → <b>Kurulum dosyasını indir</b>. Dosya 24 saat geçerlidir ve tek kullanımlıktır. Tarayıcı "tehlikeli olabilir" uyarısı verirse İndirilenler listesinden <b>Sakla / Keep</b> seçin.</> },
-      { m: <>O bilgisayarda cmd'ye şu komutu yapıştırın. İndirilenler'deki en yeni kurulum dosyasını bulup çalıştırır (tarayıcı adını "pipeline_kurulum (1).ps1" yapmış olsa da):</>, k: KURULUM_KOMUTU },
-      { m: <>Kurulum kodu ve en son veriyi indirir, kütüphaneleri kurar. İlk seferde uzun sürer (kütüphaneler ~2–3 GB; embedding modelleri ilk çalıştırmada ~3–4 GB). Bitince <b>"KURULUM TAMAM"</b> yazar.</> },
+      { m: <>İndirilen dosyaya sağ tıklayıp <b>PowerShell ile çalıştır</b> deyin (Windows 11'de önce "Diğer seçenekleri göster"). Ya da cmd'ye şu komutu yapıştırın; İndirilenler'deki en yeni kurulum dosyasını bulup çalıştırır:</>, k: KURULUM_KOMUTU },
+      { m: <>Kurulum kodu ve en son veriyi indirir, kütüphaneleri kurar. İlk seferde uzun sürer (kütüphaneler ~2–3 GB; embedding modelleri ilk çalıştırmada ~3–4 GB). Bitince <b>"KURULUM TAMAM"</b> yazar ve masaüstüne <b>Filizyol Pipeline</b> kısayolu konur.</> },
       { m: <>Bilgisayar <b>Kayıtlı bilgisayarlar</b> listesinde görünür. Artık "Yıllık bölüm verisi güncellemesi" adımlarıyla çalıştırılabilir.</> },
     ],
     not: <>Klasörde zaten pipeline varsa kurulum üzerine yazar: veriler korunur, değişen kod dosyaları <code>yedekler</code> klasörüne kopyalanır.</>,

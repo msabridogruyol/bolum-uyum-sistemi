@@ -17,7 +17,7 @@ Kurulum dosyası 24 saat geçerlidir ve tek kullanımlıktır. İlk kurulumda k�
 
 | Durum | Komut (cmd'ye yapıştırın) |
 |---|---|
-| Sayaç uyarı verdiğinde ya da bölüm verisi değiştiğinde | `powershell -ExecutionPolicy Bypass -File C:\pipeline\pipeline_calistir.ps1` |
+| Sayaç uyarı verdiğinde ya da bölüm verisi değiştiğinde | Masaüstündeki **Filizyol Pipeline** kısayoluna çift tıklayın (ya da `powershell -ExecutionPolicy Bypass -File C:\pipeline\pipeline_calistir.ps1`) |
 | ESCO meslek listesi değiştiğinde | Aynı komut, sonuna `-MeslekHazirla` eklenir |
 | Başka bir bilgisayarın daha yeni sonucu ile çakışma uyarısı çıktığında (sistemdekini kullanmak için) | Aynı komut, sonuna `-SistemdekiniAl` eklenir |
 | Çakışmada bu bilgisayarın sonucunu en yeni yapmak için (diğeri sürüm geçmişinde kalır) | `C:\pipeline\venv\Scripts\python.exe C:\pipeline\src\s2_sisteme_gonder.py --zorla` |
