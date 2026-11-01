@@ -41,7 +41,7 @@ function Sihirbaz({ tur, ozet, onBitti }) {
   const [veriYili, setVeriYili] = useState('')
   const [kaynak, setKaynak] = useState('')
   const [asgariBrut, setAsgariBrut] = useState('')
-  const [ayniYil, setAyniYil] = useState(true)
+  const [ayniYil, setAyniYil] = useState(false)   // [2026-11-01] varsayılan: birleştir (TÜİK tabloları ayrı dosyalarda)
   const [hata, setHata] = useState(null)
   const [bekle, setBekle] = useState(false)
   const [sonuc, setSonuc] = useState(null)
@@ -106,7 +106,7 @@ function Sihirbaz({ tur, ozet, onBitti }) {
           is_bulma_suresi_ay: s.is_bulma_suresi_ay, alan_uyum_orani: s.alan_uyum_orani, kazanc_grubu: s.kazanc_grubu, kazanc_tl: s.kazanc_tl,
           bolum_id: s.bolum_id || null })),
       })
-      setSonuc(`${r.eklenen} satır kaydedildi (${r.eslesen} bölümle eşleşti, ${r.eslesmeyen} eşleşmesiz). ${r.silinen ? `Aynı yılın önceki ${r.silinen} satırı silindi.` : ''}`)
+      setSonuc(`${r.eklenen} yeni satır, ${r.guncellenen ?? 0} satır var olanla birleştirildi (${r.eslesen} bölümle eşleşti, ${r.eslesmeyen} eşleşmesiz). ${r.silinen ? `Aynı yılın önceki ${r.silinen} satırı silindi.` : ''}`)
     } else {
       if (!Number(asgariBrut)) throw new Error('O yılın asgari brüt ücreti zorunlu.')
       const gecerli = satirlar.filter((s) => s.isco_kodu && Number(s.brut_aylik_ortalama_tl) > 0)
@@ -254,7 +254,7 @@ function Sihirbaz({ tur, ozet, onBitti }) {
             )}
             {tur === 'istihdam' && (
               <label className="yp-ince" style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
-                <input type="checkbox" checked={ayniYil} onChange={(e) => setAyniYil(e.target.checked)} /> Aynı yılın eski verisini sil (yerine yaz)
+                <input type="checkbox" checked={ayniYil} onChange={(e) => setAyniYil(e.target.checked)} /> Bu yılın tüm eski verisini önce sil (yalnızca yılı baştan yüklerken). İşaretsizse aynı yıl ve programdaki satırla birleştirilir: TÜİK'in istihdam oranı, iş bulma süresi ve kazanç grubu tablolarını sırayla yükleyebilirsiniz.
               </label>
             )}
             <button className="btn" disabled={bekle || !veriYili || !kaynak.trim()} onClick={kaydet}>{bekle ? 'Kaydediliyor…' : 'Kaydet'}</button>
