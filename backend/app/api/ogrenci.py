@@ -20,7 +20,7 @@ from datetime import datetime, timedelta, timezone
 
 from app.core.katman_servisi import (
     IsKuraliHatasi, aktif_veya_yeni_tur_getir, son_tur_getir, katman_oturumu_baslat,
-    cevabi_kaydet, katmani_tamamla, tum_ana_katmanlar_tamamlandi_mi, parametre_oku,
+    cevabi_kaydet, katmani_tamamla, tum_ana_katmanlar_tamamlandi_mi,
 )
 from app.core.dal_servisi import (
     k5_tetikle, dal_bul, dal_oturumu_baslat, dali_tamamla, bekleyen_dal_var_mi,
@@ -350,7 +350,10 @@ def k5_durumu_getir(
     try:
         tur = son_tur_getir(db, ogrenci)
     except IsKuraliHatasi:
-        return K5DurumOut(esik=float(parametre_oku(db, "k5_esik_puani", "80")), acilan=[], ilgi_gosterilen=[])
+        # [2026-11-01] Eşik, K5'in gerçekte kullandığı değerdir (dal_servisi.KUME_ESIK = 70). Eski "k5_esik_puani"
+        # parametresi (alan bazlı eski K5'ten, varsayılan 80) artık hiçbir hesapta kullanılmıyordu; ekrana yanlış eşik gidiyordu.
+        from app.core.dal_servisi import KUME_ESIK
+        return K5DurumOut(esik=KUME_ESIK, acilan=[], ilgi_gosterilen=[])
     sonuc = k5_tetikle(db, ogrenci, tur)  # idempotent — zaten açık olanları tekrar açmaz
     db.commit()
     return K5DurumOut(
