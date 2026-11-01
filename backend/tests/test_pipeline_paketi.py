@@ -265,3 +265,17 @@ def test_supabase_anahtar_turleri_ve_adres(monkeypatch):
     for adres in ("https://abcd.supabase.co", "https://abcd.supabase.co/", "https://abcd.supabase.co/rest/v1/", " abcd.supabase.co "):
         monkeypatch.setattr(settings, "SUPABASE_URL", adres)
         assert depo._taban() == "https://abcd.supabase.co/storage/v1", adres
+
+
+@db_gerekli
+def test_canli_k5_yalnizca_yeni_is_turleri(db):
+    """Canlıda dala bağlı eski K5 değişkenleri (C1, E1 …) dururken pipeline'a yalnızca yeni iş türleri (U01_A …) gider;
+    aksi hâlde K5 bağları dosyası yükleme ekranında 'sistemde olmayan iş türü kodu' diye reddedilir."""
+    import re
+    db.execute(text("INSERT INTO degiskenler (katman_id, kod, ad, sira, dal_id, ters_yonlu) SELECT d.katman_id, 'C9TEST', 'Eski K5', 999, d.dal_id, false "
+                    "FROM degiskenler d WHERE d.dal_id IS NOT NULL LIMIT 1"))
+    db.commit()
+    c = pp.canli_listeler(db)
+    kodlar = {e["kod"] for e in c["k5_eksenleri"]}
+    assert "C9TEST" not in kodlar and all(re.match(r"^U[0-9]{2}_", k) for k in kodlar)
+    assert {x["kod"] for x in c["k5_cumleleri"]} <= kodlar
