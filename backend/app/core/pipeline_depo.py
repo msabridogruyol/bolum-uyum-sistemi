@@ -38,14 +38,14 @@ def _taban() -> str:
     return settings.SUPABASE_URL.strip().rstrip("/") + "/storage/v1"
 
 
-def _istek(yontem: str, yol: str, govde=None, zaman_asimi: int = 30):
+def _istek(yontem: str, yol: str, govde=None, zaman_asimi: int = 30, ek_baslik: dict | None = None):
     if not hazir_mi():
         raise DepoHatasi("Pipeline deposu yapılandırılmamış (Render → Environment: SUPABASE_URL ve SUPABASE_SERVICE_KEY).")
     anahtar = settings.SUPABASE_SERVICE_KEY.strip()
     veri = None if govde is None else json.dumps(govde).encode("utf-8")
     istek = urllib.request.Request(_taban() + yol, data=veri, method=yontem,
                                    headers={"Authorization": f"Bearer {anahtar}", "apikey": anahtar,
-                                            "Content-Type": "application/json"})
+                                            "Content-Type": "application/json", **(ek_baslik or {})})
     try:
         with urllib.request.urlopen(istek, timeout=zaman_asimi) as yanit:
             ham = yanit.read()
@@ -82,18 +82,19 @@ def parca_yolu(sha256: str) -> str:
     return PARCA_ONEKI + sha256
 
 
-def mevcut_parcalar() -> set[str]:
-    """Depodaki tüm parçaların özetleri."""
-    sonuc, kayma = set(), 0
+def mevcut_parcalar() -> dict[str, str]:
+    """Depodaki tüm parçalar: özet → oluşturma zamanı (ISO metin; bilinmiyorsa boş)."""
+    sonuc, kayma = {}, 0
     while True:
         durum, icerik = _istek("POST", f"/object/list/{_kova()}",
                                {"prefix": PARCA_ONEKI.rstrip("/"), "limit": 1000, "offset": kayma,
                                 "sortBy": {"column": "name", "order": "asc"}})
         if durum != 200:
             raise DepoHatasi(f"Depo listelenemedi ({durum}): {icerik}")
-        adlar = [x.get("name", "") for x in (icerik or []) if x.get("name")]
-        sonuc.update(a.rsplit("/", 1)[-1] for a in adlar)
-        if len(adlar) < 1000:
+        kayitlar = [x for x in (icerik or []) if x.get("name")]
+        for x in kayitlar:
+            sonuc[x["name"].rsplit("/", 1)[-1]] = x.get("created_at") or ""
+        if len(kayitlar) < 1000:
             return sonuc
         kayma += 1000
 
@@ -106,7 +107,9 @@ def indirme_adresleri(ozetler: list[str], sure_sn: int = 3600) -> dict[str, str]
                                {"expiresIn": sure_sn, "paths": [parca_yolu(o) for o in grup]})
         if durum != 200 or not isinstance(icerik, list):
             raise DepoHatasi(f"İndirme adresi alınamadı ({durum}): {icerik}")
-        for o, kayit in zip(grup, icerik):
+        yola_gore = {k.get("path"): k for k in icerik if isinstance(k, dict)}   # sıraya değil yola göre eşlenir
+        for o in grup:
+            kayit = yola_gore.get(parca_yolu(o)) or {}
             adres = kayit.get("signedURL") or kayit.get("signedUrl")
             if not adres:
                 raise DepoHatasi(f"Parça depoda yok: {o[:12]}… ({kayit.get('error')})")
@@ -115,7 +118,8 @@ def indirme_adresleri(ozetler: list[str], sure_sn: int = 3600) -> dict[str, str]
 
 
 def yukleme_adresi(sha256: str) -> str:
-    durum, icerik = _istek("POST", f"/object/upload/sign/{_kova()}/{parca_yolu(sha256)}", {})
+    # x-upsert imza anında verilir: yükleme zaman aşımına uğrayıp tekrar denenirse "zaten var" hatası olmasın
+    durum, icerik = _istek("POST", f"/object/upload/sign/{_kova()}/{parca_yolu(sha256)}", {}, ek_baslik={"x-upsert": "true"})
     adres = (icerik or {}).get("url") or (icerik or {}).get("signedURL")
     if durum != 200 or not adres:
         raise DepoHatasi(f"Yükleme adresi alınamadı ({durum}): {icerik}")
@@ -129,3 +133,28 @@ def parcalari_sil(ozetler: list[str]) -> int:
         if durum != 200:
             raise DepoHatasi(f"Eski parçalar silinemedi ({durum}): {icerik}")
     return len(ozetler)
+
+
+def parca_bozuk_mu(sha256: str) -> bool:
+    """Parçayı depodan okuyup içerik özetini denetler (adı içeriğiyle uyuşmuyorsa True). Bozuksa silinir; ilk gönderen
+    bilgisayar bir sonraki gönderimde yeniden yükler."""
+    import hashlib
+    anahtar = settings.SUPABASE_SERVICE_KEY.strip()
+    istek = urllib.request.Request(f"{_taban()}/object/{_kova()}/{parca_yolu(sha256)}",
+                                   headers={"Authorization": f"Bearer {anahtar}", "apikey": anahtar})
+    h = hashlib.sha256()
+    try:
+        with urllib.request.urlopen(istek, timeout=120) as y:
+            while True:
+                blok = y.read(1024 * 1024)
+                if not blok:
+                    break
+                h.update(blok)
+    except urllib.error.HTTPError as e:
+        if e.code in (400, 404):
+            return False   # zaten yok: yeniden yüklenebilir
+        raise DepoHatasi(f"Parça okunamadı ({e.code}).")
+    if h.hexdigest() == sha256:
+        return False
+    parcalari_sil([sha256])
+    return True

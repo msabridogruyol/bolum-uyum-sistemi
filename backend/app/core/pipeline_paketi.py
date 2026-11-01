@@ -13,8 +13,9 @@ Sayaç    : bölüm profilleri en son ne zaman canlıya alındı + 365 gün; sü
 """
 import hashlib
 import json
+import re
 import secrets
-from datetime import timedelta
+from datetime import datetime, timedelta
 from zoneinfo import ZoneInfo
 from pathlib import Path
 
@@ -31,7 +32,13 @@ UYARI_GUN = 30
 KURULUM_GECERLILIK_SAAT = 24
 SAKLANAN_SURUM = 5
 EN_FAZLA_DOSYA = 3000
-YEREL = ZoneInfo("Europe/Istanbul")   # ekranda / dosyada gösterilen tarih ve saatler
+YEREL = ZoneInfo("Europe/Istanbul")
+VERI_KLASORLERI = ("veri", "onet", "onbellek", "cikti")   # depoda yalnızca bunlar; kod yalnızca sistemden gelir
+SAKLAMA_GUN = 30            # son 5 sürüme ek olarak son 30 günün sürümlerinin parçaları da silinmez
+YENI_PARCA_SAAT = 6         # yeni yüklenmiş (henüz sürüme girmemiş olabilecek) parçalar budanmaz
+KILIT_ANAHTARI = 2026110188
+_HEX64 = re.compile(r"^[0-9a-f]{64}$")
+_YASAK_KARAKTER = re.compile(r'[\x00-\x1f\\:*?"<>|]')   # ekranda / dosyada gösterilen tarih ve saatler
 
 
 class PaketHatasi(Exception):
@@ -162,16 +169,29 @@ def surumler(db: Session, adet: int = SAKLANAN_SURUM) -> list[dict]:
     return [dict(r) for r in rows]
 
 
+class SurumCakismasi(PaketHatasi):
+    pass
+
+
+def veri_yolu_gecerli_mi(yol) -> bool:
+    """Depodaki dosya yolu: veri / onet / onbellek / cikti altında, göreli, '..' ve Windows'ta yasak karakter içermeyen."""
+    if not isinstance(yol, str) or not yol or len(yol) > 300 or _YASAK_KARAKTER.search(yol):
+        return False
+    parcalar = yol.split("/")
+    return parcalar[0] in VERI_KLASORLERI and len(parcalar) >= 2 and all(p and p not in (".", "..") and p == p.strip()
+                                                                          and not p.endswith(".") for p in parcalar)
+
+
 def _dosyalari_dogrula(dosyalar: dict) -> list[str]:
     if not isinstance(dosyalar, dict) or not dosyalar or len(dosyalar) > EN_FAZLA_DOSYA:
         raise PaketHatasi("Dosya listesi boş ya da çok uzun.")
     parcalar = []
     for yol, d in dosyalar.items():
-        if (not isinstance(yol, str) or yol.startswith(("/", "\\")) or ".." in yol.replace("\\", "/").split("/")
-                or ":" in yol or not isinstance(d, dict)):
-            raise PaketHatasi(f"Geçersiz dosya yolu: {yol!r}")
+        if not veri_yolu_gecerli_mi(yol) or not isinstance(d, dict):
+            raise PaketHatasi(f"Geçersiz dosya yolu: {str(yol)[:120]!r} (yalnızca {', '.join(VERI_KLASORLERI)} klasörleri)")
         p = d.get("parcalar")
-        if not isinstance(p, list) or not all(isinstance(x, str) and len(x) == 64 for x in p):
+        if (not isinstance(p, list) or not p and int(d.get("boyut", 0)) != 0 or len(p) > 50
+                or not all(isinstance(x, str) and _HEX64.match(x) for x in p) or not _HEX64.match(str(d.get("sha256", "")))):
             raise PaketHatasi(f"Geçersiz parça listesi: {yol}")
         parcalar += p
     return parcalar
@@ -180,18 +200,32 @@ def _dosyalari_dogrula(dosyalar: dict) -> list[str]:
 def gonderim_baslat(parcalar: list[dict]) -> dict:
     """Bilgisayarın göndermek istediği parçalardan depoda olmayanlar için yükleme adresleri."""
     for p in parcalar:
-        if len(str(p.get("sha256", ""))) != 64 or int(p.get("boyut", 0)) > depo.PARCA_BOYUTU:
+        if not _HEX64.match(str(p.get("sha256", ""))) or not 0 <= int(p.get("boyut", -1)) <= depo.PARCA_BOYUTU:
             raise PaketHatasi("Geçersiz parça (özet ya da boyut).")
     depo.kova_hazirla()
     var = depo.mevcut_parcalar()
-    eksik = sorted({p["sha256"] for p in parcalar} - var)
+    eksik = sorted({p["sha256"] for p in parcalar} - set(var))
     return {"eksik": {o: depo.yukleme_adresi(o) for o in eksik}, "var_olan": len(parcalar) - len(eksik)}
 
 
-def gonderim_tamamla(db: Session, cihaz: dict, dosyalar: dict, girdi_ozeti: dict | None, aciklama: str | None) -> dict:
+def parca_bozuk_bildir(sha256: str) -> bool:
+    if not _HEX64.match(sha256 or ""):
+        raise PaketHatasi("Geçersiz parça özeti.")
+    return depo.parca_bozuk_mu(sha256)
+
+
+def gonderim_tamamla(db: Session, cihaz: dict, dosyalar: dict, girdi_ozeti: dict | None, aciklama: str | None,
+                     taban_surum_id: int | None = None, zorla: bool = False) -> dict:
     parcalar = _dosyalari_dogrula(dosyalar)
+    # Aynı anda iki gönderim: kontrol + kayıt + budama tek sırada (biri ötekinin parçalarını silmesin)
+    db.execute(text("SELECT pg_advisory_xact_lock(:k)"), {"k": KILIT_ANAHTARI})
+    son = son_surum(db)
+    if son and not zorla and son["id"] != taban_surum_id:
+        raise SurumCakismasi(
+            f"Bu çalıştırma başladıktan sonra başka bir bilgisayar daha yeni sonuç gönderdi (sürüm {son['id']}, "
+            f"{son.get('cihaz_adi') or '?'}). Üzerine yazılmadı.")
     var = depo.mevcut_parcalar()
-    eksik = sorted(set(parcalar) - var)
+    eksik = sorted(set(parcalar) - set(var))
     if eksik:
         raise PaketHatasi(f"{len(eksik)} parça depoya ulaşmamış; gönderim yarım kaldı. Pipeline'ı tekrar çalıştırın.")
     toplam = sum(int(d.get("boyut", 0)) for d in dosyalar.values())
@@ -200,21 +234,35 @@ def gonderim_tamamla(db: Session, cihaz: dict, dosyalar: dict, girdi_ozeti: dict
         "VALUES (:c, :ca, CAST(:d AS JSONB), CAST(:g AS JSONB), :t, :a) RETURNING id"),
         {"c": cihaz["id"], "ca": cihaz["cihaz_adi"], "d": json.dumps(dosyalar, ensure_ascii=False),
          "g": json.dumps(girdi_ozeti or {}, ensure_ascii=False), "t": toplam, "a": (aciklama or "")[:500]}).scalar()
+    silinen = budama(db, var)
     db.commit()
-    silinen = budama(db)
     return {"surum_id": surum_id, "toplam_bayt": toplam, "silinen_parca": silinen}
 
 
-def budama(db: Session) -> int:
-    """Son SAKLANAN_SURUM sürümün kullanmadığı parçaları depodan kaldırır (depo ücretsiz plan sınırında kalsın)."""
-    kalan = db.execute(text("SELECT dosyalar FROM pipeline_surumleri ORDER BY id DESC LIMIT :n"),
-                       {"n": SAKLANAN_SURUM}).scalars().all()
+def budama(db: Session, depodaki: dict[str, str] | None = None) -> int:
+    """Hiçbir saklanan sürümün kullanmadığı parçaları depodan kaldırır (ücretsiz plan sınırında kalınsın).
+    Saklanan: son SAKLANAN_SURUM sürüm + son SAKLAMA_GUN günün sürümleri. Son YENI_PARCA_SAAT saatte yüklenen parça
+    (başka bir bilgisayarın süren gönderimine ait olabilir) silinmez."""
+    kalan = db.execute(text("SELECT dosyalar FROM pipeline_surumleri WHERE id IN (SELECT id FROM pipeline_surumleri "
+                            "ORDER BY id DESC LIMIT :n) OR zaman > now() - make_interval(days => :g)"),
+                       {"n": SAKLANAN_SURUM, "g": SAKLAMA_GUN}).scalars().all()
     if not kalan:
         return 0
     gerekli = {p for d in kalan for f in (d or {}).values() for p in f.get("parcalar", [])}
+    sinir = simdi() - timedelta(hours=YENI_PARCA_SAAT)
     try:
-        artik = sorted(depo.mevcut_parcalar() - gerekli)
-        return depo.parcalari_sil(artik) if artik else 0
+        depodaki = depodaki if depodaki is not None else depo.mevcut_parcalar()
+        artik = []
+        for o, zaman in depodaki.items():
+            if o in gerekli:
+                continue
+            try:
+                eski = datetime.fromisoformat(zaman.replace("Z", "+00:00")) < sinir
+            except (ValueError, AttributeError):
+                eski = False   # zamanı bilinmeyen parça silinmez
+            if eski:
+                artik.append(o)
+        return depo.parcalari_sil(sorted(artik)) if artik else 0
     except depo.DepoHatasi:
         return 0   # budama bir sonraki gönderimde yeniden denenir; sürüm kaydı geçerli
 
@@ -245,11 +293,13 @@ def sayac_durumu(db: Session) -> dict:
             db.rollback()
             return []
 
+    eksik_nedeni = 0
     for tablo, ad in (("bolum_agirliklari", "bölüm profili"), ("bolum_k5_baglari", "K5 iş türü bağı"),
                       ("bolum_ornek_meslekler", "örnek meslek listesi")):
         eksik = eksik_bolumler(tablo)
         if eksik:
             nedenler.append(f"{len(eksik)} yayındaki bölümün {ad} yok: " + ", ".join(eksik[:5]) + (" …" if len(eksik) > 5 else ""))
+            eksik_nedeni += 1
 
     canli = canli_listeler(db)
     if son and son.get("girdi_ozeti"):
@@ -272,7 +322,8 @@ def sayac_durumu(db: Session) -> dict:
 
     sonraki = profil + timedelta(days=GUNCELLIK_GUN) if profil else None
     kalan = (sonraki - bugun).days if sonraki else None
-    calistirma_gerekli = len(nedenler) - int(bekleyen) > 0
+    # Bekleyen çıktı varsa eksik profil / bağ nedenleri büyük olasılıkla o çıktıyla kapanır: yapılacak iş önce canlıya almak
+    calistirma_gerekli = len(nedenler) - int(bekleyen) - (eksik_nedeni if bekleyen else 0) > 0
     if profil is None:
         nedenler.insert(0, "Bölüm profilleri hiç canlıya alınmamış.")
     elif kalan <= 0:

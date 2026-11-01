@@ -25,9 +25,13 @@ def _goc(db):
 @pytest.fixture
 def sahte_depo(monkeypatch):
     nesneler: set[str] = set()
+    yeni: set[str] = set()      # bu kümedeki parçalar "az önce yüklendi" sayılır (budanmaz)
+    eski_zaman = (datetime.now(timezone.utc) - timedelta(days=2)).isoformat()
     monkeypatch.setattr(depo, "hazir_mi", lambda: True)
     monkeypatch.setattr(depo, "kova_hazirla", lambda: None)
-    monkeypatch.setattr(depo, "mevcut_parcalar", lambda: set(nesneler))
+    monkeypatch.setattr(depo, "mevcut_parcalar",
+                        lambda: {o: (datetime.now(timezone.utc).isoformat() if o in yeni else eski_zaman) for o in nesneler})
+    monkeypatch.setattr(depo, "parca_bozuk_mu", lambda o: o == "e" * 64)
     monkeypatch.setattr(depo, "yukleme_adresi", lambda o: f"https://depo/yukle/{o}")
     monkeypatch.setattr(depo, "indirme_adresleri", lambda ozetler, sure_sn=3600: {o: f"https://depo/indir/{o}" for o in ozetler})
 
@@ -35,7 +39,7 @@ def sahte_depo(monkeypatch):
         nesneler.difference_update(ozetler)
         return len(ozetler)
     monkeypatch.setattr(depo, "parcalari_sil", sil)
-    return nesneler
+    return nesneler, yeni
 
 
 def _kur(istemci, kisiler, ad="Ofis PC"):
@@ -60,6 +64,9 @@ def test_kod_manifesti_ve_sablon():
 @db_gerekli
 def test_kurulum_gonderim_sayac_ve_iptal(istemci, kisiler, db, sahte_depo):
     _goc(db)
+    db.execute(text("DELETE FROM pipeline_surumleri"))
+    db.commit()
+    sahte_depo, yeni_parcalar = sahte_depo
     kurulum = _kur(istemci, kisiler)
     # yalnızca süper admin
     assert istemci.post("/admin/pipeline-paketi/kurulum-dosyasi", headers=kisiler["yetkili"],
@@ -94,10 +101,25 @@ def test_kurulum_gonderim_sayac_ve_iptal(istemci, kisiler, db, sahte_depo):
     r = istemci.post("/pipeline-istemci/gonderim/tamamla", headers=bas, json={"dosyalar": dosyalar, "girdi_ozeti": canli["ozet"]})
     assert r.status_code == 422, "yüklenmemiş parça varken sürüm kaydedilmez"
     sahte_depo.add(b)
-    sahte_depo.add("d" * 64)   # hiçbir sürümün kullanmadığı artık parça
+    sahte_depo.add("d" * 64)   # hiçbir sürümün kullanmadığı eski artık parça → budanır
+    sahte_depo.add("f" * 64); yeni_parcalar.add("f" * 64)   # az önce yüklenmiş (başka gönderime ait olabilir) → kalır
     r = istemci.post("/pipeline-istemci/gonderim/tamamla", headers=bas, json={"dosyalar": dosyalar, "girdi_ozeti": canli["ozet"]})
     assert r.status_code == 200, r.text
-    assert r.json()["silinen_parca"] == 1 and sahte_depo == {a, b}
+    assert r.json()["silinen_parca"] == 1 and sahte_depo == {a, b, "f" * 64}
+    ilk = r.json()["surum_id"]
+    # bu çalıştırma eski bir sürümden başladıysa (başka bilgisayar arada gönderdi) üzerine yazılmaz; zorla ile yazılır
+    r2 = istemci.post("/pipeline-istemci/gonderim/tamamla", headers=bas, json={"dosyalar": dosyalar, "taban_surum_id": ilk - 1})
+    assert r2.status_code == 409
+    r2 = istemci.post("/pipeline-istemci/gonderim/tamamla", headers=bas, json={"dosyalar": dosyalar, "taban_surum_id": ilk})
+    assert r2.status_code == 200
+    r = istemci.post("/pipeline-istemci/gonderim/tamamla", headers=bas, json={"dosyalar": dosyalar, "taban_surum_id": ilk, "zorla": True})
+    assert r.status_code == 200
+    # veri klasörleri dışına (kod, ayar) yol kabul edilmez; özetler onaltılık olmalı
+    for kotu in ("src/b1_bolum_esitle.py", "pipeline_calistir.ps1", "ayar.json", "veri/a:b", "veri/../src/x.py", "veri\\x"):
+        assert istemci.post("/pipeline-istemci/gonderim/tamamla", headers=bas, json={
+            "dosyalar": {kotu: {"sha256": "c" * 64, "boyut": 1, "parcalar": [a]}}, "zorla": True}).status_code == 422, kotu
+    assert istemci.post("/pipeline-istemci/parca-adresleri", headers=bas, json={"parcalar": ["Z" * 64]}).status_code == 422
+    assert istemci.post("/pipeline-istemci/parca-bozuk", headers=bas, json={"sha256": "e" * 64}).json() == {"bozuktu": True}
     # kötü yol reddedilir
     assert istemci.post("/pipeline-istemci/gonderim/tamamla", headers=bas, json={
         "dosyalar": {"../../x": {"sha256": "c" * 64, "boyut": 1, "parcalar": [a]}}}).status_code == 422
@@ -107,10 +129,10 @@ def test_kurulum_gonderim_sayac_ve_iptal(istemci, kisiler, db, sahte_depo):
 
     # sayaç ve bilgisayar listesi
     v = istemci.get("/admin/pipeline-paketi/durum", headers=kisiler["super"]).json()
-    assert v["depo_hazir"] and [c["cihaz_adi"] for c in v["cihazlar"]] == ["Ofis PC"] and v["surumler"][0]["dosya_sayisi"] == 1
+    assert v["depo_hazir"] and "Ofis PC" in [c["cihaz_adi"] for c in v["cihazlar"]] and v["surumler"][0]["dosya_sayisi"] == 1
     assert v["sayac"]["durum"] in ("canliya_al", "gerekli"), "çalıştırma sonrası çıktılar canlıya alınmadıysa"
     # erişim kaldırma
-    cid = v["cihazlar"][0]["id"]
+    cid = next(c["id"] for c in v["cihazlar"] if c["cihaz_adi"] == "Ofis PC")
     assert istemci.delete(f"/admin/pipeline-paketi/cihazlar/{cid}", headers=kisiler["super"]).status_code == 204
     assert istemci.get("/pipeline-istemci/manifest", headers=bas).status_code == 401
     assert db.execute(text("SELECT COUNT(*) FROM audit_log WHERE islem IN ('pipeline_kurulum_dosyasi', 'pipeline_cihaz_kaldirma')")).scalar() >= 2

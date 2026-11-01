@@ -52,6 +52,8 @@ if (-not $cevap) {
   }
   $ayar = @{ api = $Api; anahtar = $cevap.cihaz_anahtari; cihaz_adi = $cevap.cihaz_adi } | ConvertTo-Json
   [IO.File]::WriteAllText($AyarYolu, $ayar, (New-Object Text.UTF8Encoding $false))
+  # Bilgisayar anahtarını yalnızca bu Windows kullanıcısı okuyabilsin (klasörden devralınan izinler kaldırılır)
+  try { & icacls $AyarYolu /inheritance:r /grant:r "$($env:USERDOMAIN)\$($env:USERNAME):(R,W)" | Out-Null } catch {}
   Write-Host "  Bağlandı: $($cevap.cihaz_adi)"
 }
 $Baslik = @{ "X-Pipeline-Anahtari" = $cevap.cihaz_anahtari }

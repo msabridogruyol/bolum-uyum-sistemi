@@ -9,12 +9,15 @@ GET  /pipeline-istemci/kod?yol=src/x.py      — kod dosyası
 POST /pipeline-istemci/parca-adresleri      — parçalar için kısa süreli indirme adresleri (Storage)
 GET  /pipeline-istemci/canli                — canlı bölüm / özellik / K5 listeleri (+ özetleri)
 POST /pipeline-istemci/gonderim/baslat      — depoda olmayan parçalar için yükleme adresleri
-POST /pipeline-istemci/gonderim/tamamla     — yeni veri sürümünü kaydet (eski sürümlerin artık parçaları budanır)
+POST /pipeline-istemci/gonderim/tamamla     — yeni veri sürümünü kaydet (başka bilgisayar daha yeni gönderdiyse 409)
+POST /pipeline-istemci/parca-bozuk          — doğrulanamayan parçayı sunucu denetler, bozuksa siler
 Bu uçlar canlı sisteme hiçbir şey YAYIMLAMAZ; çıktılar yine süper admin Pipeline Sonuçları ekranından canlıya alınır.
 """
 from fastapi import APIRouter, Depends, Header, HTTPException, Query
 from fastapi.responses import Response
-from pydantic import BaseModel, Field
+from typing import Annotated
+
+from pydantic import BaseModel, Field, StringConstraints
 from sqlalchemy.orm import Session
 
 from app.core import pipeline_depo as depo
@@ -68,8 +71,11 @@ def kod(yol: str = Query(..., max_length=300), cihaz: dict = Depends(_cihaz)):
         raise HTTPException(404, str(e))
 
 
+Hex64 = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
+
+
 class ParcaListesi(BaseModel):
-    parcalar: list[str] = Field(..., max_length=pp.EN_FAZLA_DOSYA)
+    parcalar: list[Hex64] = Field(..., max_length=pp.EN_FAZLA_DOSYA)
 
 
 @router.post("/parca-adresleri")
@@ -86,12 +92,12 @@ def canli(db: Session = Depends(get_db), cihaz: dict = Depends(_cihaz)):
 
 
 class Parca(BaseModel):
-    sha256: str = Field(..., min_length=64, max_length=64)
-    boyut: int = Field(..., ge=0)
+    sha256: Hex64
+    boyut: int = Field(..., ge=0, le=pp.depo.PARCA_BOYUTU)
 
 
 class BaslatIstek(BaseModel):
-    parcalar: list[Parca] = Field(..., max_length=pp.EN_FAZLA_DOSYA * 4)
+    parcalar: list[Parca] = Field(..., max_length=500)   # bilgisayar 100'lük gruplar hâlinde gönderir
 
 
 @router.post("/gonderim/baslat")
@@ -105,18 +111,36 @@ def gonderim_baslat(istek: BaslatIstek, cihaz: dict = Depends(_cihaz)):
 
 
 class TamamlaIstek(BaseModel):
-    dosyalar: dict
-    girdi_ozeti: dict | None = None
+    dosyalar: dict = Field(..., max_length=pp.EN_FAZLA_DOSYA)
+    girdi_ozeti: dict[str, Annotated[str, StringConstraints(max_length=64)]] | None = Field(None, max_length=10)
     aciklama: str | None = Field(None, max_length=500)
+    taban_surum_id: int | None = None     # bu çalıştırmanın başladığı veri sürümü (yoksa ilk gönderim)
+    zorla: bool = False                    # başka bilgisayarın daha yeni sürümü olsa da bunu en yeni yap
 
 
 @router.post("/gonderim/tamamla")
 def gonderim_tamamla(istek: TamamlaIstek, db: Session = Depends(get_db), cihaz: dict = Depends(_cihaz)):
     try:
-        return pp.gonderim_tamamla(db, cihaz, istek.dosyalar, istek.girdi_ozeti, istek.aciklama)
+        return pp.gonderim_tamamla(db, cihaz, istek.dosyalar, istek.girdi_ozeti, istek.aciklama, istek.taban_surum_id, istek.zorla)
+    except pp.SurumCakismasi as e:
+        db.rollback()
+        raise HTTPException(409, str(e))
     except pp.PaketHatasi as e:
         db.rollback()
         raise HTTPException(422, str(e))
     except depo.DepoHatasi as e:
         db.rollback()
+        _depo_hatasi(e)
+
+
+class BozukIstek(BaseModel):
+    sha256: Hex64
+
+
+@router.post("/parca-bozuk")
+def parca_bozuk(istek: BozukIstek, cihaz: dict = Depends(_cihaz)):
+    """İndirilen parça adıyla uyuşmadı: sunucu parçayı depodan okuyup denetler, gerçekten bozuksa siler."""
+    try:
+        return {"bozuktu": pp.parca_bozuk_bildir(istek.sha256)}
+    except depo.DepoHatasi as e:
         _depo_hatasi(e)

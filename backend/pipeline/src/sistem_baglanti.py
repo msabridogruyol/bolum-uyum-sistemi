@@ -69,11 +69,20 @@ def api(yontem: str, yol: str, govde=None, ham: bool = False, zaman_asimi: int =
         raise BaglantiHatasi(f"Sistem isteği reddetti ({e.code}): {ayrinti or e.reason}")
 
 
+class AdresSuresiDoldu(BaglantiHatasi):
+    pass
+
+
 def indir(adres: str) -> bytes:
     def cagir():
         with urllib.request.urlopen(adres, timeout=300) as y:
             return y.read()
-    return _yeniden_dene(cagir)
+    try:
+        return _yeniden_dene(cagir)
+    except urllib.error.HTTPError as e:
+        if e.code in (400, 401, 403):
+            raise AdresSuresiDoldu(f"İndirme adresi geçersiz ya da süresi dolmuş ({e.code}).")
+        raise BaglantiHatasi(f"Depodan indirilemedi ({e.code}).")
 
 
 def yukle(adres: str, veri: bytes) -> None:
@@ -86,7 +95,11 @@ def yukle(adres: str, veri: bytes) -> None:
     try:
         _yeniden_dene(cagir)
     except urllib.error.HTTPError as e:
-        raise BaglantiHatasi(f"Depoya yükleme reddedildi ({e.code}): {e.read()[:200]!r}")
+        govde = e.read()[:300]
+        # Önceki deneme aslında yüklenmişse (zaman aşımı sonrası tekrar): parça içerik özetiyle adlandırıldığı için aynıdır
+        if e.code in (400, 409) and (b"Duplicate" in govde or b"already exists" in govde):
+            return
+        raise BaglantiHatasi(f"Depoya yükleme reddedildi ({e.code}): {govde!r}")
 
 
 def sha256(veri: bytes) -> str:
@@ -109,6 +122,18 @@ def parca_oku(yol: Path, sira: int) -> bytes:
     with open(yol, "rb") as f:
         f.seek(sira * PARCA_BOYUTU)
         return f.read(PARCA_BOYUTU)
+
+
+def guvenli_hedef(yol: str, klasorler=KAPSAM) -> Path:
+    """Sistemden gelen göreli yolu bu bilgisayardaki pipeline klasörü içinde tutar (dışarı yazılamaz)."""
+    parcalar = yol.replace("\\", "/").split("/")
+    if not yol or yol.startswith("/") or ":" in yol or any(p in ("", ".", "..") for p in parcalar) or \
+            (klasorler is not None and parcalar[0] not in klasorler):
+        raise BaglantiHatasi(f"Sistemden beklenmeyen dosya yolu geldi, yazılmadı: {yol[:120]!r}")
+    hedef = (KOK / yol).resolve()
+    if not hedef.is_relative_to(KOK.resolve()):
+        raise BaglantiHatasi(f"Sistemden beklenmeyen dosya yolu geldi, yazılmadı: {yol[:120]!r}")
+    return hedef
 
 
 def yerel_dosyalar() -> dict[str, Path]:

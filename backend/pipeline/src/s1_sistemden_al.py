@@ -24,12 +24,13 @@ import io
 import json
 import shutil
 import sys
+import urllib.parse
 from datetime import datetime
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from sistem_baglanti import (KOK, BaglantiHatasi, api, durum_oku, durum_yaz, dosya_ozeti, indir, sha256,  # noqa: E402
-                             yerel_dosyalar)
+from sistem_baglanti import (KOK, KAPSAM, AdresSuresiDoldu, BaglantiHatasi, api, durum_oku, durum_yaz, dosya_ozeti,  # noqa: E402
+                             guvenli_hedef, indir, sha256, yerel_dosyalar)
 
 VERI = KOK / "veri"
 DAMGA = f"{datetime.now():%Y%m%d_%H%M%S}"
@@ -80,10 +81,13 @@ def kodu_guncelle(manifest: dict) -> bool:
     calistirici_degisti, degisen = False, []
     sistemdeki = {d["yol"] for d in manifest["kod"]}
     for d in manifest["kod"]:
-        yol = KOK / d["yol"]
+        # kod veri klasörlerine, venv'e ya da ayar dosyalarına yazamaz
+        if d["yol"].split("/")[0] in KAPSAM + ("venv", "yedekler", "_silinecek") or d["yol"] in ("ayar.json", ".senkron_durumu.json"):
+            raise BaglantiHatasi(f"Sistemden beklenmeyen kod yolu geldi, yazılmadı: {d['yol'][:120]!r}")
+        yol = guvenli_hedef(d["yol"], klasorler=None)
         if yol.exists() and sha256(yol.read_bytes()) == d["sha256"]:
             continue
-        veri = api("GET", "/pipeline-istemci/kod?yol=" + d["yol"], ham=True)
+        veri = api("GET", "/pipeline-istemci/kod?yol=" + urllib.parse.quote(d["yol"]), ham=True)
         if sha256(veri) != d["sha256"]:
             raise BaglantiHatasi(f"İndirilen kod dosyası doğrulanamadı: {d['yol']}")
         yol.parent.mkdir(parents=True, exist_ok=True)
@@ -107,7 +111,29 @@ def kodu_guncelle(manifest: dict) -> bool:
 
 
 # ------------------------------------------------------------------------------------------------ 2) veri
-def veriyi_al(manifest: dict, kurulum: bool, sistemdekini_al: bool) -> None:
+def _dosyayi_indir(y: str, d: dict) -> bytes:
+    """Parçaları indirir ve doğrular. Adresler dosya başına istenir (uzun indirmede süresi dolmasın)."""
+    adresler = api("POST", "/pipeline-istemci/parca-adresleri", {"parcalar": sorted(set(d["parcalar"]))})["adresler"]
+    veri = bytearray()
+    for p in d["parcalar"]:
+        try:
+            parca = indir(adresler[p])
+        except AdresSuresiDoldu:
+            adresler = api("POST", "/pipeline-istemci/parca-adresleri", {"parcalar": sorted(set(d["parcalar"]))})["adresler"]
+            parca = indir(adresler[p])
+        if sha256(parca) != p:
+            bozuktu = api("POST", "/pipeline-istemci/parca-bozuk", {"sha256": p}).get("bozuktu")
+            raise BaglantiHatasi(f"İndirilen parça doğrulanamadı ({y}). " + (
+                "Sistemdeki bozuk parça silindi; o sürümü gönderen bilgisayar pipeline'ı bir kez daha çalıştırınca yeniden yüklenir."
+                if bozuktu else "Bağlantı kaynaklı olabilir; tekrar deneyin."))
+        veri += parca
+    if sha256(bytes(veri)) != d["sha256"]:
+        raise BaglantiHatasi(f"İndirilen dosya doğrulanamadı: {y}")
+    return bytes(veri)
+
+
+def veriyi_al(manifest: dict, kurulum: bool, sistemdekini_al: bool) -> bool:
+    """False: bu bilgisayardaki veri sistemle eşleştirilmedi (kurulumda dokunulmadı); canlı listeler de yazılmaz."""
     sistem = manifest.get("veri")
     if not sistem:
         print("Veri: sistemde henüz veri sürümü yok — bu bilgisayardaki veri kullanılacak, çalıştırma sonunda gönderilecek.")
@@ -116,10 +142,22 @@ def veriyi_al(manifest: dict, kurulum: bool, sistemdekini_al: bool) -> None:
     if durum and durum.get("surum_id") == sistem["surum_id"]:
         print(f"Veri: bu bilgisayar sistemdeki son sürümle aynı (sürüm {sistem['surum_id']}).")
         return
+    for y in sistem["dosyalar"]:
+        guvenli_hedef(y)                                   # hepsi indirilmeden önce denetlenir
     yerel = yerel_dosyalar()
     yerel_ozet = {y: dosya_ozeti(p)["sha256"] for y, p in yerel.items()}
+    if not durum and yerel and not sistemdekini_al:
+        # Bu bilgisayarda sistemle hiç eşleşmemiş veri var: kurulumda bile kendiliğinden üzerine yazılmaz
+        mesaj = (f"Bu bilgisayarda sistemle henüz eşleşmemiş veri var ({len(yerel)} dosya); sistemde de sürüm "
+                 f"{sistem['surum_id']} ({sistem.get('cihaz_adi') or '?'}) var. Hangisinin kullanılacağına siz karar verin:\n"
+                 "  sistemdekini almak için:  ... pipeline_calistir.ps1 -SistemdekiniAl  (buradakiler önce yedeklenir)")
+        if kurulum:
+            print("Veri: " + mesaj + "\nKurulum bu bilgisayardaki veriye dokunmadan tamamlandı.")
+            return False
+        raise BaglantiHatasi(mesaj)
     if durum and not sistemdekini_al:
         gonderilmemis = [y for y, s in yerel_ozet.items() if y not in TURETILEN and durum["dosyalar"].get(y) != s]
+        gonderilmemis += [y for y in durum["dosyalar"] if y not in yerel_ozet and y not in TURETILEN]   # silinmiş olanlar da
         if gonderilmemis:
             raise BaglantiHatasi(
                 f"Sistemde başka bir bilgisayarın gönderdiği daha yeni veri var (sürüm {sistem['surum_id']}, "
@@ -127,37 +165,37 @@ def veriyi_al(manifest: dict, kurulum: bool, sistemdekini_al: bool) -> None:
                 f"(ör. {', '.join(gonderilmemis[:3])}). Biri ötekinin üzerine yazmasın diye durdu.\n"
                 "Sistemdekini kullanmak için:  powershell -ExecutionPolicy Bypass -File C:\\pipeline\\pipeline_calistir.ps1 "
                 "-SistemdekiniAl   (bu bilgisayardakiler önce yedekler klasörüne kopyalanır)")
-    elif not durum and yerel and not kurulum and not sistemdekini_al:
-        raise BaglantiHatasi(
-            "Bu bilgisayardaki veri sistemdeki hiçbir sürümle eşleştirilemedi (ilk eşleştirme). Sistemdeki son sürümü "
-            "almak için -SistemdekiniAl ile çalıştırın.")
+    yedek = KOK / "yedekler" / f"veri_oncesi_{DAMGA}"
     hedefler = {y: d for y, d in sistem["dosyalar"].items() if yerel_ozet.get(y) != d["sha256"]}
-    if hedefler:
-        parcalar = sorted({p for d in hedefler.values() for p in d["parcalar"]})
-        adresler = api("POST", "/pipeline-istemci/parca-adresleri", {"parcalar": parcalar})["adresler"]
-        yedek = KOK / "yedekler" / f"veri_oncesi_{DAMGA}"
-        toplam = 0
+    # Önce hepsi geçici klasöre indirilip doğrulanır; biri bile başarısız olursa bu bilgisayardaki dosyalara dokunulmaz
+    gecici_kok = KOK / "yedekler" / f".indirme_{DAMGA}"
+    toplam = 0
+    try:
         for y, d in sorted(hedefler.items()):
-            veri = b""
-            for p in d["parcalar"]:
-                parca = indir(adresler[p])
-                if sha256(parca) != p:
-                    raise BaglantiHatasi(f"İndirilen parça doğrulanamadı ({y}).")
-                veri += parca
-            if sha256(veri) != d["sha256"]:
-                raise BaglantiHatasi(f"İndirilen dosya doğrulanamadı: {y}")
-            hedef = KOK / y
-            if hedef.exists():
-                (yedek / y).parent.mkdir(parents=True, exist_ok=True)
-                shutil.copy(hedef, yedek / y)
-            hedef.parent.mkdir(parents=True, exist_ok=True)
-            gecici = hedef.with_name(hedef.name + ".tmp")
-            gecici.write_bytes(veri); gecici.replace(hedef)
+            veri = _dosyayi_indir(y, d)
+            g = gecici_kok / y
+            g.parent.mkdir(parents=True, exist_ok=True)
+            g.write_bytes(veri)
             toplam += len(veri)
-        print(f"Veri: sistemdeki sürüm {sistem['surum_id']} alındı — {len(hedefler)} dosya, {toplam / 1e6:.1f} MB"
-              + (f" (önceki hâlleri: {yedek})" if yedek.exists() else ""))
-    else:
-        print(f"Veri: dosyalar sistemdeki sürüm {sistem['surum_id']} ile zaten aynı.")
+    except BaseException:
+        shutil.rmtree(gecici_kok, ignore_errors=True)
+        raise
+    for y in sorted(hedefler):
+        hedef = guvenli_hedef(y)
+        if hedef.exists():
+            (yedek / y).parent.mkdir(parents=True, exist_ok=True)
+            shutil.copy(hedef, yedek / y)
+        hedef.parent.mkdir(parents=True, exist_ok=True)
+        (gecici_kok / y).replace(hedef)
+    shutil.rmtree(gecici_kok, ignore_errors=True)
+    # Sistemdeki sürümde olmayan yerel dosyalar (eski kalıntı) yedeğe taşınır; yoksa bir sonraki gönderimde geri gelirdi
+    kalinti = [y for y in yerel if y not in sistem["dosyalar"] and y not in TURETILEN]
+    for y in kalinti:
+        (yedek / y).parent.mkdir(parents=True, exist_ok=True)
+        shutil.move(str(yerel[y]), yedek / y)
+    print(f"Veri: sistemdeki sürüm {sistem['surum_id']} alındı — {len(hedefler)} dosya, {toplam / 1e6:.1f} MB"
+          + (f"; sistemde olmayan {len(kalinti)} eski dosya yedeğe taşındı" if kalinti else "")
+          + (f" (önceki hâlleri: {yedek})" if yedek.exists() else ""))
     durum_yaz(sistem["surum_id"], sistem["dosyalar"])
 
 
@@ -276,7 +314,8 @@ def main():
         if calistirici and not kurulum:
             print("Çalıştırma dosyası ya da s1 güncellendi; çalıştırma yeni hâliyle yeniden başlıyor.")
             sys.exit(KOD_YENIDEN_BASLAT)
-        veriyi_al(manifest, kurulum, sistemdekini_al)
+        if veriyi_al(manifest, kurulum, sistemdekini_al) is False:
+            return
         canli = api("GET", "/pipeline-istemci/canli")
         VERI.mkdir(parents=True, exist_ok=True)
         bolumleri_esitle(canli["bolumler"])

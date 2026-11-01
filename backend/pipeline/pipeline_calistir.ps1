@@ -5,7 +5,7 @@
 # Ekrana yazılanlar ayrıca cikti\calistirma_log.txt dosyasına kaydedilir. Bir adım hata verirse sonraki adımlar ÇALIŞMAZ.
 # Hiçbir adım canlıya yükleme yapmaz: çıktılar admin → Pipeline Sonuçları ekranından canlıya alınır.
 # Adlar: s1 / s2 = sistemle alışveriş, m1–m5 = meslek hazırlığı (yalnızca -MeslekHazirla), b1–b7 = bölüm adımları.
-param([switch]$MeslekHazirla, [switch]$SistemdekiniAl)
+param([switch]$MeslekHazirla, [switch]$SistemdekiniAl, [switch]$Devam)   # -Devam: kod güncellemesinden sonra kendi kendini yeniden başlatırken (kayıt silinmesin)
 
 $Kok = Split-Path -Parent $MyInvocation.MyCommand.Path
 $Py  = Join-Path $Kok "venv\Scripts\python.exe"
@@ -37,7 +37,7 @@ if (-not (Test-Path (Join-Path $Kok "ayar.json"))) {
   Write-Host "Bu bilgisayar sisteme bağlı değil. Admin paneli → Pipeline Sonuçları → 'Bu bilgisayara kur' ile kurulum dosyasını indirip çalıştırın." -ForegroundColor Red
   exit 1
 }
-"Filizyol pipeline kaydı — $(Get-Date -Format s)" | Out-File $Log -Encoding utf8
+if (-not $Devam) { "Filizyol pipeline kaydı — $(Get-Date -Format s)" | Out-File $Log -Encoding utf8 }
 
 # s1: sistemden güncel kod + veri + canlı listeler. Bu dosya ya da s1 güncellendiyse yeni hâliyle yeniden başlar (çıkış kodu 10).
 Yaz "`n========== s1) Sistemden güncel kod, veri ve canlı listeler  ($(Get-Date -Format 'HH:mm:ss')) ==========" "Cyan"
@@ -45,7 +45,7 @@ $s1 = @("src\s1_sistemden_al.py"); if ($SistemdekiniAl) { $s1 += "--sistemdekini
 $kod = Calistir $s1
 if ($kod -eq 10) {
   Yaz "Pipeline kodu güncellendi; yeni hâliyle yeniden başlatılıyor." "Yellow"
-  $yeniden = @("-ExecutionPolicy", "Bypass", "-File", $MyInvocation.MyCommand.Path)
+  $yeniden = @("-ExecutionPolicy", "Bypass", "-File", $MyInvocation.MyCommand.Path, "-Devam")
   if ($MeslekHazirla) { $yeniden += "-MeslekHazirla" }
   if ($SistemdekiniAl) { $yeniden += "-SistemdekiniAl" }
   & powershell @yeniden
