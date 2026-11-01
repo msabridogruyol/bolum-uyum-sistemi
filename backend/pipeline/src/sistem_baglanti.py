@@ -73,7 +73,14 @@ class AdresSuresiDoldu(BaglantiHatasi):
     pass
 
 
+def tam_adres(adres: str) -> str:
+    """Depo adresi göreli gelebilir (sunucunun kendi diskindeki depo: /pipeline-istemci/depo/...): sistem adresine eklenir."""
+    return ayar()["api"].rstrip("/") + adres if adres.startswith("/") else adres
+
+
 def indir(adres: str) -> bytes:
+    adres = tam_adres(adres)
+
     def cagir():
         with urllib.request.urlopen(adres, timeout=300) as y:
             return y.read()
@@ -86,7 +93,7 @@ def indir(adres: str) -> bytes:
 
 
 def yukle(adres: str, veri: bytes) -> None:
-    istek = urllib.request.Request(adres, data=veri, method="PUT",
+    istek = urllib.request.Request(tam_adres(adres), data=veri, method="PUT",
                                    headers={"Content-Type": "application/octet-stream", "x-upsert": "true"})
 
     def cagir():

@@ -140,9 +140,15 @@ NIYETLER: list[dict] = [
     {"k": "tuik", "rol": (SUPER,), "kalip": ["tuik", "istihdam", "maas", "kazanc", "is hayati veri", "asgari ucret"],
      "metin": "TÜİK istihdam göstergeleri, Kazanç Yapısı, kamu maaşları ve asgari ücret İş Hayatı Verileri sayfasından yüklenir/güncellenir.",
      "bag": [("İş Hayatı Verileri", "/admin/is-hayati-verileri")]},
-    {"k": "pipeline", "rol": (SUPER,), "kalip": ["pipeline", "agirlik", "taslak", "esco"],
-     "metin": "Bölüm ağırlığı yüklemeleri ve onay bekleyen taslaklar Pipeline Durumu sayfasında; onaylanana kadar skor motorunda kullanılmaz.",
-     "bag": [("Pipeline Durumu", "/admin/pipeline")]},
+    {"k": "pipeline", "rol": (SUPER,), "kalip": ["pipeline", "agirlik", "taslak", "esco", "sayac", "bilgisayara kur"],
+     "metin": "Bölüm verisi yılda bir yenilenir: Pipeline Sonuçları'ndaki sayaç ne zaman gerektiğini söyler. Pipeline kurulu bilgisayarda "
+              "çalıştırılır, çıktılar aynı sayfada 3 adımla canlıya alınır; yeni bilgisayar kurulumu da oradan yapılır. "
+              "Adım adım anlatım Yönetim Rehberi'nde.",
+     "bag": [("Pipeline Sonuçları", "/admin/pipeline"), ("Yönetim Rehberi", "/admin/yonetim-rehberi")]},
+    {"k": "rehber", "rol": (SUPER,), "kalip": ["nasil yapilir", "adim adim", "rehber", "nereden yapilir"],
+     "metin": "Sık yapılan işlerin (bölüm verisi güncellemesi, bilgisayar kurulumu, veri kaynakları, demo okul, sunucu taşıma) "
+              "adım adım anlatımı Yönetim Rehberi'nde.",
+     "bag": [("Yönetim Rehberi", "/admin/yonetim-rehberi")]},
     {"k": "parametre", "rol": (SUPER,), "kalip": ["parametre", "katman agirlik", "esik", "ayar"],
      "metin": "Sistem parametreleri (katman ağırlıkları, eşikler, süreler) Parametreler sayfasında; değişiklikler denetim kaydına yazılır.",
      "bag": [("Parametreler", "/admin/parametreler")]},
@@ -400,9 +406,9 @@ def okul_ozeti(db: Session, okul_id: int, bugun: date | None = None) -> list[dic
     return B
 
 
-_SUPER_SAYFA = {"/admin/pipeline": "Pipeline Durumu", "/admin/guvenlik": "Güvenlik / Tutarlılık", "/admin/karsilastirma": "Okul Karşılaştırması",
+_SUPER_SAYFA = {"/admin/pipeline": "Pipeline Sonuçları", "/admin/guvenlik": "Güvenlik / Tutarlılık", "/admin/karsilastirma": "Okul Karşılaştırması",
                 "/admin/okullar": "Okullar", "/admin/koclar": "Eğitim Koçları", "/admin/test-hesaplari": "Test Hesapları", "/admin/bolumler": "Bölümler"}
-SUPER_ONCELIK = ["pipeline", "yetkilisiz", "gecersiz", "koc", "yarim", "giris_yok", "yetkili_sifre", "test_suresi", "paketsiz", "bolum_taslak"]
+SUPER_ONCELIK = ["pipeline_sayac", "pipeline", "yetkilisiz", "gecersiz", "koc", "yarim", "giris_yok", "yetkili_sifre", "test_suresi", "paketsiz", "bolum_taslak"]
 
 
 def sistem_ozeti(db: Session, yon) -> list[dict]:

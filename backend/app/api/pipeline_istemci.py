@@ -13,7 +13,7 @@ POST /pipeline-istemci/gonderim/tamamla     — yeni veri sürümünü kaydet (b
 POST /pipeline-istemci/parca-bozuk          — doğrulanamayan parçayı sunucu denetler, bozuksa siler
 Bu uçlar canlı sisteme hiçbir şey YAYIMLAMAZ; çıktılar yine süper admin Pipeline Sonuçları ekranından canlıya alınır.
 """
-from fastapi import APIRouter, Depends, Header, HTTPException, Query
+from fastapi import APIRouter, Depends, Header, HTTPException, Query, Request
 from fastapi.responses import Response
 from typing import Annotated
 
@@ -144,3 +144,41 @@ def parca_bozuk(istek: BozukIstek, cihaz: dict = Depends(_cihaz)):
         return {"bozuktu": pp.parca_bozuk_bildir(istek.sha256)}
     except depo.DepoHatasi as e:
         _depo_hatasi(e)
+
+
+# [2026-11-01] "disk" türü depo (kendi sunucu): parçalar backend üzerinden, kısa süreli imzalı adresle.
+# Supabase türünde bu uçlar kullanılmaz (404). Ayrıntı: app/core/pipeline_depo_disk.py
+def _disk_imza(sha256: str, islem: str, son: int, imza: str):
+    from app.core import pipeline_depo_disk as disk
+    if depo.tur() != "disk":
+        raise HTTPException(404, "Bu sistemde disk deposu kullanılmıyor.")
+    if not pp._HEX64.match(sha256) or islem not in ("indir", "yukle") or not disk.imza_gecerli_mi(islem, sha256, son, imza):
+        raise HTTPException(403, "Adres geçersiz ya da süresi dolmuş.")
+    return disk
+
+
+@router.get("/depo/{sha256}")
+def depo_indir(sha256: str, islem: str = Query(...), son: int = Query(...), imza: str = Query(..., max_length=64)):
+    disk = _disk_imza(sha256, islem, son, imza)
+    if islem != "indir":
+        raise HTTPException(403, "Adres bu işlem için değil.")
+    try:
+        return Response(disk.parca_oku(sha256), media_type="application/octet-stream")
+    except depo.DepoHatasi as e:
+        raise HTTPException(404, str(e))
+
+
+@router.put("/depo/{sha256}")
+async def depo_yukle(sha256: str, request: Request, islem: str = Query(...), son: int = Query(...),
+                     imza: str = Query(..., max_length=64)):
+    disk = _disk_imza(sha256, islem, son, imza)
+    if islem != "yukle":
+        raise HTTPException(403, "Adres bu işlem için değil.")
+    veri = await request.body()
+    if len(veri) > depo.PARCA_BOYUTU:
+        raise HTTPException(413, "Parça en fazla 20 MB olabilir.")
+    try:
+        disk.parca_yaz(sha256, veri)
+    except depo.DepoHatasi as e:
+        raise HTTPException(400, str(e))
+    return {"Key": sha256}

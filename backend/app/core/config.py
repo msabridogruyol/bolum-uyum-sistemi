@@ -44,6 +44,9 @@ class Settings(BaseSettings):
     SUPABASE_URL: str = ""
     SUPABASE_SERVICE_KEY: str = ""
     PIPELINE_DEPO_KOVA: str = "pipeline"
+    # "supabase" (varsayılan) ya da "disk" (kendi sunucu: parçalar PIPELINE_DEPO_DIZINI klasöründe, backend üzerinden)
+    PIPELINE_DEPO: str = "supabase"
+    PIPELINE_DEPO_DIZINI: str = "/var/lib/filizyol/pipeline_depo"
 
     # --- Sistem varsayılanları (E8'deki varsayılanlarla birebir aynı;
     #     gerçek değerler sistem_parametreleri tablosunda tutulur, bunlar

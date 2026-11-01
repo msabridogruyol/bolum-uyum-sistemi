@@ -39,6 +39,7 @@ const AdminGirisSayfasi = tembel(() => import('./pages/admin/AdminGirisSayfasi')
 const KontrolPaneliSayfasi = tembel(() => import('./pages/admin/KontrolPaneliSayfasi'))
 const HataKayitlariSayfasi = tembel(() => import('./pages/admin/HataKayitlariSayfasi'))   // [2026-10-11]
 const PipelineDurumuSayfasi = tembel(() => import('./pages/admin/PipelineDurumuSayfasi'))
+const YonetimRehberiSayfasi = tembel(() => import('./pages/admin/YonetimRehberiSayfasi'))
 const BolumlerSayfasi = tembel(() => import('./pages/admin/BolumlerSayfasi'))
 const DallarSayfasi = tembel(() => import('./pages/admin/DallarSayfasi'))
 const SorularSayfasi = tembel(() => import('./pages/admin/SorularSayfasi'))
@@ -178,6 +179,7 @@ function AnaUygulama() {
       >
         <Route index element={<KontrolPaneliSayfasi />} />
         <Route path="pipeline" element={<PipelineDurumuSayfasi />} />
+        <Route path="yonetim-rehberi" element={<YonetimRehberiSayfasi />} />
         <Route path="bolumler" element={<BolumlerSayfasi />} />
         <Route path="dallar" element={<DallarSayfasi />} />
         <Route path="sorular" element={<SorularSayfasi />} />

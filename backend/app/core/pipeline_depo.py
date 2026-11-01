@@ -1,6 +1,11 @@
 # -*- coding: utf-8 -*-
 """
-[2026-11-01] Pipeline veri deposu: Supabase Storage (gizli kova).
+[2026-11-01] Pipeline veri deposu. İki tür (ayar: PIPELINE_DEPO):
+  * "supabase" (varsayılan): Supabase Storage'da gizli kova — bu dosya.
+  * "disk": sunucunun kendi diskindeki klasör (PIPELINE_DEPO_DIZINI) — app/core/pipeline_depo_disk.py.
+    Kendi sunucuya taşınınca kullanılır; Render / Supabase gerekmez.
+İki tür de aynı işlevleri sunar (hazir_mi, kova_hazirla, mevcut_parcalar, indirme_adresleri, yukleme_adresi,
+parcalari_sil, parca_bozuk_mu); sistemin geri kalanı hangisinin kullanıldığını bilmez.
 
 Pipeline'ın veri, önbellek ve çıktı dosyaları (~220 MB) kod deposunda değil, Storage'da tutulur.
   * Dosyalar en fazla PARCA_BOYUTU'luk parçalara bölünür. Supabase ücretsiz planında tek dosya sınırı 50 MB;
@@ -26,8 +31,30 @@ class DepoHatasi(Exception):
     pass
 
 
+def tur() -> str:
+    return (settings.PIPELINE_DEPO or "supabase").strip().lower()
+
+
+def _disk():
+    from app.core import pipeline_depo_disk
+    return pipeline_depo_disk
+
+
+def _disk_mi() -> bool:
+    return tur() == "disk"
+
+
 def hazir_mi() -> bool:
+    if _disk_mi():
+        return _disk().hazir_mi()
     return bool(settings.SUPABASE_URL.strip() and settings.SUPABASE_SERVICE_KEY.strip())
+
+
+def eksik_ayar_metni() -> str:
+    """Depo hazır değilse ekranda gösterilecek: ne eksik."""
+    if _disk_mi():
+        return f"Disk deposu klasörü yazılamıyor ya da yok: {settings.PIPELINE_DEPO_DIZINI}"
+    return "SUPABASE_URL ve SUPABASE_SERVICE_KEY ortam değişkenleri tanımlı değil."
 
 
 def _kova() -> str:
@@ -70,6 +97,8 @@ def _mutlak(adres: str) -> str:
 
 def kova_hazirla() -> None:
     """Kova yoksa gizli olarak oluşturur (tekrar çağırmak güvenli)."""
+    if _disk_mi():
+        return _disk().kova_hazirla()
     durum, _ = _istek("GET", f"/bucket/{_kova()}")
     if durum == 200:
         return
@@ -84,6 +113,8 @@ def parca_yolu(sha256: str) -> str:
 
 def mevcut_parcalar() -> dict[str, str]:
     """Depodaki tüm parçalar: özet → oluşturma zamanı (ISO metin; bilinmiyorsa boş)."""
+    if _disk_mi():
+        return _disk().mevcut_parcalar()
     sonuc, kayma = {}, 0
     while True:
         durum, icerik = _istek("POST", f"/object/list/{_kova()}",
@@ -100,6 +131,8 @@ def mevcut_parcalar() -> dict[str, str]:
 
 
 def indirme_adresleri(ozetler: list[str], sure_sn: int = 3600) -> dict[str, str]:
+    if _disk_mi():
+        return _disk().indirme_adresleri(ozetler, sure_sn)
     sonuc = {}
     for i in range(0, len(ozetler), 200):
         grup = ozetler[i:i + 200]
@@ -118,6 +151,8 @@ def indirme_adresleri(ozetler: list[str], sure_sn: int = 3600) -> dict[str, str]
 
 
 def yukleme_adresi(sha256: str) -> str:
+    if _disk_mi():
+        return _disk().yukleme_adresi(sha256)
     # x-upsert imza anında verilir: yükleme zaman aşımına uğrayıp tekrar denenirse "zaten var" hatası olmasın
     durum, icerik = _istek("POST", f"/object/upload/sign/{_kova()}/{parca_yolu(sha256)}", {}, ek_baslik={"x-upsert": "true"})
     adres = (icerik or {}).get("url") or (icerik or {}).get("signedURL")
@@ -127,6 +162,8 @@ def yukleme_adresi(sha256: str) -> str:
 
 
 def parcalari_sil(ozetler: list[str]) -> int:
+    if _disk_mi():
+        return _disk().parcalari_sil(ozetler)
     for i in range(0, len(ozetler), 500):
         grup = [parca_yolu(o) for o in ozetler[i:i + 500]]
         durum, icerik = _istek("DELETE", f"/object/{_kova()}", {"prefixes": grup})
@@ -138,6 +175,8 @@ def parcalari_sil(ozetler: list[str]) -> int:
 def parca_bozuk_mu(sha256: str) -> bool:
     """Parçayı depodan okuyup içerik özetini denetler (adı içeriğiyle uyuşmuyorsa True). Bozuksa silinir; ilk gönderen
     bilgisayar bir sonraki gönderimde yeniden yükler."""
+    if _disk_mi():
+        return _disk().parca_bozuk_mu(sha256)
     import hashlib
     anahtar = settings.SUPABASE_SERVICE_KEY.strip()
     istek = urllib.request.Request(f"{_taban()}/object/{_kova()}/{parca_yolu(sha256)}",

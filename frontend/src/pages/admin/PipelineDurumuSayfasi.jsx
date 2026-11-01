@@ -1,6 +1,8 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useAdminAuth } from '../../context/AdminAuthContext'
+import { Link } from 'react-router-dom'
 import { api } from '../../api/client'
+import { CALISTIR_KOMUTU, CIKTI, KURULUM_KOMUTU } from '../../components/yonetim/pipelineKomutlari'
 
 // [DÜZELTME] Artık pipeline çıktıları .xlsx (Türkçe karakter bozulmasını
 // önlemek için) — bu yüzden düz CSV metin ayrıştırma yerine SheetJS
@@ -270,10 +272,8 @@ const SAYAC_GORUNUM = {
   gerekli: { etiket: 'Pipeline çalıştırılmalı', renk: 'var(--re)', zemin: 'var(--rel)' },
   canliya_al: { etiket: 'Çıktılar canlıya alınmalı', renk: 'var(--am)', zemin: 'var(--aml)' },
 }
-const CALISTIR_KOMUTU = 'powershell -ExecutionPolicy Bypass -File C:\\pipeline\\pipeline_calistir.ps1'
-const KURULUM_KOMUTU = 'powershell -ExecutionPolicy Bypass -File "%USERPROFILE%\\Downloads\\pipeline_kurulum.ps1"'
 
-function Komut({ metin }) {
+export function Komut({ metin }) {
   const [kopyalandi, setKopyalandi] = useState(false)
   return (
     <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', margin: '6px 0' }}>
@@ -349,13 +349,21 @@ function PipelineKurulumKarti({ durum, yenile }) {
 
   return (
     <div className="card">
-      <div className="ct">Pipeline'ı bir bilgisayara kur</div>
+      <div className="ct">Bilgisayarlar ve veri deposu</div>
       <div className="ps" style={{ margin: '0 0 10px' }}>
         Pipeline'ın kodu sistemde, verisi sistemin deposunda durur. Herhangi bir Windows bilgisayara buradan indirilen tek dosyayla
         kurulur. Her çalıştırmada güncel kodu ve en son veriyi kendisi alır, bitince sonuçları depoya gönderir.
         Canlıya alma yine aşağıdaki 3 adımla yapılır.
       </div>
-      {!durum.depo_hazir && (
+      <div className="yp-ince" style={{ marginBottom: 8 }}>
+        Veri deposu: <b>{durum.depo_turu === 'disk' ? 'sunucunun kendi diski' : 'Supabase Storage'}</b>{durum.depo_hazir ? ' · bağlı ✓' : ''}
+      </div>
+      {!durum.depo_hazir && (durum.depo_turu === 'disk' ? (
+        <div className="auth-error" style={{ marginBottom: 10 }}>
+          <b>Disk deposu kullanılamıyor.</b> {durum.depo_eksik} Sunucuda klasörü oluşturup backend'in yazabileceği izni verin
+          (ayar: <code>PIPELINE_DEPO_DIZINI</code>).
+        </div>
+      ) : (
         <div className="auth-error" style={{ marginBottom: 10 }}>
           <b>Pipeline deposu henüz bağlı değil.</b> Kurulum dosyası indirilebilir, ancak veri gönderip almak için bir kez şunlar yapılmalı:
           <ol style={{ margin: '6px 0 0', paddingLeft: 18 }}>
@@ -363,9 +371,9 @@ function PipelineKurulumKarti({ durum, yenile }) {
             <li>Render → backend servisi → <b>Environment</b>: <code>SUPABASE_URL</code> = Project URL, <code>SUPABASE_SERVICE_KEY</code> = service_role anahtarı → <b>Save</b> (servis yeniden başlar).</li>
           </ol>
         </div>
-      )}
+      ))}
       <div className="yp-ince" style={{ marginBottom: 6 }}>
-        <b>1.</b> Bilgisayarda <b>Python 3.14</b> kurulu olmalı. Kurulu değilse <a href="https://www.python.org/downloads/" target="_blank" rel="noreferrer">python.org</a>'dan
+        <b>1.</b> Bilgisayarda <b>Python 3.14</b> kurulu olmalı. Kurulu değilse <a href="https://www.python.org/downloads/" target="_blank" rel="noreferrer" className="ak-link">python.org</a>'dan
         kurun ve "Add python.exe to PATH" kutusunu işaretleyin.
       </div>
       <div className="yp-ince" style={{ marginBottom: 6 }}><b>2.</b> Bilgisayara bir ad verin ve kurulum dosyasını indirin. Dosya 24 saat geçerlidir ve tek kullanımlıktır.</div>
@@ -491,16 +499,17 @@ export default function PipelineDurumuSayfasi() {
       <div className="ph">
         <div className="pt">Pipeline Sonuçları</div>
         <div className="ps">
-          Bölüm verileri bilgisayarınızdaki pipeline'da üretilir. Çıktıları buradan <b>üç adımda</b> canlıya alırsınız; Supabase SQL
-          ekranı gerekmez. Her adımda önce önizleme görürsünüz, canlıya almadan önceki hâl saklanır.
+          Bölüm verileri yılda bir yenilenir: <b>①</b> pipeline'ı kurulu bilgisayarda çalıştırın, <b>②</b> çıktıları aşağıdaki
+          <b> 3 adımla</b> canlıya alın. Her adımda önce önizleme görürsünüz; canlıya almadan önceki hâl saklanır.{' '}
+          <Link to="/admin/yonetim-rehberi" className="ak-link">Adım adım anlatım: Yönetim Rehberi →</Link>
         </div>
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
 
       {paket && <PipelineSayacKarti durum={paket} />}
-      {paket && <PipelineKurulumKarti durum={paket} yenile={paketiYenile} />}
 
+      <div className="ct" style={{ margin: '22px 0 8px' }}>Canlıya alma · 3 adım (sırayla)</div>
       <div className="card">
         <div className="ct">1. adım · Bölüm profilleri</div>
         <div className="ps" style={{ margin: '0 0 10px' }}>
@@ -508,7 +517,7 @@ export default function PipelineDurumuSayfasi() {
           "Geçmiş Yüklemeler"de <b>Yayına Al</b> deyince canlıya geçer ve tüm öğrencilerin sonuçları yeniden hesaplanır.
           Önceki sürümler silinmez.
         </div>
-        <div className="yp-ince" style={{ marginBottom: 10 }}>Seçilecek dosya: <b>C:\pipeline\cikti\bolum_agirliklari.xlsx</b></div>
+        <div className="yp-ince" style={{ marginBottom: 10 }}>Seçilecek dosya: <b>{CIKTI.profil}</b></div>
         <label className="btn" style={{ cursor: yukleniyor ? 'not-allowed' : 'pointer', opacity: yukleniyor ? 0.6 : 1 }}>
           {yukleniyor ? <span className="spin" /> : '⬆ Dosyayı seç'}
           <input type="file" accept=".xlsx,.xls,.csv" onChange={dosyaSecildi} disabled={yukleniyor} style={{ display: 'none' }} />
@@ -585,11 +594,13 @@ export default function PipelineDurumuSayfasi() {
       )}
 
       <div style={{ marginTop: 20 }}>
-        <VeriAdimKarti no={2} tur="k5_baglari" baslik="K5 iş türü bağları" dosyaYolu="C:\pipeline\cikti\k5_baglari_veri.sql"
+        <VeriAdimKarti no={2} tur="k5_baglari" baslik="K5 iş türü bağları" dosyaYolu={CIKTI.k5}
           aciklama="Her bölümün hangi iş türlerine bağlı olduğu (K5 soruları ve küme içi sıralama bu bağlarla çalışır)." />
-        <VeriAdimKarti no={3} tur="ornek_meslekler" baslik="Örnek meslekler" dosyaYolu="C:\pipeline\cikti\ornek_meslekler_veri.sql"
+        <VeriAdimKarti no={3} tur="ornek_meslekler" baslik="Örnek meslekler" dosyaYolu={CIKTI.ornek}
           aciklama="Bölüm sayfasında ve Karşılaştır'da görünen örnek meslek listeleri (bölüm başına en fazla 5)." />
       </div>
+
+      {paket && <div style={{ marginTop: 22 }}><PipelineKurulumKarti durum={paket} yenile={paketiYenile} /></div>}
 
       <details style={{ marginTop: 20 }}>
         <summary className="yp-ince" style={{ cursor: 'pointer', fontWeight: 700 }}>Gelişmiş: meslek listesi (yalnızca meslek listesi değiştiyse)</summary>

@@ -49,7 +49,7 @@ const SUPER_MENU = [
   { grup: 'Ölçme ve Kalite', baglantilar: [
     ['/admin/soru-gecerlilik', '🎯', 'Soru Geçerlilik Testi'],
     ['/admin/guvenlik', '🛡️', 'Güvenlik / Tutarlılık'],
-    ['/admin/pipeline', '⚙️', 'Pipeline Durumu'],
+    ['/admin/pipeline', '⚙️', 'Pipeline Sonuçları'],   // [2026-11-01] sayfa başlığıyla aynı ad
   ] },
   { grup: 'Sistem', baglantilar: [
     ['/admin/veri-kaynaklari', '🗂️', 'Veri Kaynakları'],   // [2026-11-01]
@@ -58,6 +58,7 @@ const SUPER_MENU = [
     ['/admin/hata-kayitlari', '🐞', 'Hata Kayıtları'],
   ] },
   { grup: 'Yardım', baglantilar: [
+    ['/admin/yonetim-rehberi', '🧭', 'Yönetim Rehberi'],   // [2026-11-01] adım adım: neyin nasıl yapıldığı
     ['/admin/sistem-hakkinda', 'ℹ️', 'Sistem Hakkında'],
     ['/admin/sss', '❓', 'Okul Yetkilisi SSS'],
     ['/admin/kaynakca', '📚', 'Kaynakça'],

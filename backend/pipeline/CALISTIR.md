@@ -53,7 +53,16 @@ Admin paneli → **Pipeline Sonuçları** ekranında üç adım sırayla yapıl�
 2. `cikti\k5_baglari_veri.sql`
 3. `cikti\ornek_meslekler_veri.sql`
 
-## 5. Sayaç
+## 5. Veri deposu
+
+Veri, önbellek ve çıktılar sistemin deposunda durur. Depo türü sunucudaki `PIPELINE_DEPO` ayarıyla seçilir:
+
+- `supabase` (varsayılan): Supabase Storage. `SUPABASE_URL` ve `SUPABASE_SERVICE_KEY` gerekir.
+- `disk`: kendi sunucuda bir klasör (`PIPELINE_DEPO_DIZINI`). Bilgisayar parçaları backend üzerinden gönderir ve alır.
+
+Bilgisayardaki pipeline için ikisi arasında fark yoktur. Depo değiştirildikten sonra pipeline'ı en son veri gönderen bilgisayarda bir kez çalıştırmak bütün veriyi yeni depoya taşır.
+
+## 6. Sayaç
 
 Pipeline Sonuçları ekranındaki sayaç, bölüm profillerinin en son canlıya alındığı tarihten itibaren 365 günü sayar ve son 30 günde uyarır. Şu durumlarda süre dolmadan "gerekli" der:
 
@@ -64,6 +73,6 @@ Pipeline Sonuçları ekranındaki sayaç, bölüm profillerinin en son canlıya 
 
 Özellik adı ya da tanımı değişirse yalnızca not düşülür. Puanlar `veri\degisken_kutuplari.csv` dosyasındaki kutup cümlelerinden hesaplandığı için yeniden çalıştırma gerekmez; kutup cümlelerinin yeni tanıma uygun olup olmadığı kontrol edilmelidir.
 
-## 6. Raporlar (`cikti\rapor\`)
+## 7. Raporlar (`cikti\rapor\`)
 
 Rapor dosyalarının adı, onları üreten adımın adıyla başlar: `b3_tuik_eslesme.csv`, `b4_bolum_kaynaklari.csv`, `b4_regresyon_basarisi.csv`, `b5_k5_baglari_raporu.csv`, `b5_ozet.txt`, `b6_ornek_meslekler.csv`, `b7_kontrol.csv`.

@@ -563,6 +563,24 @@ def audit_log_excel(gun: int = Query(90, ge=0, le=3650), db: Session = Depends(g
 
 
 # ----------------------------------------------------------------------------- Kontrol Paneli
+def _pipeline_sayac_maddesi(db: Session) -> list[dict]:
+    """[2026-11-01] Yıllık bölüm verisi sayacı (Pipeline Sonuçları ile aynı hesap): güncel değilse Kontrol Paneli'nde görünür."""
+    from app.core.pipeline_paketi import sayac_durumu
+    s = _guvenli(db, lambda: sayac_durumu(db), None)
+    if not s or s["durum"] == "guncel":
+        return []
+    ilk = s["nedenler"][0] if s["nedenler"] else ""
+    if s["durum"] == "yaklasiyor":
+        return [{"k": "pipeline_sayac", "seviye": "bilgi", "ikon": "⏳", "baslik": "Yıllık bölüm verisi güncellemesine kalan gün",
+                 "link": "/admin/pipeline", "sayi": s["kalan_gun"],
+                 "aciklama": "Pipeline'ı kurulu bilgisayarda çalıştırıp çıktıları 3 adımla canlıya alın (Yönetim Rehberi)."}]
+    if s["durum"] == "canliya_al":
+        return [{"k": "pipeline_sayac", "seviye": "uyari", "ikon": "⏳", "baslik": "Canlıya alınmayı bekleyen pipeline çıktısı",
+                 "link": "/admin/pipeline", "sayi": 1, "aciklama": ilk}]
+    return [{"k": "pipeline_sayac", "seviye": "uyari", "ikon": "⏳", "baslik": "Bölüm verisi güncellemesi gerekli (neden sayısı)",
+             "link": "/admin/pipeline", "sayi": max(1, len(s["nedenler"])), "aciklama": ilk}]
+
+
 @router.get("/istatistik/dikkat")
 def dikkat_gerektirenler(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
     ozet = db.execute(text("""
@@ -576,6 +594,7 @@ def dikkat_gerektirenler(db: Session = Depends(get_db), yon: AdminKullanici = De
         {"k": "pipeline", "seviye": "uyari", "ikon": "🧪", "baslik": "Onay bekleyen pipeline taslağı", "link": "/admin/pipeline",
          "sayi": s("SELECT count(DISTINCT yukleme_grubu) FROM bolum_agirliklari_taslak WHERE durum = 'bekliyor'"),
          "aciklama": "Yüklenen bölüm ağırlıkları onaylanana kadar skor motorunda kullanılmaz."},
+        *_pipeline_sayac_maddesi(db),
         {"k": "gecersiz", "seviye": "uyari", "ikon": "🛡️", "baslik": "Son 30 günde geçersiz sayılan tur", "link": "/admin/guvenlik",
          "sayi": s("""SELECT count(*) FROM ogrenci_degerlendirme_turu t JOIN ogrenciler o ON o.id = t.ogrenci_id
                        WHERE t.durum = 'tamamlandi' AND NOT t.sonuc_gecerli_mi AND t.tamamlanma_zamani >= now() - interval '30 days'

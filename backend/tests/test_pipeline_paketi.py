@@ -188,3 +188,67 @@ def test_sayac_kurallari(db):
     s = pp.sayac_durumu(db)
     eksik_var = any("yok:" in n for n in s["nedenler"])
     assert s["durum"] == ("gerekli" if eksik_var else "canliya_al") and any("canlıya alınmadı" in n for n in s["nedenler"])
+
+
+@db_gerekli
+def test_disk_deposu(istemci, kisiler, db, tmp_path, monkeypatch):
+    """Kendi sunucu: PIPELINE_DEPO=disk. Parçalar sunucu klasörüne backend üzerinden, imzalı adresle gider / gelir."""
+    import hashlib
+    from app.core.config import settings
+    _goc(db)
+    db.execute(text("DELETE FROM pipeline_surumleri"))
+    db.commit()
+    monkeypatch.setattr(settings, "PIPELINE_DEPO", "disk")
+    monkeypatch.setattr(settings, "PIPELINE_DEPO_DIZINI", str(tmp_path / "depo"))
+    assert depo.tur() == "disk" and depo.hazir_mi()
+    v = istemci.get("/admin/pipeline-paketi/durum", headers=kisiler["super"]).json()
+    assert v["depo_turu"] == "disk" and v["depo_hazir"] and v["depo_eksik"] is None
+    bas = {"X-Pipeline-Anahtari": istemci.post("/pipeline-istemci/etkinlestir",
+                                               json={"kurulum_anahtari": _kur(istemci, kisiler, "Sunucu PC")}).json()["cihaz_anahtari"]}
+    veri = b"merhaba pipeline" * 1000
+    o = hashlib.sha256(veri).hexdigest()
+    eksik = istemci.post("/pipeline-istemci/gonderim/baslat", headers=bas, json={"parcalar": [{"sha256": o, "boyut": len(veri)}]}).json()["eksik"]
+    adres = eksik[o]
+    assert adres.startswith("/pipeline-istemci/depo/"), "göreli adres: bilgisayar kendi sistem adresine ekler"
+    assert istemci.put(adres, content=b"bozuk").status_code == 400, "içerik özeti adıyla uyuşmazsa kabul edilmez"
+    assert istemci.put(adres[:-1] + ("0" if adres[-1] != "0" else "1"), content=veri).status_code == 403
+    assert istemci.put(adres.replace("islem=yukle", "islem=indir"), content=veri).status_code == 403
+    assert istemci.put(adres, content=veri).status_code == 200
+    r = istemci.post("/pipeline-istemci/gonderim/tamamla", headers=bas, json={
+        "dosyalar": {"veri/x.bin": {"sha256": o, "boyut": len(veri), "parcalar": [o]}}})
+    assert r.status_code == 200, r.text
+    indir = istemci.post("/pipeline-istemci/parca-adresleri", headers=bas, json={"parcalar": [o]}).json()["adresler"][o]
+    g = istemci.get(indir)
+    assert g.status_code == 200 and g.content == veri
+    assert istemci.get(indir.replace("islem=indir", "islem=yukle")).status_code == 403
+    # bozulmuş parça: denetimde silinir
+    (tmp_path / "depo" / "parca" / o).write_bytes(b"x")
+    assert istemci.post("/pipeline-istemci/parca-bozuk", headers=bas, json={"sha256": o}).json() == {"bozuktu": True}
+    assert not (tmp_path / "depo" / "parca" / o).exists()
+    # supabase türünde bu uçlar kapalı
+    monkeypatch.setattr(settings, "PIPELINE_DEPO", "supabase")
+    assert istemci.get(indir).status_code == 404
+
+
+@db_gerekli
+def test_kontrol_paneli_sayac_maddesi(db):
+    """Sayaç güncel değilse Kontrol Paneli 'dikkat' listesinde görünür (Pipeline Sonuçları ile aynı hesap)."""
+    from app.api.sistem_istatistik import _pipeline_sayac_maddesi
+    _goc(db)
+    db.execute(text("DELETE FROM pipeline_surumleri"))
+    db.commit()
+    if pp.sayac_durumu(db)["son_guncelleme"] is None:
+        pytest.skip("test veritabanında bölüm profili yok")
+    db.execute(text("UPDATE bolum_agirliklari SET olusturulma_zamani = now() - interval '400 days'"))
+    db.commit()
+    m = _pipeline_sayac_maddesi(db)
+    assert len(m) == 1 and m[0]["k"] == "pipeline_sayac" and m[0]["seviye"] == "uyari" and "süresi doldu" in m[0]["aciklama"]
+    db.execute(text("UPDATE bolum_agirliklari SET olusturulma_zamani = now() - interval '340 days'"))
+    db.commit()
+    m = _pipeline_sayac_maddesi(db)
+    s = pp.sayac_durumu(db)
+    if s["durum"] == "yaklasiyor":
+        assert m[0]["sayi"] == s["kalan_gun"] and m[0]["seviye"] == "bilgi"
+    db.execute(text("UPDATE bolum_agirliklari SET olusturulma_zamani = now() - interval '5 days'"))
+    db.commit()
+    assert pp.sayac_durumu(db)["durum"] != "guncel" or _pipeline_sayac_maddesi(db) == []
