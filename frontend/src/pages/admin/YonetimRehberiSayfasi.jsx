@@ -29,8 +29,8 @@ const KONULAR = [
     ne_zaman: 'Yeni ya da başka bir Windows bilgisayarda çalıştırmak istediğinizde.',
     adimlar: [
       { m: <>O bilgisayarda <b>Python 3.14</b> kurulu olmalı. Değilse <a href="https://www.python.org/downloads/" target="_blank" rel="noreferrer" className="ak-link">python.org</a>'dan kurun; kurulumda <b>"Add python.exe to PATH"</b> kutusunu işaretleyin.</> },
-      { m: <><E to="/admin/pipeline">Pipeline Sonuçları</E> → <b>Bilgisayarlar ve veri deposu</b> → bilgisayara bir ad verin → <b>Kurulum dosyasını indir</b>. Dosya 24 saat geçerlidir ve tek kullanımlıktır.</> },
-      { m: <>İndirilen dosyayı o bilgisayarda çalıştırın (cmd'ye yapıştırın):</>, k: KURULUM_KOMUTU },
+      { m: <><E to="/admin/pipeline">Pipeline Sonuçları</E> → <b>Bilgisayarlar ve veri deposu</b> → bilgisayara bir ad verin → <b>Kurulum dosyasını indir</b>. Dosya 24 saat geçerlidir ve tek kullanımlıktır. Tarayıcı "tehlikeli olabilir" uyarısı verirse İndirilenler listesinden <b>Sakla / Keep</b> seçin.</> },
+      { m: <>O bilgisayarda cmd'ye şu komutu yapıştırın. İndirilenler'deki en yeni kurulum dosyasını bulup çalıştırır (tarayıcı adını "pipeline_kurulum (1).ps1" yapmış olsa da):</>, k: KURULUM_KOMUTU },
       { m: <>Kurulum kodu ve en son veriyi indirir, kütüphaneleri kurar. İlk seferde uzun sürer (kütüphaneler ~2–3 GB; embedding modelleri ilk çalıştırmada ~3–4 GB). Bitince <b>"KURULUM TAMAM"</b> yazar.</> },
       { m: <>Bilgisayar <b>Kayıtlı bilgisayarlar</b> listesinde görünür. Artık "Yıllık bölüm verisi güncellemesi" adımlarıyla çalıştırılabilir.</> },
     ],
