@@ -14,7 +14,7 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 
 from app.core.database import get_db
-from app.api.deps import get_mevcut_ogrenci
+from app.api.deps import get_kvkk_onayli_ogrenci, get_mevcut_ogrenci
 from app.models import Ogrenci, OgrenciKoclukOturumu, OgrenciKoclukMesaji
 from app.core.ai_koc_servisi import (
     sistem_promptu_olustur, openai_ile_konus, oturumu_ozetle,
@@ -111,7 +111,7 @@ class GecmisOturumOut(BaseModel):
 @router.post("/oturum/baslat", response_model=OturumOut)
 def oturum_baslat(
     db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+    ogrenci: Ogrenci = Depends(get_kvkk_onayli_ogrenci),
 ):
     aktif = (
         db.query(OgrenciKoclukOturumu)
@@ -140,7 +140,7 @@ def mesaj_gonder(
     oturum_id: int,
     istek: MesajIstek,
     db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+    ogrenci: Ogrenci = Depends(get_kvkk_onayli_ogrenci),
 ):
     oturum = db.get(OgrenciKoclukOturumu, oturum_id)
     if oturum is None or oturum.ogrenci_id != ogrenci.id:

@@ -128,7 +128,14 @@ DECLARE sid int;
 DECLARE secid int;
 DECLARE eski int[];
 BEGIN
-  IF EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'olcme_soru_seti' AND deger = '__SURUM__') THEN
+  -- [2026-10-19] Silme içeren bu blok TEK SEFERLİKTİR: tek_seferlik_gocler işareti (değiştirilemez) esas alınır. Eski koruma
+  -- yalnızca sistem_parametreleri.olcme_soru_seti idi; o değer elle değişirse her açılışta tüm turlar silinebilirdi.
+  IF EXISTS (SELECT 1 FROM tek_seferlik_gocler WHERE ad = '0076_soru_seti___SURUM__') THEN
+    RETURN;
+  END IF;
+  -- Daha önce (eski korumayla) uygulanmış kurulum: işareti yaz, hiçbir şey silme
+  IF EXISTS (SELECT 1 FROM sistem_parametreleri WHERE anahtar = 'olcme_soru_seti') THEN
+    INSERT INTO tek_seferlik_gocler (ad) VALUES ('0076_soru_seti___SURUM__') ON CONFLICT (ad) DO NOTHING;
     RETURN;
   END IF;
   -- boş kurulum (ör. CI test şeması): katmanlar/değişkenler yoksa soru seti kurulmaz, hiçbir şey silinmez
@@ -169,6 +176,7 @@ BEGIN
   INSERT INTO sistem_parametreleri (anahtar, deger, aciklama, guncelleme_zamani)
   VALUES ('olcme_soru_seti', '__SURUM__', 'Yüklü K1-K4 soru seti (0076_yeni_k5_sorular)', now())
   ON CONFLICT (anahtar) DO UPDATE SET deger = EXCLUDED.deger, guncelleme_zamani = now();
+  INSERT INTO tek_seferlik_gocler (ad) VALUES ('0076_soru_seti___SURUM__') ON CONFLICT (ad) DO NOTHING;
 END
 $$;
 """
@@ -185,7 +193,9 @@ def sql_uret() -> str:
                 .replace("__KUTUP__", ", ".join("'" + s.replace("'", "''") + "'" for s in KUTUP_SECENEKLERI)))
     # DO blokları içindeki ";\n" bölünmesin (sema_guncelleme komutları ";\n" ile ayırır)
     bloklar = [banka_sql, soru_sql]
-    return _SEMA.strip() + "\n" + "".join(b.strip().replace(";\n", "; \n") + ";\n" for b in bloklar)
+    isaret = ("CREATE TABLE IF NOT EXISTS tek_seferlik_gocler (ad VARCHAR PRIMARY KEY, "
+              "uygulanma_zamani TIMESTAMPTZ NOT NULL DEFAULT now());\n")
+    return _SEMA.strip() + "\n" + isaret + "".join(b.strip().replace(";\n", "; \n") + ";\n" for b in bloklar)
 
 
 def _sema_bloklari_tek_satir() -> str:

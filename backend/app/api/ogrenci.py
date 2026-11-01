@@ -10,7 +10,7 @@ from pydantic import BaseModel
 from sqlalchemy.orm import Session
 from sqlalchemy import text, func
 
-from app.api.deps import get_mevcut_ogrenci
+from app.api.deps import get_kvkk_onayli_ogrenci, get_mevcut_ogrenci
 from fastapi import Request
 from app.core import hesap_guvenligi_servisi as hg
 from app.schemas.auth import KvkkOnayIstek
@@ -53,6 +53,17 @@ def _puan_araligi(puan: float) -> str:
     """
     from app.core.seviye import yorum_araligi
     return yorum_araligi(puan)
+
+
+def _sik_sirasi(soru, secenekler: list, tur_id) -> list:
+    """[2026-10-19] Seçmeli (sjt) sorularda şıklar öğrenci turuna göre tohumlu karıştırılır: soru setinde 1. şık hep en küçük
+    kodlu özelliğe aitti, "hep ilk şık" kalıbı profili sistematik biçimde kaydırıyordu. Puanlama şık kimliğine (ağırlık tablosu)
+    bağlıdır, sıraya değil; aynı turda sıra hep aynı kalır (sayfa yenilense de). Kutup (uçlar) sorularının 4'lü ölçeği sırayla
+    anlam taşıdığı için karıştırılmaz."""
+    if getattr(soru, "soru_tipi", None) != "sjt":
+        return secenekler
+    import hashlib
+    return sorted(secenekler, key=lambda s: hashlib.sha256(f"{tur_id}:{s.id}".encode()).hexdigest())
 
 
 def _yorumlari_ekle(db: Session, sonuclar: list[KatmanSonucSatiri]) -> list[KatmanSonucSatiri]:
@@ -160,7 +171,7 @@ def _mevcut_cevaplar(db: Session, ogrenci: Ogrenci, tur_id: int | None, soru_idl
 def katmani_baslat(
     kod: str,
     db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+    ogrenci: Ogrenci = Depends(get_kvkk_onayli_ogrenci),
 ):
     katman = _katman_bul(db, kod)
     try:
@@ -205,7 +216,7 @@ def katmani_baslat(
             uc_a_metni=s.uc_a_metni, uc_b_metni=s.uc_b_metni,
             secenekler=[
                 SecenekOut(id=sec.id, secenek_sirasi=sec.secenek_sirasi, secenek_metni=sec.secenek_metni)
-                for sec in secenekler_by_soru.get(s.id, [])
+                for sec in _sik_sirasi(s, secenekler_by_soru.get(s.id, []), tur.id)
             ],
         )
         for s in sorular
@@ -353,7 +364,7 @@ def k5_durumu_getir(
 def dali_baslat(
     kod: str,
     db: Session = Depends(get_db),
-    ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
+    ogrenci: Ogrenci = Depends(get_kvkk_onayli_ogrenci),
 ):
     try:
         tur = son_tur_getir(db, ogrenci)
@@ -381,7 +392,7 @@ def dali_baslat(
             uc_a_metni=s.uc_a_metni, uc_b_metni=s.uc_b_metni,
             secenekler=[
                 SecenekOut(id=sec.id, secenek_sirasi=sec.secenek_sirasi, secenek_metni=sec.secenek_metni)
-                for sec in secenekler_by_soru.get(s.id, [])
+                for sec in _sik_sirasi(s, secenekler_by_soru.get(s.id, []), tur.id)
             ],
         )
         for s in sorular

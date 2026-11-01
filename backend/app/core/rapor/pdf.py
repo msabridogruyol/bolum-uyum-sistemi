@@ -677,7 +677,7 @@ def _kiyas_ozellikleri(xs: list, kitle: str, hedefli: bool) -> str:
 
 def _hedef_kiyasi_bolumu(st, k: dict, kitle: str) -> list:
     hs = ParagraphStyle("hk2", parent=st.hucre, fontSize=7.6, leading=9.8)
-    toplam = k.get("bolum_sayisi") or 301
+    toplam = k.get("bolum_sayisi")   # [2026-10-19] sabit 301 yedeği kaldırıldı (yayındaki bölüm sayısı 278)
     h = [st.p(_KIYAS_BASLIK[kitle], st.h2)]
     hd = k.get("hedef")
     satirlar = k.get("satirlar") or []
@@ -691,7 +691,7 @@ def _hedef_kiyasi_bolumu(st, k: dict, kitle: str) -> list:
             h.append(_tablo(st, ["Bölüm", "Puanı yükselten özellikler", "Puanı düşüren özellikler"], veri,
                             [50 * mm, 62 * mm, 62 * mm], kucuk=True))
     else:
-        h.append(st.p(f"<b>Hedef bölüm:</b> {_e(hd['bolum'])} · uyum %{yuvarla(hd['uyum'])} · {toplam} bölüm içinde {hd['sira']}. sırada"))
+        h.append(st.p(f"<b>Hedef bölüm:</b> {_e(hd['bolum'])} · uyum %{yuvarla(hd['uyum'])} · {(str(toplam) + ' bölüm içinde ') if toplam else ''}{hd['sira']}. sırada"))
         if not satirlar:
             h.append(st.p("Kıyas için hedefin dışında bölüm seçilmedi.", st.not_))
         veri = []

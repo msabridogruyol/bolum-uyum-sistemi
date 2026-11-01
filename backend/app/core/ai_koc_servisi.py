@@ -33,6 +33,9 @@ KRIZ_IFADELERI = (
     "yaşamak istemiyorum", "yasamak istemiyorum", "hayatıma son", "hayatima son", "canıma kıy", "canima kiy",
     "kendime zarar", "kendimi kes", "kendimi kesiyorum", "bileklerimi", "yok olmak istiyorum", "her şeye son",
     "bana şiddet", "bana siddet", "taciz", "istismar", "beni dövüyor", "beni dovuyor",
+    # [2026-10-19] denetim: zorbalık, tehdit ve örtük çaresizlik ifadeleri
+    "zorbalık", "zorbalik", "zorbalığa", "zorbaliga", "beni tehdit", "kendime bir şey yap", "kendime bir sey yap",
+    "dayanamıyorum artık", "dayanamiyorum artik", "depresyondayım", "depresyondayim",
 )
 KRIZ_YANITI = (
     "Bunu benimle paylaştığın için teşekkür ederim, yazdıklarını çok önemsiyorum. Şu an yaşadığın şey "

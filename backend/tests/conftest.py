@@ -99,6 +99,13 @@ def _hiz_sayaclarini_sifirla(app):
         yigin = getattr(yigin, "app", None)
 
 
+def kvkk_onayla(db, ogrenci_id):
+    """[2026-10-19] Değerlendirme ve yapay zekâ uçları güncel KVKK onayı ister: test öğrencisine zorunlu onaylar yazılır."""
+    from app.core.hesap_guvenligi_servisi import kvkk_kaydet
+    from app.core.kvkk_metinleri import ZORUNLU_KODLAR
+    kvkk_kaydet(db, "ogrenci", ogrenci_id, {k: True for k in ZORUNLU_KODLAR}, None)
+
+
 @pytest.fixture
 def kisiler(db):
     """İki okul; A okulunun yetkilisi, A okulunda bir öğrenci ve bir süper admin + erişim tokenleri."""
@@ -115,6 +122,7 @@ def kisiler(db):
     db.execute(text("""INSERT INTO ogrenciler (id, ad_soyad, email, sifre_hash, okul_id, olusturulma_zamani, guncelleme_zamani)
                        VALUES (:i, 'Test Öğrenci', :e, 'x', :o, now(), now())"""),
                {"i": ogrenci, "e": f"ogr.{ek}@test.invalid", "o": okul_a})
+    kvkk_onayla(db, ogrenci)
     db.commit()
     return {
         "okul_a": okul_a, "okul_b": okul_b,

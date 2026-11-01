@@ -347,9 +347,10 @@ def k_maarif(b: Baglam, m: str) -> str:
 
 
 def k_is_turu(b: Baglam, m: str) -> str:
-    return ("İş türü soruları (K5), ilk dört bölümü bitirdiğinde uyumu 70 ve üzerinde çıkan bölümlerin varsa açılır. Bu bölümlerde "
-            "yapılan işlerden hangilerini daha çok seçtiğine göre bölümler kendi aralarında yeniden sıralanır. Listeye yeni bölüm "
-            "girmez, listeden bölüm çıkmaz; asıl belirleyici ilk dört bölümdür.")
+    return ("İş türü soruları (K5), ilk dört bölümü bitirdiğinde sana en yakın çıkan bölümler (uyumu 70 ve üzeri olanlar; en az 5, "
+            "en fazla 20) için açılır. Bu bölümlerde yapılan işlerden hangilerini daha çok seçtiğine göre bölümler yalnızca kendi "
+            "aralarında yer değiştirir; bu yüzden ilk 10 listende küçük değişiklikler olabilir. Diğer bölümler etkilenmez; asıl "
+            "belirleyici ilk dört bölümdür.")
 
 
 # [2026-10-13] Yeni özellikler: mülakat simülasyonu, düşünme atölyesi, dil, sonuç e-postası
