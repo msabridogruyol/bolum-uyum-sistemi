@@ -37,6 +37,7 @@ VERI_KLASORLERI = ("veri", "onet", "onbellek", "cikti")   # depoda yalnızca bun
 SAKLAMA_GUN = 30            # son 5 sürüme ek olarak son 30 günün sürümlerinin parçaları da silinmez
 YENI_PARCA_SAAT = 6         # yeni yüklenmiş (henüz sürüme girmemiş olabilecek) parçalar budanmaz
 KILIT_ANAHTARI = 2026110188
+K5_KOD_DESENI = "^U[0-9]{2}_"   # yeni K5 iş türü değişkenleri (veri_yukleme._k5_kodlari ile aynı)
 _HEX64 = re.compile(r"^[0-9a-f]{64}$")
 _YASAK_KARAKTER = re.compile(r'[\x00-\x1f\\:*?"<>|]')   # ekranda / dosyada gösterilen tarih ve saatler
 
@@ -142,12 +143,14 @@ def canli_listeler(db: Session) -> dict:
     degiskenler = [dict(r) for r in db.execute(text(
         "SELECT d.kod, d.ad, COALESCE(d.aciklama, '') AS aciklama, k.kod AS katman FROM degiskenler d "
         "JOIN katmanlar k ON k.id = d.katman_id WHERE d.dal_id IS NULL ORDER BY k.sira, d.sira")).mappings()]
+    # K5 iş türleri: yeni K5 değişkenleri (kod U01_A biçiminde) — sistemin her yerinde aynı kural (veri_yukleme, veri_kaynaklari).
+    # Dala bağlı eski K5 değişkenleri (C1, E1 …) canlıda duruyor ama artık kullanılmıyor; pipeline'a gitmez.
     eksenler = [dict(r) for r in db.execute(text(
-        "SELECT d.kod, COALESCE(a.ad, '') AS alan, d.ad FROM degiskenler d LEFT JOIN dallar a ON a.id = d.dal_id "
-        "WHERE d.dal_id IS NOT NULL ORDER BY d.kod")).mappings()]
+        f"SELECT d.kod, COALESCE(a.ad, '') AS alan, d.ad FROM degiskenler d LEFT JOIN dallar a ON a.id = d.dal_id "
+        f"WHERE d.dal_id IS NOT NULL AND d.kod ~ '{K5_KOD_DESENI}' ORDER BY d.kod")).mappings()]
     cumleler = [dict(r) for r in db.execute(text(
-        "SELECT d.kod, c.sira, c.metin FROM k5_cumleleri c JOIN degiskenler d ON d.id = c.degisken_id "
-        "WHERE c.aktif_mi ORDER BY d.kod, c.sira")).mappings()]
+        f"SELECT d.kod, c.sira, c.metin FROM k5_cumleleri c JOIN degiskenler d ON d.id = c.degisken_id "
+        f"WHERE c.aktif_mi AND d.kod ~ '{K5_KOD_DESENI}' ORDER BY d.kod, c.sira")).mappings()]
     return {
         "ozet": {"bolumler": _ozet([[b["id"], b["ad"], b["kisa_aciklama"]] for b in bolumler]),
                  "degiskenler": _ozet([[d["kod"], d["ad"], d["aciklama"]] for d in degiskenler]),
