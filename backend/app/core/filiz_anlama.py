@@ -16,6 +16,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass, field
 
+from sqlalchemy import text
 from sqlalchemy.orm import Session
 
 from app.core import filiz_bilgi as fb
@@ -165,8 +166,16 @@ _MAAS = ("maas", "kazanilir", "ne kadar kazan", "ne kadar para", "para kazan", "
          "ne kazanir", "kazanci", "kac para", "iyi para", "para var mi")
 
 
-def maas_sorusu(d: fb.Dizin, soru: str, moduller: set[str] | None) -> Cevap | None:
-    """Sistemde meslek / bölüm bazında maaş verisi yok: uydurmadan söyler, var olan içeriğe yönlendirir."""
+def _bolum_id(db: Session, v: str) -> int | None:
+    for bid, ad in db.execute(text("SELECT id, ad FROM bolumler WHERE durum = 'yayinda'")).all():
+        if " ".join(fb.sade(ad).split()) == v:
+            return bid
+    return None
+
+
+def maas_sorusu(d: fb.Dizin, soru: str, moduller: set[str] | None, db: Session | None = None) -> Cevap | None:
+    """Maaş sorusu. Sistemdeki kazanç verisi (TÜİK meslek grubu ortalamasından tahmin, kamu kadro maaşları) İş Hayatı'ndadır:
+    modül açık ve o bölüm için veri varsa oraya yönlendirir; yoksa uydurmadan söyler."""
     t = f" {fb.duzelt(soru)} "
     if not any(k in t for k in _MAAS):
         return None
@@ -175,9 +184,24 @@ def maas_sorusu(d: fb.Dizin, soru: str, moduller: set[str] | None) -> Cevap | No
         return None
     ad = _gorunen(d, hedef[0])
     secenek = [f"{ad} mezunları nerelerde çalışır?", f"{ad} bölümü hakkında bilgi verir misin?"]
-    if moduller and "is_hayati" in moduller:
-        secenek.append("Brüt ve net maaş farkı ne demek?")
-    return Cevap(f"Sistemde meslek ya da bölüm bazında maaş bilgisi yok; maaşlar kuruma, şehre, sektöre ve deneyime göre çok değişir. "
+    if moduller is not None and "is_hayati" not in moduller:
+        return Cevap("Kazanç bilgileri İş Hayatı bölümünde yer alıyor; okulunun paketinde bu bölüm yok. "
+                     f"{ad} mezunlarının hangi alanlarda çalıştığını anlatabilirim. 🌱", "icerik_yok", secenek)
+    eksik = None
+    if db is not None:
+        try:
+            from app.core import is_hayati_servisi as ihs
+            bid = _bolum_id(db, hedef[0])
+            v = ihs.bolum_verisi(db, bid) if bid else None
+            eksik = set(v["eksik"]) if v else None
+        except Exception:
+            db.rollback()
+    if eksik is not None and not {"kazanc", "kamu"} <= eksik:
+        return Cevap(f"📖 {ad} için kazanç bilgisi İş Hayatı sayfasında, “İlk Maaşla Bir Ay” sekmesinde. Rakamlar TÜİK meslek grubu "
+                     "ortalamalarından hesaplanan bir tahmindir (varsa kamu kadro maaşları da orada); ilk iş maaşı genellikle "
+                     "ortalamanın altındadır. Maaşlar kuruma, şehre ve deneyime göre de değişir.\n\nKaynak: İş Hayatı › İlk Maaşla Bir Ay",
+                     "icerik", secenek + ["Brüt ve net maaş farkı ne demek?"])
+    return Cevap(f"Sistemde {ad} için kazanç verisi henüz yok; maaşlar kuruma, şehre, sektöre ve deneyime göre çok değişir. "
                  f"{ad} mezunlarının hangi alanlarda çalıştığını ve bölümü anlatabilirim. 🌱", "icerik", secenek)
 
 
@@ -209,7 +233,7 @@ def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | N
         c = f(d, soru)
         if c:
             return c
-    for f in (maas_sorusu, lambda d_, s_, m_: kunye_sorusu(d_, s_)):
+    for f in (lambda d_, s_, m_: maas_sorusu(d_, s_, m_, db), lambda d_, s_, m_: kunye_sorusu(d_, s_)):
         c = f(d, soru, moduller)
         if c:
             return c

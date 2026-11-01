@@ -46,6 +46,7 @@ OTOMATIK += ["0081_ek_olcme_sorulari"]   # [2026-10-19] K1-K4 ek sorular + katma
 OTOMATIK += ["0082_bolum_kaldirma"]   # [2026-10-29] lisans programı olmayan / 3'ten az üniversitedeki 12 bölüm kaldırıldı (278 → 266)
 OTOMATIK += ["0083_filiz_her_pakette"]   # [2026-10-30] Filiz her pakette; yapay zekâ sınırı pakete göre, okul aylık üst sınırı
 OTOMATIK += ["0084_filiz_olcum"]   # [2026-10-31] katmanlı Filiz: cevabın kaynağı ve süresi
+OTOMATIK += ["0085_veri_kaynagi_kontrol"]   # [2026-11-01] Veri Kaynakları ekranı: süper adminin kontrol kayıtları
 KILIT = 2026101001
 
 

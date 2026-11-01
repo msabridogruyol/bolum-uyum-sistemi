@@ -52,6 +52,7 @@ const SUPER_MENU = [
     ['/admin/pipeline', '⚙️', 'Pipeline Durumu'],
   ] },
   { grup: 'Sistem', baglantilar: [
+    ['/admin/veri-kaynaklari', '🗂️', 'Veri Kaynakları'],   // [2026-11-01]
     ['/admin/parametreler', '🎛️', 'Parametreler'],
     ['/admin/audit-log', '📜', 'Audit Log'],
     ['/admin/hata-kayitlari', '🐞', 'Hata Kayıtları'],

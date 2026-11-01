@@ -66,6 +66,7 @@ const TestGirisSayfasi = tembel(() => import('./pages/TestGirisSayfasi'))
 const IsHayatiSayfasi = tembel(() => import('./pages/IsHayatiSayfasi'))                         // [2026-10-10] İş Hayatı
 const OgrenciKarsilastirmaSayfasi = tembel(() => import('./pages/KarsilastirmaSayfasi'))     // [2026-10-11] bölüm karşılaştırma (öğrenci)
 const IsHayatiVerileriSayfasi = tembel(() => import('./pages/admin/IsHayatiVerileriSayfasi'))   // [2026-10-10]
+const VeriKaynaklariSayfasi = tembel(() => import('./pages/admin/VeriKaynaklariSayfasi'))   // [2026-11-01]
 
 // [2026-10-10] Eski /sonuc/K1 → /profilim/K1 ; /kesfet?bolum=..&ara=.. → /bolumler/tum?… (sorgu korunur)
 function EskiKatmanYonlendir() {
@@ -198,6 +199,7 @@ function AnaUygulama() {
         <Route path="koclar" element={<KocYonetimSayfasi />} />
         <Route path="yokatlas" element={<YokatlasEslesmeSayfasi />} />
         <Route path="is-hayati-verileri" element={<IsHayatiVerileriSayfasi />} />
+        <Route path="veri-kaynaklari" element={<VeriKaynaklariSayfasi />} />
         <Route path="takvim" element={<GenelTakvimSayfasi />} />
         <Route path="sss" element={<SssSayfasi />} />
         <Route path="kaynakca" element={<KaynakcaSayfasi />} />

@@ -473,6 +473,8 @@ export const api = {
   ihMeslekIscoKaydet: (meslekAdi, iscoKodu) => aput('/admin/is-hayati/meslek-isco', { meslek_adi: meslekAdi, isco_kodu: iscoKodu || null }),
   ihMeslekIscoJson: () => apost('/admin/is-hayati/meslek-isco/json-yukle'),
   yokatlasEslestir: (bolumId, gruplar) => aput(`/admin/yokatlas/bolum/${bolumId}`, { gruplar }),
+  veriKaynaklari: () => aget('/admin/veri-kaynaklari'),   // [2026-11-01] Veri Kaynakları (süper admin)
+  veriKaynagiKontrol: (kod, sonuc, notlar) => apost(`/admin/veri-kaynaklari/${kod}/kontrol`, { sonuc, notlar: notlar || null }),
   // [2026-10-10] Takvim, Kütüphanem, görev geçmişi
   takvim: () => get('/ogrenci/takvim'),
   takvimEkle: (veri) => post('/ogrenci/takvim', veri),
