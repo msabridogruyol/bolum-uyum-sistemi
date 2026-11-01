@@ -57,6 +57,21 @@ def eksik_ayar_metni() -> str:
     return "SUPABASE_URL ve SUPABASE_SERVICE_KEY ortam değişkenleri tanımlı değil."
 
 
+def baglanti_sina() -> str | None:
+    """Depoya gerçekten bağlanılabiliyor mu (ayar var ama anahtar ya da adres yanlış olabilir). Sorun yoksa None,
+    varsa ekranda gösterilecek açıklama. Admin panelindeki "bağlı ✓" buna dayanır."""
+    if not hazir_mi():
+        return eksik_ayar_metni()
+    if _disk_mi():
+        return None
+    try:
+        kova_hazirla()          # anahtar / adres yanlışsa burada ya da listede hata verir
+        mevcut_parcalar()
+    except DepoHatasi as e:
+        return str(e)
+    return None
+
+
 def _kova() -> str:
     return (settings.PIPELINE_DEPO_KOVA or "pipeline").strip()
 

@@ -358,7 +358,13 @@ function PipelineKurulumKarti({ durum, yenile }) {
       <div className="yp-ince" style={{ marginBottom: 8 }}>
         Veri deposu: <b>{durum.depo_turu === 'disk' ? 'sunucunun kendi diski' : 'Supabase Storage'}</b>{durum.depo_hazir ? ' · bağlı ✓' : ''}
       </div>
-      {!durum.depo_hazir && (durum.depo_turu === 'disk' ? (
+      {!durum.depo_hazir && durum.depo_ayarli && durum.depo_turu !== 'disk' ? (
+        <div className="auth-error" style={{ marginBottom: 10 }}>
+          <b>Supabase deposuna bağlanılamadı.</b> Ayarlar girilmiş, ancak depo şu yanıtı verdi: <code style={{ wordBreak: 'break-all' }}>{durum.depo_eksik}</code>
+          <div style={{ marginTop: 6 }}>Render → backend servisi → <b>Environment</b>: <code>SUPABASE_URL</code> değerinin <code>https://proje-kodu.supabase.co</code> biçiminde olduğunu ve <code>SUPABASE_SERVICE_KEY</code> değerinin
+            gizli anahtar (<code>sb_secret_…</code> ya da service_role <code>eyJ…</code>) olduğunu kontrol edin; anon / publishable anahtarı çalışmaz. Düzeltip <b>Save Changes</b> deyin, servis yeniden başlayınca bu sayfayı yenileyin.</div>
+        </div>
+      ) : !durum.depo_hazir && (durum.depo_turu === 'disk' ? (
         <div className="auth-error" style={{ marginBottom: 10 }}>
           <b>Disk deposu kullanılamıyor.</b> {durum.depo_eksik} Sunucuda klasörü oluşturup backend'in yazabileceği izni verin
           (ayar: <code>PIPELINE_DEPO_DIZINI</code>).

@@ -42,8 +42,8 @@ def _yeniden_dene(fn, deneme: int = 4):
         try:
             return fn()
         except (urllib.error.URLError, TimeoutError, ConnectionError) as e:
-            if isinstance(e, urllib.error.HTTPError) and e.code < 500:
-                raise
+            if isinstance(e, urllib.error.HTTPError) and (e.code < 500 or i == deneme - 1):
+                raise   # çağıran sunucunun açıklamasını (detail) okuyup gösterir
             if i == deneme - 1:
                 raise BaglantiHatasi(f"Sisteme ulaşılamadı: {e}")
             time.sleep(2 * (i + 1))
@@ -66,6 +66,9 @@ def api(yontem: str, yol: str, govde=None, ham: bool = False, zaman_asimi: int =
             ayrinti = json.loads(e.read()).get("detail")
         except Exception:
             ayrinti = None
+        if ayrinti is None and e.code >= 500:
+            raise BaglantiHatasi(f"Sisteme ulaşılamadı ({e.code}: {e.reason}). Sunucu yeniden başlıyor ya da kapalı olabilir; "
+                                 "birkaç dakika sonra tekrar deneyin.")
         raise BaglantiHatasi(f"Sistem isteği reddetti ({e.code}): {ayrinti or e.reason}")
 
 
