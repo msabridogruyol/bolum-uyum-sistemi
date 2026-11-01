@@ -9,8 +9,8 @@ import { tl, TahminEtiketi } from './ortak'
 const SAYI = (v) => Math.round(Number(v)).toLocaleString('tr-TR')
 const KONUT = [
   { kod: 'aile', ad: 'Ailemle', ikon: '🏠', not: 'Kira yok. Eve katkını “Aileye katkı” satırına yazabilirsin.' },
-  { kod: 'arkadas', ad: 'Ev arkadaşıyla', ikon: '👥', not: '2+1 bir evin kirasını, aidatını ve faturalarını ikiye bölüyoruz.' },
-  { kod: 'tek', ad: 'Tek başıma', ikon: '🔑', not: '1+1 bir evin kirasını, aidatını ve faturalarını tek başına ödüyorsun.' },
+  { kod: 'arkadas', ad: 'Ev arkadaşıyla', ikon: '👥', not: '2+1 bir evin kirasını, aidatını (apartman giderini) ve faturalarını ikiye bölüyoruz.' },
+  { kod: 'tek', ad: 'Tek başıma', ikon: '🔑', not: '1+1 bir evin kirasını, aidatını (apartman giderini) ve faturalarını tek başına ödüyorsun.' },
 ]
 const ULASIM = [
   { kod: 'toplu', ad: 'Toplu taşıma', ikon: '🚌' },
