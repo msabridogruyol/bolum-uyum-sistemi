@@ -114,20 +114,95 @@ function Sihirbaz({ tur, ozet, onBitti }) {
         satirlar: gecerli.map((s) => ({ isco_kodu: String(s.isco_kodu), ad: s.ad, brut_aylik_ortalama_tl: Number(s.brut_aylik_ortalama_tl) })) })
       setSonuc(`${r.kaydedilen} meslek grubu kaydedildi${gecerli.length < satirlar.length ? ` (${satirlar.length - gecerli.length} hatalı satır atlandı)` : ''}.`)
     }
-    setOnizleme(null); setOkuma(null); setDosya(null)
+    setOnizleme(null); setOkuma(null); setDosya(null); setPaket(null)
     onBitti?.()
   })
+
+  // [2026-11-01] TÜİK tablo paketi: indirilen dosyalar birlikte seçilir; ölçü, düzey ve yıl başlıktan tanınır, sütun seçilmez
+  const [paket, setPaket] = useState(null)
+  async function paketSec(e) {
+    const secilen = [...(e.target.files || [])]
+    e.target.value = ''
+    if (!secilen.length) return
+    setOkuma(null); setOnizleme(null); setSonuc(null); setPaket(null)
+    await calistir(async () => {
+      const dosyalar = await Promise.all(secilen.map(async (f) => ({ dosya_adi: f.name, icerik_base64: await dosyayiOku(f) })))
+      const v = await api.ihTuikPaket(dosyalar)
+      setPaket(v)
+      if (v.satirlar.length) {
+        setDosya({ ad: v.dosyalar.filter((d) => d.durum === 'kullanilacak').map((d) => d.dosya_adi).join(' + ').slice(0, 200), b64: '' })
+        setOnizleme(v); setSatirlar(v.satirlar); setFiltre('hepsi')
+        setVeriYili(String(v.yil || '')); setKaynak(v.kaynak || ''); setAyniYil(false)
+      }
+    })
+  }
 
   const satirGuncelle = (i, d) => setSatirlar((l) => l.map((s, j) => (j === i ? { ...s, ...d } : s)))
   const gorunen = satirlar.map((s, i) => [s, i]).filter(([s]) => filtre === 'hepsi' || (filtre === 'esle' ? !s.bolum_id : filtre === 'oneri' ? s.durum === 'oneri' : s.hatalar?.length))
 
   return (
     <div className="card" style={{ marginBottom: 16 }}>
-      <div className="ct">{tur === 'istihdam' ? 'Yeni TÜİK istihdam göstergeleri dosyası yükle' : 'Kazanç Yapısı Araştırması tablosu yükle'}</div>
+      {tur === 'istihdam' && (
+        <div style={{ marginBottom: 14 }}>
+          <div className="ct">TÜİK istihdam göstergelerini yükle</div>
+          <ol style={{ margin: '6px 0 10px 18px', padding: 0, fontSize: 13, lineHeight: 1.6 }}>
+            <li><b>TÜİK Veri Portalı</b> › Yükseköğretim İstihdam Göstergeleri bülteni › <b>Tablolar</b> bölümünden şu <b>3 dosyayı</b> indirin:
+              <ul style={{ margin: '2px 0 4px 18px' }}>
+                <li>Lisans mezunlarının <b>bölümlere göre</b> kayıtlı istihdam oranı</li>
+                <li>Lisans mezunlarının <b>bölümlere göre</b> ilk iş bulma süresi</li>
+                <li>Lisans mezunlarının <b>bölümlere göre</b> aylık ortalama kazanç grupları</li>
+              </ul>
+              <span className="yp-ince">Ön lisans tabloları ve "eğitim ve öğretim alanlarına göre" tablolar gerekmez; seçerseniz neden kullanılmadığı yazılır.</span>
+            </li>
+            <li>Üç dosyayı <b>birlikte</b> seçin (Ctrl / Cmd ile çoklu seçim). Hangi dosyanın ne olduğu ve yılı otomatik tanınır; sütun seçmeniz gerekmez.</li>
+            <li>Aşağıdaki listede bölüm eşleşmelerini kontrol edin: <b>"Öneri — kontrol et"</b> ve <b>"Bölümsüz"</b> filtrelerine bakın.</li>
+            <li><b>Kaydet</b>'e basın. Veri yılı ve kaynak dosyadan doldurulur.</li>
+          </ol>
+          <label className="btn" style={{ display: 'inline-block', cursor: bekle ? 'wait' : 'pointer' }}>
+            {bekle ? 'Dosyalar okunuyor…' : '📂 TÜİK dosyalarını seç (birden çok)'}
+            <input type="file" multiple accept=".xls,.xlsx,.xlsm,.csv" onChange={paketSec} disabled={bekle} style={{ display: 'none' }} />
+          </label>
+          {paket && (
+            <div className="yp-tablo-kap" style={{ marginTop: 10, maxHeight: 280 }}>
+              <table className="yp-tablo">
+                <thead><tr><th>Dosya</th><th>Tanınan tablo</th><th>Yıl</th><th>Satır</th><th>Durum</th></tr></thead>
+                <tbody>
+                  {paket.dosyalar.map((d) => (
+                    <tr key={d.dosya_adi}>
+                      <td style={{ maxWidth: 260, wordBreak: 'break-word' }}>{d.dosya_adi}</td>
+                      <td>{d.olcu_ad ? `${d.olcu_ad} · ${DUZEY[d.duzey] || '—'}` : '—'}</td>
+                      <td>{d.yil || '—'}</td><td>{d.satir ?? '—'}</td>
+                      <td>{d.durum === 'kullanilacak' ? <span className="kc-durum kc-durum-gr">✓ kullanılacak</span>
+                        : <span className="yp-ince">Kullanılmadı: {d.neden}</span>}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
+          {paket && paket.uyarilar?.map((u) => <div key={u} className="yp-ince" style={{ color: 'var(--am)', marginTop: 4 }}>⚠ {u}</div>)}
+          {hata && !okuma && !onizleme && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
+          {sonuc && <div style={{ marginTop: 10, color: 'var(--gr)', fontWeight: 700, fontSize: 13 }}>✓ {sonuc}</div>}
+        </div>
+      )}
+      {tur === 'istihdam' ? (
+      <details style={{ marginBottom: onizleme ? 0 : 0 }}>
+        <summary className="yp-ince" style={{ cursor: 'pointer', fontWeight: 700 }}>Gelişmiş: tek dosya, bağlantıdan indirme ya da farklı biçimde tablo</summary>
+        <div style={{ marginTop: 10 }}>{gelismis()}</div>
+      </details>
+      ) : gelismis()}
+      {onizlemeBolumu()}
+    </div>
+  )
+
+  function gelismis() {
+    return (
+    <>
+      <div className="ct">{tur === 'istihdam' ? 'Tek dosya yükle (sütunları kendiniz seçin)' : 'Kazanç Yapısı Araştırması tablosu yükle'}</div>
       <div className="yp-ince" style={{ marginBottom: 10 }}>
         {tur === 'istihdam'
-          ? 'TÜİK Yükseköğretim İstihdam Göstergeleri tablosunu (.xlsx ya da .csv) seçin. Başlık satırı ve sütunlar otomatik tahmin edilir; kontrol edip düzeltin. Program adları sistemdeki bölümlerle eşleştirilir ("(İngilizce)", "(Burslu)" gibi ekler yok sayılır).'
-          : 'TÜİK Kazanç Yapısı Araştırması meslek grubu tablosunu (.xlsx / .csv) seçin. Meslek grubu kodu (ISCO-08) ayrı sütunda değilse adın başındaki rakamdan ya da grup adından bulunur. Yıllık tutarlar 12\'ye bölünür.'}
+          ? 'Bir tabloyu (.xls, .xlsx ya da .csv) seçin. Başlık satırı ve sütunlar otomatik tahmin edilir; kontrol edip düzeltin. Program adları sistemdeki bölümlerle eşleştirilir ("(İngilizce)", "(Burslu)" gibi ekler yok sayılır).'
+          : 'TÜİK Kazanç Yapısı Araştırması meslek grubu tablosunu (.xls, .xlsx ya da .csv) seçin. Meslek grubu kodu (ISCO-08) ayrı sütunda değilse adın başındaki rakamdan ya da grup adından bulunur. Yıllık tutarlar 12\'ye bölünür.'}
       </div>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 8 }}>
         <input className="yp-sec" style={{ flex: '1 1 340px', minWidth: 0 }} value={baglanti} onChange={(e) => setBaglanti(e.target.value)}
@@ -137,9 +212,9 @@ function Sihirbaz({ tur, ozet, onBitti }) {
       <div className="yp-ince" style={{ marginBottom: 8 }}>
         Portalda tablonun indirme simgesine sağ tıklayıp "Bağlantı adresini kopyala"yı seçin. Yalnızca tuik.gov.tr bağlantıları kabul edilir. Bağlantı çalışmazsa dosyayı indirip aşağıdan seçin.
       </div>
-      <input type="file" accept=".xlsx,.xlsm,.csv" onChange={dosyaSec} disabled={bekle} />
-      {hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
-      {sonuc && <div style={{ marginTop: 10, color: 'var(--gr)', fontWeight: 700, fontSize: 13 }}>✓ {sonuc}</div>}
+      <input type="file" accept=".xls,.xlsx,.xlsm,.csv" onChange={dosyaSec} disabled={bekle} />
+      {(tur !== 'istihdam' || okuma) && hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
+      {tur !== 'istihdam' && sonuc && <div style={{ marginTop: 10, color: 'var(--gr)', fontWeight: 700, fontSize: 13 }}>✓ {sonuc}</div>}
 
       {okuma && (
         <div style={{ marginTop: 14 }}>
@@ -185,7 +260,13 @@ function Sihirbaz({ tur, ozet, onBitti }) {
           <button className="btn" disabled={bekle} onClick={onizle}>{bekle ? 'İşleniyor…' : 'Önizle →'}</button>
         </div>
       )}
+    </>
+    )
+  }
 
+  function onizlemeBolumu() {
+    return (
+    <>
       {onizleme && (
         <div style={{ marginTop: 16 }}>
           {onizleme.uyarilar?.map((u) => <div key={u} className="yp-ince" style={{ color: 'var(--am)' }}>⚠ {u}</div>)}
@@ -259,10 +340,12 @@ function Sihirbaz({ tur, ozet, onBitti }) {
             )}
             <button className="btn" disabled={bekle || !veriYili || !kaynak.trim()} onClick={kaydet}>{bekle ? 'Kaydediliyor…' : 'Kaydet'}</button>
           </div>
+          {hata && <div className="auth-error" style={{ marginTop: 10 }}>{hata}</div>}
         </div>
       )}
-    </div>
-  )
+    </>
+    )
+  }
 }
 
 // ----------------------------------------------------------------------------- genel düzenlenebilir tablo
@@ -386,7 +469,7 @@ function IstihdamSekmesi({ ozet, yenileOzet }) {
         <div className="card" style={{ marginBottom: 12, borderLeft: '4px solid var(--am)', background: 'color-mix(in srgb, var(--am) 8%, var(--sur))' }}>
           <b>🔔 Güncelleme zamanı:</b> {ozet.guncelleme.son_veri_yili
             ? `Sistemdeki son veri ${ozet.guncelleme.son_veri_yili} yılına ait; TÜİK ${ozet.guncelleme.beklenen_veri_yili} verisini yayımlamış olabilir.`
-            : 'Sistemde henüz TÜİK istihdam verisi yok.'} TÜİK genellikle bu tabloyu Temmuz ayında yayımlar; aşağıya portal bağlantısını yapıştırarak yükleyebilirsiniz.
+            : 'Sistemde henüz TÜİK istihdam verisi yok.'} TÜİK genellikle bu tabloyu Temmuz ayında yayımlar; aşağıdaki adımlarla yükleyebilirsiniz.
         </div>
       )}
       {ozet?.istihdam?.length > 0 && (

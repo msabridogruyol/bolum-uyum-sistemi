@@ -252,6 +252,108 @@ def istihdam_onizle(istek: OnizleIstek, db: Session = Depends(get_db), yon: Admi
             "uyarilar": uyarilar, "bolumler": [{"id": b["id"], "ad": b["ad"]} for b in adaylar]}
 
 
+# ----------------------------------------------------------------------------------------- TÜİK tablo paketi
+# [2026-11-01] TÜİK Yükseköğretim İstihdam Göstergeleri her ölçüyü ayrı tabloda verir (lisans / ön lisans × kayıtlı istihdam
+# oranı / ilk iş bulma süresi / aylık ortalama kazanç grupları). Yönetici indirdiği dosyaları birlikte seçer; her dosyanın
+# ölçüsü, düzeyi ve en son yılı başlığından tanınır, satırlar tek önizlemede birleşir. Sütun seçmek gerekmez.
+_TUIK_OLCU = [("kayitli istihdam orani", "istihdam_orani", "Kayıtlı istihdam oranı"),
+              ("ilk is bulma suresi", "is_bulma_suresi_ay", "İlk iş bulma süresi"),
+              ("kazanc grup", "kazanc_grubu", "Aylık ortalama kazanç grubu")]
+
+
+class TuikDosya(BaseModel):
+    dosya_adi: str = Field(max_length=200)
+    icerik_base64: str
+
+
+class TuikPaketIstek(BaseModel):
+    dosyalar: list[TuikDosya] = Field(min_length=1, max_length=12)
+
+
+def _tuik_tani(ad: str, satirlar: list[list]) -> dict:
+    """Başlıktan ölçü, düzey, bölüm sütunu, yıl sütunları ve dosyadaki kaynak satırı."""
+    ust = " ".join(str(c) for r in satirlar[:3] for c in r if str(c).strip())
+    t = _normalize(ust)
+    olcu = next(((k, ad_) for anahtar, k, ad_ in _TUIK_OLCU if anahtar in t), (None, None))
+    duzey = "onlisans" if re.search(r"\bon ?lisans", t) else ("lisans" if "lisans" in t else None)
+    baslik = next((i for i, r in enumerate(satirlar[:15]) if r and _normalize(str(r[0])).startswith("bolum")), None)
+    yillar = {}
+    if baslik is not None:
+        for j, c in enumerate(satirlar[baslik]):
+            try:
+                y = int(float(str(c).strip()))
+            except ValueError:
+                continue
+            if 2000 <= y <= 2100:
+                yillar[y] = j
+    kaynak = next((str(r[0]).strip() for r in satirlar[-8:] if r and _normalize(str(r[0])).startswith("tuik,")), None)
+    sonuc = {"dosya_adi": ad, "olcu": olcu[0], "olcu_ad": olcu[1], "duzey": duzey, "baslik_satiri": baslik, "yillar": yillar,
+             "kaynak": kaynak, "durum": "kullanilacak", "neden": None}
+    if "uyumlu bir meslek grubunda" in t or "alanlarina gore" in t or "alanlari ile" in t:
+        sonuc.update(durum="atlandi", neden="Bölüm bazında değil, eğitim alanı bazında; bölümlere bağlanamaz.")
+    elif "bolumlere gore" not in t or olcu[0] is None:
+        sonuc.update(durum="atlandi", neden="Tanınan bir TÜİK bölüm tablosu değil. Tek dosya yükleme bölümünü kullanın.")
+    elif duzey == "onlisans":
+        sonuc.update(durum="atlandi", neden="Ön lisans tablosu: sistemdeki bölümler lisans bölümleri olduğu için kullanılmaz.")
+    elif not yillar:
+        sonuc.update(durum="atlandi", neden="Yıl sütunları bulunamadı.")
+    return sonuc
+
+
+@router.post("/istihdam/tuik-paket")
+def istihdam_tuik_paket(istek: TuikPaketIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
+    taninan = []
+    for d in istek.dosyalar:
+        satirlar = [list(r) for r in _dosyadan_satirlar(d.dosya_adi, d.icerik_base64)]
+        taninan.append((d, _tuik_tani(d.dosya_adi, satirlar)))
+    kullan = [(d, t) for d, t in taninan if t["durum"] == "kullanilacak"]
+    gorulen = {}
+    for d, t in kullan:
+        if t["olcu"] in gorulen:
+            t.update(durum="atlandi", neden=f"Aynı ölçü ikinci kez seçildi ({gorulen[t['olcu']]}).")
+        else:
+            gorulen[t["olcu"]] = t["dosya_adi"]
+    kullan = [(d, t) for d, t in kullan if t["durum"] == "kullanilacak"]
+    if not kullan:
+        return {"dosyalar": [t for _, t in taninan], "yil": None, "satirlar": [], "uyarilar": ["Kullanılabilecek tablo yok."],
+                "ozet": {"toplam": 0, "otomatik": 0, "oneri": 0, "yok": 0, "hatali": 0}, "bolumler": [], "kaynak": None}
+    # Hepsinde bulunan en son yıl
+    ortak = set.intersection(*(set(t["yillar"]) for _, t in kullan))
+    yil = max(ortak) if ortak else max(max(t["yillar"]) for _, t in kullan)
+    uyarilar = [] if ortak else ["Dosyalarda ortak yıl yok; her dosyanın en son yılı kullanıldı."]
+    birlesik: dict[tuple, dict] = {}
+    adaylar_cikti = None
+    for d, t in kullan:
+        sutun = t["yillar"].get(yil, t["yillar"][max(t["yillar"])])
+        try:
+            on = istihdam_onizle(OnizleIstek(tur="istihdam", dosya_adi=d.dosya_adi, icerik_base64=d.icerik_base64,
+                                             baslik_satiri=t["baslik_satiri"], eslesme={"program_adi": 0, t["olcu"]: sutun},
+                                             varsayilan_duzey=t["duzey"]), db, yon)
+        except HTTPException:
+            t.update(durum="atlandi", neden=f"{yil} yılı sütununda değer yok.")
+            continue
+        adaylar_cikti = on["bolumler"]
+        t["satir"] = len(on["satirlar"])
+        t["yil"] = yil if yil in t["yillar"] else max(t["yillar"])
+        for s in on["satirlar"]:
+            k = (s["duzey"] or "", _program_anahtari(s["program_adi_kaynak"]))
+            if k not in birlesik:
+                birlesik[k] = dict(s)
+            else:
+                b = birlesik[k]
+                b[t["olcu"]] = s[t["olcu"]]
+                b["hatalar"] = (b.get("hatalar") or []) + (s.get("hatalar") or [])
+    satirlar = list(birlesik.values())
+    eksik = [ad_ for _, k, ad_ in _TUIK_OLCU if k not in gorulen]
+    if eksik:
+        uyarilar.append("Seçilmeyen tablo: " + ", ".join(eksik) + ". Sonra ayrıca yükleyebilirsiniz; aynı satırlara eklenir.")
+    say = {k: sum(1 for s in satirlar if s["durum"] == k) for k in ("otomatik", "oneri", "yok")}
+    kaynak = next((t["kaynak"] for _, t in kullan if t["kaynak"]), None) or f"TÜİK, Yükseköğretim İstihdam Göstergeleri, {yil}"
+    sirali = sorted((t for _, t in taninan), key=lambda t: t["durum"] != "kullanilacak")   # kullanılacaklar önce
+    return {"dosyalar": sirali, "yil": yil, "satirlar": satirlar, "uyarilar": uyarilar, "kaynak": kaynak,
+            "ozet": {"toplam": len(satirlar), **say, "hatali": sum(1 for s in satirlar if s.get("hatalar"))}, "bolumler": adaylar_cikti}
+
+
 class IstihdamSatiri(BaseModel):
     program_adi_kaynak: str = Field(min_length=1, max_length=300)
     duzey: str | None = Field(None, pattern="^(lisans|onlisans)$")

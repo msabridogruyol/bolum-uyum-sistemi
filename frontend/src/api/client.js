@@ -460,6 +460,7 @@ export const api = {
   ihDosyaOku: (v) => apost('/admin/is-hayati/dosya/oku', v),
   ihBaglantiIndir: (url) => apost('/admin/is-hayati/baglanti/indir', { url }),
   ihIstihdamOnizle: (v) => apost('/admin/is-hayati/istihdam/onizle', v),
+  ihTuikPaket: (dosyalar) => apost('/admin/is-hayati/istihdam/tuik-paket', { dosyalar }),   // [2026-11-01] TÜİK tablolarını birlikte yükle
   ihIstihdamKaydet: (v) => apost('/admin/is-hayati/istihdam/kaydet', v),
   ihKazancOnizle: (v) => apost('/admin/is-hayati/kazanc/onizle', v),
   ihKazancKaydet: (v) => apost('/admin/is-hayati/kazanc/kaydet', v),
