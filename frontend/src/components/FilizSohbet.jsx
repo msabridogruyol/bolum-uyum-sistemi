@@ -119,8 +119,17 @@ export default function FilizSohbet() {
         id = await yeniOturum()                                   // oturum kapanmışsa sessizce yenisini aç
         cevap = await api.aiKocMesajGonder(id, metin, konum.pathname)
       }
-      setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti, otomatik: cevap.otomatik }])
-      setDurum((d) => (d && d.mod !== 'otomatik' ? { ...d, kalan: Math.max(0, d.kalan - 1) } : d))
+      setMesajlar((m) => [...m, { rol: 'asistan', icerik: cevap.asistan_yaniti, otomatik: cevap.otomatik, kaynak: cevap.kaynak, secenekler: cevap.secenekler || [] }])
+      // [2026-10-30] Yapay zekâ sınırı dolunca hizmet kesilmez: sunucu rehber moduna geçer (cevap.otomatik); burada da
+      // hak bitince sohbet kilitlenmez, rehber moduna geçilir.
+      setDurum((d) => {
+        if (!d || d.mod === 'otomatik') return d
+        // [2026-10-31] Sistem içeriğinden, gizlilik ya da kriz cevabı: yapay zekâ kullanılmadı, hak düşmez, mod değişmez
+        if (cevap.sinir_doldu) return { ...d, mod: 'otomatik', kalan: Math.max(1, d.gunluk_limit || 1) }
+        if (cevap.kaynak !== 'yz') return d   // içerik / rehber (yoğunluk) / sabit / kriz: hak düşmez, mod değişmez
+        const kalan = Math.max(0, d.kalan - 1)
+        return kalan <= 0 ? { ...d, mod: 'otomatik', kalan: Math.max(1, d.gunluk_limit || 1) } : { ...d, kalan }
+      })
       if (cevap.oturum_kapandi_mi) {
         setOturumId(null)
         setMesajlar((m) => [...m, { rol: 'not', icerik: 'Bu sohbeti özetledim. Yeni bir sohbette kaldığımız yerden devam edebiliriz.' }])
@@ -165,7 +174,7 @@ export default function FilizSohbet() {
   const otomatik = durum?.mod === 'otomatik'   // [2026-10-10] yapay zekâ bağlı değil: kural tabanlı rehber
   const oneriler = otomatik ? (durum.ornek_sorular || []).slice(0, 5) : [...(ONERILER_SAYFA[konum.pathname] || []), ...ONERILER_GENEL].slice(0, 4)
   const pasif = hazir && durum && !durum.aktif
-  const hakBitti = durum?.aktif && durum.kalan <= 0
+  const hakBitti = durum?.aktif && durum.mod !== 'otomatik' && durum.kalan <= 0   // [2026-10-31] rehber modunda hak yok, kilit yok
 
   return (
     <>
@@ -278,7 +287,14 @@ export default function FilizSohbet() {
                 : <div key={i} className={`filiz-mesaj ${m.rol === 'ogrenci' ? 'ogrenci' : 'asistan'}`}>
                     {m.icerik}
                     {m.rol === 'asistan' && m.sozluk && <button className="filiz-oto-etiket" style={{ border: 0, cursor: 'pointer' }} onClick={() => { setSozlukKelime(m.sozluk.ad); setGorunum('sozluk') }}>📖 Sözlükten · benzer kelimeler</button>}
-                    {m.rol === 'asistan' && !m.sozluk && (m.otomatik || (otomatik && m.otomatik !== false)) && <span className="filiz-oto-etiket">🤖 Otomatik yanıt</span>}
+                    {m.rol === 'asistan' && !m.sozluk && m.kaynak === 'icerik' && <span className="filiz-oto-etiket">📖 Sistemdeki içerikten</span>}
+                    {m.rol === 'asistan' && !m.sozluk && m.kaynak !== 'icerik' && (m.otomatik || (otomatik && m.otomatik !== false)) && <span className="filiz-oto-etiket">🤖 Otomatik yanıt</span>}
+                    {/* [2026-10-31] "Şunu mu demek istedin?" / ilgili sorular: yalnızca son cevapta, tıklayınca soru gönderilir */}
+                    {m.rol === 'asistan' && m.secenekler?.length > 0 && i === mesajlar.length - 1 && !gonderiliyor && (
+                      <div className="filiz-secenekler">
+                        {m.secenekler.map((o) => <button key={o} className="filiz-oneri" onClick={() => gonder(o)} disabled={hakBitti}>{o}</button>)}
+                      </div>
+                    )}
                   </div>
             ))}
             {gonderiliyor && <div className="filiz-mesaj asistan filiz-yaziyor"><span /><span /><span /></div>}
@@ -381,6 +397,7 @@ export const FILIZ_CSS = `
 .filiz-ikon-btn{width:28px;height:28px;border-radius:50%;border:1px solid var(--bor2);background:var(--sur);color:var(--tx2);cursor:pointer;font-size:13px}
 .filiz-mesajlar{flex:1;overflow-y:auto;padding:14px;display:flex;flex-direction:column;gap:10px}
 .filiz-bos{display:flex;flex-direction:column;align-items:center;text-align:center;padding:16px 8px}
+.filiz-secenekler{display:flex;flex-direction:column;gap:6px;margin-top:10px}
 .filiz-oneri{text-align:left;border:1px solid var(--bor2);background:var(--sur);color:var(--tx);border-radius:12px;padding:9px 12px;font-size:12.5px;cursor:pointer;font-family:inherit}
 .filiz-oneri:hover{border-color:var(--pu);background:var(--pul)}
 .filiz-mesaj{max-width:85%;padding:9px 13px;border-radius:16px;font-size:13.5px;line-height:1.55;white-space:pre-wrap;word-wrap:break-word}
