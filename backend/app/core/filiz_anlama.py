@@ -276,6 +276,14 @@ def kapali_modul_cevabi(d: fb.Dizin, soru: str, moduller: set[str] | None) -> Ce
     return None
 
 
+_YER = (" nerede ", " nerden ", " nereden ", " nereye ", " nerde ", " gorurum ", " gorebilirim ", " bulurum ", " bulabilirim ",
+        " bakarim ", " bakabilirim ", " ulasirim ", " ulasabilirim ")
+
+
+def _YER_SORUSU(t: str) -> bool:
+    return any(k in t for k in _YER)
+
+
 def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | None:
     """Kişisel konulardan ÖNCE denenir: karşılaştırma, meslek yolu, güçlü bilgi sorusu."""
     d = fb.dizin(db)
@@ -300,7 +308,9 @@ def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | N
         if c:
             return c
     # Tanım sorusu ve terim sözlükte aynen var: sözlük (soruda geçen bölüm adından daha uzun/özgülse)
-    sb = fb.sozluk_bul(db, soru)
+    # [2026-11-02 uçtan uca simülasyon] "Taban puanları nerede görürüm?" bir yer sorusudur, tanım değil: tanım kalıbı
+    # yoksa ve soru "nerede / nereden / nasıl görürüm" diye soruyorsa sözlüğe gidilmez (konu cevabı yeri söyler).
+    sb = None if _YER_SORUSU(t) and not any(k in t for k in fb._TANIM) else fb.sozluk_bul(db, soru)
     if sb is not None:
         coz = d.varliklari_coz(soru)
         en_uzun_ad = max((len(a) for a, _ in coz), default=0)

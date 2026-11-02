@@ -317,7 +317,7 @@ def filiz_denetle(rapor, o, soru, bek, c, hedef_ad):
     if tur == "kisisel":
         if kaynak in ("bilinmiyor",) or (kaynak == "netlestirme" and bek["orijinal"] != "Hedef bölümüm hakkında bilgi verir misin?"):
             rapor.ekle("filiz_kisisel_anlamadi", ornek)
-        if hedef_ad is None and re.search(r"\bhedefin\b", y.lower()) and "hedef bölüm seçmemişsin" not in y.lower() \
+        if hedef_ad is None and kaynak != "bilinmiyor" and re.search(r"\bhedefin\b", y.lower()) and "hedef bölüm seçmemişsin" not in y.lower() \
                 and "henüz bir hedef" not in y.lower():
             rapor.ekle("filiz_hedefsiz_hedef_dedi", ornek)
     elif tur == "bolum":

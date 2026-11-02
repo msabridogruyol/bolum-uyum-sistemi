@@ -133,7 +133,11 @@ def capa_ekle(sozcukler, degisim: bool = True) -> None:
 def _bitisik_ayir(w: str) -> str:
     """[2026-11-02 simülasyon] Boşluğu unutulmuş iki sözcük ("halkoyunlari", "teknolojisimuhendisligi"): sözcük sistemde
     yoksa ve iki parçası da sistemin bildiği sözcüklerse ayrılır (en dengeli bölünme)."""
-    if len(w) < 8 or w in _BILINEN or w in _CAPA or not w.isalpha():
+    if len(w) < 6 or w in _BILINEN or w in _CAPA or not w.isalpha():
+        return w
+    if w.startswith("ve") and len(w) >= 6 and (w[2:] in _CAPA or w[2:] in _BILINEN):
+        return f"ve {w[2:]}"        # [2026-11-02 uçtan uca simülasyon] "yiyecek veicecek isletmeciligi"
+    if len(w) < 8:
         return w
     en = None
     for i in range(3, len(w) - 3):
@@ -144,14 +148,100 @@ def _bitisik_ayir(w: str) -> str:
     return f"{en[0]} {en[1]}" if en else w
 
 
+# [2026-11-02 uçtan uca simülasyon] Türkçe ad çekim ekleri (sadeleştirilmiş: ı→i, ü→u, ö→o). Bilinen bir sözcüğe bu
+# eklerden biri gelmişse ("puan" + "lari") sözcük doğru yazılmıştır; yazım düzeltmesi ona dokunmaz.
+_AD_EKI = re.compile(r"(lar|ler)?(imiz|iniz|umuz|unuz|lari|leri|im|in|um|un|si|su|i|u)?"
+                     r"(ndan|nden|nda|nde|nin|nun|dan|den|tan|ten|yla|yle|da|de|ta|te|na|ne|ya|ye|yi|yu|ni|nu|la|le|ki|a|e|i|u|n)?")
+
+
+def ek_mi(kok: str, ek: str) -> bool:
+    """ek, kok'e gelebilecek bir ad çekim eki mi? Ünlüyle biten köke ünlüyle başlayan ek doğrudan gelmez
+    ("sifre" + "i" değil "sifreyi"; "sifrei" bir yazım hatasıdır)."""
+    return bool(ek) and _AD_EKI.fullmatch(ek) is not None and not (kok[-1:] in "aeiou" and ek[0] in "aeiou")
+
+
+def _ekli_bilinen(w: str) -> bool:
+    """w, bilinen bir sözcük (en az 4 harf) + ad çekim eki mi? "puanlari" = puan + lari, "postasi" = posta + si."""
+    for k in range(len(w) - 1, 3, -1):
+        if (w[:k] in _CAPA or w[:k] in _BILINEN) and ek_mi(w[:k], w[k:]):
+            return True
+    return False
+
+
+_BELIRSIZ = object()
+
+
+def _adaylar(w: str):
+    """Tek harf hatasının (atlanan ya da yanlış harf) adayları: set; eşlemelerden biri belirsizse _BELIRSIZ
+    (iki ayrı çapaya aynı uzaklıkta: "bilisi" bilişim de bilgisi de olabilir)."""
+    aday: set[str] = set()
+    if w in _SILME:
+        if _SILME[w] is None:
+            return _BELIRSIZ
+        aday.add(_SILME[w])
+    for i in range(len(w)):
+        k = w[:i] + "?" + w[i + 1:]
+        if k in _DEGIS:
+            if _DEGIS[k] is None:
+                return _BELIRSIZ
+            aday.add(_DEGIS[k])
+    return aday
+
+
 def _yazim(w: str) -> str:
+    """Tek harf hatası düzeltmesi. [2026-11-02 uçtan uca simülasyon] Kök nedenler:
+    * Doğru yazılmış ekli sözcük başka bir sözcüğe çevriliyordu ("puanlari" → "planlari"): bilinen sözcük + ek artık
+      düzeltilmez.
+    * Atlanan harf eşlemesi belirsizken yanlış harf eşlemesine düşülüyordu ("bilisi" → "bilimi"; bilişim de olabilir):
+      iki eşlemenin adayları birlikte sayılır, tek aday yoksa sözcüğe dokunulmaz.
+    * Ekli sözcüğün kökündeki hata hiç düzeltilmiyordu ("posasi", "mulkata"): kök + ek ayrılır, kök düzeltilir."""
     if len(w) < 4 or not _CAPA or w in _CAPA or w in _BILINEN or w in _DURAK or w in _KELIME or not w.isalpha():
         return w
-    if _SILME.get(w):                   # en sık hata atlanan harf: tek adayı varsa o
-        return _SILME[w]
-    aday = {_DEGIS.get(w[:i] + "?" + w[i + 1:]) for i in range(len(w))}
-    aday.discard(None)
-    return aday.pop() if len(aday) == 1 else w
+    if _ekli_bilinen(w):
+        return w
+    aday = _adaylar(w)
+    if aday is _BELIRSIZ or len(aday) > 1:
+        return w
+    if aday:
+        a = aday.pop()
+        # Çapanın eksiz kökü yazılmışsa sözcük doğrudur: "muhendis" ≠ hatalı "muhendisi" (önceden "muhendisi"ne çevriliyordu;
+        # testlerin sırasına göre dizinde "muhendis" geçmediğinde ortaya çıkıyordu)
+        return w if a.startswith(w) and ek_mi(w, a[len(w):]) else a
+    for k in range(len(w) - 1, 4, -1):            # kök (5+ harf) + ek: "mulkat|a" → mulakat + a
+        if ek_mi(w[:k], w[k:]):
+            kok = _adaylar(w[:k])
+            if kok is _BELIRSIZ or len(kok) > 1:
+                return w
+            if kok:
+                return kok.pop() + w[k:]
+    return w
+
+
+def bir_harf(a: str, b: str) -> bool:
+    """a ile b arasında en çok bir düzenleme var mı (atlanan, fazla, yanlış ya da yer değiştirmiş iki komşu harf)?"""
+    if a == b:
+        return True
+    la, lb = len(a), len(b)
+    if abs(la - lb) > 1:
+        return False
+    if la == lb:
+        fark = [i for i in range(la) if a[i] != b[i]]
+        return len(fark) == 1 or (len(fark) == 2 and fark[1] == fark[0] + 1
+                                  and a[fark[0]] == b[fark[1]] and a[fark[1]] == b[fark[0]])
+    kisa, uzun = (a, b) if la < lb else (b, a)
+    i = next((i for i in range(len(kisa)) if kisa[i] != uzun[i]), len(kisa))
+    return kisa[i:] == uzun[i + 1:]
+
+
+def yakin_ekli(q: str, e: str, kuyruk: int = 4) -> bool:
+    """Sorudaki q sözcüğü, e'nin tek harf hatalı (ve en çok `kuyruk` harf ekli) yazımı mı? e en az 4 harf olmalı.
+    "asarim"~"tasarim", "fizi"~"fizik", "konuma"~"konusma", "kulanabilir"~"kullan" (kuyruk uzun verilirse)."""
+    if len(e) < 4 or len(q) < 3:
+        return False
+    for n in (len(e) - 1, len(e), len(e) + 1):
+        if 3 <= n <= len(q) and len(q) - n <= kuyruk and bir_harf(q[:n], e):
+            return True
+    return False
 
 
 def _konusma_eki(w: str) -> str:
@@ -191,8 +281,46 @@ def anahtar_var(a: str, t: str) -> bool:
     return re.search(rf"(?<![a-z0-9]){re.escape(a)}{kuyruk}", t) is not None
 
 
-def duzelt(m: str | None) -> str:
-    """Sorgu metnini sadeleştirir ve konuşma dilini / kısaltmaları açar (yalnızca öğrenci sorusu için; belgeler değil)."""
+def _taninmayan(w: str) -> bool:
+    """Sistemin hiçbir metninde ve hiçbir çapa sözcüğünde (ekli hâliyle de) geçmeyen sözcük: yazım hatası adayı."""
+    return w.isalpha() and w not in _BILINEN and w not in _CAPA and w not in _DURAK and not _ekli_bilinen(w)
+
+
+def anahtar_yakin(a: str, t: str) -> bool:
+    """[2026-11-02 uçtan uca simülasyon] Konu anahtarının tek harf hatalı yazımı: "sifrei unuttum" ~ "sifremi unuttum",
+    "sistem nsil calisiyor" ~ "sistem nasil", "sonuc e posasi" ~ "sonuc e posta", "ingilizce kulanabilir" ~ "ingilizce
+    kullan", "odevimi yaar misin" ~ "odevimi yapar". a ve t sadeleştirilmiş olmalı.
+    Kök neden: yazım düzeltmesi sözcük sözcük çalışır; konu anahtarı ekli ya da durak sözcüğü olunca ("posta" → "postasi",
+    "nasil") hatalı sözcük hiç düzeltilmiyor, soru "anlayamadım"a düşüyordu.
+    Kural: anahtarın tam olarak bir sözcüğü tek harf hatalı olabilir. Tek sözcüklü anahtarda (en az 6 harf) o sözcük
+    sistemde tanınmayan bir sözcük olmalı (geçerli bir sözcük başka bir sözcüğe benzetilmez); çok sözcüklü anahtarda
+    diğer sözcükler aynen (ya da ekli: "maili gelmedi") geçtiği için bağlam yeterlidir, hatalı sözcük 5+ harfliyse
+    geçerli bir sözcük olabilir ("dusune atolyesi"). Son sözcükten sonra ek gelebilir (anahtar_var ile aynı)."""
+    ak = a.split()
+    if not ak or (len(ak) == 1 and len(ak[0]) < 6):
+        return False
+    tk = t.split()
+    for s in range(len(tk) - len(ak) + 1):
+        hatali = 0
+        for j, e in enumerate(ak):
+            w = tk[s + j]
+            son = j == len(ak) - 1
+            if w == e or (son and w.startswith(e) and len(w) - len(e) <= 7) or (w.startswith(e) and ek_mi(e, w[len(e):])):
+                continue
+            if (hatali == 0 and len(e) >= 4 and w not in _DURAK
+                    and (_taninmayan(w) or (len(ak) >= 2 and len(e) >= 5)) and yakin_ekli(w, e, 7 if son else 0)):
+                hatali = 1
+                continue
+            break
+        else:
+            if hatali == 1:
+                return True
+    return False
+
+
+def duzelt(m: str | None, yazim: bool = True) -> str:
+    """Sorgu metnini sadeleştirir ve konuşma dilini / kısaltmaları açar (yalnızca öğrenci sorusu için; belgeler değil).
+    yazim=False: tek harf hatası düzeltmesi yapılmaz (ad tanıma, düzeltmenin yanlış yöne çektiği sözcüğün aslını da dener)."""
     t = sade(m)
     for k, v in sorted(_KELIME.items(), key=lambda x: -len(x[0])):
         if " " in k:
@@ -219,7 +347,7 @@ def duzelt(m: str | None) -> str:
         w = _KELIME.get(w, w)
         if w and " " not in w:
             k = _konusma_eki(w)
-            w = k if k != w else _yazim(w)     # konuşma dili ("olcam") yazım hatası sayılmaz
+            w = k if k != w else (_yazim(w) if yazim else w)     # konuşma dili ("olcam") yazım hatası sayılmaz
             if " " not in w:
                 w = _bitisik_ayir(w)
         out.append(w)
@@ -345,10 +473,17 @@ class Dizin:
         capa_ekle(list(self.takma))
         # Aday dizini: ilk iki harfe göre (hız)
         self._aday: dict[str, list[tuple[str, tuple[str, ...]]]] = defaultdict(list)
+        # [2026-11-02 uçtan uca simülasyon] Çok sözcüklü adlar her sözcüğünün ilk 4 harfiyle de dizinlenir: adın bir
+        # sözcüğü hatalı yazıldığında ("Siyaset İlimi ve Kamu Yönetimi") doğru yazılan sözcüğünden bulunur.
+        self._cok: dict[str, list[tuple[str, tuple[str, ...], int]]] = defaultdict(list)
         for anahtar in set(self.varliklar) | set(self.takma):
             tok = tuple(anahtar.split())
             if tok and len(anahtar) >= 3:
                 self._aday[tok[0][:2]].append((anahtar, tok))
+            if len(tok) >= 2:
+                for j, w in enumerate(tok):
+                    if len(w) >= 4 and w != "ve":
+                        self._cok[w[:4]].append((anahtar, tok, j))
 
     def _idf(self, k: str) -> float:
         n = len(self.ters.get(k, ()))
@@ -401,6 +536,7 @@ class Dizin:
                     tam = sum(q[i + j] == tok[j] for j in range(n))
                     fark = sum(abs(len(q[i + j]) - len(tok[j])) for j in range(n))
                     adaylar.append((n, tam, fark, len(anahtar), i, anahtar))
+        adaylar += self._hatali_cok_sozcuklu(q, duzelt(soru, yazim=False).split(), {(a[4], a[5]) for a in adaylar})
         # çok sözcüklü > tam yazım > yazılana en yakın ("grafik tasarim" = Grafik Tasarımı, "grafik tasarımcı" değil) > uzun ad
         adaylar.sort(key=lambda a: (-a[0], -a[1], a[2], -a[3]))
         kullanilan: set[int] = set()
@@ -428,6 +564,46 @@ class Dizin:
             if ekli:
                 sonuc = [x for x in sonuc if not (x[0] in _DERS_ADI and x not in ekli)]
         return [(a, h) for a, h, _, _ in sonuc]
+
+    def _hatali_cok_sozcuklu(self, q: list[str], ham: list[str], var: set) -> list[tuple]:
+        """[2026-11-02 uçtan uca simülasyon] Çok sözcüklü adda bir sözcük hatalı yazılmış: "siyaset ilimi ve kamu
+        yonetimi", "endustriyel asarim muhendisligi", "fizi ogretmenligi", "turk hak oyunlari", "ekonomi e finans".
+        Kök neden: ad ancak bütün sözcükleri tanınırsa bulunuyordu; tek sözcük tanınmayınca adın kalan kısmına uyan
+        BAŞKA ve daha kısa bir ad (Kamu Yönetimi, Endüstri Mühendisliği) ya da genel bir sözcük ("öğretmenlik") seçiliyor,
+        öğrenciye kendinden emin biçimde yanlış bölüm anlatılıyordu.
+        Kural: adın en az bir anlamlı sözcüğü (4+ harf) doğru ya da ekli yazılmış olmalı; hatalı sözcükler tek harf
+        hatası taşır; 3 sözcüğe kadar adlarda en çok 1, daha uzunlarda en çok 2 hatalı sözcük. "ve" yerine "v" / "e"
+        yazılabilir. Sözcük, yazım düzeltmesinden önceki hâliyle de denenir (düzeltme yanlış yöne çekmiş olabilir).
+        Dönen adaylar varliklari_coz ile aynı biçimdedir: (sözcük sayısı, tam sayısı, uzunluk farkı, ad uzunluğu, konum, ad)."""
+        if len(ham) != len(q):
+            ham = q
+        out = []
+        for i in range(len(q)):
+            for w in {q[i][:4], ham[i][:4]}:
+                for anahtar, tok, j in self._cok.get(w, ()):
+                    s, n = i - j, len(tok)
+                    if s < 0 or s + n > len(q) or (s, anahtar) in var:
+                        continue
+                    hatali = dogru = tam = fark = 0
+                    for t, e in enumerate(tok):
+                        adaylar = (q[s + t], ham[s + t])
+                        if any(_ek_toleransli(c, e) for c in adaylar):
+                            tam += q[s + t] == e
+                            dogru += e != "ve" and len(e) >= 4
+                            fark += abs(len(q[s + t]) - len(e))
+                        elif e == "ve" and any(c in ("v", "e") for c in adaylar):
+                            hatali += 1
+                        elif e != "ve" and any(yakin_ekli(c, e) for c in adaylar):
+                            hatali += 1
+                            fark += 1
+                        else:
+                            break
+                    else:
+                        cekirdek = n - tok.count("ve")
+                        if dogru and hatali <= (1 if cekirdek <= 3 else 2):   # 0: yalnızca düzeltme öncesi hâliyle tanındı
+                            var.add((s, anahtar))
+                            out.append((n, tam, fark, len(anahtar), s, anahtar))
+        return out
 
     def soru_varliklari(self, soru: str) -> list[str]:
         """Belirsiz olmayan varlıklar (puanlamada öne alınır). Bir takma ad tek bölüme çıkıyorsa o bölüm de eklenir."""

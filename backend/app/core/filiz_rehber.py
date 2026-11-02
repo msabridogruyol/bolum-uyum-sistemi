@@ -743,10 +743,11 @@ _ANAHTAR_SADE: dict[str, str] = {}
 def _anahtar_var(a: str, t: str) -> bool:
     """[2026-11-02] Anahtar da sorgu gibi sadeleştirilir: "sonuc e-posta", "yks'ye kac" gibi anahtarlar sorgu metninde
     "e posta", "yks ye" biçimine dönüştüğü için önceden hiç eşleşmiyordu."""
-    from app.core.filiz_bilgi import anahtar_var, sade
+    from app.core.filiz_bilgi import anahtar_var, anahtar_yakin, sade
     if a not in _ANAHTAR_SADE:
         _ANAHTAR_SADE[a] = " ".join(sade(a).split()) + (" " if a.endswith(" ") else "")
-    return anahtar_var(_ANAHTAR_SADE[a], t)
+    # [2026-11-02 uçtan uca simülasyon] tam eşleşme yoksa tek harf hatalı yazım (filiz_bilgi.anahtar_yakin)
+    return anahtar_var(_ANAHTAR_SADE[a], t) or anahtar_yakin(_ANAHTAR_SADE[a].strip(), t)
 
 
 def _konu_sec(t: str, varlik_var: bool, tam: str | None = None) -> tuple:
