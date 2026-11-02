@@ -171,6 +171,12 @@ def degerlendir(c, bas, o, rnd, rapor):
     return True
 
 
+def _aciklamali(m: str, bas: int, son: int) -> bool:
+    """tests/test_icerik_dili.py ile aynı kural: ağır sözcüğün hemen ardından (en çok iki sözcük sonra) parantezli
+    açıklama gelir ya da sözcük parantez içindedir (ör. "epistemoloji (bilgi felsefesi)", "ana tasarım fikri (konsept)")."""
+    return bool(re.match(r"^\w*(?:\s+\w+){0,2}\s*\(", m[son:son + 40])) or "(" in m[max(0, bas - 40):bas].split(")")[-1]
+
+
 def metin_denetle(rapor, uc: str, veri):
     for yol, m in metinleri_gez(veri):
         if len(m) > 20000:
@@ -178,7 +184,9 @@ def metin_denetle(rapor, uc: str, veri):
         b = BOZUK.search(m)
         if b and not yol.endswith((".id", ".kod", ".url", "_id")):
             rapor.ekle("bozuk_metin", {"uc": uc, "yol": yol, "eslesen": b.group(0), "metin": m[:240]})
-        agir = {w for w in re.findall(r"\w+", m.lower()) if w in AGIR}
+        agir = {t.group(0).lower() for t in re.finditer(r"\w+", m) if t.group(0).lower() in AGIR and not _aciklamali(m, t.start(), t.end())}
+        if yol.endswith(".ad"):
+            agir = set()   # meslek / ders adı (ör. "Konsept sanatçısı") bir addır, sadeleştirilmez
         if agir and "/sozluk" not in uc and " " in m.strip():   # sözlük terimin kendisini tanımlar; tek sözcük = kod
             rapor.ekle("agir_sozcuk", {"uc": uc, "yol": yol, "sozcuk": sorted(agir), "metin": m[:200]})
 
