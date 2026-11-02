@@ -1,0 +1,1103 @@
+{
+ "surum": "2026-11-02",
+ "aciklama": "K1–K4 soru metinleri: lise düzeyinde sade dil, gündelik hayata dengeli bağlam dağılımı, tekrarların giderilmesi. Değişken eşlemesi, soru tipi ve şık sırası aynen korunur (0090_soru_sadelestirme).",
+ "sorular": [
+  {
+   "katman": "K1",
+   "eski_metin": "Ailen yaz tatili için sana bir miktar para ayırdı ve nasıl kullanacağını sen seçeceksin. Hangisi sana uyar?",
+   "yeni_metin": "Ailen yaz tatili için sana bir miktar para ayırdı. Bu parayla ne yapmak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Adı herkesçe bilinen, saygın bir yaz programına katılmak.",
+     "yeni": "Adı herkesçe bilinen, saygın bir yaz okuluna katılmak."
+    },
+    {
+     "sira": 4,
+     "eski": "Seramik, çizim ya da fotoğraf gibi güzel şeyler üretebileceğim bir atölyeye katılmak.",
+     "yeni": "Parayla odamı kendi zevkime göre güzelleştirecek şeyler almak."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "İleride iki iş teklifi aldığını düşün. Hangisine daha yakınsın?",
+   "yeni_metin": "İleride iki iş teklifi aldığını düşün. Hangisine daha yakınsın?",
+   "uc_a": [
+    "Saatleri ve maaşı belli, düzenli bir iş.",
+    "Saatleri ve maaşı belli ama nasıl çalışacağına başkalarının karar verdiği bir iş."
+   ],
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Yazın çalışmak için iş bakıyorsun ve dört teklif aldın. Hangisi sana uyar?",
+   "yeni_metin": "Yazın çalışmak için iş arıyorsun ve dört teklif aldın. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Bir bakkalda yaşlı müşterilerin siparişlerini evlerine götürdüğüm bir iş.",
+     "yeni": "Yaşlı komşuların siparişlerini evlerine götürüp onlara yardımcı olduğum bir iş."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Ailen meslek seçimin için sana dört tavsiye veriyor. Hangisine en çok katılırsın?",
+   "yeni_metin": "Rehberlik servisinde meslek seçimini konuşurken sana dört farklı tavsiye verildi. Hangisine en çok katılırsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Sosyal medyada paylaştığın bir video çok beğenildi ve takipçin hızla arttı. Bundan sonra en çok neyi isterdin?",
+   "yeni_metin": "Sosyal medyada paylaştığın bir video çok beğenildi ve takipçin hızla arttı. Bundan sonra ne isterdin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 2,
+     "eski": "Tanınan, sözü dinlenen bir hesap olmak; insanların beni bu alanda bilmesi.",
+     "yeni": "Tanınan, sözü dinlenen biri olmak; insanların beni bu videolardan tanıması."
+    },
+    {
+     "sira": 4,
+     "eski": "Paylaşımlarımı daha özgün ve estetik hale getirip güzel içerikler üretmek.",
+     "yeni": "Paylaşımlarımı daha özgün ve göze hoş gelen videolara dönüştürmek."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Yazın iki iş teklifin var. Hangisine daha yakınsın?",
+   "yeni_metin": "İyi olduğun bir dersten başkalarına yardım etmen için iki teklif var. Hangisine daha yakınsın?",
+   "uc_a": [
+    "Bir mağazada çalışıp iki kat kazanmak ve kendi ihtiyaçlarımı karşılamak.",
+    "Ortaokul öğrencilerine özel ders verip emeğimin karşılığında iyi bir harçlık kazanmak."
+   ],
+   "uc_b": [
+    "Bir derneğin dağıtımında daha az kazanıp insanlara yardım etmek.",
+    "Gençlik merkezinde aynı dersi, imkânı olmayan öğrencilere ücretsiz anlatmak."
+   ],
+   "secenekler": []
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Tanıdığın bir büyüğün (ablan, ağabeyin, kuzenin) işini anlatıyor. Hangisini duysan \"Ben de bunu isterim.\" derdin?",
+   "yeni_metin": "Tanıdığın bir büyüğün (ablan, ağabeyin, kuzenin) işini anlatıyor. Hangisini duysan \"Ben de bunu isterim.\" derdin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 4,
+     "eski": "Yaptığı işte kendini yerinde hissettiğini, işini bırakmak istemediğini.",
+     "yeni": "Yaptığı işi çok sevdiğini, işini hiç bırakmak istemediğini."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Arkadaşlarınla bir telefon uygulaması fikri üzerinde çalışmaya başladınız. Senin için asıl amaç hangisi olurdu?",
+   "yeni_metin": "Arkadaşlarınla bir telefon uygulaması fikri üzerinde çalışmaya başladınız. Senin için asıl amaç hangisi olurdu?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "İyi bir gelir getirmesi.",
+     "yeni": "Uygulamadan iyi bir gelir elde etmek."
+    },
+    {
+     "sira": 2,
+     "eski": "Yıllar sonra da uğraşıyor olmak isteyeceğim bir fikri gerçekleştirmek.",
+     "yeni": "Yıllarca severek uğraşabileceğim bir fikri hayata geçirmek."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Hafta içi her gün iki saatin boş kalıyor. Bu zamanı düzenli olarak neye ayırırdın?",
+   "yeni_metin": "Hafta içi her gün iki saatin boş kalıyor. Bu zamanı düzenli olarak neye ayırırdın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "O gün ne yapacağıma kimseye sormadan kendim karar vermeye.",
+     "yeni": "Kimseye hesap vermeden, o gün kendi seçtiğim bir işe."
+    },
+    {
+     "sira": 4,
+     "eski": "Müzik, resim ya da tasarım gibi bir şey üretmeye.",
+     "yeni": "Fotoğraf, çizim ya da kısa video gibi güzel bir şey üretmeye."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "İleride nerede çalışmak istersin? Hangisine daha yakınsın?",
+   "yeni_metin": "Ailenle üniversite tercihlerini konuşuyorsunuz. Hangisine daha yakınsın?",
+   "uc_a": [
+    "Adı herkesçe bilinen, saygın bir kurumda çalışmak.",
+    "Girmesi zor, herkesin saygı duyduğu ünlü bir üniversitede okumak."
+   ],
+   "uc_b": [
+    "Pek bilinmeyen ama her gün kendini içinde bulduğun bir işte çalışmak.",
+    "Daha az bilinen ama sevdiğim bölümün olduğu bir üniversitede okumak."
+   ],
+   "secenekler": []
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Ailenin ya da bir akrabanın küçük bir dükkânı olduğunu ve ileride işi sana bırakacaklarını düşün. Seni en çok ne heyecanlandırır?",
+   "yeni_metin": "Ailenin ya da bir akrabanın küçük bir dükkânı olduğunu ve ileride işi sana bırakacaklarını düşün. Hangisi seni heyecanlandırır?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Her gün işe giderken kendimi yerimde hissetmek.",
+     "yeni": "Her gün işe isteyerek, severek gitmek."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Bayram tatilinde bir hafta boyunca ne yapacağını sen seçeceksin. Hangisini seçersin?",
+   "yeni_metin": "Bayram tatilinde bir haftan boş. Bu haftayı nasıl geçirmek istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 2,
+     "eski": "Uzun zamandır yapmak istediğim, bana iyi gelen bir uğraşa (yazmak, bir şey onarmak gibi) bütün haftayı vermek.",
+     "yeni": "Bütün haftayı en sevdiğim uğraşa vermek; örneğin yazmak ya da bir şey onarmak."
+    },
+    {
+     "sira": 3,
+     "eski": "Haftayı kimseye sormadan, tamamen kendi seçtiğim şekilde geçirmek.",
+     "yeni": "Kimseye uymak zorunda kalmadan, haftayı tamamen kendi kararlarımla geçirmek."
+    },
+    {
+     "sira": 4,
+     "eski": "Resim, müzik ya da el işi gibi bir şey üretmek.",
+     "yeni": "Seramik, ahşap boyama ya da el işiyle güzel bir şey üretmek."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Yıllar sonra eski arkadaşlarınla buluştun ve işini anlatıyorsun. En çok hangisini söyleyebilmek isterdin?",
+   "yeni_metin": "Mahallende herkesin tanıdığı dört kişi var. Hangisi gibi olmak isterdin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Düzenim oturdu; işimden hiç endişe etmiyorum.",
+     "yeni": "Yıllardır aynı yerde, işini kaybetme korkusu olmadan huzurla çalışan komşu."
+    },
+    {
+     "sira": 2,
+     "eski": "Herkesin bildiği, saygın bir yerde çalışıyorum.",
+     "yeni": "İşi sayesinde herkesin saygıyla selam verdiği, sözü dinlenen komşu."
+    },
+    {
+     "sira": 3,
+     "eski": "Yaptığım iş birilerinin işine yarıyor.",
+     "yeni": "Kimin bir derdi olsa koşup yardım eden, mahalleye faydası dokunan komşu."
+    },
+    {
+     "sira": 4,
+     "eski": "Kendi işimin patronuyum; kararları ben veriyorum.",
+     "yeni": "Kendi dükkânını açmış, kimseye bağlı olmadan kendi kararlarıyla çalışan komşu."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "İki iş seçeneğin var. Hangisine daha yakınsın?",
+   "yeni_metin": "Okul dönemi boyunca harçlığını kendin çıkarmak istiyorsun. Hangisine daha yakınsın?",
+   "uc_a": [
+    "Çizim, müzik ya da tasarımla para kazanmaya çalışmak; kazancı aydan aya değişebilir.",
+    "Kendi yaptığım takıları ya da çizimleri internetten satmak; kazancım aydan aya değişebilir."
+   ],
+   "uc_b": [
+    "Belli işleri düzenli yaptığım, her ay maaşı belli bir iş.",
+    "Hafta sonları bir dükkânda, her hafta ücreti belli olan bir işte çalışmak."
+   ],
+   "secenekler": []
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Bir yarışmada birinci oldun ve ödülünü dört seçenekten sen seçeceksin. Hangisini seçersin?",
+   "yeni_metin": "Dershanedeki deneme sınavında ilk üçe girdin ve dört ödülden birini alabilirsin. Hangisini seçersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Bir yıllık atölye ücreti kadar nakit para.",
+     "yeni": "Dilediğim gibi harcayabileceğim yüklü bir para ödülü."
+    },
+    {
+     "sira": 2,
+     "eski": "Ödülümü yerel gazetede haberimle birlikte almak; çevremde tanınmak.",
+     "yeni": "Adımın ve fotoğrafımın dershanenin afişlerinde yer alması; çevremde tanınmak."
+    },
+    {
+     "sira": 3,
+     "eski": "Bir yaz boyunca kendi projemi kimseye hesap vermeden yürütebileceğim küçük bir destek.",
+     "yeni": "Gelecek dönem hangi etüt saatlerine katılacağımı kendim seçme hakkı."
+    },
+    {
+     "sira": 4,
+     "eski": "Bir sanat ya da tasarım atölyesinde bir yıllık ücretsiz eğitim.",
+     "yeni": "Bir sanat ya da tasarım atölyesinde bir dönem ücretsiz eğitim."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Arkadaş grubunda ne yapılacağına karar verilecek. Hangisine daha yakınsın?",
+   "yeni_metin": "Sınıfça yıl sonu etkinliğine karar verilecek. Hangisine daha yakınsın?",
+   "uc_a": [
+    "Herkes ne istiyorsa ona uymak, grubun havasını bozmamak.",
+    "Çoğunluk ne istiyorsa ona uymak, sınıfın havasını bozmamak."
+   ],
+   "uc_b": [
+    "Kararı kendim verip grubu yönlendirmek.",
+    "Kendi fikrimi öne çıkarıp sınıfı buna ikna etmeye çalışmak."
+   ],
+   "secenekler": []
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Bir arkadaşının doğum günü partisine gittin ve orada neredeyse kimseyi tanımıyorsun. Sana en çok hangisi uyar?",
+   "yeni_metin": "Bir arkadaşının doğum günü partisine gittin ve orada neredeyse kimseyi tanımıyorsun. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 4,
+     "eski": "Hiç bilmediğim bir oyunu, yapamama ihtimaline rağmen ilk denemeye gönüllü olurum.",
+     "yeni": "Bir oyun oynanacaksa beceremeyebileceğimi bilsem de ilk deneyen ben olurum."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Arkadaş grubunda genellikle hangi rolde olursun?",
+   "yeni_metin": "Bayramda kuzenlerinle bir araya geldiğinizde genellikle nasıl biri olursun?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 2,
+     "eski": "Tartışmaları yatıştıran, herkesle iyi geçinen kişi.",
+     "yeni": "Tartışma çıkınca araları bulan, herkesle iyi geçinen kişi."
+    },
+    {
+     "sira": 3,
+     "eski": "Aynı şeyleri yapmaktan sıkılıp sürekli değişiklik öneren kişi.",
+     "yeni": "Aynı oyunlardan çabuk sıkılıp hep yeni bir şey öneren kişi."
+    },
+    {
+     "sira": 4,
+     "eski": "Kararları veren, grubu yönlendiren kişi.",
+     "yeni": "Ne yapılacağına karar veren, diğerlerini yönlendiren kişi."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Ailenle başka bir şehre taşındınız. İlk haftalarda sana en çok hangisi uyar?",
+   "yeni_metin": "Ailenle başka bir şehre taşındınız. İlk haftalarda hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 4,
+     "eski": "Evdeki taşınma işlerini ben paylaştırır, kimin neyi bitirdiğini takip ederim.",
+     "yeni": "Taşınma işlerinde görevleri ben paylaştırır, kimin neyi bitirdiğini takip ederim."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Bir yaz günün nasıl geçsin? Hangisine daha yakınsın?",
+   "yeni_metin": "Okulun olmadığı bir yaz gününü düşün. Hangisine daha yakınsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Yazın bir kafede çalışmaya başladın. Sana en çok hangisi uyar?",
+   "yeni_metin": "Yazın bir kafede çalışmaya başladın. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 4,
+     "eski": "Patron \"Satarsan prim var, satamazsan yok.\" derse bu riski alırım.",
+     "yeni": "Patron satışa göre ek para önerirse hiç alamama riskine rağmen kabul ederim."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "İlk kez tek başına otobüsle başka bir şehre gideceksin. Sana en çok hangisi uyar?",
+   "yeni_metin": "İlk kez tek başına otobüsle başka bir şehre gideceksin. Sana en çok hangisi uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 2,
+     "eski": "Yolda bir aksilik çıkar mı diye içimde bir huzursuzluk olur.",
+     "yeni": "Yolda bir sorun çıkar mı diye biraz tedirgin olurum."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Arkadaş grubunla bir hafta sonu gezisi planlıyorsunuz. Sen ne yaparsın?",
+   "yeni_metin": "Arkadaş grubunla günübirlik bir gezi planlıyorsunuz. Sen ne yaparsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Konaklamayı ayarlamadan gidip orada bulmayı öneririm.",
+     "yeni": "Dönüş otobüsünü önceden ayarlamadan gidip gerisini orada çözmeyi öneririm."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Bir arkadaşın son dakikada arıyor: Bu akşam senin tanımadığın insanlarla bir konsere gidiyorlar. Sana en çok hangisi uyar?",
+   "yeni_metin": "Okulda bugünkü ders programı son anda değişti; ilk iki saat başka bir sınıfla ortak bir etkinlik yapılacak. Sana en çok hangisi uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Harika; yeni insanlarla tanışmak için iyi bir fırsat.",
+     "yeni": "Sevinirim; başka sınıftan yeni insanlarla tanışmak için iyi bir fırsat."
+    },
+    {
+     "sira": 2,
+     "eski": "Tanımadığım bir ortamda nasıl davranacağımı düşünüp biraz gerilirim.",
+     "yeni": "Ne yapacağımızı bilmediğim için biraz gerilirim."
+    },
+    {
+     "sira": 3,
+     "eski": "Rutini bozan son dakika planlarını severim, hemen hazırlanırım.",
+     "yeni": "Aynı düzende geçen bir günün birden değişmesi bana enerji verir."
+    },
+    {
+     "sira": 4,
+     "eski": "Nereye gideceğimiz, ne zaman döneceğimiz belli olmasa da sorun etmem.",
+     "yeni": "Etkinlikte başarısız olma ihtimali olsa da çekinmeden ilk deneyenlerden olurum."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Yaz tatilinin ilk haftası başladı. Günlerin nasıl geçer?",
+   "yeni_metin": "Dershanede deneme sınavı yaklaşıyor. Hafta sonun nasıl geçer?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Neredeyse her gün arkadaşlarımla buluşur, kalabalık ortamlarda olurum.",
+     "yeni": "Arkadaşlarımla buluşur, sohbet ede ede grup halinde çalışırım."
+    },
+    {
+     "sira": 2,
+     "eski": "Kendime bir program yapar; spor, okuma ve uyku saatlerimi ona göre ayarlarım.",
+     "yeni": "Bir çalışma programı yapar, her dersi planladığım saatte bitiririm."
+    },
+    {
+     "sira": 3,
+     "eski": "Merak ettiğim bir konuyu araştırır, hiç denemediğim türde kitap ya da müzik denerim.",
+     "yeni": "Konuların kitapta olmayan ilginç yanlarını araştırırken kendimi kaptırırım."
+    },
+    {
+     "sira": 4,
+     "eski": "Plan yapmam; günüm o an ne çıkarsa ona göre şekillenir.",
+     "yeni": "Tek bir derse saatlerce oturmak yerine sık sık ders ve yer değiştirerek çalışmayı severim."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "İlk kez bir şeyi deneyeceksin (bir yarışmaya başvurmak gibi). Hangisine daha yakınsın?",
+   "yeni_metin": "İlk kez bir şeyi deneyeceksin (bir yarışmaya başvurmak gibi). Hangisine daha yakınsın?",
+   "uc_a": [
+    "Ya kötü giderse diye uzun süre içim rahat etmez.",
+    "Ya kötü giderse diye bir süre kafamda kurar, biraz gerilirim."
+   ],
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Arkadaşlarla katıldığınız mahalle turnuvasında önemli bir maçı son dakikada kaybettiniz. Sonrasında ne yaparsın?",
+   "yeni_metin": "Arkadaşlarınla katıldığın mahalle turnuvasında önemli bir maçı son dakikada kaybettiniz. Sonrasında ne yaparsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Sonraki maçta riskli ama kazandırabilecek yeni bir taktik deneyelim derim.",
+     "yeni": "Sonraki maçta riskli de olsa bambaşka bir taktik denemeyi öneririm."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Arkadaşlarınla açtığınız bağış standında akşam kasadan para eksik çıktı ve tartışma başladı. Ne yaparsın?",
+   "yeni_metin": "Sınıfça kütüphaneye kitap almak için para topladınız. Akşam sayınca para eksik çıktı ve tartışma başladı. Ne yaparsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 2,
+     "eski": "Vakit kaybetmeden ne yapacağımıza karar veririm: Önce kasayı yeniden sayar, kayıtlara bakarız.",
+     "yeni": "Vakit kaybetmeden ne yapacağımıza karar veririm: Önce parayı yeniden sayar, listeye bakarız."
+    },
+    {
+     "sira": 3,
+     "eski": "Eksik çözülmezse bağışçılara açıkça söylemeyi öneririm.",
+     "yeni": "Eksik para bulunamazsa durumu öğretmene ve sınıfa açıkça söylemeyi öneririm."
+    },
+    {
+     "sira": 4,
+     "eski": "Biri kasayı benim yanlış saydığımı söylerse savunmaya geçmeden dinler, kontrol ederim.",
+     "yeni": "Biri parayı benim yanlış saydığımı söylerse savunmaya geçmeden dinler, kontrol ederim."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Arkadaşlarınla yaptığınız bir işten para kazandınız ve nasıl paylaşacağınıza karar vereceksiniz. Hangisine daha yakınsın?",
+   "yeni_metin": "Arkadaşlarınla yaptığınız bir işten para kazandınız ve nasıl paylaşacağınıza karar vereceksiniz. Hangisine daha yakınsın?",
+   "uc_a": [
+    "Kazancı hemen herkese eşit paylaştırmak; kimse kendini dışlanmış hissetmesin.",
+    "Kazancı hemen herkese eşit paylaştırmak; kimse haksızlığa uğradığını düşünmesin."
+   ],
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Yaz boyunca ailenin küçük kırtasiye dükkânında yardım ediyorsun. Sana en çok hangisi uyar?",
+   "yeni_metin": "Yaz boyunca ailenin küçük kırtasiye dükkânında yardım ediyorsun. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Kimse söylemeden eksik ürünleri fark eder, sipariş listesini ben hazırlarım.",
+     "yeni": "Biri söylemeden eksik ürünleri fark eder, sipariş listesini ben hazırlarım."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Arkadaşlarınla bir bilgi ve bulmaca yarışmasına katılıyorsunuz. Ekipte hangi rolü üstlenirsin?",
+   "yeni_metin": "Arkadaşlarınla bir bilgi ve bulmaca yarışmasına katılıyorsunuz. Ekipte hangi rolü üstlenirsin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 2,
+     "eski": "Ekibi bir arada tutan: tartışmaları yatıştıran.",
+     "yeni": "Ekibi bir arada tutan: tartışma çıkınca herkesi sakinleştirip anlaşmayı sağlayan."
+    },
+    {
+     "sira": 3,
+     "eski": "Kriz anında karar veren: işler ters gidince hızla yol bulan.",
+     "yeni": "Zor anda karar veren: işler ters gidince hemen bir yol bulan."
+    },
+    {
+     "sira": 4,
+     "eski": "Stratejiyi kuran: kimin hangi konuda iyi olduğunu görüp soruları ona göre paylaştıran.",
+     "yeni": "Yol haritasını çizen: kimin hangi konuda iyi olduğunu görüp soruları ona göre paylaştıran."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Arkadaşlarınla el yapımı anahtarlık ve telefon kılıflarını internetten satıyorsunuz. Sen ne yaparsın?",
+   "yeni_metin": "Ablan el yapımı takılarını internetten satıyor ve sen de ona yardım ediyorsun. Sen ne yaparsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 2,
+     "eski": "Ürünün küçük kusurlarını da açıklamaya yazarım.",
+     "yeni": "Ürünün küçük kusurlarını da ürün açıklamasına dürüstçe yazarım."
+    },
+    {
+     "sira": 3,
+     "eski": "Olumsuz yorumları okuyup ürünü ona göre düzeltirim.",
+     "yeni": "Olumsuz yorumları okuyup ürünü onlara göre düzeltirim."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Çalışma tarzını düşün. Hangisine daha yakınsın?",
+   "yeni_metin": "Çalışma tarzını düşün. Hangisine daha yakınsın?",
+   "uc_a": null,
+   "uc_b": [
+    "Beklenmedik bir şey çıktığında anında karar verip çözüm bulmakta iyiyim.",
+    "Fazla plan yapmam; bir şey çıktığında o an karar verip çözerim."
+   ],
+   "secenekler": []
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Arkadaşlarınla bir kısa film yarışmasına katılıyorsunuz. Sen hangi işi üstlenirsin?",
+   "yeni_metin": "Mahalledeki gençlik merkezinde arkadaşlarınla kısa bir film çekmeye karar verdiniz. Sen hangi işi üstlenirsin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Bir arkadaşınla mahallede bisiklet tamiri işi kurdunuz. Sana en çok hangisi uyar?",
+   "yeni_metin": "Okul takımınız üst üste maç kaybediyor. Sana en çok hangisi uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Ortağımla aramızda çıkan anlaşmazlıkları konuşarak çözerim.",
+     "yeni": "Birbirini suçlayan takım arkadaşlarını konuşturup aralarını bulurum."
+    },
+    {
+     "sira": 2,
+     "eski": "Müşteri bulmak için ilk adımı ben atar, duyuruları ben yaparım.",
+     "yeni": "Kimse istemeden fazladan bir antrenman ayarlar, arkadaşları çağırırım."
+    },
+    {
+     "sira": 3,
+     "eski": "Müşterilerden gelen eleştirilere göre işimizi değiştiririm.",
+     "yeni": "Antrenörün eleştirilerini kişisel almam, söylediklerini antrenmanda uygularım."
+    },
+    {
+     "sira": 4,
+     "eski": "Fiyatımızı, rakipleri ve nasıl büyüyeceğimizi hesaplarım.",
+     "yeni": "Rakipleri inceleyip hangi oyun planıyla kazanabileceğimizi düşünürüm."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Birlikte çalıştığın grupta bir sorun çıktı. Hangisine daha yakınsın?",
+   "yeni_metin": "Birlikte çalıştığın grupta bir sorun çıktı. Hangisine daha yakınsın?",
+   "uc_a": [
+    "Önce herkesi dinleyip ortak bir karar çıkarmak.",
+    "Önce herkesin ne düşündüğünü sorup birlikte bir yol bulmak."
+   ],
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Kuzeninle canlı yayın yaparken ses gitti ve izleyiciler yayından çıkmaya başladı. Sen ne yaparsın?",
+   "yeni_metin": "Kuzeninle canlı yayın yaparken ses gitti ve izleyiciler yayından çıkmaya başladı. Sen ne yaparsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 4,
+     "eski": "Kanal için bu tür aksiliklere karşı uzun vadeli bir plan çıkarırım.",
+     "yeni": "Bu aksiliğin kanala kaç izleyici kaybettirdiğine bakıp kanalı büyütmek için yeni bir plan yaparım."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Mahallede yaşlı komşular için bir alışveriş yardım grubu kurdunuz. Sana en çok hangisi uyar?",
+   "yeni_metin": "Mahallede yaşlı komşular için bir alışveriş yardım grubu kurdunuz. Sana en çok hangisi uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Yardıma ihtiyacı olan komşuları kimse söylemeden bulup listeye eklerim.",
+     "yeni": "Yardıma ihtiyacı olan komşuları kendim kapı kapı dolaşıp bulurum."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Bir arkadaşınıza sürpriz doğum günü partisi hazırlıyorsunuz. Sen ne yaparsın?",
+   "yeni_metin": "Yurt dışına taşınan bir arkadaşınız için sürpriz bir veda buluşması hazırlıyorsunuz. Sen ne yaparsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 2,
+     "eski": "Mekân konusunda anlaşamayan arkadaşları uzlaştırırım.",
+     "yeni": "Mekân konusunda anlaşamayan arkadaşların ortak bir karara varmasını sağlarım."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Yeni bir şey yapacaksın (bir video kurgulamak, bir yemek tarifi denemek gibi). Hangisine daha yakınsın?",
+   "yeni_metin": "Yeni bir şey yapacaksın (bir videoyu kesip birleştirmek, bir yemek tarifi denemek gibi). Hangisine daha yakınsın?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Yazın bir kargo şubesinde yarı zamanlı çalışıyorsun ve gün çok yoğun geçiyor. Sana en çok hangisi uyar?",
+   "yeni_metin": "Yazın bir kargo şubesinde yarı zamanlı çalışıyorsun ve gün çok yoğun geçiyor. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Kuralları herkese aynı uygularım; tanıdığım müşteriye de sıra kaydırmam.",
+     "yeni": "Kuralları herkese aynı uygularım; tanıdığım müşteriyi de sıranın önüne almam."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Arkadaşlarınla bir hafta sonu bisiklet turu düzenliyorsunuz. Hangi işi almak istersin?",
+   "yeni_metin": "Okulun bisiklet kulübü şehir dışına bir tur düzenliyor. Hangi işi almak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Bir tanıdığınız küçük bir kafe açıyor ve senden yardım istiyor. Hangi işi almak istersin?",
+   "yeni_metin": "Bir tanıdığınız küçük bir kafe açıyor ve senden yardım istiyor. Hangi işi almak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 4,
+     "eski": "Kafenin nasıl bir yer olacağına dair genel fikri ortaya koymak, adımları ekiple birlikte belirlemek.",
+     "yeni": "Kafenin nasıl bir yer olacağını, ana fikrini ortaya koymak."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Bir hafta sonu arkadaşlarınla doğa yürüyüşüne gidiyorsunuz. Sana en çok hangisi uyar?",
+   "yeni_metin": "Komşunuz tatile gidiyor ve köpeğine bir hafta sizin bakmanızı istedi. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Yoldaki bitkileri ve böcekleri incelemek, dere suyunu gözlemlemek.",
+     "yeni": "Köpeğin ne yediğini ve nasıl davrandığını gözlemleyip not almak."
+    },
+    {
+     "sira": 2,
+     "eski": "Tırmanış ya da uzun yürüyüş gibi bedenimi zorlayan kısımlar.",
+     "yeni": "Köpeği her gün uzun yürüyüşlere çıkarıp onunla koşmak."
+    },
+    {
+     "sira": 3,
+     "eski": "Yürüyüş öncesi malzemeleri bir kontrol listesine göre sırayla hazırlamak.",
+     "yeni": "Mama ve su saatlerini bir çizelgeye yazıp her gün aynı düzende uygulamak."
+    },
+    {
+     "sira": 4,
+     "eski": "Her şeyi önceden planlamak yerine genel bir fikirle yola çıkıp gerisini o an çözmek.",
+     "yeni": "Köpeğin bir haftasını kabaca düşünüp her günü onun o günkü haline göre ayarlamak."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Belediyenin gençlik spor merkezinde gönüllü olacaksın. Hangi işi almak istersin?",
+   "yeni_metin": "Belediyenin gençlik spor merkezinde gönüllü olacaksın. Hangi işi almak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Maç istatistiklerini tutup oyuncuların performans tablolarını çıkarmak.",
+     "yeni": "Maçlarda kimin kaç sayı attığını kaydedip oyuncuların gelişimini gösteren tablolar hazırlamak."
+    },
+    {
+     "sira": 3,
+     "eski": "Antrenmanlara bizzat katılıp sahada koşturmak.",
+     "yeni": "Antrenmanlara ben de katılıp sahada koşturmak."
+    },
+    {
+     "sira": 4,
+     "eski": "Malzeme dolabını belli bir düzene göre yerleştirip her şeyin yerini sabitlemek.",
+     "yeni": "Malzeme dolabını belli bir düzene göre yerleştirip her şeyin yerini belirlemek."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Kuzeninle kendi tişört markanızı kuruyorsunuz. Hangi işi almak istersin?",
+   "yeni_metin": "Kuzeninle kendi tişört markanızı kuruyorsunuz. Hangi işi almak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Markanın neye benzeyeceğine dair büyük fikri ortaya atmak.",
+     "yeni": "Markanın nasıl bir marka olacağını, ana fikrini belirlemek."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Yeni bir işe başlarken hangisi sana daha yakın?",
+   "yeni_metin": "Yeni bir işe başlarken hangisi sana daha yakın?",
+   "uc_a": null,
+   "uc_b": [
+    "Önce büyük resmi görüp sezgimle ilerlemek.",
+    "Önce işin bütününe bakıp içimden geldiği gibi ilerlemek."
+   ],
+   "secenekler": []
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Evde ailecek haftalık bütçe ve plan yapılacak. Hangi işi almak istersin?",
+   "yeni_metin": "Evde ailecek haftalık bütçe ve plan yapılacak. Hangi işi almak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Hangi sebze ve meyvenin hangi mevsimde daha taze ve ucuz olduğunu araştırmak.",
+     "yeni": "Balkonda ya da bahçede evin ihtiyacı için hangi sebzelerin yetiştirilebileceğini araştırmak."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Okulda bir proje yarışması var ve hangi ödül için yarışacağını sen seçiyorsun. Hangisi seni daha çok çeker?",
+   "yeni_metin": "Okulda bir proje yarışması var ve dört ayrı dalda ödül verilecek. Hangisini kazanmak seni daha çok sevindirir?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Birinciye verilen yüklü para ödülü.",
+     "yeni": "En büyük para ödülünün verildiği birincilik ödülü."
+    },
+    {
+     "sira": 2,
+     "eski": "Kazananın adının okulda ve yerel gazetede duyurulması.",
+     "yeni": "Kazananın okulun panosunda ve sosyal medya hesabında adıyla tanıtıldığı ödül."
+    },
+    {
+     "sira": 3,
+     "eski": "Kazanan projenin mahalledeki ihtiyaç sahipleri için hayata geçirilmesi.",
+     "yeni": "Kazanan projenin, mahallede ihtiyacı olan insanlar için gerçekten yapıldığı ödül."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Yirmi yıl sonraki hayatını düşün. Hangisi senin için daha önemli olur?",
+   "yeni_metin": "Yaz tatilinde bir kursa yazılacaksın. Hangisi seni daha çok çeker?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "İşimi kaybetme kaygısı olmadan, düzenli ve güvenli bir hayatımın olması.",
+     "yeni": "Bitirince belge veren, ileride iş bulmamı kolaylaştıracak bir kurs."
+    },
+    {
+     "sira": 2,
+     "eski": "Maddi açıdan çok rahat, yüksek gelirli bir hayatımın olması.",
+     "yeni": "Kısa sürede iyi para kazanmamı sağlayacak bir beceri öğreten kurs."
+    },
+    {
+     "sira": 3,
+     "eski": "Yaptığım işin bana anlamlı gelmesi, sabahları isteyerek kalkmam.",
+     "yeni": "Para ya da belge getirmese de yıllardır merak ettiğim bir konuyu öğreten kurs."
+    },
+    {
+     "sira": 4,
+     "eski": "Ne zaman, nerede ve nasıl çalışacağıma kendimin karar vermesi.",
+     "yeni": "Saatini ve hızını tamamen kendim belirlediğim bir internet kursu."
+    }
+   ]
+  },
+  {
+   "katman": "K1",
+   "eski_metin": "Bu yıl okulda bir etkinlik ya da projede yer alacaksın. Hangisi sana daha değerli gelir?",
+   "yeni_metin": "Bu yıl okulda bir etkinlik ya da projede yer alacaksın. Hangisi sana daha değerli gelir?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Okulu dışarıda temsil eden, adı herkesçe bilinen saygın takımda olmak.",
+     "yeni": "Okulu dışarıdaki yarışmalarda temsil eden, adı herkesçe bilinen takımda olmak."
+    },
+    {
+     "sira": 4,
+     "eski": "Konusunu ve çalışma saatlerini tamamen kendimin belirlediği bağımsız bir projede olmak.",
+     "yeni": "Konusunu ve çalışma saatlerini tamamen kendim belirlediğim bağımsız bir projede olmak."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Sınıfça bir okul gazetesi çıkaracaksınız. Sana en çok hangisi uyar?",
+   "yeni_metin": "Sınıfça bir okul gazetesi çıkaracaksınız. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Bir yabancı dil kursunun ilk haftasındasın. Sana en çok hangisi uyar?",
+   "yeni_metin": "Hafta sonları bir yabancı dil kursuna başladın. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Teneffüslerde hemen yanımdakilerle tanışır, sohbeti ben başlatırım.",
+     "yeni": "Derste konuşma etkinliklerinde ilk gönüllü olan hep ben olurum."
+    },
+    {
+     "sira": 2,
+     "eski": "Grup çalışmalarında ortam tatlı geçsin diye arkadaşlarımla uyum içinde çalışmaya özen gösteririm.",
+     "yeni": "Eşli çalışmalarda arkadaşımla anlaşmazlık çıkmamasına özen gösteririm."
+    },
+    {
+     "sira": 3,
+     "eski": "Kelime çalışmalarımı her gün belli bir saatte, düzenli yaparım.",
+     "yeni": "Kelime çalışmalarımı her gün belli bir saatte, aksatmadan yaparım."
+    },
+    {
+     "sira": 4,
+     "eski": "O dilin konuşulduğu ülkenin müziğini, filmlerini ve yemeklerini merakla araştırırım.",
+     "yeni": "O dilin konuşulduğu ülkelerin müziklerini, filmlerini ve yemeklerini merakla araştırırım."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Okul gezisinde otobüs yolda arızalandı ve iki saat bekleyeceksiniz. Sana en çok hangisi uyar?",
+   "yeni_metin": "Akşam elektrikler kesildi ve saatlerce gelmeyecek. Evde ailenle beklerken hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Arkadaşlar arasında gerginlik çıkmasın diye herkesle iyi geçinmeye çalışırım.",
+     "yeni": "Kimse birbirine sinirlenmesin diye ortamı yumuşatmaya çalışırım."
+    },
+    {
+     "sira": 2,
+     "eski": "Eve geç kalacağımızı düşündükçe içim biraz huzursuz olur.",
+     "yeni": "Ödevlerimi yetiştiremeyeceğim diye canım sıkılır, rahat edemem."
+    },
+    {
+     "sira": 3,
+     "eski": "Hareketsiz beklemek bana göre değil; hemen bir oyun ya da etkinlik başlatırım.",
+     "yeni": "Hareketsiz oturmak bana göre değil; hemen mum ışığında bir oyun başlatırım."
+    },
+    {
+     "sira": 4,
+     "eski": "Öğretmenle konuşup bekleme süresince ne yapacağımızı ben organize ederim.",
+     "yeni": "Herkese bir görev verip fener ve mumları bulma işini ben yönetirim."
+    }
+   ]
+  },
+  {
+   "katman": "K2",
+   "eski_metin": "Okulun robotik takımına seçildin. Sana en çok hangisi uyar?",
+   "yeni_metin": "Okulun robotik takımına seçildin. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Dönem projesinin teslimine iki gün kaldı ve işler yetişmiyor. Sana en çok hangisi uyar?",
+   "yeni_metin": "Dönem projesinin teslimine iki gün kaldı ve işler yetişmiyor. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": []
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Kulübünüz bir hafta boyunca okulda kermes standı açacak. Hangi rol sana uyar?",
+   "yeni_metin": "Dershanede arkadaşlarınla bir çalışma grubu kurdunuz. Hangi rol sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Kimin hangi saatte nöbet tutacağını ve işlerin sırasını planlamak.",
+     "yeni": "Hangi gün hangi konuyu çalışacağımızı planlayıp takvimi takip etmek."
+    },
+    {
+     "sira": 2,
+     "eski": "Ekipte çıkan anlaşmazlıkları konuşarak çözmek, herkesi aynı hedefte tutmak.",
+     "yeni": "\"Herkes eşit çalışmıyor.\" diye tartışma çıkınca konuşarak çözmek, grubu bir arada tutmak."
+    },
+    {
+     "sira": 3,
+     "eski": "Kimse söylemeden eksik olanı fark edip hemen harekete geçmek.",
+     "yeni": "Kimse önermeden eksik kalan konuyu fark edip onu çalışmayı başlatmak."
+    },
+    {
+     "sira": 4,
+     "eski": "Hangi ürünün daha çok gelir getireceğini ve fiyatları nasıl belirleyeceğimizi düşünmek.",
+     "yeni": "Diğer grupların nasıl çalıştığına bakıp bizi öne geçirecek bir yöntem bulmak."
+    }
+   ]
+  },
+  {
+   "katman": "K3",
+   "eski_metin": "Münazara yarışmasında takımınla finale kaldınız. Sana en çok hangisi uyar?",
+   "yeni_metin": "Münazara yarışmasında takımınla finale kaldınız. Hangisi sana uyar?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Konuşmayı kimin yapacağı konusunda arkadaşlarım tartışınca araya girip uzlaştırırım.",
+     "yeni": "Konuşmayı kimin yapacağı konusunda arkadaşlarım tartışınca araya girip anlaşmalarını sağlarım."
+    },
+    {
+     "sira": 3,
+     "eski": "Çok etkili olacak ama tam doğru olmayan bir bilgiyi, kazanmamıza yardım etse de konuşmamdan çıkarırım.",
+     "yeni": "Kazanmamıza yardım edecek olsa da tam doğru olmayan bir bilgiyi konuşmamdan çıkarırım."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Okulda bir bilim şenliği düzenlenecek. Hangi işi almak istersin?",
+   "yeni_metin": "Okulda bir bilim şenliği düzenlenecek. Hangi işi almak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 3,
+     "eski": "Şenliğin ana temasını ve genel fikrini bulmak.",
+     "yeni": "Şenliğin hangi konu etrafında toplanacağını, ana fikrini bulmak."
+    },
+    {
+     "sira": 4,
+     "eski": "Mahalledeki esnafı şenliğe destek vermeye ikna etmek.",
+     "yeni": "Mahalledeki esnaftan şenlik için destek toplamak."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Okul bahçesinde küçük bir sebze bahçesi kurulacak. Hangi işi almak istersin?",
+   "yeni_metin": "Bir yaz kampına katılıyorsun ve dört gruptan birine yazılacaksın. Hangisini seçersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Toprağı ve tohumları inceleyip bitkilerin nasıl büyüdüğünü gözlemlemek.",
+     "yeni": "Doğa grubu: bitkileri, kuşları ve dere suyunu inceleyip kayıt tutmak."
+    },
+    {
+     "sira": 2,
+     "eski": "Toprağı kazmak, fide dikmek, su taşımak gibi bedenen çalışılan işler.",
+     "yeni": "Macera grubu: kano, tırmanış gibi bedenle yapılan etkinliklere katılmak."
+    },
+    {
+     "sira": 3,
+     "eski": "Bahçenin okula uzun vadede ne katacağını düşünüp genel fikri ortaya atmak.",
+     "yeni": "Fikir grubu: kampın bu yılki ana fikrini bulup bütün etkinlikleri ona bağlamak."
+    },
+    {
+     "sira": 4,
+     "eski": "Çıkan ürünleri okul pazarında satmak, alıcı bulmak.",
+     "yeni": "Tanıtım grubu: kampta yapılan ürünleri satmak, ziyaretçileri etkinliklere katılmaya ikna etmek."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Ailen internetten ürün satan küçük bir sayfa açacak. Hangi işi almak istersin?",
+   "yeni_metin": "Sınıfça yıl sonunda bir gezi düzenleyeceksiniz. Hangi işi almak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Ziyaretçi ve satış sayılarını grafiğe döküp hangi gün neyin daha çok satıldığını çözmek.",
+     "yeni": "Gezinin masraflarını tabloya döküp kişi başı ne kadar tutacağını hesaplamak."
+    },
+    {
+     "sira": 2,
+     "eski": "Gelen siparişleri belli bir düzene göre kaydedip her adımı eksiksiz takip etmek.",
+     "yeni": "Gezi gününün saat saat programını hazırlayıp herkesin bu sıraya uymasını takip etmek."
+    },
+    {
+     "sira": 3,
+     "eski": "Sayfanın genel yönünü ve benzerlerinden neyi farklı yapacağını belirlemek.",
+     "yeni": "Gezinin genel fikrini, nereye ve neden gidileceğini belirlemek."
+    },
+    {
+     "sira": 4,
+     "eski": "Müşterilere ürünleri tanıtmak, onları almaya ikna etmek.",
+     "yeni": "Okul yönetimini ve aileleri geziye izin vermeye ikna etmek."
+    }
+   ]
+  },
+  {
+   "katman": "K4",
+   "eski_metin": "Okul gezisiyle bir milli parka gidiyorsunuz. Sana en çok hangisi uyar?",
+   "yeni_metin": "Küçük kuzenin hafta sonu sizde kalacak ve onunla vakit geçireceksin. Hangisini yapmak istersin?",
+   "uc_a": null,
+   "uc_b": null,
+   "secenekler": [
+    {
+     "sira": 1,
+     "eski": "Gezi boyunca gördüklerimi ilginç bir yazıya dönüştürmek.",
+     "yeni": "Ona masal okuyup birlikte kısa bir hikâye yazmak."
+    },
+    {
+     "sira": 2,
+     "eski": "Gezilecek alanın krokisini ya da manzaranın çizimini yapmak.",
+     "yeni": "Birlikte kartondan bir ev ya da araba maketi yapmak."
+    },
+    {
+     "sira": 3,
+     "eski": "Rehberle birlikte kuşları, bitkileri ve kayaları incelemek.",
+     "yeni": "Parkta böcekleri ve yaprakları büyüteçle incelemek."
+    },
+    {
+     "sira": 4,
+     "eski": "Zorlu bir parkurda uzun süre yürümek, tırmanmak.",
+     "yeni": "Parkta koşmaca, ip atlama gibi hareketli oyunlar oynamak."
+    }
+   ]
+  }
+ ]
+}
