@@ -47,6 +47,24 @@ KRIZ_YANITI = (
 )
 
 
+# [2026-11-03] Yalnız sınıflandırıcının (kriz_modeli) "olası kriz" dediği mesaj: kesin değil, yanlış alarm olabilir. Sert kriz
+# mesajı ve okul bildirimi yok; öğrenciye nazik bir destek ve açıklama sorusu.
+DESTEK_YANITI = (
+    "Yazdıklarında zor bir şey yaşıyor olabileceğini hissettim; yanlış anladıysam kusura bakma. 💚 Seni üzen, korkutan ya da "
+    "sana zarar veren bir durum varsa bunu tek başına taşımak zorunda değilsin: güvendiğin bir yetişkinle, rehber öğretmeninle "
+    "ya da okulundaki psikolojik danışmanla konuş. Kendini tehlikede hissediyorsan 112 Acil Çağrı'yı ya da 7/24 açık ALO 183 "
+    "Sosyal Destek Hattı'nı arayabilirsin. Başka bir şey sormak istediysen sorunu biraz daha açar mısın? Yardımcı olayım."
+)
+
+
+def kriz_duzeyi(metin: str) -> str | None:
+    """'kesin' (kural katmanı) | 'olasi' (yalnız sınıflandırıcı) | None."""
+    if kriz_mesaji_mi(metin):
+        return "kesin"
+    from app.core.kriz_modeli import olasi_kriz_mi
+    return "olasi" if olasi_kriz_mi(metin) else None
+
+
 def _sade(metin: str) -> str:
     return " ".join(str(metin).replace("İ", "i").replace("I", "ı").lower().split())
 

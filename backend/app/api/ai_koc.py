@@ -21,7 +21,7 @@ from app.models import Ogrenci, OgrenciKoclukOturumu, OgrenciKoclukMesaji
 from app.core.ai_koc_servisi import (
     sistem_promptu_olustur, openai_ile_konus, oturumu_ozetle,
     AsistanKullanilamiyorHatasi, MAKSIMUM_TUR,
-    asistan_aktif_mi, kriz_mesaji_mi, KRIZ_YANITI, GUNLUK_MESAJ_LIMITI_VARSAYILAN,
+    asistan_aktif_mi, kriz_mesaji_mi, kriz_duzeyi, KRIZ_YANITI, DESTEK_YANITI, GUNLUK_MESAJ_LIMITI_VARSAYILAN,
 )
 from app.core.katman_servisi import parametre_oku
 
@@ -155,7 +155,7 @@ class MesajCevap(BaseModel):
     asistan_yaniti: str
     oturum_kapandi_mi: bool = False
     otomatik: bool = False             # [2026-10-10] cevap kural tabanlı rehberden geldiyse
-    kaynak: str = "yz"                 # [2026-10-31] yz | icerik | rehber | sabit | kriz | bilinmiyor (katmanlı Filiz)
+    kaynak: str = "yz"                 # [2026-10-31] yz | icerik | rehber | sabit | kriz | destek | bilinmiyor (katmanlı Filiz)
     sinir_doldu: bool = False          # [2026-10-31] günlük ya da okulun aylık yapay zekâ sınırı doldu (arayüz rehber moduna geçer)
     secenekler: list[str] = []         # [2026-10-31] tıklanabilir öneri / "Şunu mu demek istedin?" soruları
 
@@ -214,12 +214,20 @@ def mesaj_gonder(
         raise HTTPException(status_code=400, detail="Mesaj boş olamaz.")
 
     # [2026-10-04] Kriz ifadesi: model çağrılmaz, güvenli yönlendirme cevabı verilir (limit ve anahtardan bağımsız)
-    if kriz_mesaji_mi(metin):
+    # [2026-11-03] İki katman: kural (kesin → kriz cevabı + okul ayarı açıksa okul yetkilisine bildirim) ve sınıflandırıcı
+    # (olası → nazik destek cevabı, bildirim yok). Ayrıntı: ai_koc_servisi.kriz_duzeyi, kriz_modeli, kriz_bildirimi.
+    duzey = kriz_duzeyi(metin)
+    if duzey:
+        if duzey == "kesin":
+            from app.core.kriz_bildirimi import KRIZ_OKUL_EKI, okula_bildir
+            yanit, kaynak = KRIZ_YANITI + (KRIZ_OKUL_EKI if okula_bildir(db, ogrenci) else ""), "kriz"
+        else:
+            yanit, kaynak = DESTEK_YANITI, "destek"
         db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="ogrenci", icerik=metin))
-        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=KRIZ_YANITI, kaynak="kriz",
+        db.add(OgrenciKoclukMesaji(oturum_id=oturum.id, rol="asistan", icerik=yanit, kaynak=kaynak,
                                    sure_ms=int((time.monotonic() - t0) * 1000)))
         db.commit()
-        return MesajCevap(asistan_yaniti=KRIZ_YANITI, oturum_kapandi_mi=False, kaynak="kriz")
+        return MesajCevap(asistan_yaniti=yanit, oturum_kapandi_mi=False, kaynak=kaynak)
 
     # [2026-10-11] Hiyerarşi koruması (yapay zekâ ve otomatik rehber): başka bir öğrenciyi hedefleyen soru (okuldaki başka
     # bir öğrencinin adı, "arkadaşımın puanı", "en yüksek net kimde", okul/sınıf ortalaması) modele GİTMEZ; sabit cevap.
