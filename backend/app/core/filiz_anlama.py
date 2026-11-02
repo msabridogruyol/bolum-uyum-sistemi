@@ -31,7 +31,8 @@ class Cevap:
 
 _MESLEK_YOLU = ("olmak ic", "olmak isti", "olacagim", "olabilirim", "olurum", "olmak lazim", "olmam lazim", "olmak icin",
                 "ne okuma", "neyi okuma", "hangi bolum", "okumam lazim", "okumaliyim", "okumam gerek", "nasil olun",
-                "nasil olabil", "icin ne oku", "olmanin yolu", "olmak istersem", "olmak icin hangi")
+                "nasil olabil", "icin ne oku", "olmanin yolu", "olmak istersem", "olmak icin hangi", "ne okusam", "ne okuyayim",
+                "hangi bolumu okusam")
 _KARSILASTIR = (" mi ", " mu ", " yoksa ", " fark", "karsilastir", " vs ", " hangisi", " arasinda", " ile ")
 _ACIK_KARSI = (" fark", "karsilastir", " vs ", " hangisi", " arasinda", " yoksa ", " ayni sey", " ayni mi", " benzer")
 
@@ -137,7 +138,8 @@ def meslek_yolu(d: fb.Dizin, soru: str) -> Cevap | None:
         nasil = next((b for b in d.belgeler if b.tur == "meslek" and b.varlik == anahtar), None)
         nasil_metin = re.search(r"Nasıl olunur: (.+)$", nasil.metin) if nasil else None
         # Anahtar bir meslek değil de bölüm adının bir parçasıysa ("yazılım", "kontrol"): "X olmak için" denmez
-        bas = (f"{meslek_adi} olmak için" if anahtar in d.meslek_bolum or anahtar in d.takma and not any(anahtar in v for v in bolumler)
+        bas = (f"“{meslek_adi}” için" if re.search(r"m[ae]k$", anahtar)            # "oyun yapmak" bir meslek adı değil, bir iş
+               else f"{meslek_adi} olmak için" if anahtar in d.meslek_bolum or anahtar in d.takma and not any(anahtar in v for v in bolumler)
                else f"“{meslek_adi}” alanında")
         yanit = f"📖 {bas} okunabilecek bölüm{'ler' if len(bolumler) > 1 else ''}:\n" + "\n".join(satirlar)
         if nasil_metin:
@@ -147,6 +149,35 @@ def meslek_yolu(d: fb.Dizin, soru: str) -> Cevap | None:
                    if len(bolumler) == 1 else [f"{_gorunen(d, v)} bölümü hakkında bilgi verir misin?" for v in bolumler[:3]])
         return Cevap(yanit, "icerik", secenek + ["Bana hangi bölümler uygun?"])
     return None
+
+
+_MESLEK_KALIBI = re.compile(r"(?:^|\s)((?:\w+\s){0,3}?\w+?)\s(?:olmak|olabilmek|olmam|olacagim|olabilirim|olmanin)\b")
+
+
+def bilinmeyen_meslek(d: fb.Dizin, soru: str) -> Cevap | None:
+    """[2026-11-02 kör test] "Gemi kaptanı olmak için hangi bölüm?", "kriminolog olmak istiyorum hangi bölüm": meslek sistemde
+    tanınmayınca soru "hangi bölüm" sözcüklerinden dolayı öğrencinin KENDİ önerilerine gidiyordu, ilgisiz bir liste gösteriliyordu.
+    Meslek yolu sorusunda hiçbir bölüm/meslek adı tanınmadıysa bunu açıkça söyler (uydurmaz)."""
+    t = f" {fb.duzelt(soru)} "
+    if not any(k in t for k in ("olmak ic", "olmak isti", "olmak icin", "olmam lazim", "olmak lazim", "olabilmek icin",
+                                "olmanin yolu", "olmak istersem")):
+        return None
+    if not any(k in t for k in (" hangi bolum", " ne oku", " ne okun", " okumaliyim", " okumam lazim", " okumam gerek",
+                                " hangi fakulte", " ne okusam", " nasil olun", " nasil olabil")):
+        return None             # "zengin olmak istiyorum" bir meslek sorusu değil
+    if any(h in d.bolumler for _, hs in d.varliklari_coz(soru) for h in hs):
+        return None
+    m = _MESLEK_KALIBI.search(t)
+    if not m:
+        return None
+    kel = [w for w in m.group(1).split() if w not in fb._DURAK and w not in ("ben", "ileride", "buyuyunce", "gelecekte", "bir", "iyi")]
+    if not kel:
+        return None
+    ad = _meslek_gorunen(d, " ".join(kel), soru)
+    return Cevap(f"“{ad}” mesleğini sistemdeki meslek listesinde bulamadım, o yüzden hangi bölümün bu mesleğe götürdüğünü "
+                 "kesin söyleyemem. 🌱 Bölümler › Tüm bölümler sayfasında ilgili alanlara bakabilir, rehber öğretmenine de "
+                 "sorabilirsin. Mesleği farklı bir adla yazarsan (ör. “gemi kaptanı” yerine “kaptan”) yeniden bakarım.",
+                 "icerik_yok", ["Bana hangi bölümler uygun?"])
 
 
 # Yalnızca "X mi Y mi" kalıbında tek başına yazılan kısa adlar ("tip mi dis mi"): genel metinde "dis" dış/diş belirsiz
@@ -303,6 +334,9 @@ def onceden_anla(db: Session, soru: str, moduller: set[str] | None) -> Cevap | N
         c = f(d, soru)
         if c:
             return c
+    c = bilinmeyen_meslek(d, soru)
+    if c:
+        return c
     for f in (lambda d_, s_, m_: maas_sorusu(d_, s_, m_, db), lambda d_, s_, m_: kunye_sorusu(d_, s_)):
         c = f(d, soru, moduller)
         if c:

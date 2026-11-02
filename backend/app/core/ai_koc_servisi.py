@@ -15,6 +15,7 @@ Tasarım prensipleri:
   hiçbir kod değişikliği gerekmeden çalışmaya başlar.
 """
 import os
+import re
 from sqlalchemy.orm import Session
 
 from app.models import Ogrenci, Bolum, GelisimKaynakOnerisi
@@ -29,9 +30,9 @@ GUNLUK_MESAJ_LIMITI_VARSAYILAN = 40  # [2026-10-31] Tam paket / okulsuz öğrenc
 # ifadesi geçen mesajlarda model ÇAĞRILMAZ; her zaman aynı, güvenli ve yönlendirici cevap verilir
 # (anahtar olmasa da çalışır). Daha örtük durumlar için sistem promptunda ayrıca kural var (madde 8).
 KRIZ_IFADELERI = (
-    "intihar", "kendimi öldür", "kendimi oldur", "ölmek istiyorum", "olmek istiyorum",
+    "intihar", "ölmek istiyorum",   # "kendimi öldür" → desen ("kendimi öldüresiye çalıştım" kriz değil) "olmek istiyorum",
     "yaşamak istemiyorum", "yasamak istemiyorum", "hayatıma son", "hayatima son", "canıma kıy", "canima kiy",
-    "kendime zarar", "kendimi kes", "kendimi kesiyorum", "bileklerimi", "yok olmak istiyorum", "her şeye son",
+    "kendime zarar", "kendimi kesiyorum",   # "kendimi kes" → desen: "kendimi kesin olarak" kriz değil "bileklerimi", "yok olmak istiyorum", "her şeye son",
     "bana şiddet", "bana siddet", "taciz", "istismar", "beni dövüyor", "beni dovuyor",
     # [2026-10-19] denetim: zorbalık, tehdit ve örtük çaresizlik ifadeleri
     "zorbalık", "zorbalik", "zorbalığa", "zorbaliga", "beni tehdit", "kendime bir şey yap", "kendime bir sey yap",
@@ -50,9 +51,120 @@ def _sade(metin: str) -> str:
     return " ".join(str(metin).replace("İ", "i").replace("I", "ı").lower().split())
 
 
+def _ascii(metin: str) -> str:
+    t = str(metin or "").replace("İ", "i").replace("I", "ı").lower().replace("i̇", "i")
+    t = t.translate(str.maketrans("çğıöşüâîû", "cgiosuaiu"))
+    return " ".join(re.sub(r"[^a-z0-9 ]+", " ", t).split())
+
+
+# [2026-11-02 kör test] Kriz ifadeleri yalnızca birkaç kalıpla aranıyordu; örtük, çekimli ve dolaylı ifadeler kaçıyordu.
+# İki kör ölçüm: Filiz'e sorulan 10 kriz cümlesinin 5'i, ayrı bir 90 cümlelik kriz setinin ise yalnızca 35'i yakalanıyordu
+# ("Ölsem kimse fark etmez", "Tükendim, devam edemem artık", "Herkese teşekkürler, bu benim son mesajım",
+# "babam beni kemerle dövdü yine", "internetten tanıştığım biri çıplak foto istiyor").
+# Desenler Türkçe karaktersiz sadeleştirilmiş metinde, sözcük başında aranır; çekim ekleri desenin içindedir.
+# Kural: yanlış alarm, kaçırılan krizden her zaman iyidir (yanlış alarmda öğrenci yalnızca nazik bir destek mesajı görür).
+# Tek istisna akademik/meslek bağlamı: "intihar oranları üzerine araştırma", "istismara uğramış çocuklarla çalışmak".
+_KISI = r"(babam|annem|abim|ablam|uvey \w+|enistem|amcam|dayim|kocam|sevgilim|ogretmen\w*|komsu\w*|sofor\w*|biri|bir grup|grup|cocuk\w*|onlar)"
+_KRIZ_DESENLERI = [re.compile(r"(?<![a-z0-9])" + d) for d in (
+    # açık intihar düşüncesi ya da hazırlık
+    r"intihar", r"kendimi( \w+){0,2} (oldur(?!esiye)|as(ar|mak|may|acag|sam|tim)|at(ar|mak|acag|sam)|bitir|yok ed)",
+    r"(olmek|olmeyi) (ist|dusun)", r"(keske )?olsem (mi|keske|iyi|rahat|kurtul)", r"keske olsem", r"olup gitse", r"oleyim\b", r"olmem lazim", r"olum\w* (cok )?dusun",
+    r"(keske|hic) dogmasa", r"dogmamis olmay", r"yasamak (istemi|zorunda degil)", r"yasamaya (devam etmek )?istemi",
+    r"(yasama|yasamak|hayat)\w* (bir |bi |hicbir )?(anlami|sebeb\w*) (yok|kalma|kalmi|kalmay)", r"yasamak icin (bir |bi |hicbir )?sebeb",
+    r"(hayat|yasam)\w* son (ver|veri)", r"hayatima son", r"canima kiy", r"her seye son", r"her sey bitsin",
+    r"her seyi bitir(mek isti|ecegim|sem|eyim)", r"bu hayati bitir",
+    r"(bir daha |bi daha )?(hic )?uyanma(mak|sam|yayim|mayi)", r"sonsuza (kadar|dek) uyu", r"yok ol(mak|sam|ayim|up gitsem)",
+    r"ortadan kaybol(mak|sam|ayim)", r"bu dunyadan git", r"(beni )?(bu )?dunyaya baglayan", r"bensiz (herkes |daha |dunya |her sey |hayat )*(mutlu|iyi|rahat|kolay)",
+    r"kimse (beni )?(ozlemez|aramaz)", r"(olsem|gitsem|olmasam) (kimse|herkes|daha)", r"kimse fark etmez", r"kimsenin umrunda (degil|olmaz)",
+    r"(kopru|cati|cam|bina|balkon|yuksek)\w* (den |dan )?atla(mak isti|mayi|yacag|sam|yip|yim)", r"(cok|kutu kutu|bir avuc|butun) ilac",
+    r"ilac\w* (biriktir|hepsini|icip|icsem|icerek|icecem|icecegim)", r"\bip (sakl|ald|hazir)", r"kaza olsa (da|ta) gitsem",
+    r"gelecek (yili|seneyi|yazi|ayi) gor(meyecegim|ecegimi sanmiyorum|emeyecegim)", r"(benden|bensiz) kurtul",
+    r"(bir |bi )?yuk (gibi|oldugumu|oluyorum)", r"yukten baska", r"(yasamak|yasamaktan|hayattan|nefes almaktan) yoruldum",
+    r"tukendim", r"devam edemem", r"cabalamayi birak", r"savasacak guc", r"(bir|bi|hic)\s?seyin duzelmeyecegi",
+    r"her seyi birak(mak isti|iyorum)", r"kendimi de birak",
+    # yaşamın sonunu ima eden ifadeler (kariyer sorusunun içinde de olabilir)
+    r"yasamayacag", r"(uzun|fazla) (kalmayacag|yasamayacag)", r"dayanabilecegimi sanmiyorum", r"(bi|bir) daha sabah olmasin",
+    r"sabah olmasin", r"(artik )?bitti her sey", r"her sey bitti artik", r"ben yokken", r"beni affed", r"ben gidiyorum.*hosca",
+    r"hosca ?kal(in)? herkes", r"herkes(e)? hosca ?kal", r"yoruldum (yasamaktan|hayattan)", r"ilac kutusu",
+    r"(anneme|babama|aileme|herkese) (bir |bi )?mektup yazdim", r"(iyi bak(in|sin)|bakin)\w*.*benden sonra|benden sonra.*(iyi bak|bakin)",
+    r"var olmasa(ydim|m)", r"(seneye|yarin|haftaya|gelecek yil)\w* (burada|hayatta) ol(mayacag|acagimi sanmiyorum)",
+    r"burada olacagimi sanmiyorum", r"fisi (tamamen )?cek", r"(yarin|bu aksam|bu gece)( \w+){0,5} (her sey )?bitmis olacak",
+    r"yarin yazmazsam", r"gitmem gereken yere", r"artik( \w+)? gidecegim\b",
+    # veda
+    r"son mesajim", r"son kez yaziyorum", r"son konusmamiz", r"veda ettim", r"burada olmayacagim", r"bundan sonra gerek kalmayacak",
+    r"(bir |bi )?daha yaz(mayacag|micam|mayacam)", r"(esyalarimi|seylerimi|kedimi|kopegimi|sifrelerimi|kiyafetlerimi)( \w+){0,4} (verdim|biraktim)",
+    r"ihtiyacim (olmayacak|olmicak)", r"bakam(icam|ayacagim)", r"mektup yazdim.*(bulunca|anlar)", r"artik her sey hazir",
+    # kendine zarar verme
+    r"kendime( \w+){0,2} (zarar|bir sey yap|bisey yap|kiy)",
+    r"kendimi( \w+){0,2} (kes(tim|iyor|ecek|mek|meyi|sem|erim|ip)|yarala|jilet|cizi|yak(tim|iyor|mak|acak)|cezalandir)",
+    r"(kolumu|kollarimi|bacagimi|bacaklarimi|bilegimi|bileklerimi)( \w+){0,1} (kes|ciz)", r"izler\w* (artik )?gecm", r"bilek(ler)?imi", r"jilet",
+    r"kesiklerim", r"kesik izler", r"(kolumda|kollarimda|bacagimda|bacaklarimda|bileklerimde) (\w+ )?iz", r"kendime (vur|eziyet)",
+    r"(duvara )?kafami (duvara )?vur(uyorum|dum|uyom|du|dular|uyor)", r"bilerek (yemek )?yemiyorum",
+    r"kendimi (acit|incit)", r"(kollarim|bileklerim|bacaklarim)\w* (kimse )?gorme", r"uzun kollu giy",
+    r"(izleri|yaralari|kesikleri)\w* (nasil )?sakla", r"(kollarimdaki|bileklerimdeki|bacaklarimdaki) (iz|yara|kesik)",
+    # şiddet, istismar, zorbalık, tehdit
+    r"taciz", r"istismar", r"tecavuz", r"cinsel", r"beni( \w+){0,3} dov", r"(bizi|hepimizi|annemi|kardesimi)( \w+){0,2} dov",
+    r"dov(uyor|uyo|du|duler|dular|ecek|eceklermis|erler)\b", r"dayak (yi|ye|at)", r"(cok|hep|surekli|yine) vur(uyo|uyor|du)",
+    r"bana (siddet|vuruyor|vurdu|el kaldir|zarar veriyor)", r"beni (kemerle|sopayla|terlikle)", r"kemerle",
+    r"tekmel(iyo|iyor|edi)", r"sikistirip", r"(odaya|odama|eve) kilitle", r"(bicak|silah|tabanca)\w*( \w+){0,4} tehdit",
+    r"tehdit (etti|ediyor|ediyo|ediyorlar)", r"oldurmekle", r"(seni|beni|hepimizi|onu) oldurecegim", r"oldurecegim diye", r"oldurecekmis",
+    r"(herkesi|hepimizi) vur(acag|acak)", r"silah getir", r"adresimi (de )?biliyo", r"zorbalik", r"zorbaliga", r"beni tehdit",
+    r"uygunsuz (sey|mesaj|foto|istek|soz)", r"ciplak", r"ifsa", r"(fotograf|foto)\w*( \w+){0,2} (yaymak|yayacag|ifsa)",
+    r"(garip|kotu|tuhaf) (sekilde )?dokun", r"dokun(maya|uyo|uyor|du|acak)", r"odama (gece )?gir(iyo|iyor|di)",
+    r"rahatsiz edici", r"zorla (nisan|evlen|ople|dokun|elle|bir sey|bisey|seyler)", r"(nisanla|evlendir)\w* (istiyo|istiyor)",
+    r"kilitli(yor|yo)", r"yemek vermi(yor|yo)", r"tokat at", r"yumruk at", r"(kafama|yuzume) (vur|tokat|yumruk)", r"elles",
+    r"yayacak", r"yaymakla", r"(foto|fotograf|video)\w*( \w+){0,3} (yay|ifsa)", r"sir aramizda", r"\d{2} yasinda oldugumu",
+    r"gebert", r"canini yak", r"(oldurecegim|oldururum|oldurcem|olduruce)", r"silah\w*( \w+){0,3} okul", r"okula (goturup|getirip)",
+    r"kendimi tutamiyorum", r"mor(luk|armis|ardi|ariyor)",
+    # [kör set 4] şantaj, gizli ilişki, veda, kendine zarar, şiddet: kavram düzeyinde genelleştirilmiş kalıplar
+    r"yoksa( \w+){0,4} (herkes gor|paylas(acak|acag|ir|ilacak|maya)|yay(acak|acag|ar\b|arim|arlar|ilacak|mak|maya)|at(acak|cak)|yolla(yacak|r\b|ycak)|gonder(ecek|ir\b|icek))",
+    r"(gondermezsem|atmazsam|vermezsem)( \w+){0,4} (yay(acak|acag|ar\b|arlar|ilacak|mak)|at(acak|cak)|yolla|gonder|paylas)",
+    r"(ozel|mahrem|ciplak)\w* (foto|fotograf|video|goruntu)", r"(ikimizin|aramizin|bizim) sirr", r"sirrimiz", r"yalniz kalalim",
+    r"\d{2} yasindayim", r"hakkini(zi)? helal", r"beni unutma", r"artik hazirim", r"(bir|bi) daha gormeyeceksin",
+    r"esyalarimi (dagit|ver)", r"(kalmicam|kalmayacagim) zaten", r"ortadan kaybolmam", r"fisimi cek", r"sonunu kendim yaz",
+    r"kolumdaki iz", r"canim yanmazsa", r"kendime bi\w* (seyler|sey) yap", r"kolunu kir", r"(kardesime|anneme|bana) vurdu",
+    r"esya\w* firlat", r"tekme tokat", r"dovul(uyorum|dum)", r"kafami (dolaba|duvara|kapiya|yere) carp", r"burnum kana",
+    r"(bir sey|bisey) yapacagimdan korkuyorum", r"zarar vermeyi planl", r"okula (bisiyle|biseyle|bir seyle) gel", r"(bize|bana|anneme|kardesime) el kaldir", r"eve gitmekten kork",
+    r"kapi sesi\w*.*titre", r"kimseye (soylememi|anlatmamami|soylemememi|anlatma)", r"(sir|gizli)\w* (tut|kalsin|kalmasini)",
+    r"gizlice bulus", r"kamera\w* acmami", r"bedenim\w* (ilgili|hakkinda)", r"(bana|beni) sey yap", r"\d{2} yasinda\w*.*(foto|bulus|gizli|kamera)",
+    r"(foto|fotograf|video)\w*.*\d{2} yasinda", r"(para|harclik)\w* (vermezsem|istiyor)", r"herkese yay", r"herkes gorecek",
+    r"ekran goruntu\w*( \w+){0,3} (atacag|yayacag|gonderecek)", r"yere yatirip", r"merdivenden it", r"itip kak",
+    r"(kaydedip|cekip) dov", r"beni bekliyorlar",
+    r"(onu|ona|birini|birine|hepsini|cocugu|cocuga|kizi|babami|annemi)( \w+){0,3} (yaralayacag|zarar verecegim|oldur|bitirecegim)",
+    r"zarar (verecegim|vermek isti|vermenin yolu)", r"oldurmek isti", r"okula (bisey|bir sey|silah)\w* getir", r"hepsi pisman olacak",
+    # yoğun çaresizlik
+    r"dayanamiyorum artik", r"artik dayanamiyorum", r"depresyon(dayim|a girdim|da hissed)", r"artik (yasa|dayana)mam",
+)]
+# Akademik / meslek bağlamı: suç ya da sorun bir araştırma, ders ya da meslek konusu olarak geçiyorsa (birinci tekil kişide
+# bir niyet ya da yaşantı yoksa) kriz sayılmaz.
+_AKADEMIK = re.compile(r"(?<![a-z0-9])(arastirma|oran\w*|bolum\w*|ders\w*|kitab\w*|program\w*|onleme|hasta\w*|meslek\w*|okuyup|"
+                       r"calismak isti|calisan|uzerine|konusu|teori\w*|sosyoloji|psikoloji|psikiyatri|sosyal hizmet|hemsire\w*|"
+                       r"avukat\w*|polis\w*|hakim\w*|savci\w*|kriminoloji|adli)")
+_AKADEMIK_KRIZ = re.compile(r"(?<![a-z0-9])(intihar|istismar\w*|taciz|siddet|depresyon|cinsel|tecavuz|zorbalik|zorbaliga)")
+_KISISEL_KRIZ = re.compile(r"(?<![a-z0-9])(intihar (et|eder|edec|etme)|kendimi|kendime|ugradim|ugruyorum|maruz kal|"
+                           r"(beni|bana|bize) (taciz|istismar|tecavuz|siddet)|(taciz|istismar|tecavuz|siddet)\w* (ediyor|etti|ediyo|"
+                           r"uyguluyor|goruyorum|gordum|edildim|ediliyorum))")
+
+
+# Oyun bağlamı: "lol oynarken takım arkadaşlarımı öldürcem" bir tehdit değil (yalnızca başkasına zarar desenleri için)
+_OYUN = re.compile(r"(?<![a-z0-9])(oyun\w*|oynar\w*|oynuyor\w*|lol|valorant|pubg|minecraft|fortnite|cs ?go|takim arkadas\w*|mac\w*|rank\w*)")
+_BASKASINA = ("oldur", "gebert", "bitirecegim", "yaralayacag", "zarar verecegim", "vurac")
+
+
 def kriz_mesaji_mi(metin: str) -> bool:
     t = _sade(metin)
-    return any(ifade in t for ifade in KRIZ_IFADELERI)
+    a = _ascii(metin)
+    eslesen = [d for d in _KRIZ_DESENLERI if d.search(a)]
+    if not eslesen and not any(ifade in t for ifade in KRIZ_IFADELERI):
+        return False
+    if _OYUN.search(a) and eslesen and all(any(k in d.pattern for k in _BASKASINA) for d in eslesen) \
+            and not any(ifade in t for ifade in KRIZ_IFADELERI):
+        return False
+    # Yalnızca akademik/meslek konusu olarak geçen suç ya da sorun sözcükleri ("intihar oranları üzerine araştırma")
+    if _AKADEMIK.search(a) and all(_AKADEMIK_KRIZ.search(d.pattern) or d.pattern.endswith("dov") for d in eslesen) \
+            and not _KISISEL_KRIZ.search(a):
+        return False
+    return True
 
 
 class AsistanKullanilamiyorHatasi(Exception):

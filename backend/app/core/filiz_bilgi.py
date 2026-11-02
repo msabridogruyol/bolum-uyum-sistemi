@@ -56,7 +56,7 @@ def kokler(m: str | None) -> list[str]:
 # ("bil muh", "pdr"), ekli bölüm adları ("hukukta", "psikolojiden"), küçük yazım hataları. Sorgu önce düzeltilir;
 # bölüm/meslek adları ekli ve hafif hatalı yazılsa da tanınır (Dizin.varliklari_coz).
 _KELIME = {
-    "bi": "bir", "bisey": "bir sey", "birsey": "bir sey", "bise": "bir sey", "nasi": "nasil", "nasıl": "nasil", "niye": "neden",
+    "bi": "bir", "bisey": "bir sey", "hicbisey": "hicbir sey", "hicbisi": "hicbir sey", "hicbiseyi": "hicbir seyi", "birsey": "bir sey", "bise": "bir sey", "nasi": "nasil", "nasıl": "nasil", "niye": "neden",
     "napcam": "ne yapacagim", "napicam": "ne yapacagim", "napcaz": "ne yapacagiz", "napiyim": "ne yapayim", "napayim": "ne yapayim",
     "napim": "ne yapayim", "napcak": "ne yapacak", "napcan": "ne yapacaksin", "napıcak": "ne yapacak", "naptin": "ne yaptin", "noluyo": "ne oluyor", "noldu": "ne oldu", "nedir ki": "nedir",
     "tmm": "tamam", "slm": "selam", "mrb": "merhaba", "msl": "mesela", "bn": "ben", "bnm": "benim", "sn": "sen", "snn": "senin",
@@ -84,7 +84,8 @@ _MUH_KISA = {"muh", "muhen", "muh.", "mh"}                                      
 
 # Sistemdeki belgelerde geçen sözcükler (Dizin kurulurken doldurulur) + sık sözcükler: bunlar konuşma dili sayılmaz
 _BILINEN: set[str] = set("""ancak gercek gercekten oyuncak kucak bucak sucuk bicak ocak sacak yumurcak tencere bircok
-hicbir pecete""".split())
+hicbir pecete diyor diyorlar diyo dedi dediler istiyor istiyorlar istiyo yapiyor yapiyo geliyor gidiyor oluyor bilmiyor
+seviyor seviyorum sevmiyor""".split())   # [2026-11-02] sık fiiller: dizin küçükken "diyor" → "ediyor" diye bozulmasın
 
 
 # [2026-11-02 simülasyon] Tek harf hatası düzeltme: "petrl" → petrol, "gretmenligi" → ogretmenligi, "bolmler" → bolumler,
@@ -233,13 +234,13 @@ def bir_harf(a: str, b: str) -> bool:
     return kisa[i:] == uzun[i + 1:]
 
 
-def yakin_ekli(q: str, e: str, kuyruk: int = 4) -> bool:
+def yakin_ekli(q: str, e: str, kuyruk: int = 4, en_az: int = 4) -> bool:
     """Sorudaki q sözcüğü, e'nin tek harf hatalı (ve en çok `kuyruk` harf ekli) yazımı mı? e en az 4 harf olmalı.
     "asarim"~"tasarim", "fizi"~"fizik", "konuma"~"konusma", "kulanabilir"~"kullan" (kuyruk uzun verilirse)."""
-    if len(e) < 4 or len(q) < 3:
+    if len(e) < en_az or len(q) < 2:
         return False
     for n in (len(e) - 1, len(e), len(e) + 1):
-        if 3 <= n <= len(q) and len(q) - n <= kuyruk and bir_harf(q[:n], e):
+        if 2 <= n <= len(q) and len(q) - n <= kuyruk and bir_harf(q[:n], e):
             return True
     return False
 
@@ -292,13 +293,14 @@ def anahtar_yakin(a: str, t: str) -> bool:
     kullan", "odevimi yaar misin" ~ "odevimi yapar". a ve t sadeleştirilmiş olmalı.
     Kök neden: yazım düzeltmesi sözcük sözcük çalışır; konu anahtarı ekli ya da durak sözcüğü olunca ("posta" → "postasi",
     "nasil") hatalı sözcük hiç düzeltilmiyor, soru "anlayamadım"a düşüyordu.
-    Kural: anahtarın tam olarak bir sözcüğü tek harf hatalı olabilir. Tek sözcüklü anahtarda (en az 6 harf) o sözcük
-    sistemde tanınmayan bir sözcük olmalı (geçerli bir sözcük başka bir sözcüğe benzetilmez); çok sözcüklü anahtarda
-    diğer sözcükler aynen (ya da ekli: "maili gelmedi") geçtiği için bağlam yeterlidir, hatalı sözcük 5+ harfliyse
-    geçerli bir sözcük olabilir ("dusune atolyesi"). Son sözcükten sonra ek gelebilir (anahtar_var ile aynı)."""
+    Kural: yalnızca çok sözcüklü anahtar ve tam olarak bir sözcüğü tek harf hatalı olabilir (tek sözcüklü anahtar bulanık
+    aranmaz: "bildigim" ~ "bildirim"). Diğer sözcükler aynen (ya da ekli: "maili gelmedi") geçtiği için bağlam yeterlidir;
+    hatalı sözcük sistemde tanınmayan bir sözcük olmalı ya da 5+ harfli olmalı ("dusune atolyesi"). Son sözcükten sonra ek
+    gelebilir (anahtar_var ile aynı)."""
     ak = a.split()
-    if not ak or (len(ak) == 1 and len(ak[0]) < 6):
-        return False
+    if len(ak) < 2:
+        return False        # [2026-11-02 kör test] tek sözcüklü anahtar bulanık aranmaz: "bildigim" ~ "bildirim" gibi
+    #                         geçerli sözcükler başka konuya gidiyordu; bağlamı olan çok sözcüklü anahtar yeterli
     tk = t.split()
     for s in range(len(tk) - len(ak) + 1):
         hatali = 0
@@ -307,8 +309,8 @@ def anahtar_yakin(a: str, t: str) -> bool:
             son = j == len(ak) - 1
             if w == e or (son and w.startswith(e) and len(w) - len(e) <= 7) or (w.startswith(e) and ek_mi(e, w[len(e):])):
                 continue
-            if (hatali == 0 and len(e) >= 4 and w not in _DURAK
-                    and (_taninmayan(w) or (len(ak) >= 2 and len(e) >= 5)) and yakin_ekli(w, e, 7 if son else 0)):
+            if (hatali == 0 and len(e) >= 3 and w not in _DURAK
+                    and (_taninmayan(w) or (len(ak) >= 2 and len(e) >= 5)) and yakin_ekli(w, e, 7 if son else 0, en_az=3)):
                 hatali = 1
                 continue
             break
@@ -482,7 +484,7 @@ class Dizin:
                 self._aday[tok[0][:2]].append((anahtar, tok))
             if len(tok) >= 2:
                 for j, w in enumerate(tok):
-                    if len(w) >= 4 and w != "ve":
+                    if len(w) >= 3 and w != "ve":
                         self._cok[w[:4]].append((anahtar, tok, j))
 
     def _idf(self, k: str) -> float:
@@ -534,7 +536,10 @@ class Dizin:
                     continue                                              # "tip", "ebe": tam yazım ya da yaygın ek ("tipta")
                 if all(_ek_toleransli(q[i + j], tok[j]) for j in range(n)):
                     tam = sum(q[i + j] == tok[j] for j in range(n))
-                    fark = sum(abs(len(q[i + j]) - len(tok[j])) for j in range(n))
+                    # Yazılana uzaklık: biri diğerinin başıysa (yarım bırakılmış ya da ekli yazım) harf farkı, değilse +2.
+                    # Yarım bırakılmış yazım en sık hatadır: "antropoloj" → antropoloji (bölüm), antropolog (meslek) değil.
+                    fark = sum(abs(len(q[i + j]) - len(tok[j]))
+                               + (0 if tok[j].startswith(q[i + j]) or q[i + j].startswith(tok[j]) else 2) for j in range(n))
                     adaylar.append((n, tam, fark, len(anahtar), i, anahtar))
         adaylar += self._hatali_cok_sozcuklu(q, duzelt(soru, yazim=False).split(), {(a[4], a[5]) for a in adaylar})
         # çok sözcüklü > tam yazım > yazılana en yakın ("grafik tasarim" = Grafik Tasarımı, "grafik tasarımcı" değil) > uzun ad
@@ -589,13 +594,13 @@ class Dizin:
                         adaylar = (q[s + t], ham[s + t])
                         if any(_ek_toleransli(c, e) for c in adaylar):
                             tam += q[s + t] == e
-                            dogru += e != "ve" and len(e) >= 4
+                            dogru += e != "ve" and (len(e) >= 4 or q[s + t] == e)   # "hat saati" → Hat Sanatı
                             fark += abs(len(q[s + t]) - len(e))
                         elif e == "ve" and any(c in ("v", "e") for c in adaylar):
                             hatali += 1
                         elif e != "ve" and any(yakin_ekli(c, e) for c in adaylar):
                             hatali += 1
-                            fark += 1
+                            fark += abs(len(q[s + t]) - len(e)) + 3     # tanınan (ekli/yarım) yazımdan her zaman uzak
                         else:
                             break
                     else:
@@ -962,6 +967,12 @@ def sozluk_bul(db: Session, soru: str) -> Belge | None:
                 if not (len(a) > uz and f" {a} " in f"{t} " and (tanim or " " in a or kisaltma)) or not _sozluk_kapsar(a, t):
                     continue
                 en, uz = b, len(a)
+    if en is None and tanim:
+        # [2026-11-02] tanım sorusunda çok sözcüklü terimin tek harf hatalı yazımı: "güçlü yn ne demek" → Güçlü yön
+        adaylar = {b.baslik: b for b in dizin(db).belgeler if b.tur == "sozluk"
+                   for a in b.adlar if " " in a and anahtar_yakin(a, t.strip())}
+        if len(adaylar) == 1:
+            return next(iter(adaylar.values()))
     return en
 
 
