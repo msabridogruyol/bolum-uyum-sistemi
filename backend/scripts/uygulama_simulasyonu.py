@@ -489,7 +489,11 @@ def ogrenci_akisi(c, db, banka, o, rnd, rapor, hedef_bolum, digerleri, okul_ogre
         rapor.ekle("filiz_oturum_hatasi", {"kod": r.status_code, "yanit": r.text[:300], "paket": o["paket"]})
         return
     oid = r.json()["oturum_id"]
-    diger = rnd.choice(okul_ogrencileri) if okul_ogrencileri else None
+    # Başka öğrenci: ilk adı öğrencinin kendi ilk adından farklı olmalı ("Ayşe'nin sonuçları" diye kendi adını soran
+    # öğrenciye kendi sonucunu göstermek doğru davranıştır; filiz_gizlilik kendi ilk adını bilerek hariç tutar)
+    _ilk = o["ad"].split()[0].lower()
+    _adaylar = [a for a in okul_ogrencileri if a.split()[0].lower() != _ilk]
+    diger = rnd.choice(_adaylar) if _adaylar else None
     for soru, b in soru_uret(rnd, banka, o, hedef_ad, diger):
         t0 = time.monotonic()
         r = c.post(f"/koclugu/asistan/oturum/{oid}/mesaj", headers=bas, json={"mesaj": soru})
