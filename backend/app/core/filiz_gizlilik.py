@@ -235,9 +235,12 @@ TOPLU_YANITI = ("Okulunun yüklediği bir denemeye en az 5 öğrenci katıldıys
 
 _AKRAN = ("arkadas", "sinifimdak", "sinifimizdak", "sinifdak", "sinifta kim", "subemdek", "subemizdek", "okulumdak", "okulumuzdak",
           "diger ogrenci", "baska ogrenci", "digerlerin", "herkesin", "sinifin", "subenin", "kanka", "sevgilim",
-          "ogrencilerin", "baskasinin", "baskalarinin")
+          "ogrencilerin", "baskasinin", "baskalarinin",
+          # [2026-11-02 kör test] "diğer kullanıcıların e-posta adresleri", "kardeşimin hesabına bakabilir misin"
+          "diger kullanici", "baska kullanici", "kullanicilarin", "kardesim", "abimin", "ablamin")
 _VERI = ("sonuc", "puan", "hedef", "net", "not", "skor", "uyum", "profil", "sirala", "derece", "test", "bolum", "tercih",
-         "guclu", "zayif", "rapor", "basari", "cikti", "yapti", "aldi", "kac", "ne kadar", "secti", "istedi", "deneme")
+         "guclu", "zayif", "rapor", "basari", "cikti", "yapti", "aldi", "kac", "ne kadar", "secti", "istedi", "deneme",
+         "e posta", "eposta", "mail", "adres", "telefon", "sifre", "hesab", "kisilik", "bilgi")
 _EN_KIM = re.compile(r"\ben (yuksek|dusuk|basarili|basarisiz|iyi|kotu|cok|az|fazla)\b.*\b(kim|kimin|kimde|kimler|hangi ogrenci)\b")
 _TOPLU = re.compile(r"\b(okul|sinif|sube|okulun|sinifin|subenin|okulumuzun|sinifimizin|subemizin)\w* ortalama|"
                     r"ortalama\w* (okul|sinif|sube)|\bkacinci\w*\b.*\b(okul|sinif|sube)|\b(okul|sinif|sube)\w*\b.*\bkacinci|"
@@ -246,6 +249,37 @@ _TOPLU = re.compile(r"\b(okul|sinif|sube|okulun|sinifin|subenin|okulumuzun|sinif
 
 def _icerir(n: str, kokler) -> bool:
     return any(re.search(r"(?:^|\s)" + re.escape(k), n) for k in kokler)
+
+
+_ILK_ADLAR: set[str] | None = None
+_ILGI_EKI = ("nin", "nun", "in", "un")
+_UNVAN = {"mimar", "sultan", "gazi", "sehit", "hoca", "hazreti", "hz", "kanuni", "yavuz", "piri", "katip", "seyh", "sair"}
+_YUMUSAMA = {"b": "p", "g": "k", "d": "t", "c": "c"}
+
+
+def _ilk_adlar() -> set[str]:
+    global _ILK_ADLAR
+    if _ILK_ADLAR is None:
+        from pathlib import Path
+        yol = Path(__file__).resolve().parents[1] / "data" / "turkce_ilk_adlar.txt"
+        _ILK_ADLAR = {w for satir in yol.read_text(encoding="utf-8").splitlines() if not satir.startswith("#")
+                      for w in satir.split()}
+    return _ILK_ADLAR
+
+
+def _ilgi_hali_ad(tok: list[str], i: int) -> str | None:
+    """tok[i] bir ilk adın ilgi hâli mi ("burakin", "zeynebin"; kesmeyle yazılmışsa "burak" + "in")? Adı döndürür."""
+    adlar = _ilk_adlar()
+    w = tok[i]
+    if w in adlar and i + 1 < len(tok) and tok[i + 1] in _ILGI_EKI:
+        return w
+    for ek in _ILGI_EKI:
+        if w.endswith(ek) and len(w) - len(ek) >= 2:
+            kok = w[: -len(ek)]
+            for aday in (kok, kok[:-1] + _YUMUSAMA.get(kok[-1], kok[-1])):
+                if aday in adlar:
+                    return aday
+    return None
 
 
 def ogrenci_hiyerarsi_yaniti(metin: str, dizin: AdDizini, kendi_ad: str | None) -> str | None:
@@ -269,6 +303,16 @@ def ogrenci_hiyerarsi_yaniti(metin: str, dizin: AdDizini, kendi_ad: str | None) 
     for r in re.finditer(r"(\w+)\s*['’`]\s*\w{1,5}", metin or ""):
         ad = _n(r.group(1))
         if ad in dizin.ilk_adlar and (not kendi or ad != kendi[0]) and _icerir(n, _VERI):
+            return HIYERARSI_YANITI
+    # 6) [2026-11-02 kör test] okul listesinde olmayan bir ad: "Burak'ın hedef bölümü ne", "zeynebin netleri kaç".
+    # Önceden bu sorulara öğrencinin KENDİ hedefi ("Hedefin ...") anlatılıyordu: başka biri sorulurken kendi verisini
+    # göstermek yanıltıcı. Sık ilk adların ilgi hâli + öğrenci verisi sözcüğü → sabit cevap (kendi ilk adı hariç).
+    tok = [t[0] for t in _parcala(metin or "")]
+    for i in range(len(tok)):
+        ad = _ilgi_hali_ad(tok, i)
+        if i and tok[i - 1] in _UNVAN:
+            continue                                   # "Mimar Sinan'ın taban puanı", "Fatih Sultan Mehmet'in" (üniversite)
+        if ad and (not kendi or ad != kendi[0]) and _icerir(n, _VERI):
             return HIYERARSI_YANITI
     return None
 

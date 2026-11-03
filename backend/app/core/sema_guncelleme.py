@@ -52,6 +52,7 @@ OTOMATIK += ["0087_veri_yonetimi_demo"]   # [2026-11-01] Pipeline ekranından K5
 OTOMATIK += ["0088_pipeline_paketi"]   # [2026-11-01] pipeline'ı sistemden kurma: bilgisayar anahtarları + veri sürümleri (Storage)
 OTOMATIK += ["0089_icerik_sadelestirme"]   # [2026-11-02] öğrenciye görünen içerikte lise düzeyine uygun dil (yalnızca değişmemiş metne)
 OTOMATIK += ["0090_soru_sadelestirme"]   # [2026-11-02] K1–K4 soruları sade dil + gündelik hayata dengeli dağılım (yalnızca değişmemiş metne)
+OTOMATIK += ["0091_kriz_okul_bildirimi"]   # [2026-11-03] Filiz kriz → okul yetkilisi bildirimi parametresi (varsayılan kapalı)
 KILIT = 2026101001
 
 

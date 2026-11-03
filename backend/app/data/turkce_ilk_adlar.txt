@@ -1,0 +1,27 @@
+# [2026-11-02 kör test] Sık Türkçe ilk adlar (Türkçe karaktersiz, küçük harf). filiz_gizlilik: "Burak'ın hedef bölümü ne",
+# "zeynebin netleri kaç" gibi okul listesinde olmayan bir öğrencinin bilgisini soran cümleleri tanımak için.
+# Yalnızca İLGİ HÂLİ EKİ almış ad + öğrenci verisi sözcüğü birlikteyse kullanılır ("Deniz'in puanı"); ad tek başına bir şey ifade etmez.
+# Sıradan sözcük olan ya da üniversite/yer adı olan adlar listede yok (deniz, toprak, demir, kaya, ege, güneş, filiz...).
+abdulkadir abdullah ada adalet adem adil adnan afra ahmet ahsen akif alara aleyna ali alican alihan alim alp
+alparslan alper altan alya arda arif arslan arzu asim aslan asli asya atakan atilla avni aybars aybuke ayca aycan
+aydan aydin ayfer ayhan aykut aylin aynur ayse aysel aysu aytac ayten aziz azra baha bahadir bahar bahri banu baran
+baris basak basri battal batu batuhan bayram bedir begum bekir belgin belinay belis berat beren berfin berk berkan
+berkay berke berna beste betul beyza bilal bilge birgul birsen bora bulent burak burcu burhan buse busra cafer cagan
+cagatay cagla cagri can canan canberk cansu cem cemal cemil cemre cengiz cenk ceren ceyda cigdem cihan cuneyt damla
+danyal davut defne demet derya didem dilan dilara dilay dilek dogan doganay dogukan dolunay duran duru duygu ebru ece
+eda ediz efe efekan egemen ela elcin elif elvan emel emin emine emir emirhan emre enes engin ensar eray erdal erdem
+erdogan eren ergun erhan erkan erkin ersin ertan ertugrul ervin esma esra eylul eymen eyup ezgi faruk fatih fehmi
+ferhat feride fethi fevzi feyza figen fikret firat fuat funda furkan gamze gizem gokay gokberk gokhan goksu goktug
+gonca gonul gul gulay gulsen gulsum gurkan guven hacer hakan hakki halil halit hamza hande harun hasan hatice havva
+haydar hayri hikmet hilal hira hulusi huseyin ibrahim ihsan ilhan ilker ilyas irem irfan isil ismail ismet izzet kaan
+kader kadir kagan kamil kazim kemal kenan kerem kerim koray korhan kubilay kubra kutay lale leman levent leyla lina
+lutfi mahmut mazlum mehmet mehtap melek melike melis meltem meral mert merve meryem mesut metin mevlut mine mirac
+miran miray muge muhammed muharrem murat musa mustafa muzaffer naci nail nalan naz nazim nazli necati necip nedim
+nehir nergis neslihan nesrin nevzat nida nihat nil nilay nilufer nisa nur nuray nurcan nuri nurten oguz oguzhan okan
+oktay omer onur orhan osman oya ozan ozge ozgur ozkan ozlem pelin pinar polat rabia ramazan rasim recep refik reha
+resat reyhan riza rukiye rustem saadet sabiha sabri sadik safa sait salih samet sami sanem sarp seda sedat sedef
+selahattin selcuk selen selim selin selma sema semih semra sena senem serap serdar sergen serhat serkan serra sertac
+sevda sevgi sevil sevval seyma sibel simge sinan sinem songul suat sude sueda sukru suleyman sultan sumeyye taha
+tahir talat talha tamer taner tarik tayfun tayyip tekin tolga tuba tufan tugay tugba tugce tulay tulin tuna tunc
+tuncay turan turgay ufuk ugur ulku umay umit umut utku vedat veli volkan yagiz yagmur yahya yakup yalcin yaren
+yasemin yasin yavuz yeliz yigit yilmaz yuksel yunus yusuf zafer zehra zeki zerrin zeynep ziya zubeyde zumrut
