@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 
 // [2026-10-10] Güven puanı eşiğin altında kalan turda öğrenci sonuçlarını görür; üstte bu uyarı çıkar.
-// Geçersiz turdan sonra bekleme süresi uygulanmaz, öğrenci hemen yeniden değerlendirilebilir.
+// Geçersiz turdan sonra bekleme süresi uygulanmaz: öğrenci yalnızca güveni düşük bölümü aynı turda yeniden yanıtlar
+// (katman_servisi; tüm değerlendirme baştan yapılmaz). [2026-11-03] metin bu akışa göre düzeltildi.
 export default function GecersizTurUyarisi({ ozet }) {
   const navigate = useNavigate()
   if (!ozet || !ozet.tur_tamamlandi_mi || ozet.sonuc_gecerli !== false) return null
@@ -15,11 +16,12 @@ export default function GecersizTurUyarisi({ ozet }) {
       <div style={{ flex: 1, minWidth: 220 }}>
         <div style={{ fontWeight: 800, color: 'var(--tx)' }}>Bu değerlendirme doğrulanamadı</div>
         <div style={{ fontSize: 13, color: 'var(--tx2)', marginTop: 2 }}>
-          Değerlendirme sırasında sekme değiştirme ya da tam ekrandan çıkma gibi durumlar oldu. Sonuçlarını yine de
-          görebilirsin. Daha doğru öneriler için değerlendirmeyi yeniden yapmanı öneririz.
+          Bazı bölümlerde cevapların doğrulanamadı (ör. dikkat sorularında hata, sekme değiştirme ya da tam ekrandan
+          çıkma). Sonuçlarını yine de görebilirsin. Tüm değerlendirmeyi baştan yapman gerekmez; sorun çıkan bölümü
+          yeniden yanıtlaman yeterli.
         </div>
       </div>
-      <button className="btn" onClick={() => navigate('/katmanlar')}>Yeniden başla →</button>
+      <button className="btn" onClick={() => navigate('/katmanlar')}>Sorunlu bölümü yeniden çöz →</button>
     </div>
   )
 }

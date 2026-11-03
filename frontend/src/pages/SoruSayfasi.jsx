@@ -147,10 +147,10 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
         </ul>
         <div className={`sn-kamera${kameraRizasi ? ' acik' : ''}`}>
           {kameraRizasi ? (
-            <span>📷 <b>Kamera doğrulaması açık.</b> Kimliğini doğrulamak için sistem ara ara fotoğrafını çeker. Fotoğraflar 6 ay sonra silinir.</span>
+            <span>📷 <b>Kamera doğrulaması açık.</b> Sistem her 4 soruda bir fotoğrafını çeker; yüz tanıma yapılmaz. Fotoğraflar 6 ay sonra silinir.</span>
           ) : (
             <>
-              <span>📷 <b>Kamera doğrulaması kapalı.</b> Açmak zorunlu değil. Açmasan da puanın düşmez. Açarsan sonucun “kimliği doğrulanmış” diye işaretlenir.</span>
+              <span>📷 <b>Kamera doğrulaması kapalı.</b> Açmak zorunlu değil. Açmasan da puanın düşmez. Açarsan okulunun raporunda “Kamera doğrulaması: Var” yazar.</span>
               <button className="btn sec" disabled={kameraBekle || kameraRizasi === null} onClick={async () => { setKameraBekle(true); await onKameraIzni(); setKameraBekle(false) }}>
                 {kameraBekle ? <span className="spin" /> : 'Kamerayı aç'}
               </button>

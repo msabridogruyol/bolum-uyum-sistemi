@@ -92,6 +92,8 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
     v: dict = {
         "okul": okul_bilgisi(db, okul_id or None), "kapsam": kume["etiket"], "kapsam_tur": kapsam_tur,
         "tarih": datetime.now(TR), "esik": EN_AZ_GRUP if kitle != "ogretmen" else None, "kitle": kitle, "moduller": sorted(moduller),
+        # [2026-11-03] "Filizyol nedir" slaytı yayındaki bölüm sayısını veritabanından alır (önce sabit "300'den fazla" yazıyordu)
+        "bolum_sayisi": db.execute(text("SELECT count(*) FROM bolumler WHERE durum = 'yayinda'")).scalar() or 0,
         "toplu": toplam > 0 and yeterli(toplam),      # False → yalnızca genel anlatım slaytları
         "iletisim": _iletisim(okul) if okul else {"rehberler": []},
         "takvim": _takvim(db, okul_id, kume["sinif"]) if "takvim" in moduller else [],

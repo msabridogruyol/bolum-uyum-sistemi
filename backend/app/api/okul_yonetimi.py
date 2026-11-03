@@ -798,14 +798,14 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
             oneriler = [{"sira": i + 1, "bolum": adlar.get(s.bolum_id, "?"), "uyum": round(float(s.toplam_uyum), 1),
                          "alan": getattr(s, "alan", None)} for i, s in enumerate(siralama_getir(db, o, tur, ilk_n=10))]
             if any(d["durum"] != "tamamlandi" for d in tur_listesi[0]["dallar"]):
-                sonuc_notu = "Alan (K5) soruları bitmediği için liste kesinleşmedi."
+                sonuc_notu = "İş türü soruları (K5) bitmediği için liste kesinleşmedi."
         except Exception:
             db.rollback()
-            # yedek: kayıtlı uyum skorlarından ham sıralama (K5 düzeltmesi ve alan sırası olmadan)
+            # yedek: kayıtlı uyum skorlarından ham sıralama (K5 küme içi sıralaması olmadan)
             ham = db.execute(text("SELECT bolum_id, toplam_uyum FROM ogrenci_bolum_uyum_skorlari WHERE tur_id = :t "
                                   "ORDER BY toplam_uyum DESC LIMIT 10"), {"t": turlar[0]["id"]}).all()
             oneriler = [{"sira": i + 1, "bolum": adlar.get(b, "?"), "uyum": round(float(u), 1), "alan": None} for i, (b, u) in enumerate(ham)]
-            sonuc_notu = "Ham uyum sıralaması gösteriliyor (öğrencinin ekranındaki alan düzenlemesi uygulanmadı)." if ham else "Sonuç listesi hesaplanamadı."
+            sonuc_notu = "Ham uyum sıralaması gösteriliyor (K5'in küme içi sıralaması uygulanmadı)." if ham else "Sonuç listesi hesaplanamadı."
     else:
         sonuc_notu = "Öğrenci K1–K4 bölümlerini tamamladığında öneri listesi burada görünür."
     hedef = None

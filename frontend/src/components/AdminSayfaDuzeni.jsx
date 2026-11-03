@@ -41,7 +41,7 @@ const SUPER_MENU = [
     ['/admin/is-hayati-verileri', '💼', 'İş Hayatı Verileri'],
     ['/admin/meslek-dili', '🗣️', 'Meslek Dili Sözlüğü'],
     ['/admin/konular', '📝', 'Konu Listesi (Net Takibi)'],
-    ['/admin/dallar', '🌿', 'Dallar (K5)'],
+    ['/admin/dallar', '🌿', 'Üst Alanlar'],
     ['/admin/sorular', '❔', 'Soru Bankası'],
     ['/admin/gelisim-kaynak', '🌱', 'Gelişim Kaynak Havuzu'],
     ['/admin/takvim', '🗓️', 'Genel Takvim'],

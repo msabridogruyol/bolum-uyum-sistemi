@@ -24,7 +24,7 @@
    "ad": "Katman",
    "g": "Değerlendirme",
    "t": "Değerlendirmenin her bir parçası. K1'den K4'e kadar dört ana katman, sonunda da K5 (İş türü tercihleri) vardır. Her katman seni başka bir yönden tanır.",
-   "o": "K1 seni değerlerinle, K2 kişiliğinle tanır. Dördünü bitirince bölüm önerilerin hazırlanır.",
+   "o": "K1 seni değerlerinle, K2 kişiliğinle tanır. Dördünü bitirince sana özel iş türü soruları açılır; onları da bitirince bölüm önerilerini görürsün.",
    "es": [
     "katman"
    ]

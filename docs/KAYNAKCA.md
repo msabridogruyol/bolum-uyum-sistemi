@@ -7,7 +7,7 @@ Sistemde elle hazırlanan her bileşen, ne yaptığı, nasıl hesaplandığı ve
 - Kaynaklar bileşenin **kuramsal dayanağını** gösterir; Filizyol ölçekleri bu kaynaklardaki ölçeklerin birebir uyarlaması değildir.
 - **Kurum içi** işaretli bileşenlerde eşik, ağırlık ve sayılar ürün tasarımı kararıdır.
 
-Toplam: 75 bileşen, 160 kaynak.
+Toplam: 76 bileşen, 161 kaynak.
 
 ## İçindekiler
 
@@ -27,9 +27,9 @@ Toplam: 75 bileşen, 160 kaynak.
 
 ### Değerlendirme katmanları (K1–K5)
 
-Öğrenciyi beş katmanda ölçen yapı: K1 Değerler/Motivasyon, K2 Kişilik & Çalışma Tarzı, K3 İş Ortamı & Profesyonel Yetkinlik, K4 Alan Eğilimi & Bilişsel Stil, K5 koşullu Derinleşme.
+Öğrenciyi beş katmanda ölçen yapı: K1 Değerler/Motivasyon, K2 Kişilik & Çalışma Tarzı, K3 İş Ortamı & Profesyonel Yetkinlik, K4 Alan Eğilimi & Bilişsel Stil, K5 koşullu İş türü tercihleri.
 
-**Nasıl:** K1–K4 zorunlu ve sırasıyla 7, 8, 7, 9 değişken ölçer (toplam 31); K5 K1–K4 bittikten sonra koşullu açılır (kosullu_mu=TRUE). Ekranda katman başına tahmini süre ≈5 dk, K5 için ≈3 dk/alan yazılır.
+**Nasıl:** K1–K4 zorunlu ve sırasıyla 7, 8, 7, 9 değişken ölçer (toplam 31); K5 K1–K4 bittikten sonra koşullu açılır (kosullu_mu=TRUE). Ekranda katman başına tahmini süre ≈9-10 dk (soru tipine göre: durum 30 sn, uçlar 20 sn, dikkat 10 sn; gerçek süre verisi yok), K5 için ≈3-5 dk yazılır. [2026-10-18] K1–K4'te katman başına 15 soru: 8 en çok / en az, 3 tek seçim, 4 uçlar (A / B). [2026-10-19] Göç 0081 ile 16 en çok / en az sorusu ve katman başına 2 dikkat sorusu eklendi: puanlanan soru K1 18, K2 19, K3 18, K4 21; her özellik 8-10 kez ölçülür.
 
 **Dayanak:**
 
@@ -38,7 +38,7 @@ Toplam: 75 bileşen, 160 kaynak.
 - [66] John ve Srivastava, 1999 — Beş Faktör modelini ve ölçümünü özetler; K2 kişilik & çalışma tarzı katmanına dayanak verir.
 - [58] Holland, 1997 — RIASEC ilgi tipolojisi K4 alan eğilimi katmanının kuramsal temelidir.
 
-> Katmanların kuramlara bağlanması kavramsal düzeydedir (esinlenme); K1–K4'teki değişken sayıları (7, 8, 7, 9), K5'in koşullu açılması ve süre tahminleri (≈5 dk, ≈3 dk/alan) kurum içi tasarım kararıdır.
+> Katmanların kuramlara bağlanması kavramsal düzeydedir (esinlenme); K1–K4'teki değişken sayıları (7, 8, 7, 9), K5'in koşullu açılması ve süre tahminleri (katman başına ≈9–10 dk, K5 ≈3–5 dk) kurum içi tasarım kararıdır.
 
 ### 31 değişkenin tanımları (D1–D7, P1–P8, I1–I7, A1–A9)
 
@@ -115,7 +115,7 @@ Senaryo sorularında seçilen davranışın bir veya birden çok değişkene pua
 
 Öğrencinin soruları okuyup okumadığını yoklayan, puana değil güven puanına etki eden sorular.
 
-**Nasıl:** soru_tipi='kontrol' sorular hiçbir değişkene puan katmaz; beklenen_secenek_sira ile karşılaştırılır, doğruluk oranı × 100 kontrol skoru olur (hiç kontrol sorusu yoksa 100).
+**Nasıl:** soru_tipi='kontrol' sorular hiçbir değişkene puan katmaz; beklenen_secenek_sira ile karşılaştırılır, doğruluk oranı × 100 kontrol skoru olur (hiç kontrol sorusu yoksa güven yalnızca olay skorundan hesaplanır). [2026-10-19] Her K1-K4 katmanında 2 dikkat sorusu: biri açık yönerge, biri herkesin bildiği tek doğru cevaplı soru; şıkları karıştırılmaz.
 
 **Dayanak:**
 
@@ -123,13 +123,13 @@ Senaryo sorularında seçilen davranışın bir veya birden çok değişkene pua
 - [67] Kam ve Chan, 2018 — Talimatlı yanıt maddelerinin ('bu soruda X'i seçin') özensiz yanıtlayıcıları belirlemedeki geçerliğini sınar; beklenen şıkla karşılaştırılan kontrol soruları tasarımını doğrudan destekler.
 - [59] Huang ve ark., 2012 — Yetersiz çabalı yanıtlamayı saptama göstergelerini (ör. yanıt süresi, tutarsızlık) ve caydırıcı yönergeleri inceler; dikkat soruları ve güven puanındaki davranış göstergelerine dayanak sağlar.
 
-> Kontrol skorunun doğruluk oranı × 100 olarak hesaplanması ve hiç kontrol sorusu yoksa 100 kabul edilmesi kurum içi karardır.
+> Kontrol skorunun doğruluk oranı × 100 olarak hesaplanması ve güven puanında kontrol ile olay skorundan düşük olanın alınması kurum içi karardır.
 
 ### Güven puanı ve sonuç geçerliliği · _Kurum içi_
 
 Bir değerlendirme turunun güvenilirliğini 0–100 puanla gösterir; eşik altı turlar 'geçersiz' etiketlenir (silinmez).
 
-**Nasıl:** güven = 0,5 × kontrol_skoru + 0,5 × olay_skoru; olay_skoru = max(0, 100 − Σceza); cezalar: tam ekrandan çıkma 10, sekme değiştirme 10, pencere odağı kaybı 5, ikinci ekran 15, ekran görüntüsü tuşu 10, kopyalama 5, kamera kapandı 5; kamera iznini reddetmek ve 'geri dönüldü' olayları cezasız. Eşik parametre guven_skoru_esigi, varsayılan 50; akran analizinde <50 'düşük güven' sayılır.
+**Nasıl:** güven = min(kontrol_skoru, olay_skoru) (2026-10-20; kontrol sorusu yoksa olay_skoru); olay_skoru = max(0, 100 − Σceza); cezalar: tam ekrandan çıkma 10, sekme değiştirme 10, pencere odağı kaybı 5, ikinci ekran 15, ekran görüntüsü tuşu 10, kopyalama 5, kamera kapandı 5; kamera iznini reddetmek ve 'geri dönüldü' olayları cezasız. Eşik parametre guven_skoru_esigi, varsayılan 50; akran analizinde <50 'düşük güven' sayılır.
 
 **Dayanak:**
 
@@ -138,34 +138,34 @@ Bir değerlendirme turunun güvenilirliğini 0–100 puanla gösterir; eşik alt
 
 > Güven puanının bileşimi (0,5 kontrol + 0,5 olay skoru), olay cezaları (10/10/5/15/10/5/5) ve 50 eşiği kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz. Kaynaklar yalnızca birden çok yanıt kalitesi göstergesinin birlikte kullanılması fikrini destekler; tarayıcı olaylarının (sekme değiştirme, tam ekrandan çıkma vb.) yanıt geçerliğiyle ilişkisi için doğrulanmış bir kaynak eşlenmemiştir.
 
-### K5 alan açma kuralı · _Kurum içi_
+### K5 küme kuralı ve öğrenciye özel sorular · _Kurum içi_
 
-K1–K4 sonrası öğrenciye hangi derinleşme alanlarının (en fazla 2) açılacağına karar verir.
+K1–K4 sonrası öğrencinin hangi bölümlerinin K5'te kendi aralarında karşılaştırılacağına ve bunun için hangi soruların sorulacağına karar verir.
 
-**Nasıl:** İlk 15 bölüm (DAL_SECIM_UST_N) alanlarına göre gruplanır; 1. sıradaki bölümün alanı her zaman açılır, diğer alanlar en iyi 3 bölüm ortalaması ana alandan en çok 10 puan (IKINCI_ALAN_FARK) gerideyse açılır (k5_max_dal_sayisi = 2). Ana alanın tüm soruları, ikinci alanın yalnızca ilk 6 sorusu sorulur (toplam en fazla 14 + 6 = 20). Gösterilen alan puanı = ilk 15'teki toplam uyum payı (%). Eski K4 eşiği (k5_esik_puani 80→70) artık seçimde kullanılmıyor.
-
-**Dayanak:**
-
-- [42] Gati ve Asher, 2005 — Kariyer kararında önce geniş bir ön elemeyle seçenekleri daraltıp sonra az sayıda seçeneği derinlemesine incelemeyi öneren aşamalı modeldir; K1–K4 sonrası yalnızca en uygun 1–2 alanın K5 ile derinleştirilmesi bu huni mantığından esinlenir.
-- [55] Hendrickson, 2007 — Önceki aşamadaki performansa göre sonraki modülün seçildiği çok aşamalı test tasarımını tanıtır; K5'in K1–K4 sonuçlarına göre dallanmasına genel yapısal dayanak verir, ancak K5 bir yetenek testi değildir.
-
-> İlk 15 bölüm (DAL_SECIM_UST_N), en fazla 2 alan, 10 puanlık ikinci alan farkı ve 14 + 6 soru sınırı kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz.
-
-### K5 üst alanlar, alan soruları ve dal içi uyum
-
-17 üst alan (Mühendislik, Bilişim & Yazılım, Sağlık & Rehabilitasyon …) için iş türü eksenleri, bölüm–alan eşleşmeleri ve alan içi bölüm uyumu.
-
-**Nasıl:** 301 bölüm elle gözden geçirilmiş bölüm_dal_eslesme ile bir üst alana bağlıdır (eski yapı: A1–A9'a göre K-Means ile 8 dal). Yeni yapıda dal içi uyum = öğrencinin eksen puanlarının bölüm–eksen bağlarıyla (bolum_k5_baglari, 0–1) ağırlıklı ortalaması; bölümler arası z-skoru alınır, güven = min(1, öğrenci K5 std / 15) ve skor = 50 + güven × 15 × z (0–100). Bağ yoksa eski yöntem (katman içi ölçekli 100 − |fark|) çalışır.
+**Nasıl:** [2026-10-18] K1–K4 uyumu ≥ 70 olan bölümler kümeye alınır (en fazla 20, en az 5; puanlar göreli olduğundan ≥ 70 = en iyi bölüme 30 puandan yakın). Kümedeki bölümlerin bağlı iş türleri (bolum_k5_baglari) toplanır; alan sınırı yoktur. Soru sayısı = iş türü sayısı × 3/4 (en az 6, en fazla 15): yaklaşık %50 en çok / en az ve %20 tek seçim (her iş türü dengeli sayıda görünür), %30 uçlar (K1–K4'te birbirine en yakın bölüm çiftlerinin ana iş türleri karşı karşıya). Sorular iş türü başına 3 etkinlik cümlesinden (k5_cumleleri) ve 20 kökten (k5_soru_kokleri) üretilir, tur başına sabittir ve sorular.ogrenci_id / tur_id ile saklanır. Eski alan açma kuralı (ilk 15 bölümün alanları, en fazla 2 alan) kaldırıldı: uçtan uca simülasyonda alan soruları doğru bölümü eziyordu.
 
 **Dayanak:**
 
-- [137] UNESCO Institute for Statistics, 2015 — Eğitim alanlarının uluslararası hiyerarşik sınıflamasıdır; 301 bölümün 17 üst alana gruplanmasına referans çerçeve sunar, ancak 17 alanlık yapı ISCED-F ile birebir aynı değildir.
-- [147] Yükseköğretim Kurulu, t.y. — Türkiye'deki lisans/önlisans programlarının resmî listesini ve alan bilgilerini sunar; 301 bölümün tanımlanması ve gruplanmasında başvuru kaynağıdır.
-- [85] MacQueen, 1967 — K-ortalamalar kümeleme yöntemini tanımlar; eski yapıdaki A1–A9'a göre 8 dala kümelemenin yöntemsel dayanağıdır.
-- [58] Holland, 1997 — Holland'ın profil farklılaşması kavramı, öğrencinin eksen puanlarının ne kadar ayrıştığına göre güven katsayısı uygulamasına kavramsal esin verir.
+- [42] Gati ve Asher, 2005 — Kariyer kararında önce geniş bir ön elemeyle seçenekleri daraltıp sonra az sayıda seçeneği derinlemesine incelemeyi öneren aşamalı modeldir; K1–K4 sonrası yalnızca en uygun bölüm kümesinin iş türü sorularıyla kendi arasında karşılaştırılması bu huni mantığından esinlenir.
+- [55] Hendrickson, 2007 — Önceki aşamadaki performansa göre sonraki modülün seçildiği çok aşamalı test tasarımını tanıtır; K5 sorularının K1–K4 sonuçlarına göre öğrenciye özel kurulmasına genel yapısal dayanak verir, ancak K5 bir yetenek testi değildir.
+
+> Küme eşiği (≥ 70), küme sınırları (en az 5, en fazla 20), soru sayısı kuralı (iş türü sayısı × 3/4; 6–15) ve soru türü payları (%50 / %20 / %30) kurum içi tasarım kararıdır; akademik bir kesme noktasına dayanmaz.
+
+### K5 iş türleri ve bölüm K5 puanı
+
+129 iş türü (17 üst alan altında gruplanmış), bölüm–iş türü bağları ve öğrencinin cevaplarından bölümün K5 puanı.
+
+**Nasıl:** [2026-10-18] İş türü puanı K1–K4 ile aynı kurallarla hesaplanır (en çok 100 / en az 0 / diğer 50; tek seçimde seçilen 100, diğerleri 33,3; uçlarda 4'lü ölçek). Bölümün K5 puanı = bağlı iş türlerinin bağ ağırlıklı ortalaması (bolum_k5_baglari, 0–1); öğrencinin iş türü puanlarının yayılımı düşükse (std < 15) puan orantılı olarak 50'ye çekilir. Bağlar pipeline'ın b5 adımında veriden üretilir (iş türü cümleleri ↔ meslekler ve bölüm metni, 3 embedding modeli; %70 meslek kanıtı + %30 bölüm metni kanıtı; bağ = 0,25 + 0,75 × yakınlık, 0,05 adımlı; elle düzeltme yok) ve Pipeline Sonuçları ekranından yedekli olarak canlıya alınır. 17 üst alan bölümlerin alan etiketi için kalır (bolum_dal_eslesme).
+
+**Dayanak:**
+
+- [137] UNESCO Institute for Statistics, 2015 — Eğitim alanlarının uluslararası hiyerarşik sınıflamasıdır; bölümlerin 17 üst alana gruplanmasına referans çerçeve sunar, ancak 17 alanlık yapı ISCED-F ile birebir aynı değildir.
+- [147] Yükseköğretim Kurulu, t.y. — Türkiye'deki lisans/önlisans programlarının resmî listesini ve alan bilgilerini sunar; bölümlerin tanımlanması ve gruplanmasında başvuru kaynağıdır.
+- [85] MacQueen, 1967 — K-ortalamalar kümeleme yöntemini tanımlar; eski yapıdaki A1–A9'a göre 8 dala kümelemenin yöntemsel dayanağıydı (eski yapı, 2026-10-08'de kaldırıldı).
+- [58] Holland, 1997 — Holland'ın profil farklılaşması kavramı, öğrencinin iş türü puanlarının ne kadar ayrıştığına göre güven katsayısı uygulamasına kavramsal esin verir.
 - [140] Ward, 1963 — Bölüm/meslek profillerinin benzerliğe göre hiyerarşik olarak kümelenmesini destekler.
 
-> 17 üst alan, bölüm–alan eşleşmeleri ve bölüm–eksen bağları (0–1) elle hazırlanmıştır. Güven = min(1, std/15), 50 + güven × 15 × z skoru ve eski yöntemdeki 100 − |fark| hesabı kurum içi tasarım kararıdır.
+> 17 üst alan ve bölüm–alan eşleşmeleri bir taksonomidir (elle hazırlanmış, yalnızca etiket). Bağ dönüşümü (0,25 + 0,75 × yakınlık), %70 / %30 kanıt payları, güven = min(1, std/15) ve K5 puanı = 50 + güven × (ham − 50) kurum içi tasarım kararıdır.
 
 ### Gelişim yorum havuzu (sonuç yorumları)
 
@@ -223,6 +223,18 @@ Her soru/şık metninin gerçekten bağlı olduğu değişkeni ölçüp ölçmed
 
 > Dil modellerinin insan uzman yerine kullanılması bir esinlenmedir; Lawshe CVR veya kappa birebir hesaplanmaz. Katman %70 ve genel %80 eşikleri kurum içi karardır. Rastgele taban formülü (C(3,2)·p²(1−p) + p³) basit binom olasılığıdır, ayrı bir kaynak gerektirmez.
 
+### Maarif Modeli karşılıkları · _Kurum içi_
+
+Her özelliğin Türkiye Yüzyılı Maarif Modeli'ndeki ilişkili değer, eğilim ve becerileri (ör. Yeniliğe açıklık → Merak, Açık fikirlilik).
+
+**Nasıl:** app/data/maarif_eslesme.json: özellik kodu → TYMM değer / eğilim (E…) / sosyal-duygusal beceri (SDB…) / kavramsal beceri (KB…). Profilim, katman detayı, Koçluğum, okul istatistikleri ve PDF raporlarında gösterilir. İş değerleri (D1 güvence, D2 gelir, D3 statü, D4 anlam) eşleştirilmedi.
+
+**Dayanak:**
+
+- [161] MEB, 2024 (TYMM) — Eşleştirilen kavramların resmî adları ve kodları bu çerçevelerden alınmıştır.
+
+> Eşleştirme kurum içinde yapılmış yorumsal bir ilişkilendirmedir; birebir ölçüm değildir, puanlamayı etkilemez ve MEB onayı anlamına gelmez.
+
 ## Uyum hesaplama
 
 ### Meslek verisi (ESCO) ve çeviri
@@ -242,9 +254,9 @@ Bölüm profillerinin hesaplandığı meslek havuzu ve İngilizce–Türkçe çe
 
 ### Bölüm beklenen profili (embedding eşleştirme pipeline'ı)
 
-301 bölümün 31 değişkendeki 'beklenen profilini' (agirlik_degeri) çıkaran, öğrenciden bağımsız offline hesaplama.
+yayındaki 262 bölümün 31 değişkendeki 'beklenen profilini' (agirlik_degeri) çıkaran, öğrenciden bağımsız offline hesaplama (pipeline b4).
 
-**Nasıl:** Meslek ve bölüm tam açıklamaları 3 modelle (turkce-embedding-bge-m3, bert-base-turkish-cased-mean-nli-stsb-tr, bge-large-en-v1.5) anlamsal benzerlikle eşleşir; ilişki ortalamanın en az 1 std üstündeyse sayılır, model konsensüsü önceliklendirir; yakın mesleklerin puanları ağırlıklı ortalamayla bölüm profiline dönüşür (agirlikli_varyans, etkin_meslek_sayisi, yakinsama_skoru güvenilirlik göstergeleri; yakinsama_esik_sigma 0,10). Çıktı taslak tabloya yüklenir, önizleme sonrası süper admin onayıyla yeni versiyon olur; veri yoksa nötr 50.
+**Nasıl:** Bölüm metni (232 bölümde resmî ders planlarındaki ders adları, diğerlerinde kısa açıklama; b2) ESCO meslek metinleriyle 3 modelde (turkce-embedding-bge-m3, bert-base-turkish-cased-mean-nli-stsb-tr, bge-large-en-v1.5) karşılaştırılır; her modelin benzerlikleri bölüm içinde standartlaştırılıp eşit ağırlıkla ortalanır, en benzer 40 meslek benzerlik farkıyla ağırlıklandırılır (bolum_meslek.py; ISCO-08: öğretmenlik dışı bölümde ISCO 23, hiçbir bölümde 2310 sayılmaz). Meslek puanı = %70 O*NET 31.0 öğe puanları + %30 regresyon (O*NET karşılığı yoksa yalnız regresyon); D3 SIOPS-08 %70 + regresyon %30; D1/D2 TÜİK Yükseköğretim İstihdam Göstergeleri (TÜİK'te olmayan bölümde tahmin). Her değişken bölümler arasında 50 ± 10'a ölçeklenir; agirlikli_varyans ve etkin_meslek_sayisi güvenilirlik göstergeleri olarak yazılır. Çıktı taslak tabloya yüklenir, önizleme sonrası süper admin onayıyla yeni versiyon olur; veri yoksa nötr 50.
 
 **Dayanak:**
 
@@ -252,7 +264,7 @@ Bölüm profillerinin hesaplandığı meslek havuzu ve İngilizce–Türkçe çe
 - [23] Chen ve ark., 2024 — Kullanılan turkce-embedding-bge-m3 modelinin temel aldığı çok dilli BGE-M3 embedding modelini tanıtır.
 - [20] Cer ve ark., 2017 — Çok dilli ve diller arası anlamsal metin benzerliği (STS) görevini ve STS-B veri setini tanımlar; açıklamalar arası benzerlik puanlamasının ve stsb-tr modelinin dayandığı değerlendirme çerçevesidir.
 
-> Embedding eşleştirmesi literatüre dayanır; ancak 'ortalama + 1 std' eşiği, 3 model konsensüsü, ağırlıklı ortalama ile bölüm profiline aktarma, yakinsama_esik_sigma = 0,10 ve veri yoksa nötr 50 kuralı kurum içi tasarım kararlarıdır; belirli bir yayındaki yöntemin uyarlaması değildir.
+> Embedding eşleştirmesi ve O*NET / SIOPS / TÜİK verileri kaynaklara dayanır; ancak en benzer 40 meslek, modellerin eşit ağırlığı, %70 / %30 karışım payları, 50 ± 10 ölçekleme ve veri yoksa nötr 50 kuralı kurum içi tasarım kararlarıdır (2026-10-22'de ÖSYM puan türü dış ölçütüyle sınandı); belirli bir yayındaki yöntemin uyarlaması değildir.
 
 ### Katman ve kriter ağırlıkları · _Kurum içi_
 
@@ -272,7 +284,7 @@ Her katmanın ve değişkenin toplam uyuma katkı payı.
 
 Öğrenci ve bölüm profillerini düzeyden bağımsız 'şekil' olarak karşılaştırma.
 
-**Nasıl:** Öğrenci vektörü ve her bölüm satırı her katman içinde kendi ortalama/std'sine göre 50 + 15·z'ye ölçeklenir (≤2 değişkenli katmanda ham değer); performans_ij = max(0, 100 − |öğrenci_j − bölüm_ij|). Bu matris 10 yöntemin ortak girdisidir; koçluk gap analizi ve K5 eski yöntemi de aynı ölçeği kullanır.
+**Nasıl:** Öğrenci vektörü ve her bölüm satırı her katman içinde kendi ortalama/std'sine göre 50 + 15·z'ye ölçeklenir (≤2 değişkenli katmanda ham değer); performans_ij = max(0, 100 − |öğrenci_j − bölüm_ij|). Bu matris 10 yöntemin ortak girdisidir; koçluk gap analizi de aynı ölçeği kullanır.
 
 **Dayanak:**
 
@@ -316,29 +328,29 @@ Duygusal hassasiyet puanının bölüm önerisine katılmaması ve koçlukta ter
 
 Öğrenciye gösterilen bölüm önerilerinin sırası.
 
-**Nasıl:** Sıra yalnızca gösterilen uyum puanına göredir (10 ÇKKV yönteminin ortalaması + K5 dal katkısı), büyükten küçüğe. Eşitlikte ağırlıklı varyans (artan), etkin meslek sayısı (azalan) ve ad (alfabetik) kullanılır. Sonradan alan cezası, alan gruplaması ya da kota uygulanmaz.
+**Nasıl:** Sıra yalnızca gösterilen uyum puanına göredir (10 ÇKKV yönteminin ortalaması; K5 yalnızca küme içi sırayı değiştirir), büyükten küçüğe. Eşitlikte ağırlıklı varyans (artan), etkin meslek sayısı (azalan) ve ad (alfabetik) kullanılır. Sonradan alan cezası, alan gruplaması ya da kota uygulanmaz.
 
 **Dayanak:**
 
 - [137] UNESCO Institute for Statistics, 2015 — Eğitim alanlarının hiyerarşik sınıflamasını verir; önerilerde bilgi olarak gösterilen 17 üst alanın tanımlanmasına resmî referans sağlar.
 
-> 2026-10-17 öncesinde alan tutarlılığı cezası (puana yazılıp 0'a kırpılan) ve 17 alanlık elle yazılmış komşuluk tablosuyla gruplama vardı; ölçülen sonucu değiştirdikleri için kaldırıldı. Konu olarak uzak görünen bölümlerin birlikte çıkması, öğrencinin ölçülen özelliklerindeki gerçek ortaklığı gösterir; ayrım değişkenlerden ve K5 derinleşmesinden gelir.
+> 2026-10-17 öncesinde alan tutarlılığı cezası (puana yazılıp 0'a kırpılan) ve 17 alanlık elle yazılmış komşuluk tablosuyla gruplama vardı; ölçülen sonucu değiştirdikleri için kaldırıldı. Konu olarak uzak görünen bölümlerin birlikte çıkması, öğrencinin ölçülen özelliklerindeki gerçek ortaklığı gösterir; ayrım değişkenlerden ve küme içi iş türü sorularından (K5) gelir.
 
 ### K5 etkisi, eşitlik bozma ve ilk 10 liste · _Kurum içi_ · _Okul görünümünde yok_
 
-Alan sorularının nihai uyuma katılması ve gösterilen sıralamanın kuralları.
+İş türü sorularının (K5) sıralamaya katılması ve gösterilen sıralamanın kuralları.
 
-**Nasıl:** nihai = toplam_uyum + 0,50 × (dal_ici_uyum − 50), en fazla ±25, 0–100 (0,30→0,50 seçimi iki aşamalı doğrulama simülasyonuna dayanır: ilk 3 doğruluğu %75,5→%76,5). Sıralama: alan grubu, nihai uyum azalan, agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad; öğrenciye en fazla 10 bölüm gösterilir ve yalnızca K1–K4 tamamlanınca hesaplanır.
+**Nasıl:** [2026-10-18] Kümedeki bölümler ölçüt = toplam_uyum + 0,15 × (K5 − 50) ile (ölçütte en fazla ±7,5) yeniden sıralanır ve kümenin kendi K1–K4 puanlarını büyükten küçüğe yuva olarak alır; kümenin dışı değişmez. Kurum içi uçtan uca simülasyon (gerçek kod yolu, 300 + 300 sentetik öğrenci): K5 cevapları hedef bölümün işleriyle uyumluyken hedefin 1. çıkma oranı %70 → %80, ilk 3 %90 → %95; K5 cevapları rastgeleyken %67 → %61. Önceki alan bazlı K5 (0,50) aynı ölçütte doğru bölümü %43'ten %28'e düşürüyordu. Sıralama: nihai uyum azalan, agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad; öğrenciye en fazla 10 bölüm gösterilir ve yalnızca K1–K4 tamamlanınca hesaplanır.
 
 **Dayanak:** Akademik dayanak yok.
 
-> K5 katkı katsayısı (0,50), ±25 sınırı, eşitlik bozma sırası ve en fazla 10 bölüm gösterimi kurum içi tasarım kararlarıdır; 0,30→0,50 seçimi yalnızca kurum içi sentetik yanıtlayıcı simülasyonuna (ilk 3 doğruluğu %75,5→%76,5) dayanır, akademik bir kesme noktasına veya yayımlanmış bir puan birleştirme yöntemine dayanmaz. Simülasyondaki küçük kazanç (~1 puan) dış örneklemle doğrulanmamıştır.
+> K5 katkı katsayısı (0,15), ±7,5 sınırı, eşitlik bozma sırası ve en fazla 10 bölüm gösterimi kurum içi tasarım kararlarıdır; katsayı seçimleri (10-08'de 0,30→0,50, 10-18'de 0,50→0,15) yalnızca kurum içi sentetik yanıtlayıcı simülasyonlarına dayanır, akademik bir kesme noktasına veya yayımlanmış bir puan birleştirme yöntemine dayanmaz ve dış örneklemle doğrulanmamıştır.
 
 ### 'Neden bu bölüm?' açıklamaları · _Kurum içi_
 
 Her önerilen bölüm için örtüşen güçlü yönleri, öğrencinin kanıt cevaplarını, K5 notunu ve dikkat notunu üreten açıklama.
 
-**Nasıl:** Örtüşen yön: bölümün o özellikteki bölümler arası yüzdeliği ≥60 ve öğrencinin ölçekli puanı ≥55; en fazla 3 yön, 30 kısa ad (KISA_AD). Dikkat notu: bölüm yüzdeliği ≥85 ve öğrenci ≤40, aynı not 3+ bölümde çıkıyorsa gösterilmez. K5 notu ana eksen puanı ≥60/≤40. Kanıtlar: SJT'de ağırlık ≥0,5 seçilen şık, Likert'te en güçlü katılım, kutupta 1. veya 4. şık; metinler 110 karakterle kısaltılır. [2026-10-17] Dikkat notu iki yönlüdür: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not.
+**Nasıl:** Örtüşen yön: bölümün o özellikteki bölümler arası yüzdeliği ≥60 ve öğrencinin ölçekli puanı ≥55; en fazla 3 yön, 30 kısa ad (KISA_AD). Dikkat notu: bölüm yüzdeliği ≥85 ve öğrenci ≤40, aynı not 3+ bölümde çıkıyorsa gösterilmez. K5 notu bölümün ana iş türündeki puan ≥60/≤40. Kanıtlar: SJT'de ağırlık ≥0,5 seçilen şık, Likert'te en güçlü katılım, kutupta 1. veya 4. şık; metinler 110 karakterle kısaltılır. [2026-10-17] Dikkat notu iki yönlüdür: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not.
 
 **Dayanak:**
 
@@ -380,7 +392,7 @@ Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını (cevap
 
 Öğrenci ile hedef bölüm arasındaki farkı özellik özellik sınıflayıp en önemli gelişim alanlarını bulma.
 
-**Nasıl:** Göreli fark (katman/dal içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır. [2026-10-17] Ekranda fark yakınlık dilinde gösterilir (uyum puanı da farkın yönüne bakmaz): |fark| < 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz; değerlerde (K1) 'senin için daha önemli / daha az önemli' denir; P4 (kaygı) için yalnızca fazlası fark sayılır.
+**Nasıl:** Göreli fark (katman içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır. [2026-10-17] Ekranda fark yakınlık dilinde gösterilir (uyum puanı da farkın yönüne bakmaz): |fark| < 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz; değerlerde (K1) 'senin için daha önemli / daha az önemli' denir; P4 (kaygı) için yalnızca fazlası fark sayılır.
 
 **Dayanak:**
 
@@ -519,7 +531,7 @@ Yapay zekâ bağlı değilken öğrencinin gerçek verileriyle anahtar kelimeye 
 
 OpenAI modeline öğrencinin gerçek profiliyle giden sistem istemi, oturum/limit kuralları ve kendine zarar ifadelerinde sabit güvenli yanıt.
 
-**Nasıl:** Sistem istemi 11 kural içerir: sohbet dili (liste yok), kişisel anı uydurmama, yalnızca profil verisine dayanma, sistemle çelişmeme, kariyer eksenli kalma, sıcak/yargısız ton, kaynakları hedef bölüme göre çerçeveleme (en fazla 1–2), reşit olmayan güvenliği (112, ALO 183, teşhis koymama), haftalık görevlere dayanma, 2–4 cümle, gizlilik (başka öğrenci hakkında bilgi vermeme). Öğrencinin adı modele gönderilmez; mesajlardaki kendi adı ve okul arkadaşlarının adları maskelenir. Model gpt-4o-mini, temperature 0,7, en çok 500 token; oturum 20 mesajda kapanır, 2–3 cümlelik özet sonraki oturuma taşınır; günlük 30 mesaj (filiz_gunluk_mesaj_limiti). 23 kriz ifadesi geçerse model çağrılmadan sabit yanıt verilir.
+**Nasıl:** Sistem istemi 11 kural içerir: sohbet dili (liste yok), kişisel anı uydurmama, yalnızca profil verisine dayanma, sistemle çelişmeme, kariyer eksenli kalma, sıcak/yargısız ton, kaynakları hedef bölüme göre çerçeveleme (en fazla 1–2), reşit olmayan güvenliği (112, ALO 183, teşhis koymama), haftalık görevlere dayanma, 2–4 cümle, gizlilik (başka öğrenci hakkında bilgi vermeme). Öğrencinin adı modele gönderilmez; mesajlardaki kendi adı ve okul arkadaşlarının adları maskelenir. Model gpt-4o-mini, temperature 0,7, en çok 500 token; oturum 20 mesajda kapanır, 2–3 cümlelik özet sonraki oturuma taşınır; günlük mesaj sınırı pakete göre: Temel 5, Gelişim 20, Tam 40 (filiz_gunluk_mesaj_limiti_temel, _gelisim, filiz_gunluk_mesaj_limiti); okulun aylık üst sınırı öğrenci başına Temel 30, Gelişim 60, Tam 120 (filiz_okul_aylik_ogrenci_basi_temel, _gelisim, filiz_okul_aylik_ogrenci_basi); aynı anda en fazla 10 yapay zekâ çağrısı, 15 sn zaman aşımı ve aynı sağlayıcıda yedek model; sınır dolunca, yoğunlukta ya da hatada Filiz rehber modunda cevaplar. 23 kriz ifadesi geçerse model çağrılmadan sabit yanıt verilir.
 
 **Dayanak:**
 
@@ -547,9 +559,9 @@ Hedef mesleğe göre kıyafet değiştiren ve ara ara motivasyon cümlesi söyle
 
 ### Bölüm açıklamaları, bölüm detayı ve Keşfet
 
-301 bölümün kısa açıklaması, detaylı tanıtımı (özet, dersler, iş alanları, meslekler, günlük işler, çalışma ortamı, beceriler, nasıl olunur) ve tüm bölümleri arama ekranı.
+262 bölümün kısa açıklaması, detaylı tanıtımı (özet, dersler, iş alanları, meslekler, günlük işler, çalışma ortamı, beceriler, nasıl olunur) ve tüm bölümleri arama ekranı.
 
-**Nasıl:** Kısa açıklamalar Bölüm_Listesi.xlsx'ten 301 bölüm adıyla birebir eşlenerek eklendi; detay JSON'u bolumler.detay alanında (içerik repoda değil). Keşfet her bölüm için en yüksek ağırlıklı 5 değişkeni ve varsa uyum yüzdesini gösterir; arama Türkçe İ/ı kuralıyla Python'da yapılır.
+**Nasıl:** Kısa açıklamalar Bölüm_Listesi.xlsx'ten bölüm adıyla birebir eşlenerek eklendi (ilk listede 301 bölüm vardı; birleştirme ve kaldırmalardan sonra 262); detay JSON'u bolumler.detay alanında (içerik repoda değil). Keşfet her bölüm için en yüksek ağırlıklı 5 değişkeni ve varsa uyum yüzdesini gösterir; arama Türkçe İ/ı kuralıyla Python'da yapılır.
 
 **Dayanak:**
 
@@ -564,14 +576,14 @@ Hedef mesleğe göre kıyafet değiştiren ve ara ara motivasyon cümlesi söyle
 
 Her bölümün mesleğinde sık kullanılan terimlerin anlamı ve örnek cümlesi.
 
-**Nasıl:** meslek_jargonu.json: 301 bölüm × ortalama 10 terim (terim, anlam, örnek) elle yazılmış varsayılan içerik; öncelik okula özel sürüm → genel sürüm (süper admin) → varsayılan.
+**Nasıl:** meslek_jargonu.json: 262 bölüm × ortalama 10 terim (terim, anlam, örnek) elle yazılmış varsayılan içerik; öncelik okula özel sürüm → genel sürüm (süper admin) → varsayılan.
 
 **Dayanak:**
 
 - [93] Mesleki Yeterlilik Kurumu, t.y. — Ulusal meslek standartları mesleklerin görev ve terminolojisini resmî olarak tanımlar; jargon terimlerinin doğrulanabileceği bir kaynaktır.
 - [38] European Commission, t.y. — ESCO meslek ve beceri tanımları çok dilli standart terimler sunar; terim anlamlarının tutarlılığını desteklemek için kullanılabilir.
 
-> 301 bölüm × ortalama 10 terim elle yazılmış varsayılan içeriktir; terimlerin MYK/ESCO ile tek tek doğrulandığına dair kayıt yoktur. Meslekî sosyalleşme için akademik kaynak eklenmedi; bileşen büyük ölçüde içerik/ürün kararıdır.
+> 262 bölüm × ortalama 10 terim elle yazılmış varsayılan içeriktir; terimlerin MYK/ESCO ile tek tek doğrulandığına dair kayıt yoktur. Meslekî sosyalleşme için akademik kaynak eklenmedi; bileşen büyük ölçüde içerik/ürün kararıdır.
 
 ### Meslek simülasyonu karar anları
 
@@ -638,7 +650,7 @@ Seçili bölümün meslekleri için, ait oldukları ISCO-08 meslek grubunun üre
 
 Her bölüm için 4 soruluk kısa bir iş görüşmesi: mülakatçı alana özgü bir durum sorar, iki aday farklı yaklaşımla cevap verir, öğrenci daha iyi cevabı seçer; ardından iki cevabın gerekçesi, mülakatçının tercihi ve 'Alandan bir bilgi' gösterilir.
 
-**Nasıl:** İçerik app/data/mulakat_simulasyonu.json: 301 bölüm × 4 soru (2 alan durumu, 1 iletişim, 1 etik/sorumluluk) = 1.204 soru; her soruda konu, beceri, terimler, iki aday cevabı ve gerekçeleri, 'Alandan bir bilgi' (ders). 1.149 soruda tek iyi aday vardır; 55 soru 'ikisi de' türündedir (iki yaklaşımın sonucu anlatılır). İyi adayın yeri dengelidir (Aday 1: 572, Aday 2: 577; testte %40–60 aralığı denetlenir). Bilgi sınavı değildir; doğru aday gerekçeden mantıkla bulunabilir. 105 soru bir düşünme aracıyla etiketlidir ve 'Atölyede dene' bağlantısıyla Düşünme Atölyesi'ne bağlanır. Durumlar kurgusaldır ve bağımsız içerik denetiminden geçmiştir. Kayıt: seçimler ve mülakatçıyla aynı seçilen soru sayısı (is_hayati_mulakat_sim), yalnızca öğrencinin kendi uçlarından okunur; puan ya da uyum hesabına girmez.
+**Nasıl:** İçerik app/data/mulakat_simulasyonu.json: 262 bölüm × 4 soru (2 alan durumu, 1 iletişim, 1 etik/sorumluluk) = 1.048 soru; her soruda konu, beceri, terimler, iki aday cevabı ve gerekçeleri, 'Alandan bir bilgi' (ders). 1.004 soruda tek iyi aday vardır; 44 soru 'ikisi de' türündedir (iki yaklaşımın sonucu anlatılır). İyi adayın yeri dengelidir (Aday 1: 501, Aday 2: 503; testte %40–60 aralığı denetlenir). Bilgi sınavı değildir; doğru aday gerekçeden mantıkla bulunabilir. 95 soru bir düşünme aracıyla etiketlidir ve 'Atölyede dene' bağlantısıyla Düşünme Atölyesi'ne bağlanır. Durumlar kurgusaldır ve bağımsız içerik denetiminden geçmiştir. Kayıt: seçimler ve mülakatçıyla aynı seçilen soru sayısı (is_hayati_mulakat_sim), yalnızca öğrencinin kendi uçlarından okunur; puan ya da uyum hesabına girmez.
 
 **Dayanak:**
 
@@ -646,13 +658,13 @@ Her bölüm için 4 soruluk kısa bir iş görüşmesi: mülakatçı alana özg�
 - [108] Phillips, 1998 — Gerçekçi iş önizlemelerinin beklentiler ve işten ayrılma üzerinde küçük ama tutarlı etkileri olduğunu meta-analitik olarak gösterir; simülasyonun meslek tanıtım amacını destekler, etkinin büyüklüğü ya da öğrenci örnekleminde geçerliği konusunda bir şey söylemez.
 - [88] McDaniel ve ark., 2001 — Durumsal yargı testlerinin iş performansını yordadığını gösterir; bir duruma verilen cevapları karşılaştırıp daha iyisini seçme biçimi bu test türünden esinlenir. Mülakat simülasyonu bir seçme ya da ölçme aracı değildir; geçerlik çalışması yapılmamıştır ve sonuç öğrenciyi değerlendirmek için kullanılmaz.
 
-> 1.204 soru, aday cevapları, gerekçeler ve 'Alandan bir bilgi' metinleri kurum içinde yazılmış kurgusal içeriktir; bağımsız içerik denetiminden geçmiş olsa da her alan için alan uzmanı onayı ve durumsal yargı testi olarak psikometrik çalışma yoktur. Soru dağılımı (2 alan, 1 iletişim, 1 etik), iyi adayın yerinin %40–60 dengesi ve düşünme aracı etiketleri ürün kararıdır.
+> 1.048 soru, aday cevapları, gerekçeler ve 'Alandan bir bilgi' metinleri kurum içinde yazılmış kurgusal içeriktir; bağımsız içerik denetiminden geçmiş olsa da her alan için alan uzmanı onayı ve durumsal yargı testi olarak psikometrik çalışma yoktur. Soru dağılımı (2 alan, 1 iletişim, 1 etik), iyi adayın yerinin %40–60 dengesi ve düşünme aracı etiketleri ürün kararıdır.
 
 ### İş Hayatı · Düşünme Atölyesi · _Kurum içi_
 
 Okulda pek öğretilmeyen düşünme araçlarını yaparak öğreten 6 modül: kök neden (5 Neden), korelasyon ≠ nedensellik, algoritmik düşünme, ikiye bölerek arama, veriyi doğru oku (tercih) ve öğrenmeyi öğren (kendini sınama deneyi).
 
-**Nasıl:** İçerik app/data/dusunme_atolyesi.json. Modül akışı: durum → ilk deneme (araç bilinmeden) → araç → okulda → iş hayatında → bu hafta dene → özet ('ilk denemen → aracı kullanınca'; puan değildir). Alıştırmalar: neden zinciri ve kök/belirti ayrımı; saçılım grafikli 3 korelasyon vakası; adımları sıralayıp robotu çalıştırma; 1–100 arası sayı bulma ve ikiye bölme gösterimi; kurgusal program tablosu (kontenjan, taban puan, taban başarı sırası, son yerleşenin netleri) üzerinde 5 soru ve Güvenli/Dengeli/Riskli sınıflaması (oran ≤0,85 / ≤1,10 / >1,10; Tercih bileşeniyle aynı eşikler); öğrenmeyi öğren deneyi: uydurma dilden 12 kelime, 6'sı kendini sınayarak 6'sı tekrar okuyarak çalışılır (sınama listesi rastgele, sınama önce okuma sonra), ara görevden sonra test; aynı kelimelerle 2. ölçüm en erken 12 saat sonra açılır ve sonuca göre açıklama verilir. Mülakat Simülasyonu'ndaki 105 etiketli soru ilgili modüle bağlanır. Kayıt: öğrenci + araç başına tek satır (is_hayati_dusunme) ve deney ölçümleri (is_hayati_ogrenme_deneyi).
+**Nasıl:** İçerik app/data/dusunme_atolyesi.json. Modül akışı: durum → ilk deneme (araç bilinmeden) → araç → okulda → iş hayatında → bu hafta dene → özet ('ilk denemen → aracı kullanınca'; puan değildir). Alıştırmalar: neden zinciri ve kök/belirti ayrımı; saçılım grafikli 3 korelasyon vakası; adımları sıralayıp robotu çalıştırma; 1–100 arası sayı bulma ve ikiye bölme gösterimi; kurgusal program tablosu (kontenjan, taban puan, taban başarı sırası, son yerleşenin netleri) üzerinde 5 soru ve Güvenli/Dengeli/Riskli sınıflaması (oran ≤0,85 / ≤1,10 / >1,10; Tercih bileşeniyle aynı eşikler); öğrenmeyi öğren deneyi: uydurma dilden 12 kelime, 6'sı kendini sınayarak 6'sı tekrar okuyarak çalışılır (sınama listesi rastgele, sınama önce okuma sonra), ara görevden sonra test; aynı kelimelerle 2. ölçüm en erken 12 saat sonra açılır ve sonuca göre açıklama verilir. Mülakat Simülasyonu'ndaki 97 etiketli soru ilgili modüle bağlanır. Kayıt: öğrenci + araç başına tek satır (is_hayati_dusunme) ve deney ölçümleri (is_hayati_ogrenme_deneyi).
 
 **Dayanak:**
 
@@ -925,7 +937,7 @@ Bölümün üniversite/program bilgileri (kontenjan, taban puan, başarı sıras
 
 Bir öğrencinin sonuçlarını dört farklı kitleye göre dili ve içeriği değişen PDF olarak sunar.
 
-**Nasıl:** Puanlar yeniden hesaplanmaz, ekrandakiyle aynı kaynaklar kullanılır (güçlü ≥62 en çok 6, gelişim <40 en çok 5). Kurallı SWOT: S ilk 5 güçlü yön; W hedef odakları + gelişim alanları (en çok 5); O ilk 3 bölüm, öne çıkan 2 alan, tekrar eden güçlü yönler, K5 alanı, Listem; T hedef ilk 10'da değil, belirgin açıklar, hiç adım yok, düşük güven, son 4 haftada görev yok vb. Veli raporunda 6 öneri ve 4 'öğretmene sorulacak soru'; her sayfada 'Kişisel veri içerir' altbilgisi; net bölümünde 'hedef netler tek kişiye aittir, OBP etkiler' notu.
+**Nasıl:** Puanlar yeniden hesaplanmaz, ekrandakiyle aynı kaynaklar kullanılır (güçlü ≥62 en çok 6, gelişim <40 en çok 5). Kurallı SWOT: S ilk 5 güçlü yön; W hedef odakları + gelişim alanları (en çok 5); O ilk 3 bölüm, öne çıkan 2 alan, tekrar eden güçlü yönler, K5'te öne çıkan iş türü, Listem; T hedef ilk 10'da değil, belirgin açıklar, hiç adım yok, düşük güven, son 4 haftada görev yok vb. Veli raporunda 6 öneri ve 4 'öğretmene sorulacak soru'; her sayfada 'Kişisel veri içerir' altbilgisi; net bölümünde 'hedef netler tek kişiye aittir, OBP etkiler' notu.
 
 **Dayanak:**
 
@@ -1003,7 +1015,7 @@ PDF raporlarında ve rapor ekranlarında sayıların yanında 'ne anlama geliyor
 
 Değerlendirmenin son bölümü bitince öğrenciye giden sonuç e-postası; yeni eğitim yılında toplu sınıf atlatma ve öğrencinin değerlendirmesini sıfırlama.
 
-**Nasıl:** Sonuç e-postası (app/core/sonuc_epostasi.py) son bölümden sonra arka planda gider: K1–K4 bitince, K5 derinleşme dalı açıldıysa son dal tamamlanınca. Okulun paketinde 'Öğrenci raporları' modülü varsa öğrenci raporu PDF olarak eklenir (yalnızca PDF, en çok 3 MB), yoksa e-posta eksiz gider. Güven puanı düşük turda ve test hesaplarında gitmez; sorunlu katman yeniden çözülüp tur tamamlanınca gider; bir tamamlanma için bir kez gider. Okul yetkilisi öğrenci detayında gönderim durumunu görür ve 'Yeniden gönder' diyebilir; sonuc_epostasi_acik parametresiyle kapatılabilir. Sınıf atlatma: 9→10, 10→11, 11→12, 12→Mezun, şube harfi korunur; önizleme (sınıf başına sayı), sınıf bazında seçim, seçili öğrenciler sınıfında kalır; test hesapları ve 'Aday' dahil edilmez; aynı yıl ikinci kez yapılırsa uyarı ve açık onay. Eski sınıf toplu_islemler'e yazılır, 30 gün içinde 'Geri al' (sonradan elle değişenler atlanır). 'Değerlendirmeyi sıfırla' öğrencinin son turunu siler (cevaplar, sonuçlar, bölüm uyumları, bu tura bağlı koçluk adımları); önceki turlar ve hesap kalır; işlemler denetim kaydına yazılır.
+**Nasıl:** Sonuç e-postası (app/core/sonuc_epostasi.py) son bölümden sonra arka planda gider: K1–K4 bitince, K5 iş türü soruları açıldıysa onlar tamamlanınca. Okulun paketinde 'Öğrenci raporları' modülü varsa öğrenci raporu PDF olarak eklenir (yalnızca PDF, en çok 3 MB), yoksa e-posta eksiz gider. Güven puanı düşük turda ve test hesaplarında gitmez; sorunlu katman yeniden çözülüp tur tamamlanınca gider; bir tamamlanma için bir kez gider. Okul yetkilisi öğrenci detayında gönderim durumunu görür ve 'Yeniden gönder' diyebilir; sonuc_epostasi_acik parametresiyle kapatılabilir. Sınıf atlatma: 9→10, 10→11, 11→12, 12→Mezun, şube harfi korunur; önizleme (sınıf başına sayı), sınıf bazında seçim, seçili öğrenciler sınıfında kalır; test hesapları ve 'Aday' dahil edilmez; aynı yıl ikinci kez yapılırsa uyarı ve açık onay. Eski sınıf toplu_islemler'e yazılır, 30 gün içinde 'Geri al' (sonradan elle değişenler atlanır). 'Değerlendirmeyi sıfırla' öğrencinin son turunu siler (cevaplar, sonuçlar, bölüm uyumları, bu tura bağlı koçluk adımları); önceki turlar ve hesap kalır; işlemler denetim kaydına yazılır.
 
 **Dayanak:** Akademik dayanak yok.
 
@@ -1404,6 +1416,8 @@ Kimin hangi veriyi görebileceğine dair yapısal kurallar ve kritik işlemlerin
    - Doğrulama: Özet sayfası doğrudan okundu (2026-10; yayın 7 Ocak 2025): en hızlı önem kazanan beceriler (yapay zekâ ve büyük veri, ağlar ve siber güvenlik, teknoloji okuryazarlığı; analitik ve yaratıcı düşünme, dayanıklılık-esneklik, merak ve yaşam boyu öğrenme), mutlak sayıca en çok büyüyen ve en hızlı küçülen işler. Küresel işveren anketi; Türkiye'ye birebir uymayabilir. Yalnızca nitel düzeyde kullanıldı.
 160. Ohno, T. (1988). Toyota production system: Beyond large-scale production. Productivity Press. <https://www.routledge.com/9780915299140>
    - Doğrulama: Routledge ürün sayfası (yazar, başlık, Productivity Press, 1988, 1. baskı, ISBN 9780915299140) ve USI kütüphane kaydı (Cambridge, Mass.; xix + 143 s.; Toyota seisan hōshiki'nin İngilizce çevirisi; ISBN 0915299143). '5 kez neden' anlatımının kitabın 2. bölümünün başında yer aldığı ikincil kaynaktan (Gemba Academy yazısı); sayfa numarası doğrulanmadı. DOI yok.
+161. T.C. Millî Eğitim Bakanlığı. (2024). Türkiye Yüzyılı Maarif Modeli: Öğrenci profili, beceri çerçevesi (eğilimler, sosyal-duygusal öğrenme becerileri, kavramsal beceriler) ve Erdem-Değer-Eylem çerçevesi. <https://tymm.meb.gov.tr>
+   - Doğrulama: MEB resmî sitesi (tymm.meb.gov.tr), 2026-10-19'da erişildi
 
 ## Doğrulanamayan ve listeye alınmayan künyeler
 

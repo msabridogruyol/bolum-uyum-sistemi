@@ -204,15 +204,8 @@ export default function KatmanlarSayfasi() {
             ))}
           </div>
 
-          {k5Durum?.ilgi_gosterilen?.length > 0 && (
-            <div className="card" style={{ marginTop: 14 }}>
-              <div className="ct">Ayrıca İlgi Gösterdiğin Alanlar</div>
-              <div className="ps" style={{ margin: 0 }}>
-                {k5Durum.ilgi_gosterilen.map((d) => `${d.dal_adi} (${d.puan} puan)`).join(', ')} —
-                bu alanlara da yakınlık gösterdin.
-              </div>
-            </div>
-          )}
+          {/* [2026-11-03] "Ayrıca ilgi gösterdiğin alanlar" kartı kaldırıldı: eski alan bazlı K5'ten kalmıştı; yeni K5'te
+              (tek adım) bu liste hep boştur (dal_servisi.k5_tetikle). */}
 
           {!k5AcikMi && tamamlanan === katmanlar.length && (
             <div className="bos-durum" style={{ marginTop: 14 }}>

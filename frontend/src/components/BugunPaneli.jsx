@@ -16,7 +16,7 @@ function SiradakiAdim({ ozet, katmanlar, hedef, plan, kocluk = true }) {
     alt = `${b.soru || ''} ${b.sure || ''} · Yarıda bırakırsan kaldığın yerden devam edersin.`
     dugme = bekleyen.durum === 'devam_ediyor' ? 'Kaldığın yerden devam et' : 'Başla'; git = '/katmanlar'
   } else if (!ozet.tur_tamamlandi_mi) {
-    ust = 'Değerlendirme'; baslik = '🌻 Sana özel iş türü soruları'; alt = 'Bu adımı bitirince bölüm önerilerin kesinleşir.'; dugme = 'Devam et'; git = '/katmanlar'
+    ust = 'Değerlendirme'; baslik = '🌻 Sana özel iş türü soruları'; alt = 'Bu adımı bitirince sana en uygun bölümlerin kendi aralarındaki sırası netleşir ve bölüm önerilerin açılır.'; dugme = 'Devam et'; git = '/katmanlar'
   } else if (!hedef) {
     ust = 'Sonuçların hazır'; baslik = '🎯 Bir hedef bölüm seç'; alt = 'Sana uygun bölümlere bak. Birini hedef seçince adım adım planın hazırlanır.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
   } else if (!kocluk) {

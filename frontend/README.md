@@ -19,9 +19,9 @@ npm run dev   # http://localhost:5173, backend'in localhost:8000'de çalıştı�
 - D1 — Kayıt/Giriş (JWT, localStorage'da saklanıyor)
 - D2 — Katman akışı: liste (**gerçek ilerleme durumuyla — tamamlandı/devam
   ediyor rozetleri**), soru sorma, cevaplama, tamamlama
-- Sidebar'da genel ilerleme özeti (kaç katman tamamlandı, K5 dal durumu,
+- Sidebar'da genel ilerleme özeti (kaç katman tamamlandı, K5 adımının durumu,
   sonraki tur tarihi) — `GET /ogrenci/durum-ozeti`
-- D3 — K5 dal derinleşme akışı
+- D3 — K5 iş türü tercihleri akışı (2026-10-18'den beri tek adım; eski dal/alan derinleşmesi kaldırıldı)
 - D5 — Öneri Listesi, Tüm Bölümleri Keşfet
 - Bölüm F — Koçluk: hedef seçme/değiştirme (onay akışı dahil), gelişim
   analizi, yol haritası, tur karşılaştırması

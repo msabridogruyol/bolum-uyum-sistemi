@@ -7,12 +7,12 @@ const DURUM_BILGI = {
   taslak: {
     etiket: 'Taslak — İncelenmeyi Bekliyor',
     renk: 'bdg-lock',
-    aciklama: 'Yalnızca tek bir yöntemden (kümeleme analizi) geldi. Henüz farklı bir yöntemle çapraz doğrulanmadı.',
+    aciklama: 'Bölümlerin bu alana atanması tek bir yönteme dayanıyor; farklı bir yöntemle çapraz doğrulanmadı. Etiketin kullanımını etkilemez.',
   },
   guclu_kanitli: {
     etiket: 'Güçlü Kanıtlı',
     renk: 'bdg-done',
-    aciklama: 'Birden fazla bağımsız yöntem (dil modelleri + kümeleme) aynı sonuca ulaştı — güvenilirliği yüksek.',
+    aciklama: 'Bölümlerin bu alana atanmasında birden fazla bağımsız yöntem (dil modelleri + kümeleme) aynı sonuca ulaştı.',
   },
   gozden_gecirilmeli: {
     etiket: 'Gözden Geçirilmeli',
@@ -55,8 +55,13 @@ function csvSatirlariniAyristir(metin) {
   }).filter((s) => s.kod && s.ad)
 }
 
+// [2026-11-03] K5 adımının kaydı (K5N): öğrenciye açılan tek K5 adımı. Bölüm eşleşmesi ve bankada sorusu yoktur;
+// sorular öğrencinin uyum kümesindeki bölümlerin iş türlerinden öğrenciye özel üretilir (dal_servisi).
+const K5_ADIMI = 'K5N'
+
 function DalKarti({ dal, onDurumGuncelle }) {
   const bilgi = DURUM_BILGI[dal.dogrulama_durumu] || DURUM_BILGI.taslak
+  const k5Adimi = dal.kod === K5_ADIMI
   const [degistiriliyor, setDegistiriliyor] = useState(false)
 
   return (
@@ -66,19 +71,23 @@ function DalKarti({ dal, onDurumGuncelle }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <span style={{ fontSize: 14.5, fontWeight: 700 }}>{dal.ad}</span>
             <span className="bdg bdg-lock">{dal.kod}</span>
-            <span className={`bdg ${bilgi.renk}`}>{bilgi.etiket}</span>
+            {k5Adimi ? <span className="bdg bdg-done">K5 adımı</span> : <span className={`bdg ${bilgi.renk}`}>{bilgi.etiket}</span>}
             {dal.kullanimda === false && <span className="bdg bdg-lock">Kullanım dışı (eski yapı)</span>}
           </div>
-          <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5, marginBottom: 8 }}>{bilgi.aciklama}</div>
-          <div style={{ display: 'flex', gap: 16, fontSize: 11.5, color: 'var(--tx3)', fontWeight: 600 }}>
+          <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5, marginBottom: 8 }}>
+            {k5Adimi
+              ? 'Öğrenciye açılan tek K5 adımı. Soruları, öğrencinin uyum kümesindeki bölümlerin iş türlerinden öğrenciye özel üretilir; bu yüzden burada bölüm, değişken ve soru sayısı görünmez.'
+              : bilgi.aciklama}
+          </div>
+          {!k5Adimi && <div style={{ display: 'flex', gap: 16, fontSize: 11.5, color: 'var(--tx3)', fontWeight: 600 }}>
             <span>📚 {dal.bolum_sayisi} bölüm</span>
-            <span>🧬 {dal.degisken_sayisi} değişken</span>
+            <span>🧬 {dal.degisken_sayisi} {dal.kod.startsWith('U') ? 'iş türü' : 'değişken'}</span>
             <span>❓ {dal.soru_sayisi} aktif soru{dal.pasif_soru_sayisi ? ` (+${dal.pasif_soru_sayisi} pasif)` : ''}</span>
             <span>{dal.coklu_kaynakli_mi ? '✅ Çoklu yöntem doğrulaması var' : '⚠️ Tek yöntemden geldi'}</span>
-          </div>
+          </div>}
         </div>
 
-        {degistiriliyor ? (
+        {k5Adimi ? null : degistiriliyor ? (
           <select
             className="auth-input"
             style={{ width: 200 }}
@@ -108,7 +117,7 @@ export default function DallarSayfasi() {
   const [durumFiltre, setDurumFiltre] = useState('')
 
   const yukle = useCallback(() => {
-    api.dallariDetayliListele().then(setDallar).catch((e) => setHata(e.detail || 'Dallar yüklenemedi.'))
+    api.dallariDetayliListele().then(setDallar).catch((e) => setHata(e.detail || 'Üst alanlar yüklenemedi.'))
   }, [])
 
   useEffect(() => { yukle() }, [yukle])
@@ -120,7 +129,7 @@ export default function DallarSayfasi() {
       setYeniKod(''); setYeniAd('')
       yukle()
     } catch (err) {
-      setHata(err.detail || 'Dal eklenemedi.')
+      setHata(err.detail || 'Üst alan eklenemedi.')
     }
   }
 
@@ -176,8 +185,8 @@ export default function DallarSayfasi() {
   return (
     <div className="pg pg-genis">
       <div className="ph">
-        <div className="pt">Üst Alanlar (bölüm alan etiketleri)</div>
-        <div className="ps">Öğrencinin K4 sonucuna göre kendisine özel açılabilecek ek inceleme alanları. "Taslak" durumu bir hata değil — yalnızca henüz tek yöntemle doğrulandığı anlamına gelir.</div>
+        <div className="pt">Üst Alanlar</div>
+        <div className="ps">17 üst alan (U01–U17) bölümlerin alan etiketidir: listelerde ve raporlarda gruplama, İş Hayatı alan içerikleri, eğitim koçu eşleştirmesi ve K5 iş türlerinin gruplanması için kullanılır. Öğrenciye soru açmaz. K5 tek adımdır ("İş türü tercihleri"): soruları, öğrencinin uyumu 70 ve üzeri olan bölümlerinin (en az 5, en fazla 20) iş türlerinden üretilir ve yalnızca bu bölümlerin kendi aralarındaki sırasını değiştirir. "Taslak" durumu bir hata değildir; bölümlerin alana atanmasının henüz tek yöntemle doğrulandığını gösterir.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
@@ -218,7 +227,7 @@ export default function DallarSayfasi() {
         </div>
         {topluSonuc && (
           <div style={{ marginTop: 12, fontSize: 12.5 }}>
-            <b style={{ color: 'var(--gr)' }}>{topluSonuc.eklenen} dal eklendi.</b>
+            <b style={{ color: 'var(--gr)' }}>{topluSonuc.eklenen} üst alan eklendi.</b>
             {topluSonuc.hatalar.length > 0 && (
               <div style={{ color: 'var(--am)', marginTop: 4 }}>{topluSonuc.hatalar.slice(0, 5).join(', ')}</div>
             )}
@@ -233,13 +242,13 @@ export default function DallarSayfasi() {
         </div>
         <div style={{ flex: 1 }}>
           <label className="auth-label">Ad</label>
-          <input className="auth-input" value={yeniAd} onChange={(e) => setYeniAd(e.target.value)} placeholder="Yeni alan adı" required />
+          <input className="auth-input" value={yeniAd} onChange={(e) => setYeniAd(e.target.value)} placeholder="Yeni üst alan adı" required />
         </div>
         <button className="btn" type="submit">Ekle</button>
       </form>
 
       {gosterilecekler.length === 0 ? (
-        <div className="bos-durum">Bu filtreye uyan dal yok.</div>
+        <div className="bos-durum">Bu filtreye uyan kayıt yok.</div>
       ) : (
         gosterilecekler.map((d) => <DalKarti key={d.id} dal={d} onDurumGuncelle={durumGuncelle} />)
       )}

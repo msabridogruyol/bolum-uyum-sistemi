@@ -380,7 +380,8 @@ def kontrol_paneli_ozeti(
 ):
     toplam_bolum = db.query(Bolum).count()
     yayinda_bolum = db.query(Bolum).filter(Bolum.durum == "yayinda").count()
-    tanimli_dal = db.query(Dal).count()
+    # [2026-11-03] Yalnızca üst alanlar (U01–U17): dallar tablosunda eski yapıdan kalan D01–D08 ve K5 adımının kaydı da var
+    tanimli_dal = db.query(Dal).filter(Dal.kod.like("U%")).count()
     toplam_ogrenci = db.query(Ogrenci).count()
     tamamlanan_tur = db.query(OgrenciDegerlendirmeTuru).filter(OgrenciDegerlendirmeTuru.durum == "tamamlandi").count()
 
@@ -508,7 +509,7 @@ def dal_ekle(
 ):
     mevcut = db.query(Dal).filter(Dal.kod == istek.kod).first()
     if mevcut is not None:
-        raise HTTPException(status_code=400, detail=f"'{istek.kod}' kodlu dal zaten var.")
+        raise HTTPException(status_code=400, detail=f"'{istek.kod}' kodlu kayıt zaten var.")
     dal = Dal(kod=istek.kod, ad=istek.ad, bagli_degisken_id=istek.bagli_degisken_id, dogrulama_durumu="taslak")
     db.add(dal)
     _audit_yaz(db, admin, "dal_ekleme", "dallar", istek.kod, None)
@@ -528,7 +529,7 @@ def dal_durumunu_guncelle(
         raise HTTPException(status_code=400, detail=f"Geçersiz durum: {istek.yeni_durum}")
     dal = db.get(Dal, dal_id)
     if dal is None:
-        raise HTTPException(status_code=404, detail="Dal bulunamadı.")
+        raise HTTPException(status_code=404, detail="Üst alan bulunamadı.")
     eski = dal.dogrulama_durumu
     dal.dogrulama_durumu = istek.yeni_durum
     _audit_yaz(db, admin, "dal_durum_degisikligi", "dallar", str(dal_id), f"{eski} -> {istek.yeni_durum}")
