@@ -9,10 +9,11 @@ Create Date: 2026-11-03
      "İş türü tercihleri"dir. Ad öğrencinin Değerlendirme ekranında, Cevap Analizi'nde ve katman listelerinde
      veritabanından gösterildiği için eski sistemi anlatıyordu. Yalnızca ad hâlâ ilk kurulumdaki değerse değişir.
   2) 0002'deki dört parametre hiçbir hesapta okunmuyor ama Parametreler ekranında değiştirilebilir görünüyordu:
-       k5_esik_puani (eski alan K5 eşiği 80; gerçek eşik dal_servisi.KUME_ESIK = 70),
-       k5_max_dal_sayisi (eski "en fazla 3 dal"; K5 artık tek adım),
+       k5_esik_puani (eski alan K5 eşiği; 0002'de 80, 0008'de 70; gerçek eşik dal_servisi.KUME_ESIK),
+       k5_max_dal_sayisi (eski "en fazla N dal", 0008'de 2; K5 artık tek adım),
        yakinsama_esik_sigma (eski pipeline güven eşiği; pipeline artık bu değeri sistemden almıyor),
-       yeniden_degerlendirme_min_gun (120; yerini yeniden_degerlendirme_gun_12 ve yeniden_degerlendirme_yillik_hak aldı).
+       yeniden_degerlendirme_min_gun (yerini yeniden_degerlendirme_gun_12 ve yeniden_degerlendirme_yillik_hak aldı; 0079 zaten
+       siler, 0068 her açılışta yeniden eklediği için 0079'dan sonra burada da silinir).
      Etkisiz ayar yanıltıcı olduğu için kaldırılır.
 İdempotent: app/core/sema_guncelleme.py OTOMATIK listesinde.
 """

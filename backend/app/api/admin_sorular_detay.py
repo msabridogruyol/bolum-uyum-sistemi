@@ -138,13 +138,9 @@ def dal_filtre_listesi(
 
 
 def _kullanimdaki_dal_idleri(db: Session) -> set[int]:
-    """Bölüm eşleşmesi olan ya da en az bir AKTİF sorusu bulunan dallar + K5 adımının kaydı (K5N).
-    [2026-11-03] K5N'in bölüm eşleşmesi ve soru bankasında sorusu yoktur (sorular öğrenciye özel üretilir); bu yüzden
-    yönetim ekranında "Kullanım dışı (eski yapı)" görünüyordu. Oysa öğrenciye açılan tek K5 adımı odur."""
-    from app.core.skor_motoru import K5_DAL_KODU
+    """Bölüm eşleşmesi olan ya da en az bir AKTİF sorusu bulunan dallar."""
     from app.models import BolumDalEslesme
     idler = {d for (d,) in db.query(BolumDalEslesme.dal_id).distinct().all()}
-    idler |= {d for (d,) in db.query(Dal.id).filter(Dal.kod == K5_DAL_KODU).all()}
     idler |= {d for (d,) in db.query(Degisken.dal_id).join(Soru, Soru.degisken_id == Degisken.id)
               .filter(Soru.aktif_mi.is_(True), Degisken.dal_id.isnot(None)).distinct().all()}
     idler |= {d for (d,) in db.query(Degisken.dal_id)
@@ -212,7 +208,11 @@ def dallari_detayli_listele(
     for soru_id, dal_id, aktif in sjt_satirlari:
         # [2026-10-09] yalnızca AKTİF sorular sayılır; pasifler ayrıca gösterilir
         (sjt_soru_id_by_dal if aktif else pasif_by_dal).setdefault(dal_id, set()).add(soru_id)
-    kullanimda = _kullanimdaki_dal_idleri(db)
+    # [2026-11-03] K5 adımının kaydı (K5N) da kullanımdadır: bölüm eşleşmesi ve bankada sorusu yoktur (sorular öğrenciye
+    # özel üretilir), bu yüzden Üst Alanlar ekranında "Kullanım dışı (eski yapı)" görünüyordu. Soru filtresi menüsüne
+    # (dal_filtre_listesi) eklenmez: orada seçilse hep 0 soru dönerdi.
+    from app.core.skor_motoru import K5_DAL_KODU
+    kullanimda = _kullanimdaki_dal_idleri(db) | {d.id for d in dallar if d.kod == K5_DAL_KODU}
 
     sonuc = []
     for d in dallar:

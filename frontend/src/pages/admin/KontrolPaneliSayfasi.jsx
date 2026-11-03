@@ -8,7 +8,7 @@ import { KpiKarti, KpiSatiri, sayi } from '../../components/istatistik'
 // Güvenlik denetim listesi — STATİK, elle yapılmış bir kod denetiminin
 // sonucunu yansıtır. Canlı/otomatik tarayan bir sistem DEĞİLDİR.
 const GUVENLIK_DENETIMI = [
-  { baslik: 'Uç nokta yetki kontrolü', durum: 'iyi', detay: 'Yönetim uç noktalarının tamamı (166) yetki kontrolünde — kod taraması, 2026-11-03' },
+  { baslik: 'Uç nokta yetki kontrolü', durum: 'iyi', detay: 'Yönetim uç noktalarının tamamı yetki kontrolünde (OpenAPI taraması, 2026-11-03)' },
   { baslik: 'SQL enjeksiyonu riski', durum: 'iyi', detay: 'Tüm sorgular parametreli, metin birleştirme yok' },
   { baslik: 'Hassas veri sızıntısı', durum: 'iyi', detay: 'Şifre hash\'i hiçbir yanıtta dönmüyor' },
   { baslik: 'Audit log kapsamı', durum: 'iyi', detay: 'Kritik işlemler (onay, rol, durum değişikliği) kayıt altında' },

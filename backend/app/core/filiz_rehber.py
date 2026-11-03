@@ -343,9 +343,11 @@ def _yeni_tur_cumlesi(b) -> str:
         b.db.rollback()
         return "Yeni değerlendirme turu, sınıfına göre belirlenen süre dolunca açılır."
     if d["durum"] == "acik":
-        return "Yeni bir değerlendirme turu şu an açık; istersen yeniden değerlendirilip kendindeki değişimi görebilirsin."
+        return "Yeni bir değerlendirme turu şu an açık; istersen yeni değerlendirmeye başlayıp kendindeki değişimi görebilirsin."
     if d["durum"] == "bekleme" and d.get("yeniden_acilis"):
-        return (f"Yeni değerlendirme turu {d['yeniden_acilis'].strftime('%d.%m.%Y')} tarihinde açılır (yaklaşık {d['kalan_gun']} gün sonra); "
+        from zoneinfo import ZoneInfo
+        tarih = d["yeniden_acilis"].astimezone(ZoneInfo("Europe/Istanbul")).strftime("%d.%m.%Y")
+        return (f"Yeni değerlendirme turu {tarih} tarihinde açılır (yaklaşık {d['kalan_gun']} gün sonra); "
                 "o zaman kendindeki değişimi de görebileceksin.")
     return "Yeni değerlendirme turu, sınıfına göre belirlenen süre dolunca açılır."
 
