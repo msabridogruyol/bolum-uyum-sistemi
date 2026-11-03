@@ -30,7 +30,7 @@ export const SOZLUK = [
     t: 'Filizyol\'daki sorulara verdiğin cevaplarla seni tanımaya çalışan bölüm. Bir sınav değildir; doğru ya da yanlış cevap yoktur.' },
   { k: 'katman', ad: 'Katman', g: 'Değerlendirme', es: ['katman'],
     t: 'Değerlendirmenin her bir parçası. K1\'den K4\'e kadar dört ana katman, sonunda da K5 (İş türü tercihleri) vardır. Her katman seni başka bir yönden tanır.',
-    o: 'K1 seni değerlerinle, K2 kişiliğinle tanır. Dördünü bitirince bölüm önerilerin hazırlanır.' },
+    o: 'K1 seni değerlerinle, K2 kişiliğinle tanır. Dördünü bitirince sana özel iş türü soruları açılır; onları da bitirince bölüm önerilerini görürsün.' },
   { k: 'k1', ad: 'K1 – Değerler / Motivasyon', g: 'Değerlendirme', es: ['k1'], tam: true, bh: true,
     t: 'Bir işte senin için neyin önemli olduğuna bakar: güvence mi, gelir mi, anlam mı, özgürlük mü?' },
   { k: 'k2', ad: 'K2 – Kişilik ve Çalışma Tarzı', g: 'Değerlendirme', es: ['k2'], tam: true, bh: true,

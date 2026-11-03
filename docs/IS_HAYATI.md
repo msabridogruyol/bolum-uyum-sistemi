@@ -184,7 +184,7 @@ yaklaşımla cevap verir, öğrenci daha iyi cevabı seçer. Ardından iki cevab
 sorularda iki yaklaşımın sonucu) ve "Alandan bir bilgi" gösterilir. Bilgi sınavı değildir: doğru aday, gerekçesinden mantıkla bulunabilir.
 - Uçlar: `is_hayati_mulakat_sim.py` → `GET /mulakat-sim/{bolum_id}`, `POST /mulakat-sim` (özet + kayıt).
 - Tablo (0070): `is_hayati_mulakat_sim` (seçimler, mülakatçıyla aynı seçilen soru sayısı). Yalnızca öğrencinin kendi uçlarından okunur.
-- İçerik: `app/data/mulakat_simulasyonu.json` — 301 bölüm × 4 soru (2 alan durumu, 1 iletişim, 1 etik/sorumluluk). Anahtar bölüm
+- İçerik: `app/data/mulakat_simulasyonu.json` — 262 bölüm × 4 soru (1.048 soru) (2 alan durumu, 1 iletişim, 1 etik/sorumluluk). Anahtar bölüm
   adıdır (`bolumler.ad`). Soru alanları: `konu, beceri, soru, terimler[], tur (dogru|ikisi_de), adaylar[2]{cevap, iyi, neden, sonuc?}, ders`.
   İyi adayın yeri dengelidir (testte %40–60 aralığı denetlenir). Diğer dillerde içerik, `app/data` havuzundan çalışma anında çevrilir.
 

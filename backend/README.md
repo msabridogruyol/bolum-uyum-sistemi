@@ -42,6 +42,9 @@ alembic/versions/
 
 ## Çalışır Durumda Olan (Uçtan Uca Test Edildi)
 
+> [2026-11-03] Not: Bu bölüm ve aşağıdaki sorun tablosu ilk iskeletin geliştirme günlüğüdür (ör. eski 301 bölüm, %20/15/25/40
+> ağırlıklar, 120 günlük tur kısıtı, K5 dal derinleşmesi). Güncel işleyiş: süper admin → Sistem Hakkında ve Kaynakça.
+
 Bu iskelet, yedi ayrı test dosyasıyla (75+ doğrulama, toplamda) doğrulandı
 (SQLite üzerinde, `TestClient` ile; PostgreSQL dialekt farkları
 `.with_variant()` ile ayrıca ele alındı):

@@ -331,6 +331,25 @@ def k_takvim(b: Baglam, m: str) -> str:
     return "Takviminde yaklaşan bir etkinlik görünmüyor. Kendi hatırlatmalarını Takvim sayfasından ekleyebilirsin."
 
 
+
+def _yeni_tur_cumlesi(b) -> str:
+    """[2026-11-03] Yeni değerlendirme turunun ne zaman açılacağı, öğrencinin gerçek durumundan (sınıfa göre bekleme
+    süresi parametreleri: 12. sınıf ve mezun yeniden_degerlendirme_gun_12, diğerleri yılda yeniden_degerlendirme_yillik_hak).
+    Önce sabit "yaklaşık 3 ay" deniyordu; 0079'dan beri bu süre sınıfa göre 70 gün ya da yılda 2 kez."""
+    try:
+        from app.core.katman_servisi import degerlendirme_durumu
+        d = degerlendirme_durumu(b.db, b.o)
+    except Exception:
+        b.db.rollback()
+        return "Yeni değerlendirme turu, sınıfına göre belirlenen süre dolunca açılır."
+    if d["durum"] == "acik":
+        return "Yeni bir değerlendirme turu şu an açık; istersen yeniden değerlendirilip kendindeki değişimi görebilirsin."
+    if d["durum"] == "bekleme" and d.get("yeniden_acilis"):
+        return (f"Yeni değerlendirme turu {d['yeniden_acilis'].strftime('%d.%m.%Y')} tarihinde açılır (yaklaşık {d['kalan_gun']} gün sonra); "
+                "o zaman kendindeki değişimi de görebileceksin.")
+    return "Yeni değerlendirme turu, sınıfına göre belirlenen süre dolunca açılır."
+
+
 def k_test(b: Baglam, m: str) -> str:
     if "cevapla" in _sade(m):
         return ("Doğru ya da yanlış cevap yok. \"Olmak istediğin\" kişiye göre değil, şu anki hâline göre cevap ver. Çok düşünme; ilk "
@@ -338,8 +357,8 @@ def k_test(b: Baglam, m: str) -> str:
                 "Ara verirsen cevapların kaydedilir. Döndüğünde kaldığın yerden devam edersin.")
     d = b.degerlendirme()
     if d["durum"] == "tamamlandi":
-        return ("Değerlendirmeni tamamladın. Sonuçların Profilim ve Bölümler sayfalarında. Yaklaşık 3 ay sonra yeni tur açılınca kendindeki "
-                "değişimi de görebileceksin. Bazı cevapların tutarsız bulunduysa beklemen gerekmez: yalnızca o bölümü yeniden yanıtlarsın.")
+        return ("Değerlendirmeni tamamladın. Sonuçların Profilim ve Bölümler sayfalarında. " + _yeni_tur_cumlesi(b)
+                + " Bazı cevapların tutarsız bulunduysa beklemen gerekmez: yalnızca o bölümü yeniden yanıtlarsın.")
     if d["durum"] == "yok":
         return "Değerlendirmeye henüz başlamadın. Doğru ya da yanlış cevap yok. İçinden geldiği gibi cevap ver; en doğru sonuç böyle çıkar. Ara verirsen cevapların kaydedilir."
     return f"Değerlendirmenin {d['biten']}/{d['toplam']} bölümünü bitirdin. Ara verdiğinde cevapların kaydedilir. Döndüğünde kaldığın sorudan devam edersin."

@@ -324,7 +324,7 @@ def sistem_promptu_olustur(db: Session, ogrenci: Ogrenci, onceki_ozet: str | Non
 SİSTEMİN BÖLÜMLERİ (öğrenci "nerede, nasıl" diye sorarsa bunlara dayan; burada olmayan bir özelliği varmış gibi anlatma):
 Profilim: sonuçlar ve kısa yorum ("Kısaca", bunu yap / bundan kaçın). Bölümler: uyumlu bölümler. Koçluğum: hedef bölüm ve yol haritası.
 Raporlarım: kendi ve veli raporu (okulunda açıksa); değerlendirmenin son bölümü bitince sonuç e-postası gider, gelmediyse rehber öğretmen yeniden gönderebilir.
-Yeniden değerlendirme: yaklaşık 3 ay sonra yeni tur açılır; cevaplar tutarsız bulunduysa yalnızca o bölüm beklemeden yeniden yanıtlanır.
+Yeniden değerlendirme: 12. sınıf ve mezunlarda varsayılan olarak 70 günde bir, diğer sınıflarda yılda 2 kez yeni tur açılır (okul yetkilisi daha erken açabilir); cevaplar tutarsız bulunduysa yalnızca o bölüm beklemeden yeniden yanıtlanır.
 İş Hayatı (okulunda açıksa): maaşlar, zor günler, CV, Mülakat Pratiği, Mülakat Simülasyonu (iki adaydan daha iyi cevabı seçme),
 Düşünme Atölyesi (kök neden, korelasyon/nedensellik, algoritma, ikiye bölerek arama, tercih verisini okuma, öğrenmeyi öğren deneyi; ikinci ölçüm en erken 12 saat sonra).
 Ayarlar: dil seçimi (Türkçe dışında 12 dil), gizlilik. Sistem Hakkında: SSS.

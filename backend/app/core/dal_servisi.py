@@ -177,7 +177,7 @@ def bolum_k5_puanlari(kume_bolumleri, baglar: dict[int, dict[int, float]], puan:
 def dal_bul(db: Session, kod: str) -> Dal:
     dal = db.query(Dal).filter(Dal.kod == kod.upper()).first()
     if dal is None:
-        raise IsKuraliHatasi(f"Dal bulunamadı: {kod}")
+        raise IsKuraliHatasi("İş türü soruları bulunamadı.")
     return dal
 
 
@@ -255,7 +255,7 @@ def dal_oturumu_baslat(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDege
               .filter(OgrenciDalOturumu.ogrenci_id == ogrenci.id, OgrenciDalOturumu.tur_id == tur.id,
                       OgrenciDalOturumu.dal_id == dal.id).with_for_update().first())
     if oturum is None or dal.kod != K5_DAL_KODU:
-        raise IsKuraliHatasi("Bu bölüm senin için açılmadı.")
+        raise IsKuraliHatasi("İş türü soruları senin için henüz açılmadı.")
     if oturum.durum == "tamamlandi":
         raise IsKuraliHatasi("Bu soruları bu turda zaten tamamladın.")
     sorular = dal_sorulari(db, ogrenci, dal, tur) or _sorulari_uret(db, ogrenci, tur)

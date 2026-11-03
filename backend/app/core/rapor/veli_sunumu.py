@@ -403,8 +403,9 @@ def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
     _metin(sl, SOL, 1.75, 5.3, 2.6, [
         "Filizyol, öğrencilerin kendi değerlerini, çalışma tarzlarını, becerilerini ve ilgi alanlarını tanımalarına "
         "yardımcı olan bir değerlendirme ve rehberlik sistemidir.",
-        "Öğrenci soruları kendi hızında yanıtlar; sistem bu yanıtları 300'den fazla üniversite bölümünün gerektirdiği "
-        "özelliklerle karşılaştırır ve öğrenciye en uyumlu bölümleri nedenleriyle birlikte gösterir.",
+        "Öğrenci soruları kendi hızında yanıtlar; sistem bu yanıtları "
+        + (f"{d.v['bolum_sayisi']} lisans bölümünün" if d.v.get("bolum_sayisi") else "lisans bölümlerinin")
+        + " gerektirdiği özelliklerle karşılaştırır ve öğrenciye en uyumlu bölümleri nedenleriyle birlikte gösterir.",
     ], 16, MUREKKEP, satir_arasi=12)
     # katman kartları (2 x 2) + K5 iş türü tercihleri
     x0, y0, kw, kh = 6.35, 1.75, 3.1, 1.15
