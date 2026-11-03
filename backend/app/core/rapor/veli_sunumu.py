@@ -491,6 +491,27 @@ def _guclu(d: _Deste):
              + ("Gri çubuklar okul geneli ortalamasıdır." if any(x["okul"] is not None for x in g) else ""))
 
 
+def _maarif(d: _Deste):
+    """[2026-11-03] Öne çıkan özelliklerin Türkiye Yüzyılı Maarif Modeli'ndeki karşılıkları (yorumsal; MEB onayı iddiası yok)."""
+    from app.core.maarif import NOT
+    g = [x for x in (d.v.get("guclu") or []) if x.get("maarif")]
+    if not g:
+        return
+    sl = d.slayt("Maarif Modeli ile ilişkisi", "Öne çıkan yönlerin Maarif Modeli'ndeki karşılıkları")
+    _metin(sl, SOL, 1.75, 12.1, 0.8, "Okulda uygulanan Türkiye Yüzyılı Maarif Modeli değerleri, eğilimleri ve becerileri tanımlar. "
+           "Öğrencilerimizde öne çıkan özelliklerin bu çerçevede hangi kavramlara yakın olduğu aşağıdadır.", 16, GRI)
+    y = 2.7
+    for x in g[:5]:
+        _kart(sl, SOL, y, 12.1, 0.62, d.r.acik)
+        _metin(sl, SOL + 0.3, y + 0.14, 4.6, 0.4, [[(x["ad"], {"kalin": True})]], 16, MUREKKEP)
+        _metin(sl, SOL + 5.1, y + 0.14, 6.8, 0.4, x["maarif"], 16, MUREKKEP)
+        y += 0.74
+    _metin(sl, SOL, min(y + 0.1, 6.55), 12.1, 0.5, NOT, 12, GRI)
+    _not(sl, "Bu eşleştirme yorumsaldır: Filizyol'un ölçtüğü özelliklerin Maarif Modeli'ndeki ilişkili kavramlarını gösterir. "
+             "Puanları etkilemez ve Millî Eğitim Bakanlığı onayı anlamına gelmez. Okulda yürütülen değerler ve beceriler "
+             "çalışmalarıyla bağ kurmak için kullanılabilir.")
+
+
 def _alanlar(d: _Deste):
     a = [x for x in (d.v.get("alanlar") or []) if x.get("sayi")]
     if not any(not x.get("diger") for x in a):
@@ -688,6 +709,7 @@ def _deste_kur(v: dict, pdf: bool = False) -> _Deste:
         if v.get("profil_yeterli"):
             if v.get("guclu"):
                 _guclu(d)
+                _maarif(d)
             if any(not x.get("diger") and x.get("sayi") for x in v.get("alanlar") or []) or v.get("bolumler"):
                 _alanlar(d)
         if (v.get("hedef") or {}).get("oran") is not None:

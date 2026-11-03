@@ -32,6 +32,17 @@ UYUM_YUKSEK, UYUM_DUSUK = 60.0, 40.0
 
 
 @lru_cache(maxsize=1)
+
+def _maarif_alani(kod, kitle: str) -> dict:
+    """[2026-11-03] Rehber öğretmen ve sınıf öğretmeni yorumunda güçlü yönün Türkiye Yüzyılı Maarif Modeli'ndeki ilişkili
+    kavramları (yorumsal; app/core/maarif.py). Öğretmen derste aynı kavramlarla (eğilim, beceri, değer) çalışır.
+    Öğrenci ve veli ekranlarında Maarif karşılıkları ayrı kartta gösterildiği için burada eklenmez (tekrar olmasın)."""
+    if kitle not in ("rehber", "ogretmen") or not kod:
+        return {}
+    from app.core.maarif import kisa_metin
+    m = kisa_metin(kod)
+    return {"maarif": m} if m else {}
+
 def _icerik() -> dict:
     try:
         return json.loads(_DOSYA.read_text("utf-8")).get("degiskenler", {})
@@ -226,7 +237,7 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
     for g in guclu[:3]:
         m = (kitle == "rehber" and _metin(g.get("kod"), "yuksek", "rehber")) or _metin(g.get("kod"), "yuksek", alan_g)
         if m:
-            y["guclu"].append({"ad": g["ad"], "metin": m})
+            y["guclu"].append({"ad": g["ad"], "metin": m, **_maarif_alani(g.get("kod"), kitle)})
 
     # --- Gelişim / destek (düşük kutupta nötr adlar)
     alan_d = {"ogrenci": "yap", "veli": "veli", "ogretmen": "ogretmen", "rehber": "ogretmen"}[kitle]

@@ -139,13 +139,15 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
         # duygusal hassasiyet (P4) ve eşleşme dışı özellikler veli sunumunda yer almaz (psikolojik ayrıntı)
         from app.core.katman_servisi import parametre_oku
         haric = sorted({"P4"} | {x.strip() for x in (parametre_oku(db, "eslesme_disi_degiskenler", "P4") or "").split(",") if x.strip()})
-        sql = """SELECT d.ad, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
+        sql = """SELECT d.ad, min(d.kod) AS kod, avg(s.puan) AS ort, count(DISTINCT s.ogrenci_id) AS n FROM ogrenci_degisken_skorlari s
                    JOIN degiskenler d ON d.id = s.degisken_id JOIN katmanlar k ON k.id = d.katman_id
                   WHERE s.tur_id = ANY(:t) AND d.dal_id IS NULL AND NOT k.kosullu_mu AND d.kod <> ALL(:haric) GROUP BY d.ad"""
         # [2026-10-14] ortalamalara yalnızca GEÇERLİ (güven eşiğini geçen) son turlar girer — okul raporlarıyla aynı kural
         from app.core.rapor.veri import gecerli_tur_idleri
         gecerli_tur = gecerli_tur_idleri(db, list(tamam_tur.values()))
-        kapsam_ort = {r.ad: (float(r.ort), r.n) for r in db.execute(text(sql), {"t": gecerli_tur, "haric": haric}).all()}
+        kapsam_satir = db.execute(text(sql), {"t": gecerli_tur, "haric": haric}).all()
+        kapsam_ort = {r.ad: (float(r.ort), r.n) for r in kapsam_satir}
+        ad_kod = {r.ad: r.kod for r in kapsam_satir}
         ilk5 = sorted(((a, o) for a, (o, n) in kapsam_ort.items() if yeterli(n)), key=lambda x: -x[1])[:5]
         okul_ort = {}
         if kapsam_tur != "okul":
@@ -153,7 +155,10 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
                                                and x.get("tur_id") and oid in {o.id for o in tum}])
             if yeterli(len(okul_tur)):
                 okul_ort = {r.ad: float(r.ort) for r in db.execute(text(sql), {"t": okul_tur, "haric": haric}).all() if yeterli(r.n)}
-        v["guclu"] = [{"ad": a, "ort": round(o, 1), "okul": round(okul_ort[a], 1) if a in okul_ort else None} for a, o in ilk5]
+        # [2026-11-03] Türkiye Yüzyılı Maarif Modeli'ndeki ilişkili kavramlar (yorumsal; app/core/maarif.py)
+        from app.core.maarif import kisa_metin as maarif_metni
+        v["guclu"] = [{"ad": a, "ort": round(o, 1), "okul": round(okul_ort[a], 1) if a in okul_ort else None,
+                       "maarif": maarif_metni(ad_kod.get(a))} for a, o in ilk5]
 
         # ------------------------------------------------------------ alanlar ve bölümler (toplu)
         bolum_ad = {r.id: _baslik(r.ad) for r in db.execute(text("SELECT id, ad FROM bolumler")).all()}

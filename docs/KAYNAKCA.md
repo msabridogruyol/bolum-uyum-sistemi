@@ -227,7 +227,7 @@ Her soru/şık metninin gerçekten bağlı olduğu değişkeni ölçüp ölçmed
 
 Her özelliğin Türkiye Yüzyılı Maarif Modeli'ndeki ilişkili değer, eğilim ve becerileri (ör. Yeniliğe açıklık → Merak, Açık fikirlilik).
 
-**Nasıl:** app/data/maarif_eslesme.json: özellik kodu → TYMM değer / eğilim (E…) / sosyal-duygusal beceri (SDB…) / kavramsal beceri (KB…). Profilim, katman detayı, Koçluğum, okul istatistikleri ve PDF raporlarında gösterilir. İş değerleri (D1 güvence, D2 gelir, D3 statü, D4 anlam) eşleştirilmedi.
+**Nasıl:** app/data/maarif_eslesme.json: özellik kodu → TYMM değer / eğilim (E…) / sosyal-duygusal beceri (SDB…) / kavramsal beceri (KB…). Profilim, katman detayı, Koçluğum, okul istatistikleri, PDF raporları, rehber öğretmen ve sınıf öğretmeni yorumlarındaki güçlü yönler ve veli toplantısı sunumunda (grubun öne çıkan özellikleri) gösterilir. İş değerleri (D1 güvence, D2 gelir, D3 statü, D4 anlam) eşleştirilmedi.
 
 **Dayanak:**
 
