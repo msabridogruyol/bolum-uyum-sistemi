@@ -30,7 +30,7 @@
    "yorum": "Meslek genelinde düşük maruz kalma; bazı görevler yüksek olsa da meslek büyük ölçüde insan işi görevlere dayanıyor."
   },
   "minimal": {
-   "ad": "Minimal maruz kalma",
+   "ad": "Çok az maruz kalma",
    "tanim": "μ < 0,5 ve μ + σ > 0,4",
    "yorum": "Bazı görevlerde etkileşim olabilir ama mesleğin doğası belirgin biçimde değişmez."
   },
@@ -41,7 +41,7 @@
   },
   "kaynak_bolum": "Tablo 5, s. 38"
  },
- "duzey_kurali": "Grup düzeyini ILO değil Filizyol hesaplar: grubun ILO tablosundaki mesleklerinin en az üçte biri Gradyan 3–4'teyse “En çok değişecek”; değilse en az beşte biri herhangi bir gradyandaysa (1–4) “Kısmen değişecek”; aksi hâlde “Az değişecek”. Her meslek eşit sayılır (çalışan sayısına göre ağırlık yok).",
+ "duzey_kurali": "Grup düzeyini ILO değil Filizyol hesaplar. Grubun ILO tablosundaki mesleklerinin en az üçte biri Gradyan 3–4'teyse “En çok değişecek” denir. Değilse ve en az beşte biri herhangi bir gradyandaysa (1–4) “Kısmen değişecek” denir. Aksi hâlde “Az değişecek” denir. Her meslek eşit sayılır (çalışan sayısına göre ağırlık yok).",
  "uyari": {
   "metin": "Maruz kalma, mesleğin yok olacağı anlamına gelmez. ILO'ya göre bu puanlar bir mesleğin görevlerinin ne kadarının bugünkü üretken yapay zekâ ile yapılabileceğini gösterir; teknolojinin gerçekten kullanılıp kullanılmayacağını, yeni doğacak işleri ve çalışanların yeni araçlarla nasıl uyum sağlayacağını göstermez. Çoğu meslekte beklenen, işin yok olması değil dönüşmesidir: bazı görevler yapay zekâya kayar, insan becerisi gerektiren görevlerin önemi artar.",
   "dayanak": "ILO WP140, Bölüm 10 (s. 44–45) ve Sonuç (s. 46–47); ILO WP96 (2023), Özet ve Sonuç",
@@ -75,7 +75,7 @@
     "minimal": 3,
     "maruz_degil": 2
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — minimal maruz kalma: 3; maruz değil: 2.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — çok az maruz kalma: 3; maruz değil: 2.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 51–56 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -145,7 +145,7 @@
     "minimal": 4,
     "maruz_degil": 1
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 7 meslek — Gradyan 1–2: 2; minimal maruz kalma: 4; maruz değil: 1.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 7 meslek — Gradyan 1–2: 2; çok az maruz kalma: 4; maruz değil: 1.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 50–55 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -231,7 +231,7 @@
     "minimal": 11,
     "maruz_degil": 1
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 14 meslek — Gradyan 1–2: 2; minimal maruz kalma: 11; maruz değil: 1.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 14 meslek — Gradyan 1–2: 2; çok az maruz kalma: 11; maruz değil: 1.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 49–56 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -373,7 +373,7 @@
     "minimal": 2,
     "maruz_degil": 0
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 4 meslek — Gradyan 1–2: 2; minimal maruz kalma: 2.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 4 meslek — Gradyan 1–2: 2; çok az maruz kalma: 2.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 50–53 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -436,7 +436,7 @@
     "minimal": 10,
     "maruz_degil": 6
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 24 meslek — Gradyan 3–4: 2; Gradyan 1–2: 6; minimal maruz kalma: 10; maruz değil: 6.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 24 meslek — Gradyan 3–4: 2; Gradyan 1–2: 6; çok az maruz kalma: 10; maruz değil: 6.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 48–55 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -660,7 +660,7 @@
     "minimal": 5,
     "maruz_degil": 10
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 15 meslek — minimal maruz kalma: 5; maruz değil: 10.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 15 meslek — çok az maruz kalma: 5; maruz değil: 10.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 51–59 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -811,7 +811,7 @@
     "minimal": 6,
     "maruz_degil": 4
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 12 meslek — Gradyan 1–2: 2; minimal maruz kalma: 6; maruz değil: 4.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 12 meslek — Gradyan 1–2: 2; çok az maruz kalma: 6; maruz değil: 4.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 49–57 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -938,7 +938,7 @@
     "minimal": 1,
     "maruz_degil": 0
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 11 meslek — Gradyan 3–4: 6; Gradyan 1–2: 4; minimal maruz kalma: 1.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 11 meslek — Gradyan 3–4: 6; Gradyan 1–2: 4; çok az maruz kalma: 1.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 48–51 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -1136,7 +1136,7 @@
    ],
    "degisen_gorevler": [
     "Belirtilen şartlara göre kod yazma ve bakım",
-    "Test planı, test betiği ve dokümantasyon hazırlama",
+    "Test planı, test betiği (testi otomatik yapan kod) ve dokümantasyon hazırlama",
     "Veritabanı tasarımı ve rutin geliştirme işleri"
    ],
    "deger_kazanan": [
@@ -1162,7 +1162,7 @@
     "minimal": 4,
     "maruz_degil": 7
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 21 meslek — Gradyan 3–4: 5; Gradyan 1–2: 5; minimal maruz kalma: 4; maruz değil: 7.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 21 meslek — Gradyan 3–4: 5; Gradyan 1–2: 5; çok az maruz kalma: 4; maruz değil: 7.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 48–59 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -1335,7 +1335,7 @@
     }
    ],
    "degisen_gorevler": [
-    "Çeviri, düzelti ve metin revizyonu",
+    "Çeviri, yazım düzeltme ve metin revizyonu",
     "Araştırma, arşiv ve kayıt düzenleme",
     "Haber ve içerik metinlerinin taslağı"
    ],
@@ -1362,7 +1362,7 @@
     "minimal": 6,
     "maruz_degil": 18
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 25 meslek — Gradyan 1–2: 1; minimal maruz kalma: 6; maruz değil: 18.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 25 meslek — Gradyan 1–2: 1; çok az maruz kalma: 6; maruz değil: 18.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 50–57 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -1593,7 +1593,7 @@
     "minimal": 4,
     "maruz_degil": 11
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 17 meslek — Gradyan 3–4: 1; Gradyan 1–2: 1; minimal maruz kalma: 4; maruz değil: 11.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 17 meslek — Gradyan 3–4: 1; Gradyan 1–2: 1; çok az maruz kalma: 4; maruz değil: 11.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 49–59 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -1760,7 +1760,7 @@
     "minimal": 5,
     "maruz_degil": 1
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 24 meslek — Gradyan 3–4: 8; Gradyan 1–2: 10; minimal maruz kalma: 5; maruz değil: 1.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 24 meslek — Gradyan 3–4: 8; Gradyan 1–2: 10; çok az maruz kalma: 5; maruz değil: 1.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 48–56 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -1984,7 +1984,7 @@
     "minimal": 3,
     "maruz_degil": 4
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 10 meslek — Gradyan 1–2: 3; minimal maruz kalma: 3; maruz değil: 4.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 10 meslek — Gradyan 1–2: 3; çok az maruz kalma: 3; maruz değil: 4.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 50–60 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -2095,7 +2095,7 @@
     "minimal": 2,
     "maruz_degil": 0
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 6 meslek — Gradyan 3–4: 1; Gradyan 1–2: 3; minimal maruz kalma: 2.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 6 meslek — Gradyan 3–4: 1; Gradyan 1–2: 3; çok az maruz kalma: 2.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 49–53 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -2212,7 +2212,7 @@
     }
    ],
    "degisen_gorevler": [
-    "Veri girişi, metin yazma, düzelti ve biçimlendirme",
+    "Veri girişi, metin yazma, yazım düzeltme ve biçimlendirme",
     "Toplantı ve randevu organize etme",
     "Belge kaydı ve sınıflandırma"
    ],
@@ -2367,7 +2367,7 @@
     "minimal": 1,
     "maruz_degil": 0
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 6 meslek — Gradyan 3–4: 4; Gradyan 1–2: 1; minimal maruz kalma: 1.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 6 meslek — Gradyan 3–4: 4; Gradyan 1–2: 1; çok az maruz kalma: 1.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 48–52 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -2509,7 +2509,7 @@
    ],
    "degisen_gorevler": [
     "Bilgileri kodlama ve sınıflandırma",
-    "Metinleri düzelti, karşılaştırma",
+    "Metinlerde yazım düzeltme, karşılaştırma",
     "Personel ve arşiv kayıtlarını saklama, bulma"
    ],
    "deger_kazanan": [
@@ -2535,7 +2535,7 @@
     "minimal": 5,
     "maruz_degil": 12
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 17 meslek — minimal maruz kalma: 5; maruz değil: 12.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 17 meslek — çok az maruz kalma: 5; maruz değil: 12.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 53–59 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -2702,7 +2702,7 @@
     "minimal": 2,
     "maruz_degil": 3
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 12 meslek — Gradyan 3–4: 1; Gradyan 1–2: 6; minimal maruz kalma: 2; maruz değil: 3.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 12 meslek — Gradyan 3–4: 1; Gradyan 1–2: 6; çok az maruz kalma: 2; maruz değil: 3.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 48–56 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -2830,7 +2830,7 @@
     "minimal": 1,
     "maruz_degil": 4
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — minimal maruz kalma: 1; maruz değil: 4.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 5 meslek — çok az maruz kalma: 1; maruz değil: 4.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 54–59 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -3339,7 +3339,7 @@
     }
    ],
    "degisen_gorevler": [
-    "Proje, çizim ve şartnameleri okuma, malzeme belirleme",
+    "Proje, çizim ve şartnameleri (işin teknik koşullarını yazan belgeleri) okuma, malzeme belirleme",
     "İşin planlanması ve koordinasyonu"
    ],
    "deger_kazanan": [
@@ -3690,7 +3690,7 @@
     "minimal": 2,
     "maruz_degil": 18
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 20 meslek — minimal maruz kalma: 2; maruz değil: 18.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 20 meslek — çok az maruz kalma: 2; maruz değil: 18.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 54–60 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -3856,7 +3856,7 @@
    ],
    "degisen_gorevler": [
     "Üretim kayıtları ve test sonuçlarının raporlanması",
-    "Şartname okuma ve hesaplamalar"
+    "Şartname (işin teknik koşullarını yazan belge) okuma ve hesaplamalar"
    ],
    "deger_kazanan": [
     "Gıda, ahşap, giysi gibi malzemeyle el emeği ve ustalık",
@@ -3881,7 +3881,7 @@
     "minimal": 1,
     "maruz_degil": 24
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 25 meslek — minimal maruz kalma: 1; maruz değil: 24.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 25 meslek — çok az maruz kalma: 1; maruz değil: 24.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 54–59 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -4112,7 +4112,7 @@
     "minimal": 3,
     "maruz_degil": 0
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 3 meslek — minimal maruz kalma: 3.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 3 meslek — çok az maruz kalma: 3.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 53–54 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -4165,7 +4165,7 @@
     "minimal": 2,
     "maruz_degil": 8
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 11 meslek — Gradyan 1–2: 1; minimal maruz kalma: 2; maruz değil: 8.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 11 meslek — Gradyan 1–2: 1; çok az maruz kalma: 2; maruz değil: 8.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 51–60 (meslek satırlarının sayfaları)",
    "meslekler": [
     {
@@ -4624,7 +4624,7 @@
     "minimal": 1,
     "maruz_degil": 5
    },
-   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 8 meslek — Gradyan 1–2: 2; minimal maruz kalma: 1; maruz değil: 5.",
+   "aciklama": "ILO 2025 endeksi (Tablo A1), bu alt ana gruptaki 8 meslek — Gradyan 1–2: 2; çok az maruz kalma: 1; maruz değil: 5.",
    "kaynak_bolum": "Tablo A1 (Annex), s. 50–61 (meslek satırlarının sayfaları)",
    "meslekler": [
     {

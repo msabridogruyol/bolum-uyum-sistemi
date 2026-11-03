@@ -104,7 +104,7 @@
      "durum": "Yöneticin maliyeti düşürmek için daha ucuz bir malzeme kullanılmasını istiyor. Sen bu malzemenin uzun vadede dayanıklılık sorunu çıkarabileceğini düşünüyorsun.",
      "secenekler": [
       {
-       "metin": "Kaygımı test verileri ve teknik şartnameyle destekleyip yazılı olarak sunarım.",
+       "metin": "Kaygımı test verileri ve teknik şartnameyle (işin teknik kurallarını yazan belgeyle) destekleyip yazılı olarak sunarım.",
        "sonuc": "Veriye dayalı itiraz dinlenme şansını artırır ve kayıt altına alınmış olur.",
        "yaklasim": "analitik"
       },
@@ -685,8 +685,8 @@
      "durum": "Gün boyunca zor yaşam öyküleri dinledin. Akşam eve geldiğinde bile danışanlarını düşünüyor, kendi hayatına odaklanamıyorsun.",
      "secenekler": [
       {
-       "metin": "Düzenli süpervizyon ya da meslektaş desteği alarak yaşadıklarımı konuşurum.",
-       "sonuc": "Bu alanda süpervizyon, profesyonel destek almanın olağan yoludur ve tükenmişliği önler.",
+       "metin": "Düzenli süpervizyon (deneyimli bir uzmandan rehberlik) ya da meslektaş desteği alarak yaşadıklarımı konuşurum.",
+       "sonuc": "Bu alanda süpervizyon (deneyimli bir uzmandan rehberlik), profesyonel destek almanın olağan yoludur ve tükenmişliği önler.",
        "yaklasim": "guvenlik"
       },
       {
@@ -700,7 +700,7 @@
        "yaklasim": "empati"
       }
      ],
-     "basa_cikma": "Başkalarının acısına tanıklık etmek 'ikincil travma' denen bir yük oluşturabilir. Süpervizyon, sınırlar ve öz bakım bu mesleğin vazgeçilmezleridir.",
+     "basa_cikma": "Başkalarının acısına tanıklık etmek 'ikincil travma' denen bir yük oluşturabilir. Süpervizyon (deneyimli bir uzmandan rehberlik), sınırlar ve öz bakım bu mesleğin vazgeçilmezleridir.",
      "neden_seviyorlar": "Psikologlar ve sosyal hizmet uzmanları, bir insanın hayatında yeniden umut doğduğunu görmenin tarif edilemez bir anlam taşıdığını söyler."
     },
     {
@@ -710,7 +710,7 @@
      "durum": "Bir görüşmede danışanın, başka birinin güvenliğini ciddi biçimde tehlikeye atabilecek bir şeyden söz etti. Gizlilik ilkesini de önemsiyorsun.",
      "secenekler": [
       {
-       "metin": "Meslek etiği ve kurumun yasal bildirim kurallarına göre süpervizörüme danışır, gerekli adımları atarım.",
+       "metin": "Meslek etiği ve kurumun yasal bildirim kurallarına göre süpervizörüme (bana rehberlik eden kıdemli uzmana) danışır, gerekli adımları atarım.",
        "sonuc": "Doğru yaklaşım. Gizlilik çok önemlidir ama bir kişinin güvenliği ciddi tehlikedeyse meslek etiği ve mevzuat belirli adımlar atmayı gerektirir; tek başına karar vermemelisin.",
        "yaklasim": "etik",
        "onerilen": true
@@ -726,7 +726,7 @@
        "yaklasim": "hizli"
       }
      ],
-     "basa_cikma": "Etik ikilemler bu mesleğin bir parçasıdır. Meslek etiği kurallarını iyi bilmek ve zor kararlarda süpervizyon almak seni ve danışanı korur.",
+     "basa_cikma": "Etik ikilemler bu mesleğin bir parçasıdır. Meslek etiği kurallarını iyi bilmek ve zor kararlarda süpervizyon (deneyimli bir uzmandan rehberlik) almak seni ve danışanı korur.",
      "neden_seviyorlar": "Bu meslekteki insanlar, zor anlarda doğru kararı verip birinin güvenliğini sağlamanın sorumluluğunu onurla taşır."
     },
     {
@@ -786,7 +786,7 @@
      "durum": "Aylardır görüştüğün bir danışanda beklediğin ilerleme olmuyor. Kendi yeterliliğinden şüphe etmeye başladın.",
      "secenekler": [
       {
-       "metin": "Süpervizörümle vakayı değerlendirip farklı bir yaklaşım düşünürüz.",
+       "metin": "Süpervizörümle (bana rehberlik eden kıdemli uzmanla) vakayı değerlendirip farklı bir yaklaşım düşünürüz.",
        "sonuc": "Başka bir bakış açısı, tıkanmayı aşmanın en iyi yoludur.",
        "yaklasim": "analitik"
       },
@@ -856,7 +856,7 @@
        "yaklasim": "hizli"
       }
      ],
-     "basa_cikma": "Öğretmenliğin görünmeyen kısmı ders dışında yapılır. Değerlendirme rubrikleri ve ortak materyaller bu yükü azaltır.",
+     "basa_cikma": "Öğretmenliğin görünmeyen kısmı ders dışında yapılır. Değerlendirme rubrikleri (puanlama ölçütü tabloları) ve ortak materyaller bu yükü azaltır.",
      "neden_seviyorlar": "Kâğıt yığınlarının arasında bir öğrencinin kendini aştığını gösteren bir cevap okumak, öğretmenlerin gününü güzelleştirir."
     },
     {
@@ -1643,7 +1643,7 @@
       }
      ],
      "basa_cikma": "Ret, sahne sanatlarının sık yaşanan bir gerçeğidir ve yeteneğinin tek ölçüsü değildir. Devamlılık ve gelişim en güçlü silahlardır.",
-     "neden_seviyorlar": "Sanatçılar, sayısız rettin ardından gelen bir 'evet'in ve sahnede kendini ifade etmenin her şeye değdiğini anlatır."
+     "neden_seviyorlar": "Sanatçılar, sayısız reddin ardından gelen bir 'evet'in ve sahnede kendini ifade etmenin her şeye değdiğini anlatır."
     },
     {
      "saat": "14:00",
@@ -1729,10 +1729,10 @@
      "saat": "22:30",
      "tur": "fazla_mesai",
      "baslik": "Teslim gecesi",
-     "durum": "Proje teslimine bir gün kaldı. Paftalar hâlâ tamamlanmadı ve ofiste herkes geç saatlere kadar çalışıyor.",
+     "durum": "Proje teslimine bir gün kaldı. Paftalar (proje çizim sayfaları) hâlâ tamamlanmadı ve ofiste herkes geç saatlere kadar çalışıyor.",
      "secenekler": [
       {
-       "metin": "Kalan işleri öncelik sırasına koyup ekiple paylaşırız; en önemli paftaları önce bitiririz.",
+       "metin": "Kalan işleri öncelik sırasına koyup ekiple paylaşırız; en önemli paftaları (proje çizim sayfalarını) önce bitiririz.",
        "sonuc": "Önceliklendirme son geceyi yönetilebilir kılar.",
        "yaklasim": "planli"
       },
@@ -2234,7 +2234,7 @@
       },
       {
        "metin": "Misafiri önceden arayıp durumu dürüstçe açıklar, uygun seçenekler sunarım.",
-       "sonuc": "Dürüst ve proaktif iletişim güveni korur; yöneticinin de bilgisi olmalıdır.",
+       "sonuc": "Dürüst ve sorun büyümeden kurulan iletişim güveni korur; yöneticinin de bilgisi olmalıdır.",
        "yaklasim": "iletisim"
       },
       {
@@ -2361,7 +2361,7 @@
     "saat": "19:00",
     "tur": "fazla_mesai",
     "baslik": "Kültür beklemiyor",
-    "durum": "Biyoreaktördeki hücre kültürünün kritik aşaması akşama denk geldi. Ölçümleri kaçırırsan haftalarca süren deney boşa gidebilir.",
+    "durum": "Biyoreaktördeki (hücrelerin büyütüldüğü kaptaki) hücre kültürünün kritik aşaması akşama denk geldi. Ölçümleri kaçırırsan haftalarca süren deney boşa gidebilir.",
     "secenekler": [
      {
       "metin": "Ekip arkadaşımla nöbetleşe ölçüm planı yapıp ikimizin de dinlenmesini sağlarım.",
@@ -2385,8 +2385,8 @@
    {
     "saat": "11:00",
     "tur": "hata",
-    "baslik": "Kontamine olmuş örnekler",
-    "durum": "Haftalardır büyüttüğün kültürlerin bir kısmının kontamine olduğunu fark ettin. Proje toplantısı yarın.",
+    "baslik": "Kontamine olmuş (istenmeyen bir şey bulaşmış) örnekler",
+    "durum": "Haftalardır büyüttüğün kültürlerin bir kısmının kontamine olduğunu (istenmeyen bir şey bulaştığını) fark ettin. Proje toplantısı yarın.",
     "secenekler": [
      {
       "metin": "Durumu dürüstçe raporlar, olası nedenleri ve yeni planı toplantıda sunarım.",
@@ -2394,7 +2394,7 @@
       "yaklasim": "etik"
      },
      {
-      "metin": "Steril çalışma adımlarını gözden geçirip kontaminasyonun kaynağını ararım.",
+      "metin": "Steril çalışma adımlarını gözden geçirip kontaminasyonun (istenmeyen bulaşmanın) kaynağını ararım.",
       "sonuc": "Nedeni bulmak aynı hatayı önler.",
       "yaklasim": "analitik"
      },
@@ -2404,7 +2404,7 @@
       "yaklasim": "hizli"
      }
     ],
-    "basa_cikma": "Kontaminasyon biyoteknolojide sık yaşanır. Ayrıntılı kayıt ve steril çalışma rutinleri kayıpları azaltır.",
+    "basa_cikma": "Kontaminasyon (istenmeyen bulaşma) biyoteknolojide sık yaşanır. Ayrıntılı kayıt ve steril çalışma rutinleri kayıpları azaltır.",
     "neden_seviyorlar": "Her başarısız denemenin bir sonrakini daha iyi yaptığını bilmek, biyomühendislerin sabrını besler."
    }
   ],
@@ -2413,7 +2413,7 @@
     "saat": "13:00",
     "tur": "baski",
     "baslik": "Tesis verimi düştü",
-    "durum": "Flotasyon tesisinde konsantre verimi birkaç gündür düşük. Yönetim hızlı bir açıklama bekliyor.",
+    "durum": "Flotasyon (köpükle cevher ayırma) tesisinde konsantre (zenginleştirilmiş cevher) verimi birkaç gündür düşük. Yönetim hızlı bir açıklama bekliyor.",
     "secenekler": [
      {
       "metin": "Cevher besleme özelliklerini, reaktif dozlarını ve ekipman durumunu sistemli olarak incelerim.",
@@ -2426,7 +2426,7 @@
       "yaklasim": "ekip"
      },
      {
-      "metin": "Reaktif miktarını artırıp sonucu izlerim.",
+      "metin": "Reaktif (kullanılan kimyasal madde) miktarını artırıp sonucu izlerim.",
       "sonuc": "Hızlı bir deneme olabilir ama neden bilinmeden maliyet artabilir.",
       "yaklasim": "hizli"
      }
@@ -2451,7 +2451,7 @@
       "yaklasim": "planli"
      },
      {
-      "metin": "Tesisin farklı cevherlerle çalışabilmesi için bir fizibilite fikri hazırlarım.",
+      "metin": "Tesisin farklı cevherlerle çalışabilmesi için bir fizibilite (yapılabilirlik incelemesi) fikri hazırlarım.",
       "sonuc": "Çözüm üretmek hem kuruma hem kariyerine değer katar.",
       "yaklasim": "yaratici"
      }
@@ -2509,7 +2509,7 @@
       "yaklasim": "planli"
      }
     ],
-    "basa_cikma": "Doğal bir malzemede partiler arası farklar olabilir. Açık spesifikasyon ve numune onayı anlaşmazlıkları azaltır.",
+    "basa_cikma": "Doğal bir malzemede partiler arası farklar olabilir. Açık bir teknik özellik listesi ve numune onayı anlaşmazlıkları azaltır.",
     "neden_seviyorlar": "Bu mühendisler, ürettikleri derinin vitrinlerde şık bir ürüne dönüştüğünü görmekten keyif alır."
    }
   ],
@@ -2557,7 +2557,7 @@
       "yaklasim": "analitik"
      },
      {
-      "metin": "Üretim bir an önce başlasın diye geçici bir köprüleme yaparım.",
+      "metin": "Üretim bir an önce başlasın diye geçici bir köprüleme (koruma sistemini devre dışı bırakan bağlantı) yaparım.",
       "sonuc": "Geçici çözümler kalıcı tehlikelere dönüşebilir.",
       "yaklasim": "hizli"
      }
@@ -3177,7 +3177,7 @@
     "durum": "Uzun bir kanal projesinde yüzlerce kesit için benzer hesaplar yapıyorsun.",
     "secenekler": [
      {
-      "metin": "Hesapları otomatikleştiren bir tablo ya da betik hazırlarım.",
+      "metin": "Hesapları otomatikleştiren bir tablo ya da betik (küçük bilgisayar programı) hazırlarım.",
       "sonuc": "Hem zaman kazanırsın hem hata riskini azaltırsın.",
       "yaklasim": "yaratici"
      },
@@ -3474,7 +3474,7 @@
       "yaklasim": "iletisim"
      },
      {
-      "metin": "Tahkimat ve zemin kontrollerini artırıp sonuçlarını ekiple paylaşırım.",
+      "metin": "Tahkimat (tünel destekleme yapıları) ve zemin kontrollerini artırıp sonuçlarını ekiple paylaşırım.",
       "sonuc": "Somut önlemler kaygıyı azaltır.",
       "yaklasim": "guvenlik"
      },
@@ -3543,7 +3543,7 @@
     "saat": "10:30",
     "tur": "yonetici",
     "baslik": "Kısa yoldan onay",
-    "durum": "Yöneticin, zaman kazanmak için bir parçanın dayanım testini atlayıp benzer bir parçanın sonuçlarına dayanarak onay vermeni istiyor.",
+    "durum": "Yöneticin, zaman kazanmak için bir parçanın dayanım (yüke ne kadar dayandığını ölçen) testini atlayıp benzer bir parçanın sonuçlarına dayanarak onay vermeni istiyor.",
     "secenekler": [
      {
       "metin": "Benzerliğin teknik olarak geçerli olup olmadığını kanıtlarıyla değerlendirip yazılı görüş veririm.",
@@ -3651,7 +3651,7 @@
     "durum": "Haftalardır analiz yapmak yerine dağınık verileri temizliyorsun.",
     "secenekler": [
      {
-      "metin": "Temizleme adımlarını otomatik hâle getiren bir betik yazarım.",
+      "metin": "Temizleme adımlarını otomatik hâle getiren bir betik (küçük bilgisayar programı) yazarım.",
       "sonuc": "Tekrar eden işi bir kez otomatikleştirmek sonraki projeleri hızlandırır.",
       "yaklasim": "yaratici"
      },
@@ -3805,8 +3805,8 @@
    {
     "saat": "10:30",
     "tur": "baski",
-    "baslik": "Nanotoz ve koruyucu ekipman",
-    "durum": "Yeni gelen bir stajyer, nanotoz içeren bir işlemi çeker ocak dışında yapmak üzere.",
+    "baslik": "Nanotoz (çok küçük parçacıklı toz) ve koruyucu ekipman",
+    "durum": "Yeni gelen bir stajyer, nanotoz (çok küçük parçacıklı toz) içeren bir işlemi çeker ocak dışında yapmak üzere.",
     "secenekler": [
      {
       "metin": "İşlemi hemen durdurup çeker ocak ve koruyucu ekipmanla nasıl yapılacağını gösteririm.",
@@ -3821,7 +3821,7 @@
      },
      {
       "metin": "Sonra uyarırım, şimdi işini bitirsin.",
-      "sonuc": "Maruziyet o sırada gerçekleşir.",
+      "sonuc": "Maruz kalma o sırada olur.",
       "yaklasim": "hizli"
      }
     ],
@@ -4078,7 +4078,7 @@
       "yaklasim": "yaratici"
      },
      {
-      "metin": "Çevrim süresini kısaltmak için verileri analiz ederim.",
+      "metin": "Çevrim süresini (bir ürünü üretmek için geçen süreyi) kısaltmak için verileri analiz ederim.",
       "sonuc": "Küçük iyileştirmeler büyük kazanç sağlayabilir.",
       "yaklasim": "analitik"
      },
@@ -4097,7 +4097,7 @@
     "saat": "22:30",
     "tur": "nobet",
     "baslik": "Gece bakım penceresi daraldı",
-    "durum": "Hat bakımına ayrılan gece penceresi gecikmeler yüzünden kısaldı; işlerin bir kısmı bitmeyebilir.",
+    "durum": "Hat bakımına ayrılan gece süresi gecikmeler yüzünden kısaldı; işlerin bir kısmı bitmeyebilir.",
     "secenekler": [
      {
       "metin": "Güvenlik açısından kritik işleri önceliklendirir, bitmeyenleri bir sonraki pencereye planlarım.",
@@ -4220,7 +4220,7 @@
       "yaklasim": "planli"
      }
     ],
-    "basa_cikma": "Tekstilde sıkı termin baskısı yaygındır. Erken iletişim ve alternatif çözümler müşteri ilişkisini korur.",
+    "basa_cikma": "Tekstilde sıkı teslim tarihi baskısı yaygındır. Erken iletişim ve alternatif çözümler müşteri ilişkisini korur.",
     "neden_seviyorlar": "Tekstil mühendisleri, ürettikleri kumaşın mağaza vitrinlerinde yer almasını görmenin keyfini sever."
    },
    {
@@ -4437,7 +4437,7 @@
    {
     "saat": "10:30",
     "tur": "yonetici",
-    "baslik": "Ağırlık mı dayanım mı?",
+    "baslik": "Ağırlık mı sağlamlık mı?",
     "durum": "Yöneticin yakıt verimliliği için bir yapısal parçanın biraz daha inceltilmesini istiyor. Hesaplar güvenlik payını daraltıyor.",
     "secenekler": [
      {
@@ -4597,7 +4597,7 @@
     "saat": "17:00",
     "tur": "yonetici",
     "baslik": "Kapasite planı gerçekçi değil",
-    "durum": "Yönetim, mevcut hatla mümkün olmayan bir üretim hedefini müşteriye söz verdi.",
+    "durum": "Yönetim, mevcut üretim hattıyla mümkün olmayan bir üretim hedefini müşteriye söz verdi.",
     "secenekler": [
      {
       "metin": "Hattın gerçek kapasitesini verilerle gösterip seçenekleri (vardiya, yatırım, dış kaynak) sunarım.",
@@ -5117,7 +5117,7 @@
      }
     ],
     "basa_cikma": "Veri bilimcileri modellerin toplumsal etkisinden de sorumludur. Adillik kontrollerini sürecin parçası yapmak önemlidir.",
-    "neden_seviyorlar": "Veri bilimciler, verinin içinden insanlara fayda sağlayan bir içgörü çıkardıklarında büyük tatmin hisseder."
+    "neden_seviyorlar": "Veri bilimciler, verinin içinden insanlara fayda sağlayan bir içgörü (önemli bir fark ediş) çıkardıklarında büyük tatmin hisseder."
    },
    {
     "saat": "10:30",
@@ -5622,7 +5622,7 @@
     "saat": "14:30",
     "tur": "baski",
     "baslik": "Analiz sonucu sınırda",
-    "durum": "Bir ürün partisinin kalite analizinde bir değer spesifikasyon sınırında çıktı. Üretim sevkiyat için onay bekliyor.",
+    "durum": "Bir ürün partisinin kalite analizinde bir değer izin verilen sınırda çıktı. Üretim sevkiyat için onay bekliyor.",
     "secenekler": [
      {
       "metin": "Analizi prosedüre uygun biçimde tekrarlar, sonuç netleşmeden onay vermem.",
@@ -5726,11 +5726,11 @@
    {
     "saat": "18:00",
     "tur": "hata",
-    "baslik": "PCR kontaminasyonu",
+    "baslik": "PCR kontaminasyonu (istenmeyen bulaşma)",
     "durum": "Negatif kontrollerinde bant çıktı; son haftanın PCR sonuçlarının güvenilirliği şüpheli.",
     "secenekler": [
      {
-      "metin": "Sonuçları raporlamayı durdurup kontaminasyon kaynağını araştırırım.",
+      "metin": "Sonuçları raporlamayı durdurup kontaminasyon (istenmeyen bulaşma) kaynağını araştırırım.",
       "sonuc": "Doğru davranış. Kontrol başarısızsa sonuçlar güvenilir değildir; raporlamak yanlış kararlara yol açabilir.",
       "yaklasim": "etik",
       "onerilen": true
@@ -5746,7 +5746,7 @@
       "yaklasim": "ekip"
      }
     ],
-    "basa_cikma": "Moleküler biyolojide kontaminasyon sık yaşanır. Kontrol örnekleri ve ayrı çalışma alanları bu yüzden vardır.",
+    "basa_cikma": "Moleküler biyolojide kontaminasyon (istenmeyen bulaşma) sık yaşanır. Kontrol örnekleri ve ayrı çalışma alanları bu yüzden vardır.",
     "neden_seviyorlar": "Moleküler biyologlar, DNA'nın içindeki bilgiyi okumanın ve hastalıkları anlamaya katkı sağlamanın heyecanını yaşar."
    },
    {
@@ -5871,7 +5871,7 @@
      },
      {
       "metin": "Kısa süreceği için izin veririm.",
-      "sonuc": "Kontaminasyon haftalarca süren çalışmaları bozabilir.",
+      "sonuc": "Kontaminasyon (istenmeyen bulaşma) haftalarca süren çalışmaları bozabilir.",
       "yaklasim": "hizli"
      }
     ],
@@ -5892,7 +5892,7 @@
       "yaklasim": "ekip"
      },
      {
-      "metin": "Analiz betiklerini önceden hazırlayıp gece işlemini otomatikleştiririm.",
+      "metin": "Analiz betiklerini (küçük programları) önceden hazırlayıp gece işlemini otomatikleştiririm.",
       "sonuc": "Hazırlık gece yükünü azaltır.",
       "yaklasim": "planli"
      },
@@ -6018,7 +6018,7 @@
     "durum": "Uzun bir afet müdahalesinin ardından eve döndün ama gördüklerin aklından çıkmıyor.",
     "secenekler": [
      {
-      "metin": "Kurumun psikososyal destek imkânlarını kullanırım.",
+      "metin": "Kurumun psikososyal (ruhsal ve sosyal) destek imkânlarını kullanırım.",
       "sonuc": "Afet çalışanlarının da desteğe ihtiyacı vardır; bu güçlülüktür.",
       "yaklasim": "guvenlik"
      },
@@ -6172,7 +6172,7 @@
     "saat": "11:00",
     "tur": "hata",
     "baslik": "Yanlış dişe işaret",
-    "durum": "Tedaviye başlamadan önce kayıtları son kez kontrol ederken, radyografide işaretlenen dişin hasta dosyasındakiyle uyuşmadığını fark ettin.",
+    "durum": "Tedaviye başlamadan önce kayıtları son kez kontrol ediyorsun. Bu sırada röntgende işaretlenen dişin hasta dosyasındakiyle uyuşmadığını fark ettin.",
     "secenekler": [
      {
       "metin": "Tedaviyi başlatmadan hastayla birlikte doğru dişi teyit eder, kayıtları düzeltirim.",
@@ -6186,7 +6186,7 @@
       "yaklasim": "ekip"
      },
      {
-      "metin": "Radyografiye güvenip devam ederim.",
+      "metin": "Röntgene güvenip devam ederim.",
       "sonuc": "Doğrulama yapılmadan ilerlemek risklidir.",
       "yaklasim": "hizli"
      }
@@ -6279,7 +6279,7 @@
     "saat": "10:00",
     "tur": "zam",
     "baslik": "Kira ve maliyetler arttı",
-    "durum": "Eczanenin kira ve işletme giderleri arttı; kâr marjın daraldı.",
+    "durum": "Eczanenin kira ve işletme giderleri arttı; kâr marjın (her satıştan kalan kâr payın) daraldı.",
     "secenekler": [
      {
       "metin": "Giderlerimi ayrıntılı inceleyip tasarruf edebileceğim alanları belirlerim.",
@@ -6386,7 +6386,7 @@
     "durum": "Gün boyu hastalara manuel terapi uygulamak sırtını ve bileklerini yormaya başladı.",
     "secenekler": [
      {
-      "metin": "Kendi ergonomime dikkat edip uygun teknikleri ve ekipmanı kullanırım.",
+      "metin": "Kendi duruşuma ve çalışma pozisyonuma dikkat edip uygun teknikleri ve ekipmanı kullanırım.",
       "sonuc": "Kendi bedenini korumak mesleği uzun yıllar sürdürmeni sağlar.",
       "yaklasim": "guvenlik"
      },
@@ -6600,7 +6600,7 @@
       "yaklasim": "planli"
      },
      {
-      "metin": "Teknisyenlerle iş akışını gözden geçirip darboğazı buluruz.",
+      "metin": "Teknisyenlerle iş akışını gözden geçirip darboğazı (işi yavaşlatan tıkanma noktasını) buluruz.",
       "sonuc": "Süreç iyileştirmesi kalıcı rahatlama sağlar.",
       "yaklasim": "ekip"
      },
@@ -7149,12 +7149,12 @@
     "secenekler": [
      {
       "metin": "Uygun bir zamanda danışana ulaşıp yaşananları konuşmak için bir sonraki seansı öneririm.",
-      "sonuc": "Terapötik ilişkideki kopukluklar onarılabilir ve terapiye katkı sağlayabilir.",
+      "sonuc": "Terapist ile danışan arasındaki ilişkideki kopukluklar onarılabilir ve terapiye katkı sağlayabilir.",
       "yaklasim": "iletisim"
      },
      {
-      "metin": "Yaşananları süpervizörümle değerlendiririm.",
-      "sonuc": "Süpervizyon yeni bir bakış açısı sunar.",
+      "metin": "Yaşananları süpervizörümle (bana rehberlik eden deneyimli meslektaşımla) değerlendiririm.",
+      "sonuc": "Süpervizyon (deneyimli bir meslektaştan rehberlik almak) yeni bir bakış açısı sunar.",
       "yaklasim": "ekip"
      },
      {
@@ -7163,7 +7163,7 @@
       "yaklasim": "analitik"
      }
     ],
-    "basa_cikma": "Terapötik ilişkide gerilimler olabilir. Bunları güvenli biçimde konuşmak çoğu zaman ilişkiyi güçlendirir.",
+    "basa_cikma": "Terapist ile danışan arasındaki ilişkide gerilimler olabilir. Bunları güvenli biçimde konuşmak çoğu zaman ilişkiyi güçlendirir.",
     "neden_seviyorlar": "Psikologlar, bir insanın kendini anlamaya ve iyileşmeye başladığı süreçte yanında olmanın anlamını derinden hisseder."
    },
    {
@@ -7173,7 +7173,7 @@
     "durum": "Gün boyu dinlediğin ağır hikâyeler akşamları da zihninde dönüp duruyor.",
     "secenekler": [
      {
-      "metin": "Düzenli süpervizyon ve gerekirse kendi terapimi sürdürürüm.",
+      "metin": "Düzenli süpervizyonu (deneyimli bir meslektaştan rehberlik almayı) ve gerekirse kendi terapimi sürdürürüm.",
       "sonuc": "Psikologlar için profesyonel destek mesleki sağlığın temelidir.",
       "yaklasim": "guvenlik"
      },
@@ -7216,7 +7216,7 @@
       "yaklasim": "hizli"
      }
     ],
-    "basa_cikma": "Rehber öğretmenler zor etik kararlarla karşılaşır. Okul prosedürlerini bilmek ve süpervizyon almak hem öğrenciyi hem danışmanı korur.",
+    "basa_cikma": "Rehber öğretmenler zor etik kararlarla karşılaşır. Okul prosedürlerini bilmek ve süpervizyon (deneyimli bir meslektaştan rehberlik) almak hem öğrenciyi hem danışmanı korur.",
     "neden_seviyorlar": "Rehber öğretmenler, zor bir dönemden geçen bir öğrencinin yeniden gülümsediğini görmenin en büyük ödül olduğunu söyler."
    },
    {
@@ -7268,7 +7268,7 @@
       "yaklasim": "ekip"
      }
     ],
-    "basa_cikma": "Sosyal hizmette kaynak kısıtlılığı en zorlayıcı gerçeklerdendir. Ağ kurmak ve dürüst iletişim bu zorluğu hafifletir.",
+    "basa_cikma": "Sosyal hizmette kaynakların kısıtlı olması en zorlayıcı gerçeklerdendir. Ağ kurmak ve dürüst iletişim bu zorluğu hafifletir.",
     "neden_seviyorlar": "Sosyal hizmet uzmanları, zor durumdaki bir ailenin yeniden ayağa kalkmasına katkı sağlamanın anlamını derinden hisseder."
    },
    {
@@ -7278,7 +7278,7 @@
     "durum": "Takip ettiğin dosya sayısı arttı ve her birine yetişemediğin için suçluluk hissediyorsun.",
     "secenekler": [
      {
-      "metin": "Süpervizörümle vaka yükümü ve önceliklerimi konuşurum.",
+      "metin": "Süpervizörümle (bana rehberlik eden deneyimli meslektaşımla) vaka yükümü ve önceliklerimi konuşurum.",
       "sonuc": "Destek istemek profesyonelliktir.",
       "yaklasim": "iletisim"
      },
@@ -7293,7 +7293,7 @@
       "yaklasim": "ekip"
      }
     ],
-    "basa_cikma": "Sosyal hizmette tükenmişlik yaygındır. Sınırlar, süpervizyon ve öz bakım bu mesleği sürdürmeyi mümkün kılar.",
+    "basa_cikma": "Sosyal hizmette tükenmişlik yaygındır. Sınırlar, süpervizyon (deneyimli bir meslektaştan rehberlik) ve öz bakım bu mesleği sürdürmeyi mümkün kılar.",
     "neden_seviyorlar": "Sosyal hizmet uzmanları, toplumun en kırılgan kesimlerine umut olmanın değerini iyi bilir."
    }
   ],
@@ -8949,15 +8949,15 @@
     "saat": "11:00",
     "tur": "etik",
     "baslik": "Sponsorun eser isteği",
-    "durum": "Serginin sponsoru, kendi koleksiyonundan bir eserin sergiye konsepte uymasa da eklenmesini istiyor.",
+    "durum": "Serginin sponsoru, kendi koleksiyonundan bir eserin, serginin ana fikrine uymasa da sergiye eklenmesini istiyor.",
     "secenekler": [
      {
-      "metin": "Sergi konseptinin bütünlüğünü açıklayıp eserin başka bir etkinlikte sergilenmesini öneririm.",
-      "sonuc": "Küratöryel bağımsızlık sergiyi güvenilir kılar.",
+      "metin": "Serginin ana fikrinin bütünlüğünü açıklayıp eserin başka bir etkinlikte sergilenmesini öneririm.",
+      "sonuc": "Küratörün bağımsızlığı sergiyi güvenilir kılar.",
       "yaklasim": "etik"
      },
      {
-      "metin": "Eserin konsepte bağlanabileceği bir yorum olup olmadığını araştırırım.",
+      "metin": "Eserin serginin ana fikrine bağlanabileceği bir yorum olup olmadığını araştırırım.",
       "sonuc": "Yaratıcı bir çözüm bulunabilir.",
       "yaklasim": "yaratici"
      },
@@ -8967,7 +8967,7 @@
       "yaklasim": "ekip"
      }
     ],
-    "basa_cikma": "Sanat dünyasında finansman ile küratöryel bağımsızlık arasında denge kurmak gerekir.",
+    "basa_cikma": "Sanat dünyasında finansman ile küratörün bağımsızlığı arasında denge kurmak gerekir.",
     "neden_seviyorlar": "Küratörler, eserler arasında anlamlı bir hikâye kurmanın yaratıcı keyfini çok sever."
    }
   ],
@@ -9662,7 +9662,7 @@
     "secenekler": [
      {
       "metin": "Varsayımları verilere ve mesleki standartlara dayandırır, değişikliğin risklerini yazılı olarak bildiririm.",
-      "sonuc": "Doğru davranış. Aktüeryal hesapların gerçekçi olması sigortalıların ve şirketin güvencesidir.",
+      "sonuc": "Doğru davranış. Aktüeryal hesapların (sigorta risk hesaplarının) gerçekçi olması sigortalıların ve şirketin güvencesidir.",
       "yaklasim": "etik",
       "onerilen": true
      },
@@ -9678,7 +9678,7 @@
      }
     ],
     "basa_cikma": "Aktüerler bağımsız ve gerçekçi hesaplamalarıyla güven sağlar. Mesleki standartlar bu bağımsızlığı korur.",
-    "neden_seviyorlar": "Aktüerler, matematikle geleceğin risklerini ölçülebilir kılmanın entelektüel keyfini sever."
+    "neden_seviyorlar": "Aktüerler, matematikle geleceğin risklerini ölçülebilir kılmanın düşünsel keyfini sever."
    },
    {
     "saat": "10:30",
@@ -10579,7 +10579,7 @@
     "durum": "Yönetim, ürün fiyatını önce artırıp sonra 'büyük indirim' olarak göstermeyi öneriyor.",
     "secenekler": [
      {
-      "metin": "Bunun tüketiciyi yanıltabileceğini ve mevzuata aykırı olabileceğini anlatıp gerçek bir kampanya öneririm.",
+      "metin": "Bunun tüketiciyi yanıltabileceğini ve yasal kurallara aykırı olabileceğini anlatıp gerçek bir kampanya öneririm.",
       "sonuc": "Doğru davranış. Yanıltıcı fiyat uygulamaları tüketici haklarını ihlal eder ve itibarı zedeler.",
       "yaklasim": "etik",
       "onerilen": true
@@ -10750,7 +10750,7 @@
      },
      {
       "metin": "Dosyalardaki ortak risk eğilimlerini analiz ederim.",
-      "sonuc": "Rutin veri yeni içgörüler sağlar.",
+      "sonuc": "Rutin veri yeni içgörüler (önemli fark edişler) sağlar.",
       "yaklasim": "analitik"
      }
     ],
@@ -10881,7 +10881,7 @@
       "yaklasim": "analitik"
      },
      {
-      "metin": "Panikle tüm pozisyonu kapatırım.",
+      "metin": "Panikle tüm pozisyonu (açıktaki tüm alım satım işlemlerini) kapatırım.",
       "sonuc": "Aceleyle verilen kararlar ek kayıplara yol açabilir.",
       "yaklasim": "hizli"
      }
@@ -11764,7 +11764,7 @@
       "yaklasim": "iletisim"
      },
      {
-      "metin": "Brief'i yeniden okuyup farklı bir açıdan yeni fikirler üretirim.",
+      "metin": "Brief'i (müşterinin verdiği iş tanımını) yeniden okuyup farklı bir açıdan yeni fikirler üretirim.",
       "sonuc": "Yaratıcı süreç tekrar denemeyi gerektirir.",
       "yaklasim": "yaratici"
      },
@@ -11774,7 +11774,7 @@
       "yaklasim": "ekip"
      }
     ],
-    "basa_cikma": "Reklamcılıkta fikirlerin reddi süreçtir. Net brief ve geri bildirim yaratıcı enerjiyi doğru yöne kanalize eder.",
+    "basa_cikma": "Reklamcılıkta fikirlerin reddi süreçtir. Net brief (iş tanımı) ve geri bildirim yaratıcı enerjiyi doğru yöne yönlendirir.",
     "neden_seviyorlar": "Metin yazarları, yazdıkları bir sloganın herkesin dilinde dolaştığını duymanın keyfini sever."
    },
    {
@@ -12282,7 +12282,7 @@
     "saat": "20:00",
     "tur": "fazla_mesai",
     "baslik": "Sergi kurulumunda teknik sorun",
-    "durum": "Etkileşimli enstalasyonun yarın açılışta sergilenecek ama sensörler düzgün çalışmıyor.",
+    "durum": "Etkileşimli enstalasyonun (mekâna kurulan sanat eserin) yarın açılışta sergilenecek ama sensörler düzgün çalışmıyor.",
     "secenekler": [
      {
       "metin": "Sorunu adım adım test edip en güvenilir çalışan versiyonu hazırlarım.",
@@ -12530,7 +12530,7 @@
       "yaklasim": "etik"
      },
      {
-      "metin": "Fotoğraflarımı paylaşırken izleme ve filigran gibi önlemler alırım.",
+      "metin": "Fotoğraflarımı paylaşırken izleme ve filigran (fotoğrafın üzerine konan silik ad ya da logo) gibi önlemler alırım.",
       "sonuc": "Önleyici koruma sağlar.",
       "yaklasim": "planli"
      }
@@ -12872,7 +12872,7 @@
      },
      {
       "metin": "Kısa süreceği için devam ederim.",
-      "sonuc": "Kısa süreli maruziyet de zararlıdır.",
+      "sonuc": "Kısa süre maruz kalmak da zararlıdır.",
       "yaklasim": "hizli"
      }
     ],
@@ -12989,7 +12989,7 @@
     "saat": "15:00",
     "tur": "monotonluk",
     "baslik": "Milimetrik temizlik",
-    "durum": "Günlerdir bir fresk yüzeyini milimetrik olarak temizliyorsun.",
+    "durum": "Günlerdir bir fresk (duvar resmi) yüzeyini milimetrik olarak temizliyorsun.",
     "secenekler": [
      {
       "metin": "Çalışmayı küçük alanlara bölüp ilerlemeyi fotoğraflarla belgelerim.",
@@ -13213,7 +13213,7 @@
      },
      {
       "metin": "Bir dahaki sefere dikkat etmesini söylerim.",
-      "sonuc": "Maruziyet o anda devam eder.",
+      "sonuc": "Maruziyet (zararlı maddeyle temas) o anda devam eder.",
       "yaklasim": "hizli"
      }
     ],
@@ -13434,7 +13434,7 @@
    {
     "saat": "22:00",
     "tur": "fazla_mesai",
-    "baslik": "Teslim öncesi crunch",
+    "baslik": "Teslim öncesi crunch (aşırı yoğun mesai dönemi)",
     "durum": "Animasyon projesinin teslimine haftalar kala ekipten her akşam fazla mesai bekleniyor.",
     "secenekler": [
      {
@@ -13815,7 +13815,7 @@
       "yaklasim": "iletisim"
      },
      {
-      "metin": "Repertuvarı sesimi daha az zorlayacak şarkılarla düzenlerim.",
+      "metin": "Şarkı listemi sesimi daha az zorlayacak şarkılarla düzenlerim.",
       "sonuc": "Esnek bir çözüm olabilir; uzman görüşüyle birlikte.",
       "yaklasim": "yaratici"
      }
@@ -14377,8 +14377,8 @@
    {
     "saat": "22:00",
     "tur": "fazla_mesai",
-    "baslik": "Miks yarın teslim",
-    "durum": "Bir filmin ses miksi yarın teslim edilmeli ve yönetmen son kurguyu yeni değiştirdi.",
+    "baslik": "Miks (seslerin son karışımı) yarın teslim",
+    "durum": "Bir filmin ses miksi (seslerin birleştirilip dengelenmesi) yarın teslim edilmeli ve yönetmen son kurguyu yeni değiştirdi.",
     "secenekler": [
      {
       "metin": "Değişen sahneleri önceliklendirip sesi bu bölümlere uyarlarım.",
@@ -14535,7 +14535,7 @@
     "saat": "16:00",
     "tur": "hata",
     "baslik": "Ses tutmadı",
-    "durum": "Haftalarca uğraştığın bir sazın sesi beklediğin tınıyı vermedi.",
+    "durum": "Haftalarca uğraştığın bir sazın sesi beklediğin tınıyı (ses rengini) vermedi.",
     "secenekler": [
      {
       "metin": "Gövde kalınlığı, ahşap ve ayarları adım adım kontrol edip sorunu ararım.",
@@ -14575,7 +14575,7 @@
      },
      {
       "metin": "Kısa süreceği için devam ederim.",
-      "sonuc": "Kısa maruziyet de zararlıdır.",
+      "sonuc": "Kısa süreli maruz kalma da zararlıdır.",
       "yaklasim": "hizli"
      }
     ],
@@ -14640,10 +14640,10 @@
     "saat": "22:00",
     "tur": "fazla_mesai",
     "baslik": "Yarışma teslimi",
-    "durum": "Mimari proje yarışmasının teslimi yarın ve paftalar hâlâ tamamlanmadı.",
+    "durum": "Mimari proje yarışmasının teslimi yarın ve paftalar (proje çizim sayfaları) hâlâ tamamlanmadı.",
     "secenekler": [
      {
-      "metin": "Jüri için en önemli paftaları belirleyip önce onları tamamlarım.",
+      "metin": "Jüri için en önemli paftaları (proje çizim sayfalarını) belirleyip önce onları tamamlarım.",
       "sonuc": "Önceliklendirme kaliteyi korur.",
       "yaklasim": "planli"
      },
@@ -15251,8 +15251,8 @@
     "durum": "Yem fiyatlarındaki artış nedeniyle işletmenin maliyetleri yükseldi.",
     "secenekler": [
      {
-      "metin": "Yem rasyonunu bir uzmanla birlikte optimize ederim.",
-      "sonuc": "Verimli rasyon maliyeti düşürür.",
+      "metin": "Yem rasyonunu (hayvanların günlük yem karışımını) bir uzmanla birlikte en verimli hâle getiririm.",
+      "sonuc": "Verimli rasyon (yem karışımı) maliyeti düşürür.",
       "yaklasim": "analitik"
      },
      {
@@ -15380,17 +15380,17 @@
    {
     "saat": "11:00",
     "tur": "baski",
-    "baslik": "Kaynağı belirsiz tomruk",
-    "durum": "Bir tedarikçi, kaynağı belgelenmemiş tomrukları çok uygun fiyata öneriyor.",
+    "baslik": "Kaynağı belirsiz tomruk (kesilmiş ağaç gövdesi)",
+    "durum": "Bir tedarikçi, kaynağı belgelenmemiş tomrukları (kesilmiş ağaç gövdelerini) çok uygun fiyata öneriyor.",
     "secenekler": [
      {
-      "metin": "Yasal kaynak belgesi olmayan tomruğu satın almam.",
+      "metin": "Yasal kaynak belgesi olmayan tomruğu (kesilmiş ağaç gövdesini) satın almam.",
       "sonuc": "Doğru davranış. Kaynağı belgesiz orman ürünleri yasa dışı kesim riskini taşır.",
       "yaklasim": "etik",
       "onerilen": true
      },
      {
-      "metin": "Tedarikçiden menşe belgelerini isterim.",
+      "metin": "Tedarikçiden menşe (ürünün geldiği yer) belgelerini isterim.",
       "sonuc": "Belge kontrolü yasal uygunluğu sağlar.",
       "yaklasim": "analitik"
      },
@@ -15410,7 +15410,7 @@
     "durum": "Mobilya sezonunda fabrikada siparişler arttı ve ekip fazla mesai yapıyor.",
     "secenekler": [
      {
-      "metin": "Üretim planını darboğazlara göre yeniden düzenlerim.",
+      "metin": "Üretim planını darboğazlara (işi yavaşlatan tıkanma noktalarına) göre yeniden düzenlerim.",
       "sonuc": "Verimlilik fazla mesaiyi azaltır.",
       "yaklasim": "analitik"
      },
@@ -15618,11 +15618,11 @@
     "saat": "16:00",
     "tur": "baski",
     "baslik": "Rapor sonuçları değişsin",
-    "durum": "Bir proje için hazırladığın fizibilite raporunun daha olumlu gösterilmesi isteniyor.",
+    "durum": "Bir proje için hazırladığın fizibilite (yapılabilirlik) raporunun daha olumlu gösterilmesi isteniyor.",
     "secenekler": [
      {
       "metin": "Raporu gerçek verilere dayandırır, riskleri açıkça belirtirim.",
-      "sonuc": "Doğru davranış. Gerçeği yansıtmayan fizibilite raporu yanlış yatırım kararlarına yol açar.",
+      "sonuc": "Doğru davranış. Gerçeği yansıtmayan fizibilite (yapılabilirlik) raporu yanlış yatırım kararlarına yol açar.",
       "yaklasim": "etik",
       "onerilen": true
      },
@@ -15724,7 +15724,7 @@
     "saat": "16:00",
     "tur": "baski",
     "baslik": "Belgede değişiklik isteği",
-    "durum": "Bir müşteri, gümrükte avantaj sağlamak için ürün menşe belgesinde değişiklik yapılmasını istiyor.",
+    "durum": "Bir müşteri, gümrükte avantaj sağlamak için ürün menşe belgesinde (ürünün üretildiği ülkeyi gösteren belgede) değişiklik yapılmasını istiyor.",
     "secenekler": [
      {
       "metin": "Belgelerde gerçek dışı bilgi kullanmayacağımı açıkça söylerim.",
@@ -16121,7 +16121,7 @@
     "durum": "Danışmanlık verdiğin bir işletmede süt verimi birkaç haftadır düşüyor.",
     "secenekler": [
      {
-      "metin": "Yem rasyonu, barınak koşulları ve hayvan sağlığı kayıtlarını incelerim.",
+      "metin": "Yem rasyonu (hayvanların günlük yem karışımı), barınak koşulları ve hayvan sağlığı kayıtlarını incelerim.",
       "sonuc": "Sistemli inceleme nedeni bulur.",
       "yaklasim": "analitik"
      },
@@ -16171,7 +16171,7 @@
     "saat": "23:00",
     "tur": "nobet",
     "baslik": "Gece vardiyasında yorgunluk",
-    "durum": "Gece köprüüstü vardiyasındasın, çok yorgunsun ve yoğun bir deniz trafiğine giriyorsunuz.",
+    "durum": "Gece köprüüstü (geminin yönetildiği bölüm) vardiyasındasın, çok yorgunsun ve yoğun bir deniz trafiğine giriyorsunuz.",
     "secenekler": [
      {
       "metin": "Yorgunluğumu kaptana bildirip gerekirse ek gözcü ya da destek isterim.",
@@ -16191,7 +16191,7 @@
      }
     ],
     "basa_cikma": "Denizcilikte dinlenme kuralları can güvenliği içindir. Yorgunluğu bildirmek bir zayıflık değil sorumluluktur.",
-    "neden_seviyorlar": "Zabitler, gece köprüüstünde okyanusun sessizliğinde gemiyi güvenle yönlendirmenin huzurunu ve gururunu yaşar."
+    "neden_seviyorlar": "Zabitler, gece köprüüstünde (geminin yönetildiği bölümde) okyanusun sessizliğinde gemiyi güvenle yönlendirmenin huzurunu ve gururunu yaşar."
    },
    {
     "saat": "14:00",
@@ -16262,7 +16262,7 @@
       "yaklasim": "analitik"
      },
      {
-      "metin": "Armatörün maliyet kaygısını anladığımı gösteririm.",
+      "metin": "Armatörün (gemi sahibinin) maliyet kaygısını anladığımı gösteririm.",
       "sonuc": "Empati ilişkiyi korur.",
       "yaklasim": "empati"
      }
@@ -16329,7 +16329,7 @@
     "saat": "08:30",
     "tur": "baski",
     "baslik": "Kötü hava ve kalkış",
-    "durum": "Limandan kalkış saati geldi ama hava tahmini fırtınayı gösteriyor; kumpanya programa uyulmasını istiyor.",
+    "durum": "Limandan kalkış saati geldi ama hava tahmini fırtınayı gösteriyor; kumpanya (gemiyi işleten şirket) programa uyulmasını istiyor.",
     "secenekler": [
      {
       "metin": "Hava ve deniz durumunu kaptanla değerlendirip güvenlik kararına göre hareket ederiz.",
@@ -16338,7 +16338,7 @@
       "onerilen": true
      },
      {
-      "metin": "Kumpanyaya hava durumunu ve olası gecikmeyi bildiririm.",
+      "metin": "Kumpanyaya (gemiyi işleten şirkete) hava durumunu ve olası gecikmeyi bildiririm.",
       "sonuc": "Erken iletişim beklentiyi yönetir.",
       "yaklasim": "iletisim"
      },
@@ -16469,7 +16469,7 @@
       "yaklasim": "yaratici"
      },
      {
-      "metin": "Yeni rota fizibilite çalışmalarında görev isterim.",
+      "metin": "Yeni rota fizibilite (yapılabilirlik) çalışmalarında görev isterim.",
       "sonuc": "Yeni sorumluluk motivasyon verir.",
       "yaklasim": "iletisim"
      },
@@ -16699,7 +16699,7 @@
    {
     "saat": "23:30",
     "tur": "ofkeli",
-    "baslik": "Overbooking gecesi",
+    "baslik": "Overbooking (kapasiteden fazla rezervasyon) gecesi",
     "durum": "Gece geç saatte gelen bir misafire fazla rezervasyon nedeniyle oda verilemiyor; misafir çok öfkeli.",
     "secenekler": [
      {
@@ -16708,7 +16708,7 @@
       "yaklasim": "empati"
      },
      {
-      "metin": "Overbooking'in nedenini analiz edip rezervasyon politikasını gözden geçiririm.",
+      "metin": "Overbooking'in (kapasiteden fazla rezervasyon alınmasının) nedenini analiz edip rezervasyon politikasını gözden geçiririm.",
       "sonuc": "Tekrarını önler.",
       "yaklasim": "analitik"
      },
@@ -17410,7 +17410,7 @@
    {
     "saat": "11:00",
     "tur": "baski",
-    "baslik": "Yangın dayanımlı malzeme",
+    "baslik": "Yangına dayanıklı malzeme",
     "durum": "Sahibin istediği bir kumaş, denizcilik yangın güvenliği standartlarını karşılamıyor.",
     "secenekler": [
      {
@@ -17651,7 +17651,7 @@
     "saat": "15:00",
     "tur": "baski",
     "baslik": "Hesap sınırda",
-    "durum": "Bir binanın deprem analizinde bazı elemanların kapasitesi sınırda çıktı; proje müellifi değişiklik istemiyor.",
+    "durum": "Bir binanın deprem analizinde bazı elemanların kapasitesi sınırda çıktı; proje müellifi (projeyi hazırlayan kişi) değişiklik istemiyor.",
     "secenekler": [
      {
       "metin": "Elemanları yönetmeliğe uygun güvenlik payıyla yeniden boyutlandırırım.",
@@ -17660,7 +17660,7 @@
       "onerilen": true
      },
      {
-      "metin": "Müellifle mimari tasarımı koruyacak yapısal alternatifler ararım.",
+      "metin": "Müellifle (projeyi hazırlayan kişiyle) mimari tasarımı koruyacak yapısal alternatifler ararım.",
       "sonuc": "Ortak çözüm iki tarafı da gözetir.",
       "yaklasim": "ekip"
      },
@@ -17707,7 +17707,7 @@
     "durum": "Gece vardiyasında kuyuda sondaj çamuru kaybı başladı.",
     "secenekler": [
      {
-      "metin": "Kuyu kontrol prosedürünü uygular, süpervizörü hemen bilgilendiririm.",
+      "metin": "Kuyu kontrol prosedürünü uygular, süpervizörü (sahadaki sorumlu amiri) hemen bilgilendiririm.",
       "sonuc": "Doğru davranış. Çamur kaybı kuyu kontrolünü tehlikeye atabilir; prosedür anında uygulanır.",
       "yaklasim": "guvenlik",
       "onerilen": true
@@ -17813,7 +17813,7 @@
     "durum": "Günlerdir aynı veri setinin işlenmesiyle uğraşıyorsun ve ekrana bakmaktan yoruldun.",
     "secenekler": [
      {
-      "metin": "İşlem adımlarını otomatikleştiren betikler yazarım.",
+      "metin": "İşlem adımlarını otomatikleştiren betikler (küçük programlar) yazarım.",
       "sonuc": "Otomasyon hem hız hem doğruluk sağlar.",
       "yaklasim": "yaratici"
      },

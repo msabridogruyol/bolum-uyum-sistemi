@@ -145,7 +145,7 @@
    },
    "iste": {
     "meslek": "Bakım teknisyeni",
-    "durum": "Bir fabrikada paketleme makinesi haftada iki kez duruyor. Teknisyen inceliyor: Kayış kopuyor, çünkü aşırı ısınıyor; ısınıyor, çünkü yanındaki rulman yağsız kalıp sürtünmeyi artırıyor; rulman yağsız, çünkü bakım listesinde yağlama hiç yer almıyor.",
+    "durum": "Bir fabrikada paketleme makinesi haftada iki kez duruyor. Teknisyen inceliyor: Kayış kopuyor, çünkü aşırı ısınıyor; ısınıyor, çünkü yanındaki rulman (dönen mili taşıyan bilyeli parça) yağsız kalıp sürtünmeyi artırıyor; rulman yağsız, çünkü bakım listesinde yağlama hiç yer almıyor.",
     "soru": "Hangi çözüm sorunu kökünden çözer?",
     "secenekler": [
      {

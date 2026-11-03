@@ -398,7 +398,7 @@ def bicim_kontrolu(metin: str, sayfa: int, kaynak_metin: str = "") -> dict:
     ust = "\n".join(bolumler[0]["satirlar"][:6])
     eposta = _EPOSTA.findall(ust) or _EPOSTA.findall(duz[:600])
     ad_var = bool(bolumler[0]["satirlar"]) and len(re.findall(r"[^\W\d_]+", bolumler[0]["satirlar"][0])) >= 2
-    madde("iletisim", "İletişim bilgisi ayrıştırılabiliyor", "tamam" if eposta and ad_var else ("kismen" if eposta or ad_var else "eksik"),
+    madde("iletisim", "İletişim bilgisi sistem tarafından okunabiliyor", "tamam" if eposta and ad_var else ("kismen" if eposta or ad_var else "eksik"),
           "ATS, adını ve e-postanı genellikle metnin en üstünde arar. Bu bilgiler üst bilgi/alt bilgi alanında ya da görselde olursa bulunamayabilir.",
           ("İyi: ad ve e-posta (" + eposta[0] + ") en üstte bulundu.") if eposta and ad_var
           else ("E-posta adresi bulunamadı; geçerli bir e-posta ekle." if not eposta else "En üst satırda ad soyad bulunamadı."),

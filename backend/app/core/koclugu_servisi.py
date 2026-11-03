@@ -431,6 +431,19 @@ AYIRT_GUCLU_ESIK = 75.0   # bunun üstündeyse "bölüm bu alanda talepkâr" cü
 AYIRT_MIN_BOLUM = 20      # daha az yayındaki bölüm varsa (test/kurulum) ayırt edicilik hesaplanmaz
 
 
+# [2026-11-02 simülasyon] Ayırt edicilik bütün bölümlerin profillerinden hesaplanır ve yalnızca bölüm profilleri ya da
+# yayındaki bölümler değişince değişir. Önceden her koçluk ekranında ve her Filiz rehber mesajında yeniden hesaplanıyordu
+# (~0,2 sn). Sonuç, profil verisinin imzasıyla (satır sayısı, en yüksek sürüm/kimlik, yayındaki bölümler) önbelleğe alınır.
+_AYIRT_ONBELLEK: dict = {}
+
+
+def _ayirt_imzasi(db: Session) -> tuple:
+    from sqlalchemy import text as _t
+    a = db.execute(_t("SELECT count(*), coalesce(max(id), 0), coalesce(max(versiyon), 0) FROM bolum_agirliklari")).one()
+    b = db.execute(_t("SELECT count(*), coalesce(sum(id), 0) FROM bolumler WHERE durum = 'yayinda'")).one()
+    return tuple(a) + tuple(b)
+
+
 def bolum_ayirt_ediciligi(db: Session, hedef_bolum_id: int, degisken_idler: list[int]) -> dict[int, float] | None:
     """
     [2026-10-07] Hedef bölümün her özellikte, yayındaki tüm bölümler arasındaki yüzdeliği (0-100).
@@ -438,6 +451,20 @@ def bolum_ayirt_ediciligi(db: Session, hedef_bolum_id: int, degisken_idler: list
     Örn. Felsefe'de "sayısal eğilim" yüzdeliği düşükse, öğrencinin sayısal puanı ne kadar düşük
     olursa olsun bu alan Felsefe için odak alanı yapılmaz.
     """
+    anahtar = (_ayirt_imzasi(db), tuple(sorted(set(degisken_idler))))
+    tablo = _AYIRT_ONBELLEK.get(anahtar)
+    if tablo is None:
+        tablo = _ayirt_tablosu(db, list(anahtar[1]))
+        if len(_AYIRT_ONBELLEK) > 64:
+            _AYIRT_ONBELLEK.clear()
+        _AYIRT_ONBELLEK[anahtar] = tablo
+    if tablo is None or hedef_bolum_id not in tablo:
+        return None
+    return {d: v for d, v in tablo[hedef_bolum_id].items() if d in set(degisken_idler)}
+
+
+def _ayirt_tablosu(db: Session, degisken_idler: list[int]) -> dict[int, dict[int, float]] | None:
+    """Bütün yayındaki bölümler için özellik yüzdelikleri: {bolum_id: {degisken_id: yüzdelik}}."""
     satirlar = (db.query(BolumAgirligi)
                 .join(Bolum, Bolum.id == BolumAgirligi.bolum_id)
                 .filter(Bolum.durum == "yayinda", BolumAgirligi.degisken_id.in_(degisken_idler)).all())
@@ -447,7 +474,7 @@ def bolum_ayirt_ediciligi(db: Session, hedef_bolum_id: int, degisken_idler: list
         if k not in en_guncel or r.versiyon > en_guncel[k].versiyon:
             en_guncel[k] = r
     bolum_idler = sorted({b for b, _ in en_guncel})
-    if len(bolum_idler) < AYIRT_MIN_BOLUM or hedef_bolum_id not in bolum_idler:
+    if len(bolum_idler) < AYIRT_MIN_BOLUM:
         return None
     degiskenler = {d.id: d for d in db.query(Degisken).filter(Degisken.id.in_(degisken_idler)).all()}
     idler = [d for d in degisken_idler if d in degiskenler]
@@ -456,9 +483,10 @@ def bolum_ayirt_ediciligi(db: Session, hedef_bolum_id: int, degisken_idler: list
     for j, d in enumerate(idler):
         gruplar.setdefault((degiskenler[d].katman_id, degiskenler[d].dal_id), []).append(j)
     M = _katman_ici_olcekle(M, list(gruplar.values()))
-    h = bolum_idler.index(hedef_bolum_id)
     n = len(bolum_idler)
-    return {d: float((M[:, j] < M[h, j]).sum() / (n - 1) * 100) for j, d in enumerate(idler)}
+    # her sütunda, bölümün değerinden kesin küçük olan bölüm sayısı (eski hesapla aynı: (M[:, j] < M[h, j]).sum())
+    kucuk = (M[None, :, :] < M[:, None, :]).sum(axis=1)
+    return {b: {d: float(kucuk[i, j] / (n - 1) * 100) for j, d in enumerate(idler)} for i, b in enumerate(bolum_idler)}
 
 
 def _orta_onem_metni(d: Degisken, bolum_adi: str) -> str:

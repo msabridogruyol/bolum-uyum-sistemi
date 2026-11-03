@@ -401,7 +401,7 @@ DETAY: dict[str, dict] = {
         "kontrol": [
             "Bir {bolum} mezunuyla görüştün ve tatmin sorusunu sordun.",
             "Aldığın cevabı not ettin.",
-            "Bu cevabın seninle örtüşüp örtüşmediğini yazılı olarak değerlendirdin.",
+            "Bu cevabın sana uyup uymadığını yazılı olarak değerlendirdin.",
         ],
         "ipucu": "Kimseyi bulamazsan okulunun rehberlik servisinden ya da öğretmenlerinden bu alanda çalışan bir tanıdık önermelerini isteyebilirsin.",
     },
@@ -415,7 +415,7 @@ DETAY: dict[str, dict] = {
         "kontrol": [
             "Önem sırasına göre dizilmiş 5 değerin var.",
             "5 değerin her birini bölümdeki bir karşılıkla eşleştirdin ya da karşılığı olmadığını işaretledin.",
-            "Bölümün değerlerinle ne kadar örtüştüğünü bir cümleyle söyleyebiliyorsun.",
+            "Bölümün değerlerinle ne kadar uyuştuğunu bir cümleyle söyleyebiliyorsun.",
         ],
         "ipucu": "Değer bulmakta zorlanırsan kendine \"Beni en çok ne kızdırır?\" diye sor; kızdığın şey çoğu zaman önemsediğin bir değerin çiğnenmesidir.",
     },
@@ -1647,7 +1647,7 @@ DETAY: dict[str, dict] = {
         ],
         "kontrol": [
             "Belirsizliğe karşı rahatlığının nasıl değiştiğini yazdın.",
-            "{bolum} içindeki alt alanları öngörülebilirlik açısından karşılaştırdın.",
+            "{bolum} içindeki alt alanları, ne kadar önceden tahmin edilebilir olduklarına göre karşılaştırdın.",
             "3-4 cümlelik yazılı bir değerlendirmen var.",
         ],
         "ipucu": "",
@@ -2029,7 +2029,7 @@ DETAY: dict[str, dict] = {
     },
     "I2-U-2": {
         "nasil": [
-            "Okulunda akran arabuluculuğu, öğrenci temsilciliği ya da sınıf başkanlığı gibi hangi rollerin olduğunu rehberlik servisine ya da sınıf öğretmenine sor.",
+            "Okulunda akran arabuluculuğu (arkadaşlar arasındaki anlaşmazlığı çözmeye yardım etme), öğrenci temsilciliği ya da sınıf başkanlığı gibi hangi rollerin olduğunu rehberlik servisine ya da sınıf öğretmenine sor.",
             "Sana uygun olan rolün görevlerini ve seçim ya da başvuru tarihlerini öğren.",
             "Başvur ya da aday ol; gerekiyorsa neden bu rolü istediğini anlatan 3–4 cümlelik kısa bir konuşma hazırla.",
             "Rolü aldığında dönem boyunca yaşadığın önemli bir durumu ve nasıl yönettiğini defterine not et.",
@@ -2827,7 +2827,7 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Edebiyat öğretmenine ve rehberlik servisine lise öğrencilerine açık deneme, hikâye ya da kompozisyon yarışmalarını sor; okul panosunu da kontrol et.",
             "Bulduğun 2–3 yarışma için konu, kelime sınırı ve son başvuru tarihini bir tabloya yaz.",
-            "Yarışmanın resmî şartnamesini oku: Yaş sınırı, kimlerin katılabileceği ve nasıl gönderileceği yazılı olmalı.",
+            "Yarışmanın resmî şartnamesini (kurallarını anlatan belgeyi) oku: Yaş sınırı, kimlerin katılabileceği ve nasıl gönderileceği yazılı olmalı.",
             "İlgi alanına ve tarihine en uygun olanı seç ve yazmaya başlayacağın tarihi takvimine not et.",
         ],
         "kontrol": [
@@ -3076,7 +3076,7 @@ DETAY: dict[str, dict] = {
     "A4-U-2": {
         "nasil": [
             "Görsel sanatlar öğretmenine ve rehberlik servisine lise öğrencilerine açık tasarım, afiş ya da maket yarışmalarını sor; Teknofest gibi bilinen organizasyonların kategorilerini de incele.",
-            "{bolum} ile en uyumlu yarışmayı seç ve şartnamesini dikkatle oku: konu, boyut, teslim biçimi, son tarih.",
+            "{bolum} ile en uyumlu yarışmayı seç ve şartnamesini (kurallarını anlatan belgeyi) dikkatle oku: konu, boyut, teslim biçimi, son tarih.",
             "Takvime geriye doğru plan yaz: fikir, eskiz, üretim ve teslim için ayrı tarihler belirle.",
             "Çalışmanı hazırla, gerekirse öğretmeninden görüş al ve başvuruyu ailenin ya da öğretmeninin bilgisi dahilinde yap.",
         ],
@@ -3192,7 +3192,7 @@ DETAY: dict[str, dict] = {
     "A5-U-2": {
         "nasil": [
             "Seçtiğin araştırma sorusunu fen öğretmenine götür ve danışman olmasını iste; TÜBİTAK 2204 gibi yarışmaların takvimine birlikte bakın.",
-            "Yarışmanın şartnamesini okuyun ve son başvuru tarihini takvime yazın.",
+            "Yarışmanın şartnamesini (kurallarını anlatan belgeyi) okuyun ve son başvuru tarihini takvime yazın.",
             "Proje planı hazırla: araştırma sorusu, hipotez, yöntem, gerekli malzemeler ve haftalık takvim. Deneyleri yalnızca öğretmen gözetiminde ve güvenli yöntemlerle yap.",
             "Deneylerini yap, verilerini tabloya yaz ve öğretmeninle düzenli olarak gözden geçir.",
             "Başvuru formunu ve proje raporunu öğretmeninle birlikte hazırla ve süresi içinde gönder.",
@@ -3670,7 +3670,7 @@ DETAY: dict[str, dict] = {
     "A9-U-2": {
         "nasil": [
             "Rehberlik servisine ve öğretmenlerine lise öğrencilerine açık iş fikri ya da girişimcilik yarışmalarını sor; Teknofest gibi bilinen organizasyonların kategorilerini de incele.",
-            "Bir yarışma seç ve şartnamesini oku: kimler katılabilir, ne teslim ediliyor, son tarih ne?",
+            "Bir yarışma seç ve şartnamesini (kurallarını anlatan belgeyi) oku: kimler katılabilir, ne teslim ediliyor, son tarih ne?",
             "İş fikrini hazırla: Sorun, çözüm, hedef kitle (ürünü kim kullanacak), nasıl gelir elde edeceğin ve ekip başlıklarıyla bir sayfa yaz.",
             "Gerekirse kısa bir sunum ya da video hazırla ve bir öğretmene danışarak geliştir.",
             "Başvurunu ailenin ya da öğretmeninin bilgisi dahilinde süresi içinde gönder ve onay mesajını sakla.",
@@ -3777,7 +3777,7 @@ _EK_DETAY = {
         "kontrol": [
             "5 sorunun her birinin cevabı yazılı.",
             "Her soru için en az 2 kaynak kullandın.",
-            "Kaynakların ayrıştığı en az 1 noktayı ve yeni bir soru not ettin.",
+            "Kaynakların farklı şeyler söylediği en az 1 noktayı ve yeni bir soru not ettin.",
         ],
         "ipucu": "Bir bilgiye iki kaynaktan bakmak, hem merakını hem de doğruyu yanlıştan ayırma becerini geliştirir.",
     },
