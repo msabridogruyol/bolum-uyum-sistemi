@@ -20,7 +20,11 @@ function Liste({ baslik, l }) {
     <div className="ry-blok">
       <div className="ry-bb">{baslik}</div>
       <ul className="ry-liste">
-        {l.map((x, i) => <li key={i}><b>{x.ad}:</b> {x.metin}</li>)}
+        {l.map((x, i) => (
+          <li key={i}><b>{x.ad}:</b> {x.metin}
+            {x.maarif && <div className="maarif-satir">Maarif Modeli'nde ilişkili: <span translate="no">{x.maarif}</span></div>}
+          </li>
+        ))}
       </ul>
     </div>
   )
