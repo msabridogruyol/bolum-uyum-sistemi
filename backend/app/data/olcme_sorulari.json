@@ -5,10 +5,10 @@
   {
    "katman": "K1",
    "tip": "encok",
-   "metin": "Ailen yaz tatili için sana bir miktar para ayırdı ve nasıl kullanacağını sen seçeceksin. Hangisi sana uyar?",
+   "metin": "Ailen yaz tatili için sana bir miktar para ayırdı. Bu parayla ne yapmak istersin?",
    "secenekler": [
     {
-     "metin": "Adı herkesçe bilinen, saygın bir yaz programına katılmak.",
+     "metin": "Adı herkesçe bilinen, saygın bir yaz okuluna katılmak.",
      "degisken": "D3"
     },
     {
@@ -20,7 +20,7 @@
      "degisken": "D6"
     },
     {
-     "metin": "Seramik, çizim ya da fotoğraf gibi güzel şeyler üretebileceğim bir atölyeye katılmak.",
+     "metin": "Parayla odamı kendi zevkime göre güzelleştirecek şeyler almak.",
      "degisken": "D7"
     }
    ]
@@ -31,13 +31,13 @@
    "metin": "İleride iki iş teklifi aldığını düşün. Hangisine daha yakınsın?",
    "a": "D1",
    "b": "D6",
-   "uc_a": "Saatleri ve maaşı belli, düzenli bir iş.",
+   "uc_a": "Saatleri ve maaşı belli ama nasıl çalışacağına başkalarının karar verdiği bir iş.",
    "uc_b": "Kararlarını kendin verdiğin, kazancı aydan aya değişen serbest bir iş."
   },
   {
    "katman": "K1",
    "tip": "encok",
-   "metin": "Yazın çalışmak için iş bakıyorsun ve dört teklif aldın. Hangisi sana uyar?",
+   "metin": "Yazın çalışmak için iş arıyorsun ve dört teklif aldın. Hangisi sana uyar?",
    "secenekler": [
     {
      "metin": "Saatleri ve ücreti baştan belli, ne zaman ne kadar alacağımı bildiğim bir iş.",
@@ -48,7 +48,7 @@
      "degisken": "D2"
     },
     {
-     "metin": "Bir bakkalda yaşlı müşterilerin siparişlerini evlerine götürdüğüm bir iş.",
+     "metin": "Yaşlı komşuların siparişlerini evlerine götürüp onlara yardımcı olduğum bir iş.",
      "degisken": "D5"
     },
     {
@@ -60,7 +60,7 @@
   {
    "katman": "K1",
    "tip": "tek",
-   "metin": "Ailen meslek seçimin için sana dört tavsiye veriyor. Hangisine en çok katılırsın?",
+   "metin": "Rehberlik servisinde meslek seçimini konuşurken sana dört farklı tavsiye verildi. Hangisine en çok katılırsın?",
    "secenekler": [
     {
      "metin": "\"İşin garanti olsun, gerisi sonra gelir.\"",
@@ -83,14 +83,14 @@
   {
    "katman": "K1",
    "tip": "encok",
-   "metin": "Sosyal medyada paylaştığın bir video çok beğenildi ve takipçin hızla arttı. Bundan sonra en çok neyi isterdin?",
+   "metin": "Sosyal medyada paylaştığın bir video çok beğenildi ve takipçin hızla arttı. Bundan sonra ne isterdin?",
    "secenekler": [
     {
      "metin": "Reklam anlaşmalarıyla bundan düzenli bir gelir elde etmek.",
      "degisken": "D2"
     },
     {
-     "metin": "Tanınan, sözü dinlenen bir hesap olmak; insanların beni bu alanda bilmesi.",
+     "metin": "Tanınan, sözü dinlenen biri olmak; insanların beni bu videolardan tanıması.",
      "degisken": "D3"
     },
     {
@@ -98,7 +98,7 @@
      "degisken": "D5"
     },
     {
-     "metin": "Paylaşımlarımı daha özgün ve estetik hale getirip güzel içerikler üretmek.",
+     "metin": "Paylaşımlarımı daha özgün ve göze hoş gelen videolara dönüştürmek.",
      "degisken": "D7"
     }
    ]
@@ -106,11 +106,11 @@
   {
    "katman": "K1",
    "tip": "kutup",
-   "metin": "Yazın iki iş teklifin var. Hangisine daha yakınsın?",
+   "metin": "İyi olduğun bir dersten başkalarına yardım etmen için iki teklif var. Hangisine daha yakınsın?",
    "a": "D2",
    "b": "D5",
-   "uc_a": "Bir mağazada çalışıp iki kat kazanmak ve kendi ihtiyaçlarımı karşılamak.",
-   "uc_b": "Bir derneğin dağıtımında daha az kazanıp insanlara yardım etmek."
+   "uc_a": "Ortaokul öğrencilerine özel ders verip emeğimin karşılığında iyi bir harçlık kazanmak.",
+   "uc_b": "Gençlik merkezinde aynı dersi, imkânı olmayan öğrencilere ücretsiz anlatmak."
   },
   {
    "katman": "K1",
@@ -130,7 +130,7 @@
      "degisken": "D3"
     },
     {
-     "metin": "Yaptığı işte kendini yerinde hissettiğini, işini bırakmak istemediğini.",
+     "metin": "Yaptığı işi çok sevdiğini, işini hiç bırakmak istemediğini.",
      "degisken": "D4"
     }
    ]
@@ -141,11 +141,11 @@
    "metin": "Arkadaşlarınla bir telefon uygulaması fikri üzerinde çalışmaya başladınız. Senin için asıl amaç hangisi olurdu?",
    "secenekler": [
     {
-     "metin": "İyi bir gelir getirmesi.",
+     "metin": "Uygulamadan iyi bir gelir elde etmek.",
      "degisken": "D2"
     },
     {
-     "metin": "Yıllar sonra da uğraşıyor olmak isteyeceğim bir fikri gerçekleştirmek.",
+     "metin": "Yıllarca severek uğraşabileceğim bir fikri hayata geçirmek.",
      "degisken": "D4"
     },
     {
@@ -172,11 +172,11 @@
      "degisken": "D5"
     },
     {
-     "metin": "O gün ne yapacağıma kimseye sormadan kendim karar vermeye.",
+     "metin": "Kimseye hesap vermeden, o gün kendi seçtiğim bir işe.",
      "degisken": "D6"
     },
     {
-     "metin": "Müzik, resim ya da tasarım gibi bir şey üretmeye.",
+     "metin": "Fotoğraf, çizim ya da kısa video gibi güzel bir şey üretmeye.",
      "degisken": "D7"
     }
    ]
@@ -184,16 +184,16 @@
   {
    "katman": "K1",
    "tip": "kutup",
-   "metin": "İleride nerede çalışmak istersin? Hangisine daha yakınsın?",
+   "metin": "Ailenle üniversite tercihlerini konuşuyorsunuz. Hangisine daha yakınsın?",
    "a": "D3",
    "b": "D4",
-   "uc_a": "Adı herkesçe bilinen, saygın bir kurumda çalışmak.",
-   "uc_b": "Pek bilinmeyen ama her gün kendini içinde bulduğun bir işte çalışmak."
+   "uc_a": "Girmesi zor, herkesin saygı duyduğu ünlü bir üniversitede okumak.",
+   "uc_b": "Daha az bilinen ama sevdiğim bölümün olduğu bir üniversitede okumak."
   },
   {
    "katman": "K1",
    "tip": "encok",
-   "metin": "Ailenin ya da bir akrabanın küçük bir dükkânı olduğunu ve ileride işi sana bırakacaklarını düşün. Seni en çok ne heyecanlandırır?",
+   "metin": "Ailenin ya da bir akrabanın küçük bir dükkânı olduğunu ve ileride işi sana bırakacaklarını düşün. Hangisi seni heyecanlandırır?",
    "secenekler": [
     {
      "metin": "Müşterisi oturmuş, her ay düzenli kazandıran güvenli bir iş olması.",
@@ -204,7 +204,7 @@
      "degisken": "D2"
     },
     {
-     "metin": "Her gün işe giderken kendimi yerimde hissetmek.",
+     "metin": "Her gün işe isteyerek, severek gitmek.",
      "degisken": "D4"
     },
     {
@@ -216,22 +216,22 @@
   {
    "katman": "K1",
    "tip": "tek",
-   "metin": "Bayram tatilinde bir hafta boyunca ne yapacağını sen seçeceksin. Hangisini seçersin?",
+   "metin": "Bayram tatilinde bir haftan boş. Bu haftayı nasıl geçirmek istersin?",
    "secenekler": [
     {
      "metin": "Masrafı ve programı baştan belli, sürpriz çıkmayacağından emin olduğum bir tatil.",
      "degisken": "D1"
     },
     {
-     "metin": "Uzun zamandır yapmak istediğim, bana iyi gelen bir uğraşa (yazmak, bir şey onarmak gibi) bütün haftayı vermek.",
+     "metin": "Bütün haftayı en sevdiğim uğraşa vermek; örneğin yazmak ya da bir şey onarmak.",
      "degisken": "D4"
     },
     {
-     "metin": "Haftayı kimseye sormadan, tamamen kendi seçtiğim şekilde geçirmek.",
+     "metin": "Kimseye uymak zorunda kalmadan, haftayı tamamen kendi kararlarımla geçirmek.",
      "degisken": "D6"
     },
     {
-     "metin": "Resim, müzik ya da el işi gibi bir şey üretmek.",
+     "metin": "Seramik, ahşap boyama ya da el işiyle güzel bir şey üretmek.",
      "degisken": "D7"
     }
    ]
@@ -239,22 +239,22 @@
   {
    "katman": "K1",
    "tip": "encok",
-   "metin": "Yıllar sonra eski arkadaşlarınla buluştun ve işini anlatıyorsun. En çok hangisini söyleyebilmek isterdin?",
+   "metin": "Mahallende herkesin tanıdığı dört kişi var. Hangisi gibi olmak isterdin?",
    "secenekler": [
     {
-     "metin": "Düzenim oturdu; işimden hiç endişe etmiyorum.",
+     "metin": "Yıllardır aynı yerde, işini kaybetme korkusu olmadan huzurla çalışan komşu.",
      "degisken": "D1"
     },
     {
-     "metin": "Herkesin bildiği, saygın bir yerde çalışıyorum.",
+     "metin": "İşi sayesinde herkesin saygıyla selam verdiği, sözü dinlenen komşu.",
      "degisken": "D3"
     },
     {
-     "metin": "Yaptığım iş birilerinin işine yarıyor.",
+     "metin": "Kimin bir derdi olsa koşup yardım eden, mahalleye faydası dokunan komşu.",
      "degisken": "D5"
     },
     {
-     "metin": "Kendi işimin patronuyum; kararları ben veriyorum.",
+     "metin": "Kendi dükkânını açmış, kimseye bağlı olmadan kendi kararlarıyla çalışan komşu.",
      "degisken": "D6"
     }
    ]
@@ -262,31 +262,31 @@
   {
    "katman": "K1",
    "tip": "kutup",
-   "metin": "İki iş seçeneğin var. Hangisine daha yakınsın?",
+   "metin": "Okul dönemi boyunca harçlığını kendin çıkarmak istiyorsun. Hangisine daha yakınsın?",
    "a": "D7",
    "b": "D1",
-   "uc_a": "Çizim, müzik ya da tasarımla para kazanmaya çalışmak; kazancı aydan aya değişebilir.",
-   "uc_b": "Belli işleri düzenli yaptığım, her ay maaşı belli bir iş."
+   "uc_a": "Kendi yaptığım takıları ya da çizimleri internetten satmak; kazancım aydan aya değişebilir.",
+   "uc_b": "Hafta sonları bir dükkânda, her hafta ücreti belli olan bir işte çalışmak."
   },
   {
    "katman": "K1",
    "tip": "encok",
-   "metin": "Bir yarışmada birinci oldun ve ödülünü dört seçenekten sen seçeceksin. Hangisini seçersin?",
+   "metin": "Dershanedeki deneme sınavında ilk üçe girdin ve dört ödülden birini alabilirsin. Hangisini seçersin?",
    "secenekler": [
     {
-     "metin": "Bir yıllık atölye ücreti kadar nakit para.",
+     "metin": "Dilediğim gibi harcayabileceğim yüklü bir para ödülü.",
      "degisken": "D2"
     },
     {
-     "metin": "Ödülümü yerel gazetede haberimle birlikte almak; çevremde tanınmak.",
+     "metin": "Adımın ve fotoğrafımın dershanenin afişlerinde yer alması; çevremde tanınmak.",
      "degisken": "D3"
     },
     {
-     "metin": "Bir yaz boyunca kendi projemi kimseye hesap vermeden yürütebileceğim küçük bir destek.",
+     "metin": "Gelecek dönem hangi etüt saatlerine katılacağımı kendim seçme hakkı.",
      "degisken": "D6"
     },
     {
-     "metin": "Bir sanat ya da tasarım atölyesinde bir yıllık ücretsiz eğitim.",
+     "metin": "Bir sanat ya da tasarım atölyesinde bir dönem ücretsiz eğitim.",
      "degisken": "D7"
     }
    ]
@@ -317,16 +317,16 @@
   {
    "katman": "K2",
    "tip": "kutup",
-   "metin": "Arkadaş grubunda ne yapılacağına karar verilecek. Hangisine daha yakınsın?",
+   "metin": "Sınıfça yıl sonu etkinliğine karar verilecek. Hangisine daha yakınsın?",
    "a": "P2",
    "b": "P8",
-   "uc_a": "Herkes ne istiyorsa ona uymak, grubun havasını bozmamak.",
-   "uc_b": "Kararı kendim verip grubu yönlendirmek."
+   "uc_a": "Çoğunluk ne istiyorsa ona uymak, sınıfın havasını bozmamak.",
+   "uc_b": "Kendi fikrimi öne çıkarıp sınıfı buna ikna etmeye çalışmak."
   },
   {
    "katman": "K2",
    "tip": "encok",
-   "metin": "Bir arkadaşının doğum günü partisine gittin ve orada neredeyse kimseyi tanımıyorsun. Sana en çok hangisi uyar?",
+   "metin": "Bir arkadaşının doğum günü partisine gittin ve orada neredeyse kimseyi tanımıyorsun. Hangisi sana uyar?",
    "secenekler": [
     {
      "metin": "Hemen birkaç kişiyle sohbete başlar, kısa sürede kaynaşırım.",
@@ -341,7 +341,7 @@
      "degisken": "P5"
     },
     {
-     "metin": "Hiç bilmediğim bir oyunu, yapamama ihtimaline rağmen ilk denemeye gönüllü olurum.",
+     "metin": "Bir oyun oynanacaksa beceremeyebileceğimi bilsem de ilk deneyen ben olurum.",
      "degisken": "P7"
     }
    ]
@@ -349,22 +349,22 @@
   {
    "katman": "K2",
    "tip": "tek",
-   "metin": "Arkadaş grubunda genellikle hangi rolde olursun?",
+   "metin": "Bayramda kuzenlerinle bir araya geldiğinizde genellikle nasıl biri olursun?",
    "secenekler": [
     {
      "metin": "Ortamı canlandıran, herkesi bir araya toplayan kişi.",
      "degisken": "P1"
     },
     {
-     "metin": "Tartışmaları yatıştıran, herkesle iyi geçinen kişi.",
+     "metin": "Tartışma çıkınca araları bulan, herkesle iyi geçinen kişi.",
      "degisken": "P2"
     },
     {
-     "metin": "Aynı şeyleri yapmaktan sıkılıp sürekli değişiklik öneren kişi.",
+     "metin": "Aynı oyunlardan çabuk sıkılıp hep yeni bir şey öneren kişi.",
      "degisken": "P6"
     },
     {
-     "metin": "Kararları veren, grubu yönlendiren kişi.",
+     "metin": "Ne yapılacağına karar veren, diğerlerini yönlendiren kişi.",
      "degisken": "P8"
     }
    ]
@@ -372,7 +372,7 @@
   {
    "katman": "K2",
    "tip": "encok",
-   "metin": "Ailenle başka bir şehre taşındınız. İlk haftalarda sana en çok hangisi uyar?",
+   "metin": "Ailenle başka bir şehre taşındınız. İlk haftalarda hangisi sana uyar?",
    "secenekler": [
     {
      "metin": "Mahalledeki gençlerle tanışmak için hemen dışarı çıkarım.",
@@ -387,7 +387,7 @@
      "degisken": "P5"
     },
     {
-     "metin": "Evdeki taşınma işlerini ben paylaştırır, kimin neyi bitirdiğini takip ederim.",
+     "metin": "Taşınma işlerinde görevleri ben paylaştırır, kimin neyi bitirdiğini takip ederim.",
      "degisken": "P8"
     }
    ]
@@ -395,7 +395,7 @@
   {
    "katman": "K2",
    "tip": "kutup",
-   "metin": "Bir yaz günün nasıl geçsin? Hangisine daha yakınsın?",
+   "metin": "Okulun olmadığı bir yaz gününü düşün. Hangisine daha yakınsın?",
    "a": "P3",
    "b": "P6",
    "uc_a": "Yapacaklarımı önceden planlayıp hepsini zamanında bitirdiğim bir gün.",
@@ -404,7 +404,7 @@
   {
    "katman": "K2",
    "tip": "encok",
-   "metin": "Yazın bir kafede çalışmaya başladın. Sana en çok hangisi uyar?",
+   "metin": "Yazın bir kafede çalışmaya başladın. Hangisi sana uyar?",
    "secenekler": [
     {
      "metin": "Bir iş arkadaşım bozulursa ilk ben gidip gönlünü alırım.",
@@ -419,7 +419,7 @@
      "degisken": "P6"
     },
     {
-     "metin": "Patron \"Satarsan prim var, satamazsan yok.\" derse bu riski alırım.",
+     "metin": "Patron satışa göre ek para önerirse hiç alamama riskine rağmen kabul ederim.",
      "degisken": "P7"
     }
    ]
@@ -434,7 +434,7 @@
      "degisken": "P3"
     },
     {
-     "metin": "Yolda bir aksilik çıkar mı diye içimde bir huzursuzluk olur.",
+     "metin": "Yolda bir sorun çıkar mı diye biraz tedirgin olurum.",
      "degisken": "P4"
     },
     {
@@ -450,7 +450,7 @@
   {
    "katman": "K2",
    "tip": "encok",
-   "metin": "Arkadaş grubunla bir hafta sonu gezisi planlıyorsunuz. Sen ne yaparsın?",
+   "metin": "Arkadaş grubunla günübirlik bir gezi planlıyorsunuz. Sen ne yaparsın?",
    "secenekler": [
     {
      "metin": "Hiç bilmediğimiz bir kasabayı ve oranın kültürünü keşfetmeyi öneririm.",
@@ -461,7 +461,7 @@
      "degisken": "P6"
     },
     {
-     "metin": "Konaklamayı ayarlamadan gidip orada bulmayı öneririm.",
+     "metin": "Dönüş otobüsünü önceden ayarlamadan gidip gerisini orada çözmeyi öneririm.",
      "degisken": "P7"
     },
     {
@@ -505,22 +505,22 @@
   {
    "katman": "K2",
    "tip": "tek",
-   "metin": "Bir arkadaşın son dakikada arıyor: Bu akşam senin tanımadığın insanlarla bir konsere gidiyorlar. Sana en çok hangisi uyar?",
+   "metin": "Okulda bugünkü ders programı son anda değişti; ilk iki saat başka bir sınıfla ortak bir etkinlik yapılacak. Sana en çok hangisi uyar?",
    "secenekler": [
     {
-     "metin": "Harika; yeni insanlarla tanışmak için iyi bir fırsat.",
+     "metin": "Sevinirim; başka sınıftan yeni insanlarla tanışmak için iyi bir fırsat.",
      "degisken": "P1"
     },
     {
-     "metin": "Tanımadığım bir ortamda nasıl davranacağımı düşünüp biraz gerilirim.",
+     "metin": "Ne yapacağımızı bilmediğim için biraz gerilirim.",
      "degisken": "P4"
     },
     {
-     "metin": "Rutini bozan son dakika planlarını severim, hemen hazırlanırım.",
+     "metin": "Aynı düzende geçen bir günün birden değişmesi bana enerji verir.",
      "degisken": "P6"
     },
     {
-     "metin": "Nereye gideceğimiz, ne zaman döneceğimiz belli olmasa da sorun etmem.",
+     "metin": "Etkinlikte başarısız olma ihtimali olsa da çekinmeden ilk deneyenlerden olurum.",
      "degisken": "P7"
     }
    ]
@@ -528,22 +528,22 @@
   {
    "katman": "K2",
    "tip": "encok",
-   "metin": "Yaz tatilinin ilk haftası başladı. Günlerin nasıl geçer?",
+   "metin": "Dershanede deneme sınavı yaklaşıyor. Hafta sonun nasıl geçer?",
    "secenekler": [
     {
-     "metin": "Neredeyse her gün arkadaşlarımla buluşur, kalabalık ortamlarda olurum.",
+     "metin": "Arkadaşlarımla buluşur, sohbet ede ede grup halinde çalışırım.",
      "degisken": "P1"
     },
     {
-     "metin": "Kendime bir program yapar; spor, okuma ve uyku saatlerimi ona göre ayarlarım.",
+     "metin": "Bir çalışma programı yapar, her dersi planladığım saatte bitiririm.",
      "degisken": "P3"
     },
     {
-     "metin": "Merak ettiğim bir konuyu araştırır, hiç denemediğim türde kitap ya da müzik denerim.",
+     "metin": "Konuların kitapta olmayan ilginç yanlarını araştırırken kendimi kaptırırım.",
      "degisken": "P5"
     },
     {
-     "metin": "Plan yapmam; günüm o an ne çıkarsa ona göre şekillenir.",
+     "metin": "Tek bir derse saatlerce oturmak yerine sık sık ders ve yer değiştirerek çalışmayı severim.",
      "degisken": "P6"
     }
    ]
@@ -554,13 +554,13 @@
    "metin": "İlk kez bir şeyi deneyeceksin (bir yarışmaya başvurmak gibi). Hangisine daha yakınsın?",
    "a": "P4",
    "b": "P7",
-   "uc_a": "Ya kötü giderse diye uzun süre içim rahat etmez.",
+   "uc_a": "Ya kötü giderse diye bir süre kafamda kurar, biraz gerilirim.",
    "uc_b": "Kötü ihtimallere fazla takılmadan denerim."
   },
   {
    "katman": "K2",
    "tip": "encok",
-   "metin": "Arkadaşlarla katıldığınız mahalle turnuvasında önemli bir maçı son dakikada kaybettiniz. Sonrasında ne yaparsın?",
+   "metin": "Arkadaşlarınla katıldığın mahalle turnuvasında önemli bir maçı son dakikada kaybettiniz. Sonrasında ne yaparsın?",
    "secenekler": [
     {
      "metin": "Kimseyi suçlamadan herkesin moralini düzeltmeye çalışırım.",
@@ -571,7 +571,7 @@
      "degisken": "P4"
     },
     {
-     "metin": "Sonraki maçta riskli ama kazandırabilecek yeni bir taktik deneyelim derim.",
+     "metin": "Sonraki maçta riskli de olsa bambaşka bir taktik denemeyi öneririm.",
      "degisken": "P7"
     },
     {
@@ -583,22 +583,22 @@
   {
    "katman": "K3",
    "tip": "encok",
-   "metin": "Arkadaşlarınla açtığınız bağış standında akşam kasadan para eksik çıktı ve tartışma başladı. Ne yaparsın?",
+   "metin": "Sınıfça kütüphaneye kitap almak için para topladınız. Akşam sayınca para eksik çıktı ve tartışma başladı. Ne yaparsın?",
    "secenekler": [
     {
      "metin": "Herkesi sakinleştirir, suçlamayı bırakıp birlikte çözmemizi sağlarım.",
      "degisken": "I2"
     },
     {
-     "metin": "Vakit kaybetmeden ne yapacağımıza karar veririm: Önce kasayı yeniden sayar, kayıtlara bakarız.",
+     "metin": "Vakit kaybetmeden ne yapacağımıza karar veririm: Önce parayı yeniden sayar, listeye bakarız.",
      "degisken": "I3"
     },
     {
-     "metin": "Eksik çözülmezse bağışçılara açıkça söylemeyi öneririm.",
+     "metin": "Eksik para bulunamazsa durumu öğretmene ve sınıfa açıkça söylemeyi öneririm.",
      "degisken": "I4"
     },
     {
-     "metin": "Biri kasayı benim yanlış saydığımı söylerse savunmaya geçmeden dinler, kontrol ederim.",
+     "metin": "Biri parayı benim yanlış saydığımı söylerse savunmaya geçmeden dinler, kontrol ederim.",
      "degisken": "I6"
     }
    ]
@@ -609,13 +609,13 @@
    "metin": "Arkadaşlarınla yaptığınız bir işten para kazandınız ve nasıl paylaşacağınıza karar vereceksiniz. Hangisine daha yakınsın?",
    "a": "I4",
    "b": "I7",
-   "uc_a": "Kazancı hemen herkese eşit paylaştırmak; kimse kendini dışlanmış hissetmesin.",
+   "uc_a": "Kazancı hemen herkese eşit paylaştırmak; kimse haksızlığa uğradığını düşünmesin.",
    "uc_b": "Kazancın bir kısmını işi büyütmek için kenara koymak."
   },
   {
    "katman": "K3",
    "tip": "encok",
-   "metin": "Yaz boyunca ailenin küçük kırtasiye dükkânında yardım ediyorsun. Sana en çok hangisi uyar?",
+   "metin": "Yaz boyunca ailenin küçük kırtasiye dükkânında yardım ediyorsun. Hangisi sana uyar?",
    "secenekler": [
     {
      "metin": "Günün işlerini öncelik sırasına koyar, acil olanları önce bitiririm.",
@@ -626,7 +626,7 @@
      "degisken": "I3"
     },
     {
-     "metin": "Kimse söylemeden eksik ürünleri fark eder, sipariş listesini ben hazırlarım.",
+     "metin": "Biri söylemeden eksik ürünleri fark eder, sipariş listesini ben hazırlarım.",
      "degisken": "I5"
     },
     {
@@ -645,15 +645,15 @@
      "degisken": "I1"
     },
     {
-     "metin": "Ekibi bir arada tutan: tartışmaları yatıştıran.",
+     "metin": "Ekibi bir arada tutan: tartışma çıkınca herkesi sakinleştirip anlaşmayı sağlayan.",
      "degisken": "I2"
     },
     {
-     "metin": "Kriz anında karar veren: işler ters gidince hızla yol bulan.",
+     "metin": "Zor anda karar veren: işler ters gidince hemen bir yol bulan.",
      "degisken": "I3"
     },
     {
-     "metin": "Stratejiyi kuran: kimin hangi konuda iyi olduğunu görüp soruları ona göre paylaştıran.",
+     "metin": "Yol haritasını çizen: kimin hangi konuda iyi olduğunu görüp soruları ona göre paylaştıran.",
      "degisken": "I7"
     }
    ]
@@ -661,18 +661,18 @@
   {
    "katman": "K3",
    "tip": "encok",
-   "metin": "Arkadaşlarınla el yapımı anahtarlık ve telefon kılıflarını internetten satıyorsunuz. Sen ne yaparsın?",
+   "metin": "Ablan el yapımı takılarını internetten satıyor ve sen de ona yardım ediyorsun. Sen ne yaparsın?",
    "secenekler": [
     {
      "metin": "Siparişleri teslim tarihine göre sıraya koyar, hiçbirini geciktirmem.",
      "degisken": "I1"
     },
     {
-     "metin": "Ürünün küçük kusurlarını da açıklamaya yazarım.",
+     "metin": "Ürünün küçük kusurlarını da ürün açıklamasına dürüstçe yazarım.",
      "degisken": "I4"
     },
     {
-     "metin": "Olumsuz yorumları okuyup ürünü ona göre düzeltirim.",
+     "metin": "Olumsuz yorumları okuyup ürünü onlara göre düzeltirim.",
      "degisken": "I6"
     },
     {
@@ -688,12 +688,12 @@
    "a": "I1",
    "b": "I3",
    "uc_a": "İşleri önceden planlar, son ana bırakmam.",
-   "uc_b": "Beklenmedik bir şey çıktığında anında karar verip çözüm bulmakta iyiyim."
+   "uc_b": "Fazla plan yapmam; bir şey çıktığında o an karar verip çözerim."
   },
   {
    "katman": "K3",
    "tip": "encok",
-   "metin": "Arkadaşlarınla bir kısa film yarışmasına katılıyorsunuz. Sen hangi işi üstlenirsin?",
+   "metin": "Mahalledeki gençlik merkezinde arkadaşlarınla kısa bir film çekmeye karar verdiniz. Sen hangi işi üstlenirsin?",
    "secenekler": [
     {
      "metin": "Çekim takvimini çıkarır, teslim gününe kadar her şeyin yetişmesini sağlarım.",
@@ -716,22 +716,22 @@
   {
    "katman": "K3",
    "tip": "tek",
-   "metin": "Bir arkadaşınla mahallede bisiklet tamiri işi kurdunuz. Sana en çok hangisi uyar?",
+   "metin": "Okul takımınız üst üste maç kaybediyor. Sana en çok hangisi uyar?",
    "secenekler": [
     {
-     "metin": "Ortağımla aramızda çıkan anlaşmazlıkları konuşarak çözerim.",
+     "metin": "Birbirini suçlayan takım arkadaşlarını konuşturup aralarını bulurum.",
      "degisken": "I2"
     },
     {
-     "metin": "Müşteri bulmak için ilk adımı ben atar, duyuruları ben yaparım.",
+     "metin": "Kimse istemeden fazladan bir antrenman ayarlar, arkadaşları çağırırım.",
      "degisken": "I5"
     },
     {
-     "metin": "Müşterilerden gelen eleştirilere göre işimizi değiştiririm.",
+     "metin": "Antrenörün eleştirilerini kişisel almam, söylediklerini antrenmanda uygularım.",
      "degisken": "I6"
     },
     {
-     "metin": "Fiyatımızı, rakipleri ve nasıl büyüyeceğimizi hesaplarım.",
+     "metin": "Rakipleri inceleyip hangi oyun planıyla kazanabileceğimizi düşünürüm.",
      "degisken": "I7"
     }
    ]
@@ -765,7 +765,7 @@
    "metin": "Birlikte çalıştığın grupta bir sorun çıktı. Hangisine daha yakınsın?",
    "a": "I2",
    "b": "I5",
-   "uc_a": "Önce herkesi dinleyip ortak bir karar çıkarmak.",
+   "uc_a": "Önce herkesin ne düşündüğünü sorup birlikte bir yol bulmak.",
    "uc_b": "Beklemeden gereken ilk adımı kendim atmak."
   },
   {
@@ -786,7 +786,7 @@
      "degisken": "I6"
     },
     {
-     "metin": "Kanal için bu tür aksiliklere karşı uzun vadeli bir plan çıkarırım.",
+     "metin": "Bu aksiliğin kanala kaç izleyici kaybettirdiğine bakıp kanalı büyütmek için yeni bir plan yaparım.",
      "degisken": "I7"
     }
    ]
@@ -805,7 +805,7 @@
      "degisken": "I4"
     },
     {
-     "metin": "Yardıma ihtiyacı olan komşuları kimse söylemeden bulup listeye eklerim.",
+     "metin": "Yardıma ihtiyacı olan komşuları kendim kapı kapı dolaşıp bulurum.",
      "degisken": "I5"
     },
     {
@@ -817,14 +817,14 @@
   {
    "katman": "K3",
    "tip": "encok",
-   "metin": "Bir arkadaşınıza sürpriz doğum günü partisi hazırlıyorsunuz. Sen ne yaparsın?",
+   "metin": "Yurt dışına taşınan bir arkadaşınız için sürpriz bir veda buluşması hazırlıyorsunuz. Sen ne yaparsın?",
    "secenekler": [
     {
      "metin": "Kim ne zaman ne yapacak, saat saat bir plan yapıp takip ederim.",
      "degisken": "I1"
     },
     {
-     "metin": "Mekân konusunda anlaşamayan arkadaşları uzlaştırırım.",
+     "metin": "Mekân konusunda anlaşamayan arkadaşların ortak bir karara varmasını sağlarım.",
      "degisken": "I2"
     },
     {
@@ -840,7 +840,7 @@
   {
    "katman": "K3",
    "tip": "kutup",
-   "metin": "Yeni bir şey yapacaksın (bir video kurgulamak, bir yemek tarifi denemek gibi). Hangisine daha yakınsın?",
+   "metin": "Yeni bir şey yapacaksın (bir videoyu kesip birleştirmek, bir yemek tarifi denemek gibi). Hangisine daha yakınsın?",
    "a": "I6",
    "b": "I5",
    "uc_a": "Bir parçasını yapıp başkalarına göstermek, yorumlarına göre devam etmek.",
@@ -849,7 +849,7 @@
   {
    "katman": "K3",
    "tip": "encok",
-   "metin": "Yazın bir kargo şubesinde yarı zamanlı çalışıyorsun ve gün çok yoğun geçiyor. Sana en çok hangisi uyar?",
+   "metin": "Yazın bir kargo şubesinde yarı zamanlı çalışıyorsun ve gün çok yoğun geçiyor. Hangisi sana uyar?",
    "secenekler": [
     {
      "metin": "İşleri öncelik sırasına koyar, önce en acil gönderileri çıkarırım.",
@@ -860,7 +860,7 @@
      "degisken": "I3"
     },
     {
-     "metin": "Kuralları herkese aynı uygularım; tanıdığım müşteriye de sıra kaydırmam.",
+     "metin": "Kuralları herkese aynı uygularım; tanıdığım müşteriyi de sıranın önüne almam.",
      "degisken": "I4"
     },
     {
@@ -904,7 +904,7 @@
   {
    "katman": "K4",
    "tip": "encok",
-   "metin": "Arkadaşlarınla bir hafta sonu bisiklet turu düzenliyorsunuz. Hangi işi almak istersin?",
+   "metin": "Okulun bisiklet kulübü şehir dışına bir tur düzenliyor. Hangi işi almak istersin?",
    "secenekler": [
     {
      "metin": "Rotanın uzunluğunu, süresini ve harcamaları hesaplamak.",
@@ -965,7 +965,7 @@
      "degisken": "A4"
     },
     {
-     "metin": "Kafenin nasıl bir yer olacağına dair genel fikri ortaya koymak, adımları ekiple birlikte belirlemek.",
+     "metin": "Kafenin nasıl bir yer olacağını, ana fikrini ortaya koymak.",
      "degisken": "A8"
     }
    ]
@@ -982,22 +982,22 @@
   {
    "katman": "K4",
    "tip": "encok",
-   "metin": "Bir hafta sonu arkadaşlarınla doğa yürüyüşüne gidiyorsunuz. Sana en çok hangisi uyar?",
+   "metin": "Komşunuz tatile gidiyor ve köpeğine bir hafta sizin bakmanızı istedi. Hangisi sana uyar?",
    "secenekler": [
     {
-     "metin": "Yoldaki bitkileri ve böcekleri incelemek, dere suyunu gözlemlemek.",
+     "metin": "Köpeğin ne yediğini ve nasıl davrandığını gözlemleyip not almak.",
      "degisken": "A5"
     },
     {
-     "metin": "Tırmanış ya da uzun yürüyüş gibi bedenimi zorlayan kısımlar.",
+     "metin": "Köpeği her gün uzun yürüyüşlere çıkarıp onunla koşmak.",
      "degisken": "A6"
     },
     {
-     "metin": "Yürüyüş öncesi malzemeleri bir kontrol listesine göre sırayla hazırlamak.",
+     "metin": "Mama ve su saatlerini bir çizelgeye yazıp her gün aynı düzende uygulamak.",
      "degisken": "A7"
     },
     {
-     "metin": "Her şeyi önceden planlamak yerine genel bir fikirle yola çıkıp gerisini o an çözmek.",
+     "metin": "Köpeğin bir haftasını kabaca düşünüp her günü onun o günkü haline göre ayarlamak.",
      "degisken": "A8"
     }
    ]
@@ -1063,7 +1063,7 @@
    "metin": "Belediyenin gençlik spor merkezinde gönüllü olacaksın. Hangi işi almak istersin?",
    "secenekler": [
     {
-     "metin": "Maç istatistiklerini tutup oyuncuların performans tablolarını çıkarmak.",
+     "metin": "Maçlarda kimin kaç sayı attığını kaydedip oyuncuların gelişimini gösteren tablolar hazırlamak.",
      "degisken": "A1"
     },
     {
@@ -1071,11 +1071,11 @@
      "degisken": "A3"
     },
     {
-     "metin": "Antrenmanlara bizzat katılıp sahada koşturmak.",
+     "metin": "Antrenmanlara ben de katılıp sahada koşturmak.",
      "degisken": "A6"
     },
     {
-     "metin": "Malzeme dolabını belli bir düzene göre yerleştirip her şeyin yerini sabitlemek.",
+     "metin": "Malzeme dolabını belli bir düzene göre yerleştirip her şeyin yerini belirlemek.",
      "degisken": "A7"
     }
    ]
@@ -1117,7 +1117,7 @@
      "degisken": "A4"
     },
     {
-     "metin": "Markanın neye benzeyeceğine dair büyük fikri ortaya atmak.",
+     "metin": "Markanın nasıl bir marka olacağını, ana fikrini belirlemek.",
      "degisken": "A8"
     },
     {
@@ -1133,7 +1133,7 @@
    "a": "A7",
    "b": "A8",
    "uc_a": "Adım adım, talimatlara göre ilerlemek.",
-   "uc_b": "Önce büyük resmi görüp sezgimle ilerlemek."
+   "uc_b": "Önce işin bütününe bakıp içimden geldiği gibi ilerlemek."
   },
   {
    "katman": "K4",
@@ -1149,7 +1149,7 @@
      "degisken": "A2"
     },
     {
-     "metin": "Hangi sebze ve meyvenin hangi mevsimde daha taze ve ucuz olduğunu araştırmak.",
+     "metin": "Balkonda ya da bahçede evin ihtiyacı için hangi sebzelerin yetiştirilebileceğini araştırmak.",
      "degisken": "A5"
     },
     {

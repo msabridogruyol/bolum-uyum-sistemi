@@ -1,5 +1,5 @@
 {
- "surum": "2026-10-18",
+ "surum": "2026-11-02",
  "aciklama": "Yeni K5 soru bankası: 129 iş türü × 3 etkinlik cümlesi ve soru kökleri. Sorular öğrenciye özel bu bankadan kurulur (dal_servisi).",
  "kokler": {
   "encok": [
@@ -7,16 +7,16 @@
    "Yazın bir yerde staj yapma fırsatın var. Bu işlerden hangisi sana en çok, hangisi en az uyar?",
    "Bir arkadaşın bu işlerden birinde ona eşlik etmeni istiyor. Hangisine en çok, hangisine en az katılmak istersin?",
    "İnternette bir işin nasıl yapıldığını anlatan bir video serisi izleyeceksin. Hangisi sana en çok, hangisi en az ilginç gelir?",
-   "Bir gün boyunca birinin yanında çalışacaksın. Hangisi sana en çok, hangisi en az ilginç gelir?",
-   "Bir hafta sonunu bu işlerden biriyle geçireceksin. Hangisi sana en çok, hangisi en az uyar?",
-   "Bu işlerden birinde bir gün yardımcı olacaksın. Hangisi sana en çok, hangisi en az uyar?",
-   "Bir projede görev alacaksın. Hangi görev sana en çok, hangisi en az uyar?"
+   "Okulun kariyer gününde bu işleri yapan kişiler sınıfınıza gelecek. Hangisi sana en çok, hangisi en az ilginç gelir?",
+   "Hafta sonu kursunda bu işlerden birini öğrenebilirsin. Hangisi sana en çok, hangisi en az uyar?",
+   "Ailenin tanıdıkları bu işleri yapıyor ve seni bir günlüğüne yanlarına çağırıyorlar. Hangisi sana en çok, hangisi en az uyar?",
+   "Okulda bir proje ödevi hazırlayacaksın ve konusu bu işlerden biri olacak. Hangisi sana en çok, hangisi en az ilginç gelir?"
   ],
   "tek": [
    "Bir hafta boyunca bunlardan yalnızca birini yapabilecek olsan hangisini seçerdin?",
    "Bir yaz boyunca bunlardan yalnızca birini deneyebilecek olsan hangisini seçerdin?",
    "Bir arkadaşın bunlardan birini birlikte yapmayı öneriyor. Hangisini seçerdin?",
-   "Bir gününü bu işlerden yalnızca biriyle geçirebilecek olsan hangisini seçerdin?"
+   "Mahallendeki gençlik merkezinde bunlardan yalnızca birini deneyebileceğin bir atölye açılıyor. Hangisini seçerdin?"
   ],
   "kutup": [
    "İki staj teklifin var. Hangisine daha yakınsın?",
@@ -24,9 +24,9 @@
    "İleride her gün yapacağın iş bu ikisinden biri olacak. Hangisine daha yakınsın?",
    "Bir arkadaşın seni iki farklı projeye çağırıyor. Hangisine daha yakınsın?",
    "Bir yaz boyunca bu iki işten birini öğreneceksin. Hangisine daha yakınsın?",
-   "Bir proje için iki farklı görev var. Hangisine daha yakınsın?",
+   "Rehber öğretmenin seninle bu iki iş hakkında konuştu. Hangisine daha yakınsın?",
    "Bir günlüğüne bu iki işten birini yapan birinin yerinde olabilirsin. Hangisine daha yakınsın?",
-   "İki işi düşündüğünde kendini hangisine daha yakın hissediyorsun?"
+   "Akşam yemeğinde ailenle meslekleri konuşurken bu iki iş açıldı. Hangisine daha yakınsın?"
   ]
  },
  "cumleler": {
@@ -107,7 +107,7 @@
   ],
   "U02_S": [
    "Bir dükkânın stok, satış ve kasa kayıtlarını tek bir sistemde birleştirmek",
-   "Bir derneğin üye kaydından aidat takibine kadar işlerini adım adım dijitale taşımak",
+   "Bir derneğin üye kaydından aidat takibine kadar işlerini adım adım bilgisayara taşımak",
    "Bir kütüphanenin ödünç verme işinde hangi bilginin nerede tutulacağını planlamak"
   ],
   "U02_V": [
@@ -156,13 +156,13 @@
    "Işık kirliliğinden uzak bir tepede takımyıldızları gökyüzü haritasıyla eşleştirmek"
   ],
   "U04_A": [
-   "Bir mahalle deprem tatbikatında toplanma alanını ve tahliye yollarını planlamak",
+   "Bir mahalle deprem tatbikatında toplanma alanını ve binalardan çıkış yollarını planlamak",
    "Parkta düşüp dizini yaralayan bir çocuğa ilk yardım uygulamak",
    "Sel ihtimaline karşı ailenin acil durum çantasını ve iletişim planını hazırlamak"
   ],
   "U04_B": [
    "Yalnız yaşayan yaşlı bir komşunun ilaç saatlerini ve günlük ihtiyaçlarını takip etmek",
-   "Ameliyattan yeni çıkan bir yakınının yatakta rahat etmesi için yatışını düzenlemek",
+   "Ameliyattan yeni çıkan bir yakınının yatakta rahat etmesi için yastıklarını ve duruşunu düzenlemek",
    "Yeni doğmuş bir bebeğin ilk günlerinde ailesine banyo ve bakım konusunda destek olmak"
   ],
   "U04_D": [
@@ -208,7 +208,7 @@
   "U04_Y": [
    "Bir aile sağlığı merkezinde nöbet listesini ve malzeme siparişlerini düzenlemek",
    "Bir atölyede çalışanlar için riskli noktaları bulup güvenlik önlemlerini belirlemek",
-   "Bir aşı kampanyasında gönüllüleri, malzemeleri ve günlük programı organize etmek"
+   "Bir aşı kampanyasında gönüllüleri, malzemeleri ve günlük programı düzenlemek"
   ],
   "U05_A": [
    "Mahalle futbol takımının maç öncesi antrenman programını ve taktiğini hazırlamak",
@@ -228,7 +228,7 @@
   "U05_Y": [
    "Mahalleler arası bir turnuva için takımları, hakemleri ve maç takvimini ayarlamak",
    "Amatör bir kulübün sponsorluk görüşmelerini ve yıllık bütçesini yönetmek",
-   "Bir koşu yarışında kayıt, numara dağıtımı ve su istasyonlarını organize etmek"
+   "Bir koşu yarışında kayıt, numara dağıtımı ve su noktalarını ayarlamak"
   ],
   "U06_A": [
    "Kalabalık bir ailenin aylık alışverişini ve harcamalarını bütçeye göre planlamak",
@@ -282,7 +282,7 @@
   ],
   "U07_O": [
    "Görme engelli bir çocuğa kabartmalı kartlarla şekilleri ve harfleri tanıtmak",
-   "Otizm spektrumundaki bir çocuğa resimli kartlarla günlük işlerin sırasını öğretmek",
+   "Otizmi olan bir çocuğa resimli kartlarla günlük işlerin sırasını öğretmek",
    "Down sendromu olan bir gence para üstü saymayı alışveriş yaparak çalıştırmak"
   ],
   "U07_P": [
@@ -302,7 +302,7 @@
   ],
   "U07_T": [
    "Büyükannene telefonda görüntülü arama yapmayı ve fotoğraf göndermeyi öğretmek",
-   "Çocuklara blok tabanlı bir kodlama uygulamasıyla basit animasyon yapmayı göstermek",
+   "Çocuklara blokları sürükleyerek kod yazılan bir uygulamayla basit animasyon yapmayı göstermek",
    "Gönüllü bir atölyede gençlere güvenli internet kullanımını ve şifre korumayı anlatmak"
   ],
   "U08_C": [
@@ -317,7 +317,7 @@
   ],
   "U08_E": [
    "Tatilde yaşadığın bir olaydan yola çıkarak kısa bir öykü yazmak",
-   "Bir şiirdeki imgeleri ve şairin anlatmak istediklerini satır satır çözümlemek",
+   "Bir şiirde şairin anlatmak istediklerini ve kullandığı benzetmeleri satır satır incelemek",
    "Bir kitap buluşmasında okunan romanın karakterlerini ve anlatımını tartışmak"
   ],
   "U08_F": [
@@ -338,12 +338,12 @@
   "U08_M": [
    "Aile albümündeki eski fotoğrafları tarihlerine göre sınıflandırıp etiketlemek",
    "Bağışlanan eski eşyaların bir vitrinde hangi sırayla sergileneceğini planlamak",
-   "Belediyenin eski belgelerini numaralandırıp kolayca bulunacak şekilde kataloglamak"
+   "Belediyenin eski belgelerini numaralandırıp kolayca bulunacak şekilde listelemek"
   ],
   "U08_R": [
    "Antik bir kentte toprağı katman katman açıp eski duvar kalıntılarını ortaya çıkarmak",
    "Tarlada bulunan çanak çömlek parçalarının hangi döneme ait olduğunu incelemek",
-   "Kazıda çıkan her buluntunun yerini ölçüp krokiye işlemek"
+   "Kazıda çıkan her buluntunun yerini ölçüp basit bir haritaya işlemek"
   ],
   "U08_S": [
    "Kasaba halkıyla görüşüp gençlerin neden kente göç ettiğini araştırmak",
@@ -358,7 +358,7 @@
   "U09_E": [
    "Devletin akaryakıt vergisini artırmasının ailelerin harcamalarına etkisini hesaplamak",
    "Belediyenin toplu taşıma ücretini düşürmesinin bütçeye maliyetini ve kazancını hesaplamak",
-   "Devletin vereceği bir kira desteğinin kamu bütçesine yükünü ve halka yararını tartmak"
+   "Devletin vereceği bir kira yardımının devlete maliyetini ve halka yararını karşılaştırmak"
   ],
   "U09_H": [
    "Bir kira anlaşmazlığında hangi kanun maddesinin kimden yana olduğunu incelemek",
@@ -372,7 +372,7 @@
   ],
   "U09_S": [
    "Bir seçimde oyların bölgelere göre neden farklı dağıldığını incelemek",
-   "Seçim kampanyalarındaki hangi vaatlerin gençleri neden etkilediğini çözümlemek",
+   "Seçim kampanyalarındaki hangi vaatlerin gençleri neden etkilediğini incelemek",
    "Bir yasa önerisine meclisteki grupların neden farklı tavır aldığını incelemek"
   ],
   "U09_U": [
@@ -386,22 +386,22 @@
    "Bir kargonun karayolu ile deniz yolu arasındaki maliyet ve süre farkını karşılaştırmak"
   ],
   "U10_E": [
-   "Domates fiyatının bir ayda neden iki katına çıktığını arz ve talep ile açıklamak",
+   "Domates fiyatının bir ayda neden iki katına çıktığını üretilen ve istenen miktara bakarak açıklamak",
    "Kira fiyatlarındaki artışın semtten semte neden farklı olduğunu incelemek",
    "Kasabaya açılan bir fabrikanın iş bulma ve ücretlere etkisini araştırmak"
   ],
   "U10_F": [
-   "Harçlıktan biriken parayı mevduat, altın ve fon arasında paylaştırmayı planlamak",
+   "Harçlıktan biriken parayı banka hesabı, altın ve yatırım fonu arasında paylaştırmayı planlamak",
    "İki bankanın kredi tekliflerini karşılaştırıp toplam geri ödemeyi hesaplamak",
    "Bir şirketin hissesini almadan önce kâr ve borç durumunu incelemek"
   ],
   "U10_G": [
    "Mahallede eksik olan bir hizmeti fark edip bir iş fikrine dönüştürmek",
    "Yaz tatilinde el yapımı ürünler satan küçük bir işi sıfırdan başlatmak",
-   "Bir iş fikri için ortak bulup ilk sermayeyi nasıl toplayacağını kurgulamak"
+   "Bir iş fikri için ortak bulup başlangıç parasını nasıl toplayacağını planlamak"
   ],
   "U10_J": [
-   "Bir yerel üreticinin ürünleri için çevrimiçi mağaza kurup siparişleri yönetmek",
+   "Bir yerel üreticinin ürünleri için internet mağazası kurup siparişleri yönetmek",
    "Bir yerel markanın internet satışlarını artırmak için reklam ve kampanya ayarlarını yönetmek",
    "Bir internet mağazasında ödeme ve kargo adımlarını kolaylaştıran düzenlemeler yapmak"
   ],
@@ -423,17 +423,17 @@
   "U10_Y": [
    "Gönüllü ekibinde kimin hangi göreve uygun olduğuna karar verip işleri dağıtmak",
    "Bir kafeye yeni eleman alırken adaylarla görüşüp seçim yapmak",
-   "Bir mağazada çalışanların vardiya düzenini herkesin ihtiyacına göre organize etmek"
+   "Bir mağazada çalışanların vardiya düzenini herkesin ihtiyacına göre ayarlamak"
   ],
   "U11_D": [
    "Mahalle barınağının sosyal medya hesabı için haftalık paylaşım takvimi hazırlamak",
-   "Hangi paylaşımın daha çok etkileşim aldığını takip edip yeni içerik biçimleri denemek",
+   "Hangi paylaşımın daha çok beğeni ve yorum aldığını takip edip yeni içerik türleri denemek",
    "Bir etkinliği anlık hikâyeler ve kısa videolarla takipçilere canlı aktarmak"
   ],
   "U11_F": [
    "Parkta geçen kısa bir filmin senaryosunu yazıp sahnelere bölmek",
    "Arkadaşlarınla çektiğin kısa filmde oyunculara sahnenin nasıl oynanacağını tarif etmek",
-   "Bir filmin hikâyesinin nasıl kurulduğunu sahne sahne çözümlemek"
+   "Bir filmin hikâyesinin nasıl kurulduğunu sahne sahne incelemek"
   ],
   "U11_H": [
    "Mahallede kapanan bir parkın nedenini araştırıp yetkililerle konuşarak haber yazmak",
@@ -478,7 +478,7 @@
   "U12_H": [
    "Kilden bir insan figürü şekillendirip fırında pişirmek",
    "Bir ağaç kütüğünü oyarak üç boyutlu bir hayvan figürü yontmak",
-   "Atık metal parçaları kaynakla birleştirip parkta duracak bir yapıt oluşturmak"
+   "Atık metal parçaları kaynakla birleştirip parkta duracak bir heykel yapmak"
   ],
   "U12_K": [
    "Bir kütüphanedeki yıpranmış eski bir kitabın sayfalarını bozmadan onarmak",
@@ -497,7 +497,7 @@
   ],
   "U12_R": [
    "Tuval üzerine yağlı boyayla bir köy manzarası boyamak",
-   "Bir parkta oturup gelip geçen insanların karakalem eskizlerini çizmek",
+   "Bir parkta oturup gelip geçen insanların karakalemle hızlı çizimlerini yapmak",
    "Mahalledeki boş bir duvara renkli bir duvar resmi işlemek"
   ],
   "U12_T": [
@@ -511,7 +511,7 @@
    "Küçük bir odaya sığan, katlanabilir bir çalışma masasının kartondan maketini yapmak"
   ],
   "U12_Y": [
-   "Mahalledeki gençlerin çizimlerinden oluşan bir serginin açılışını organize etmek",
+   "Mahalledeki gençlerin çizimlerinden oluşan bir serginin açılışını düzenlemek",
    "El yapımı ürünler pazarına katılacak üreticileri ve stant yerlerini ayarlamak",
    "Bir kültür merkezinin bir aylık atölye ve sergi takvimini düzenlemek"
   ],
@@ -536,7 +536,7 @@
    "Bir konser sahnesinde şarkı değiştikçe ışıkların rengini ve yönünü planlamak"
   ],
   "U13_K": [
-   "Bir türkünün hangi makamda olduğunu ve ezgisinin nasıl ilerlediğini çözümlemek",
+   "Bir türkünün hangi makamda olduğunu ve ezgisinin nasıl ilerlediğini incelemek",
    "Bir şarkının akor geçişlerini inceleyip kulağa neden hoş geldiğini açıklamak",
    "İki farklı dönemin şarkılarındaki ritim ve akor kalıplarını karşılaştırmak"
   ],
@@ -548,7 +548,7 @@
   "U13_O": [
    "Bir sahne oyununda kendinden çok farklı bir karakteri canlandırmak",
    "Bir doğaçlama atölyesinde anında verilen bir duruma göre rol yapmak",
-   "Bir karakterin repliklerini ezberleyip ses tonunu ve jestlerini çalışmak"
+   "Bir karakterin sözlerini ezberleyip ses tonunu ve el, yüz hareketlerini çalışmak"
   ],
   "U13_S": [
    "Bir yaz konserinde sahneye çıkıp bir şarkı söylemek",
@@ -556,12 +556,12 @@
    "Mahalle korosunda yeni bir şarkının ikinci sesini seslendirmek"
   ],
   "U13_T": [
-   "Bir arkadaşının şarkısını kaydedip vokal ile çalgıların ses seviyelerini dengelemek",
+   "Bir arkadaşının şarkısını kaydedip şarkı sesiyle çalgıların ses seviyelerini dengelemek",
    "Bilgisayarda doğadan kaydettiğin seslerle yeni bir elektronik ritim üretmek",
    "Bir açık hava konserinde mikrofonları ve hoparlörleri kurup ses ayarını yapmak"
   ],
   "U13_Y": [
-   "Bir konser gecesinde grupların sahneye çıkış sırasını ve süresini organize etmek",
+   "Bir konser gecesinde grupların sahneye çıkış sırasını ve süresini ayarlamak",
    "Bir sahne oyununun prova takvimini ve ekiplerin görev dağılımını düzenlemek",
    "Gösteri sırasında perde arkasında ışık, ses ve dekor ekiplerini yönlendirmek"
   ],
@@ -638,7 +638,7 @@
   "U16_I": [
    "Bir feribot hattının sefer saatlerini yolcu yoğunluğuna göre yeniden planlamak",
    "Bir havalimanında bagajların doğru uçağa yüklenme akışını düzenlemek",
-   "Bir limana gelen gemilerin yanaşma sırasını ve yükleme işlerini organize etmek"
+   "Bir limana gelen gemilerin yanaşma sırasını ve yükleme işlerini düzenlemek"
   ],
   "U16_T": [
    "Kuleden uçaklara iniş sırası ve pist bilgisi vermek",

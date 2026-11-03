@@ -14,7 +14,8 @@ from pathlib import Path
 VERI = Path(__file__).resolve().parents[1] / "app" / "data"
 DOSYALAR = ["meslek_senaryolari.json", "mulakat_simulasyonu.json", "zor_gunler.json", "meslege_yol.json", "is_hayati_dersler.json",
             "dusunme_atolyesi.json", "cv_rehberi.json", "rapor_yorumlari.json", "is_hayati_mulakat.json", "sozluk_temel.json",
-            "sozluk_genis.json", "k5_soru_bankasi.json", "ornek_ilanlar.json"]
+            "sozluk_genis.json", "k5_soru_bankasi.json", "ornek_ilanlar.json", "olcme_sorulari.json",
+            "olcme_sorulari_ek.json"]
 META = {"aciklama", "surum", "kaynak", "kaynaklar", "not", "notlar", "yontem", "lisans", "kapsam", "turler", "genel_not"}
 AGIR = ("tetkik", "mukayese", "minimal", "konsept", "metodoloji", "operasyonel", "spesifikasyon", "epistemoloji", "ontoloji",
         "binaenaleyh", "mütevellit", "hasebiyle", "işbu", "mezkur", "nezdinde", "teemmül", "muhteva", "istihsal", "paradigma",
