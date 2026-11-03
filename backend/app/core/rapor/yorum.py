@@ -191,11 +191,13 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
                           "rehber": f"Önem verdiği değerler: {dadlar}."}[kitle])
     if bolumler:
         b1 = bolumler[0]["ad"]
-        alan_m = " · ".join(alanlar) or "—"
-        y["ozet"].append({"ogrenci": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. En uyumlu bölümün: {b1}.",
-                          "veli": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. En uyumlu görünen bölüm: {b1}.",
-                          "ogretmen": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}.",
-                          "rehber": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. İlk öneri: {b1}."}[kitle])
+        # [2026-11-03] Bölümlerin üst alan etiketi yoksa "en öne çıkan alanlar: —" yazılmaz; yalnızca bölüm söylenir.
+        alan_m = " · ".join(alanlar)
+        on = f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. " if alan_m else ""
+        cumle = {"ogrenci": f"{on}En uyumlu bölümün: {b1}.", "veli": f"{on}En uyumlu görünen bölüm: {b1}.",
+                 "ogretmen": on.strip(), "rehber": f"{on}İlk öneri: {b1}."}[kitle]
+        if cumle:
+            y["ozet"].append(cumle)
     if hd == "uyumlu":
         y["ozet"].append(f"Seçtiğin hedef ({h['ad']}) profilinle uyumlu; şimdi önemli olan bu hedef için düzenli çalışmak." if sen else
                          f"Seçilen hedef ({h['ad']}) öğrencinin profiliyle uyumlu; şimdi önemli olan bu hedef için düzenli çalışmak.")
