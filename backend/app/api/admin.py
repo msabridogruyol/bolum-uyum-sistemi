@@ -866,6 +866,8 @@ def uyum_skorlarini_yeniden_hesapla(db: Session) -> int:
         if toplam_uyum_hesapla(db, ogrenci, tur):
             sayi += 1
         db.commit()   # her öğrenciden sonra kaydet: biri hata verirse öncekiler kaybolmasın
+    from app.core.skor_motoru import siralama_onbellegini_bosalt
+    siralama_onbellegini_bosalt()   # [2026-11-04] rehber listeleri yeni skorları hemen görsün
     return sayi
 
 

@@ -48,6 +48,7 @@ def yonetim_dil(istek: DilIstek, db: Session = Depends(get_db), yon: AdminKullan
 
 
 class IcerikIstek(GirdiModeli):
+    model_config = {"str_max_length": 200_000}   # [2026-11-04] uzun metin işleyicide kesilir; tek uzun metin tüm paketi 422'ye düşürmesin
     dil: str = Field(min_length=2, max_length=5)
     metinler: list[str] = Field(max_length=200)
 

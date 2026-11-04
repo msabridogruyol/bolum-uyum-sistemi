@@ -581,7 +581,12 @@ def toplu_siralama(db: Session, tur_idler, ilk_n: int | None = None) -> dict[int
         kayit = _SIRA_ONBELLEK.get(anahtar)
         if kayit and kayit[1] == turlar and _t.monotonic() - kayit[0] < SIRALAMA_ONBELLEK_SN:
             return kayit[2]
-        sonuc = _toplu_siralama_hesapla(db, turlar, ilk_n)
+        try:
+            sonuc = _toplu_siralama_hesapla(db, turlar, ilk_n)
+        except Exception:
+            with _SIRA_ANA_KILIT:
+                _SIRA_KILITLER.pop(anahtar, None)
+            raise
         with _SIRA_ANA_KILIT:
             if len(_SIRA_ONBELLEK) >= 32:
                 for k in sorted(_SIRA_ONBELLEK, key=lambda k: _SIRA_ONBELLEK[k][0])[:16]:

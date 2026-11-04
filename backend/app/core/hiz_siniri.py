@@ -127,7 +127,9 @@ class HesapDenemeSayaci:
     def hatali(self, anahtar: str) -> None:
         simdi = self._saat()
         with self._kilit:
-            if len(self._kayit) > self.EN_FAZLA_ANAHTAR:
+            n = len(self._kayit)
+            if n > 4 * self.EN_FAZLA_ANAHTAR or (n > self.EN_FAZLA_ANAHTAR and simdi - getattr(self, "_son_yer_ac", -1e9) > 60):
+                self._son_yer_ac = simdi   # tarama dakikada en çok bir kez; sert tavanı (4×) aşınca hemen
                 self._yer_ac(simdi)
             self._guncel(anahtar, simdi)
             self._kayit.setdefault(anahtar, []).append(simdi)
@@ -146,7 +148,7 @@ class HesapDenemeSayaci:
         for _, a in kilitsiz[: len(self._kayit) - self.EN_FAZLA_ANAHTAR // 2]:
             self._kayit.pop(a, None)
         if len(self._kayit) > 4 * self.EN_FAZLA_ANAHTAR:
-            for _, a in sorted((l[-1], a) for a, l in self._kayit.items())[: len(self._kayit) - 4 * self.EN_FAZLA_ANAHTAR]:
+            for _, a in sorted((l[-1], a) for a, l in self._kayit.items())[: len(self._kayit) - 3 * self.EN_FAZLA_ANAHTAR]:
                 self._kayit.pop(a, None)
 
     def temizle(self, anahtar: str) -> None:

@@ -265,9 +265,12 @@ def _hedefe_gore_yenile(db: Session, ogrenci: Ogrenci, gorevler: list[OgrenciHaf
             if yeni:
                 for alan in ("tur", "baslik", "aciklama", "ref_kod", "ref_bolum_id", "link"):
                     setattr(g, alan, yeni.get(alan))
-                degisti = True
+            else:   # yeni hedefte sıradaki adım yok: eski hedefin adımı kalmaz (her istekte yeniden hesaplanmasın)
+                db.delete(g)
+                gorevler.remove(g)
+            degisti = True
         elif g.tur == "kesif" and g.aciklama and _HEDEF_ONEKI.match(g.aciklama):
-            hb = db.get(Bolum, hedef.bolum_id) if hedef else None
+            hb = db.get(Bolum, hedef.bolum_id) if hedef and hedef.bolum_id != g.ref_bolum_id else None
             onek = f"Hedefin {_turkce_baslik(hb.ad)}; " if hb else ""
             yeni_metin = _HEDEF_ONEKI.sub(onek, g.aciklama, count=1) if onek else _HEDEF_ONEKI.sub("", g.aciklama, count=1).replace(
                 "yine de başka seçenekleri tanımak kararını güçlendirir. ", "", 1)

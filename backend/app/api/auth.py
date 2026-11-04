@@ -156,7 +156,8 @@ TEK_GIRIS_ROLLERI = {"ogrenci", "okul_yetkilisi", "super_admin"}
 def _karmayi_tazele(hesap, duz_sifre: str) -> None:
     """[2026-10-11] Eski tur sayısıyla karılmış şifreyi güncel ayarla yeniden kar (sonraki girişler hızlansın)."""
     from app.core.security import sifre_hashle, yeniden_karma_gerekli_mi
-    if yeniden_karma_gerekli_mi(hesap.sifre_hash):
+    # [2026-11-04] 72 bayttan uzun (eski bcrypt'in kestiği) şifre yeniden karılamaz; giriş yine de başarılı olur
+    if yeniden_karma_gerekli_mi(hesap.sifre_hash) and len(duz_sifre.encode("utf-8")) <= 72:
         hesap.sifre_hash = sifre_hashle(duz_sifre)
 
 

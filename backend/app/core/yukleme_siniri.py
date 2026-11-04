@@ -129,9 +129,9 @@ class GovdeBoyutuAraKatmani:
 
 # [2026-11-04] Güvenlik denetimi — sıkıştırma bombası: 10 MB sınırı sıkıştırılmış .xlsx'e uygulanıyordu; 15 KB'lık bir dosya
 # 16.384 sütun ilan edip ~3 GB, 300 KB'lık tek hücre ~640 MB bellek tüketebiliyordu (sunucu tüm okullar için düşer).
-XLSX_ACIK_EN_FAZLA_BAYT = 80 * MB       # açılmış toplam boyut (gerçek okul dosyaları birkaç MB)
+XLSX_ACIK_EN_FAZLA_BAYT = 200 * MB      # açılmış toplam boyut (gerçek okul dosyaları birkaç MB)
 XLSX_EN_FAZLA_ORAN = 200                # tek giriş için açılmış/sıkıştırılmış oranı (normal XML ~5–20)
-TABLO_EN_FAZLA_SUTUN = 200              # ilk sayfada okunacak sütun (öğrenci listesi ~10, TÜİK tabloları ~60)
+TABLO_EN_FAZLA_SUTUN = 1000             # ilk sayfada okunacak sütun (öğrenci listesi ~10, TÜİK ~60, optik okuyucu ~300)
 HUCRE_EN_FAZLA_KARAKTER = 2000
 
 

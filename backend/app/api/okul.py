@@ -35,7 +35,7 @@ class OkulOut(BaseModel):
     id: int
     ad: str
     alt_baslik: str | None = None
-    logo: str | None = Field(None, max_length=1_000_000)
+    logo: str | None = None
     aktif_mi: bool                    # amblem bu okulun öğrencilerine gösterilsin mi
     # [2026-10-09] Listede sistemdeki öğrenci sayısı; tekil cevaplarda okulun girdiği sayı (boş olabilir → None)
     ogrenci_sayisi: int | None = 0
@@ -67,7 +67,7 @@ class OkulBilgiOut(BaseModel):
     id: int
     ad: str
     alt_baslik: str | None = None
-    logo: str | None = Field(None, max_length=1_000_000)
+    logo: str | None = None
     kurulus_yili: int | None = None
     ogrenci_sayisi: int | None = None
     tanitim: str | None = None
