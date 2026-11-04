@@ -144,3 +144,58 @@ def test_bolum_duzeyleri_ve_duzeye_gore_eslestirme():
     assert ihs.program_eslestir("İş sağlığı ve güvenliği", ad, duzey="onlisans")["bolum_id"] is None
     assert ihs.program_eslestir("İş sağlığı ve güvenliği", ad, duzey="lisans")["bolum_id"] == 1
     assert ihs.program_eslestir("Basım ve yayım teknolojileri", ad, duzey="onlisans")["bolum_id"] == 2
+
+
+def _yeni_portal_xlsx(baslik: str, gosterge: str, satirlar: list[tuple]) -> str:
+    """[2026-11-04] Yeni TÜİK Veri Portalı (databrowser2.tuik.gov.tr) Excel dışa aktarımının biçimi: başlık + kapsam satırları,
+    'İstatistiksel Gösterge' / 'Zaman' (yıllar) / 'Bölüm' başlık satırları, eksik değer '-', kazanç grubu sayı kodu (5 = çok yüksek)."""
+    import base64
+    import io
+    import openpyxl
+    wb = openpyxl.Workbook()
+    ws = wb.active
+    ws.append([baslik + "  "])
+    ws.append(["Coğrafi Kapsam: Türkiye  "])
+    ws.append(["Gözlem Sıklığı: Yıllık  "])
+    ws.append([])
+    ws.append(["İstatistiksel Gösterge   ", gosterge, gosterge])
+    ws.append(["Zaman   ", "2025", "2024"])
+    ws.append(["Bölüm   ", "", ""])
+    for r in satirlar:
+        ws.append(list(r))
+    b = io.BytesIO()
+    wb.save(b)
+    return base64.b64encode(b.getvalue()).decode()
+
+
+@db_gerekli
+def test_yeni_tuik_portali_disa_aktarimi_taninir(istemci, kisiler, db):
+    ad = f"YENİ PORTAL {uuid.uuid4().hex[:5].upper()}"
+    db.execute(text("INSERT INTO bolumler (ad, durum) VALUES (:a, 'yayinda')"), {"a": ad})
+    db.commit()
+    p = ad.capitalize() + "   "
+    dosyalar = [
+        {"dosya_adi": "kio.xlsx", "icerik_base64": _yeni_portal_xlsx(
+            "Lisans mezunlarının bölümlere göre kayıtlı istihdam oranı", "Kayıtlı istihdam oranı (%)",
+            [("Toplam   ", 73.9265, 75.03), (p, 85.0828729281768, 89.62)])},
+        {"dosya_adi": "sure.xlsx", "icerik_base64": _yeni_portal_xlsx(
+            "Lisans mezunlarının bölümlere göre ilk iş bulma süresi", "İlk iş bulma süresi (Ay)",
+            [(p, 10.7260273972603, "-")])},
+        {"dosya_adi": "kazanc.xlsx", "icerik_base64": _yeni_portal_xlsx(
+            "Lisans mezunlarının bölümlere göre aylık ortalama kazanç grupları", "Ortalama kazanç grubu",
+            [(p, "5", "4")])},
+    ]
+    r = istemci.post("/admin/is-hayati/istihdam/tuik-paket", headers=kisiler["super"], json={"dosyalar": dosyalar})
+    assert r.status_code == 200, r.text
+    v = r.json()
+    assert all(d["durum"] == "kullanilacak" for d in v["dosyalar"]), v["dosyalar"]
+    assert v["yil"] == 2025
+    s = next(x for x in v["satirlar"] if x["program_adi_kaynak"] == ad.capitalize())
+    assert round(s["istihdam_orani"], 1) == 85.1 and round(s["is_bulma_suresi_ay"], 1) == 10.7
+    assert s["kazanc_grubu"] == "cok_yuksek" and not s["hatalar"] and s["bolum_id"]
+
+
+def test_kazanc_grubu_sayi_kodu():
+    from app.core import is_hayati_servisi as ihs
+    assert [ihs.kazanc_grubu_coz(x) for x in ("5", 4, 3.0, "2", "1")] == ["cok_yuksek", "yuksek", "orta", "dusuk", "cok_dusuk"]
+    assert ihs.kazanc_grubu_coz("6") is None and ihs.kazanc_grubu_coz("2.5") is None and ihs.kazanc_grubu_coz("Orta") == "orta"

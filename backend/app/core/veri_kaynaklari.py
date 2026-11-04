@@ -283,8 +283,9 @@ _PIPELINE_KOMUT = "powershell -ExecutionPolicy Bypass -File C:\\pipeline\\pipeli
 _PIPELINE_ADIM = [f"Bilgisayarınızda Komut İstemi'ni açıp şu komutu yapıştırın: {_PIPELINE_KOMUT} (adımlar: C:\\pipeline\\CALISTIR.md).",
                   "Çalıştırma bitince çıktıları kontrol ettirin; \"yükleyebilirsiniz\" onayını bekleyin."]
 ADIMLAR = {
-    "tuik_istihdam": ["data.tuik.gov.tr › Eğitim, Kültür, Spor ve Turizm › Yükseköğretim İstihdam Göstergeleri sayfasını açın.",
-                      "\"Lisans mezunlarının bölümlere göre…\" ile başlayan 3 tabloyu (.xls) indirin: kayıtlı istihdam oranı, ilk iş bulma süresi, aylık ortalama kazanç grupları.",
+    "tuik_istihdam": ["veriportali.tuik.gov.tr › Eğitim › Yükseköğretim İstihdam Göstergeleri › Tablolar ve Grafikler sayfasını açın.",
+                      "\"Lisans mezunlarının bölümlere göre…\" ile başlayan 3 tabloyu açın (kayıtlı istihdam oranı, ilk iş bulma süresi, aylık "
+                      "ortalama kazanç grupları); her birinde sağ üstteki indirme okundan Excel'i seçip kaydedin.",
                       "İş Hayatı Verileri › 📊 TÜİK İstihdam Göstergeleri sekmesinde \"TÜİK istihdam göstergelerini yükle\" kutusunda 3 dosyayı birlikte seçin; önizlemeye bakıp kaydedin."],
     "tuik_kazanc": ["TÜİK Kazanç Yapısı Araştırması'nın meslek gruplarına göre kazanç tablosunu indirin (4 yılda bir yayımlanır).",
                     "İş Hayatı Verileri › 💰 Kazanç Yapısı sekmesinden tabloyu yükleyin; o yılın asgari brüt ücretini girip önizlemeyi kontrol edin."],

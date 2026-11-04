@@ -284,13 +284,18 @@ def _tuik_tani(ad: str, satirlar: list[list]) -> dict:
     baslik = next((i for i, r in enumerate(satirlar[:15]) if r and _normalize(str(r[0])).startswith("bolum")), None)
     yillar = {}
     if baslik is not None:
-        for j, c in enumerate(satirlar[baslik]):
-            try:
-                y = int(float(str(c).strip()))
-            except ValueError:
-                continue
-            if 2000 <= y <= 2100:
-                yillar[y] = j
+        # Eski portal: yıllar "Bölüm" satırında. Yeni Veri Portalı (databrowser, Excel dışa aktarımı) yılları bir üstteki
+        # "Zaman" satırına yazar ("İstatistiksel Gösterge" / "Zaman" / "Bölüm" başlık satırları) → yukarı doğru en fazla 3 satır bakılır.
+        for i in range(baslik, max(-1, baslik - 4), -1):
+            for j, c in enumerate(satirlar[i][1:], start=1):
+                try:
+                    y = int(float(str(c).strip()))
+                except ValueError:
+                    continue
+                if 2000 <= y <= 2100 and str(c).strip() in (str(y), f"{y}.0"):
+                    yillar.setdefault(y, j)
+            if yillar:
+                break
     kaynak = next((str(r[0]).strip() for r in satirlar[-8:] if r and _normalize(str(r[0])).startswith("tuik,")), None)
     sonuc = {"dosya_adi": ad, "olcu": olcu[0], "olcu_ad": olcu[1], "duzey": duzey, "baslik_satiri": baslik, "yillar": yillar,
              "kaynak": kaynak, "durum": "kullanilacak", "neden": None}
