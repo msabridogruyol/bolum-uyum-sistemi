@@ -27,6 +27,8 @@ import sys
 from pathlib import Path
 
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from guvenli_npy import metin_listesi_kaydet, metin_listesi_oku  # noqa: E402  [2026-11-04] pickle'sız ad listeleri
 
 KOK = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(__file__).resolve().parents[1]
 ONB, VERI, CIKTI = KOK / "onbellek", KOK / "veri", KOK / "cikti"
@@ -45,7 +47,7 @@ def oku(yol, ayirici=","):
 def main():
     meslek = oku(VERI / "meslekler_esco.csv")
     bolumler = [r["ad"] for r in oku(VERI / "bolumler.csv")]
-    bad = list(np.load(ONB / "bolum_isimleri.npy", allow_pickle=True))
+    bad = metin_listesi_oku(ONB / "bolum_isimleri.npy")
     bi = {b: i for i, b in enumerate(bad)}
     from bolum_meslek import UST_MESLEK, Kurallar, benzerlik
     kural = Kurallar(meslek)

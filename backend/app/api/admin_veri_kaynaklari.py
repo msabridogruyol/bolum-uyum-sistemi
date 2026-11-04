@@ -9,6 +9,7 @@ Ayrıntı: app/core/veri_kaynaklari.py
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_super_admin
@@ -20,7 +21,7 @@ from app.models import AdminKullanici
 router = APIRouter(prefix="/admin/veri-kaynaklari", tags=["Admin — Veri Kaynakları"])
 
 
-class KontrolIstek(BaseModel):
+class KontrolIstek(GirdiModeli):
     sonuc: str = Field(..., pattern="^(guncel|guncellendi|sorun)$")
     notlar: str | None = Field(None, max_length=1000)
 

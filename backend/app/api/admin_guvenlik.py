@@ -10,7 +10,7 @@ GET /admin/guvenlik/turlar                — tüm turların güven skoru + olay
 GET /admin/guvenlik/turlar/{tur_id}        — bir turun tüm olayları + fotoğrafları (detay)
 """
 
-from pydantic import BaseModel
+from pydantic import Field, BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
@@ -53,7 +53,7 @@ class GuvenlikOlayOut(BaseModel):
 
 class GuvenlikFotografOut(BaseModel):
     id: int
-    foto_base64: str
+    foto_base64: str = Field(max_length=3_000_000)
     katman_kod: str | None
     cekim_zamani: str
 

@@ -18,6 +18,7 @@ from fastapi.responses import Response
 from typing import Annotated
 
 from pydantic import BaseModel, Field, StringConstraints
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.core import pipeline_depo as depo
@@ -39,7 +40,7 @@ def _depo_hatasi(e: Exception):
     raise HTTPException(503, str(e))
 
 
-class EtkinlestirIstek(BaseModel):
+class EtkinlestirIstek(GirdiModeli):
     kurulum_anahtari: str = Field(..., min_length=20, max_length=200)
 
 
@@ -74,7 +75,7 @@ def kod(yol: str = Query(..., max_length=300), cihaz: dict = Depends(_cihaz)):
 Hex64 = Annotated[str, StringConstraints(pattern=r"^[0-9a-f]{64}$")]
 
 
-class ParcaListesi(BaseModel):
+class ParcaListesi(GirdiModeli):
     parcalar: list[Hex64] = Field(..., max_length=pp.EN_FAZLA_DOSYA)
 
 
@@ -91,12 +92,12 @@ def canli(db: Session = Depends(get_db), cihaz: dict = Depends(_cihaz)):
     return pp.canli_listeler(db)
 
 
-class Parca(BaseModel):
+class Parca(GirdiModeli):
     sha256: Hex64
     boyut: int = Field(..., ge=0, le=pp.depo.PARCA_BOYUTU)
 
 
-class BaslatIstek(BaseModel):
+class BaslatIstek(GirdiModeli):
     parcalar: list[Parca] = Field(..., max_length=500)   # bilgisayar 100'lük gruplar hâlinde gönderir
 
 
@@ -110,7 +111,7 @@ def gonderim_baslat(istek: BaslatIstek, cihaz: dict = Depends(_cihaz)):
         _depo_hatasi(e)
 
 
-class TamamlaIstek(BaseModel):
+class TamamlaIstek(GirdiModeli):
     dosyalar: dict = Field(..., max_length=pp.EN_FAZLA_DOSYA)
     girdi_ozeti: dict[str, Annotated[str, StringConstraints(max_length=64)]] | None = Field(None, max_length=10)
     aciklama: str | None = Field(None, max_length=500)
@@ -133,7 +134,7 @@ def gonderim_tamamla(istek: TamamlaIstek, db: Session = Depends(get_db), cihaz: 
         _depo_hatasi(e)
 
 
-class BozukIstek(BaseModel):
+class BozukIstek(GirdiModeli):
     sha256: Hex64
 
 

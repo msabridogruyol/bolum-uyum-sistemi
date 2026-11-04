@@ -7,6 +7,7 @@ import re
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_yonetim
@@ -36,7 +37,7 @@ def akranlar(ogrenci_id: str, kapsam: str = "okul", db: Session = Depends(get_db
     return benzer_akranlar(db, str(o.id), [(x.id, x.ad_soyad, _sinif_metni(x)) for x in havuz], n=5)
 
 
-class DagilimIstek(BaseModel):
+class DagilimIstek(GirdiModeli):
     sinif: str
     subeler: list[str] = Field(min_length=1, max_length=20)
     mod: str = "dengeli"                     # dengeli | benzer
@@ -75,12 +76,12 @@ def dagilim_onerisi(okul_id: int, istek: DagilimIstek, db: Session = Depends(get
     return sonuc
 
 
-class Atama(BaseModel):
+class Atama(GirdiModeli):
     id: str
     sube: str
 
 
-class UygulaIstek(BaseModel):
+class UygulaIstek(GirdiModeli):
     sinif: str
     atamalar: list[Atama] = Field(min_length=1, max_length=2000)
 

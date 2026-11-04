@@ -18,7 +18,14 @@ import os as _os
 BCRYPT_TUR = max(10, min(14, int(_os.getenv("BCRYPT_TUR", "10") or 10)))
 
 
+SIFRE_EN_FAZLA_BAYT = 72   # bcrypt sınırı (bcrypt 5 daha uzununu reddeder; eski sürümler sessizce keserdi)
+
+
 def sifre_hashle(duz_sifre: str) -> str:
+    # [2026-11-04] 72 bayttan uzun şifre (ör. 36+ Türkçe harf) bcrypt'te ValueError → 500 veriyordu; kullanıcıya açık mesaj
+    if len((duz_sifre or "").encode("utf-8")) > SIFRE_EN_FAZLA_BAYT:
+        from fastapi import HTTPException
+        raise HTTPException(status_code=400, detail="Şifre çok uzun. En fazla 72 karakter kullanın (Türkçe harfler 2 karakter sayılır).")
     return bcrypt.hashpw(duz_sifre.encode("utf-8"), bcrypt.gensalt(rounds=BCRYPT_TUR)).decode("utf-8")
 
 
@@ -31,7 +38,13 @@ def yeniden_karma_gerekli_mi(hash_sifre: str | None) -> bool:
 
 
 def sifre_dogrula(duz_sifre: str, hash_sifre: str) -> bool:
-    return bcrypt.checkpw(duz_sifre.encode("utf-8"), hash_sifre.encode("utf-8"))
+    # [2026-11-04] Bozuk/boş hash (ör. "x", şifresiz test hesabı) ValueError fırlatıp isteği askıda bırakıyordu → yanlış şifre say.
+    if not duz_sifre or not hash_sifre:
+        return False
+    try:   # eski bcrypt sürümleri 72 baytı aşan şifreyi keserek karmalardı; doğrulama da aynı ilk 72 baytla yapılır
+        return bcrypt.checkpw(duz_sifre.encode("utf-8")[:SIFRE_EN_FAZLA_BAYT], hash_sifre.encode("utf-8"))
+    except ValueError:
+        return False
 
 
 def _token_uret(konu: str, rol: str, sure: timedelta, tip: str) -> str:

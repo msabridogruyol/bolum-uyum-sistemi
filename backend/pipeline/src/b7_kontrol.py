@@ -16,7 +16,10 @@ import csv
 import re
 from pathlib import Path
 
+import sys
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from guvenli_npy import metin_listesi_kaydet, metin_listesi_oku  # noqa: E402  [2026-11-04] pickle'sız ad listeleri
 
 KOK = Path(__file__).resolve().parents[1]
 ONB, VERI, RAPOR = KOK / "onbellek", KOK / "veri", KOK / "cikti" / "rapor"
@@ -32,7 +35,7 @@ def kucuk(s):
 def main():
     meslek = list(csv.DictReader(open(VERI / "meslekler_esco.csv", encoding="utf-8-sig")))
     ad = [kucuk(o["ad"]) for o in meslek]
-    bad = list(np.load(ONB / "bolum_isimleri.npy", allow_pickle=True))
+    bad = metin_listesi_oku(ONB / "bolum_isimleri.npy")
     isco23 = np.array([o["isco_grubu"].zfill(4).startswith("23") for o in meslek])
     nz = lambda X: X / (np.linalg.norm(X, axis=1, keepdims=True) + 1e-12)
     zr = lambda X: (X - X.mean(1, keepdims=True)) / (X.std(1, keepdims=True) + 1e-12)

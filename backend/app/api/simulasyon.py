@@ -18,6 +18,7 @@ from collections import Counter
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -105,7 +106,7 @@ def simulasyon(bolum_id: int, meslek: int = Query(0, ge=0), db: Session = Depend
             "sahneler": sahneler, "kararli": bool(kararlar)}
 
 
-class SonucIstek(BaseModel):
+class SonucIstek(GirdiModeli):
     bolum_id: int
     meslek: int = Field(ge=0)
     tepkiler: dict[str, int] = Field(default_factory=dict)    # {"is0": 2, ...}

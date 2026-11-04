@@ -45,7 +45,9 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
   if (!katmanlar || !katmanSonuclari || !k5Durum) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
-  const tamamlanan = katmanlar.filter((k) => k.durum === 'tamamlandi').length
+  // [2026-11-04] Koşullu iş türü adımı (K5) yalnızca öğrenciye açıldıysa sayılır (Değerlendirme sayfasıyla aynı payda)
+  const sayilan = katmanlar.filter((k) => !k.kosullu_mu || k.durum !== 'baslamadi')
+  const tamamlanan = sayilan.filter((k) => k.durum === 'tamamlandi').length
   const tumTamam = ANA_KATMANLAR.every((kod) => katmanSonuclari[kod] !== null)
 
   // [2026-10-03] K5 zorunlu: açılan dal(lar) bitmediyse öğrenci K5'e yönlendirilir
@@ -74,7 +76,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
       <div className="ph" style={gomulu ? { display: 'none' } : undefined}>
         <div className="pt">Genel Sonuçlar</div>
         <div className="ps">
-          Tüm katmanların özet profili · {tamamlanan}/{katmanlar.length} katman tamamlandı
+          Tüm katmanların özet profili · {tamamlanan}/{sayilan.length} katman tamamlandı
         </div>
       </div>
       {!gomulu && <GecersizTurUyarisi ozet={ozet} />}
@@ -135,7 +137,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
             <div className="taslak-onizleme-overlay">
               <div className="to-ikon">📊</div>
               <div className="to-metin">
-                K1–K4'ün hepsini bitirince güçlü yönlerin, önem verdiğin değerler ve gelişime açık yönlerin burada görünecek. Şu an {tamamlanan}/{katmanlar.length} katman tamamlandı.
+                K1–K4'ün hepsini bitirince güçlü yönlerin, önem verdiğin değerler ve gelişime açık yönlerin burada görünecek. Şu an {tamamlanan}/{sayilan.length} katman tamamlandı.
               </div>
             </div>
           </div>

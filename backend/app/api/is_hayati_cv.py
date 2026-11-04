@@ -29,6 +29,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -534,7 +535,7 @@ def cv_getir(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogre
     return _cevap(db, o)
 
 
-class CvIstek(BaseModel):
+class CvIstek(GirdiModeli):
     icerik: dict
     paylas: bool = False
 
@@ -612,7 +613,7 @@ def rehber(o: Ogrenci = Depends(get_mevcut_ogrenci)):
         raise HTTPException(503, "CV rehberi şu an yüklenemedi.")
 
 
-class AtsIstek(BaseModel):
+class AtsIstek(GirdiModeli):
     icerik: dict | None = None        # düzenleyicideki (kaydedilmemiş olabilir) CV; yoksa kayıtlı CV ya da taslak
     ilan_metni: str | None = None     # öğrencinin yapıştırdığı ilan (en çok 8.000 karakter)
     ilan_id: str | None = None        # örnek ilan (ornek_ilanlar.json) — satır türleri dosyadan gelir

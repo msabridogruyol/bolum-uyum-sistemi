@@ -551,9 +551,52 @@ def toplu_nihai_uyum(db: Session, tur_idler, bolum_idler=None) -> dict[int, dict
     return sonuc
 
 
+# [2026-11-04] Yük denetimi: 3.000 öğrencili okulda tek çağrı ~1,7–3,8 sn (786 bin skor satırı). Rehber paneli bir sayfada
+# özet, öğrenci listesi, erken uyarı, Filiz özeti ve hazır raporlar için aynı tur kümesini 4–5 kez, çoğu zaman AYNI ANDA
+# hesaplatıyordu (genel bakış ~14 sn). Sonuç, tur kümesi + ilk_n anahtarıyla kısa süre (SIRALAMA_ONBELLEK_SN) süreç içinde
+# tutulur; aynı anahtarı aynı anda isteyenler ilk hesabı bekler (tek uçuş). Yeni biten tur anahtarı değiştirir (hemen görünür);
+# skorların yeniden hesaplanması (pipeline onayı) en geç SIRALAMA_ONBELLEK_SN sonra yansır — ayrıca siralama_onbellegini_bosalt.
+SIRALAMA_ONBELLEK_SN = 45.0
+_SIRA_ONBELLEK: dict = {}
+_SIRA_KILITLER: dict = {}
+_SIRA_ANA_KILIT = __import__("threading").Lock()
+
+
+def siralama_onbellegini_bosalt() -> None:
+    with _SIRA_ANA_KILIT:
+        _SIRA_ONBELLEK.clear()
+
+
 def toplu_siralama(db: Session, tur_idler, ilk_n: int | None = None) -> dict[int, list[SiralamaSatiri]]:
     """tur_id -> öğrencinin sonuç ekranındaki sıralama (siralama_getir ile aynı skor ve sıra; kendall_w /
     yontem_skorlari doldurulmaz). Bölüm tarafı (alan haritası, tie-break verisi) bir kez okunur."""
+    import time as _t
+    turlar = tuple(sorted({int(t) for t in tur_idler if t is not None}))
+    if len(turlar) < 50:   # tek öğrenci / küçük grup: hızlı, önbelleğe gerek yok
+        return _toplu_siralama_hesapla(db, turlar, ilk_n)
+    anahtar = (hash(turlar), len(turlar), ilk_n)
+    with _SIRA_ANA_KILIT:
+        kilit = _SIRA_KILITLER.setdefault(anahtar, __import__("threading").Lock())
+    with kilit:
+        kayit = _SIRA_ONBELLEK.get(anahtar)
+        if kayit and kayit[1] == turlar and _t.monotonic() - kayit[0] < SIRALAMA_ONBELLEK_SN:
+            return kayit[2]
+        try:
+            sonuc = _toplu_siralama_hesapla(db, turlar, ilk_n)
+        except Exception:
+            with _SIRA_ANA_KILIT:
+                _SIRA_KILITLER.pop(anahtar, None)
+            raise
+        with _SIRA_ANA_KILIT:
+            if len(_SIRA_ONBELLEK) >= 32:
+                for k in sorted(_SIRA_ONBELLEK, key=lambda k: _SIRA_ONBELLEK[k][0])[:16]:
+                    _SIRA_ONBELLEK.pop(k, None)
+                    _SIRA_KILITLER.pop(k, None)
+            _SIRA_ONBELLEK[anahtar] = (_t.monotonic(), turlar, sonuc)
+        return sonuc
+
+
+def _toplu_siralama_hesapla(db: Session, tur_idler, ilk_n: int | None = None) -> dict[int, list[SiralamaSatiri]]:
     harita = toplu_nihai_uyum(db, tur_idler)
     if not harita:
         return {}

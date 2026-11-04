@@ -63,9 +63,12 @@ export default function KatmanlarSayfasi() {
   if (hata) return <div className="pg"><div className="bos-durum">{hata}</div></div>
   if (!katmanlar || hedef === undefined) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
-  const tamamlanan = katmanlar.filter((k) => k.durum === 'tamamlandi').length
-  const profilYuzde = Math.round((tamamlanan / katmanlar.length) * 100)
   const k5AcikMi = k5Durum && (k5Durum.acilan?.length > 0 || k5Durum.ilgi_gosterilen?.length > 0)
+  // [2026-11-04] İlerleme yalnızca bu öğrencinin çözmesi gereken adımlardan: dört ana bölüm + (açıldıysa) iş türü adımı.
+  // Önceden koşullu K5 her zaman paydaydı: yarıda %40 (yan menü %50), dördü bitip K5 açılmayınca %80'de kalıyordu.
+  const sayilan = katmanlar.filter((k) => !k.kosullu_mu || k5AcikMi || k.durum !== 'baslamadi')
+  const tamamlanan = sayilan.filter((k) => k.durum === 'tamamlandi').length
+  const profilYuzde = sayilan.length ? Math.round((tamamlanan / sayilan.length) * 100) : 0
 
   const enGucluDeger = k1Sonuc?.tamamlandi_mi && k1Sonuc.sonuclar.length
     ? [...k1Sonuc.sonuclar].sort((a, b) => b.puan - a.puan)[0]
@@ -207,7 +210,7 @@ export default function KatmanlarSayfasi() {
           {/* [2026-11-03] "Ayrıca ilgi gösterdiğin alanlar" kartı kaldırıldı: eski alan bazlı K5'ten kalmıştı; yeni K5'te
               (tek adım) bu liste hep boştur (dal_servisi.k5_tetikle). */}
 
-          {!k5AcikMi && tamamlanan === katmanlar.length && (
+          {!k5AcikMi && tamamlanan === sayilan.length && (
             <div className="bos-durum" style={{ marginTop: 14 }}>
               Şu an sana özel açılmış iş türü sorusu yok. Bölüm önerilerin ilk dört bölümün sonuçlarına göre hazırlanır.
             </div>
@@ -256,7 +259,7 @@ export default function KatmanlarSayfasi() {
             {enGucluDeger ? (
               <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.65 }}>
                 Değerler katmanına göre senin için en önemli şey: <b style={{ color: 'var(--tx)' }}>{enGucluDeger.degisken_adi}</b>.
-                {' '}Değerlendirmeyi bitirince bunu sağlayabilecek bölümleri bulabilirsin.
+                {' '}{profilYuzde === 100 ? 'Bölümler sayfasında bunu sağlayabilecek bölümleri görebilirsin.' : 'Değerlendirmeyi bitirince bunu sağlayabilecek bölümleri bulabilirsin.'}
               </div>
             ) : (
               <div className="taslak-onizleme">

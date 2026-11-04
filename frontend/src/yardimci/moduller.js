@@ -5,15 +5,17 @@ import { api } from '../api/client'
 
 let onbellek = null
 let istek = null
+let hataOldu = false   // [2026-11-04] liste alınamadıysa "hazır" sayılır ve her şey açık kabul edilir (eski davranış)
 const dinleyiciler = new Set()
+const bildir = () => dinleyiciler.forEach((f) => f({ m: onbellek, hata: hataOldu }))
 
 export function modulleriYukle(zorla = false) {
-  if (zorla) { onbellek = null; istek = null }
+  if (zorla) { onbellek = null; istek = null; hataOldu = false }
   if (!istek) {
     istek = api.ogrenciModulleri()
-      .then((v) => { onbellek = new Set(v.moduller || []) })
-      .catch(() => { istek = null })   // hata: bir sonraki çağrıda yeniden dene; o ana kadar her şey açık
-      .finally(() => dinleyiciler.forEach((f) => f(onbellek)))
+      .then((v) => { onbellek = new Set(v.moduller || []); hataOldu = false })
+      .catch(() => { istek = null; hataOldu = true })   // hata: bir sonraki çağrıda yeniden dene; o ana kadar her şey açık
+      .finally(bildir)
   }
   return istek
 }
@@ -21,17 +23,22 @@ export function modulleriYukle(zorla = false) {
 // Yüklendikten sonra eşzamanlı sorgu (yüklenemediyse açık sayılır)
 export const modulAcikMi = (kod) => !onbellek || onbellek.has(kod)
 
-export function modulleriTemizle() { onbellek = null; istek = null }
+export function modulleriTemizle() { onbellek = null; istek = null; hataOldu = false }
 
+// Dönen fonksiyon: acik(kod) → modül açık mı. acik.hazir → paket listesi geldi mi (ya da alınamadı mı).
+// [2026-11-04] Ekran denetimi: liste gelene kadar her şey "açık" sayıldığından Temel/Gelişim paketli öğrencinin her sayfası
+// kapalı modüllerin uçlarını çağırıp 403 alıyordu. Modüle bağlı istekler ve sayfalar acik.hazir olduktan sonra çalışır.
 export function useModuller() {
-  const [m, setM] = useState(onbellek)
+  const [d, setD] = useState({ m: onbellek, hata: hataOldu })
   useEffect(() => {
-    dinleyiciler.add(setM)
+    dinleyiciler.add(setD)
     if (!onbellek) modulleriYukle()
-    else setM(onbellek)
-    return () => dinleyiciler.delete(setM)
+    else setD({ m: onbellek, hata: false })
+    return () => dinleyiciler.delete(setD)
   }, [])
-  return (kod) => !m || m.has(kod)
+  const acik = (kod) => !d.m || d.m.has(kod)
+  acik.hazir = !!d.m || d.hata
+  return acik
 }
 
 // Öğrenci sayfa yolu → gereken modül

@@ -12,6 +12,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -42,7 +43,7 @@ def _satir(r: dict, kaynak: str, duzenlenebilir: bool = False) -> dict:
             "hedef_sinif": r["hedef_sinif"], "kaynak": kaynak, "duzenlenebilir": duzenlenebilir}
 
 
-class EtkinlikIstek(BaseModel):
+class EtkinlikIstek(GirdiModeli):
     baslik: str = Field(min_length=2, max_length=120)
     aciklama: str | None = Field(default=None, max_length=600)
     tur: str = "diger"

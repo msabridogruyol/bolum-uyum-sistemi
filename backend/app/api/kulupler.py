@@ -19,6 +19,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -50,7 +51,7 @@ def ilgi_testi(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_og
             "sonuc": sonuc, **_oneri_paketi(db, o, sonuc)}
 
 
-class IlgiCevapIstek(BaseModel):
+class IlgiCevapIstek(GirdiModeli):
     cevaplar: dict[str, int]
 
 
@@ -71,7 +72,7 @@ def ilgi_testi_kaydet(istek: IlgiCevapIstek, db: Session = Depends(get_db), o: O
 
 
 # ============================================================================= yönetim
-class KulupIstek(BaseModel):
+class KulupIstek(GirdiModeli):
     ad: str = Field(min_length=2, max_length=80)
     aciklama: str | None = Field(default=None, max_length=300)
     ilgiler: list[str] = Field(default_factory=list)

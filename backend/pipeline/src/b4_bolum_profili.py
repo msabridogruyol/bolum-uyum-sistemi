@@ -47,6 +47,8 @@ import zipfile
 from pathlib import Path
 
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from guvenli_npy import metin_listesi_kaydet, metin_listesi_oku  # noqa: E402  [2026-11-04] pickle'sız ad listeleri
 from openpyxl import Workbook, load_workbook
 
 warnings.filterwarnings("ignore")
@@ -156,7 +158,7 @@ def main():
     RAPOR.mkdir(parents=True, exist_ok=True)
     print("[1/6] Girdiler okunuyor")
     meslek = oku_csv(VERI / "meslekler_esco.csv")
-    kod_m = list(np.load(ONB / "degisken_kodlari.npy", allow_pickle=True))
+    kod_m = metin_listesi_oku(ONB / "degisken_kodlari.npy")
     a3 = {m: np.load(ONB / f"m5_skor_matrisi_{m}.npy") for m in MODELLER}
     emb = [np.load(ONB / f"meslekler_{m}.npy") for m in MODELLER]
     X_emb = PCA(300, random_state=0).fit_transform(np.hstack([(e - e.mean(0)) / (e.std(0) + 1e-9) for e in emb]))
@@ -236,7 +238,7 @@ def main():
 
     print("[3/6] Bölüm → meslek bağlantıları (bölüm metni ↔ meslek metni)")
     bolumler = [r["ad"] for r in oku_csv(VERI / "bolumler.csv")]
-    bad = list(np.load(ONB / "bolum_isimleri.npy", allow_pickle=True))
+    bad = metin_listesi_oku(ONB / "bolum_isimleri.npy")
     from bolum_meslek import Kurallar, benzerlik       # [2026-11-01] b4 / b5 / b6 ortak bölüm → meslek kuralı
     benz = benzerlik(ONB, MODELLER)
     bad_i = {b: i for i, b in enumerate(bad)}

@@ -17,6 +17,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -78,7 +79,7 @@ def _deney(db: Session, o: Ogrenci) -> dict | None:
             "kalan_saat": None if r.olcum2 is not None or simdi >= acilis else max(1, round((acilis - simdi).total_seconds() / 3600))}
 
 
-class DeneyIstek(BaseModel):
+class DeneyIstek(GirdiModeli):
     asama: int = Field(..., ge=1, le=2)
     okuma: int = Field(..., ge=0, le=20)      # tekrar okuyarak çalışılan listeden doğru sayısı
     sinama: int = Field(..., ge=0, le=20)     # kendini sınayarak çalışılan listeden doğru sayısı
@@ -106,7 +107,7 @@ def deney_kaydet(istek: DeneyIstek, db: Session = Depends(get_db), o: Ogrenci = 
     return _deney(db, o)
 
 
-class DusunmeIstek(BaseModel):
+class DusunmeIstek(GirdiModeli):
     ilk_dogru: int = Field(0, ge=0, le=50)
     ilk_toplam: int = Field(0, ge=0, le=50)
     okulda: bool | None = None

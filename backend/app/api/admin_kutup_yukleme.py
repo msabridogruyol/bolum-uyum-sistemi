@@ -16,6 +16,7 @@ POST /admin/kutup-sorulari/toplu          — toplu yükleme
 """
 
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -26,7 +27,7 @@ from app.models import AdminKullanici, Soru, SoruSecenegi, Katman, Degisken
 router = APIRouter(prefix="/kutup-sorulari", tags=["admin-kutup"])
 
 
-class KutupSoruGirisi(BaseModel):
+class KutupSoruGirisi(GirdiModeli):
     katman_kod: str
     a_degisken_kod: str
     b_degisken_kod: str
@@ -35,7 +36,7 @@ class KutupSoruGirisi(BaseModel):
     b_ucu_etiketi: str  # kısa etiket, örn. "Ekiple çalışmak"
 
 
-class TopluKutupIstek(BaseModel):
+class TopluKutupIstek(GirdiModeli):
     satirlar: list[KutupSoruGirisi]
 
 

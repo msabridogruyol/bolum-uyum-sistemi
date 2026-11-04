@@ -19,6 +19,7 @@ from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -67,7 +68,7 @@ def kulup_durumu(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_
     }
 
 
-class TalepIstek(BaseModel):
+class TalepIstek(GirdiModeli):
     mesaj: str | None = Field(default=None, max_length=300)
 
 
@@ -137,7 +138,7 @@ def talepler(okul_id: int, durum: str = "bekliyor", db: Session = Depends(get_db
     return {"talepler": [_uyelik_satiri(r, ogr.get(r.ogrenci_id)) for r in rows], "bekleyen": bekleyen}
 
 
-class KararIstek(BaseModel):
+class KararIstek(GirdiModeli):
     karar: str = Field(pattern="^(onayla|reddet|cikar)$")
     yanit: str | None = Field(default=None, max_length=300)
 
@@ -176,7 +177,7 @@ def uyeler(kulup_id: int, db: Session = Depends(get_db), yon: AdminKullanici = D
     return {"kulup": k.ad, "uyeler": liste}
 
 
-class DuyuruIstek(BaseModel):
+class DuyuruIstek(GirdiModeli):
     tur: str = Field(default="duyuru", pattern="^(duyuru|etkinlik)$")
     baslik: str = Field(min_length=2, max_length=120)
     metin: str | None = Field(default=None, max_length=1000)

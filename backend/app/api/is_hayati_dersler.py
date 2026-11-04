@@ -11,6 +11,7 @@ dönemden hesaplanır ve yalnızca hesap tablodaki net tutarla tutarlıysa göst
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -60,7 +61,7 @@ def dersler(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogren
             "not": ihp.veri(DOSYA).get("genel_not"), "tamamlanan": sum(1 for d in liste if d["ilerleme"])}
 
 
-class SinavIstek(BaseModel):
+class SinavIstek(GirdiModeli):
     cevaplar: list[int | None] = Field(default_factory=list, max_length=10)
 
 

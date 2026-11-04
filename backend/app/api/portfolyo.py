@@ -18,6 +18,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -89,12 +90,12 @@ def portfolyom(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_og
     return portfolyo_verisi(db, o)
 
 
-class DilIstek(BaseModel):
+class DilIstek(GirdiModeli):
     dil: str = Field(min_length=2, max_length=30)
     seviye: str
 
 
-class ProfilIstek(BaseModel):
+class ProfilIstek(GirdiModeli):
     hakkimda: str | None = Field(default=None, max_length=1200)
     yetenekler: list[str] = Field(default_factory=list)
     diller: list[DilIstek] = Field(default_factory=list)
@@ -116,7 +117,7 @@ def profil_kaydet(istek: ProfilIstek, db: Session = Depends(get_db), o: Ogrenci 
     return portfolyo_verisi(db, o)
 
 
-class KayitIstek(BaseModel):
+class KayitIstek(GirdiModeli):
     tur: str
     baslik: str = Field(min_length=2, max_length=140)
     kurum: str | None = Field(default=None, max_length=120)
@@ -126,7 +127,7 @@ class KayitIstek(BaseModel):
     saat: int | None = Field(default=None, ge=0, le=5000)
     derece: str | None = Field(default=None, max_length=80)
     link: str | None = Field(default=None, max_length=400)
-    belge: str | None = None          # data URL (PDF / görsel); "" → belgeyi kaldır; None → değiştirme
+    belge: str | None = Field(None, max_length=1_600_000)         # data URL (PDF / görsel); "" → belgeyi kaldır; None → değiştirme
     belge_adi: str | None = Field(default=None, max_length=120)
 
 
@@ -140,6 +141,11 @@ def _dogrula(istek: KayitIstek) -> dict:
     link = (istek.link or "").strip() or None
     if link and not re.match(r"^https?://", link):
         link = "https://" + link
+    if link:   # [2026-11-04] yalnızca geçerli bir web adresi (boşluk/tırnak/köşeli parantez yok, alan adı var)
+        from urllib.parse import urlparse
+        u = urlparse(link)
+        if len(link) > 500 or not u.netloc or "." not in u.netloc or re.search(r'[\s"\'<>`]', link):
+            raise HTTPException(400, "Bağlantı geçerli bir web adresi olmalı (ör. https://ornek.com/sayfa).")
     if istek.belge:
         if not re.match(r"^data:(application/pdf|image/(png|jpeg|webp));base64,", istek.belge):
             raise HTTPException(400, "Belge PDF, PNG, JPG ya da WEBP olmalı.")
@@ -238,7 +244,7 @@ def _yonetim_kaydi(db: Session, yon: AdminKullanici, portfolyo_id: int):
     return r, _ogrenci_kapsami(db, yon, str(r.ogrenci_id))
 
 
-class DogrulaIstek(BaseModel):
+class DogrulaIstek(GirdiModeli):
     dogrula: bool = True
 
 

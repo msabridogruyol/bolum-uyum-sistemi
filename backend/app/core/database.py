@@ -14,7 +14,9 @@ _HAVUZ_BOYUTU = int(_os.environ.get("DB_POOL_SIZE", "10"))
 _HAVUZ_TASMA = int(_os.environ.get("DB_MAX_OVERFLOW", "20"))
 HAVUZ_KAPASITESI = _HAVUZ_BOYUTU + _HAVUZ_TASMA
 _sqlite = settings.DATABASE_URL.startswith("sqlite")
-engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True, **({} if _sqlite else {
+# [2026-11-04] hide_parameters: veritabanı hata mesajları (günlük ve Hata Kayıtları ekranı) sorgu değerlerini — e-posta, ad,
+# cevap metni — içermez; yalnızca SQL kalıbı görünür.
+engine = create_engine(settings.DATABASE_URL, pool_pre_ping=True, hide_parameters=True, **({} if _sqlite else {
     "pool_size": _HAVUZ_BOYUTU, "max_overflow": _HAVUZ_TASMA,
     "pool_timeout": int(_os.environ.get("DB_POOL_TIMEOUT", "15"))}))
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)

@@ -2413,5 +2413,33 @@
   "uz": "'{0}' kodli yozuv allaqachon mavjud.",
   "az": "'{0}' kodlu qeyd artıq mövcuddur.",
   "ko": "코드가 '{0}'인 기록이 이미 있습니다."
+ },
+ "Dört bölümde soruları cevaplarsın: değerlerin, kişiliğin, iş ortamı yetkinliklerin ve ilgi alanların. Uyumu yüksek çıkan bölümlerin varsa son adımda iş türü soruları bu bölümleri kendi aralarında yeniden sıralar.": {
+  "en": "You answer four sections of questions: your values, your personality, your workplace competencies and your interests. If some majors come out with a high fit, work-type questions in the last step re-rank those majors among themselves.",
+  "de": "Du beantwortest Fragen in vier Teilen: deine Werte, deine Persönlichkeit, deine Kompetenzen im Arbeitsumfeld und deine Interessen. Wenn Studiengänge mit hoher Passung herauskommen, reihen die Fragen zu Tätigkeitsarten im letzten Schritt diese Studiengänge untereinander neu.",
+  "fr": "Tu réponds à des questions en quatre parties : tes valeurs, ta personnalité, tes compétences en milieu de travail et tes centres d'intérêt. Si des filières ressortent avec une forte adéquation, les questions sur les types de travail de la dernière étape les reclassent entre elles.",
+  "ru": "Ты отвечаешь на вопросы из четырёх частей: о твоих ценностях, личности, компетенциях в рабочей среде и интересах. Если у тебя есть направления с высоким соответствием, на последнем шаге вопросы о типах работы заново упорядочивают их между собой.",
+  "es": "Respondes preguntas en cuatro partes: tus valores, tu personalidad, tus competencias en el entorno laboral y tus intereses. Si te salen carreras con afinidad alta, en el último paso las preguntas sobre tipos de trabajo las reordenan entre sí.",
+  "it": "Rispondi a domande in quattro parti: i tuoi valori, la tua personalità, le tue competenze nell'ambiente di lavoro e i tuoi interessi. Se emergono corsi di laurea con alta compatibilità, nell'ultimo passo le domande sui tipi di lavoro li riordinano tra loro.",
+  "ar": "تُجيب عن أسئلة في أربعة أقسام: قيمك، وشخصيتك، وكفاءاتك في بيئة العمل، واهتماماتك. وإذا ظهرت لك تخصصات عالية التوافق، تُعيد أسئلة أنواع العمل في الخطوة الأخيرة ترتيبها فيما بينها.",
+  "zh": "你会回答四个部分的问题：你的价值观、性格、工作环境中的能力和兴趣。如果有匹配度较高的专业，最后一步的工作类型问题会在这些专业之间重新排序。",
+  "hi": "तुम चार भागों के प्रश्नों के जवाब देते हो: तुम्हारे मूल्य, व्यक्तित्व, कार्यस्थल की योग्यताएँ और रुचियाँ। अगर कुछ मेजरों का फ़िट ऊँचा निकलता है, तो आख़िरी चरण में कार्य-प्रकार के प्रश्न इन मेजरों को आपस में दोबारा क्रमबद्ध करते हैं।",
+  "uz": "Sen toʻrt boʻlimdagi savollarga javob berasan: qadriyatlaring, shaxsiyating, ish muhitidagi kompetensiyalaring va qiziqishlaring. Agar mosligi yuqori yoʻnalishlaring chiqsa, oxirgi bosqichda ish turi savollari ularni oʻzaro qayta tartiblaydi.",
+  "az": "Dörd bölmədə suallara cavab verirsən: dəyərlərin, şəxsiyyətin, iş mühitindəki səriştələrin və maraq sahələrin. Uyğunluğu yüksək çıxan ixtisasların varsa, son addımda iş növü sualları bu ixtisasları öz aralarında yenidən sıralayır.",
+  "ko": "네 부분의 질문에 답해요: 가치, 성격, 직무 환경 역량, 관심 분야. 적합도가 높은 전공이 있으면 마지막 단계의 직무 유형 질문이 그 전공들의 순위를 서로 간에 다시 매겨요."
+ },
+ "Bölümler sayfasında bunu sağlayabilecek bölümleri görebilirsin.": {
+  "en": "On the Majors page you can see the majors that can offer this.",
+  "de": "Auf der Seite „Studiengänge“ siehst du die Studiengänge, die dir das bieten können.",
+  "fr": "Sur la page Filières, tu peux voir les filières qui peuvent t’offrir cela.",
+  "ru": "На странице «Направления» ты можешь увидеть направления, которые могут это дать.",
+  "es": "En la página de Carreras puedes ver las carreras que pueden ofrecerte esto.",
+  "it": "Nella pagina Corsi di laurea puoi vedere i corsi che possono offrirti questo.",
+  "ar": "في صفحة التخصصات يمكنك رؤية التخصصات التي توفر لك هذا.",
+  "zh": "在“专业”页面，你可以看到能满足这一点的专业。",
+  "hi": "विषय पृष्ठ पर तुम वे विषय देख सकते हो जो तुम्हें यह दे सकते हैं।",
+  "uz": "Yo‘nalishlar sahifasida bunga imkon beradigan yo‘nalishlarni ko‘rishing mumkin.",
+  "az": "İxtisaslar səhifəsində bunu təmin edə biləcək ixtisasları görə bilərsən.",
+  "ko": "학과 페이지에서 이것을 줄 수 있는 학과를 볼 수 있어."
  }
 }

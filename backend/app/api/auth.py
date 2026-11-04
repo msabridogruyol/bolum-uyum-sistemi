@@ -65,6 +65,9 @@ def giris_sonucu(db: Session, hesap, rol: str, cihaz_tokeni: str | None) -> Giri
     if not getattr(hesap, "test_hesabi", False) and hg.iki_adim_aktif_mi(db) and not hg.cihaz_guvenilir_mi(db, tip, hesap.id, cihaz_tokeni):
         try:
             hg.dogrulama_kodu_gonder(db, tip, hesap.id, hesap.email, hesap.ad_soyad)
+        except hg.BeklemeHatasi as e:   # [2026-11-04] günlük kod / hatalı deneme sınırı
+            db.rollback()
+            raise HTTPException(status_code=429, detail=str(e))
         except IsKuraliHatasi as e:
             db.rollback()
             raise HTTPException(status_code=503, detail=str(e))
@@ -153,7 +156,8 @@ TEK_GIRIS_ROLLERI = {"ogrenci", "okul_yetkilisi", "super_admin"}
 def _karmayi_tazele(hesap, duz_sifre: str) -> None:
     """[2026-10-11] Eski tur sayısıyla karılmış şifreyi güncel ayarla yeniden kar (sonraki girişler hızlansın)."""
     from app.core.security import sifre_hashle, yeniden_karma_gerekli_mi
-    if yeniden_karma_gerekli_mi(hesap.sifre_hash):
+    # [2026-11-04] 72 bayttan uzun (eski bcrypt'in kestiği) şifre yeniden karılamaz; giriş yine de başarılı olur
+    if yeniden_karma_gerekli_mi(hesap.sifre_hash) and len(duz_sifre.encode("utf-8")) <= 72:
         hesap.sifre_hash = sifre_hashle(duz_sifre)
 
 

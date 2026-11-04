@@ -8,7 +8,8 @@ bulunur. app/schemas/ogrenci.py içindeki hiçbir şema bu alanları içermez.
 """
 from datetime import datetime
 
-from pydantic import BaseModel
+from pydantic import Field, BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 
 
 # --- E8 — Sistem Parametreleri ---
@@ -22,13 +23,13 @@ class SistemParametresiOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class ParametreGuncelleIstek(BaseModel):
+class ParametreGuncelleIstek(GirdiModeli):
     deger: str
 
 
 # --- E5 — Bölümler ---
 
-class BolumDurumIstek(BaseModel):
+class BolumDurumIstek(GirdiModeli):
     yeni_durum: str  # 'taslak' | 'test_ediliyor' | 'yayinda'
     gerekce: str
 
@@ -43,16 +44,16 @@ class BolumOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class BolumAciklamaIstek(BaseModel):
+class BolumAciklamaIstek(GirdiModeli):
     kisa_aciklama: str
 
 
-class BolumTopluAciklamaSatiri(BaseModel):
+class BolumTopluAciklamaSatiri(GirdiModeli):
     ad: str
     kisa_aciklama: str
 
 
-class BolumTopluAciklamaIstek(BaseModel):
+class BolumTopluAciklamaIstek(GirdiModeli):
     satirlar: list[BolumTopluAciklamaSatiri]
 
 
@@ -102,7 +103,7 @@ class KatmanAgirligiOut(BaseModel):
     agirlik: float
 
 
-class YeniAgirlikVersiyonuIstek(BaseModel):
+class YeniAgirlikVersiyonuIstek(GirdiModeli):
     agirliklar: dict[str, float]  # {'K1': 25, 'K2': 25, 'K3': 25, 'K4': 25} — toplam 100
 
 
@@ -117,24 +118,24 @@ class DalOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class DalEkleIstek(BaseModel):
+class DalEkleIstek(GirdiModeli):
     kod: str
     ad: str
     bagli_degisken_id: int | None = None
 
 
-class DalDurumIstek(BaseModel):
+class DalDurumIstek(GirdiModeli):
     yeni_durum: str  # 'taslak' | 'guclu_kanitli' | 'gozden_gecirilmeli'
 
 
 # --- E6 — Soru Bankası ---
 
-class SjtAgirlikGirisi(BaseModel):
+class SjtAgirlikGirisi(GirdiModeli):
     degisken_id: int
     agirlik: float  # -1.000 ile 1.000 arası (negatif = ters yönlü katkı)
 
 
-class SecenekGirisi(BaseModel):
+class SecenekGirisi(GirdiModeli):
     metin: str
     sjt_agirliklari: list[SjtAgirlikGirisi] = []  # yalnızca soru_tipi='sjt' için kullanılır
 
@@ -148,7 +149,7 @@ class DegiskenListeOut(BaseModel):
 
 # --- Birleşik Toplu Soru Yükleme (Likert + SJT tek dosyada, tek format) ---
 
-class TopluSoruSatiri(BaseModel):
+class TopluSoruSatiri(GirdiModeli):
     soru_gecici_id: str
     katman_kod: str
     soru_tipi: str  # 'likert' | 'sjt'
@@ -161,7 +162,7 @@ class TopluSoruSatiri(BaseModel):
     sjt_agirlik: float | None = None      # yalnızca sjt satırlarında dolu
 
 
-class TopluSoruYuklemeIstek(BaseModel):
+class TopluSoruYuklemeIstek(GirdiModeli):
     satirlar: list[TopluSoruSatiri]
 
 
@@ -172,12 +173,12 @@ class TopluSoruSonuc(BaseModel):
     hatalar: list[str]
 
 
-class TopluSoruIdIstek(BaseModel):
+class TopluSoruIdIstek(GirdiModeli):
     soru_idler: list[int]
     onay: str | None = None  # [2026-10-10] öğrenci cevabı olan sorular siliniyorsa "SIL"
 
 
-class TopluAktifIstek(BaseModel):
+class TopluAktifIstek(GirdiModeli):
     soru_idler: list[int]
     aktif_mi: bool
 
@@ -205,7 +206,7 @@ class GecerlilikTestBirimiOut(BaseModel):
     beklenen_degisken_kod: str
 
 
-class SoruGecerlilikSonucuGiris(BaseModel):
+class SoruGecerlilikSonucuGiris(GirdiModeli):
     birim_anahtari: str
     kaynak_soru_id: int
     secenek_id: int | None = None
@@ -221,7 +222,7 @@ class SoruGecerlilikSonucuGiris(BaseModel):
     model_c_benzerlik: float
 
 
-class SoruGecerlilikYuklemeIstek(BaseModel):
+class SoruGecerlilikYuklemeIstek(GirdiModeli):
     sonuclar: list[SoruGecerlilikSonucuGiris]
 
 
@@ -252,7 +253,7 @@ class SoruGecerlilikOzetOut(BaseModel):
     sonuclar: list[SoruGecerlilikSonucuOut]
 
 
-class SoruEkleIstek(BaseModel):
+class SoruEkleIstek(GirdiModeli):
     katman_id: int
     degisken_id: int | None = None
     soru_tipi: str
@@ -261,16 +262,16 @@ class SoruEkleIstek(BaseModel):
     secenekler: list[SecenekGirisi]  # [DEĞİŞTİ] artık obje listesi — her seçenek SJT ağırlıkları taşıyabilir
 
 
-class SoruAktifIstek(BaseModel):
+class SoruAktifIstek(GirdiModeli):
     aktif_mi: bool
 
 
 # --- Yönetici Yönetimi (super_admin only) ---
 
-class YoneticiEkleIstek(BaseModel):
-    ad_soyad: str
-    email: str
-    sifre: str
+class YoneticiEkleIstek(GirdiModeli):
+    ad_soyad: str = Field(max_length=200)
+    email: str = Field(max_length=254)
+    sifre: str = Field(max_length=200)
     rol: str = "super_admin"  # [2026-10-09] buradan yalnızca süper admin eklenir
 
 
@@ -382,7 +383,7 @@ class DetayliIstatistiklerOut(BaseModel):
 # Bilgisayarınızda çalışan pipeline'ın çıktısını (CSV) admin panelinden
 # yükleyip, canlıya yansımadan ÖNCE önizleyip onaylamanızı sağlar.
 
-class PipelineTaslakSatiri(BaseModel):
+class PipelineTaslakSatiri(GirdiModeli):
     bolum_adi: str
     degisken_kod: str
     agirlik_degeri: float
@@ -391,7 +392,7 @@ class PipelineTaslakSatiri(BaseModel):
     etkin_meslek_sayisi: int | None = None
 
 
-class PipelineYuklemeIstek(BaseModel):
+class PipelineYuklemeIstek(GirdiModeli):
     satirlar: list[PipelineTaslakSatiri]
 
 

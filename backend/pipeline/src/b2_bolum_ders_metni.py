@@ -31,6 +31,8 @@ from datetime import datetime
 from pathlib import Path
 
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from guvenli_npy import metin_listesi_kaydet, metin_listesi_oku  # noqa: E402  [2026-11-04] pickle'sız ad listeleri
 
 KOK = Path(__file__).resolve().parents[1]
 VERI, ONB, YEDEK = KOK / "veri", KOK / "onbellek", KOK / "yedekler"
@@ -143,7 +145,7 @@ def main():
         print(f"[{m}] bölüm metinleri encode ediliyor…")
         v = parcali_embed(embed_et, p_en if m == "model_c" else p_tr, m)
         np.save(eski, v)
-    np.save(ONB / "bolum_isimleri.npy", np.array(adlar, dtype=object))
+    metin_listesi_kaydet(ONB / "bolum_isimleri.npy", adlar)
     with open(VERI / "bolum_metni.csv", "w", encoding="utf-8-sig", newline="") as f:
         w = csv.writer(f, delimiter=";"); w.writerow(["bolum", "kaynak", "metin", "metin_en"])
         w.writerows(zip(adlar, kaynak, metin_tr, metin_en))

@@ -9,6 +9,7 @@
 """
 from fastapi import APIRouter, Depends, HTTPException, Query, Request, Response
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -20,7 +21,7 @@ from app.models import AdminKullanici
 router = APIRouter(tags=["Hata kayıtları"])
 
 
-class IstemciHata(BaseModel):
+class IstemciHata(GirdiModeli):
     mesaj: str = Field(..., max_length=2000)
     yigin: str | None = Field(None, max_length=8000)
     sayfa: str | None = Field(None, max_length=500)
@@ -80,7 +81,7 @@ def ayrinti(kayit_id: int, db: Session = Depends(get_db), _: AdminKullanici = De
     return dict(r)
 
 
-class CozulduIstek(BaseModel):
+class CozulduIstek(GirdiModeli):
     cozuldu: bool = True
 
 

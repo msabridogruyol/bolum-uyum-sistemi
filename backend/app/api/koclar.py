@@ -17,6 +17,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -166,7 +167,7 @@ def koc_var_mi(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_og
     return {"var": var or talep}
 
 
-class DegerlendirmeIstek(BaseModel):
+class DegerlendirmeIstek(GirdiModeli):
     puan: int = Field(ge=1, le=5)
     yorum: str | None = Field(default=None, max_length=800)
 
@@ -183,7 +184,7 @@ def talep_degerlendir(talep_id: int, istek: DegerlendirmeIstek, db: Session = De
     return {"tamam": True}
 
 
-class TalepIstek(BaseModel):
+class TalepIstek(GirdiModeli):
     konu: str
     tercih_zamani: str | None = Field(default=None, max_length=120)
     mesaj: str | None = Field(default=None, max_length=800)
@@ -236,7 +237,7 @@ def talep_iptal(talep_id: int, db: Session = Depends(get_db), o: Ogrenci = Depen
 
 
 # ============================================================================= yönetim
-class KocIstek(BaseModel):
+class KocIstek(GirdiModeli):
     ad_soyad: str = Field(min_length=3, max_length=80)
     unvan: str | None = Field(default=None, max_length=80)
     hakkinda: str | None = Field(default=None, max_length=1000)
@@ -328,13 +329,13 @@ def koc_duzenle(koc_id: int, istek: KocIstek, db: Session = Depends(get_db), yon
     return {"tamam": True}
 
 
-class OkulAtama(BaseModel):
+class OkulAtama(GirdiModeli):
     okul_id: int
     durum: str = "aktif"
     notlar: str | None = Field(default=None, max_length=300)
 
 
-class OkulAtamaIstek(BaseModel):
+class OkulAtamaIstek(GirdiModeli):
     okullar: list[OkulAtama] = Field(default_factory=list, max_length=500)
 
 
@@ -392,7 +393,7 @@ def talepleri_listele(okul_id: int | None = None, db: Session = Depends(get_db),
             "bekleyen": sum(1 for x in sonuc if x["durum"] == "beklemede")}
 
 
-class TalepGuncelleIstek(BaseModel):
+class TalepGuncelleIstek(GirdiModeli):
     durum: str
     randevu_zamani: datetime | None = None
     gorusme_linki: str | None = Field(default=None, max_length=400)

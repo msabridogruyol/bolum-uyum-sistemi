@@ -12,6 +12,7 @@ GET  /admin/meslekler/sayi         — mevcut meslek sayısını döner (kontrol
 """
 
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 from sqlalchemy import text
 from fastapi import APIRouter, Depends, HTTPException
@@ -23,14 +24,14 @@ from app.models import AdminKullanici, Meslek
 router = APIRouter(prefix="/meslekler", tags=["admin-meslekler"])
 
 
-class MeslekGirisi(BaseModel):
+class MeslekGirisi(GirdiModeli):
     esco_kodu: str
     ad: str
     aciklama: str | None = None
     isco_grubu: str | None = None
 
 
-class TopluMeslekYuklemeIstek(BaseModel):
+class TopluMeslekYuklemeIstek(GirdiModeli):
     meslekler: list[MeslekGirisi]
 
 

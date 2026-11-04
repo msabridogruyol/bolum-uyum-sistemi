@@ -14,6 +14,7 @@ import json
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -27,7 +28,7 @@ ogrenci_router = APIRouter()
 SINIRLAR = {"istihdam_orani": (0, 100), "is_bulma_suresi_ay": (0, 120), "alan_uyum_orani": (0, 100), "ilk_net_maas": (0, 10_000_000)}
 
 
-class TahminGirdi(BaseModel):
+class TahminGirdi(GirdiModeli):
     tahminler: dict[str, float | None] = Field(default_factory=dict)
 
 

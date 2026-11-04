@@ -1,5 +1,6 @@
 """[2026-10-04] Haftalık görevler, seri ve Filiz seviyesi — API şemaları."""
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 
 
 class HaftalikGorevOut(BaseModel):
@@ -57,5 +58,5 @@ class HaftalikOzetOut(BaseModel):
     yansitma_sorulari: list[YansitmaSorusuOut]
 
 
-class GorevTamamlaIstek(BaseModel):
+class GorevTamamlaIstek(GirdiModeli):
     yanit: dict | None = None

@@ -20,6 +20,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -93,7 +94,7 @@ def liste(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Dep
             "bolumler": [{"id": b.id, "ad": b.ad} for b in db.execute(text("SELECT id, ad FROM bolumler WHERE durum = 'yayinda' ORDER BY ad")).all()]}
 
 
-class HikayeIstek(BaseModel):
+class HikayeIstek(GirdiModeli):
     mezun_ad: str = Field(min_length=2, max_length=120)
     ad_bicimi: str = "bas_harf"
     mezuniyet_yili: int = Field(ge=1950, le=2100)

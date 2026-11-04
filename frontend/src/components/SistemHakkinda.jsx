@@ -9,7 +9,7 @@ const OGRENCI = {
   baslik: 'Sistem Hakkında',
   giris: 'Filizyol bir kariyer koçluğu sistemidir. Sana en uygun üniversite bölümlerini ve meslekleri keşfetmene yardım eder. Seni bir sınavla ölçmez. Kim olduğunu, neyi sevdiğini ve nasıl çalışmayı sevdiğini anlamaya çalışır. Sonra bunu bölümlerin istedikleriyle karşılaştırır.',
   adimlar: [
-    { ikon: '📝', baslik: 'Değerlendirme', metin: 'Dört bölüm soru cevaplarsın: değerlerin, kişiliğin, iş ortamı yetkinliklerin ve ilgi alanların. Uyumu yüksek çıkan bölümlerin varsa son adımda iş türü soruları bu bölümleri kendi aralarında yeniden sıralar.' },
+    { ikon: '📝', baslik: 'Değerlendirme', metin: 'Dört bölümde soruları cevaplarsın: değerlerin, kişiliğin, iş ortamı yetkinliklerin ve ilgi alanların. Uyumu yüksek çıkan bölümlerin varsa son adımda iş türü soruları bu bölümleri kendi aralarında yeniden sıralar.' },
     { ikon: '🧭', baslik: 'Profilim ve Bölümler', metin: 'Güçlü yönlerini, önem verdiğin değerleri ve sana en uygun bölümleri görürsün. Her bölümün yanında uyum puanı ve "Neden bu bölüm?" açıklaması yazar. Bölümde neler okutulduğuna ve hangi üniversitelerde olduğuna bakabilirsin.' },
     { ikon: '🎯', baslik: 'Hedef ve Koçluğum', metin: 'Bir hedef bölüm seçersin. Koçluğum\'da kendini bu bölümle özellik özellik karşılaştırırsın (Durumum), sana özel yol haritasının adımlarını tamamlarsın (Adımlarım) ve bölümü yakından tanırsın (Bölümünü Tanı).' },
     { ikon: '🌱', baslik: 'Gelişim', metin: 'Haftalık görevler, takvim, kulüp önerileri, kütüphanen, Filiz ve eğitim koçlarıyla yolculuğun devam eder.' },

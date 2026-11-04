@@ -11,6 +11,7 @@ GET  /koclugu/asistan/gecmis               — geçmiş oturum özetlerini liste
 from datetime import datetime, timezone
 import time
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
@@ -39,7 +40,7 @@ class OturumOut(BaseModel):
     mesajlar: list[OturumMesajiOut] = []
 
 
-class MesajIstek(BaseModel):
+class MesajIstek(GirdiModeli):
     mesaj: str
     sayfa: str | None = None  # [2026-10-04] öğrencinin o an bulunduğu sayfa (bağlam için)
     baglam_oturum_id: int | None = None  # [2026-10-10] geçmişten "devam et" ile açılan sohbet

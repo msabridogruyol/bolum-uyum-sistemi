@@ -48,6 +48,8 @@ VARSAYILAN = {
 
 _KIMLIK = re.compile(
     r"^/(auth|admin/auth)/(giris|kayit|test-giris|iki-adim/dogrula|iki-adim/tekrar|sifremi-unuttum|sifre-sifirla|sifre-sifirla/bilgi)/?$"
+    # [2026-11-04] Güvenlik denetimi: şifre belirleyen/değiştiren ve cihaz etkinleştiren uçlar da kimlik kademesinde
+    r"|^/(yonetim/ben/ilk-sifre|ogrenci/profil/ilk-sifre|ogrenci/profil/sifre-degistir|pipeline-istemci/etkinlestir)/?$"
 )
 _AGIR_GET = [
     re.compile(r"/(pdf|excel|rapor|sablon|deneme-sablonu)/?$"),                # PDF / Excel / şablon üretimi
@@ -125,10 +127,29 @@ class HesapDenemeSayaci:
     def hatali(self, anahtar: str) -> None:
         simdi = self._saat()
         with self._kilit:
-            if len(self._kayit) > 50_000:
-                self._kayit.clear()
+            n = len(self._kayit)
+            if n > 4 * self.EN_FAZLA_ANAHTAR or (n > self.EN_FAZLA_ANAHTAR and simdi - getattr(self, "_son_yer_ac", -1e9) > 60):
+                self._son_yer_ac = simdi   # tarama dakikada en çok bir kez; sert tavanı (4×) aşınca hemen
+                self._yer_ac(simdi)
             self._guncel(anahtar, simdi)
             self._kayit.setdefault(anahtar, []).append(simdi)
+
+    EN_FAZLA_ANAHTAR = 50_000
+
+    def _yer_ac(self, simdi: float) -> None:
+        """[2026-11-04] Eskiden tablo dolunca tümü silinirdi (clear) → uydurma e-postalarla 50 bin hatalı deneme
+        hedef hesabın kilidini de açardı. Şimdi: süresi geçenler atılır; yer yine yoksa yalnızca KİLİTLİ OLMAYAN
+        en eski kayıtlar atılır. Kilitli hesaplar ancak sert tavan (4×) aşılırsa en eskiden başlanarak düşer (bellek sınırı)."""
+        for a in list(self._kayit):
+            self._guncel(a, simdi)
+        if len(self._kayit) <= self.EN_FAZLA_ANAHTAR:
+            return
+        kilitsiz = sorted((l[-1], a) for a, l in self._kayit.items() if len(l) < self.en_fazla)
+        for _, a in kilitsiz[: len(self._kayit) - self.EN_FAZLA_ANAHTAR // 2]:
+            self._kayit.pop(a, None)
+        if len(self._kayit) > 4 * self.EN_FAZLA_ANAHTAR:
+            for _, a in sorted((l[-1], a) for a, l in self._kayit.items())[: len(self._kayit) - 3 * self.EN_FAZLA_ANAHTAR]:
+                self._kayit.pop(a, None)
 
     def temizle(self, anahtar: str) -> None:
         with self._kilit:
@@ -193,8 +214,11 @@ class KovaSinirlayici:
         self._son_temizlik = simdi
         for k in [k for k, v in self._kovalar.items() if simdi - v[1] >= k[2]]:
             del self._kovalar[k]
-        if len(self._kovalar) >= self._en_fazla:   # hâlâ çoksa (saldırı) — fail-open: sıfırla
-            self._kovalar.clear()
+        if len(self._kovalar) >= self._en_fazla:
+            # [2026-11-04] Eskiden tümü silinirdi (fail-open: sahte IP seli herkesin kovasını sıfırlardı).
+            # Şimdi en uzun süredir boşta olan yarısı düşer; dolu (sınırda olan) kovalar korunur.
+            for k, _ in sorted(self._kovalar.items(), key=lambda kv: kv[1][1])[: len(self._kovalar) - self._en_fazla // 2]:
+                del self._kovalar[k]
 
     def sifirla(self) -> None:
         with self._kilit:

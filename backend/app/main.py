@@ -90,12 +90,14 @@ app.add_middleware(DilAraKatmani)   # [2026-10-12] Filiz'in cevap dili için
 app.add_middleware(GovdeBoyutuAraKatmani)
 app.add_middleware(HizSiniriAraKatmani)
 app.add_middleware(HataYakalamaAraKatmani)
+from app.core.guvenlik_basliklari import GuvenlikBasliklariAraKatmani  # noqa: E402
+app.add_middleware(GuvenlikBasliklariAraKatmani)   # [2026-11-04] nosniff, çerçeve yasağı, CSP (429/413/500 yanıtları dahil)
 
 # CORS — yalnızca Firebase Hosting domaini (veritabani_taslagi.md 4.5)
 app.add_middleware(
     CORSMiddleware,
     allow_origins=settings.CORS_ALLOWED_ORIGINS,
-    allow_credentials=True,
+    allow_credentials=False,   # [2026-11-04] kimlik çerezle değil Authorization başlığıyla taşınır; çerez/kimlikli CORS gereksiz yetki
     allow_methods=["*"],
     allow_headers=["*"],
 )

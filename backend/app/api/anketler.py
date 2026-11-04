@@ -11,6 +11,7 @@ Anonimlik: anonim ankette yanıt satırında ogrenci_id ve şube TUTULMAZ (yaln�
 anket_katilim tablosunda yalnızca "bir kez yanıtlama" kontrolü için durur ve yanıtla eşleştirilemez.
 Anonim olmayan tarama formlarında öğrenci kendi seviyesini ve önerisini görür; rehber öğrenci bazında listeyi görür.
 """
+from app.core.excel_guvenligi import guvenli_kaydet
 import io
 import json
 import re
@@ -20,6 +21,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -95,7 +97,7 @@ def okul_anketleri(okul_id: int, db: Session = Depends(get_db), yon: AdminKullan
     return {"anketler": liste}
 
 
-class SoruIstek(BaseModel):
+class SoruIstek(GirdiModeli):
     id: str | None = None
     metin: str = Field(min_length=2, max_length=300)
     tur: str
@@ -104,7 +106,7 @@ class SoruIstek(BaseModel):
     ters: bool = False
 
 
-class AnketIstek(BaseModel):
+class AnketIstek(GirdiModeli):
     baslik: str = Field(min_length=3, max_length=120)
     aciklama: str | None = Field(default=None, max_length=1000)
     sablon: str | None = None
@@ -186,7 +188,7 @@ def anket_duzenle(anket_id: int, istek: AnketIstek, db: Session = Depends(get_db
     db.commit()
 
 
-class DurumIstek(BaseModel):
+class DurumIstek(GirdiModeli):
     durum: str = Field(pattern="^(taslak|yayinda|kapandi)$")
 
 
@@ -323,7 +325,7 @@ def anket_excel(anket_id: int, db: Session = Depends(get_db), yon: AdminKullanic
             ws.cell(row=i, column=j, value=v)
     ws.freeze_panes = "A2"
     b = io.BytesIO()
-    wb.save(b)
+    guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     denetim_yaz(db, yon, "anket_excel", "anketler", anket_id, a["baslik"], a["okul_id"])
     db.commit()
     return Response(b.getvalue(), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
@@ -368,7 +370,7 @@ def anket_ac(anket_id: int, db: Session = Depends(get_db), o: Ogrenci = Depends(
     return {**_ozet(db, a), "sorular": a["sorular"], "likert": LIKERT, "yanitladim": yanitladim}
 
 
-class YanitIstek(BaseModel):
+class YanitIstek(GirdiModeli):
     cevaplar: dict
 
 

@@ -54,6 +54,7 @@ OTOMATIK += ["0089_icerik_sadelestirme"]   # [2026-11-02] öğrenciye görünen 
 OTOMATIK += ["0090_soru_sadelestirme"]   # [2026-11-02] K1–K4 soruları sade dil + gündelik hayata dengeli dağılım (yalnızca değişmemiş metne)
 OTOMATIK += ["0091_kriz_okul_bildirimi"]   # [2026-11-03] Filiz kriz → okul yetkilisi bildirimi parametresi (varsayılan kapalı)
 OTOMATIK += ["0092_guncel_adlar"]   # [2026-11-03] K5 katman adı "İş türü tercihleri"; kullanılmayan 4 eski parametre kaldırıldı
+OTOMATIK += ["0093_denetim_guvenlik_performans"]   # [2026-11-04] soru_gecerlilik_sonuclari tablosu + yük indeksleri
 KILIT = 2026101001
 
 

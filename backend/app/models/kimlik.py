@@ -49,7 +49,9 @@ class Ogrenci(Base):
     ilgi_alanlari: Mapped[str | None] = mapped_column(String, nullable=True)
     hedef_universite: Mapped[str | None] = mapped_column(String, nullable=True)
     hedef_meslek_id: Mapped[int | None] = mapped_column(BigInteger, ForeignKey("meslekler.id"), nullable=True)
-    profil_foto_base64: Mapped[str | None] = mapped_column(String, nullable=True)
+    # [2026-11-04] deferred: fotoğraf (≤2 MB data URL) yalnızca istenince okunur. Önceden her kimlikli öğrenci isteğinde
+    # (deps.get_mevcut_ogrenci) ve her öğrenci listesinde tüm fotoğraflar veritabanından çekiliyordu.
+    profil_foto_base64: Mapped[str | None] = mapped_column(String, nullable=True, deferred=True)
     # [2026-10-10] Süper adminin açtığı test hesabı: 2 adımlı doğrulama istenmez, giriş bağlantısıyla açılabilir.
     test_hesabi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
     test_giris_anahtari: Mapped[str | None] = mapped_column(String, nullable=True)   # bağlantı anahtarının SHA-256 özeti

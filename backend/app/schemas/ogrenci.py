@@ -9,7 +9,8 @@ YALNIZCA app/schemas/admin.py içindeki (henüz yazılmadı) ayrı şemalarda
 bulunabilir.
 """
 from datetime import datetime, date
-from pydantic import BaseModel
+from pydantic import Field, BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 
 
 class KatmanOut(BaseModel):
@@ -53,7 +54,7 @@ class KatmanBaslatCevap(BaseModel):
     mevcut_cevaplar: list[dict] = []
 
 
-class CevapIstek(BaseModel):
+class CevapIstek(GirdiModeli):
     soru_id: int
     secenek_id: int                       # tek seçimli soruda seçilen şık; encok_enaz'da EN ÇOK uyan şık
     en_az_secenek_id: int | None = None   # yalnızca encok_enaz sorularında: EN AZ uyan şık
@@ -193,24 +194,24 @@ class ProfilOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class ProfilGuncelleIstek(BaseModel):
-    ad_soyad: str | None = None
+class ProfilGuncelleIstek(GirdiModeli):
+    ad_soyad: str | None = Field(None, max_length=200)
     okul: str | None = None   # [2026-10-09] yok sayılır — okul yönetimden atanır (eski istemciler için alan duruyor)
     sinif: str | None = None
     dogum_tarihi: date | None = None
     cinsiyet: str | None = None  # 'kadin' | 'erkek' | 'belirtmek_istemiyorum' | 'diger'
-    ilgi_alanlari: str | None = None
-    hedef_universite: str | None = None
+    ilgi_alanlari: str | None = Field(None, max_length=5000)   # [2026-11-04] ön yüz 1000 karakterde keser; eski uzun kayıtlar kaydedilebilsin
+    hedef_universite: str | None = Field(None, max_length=200)
     hedef_meslek_id: int | None = None
 
 
-class SifreDegistirIstek(BaseModel):
-    eski_sifre: str
-    yeni_sifre: str  # min 8 karakter — router'da doğrulanır
+class SifreDegistirIstek(GirdiModeli):
+    eski_sifre: str = Field(max_length=200)
+    yeni_sifre: str = Field(max_length=200)  # min 8 karakter — router'da doğrulanır
 
 
-class ProfilFotoIstek(BaseModel):
-    foto_base64: str  # "data:image/png;base64,..." formatında, tam data URI
+class ProfilFotoIstek(GirdiModeli):
+    foto_base64: str = Field(max_length=3_000_000)  # "data:image/png;base64,..." formatında, tam data URI (işleyici ayrıca 2,8 M sınırı uygular)
 
 
 class MeslekAramaSonucu(BaseModel):

@@ -12,6 +12,7 @@ import re
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_super_admin
@@ -36,7 +37,7 @@ def durum(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcu
             "kod_dosya_sayisi": len(kod), "cihazlar": pp.cihazlar(db), "surumler": pp.surumler(db)}
 
 
-class KurulumIstek(BaseModel):
+class KurulumIstek(GirdiModeli):
     cihaz_adi: str = Field(..., min_length=2, max_length=60)
     api_adresi: str = Field(..., max_length=300)
 
