@@ -50,7 +50,26 @@ KAMU = [
     _kamu("Avukat (1. derece 4. kademe)", ["hukuk", "avukat"], 102135, _KIDEMLI),
 ]
 
-SQL_TABLO = r"""
+def _q(v) -> str:
+    """SQL metin sabiti (tek tırnak kaçışlı). Değerler bu dosyadaki sabit, kaynaklı metinlerdir; dışarıdan girdi yok."""
+    return "'" + str(v).replace("'", "''") + "'"
+
+
+YASAM = [
+    ("bekar_yasam", "Bekâr bir çalışanın aylık yaşama maliyeti", "49124.30",
+     "Tek yaşayan bir çalışanın gıda, kira, ulaşım, fatura, giyim, sağlık, eğitim gibi tüm zorunlu harcamaları"),
+    ("aclik_siniri", "Açlık sınırı (4 kişilik ailenin aylık gıda harcaması)", "38024.03",
+     "Dört kişilik bir ailenin sağlıklı beslenmesi için gereken aylık mutfak harcaması"),
+    ("yoksulluk_siniri", "Yoksulluk sınırı (4 kişilik ailenin tüm zorunlu harcamaları)", "123856.80",
+     "Dört kişilik bir ailenin gıda ve gıda dışı tüm zorunlu aylık harcamaları"),
+]
+YKS = [("YKS 2027 – TYT (Temel Yeterlilik Testi)", "2027-06-19"), ("YKS 2027 – AYT ve YDT", "2027-06-20")]
+_YKS_ACIKLAMA = ("ÖSYM 2027 Sınav Takvimi (açıklanma 28.10.2026). Başvurular 2–16 Mart 2027, geç başvuru 16–18 Mart 2027; "
+                 "sonuçlar 21 Temmuz 2027 (planlanan).")
+
+# [2026-11-04] Canlıda göçler app/core/sema_guncelleme.py ile yalnızca bu modülün SQL metninden uygulanır (upgrade() çalışmaz).
+# Bu yüzden tohumlar da SQL'dedir. Her tohum tek ifadedir: tek_seferlik_gocler işareti ilk kez eklenirse satırlar yazılır.
+SQL = r"""
 CREATE TABLE IF NOT EXISTS yasam_maliyeti_referans (
     id SERIAL PRIMARY KEY,
     kod VARCHAR(40) NOT NULL,
@@ -63,49 +82,39 @@ CREATE TABLE IF NOT EXISTS yasam_maliyeti_referans (
     olusturulma TIMESTAMPTZ NOT NULL DEFAULT now(),
     UNIQUE (kod, donem)
 );
+WITH isaret AS (
+    INSERT INTO tek_seferlik_gocler (ad) VALUES ('0097_yasam_maliyeti_turkis_2026_10') ON CONFLICT (ad) DO NOTHING RETURNING ad
+)
+INSERT INTO yasam_maliyeti_referans (kod, ad, aylik_tutar, kapsam, donem, kaynak, tarih)
+SELECT v.kod, v.ad, v.tutar, v.kapsam, '2026-10', """ + _q(_TURKIS) + r""", DATE '2026-10-30' FROM (VALUES
+""" + ",\n".join(f"    ({_q(k)}, {_q(a)}, {t}, {_q(c)})" for k, a, t, c in YASAM) + r"""
+) AS v(kod, ad, tutar, kapsam)
+WHERE EXISTS (SELECT 1 FROM isaret)
+ON CONFLICT (kod, donem) DO NOTHING;
+WITH isaret AS (
+    INSERT INTO tek_seferlik_gocler (ad) VALUES ('0097_kamu_maaslari_2026_2') ON CONFLICT (ad) DO NOTHING RETURNING ad
+)
+INSERT INTO kamu_maaslari (kadro_adi, anahtar_kelimeler, net_min, net_max, donem, kaynak, aciklama)
+SELECT v.kadro, CAST(v.kel AS JSONB), v.tutar, v.tutar, '2026-2', """ + _q(_AA) + r""", v.aciklama FROM (VALUES
+""" + ",\n".join(f"    ({_q(k)}, {_q(w)}, {t}, {_q(a)})" for k, w, t, a in KAMU) + r"""
+) AS v(kadro, kel, tutar, aciklama)
+WHERE EXISTS (SELECT 1 FROM isaret)
+  AND NOT EXISTS (SELECT 1 FROM kamu_maaslari m WHERE m.kadro_adi = v.kadro AND m.donem = '2026-2');
+WITH isaret AS (
+    INSERT INTO tek_seferlik_gocler (ad) VALUES ('0097_yks_2027') ON CONFLICT (ad) DO NOTHING RETURNING ad
+)
+INSERT INTO takvim_etkinlikleri (okul_id, ogrenci_id, baslik, aciklama, tur, baslangic, olusturan)
+SELECT NULL, NULL, v.baslik, """ + _q(_YKS_ACIKLAMA) + r""", 'sinav', CAST(v.gun AS DATE), 'Sistem (ÖSYM takvimi)' FROM (VALUES
+""" + ",\n".join(f"    ({_q(b)}, {_q(g)})" for b, g in YKS) + r"""
+) AS v(baslik, gun)
+WHERE EXISTS (SELECT 1 FROM isaret)
+  AND NOT EXISTS (SELECT 1 FROM takvim_etkinlikleri t WHERE t.okul_id IS NULL AND t.ogrenci_id IS NULL
+                  AND t.baslangic = CAST(v.gun AS DATE) AND t.baslik ILIKE '%YKS%')
 """
 
 
 def upgrade():
-    op.execute(SQL_TABLO)
-    bag = op.get_bind()
-    from sqlalchemy import text
-
-    def ilk_kez(ad: str) -> bool:
-        return bag.execute(text("INSERT INTO tek_seferlik_gocler (ad) VALUES (:a) ON CONFLICT (ad) DO NOTHING RETURNING ad"),
-                           {"a": ad}).first() is not None
-
-    if ilk_kez("0097_yasam_maliyeti_turkis_2026_10"):
-        for kod, ad, tutar, kapsam in (
-                ("bekar_yasam", "Bekâr bir çalışanın aylık yaşama maliyeti", 49124.30,
-                 "Tek yaşayan bir çalışanın gıda, kira, ulaşım, fatura, giyim, sağlık, eğitim gibi tüm zorunlu harcamaları"),
-                ("aclik_siniri", "Açlık sınırı (4 kişilik ailenin aylık gıda harcaması)", 38024.03,
-                 "Dört kişilik bir ailenin sağlıklı beslenmesi için gereken aylık mutfak harcaması"),
-                ("yoksulluk_siniri", "Yoksulluk sınırı (4 kişilik ailenin tüm zorunlu harcamaları)", 123856.80,
-                 "Dört kişilik bir ailenin gıda ve gıda dışı tüm zorunlu aylık harcamaları")):
-            bag.execute(text("INSERT INTO yasam_maliyeti_referans (kod, ad, aylik_tutar, kapsam, donem, kaynak, tarih) "
-                             "VALUES (:k, :a, :t, :c, '2026-10', :s, DATE '2026-10-30') ON CONFLICT (kod, donem) DO NOTHING"),
-                        {"k": kod, "a": ad, "t": tutar, "c": kapsam, "s": _TURKIS})
-
-    if ilk_kez("0097_kamu_maaslari_2026_2"):
-        for kadro, kel, tutar, aciklama in KAMU:
-            if bag.execute(text("SELECT 1 FROM kamu_maaslari WHERE kadro_adi = :k AND donem = '2026-2'"), {"k": kadro}).first():
-                continue
-            bag.execute(text("INSERT INTO kamu_maaslari (kadro_adi, anahtar_kelimeler, net_min, net_max, donem, kaynak, aciklama) "
-                             "VALUES (:k, CAST(:w AS JSONB), :t, :t, '2026-2', :s, :a)"),
-                        {"k": kadro, "w": kel, "t": tutar, "s": _AA, "a": aciklama})
-
-    if ilk_kez("0097_yks_2027"):
-        for baslik, gun in (("YKS 2027 – TYT (Temel Yeterlilik Testi)", "2027-06-19"),
-                            ("YKS 2027 – AYT ve YDT", "2027-06-20")):
-            if bag.execute(text("SELECT 1 FROM takvim_etkinlikleri WHERE okul_id IS NULL AND ogrenci_id IS NULL "
-                                "AND baslangic = CAST(:g AS DATE) AND baslik ILIKE '%YKS%'"), {"g": gun}).first():
-                continue
-            bag.execute(text("INSERT INTO takvim_etkinlikleri (okul_id, ogrenci_id, baslik, aciklama, tur, baslangic, olusturan) "
-                             "VALUES (NULL, NULL, :b, :a, 'sinav', CAST(:g AS DATE), 'Sistem (ÖSYM takvimi)')"),
-                        {"b": baslik, "g": gun,
-                         "a": "ÖSYM 2027 Sınav Takvimi (açıklanma 28.10.2026). Başvurular 2–16 Mart 2027, geç başvuru 16–18 Mart 2027; "
-                              "sonuçlar 21 Temmuz 2027 (planlanan)."})
+    op.execute(SQL)
 
 
 def downgrade():
