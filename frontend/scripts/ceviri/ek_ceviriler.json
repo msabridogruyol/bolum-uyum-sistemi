@@ -2931,5 +2931,47 @@
   "uz": "(taxminiy)",
   "az": "(təxmini)",
   "ko": "(추정)"
+ },
+ "⟳ Otomatik çek": {
+  "en": "⟳ Fetch automatically",
+  "de": "⟳ Automatisch abrufen",
+  "fr": "⟳ Récupérer automatiquement",
+  "ru": "⟳ Загрузить автоматически",
+  "es": "⟳ Obtener automáticamente",
+  "it": "⟳ Recupera automaticamente",
+  "ar": "⟳ جلب تلقائي",
+  "zh": "⟳ 自动获取",
+  "hi": "⟳ स्वतः प्राप्त करें",
+  "uz": "⟳ Avtomatik olish",
+  "az": "⟳ Avtomatik çək",
+  "ko": "⟳ 자동으로 가져오기"
+ },
+ "Çekiliyor…": {
+  "en": "Fetching…",
+  "de": "Wird abgerufen…",
+  "fr": "Récupération…",
+  "ru": "Загрузка…",
+  "es": "Obteniendo…",
+  "it": "Recupero…",
+  "ar": "جارٍ الجلب…",
+  "zh": "正在获取…",
+  "hi": "प्राप्त हो रहा है…",
+  "uz": "Olinmoqda…",
+  "az": "Çəkilir…",
+  "ko": "가져오는 중…"
+ },
+ "Elle güncellemek için:": {
+  "en": "To update manually:",
+  "de": "Zum manuellen Aktualisieren:",
+  "fr": "Pour mettre à jour manuellement :",
+  "ru": "Для ручного обновления:",
+  "es": "Para actualizar manualmente:",
+  "it": "Per aggiornare manualmente:",
+  "ar": "للتحديث يدويًا:",
+  "zh": "手动更新：",
+  "hi": "मैन्युअल रूप से अपडेट करने के लिए:",
+  "uz": "Qo'lda yangilash uchun:",
+  "az": "Əl ilə yeniləmək üçün:",
+  "ko": "직접 업데이트하려면:"
  }
 }

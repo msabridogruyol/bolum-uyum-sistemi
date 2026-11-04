@@ -298,5 +298,11 @@ def _istatistik(db, engine) -> dict:
     return {"tablo": len(_BUYUK_TABLOLAR)}
 
 
+def _tufe(db, engine) -> dict:
+    """[2026-11-04] Ayın 4'ünden sonra bir önceki ayın TÜFE'si yoksa TÜİK'ten otomatik çekilir (hata bakımı durdurmaz)."""
+    from app.core.otomatik_cekme import gece_tufe
+    return gece_tufe(db, datetime.now(YEREL).date())
+
+
 _ADIMLAR = [("gocler", _gocler), ("kuyruk", _kuyruk), ("skor_surumu", _skor_surumu), ("oneri_ozetleri", _oneri_ozetleri),
-            ("saklama", _saklama), ("istatistik", _istatistik)]
+            ("saklama", _saklama), ("istatistik", _istatistik), ("tufe", _tufe)]

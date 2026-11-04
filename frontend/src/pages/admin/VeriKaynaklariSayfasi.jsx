@@ -52,7 +52,40 @@ function KontrolFormu({ k, onKaydet }) {
   )
 }
 
-function Satir({ k, acik, onAc, onKaydet }) {
+// [2026-11-04] Kullanıcı isteği: her kaynağın yanında "Otomatik çek". Destekleyen kaynaklar (TÜFE, TÜİK istihdam) TÜİK'ten
+// çeker; hata olursa hata metni satırın altında görünür ve yönetici kaynak bağlantısından elle günceller. Desteklemeyenlerde
+// buton nedenini yazar.
+function OtomatikCek({ k, onBitti }) {
+  const [bekle, setBekle] = useState(false)
+  const [sonuc, setSonuc] = useState(null)   // { tamam: bool, metin }
+  const cek = async () => {
+    setBekle(true); setSonuc(null)
+    try {
+      const r = await api.veriKaynagiOtomatikCek(k.kod)
+      setSonuc({ tamam: true, metin: r.mesaj }); onBitti?.()
+    } catch (e) { setSonuc({ tamam: false, metin: e.detail || 'Çekilemedi.' }) }
+    setBekle(false)
+  }
+  return (
+    <>
+      <button className="yp-mini" style={{ marginLeft: 6 }} disabled={bekle} onClick={cek}
+        title={k.otomatik_cekme ? 'Veriyi kaynağından otomatik çek' : 'Bu kaynak için otomatik çekme yok; nedenini gösterir'}>
+        {bekle ? 'Çekiliyor…' : '⟳ Otomatik çek'}
+      </button>
+      {sonuc && (
+        <div style={{ whiteSpace: 'normal', marginTop: 6, maxWidth: 420, fontSize: 12.5, lineHeight: 1.5, padding: '6px 8px', borderRadius: 8,
+          background: sonuc.tamam ? 'var(--grl, var(--sur2))' : 'var(--rel)', color: sonuc.tamam ? 'var(--tx)' : 'var(--re)' }}>
+          {sonuc.tamam ? '✓ ' : '✗ '}{sonuc.metin}
+          {!sonuc.tamam && k.baglantilar?.length > 0 && (
+            <div style={{ marginTop: 4 }}>Elle güncellemek için: {k.baglantilar.map((b, i) => <Fragment key={b.url}>{i > 0 && ' · '}<a href={b.url} target="_blank" rel="noopener noreferrer">{b.ad} ↗</a></Fragment>)}</div>
+          )}
+        </div>
+      )}
+    </>
+  )
+}
+
+function Satir({ k, acik, onAc, onKaydet, onYenile }) {
   return (
     <>
       <tr className={acik ? 'secili' : ''}>
@@ -69,6 +102,7 @@ function Satir({ k, acik, onAc, onKaydet }) {
         <td style={{ whiteSpace: 'nowrap' }}>
           <button className="yp-mini" onClick={onAc}>{acik ? 'Kapat' : 'Ayrıntı / kontrol'}</button>
           {k.ekran && <Link className="yp-mini" style={{ marginLeft: 6, textDecoration: 'none' }} to={k.ekran}>Güncelle →</Link>}
+          <OtomatikCek k={k} onBitti={onYenile} />
         </td>
       </tr>
       {acik && (
@@ -155,7 +189,7 @@ export default function VeriKaynaklariSayfasi() {
               <tbody>
                 {liste.map((k) => (
                   <Fragment key={k.kod}>
-                    <Satir k={k} acik={acik === k.kod} onAc={() => setAcik(acik === k.kod ? null : k.kod)} onKaydet={kaydet} />
+                    <Satir k={k} acik={acik === k.kod} onAc={() => setAcik(acik === k.kod ? null : k.kod)} onKaydet={kaydet} onYenile={yukle} />
                   </Fragment>
                 ))}
               </tbody>

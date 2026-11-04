@@ -524,6 +524,7 @@ export const api = {
   ihMeslekIscoJson: () => apost('/admin/is-hayati/meslek-isco/json-yukle'),
   yokatlasEslestir: (bolumId, gruplar) => aput(`/admin/yokatlas/bolum/${bolumId}`, { gruplar }),
   veriKaynaklari: () => aget('/admin/veri-kaynaklari'),   // [2026-11-01] Veri Kaynakları (süper admin)
+  veriKaynagiOtomatikCek: (kod) => apost(`/admin/veri-kaynaklari/${kod}/otomatik-cek`, {}),   // [2026-11-04] kaynaktan otomatik çek
   veriKaynagiKontrol: (kod, sonuc, notlar) => apost(`/admin/veri-kaynaklari/${kod}/kontrol`, { sonuc, notlar: notlar || null }),
   // [2026-11-01] Pipeline çıktıları (K5 bağları, örnek meslekler): önizle → canlıya al; önceki hâl yedeklenir
   veriYuklemeOnizle: (tur, metin, dosyaAdi) => apost(`/admin/veri-yukleme/${tur}/onizle`, { metin, dosya_adi: dosyaAdi || null }),

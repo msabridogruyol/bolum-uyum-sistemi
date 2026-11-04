@@ -5,6 +5,7 @@
 GET  /admin/veri-kaynaklari                   — tüm kaynaklar, durum ve son 5 kontrol
 POST /admin/veri-kaynaklari/{kod}/kontrol     — "kontrol ettim, güncel" / "güncelledim" / "sorun var" kaydı (not isteğe bağlı)
 GET  /admin/veri-kaynaklari/{kod}/gecmis      — o kaynağın kontrol geçmişi (son 50)
+POST /admin/veri-kaynaklari/{kod}/otomatik-cek — [2026-11-04] kaynaktan otomatik çek (yalnızca destekleyenler; diğerleri nedenini döner)
 Ayrıntı: app/core/veri_kaynaklari.py
 """
 from fastapi import APIRouter, Depends, HTTPException
@@ -42,6 +43,25 @@ def kontrol(kod: str, istek: KontrolIstek, db: Session = Depends(get_db), yon: A
                 f"{kod}: {vk.SONUCLAR[istek.sonuc]}" + (f" · {istek.notlar.strip()[:200]}" if (istek.notlar or "").strip() else ""))
     db.commit()
     return r
+
+
+@router.post("/{kod}/otomatik-cek")
+def otomatik_cek(kod: str, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
+    """Başarılı: {"mesaj"} ve "güncelledim" kontrol kaydı. Başarısız: 422 + yöneticiye gösterilecek hata metni (veri yazılmaz)."""
+    from app.core import otomatik_cekme as oc
+    if kod not in {k[0] for k in vk.KAYNAKLAR}:
+        raise HTTPException(404, "Böyle bir veri kaynağı yok.")
+    try:
+        r = oc.cek(db, kod, yon)
+    except oc.CekmeHatasi as e:
+        if kod in oc.CEKICILER:   # denenebilir bir çekme başarısız oldu: kayıt bırakılır
+            denetim_yaz(db, yon, "veri_kaynagi_otomatik_cek", "veri_kaynagi_kontrolleri", kod, f"{kod}: HATA · {str(e)[:300]}")
+            db.commit()
+        raise HTTPException(422, str(e))
+    k = vk.kontrol_kaydet(db, kod, "guncellendi", "Otomatik çekildi: " + r["mesaj"], yon)
+    denetim_yaz(db, yon, "veri_kaynagi_otomatik_cek", "veri_kaynagi_kontrolleri", k["id"], f"{kod}: {r['mesaj'][:300]}")
+    db.commit()
+    return {"mesaj": r["mesaj"], "kontrol_id": k["id"]}
 
 
 @router.get("/{kod}/gecmis")
