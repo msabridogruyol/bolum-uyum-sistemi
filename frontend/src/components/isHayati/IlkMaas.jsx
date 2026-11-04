@@ -96,6 +96,7 @@ export default function IlkMaas({ veri, ogrenci }) {
   const [elle, setElle] = useState({})   // kalem kodu → öğrencinin girdiği tutar ('' = boş)
   const [ayirma, setAyirma] = useState('')
   const [hedef, setHedef] = useState('')
+  const [refKullan, setRefKullan] = useState(false)   // kalemler boşken TÜRK-İŞ toplamını gider olarak kullan
 
   useEffect(() => {
     let iptal = false
@@ -116,8 +117,11 @@ export default function IlkMaas({ veri, ogrenci }) {
     if (kaynak === 'kamu') {
       const k = (veri.kamu || []).find((x) => String(x.id) === String(kamuId))
       if (!k) return null
-      const t = kamuUc === 'alt' ? k.net_min : kamuUc === 'ust' ? k.net_max : (k.net_min != null && k.net_max != null ? (k.net_min + k.net_max) / 2 : null)
-      return t == null ? null : { tutar: t, tahmin: false, aciklama: `${k.kadro_adi} (${kamuUc === 'alt' ? 'aralığın alt ucu' : kamuUc === 'ust' ? 'aralığın üst ucu' : 'aralığın ortası'})`, kaynak: `${k.kaynak} · dönem ${k.donem}` }
+      // [2026-11-04] Tek tutarlı kadro (net_min = net_max ya da biri boş): aralık seçimi yok
+      const tek = k.net_min == null || k.net_max == null || k.net_min === k.net_max
+      const t = tek ? (k.net_min ?? k.net_max) : kamuUc === 'alt' ? k.net_min : kamuUc === 'ust' ? k.net_max : (k.net_min + k.net_max) / 2
+      const ne = tek ? k.kadro_adi : `${k.kadro_adi} (${kamuUc === 'alt' ? 'aralığın alt ucu' : kamuUc === 'ust' ? 'aralığın üst ucu' : 'aralığın ortası'})`
+      return t == null ? null : { tutar: t, tahmin: false, aciklama: k.aciklama ? `${ne}. ${k.aciklama}` : ne, kaynak: `${k.kaynak} · dönem ${k.donem}` }
     }
     if (kaynak === 'asgari' && veri.asgari) return { tutar: veri.asgari.net, tahmin: false, aciklama: `Net asgari ücret (${veri.asgari.donem})`, kaynak: veri.asgari.kaynak }
     if (kaynak === 'kendi' && Number(kendi) > 0) return { tutar: Number(kendi), tahmin: false, aciklama: 'Senin girdiğin tutar', kaynak: null }
@@ -136,8 +140,13 @@ export default function IlkMaas({ veri, ogrenci }) {
     const tutar = girilen !== undefined ? (girilen === '' ? null : Number(girilen)) : veridenTutar
     return { ...p, veri: d, veridenTutar, girilen, tutar }
   })
-  const doluSatirlar = satirlar.filter((s) => s.tutar != null && s.tutar > 0)
-  const bosSayisi = satirlar.filter((s) => s.tutar == null).length
+  // [2026-11-04] Karşılaştırma için kaynaklı toplam yaşam maliyeti (TÜRK-İŞ); kalemleri öğrenci doldurur
+  const refBekar = (gider?.referans || []).find((r) => r.kod === 'bekar_yasam')
+  const refDiger = (gider?.referans || []).filter((r) => r.kod !== 'bekar_yasam')
+  const kalemDolu = satirlar.filter((s) => s.tutar != null && s.tutar > 0)
+  const refAktif = refKullan && !kalemDolu.length && refBekar
+  const doluSatirlar = refAktif ? [{ kod: 'ref_bekar', ad: 'Yaşama maliyeti (toplam)', tutar: Math.round(refBekar.aylik_tutar) }] : kalemDolu
+  const bosSayisi = refAktif ? 0 : satirlar.filter((s) => s.tutar == null).length
   const veriYok = !gider?.kalemler?.length
   const toplamGider = doluSatirlar.reduce((a, s) => a + s.tutar, 0)
   const gelir = gelirBilgi?.tutar || 0
@@ -145,7 +154,7 @@ export default function IlkMaas({ veri, ogrenci }) {
   const ayirmaSayi = Number(ayirma) > 0 ? Number(ayirma) : null
   const hedefSayi = Number(hedef) > 0 ? Number(hedef) : null
 
-  const kaynakListesi = [...new Map(satirlar.filter((s) => s.veri && s.tutar === s.veridenTutar)
+  const kaynakListesi = refAktif ? [refBekar] : [...new Map(satirlar.filter((s) => s.veri && s.tutar === s.veridenTutar)
     .map((s) => [`${s.veri.kaynak}|${s.veri.tarih}`, s.veri])).values()]
 
   return (
@@ -167,11 +176,11 @@ export default function IlkMaas({ veri, ogrenci }) {
           {kaynak === 'kamu' && (
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
               <select className="yp-sec" style={{ flex: '1 1 240px' }} value={kamuId} onChange={(e) => setKamuId(e.target.value)} aria-label="Kamu kadrosu">
-                {veri.kamu.map((k) => <option key={k.id} value={k.id}>{k.kadro_adi} ({tl(k.net_min)} – {tl(k.net_max)})</option>)}
+                {veri.kamu.map((k) => <option key={k.id} value={k.id}>{k.kadro_adi} ({k.net_min == null || k.net_max == null || k.net_min === k.net_max ? tl(k.net_min ?? k.net_max) : `${tl(k.net_min)} – ${tl(k.net_max)}`})</option>)}
               </select>
-              <select className="yp-sec" value={kamuUc} onChange={(e) => setKamuUc(e.target.value)} aria-label="Aralıkta nerede">
+              {(() => { const k = veri.kamu.find((x) => String(x.id) === String(kamuId)); return k && k.net_min != null && k.net_max != null && k.net_min !== k.net_max })() && <select className="yp-sec" value={kamuUc} onChange={(e) => setKamuUc(e.target.value)} aria-label="Aralıkta nerede">
                 <option value="alt">Alt uç</option><option value="orta">Orta</option><option value="ust">Üst uç</option>
-              </select>
+              </select>}
             </div>
           )}
           {kaynak === 'kendi' && (
@@ -243,6 +252,23 @@ export default function IlkMaas({ veri, ogrenci }) {
         <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 8, fontSize: 13.5, fontWeight: 800 }}>
           <span>Toplam gider</span><span>{tl(toplamGider)}</span>
         </div>
+        {refBekar && (
+          <div style={{ marginTop: 10, fontSize: 12.5, lineHeight: 1.55, background: 'var(--sur2)', padding: '8px 10px', borderRadius: 10 }}>
+            <div>📊 <b>Karşılaştır</b></div>
+            <div>TÜRK-İŞ'e göre bekâr bir çalışanın aylık yaşama maliyeti: <b>{tl(refBekar.aylik_tutar)}</b></div>
+            <div className="yp-ince">Kira, mutfak, ulaşım, fatura dahil tüm zorunlu harcamalar; Ankara fiyatlarıyla.</div>
+            {kalemDolu.length > 0 && <div>Senin gider toplamının bu tutara oranı: <b>%{Math.round((toplamGider / refBekar.aylik_tutar) * 100)}</b></div>}
+            {refDiger.map((r) => <div key={r.kod} className="yp-ince" style={{ marginTop: 2 }}>{r.ad}: {tl(r.aylik_tutar)}</div>)}
+            <div className="yp-ince" style={{ marginTop: 2 }}>Büyük şehirlerde kira daha yüksek olduğu için gerçek tutar bundan fazla olabilir.</div>
+            <div className="yp-ince">Kaynak: {refBekar.kaynak}</div>
+            {!kalemDolu.length && (
+              <label style={{ display: 'flex', gap: 6, alignItems: 'center', marginTop: 6, fontWeight: 600 }}>
+                <input type="checkbox" checked={refKullan} onChange={(e) => setRefKullan(e.target.checked)} />
+                Kalemleri doldurmadan bu toplamla hesapla
+              </label>
+            )}
+          </div>
+        )}
       </div>
 
       <div className="card" style={{ padding: '16px 18px', borderLeft: `4px solid ${kalan >= 0 ? 'var(--okul-c)' : 'var(--re)'}` }}>
@@ -250,7 +276,7 @@ export default function IlkMaas({ veri, ogrenci }) {
         {!gelirBilgi ? (
           <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>Önce 1. adımda bir gelir seç ya da gir.</div>
         ) : !doluSatirlar.length ? (
-          <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>Hesap için en az bir gider kalemini doldur.</div>
+          <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>{refBekar ? 'Hesap için en az bir gider kalemini doldur ya da 3. adımdaki TÜRK-İŞ toplamını seç.' : 'Hesap için en az bir gider kalemini doldur.'}</div>
         ) : (
           <>
             <div style={{ display: 'flex', gap: 16, flexWrap: 'wrap', marginBottom: 10 }}>

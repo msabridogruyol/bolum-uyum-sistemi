@@ -353,10 +353,21 @@ def kamu_eslesen(db: Session, bolum_ad: str, meslek_adlari: list[str]) -> list[d
     for r in db.execute(text("SELECT * FROM kamu_maaslari ORDER BY kadro_adi")).mappings().all():
         kel = r["anahtar_kelimeler"] if isinstance(r["anahtar_kelimeler"], list) else json.loads(r["anahtar_kelimeler"] or "[]")
         kel = [_normalize(k) for k in kel if isinstance(k, str) and k.strip()]
-        if any(k in h for k in kel for h in hedef):
+        # [2026-11-04] "=tip" → adın tamamı eşit olmalı (kısa sözcükler "tip mühendisliği" gibi adlara yanlışlıkla uymasın)
+        if any((h == k[1:].strip()) if k.startswith("=") else (k in h) for k in kel for h in hedef):
             out.append({"id": r["id"], "kadro_adi": r["kadro_adi"], "net_min": _f(r["net_min"]), "net_max": _f(r["net_max"]),
                         "donem": r["donem"], "kaynak": r["kaynak"], "aciklama": r["aciklama"], "tahmin": False})
     return out
+
+
+def yasam_maliyeti_referans(db: Session) -> list[dict]:
+    """[2026-11-04] Karşılaştırma için kaynaklı TOPLAM yaşam maliyetleri (Türk-İş vb.): her koddan en son dönem."""
+    rows = db.execute(text("""SELECT DISTINCT ON (kod) kod, ad, aylik_tutar, kapsam, donem, kaynak, tarih FROM yasam_maliyeti_referans
+                              ORDER BY kod, tarih DESC NULLS LAST, id DESC""")).mappings().all()
+    sira = {"bekar_yasam": 0, "aclik_siniri": 1, "yoksulluk_siniri": 2}
+    return sorted(({"kod": r["kod"], "ad": r["ad"], "aylik_tutar": _f(r["aylik_tutar"]), "kapsam": r["kapsam"], "donem": r["donem"],
+                    "kaynak": r["kaynak"], "tarih": r["tarih"].isoformat() if r["tarih"] else None} for r in rows),
+                  key=lambda x: (sira.get(x["kod"], 9), x["kod"]))
 
 
 def veri_kaynaklari(db: Session) -> list[dict]:
@@ -371,6 +382,9 @@ def veri_kaynaklari(db: Session) -> list[dict]:
     a = guncel_asgari(db)
     if a:
         out.append({"veri": "asgari", "ad": "Asgari ücret", "kaynak": a["kaynak"], "yil": a["donem"], "kayit": 1})
+    for r in db.execute(text("SELECT kaynak, MAX(tarih) AS son_tarih, COUNT(*) n FROM yasam_maliyeti_referans GROUP BY 1 ORDER BY 2 DESC")).all():
+        out.append({"veri": "yasam_maliyeti", "ad": "Yaşam maliyeti (karşılaştırma için toplam)", "kaynak": r.kaynak,
+                    "yil": r.son_tarih.isoformat() if r.son_tarih else None, "kayit": r.n})
     for r in db.execute(text("SELECT kaynak, MAX(tarih) AS son_tarih, COUNT(*) n FROM yasam_giderleri GROUP BY 1 ORDER BY 2 DESC")).all():
         out.append({"veri": "giderler", "ad": "Yaşam giderleri", "kaynak": r.kaynak, "yil": r.son_tarih.isoformat() if r.son_tarih else None, "kayit": r.n})
     return out

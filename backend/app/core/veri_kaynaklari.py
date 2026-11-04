@@ -108,11 +108,16 @@ def _kamu(db: Session, bugun: date):
 
 
 def _giderler(db: Session, bugun: date):
-    r = _tek(db, "SELECT COUNT(*) n, MAX(tarih) t, MAX(olusturulma) z, COUNT(DISTINCT il) il FROM yasam_giderleri")
+    # [2026-11-04] Kullanıcı kararı: gider kalemlerini öğrenci doldurur; sistemin sağladığı veri karşılaştırma için kaynaklı
+    # TOPLAM yaşam maliyetidir (yasam_maliyeti_referans, Türk-İş her ay). Kalem verisi (yasam_giderleri) isteğe bağlı ektir.
+    r = _tek(db, "SELECT COUNT(*) n, MAX(tarih) t, MAX(olusturulma) z, MAX(donem) d FROM yasam_maliyeti_referans")
+    k = _tek(db, "SELECT COUNT(*) n, COUNT(DISTINCT il) il FROM yasam_giderleri") or {"n": 0, "il": 0}
     if r is None:
         return None
-    return {"kayit": r["n"], "son_guncelleme": r["z"], "donem": f"veri tarihi {r['t'].isoformat()}" if r["t"] else None,
-            "kaynak": _kaynak_metni(db, "yasam_giderleri"), "ayrinti": f"Türkiye geneli + {r['il']} il" if r["n"] else None}
+    ek = f"; ayrıca {k['n']} gider kalemi ({k['il']} il)" if k["n"] else ""
+    return {"kayit": r["n"], "son_guncelleme": r["z"], "donem": f"{r['d']} dönemi (veri tarihi {r['t'].isoformat()})" if r["t"] else None,
+            "kaynak": _kaynak_metni(db, "yasam_maliyeti_referans"),
+            "ayrinti": (f"Karşılaştırma için toplam yaşam maliyeti{ek}. Kalemleri öğrenci kendisi doldurur.") if r["n"] else None}
 
 
 def _yokatlas(db: Session, bugun: date):
@@ -250,8 +255,8 @@ KAYNAKLAR = [
      "İş Hayatı: kazançların asgari ücretle karşılaştırılması", 180, "/admin/is-hayati-verileri", _asgari),
     ("kamu_maaslari", "Kamu kadro maaşları", "Resmî",
      "İş Hayatı: kamu kadrolarının net maaş aralıkları", 180, "/admin/is-hayati-verileri", _kamu),
-    ("yasam_giderleri", "Yaşam giderleri", "Resmî",
-     "İş Hayatı: aylık gider hesabı", 365, "/admin/is-hayati-verileri", _giderler),
+    ("yasam_giderleri", "Yaşam maliyeti (toplam)", "TÜRK-İŞ",
+     "İş Hayatı › İlk Maaş: öğrencinin gider toplamıyla karşılaştırma", 92, "/admin/is-hayati-verileri", _giderler),
     ("yokatlas", "YÖK Atlas: üniversiteler, taban puan, başarı sırası, netler", "YÖK Atlas",
      "Bölüm penceresi, Karşılaştır, Net Takibi", 365, "/admin/yokatlas", _yokatlas),
     ("yks_tarihi", "YKS tarihi", "ÖSYM",
@@ -290,7 +295,9 @@ ADIMLAR = {
                     "İş Hayatı Verileri › 💰 Kazanç Yapısı sekmesinden tabloyu yükleyin; o yılın asgari brüt ücretini girip önizlemeyi kontrol edin."],
     "asgari_ucret": ["Resmî Gazete'de yeni asgari ücret yayımlandığında İş Hayatı Verileri › 🧾 Asgari Ücret ve Yaşam Giderleri sekmesinde \"Asgari ücret\" tablosuna yeni dönemi (yürürlük tarihi, brüt, net, kaynak) ekleyin."],
     "kamu_maaslari": ["Yeni memur maaş dönemi (Ocak / Temmuz) açıklandığında İş Hayatı Verileri › 🏛️ Kamu Maaşları sekmesinde kadroların net tutarlarını ve kaynağını güncelleyin."],
-    "yasam_giderleri": ["İş Hayatı Verileri › 🧾 Asgari Ücret ve Yaşam Giderleri sekmesinde \"Yaşam giderleri\" tablosuna kira ve temel gider kalemlerini kaynağıyla girin."],
+    "yasam_giderleri": ["TÜRK-İŞ her ayın son günlerinde Açlık ve Yoksulluk Sınırı Araştırması'nı yayımlar (turkis.org.tr).",
+                        "İş Hayatı Verileri › 🧾 Asgari Ücret ve Yaşam Giderleri sekmesinde \"Yaşam maliyeti (toplam)\" tablosuna yeni dönemi "
+                        "ekleyin: bekar_yasam (bekâr çalışanın yaşama maliyeti), aclik_siniri, yoksulluk_siniri; dönem (ör. 2026-11), tarih ve kaynak."],
     "yokatlas": ["YÖK Atlas verisi elle yüklenmez: bölüm penceresi açıldıkça YÖK Atlas'tan çekilir ve 7 günde bir yenilenir.",
                  "YÖK Atlas Eşleştirme ekranında \"✗ Eşleşmedi\" görünen bölümleri önerilen program grubuna bağlayın."],
     "yks_tarihi": ["ÖSYM yeni YKS tarihini açıklayınca Genel Takvim › \"+ Etkinlik ekle\" ile sınav türünde, başlığında YKS ya da TYT geçen etkinlikleri (TYT ve AYT/YDT günleri) ekleyin."],
