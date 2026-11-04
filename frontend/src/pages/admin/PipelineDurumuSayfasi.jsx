@@ -440,6 +440,7 @@ export default function PipelineDurumuSayfasi() {
   }, [])
   const [sonYukleme, setSonYukleme] = useState(null)
   const [hata, setHata] = useState(null)
+  const [bilgi, setBilgi] = useState(null)   // [2026-11-04] gece bakımı zamanlama mesajı
   const [islemGrubu, setIslemGrubu] = useState(null)
   const [paket, setPaket] = useState(null)
   const paketiYenile = useCallback(() => {
@@ -480,7 +481,8 @@ export default function PipelineDurumuSayfasi() {
   async function onayla(grup) {
     setIslemGrubu(grup)
     try {
-      await api.pipelineTaslaginiOnayla(grup)
+      const r = await api.pipelineTaslaginiOnayla(grup)   // [2026-11-04] gece bakımında canlıya alınır
+      setBilgi(r?.mesaj || null)
       listeyiYenile()
     } catch (err) {
       setHata(err.detail || 'Onaylanamadı.')
@@ -513,6 +515,7 @@ export default function PipelineDurumuSayfasi() {
       </div>
 
       {hata && <div className="auth-error">{hata}</div>}
+      {bilgi && <div style={{ background: 'var(--grl)', color: 'var(--gr)', fontSize: 12.5, fontWeight: 600, padding: '10px 13px', borderRadius: 8, marginBottom: 12 }}>{bilgi}</div>}
 
       {paket && <PipelineSayacKarti durum={paket} />}
 

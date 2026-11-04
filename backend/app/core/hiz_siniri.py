@@ -49,7 +49,8 @@ VARSAYILAN = {
 _KIMLIK = re.compile(
     r"^/(auth|admin/auth)/(giris|kayit|test-giris|iki-adim/dogrula|iki-adim/tekrar|sifremi-unuttum|sifre-sifirla|sifre-sifirla/bilgi)/?$"
     # [2026-11-04] Güvenlik denetimi: şifre belirleyen/değiştiren ve cihaz etkinleştiren uçlar da kimlik kademesinde
-    r"|^/(yonetim/ben/ilk-sifre|ogrenci/profil/ilk-sifre|ogrenci/profil/sifre-degistir|pipeline-istemci/etkinlestir)/?$"
+    r"|^/(yonetim/ben/ilk-sifre|ogrenci/profil/ilk-sifre|ogrenci/profil/sifre-degistir|yonetim/ben/sifre-degistir|"
+    r"ogrenci/profil/sifre-degistir/onayla|yonetim/ben/sifre-degistir/onayla|pipeline-istemci/etkinlestir)/?$"
 )
 _AGIR_GET = [
     re.compile(r"/(pdf|excel|rapor|sablon|deneme-sablonu)/?$"),                # PDF / Excel / şablon üretimi

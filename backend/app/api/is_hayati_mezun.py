@@ -20,7 +20,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
-from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import GirdiModeli, ad_soyad_denetle  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -95,7 +95,7 @@ def liste(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Dep
 
 
 class HikayeIstek(GirdiModeli):
-    mezun_ad: str = Field(min_length=2, max_length=120)
+    mezun_ad: str = Field(min_length=2, max_length=120)   # 30 kuralı: yeni / değişen adda (ad_soyad_denetle)
     ad_bicimi: str = "bas_harf"
     mezuniyet_yili: int = Field(ge=1950, le=2100)
     bolum_id: int | None = None
@@ -140,6 +140,7 @@ def ekle(okul_id: int, istek: HikayeIstek, db: Session = Depends(get_db), yon: A
     if db.execute(text("SELECT count(*) FROM mezun_hikayeleri WHERE okul_id = :o"), {"o": okul_id}).scalar() >= 300:
         raise HTTPException(400, "Bir okul için en fazla 300 hikâye eklenebilir.")
     v = _dogrula(db, istek)
+    ad_soyad_denetle(v["ma"])
     yeni = db.execute(text("""
         INSERT INTO mezun_hikayeleri (okul_id, mezun_ad, ad_bicimi, mezuniyet_yili, bolum_id, bolum_ad, universite, su_anki_is, cevaplar,
                                       riza_alindi, riza_tarihi, riza_kaydeden, durum, olusturan)
@@ -156,6 +157,7 @@ def duzenle(okul_id: int, hikaye_id: int, istek: HikayeIstek, db: Session = Depe
     _yetkili_mi(yon, okul_id)
     eski = _hikaye(db, okul_id, hikaye_id)
     v = _dogrula(db, istek)
+    ad_soyad_denetle(v["ma"], eski.mezun_ad)
     riza_degisti = eski.riza_tarihi != v["rt"]
     db.execute(text(f"""
         UPDATE mezun_hikayeleri SET mezun_ad = :ma, ad_bicimi = :ab, mezuniyet_yili = :my, bolum_id = :bi, bolum_ad = :ba, universite = :un,

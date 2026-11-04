@@ -158,7 +158,7 @@ class _HosgoruluOp:
                             except Exception as e2:  # noqa: BLE001
                                 hatalar.append(f"{self._ad}.execute: {str(e2).splitlines()[0][:140]}")
                     return None
-                hatalar.append(f"{self._ad}.{isim}: {str(e).splitlines()[0][:140]}")
+                hatalar.append(f"{self._ad}.{isim}: {(str(e).splitlines() or [type(e).__name__])[0][:140]}")
                 return None
         return _sar
 
@@ -189,13 +189,13 @@ def kur() -> int:
             try:
                 m.upgrade()
             except Exception as e:  # noqa: BLE001
-                hatalar.append(f"{yol.stem}.upgrade: {str(e).splitlines()[0][:140]}")
+                hatalar.append(f"{yol.stem}.upgrade: {(str(e).splitlines() or [type(e).__name__])[0][:140]}")
         # 4) ORM (eksik tablo + eksik kolon) + uygulamanın kendi şema güncellemesi
         Base.metadata.create_all(b)
         _eksik_kolonlari_ekle(b)
         _varsayilanlari_tamamla(b)
     from app.core.sema_guncelleme import semayi_guncelle
-    s = semayi_guncelle(engine)
+    s = semayi_guncelle(engine, gece=True)   # test şemasına gece göçleri (indeksler) de kurulur
     tablolar = set(inspect(engine).get_table_names())
     eksik = [t for t in KRITIK if t not in tablolar]
     print(f"Şema kuruldu: {len(tablolar)} tablo · hoşgörülen hata: {len(hatalar)} · sema_guncelleme: "

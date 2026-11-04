@@ -151,8 +151,9 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
         ilk5 = sorted(((a, o) for a, (o, n) in kapsam_ort.items() if yeterli(n)), key=lambda x: -x[1])[:5]
         okul_ort = {}
         if kapsam_tur != "okul":
+            tum_idler = {o.id for o in tum}   # [2026-11-04] yük: küme her satırda yeniden kuruluyordu
             okul_tur = gecerli_tur_idleri(db, [x["tur_id"] for oid, x in il_tum.items() if x.get("durum") == "tamamlandi"
-                                               and x.get("tur_id") and oid in {o.id for o in tum}])
+                                               and x.get("tur_id") and oid in tum_idler])
             if yeterli(len(okul_tur)):
                 okul_ort = {r.ad: float(r.ort) for r in db.execute(text(sql), {"t": okul_tur, "haric": haric}).all() if yeterli(r.n)}
         # [2026-11-03] Türkiye Yüzyılı Maarif Modeli'ndeki ilişkili kavramlar (yorumsal; app/core/maarif.py)

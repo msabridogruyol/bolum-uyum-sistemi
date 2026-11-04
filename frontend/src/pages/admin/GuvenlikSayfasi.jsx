@@ -110,6 +110,9 @@ export default function GuvenlikSayfasi() {
         </select>
       </div>
 
+      {turlar && turlar.length >= 300 && (
+        <div className="yp-ince" style={{ margin: '0 0 8px' }}>En dikkat gerektiren (güven puanı en düşük) ilk 300 değerlendirme gösteriliyor. Daraltmak için filtreleri kullanın.</div>
+      )}
       {!turlar ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : (
         <div className="ll">
           {turlar.map((t) => (

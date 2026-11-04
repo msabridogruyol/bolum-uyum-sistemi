@@ -37,7 +37,8 @@ const ProfilAyarlariSayfasi = tembel(() => import('./pages/ProfilAyarlariSayfasi
 const AnaSayfa = tembel(() => import('./pages/AnaSayfa'))
 const AdminGirisSayfasi = tembel(() => import('./pages/admin/AdminGirisSayfasi'))
 const KontrolPaneliSayfasi = tembel(() => import('./pages/admin/KontrolPaneliSayfasi'))
-const HataKayitlariSayfasi = tembel(() => import('./pages/admin/HataKayitlariSayfasi'))   // [2026-10-11]
+const HataKayitlariSayfasi = tembel(() => import('./pages/admin/HataKayitlariSayfasi'))
+const GeceBakimiSayfasi = tembel(() => import('./pages/admin/GeceBakimiSayfasi'))   // [2026-11-04]   // [2026-10-11]
 const PipelineDurumuSayfasi = tembel(() => import('./pages/admin/PipelineDurumuSayfasi'))
 const YonetimRehberiSayfasi = tembel(() => import('./pages/admin/YonetimRehberiSayfasi'))
 const BolumlerSayfasi = tembel(() => import('./pages/admin/BolumlerSayfasi'))
@@ -188,6 +189,7 @@ function AnaUygulama() {
         <Route path="ogrenciler" element={<Navigate to="/admin/okullar" replace />} />
         <Route path="audit-log" element={<AuditLogSayfasi />} />
         <Route path="hata-kayitlari" element={<HataKayitlariSayfasi />} />
+        <Route path="gece-bakimi" element={<GeceBakimiSayfasi />} />
         <Route path="yoneticiler" element={<YoneticilerSayfasi />} />
         <Route path="sistem-hakkinda" element={<SistemHakkindaSayfasi />} />
         <Route path="soru-gecerlilik" element={<SoruGecerlilikSayfasi />} />

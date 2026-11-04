@@ -6,7 +6,7 @@ NOT: Admin kayıt (self-servis) uç noktası KASITLI OLARAK yok.
 [2026-10-04] 2 adımlı doğrulama + şifremi unuttum eklendi. [2026-10-09] Süper admin ve okul yetkilileri bu sayfadan girer.
 [2026-10-11] Okul yetkilileri artık ana giriş ekranından (/auth/giris) girer; bu sayfa yalnızca süper admin içindir.
 """
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends, HTTPException, Request, Header
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -55,3 +55,14 @@ def admin_sifremi_unuttum(istek: SifremiUnuttumIstek, request: Request, db: Sess
     hg.sifirlama_baglantisi_gonder(db, istek.email, "yonetim", request.headers.get("origin"))
     db.commit()
     return SIFIRLAMA_MESAJI
+
+
+@router.post("/cikis", status_code=204)
+def yonetim_cikis(authorization: str | None = Header(None), db: Session = Depends(get_db)):
+    """[2026-11-04] Yönetim çıkışı: bu cihazın erişim anahtarı sunucuda iptal edilir."""
+    from app.core.security import token_coz, token_iptal_et
+    if authorization and authorization.startswith("Bearer "):
+        p = token_coz(authorization[7:].strip())
+        if p and p.get("tip") == "access":
+            token_iptal_et(db, p)
+    db.commit()

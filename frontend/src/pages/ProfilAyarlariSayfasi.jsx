@@ -1,7 +1,9 @@
 import { useEffect, useState, useRef } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../yardimci/sinirlar'
 import DilSecici from '../components/DilSecici'   // [2026-10-12] çoklu dil
 import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
+import SifreDegistirFormu from '../components/SifreDegistirFormu'
 import { profilEksikMi } from '../components/AnaSayfaDuzeni'
 import { GizlilikKarti } from '../components/KvkkBilesenleri'
 import HedefBolumAyari from '../components/HedefBolumAyari'
@@ -44,12 +46,6 @@ export default function ProfilAyarlariSayfasi() {
   const [mesleklAramaMetni, setMesleklAramaMetni] = useState('')
   const [meslekSonuclari, setMeslekSonuclari] = useState(null)
 
-  const [eskiSifre, setEskiSifre] = useState('')
-  const [yeniSifre, setYeniSifre] = useState('')
-  const [yeniSifreTekrar, setYeniSifreTekrar] = useState('')
-  const [sifreHata, setSifreHata] = useState(null)
-  const [sifreBasari, setSifreBasari] = useState(false)
-  const [sifreKaydediliyor, setSifreKaydediliyor] = useState(false)
 
   const fotoInputRef = useRef(null)
   const [fotoYukleniyor, setFotoYukleniyor] = useState(false)
@@ -146,32 +142,6 @@ export default function ProfilAyarlariSayfasi() {
     }
   }
 
-  async function sifreyiDegistir(e) {
-    e.preventDefault()
-    setSifreHata(null)
-    setSifreBasari(false)
-    if (yeniSifre.length < 8) {
-      setSifreHata('Yeni şifre en az 8 karakter olmalı.')
-      return
-    }
-    if (yeniSifre !== yeniSifreTekrar) {
-      setSifreHata('Yazdığın iki yeni şifre aynı değil.')
-      return
-    }
-    setSifreKaydediliyor(true)
-    try {
-      await api.sifreDegistir({ eski_sifre: eskiSifre, yeni_sifre: yeniSifre })
-      setSifreBasari(true)
-      setEskiSifre('')
-      setYeniSifre('')
-      setYeniSifreTekrar('')
-    } catch (err) {
-      setSifreHata(err.detail || 'Şifre değiştirilemedi.')
-    } finally {
-      setSifreKaydediliyor(false)
-    }
-  }
-
   if (hata && !profil) return <div className="pg"><div className="bos-durum">{hata}</div></div>
   if (!taslak) return <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
 
@@ -221,7 +191,7 @@ export default function ProfilAyarlariSayfasi() {
 
           <div className="auth-field">
             <label className="auth-label">Ad Soyad <span style={{ color: 'var(--re)' }}>*</span></label>
-            <input className="auth-input" value={taslak.ad_soyad} onChange={(e) => alanGuncelle('ad_soyad', e.target.value)} required minLength={2} />
+            <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" value={taslak.ad_soyad} onChange={(e) => alanGuncelle('ad_soyad', e.target.value)} required minLength={2} />
           </div>
 
           <div style={{ display: 'flex', gap: 10 }}>
@@ -322,27 +292,8 @@ export default function ProfilAyarlariSayfasi() {
 
       <div className="card" style={{ marginTop: 20 }}>
         <div className="ct">Şifreni Değiştir</div>
-        {sifreHata && <div className="auth-error">{sifreHata}</div>}
-        {sifreBasari && <div style={{ background: 'var(--grl)', color: 'var(--gr)', fontSize: 12.5, fontWeight: 600, padding: '10px 13px', borderRadius: 8, marginBottom: 14 }}>Şifren güncellendi.</div>}
-        <form onSubmit={sifreyiDegistir}>
-          <div className="auth-field">
-            <label className="auth-label">Şu Anki Şifren</label>
-            <input className="auth-input" type="password" value={eskiSifre} onChange={(e) => setEskiSifre(e.target.value)} required />
-          </div>
-          <div style={{ display: 'flex', gap: 10 }}>
-            <div className="auth-field" style={{ flex: 1 }}>
-              <label className="auth-label">Yeni Şifre</label>
-              <input className="auth-input" type="password" value={yeniSifre} onChange={(e) => setYeniSifre(e.target.value)} required minLength={8} />
-            </div>
-            <div className="auth-field" style={{ flex: 1 }}>
-              <label className="auth-label">Yeni Şifre (Tekrar)</label>
-              <input className="auth-input" type="password" value={yeniSifreTekrar} onChange={(e) => setYeniSifreTekrar(e.target.value)} required minLength={8} />
-            </div>
-          </div>
-          <button className="btn sec" type="submit" disabled={sifreKaydediliyor}>
-            {sifreKaydediliyor ? <span className="spin" /> : 'Şifreyi Güncelle'}
-          </button>
-        </form>
+        {/* [2026-11-04] eski şifre + e-posta onay kodu */}
+        <SifreDegistirFormu degistir={api.sifreDegistir} onayla={api.sifreDegisikliginiOnayla} />
       </div>
 
       {/* --- [2026-10-04] KVKK: isteğe bağlı izinler --- */}

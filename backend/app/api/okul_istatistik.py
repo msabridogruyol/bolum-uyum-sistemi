@@ -14,6 +14,7 @@ Paket modülü kapalı bölümler hesaplanmaz ve dönmez.
 Performans: sabit sayıda toplu SQL; öğrenci başına sorgu yok.
 """
 from __future__ import annotations
+from app.core.kisa_onbellek import ozet_onbellegi  # [2026-11-04] okul özetleri 5 dk
 
 from app.core.excel_guvenligi import guvenli_kaydet
 from collections import Counter, defaultdict
@@ -121,6 +122,7 @@ def kocluk_etkinligi(db: Session, ids: list, bas: date, bit: date) -> tuple[set,
 
 
 # ============================================================================= veri
+@ozet_onbellegi
 def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, sube: str | None = None,
                            bas: date | None = None, bit: date | None = None) -> dict:
     bas, bit = _aralik(bas, bit)
@@ -144,7 +146,8 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
     turlar = db.execute(text("""
         SELECT t.id, t.ogrenci_id, t.durum, t.guven_skoru, t.sonuc_gecerli_mi
           FROM ogrenci_degerlendirme_turu t WHERE t.ogrenci_id = ANY(:ids)"""), p).all() if ids else []
-    guvenler = [float(t.guven_skoru) for t in turlar if t.id in set(tur_ids) and t.guven_skoru is not None]
+    _tur_kume = set(tur_ids)   # [2026-11-04] yük: küme her satırda yeniden kuruluyordu (20.000 öğrencide ~8 sn)
+    guvenler = [float(t.guven_skoru) for t in turlar if t.id in _tur_kume and t.guven_skoru is not None]
     # [2026-10-14] Geçersiz = son değerlendirmesi güven eşiğinin altında kalan ÖĞRENCİ sayısı (rapor ve Tek Bakışta ile aynı tanım)
     son_idler = set(son_tur.values())
     gecersiz_idler = {t.id for t in turlar if t.id in son_idler and t.durum == "tamamlandi" and t.sonuc_gecerli_mi is False}

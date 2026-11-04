@@ -30,6 +30,7 @@ KURULUM_SABLONU = KOD_DIZINI / "_kurulum_sablonu.ps1"
 GUNCELLIK_GUN = 365
 UYARI_GUN = 30
 KURULUM_GECERLILIK_SAAT = 24
+CIHAZ_HAREKETSIZ_GUN = 400
 SAKLANAN_SURUM = 5
 EN_FAZLA_DOSYA = 3000
 YEREL = ZoneInfo("Europe/Istanbul")
@@ -108,8 +109,11 @@ def kurulumu_etkinlestir(db: Session, kurulum_ham: str) -> tuple[str, str]:
 def cihazi_dogrula(db: Session, ham: str | None) -> dict | None:
     if not ham:
         return None
+    # [2026-11-04] Güvenlik: bilgisayar anahtarı süresizdi. CIHAZ_HAREKETSIZ_GUN gün hiç kullanılmayan anahtar geçersiz sayılır
+    # (pipeline yılda bir çalışır; 400 gün bir yıllık döngüyü karşılar). Süresi dolan bilgisayar yeniden kurulur.
     r = db.execute(text("SELECT id, cihaz_adi FROM pipeline_anahtarlari WHERE tur = 'cihaz' AND ozet = :o "
-                        "AND iptal_zamani IS NULL"), {"o": _sha(ham.encode())}).mappings().first()
+                        "AND iptal_zamani IS NULL AND COALESCE(son_kullanim, olusturma_zamani) > now() - make_interval(days => :g)"),
+                   {"o": _sha(ham.encode()), "g": CIHAZ_HAREKETSIZ_GUN}).mappings().first()
     if r is None:
         return None
     db.execute(text("UPDATE pipeline_anahtarlari SET son_kullanim = now() WHERE id = :i"), {"i": r["id"]})

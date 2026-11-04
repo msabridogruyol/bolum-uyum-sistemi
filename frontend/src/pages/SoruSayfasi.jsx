@@ -385,8 +385,11 @@ export default function SoruSayfasi({ mod = 'katman' }) {
     const video = videoRef.current
     const canvas = canvasRef.current
     if (!video.videoWidth) return
-    canvas.width = video.videoWidth
-    canvas.height = video.videoHeight
+    // [2026-11-04] Kare en çok 480 px genişliğe küçültülür: tam çözünürlük (~150 KB/kare, tur başına ~4 MB) veritabanını
+    // gereksiz büyütüyordu; kimlik kontrolü için 480 px yeterli (~25 KB).
+    const olcek = Math.min(1, 480 / video.videoWidth)
+    canvas.width = Math.round(video.videoWidth * olcek)
+    canvas.height = Math.round(video.videoHeight * olcek)
     const ctx = canvas.getContext('2d')
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height)
     const base64 = canvas.toDataURL('image/jpeg', 0.7)

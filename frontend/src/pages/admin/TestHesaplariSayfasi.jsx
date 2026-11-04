@@ -2,10 +2,11 @@
 // Deneme / tanıtım için öğrenci ve okul yetkilisi hesapları: 2 adımlı doğrulama istemez, süreli giriş bağlantısıyla açılır.
 // Öğrenci ilerlemesi senaryoyla kurulur — sistem soruları gerçek akışla cevaplar, sonuçlar gerçek hesaplamayla oluşur.
 import { useEffect, useMemo, useState } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { api } from '../../api/client'
 import { Pencere, onceSure, tarih } from '../../components/yonetim/ortak'
 
-const SURELER = [[1, '1 saat'], [24, '1 gün'], [168, '1 hafta'], [720, '30 gün']]
+const SURELER = [[1, '1 saat'], [24, '1 gün'], [72, '3 gün'], [168, '1 hafta']]   // [2026-11-04] en çok 7 gün (sunucu da sınırlar)
 const BOS_SENARYO = {
   asama: 'tamamlandi', yarim: false, egilim: 'rastgele', egilim_bolum_id: '', gun_once: 3, yeni_tur_hazir: false,
   onceki_tur: false, hedef: 'otomatik', hedef_bolum_id: '', tamamlanan_adim: 3, listem_otomatik: true,
@@ -309,7 +310,7 @@ export default function TestHesaplariSayfasi() {
           <option value="ogrenci">Öğrenci</option>
           <option value="okul_yetkilisi">Okul yetkilisi</option>
         </select>
-        <input className="auth-input" placeholder="Ad Soyad (örn. Deneme Öğrenci)" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
+        <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" placeholder="Ad Soyad (örn. Deneme Öğrenci)" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
         <select className="yp-sec" value={form.okul_id} onChange={(e) => setForm({ ...form, okul_id: e.target.value })} required={form.tip === 'okul_yetkilisi'}>
           <option value="">{form.tip === 'ogrenci' ? 'Okul harici' : 'Okul seçin…'}</option>
           {(d?.okullar || []).map((o) => <option key={o.id} value={o.id}>{o.ad}</option>)}

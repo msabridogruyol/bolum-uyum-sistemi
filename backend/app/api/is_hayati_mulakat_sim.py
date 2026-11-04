@@ -20,7 +20,7 @@ from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin s
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_ogrenci
+from app.api.deps import get_mevcut_ogrenci, get_kvkk_onayli_ogrenci  # [2026-11-04] veri toplayan uçlar güncel KVKK onayı ister
 from app.api.is_hayati_dusunme import arac_ozeti
 from app.core import is_hayati_pratik as ihp
 from app.core.database import get_db
@@ -106,7 +106,7 @@ def _yanitsiz_notu(yanitsiz: int) -> str | None:
 
 
 @ogrenci_router.post("/mulakat-sim")
-def mulakat_sim_kaydet(istek: MulakatSimIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def mulakat_sim_kaydet(istek: MulakatSimIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     ad, ic = _bolum(db, istek.bolum_id)
     sorular = ic["sorular"]
     dogru = toplam = ikisi_de = 0

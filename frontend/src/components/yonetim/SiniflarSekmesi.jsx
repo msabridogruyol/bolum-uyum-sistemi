@@ -2,6 +2,7 @@
 import { useState } from 'react'
 import { api } from '../../api/client'
 import RaporSecici from '../RaporSecici'
+import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 
 function OgretmenHucresi({ okulId, s, yenile }) {
   const [duzen, setDuzen] = useState(false)
@@ -23,7 +24,7 @@ function OgretmenHucresi({ okulId, s, yenile }) {
   }
   return (
     <form onSubmit={kaydet} className="sn-ogretmen-form">
-      <input className="yp-sec" autoFocus value={f.ad} maxLength={80} onChange={(e) => setF({ ...f, ad: e.target.value })} placeholder="Ad soyad" />
+      <input className="yp-sec" autoFocus value={f.ad} maxLength={AD_SOYAD_EN_FAZLA} onChange={(e) => setF({ ...f, ad: e.target.value })} placeholder="Ad soyad" />
       <input className="yp-sec" type="email" value={f.eposta} maxLength={120} onChange={(e) => setF({ ...f, eposta: e.target.value })} placeholder="E-posta (isteğe bağlı)" />
       <button className="yp-mini" disabled={bekle}>Kaydet</button>
       <button className="yp-mini" type="button" onClick={() => setDuzen(false)}>İptal</button>

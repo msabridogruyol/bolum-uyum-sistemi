@@ -20,6 +20,7 @@ Okul yetkilisi (rehber öğretmen) + süper admin — modül: rehberlik
   * Son kullanım günlük aktiflikten (ogrenci_aktif_gunler) okunur; "beni hatırla" ile sistemi kullanan öğrenci "girmiyor" sayılmaz.
   * "Yüksek": net düşüşü %30+ ya da 3+ farklı "orta" uyarının birleşmesi. 3+ farklı düşük uyarı → "orta".
 """
+from app.core.kisa_onbellek import ozet_onbellegi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from collections import Counter, defaultdict
@@ -206,12 +207,24 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
 
 
 @router.get("/okul/{okul_id}/erken-uyari")
-def erken_uyari(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+def erken_uyari(okul_id: int, yalniz_ozet: bool = False, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """yalniz_ozet=true: yalnızca sayılar (menüdeki risk rozeti; 20.000 öğrencide liste ~3 MB)."""
     _okul_kapsami(db, yon, okul_id)
+    if yalniz_ozet:   # [2026-11-04] menü rozeti: 5 dk önbellekli sayılar (her yönetim sayfasında çağrılıyor)
+        return _erken_uyari_ozeti(db, okul_id)
     liste = uyarilari_hesapla(db, okul_id)
+    return _erken_uyari_yaniti(liste, False)
+
+
+@ozet_onbellegi
+def _erken_uyari_ozeti(db: Session, okul_id: int) -> dict:
+    return _erken_uyari_yaniti(uyarilari_hesapla(db, okul_id), True)
+
+
+def _erken_uyari_yaniti(liste: list, yalniz_ozet: bool) -> dict:
     kurallar = Counter(u["kural"] for s in liste for u in s["uyarilar"])
     return {
-        "ogrenciler": liste,
+        "ogrenciler": [] if yalniz_ozet else liste,
         "ozet": {"toplam": len(liste), "yuksek": sum(1 for s in liste if s["seviye"] == "yuksek"),
                  "orta": sum(1 for s in liste if s["seviye"] == "orta"), "dusuk": sum(1 for s in liste if s["seviye"] == "dusuk"),
                  "gorusulmemis_yuksek": sum(1 for s in liste if s["seviye"] == "yuksek" and not s["son_gorusme"] and not s["yaklasan_gorusme"])},
@@ -234,6 +247,8 @@ def risk_ertele(ogrenci_id: str, istek: ErteleIstek, db: Session = Depends(get_d
         ON CONFLICT (ogrenci_id, kural) DO UPDATE SET bitis = EXCLUDED.bitis, olusturan = EXCLUDED.olusturan, olusturulma_zamani = now()
     """), {"o": o.id, "k": istek.kural, "b": date.today() + timedelta(days=istek.gun), "y": yon.ad_soyad})
     denetim_yaz(db, yon, "risk_ertele", "ogrenciler", o.id, f"{KURALLAR[istek.kural]} · {istek.gun} gün", o.okul_id)
+    from app.core.kisa_onbellek import hepsini_bosalt
+    hepsini_bosalt()   # menüdeki risk sayısı hemen güncellensin
     db.commit()
 
 
@@ -345,6 +360,9 @@ def gorusmeler_excel(okul_id: int, gun: int = Query(365, ge=7, le=800), db: Sess
 def ogrenci_gorusmeleri(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     o = _ogrenci_kapsami(db, yon, ogrenci_id)
     liste = _sinif_ekle(db.execute(text(SECIM + " WHERE g.ogrenci_id = :o ORDER BY g.zaman DESC"), {"o": o.id}).all())
+    # [2026-11-04] Hassas okuma (görüşme notları) denetim kaydına yazılır
+    denetim_yaz(db, yon, "gorusme_notlari_goruntule", "ogrenciler", o.id, o.ad_soyad, o.okul_id)
+    db.commit()
     uyari = uyarilari_hesapla(db, o.okul_id or 0, o.id)
     return {"gorusmeler": liste, "uyarilar": uyari[0]["uyarilar"] if uyari else [],
             "secenekler": {"turler": TURLER, "konular": KONULAR, "durumlar": DURUMLAR}}

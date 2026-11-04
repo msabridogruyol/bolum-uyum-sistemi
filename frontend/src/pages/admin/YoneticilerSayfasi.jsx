@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { Link } from 'react-router-dom'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { api } from '../../api/client'
@@ -70,7 +71,7 @@ export default function YoneticilerSayfasi() {
       {hata && <div className="auth-error">{hata}</div>}
 
       <form onSubmit={ekle} className="card" style={{ display: 'flex', gap: 8, alignItems: 'flex-end', flexWrap: 'wrap' }}>
-        <div><label className="auth-label">Ad Soyad</label><input className="auth-input" value={form.ad_soyad} onChange={(e) => setForm((f) => ({ ...f, ad_soyad: e.target.value }))} required /></div>
+        <div><label className="auth-label">Ad Soyad</label><input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" value={form.ad_soyad} onChange={(e) => setForm((f) => ({ ...f, ad_soyad: e.target.value }))} required /></div>
         <div><label className="auth-label">E-posta</label><input className="auth-input" type="email" value={form.email} onChange={(e) => setForm((f) => ({ ...f, email: e.target.value }))} required /></div>
         <div><label className="auth-label">Şifre</label><input className="auth-input" type="password" value={form.sifre} onChange={(e) => setForm((f) => ({ ...f, sifre: e.target.value }))} required minLength={8} autoComplete="new-password" /></div>
         <button className="btn" type="submit">+ Süper admin ekle</button>

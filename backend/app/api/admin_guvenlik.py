@@ -13,7 +13,7 @@ GET /admin/guvenlik/turlar/{tur_id}        — bir turun tüm olayları + fotoğ
 from pydantic import Field, BaseModel
 from sqlalchemy import func
 from sqlalchemy.orm import Session
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 
 from app.core.database import get_db
 from app.api.deps import get_mevcut_admin
@@ -78,6 +78,7 @@ KRITIK_OLAY_TIPLERI = {
 def guvenlik_turlarini_listele(
     yalniz_gecersiz: bool = False,
     en_az_kritik_olay: int = 0,
+    limit: int = Query(300, ge=1, le=2000),   # [2026-11-04] 20.000 turda 7 MB dönüyordu; en dikkat gerektiren ilk N
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
@@ -144,7 +145,7 @@ def guvenlik_turlarini_listele(
         ))
 
     sonuc.sort(key=lambda s: (s.guven_skoru if s.guven_skoru is not None else 999))
-    return sonuc
+    return sonuc[:limit]
 
 
 @router.get("/turlar/{tur_id}", response_model=GuvenlikTurDetayOut)
@@ -159,6 +160,10 @@ def guvenlik_tur_detayini_getir(
         raise HTTPException(status_code=404, detail="Tur bulunamadı.")
 
     ogrenci = db.get(Ogrenci, tur.ogrenci_id)
+    from app.core.hesap_yonetimi import denetim_yaz   # [2026-11-04] kamera fotoğraflarının görüntülenmesi denetim kaydına yazılır
+    denetim_yaz(db, admin, "guvenlik_fotograf_goruntule", "ogrenciler", tur.ogrenci_id,
+                f"{getattr(ogrenci, 'ad_soyad', '')}: {tur.tur_no}. tur", getattr(ogrenci, "okul_id", None))
+    db.commit()
 
     olaylar = (
         db.query(GuvenlikOlayi)

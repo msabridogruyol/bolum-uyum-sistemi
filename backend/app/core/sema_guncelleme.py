@@ -54,7 +54,11 @@ OTOMATIK += ["0089_icerik_sadelestirme"]   # [2026-11-02] öğrenciye görünen 
 OTOMATIK += ["0090_soru_sadelestirme"]   # [2026-11-02] K1–K4 soruları sade dil + gündelik hayata dengeli dağılım (yalnızca değişmemiş metne)
 OTOMATIK += ["0091_kriz_okul_bildirimi"]   # [2026-11-03] Filiz kriz → okul yetkilisi bildirimi parametresi (varsayılan kapalı)
 OTOMATIK += ["0092_guncel_adlar"]   # [2026-11-03] K5 katman adı "İş türü tercihleri"; kullanılmayan 4 eski parametre kaldırıldı
-OTOMATIK += ["0093_denetim_guvenlik_performans"]   # [2026-11-04] soru_gecerlilik_sonuclari tablosu + yük indeksleri
+OTOMATIK += ["0093_denetim_guvenlik_performans"]
+OTOMATIK += ["0095_gece_bakimi_ve_hesap"]   # [2026-11-04] gece bakımı kuyruğu, şifre değişikliği onayı, anahtar iptali, öneri özeti   # [2026-11-04] soru_gecerlilik_sonuclari tablosu + yük indeksleri
+# [2026-11-04] Kullanıcı kuralı: sistemi yavaşlatacak göçler (büyük tablolarda indeks kurma vb.) açılışta değil, gece
+# bakımında (03:00, app/core/gece_bakimi.py) ve CONCURRENTLY ile çalışır; açılışta yalnızca hafif göçler uygulanır.
+OTOMATIK_GECE = ["0094_gece_indeksleri"]
 KILIT = 2026101001
 
 
@@ -72,27 +76,52 @@ def _komutlar(sql: str) -> list[str]:
     return [k.strip() for k in sql.split(";\n") if k.strip() and not k.strip().startswith("--")]
 
 
-def semayi_guncelle(engine) -> dict:
+_KAYIT_TABLOSU = """CREATE TABLE IF NOT EXISTS sema_uygulanan (
+    ad TEXT PRIMARY KEY, ozet TEXT NOT NULL, zaman TIMESTAMPTZ NOT NULL DEFAULT now())"""
+
+
+def semayi_guncelle(engine, gece: bool = False) -> dict:
+    """Açılışta (gece=False): OTOMATIK listesindeki hafif göçler; kilit beklemesi 5 sn (canlı trafiği kuyruğa sokmasın).
+    Gece bakımında (gece=True): ayrıca OTOMATIK_GECE (ağır, CONCURRENTLY) göçleri; kilit beklemesi 60 sn.
+    [2026-11-04] Uygulanan göç (içeriğinin özetiyle) sema_uygulanan'a yazılır ve bir sonraki açılışta yeniden çalıştırılmaz;
+    önceden ~65 göç her açılışta yeniden çalışıyor, ALTER TABLE'lar tabloları kısa süre kilitliyordu. İçerik değişirse yeniden
+    çalışır. Hata veren göç kaydedilmez; bir sonraki açılışta ya da gece bakımında yeniden denenir."""
+    import hashlib
     if engine.dialect.name != "postgresql":
         return {"atlandi": "postgresql değil"}
-    sonuc = {"uygulanan": 0, "hata": []}
+    sonuc = {"uygulanan": 0, "atlanan": 0, "hata": []}
     with engine.connect() as baglanti:
         baglanti = baglanti.execution_options(isolation_level="AUTOCOMMIT")
         if not baglanti.execute(text("SELECT pg_try_advisory_lock(:k)"), {"k": KILIT}).scalar():
             return {"atlandi": "başka bir sunucu güncelliyor"}
         try:
-            for ad in OTOMATIK:
+            baglanti.execute(text("SET lock_timeout = '%s'" % ("60s" if gece else "5s")))
+            baglanti.execute(text("SET statement_timeout = 0"))
+            baglanti.execute(text(_KAYIT_TABLOSU))
+            uygulanmis = dict(baglanti.execute(text("SELECT ad, ozet FROM sema_uygulanan")).all())
+            for ad in OTOMATIK + (OTOMATIK_GECE if gece else []):
                 sql = _sql_oku(ad)
                 if not sql:
                     continue
+                ozet = hashlib.sha256(sql.encode("utf-8")).hexdigest()[:16]
+                if uygulanmis.get(ad) == ozet:
+                    sonuc["atlanan"] += 1
+                    continue
+                basarili = True
                 for komut in _komutlar(sql):
                     try:
                         baglanti.execute(text(komut))
                         sonuc["uygulanan"] += 1
-                    except Exception as e:  # yetki yoksa vb. — site açılmaya devam etsin
+                    except Exception as e:  # yetki yoksa / kilit alınamadıysa vb. — site açılmaya devam etsin
+                        basarili = False
                         sonuc["hata"].append(f"{ad}: {str(e).splitlines()[0][:160]}")
+                if basarili:
+                    baglanti.execute(text("""INSERT INTO sema_uygulanan (ad, ozet, zaman) VALUES (:a, :o, now())
+                                             ON CONFLICT (ad) DO UPDATE SET ozet = EXCLUDED.ozet, zaman = now()"""), {"a": ad, "o": ozet})
         finally:
             baglanti.execute(text("SELECT pg_advisory_unlock(:k)"), {"k": KILIT})
+            baglanti.execute(text("RESET lock_timeout"))      # bağlantı havuza döner; ayar uygulamanın isteklerine taşınmasın
+            baglanti.execute(text("RESET statement_timeout"))
     if sonuc["hata"]:
         _log.warning("Şema güncellemesinde hata: %s", sonuc["hata"])
     return sonuc

@@ -22,7 +22,7 @@ import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_admin
@@ -48,7 +48,7 @@ def _sinif(s: str | None) -> str:
 
 class YeniTestIstek(GirdiModeli):
     tip: str
-    ad_soyad: str = Field(min_length=3, max_length=80)
+    ad_soyad: str = Field(min_length=3, max_length=AD_SOYAD_EN_FAZLA)
     okul_id: int | None = None
     sinif: str | None = "11"
 
@@ -128,6 +128,11 @@ def test_hesabi_ac(istek: YeniTestIstek, db: Session = Depends(get_db), admin: A
     okul = db.get(Okul, istek.okul_id) if istek.okul_id else None
     if istek.tip == "okul_yetkilisi" and okul is None:
         raise HTTPException(status_code=400, detail="Okul yetkilisi için okul seçin.")
+    # [2026-11-04] Güvenlik: test okul yetkilisi okulun bütün öğrenci verisini görür ve 2 adımlı doğrulamasız bağlantıyla girer;
+    # yalnızca tanıtım (demo) okullarına açılır. Gerçek okulda test öğrencisi açılabilir (yalnızca kendi verisini görür).
+    if istek.tip == "okul_yetkilisi" and not getattr(okul, "demo", False):
+        raise HTTPException(status_code=400, detail="Test okul yetkilisi yalnızca tanıtım (demo) okullarında açılabilir. "
+                                                    "Gerçek okul için okulun kendi yetkilisini ekleyin.")
     ad = re.sub(r"\s+", " ", istek.ad_soyad).strip()
     ek = secrets.token_hex(3)
     sifre = gecici_sifre()
@@ -209,7 +214,7 @@ class DemoOkulIstek(GirdiModeli):
     okul_adi: str = Field(min_length=3, max_length=80)
     paket: str = "tam"
     ogrenci_sayisi: int = Field(12, ge=1, le=30)
-    yetkili_adi: str = Field("Demo Okul Yetkilisi", min_length=3, max_length=80)
+    yetkili_adi: str = Field("Demo Okul Yetkilisi", min_length=3, max_length=AD_SOYAD_EN_FAZLA)
     baglanti_saat: int = Field(168, ge=1, le=720)
 
 
@@ -364,6 +369,8 @@ def test_giris(istek: TestGirisIstek, db: Session = Depends(get_db)):
     h.son_giris_zamani = simdi()
     if o is not None:
         olay_yaz(db, o.id, "giris", "Test bağlantısıyla", "Test")
+    else:   # [2026-11-04] test yetkilisinin her bağlantı girişi denetim kaydına yazılır
+        denetim_yaz(db, h, "test_baglanti_giris", "admin_kullanicilar", h.id, "Test bağlantısıyla giriş", h.okul_id)
     db.commit()
     return {"kapsam": "ogrenci" if o is not None else "admin", "kullanici_tipi": rol, "ad_soyad": h.ad_soyad,
             "erisim_tokeni": erisim_tokeni_uret(h.id, rol), "yenileme_tokeni": yenileme_tokeni_uret(h.id, rol)}

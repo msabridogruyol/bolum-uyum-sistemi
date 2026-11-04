@@ -13,6 +13,7 @@ Etik sınır: Bu sonuçlar yalnızca rehber öğretmen / okul yetkilisine göste
 şeklinde sunulmaz. Şube kararında karar destek amaçlıdır, tek ölçüt değildir.
 """
 from __future__ import annotations
+from app.core.kisa_onbellek import ozet_onbellegi
 
 import math
 from collections import defaultdict
@@ -120,29 +121,46 @@ def _ortak_ve_fark(pa: dict, pb: dict, adlar: dict, mat: Matris) -> tuple[list[s
 
 
 # ----------------------------------------------------------------------------- benzer akranlar
-def benzer_akranlar(db: Session, hedef_id: str, havuz: list, n: int = 5) -> dict:
+@ozet_onbellegi(kopyala=False)   # salt okunur kullanılır (değiştirilmez); anahtar okul (öğrenci listesi değil: bellek)
+def _okul_profilleri(db: Session, okul_id: int) -> dict:
+    idler = [str(r[0]) for r in db.execute(text("SELECT id FROM ogrenciler WHERE " + ("okul_id IS NULL" if not okul_id else "okul_id = :o")),
+                                           {"o": okul_id}).all()]
+    return profiller(db, idler)
+
+
+def benzer_akranlar(db: Session, hedef_id: str, havuz: list, n: int = 5, okul_id: int | None = None) -> dict:
     """havuz: [(ogrenci_id, ad_soyad, sinif_metni)] — hedef de dahil olabilir."""
     bilgi = {str(i): (ad, sm) for i, ad, sm in havuz}
     bilgi.setdefault(str(hedef_id), ("", ""))
-    prof = profiller(db, list(bilgi.keys()))
+    if okul_id is not None:   # [2026-11-04] okulun profilleri 5 dk önbellekten (20.000 öğrencide ~4,7 sn); havuza süzülür
+        tum = _okul_profilleri(db, okul_id)
+        prof = {k: tum[k] for k in bilgi if k in tum}
+        if str(hedef_id) not in prof:
+            prof.update(profiller(db, [str(hedef_id)]))
+    else:
+        prof = profiller(db, list(bilgi.keys()))
     if str(hedef_id) not in prof:
         return {"durum": "profil_yok", "akranlar": [], "havuz": len(prof)}
     mat = Matris(prof)
     adlar = degisken_adlari(db)
     hi = mat.ix[str(hedef_id)]
     a, ma = mat.z[hi], mat.maske[hi]
-    sonuc = []
+    benzerlik = []
     for oid, i in mat.ix.items():
         if oid == str(hedef_id):
             continue
         c = _cos(a, mat.z[i], ma, mat.maske[i])
-        if c is None:
-            continue
+        if c is not None:
+            benzerlik.append((oid, yuzde(c)))
+    # [2026-11-04] Yük: ortak / farklı yön açıklaması yalnızca gösterilen ilk n akran için hesaplanır (önceden bütün okul için;
+    # 20.000 öğrencide ~5 sn). Sıralama aynı (kararlı sıralama, aynı benzerlik değeri).
+    benzerlik.sort(key=lambda x: -x[1])
+    sonuc = []
+    for oid, b in benzerlik[:n]:
         ortak, fark = _ortak_ve_fark(prof[str(hedef_id)]["puan"], prof[oid]["puan"], adlar, mat)
-        sonuc.append({"id": oid, "ad_soyad": bilgi[oid][0], "sinif": bilgi[oid][1], "benzerlik": yuzde(c),
+        sonuc.append({"id": oid, "ad_soyad": bilgi[oid][0], "sinif": bilgi[oid][1], "benzerlik": b,
                       "ortak_guclu": ortak, "farkli": fark, "dusuk_guven": _dusuk_guven(prof[oid])})
-    sonuc.sort(key=lambda x: -x["benzerlik"])
-    return {"durum": "tamam", "akranlar": sonuc[:n], "havuz": len(prof) - 1,
+    return {"durum": "tamam", "akranlar": sonuc, "havuz": len(prof) - 1,
             "dusuk_guven": _dusuk_guven(prof[str(hedef_id)]), "tamamlanmamis": not prof[str(hedef_id)]["tamam"]}
 
 

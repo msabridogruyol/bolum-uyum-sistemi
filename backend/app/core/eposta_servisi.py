@@ -122,6 +122,31 @@ def dogrulama_kodu_epostasi(ad: str, kod: str) -> tuple[str, str, str]:
     return konu, html, metin
 
 
+def sifre_degisikligi_kodu_epostasi(ad: str, kod: str) -> tuple[str, str, str]:
+    """[2026-11-04] Şifre değişikliği onay kodu."""
+    ad_h = _html.escape(ad or "")
+    konu = f"Şifre değişikliği onay kodun: {kod}"
+    html = _sablon("Şifre değişikliği onayı", f"""
+      <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, hesabının şifresini değiştirmek istedin. Değişikliği onaylamak için bu kodu gir:</p>
+      <div style="font-size:32px;font-weight:bold;letter-spacing:8px;text-align:center;background:#FBE4D2;color:#C86530;border-radius:12px;padding:14px;margin:16px 0">{kod}</div>
+      <p style="font-size:13px;color:#7A7157;line-height:1.6">Kod 10 dakika geçerlidir. Bu isteği sen yapmadıysan kodu kimseyle paylaşma; şifren değişmez. Yine de şifreni yenilemeni öneririz.</p>""")
+    metin = (f"Merhaba {ad},\n\nŞifre değişikliği onay kodun: {kod}\nKod 10 dakika geçerlidir. Bu isteği sen yapmadıysan kodu "
+             "kimseyle paylaşma; şifren değişmez.\n\nFilizyol")
+    return konu, html, metin
+
+
+def sifre_degisti_bildirimi_epostasi(ad: str) -> tuple[str, str, str]:
+    """[2026-11-04] Şifre değiştikten sonra bilgi e-postası (diğer cihazlardaki oturumlar kapatıldı)."""
+    ad_h = _html.escape(ad or "")
+    konu = "Şifren değiştirildi"
+    html = _sablon("Şifren değiştirildi", f"""
+      <p style="font-size:14px;line-height:1.6">Merhaba {ad_h}, hesabının şifresi az önce değiştirildi ve diğer cihazlardaki oturumlar kapatıldı.</p>
+      <p style="font-size:13px;color:#7A7157;line-height:1.6">Bu değişikliği sen yapmadıysan hemen "Şifremi unuttum" ile yeni şifre al ve rehber öğretmenine ya da okul yönetimine haber ver.</p>""")
+    metin = (f"Merhaba {ad},\n\nHesabının şifresi az önce değiştirildi ve diğer cihazlardaki oturumlar kapatıldı. Bu değişikliği sen "
+             "yapmadıysan hemen \"Şifremi unuttum\" ile yeni şifre al.\n\nFilizyol")
+    return konu, html, metin
+
+
 def _buton(baglanti: str, yazi: str) -> str:
     return (f'<div style="text-align:center;margin:20px 0"><a href="{baglanti}" '
             f'style="background:#E8804A;color:#fff;text-decoration:none;font-weight:bold;padding:12px 22px;border-radius:12px;display:inline-block">{yazi}</a></div>'

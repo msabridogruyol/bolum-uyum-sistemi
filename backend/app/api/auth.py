@@ -15,7 +15,9 @@ GET  /auth/kvkk-metinleri        — aydınlatma metni ve onay maddeleri
 import uuid
 from datetime import timedelta
 
-from fastapi import APIRouter, Depends, HTTPException, Request, status
+from fastapi import APIRouter, Depends, Header, HTTPException, Request, status
+from pydantic import Field
+from app.schemas.girdi import GirdiModeli
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -222,7 +224,31 @@ def token_yenile(istek: YenilemeIstek, db: Session = Depends(get_db)):
     from app.core.security import token_hesaba_uygun_mu
     if hesap is None or not token_hesaba_uygun_mu(payload, hesap):   # [2026-10-11] şifre sıfırlandıysa yenileme reddedilir
         raise hata
+    # [2026-11-04] Döndürme: kullanılan yenileme anahtarı iptal edilir (çalınıp yeniden kullanılamaz), yenisi verilir
+    from app.core.security import token_iptal_et
+    token_iptal_et(db, payload)
+    db.commit()
     return TokenCifti(erisim_tokeni=erisim_tokeni_uret(hesap.id, rol), yenileme_tokeni=yenileme_tokeni_uret(hesap.id, rol))
+
+
+class CikisIstek(GirdiModeli):
+    yenileme_tokeni: str | None = Field(None, max_length=2000)
+
+
+@router.post("/cikis", status_code=204)
+def cikis_yap(istek: CikisIstek | None = None, authorization: str | None = Header(None), db: Session = Depends(get_db)):
+    """[2026-11-04] Çıkış: bu cihazın erişim ve (gönderildiyse) yenileme anahtarı sunucuda iptal edilir; diğer cihazlar etkilenmez.
+    Geçersiz / süresi geçmiş anahtar sessizce yok sayılır (çıkış her zaman başarılıdır)."""
+    from app.core.security import token_iptal_et
+    if authorization and authorization.startswith("Bearer "):
+        p = token_coz(authorization[7:].strip())
+        if p and p.get("tip") == "access":
+            token_iptal_et(db, p)
+    if istek and istek.yenileme_tokeni:
+        p = token_coz(istek.yenileme_tokeni)
+        if p and p.get("tip") == "refresh":
+            token_iptal_et(db, p)
+    db.commit()
 
 
 # ----------------------------------------------------------------------------- şifre sıfırlama

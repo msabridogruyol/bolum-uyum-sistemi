@@ -72,3 +72,19 @@ class GuvenilirCihaz(Base):
     cihaz_ozeti: Mapped[str] = mapped_column(String, nullable=False)
     son_kullanma: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
     olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)
+
+
+class SifreDegisiklikTalebi(Base):
+    """[2026-11-04] Şifre değişikliği onayı: eski şifre doğrulanınca yeni şifrenin karması burada bekler; e-postaya giden
+    6 haneli kod (yalnızca özeti) girilince uygulanır. 10 dk geçerli, en fazla 5 deneme, tek kullanımlık."""
+    __tablename__ = "sifre_degisiklik_talepleri"
+    __table_args__ = (Index("ix_sdt_kullanici", "kullanici_tipi", "kullanici_id"),)
+    id: Mapped[int] = mapped_column(_ID, primary_key=True, autoincrement=True)
+    kullanici_tipi: Mapped[str] = mapped_column(String, nullable=False)
+    kullanici_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), nullable=False)
+    yeni_sifre_hash: Mapped[str] = mapped_column(String, nullable=False)
+    kod_ozeti: Mapped[str] = mapped_column(String, nullable=False)
+    son_kullanma: Mapped[datetime] = mapped_column(DateTime(timezone=True), nullable=False)
+    deneme_sayisi: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    kullanildi: Mapped[bool] = mapped_column(Boolean, nullable=False, default=False)
+    olusturulma_zamani: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=datetime.utcnow)

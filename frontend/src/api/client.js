@@ -15,6 +15,21 @@ function yeniAnahtarlariKaydet(r, kapsam) {
   return null
 }
 
+// [2026-11-04] Çıkışta bu cihazın anahtarları sunucuda da iptal edilir (yanıt beklenmez; ağ yoksa yalnızca yerelden silinir)
+function sunucudaCikis(kapsam) {
+  const erisim = tokenAl(kapsam)
+  if (!erisim) return
+  let yenileme = null
+  try { yenileme = localStorage.getItem(`${kapsam}_yenileme_tokeni`) } catch { /* yoksay */ }
+  try {
+    fetch(`${TABAN_URL}/auth/cikis`, {
+      method: 'POST', keepalive: true,
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${erisim}` },
+      body: JSON.stringify({ yenileme_tokeni: yenileme }),
+    }).catch(() => {})
+  } catch { /* yoksay */ }
+}
+
 function tokenlariTemizle(kapsam = 'ogrenci') {
   localStorage.removeItem(`${kapsam}_erisim_tokeni`)
   localStorage.removeItem(`${kapsam}_yenileme_tokeni`)
@@ -269,7 +284,7 @@ export const api = {
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
   kvkkDurumu: () => get('/ogrenci/kvkk'),
   kvkkGuncelle: (onaylar) => post('/ogrenci/kvkk', { onaylar }),
-  cikisYap: () => tokenlariTemizle('ogrenci'),
+  cikisYap: () => { sunucudaCikis('ogrenci'); tokenlariTemizle('ogrenci') },
   girisYapildiMi: () => !!tokenAl('ogrenci'),
 
   // --- D2: Katman akışı ---
@@ -401,6 +416,7 @@ export const api = {
   okulDenemesiSil: (id) => adel(`/yonetim/okul-deneme/${id}`),
   // [2026-10-10] Rehberlik ve erken uyarı
   erkenUyari: (okulId) => aget(`/yonetim/okul/${okulId}/erken-uyari`),
+  erkenUyariOzeti: (okulId) => aget(`/yonetim/okul/${okulId}/erken-uyari?yalniz_ozet=true`),   // [2026-11-04] menü rozeti için yalnızca sayılar
   riskErtele: (ogrenciId, kural, gun = 14) => apost(`/yonetim/ogrenci/${ogrenciId}/risk-ertele`, { kural, gun }),
   okulGorusmeleri: (okulId, gun = 90) => aget(`/yonetim/okul/${okulId}/gorusmeler?gun=${gun}`),
   gorusmeExcel: (okulId) => dosyaIndir(`/yonetim/okul/${okulId}/gorusmeler/excel`, 'admin'),
@@ -554,7 +570,9 @@ export const api = {
   // [2026-10-11] Şifre değişince diğer cihazlardaki oturumlar düşer; sunucu bu cihaz için yeni anahtar çifti döner
   // [2026-10-12] Kişisel dil tercihi (hesaba kaydedilir)
   dilKaydet: (dil, kapsam = 'ogrenci') => put(kapsam === 'admin' ? '/yonetim/ben/dil' : '/ogrenci/profil/dil', { dil }, kapsam),
-  sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),
+  // [2026-11-04] { kod_gonderildi, maskeli_eposta } ya da (kod adımı yoksa) yeni anahtarlar
+  sifreDegistir: (veri) => post('/ogrenci/profil/sifre-degistir', veri).then((r) => { if (!r?.kod_gonderildi) yeniAnahtarlariKaydet(r, 'ogrenci'); return r }),
+  sifreDegisikliginiOnayla: (kod) => post('/ogrenci/profil/sifre-degistir/onayla', { kod }).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),
   ilkSifreBelirle: (yeniSifre) => post('/ogrenci/profil/ilk-sifre', { yeni_sifre: yeniSifre }).then((r) => yeniAnahtarlariKaydet(r, 'ogrenci')),  // [2026-10-09] geçici şifreden sonra
   profilFotografiGuncelle: (fotoBase64) => post('/ogrenci/profil/fotograf', { foto_base64: fotoBase64 }),
   meslekAra: (q) => get(`/ogrenci/meslek-ara?q=${encodeURIComponent(q)}`),
@@ -595,7 +613,7 @@ export const api = {
   },
   adminKodTekrarGonder: (geciciToken) => post('/admin/auth/iki-adim/tekrar', { gecici_token: geciciToken }),
   adminSifremiUnuttum: (email) => post('/admin/auth/sifremi-unuttum', { email }),
-  adminCikisYap: () => tokenlariTemizle('admin'),
+  adminCikisYap: () => { sunucudaCikis('admin'); tokenlariTemizle('admin') },
   adminGirisYapildiMi: () => !!tokenAl('admin'),
   adminRolGetir: () => jwtCoz(tokenAl('admin'))?.rol ?? null,
   adminIdGetir: () => jwtCoz(tokenAl('admin'))?.sub ?? null,
@@ -611,6 +629,8 @@ export const api = {
   parametreGuncelle: (anahtar, deger) => aput(`/admin/parametreler/${anahtar}`, { deger }),
   // [2026-10-10] K1–K4 katman ağırlıkları (katmanlar.normalizasyon_agirligi — skor motorunun okuduğu değer)
   katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
+  geceBakimi: () => aget('/admin/gece-bakimi'),   // [2026-11-04]
+  geceIsiniIptalEt: (id) => apost(`/admin/gece-bakimi/kuyruk/${id}/iptal`),
   katmanAgirliklariniGuncelle: (agirliklar) => aput('/admin/katman-agirliklari', { agirliklar }),
   bolumleriListele: () => aget('/admin/bolumler'),
   bolumDurumDegistir: (bolumId, yeniDurum, gerekce) =>
@@ -673,6 +693,8 @@ export const api = {
   // [2026-10-09] Okul bazlı yönetim (süper admin + okul yetkilisi) — okulId 0 = okul harici
   yonetimBen: () => aget('/yonetim/ben'),
   yonetimIlkSifre: (yeniSifre) => apost('/yonetim/ben/ilk-sifre', { yeni_sifre: yeniSifre }).then((r) => yeniAnahtarlariKaydet(r, 'admin')),
+  yonetimSifreDegistir: (veri) => apost('/yonetim/ben/sifre-degistir', veri).then((r) => { if (!r?.kod_gonderildi) yeniAnahtarlariKaydet(r, 'admin'); return r }),
+  yonetimSifreOnayla: (kod) => apost('/yonetim/ben/sifre-degistir/onayla', { kod }).then((r) => yeniAnahtarlariKaydet(r, 'admin')),
   yonetimOkullar: () => aget('/yonetim/okullar'),
   okulOzeti: (okulId) => aget(`/yonetim/okul/${okulId}/ozet`),
   // [2026-10-10] Okul paneli → İstatistikler; f: { sinif, sube, bas, bit } (hepsi isteğe bağlı)

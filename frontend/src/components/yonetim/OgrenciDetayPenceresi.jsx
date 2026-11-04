@@ -1,5 +1,6 @@
 // [2026-10-09] Öğrenci detayı: hesap, ilerleme, sonuç, istatistik, kayıtlar + şifre sıfırla / düzenle / sil
 import { useEffect, useState } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { t as cevirT } from '../../yardimci/dil'
 import { YonetimOgrenciYorumu } from '../RaporYorumu'
 import { katmanAdi } from '../../yardimci/katmanAdlari'
@@ -277,7 +278,7 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
         <form className="yp-kutu" style={{ marginBottom: 14 }} onSubmit={kaydet}>
           <div className="yp-kb">Bilgileri düzelt</div>
           <div className="yp-form-satir">
-            <input className="auth-input" value={duzen.ad_soyad} onChange={(e) => setDuzen({ ...duzen, ad_soyad: e.target.value })} placeholder="Ad Soyad" required />
+            <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" value={duzen.ad_soyad} onChange={(e) => setDuzen({ ...duzen, ad_soyad: e.target.value })} placeholder="Ad Soyad" required />
             <input className="auth-input" type="email" value={duzen.email} onChange={(e) => setDuzen({ ...duzen, email: e.target.value })} placeholder="E-posta" required />
             <select className="auth-input" value={duzen.sinif} onChange={(e) => setDuzen({ ...duzen, sinif: e.target.value })}>
               <option value="">Sınıf…</option>

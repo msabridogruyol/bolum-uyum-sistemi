@@ -5,7 +5,8 @@ Kaynak: sistem_genel_anlatim.md D1, veritabani_taslagi.md Bölüm 3
 import uuid
 from datetime import datetime, timedelta, timezone
 
-from jose import jwt, JWTError
+import jwt   # [2026-11-04] PyJWT (python-jose bakımsız, bilinen açıklar)
+from jwt import PyJWTError as JWTError
 import bcrypt
 
 from app.core.config import settings
@@ -55,6 +56,7 @@ def _token_uret(konu: str, rol: str, sure: timedelta, tip: str) -> str:
         "tip": tip,        # 'access' | 'refresh'
         "iat": simdi,
         "exp": simdi + sure,
+        "jti": uuid.uuid4().hex,   # [2026-11-04] çıkışta / yenilemede bu anahtar tek başına iptal edilebilsin
     }
     return jwt.encode(payload, settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
 
@@ -81,8 +83,34 @@ def token_coz(token: str) -> dict | None:
 
 
 # ----------------------------------------------------------------------------- [2026-10-11] oturumları geçersiz kılma
+def token_iptal_mi(db, payload: dict) -> bool:
+    """[2026-11-04] Çıkış yapılmış / yenilemede kullanılmış anahtar (iptal_edilen_tokenlar)."""
+    jti = payload.get("jti")
+    if not jti or db is None:
+        return False
+    from sqlalchemy import text
+    try:
+        return db.execute(text("SELECT 1 FROM iptal_edilen_tokenlar WHERE jti = :j"), {"j": jti}).first() is not None
+    except Exception:   # tablo henüz yoksa (göç uygulanmadan) giriş engellenmesin
+        db.rollback()
+        return False
+
+
+def token_iptal_et(db, payload: dict | None) -> None:
+    if not payload or not payload.get("jti"):
+        return
+    from sqlalchemy import text
+    son = datetime.fromtimestamp(int(payload.get("exp", 0)), tz=timezone.utc)
+    db.execute(text("INSERT INTO iptal_edilen_tokenlar (jti, son_kullanma) VALUES (:j, :s) ON CONFLICT (jti) DO NOTHING"),
+               {"j": payload["jti"], "s": son})
+
+
 def token_hesaba_uygun_mu(payload: dict, hesap) -> bool:
-    """Anahtar, hesabın oturumları geçersiz kılınmadan ÖNCE verildiyse False (şifre sıfırlandı / değiştirildi)."""
+    """Anahtar, hesabın oturumları geçersiz kılınmadan ÖNCE verildiyse False (şifre sıfırlandı / değiştirildi).
+    [2026-11-04] Çıkışta ya da yenilemede iptal edilmiş anahtar da False."""
+    from sqlalchemy.orm import object_session
+    if token_iptal_mi(object_session(hesap), payload):
+        return False
     g = getattr(hesap, "oturum_gecersiz_zamani", None)
     if g is None:
         return True

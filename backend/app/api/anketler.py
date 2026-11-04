@@ -25,7 +25,7 @@ from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin s
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
+from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim, get_kvkk_onayli_ogrenci  # [2026-11-04] veri toplayan uçlar güncel KVKK onayı ister
 from app.api.okul_yonetimi import _okul_kapsami
 from app.core.anket_sablonlari import LIKERT, SABLONLAR, SORU_TURLERI, destek_gerekiyor_mu, puanla, seviye_bilgisi
 from app.core.database import get_db
@@ -375,7 +375,7 @@ class YanitIstek(GirdiModeli):
 
 
 @ogrenci_router.post("/anket/{anket_id}/yanit")
-def anket_yanitla(anket_id: int, istek: YanitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def anket_yanitla(anket_id: int, istek: YanitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     a = _anket(db, anket_id)
     if a["okul_id"] != o.okul_id or not _hedefte_mi(a, o) or not _ozet(db, a)["acik"]:
         raise HTTPException(400, "Bu anket şu an yanıta kapalı.")

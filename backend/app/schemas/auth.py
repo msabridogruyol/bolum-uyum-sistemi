@@ -1,10 +1,10 @@
 """Kimlik doğrulama request/response şemaları — D1."""
 from pydantic import BaseModel, EmailStr, Field
-from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 
 
 class OgrenciKayitIstek(GirdiModeli):
-    ad_soyad: str = Field(min_length=2, max_length=200)
+    ad_soyad: str = Field(min_length=2, max_length=AD_SOYAD_EN_FAZLA)
     email: EmailStr
     sifre: str = Field(min_length=8, max_length=128)
 

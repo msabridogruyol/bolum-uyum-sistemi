@@ -22,7 +22,7 @@ from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin s
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
+from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim, get_kvkk_onayli_ogrenci  # [2026-11-04] veri toplayan uçlar güncel KVKK onayı ister
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
 from app.models import AdminKullanici, Ogrenci
@@ -103,7 +103,7 @@ class ProfilIstek(GirdiModeli):
 
 
 @ogrenci_router.put("/profil")
-def profil_kaydet(istek: ProfilIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def profil_kaydet(istek: ProfilIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     yetenek = [y.strip()[:40] for y in istek.yetenekler if y and y.strip()][:20]
     diller = [{"dil": d.dil.strip(), "seviye": d.seviye} for d in istek.diller if d.seviye in DIL_SEVIYE][:8]
     db.execute(text("""
@@ -157,7 +157,7 @@ def _dogrula(istek: KayitIstek) -> dict:
 
 
 @ogrenci_router.post("/kayit", status_code=201)
-def kayit_ekle(istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def kayit_ekle(istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     if db.execute(text("SELECT count(*) FROM portfolyo_kayitlari WHERE ogrenci_id = :o"), {"o": o.id}).scalar() >= 100:
         raise HTTPException(400, "Portfolyoda en fazla 100 kayıt olabilir.")
     v = _dogrula(istek)
@@ -170,7 +170,7 @@ def kayit_ekle(istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = De
 
 
 @ogrenci_router.put("/kayit/{kayit_id}")
-def kayit_duzenle(kayit_id: int, istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def kayit_duzenle(kayit_id: int, istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     v = _dogrula(istek)
     belge = "" if istek.belge is None else ", belge = :be, belge_adi = :bn"
     # içerik değişince rehber doğrulaması düşer
