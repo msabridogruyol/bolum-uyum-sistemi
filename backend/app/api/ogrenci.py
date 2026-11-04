@@ -679,6 +679,9 @@ def profil_guncelle(
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
     veri = istek.model_dump(exclude_unset=True)
+    if "ad_soyad" in veri:   # [2026-11-04] yeni / değişen ad en fazla 30 karakter
+        from app.schemas.girdi import ad_soyad_denetle
+        ad_soyad_denetle(veri["ad_soyad"], ogrenci.ad_soyad)
     veri.pop("okul", None)   # [2026-10-09] okul öğrenciden alınmaz; yönetimden atanır
     veri.pop("email", None)
     if ogrenci.okul_id:      # [2026-10-11] okula bağlı öğrencinin sınıfı / şubesi okul tarafından belirlenir

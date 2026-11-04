@@ -14,7 +14,7 @@ import threading
 import time
 
 OZET_SURESI_SN = 300
-_EN_FAZLA = 256
+_EN_FAZLA = 64   # 20.000 öğrencili bir okulun özeti birkaç MB olabilir; Render bellek sınırı için düşük tutuldu
 _veri: dict = {}
 _kilitler: dict = {}
 _ana = threading.Lock()

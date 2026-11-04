@@ -45,7 +45,7 @@ from datetime import datetime, timedelta
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import Field, BaseModel
-from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_ALAN_SINIRI, AD_SOYAD_EN_FAZLA, GirdiModeli, ad_soyad_denetle  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 
@@ -331,7 +331,9 @@ def _dogrula(db: Session, satirlar: list[dict], okul_id: int | None = None) -> l
         s["guncelle"] = None
         if len(s["ad_soyad"]) < 3:
             hatalar.append("Ad soyad eksik")
-        elif len(s["ad_soyad"]) > AD_SOYAD_EN_FAZLA:   # [2026-11-04] kullanıcı kuralı: en fazla 30 karakter
+        elif len(s["ad_soyad"]) > AD_SOYAD_EN_FAZLA and \
+                " ".join((kayitli.get(s["email"].lower()).ad_soyad if kayitli.get(s["email"].lower()) else "").split()) != s["ad_soyad"]:
+            # [2026-11-04] kullanıcı kuralı: yeni ya da değişen ad en fazla 30 karakter (kayıtlı uzun ad aynen gelirse geçerli)
             hatalar.append(f"Ad soyad en fazla {AD_SOYAD_EN_FAZLA} karakter olabilir")
         if not s["email"]:
             hatalar.append("E-posta eksik")
@@ -459,7 +461,7 @@ class DosyaIstek(GirdiModeli):
 
 
 class OgrenciSatir(GirdiModeli):
-    ad_soyad: str = Field(max_length=AD_SOYAD_EN_FAZLA)
+    ad_soyad: str = Field(max_length=AD_SOYAD_ALAN_SINIRI)   # 30 kuralı: _dogrula (yeni/değişen adda)
     email: str = Field(max_length=254)
     sinif: str | None = None
     sube: str | None = None
@@ -472,7 +474,7 @@ class TopluOlusturIstek(GirdiModeli):
 
 
 class OgrenciDuzenleIstek(GirdiModeli):
-    ad_soyad: str | None = Field(None, max_length=AD_SOYAD_EN_FAZLA)
+    ad_soyad: str | None = Field(None, max_length=AD_SOYAD_ALAN_SINIRI)   # 30 kuralı: yeni/değişen adda (ad_soyad_denetle)
     email: str | None = Field(None, max_length=254)
     sinif: str | None = None
     sube: str | None = None
@@ -494,7 +496,7 @@ class YetkiliEkleIstek(GirdiModeli):
 
 
 class YetkiliDuzenleIstek(GirdiModeli):
-    ad_soyad: str | None = Field(None, max_length=AD_SOYAD_EN_FAZLA)
+    ad_soyad: str | None = Field(None, max_length=AD_SOYAD_ALAN_SINIRI)   # 30 kuralı: yeni/değişen adda (ad_soyad_denetle)
     unvan: str | None = None
 
 
@@ -1011,6 +1013,7 @@ def ogrenci_duzenle(ogrenci_id: str, istek: OgrenciDuzenleIstek, db: Session = D
     if istek.ad_soyad is not None and istek.ad_soyad.strip() != o.ad_soyad:
         if len(istek.ad_soyad.strip()) < 3:
             raise HTTPException(status_code=400, detail="Ad soyad eksik.")
+        ad_soyad_denetle(istek.ad_soyad, o.ad_soyad)
         o.ad_soyad = re.sub(r"\s+", " ", istek.ad_soyad).strip()
         degisen.append("ad soyad")
     if istek.email is not None and istek.email.strip().lower() != o.email.lower():
@@ -1277,7 +1280,7 @@ def okul_kayitlari(okul_id: int, gun: int = 30, db: Session = Depends(get_db), y
 # ----------------------------------------------------------------------------- okul tanıtım bilgileri
 class KadroGirdi(GirdiModeli):
     gorev: str = Field(max_length=80)
-    ad: str = Field(max_length=AD_SOYAD_EN_FAZLA)
+    ad: str = Field(max_length=AD_SOYAD_ALAN_SINIRI)   # 30 kuralı: kadroya yeni eklenen / değişen ad
     eposta: str | None = Field(None, max_length=254)
     telefon: str | None = None
 
@@ -1340,8 +1343,11 @@ def okul_bilgi_guncelle(okul_id: int, istek: OkulBilgiIstek, db: Session = Depen
     if len(istek.kadro) > 40:
         raise HTTPException(status_code=400, detail="Kadroya en fazla 40 kişi eklenebilir.")
     kadro = []
+    kayitli_adlar = {" ".join(str(x.get("ad") or "").split()) for x in (okul.kadro or [])}
     for i, k in enumerate(istek.kadro, start=1):
         ad, gorev = _kirp(k.ad, 80), _kirp(k.gorev, 60)
+        if ad and ad not in kayitli_adlar:
+            ad_soyad_denetle(ad)
         if not ad and not (k.eposta or "").strip():
             continue  # boş satır
         if not ad or not gorev:
@@ -1437,7 +1443,7 @@ def yonetim_bolumler(db: Session = Depends(get_db), yon: AdminKullanici = Depend
 class SubeIstek(GirdiModeli):
     sinif: str
     sube: str
-    ogretmen_ad: str | None = Field(None, max_length=AD_SOYAD_EN_FAZLA)
+    ogretmen_ad: str | None = Field(None, max_length=AD_SOYAD_ALAN_SINIRI)   # 30 kuralı: sube_guncelle
     ogretmen_eposta: str | None = None
 
 
@@ -1450,6 +1456,9 @@ def sube_guncelle(okul_id: int, istek: SubeIstek, db: Session = Depends(get_db),
     if sinif not in SINIFLAR or not sube:
         raise HTTPException(status_code=400, detail="Geçersiz sınıf / şube.")
     ad = re.sub(r"\s+", " ", istek.ogretmen_ad or "").strip()[:80] or None
+    if ad:
+        ad_soyad_denetle(ad, db.execute(text("SELECT ogretmen_ad FROM okul_subeleri WHERE okul_id = :o AND sinif = :s AND sube = :b"),
+                                        {"o": okul_id, "s": sinif, "b": sube}).scalar())
     ep = (istek.ogretmen_eposta or "").strip()[:120] or None
     if ep and not _EPOSTA.match(ep):
         raise HTTPException(status_code=400, detail="E-posta geçersiz.")
@@ -1475,6 +1484,7 @@ def yetkili_duzenle(yetkili_id: str, istek: YetkiliDuzenleIstek, db: Session = D
         ad = re.sub(r"\s+", " ", istek.ad_soyad).strip()
         if len(ad) < 3:
             raise HTTPException(status_code=400, detail="Ad soyad eksik.")
+        ad_soyad_denetle(ad, y.ad_soyad)
         y.ad_soyad = ad
     if istek.unvan is not None:
         y.unvan = _unvan(istek.unvan)

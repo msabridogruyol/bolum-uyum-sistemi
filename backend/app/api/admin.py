@@ -423,7 +423,10 @@ _AGIRLIK_KATMANLARI = ("K1", "K2", "K3", "K4")
 
 def _katman_agirliklari_oku(db: Session) -> list[KatmanAgirligiOut]:
     katmanlar = db.query(Katman).filter(Katman.kod.in_(_AGIRLIK_KATMANLARI)).order_by(Katman.sira, Katman.kod).all()
-    return [KatmanAgirligiOut(katman_kod=k.kod, ad=k.ad, agirlik=float(k.normalizasyon_agirligi or 0)) for k in katmanlar]
+    bekleyen = db.execute(text("""SELECT veri->'agirliklar' FROM gece_kuyrugu WHERE tur = 'katman_agirliklari' AND durum = 'bekliyor'
+                                  ORDER BY id DESC LIMIT 1""")).scalar() or {}
+    return [KatmanAgirligiOut(katman_kod=k.kod, ad=k.ad, agirlik=float(k.normalizasyon_agirligi or 0),
+                              bekleyen=(float(bekleyen[k.kod]) if k.kod in bekleyen else None)) for k in katmanlar]
 
 
 @router.get("/katman-agirliklari", response_model=list[KatmanAgirligiOut])
@@ -477,6 +480,15 @@ def katman_agirliklarini_guncelle(
         denetim_yaz(db, admin, "katman_agirlik_guncelleme", "katmanlar", "K1-K4",
                     f"Katman ağırlığı değişikliği gece bakımına alındı ({k['zamanlandi']}): önce {onceki} → sonra {yeni}")
         db.commit()
+    else:
+        # Şu an geçerli değerlere geri dönüldü: bekleyen gece işi varsa iptal edilir (gece boşuna yeniden hesap yapılmaz).
+        from app.core.hesap_yonetimi import denetim_yaz
+        n = db.execute(text("""UPDATE gece_kuyrugu SET durum = 'iptal', sonuc = :s
+                               WHERE tur = 'katman_agirliklari' AND durum = 'bekliyor'"""),
+                       {"s": f"{admin.ad_soyad} şu anki değerlere geri döndü"}).rowcount
+        if n:
+            denetim_yaz(db, admin, "katman_agirlik_guncelleme", "katmanlar", "K1-K4", f"Bekleyen ağırlık değişikliği geri alındı ({onceki})")
+            db.commit()
     return _katman_agirliklari_oku(db)
 
 
@@ -489,7 +501,8 @@ def katman_agirliklarini_uygula(db: Session, agirliklar: dict, isteyen_id: str |
     from app.core.skor_motoru import bolum_onbellegini_temizle
     bolum_onbellegini_temizle()
     db.commit()
-    return f"{onceki} → {agirliklar}"
+    yeni = {kod: round(float(agirliklar[kod]), 2) for kod in _AGIRLIK_KATMANLARI}
+    return f"{onceki} → {yeni}", onceki != yeni
 
 
 def _skorlari_arka_planda_hesapla() -> None:
@@ -852,7 +865,7 @@ def pipeline_taslagini_uygula(db: Session, grup: str, isteyen_id: str | None = N
     """Gece bakımında çalışır (app/core/gece_bakimi.py). Skorların yeniden hesabı bakımın sonunda bir kez yapılır."""
     var_mi = db.execute(text("SELECT 1 FROM bolum_agirliklari_taslak WHERE yukleme_grubu = :g AND durum = 'bekliyor' LIMIT 1"), {"g": grup}).first()
     if not var_mi:
-        return "taslak zaten işlenmiş"
+        return "taslak zaten işlenmiş", False
     yeni_versiyon = (db.execute(text("SELECT COALESCE(MAX(versiyon), 0) + 1 FROM bolum_agirliklari")).scalar())
 
     db.execute(
@@ -875,7 +888,7 @@ def pipeline_taslagini_uygula(db: Session, grup: str, isteyen_id: str | None = N
     if admin is not None:
         _audit_yaz(db, admin, "pipeline_taslagi_canliya_alindi", "bolum_agirliklari", grup, f"versiyon {yeni_versiyon} (gece bakımı)")
     db.commit()
-    return f"versiyon {yeni_versiyon} canlıya alındı"
+    return f"versiyon {yeni_versiyon} canlıya alındı", True
 
 
 def uyum_skorlarini_yeniden_hesapla(db: Session) -> int:

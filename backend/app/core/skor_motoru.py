@@ -613,35 +613,47 @@ def toplu_siralama(db: Session, tur_idler, ilk_n: int | None = None) -> dict[int
         return _toplu_siralama_hesapla(db, turlar, ilk_n)
     girdiler, surum = _siralama_girdileri(db)
     sonuc: dict[int, list[SiralamaSatiri]] = {}
-    for tur_id, bolumler, uyumlar in db.execute(
-            _text("SELECT tur_id, bolumler, uyumlar FROM tur_oneri_ozeti WHERE tur_id = ANY(:t) AND surum = :s"),
+    # Skor sürümü (n) hesaplamadan ÖNCE okunur: hesap sırasında skor değişirse n artar, yazılan özet eşleşmez.
+    n_of = {t: 0 for t in turlar}
+    for tur_id, n, bolumler, uyumlar in db.execute(_text("""
+            SELECT t.tur_id, COALESCE(v.n, 0), z.bolumler, z.uyumlar
+              FROM unnest(CAST(:t AS BIGINT[])) AS t(tur_id)
+              LEFT JOIN tur_skor_surumu v ON v.tur_id = t.tur_id
+              LEFT JOIN tur_oneri_ozeti z ON z.tur_id = t.tur_id AND z.surum = :s AND z.kaynak_n = COALESCE(v.n, 0)"""),
             {"t": turlar, "s": surum}).all():
-        sonuc[tur_id] = [SiralamaSatiri(bolum_id=b, toplam_uyum=float(u)) for b, u in zip(bolumler, uyumlar)][:ilk_n]
+        n_of[tur_id] = n
+        if bolumler is not None:
+            sonuc[tur_id] = [SiralamaSatiri(bolum_id=b, toplam_uyum=float(u)) for b, u in zip(bolumler, uyumlar)][:ilk_n]
     eksik = [t for t in turlar if t not in sonuc]
     if eksik:
         yeni = _toplu_siralama_hesapla(db, eksik, OZET_ILK_N, girdiler)
-        _ozetleri_yaz(db, yeni, surum)
+        _ozetleri_yaz(db, yeni, surum, n_of)
         for t, satirlar in yeni.items():
             sonuc[t] = satirlar[:ilk_n]
     return sonuc
 
 
-def _ozetleri_yaz(db: Session, ozetler: dict, surum: str) -> None:
+def _ozetleri_yaz(db: Session, ozetler: dict, surum: str, n_of: dict | None = None) -> None:
     """Ayrı bağlantıda yazar: çağıran isteğin işlemine (commit/rollback) karışmaz. Yazılamazsa (ör. tur henüz başka işlemde)
     sessizce geçilir; bir sonraki istekte yeniden hesaplanır."""
     if not ozetler:
         return
     from sqlalchemy import text as _text
     from app.core.database import engine
-    satirlar = [{"t": t, "b": [s.bolum_id for s in l], "u": [round(float(s.toplam_uyum), 4) for s in l], "s": surum}
+    n_of = n_of or {}
+    satirlar = [{"t": t, "b": [s.bolum_id for s in l], "u": [round(float(s.toplam_uyum), 4) for s in l], "s": surum,
+                 "n": int(n_of.get(t, 0))}
                 for t, l in ozetler.items()]
     try:
         with engine.begin() as b:
+            # Çağıran işlem aynı satırı kilitli tutuyorsa (aynı süreçte) beklemeden vazgeç; ölü kilit olmasın.
+            b.execute(_text("SET LOCAL lock_timeout = '2s'"))
             for i in range(0, len(satirlar), 1000):
-                b.execute(_text("""INSERT INTO tur_oneri_ozeti (tur_id, bolumler, uyumlar, surum, hesaplama_zamani)
-                                   VALUES (:t, :b, :u, :s, now())
+                b.execute(_text("""INSERT INTO tur_oneri_ozeti (tur_id, bolumler, uyumlar, surum, kaynak_n, hesaplama_zamani)
+                                   VALUES (:t, :b, :u, :s, :n, now())
                                    ON CONFLICT (tur_id) DO UPDATE SET bolumler = EXCLUDED.bolumler, uyumlar = EXCLUDED.uyumlar,
-                                       surum = EXCLUDED.surum, hesaplama_zamani = now()"""), satirlar[i:i + 1000])
+                                       surum = EXCLUDED.surum, kaynak_n = EXCLUDED.kaynak_n, hesaplama_zamani = now()"""),
+                          satirlar[i:i + 1000])
     except Exception:
         log.warning("tur_oneri_ozeti yazılamadı", exc_info=True)
 
@@ -651,7 +663,9 @@ def oneri_ozetlerini_doldur(db: Session, parti: int = 2000) -> int:
     from sqlalchemy import text as _text
     _girdiler, surum = _siralama_girdileri(db)
     eksik = [r[0] for r in db.execute(_text("""
-        SELECT t.id FROM ogrenci_degerlendirme_turu t LEFT JOIN tur_oneri_ozeti z ON z.tur_id = t.id AND z.surum = :s
+        SELECT t.id FROM ogrenci_degerlendirme_turu t
+          LEFT JOIN tur_skor_surumu v ON v.tur_id = t.id
+          LEFT JOIN tur_oneri_ozeti z ON z.tur_id = t.id AND z.surum = :s AND z.kaynak_n = COALESCE(v.n, 0)
          WHERE t.durum = 'tamamlandi' AND z.tur_id IS NULL"""), {"s": surum}).all()]
     for i in range(0, len(eksik), parti):
         toplu_siralama(db, eksik[i:i + parti], OZET_ILK_N)

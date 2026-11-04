@@ -10,7 +10,7 @@ bulunabilir.
 """
 from datetime import datetime, date
 from pydantic import Field, BaseModel
-from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_ALAN_SINIRI, AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 
 
 class KatmanOut(BaseModel):
@@ -195,7 +195,7 @@ class ProfilOut(BaseModel):
 
 
 class ProfilGuncelleIstek(GirdiModeli):
-    ad_soyad: str | None = Field(None, max_length=AD_SOYAD_EN_FAZLA)
+    ad_soyad: str | None = Field(None, max_length=AD_SOYAD_ALAN_SINIRI)   # 30 kuralı: ogrenci.profil_guncelle
     okul: str | None = None   # [2026-10-09] yok sayılır — okul yönetimden atanır (eski istemciler için alan duruyor)
     sinif: str | None = None
     dogum_tarihi: date | None = None

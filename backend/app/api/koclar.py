@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_ALAN_SINIRI, AD_SOYAD_EN_FAZLA, GirdiModeli, ad_soyad_denetle  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -189,7 +189,7 @@ class TalepIstek(GirdiModeli):
     tercih_zamani: str | None = Field(default=None, max_length=120)
     mesaj: str | None = Field(default=None, max_length=800)
     talep_eden: str = "ogrenci"           # ogrenci | veli
-    veli_ad: str | None = Field(default=None, max_length=80)
+    veli_ad: str | None = Field(default=None, max_length=AD_SOYAD_EN_FAZLA)   # [2026-11-04] kişi adı en fazla 30
     iletisim: str | None = Field(default=None, max_length=120)
 
 
@@ -238,7 +238,7 @@ def talep_iptal(talep_id: int, db: Session = Depends(get_db), o: Ogrenci = Depen
 
 # ============================================================================= yönetim
 class KocIstek(GirdiModeli):
-    ad_soyad: str = Field(min_length=3, max_length=AD_SOYAD_EN_FAZLA)
+    ad_soyad: str = Field(min_length=3, max_length=AD_SOYAD_ALAN_SINIRI)   # 30 kuralı: koc_ekle / koc_duzenle
     unvan: str | None = Field(default=None, max_length=80)
     hakkinda: str | None = Field(default=None, max_length=1000)
     alanlar: list[str] = Field(default_factory=list)
@@ -296,6 +296,7 @@ def koclari_listele(db: Session = Depends(get_db), yon: AdminKullanici = Depends
 
 @router.post("/koclar", status_code=201)
 def koc_ekle(istek: KocIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
+    ad_soyad_denetle(istek.ad_soyad)
     d = _degerler(db, istek)
     kid = db.execute(text("""
         INSERT INTO egitim_koclari (ad_soyad, unvan, hakkinda, alanlar, konular, deneyim_yil, gorusme_sekli,
@@ -316,7 +317,8 @@ def _koc(db: Session, koc_id: int) -> dict:
 
 @router.put("/koc/{koc_id}")
 def koc_duzenle(koc_id: int, istek: KocIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_super_admin)):
-    _koc(db, koc_id)
+    eski = _koc(db, koc_id)
+    ad_soyad_denetle(istek.ad_soyad, (eski or {}).get("ad_soyad") if isinstance(eski, dict) else getattr(eski, "ad_soyad", None))
     d = _degerler(db, istek)
     db.execute(text("""
         UPDATE egitim_koclari SET ad_soyad = :ad, unvan = :un, hakkinda = :ha, alanlar = :al, konular = :ko,

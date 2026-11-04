@@ -1,17 +1,20 @@
 # [2026-11-04] Kullanıcı kuralı: "sistemde değişiklik yapıldığında her zaman gece 3'te güncellesin".
 #
 # Nasıl çalışır: birleştirilmeye hazır PR'a GitHub'da "gece-yayin" etiketi konur (Merge düğmesine basılmaz).
-# Bu iş her gece 03:00'te (Türkiye; 00:00 UTC) etiketli ve testleri geçmiş PR'ları numara sırasıyla main'e birleştirir.
+# Bu iş her gece 02:30'da (Türkiye; 23:30 UTC) etiketli ve testleri geçmiş PR'ları numara sırasıyla main'e birleştirir;
+# yayın (~5–10 dk) 03:00 gece bakımından önce biter. Bakım yine de yarıda kalırsa 06:00'ya kadar kendini yeniden başlatır.
 # Vercel (arayüz) ve Render (sunucu) main'deki değişikliği kendiliğinden yayınlar; böylece bütün yayınlar gece olur.
-# Sunucudaki ağır işler (göçler, skorların yeniden hesabı) zaten 03:00–06:00 gece bakımında çalışır (app/core/gece_bakimi.py).
+# Sunucudaki ağır işler (göçler, skorların yeniden hesabı) 03:00–06:00 gece bakımında çalışır (app/core/gece_bakimi.py).
 # - Birleştirilemeyen (çakışan, testi kırmızı, taslak) PR atlanır ve PR'a yorum yazılır; etiket kalır, ertesi gece yeniden denenir.
 # - Acil düzeltme gerekirse PR yine elle birleştirilebilir ya da bu iş Actions › "Gece yayini" › Run workflow ile hemen çalıştırılır.
-# - GitHub zamanlanmış işleri birkaç dakika ile bir saat arası gecikmeli başlatabilir; gece bakımı 06:00'ya kadar bekler.
+# - GitHub zamanlanmış işleri birkaç dakika ile bir saat arası gecikmeli başlatabilir; gece bakımı yarıda kalırsa 06:00'ya
+#   kadar yeniden başlar (adımları tekrarlanabilir).
+# - Yalnızca bütün kontrolleri (testler) yeşil olan PR birleştirilir; kontrol bilgisi okunamazsa PR atlanır.
 name: Gece yayini
 
 on:
   schedule:
-    - cron: "0 0 * * *"
+    - cron: "30 23 * * *"
   workflow_dispatch: {}
 
 permissions:
@@ -38,9 +41,9 @@ jobs:
           if [ -z "$prler" ]; then echo "Bu gece yayinlanacak PR yok."; exit 0; fi
           for pr in $prler; do
             echo "== PR #$pr"
-            durum=$(gh pr checks "$pr" -R "$REPO" --json bucket --jq '[.[].bucket] | if length == 0 then "yok" elif all(. == "pass" or . == "skipping") then "gecti" elif any(. == "pending") then "bekliyor" else "kaldi" end' 2>/dev/null || echo "yok")
-            if [ "$durum" = "kaldi" ] || [ "$durum" = "bekliyor" ]; then
-              gh pr comment "$pr" -R "$REPO" --body "Gece yayını: testler $durum olduğu için bu gece birleştirilmedi; etiket duruyor, yarın gece yeniden denenecek."
+            durum=$(gh pr checks "$pr" -R "$REPO" --json bucket --jq '[.[].bucket] | if length == 0 then "kontrol yok" elif all(. == "pass" or . == "skipping") then "gecti" elif any(. == "pending") then "bekliyor" else "kaldi" end' 2>/dev/null || echo "okunamadi")
+            if [ "$durum" != "gecti" ]; then
+              gh pr comment "$pr" -R "$REPO" --body "Gece yayını: kontrollerin durumu \"$durum\" olduğu için bu gece birleştirilmedi; etiket duruyor, yarın gece yeniden denenecek."
               continue
             fi
             if gh pr merge "$pr" -R "$REPO" --merge --delete-branch=false; then

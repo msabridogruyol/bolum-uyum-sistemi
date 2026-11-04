@@ -23,7 +23,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_ALAN_SINIRI, AD_SOYAD_EN_FAZLA, GirdiModeli, ad_soyad_denetle  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -313,7 +313,7 @@ def mezunlar(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = 
 
 
 class MezunIstek(YerlesmeIstek):
-    ad_soyad: str = Field(min_length=3, max_length=AD_SOYAD_EN_FAZLA)
+    ad_soyad: str = Field(min_length=3, max_length=AD_SOYAD_ALAN_SINIRI)   # 30 kuralı: yalnızca elle girilen yeni / değişen ad
     ogrenci_id: str | None = None
 
 
@@ -322,6 +322,8 @@ def mezun_ekle(okul_id: int, istek: MezunIstek, db: Session = Depends(get_db), y
     if _okul_kapsami(db, yon, okul_id) is None:
         raise HTTPException(400, "Okul seçin.")
     o = _ogrenci_kapsami(db, yon, istek.ogrenci_id) if istek.ogrenci_id else None
+    if o is None:
+        ad_soyad_denetle(istek.ad_soyad)
     yeni = _mezun_kaydi_yaz(db, okul_id, o, o.ad_soyad if o else istek.ad_soyad.strip(), istek, "okul")
     denetim_yaz(db, yon, "mezun_ekle", "mezun_yerlesmeleri", yeni, istek.ad_soyad, okul_id)
     db.commit()
@@ -335,6 +337,8 @@ def mezun_duzenle(mezun_id: int, istek: MezunIstek, db: Session = Depends(get_db
         raise HTTPException(404, "Kayıt bulunamadı.")
     _okul_kapsami(db, yon, r.okul_id)
     o = db.get(Ogrenci, r.ogrenci_id) if r.ogrenci_id else None
+    if o is None:
+        ad_soyad_denetle(istek.ad_soyad, db.execute(text("SELECT ad_soyad FROM mezun_yerlesmeleri WHERE id = :i"), {"i": mezun_id}).scalar())
     _mezun_kaydi_yaz(db, r.okul_id, o, o.ad_soyad if o else istek.ad_soyad.strip(), istek, "okul", mezun_id)
     denetim_yaz(db, yon, "mezun_duzenle", "mezun_yerlesmeleri", mezun_id, istek.ad_soyad, r.okul_id)
     db.commit()

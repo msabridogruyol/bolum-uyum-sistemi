@@ -34,7 +34,7 @@ def akranlar(ogrenci_id: str, kapsam: str = "okul", db: Session = Depends(get_db
     if kapsam == "sinif" and o.sinif:
         havuz = [x for x in havuz if x.sinif == o.sinif]
     havuz = [x for x in havuz if x.sinif != "Aday" or x.id == o.id]
-    return benzer_akranlar(db, str(o.id), [(x.id, x.ad_soyad, _sinif_metni(x)) for x in havuz], n=5)
+    return benzer_akranlar(db, str(o.id), [(x.id, x.ad_soyad, _sinif_metni(x)) for x in havuz], n=5, okul_id=o.okul_id or 0)
 
 
 class DagilimIstek(GirdiModeli):

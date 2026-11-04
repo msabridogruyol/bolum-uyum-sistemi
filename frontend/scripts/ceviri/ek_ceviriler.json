@@ -2609,5 +2609,33 @@
   "uz": "Tungi texnik xizmat",
   "az": "Gecə texniki xidməti",
   "ko": "야간 유지보수"
+ },
+ "Şu an geçerli ağırlıklara dönüldü; bekleyen gece değişikliği iptal edildi.": {
+  "en": "Reverted to the current weights; the pending overnight change was cancelled.",
+  "de": "Auf die aktuellen Gewichte zurückgesetzt; die ausstehende nächtliche Änderung wurde storniert.",
+  "fr": "Retour aux pondérations actuelles ; la modification nocturne en attente a été annulée.",
+  "ru": "Возвращены текущие веса; ожидающее ночное изменение отменено.",
+  "es": "Se volvió a los pesos actuales; el cambio nocturno pendiente se canceló.",
+  "it": "Ripristinati i pesi attuali; la modifica notturna in sospeso è stata annullata.",
+  "ar": "تمت العودة إلى الأوزان الحالية؛ وأُلغي التغيير الليلي المعلّق.",
+  "zh": "已恢复为当前权重；待执行的夜间更改已取消。",
+  "hi": "वर्तमान भार पर लौट आए; लंबित रात्रिकालीन परिवर्तन रद्द कर दिया गया।",
+  "uz": "Joriy vaznlarga qaytildi; kutilayotgan tungi o‘zgarish bekor qilindi.",
+  "az": "Hazırkı çəkilərə qayıdıldı; gözləyən gecə dəyişikliyi ləğv edildi.",
+  "ko": "현재 가중치로 되돌렸습니다. 대기 중이던 야간 변경은 취소되었습니다."
+ },
+ "Alanlardaki değerler gece bakımında uygulanacak. Şu an geçerli olan: {0}.": {
+  "en": "The values in the fields will be applied during overnight maintenance. Currently in effect: {0}.",
+  "de": "Die Werte in den Feldern werden bei der nächtlichen Wartung übernommen. Derzeit gültig: {0}.",
+  "fr": "Les valeurs des champs seront appliquées lors de la maintenance nocturne. Actuellement en vigueur : {0}.",
+  "ru": "Значения в полях будут применены во время ночного обслуживания. Сейчас действуют: {0}.",
+  "es": "Los valores de los campos se aplicarán durante el mantenimiento nocturno. Vigentes ahora: {0}.",
+  "it": "I valori nei campi saranno applicati durante la manutenzione notturna. Attualmente in vigore: {0}.",
+  "ar": "ستُطبَّق القيم الموجودة في الحقول أثناء الصيانة الليلية. المعمول به حاليًا: {0}.",
+  "zh": "字段中的数值将在夜间维护时生效。当前生效：{0}。",
+  "hi": "फ़ील्ड में दिए मान रात्रिकालीन रखरखाव के दौरान लागू होंगे। अभी लागू: {0}।",
+  "uz": "Maydonlardagi qiymatlar tungi texnik xizmat vaqtida qo‘llanadi. Hozir amalda: {0}.",
+  "az": "Sahələrdəki dəyərlər gecə baxımında tətbiq ediləcək. Hazırda qüvvədə olan: {0}.",
+  "ko": "입력란의 값은 야간 점검 때 적용됩니다. 현재 적용 중: {0}."
  }
 }

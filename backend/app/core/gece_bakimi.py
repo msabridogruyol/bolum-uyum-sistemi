@@ -64,9 +64,15 @@ def sonraki_bakim(db, simdi: datetime | None = None) -> datetime:
 
 
 def zamanlama_metni(db) -> str:
-    z, simdi = sonraki_bakim(db), datetime.now(YEREL)
-    if (z.date() - simdi.date()).days <= 1 and z.hour < 12:
+    simdi = datetime.now(YEREL)
+    z = sonraki_bakim(db, simdi)
+    if z <= simdi:
+        return "şu anda (bakım sürüyor)"
+    gun = (z.date() - simdi.date()).days
+    if gun == 0 or (gun == 1 and simdi.hour >= 12):
         return f"bu gece {z:%H:%M}"
+    if gun == 1:
+        return f"yarın {z:%H:%M}"
     return f"{z:%d.%m.%Y %H:%M}"
 
 
@@ -104,7 +110,9 @@ def calismali_mi(db, simdi: datetime | None = None) -> bool:
         simdi.replace(hour=23, minute=59, second=59, microsecond=0)
     if not (baslangic <= simdi < bitis):
         return False
-    return db.execute(text("SELECT 1 FROM gece_bakim_kaydi WHERE gun = :g"), {"g": simdi.date()}).first() is None
+    # [2026-11-04] Yarıda kalan bakım (gece yayınında sunucu yeniden başladı) da yeniden çalışır: adımlar tekrarlanabilir.
+    # Başka bir süreç hâlâ çalıştırıyorsa bakimi_calistir kilidi alamaz ve çıkar.
+    return db.execute(text("SELECT 1 FROM gece_bakim_kaydi WHERE gun = :g AND durum <> 'calisiyor'"), {"g": simdi.date()}).first() is None
 
 
 def bakimi_calistir(engine, gun: date | None = None) -> dict | None:
@@ -116,10 +124,17 @@ def bakimi_calistir(engine, gun: date | None = None) -> dict | None:
         if not kilit_bag.execute(text("SELECT pg_try_advisory_lock(:k)"), {"k": KILIT}).scalar():
             return None
         try:
-            kid = kilit_bag.execute(text("""INSERT INTO gece_bakim_kaydi (gun) VALUES (:g) ON CONFLICT (gun) DO NOTHING RETURNING id"""),
-                                    {"g": gun}).scalar()
-            if kid is None:
+            r = kilit_bag.execute(text("SELECT id, durum FROM gece_bakim_kaydi WHERE gun = :g"), {"g": gun}).first()
+            if r is not None and r.durum != "calisiyor":
                 return None
+            if r is not None:   # yarıda kalmış: aynı satırla baştan (kilit bizde; çalışan başka süreç yok)
+                kid = r.id
+                kilit_bag.execute(text("UPDATE gece_bakim_kaydi SET baslama = now(), ayrinti = '[]'::jsonb WHERE id = :i"), {"i": kid})
+            else:
+                kid = kilit_bag.execute(text("""INSERT INTO gece_bakim_kaydi (gun) VALUES (:g) ON CONFLICT (gun) DO NOTHING RETURNING id"""),
+                                        {"g": gun}).scalar()
+                if kid is None:
+                    return None
             ayrinti: list[dict] = []
             for ad, fn in _ADIMLAR:
                 t0 = time.time()
@@ -187,8 +202,15 @@ def _gocler(db, engine) -> dict:
 
 
 def _kuyruk(db, engine) -> dict:
-    satirlar = db.execute(text("SELECT id, tur, veri FROM gece_kuyrugu WHERE durum = 'bekliyor' ORDER BY id FOR UPDATE SKIP LOCKED")).mappings().all()
+    """Kuyruktaki değişiklikler uygulanır; gerekiyorsa skorlar yeniden hesaplanır. İşler skor hesabı bitene kadar 'calisiyor'
+    kalır ve göçlerin 'bekleyen_skor_hesabi' işareti ancak hesaptan sonra silinir: yarıda kesilirse (sunucu yeniden başladı)
+    bir sonraki deneme aynı işleri yeniden uygular (uygulamalar tekrarlanabilir) ve skorları yeniden hesaplar."""
+    # bakım kilidi bizde: 'calisiyor' kalmış işler yarıda kesilmiş bir denemeden kalmıştır
+    db.execute(text("UPDATE gece_kuyrugu SET durum = 'bekliyor' WHERE durum = 'calisiyor'"))
+    db.commit()
+    satirlar = db.execute(text("SELECT id, tur, veri FROM gece_kuyrugu WHERE durum = 'bekliyor' ORDER BY id")).mappings().all()
     skor_gerekli = False
+    bekleyen = []   # (id, mesaj) — skor hesabından sonra 'tamamlandi'
     sonuc = []
     for r in satirlar:
         db.execute(text("UPDATE gece_kuyrugu SET durum = 'calisiyor', calisma_zamani = now() WHERE id = :i"), {"i": r["id"]})
@@ -196,32 +218,37 @@ def _kuyruk(db, engine) -> dict:
         try:
             if r["tur"] == "pipeline_onay":
                 from app.api.admin import pipeline_taslagini_uygula
-                mesaj = pipeline_taslagini_uygula(db, r["veri"]["grup"], r["veri"].get("isteyen_id"))
-                skor_gerekli = True
+                mesaj, degisti = pipeline_taslagini_uygula(db, r["veri"]["grup"], r["veri"].get("isteyen_id"))
             elif r["tur"] == "katman_agirliklari":
                 from app.api.admin import katman_agirliklarini_uygula
-                mesaj = katman_agirliklarini_uygula(db, r["veri"]["agirliklar"], r["veri"].get("isteyen_id"))
-                skor_gerekli = True
+                mesaj, degisti = katman_agirliklarini_uygula(db, r["veri"]["agirliklar"], r["veri"].get("isteyen_id"))
             else:
-                mesaj = "skorlar yeniden hesaplanacak"
-                skor_gerekli = True
-            durum = "tamamlandi"
+                mesaj, degisti = "skorlar yeniden hesaplanacak", True
+            skor_gerekli = skor_gerekli or degisti
+            if degisti:   # yarıda kesilirse yeniden denemede skorlar mutlaka hesaplansın (işaret hesaptan sonra silinir)
+                db.execute(text("""INSERT INTO tek_seferlik_gocler (ad) SELECT 'bekleyen_skor_hesabi'
+                                   WHERE NOT EXISTS (SELECT 1 FROM tek_seferlik_gocler WHERE ad = 'bekleyen_skor_hesabi')"""))
+                db.commit()
+            bekleyen.append((r["id"], mesaj))
         except Exception as e:
             db.rollback()
-            durum, mesaj = "hata", str(e).splitlines()[0][:500]
-        db.execute(text("UPDATE gece_kuyrugu SET durum = :d, sonuc = :s WHERE id = :i"), {"d": durum, "s": mesaj, "i": r["id"]})
-        db.commit()
-        sonuc.append({"id": r["id"], "tur": r["tur"], "durum": durum})
-    # Göçlerin istediği yeniden hesap (tek_seferlik_gocler'deki 'bekleyen_skor_hesabi' işareti)
+            db.execute(text("UPDATE gece_kuyrugu SET durum = 'hata', sonuc = :s WHERE id = :i"), {"s": str(e).splitlines()[0][:500], "i": r["id"]})
+            db.commit()
+            sonuc.append({"id": r["id"], "tur": r["tur"], "durum": "hata"})
     try:
-        isaret = db.execute(text("DELETE FROM tek_seferlik_gocler WHERE ad = 'bekleyen_skor_hesabi'")).rowcount
-        db.commit()
+        isaret = db.execute(text("SELECT count(*) FROM tek_seferlik_gocler WHERE ad = 'bekleyen_skor_hesabi'")).scalar() or 0
     except Exception:
         db.rollback()
         isaret = 0
     if skor_gerekli or isaret:
         from app.api.admin import uyum_skorlarini_yeniden_hesapla
         sonuc.append({"yeniden_hesaplanan_tur": uyum_skorlarini_yeniden_hesapla(db)})
+        if isaret:
+            db.execute(text("DELETE FROM tek_seferlik_gocler WHERE ad = 'bekleyen_skor_hesabi'"))
+    for kid, mesaj in bekleyen:
+        db.execute(text("UPDATE gece_kuyrugu SET durum = 'tamamlandi', sonuc = :s WHERE id = :i"), {"s": mesaj, "i": kid})
+        sonuc.append({"id": kid, "durum": "tamamlandi"})
+    db.commit()
     return {"isler": sonuc}
 
 

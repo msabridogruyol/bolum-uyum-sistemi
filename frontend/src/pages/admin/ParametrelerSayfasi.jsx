@@ -69,6 +69,9 @@ export default function ParametrelerSayfasi() {
 
 // [2026-10-10] K1–K4 katman ağırlıkları — skor motorunun okuduğu katmanlar.normalizasyon_agirligi.
 // Kaydetmeden önce sayfa içi onay ister (değişiklik tüm öğrencilerin bölüm sıralamasını etkiler).
+// [2026-11-04] Kaydedilen değer gece bakımında uygulanır; o zamana kadar alanlarda bekleyen değer gösterilir.
+const hedef = (k) => (k.bekleyen ?? k.agirlik)
+
 function KatmanAgirliklariKarti({ duzenlenebilir }) {
   const [katmanlar, setKatmanlar] = useState(null)
   const [degerler, setDegerler] = useState({})
@@ -81,7 +84,7 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
     api.katmanAgirliklariGetir()
       .then((liste) => {
         setKatmanlar(liste)
-        setDegerler(Object.fromEntries(liste.map((k) => [k.katman_kod, String(k.agirlik)])))
+        setDegerler(Object.fromEntries(liste.map((k) => [k.katman_kod, String(hedef(k))])))
       })
       .catch((e) => setHata(e.detail || 'Katman ağırlıkları yüklenemedi.'))
   }, [])
@@ -99,7 +102,8 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
   })
   const toplam = Math.round(Object.values(sayilar).reduce((a, b) => a + (Number.isFinite(b) ? b : 0), 0) * 100) / 100
   const toplamDogru = Math.abs(toplam - 100) <= 0.01
-  const degisti = katmanlar.some((k) => sayilar[k.katman_kod] !== Number(k.agirlik))
+  const degisti = katmanlar.some((k) => sayilar[k.katman_kod] !== Number(hedef(k)))
+  const bekleyenVar = katmanlar.some((k) => k.bekleyen != null && Number(k.bekleyen) !== Number(k.agirlik))
   const kaydedilebilir = duzenlenebilir && degisti && toplamDogru && gecersiz.length === 0 && !kaydediliyor
 
   async function kaydet() {
@@ -107,10 +111,14 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
     try {
       const liste = await api.katmanAgirliklariniGuncelle(sayilar)
       setKatmanlar(liste)
-      setDegerler(Object.fromEntries(liste.map((k) => [k.katman_kod, String(k.agirlik)])))
+      setDegerler(Object.fromEntries(liste.map((k) => [k.katman_kod, String(hedef(k))])))
       setOnayAdimi(false)
-      const gb = await api.geceBakimi().catch(() => null)   // [2026-11-04] ağırlık değişikliği gece bakımında uygulanır
-      setMesaj(`Değişiklik kaydedildi. Yeni ağırlıklar ${gb?.sonraki || 'gece bakımında'} uygulanacak ve bütün uyum skorları yeniden hesaplanacak (Sistem › Gece Bakımı).`)
+      if (!liste.some((k) => k.bekleyen != null)) {
+        setMesaj('Şu an geçerli ağırlıklara dönüldü; bekleyen gece değişikliği iptal edildi.')
+      } else {
+        const gb = await api.geceBakimi().catch(() => null)   // [2026-11-04] ağırlık değişikliği gece bakımında uygulanır
+        setMesaj(`Değişiklik kaydedildi. Yeni ağırlıklar ${gb?.sonraki || 'gece bakımında'} uygulanacak ve bütün uyum skorları yeniden hesaplanacak (Sistem › Gece Bakımı).`)
+      }
     } catch (err) {
       setHata(err.detail || 'Kaydedilemedi.')
     } finally {
@@ -126,6 +134,11 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
       </div>
       {hata && <div className="auth-error">{hata}</div>}
       {mesaj && <div style={{ marginBottom: 10, fontSize: 13, color: 'var(--gr, #15803d)', fontWeight: 600 }}>{mesaj}</div>}
+      {bekleyenVar && !mesaj && (
+        <div style={{ marginBottom: 10, fontSize: 13, color: 'var(--am, #b45309)', fontWeight: 600 }}>
+          Alanlardaki değerler gece bakımında uygulanacak. Şu an geçerli olan: {katmanlar.map((k) => `${k.katman_kod} %${k.agirlik}`).join(', ')}.
+        </div>
+      )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' }}>
         {katmanlar.map((k) => (
           <label key={k.katman_kod} style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, fontWeight: 600 }}>

@@ -214,7 +214,7 @@ class DemoOkulIstek(GirdiModeli):
     okul_adi: str = Field(min_length=3, max_length=80)
     paket: str = "tam"
     ogrenci_sayisi: int = Field(12, ge=1, le=30)
-    yetkili_adi: str = Field("Demo Okul Yetkilisi", min_length=3, max_length=80)
+    yetkili_adi: str = Field("Demo Okul Yetkilisi", min_length=3, max_length=AD_SOYAD_EN_FAZLA)
     baglanti_saat: int = Field(168, ge=1, le=720)
 
 

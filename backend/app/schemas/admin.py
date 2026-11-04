@@ -101,6 +101,7 @@ class KatmanAgirligiOut(BaseModel):
     katman_kod: str
     ad: str
     agirlik: float
+    bekleyen: float | None = None   # [2026-11-04] gece bakımında uygulanacak değer (yoksa None)
 
 
 class YeniAgirlikVersiyonuIstek(GirdiModeli):

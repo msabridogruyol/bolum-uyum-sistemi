@@ -64,7 +64,7 @@ def test_yonetim_sifre_degisikligi_kodla(istemci, db, kisiler, eposta):
 @db_gerekli
 def test_ad_soyad_en_fazla_30(istemci, kisiler):
     h = kisiler["ogrenci"]
-    assert istemci.put("/ogrenci/profil", json={"ad_soyad": "A" * 31}, headers=h).status_code == 422
+    assert istemci.put("/ogrenci/profil", json={"ad_soyad": "A" * 31}, headers=h).status_code in (400, 422)
     assert istemci.put("/ogrenci/profil", json={"ad_soyad": "Ayşe Nur Yılmaz"}, headers=h).status_code == 200
 
 
@@ -99,7 +99,7 @@ def test_katman_agirligi_gece_uygulanir(istemci, db, kisiler):
     db.rollback()
 
 
-def test_gece_penceresi():
+def test_gece_penceresi(monkeypatch):
     from datetime import datetime
     from app.core.gece_bakimi import YEREL, calismali_mi
 
@@ -112,7 +112,7 @@ def test_gece_penceresi():
                 def scalar(s): return None
             return R(self.var)
     import app.core.gece_bakimi as gb
-    gb.bakim_saati = lambda db: (3, 0)
+    monkeypatch.setattr(gb, "bakim_saati", lambda db: (3, 0))
     assert calismali_mi(Db(False), datetime(2026, 11, 5, 3, 1, tzinfo=YEREL))
     assert calismali_mi(Db(False), datetime(2026, 11, 5, 5, 59, tzinfo=YEREL))
     assert not calismali_mi(Db(False), datetime(2026, 11, 5, 6, 0, tzinfo=YEREL))
@@ -170,18 +170,43 @@ def test_test_baglantisi_en_fazla_7_gun():
 
 # ----------------------------------------------------------------------------- öneri özeti
 @db_gerekli
-def test_oneri_ozeti_skor_degisince_silinir(db, kisiler):
+def test_oneri_ozeti_skor_degisince_gecersiz(db, kisiler):
+    """Skor yazılınca turun sürüm sayacı artar; eski sayaçla yazılmış özet artık eşleşmez (eşzamanlı okuma yarışı)."""
     oid = _ogrenci_id(db)
     tur = db.execute(text("""INSERT INTO ogrenci_degerlendirme_turu (ogrenci_id, tur_no, baslama_zamani, tamamlanma_zamani, durum, sonuc_gecerli_mi)
                              VALUES (:o, 1, now(), now(), 'tamamlandi', TRUE) RETURNING id"""), {"o": oid}).scalar()
     bid = db.execute(text("SELECT id FROM bolumler LIMIT 1")).scalar()
     if bid is None:
         bid = db.execute(text("INSERT INTO bolumler (ad, durum) VALUES ('Deneme Bölümü', 'yayinda') RETURNING id")).scalar()
-    db.execute(text("INSERT INTO tur_oneri_ozeti (tur_id, bolumler, uyumlar, surum) VALUES (:t, ARRAY[1], ARRAY[50], 'x')"), {"t": tur})
+    db.execute(text("INSERT INTO tur_oneri_ozeti (tur_id, bolumler, uyumlar, surum, kaynak_n) VALUES (:t, ARRAY[1], ARRAY[50], 'x', 0)"), {"t": tur})
+    n = lambda: db.execute(text("SELECT COALESCE((SELECT n FROM tur_skor_surumu WHERE tur_id = :t), 0)"), {"t": tur}).scalar()
+    assert n() == 0
     db.execute(text("""INSERT INTO ogrenci_bolum_uyum_skorlari (ogrenci_id, tur_id, bolum_id, toplam_uyum, olusturulma_zamani)
                        VALUES (:o, :t, :b, 70, now())"""), {"o": oid, "t": tur, "b": bid})
-    assert db.execute(text("SELECT count(*) FROM tur_oneri_ozeti WHERE tur_id = :t"), {"t": tur}).scalar() == 0
+    assert n() == 1
+    db.execute(text("UPDATE ogrenci_bolum_uyum_skorlari SET toplam_uyum = 71 WHERE tur_id = :t"), {"t": tur})
+    db.execute(text("DELETE FROM ogrenci_bolum_uyum_skorlari WHERE tur_id = :t"), {"t": tur})
+    assert n() == 3
+    eslesen = db.execute(text("""SELECT count(*) FROM tur_oneri_ozeti z LEFT JOIN tur_skor_surumu v ON v.tur_id = z.tur_id
+                                  WHERE z.tur_id = :t AND z.kaynak_n = COALESCE(v.n, 0)"""), {"t": tur}).scalar()
+    assert eslesen == 0
     db.rollback()
+
+
+@db_gerekli
+def test_sifre_kodu_gitmezse_hak_yanmaz(istemci, db, kisiler, monkeypatch):
+    from app.core import eposta_servisi as ep
+    from app.core.security import sifre_hashle
+    monkeypatch.setattr(ep, "eposta_yapilandirildi_mi", lambda: True)
+    monkeypatch.setattr(ep, "eposta_gonder", lambda *a, **k: False)
+    oid = _ogrenci_id(db)
+    db.execute(text("UPDATE ogrenciler SET sifre_hash = :h WHERE id = :i"), {"h": sifre_hashle("EskiSifre1!"), "i": oid})
+    db.execute(text("DELETE FROM sifre_degisiklik_talepleri WHERE kullanici_tipi = 'ogrenci' AND kullanici_id = :i"), {"i": oid})
+    db.commit()
+    r = istemci.post("/ogrenci/profil/sifre-degistir", json={"eski_sifre": "EskiSifre1!", "yeni_sifre": "YeniSifre1!"}, headers=kisiler["ogrenci"])
+    assert r.status_code == 400 and "gönderilemedi" in r.json()["detail"]
+    db.expire_all()
+    assert db.execute(text("SELECT count(*) FROM sifre_degisiklik_talepleri WHERE kullanici_tipi = 'ogrenci' AND kullanici_id = :i"), {"i": oid}).scalar() == 0
 
 
 def test_hedef_nihai_uyum_k5_yuvasi():

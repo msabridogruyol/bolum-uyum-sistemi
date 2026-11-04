@@ -368,6 +368,8 @@ def sifre_degisikligi_baslat(db: Session, kullanici_tipi: str, hesap, eski_sifre
                    SifreDegisiklikTalebi.olusturulma_zamani >= sinir).scalar() or 0)
     if son >= SIFRE_GUNLUK_TALEP:
         raise BeklemeHatasi("Son 24 saatte çok fazla şifre değişikliği istendi. Daha sonra tekrar dene ya da \"Şifremi unuttum\"u kullan.")
+    # E-posta gönderilemezse talep kaydı geri alınır (günlük 5 hakkı yanmaz, önceki bekleyen kod geçerli kalır).
+    ara = db.begin_nested()
     for eski in db.query(SifreDegisiklikTalebi).filter(SifreDegisiklikTalebi.kullanici_tipi == kullanici_tipi,
                                                         SifreDegisiklikTalebi.kullanici_id == hesap.id,
                                                         SifreDegisiklikTalebi.kullanildi.is_(False)).all():
@@ -378,8 +380,15 @@ def sifre_degisikligi_baslat(db: Session, kullanici_tipi: str, hesap, eski_sifre
                                  olusturulma_zamani=_simdi()))
     db.flush()
     konu, html, metin = ep.sifre_degisikligi_kodu_epostasi((hesap.ad_soyad or "").split(" ")[0], kod)
-    if not ep.eposta_gonder(hesap.email, konu, html, metin):
+    try:
+        gitti = ep.eposta_gonder(hesap.email, konu, html, metin)
+    except Exception:
+        log.exception("şifre değişikliği kodu gönderilemedi")
+        gitti = False
+    if not gitti:
+        ara.rollback()
         raise IsKuraliHatasi("Onay kodu e-postası gönderilemedi. Birkaç dakika sonra tekrar dene.")
+    ara.commit()
     return {"kod_gonderildi": True, "maskeli_eposta": maskeli_eposta(hesap.email)}
 
 

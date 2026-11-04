@@ -121,16 +121,24 @@ def _ortak_ve_fark(pa: dict, pb: dict, adlar: dict, mat: Matris) -> tuple[list[s
 
 
 # ----------------------------------------------------------------------------- benzer akranlar
-@ozet_onbellegi(kopyala=False)   # salt okunur kullanılır (değiştirilmez)
-def _profiller_onbellekli(db: Session, idler: tuple) -> dict:
-    return profiller(db, list(idler))
+@ozet_onbellegi(kopyala=False)   # salt okunur kullanılır (değiştirilmez); anahtar okul (öğrenci listesi değil: bellek)
+def _okul_profilleri(db: Session, okul_id: int) -> dict:
+    idler = [str(r[0]) for r in db.execute(text("SELECT id FROM ogrenciler WHERE " + ("okul_id IS NULL" if not okul_id else "okul_id = :o")),
+                                           {"o": okul_id}).all()]
+    return profiller(db, idler)
 
 
-def benzer_akranlar(db: Session, hedef_id: str, havuz: list, n: int = 5) -> dict:
+def benzer_akranlar(db: Session, hedef_id: str, havuz: list, n: int = 5, okul_id: int | None = None) -> dict:
     """havuz: [(ogrenci_id, ad_soyad, sinif_metni)] — hedef de dahil olabilir."""
     bilgi = {str(i): (ad, sm) for i, ad, sm in havuz}
     bilgi.setdefault(str(hedef_id), ("", ""))
-    prof = _profiller_onbellekli(db, tuple(sorted(bilgi.keys())))   # [2026-11-04] okul havuzu 5 dk (20.000 öğrencide ~4,7 sn)
+    if okul_id is not None:   # [2026-11-04] okulun profilleri 5 dk önbellekten (20.000 öğrencide ~4,7 sn); havuza süzülür
+        tum = _okul_profilleri(db, okul_id)
+        prof = {k: tum[k] for k in bilgi if k in tum}
+        if str(hedef_id) not in prof:
+            prof.update(profiller(db, [str(hedef_id)]))
+    else:
+        prof = profiller(db, list(bilgi.keys()))
     if str(hedef_id) not in prof:
         return {"durum": "profil_yok", "akranlar": [], "havuz": len(prof)}
     mat = Matris(prof)
