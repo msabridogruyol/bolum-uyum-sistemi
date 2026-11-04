@@ -95,6 +95,11 @@ def kazanc_grubu_coz(v) -> str | None:
     """'Çok yüksek' / 'COK YUKSEK' / 'çok_yüksek' → 'cok_yuksek'. Tanınmayan metin → None (uydurma yok)."""
     if v is None:
         return None
+    # [2026-11-04] Yeni TÜİK Veri Portalı kazanç grubunu sayı kodu olarak verir; tablo dipnotu:
+    # "5-Çok yüksek, 4-Yüksek, 3-Orta, 2-Düşük, 1-Çok düşük". Yalnızca tam sayı 1–5 tanınır.
+    kod = str(v).strip()
+    if re.fullmatch(r"[1-5](\.0+)?", kod):
+        return {5: "cok_yuksek", 4: "yuksek", 3: "orta", 2: "dusuk", 1: "cok_dusuk"}[int(float(kod))]
     t = " ".join(re.sub(r"[^a-z ]", " ", _normalize(str(v)).replace("_", " ")).split())
     if not t:
         return None
