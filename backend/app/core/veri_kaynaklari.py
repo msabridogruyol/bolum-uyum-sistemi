@@ -396,6 +396,11 @@ def durum_hesapla(olcum: dict | None, son_kontrol: dict | None, aralik: int, sim
     return "guncel", f"Son güncelleme / kontrol {gecen} gün önce."
 
 
+def _otomatik_kodlar() -> set[str]:
+    from app.core.otomatik_cekme import CEKICILER
+    return set(CEKICILER)
+
+
 def liste(db: Session, bugun: date | None = None) -> dict:
     bugun = bugun or date.today()
     simdi = datetime.now(timezone.utc)
@@ -415,7 +420,8 @@ def liste(db: Session, bugun: date | None = None) -> dict:
                     "son_guncelleme": _zaman(o.get("son_guncelleme")).isoformat() if _zaman(o.get("son_guncelleme")) else None,
                     "son_kontrol": ks[0] if ks else None, "kontroller": ks, "durum": durum, "aciklama": aciklama,
                     "adimlar": ADIMLAR.get(kod, []),
-                    "baglantilar": [{"ad": a, "url": u} for a, u in BAGLANTILAR.get(kod, [])]})
+                    "baglantilar": [{"ad": a, "url": u} for a, u in BAGLANTILAR.get(kod, [])],
+                    "otomatik_cekme": kod in _otomatik_kodlar()})
     ozet = {d: sum(1 for x in out if x["durum"] == d) for d in _SIRA}
     out.sort(key=lambda x: (_SIRA[x["durum"]], KAYNAKLAR.index(next(k for k in KAYNAKLAR if k[0] == x["kod"]))))
     return {"kaynaklar": out, "ozet": ozet, "zaman": simdi.isoformat()}
