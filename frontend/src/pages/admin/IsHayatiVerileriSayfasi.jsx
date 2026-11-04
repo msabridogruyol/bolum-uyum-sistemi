@@ -422,6 +422,7 @@ function KayitTablosu({ tablo, baslik, aciklama, kolonlar, varsayilan = {}, filt
             )))}
           </tbody>
         </table>
+        {!v && !hata && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
         {v && v.satirlar.length === 0 && !duzenle && <div className="bos-durum">Kayıt yok.</div>}
       </div>
     </div>

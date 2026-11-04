@@ -265,7 +265,7 @@ function VeriAdimKarti({ no, tur, baslik, dosyaYolu, aciklama }) {
 // Kod sistemin deposunda, veri Supabase Storage'da; her bilgisayar buradan indirilen tek dosyayla kurulur.
 // ============================================================
 const tarih = (z) => (z ? new Date(z).toLocaleDateString('tr-TR') : '—')
-const tarihSaat = (z) => (z ? new Date(z).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '—')
+const tarihSaat = (z) => (z ? new Date(z).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'medium' }) : '—')
 const SAYAC_GORUNUM = {
   guncel: { etiket: 'Güncel', renk: 'var(--gr)', zemin: 'var(--grl)' },
   yaklasiyor: { etiket: 'Yaklaşıyor', renk: 'var(--am)', zemin: 'var(--aml)' },

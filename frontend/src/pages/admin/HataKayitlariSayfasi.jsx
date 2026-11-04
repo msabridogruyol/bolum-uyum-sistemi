@@ -5,7 +5,7 @@ import { hataKayitlariApi } from '../../api/hataKayitlari'
 const KULLANICI = { ogrenci: 'Öğrenci', okul_yetkilisi: 'Okul yetkilisi', super_admin: 'Süper admin', anonim: 'Oturumsuz' }
 
 function zaman(z) {
-  return z ? new Date(z).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '—'
+  return z ? new Date(z).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'medium' }) : '—'
 }
 
 function Etiket({ renk, children }) {

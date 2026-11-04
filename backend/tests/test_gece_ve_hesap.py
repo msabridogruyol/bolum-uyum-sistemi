@@ -213,3 +213,34 @@ def test_hedef_nihai_uyum_k5_yuvasi():
     from app.core.skor_motoru import k5_nihai
     # K5 kümesindeki bölümler yuvaları değiş tokuş eder; hedef bölümün nihai uyumu küme içi yuvadan gelir
     assert k5_nihai({1: 43.0, 2: 38.0, 3: 10.0}, {1: 50, 2: 90})[2] == 43.0
+
+
+# ----------------------------------------------------------------------------- [2026-11-04] PDF hızı, Excel metin tarih, sürüm
+def test_hizli_tablo_sayfalara_bolunur_basliği_tekrarlar():
+    from reportlab.lib import colors as _c
+    from app.core.rapor import pdf as P
+    P._belge("Deneme", {"ad": "Okul"}, None)   # yazı tiplerini kaydeder
+    t = P.HizliTablo(["Ad", "Bölüm"], [[f"Öğrenci {i}", "Bilgisayar ve Öğretim Teknolojileri Öğretmenliği"] for i in range(500)],
+                     [100, 60], _c.black)
+    gen, yuk = t.wrap(160, 700)
+    parca = t.split(160, 700)
+    assert len(parca) == 2 and parca[0].wrap(160, 700)[1] <= 700
+    assert len(parca[0].satirlar) + len(parca[1].satirlar) == 500 and parca[1].ilk == len(parca[0].satirlar)
+    assert all(len(h) >= 2 for h in [t.satirlar[0][0][1]])   # uzun bölüm adı alt satıra geçer
+
+
+def test_excel_tarihleri_metin_ve_saniyeli():
+    from datetime import datetime, timezone
+    from openpyxl import Workbook
+    from app.core.excel_guvenligi import tarihleri_metne_cevir
+    wb = Workbook()
+    wb.active.append([datetime(2026, 11, 4, 8, 48, 7, tzinfo=timezone.utc), datetime(2026, 11, 4, 11, 0, 5)])
+    tarihleri_metne_cevir(wb)
+    assert [c.value for c in wb.active[1]] == ["04.11.2026 11:48:07", "04.11.2026 11:00:05"]
+
+
+@db_gerekli
+def test_sistem_surumu_herkese_acik(istemci):
+    r = istemci.get("/sistem/surum")
+    assert r.status_code == 200 and r.json()["sunucu_guncelleme"]
+    assert "surum" not in r.json()   # kod özeti / commit gösterilmez

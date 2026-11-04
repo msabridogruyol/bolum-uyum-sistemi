@@ -69,7 +69,7 @@ def zamanlama_metni(db) -> str:
     if z <= simdi:
         return "şu anda (bakım sürüyor)"
     gun = (z.date() - simdi.date()).days
-    if gun == 0 or (gun == 1 and simdi.hour >= 12):
+    if gun == 0 or (gun == 1 and simdi.hour >= PENCERE_SONU_SAAT):   # gündüz ve akşam: ertesi sabahki bakım "bu gece"
         return f"bu gece {z:%H:%M}"
     if gun == 1:
         return f"yarın {z:%H:%M}"

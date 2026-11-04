@@ -2,11 +2,12 @@
 // pipeline sonucunu canlıya alma, katman ağırlığı, skorların yeniden hesabı) her gece bakım saatinde (varsayılan 03:00) yapılır.
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../api/client'
+import { ARAYUZ_YAYIN, tarihSaniye, useSonGuncelleme } from '../../yardimci/guncelleme'
 
 const ADIM = { gocler: 'Veritabanı güncellemeleri', kuyruk: 'Bekleyen değişiklikler', skor_surumu: 'Uyum puanı sürümü',
   oneri_ozetleri: 'Rehber paneli öneri özetleri', saklama: 'Saklama süresi temizliği', istatistik: 'Tablo istatistikleri' }
 const DURUM = { bekliyor: ['Bekliyor', 'am'], calisiyor: ['Çalışıyor', 'pu'], tamamlandi: ['Uygulandı', 'gr'], hata: ['Hata', 're'], iptal: ['İptal', 'tx3'], tamam: ['Tamam', 'gr'] }
-const zaman = (z) => (z ? new Date(z).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'short' }) : '—')
+const zaman = (z) => (z ? new Date(z).toLocaleString('tr-TR', { dateStyle: 'short', timeStyle: 'medium' }) : '—')
 
 function Durum({ d }) {
   const [ad, renk] = DURUM[d] || [d, 'tx3']
@@ -16,6 +17,7 @@ function Durum({ d }) {
 export default function GeceBakimiSayfasi() {
   const [v, setV] = useState(null)
   const [hata, setHata] = useState(null)
+  const { son, bilgi } = useSonGuncelleme()
   const yukle = useCallback(() => { api.geceBakimi().then(setV).catch((e) => setHata(e.detail || 'Yüklenemedi.')) }, [])
   useEffect(() => { yukle() }, [yukle])
   async function iptal(id) {
@@ -31,6 +33,17 @@ export default function GeceBakimiSayfasi() {
       </div>
       {hata && <div className="auth-error">{hata}</div>}
       {!v && !hata && <div className="bos-durum yukleniyor">Yükleniyor…</div>}
+      <div className="card">
+        <div className="ct">Sistem güncellemesi</div>
+        <table className="yp-tablo" style={{ maxWidth: 560 }}>
+          <tbody>
+            <tr><td>Son güncelleme</td><td><b>{tarihSaniye(son)}</b></td></tr>
+            <tr><td>Arayüz yayını</td><td>{tarihSaniye(ARAYUZ_YAYIN)}</td></tr>
+            <tr><td>Sunucu yayını</td><td>{tarihSaniye(bilgi?.sunucu_guncelleme)}</td></tr>
+            <tr><td>Son gece bakımı</td><td>{bilgi?.son_gece_bakimi ? `${tarihSaniye(bilgi.son_gece_bakimi.baslama)} – ${tarihSaniye(bilgi.son_gece_bakimi.bitis)}` : 'Henüz çalışmadı'}</td></tr>
+          </tbody>
+        </table>
+      </div>
       {v && (
         <>
           <div className="card">

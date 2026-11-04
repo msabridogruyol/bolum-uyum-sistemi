@@ -19,6 +19,27 @@ def formulleri_metne_cevir(wb) -> int:
     return n
 
 
+def tarihleri_metne_cevir(wb) -> int:
+    """[2026-11-04] Kullanıcı kuralı: Excel'de değerler düz metin gelsin; tarih-saat gün.ay.yıl saat:dakika:saniye (Türkiye saati)."""
+    from datetime import date, datetime
+    from zoneinfo import ZoneInfo
+    tr = ZoneInfo("Europe/Istanbul")
+    n = 0
+    for ws in wb.worksheets:
+        for satir in ws.iter_rows():
+            for c in satir:
+                v = c.value
+                if isinstance(v, datetime):
+                    v = v.astimezone(tr) if v.tzinfo else v
+                    c.value = v.strftime("%d.%m.%Y %H:%M:%S") if (v.hour, v.minute, v.second) != (0, 0, 0) else v.strftime("%d.%m.%Y")
+                    n += 1
+                elif isinstance(v, date):
+                    c.value = v.strftime("%d.%m.%Y")
+                    n += 1
+    return n
+
+
 def guvenli_kaydet(wb, hedef) -> None:
     formulleri_metne_cevir(wb)
+    tarihleri_metne_cevir(wb)
     wb.save(hedef)

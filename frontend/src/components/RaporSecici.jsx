@@ -105,7 +105,7 @@ export default function RaporSecici({ turler: tumTurler, etiket = 'Rapor al', ku
             </div>
           )}
           {hata && <div className="auth-error" style={{ margin: 0 }}>{hata}</div>}
-          <button className="btn" style={{ width: '100%' }} disabled={bekle} onClick={indir}>{bekle ? <span className="spin" /> : `${secili.ikon} ${secili.ad} raporunu indir`}</button>
+          <button className="btn" style={{ width: '100%' }} disabled={bekle} onClick={indir}>{bekle ? <><span className="spin" /> Rapor hazırlanıyor…</> : `${secili.ikon} ${secili.ad} raporunu indir`}</button>
         </div>,
         document.body,
       )}

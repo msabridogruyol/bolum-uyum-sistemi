@@ -11,7 +11,6 @@ Create Date: 2026-11-04
   * tur_skor_surumu            — turun skorları her değiştiğinde n bir artar (tetikleyici); özet yalnızca hesaplandığı andaki
                                  n ile eşleşiyorsa kullanılır. Silme yerine sayaç: eşzamanlı bir okuma eski skorlarla hesapladığı
                                  özeti sonradan yazsa bile eşleşmez, yeniden hesaplanır.
-      Öğrencinin skorları değişince tetikleyici o turun satırını siler (kod yolundan bağımsız).
   * gece_kuyrugu, gece_bakim_kaydi — sistemi yavaşlatan işler (pipeline canlıya alma, katman ağırlığı, skorların yeniden
       hesabı) gece bakımında (varsayılan 03:00, Europe/Istanbul) çalışır; her gecenin sonucu kaydedilir.
   * Parametreler: gece_bakim_saati, sayfa_ziyareti_saklama_gun, filiz_mesaj_saklama_gun.

@@ -85,6 +85,7 @@ function satirlariDondur(hamSatirlar) {
 
 export default function SoruGecerlilikSayfasi() {
   const [ozet, setOzet] = useState(null)
+  const [ozetGeldi, setOzetGeldi] = useState(false)   // [2026-11-04] yüklenirken "henüz sonuç yok" denmesin
   const [yukleniyor, setYukleniyor] = useState(false)
   const [disaAktariliyor, setDisaAktariliyor] = useState(false)
   const [hata, setHata] = useState(null)
@@ -101,7 +102,7 @@ export default function SoruGecerlilikSayfasi() {
   useEffect(() => { xlsxYukle().catch(() => {}) }, [])
 
   function yukle() {
-    api.soruGecerlilikGetir().then(setOzet).catch(() => setOzet(null))
+    api.soruGecerlilikGetir().then(setOzet).catch(() => setOzet(null)).finally(() => setOzetGeldi(true))
     api.gecerlilikAnaliziniGetir().then(setAnaliz).catch(() => setAnaliz(null))
   }
 
@@ -248,7 +249,7 @@ export default function SoruGecerlilikSayfasi() {
       )}
 
       {!ozet ? (
-        <div className="bos-durum">Henüz hiç test sonucu yüklenmedi.</div>
+        <div className={`bos-durum${ozetGeldi ? '' : ' yukleniyor'}`}>{ozetGeldi ? 'Henüz hiç test sonucu yüklenmedi.' : 'Yükleniyor…'}</div>
       ) : (
         <>
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 10, marginBottom: 18 }}>
