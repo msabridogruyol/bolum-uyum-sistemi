@@ -112,7 +112,7 @@ export default function IlkMaas({ veri, ogrenci }) {
   const gelirBilgi = useMemo(() => {
     if (kaynak === 'meslek') {
       const m = veriliMeslek.find((x) => x.meslek === meslekAd)
-      return m ? { tutar: m.guncel_tahmin_net_tl, tahmin: true, aciklama: `${m.meslek}: “${m.veri_grup_adi || m.grup_adi}” grubunun ortalama kazancı. Bu bir ilk maaş değil, ortalamadır.`, kaynak: `${m.kaynak} · TÜİK veri yılı ${m.veri_yili} · ${m.guncel_donem} asgari ücretiyle güncellendi` } : null
+      return m ? { tutar: m.guncel_tahmin_net_tl, tahmin: true, aciklama: `${m.meslek}: “${m.veri_grup_adi || m.grup_adi}” grubunun ortalama kazancı. Bu bir ilk maaş değil, ortalamadır.`, kaynak: `${m.kaynak} · TÜİK veri yılı ${m.veri_yili}`, hesaplama: m.hesaplama } : null
     }
     if (kaynak === 'kamu') {
       const k = (veri.kamu || []).find((x) => String(x.id) === String(kamuId))
@@ -121,6 +121,9 @@ export default function IlkMaas({ veri, ogrenci }) {
       const tek = k.net_min == null || k.net_max == null || k.net_min === k.net_max
       const t = tek ? (k.net_min ?? k.net_max) : kamuUc === 'alt' ? k.net_min : kamuUc === 'ust' ? k.net_max : (k.net_min + k.net_max) / 2
       const ne = tek ? k.kadro_adi : `${k.kadro_adi} (${kamuUc === 'alt' ? 'aralığın alt ucu' : kamuUc === 'ust' ? 'aralığın üst ucu' : 'aralığın ortası'})`
+      // [2026-11-04] Maaş dönemi geçtiyse TÜFE ile bugüne taşınmış TAHMİN (hesaplama metniyle)
+      const g = k.guncel?.[tek ? (k.net_min != null ? 'net_min' : 'net_max') : kamuUc === 'ust' ? 'net_max' : 'net_min']
+      if (g && (tek || kamuUc !== 'orta')) return { tutar: g.tutar, tahmin: true, aciklama: k.aciklama ? `${ne}. ${k.aciklama}` : ne, kaynak: `${k.kaynak} · dönem ${k.donem}`, hesaplama: g.hesaplama }
       return t == null ? null : { tutar: t, tahmin: false, aciklama: k.aciklama ? `${ne}. ${k.aciklama}` : ne, kaynak: `${k.kaynak} · dönem ${k.donem}` }
     }
     if (kaynak === 'asgari' && veri.asgari) return { tutar: veri.asgari.net, tahmin: false, aciklama: `Net asgari ücret (${veri.asgari.donem})`, kaynak: veri.asgari.kaynak }
@@ -145,7 +148,8 @@ export default function IlkMaas({ veri, ogrenci }) {
   const refDiger = (gider?.referans || []).filter((r) => r.kod !== 'bekar_yasam')
   const kalemDolu = satirlar.filter((s) => s.tutar != null && s.tutar > 0)
   const refAktif = refKullan && !kalemDolu.length && refBekar
-  const doluSatirlar = refAktif ? [{ kod: 'ref_bekar', ad: 'Yaşama maliyeti (toplam)', tutar: Math.round(refBekar.aylik_tutar) }] : kalemDolu
+  const refTutar = refBekar ? (refBekar.guncel?.tutar ?? refBekar.aylik_tutar) : null   // dönemi geçtiyse TÜFE ile güncel tahmin
+  const doluSatirlar = refAktif ? [{ kod: 'ref_bekar', ad: 'Yaşama maliyeti (toplam)', tutar: Math.round(refTutar) }] : kalemDolu
   const bosSayisi = refAktif ? 0 : satirlar.filter((s) => s.tutar == null).length
   const veriYok = !gider?.kalemler?.length
   const toplamGider = doluSatirlar.reduce((a, s) => a + s.tutar, 0)
@@ -193,6 +197,7 @@ export default function IlkMaas({ veri, ogrenci }) {
             <div style={{ marginTop: 8, fontSize: 13 }}>
               <b style={{ fontSize: 18 }}>{tl(gelirBilgi.tutar)}</b>{gelirBilgi.tahmin && <TahminEtiketi />}
               <div className="yp-ince" style={{ marginTop: 2 }}>{gelirBilgi.aciklama}{gelirBilgi.kaynak ? ` · Kaynak: ${gelirBilgi.kaynak}` : ''}</div>
+              {gelirBilgi.hesaplama && <div className="yp-ince" style={{ marginTop: 2 }}><b>Hesaplama:</b> {gelirBilgi.hesaplama}</div>}
               {gelirBilgi.tahmin && <div className="yp-ince" style={{ marginTop: 2 }}>İlk iş maaşı çoğu zaman bu ortalamanın altındadır. Daha dikkatli bir hesap için asgari ücreti de dene.</div>}
             </div>
           )}
@@ -236,7 +241,7 @@ export default function IlkMaas({ veri, ogrenci }) {
                 <div style={{ fontSize: 13, fontWeight: 600 }}>{s.ad}</div>
                 <div className="yp-ince">
                   {s.veri && s.tutar === s.veridenTutar
-                    ? `${s.veri.turkiye_geneli ? 'Türkiye geneli' : s.veri.il} · ${s.veri.kaynak}${s.veri.tarih ? ` (${new Date(s.veri.tarih).toLocaleDateString('tr-TR')})` : ''}${s.carpan !== 1 ? ' · yarısı' : ''}`
+                    ? `${s.veri.turkiye_geneli ? 'Türkiye geneli' : s.veri.il} · ${s.veri.kaynak}${s.veri.tarih ? ` (${new Date(s.veri.tarih).toLocaleDateString('tr-TR')})` : ''}${s.carpan !== 1 ? ' · yarısı' : ''}${s.veri.hesaplama ? ` · tahmini: ${s.veri.hesaplama}` : ''}`
                     : s.tutar != null ? 'senin girdiğin' : 'veri yok — sen doldur'}
                 </div>
               </div>
@@ -255,10 +260,11 @@ export default function IlkMaas({ veri, ogrenci }) {
         {refBekar && (
           <div style={{ marginTop: 10, fontSize: 12.5, lineHeight: 1.55, background: 'var(--sur2)', padding: '8px 10px', borderRadius: 10 }}>
             <div>📊 <b>Karşılaştır</b></div>
-            <div>TÜRK-İŞ'e göre bekâr bir çalışanın aylık yaşama maliyeti: <b>{tl(refBekar.aylik_tutar)}</b></div>
+            <div>TÜRK-İŞ'e göre bekâr bir çalışanın aylık yaşama maliyeti: <b>{tl(refTutar)}</b>{refBekar.guncel && <TahminEtiketi />}</div>
+            {refBekar.guncel && <div className="yp-ince"><b>Hesaplama:</b> {refBekar.guncel.hesaplama}</div>}
             <div className="yp-ince">Kira, mutfak, ulaşım, fatura dahil tüm zorunlu harcamalar; Ankara fiyatlarıyla.</div>
-            {kalemDolu.length > 0 && <div>Senin gider toplamının bu tutara oranı: <b>%{Math.round((toplamGider / refBekar.aylik_tutar) * 100)}</b></div>}
-            {refDiger.map((r) => <div key={r.kod} className="yp-ince" style={{ marginTop: 2 }}>{r.ad}: {tl(r.aylik_tutar)}</div>)}
+            {kalemDolu.length > 0 && <div>Senin gider toplamının bu tutara oranı: <b>%{Math.round((toplamGider / refTutar) * 100)}</b></div>}
+            {refDiger.map((r) => <div key={r.kod} className="yp-ince" style={{ marginTop: 2 }}>{r.ad}: {tl(r.guncel?.tutar ?? r.aylik_tutar)}{r.guncel ? ' (tahmini)' : ''}</div>)}
             <div className="yp-ince" style={{ marginTop: 2 }}>Büyük şehirlerde kira daha yüksek olduğu için gerçek tutar bundan fazla olabilir.</div>
             <div className="yp-ince">Kaynak: {refBekar.kaynak}</div>
             {!kalemDolu.length && (

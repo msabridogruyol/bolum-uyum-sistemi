@@ -87,6 +87,11 @@ def giderler(il: str | None = Query(None, max_length=60), db: Session = Depends(
     kalemler = [{"kalem_kodu": r["kalem_kodu"], "ad": r["ad"], "aylik_tutar": ihs._f(r["aylik_tutar"]), "il": r["il"],
                  "turkiye_geneli": r["il"] is None, "kaynak": r["kaynak"], "tarih": r["tarih"].isoformat() if r["tarih"] else None,
                  "tahmin": False} for r in secilen.values()]
+    # [2026-11-04] Eski tarihli kalem: tutar TÜFE ile bugüne taşınır, TAHMİN olarak işaretlenir ve hesaplama metni eklenir
+    for k in kalemler:
+        g = ihs.enflasyonla_guncelle(db, k["aylik_tutar"], (k["tarih"] or "")[:7] or None, k["ad"])
+        if g:
+            k.update({"veri_tutari": k["aylik_tutar"], "aylik_tutar": g["tutar"], "tahmin": True, "hesaplama": g["hesaplama"]})
     iller = [x[0] for x in db.execute(text("SELECT DISTINCT il FROM yasam_giderleri WHERE il IS NOT NULL ORDER BY il")).all()]
     return {"il": il, "iller": iller, "kalemler": kalemler, "toplam": round(sum(k["aylik_tutar"] or 0 for k in kalemler), 2) if kalemler else None,
             "asgari": ihs.guncel_asgari(db), "referans": ihs.yasam_maliyeti_referans(db)}

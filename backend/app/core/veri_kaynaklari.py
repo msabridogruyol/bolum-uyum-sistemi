@@ -89,6 +89,22 @@ def _tuik_kazanc(db: Session, bugun: date):
             "kaynak": _kaynak_metni(db, "kazanc_meslek_gruplari")}
 
 
+def _tufe(db: Session, bugun: date):
+    """[2026-11-04] TÜFE: TÜİK her ayın 3'ünde bir önceki ayın endeksini yayımlar; 4'ünden sonra o ay beklenir."""
+    r = _tek(db, "SELECT COUNT(*) n, MAX(donem) d, MAX(olusturulma) z FROM tufe_endeksi")
+    if r is None:
+        return None
+    y, a = (bugun.year, bugun.month - 1) if bugun.day >= 4 else (bugun.year, bugun.month - 2)
+    while a < 1:
+        y, a = y - 1, a + 12
+    beklenen = f"{y}-{a:02d}"
+    return {"kayit": r["n"], "son_guncelleme": r["z"], "donem": f"son ay {r['d']}" if r["d"] else None,
+            "kaynak": _kaynak_metni(db, "tufe_endeksi"),
+            "ayrinti": "Eski tarihli TL tutarları bugüne taşımak için: güncel tahmin = tutar × (son endeks / verinin ayındaki endeks)."
+            if r["n"] else None,
+            "bekleniyor": f"{beklenen} TÜFE endeksi yayımlanmış olmalı" if r["d"] and r["d"] < beklenen else None}
+
+
 def _asgari(db: Session, bugun: date):
     r = _tek(db, "SELECT COUNT(*) n, MAX(yururluk_tarihi) t, MAX(olusturulma) z FROM asgari_ucret")
     if r is None:
@@ -251,6 +267,8 @@ KAYNAKLAR = [
      "İş Hayatı, Karşılaştır: istihdam oranı, iş bulma süresi, alan uyumu, kazanç düzeyi", 365, "/admin/is-hayati-verileri", _tuik_istihdam),
     ("tuik_kazanc", "Meslek gruplarına göre kazanç", "TÜİK",
      "İş Hayatı: meslek gruplarının ortalama brüt kazancı", 365, "/admin/is-hayati-verileri", _tuik_kazanc),
+    ("tufe", "TÜFE (enflasyon endeksi)", "TÜİK",
+     "İş Hayatı: eski tarihli tutarların (kazanç, yaşam maliyeti, kamu maaşı) güncel tahmini", 35, "/admin/is-hayati-verileri", _tufe),
     ("asgari_ucret", "Asgari ücret", "Resmî",
      "İş Hayatı: kazançların asgari ücretle karşılaştırılması", 180, "/admin/is-hayati-verileri", _asgari),
     ("kamu_maaslari", "Kamu kadro maaşları", "Resmî",
@@ -294,6 +312,9 @@ ADIMLAR = {
                       "İş Hayatı Verileri › 📊 TÜİK İstihdam Göstergeleri sekmesinde \"TÜİK istihdam göstergelerini yükle\" kutusunda 3 dosyayı birlikte seçin; önizlemeye bakıp kaydedin."],
     "tuik_kazanc": ["TÜİK Kazanç Yapısı Araştırması'nın meslek gruplarına göre kazanç tablosunu indirin (4 yılda bir yayımlanır).",
                     "İş Hayatı Verileri › 💰 Kazanç Yapısı sekmesinden tabloyu yükleyin; o yılın asgari brüt ücretini girip önizlemeyi kontrol edin."],
+    "tufe": ["TÜİK her ayın 3'ünde bir önceki ayın TÜFE'sini yayımlar. Kaynak bağlantısındaki tabloda en son ayın \"Endeks\" değerini okuyun.",
+             "İş Hayatı Verileri › 🧾 Asgari Ücret ve Yaşam Giderleri sekmesinde \"TÜFE endeksi\" tablosuna yeni satır ekleyin: ay (ör. 2026-11), "
+             "endeks, yıllık değişim ve kaynak. Eski tarihli tutarların güncel tahmini kendiliğinden yenilenir."],
     "asgari_ucret": ["Resmî Gazete'de yeni asgari ücret yayımlandığında İş Hayatı Verileri › 🧾 Asgari Ücret ve Yaşam Giderleri sekmesinde \"Asgari ücret\" tablosuna yeni dönemi (yürürlük tarihi, brüt, net, kaynak) ekleyin."],
     "kamu_maaslari": ["Yeni memur maaş dönemi (Ocak / Temmuz) açıklandığında İş Hayatı Verileri › 🏛️ Kamu Maaşları sekmesinde kadroların net tutarlarını ve kaynağını güncelleyin."],
     "yasam_giderleri": ["TÜRK-İŞ her ayın son günlerinde Açlık ve Yoksulluk Sınırı Araştırması'nı yayımlar (turkis.org.tr).",
@@ -328,6 +349,8 @@ BAGLANTILAR = {
          "https://databrowser2.tuik.gov.tr/#/tr/tuik/TR,DF_LSNS_MEZ_BOL_AOK,1.0"),
     ],
     "tuik_kazanc": [("TÜİK Veri Portalı (İstihdam, İşsizlik ve Ücret › Kazanç Yapısı Araştırması)", "https://veriportali.tuik.gov.tr")],
+    "tufe": [("TÜİK, Tüketici fiyat endeksi ve değişim oranları (2025=100)",
+              "https://databrowser2.tuik.gov.tr/#/tr/tuik/TR,DF_TUFE_SDMX_TT10,1.0")],
     "kamu_maaslari": [("AA, Zamlı memur maaşları belli oldu (03.07.2026)",
                        "https://www.aa.com.tr/tr/ekonomi/zamli-memur-maaslari-belli-oldu/3985004")],
     "yasam_giderleri": [("TÜRK-İŞ (Açlık ve Yoksulluk Sınırı Araştırması, her ay)", "https://www.turkis.org.tr"),

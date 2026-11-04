@@ -650,6 +650,14 @@ function AsgariSekmesi({ ozet, yenileOzet }) {
           { kod: 'yururluk_tarihi', ad: 'Yürürlük', tip: 'tarih', zorunlu: true, genislik: 140 },
           { kod: 'kaynak', ad: 'Kaynak', tip: 'metin', zorunlu: true },
         ]} />
+      <KayitTablosu tablo="tufe_endeksi" baslik="TÜFE endeksi (aylık, 2025=100)" onDegisti={yenileOzet}
+        aciklama="Eski tarihli tutarlar (TÜİK kazanç, yaşam maliyeti, dönemi geçmiş kamu maaşı) bugüne bu endeksle taşınır: güncel tahmin = tutar × (son ayın endeksi / verinin ayının endeksi). TÜİK her ayın 3'ünde bir önceki ayı yayımlar; yeni ayı yeni satır olarak ekleyin."
+        kolonlar={[
+          { kod: 'donem', ad: 'Ay', tip: 'metin', zorunlu: true, genislik: 90, ipucu: '2026-11' },
+          { kod: 'endeks', ad: 'Endeks', tip: 'sayi', zorunlu: true, genislik: 110 },
+          { kod: 'yillik_degisim', ad: 'Yıllık değişim %', tip: 'sayi', genislik: 110 },
+          { kod: 'kaynak', ad: 'Kaynak', tip: 'metin', zorunlu: true },
+        ]} />
       <KayitTablosu tablo="yasam_maliyeti_referans" baslik="Yaşam maliyeti (toplam, karşılaştırma için)" onDegisti={yenileOzet}
         aciklama="Öğrenci İlk Maaş hesabında gider kalemlerini kendisi doldurur; burada girilen kaynaklı toplam (ör. TÜRK-İŞ bekâr çalışanın yaşama maliyeti) karşılaştırma için gösterilir. Her kodun en yeni dönemi kullanılır; yeni ayı yeni satır olarak ekleyin. Kodlar: bekar_yasam, aclik_siniri, yoksulluk_siniri."
         varsayilan={{ tarih: bugun() }}
