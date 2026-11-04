@@ -169,6 +169,8 @@ button,input{font-family:inherit}
 /* ============ Öğrenci tarafı: üst çubuk + alt menü düzeni ============ */
 
 .spin{display:inline-block;width:14px;height:14px;border:2px solid rgba(255,255,255,.4);border-top-color:#fff;border-radius:50%;animation:donme .6s linear infinite}
+.btn.sec .spin,.yp-mini .spin,.bos-durum .spin{border-color:var(--bor2);border-top-color:var(--tx2)}   /* [2026-11-04] açık zeminde görünür */
+.btn .spin{vertical-align:-2px}
 @keyframes donme{to{transform:rotate(360deg)}}
 .bos-durum{text-align:center;padding:40px 20px;color:var(--tx3);font-size:13px;font-weight:600}
 

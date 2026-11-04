@@ -83,7 +83,7 @@ export default function CvAtolyesi({ bolum }) {
         <div style={{ flex: 1, minWidth: 220 }}>
           <div style={{ fontWeight: 800, fontSize: 15 }}>📄 {v.cv ? 'CV\'n' : 'CV taslağın hazır'}</div>
           <div className="yp-ince" style={{ lineHeight: 1.55, marginTop: 2 }}>
-            {v.cv ? `Son kayıt: ${new Date(v.cv.guncelleme).toLocaleString('tr-TR', { dateStyle: 'medium', timeStyle: 'short' })}.` : 'Portfolyondaki kayıtlarla otomatik dolduruldu. Düzenle ve kaydet.'}
+            {v.cv ? `Son kayıt: ${new Date(v.cv.guncelleme).toLocaleString('tr-TR', { dateStyle: 'medium', timeStyle: 'medium' })}.` : 'Portfolyondaki kayıtlarla otomatik dolduruldu. Düzenle ve kaydet.'}
             {' '}Portfolyonda {v.oneriler.portfolyo_kayit} kayıt, {v.oneriler.portfolyo_onayli} okul onaylı · <Link to="/portfolyo" className="hg-link" style={{ fontSize: 11.5 }}>Portfolyoma git →</Link>
           </div>
         </div>

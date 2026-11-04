@@ -38,7 +38,7 @@ function RaporKarti({ ikon, baslik, aciklama, kapsam, ek, dugmeler, not }) {
       <div className="orm-dugmeler">
         {dugmeler.map((d) => (
           <button key={d.ad} type="button" className={d.ikincil ? 'btn sec' : 'btn'} disabled={!!bekle || d.pasif} title={d.ipucu} onClick={() => calistir(d)}>
-            {bekle === d.ad ? <span className="spin" /> : d.ad}
+            {bekle === d.ad ? <><span className="spin" /> Hazırlanıyor…</> : d.ad}
           </button>
         ))}
       </div>

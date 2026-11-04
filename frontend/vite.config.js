@@ -3,6 +3,8 @@ import react from '@vitejs/plugin-react'
 
 export default defineConfig({
   plugins: [react()],
+  // [2026-11-04] Arayüzün yayın (derleme) anı: alt şeritte "Son güncelleme" olarak gösterilir.
+  define: { __YAYIN_ZAMANI__: JSON.stringify(new Date().toISOString()) },
   server: {
     proxy: {
       '/api': {

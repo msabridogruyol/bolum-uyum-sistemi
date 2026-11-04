@@ -58,6 +58,7 @@ OTOMATIK += ["0093_denetim_guvenlik_performans"]
 OTOMATIK += ["0095_gece_bakimi_ve_hesap"]   # [2026-11-04] gece bakımı kuyruğu, şifre değişikliği onayı, anahtar iptali, öneri özeti   # [2026-11-04] soru_gecerlilik_sonuclari tablosu + yük indeksleri
 # [2026-11-04] Kullanıcı kuralı: sistemi yavaşlatacak göçler (büyük tablolarda indeks kurma vb.) açılışta değil, gece
 # bakımında (03:00, app/core/gece_bakimi.py) ve CONCURRENTLY ile çalışır; açılışta yalnızca hafif göçler uygulanır.
+OTOMATIK += ["0096_sistem_surumleri"]   # [2026-11-04] sistemin güncellenme zamanı
 OTOMATIK_GECE = ["0094_gece_indeksleri"]
 KILIT = 2026101001
 

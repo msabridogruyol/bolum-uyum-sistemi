@@ -241,6 +241,10 @@ def _sema_guncelle():
         semayi_guncelle(engine)
     except Exception:
         pass
+    # [2026-11-04] Sistemin güncellenme zamanı: bu kod sürümü ilk kez çalışıyorsa zamanı kaydedilir.
+    from app.core.database import engine as _motor
+    from app.core.sistem_surumu import surumu_kaydet
+    surumu_kaydet(_motor)
     import sys as _sys
     if "pytest" not in _sys.modules:   # testler kendi verisini kurar; arka plan işi araya girmesin
         # [2026-11-04] Skorların yeniden yazılması, ağır göçler ve saklama temizlikleri açılışta değil gece bakımında (03:00)
@@ -291,6 +295,18 @@ def _baslangic_temizligi():
 def saglik_kontrolu():
     """Cloud Run health check uç noktası."""
     return {"durum": "calisiyor"}
+
+
+@app.get("/sistem/surum")
+def sistem_surumu():
+    """[2026-11-04] Sistemin son güncellenme zamanı (sunucu yayını) ve son gece bakımı. Herkese açık; yalnızca zamanlar."""
+    from app.core.database import SessionLocal
+    from app.core.sistem_surumu import surum_bilgisi
+    db = SessionLocal()
+    try:
+        return surum_bilgisi(db)
+    finally:
+        db.close()
 
 
 app.include_router(auth.router, prefix="/auth", tags=["Kimlik Doğrulama"])

@@ -19,6 +19,10 @@ BASLIK = Font(bold=True, color="FFFFFF")
 DOLGU = PatternFill("solid", fgColor="E8804A")
 
 
+from zoneinfo import ZoneInfo as _ZI
+_TR = _ZI("Europe/Istanbul")
+
+
 def _sayfa(wb, ad, basliklar, satirlar, genislik=None, renk="E8804A"):
     ws = wb.create_sheet(ad[:31])
     ws.append(basliklar)
@@ -27,7 +31,8 @@ def _sayfa(wb, ad, basliklar, satirlar, genislik=None, renk="E8804A"):
         c.fill = PatternFill("solid", fgColor=renk.lstrip("#"))
         c.alignment = Alignment(vertical="center", wrap_text=True)
     for s in satirlar:
-        ws.append([(x.replace(tzinfo=None) if isinstance(x, datetime) and x.tzinfo else x) for x in s])
+        # [2026-11-04] Tarih-saat Türkiye saatine çevrilir (önceden UTC saat yazılıyordu); metne çevirme guvenli_kaydet'te
+        ws.append([(x.astimezone(_TR).replace(tzinfo=None) if isinstance(x, datetime) and x.tzinfo else x) for x in s])
     for i, g in enumerate(genislik or [], 1):
         ws.column_dimensions[get_column_letter(i)].width = g
     ws.freeze_panes = "A2"

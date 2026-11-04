@@ -552,7 +552,7 @@ def audit_log_excel(gun: int = Query(90, ge=0, le=3650), db: Session = Depends(g
     wb.remove(wb.active)
     rol = {"super_admin": "Süper admin", "okul_yetkilisi": "Okul yetkilisi"}
     _xlsx_sayfa(wb, "Audit Log", ["Zaman", "Yapan", "Rol", "İşlem", "Hedef tablo", "Hedef", "Gerekçe / ayrıntı", "Okul"],
-                [[r.zaman.astimezone(TZ).strftime("%d.%m.%Y %H:%M") if r.zaman else None, r.yapan, rol.get(r.rol, r.rol), r.islem,
+                [[r.zaman.astimezone(TZ).strftime("%d.%m.%Y %H:%M:%S") if r.zaman else None, r.yapan, rol.get(r.rol, r.rol), r.islem,
                   r.hedef_tablo, r.hedef_id, r.gerekce, r.okul] for r in satir],
                 f"Filizyol · {date.today().strftime('%d.%m.%Y')} · {'Son ' + str(gun) + ' gün' if gun else 'Tüm kayıtlar'} · {len(satir)} kayıt")
     b = io.BytesIO()

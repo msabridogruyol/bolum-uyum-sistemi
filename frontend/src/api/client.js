@@ -630,6 +630,7 @@ export const api = {
   // [2026-10-10] K1–K4 katman ağırlıkları (katmanlar.normalizasyon_agirligi — skor motorunun okuduğu değer)
   katmanAgirliklariGetir: () => aget('/admin/katman-agirliklari'),
   geceBakimi: () => aget('/admin/gece-bakimi'),   // [2026-11-04]
+  sistemSurumu: () => get('/sistem/surum'),   // [2026-11-04] son güncellenme zamanı (herkese açık)
   geceIsiniIptalEt: (id) => apost(`/admin/gece-bakimi/kuyruk/${id}/iptal`),
   katmanAgirliklariniGuncelle: (agirliklar) => aput('/admin/katman-agirliklari', { agirliklar }),
   bolumleriListele: () => aget('/admin/bolumler'),

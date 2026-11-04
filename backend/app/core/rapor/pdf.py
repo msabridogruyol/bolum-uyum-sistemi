@@ -19,7 +19,7 @@ from reportlab.lib.utils import ImageReader
 from reportlab.pdfbase import pdfmetrics
 from reportlab.pdfbase.ttfonts import TTFont
 from reportlab.platypus import (
-    BaseDocTemplate, Frame, KeepTogether, PageTemplate, Paragraph, Spacer, Table, TableStyle,
+    BaseDocTemplate, Flowable, Frame, KeepTogether, PageTemplate, Paragraph, Spacer, Table, TableStyle,
 )
 
 from app.core.kucuk_grup import DIPNOT, GIZLI_METIN   # [2026-10-10] KVKK küçük grup gizleme
@@ -62,7 +62,7 @@ def _tarih(z, saat=False) -> str:
         return "—"
     if isinstance(z, datetime):
         z = z.astimezone(TR) if z.tzinfo else z
-        return z.strftime("%d.%m.%Y %H:%M" if saat else "%d.%m.%Y")
+        return z.strftime("%d.%m.%Y %H:%M:%S" if saat else "%d.%m.%Y")
     if hasattr(z, "strftime"):   # date
         return z.strftime("%d.%m.%Y")
     return str(z)
@@ -110,10 +110,96 @@ def _cubuklar(satirlar: list[tuple[str, float | None]], genislik=170 * mm, renk=
     return d
 
 
-def _tablo_parcali(st, basliklar, satirlar, genislikler, parca=50, **kw) -> list:
-    """[2026-11-04] Yük: binlerce satırlık tek tablo sayfalara bölünürken ReportLab her sayfada kalan tabloyu yeniden ölçer
-    (20.000 öğrencili okul raporu ~2 dk). Uzun liste başlıklı küçük tablolara bölünür; çıktı aynı görünür, süre doğrusal."""
-    return [_tablo(st, basliklar, satirlar[i:i + parca], genislikler, **kw) for i in range(0, max(len(satirlar), 1), parca)]
+class HizliTablo(Flowable):
+    """[2026-11-04] Uzun düz metin listeleri (okul raporundaki öğrenci listesi) için hızlı tablo.
+    ReportLab Table + Paragraph her hücreyi üç kez ölçüp sarıyordu (20.000 öğrencide ~16 sn). Burada hücre satırları bir kez
+    simpleSplit ile bölünür, sayfaya sığan satırlar doğrudan çizilir; başlık her sayfada tekrarlanır. Görünüm _tablo ile aynı:
+    açık başlık zemini, vurgu çizgisi, zebra, ince satır çizgisi."""
+
+    PAD_X, PAD_Y = 6, 3
+
+    def __init__(self, basliklar, satirlar, genislikler, vurgu, font="Filiz", font_b="Filiz-B", boyut=7.4, aralik=9.5,
+                 renk=colors.HexColor("#3A342D"), _hazir=None, _bas=None, _ilk=0):
+        super().__init__()
+        self.genislikler, self.vurgu, self.font, self.font_b = list(genislikler), vurgu, font, font_b
+        self.boyut, self.aralik, self.renk = boyut, aralik, renk
+        self.ilk = _ilk   # zebra sırası sayfalar arasında kesintisiz sürsün
+        if _hazir is None:
+            self.bas = self._bol([str(x) for x in basliklar], font_b)
+            self.satirlar = [self._bol(["" if c is None else str(c) for c in r], font) for r in satirlar]
+        else:
+            self.bas, self.satirlar = _bas, _hazir
+
+    def _bol(self, hucreler, font):
+        from reportlab.lib.utils import simpleSplit
+        satir = []
+        for metin, gen in zip(hucreler, self.genislikler):
+            alan = gen - 2 * self.PAD_X
+            parcalar = simpleSplit(metin, font, self.boyut, alan) if metin else [""]
+            temiz = []
+            for p in parcalar:   # boşluksuz çok uzun sözcük: karakterden böl (Paragraph splitLongWords gibi)
+                while p and pdfmetrics.stringWidth(p, font, self.boyut) > alan:
+                    k = len(p)
+                    while k > 1 and pdfmetrics.stringWidth(p[:k], font, self.boyut) > alan:
+                        k -= 1
+                    temiz.append(p[:k]); p = p[k:]
+                temiz.append(p)
+            satir.append(temiz or [""])
+        return satir, max(len(x) for x in satir) * self.aralik + 2 * self.PAD_Y
+
+    def wrap(self, aw, ah):
+        self.width = sum(self.genislikler)
+        self.height = self.bas[1] + sum(y for _, y in self.satirlar)
+        return self.width, self.height
+
+    def split(self, aw, ah):
+        kalan = ah - self.bas[1]
+        n = 0
+        for _, y in self.satirlar:
+            if y > kalan:
+                break
+            kalan -= y
+            n += 1
+        if n == 0:
+            return []
+        if n >= len(self.satirlar):
+            return [self]
+        ortak = dict(vurgu=self.vurgu, font=self.font, font_b=self.font_b, boyut=self.boyut, aralik=self.aralik, renk=self.renk, _bas=self.bas)
+        return [HizliTablo(None, None, self.genislikler, _hazir=self.satirlar[:n], _ilk=self.ilk, **ortak),
+                HizliTablo(None, None, self.genislikler, _hazir=self.satirlar[n:], _ilk=self.ilk + n, **ortak)]
+
+    def draw(self):
+        c = self.canv
+        y = self.height
+        tum_gen = sum(self.genislikler)
+        zebra = colors.HexColor("#FCFAF6")
+        for i, (hucreler, yuk) in enumerate([self.bas] + self.satirlar):
+            alt = y - yuk
+            if i == 0:
+                c.setFillColor(ACIK); c.rect(0, alt, tum_gen, yuk, stroke=0, fill=1)
+            elif (self.ilk + i) % 2 == 0:
+                c.setFillColor(zebra); c.rect(0, alt, tum_gen, yuk, stroke=0, fill=1)
+            t = c.beginText()
+            t.setFont(self.font_b if i == 0 else self.font, self.boyut, self.aralik)
+            t.setFillColor(self.renk)
+            x = 0
+            for satirlar, gen in zip(hucreler, self.genislikler):
+                t.setTextOrigin(x + self.PAD_X, y - self.PAD_Y - self.boyut)
+                for s in satirlar:
+                    t.textLine(s)
+                x += gen
+            c.drawText(t)
+            if i == 0:
+                c.setStrokeColor(self.vurgu); c.setLineWidth(0.6)
+            else:
+                c.setStrokeColor(CIZGI); c.setLineWidth(0.25)
+            c.line(0, alt, tum_gen, alt)
+            y = alt
+
+
+def _tablo_parcali(st, basliklar, satirlar, genislikler, kucuk=True, **kw) -> list:
+    """[2026-11-04] Binlerce satırlık düz metin listesi: HizliTablo (sayfa başında başlık tekrarlanır)."""
+    return [HizliTablo(basliklar, satirlar, genislikler, st.vurgu, boyut=7.4 if kucuk else 8.4, aralik=9.5 if kucuk else 11)]
 
 
 def _tablo(st, basliklar, satirlar, genislikler, zebra=True, kucuk=False):

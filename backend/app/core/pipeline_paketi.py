@@ -324,7 +324,7 @@ def sayac_durumu(db: Session) -> dict:
     # Çalıştırma yapılmış ama çıktıları canlıya alınmamışsa gereken iş "çalıştır" değil "canlıya al"dır; ayrı durum.
     bekleyen = bool(son and (profil is None or son["zaman"] > profil))
     if bekleyen:
-        nedenler.append(f"Son pipeline çalıştırmasının çıktıları ({son['zaman'].astimezone(YEREL):%d.%m.%Y %H:%M}) henüz canlıya "
+        nedenler.append(f"Son pipeline çalıştırmasının çıktıları ({son['zaman'].astimezone(YEREL):%d.%m.%Y %H:%M:%S}) henüz canlıya "
                         "alınmadı: aşağıdaki 1–3. adımla canlıya alın.")
 
     sonraki = profil + timedelta(days=GUNCELLIK_GUN) if profil else None
