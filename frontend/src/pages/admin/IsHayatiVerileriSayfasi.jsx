@@ -650,7 +650,19 @@ function AsgariSekmesi({ ozet, yenileOzet }) {
           { kod: 'yururluk_tarihi', ad: 'Yürürlük', tip: 'tarih', zorunlu: true, genislik: 140 },
           { kod: 'kaynak', ad: 'Kaynak', tip: 'metin', zorunlu: true },
         ]} />
-      <KayitTablosu tablo="yasam_giderleri" baslik="Yaşam giderleri (aylık)" onDegisti={yenileOzet}
+      <KayitTablosu tablo="yasam_maliyeti_referans" baslik="Yaşam maliyeti (toplam, karşılaştırma için)" onDegisti={yenileOzet}
+        aciklama="Öğrenci İlk Maaş hesabında gider kalemlerini kendisi doldurur; burada girilen kaynaklı toplam (ör. TÜRK-İŞ bekâr çalışanın yaşama maliyeti) karşılaştırma için gösterilir. Her kodun en yeni dönemi kullanılır; yeni ayı yeni satır olarak ekleyin. Kodlar: bekar_yasam, aclik_siniri, yoksulluk_siniri."
+        varsayilan={{ tarih: bugun() }}
+        kolonlar={[
+          { kod: 'kod', ad: 'Kod', tip: 'metin', zorunlu: true, genislik: 120, ipucu: 'bekar_yasam' },
+          { kod: 'ad', ad: 'Ad', tip: 'metin', zorunlu: true },
+          { kod: 'aylik_tutar', ad: 'Aylık (TL)', tip: 'sayi', zorunlu: true, genislik: 100 },
+          { kod: 'kapsam', ad: 'Neyi kapsar', tip: 'metin' },
+          { kod: 'donem', ad: 'Dönem', tip: 'metin', zorunlu: true, genislik: 80, ipucu: '2026-11' },
+          { kod: 'tarih', ad: 'Yayım', tip: 'tarih', zorunlu: true, genislik: 140 },
+          { kod: 'kaynak', ad: 'Kaynak', tip: 'metin', zorunlu: true },
+        ]} />
+      <KayitTablosu tablo="yasam_giderleri" baslik="Yaşam giderleri (aylık, kalem kalem — isteğe bağlı)" onDegisti={yenileOzet}
         aciklama={`İl boş bırakılırsa Türkiye geneli sayılır; il satırı varsa öğrenci o ili seçtiğinde Türkiye geneli yerine o kullanılır. Önerilen kalem kodları: ${Object.entries(kalemler).map(([k, a]) => `${k} (${a})`).join(', ')}.`}
         varsayilan={{ tarih: bugun() }}
         kolonlar={[

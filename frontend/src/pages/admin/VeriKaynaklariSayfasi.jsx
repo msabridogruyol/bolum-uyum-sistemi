@@ -81,6 +81,14 @@ function Satir({ k, acik, onAc, onKaydet }) {
                   <ol style={{ margin: 0, paddingLeft: 20, display: 'grid', gap: 4, fontSize: 13 }}>
                     {k.adimlar.map((a, i) => <li key={i}>{a}</li>)}
                   </ol>
+                  {k.baglantilar?.length > 0 && (
+                    <div style={{ marginTop: 8, fontSize: 13 }}>
+                      <b>Kaynak bağlantıları:</b>
+                      <ul style={{ margin: '4px 0 0', paddingLeft: 20, display: 'grid', gap: 2 }}>
+                        {k.baglantilar.map((b) => <li key={b.url + b.ad}><a href={b.url} target="_blank" rel="noopener noreferrer">{b.ad} ↗</a></li>)}
+                      </ul>
+                    </div>
+                  )}
                   {k.ekran && <Link className="btn" style={{ marginTop: 10, display: 'inline-block', textDecoration: 'none' }} to={k.ekran}>Güncelleme ekranına git →</Link>}
                 </div>
               )}

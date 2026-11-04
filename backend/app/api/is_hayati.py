@@ -89,7 +89,7 @@ def giderler(il: str | None = Query(None, max_length=60), db: Session = Depends(
                  "tahmin": False} for r in secilen.values()]
     iller = [x[0] for x in db.execute(text("SELECT DISTINCT il FROM yasam_giderleri WHERE il IS NOT NULL ORDER BY il")).all()]
     return {"il": il, "iller": iller, "kalemler": kalemler, "toplam": round(sum(k["aylik_tutar"] or 0 for k in kalemler), 2) if kalemler else None,
-            "asgari": ihs.guncel_asgari(db)}
+            "asgari": ihs.guncel_asgari(db), "referans": ihs.yasam_maliyeti_referans(db)}
 
 
 def _alt_modulleri_bagla():

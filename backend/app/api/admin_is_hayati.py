@@ -12,7 +12,7 @@ Dosya yükleme (Excel .xlsx / CSV, base64 JSON — okul öğrenci yüklemesiyle 
   POST   /admin/is-hayati/kazanc/kaydet                — {veri_yili, kaynak, asgari_brut_o_yil, satirlar[]}
   GET    /admin/is-hayati/yuklemeler                   — yükleme geçmişi
   DELETE /admin/is-hayati/yuklemeler/{id}              — yüklemeyi geri al (istihdam satırları birlikte silinir)
-Elle düzenleme (tablo: istihdam_gostergeleri, kazanc_meslek_gruplari, kamu_maaslari, asgari_ucret, yasam_giderleri)
+Elle düzenleme (tablo: istihdam_gostergeleri, kazanc_meslek_gruplari, kamu_maaslari, asgari_ucret, yasam_giderleri, yasam_maliyeti_referans)
   GET    /admin/is-hayati/kayit/{tablo}?q=&veri_yili=
   POST   /admin/is-hayati/kayit/{tablo}                — {veri: {...}}
   PUT    /admin/is-hayati/kayit/{tablo}/{id}           — {veri: {...}} (yalnızca gönderilen alanlar)
@@ -668,6 +668,13 @@ TABLOLAR = {
         "alanlar": {"il": lambda v: _metin(v, False, 60), "kalem_kodu": lambda v: (_metin(v, True, 40) or "").lower().replace(" ", "_"),
                     "ad": lambda v: _metin(v, True, 120), "aylik_tutar": lambda v: _sayi(v, True, 0), "kaynak": lambda v: _metin(v, True),
                     "tarih": _tarih},
+    },
+    # [2026-11-04] Karşılaştırma için toplam yaşam maliyeti (Türk-İş her ay yayımlar: yeni dönemi yeni satır olarak ekleyin)
+    "yasam_maliyeti_referans": {
+        "ad": "Yaşam maliyeti (toplam, karşılaştırma için)", "sira": "tarih DESC NULLS LAST, kod", "ara": ["kod", "ad", "donem", "kaynak"],
+        "alanlar": {"kod": lambda v: (_metin(v, True, 40) or "").lower().replace(" ", "_"), "ad": lambda v: _metin(v, True, 200),
+                    "aylik_tutar": lambda v: _sayi(v, True, 1), "kapsam": lambda v: _metin(v, False, 300),
+                    "donem": lambda v: _metin(v, True, 20), "kaynak": lambda v: _metin(v, True), "tarih": _tarih},
     },
 }
 
