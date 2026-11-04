@@ -316,6 +316,26 @@ ADIMLAR = {
 _SIRA = {"yok": 0, "sorun": 1, "bekleniyor": 2, "kontrol_zamani": 3, "guncel": 4}
 
 
+# [2026-11-04] Kullanıcı isteği: her kaynağın verinin alındığı sayfaya doğrudan bağlantısı Veri Kaynakları'nda dursun;
+# bir sonraki güncellemede bu bağlantılardan yola çıkılır. (ad, url)
+BAGLANTILAR = {
+    "tuik_istihdam": [
+        ("TÜİK Veri Portalı (Eğitim › Yükseköğretim İstihdam Göstergeleri)", "https://veriportali.tuik.gov.tr"),
+        ("Lisans mezunlarının bölümlere göre kayıtlı istihdam oranı", "https://databrowser2.tuik.gov.tr/#/tr/tuik/TR,DF_LM_KIO_BOLUM,1.0"),
+        ("Lisans mezunlarının bölümlere göre ilk iş bulma süresi", "https://databrowser2.tuik.gov.tr/#/tr/tuik/TR,DF_LM_B_IIB_SURE,1.0"),
+        ("Lisans mezunlarının bölümlere göre aylık ortalama kazanç grupları",
+         "https://databrowser2.tuik.gov.tr/#/tr/tuik/TR,DF_LSNS_MEZ_BOL_AOK,1.0"),
+    ],
+    "tuik_kazanc": [("TÜİK Veri Portalı (İstihdam, İşsizlik ve Ücret › Kazanç Yapısı Araştırması)", "https://veriportali.tuik.gov.tr")],
+    "kamu_maaslari": [("AA, Zamlı memur maaşları belli oldu (03.07.2026)",
+                       "https://www.aa.com.tr/tr/ekonomi/zamli-memur-maaslari-belli-oldu/3985004")],
+    "yasam_giderleri": [("TÜRK-İŞ (Açlık ve Yoksulluk Sınırı Araştırması, her ay)", "https://www.turkis.org.tr"),
+                        ("Ekim 2026 rakamlarının haberi (Euronews, 30.10.2026)",
+                         "https://tr.euronews.com/2026/10/30/turk-is-ekim-ayinda-aclik-siniri-38-bin-yoksulluk-siniri-123-bin-857-tl-oldu")],
+    "yks_tarihi": [("ÖSYM (Sınav Takvimi)", "https://www.osym.gov.tr")],
+}
+
+
 def _kontroller(db: Session, kod: str | None = None, adet: int = 5) -> dict[str, list[dict]]:
     try:
         sql = ("SELECT id, kaynak_kodu, sonuc, notlar, kontrol_eden, zaman FROM ("
@@ -370,7 +390,8 @@ def liste(db: Session, bugun: date | None = None) -> dict:
                     "kayit": o.get("kayit") or 0, "donem": o.get("donem"), "kaynak": o.get("kaynak"), "ayrinti": o.get("ayrinti"),
                     "son_guncelleme": _zaman(o.get("son_guncelleme")).isoformat() if _zaman(o.get("son_guncelleme")) else None,
                     "son_kontrol": ks[0] if ks else None, "kontroller": ks, "durum": durum, "aciklama": aciklama,
-                    "adimlar": ADIMLAR.get(kod, [])})
+                    "adimlar": ADIMLAR.get(kod, []),
+                    "baglantilar": [{"ad": a, "url": u} for a, u in BAGLANTILAR.get(kod, [])]})
     ozet = {d: sum(1 for x in out if x["durum"] == d) for d in _SIRA}
     out.sort(key=lambda x: (_SIRA[x["durum"]], KAYNAKLAR.index(next(k for k in KAYNAKLAR if k[0] == x["kod"]))))
     return {"kaynaklar": out, "ozet": ozet, "zaman": simdi.isoformat()}

@@ -2889,5 +2889,19 @@
   "uz": "Yashash xarajati (jami)",
   "az": "Yaşayış xərci (cəmi)",
   "ko": "생활비(합계)"
+ },
+ "Kaynak bağlantıları:": {
+  "en": "Source links:",
+  "de": "Quelllinks:",
+  "fr": "Liens vers les sources :",
+  "ru": "Ссылки на источники:",
+  "es": "Enlaces a las fuentes:",
+  "it": "Link alle fonti:",
+  "ar": "روابط المصادر:",
+  "zh": "来源链接：",
+  "hi": "स्रोत लिंक:",
+  "uz": "Manba havolalari:",
+  "az": "Mənbə keçidləri:",
+  "ko": "출처 링크:"
  }
 }

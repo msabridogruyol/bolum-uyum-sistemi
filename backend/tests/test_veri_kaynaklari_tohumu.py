@@ -51,3 +51,11 @@ def test_veri_kaynaklari_artik_eksik_gostermez(db):
     durum = {k["kod"]: k["durum"] for k in vk.liste(db)["kaynaklar"]}
     for kod in ("kamu_maaslari", "yasam_giderleri", "yks_tarihi"):
         assert durum[kod] != "yok", kod
+
+
+def test_kaynak_baglantilari_https():
+    from app.core import veri_kaynaklari as vk
+    kodlar = {k[0] for k in vk.KAYNAKLAR}
+    for kod, liste in vk.BAGLANTILAR.items():
+        assert kod in kodlar, kod
+        assert liste and all(u.startswith("https://") and a for a, u in liste)
