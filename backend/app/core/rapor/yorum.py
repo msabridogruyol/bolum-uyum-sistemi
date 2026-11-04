@@ -32,6 +32,17 @@ UYUM_YUKSEK, UYUM_DUSUK = 60.0, 40.0
 
 
 @lru_cache(maxsize=1)
+
+def _maarif_alani(kod, kitle: str) -> dict:
+    """[2026-11-03] Rehber öğretmen ve sınıf öğretmeni yorumunda güçlü yönün Türkiye Yüzyılı Maarif Modeli'ndeki ilişkili
+    kavramları (yorumsal; app/core/maarif.py). Öğretmen derste aynı kavramlarla (eğilim, beceri, değer) çalışır.
+    Öğrenci ve veli ekranlarında Maarif karşılıkları ayrı kartta gösterildiği için burada eklenmez (tekrar olmasın)."""
+    if kitle not in ("rehber", "ogretmen") or not kod:
+        return {}
+    from app.core.maarif import kisa_metin
+    m = kisa_metin(kod)
+    return {"maarif": m} if m else {}
+
 def _icerik() -> dict:
     try:
         return json.loads(_DOSYA.read_text("utf-8")).get("degiskenler", {})
@@ -191,11 +202,13 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
                           "rehber": f"Önem verdiği değerler: {dadlar}."}[kitle])
     if bolumler:
         b1 = bolumler[0]["ad"]
-        alan_m = " · ".join(alanlar) or "—"
-        y["ozet"].append({"ogrenci": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. En uyumlu bölümün: {b1}.",
-                          "veli": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. En uyumlu görünen bölüm: {b1}.",
-                          "ogretmen": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}.",
-                          "rehber": f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. İlk öneri: {b1}."}[kitle])
+        # [2026-11-03] Bölümlerin üst alan etiketi yoksa "en öne çıkan alanlar: —" yazılmaz; yalnızca bölüm söylenir.
+        alan_m = " · ".join(alanlar)
+        on = f"Bölüm uyumunda en öne çıkan alanlar: {alan_m}. " if alan_m else ""
+        cumle = {"ogrenci": f"{on}En uyumlu bölümün: {b1}.", "veli": f"{on}En uyumlu görünen bölüm: {b1}.",
+                 "ogretmen": on.strip(), "rehber": f"{on}İlk öneri: {b1}."}[kitle]
+        if cumle:
+            y["ozet"].append(cumle)
     if hd == "uyumlu":
         y["ozet"].append(f"Seçtiğin hedef ({h['ad']}) profilinle uyumlu; şimdi önemli olan bu hedef için düzenli çalışmak." if sen else
                          f"Seçilen hedef ({h['ad']}) öğrencinin profiliyle uyumlu; şimdi önemli olan bu hedef için düzenli çalışmak.")
@@ -224,7 +237,7 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
     for g in guclu[:3]:
         m = (kitle == "rehber" and _metin(g.get("kod"), "yuksek", "rehber")) or _metin(g.get("kod"), "yuksek", alan_g)
         if m:
-            y["guclu"].append({"ad": g["ad"], "metin": m})
+            y["guclu"].append({"ad": g["ad"], "metin": m, **_maarif_alani(g.get("kod"), kitle)})
 
     # --- Gelişim / destek (düşük kutupta nötr adlar)
     alan_d = {"ogrenci": "yap", "veli": "veli", "ogretmen": "ogretmen", "rehber": "ogretmen"}[kitle]

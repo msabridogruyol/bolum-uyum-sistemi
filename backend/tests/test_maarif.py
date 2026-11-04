@@ -19,3 +19,20 @@ def test_is_degerleri_eslesmez_ve_metin():
     assert all(karsiliklar(k) == [] for k in ("D1", "D2", "D3", "D4", None, "YOK"))
     assert kisa_metin("P5") == "Merak · Açık fikirlilik"
     assert "puanlamayı etkilemez" in NOT and "MEB onayı anlamına gelmez" in NOT
+
+
+def test_rehber_ve_ogretmen_yorumunda_maarif_karsiligi():
+    """[2026-11-03] Rehber / sınıf öğretmeni yorumunda güçlü yönün Maarif karşılığı; öğrenci ve veli yorumunda yok (ayrı kartta)."""
+    from app.core.maarif import kisa_metin
+    from app.core.rapor.yorum import _maarif_alani
+    assert _maarif_alani("P5", "rehber") == {"maarif": kisa_metin("P5")} and kisa_metin("P5")
+    assert _maarif_alani("P5", "ogretmen")["maarif"]
+    assert _maarif_alani("P5", "ogrenci") == {} and _maarif_alani("P5", "veli") == {}
+    assert _maarif_alani("D1", "rehber") == {}, "iş değerleri Maarif'le eşleştirilmedi"
+
+
+def test_veli_sunumunda_maarif_slayti():
+    from app.core.rapor import veli_sunumu as vs
+    assert hasattr(vs, "_maarif")
+    kaynak = open(vs.__file__, encoding="utf-8").read()
+    assert "_maarif(d)" in kaynak and "MEB onayı" in open(__import__("app.core.maarif", fromlist=["x"]).__file__, encoding="utf-8").read()

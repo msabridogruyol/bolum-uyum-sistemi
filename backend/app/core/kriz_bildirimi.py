@@ -49,7 +49,8 @@ def okula_bildir(db: Session, ogrenci) -> bool:
 
 
 def _ekle(db: Session, ogrenci, okul_id: int) -> bool:
-    link = f"/admin/okul/{okul_id}?ogrenci={ogrenci.id}"
+    # [2026-11-03] Okul panelinde öğrenci detayı ?sekme=ogrenciler&ogrenci=… ile açılır (yalnızca ?ogrenci= Özet sekmesinde kalıyordu)
+    link = f"/admin/okul/{okul_id}?sekme=ogrenciler&ogrenci={ogrenci.id}"
     yakin = db.execute(text("""SELECT 1 FROM bildirimler WHERE tur = 'kriz_uyarisi' AND link = :l
                                AND olusturulma_zamani > now() - interval '24 hours' LIMIT 1"""), {"l": link}).first()
     if yakin:
