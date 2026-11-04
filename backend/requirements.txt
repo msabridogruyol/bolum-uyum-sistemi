@@ -7,6 +7,7 @@ pydantic-settings==2.15.0
 email-validator==2.2.0
 psycopg2-binary==2.9.12
 PyJWT==2.15.0   # [2026-11-04] python-jose yerine (bakımsız, CVE)
+cryptography>=42   # [2026-11-04] gizli_metin (Fernet); önceden python-jose[cryptography] ile dolaylı geliyordu
 bcrypt==5.0.0
 numpy==2.4.4
 openai
