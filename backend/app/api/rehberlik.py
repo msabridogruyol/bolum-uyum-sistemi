@@ -20,6 +20,7 @@ Okul yetkilisi (rehber öğretmen) + süper admin — modül: rehberlik
   * Son kullanım günlük aktiflikten (ogrenci_aktif_gunler) okunur; "beni hatırla" ile sistemi kullanan öğrenci "girmiyor" sayılmaz.
   * "Yüksek": net düşüşü %30+ ya da 3+ farklı "orta" uyarının birleşmesi. 3+ farklı düşük uyarı → "orta".
 """
+from app.core.kisa_onbellek import ozet_onbellegi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from collections import Counter, defaultdict
@@ -209,7 +210,18 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
 def erken_uyari(okul_id: int, yalniz_ozet: bool = False, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     """yalniz_ozet=true: yalnızca sayılar (menüdeki risk rozeti; 20.000 öğrencide liste ~3 MB)."""
     _okul_kapsami(db, yon, okul_id)
+    if yalniz_ozet:   # [2026-11-04] menü rozeti: 5 dk önbellekli sayılar (her yönetim sayfasında çağrılıyor)
+        return _erken_uyari_ozeti(db, okul_id)
     liste = uyarilari_hesapla(db, okul_id)
+    return _erken_uyari_yaniti(liste, False)
+
+
+@ozet_onbellegi
+def _erken_uyari_ozeti(db: Session, okul_id: int) -> dict:
+    return _erken_uyari_yaniti(uyarilari_hesapla(db, okul_id), True)
+
+
+def _erken_uyari_yaniti(liste: list, yalniz_ozet: bool) -> dict:
     kurallar = Counter(u["kural"] for s in liste for u in s["uyarilar"])
     return {
         "ogrenciler": [] if yalniz_ozet else liste,
@@ -235,6 +247,8 @@ def risk_ertele(ogrenci_id: str, istek: ErteleIstek, db: Session = Depends(get_d
         ON CONFLICT (ogrenci_id, kural) DO UPDATE SET bitis = EXCLUDED.bitis, olusturan = EXCLUDED.olusturan, olusturulma_zamani = now()
     """), {"o": o.id, "k": istek.kural, "b": date.today() + timedelta(days=istek.gun), "y": yon.ad_soyad})
     denetim_yaz(db, yon, "risk_ertele", "ogrenciler", o.id, f"{KURALLAR[istek.kural]} · {istek.gun} gün", o.okul_id)
+    from app.core.kisa_onbellek import hepsini_bosalt
+    hepsini_bosalt()   # menüdeki risk sayısı hemen güncellensin
     db.commit()
 
 

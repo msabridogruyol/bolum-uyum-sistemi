@@ -546,7 +546,7 @@ export default function OkulPaneliSayfasi() {
   // [2026-11-04] Öğrenci listesi yalnızca Öğrenciler / Rehberlik / Akran sekmelerinde ve yenilenince yüklenir
   const listeSekmesi = ['ogrenciler', 'rehberlik', 'akran'].includes(sekme)
   useEffect(() => {
-    if (!listeSekmesi) return
+    if (!listeSekmesi || ogrSurum === 0) return   // ilk yükleme yenile() ile gelir (iki kez istenmesin)
     let iptal = false
     api.okulOgrencileri(okulId).then((l) => { if (!iptal) setOgrenciler(l) }).catch(() => { if (!iptal) setOgrenciler([]) })
     return () => { iptal = true }

@@ -60,3 +60,23 @@ def ozet_onbellegi(fn=None, *, haric: tuple = (), kopyala: bool = True):
 def hepsini_bosalt() -> None:
     with _ana:
         _veri.clear()
+
+
+class YazmadaBosaltAraKatmani:
+    """Yönetim (/yonetim, /admin) tarafında başarılı her değişiklik isteğinden sonra özet önbelleği boşaltılır: rehber öğrenci
+    ekleyince, sınıf atayınca vb. panel hemen güncel görünür. Öğrenci işlemleri (cevap, görev) boşaltmaz; okul özetleri
+    öğrenci tarafındaki değişikliği en geç OZET_SURESI_SN sonra gösterir."""
+
+    def __init__(self, app):
+        self.app = app
+
+    async def __call__(self, scope, receive, send):
+        if scope["type"] != "http" or scope.get("method") in ("GET", "HEAD", "OPTIONS") or \
+                not str(scope.get("path", "")).startswith(("/yonetim", "/admin")):
+            return await self.app(scope, receive, send)
+
+        async def gonder(mesaj):
+            if mesaj["type"] == "http.response.start" and mesaj.get("status", 500) < 400:
+                hepsini_bosalt()
+            await send(mesaj)
+        await self.app(scope, receive, gonder)

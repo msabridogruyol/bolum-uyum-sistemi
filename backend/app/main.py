@@ -197,6 +197,8 @@ class ZiyaretKaydiMiddleware:
 
 app.add_middleware(ZiyaretKaydiMiddleware)
 # [2026-11-04] Yük: büyük JSON yanıtlar sıkıştırılır (20.000 öğrencili okulda öğrenci listesi 10 MB → ~1 MB)
+from app.core.kisa_onbellek import YazmadaBosaltAraKatmani  # noqa: E402
+app.add_middleware(YazmadaBosaltAraKatmani)   # [2026-11-04] yönetim değişikliğinden sonra özetler hemen güncel
 from fastapi.middleware.gzip import GZipMiddleware  # noqa: E402
 app.add_middleware(GZipMiddleware, minimum_size=2048)
 

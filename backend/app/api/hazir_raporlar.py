@@ -20,6 +20,7 @@ Giriş: şifreyle yapılan başarılı oturum açma sayısı (ek bilgi).
 Performans: liste başına tek toplu SQL.
 """
 from __future__ import annotations
+from app.core.kisa_onbellek import ozet_onbellegi
 
 from datetime import date, datetime, timedelta, timezone
 
@@ -53,6 +54,11 @@ def hazir_raporlar(okul_id: int, gun: int = Query(30), sinif: str | None = None,
                    adet: int = Query(10, ge=3, le=50),
                    db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     _okul_kapsami(db, yon, okul_id)
+    return _hazir_raporlar_verisi(db, okul_id, gun, sinif, sube, adet)
+
+
+@ozet_onbellegi   # [2026-11-04] yük: okul özeti sayfası her açılışta (20.000 öğrencide ~2 sn); 5 dk, yönetim değişikliğinde boşalır
+def _hazir_raporlar_verisi(db: Session, okul_id: int, gun: int, sinif: str | None, sube: str | None, adet: int) -> dict:
     gun = gun if gun in DONEMLER else 30
     k = ogrenci_kumesi(db, okul_id, sinif, sube)
     ogr = k["ogr"]

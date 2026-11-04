@@ -32,6 +32,7 @@ PUT    /yonetim/okul/{okul_id}/tema             — okul rengi (#RRGGBB; boş = 
 GET    /yonetim/okul/{okul_id}/bilgi             — okul tanıtım bilgileri (kuruluş yılı, öğrenci sayısı, tanıtım, iletişim, kadro)
 PUT    /yonetim/okul/{okul_id}/bilgi             — tanıtım bilgilerini güncelle (okul yetkilisi + süper admin)
 """
+from app.core.kisa_onbellek import ozet_onbellegi
 from app.core.excel_guvenligi import guvenli_kaydet
 import base64
 import csv
@@ -596,6 +597,19 @@ def _okul_basligi(okul: Okul | None) -> dict:
 
 @router.get("/okul/{okul_id}/ozet")
 def okul_ozeti(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim),
+               sinif: str | None = None, sube: str | None = None):
+    """[2026-11-04] Yük: okul paneli her sekmede bu özeti ister (20.000 öğrencide ~2 sn). Yetki burada denetlenir; sonuç 5 dk
+    önbellekten gelir ve okulda herhangi bir değişiklik isteği (POST/PUT/DELETE) olunca boşaltılır (main.py)."""
+    _okul_kapsami(db, yon, okul_id)
+    return _okul_ozeti_onbellekli(db, okul_id, sinif, sube, yon=yon)
+
+
+@ozet_onbellegi(haric=("yon",))
+def _okul_ozeti_onbellekli(db: Session, okul_id: int, sinif: str | None, sube: str | None, yon=None):
+    return _okul_ozeti_hesapla(okul_id, db, yon, sinif, sube)
+
+
+def _okul_ozeti_hesapla(okul_id: int, db: Session, yon: AdminKullanici,
                sinif: str | None = None, sube: str | None = None):
     """[2026-10-10] sinif / sube verilirse yalnızca o sınıf düzeyinin / şubenin özeti (sınıf öğretmeni raporu)."""
     okul = _okul_kapsami(db, yon, okul_id)
