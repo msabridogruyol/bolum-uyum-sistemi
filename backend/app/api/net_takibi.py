@@ -16,6 +16,7 @@ from datetime import date, datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -78,7 +79,7 @@ def yapi(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)
 
 
 # ----------------------------------------------------------------------------- denemeler
-class DenemeIstek(BaseModel):
+class DenemeIstek(GirdiModeli):
     tarih: date
     oturum: str = Field(pattern="^(TYT|AYT|YDT)$")
     ad: str | None = Field(default=None, max_length=80)
@@ -140,7 +141,7 @@ def deneme_sil(deneme_id: int, db: Session = Depends(get_db), o: Ogrenci = Depen
 
 
 # ----------------------------------------------------------------------------- konu takibi
-class KonuIstek(BaseModel):
+class KonuIstek(GirdiModeli):
     ders: str
     konu: str
     durum: str
@@ -260,7 +261,7 @@ def hedef_programlari(db: Session = Depends(get_db), o: Ogrenci = Depends(get_me
     return {**v, "bolum": b.ad, "secili": (_net_hedefi(db, o) or {}).get("kilavuz_kodu")}
 
 
-class HedefIstek(BaseModel):
+class HedefIstek(GirdiModeli):
     kilavuz_kodu: int
 
 

@@ -18,6 +18,7 @@ import unicodedata
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -50,7 +51,7 @@ def paketler(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_me
             "zorunlu": [{"kod": k, **MODULLER[k]} for k in ZORUNLU]}
 
 
-class PaketIstek(BaseModel):
+class PaketIstek(GirdiModeli):
     ad: str = Field(min_length=2, max_length=40)
     aciklama: str | None = Field(default=None, max_length=300)
     moduller: list[str] = Field(default_factory=list)
@@ -106,7 +107,7 @@ def okul_paketi(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici
             "zorunlu": [{"kod": k, **MODULLER[k]} for k in ZORUNLU]}
 
 
-class OkulPaketIstek(BaseModel):
+class OkulPaketIstek(GirdiModeli):
     paket: str
     ekle: list[str] = Field(default_factory=list)
     cikar: list[str] = Field(default_factory=list)

@@ -12,7 +12,7 @@ from datetime import datetime, timezone
 import uuid
 from uuid import UUID
 
-from fastapi import BackgroundTasks, APIRouter, Depends, HTTPException
+from fastapi import BackgroundTasks, APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text, func
 from sqlalchemy.orm import Session
 
@@ -274,7 +274,7 @@ def uyum_detayini_getir(
 
 @router.get("/audit-log", response_model=list[AuditLogOut])
 def audit_log_getir(
-    limit: int = 50,
+    limit: int = Query(50, ge=1, le=1000),   # [2026-11-04] üst sınır (önceden ?limit=10000000 kabul ediliyordu)
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):
@@ -290,7 +290,7 @@ def audit_log_getir(
 
 @router.get("/ogrenciler", response_model=list[OgrenciListeOut])
 def ogrencileri_listele(
-    limit: int = 50,
+    limit: int = Query(50, ge=1, le=1000),   # [2026-11-04] üst sınır (önceden ?limit=10000000 kabul ediliyordu)
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_admin),
 ):

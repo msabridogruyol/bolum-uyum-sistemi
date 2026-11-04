@@ -49,6 +49,8 @@ import re
 import sys
 import unicodedata
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from guvenli_npy import metin_listesi_kaydet, metin_listesi_oku  # noqa: E402  [2026-11-04] pickle'sız ad listeleri
 from pathlib import Path
 
 from embedding_saglayici import embed_et, MODEL_TANIMLARI
@@ -214,8 +216,8 @@ def kalite_kontrol(skor_ort: np.ndarray, meslek_isimleri, degisken_kodlari) -> N
 
 
 def calistir(yontem: str = "izdusum"):
-    meslek_isimleri = np.load(ONBELLEK_DIZINI / "meslek_isimleri.npy", allow_pickle=True)
-    degisken_kodlari = np.load(ONBELLEK_DIZINI / "degisken_kodlari.npy", allow_pickle=True)
+    meslek_isimleri = np.array(metin_listesi_oku(ONBELLEK_DIZINI / "meslek_isimleri.npy"), dtype=object)
+    degisken_kodlari = np.array(metin_listesi_oku(ONBELLEK_DIZINI / "degisken_kodlari.npy"), dtype=object)
     isco_kodlari = meslek_isco_kodlari()
     kutuplar = kutuplari_oku() if yontem == "izdusum" else {}
     print(f"YÖNTEM: {'anlamsal izdüşüm' if yontem == 'izdusum' else 'eski benzerlik'} | "

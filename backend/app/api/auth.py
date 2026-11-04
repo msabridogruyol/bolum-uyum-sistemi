@@ -65,6 +65,9 @@ def giris_sonucu(db: Session, hesap, rol: str, cihaz_tokeni: str | None) -> Giri
     if not getattr(hesap, "test_hesabi", False) and hg.iki_adim_aktif_mi(db) and not hg.cihaz_guvenilir_mi(db, tip, hesap.id, cihaz_tokeni):
         try:
             hg.dogrulama_kodu_gonder(db, tip, hesap.id, hesap.email, hesap.ad_soyad)
+        except hg.BeklemeHatasi as e:   # [2026-11-04] günlük kod / hatalı deneme sınırı
+            db.rollback()
+            raise HTTPException(status_code=429, detail=str(e))
         except IsKuraliHatasi as e:
             db.rollback()
             raise HTTPException(status_code=503, detail=str(e))

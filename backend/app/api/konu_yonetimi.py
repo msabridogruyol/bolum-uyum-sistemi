@@ -11,6 +11,7 @@ POST   /yonetim/konular/{id}/tasi          — {yon: yukari|asagi} aynı kaynakt
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -61,7 +62,7 @@ def listele(okul_id: int | None = None, db: Session = Depends(get_db), yon: Admi
     return {"okul_id": okul_id, "duzenleyebilir_genel": yon.rol == "super_admin", "dersler": yonetim_listesi(db, okul_id)}
 
 
-class EkleIstek(BaseModel):
+class EkleIstek(GirdiModeli):
     ders: str
     ad: str = Field(max_length=120)
     okul_id: int | None = None
@@ -89,7 +90,7 @@ def ekle(istek: EkleIstek, db: Session = Depends(get_db), yon: AdminKullanici = 
     return {"id": r.id}
 
 
-class DuzenleIstek(BaseModel):
+class DuzenleIstek(GirdiModeli):
     ad: str = Field(max_length=120)
 
 
@@ -128,7 +129,7 @@ def sil(konu_id: int, db: Session = Depends(get_db), yon: AdminKullanici = Depen
     db.commit()
 
 
-class GizleIstek(BaseModel):
+class GizleIstek(GirdiModeli):
     okul_id: int
     gizli: bool
 
@@ -149,7 +150,7 @@ def gizle(konu_id: int, istek: GizleIstek, db: Session = Depends(get_db), yon: A
     db.commit()
 
 
-class TasiIstek(BaseModel):
+class TasiIstek(GirdiModeli):
     yon: str = Field(pattern="^(yukari|asagi)$")
 
 

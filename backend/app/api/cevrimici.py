@@ -17,6 +17,7 @@ from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -80,7 +81,7 @@ def buradayim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogr
             "kesildi": len(sinifim) + len(digerleri) > LISTE_EN_FAZLA}
 
 
-class GizlilikIstek(BaseModel):
+class GizlilikIstek(GirdiModeli):
     gizli: bool
 
 

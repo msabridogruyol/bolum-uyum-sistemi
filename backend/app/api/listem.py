@@ -62,7 +62,7 @@ def favori_listesi(db: Session, o: Ogrenci, uyumlu: bool = True) -> list[dict]:
     uyum = uyum_haritasi(db, o) if uyumlu else {}
     alan = _alanlar(db, [b.id for _, b in satirlar])
     return [{"bolum_id": b.id, "bolum_adi": b.ad, "kisa_aciklama": b.kisa_aciklama,
-             "toplam_uyum": round(float(uyum[b.id]), 1) if b.id in uyum else None,
+             "toplam_uyum": float(uyum[b.id]) if b.id in uyum else None,   # [2026-11-04] ham değer: ekran yuvarlar (önce 1 haneye yuvarlanınca 99,46 → 99,5 → %100; listede %99)
              **alan.get(b.id, {"ust_alan": None, "alt_alan": None}),
              "eklenme_zamani": f.eklenme_zamani} for f, b in satirlar]
 

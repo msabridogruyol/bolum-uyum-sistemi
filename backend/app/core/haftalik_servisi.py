@@ -14,6 +14,7 @@ görevleri ilgili iş yapıldığında kendiliğinden tamamlanır; keşif görev
 o bölümün örnek mesleklerini açınca tamamlanır.
 """
 import hashlib
+import re
 import json
 from datetime import date, datetime, timedelta, timezone
 from urllib.parse import quote
@@ -239,8 +240,42 @@ def haftanin_gorevleri(db: Session, ogrenci: Ogrenci, bugun: date | None = None)
     if not gorevler:
         _gorevleri_olustur(db, ogrenci, hafta)
         gorevler = oku()
+    _hedefe_gore_yenile(db, ogrenci, gorevler)
     _otomatik_tamamla(db, ogrenci, gorevler)
     return gorevler
+
+
+_HEDEF_ONEKI = re.compile(r"^Hedefin [^;]*; ")
+
+
+def _hedefe_gore_yenile(db: Session, ogrenci: Ogrenci, gorevler: list[OgrenciHaftalikGorev]) -> None:
+    """[2026-11-04] Ekran denetimi: haftanın görevleri hafta başında metniyle birlikte kaydedilir. Öğrenci hafta içinde hedef
+    bölümünü değiştirince bekleyen görevler eski hedefi anlatmaya devam ediyordu ("Hedefin Çalışma Ekonomisi…" — hedef
+    Mimarlık). Bekleyen yol haritası görevi yeni hedefin sıradaki adımıyla, keşif görevlerinin "Hedefin …;" girişi yeni
+    hedefin adıyla yenilenir. Tamamlanmış görevlere dokunulmaz (geçmiş kayıttır)."""
+    from app.core.koclugu_servisi import aktif_hedef_getir
+    bekleyen = [g for g in gorevler if g.durum == "bekliyor" and g.tur in ("plan_adimi", "kesif")]
+    if not bekleyen:
+        return
+    hedef = aktif_hedef_getir(db, ogrenci)
+    degisti = False
+    for g in bekleyen:
+        if g.tur == "plan_adimi" and (hedef is None or g.ref_bolum_id != hedef.bolum_id):
+            yeni = _yolculuk_gorevi(db, ogrenci)
+            if yeni:
+                for alan in ("tur", "baslik", "aciklama", "ref_kod", "ref_bolum_id", "link"):
+                    setattr(g, alan, yeni.get(alan))
+                degisti = True
+        elif g.tur == "kesif" and g.aciklama and _HEDEF_ONEKI.match(g.aciklama):
+            hb = db.get(Bolum, hedef.bolum_id) if hedef else None
+            onek = f"Hedefin {_turkce_baslik(hb.ad)}; " if hb else ""
+            yeni_metin = _HEDEF_ONEKI.sub(onek, g.aciklama, count=1) if onek else _HEDEF_ONEKI.sub("", g.aciklama, count=1).replace(
+                "yine de başka seçenekleri tanımak kararını güçlendirir. ", "", 1)
+            if yeni_metin != g.aciklama:
+                g.aciklama = yeni_metin
+                degisti = True
+    if degisti:
+        db.flush()
 
 
 # ----------------------------------------------------------------------------- tamamlama

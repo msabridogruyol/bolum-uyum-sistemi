@@ -1,16 +1,17 @@
 """Kimlik doğrulama request/response şemaları — D1."""
 from pydantic import BaseModel, EmailStr, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 
 
-class OgrenciKayitIstek(BaseModel):
+class OgrenciKayitIstek(GirdiModeli):
     ad_soyad: str = Field(min_length=2, max_length=200)
     email: EmailStr
     sifre: str = Field(min_length=8, max_length=128)
 
 
-class GirisIstek(BaseModel):
+class GirisIstek(GirdiModeli):
     email: EmailStr
-    sifre: str
+    sifre: str = Field(max_length=200)   # [2026-11-04] üst sınır (bcrypt 72 bayt kullanır)
 
 
 class TokenCifti(BaseModel):
@@ -19,7 +20,7 @@ class TokenCifti(BaseModel):
     token_tipi: str = "bearer"
 
 
-class YenilemeIstek(BaseModel):
+class YenilemeIstek(GirdiModeli):
     yenileme_tokeni: str
 
 
@@ -34,7 +35,7 @@ class OgrenciProfil(BaseModel):
 # ============================================================================
 # [2026-10-04] KVKK, 2 adımlı doğrulama, şifre sıfırlama
 # ============================================================================
-class KvkkOnayIstek(BaseModel):
+class KvkkOnayIstek(GirdiModeli):
     onaylar: dict[str, bool]
 
 
@@ -60,21 +61,21 @@ class GirisCevap(BaseModel):
     cihaz_tokeni: str | None = None             # "bu cihazı hatırla" seçildiyse
 
 
-class IkiAdimDogrulaIstek(BaseModel):
+class IkiAdimDogrulaIstek(GirdiModeli):
     gecici_token: str
     kod: str = Field(min_length=4, max_length=12)
     cihazi_hatirla: bool = False
 
 
-class IkiAdimTekrarIstek(BaseModel):
+class IkiAdimTekrarIstek(GirdiModeli):
     gecici_token: str
 
 
-class SifremiUnuttumIstek(BaseModel):
+class SifremiUnuttumIstek(GirdiModeli):
     email: EmailStr
 
 
-class SifreSifirlaIstek(BaseModel):
+class SifreSifirlaIstek(GirdiModeli):
     token: str = Field(min_length=10, max_length=200)
     yeni_sifre: str = Field(min_length=8, max_length=128)
 

@@ -10,6 +10,7 @@
 """
 from fastapi import APIRouter, Depends
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -30,7 +31,7 @@ def _liste(db: Session, tip: str, kid) -> dict:
     return {"bildirimler": [dict(r) for r in rows], "okunmamis": okunmamis}
 
 
-class OkunduIstek(BaseModel):
+class OkunduIstek(GirdiModeli):
     idler: list[int] | None = None
 
 
@@ -44,7 +45,7 @@ def _okundu(db: Session, tip: str, kid, idler) -> dict:
     return _liste(db, tip, kid)
 
 
-class TercihIstek(BaseModel):
+class TercihIstek(GirdiModeli):
     eposta: bool
 
 

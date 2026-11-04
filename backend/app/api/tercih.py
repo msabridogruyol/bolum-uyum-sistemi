@@ -23,6 +23,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -122,7 +123,7 @@ def tercihim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogre
     return {**tercih_verisi(db, o), "uygun": o.sinif in ("12. Sınıf", "Mezun")}
 
 
-class TercihSatir(BaseModel):
+class TercihSatir(GirdiModeli):
     universite: str = Field(min_length=2, max_length=140)
     bolum_ad: str = Field(min_length=2, max_length=160)
     bolum_id: int | None = None
@@ -133,7 +134,7 @@ class TercihSatir(BaseModel):
     notlar: str | None = Field(default=None, max_length=200)
 
 
-class TercihIstek(BaseModel):
+class TercihIstek(GirdiModeli):
     puan_turu: str | None = None
     siralama: int | None = Field(default=None, ge=1, le=3_000_000)
     puan: float | None = Field(default=None, ge=0, le=600)
@@ -183,7 +184,7 @@ def tercih_gonder(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut
     return tercih_verisi(db, o)
 
 
-class YerlesmeIstek(BaseModel):
+class YerlesmeIstek(GirdiModeli):
     durum: str
     universite: str | None = Field(default=None, max_length=140)
     bolum_ad: str | None = Field(default=None, max_length=160)
@@ -268,7 +269,7 @@ def ogrenci_tercihi(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKu
     return {**tercih_verisi(db, o, bolumler=False), "ogrenci": {"ad_soyad": o.ad_soyad, "sinif_metni": _sinif_metni(o)}}
 
 
-class KararIstek(BaseModel):
+class KararIstek(GirdiModeli):
     karar: str = Field(pattern="^(onayla|duzeltme)$")
     notu: str | None = Field(default=None, max_length=1500)
 

@@ -125,3 +125,28 @@ class GovdeBoyutuAraKatmani:
                 bas, govde = _yanit_413(sinir)
                 await send(bas)
                 await send(govde)
+
+
+# [2026-11-04] Güvenlik denetimi — sıkıştırma bombası: 10 MB sınırı sıkıştırılmış .xlsx'e uygulanıyordu; 15 KB'lık bir dosya
+# 16.384 sütun ilan edip ~3 GB, 300 KB'lık tek hücre ~640 MB bellek tüketebiliyordu (sunucu tüm okullar için düşer).
+XLSX_ACIK_EN_FAZLA_BAYT = 80 * MB       # açılmış toplam boyut (gerçek okul dosyaları birkaç MB)
+XLSX_EN_FAZLA_ORAN = 200                # tek giriş için açılmış/sıkıştırılmış oranı (normal XML ~5–20)
+TABLO_EN_FAZLA_SUTUN = 200              # ilk sayfada okunacak sütun (öğrenci listesi ~10, TÜİK tabloları ~60)
+HUCRE_EN_FAZLA_KARAKTER = 2000
+
+
+def xlsx_bomba_denetimi(veri: bytes) -> None:
+    """Açmadan önce zip içeriğini denetler; aşımda 400. Bozuk zip burada değil openpyxl'de yakalanır."""
+    import io
+    import zipfile
+    try:
+        z = zipfile.ZipFile(io.BytesIO(veri))
+    except zipfile.BadZipFile:
+        return
+    toplam = 0
+    for g in z.infolist():
+        toplam += g.file_size
+        oran = g.file_size / max(g.compress_size, 1)
+        if toplam > XLSX_ACIK_EN_FAZLA_BAYT or (g.file_size > MB and oran > XLSX_EN_FAZLA_ORAN):
+            raise HTTPException(status_code=400, detail="Excel dosyası açıldığında çok büyük. Yalnızca gerekli sütun ve satırları "
+                                                        "bırakıp yeniden kaydedin ya da CSV olarak yükleyin.")

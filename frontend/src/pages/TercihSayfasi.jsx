@@ -156,7 +156,8 @@ export default function TercihSayfasi() {
   }
   useEffect(() => { api.tercih().then(yukle).catch((e) => setHata(e.detail || 'Yükleyemedik. Tekrar dene.')) }, [])
   if (!v) return <div className="pg"><div className={`bos-durum${hata ? '' : ' yukleniyor'}`}>{hata || 'Yükleniyor…'}</div></div>
-  if (!v.uygun) return <div className="pg"><div className="card bos-durum">Tercih listesi 12. sınıf ve mezun öğrenciler içindir.</div></div>
+  // [2026-11-04] Başlıksız kart maskotun altında kalıyordu (telefonda metin kesiliyordu); diğer sayfalar gibi başlıkla açılır
+  if (!v.uygun) return <div className="pg"><div className="ph"><div className="pt">Tercihlerim</div></div><div className="card bos-durum">Tercih listesi 12. sınıf ve mezun öğrenciler içindir.</div></div>
   const degis = (l) => { setListe(l); setDegisti(true); setMesaj(null) }
   async function kaydet() {
     setBekle(true); setHata(null)

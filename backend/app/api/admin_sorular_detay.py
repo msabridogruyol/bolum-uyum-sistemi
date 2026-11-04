@@ -13,6 +13,7 @@ PUT /admin/sorular-detay/secenek/{id}       — seçenek metnini günceller
 """
 
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
@@ -72,15 +73,15 @@ class DalFiltreOut(BaseModel):
     ad: str
 
 
-class SoruMetniGuncelleIstek(BaseModel):
+class SoruMetniGuncelleIstek(GirdiModeli):
     soru_metni: str
 
 
-class SecenekMetniGuncelleIstek(BaseModel):
+class SecenekMetniGuncelleIstek(GirdiModeli):
     secenek_metni: str
 
 
-class UcMetinleriGuncelleIstek(BaseModel):
+class UcMetinleriGuncelleIstek(GirdiModeli):
     uc_a_metni: str
     uc_b_metni: str
 
@@ -522,7 +523,7 @@ def katmanin_tum_sorularini_sil(
 # [2026-10-18] Yeni K5 soru bankası (iş türü cümleleri + soru kökleri). K5 soruları öğrenciye özel bunlardan üretilir;
 # metin değişikliği yalnızca bundan sonra üretilecek soruları etkiler (öğrencinin turundaki sorular sabittir).
 # ============================================================================
-class K5MetinIstek(BaseModel):
+class K5MetinIstek(GirdiModeli):
     metin: str
 
 

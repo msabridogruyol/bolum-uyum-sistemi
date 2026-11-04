@@ -19,6 +19,7 @@ import time
 
 from fastapi import APIRouter, Depends, HTTPException, Response
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -70,7 +71,7 @@ def sozluk_ek(response: Response, db: Session = Depends(get_db), _o: Ogrenci = D
 admin_router = APIRouter(prefix="/admin/sozluk-bildirimleri", tags=["Sözlük"])
 
 
-class BildirimIstek(BaseModel):
+class BildirimIstek(GirdiModeli):
     terim: str = Field(min_length=1, max_length=200)
     k: str | None = Field(default=None, max_length=40)
     aciklama: str | None = Field(default=None, max_length=500)
@@ -98,7 +99,7 @@ def bildirimler(durum: str = "yeni", db: Session = Depends(get_db), _a: AdminKul
             "yeni_sayisi": db.execute(text("SELECT count(*) FROM sozluk_bildirimleri WHERE durum = 'yeni'")).scalar() or 0}
 
 
-class DurumIstek(BaseModel):
+class DurumIstek(GirdiModeli):
     durum: str
 
 

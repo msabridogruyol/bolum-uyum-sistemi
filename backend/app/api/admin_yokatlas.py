@@ -7,6 +7,7 @@ PUT  /admin/yokatlas/bolum/{bolum_id}   — bölüme elle YÖK Atlas program gru
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 from sqlalchemy.orm.attributes import flag_modified
@@ -51,7 +52,7 @@ def eslesme_raporu(db: Session = Depends(get_db), yon: AdminKullanici = Depends(
     }
 
 
-class GrupIstek(BaseModel):
+class GrupIstek(GirdiModeli):
     gruplar: list[str]
 
 

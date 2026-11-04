@@ -15,6 +15,7 @@ okulun paketinde 'filiz' modülü açıksa çalışır; süper admin her zaman. 
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_yonetim
@@ -43,12 +44,12 @@ def ozet(db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut
             "aydinlatma": YONETIM_FILIZ_AI_AYDINLATMA if ai else YONETIM_FILIZ_REHBER_AYDINLATMA}
 
 
-class GecmisMesaj(BaseModel):
+class GecmisMesaj(GirdiModeli):
     rol: str = Field(..., pattern="^(kullanici|filiz)$")
     metin: str = Field(..., max_length=2000)
 
 
-class SoruIstek(BaseModel):
+class SoruIstek(GirdiModeli):
     metin: str = Field(..., max_length=500)
     gecmis: list[GecmisMesaj] = Field(default_factory=list, max_length=20)   # yalnızca bu sekmedeki sohbet; sunucuda saklanmaz
 

@@ -20,6 +20,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -127,7 +128,7 @@ def mulakat(bolum_id: int | None = Query(None), db: Session = Depends(get_db), o
             "gizlilik": "Cevapların yalnızca sana görünür; okulun ya da öğretmenlerin göremez. İstediğin zaman silebilirsin."}
 
 
-class PratikIstek(BaseModel):
+class PratikIstek(GirdiModeli):
     soru_id: str = Field(max_length=40)
     cevap: str = Field(min_length=1, max_length=4000)
     kontrol: list[str] = Field(default_factory=list, max_length=20)

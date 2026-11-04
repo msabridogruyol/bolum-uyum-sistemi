@@ -32,6 +32,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
@@ -83,10 +84,10 @@ def _bn(v) -> str:
     return re.sub(r"[^a-z0-9]", "", _normalize(str(v or "")))
 
 
-class DosyaIstek(BaseModel):
+class DosyaIstek(GirdiModeli):
     tur: str = Field(pattern="^(istihdam|kazanc)$")
     dosya_adi: str = Field(max_length=200)
-    icerik_base64: str
+    icerik_base64: str = Field(max_length=20000000)
     baslik_satiri: int | None = Field(None, ge=0, le=50)
 
 
@@ -135,7 +136,7 @@ def _tablo(istek_dosya_adi: str, icerik: str, tur: str, baslik_satiri: int | Non
     return b, basliklar, govde, satirlar
 
 
-class BaglantiIstek(BaseModel):
+class BaglantiIstek(GirdiModeli):
     url: str = Field(..., min_length=10, max_length=2000)
 
 
@@ -265,12 +266,12 @@ _TUIK_OLCU = [("kayitli istihdam orani", "istihdam_orani", "Kayıtlı istihdam o
               ("kazanc grup", "kazanc_grubu", "Aylık ortalama kazanç grubu")]
 
 
-class TuikDosya(BaseModel):
+class TuikDosya(GirdiModeli):
     dosya_adi: str = Field(max_length=200)
-    icerik_base64: str
+    icerik_base64: str = Field(max_length=20000000)
 
 
-class TuikPaketIstek(BaseModel):
+class TuikPaketIstek(GirdiModeli):
     dosyalar: list[TuikDosya] = Field(min_length=1, max_length=12)
 
 
@@ -361,7 +362,7 @@ def istihdam_tuik_paket(istek: TuikPaketIstek, db: Session = Depends(get_db), yo
             "ozet": {"toplam": len(satirlar), **say, "hatali": sum(1 for s in satirlar if s.get("hatalar"))}, "bolumler": adaylar_cikti}
 
 
-class IstihdamSatiri(BaseModel):
+class IstihdamSatiri(GirdiModeli):
     program_adi_kaynak: str = Field(min_length=1, max_length=300)
     duzey: str | None = Field(None, pattern="^(lisans|onlisans)$")
     istihdam_orani: float | None = Field(None, ge=0, le=100)
@@ -372,7 +373,7 @@ class IstihdamSatiri(BaseModel):
     bolum_id: int | None = None
 
 
-class IstihdamKaydet(BaseModel):
+class IstihdamKaydet(GirdiModeli):
     dosya_adi: str | None = Field(None, max_length=200)
     veri_yili: int = Field(ge=2000, le=2100)
     kaynak: str = Field(min_length=3, max_length=500)
@@ -502,13 +503,13 @@ def kazanc_onizle(istek: OnizleIstek, db: Session = Depends(get_db), yon: AdminK
             "isco": ihs.isco_sozlugu()["alt"] | ihs.isco_sozlugu()["ana"]}
 
 
-class KazancSatiri(BaseModel):
+class KazancSatiri(GirdiModeli):
     isco_kodu: str = Field(pattern=r"^[0-9]{1,2}$")
     ad: str = Field(min_length=1, max_length=300)
     brut_aylik_ortalama_tl: float = Field(gt=0)
 
 
-class KazancKaydet(BaseModel):
+class KazancKaydet(GirdiModeli):
     dosya_adi: str | None = Field(None, max_length=200)
     veri_yili: int = Field(ge=2000, le=2100)
     kaynak: str = Field(min_length=3, max_length=500)
@@ -724,7 +725,7 @@ def kayit_listele(tablo: str, q: str | None = Query(None, max_length=100), veri_
     return {"tablo": tablo, "ad": spec["ad"], "alanlar": list(spec["alanlar"]), "satirlar": out, "toplam": toplam}
 
 
-class KayitIstek(BaseModel):
+class KayitIstek(GirdiModeli):
     veri: dict
 
 
@@ -822,7 +823,7 @@ def meslek_isco(q: str | None = Query(None, max_length=100), filtre: str = Query
     return {"satirlar": satirlar, "ozet": toplam, "isco": [{"kod": k, "ad": v} for k, v in sorted(s["alt"].items())]}
 
 
-class IscoIstek(BaseModel):
+class IscoIstek(GirdiModeli):
     meslek_adi: str = Field(min_length=1, max_length=300)
     isco_kodu: str | None = Field(None, pattern=r"^[0-9]{1,2}$")
 

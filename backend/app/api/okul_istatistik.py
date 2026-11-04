@@ -15,6 +15,7 @@ Performans: sabit sayıda toplu SQL; öğrenci başına sorgu yok.
 """
 from __future__ import annotations
 
+from app.core.excel_guvenligi import guvenli_kaydet
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
 from zoneinfo import ZoneInfo
@@ -619,7 +620,7 @@ def istatistik_xlsx(v: dict, okul_adi: str) -> bytes:
     if r.get("kulupler"):
         _sayfa(wb, "Kulüpler", ["Kulüp", "Üye", "Bekleyen talep"], [[x["ad"], x["deger"], x["bekleyen"]] for x in r["kulupler"]["kulupler"]])
     b = io.BytesIO()
-    wb.save(b)
+    guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     return b.getvalue()
 
 

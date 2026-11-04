@@ -267,6 +267,7 @@ export default function ProfilAyarlariSayfasi() {
               className="auth-input"
               style={{ minHeight: 60, resize: 'vertical', fontFamily: 'var(--fn)' }}
               value={taslak.ilgi_alanlari || ''}
+              maxLength={1000}
               onChange={(e) => alanGuncelle('ilgi_alanlari', e.target.value)}
               placeholder="Örn. resim yapmayı, satranç oynamayı ve bilim kurgu okumayı severim..."
             />

@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """[2026-10-10] Excel raporları: öğrenci (tüm puanlar, öneriler, SWOT) ve okul (özet, sınıflar, öğrenciler)."""
+from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from datetime import datetime
 
@@ -73,7 +74,7 @@ def ogrenci_xlsx(v: dict, netler: bool = True, yonetim: bool = False) -> bytes:
                    + [["Hedef program", f"{k['hedef']['universite']} · {k['hedef']['program']}", "", "", "", ""]],
                    [26, 18, 18, 14, 14, 10], renk)
     t = io.BytesIO()
-    wb.save(t)
+    guvenli_kaydet(wb, t)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     return t.getvalue()
 
 
@@ -117,5 +118,5 @@ def okul_xlsx(v: dict, netler: bool = True) -> bytes:
             for i in range(max(len(v["alanlar"]), len(o.get("en_cok_onerilen", [])), len(o.get("en_cok_hedeflenen", [])), 1))],
            [30, 9, 3, 36, 7, 36, 7], renk)
     t = io.BytesIO()
-    wb.save(t)
+    guvenli_kaydet(wb, t)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     return t.getvalue()

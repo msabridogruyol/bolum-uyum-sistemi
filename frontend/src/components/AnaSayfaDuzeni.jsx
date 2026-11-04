@@ -58,15 +58,19 @@ export default function AnaSayfaDuzeni() {
   const acik = useModuller()   // [2026-10-10] okulun paketindeki modüller
   const menu = useMobilMenu()   // [2026-10-11] dar ekranda çekmece menü
   const [bekleyenAnket, setBekleyenAnket] = useState(0)
-  const anketAcik = acik('anketler')
+  const anketAcik = acik.hazir && acik('anketler')   // [2026-11-04] paket listesi gelmeden çağrılmaz (kapalıysa 403)
+  const koclarAcik = acik.hazir && acik('egitim_koclari')
   useEffect(() => { if (anketAcik) api.anketlerim().then((v) => setBekleyenAnket(v.bekleyen || 0)).catch(() => {}) }, [anketAcik, konum.pathname, konum.search])
 
   useEffect(() => { modulleriYukle(true) }, [])   // her girişte tazele (okulun paketi değişmiş olabilir)
+  useEffect(() => {   // [2026-11-04] yalnızca Eğitim Koçları modülü açıksa sorulur (önceden her sayfada 403)
+    if (koclarAcik) api.kocVarMi().then((d) => setKocVar(!!d.var)).catch(() => {})
+    else setKocVar(false)
+  }, [koclarAcik])
 
   useEffect(() => {
     if (konum.pathname.startsWith('/katmanlar')) api.durumOzetiGetir().then(setOzet).catch(() => {})
     api.kvkkDurumu().then((d) => setKvkkGerekli(!d.guncel)).catch(() => {})
-    api.kocVarMi().then((d) => setKocVar(!!d.var)).catch(() => {})   // modül kapalıysa 403 → menüde yok
     api.profilGetir()
       .then((p) => { setProfil(p); if (hesapDiliniUygula(p.dil, (k) => api.dilKaydet(k, 'ogrenci'))) return; if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
       .catch(() => {})
@@ -107,6 +111,7 @@ export default function AnaSayfaDuzeni() {
   // [2026-10-10] Paketinde olmayan bir sayfaya adresle gelinirse sayfa yerine bilgi kartı
   const yolModulu = YOL_MODULU['/' + konum.pathname.split('/')[1]]
   const kapaliModul = yolModulu && !acik(yolModulu) ? yolModulu : null
+  const modulBekleniyor = !!yolModulu && !acik.hazir   // paket listesi gelmeden modül sayfası açılmaz (kapalıysa uçları 403 verirdi)
 
   const ilkAd = profil?.ad_soyad?.trim().split(/\s+/)[0] || 'Öğrenci'
   // Değerlendirme menüde yalnızca bitmemişse (K1-K4 veya açılan K5 dalları) ya da sınıfa göre yeni tur zamanı geldiyse görünür
@@ -267,7 +272,8 @@ export default function AnaSayfaDuzeni() {
         {/* [2026-10-09] Maskot ana içerik alanının sağ üstünde, başlık satırında durur (sayfayla birlikte kayar) */}
         {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
         <div className="main-icerik">
-          {kapaliModul ? <PaketteYok ad={MODUL_ADI[kapaliModul]} /> : <Outlet context={{ profilYenile, tanitimiAc }} />}
+          {modulBekleniyor ? <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
+            : kapaliModul ? <PaketteYok ad={MODUL_ADI[kapaliModul]} /> : <Outlet context={{ profilYenile, tanitimiAc }} />}
         </div>
         <AltSerit okul={profil?.okul} kisi={profil?.ad_soyad} rol={[profil?.sinif, profil?.sube].filter(Boolean).join(' ') || null} />
       </div>

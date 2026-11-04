@@ -102,7 +102,7 @@ def kur(db, n: int, tohum: int):
         oid = uuid.uuid4()
         paket = paketler[i % 4]
         ad = f"{rnd.choice(adlar)} {rnd.choice(soyad)}"
-        sinif = rnd.choice(["9", "10", "11", "12", "12", "mezun"])
+        sinif = rnd.choice(["9. Sınıf", "10. Sınıf", "11. Sınıf", "12. Sınıf", "12. Sınıf", "Mezun"])   # sistemin yazdığı biçim (sinif_ayir)
         durum = rnd.choices(["tam", "yarim", "yok"], [0.72, 0.14, 0.14])[0]
         db.execute(text("""INSERT INTO ogrenciler (id, ad_soyad, email, sifre_hash, okul_id, sinif, olusturulma_zamani, guncelleme_zamani)
                            VALUES (:i, :a, :e, 'x', :o, :s, now(), now())"""),

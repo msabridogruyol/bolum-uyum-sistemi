@@ -25,6 +25,7 @@ from datetime import timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -112,7 +113,7 @@ def sinif_atlat_onizle(okul_id: int, haric: str | None = Query(None), db: Sessio
             "son_islem": son, "uyari": uyari, "geri_alma_gun": GERI_ALMA_GUN}
 
 
-class SinifAtlatIstek(BaseModel):
+class SinifAtlatIstek(GirdiModeli):
     siniflar: list[str] = Field(default_factory=lambda: SIRA[:])
     haric: list[str] = Field(default_factory=list)
     onay: bool = False
@@ -182,7 +183,7 @@ def toplu_islem_geri_al(islem_id: int, db: Session = Depends(get_db), yon: Admin
     return {"donen": donen, "atlanan": atlanan}
 
 
-class IdlerIstek(BaseModel):
+class IdlerIstek(GirdiModeli):
     idler: list[str] = Field(default_factory=list, max_length=5000)
 
 
@@ -263,7 +264,7 @@ def sonuc_epostasini_gonder(ogrenci_id: str, db: Session = Depends(get_db), yon:
     return r
 
 
-class KatmanTekrarIstek(BaseModel):
+class KatmanTekrarIstek(GirdiModeli):
     kod: str
 
 

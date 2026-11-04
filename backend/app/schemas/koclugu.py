@@ -1,8 +1,9 @@
 """Bölüm F — Koçluk modülü request/response şemaları."""
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 
 
-class HedefSecIstek(BaseModel):
+class HedefSecIstek(GirdiModeli):
     bolum_id: int
     onay: bool = False
 
@@ -58,7 +59,7 @@ class YolHaritasiOut(BaseModel):
     efor_belirsiz: list[GapSatiriOut]
 
 
-class AksiyonDurumIstek(BaseModel):
+class AksiyonDurumIstek(GirdiModeli):
     durum: str  # 'planlandi' | 'devam_ediyor' | 'tamamlandi'
 
 
@@ -158,7 +159,7 @@ class GelisimPlaniOut(BaseModel):
     ilerleme: PlanIlerlemeOut
 
 
-class AdimDurumIstek(BaseModel):
+class AdimDurumIstek(GirdiModeli):
     durum: str | None = None   # 'planlandi' | 'devam_ediyor' | 'tamamlandi' | null (işareti kaldır)
     # [2026-10-10] Tamamlarken isteğe bağlı kısa geri bildirim
     ne_yaptim: str | None = None

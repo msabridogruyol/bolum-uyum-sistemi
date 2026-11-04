@@ -6,7 +6,8 @@ POST /ogrenci/katmanlar/{kod}/cevap         — bir soruyu cevapla
 POST /ogrenci/katmanlar/{kod}/tamamla       — katmanı bitir, değişken puanlarını hesapla
 """
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import Field, BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 from sqlalchemy import text, func
 
@@ -648,8 +649,8 @@ def profil_getir(
     )
 
 
-class IlkSifreIstek(BaseModel):
-    yeni_sifre: str
+class IlkSifreIstek(GirdiModeli):
+    yeni_sifre: str = Field(max_length=200)
 
 
 @router.post("/profil/ilk-sifre")
@@ -709,8 +710,14 @@ def sifre_degistir(
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
+    # [2026-11-04] Ele geçirilmiş bir oturumla eski şifre tahmini: hesap başına hatalı deneme sayacı (girişle aynı kilit)
+    from app.core.hiz_siniri import HESAP_DENEME, hesap_kilit_kontrol
+    anahtar = f"sifre-degistir:{ogrenci.id}"
+    hesap_kilit_kontrol(anahtar)
     if not sifre_dogrula(istek.eski_sifre, ogrenci.sifre_hash):
+        HESAP_DENEME.hatali(anahtar)
         raise HTTPException(status_code=400, detail="Şu anki şifren yanlış.")
+    HESAP_DENEME.temizle(anahtar)
     if len(istek.yeni_sifre) < 8:
         raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
 
@@ -869,15 +876,15 @@ GUVENLIK_OLAY_TIPLERI = {
 }
 
 
-class GuvenlikOlayiIstek(BaseModel):
+class GuvenlikOlayiIstek(GirdiModeli):
     tur_id: int
     olay_tipi: str
     katman_kod: str | None = None
 
 
-class GuvenlikFotografIstek(BaseModel):
+class GuvenlikFotografIstek(GirdiModeli):
     tur_id: int
-    foto_base64: str
+    foto_base64: str = Field(max_length=2_000_000)   # [2026-11-04] işleyici ayrıca 1,5 M sınırı uygular
     katman_kod: str | None = None
 
 

@@ -135,6 +135,12 @@ async function istek(yol, secenekler = {}, kapsam = 'ogrenci', deneme = 0) {
   }
 
   const html = htmlMi(govde)
+  // [2026-11-04] Ekran denetimi: uygulamanın kendi 502/503 yanıtı (ör. "YÖK Atlas'a bağlanılamadı", e-posta servisi) JSON
+  // açıklama taşır; önceden tekrar denenip genel "kısa süreli çalışma" mesajına çevriliyordu (sayfa uzun süre yükleniyor
+  // görünüyordu). Ağ katmanının (Render/Vercel) 5xx sayfaları JSON değildir; onlar eskisi gibi tekrar denenir.
+  if (!html && yanit.status >= 502 && yanit.status <= 504 && govde && typeof govde === 'object' && typeof govde.detail === 'string') {
+    throw new ApiHatasi(yanit.status, dostMesaj(yanit.status, govde.detail))
+  }
   if (html || yanit.status >= 500) {
     const tekrar = deneme < TEKRAR_BEKLE.length && (
       (html && cfDogrulamaMi(yanit, govde)) || (yontem === 'GET' && (html || [502, 503, 504].includes(yanit.status))))

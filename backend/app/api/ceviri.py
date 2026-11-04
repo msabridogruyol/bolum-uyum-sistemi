@@ -11,6 +11,7 @@ from __future__ import annotations
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
@@ -21,7 +22,7 @@ from app.models import AdminKullanici, Ogrenci
 router = APIRouter(tags=["Çoklu dil"])
 
 
-class DilIstek(BaseModel):
+class DilIstek(GirdiModeli):
     dil: str = Field(min_length=2, max_length=5)
 
 
@@ -46,7 +47,7 @@ def yonetim_dil(istek: DilIstek, db: Session = Depends(get_db), yon: AdminKullan
     return {"dil": yon.dil}
 
 
-class IcerikIstek(BaseModel):
+class IcerikIstek(GirdiModeli):
     dil: str = Field(min_length=2, max_length=5)
     metinler: list[str] = Field(max_length=200)
 

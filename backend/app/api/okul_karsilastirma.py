@@ -6,6 +6,7 @@ Ayrı bir "kurum yöneticisi" rolü yoktur; karşılaştırma süper adminde, Ex
 GET /yonetim/okul-karsilastirma            — tüm okullar, metrikler
 GET /yonetim/okul-karsilastirma/excel?okullar=1,2,3
 """
+from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from datetime import date, datetime, timedelta, timezone
 
@@ -132,7 +133,7 @@ def karsilastirma_excel(okullar: str | None = Query(None), db: Session = Depends
     for j in range(1, len(kol) + 1):
         ws.column_dimensions[openpyxl.utils.get_column_letter(j)].width = 28 if j == 1 else 16
     b = io.BytesIO()
-    wb.save(b)
+    guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     denetim_yaz(db, yon, "okul_karsilastirma_excel", "okullar", ",".join(str(o["id"]) for o in liste), f"{len(liste)} okul")
     db.commit()
     return Response(b.getvalue(), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",

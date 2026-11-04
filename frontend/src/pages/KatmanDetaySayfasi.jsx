@@ -15,7 +15,7 @@ const renkSec = seviyeRengi   // [2026-10-10] tek kaynak bantlar (yardimci/seviy
 
 function BoyutSatiri({ s }) {
   const [acik, setAcik] = useState(false)
-  const detayVarMi = s.durum_tespiti || s.aksiyon_onerisi || s.maarif?.length
+  const detayVarMi = Boolean(s.durum_tespiti || s.aksiyon_onerisi || s.maarif?.length)   // [2026-11-04] 0 değeri JSX'te "0" olarak yazılıyordu
 
   return (
     <div className={`boyut-satir${acik ? ' acik' : ''}`} onClick={() => detayVarMi && setAcik((a) => !a)}>

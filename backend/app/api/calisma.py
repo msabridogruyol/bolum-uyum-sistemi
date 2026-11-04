@@ -16,6 +16,7 @@ from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -106,7 +107,7 @@ def calisma(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogren
     }
 
 
-class ProgramBlok(BaseModel):
+class ProgramBlok(GirdiModeli):
     gun: int = Field(ge=0, le=6)
     baslangic: str
     sure_dk: int = Field(ge=10, le=300)
@@ -131,7 +132,7 @@ def program_kaydet(bloklar: list[ProgramBlok], db: Session = Depends(get_db), o:
     return {"program": _program(db, o.id), "ozet": ozet_hesapla(db, o.id)}
 
 
-class KayitIstek(BaseModel):
+class KayitIstek(GirdiModeli):
     tarih: date
     ders: str
     sure_dk: int = Field(default=0, ge=0, le=720)

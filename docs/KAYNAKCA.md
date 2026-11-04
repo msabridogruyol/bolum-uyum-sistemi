@@ -29,7 +29,7 @@ Toplam: 76 bileşen, 161 kaynak.
 
 Öğrenciyi beş katmanda ölçen yapı: K1 Değerler/Motivasyon, K2 Kişilik & Çalışma Tarzı, K3 İş Ortamı & Profesyonel Yetkinlik, K4 Alan Eğilimi & Bilişsel Stil, K5 koşullu İş türü tercihleri.
 
-**Nasıl:** K1–K4 zorunlu ve sırasıyla 7, 8, 7, 9 değişken ölçer (toplam 31); K5 K1–K4 bittikten sonra koşullu açılır (kosullu_mu=TRUE). Ekranda katman başına tahmini süre ≈9-10 dk (soru tipine göre: durum 30 sn, uçlar 20 sn, dikkat 10 sn; gerçek süre verisi yok), K5 için ≈3-5 dk yazılır. [2026-10-18] K1–K4'te katman başına 15 soru: 8 en çok / en az, 3 tek seçim, 4 uçlar (A / B). [2026-10-19] Göç 0081 ile 16 en çok / en az sorusu ve katman başına 2 dikkat sorusu eklendi: puanlanan soru K1 18, K2 19, K3 18, K4 21; her özellik 8-10 kez ölçülür.
+**Nasıl:** K1–K4 zorunludur ve sırasıyla 7, 8, 7, 9 değişken ölçer (toplam 31); K5 (iş türü tercihleri) K1–K4 bittikten sonra koşullu açılır. Puanlanan soru sayısı K1 18, K2 19, K3 18, K4 21; her katmanda ayrıca 2 dikkat sorusu vardır (toplam 84 soru); her özellik 8-10 kez ölçülür. Ekranda katman başına tahmini süre ≈9-10 dk (soru tipine göre: durum 30 sn, uçlar 20 sn, dikkat 10 sn; gerçek süre verisi yok), K5 için ≈3-5 dk yazılır.
 
 **Dayanak:**
 
@@ -115,7 +115,7 @@ Senaryo sorularında seçilen davranışın bir veya birden çok değişkene pua
 
 Öğrencinin soruları okuyup okumadığını yoklayan, puana değil güven puanına etki eden sorular.
 
-**Nasıl:** soru_tipi='kontrol' sorular hiçbir değişkene puan katmaz; beklenen_secenek_sira ile karşılaştırılır, doğruluk oranı × 100 kontrol skoru olur (hiç kontrol sorusu yoksa güven yalnızca olay skorundan hesaplanır). [2026-10-19] Her K1-K4 katmanında 2 dikkat sorusu: biri açık yönerge, biri herkesin bildiği tek doğru cevaplı soru; şıkları karıştırılmaz.
+**Nasıl:** soru_tipi='kontrol' sorular hiçbir değişkene puan katmaz; beklenen_secenek_sira ile karşılaştırılır, doğruluk oranı × 100 kontrol skoru olur (hiç kontrol sorusu yoksa güven yalnızca olay skorundan hesaplanır). Her K1-K4 katmanında 2 dikkat sorusu: biri açık yönerge, biri herkesin bildiği tek doğru cevaplı soru; şıkları karıştırılmaz.
 
 **Dayanak:**
 
@@ -142,7 +142,7 @@ Bir değerlendirme turunun güvenilirliğini 0–100 puanla gösterir; eşik alt
 
 K1–K4 sonrası öğrencinin hangi bölümlerinin K5'te kendi aralarında karşılaştırılacağına ve bunun için hangi soruların sorulacağına karar verir.
 
-**Nasıl:** [2026-10-18] K1–K4 uyumu ≥ 70 olan bölümler kümeye alınır (en fazla 20, en az 5; puanlar göreli olduğundan ≥ 70 = en iyi bölüme 30 puandan yakın). Kümedeki bölümlerin bağlı iş türleri (bolum_k5_baglari) toplanır; alan sınırı yoktur. Soru sayısı = iş türü sayısı × 3/4 (en az 6, en fazla 15): yaklaşık %50 en çok / en az ve %20 tek seçim (her iş türü dengeli sayıda görünür), %30 uçlar (K1–K4'te birbirine en yakın bölüm çiftlerinin ana iş türleri karşı karşıya). Sorular iş türü başına 3 etkinlik cümlesinden (k5_cumleleri) ve 20 kökten (k5_soru_kokleri) üretilir, tur başına sabittir ve sorular.ogrenci_id / tur_id ile saklanır. Eski alan açma kuralı (ilk 15 bölümün alanları, en fazla 2 alan) kaldırıldı: uçtan uca simülasyonda alan soruları doğru bölümü eziyordu.
+**Nasıl:** K1–K4 uyumu ≥ 70 olan bölümler kümeye alınır (en fazla 20, en az 5; puanlar göreli olduğundan ≥ 70 = en iyi bölüme 30 puandan yakın). Kümedeki bölümlerin bağlı iş türleri (bolum_k5_baglari) toplanır; alan sınırı yoktur. Soru sayısı = iş türü sayısı × 3/4 (en az 6, en fazla 15): yaklaşık %50 en çok / en az ve %20 tek seçim (her iş türü dengeli sayıda görünür), %30 uçlar (K1–K4'te birbirine en yakın bölüm çiftlerinin ana iş türleri karşı karşıya). Sorular iş türü başına 3 etkinlik cümlesinden (k5_cumleleri) ve 20 kökten (k5_soru_kokleri) üretilir, tur başına sabittir ve sorular.ogrenci_id / tur_id ile saklanır. Eski alan açma kuralı (ilk 15 bölümün alanları, en fazla 2 alan) kaldırıldı: uçtan uca simülasyonda alan soruları doğru bölümü eziyordu.
 
 **Dayanak:**
 
@@ -155,7 +155,7 @@ K1–K4 sonrası öğrencinin hangi bölümlerinin K5'te kendi aralarında karş
 
 129 iş türü (17 üst alan altında gruplanmış), bölüm–iş türü bağları ve öğrencinin cevaplarından bölümün K5 puanı.
 
-**Nasıl:** [2026-10-18] İş türü puanı K1–K4 ile aynı kurallarla hesaplanır (en çok 100 / en az 0 / diğer 50; tek seçimde seçilen 100, diğerleri 33,3; uçlarda 4'lü ölçek). Bölümün K5 puanı = bağlı iş türlerinin bağ ağırlıklı ortalaması (bolum_k5_baglari, 0–1); öğrencinin iş türü puanlarının yayılımı düşükse (std < 15) puan orantılı olarak 50'ye çekilir. Bağlar pipeline'ın b5 adımında veriden üretilir (iş türü cümleleri ↔ meslekler ve bölüm metni, 3 embedding modeli; %70 meslek kanıtı + %30 bölüm metni kanıtı; bağ = 0,25 + 0,75 × yakınlık, 0,05 adımlı; elle düzeltme yok) ve Pipeline Sonuçları ekranından yedekli olarak canlıya alınır. 17 üst alan bölümlerin alan etiketi için kalır (bolum_dal_eslesme).
+**Nasıl:** İş türü puanı K1–K4 ile aynı kurallarla hesaplanır (en çok 100 / en az 0 / diğer 50; tek seçimde seçilen 100, diğerleri 33,3; uçlarda 4'lü ölçek). Bölümün K5 puanı = bağlı iş türlerinin bağ ağırlıklı ortalaması (bolum_k5_baglari, 0–1); öğrencinin iş türü puanlarının yayılımı düşükse (std < 15) puan orantılı olarak 50'ye çekilir. Bağlar pipeline'ın b5 adımında veriden üretilir (iş türü cümleleri ↔ meslekler ve bölüm metni, 3 embedding modeli; %70 meslek kanıtı + %30 bölüm metni kanıtı; bağ = 0,25 + 0,75 × yakınlık, 0,05 adımlı; elle düzeltme yok) ve Pipeline Sonuçları ekranından yedekli olarak canlıya alınır. 17 üst alan bölümlerin alan etiketi için kalır (bolum_dal_eslesme).
 
 **Dayanak:**
 
@@ -340,7 +340,7 @@ Duygusal hassasiyet puanının bölüm önerisine katılmaması ve koçlukta ter
 
 İş türü sorularının (K5) sıralamaya katılması ve gösterilen sıralamanın kuralları.
 
-**Nasıl:** [2026-10-18] Kümedeki bölümler ölçüt = toplam_uyum + 0,15 × (K5 − 50) ile (ölçütte en fazla ±7,5) yeniden sıralanır ve kümenin kendi K1–K4 puanlarını büyükten küçüğe yuva olarak alır; kümenin dışı değişmez. Kurum içi uçtan uca simülasyon (gerçek kod yolu, 300 + 300 sentetik öğrenci): K5 cevapları hedef bölümün işleriyle uyumluyken hedefin 1. çıkma oranı %70 → %80, ilk 3 %90 → %95; K5 cevapları rastgeleyken %67 → %61. Önceki alan bazlı K5 (0,50) aynı ölçütte doğru bölümü %43'ten %28'e düşürüyordu. Sıralama: nihai uyum azalan, agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad; öğrenciye en fazla 10 bölüm gösterilir ve yalnızca K1–K4 tamamlanınca hesaplanır.
+**Nasıl:** Kümedeki bölümler ölçüt = toplam_uyum + 0,15 × (K5 − 50) ile (ölçütte en fazla ±7,5) yeniden sıralanır ve kümenin kendi K1–K4 puanlarını büyükten küçüğe yuva olarak alır; kümenin dışı değişmez. Kurum içi uçtan uca simülasyon (gerçek kod yolu, 300 + 300 sentetik öğrenci): K5 cevapları hedef bölümün işleriyle uyumluyken hedefin 1. çıkma oranı %70 → %80, ilk 3 %90 → %95; K5 cevapları rastgeleyken %67 → %61. Önceki alan bazlı K5 (0,50) aynı ölçütte doğru bölümü %43'ten %28'e düşürüyordu. Sıralama: nihai uyum azalan, agirlikli_varyans artan, etkin_meslek_sayisi azalan, ad; öğrenciye en fazla 10 bölüm gösterilir ve yalnızca K1–K4 tamamlanınca hesaplanır.
 
 **Dayanak:** Akademik dayanak yok.
 
@@ -350,7 +350,7 @@ Duygusal hassasiyet puanının bölüm önerisine katılmaması ve koçlukta ter
 
 Her önerilen bölüm için örtüşen güçlü yönleri, öğrencinin kanıt cevaplarını, K5 notunu ve dikkat notunu üreten açıklama.
 
-**Nasıl:** Örtüşen yön: bölümün o özellikteki bölümler arası yüzdeliği ≥60 ve öğrencinin ölçekli puanı ≥55; en fazla 3 yön, 30 kısa ad (KISA_AD). Dikkat notu: bölüm yüzdeliği ≥85 ve öğrenci ≤40, aynı not 3+ bölümde çıkıyorsa gösterilmez. K5 notu bölümün ana iş türündeki puan ≥60/≤40. Kanıtlar: SJT'de ağırlık ≥0,5 seçilen şık, Likert'te en güçlü katılım, kutupta 1. veya 4. şık; metinler 110 karakterle kısaltılır. [2026-10-17] Dikkat notu iki yönlüdür: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not.
+**Nasıl:** Örtüşen yön: bölümün o özellikteki bölümler arası yüzdeliği ≥60 ve öğrencinin ölçekli puanı ≥55; en fazla 3 yön, 30 kısa ad (KISA_AD). Dikkat notu: bölüm yüzdeliği ≥85 ve öğrenci ≤40, aynı not 3+ bölümde çıkıyorsa gösterilmez. K5 notu bölümün ana iş türündeki puan ≥60/≤40. Kanıtlar: SJT'de ağırlık ≥0,5 seçilen şık, Likert'te en güçlü katılım, kutupta 1. veya 4. şık; metinler 110 karakterle kısaltılır. Dikkat notu iki yönlüdür: bölümün çok beklediği özellikte geride kalma (bölüm üst %15, öğrenci ≤ 40) ve bölümün çok az beklediği özellikte belirgin fazlalık (bölüm alt %15, öğrenci ≥ 60); en çok 2 not.
 
 **Dayanak:**
 
@@ -392,7 +392,7 @@ Bir öğrencinin her cevabının hangi özelliğe kaç puan kattığını (cevap
 
 Öğrenci ile hedef bölüm arasındaki farkı özellik özellik sınıflayıp en önemli gelişim alanlarını bulma.
 
-**Nasıl:** Göreli fark (katman içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır. [2026-10-17] Ekranda fark yakınlık dilinde gösterilir (uyum puanı da farkın yönüne bakmaz): |fark| < 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz; değerlerde (K1) 'senin için daha önemli / daha az önemli' denir; P4 (kaygı) için yalnızca fazlası fark sayılır.
+**Nasıl:** Göreli fark (katman içi 50 ± 15 ölçekte öğrenci − bölüm) 5 kategoriye ayrılır: ≥15 belirgin üstün, ≥5 üstün, >−5 uyumlu, >−15 altında, ≤−15 belirgin altında. Öncelik = |fark| × bölüm ağırlığı/100 × katman ağırlığı (Parametreler ekranındaki katman ağırlıkları; varsayılan K1–K4 eşit, 25) × ayırt edicilik/100; ayırt edicilik = bölümün o özellikteki bölümler arası yüzdeliği (en az 20 yayındaki bölüm), <40 ise odak alanı olmaz, ≥75 ise 'bölüm talepkâr' cümlesi kullanılır. Ekranda fark yakınlık dilinde gösterilir (uyum puanı da farkın yönüne bakmaz): |fark| < 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin fazla / az (kırmızı). Fazlalık güçlü yön sayılmaz; değerlerde (K1) 'senin için daha önemli / daha az önemli' denir; P4 (kaygı) için yalnızca fazlası fark sayılır.
 
 **Dayanak:**
 

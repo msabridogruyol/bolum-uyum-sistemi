@@ -15,6 +15,7 @@ DELETE /yonetim/meslek-dili/{bolum_id}?okul_id= — düzenlemeyi kaldır (okul �
 """
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_yonetim
@@ -94,13 +95,13 @@ def getir(bolum_id: int, okul_id: int = Query(...), db: Session = Depends(get_db
     }
 
 
-class TerimGirdi(BaseModel):
+class TerimGirdi(GirdiModeli):
     terim: str = Field(..., max_length=80)
     anlam: str = Field(..., max_length=600)
     ornek: str | None = Field(None, max_length=400)
 
 
-class KaydetGirdi(BaseModel):
+class KaydetGirdi(GirdiModeli):
     terimler: list[TerimGirdi]
 
 

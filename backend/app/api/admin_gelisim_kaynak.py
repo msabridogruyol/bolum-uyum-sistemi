@@ -13,6 +13,7 @@ PUT    /admin/gelisim-kaynak/{id}         — mevcut kaynağı güncelle
 DELETE /admin/gelisim-kaynak/{id}         — kaynağı sil
 """
 from pydantic import BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 from fastapi import APIRouter, Depends, HTTPException
 
@@ -38,7 +39,7 @@ class KaynakOut(BaseModel):
     sira: int
 
 
-class KaynakYaziIstek(BaseModel):
+class KaynakYaziIstek(GirdiModeli):
     degisken_kod: str
     aralik: str
     kaynak_tipi: str
@@ -47,7 +48,7 @@ class KaynakYaziIstek(BaseModel):
     sira: int = 1
 
 
-class KaynakGuncelleIstek(BaseModel):
+class KaynakGuncelleIstek(GirdiModeli):
     aralik: str | None = None
     kaynak_tipi: str | None = None
     baslik: str | None = None

@@ -28,7 +28,10 @@ her biriyle embedding vektörlerini bir kez hesaplayıp diske kaydeder.
 """
 
 import csv
+import sys
 import numpy as np
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from guvenli_npy import metin_listesi_kaydet, metin_listesi_oku  # noqa: E402  [2026-11-04] pickle'sız ad listeleri
 from pathlib import Path
 from embedding_saglayici import embed_et, MODEL_TANIMLARI
 
@@ -164,9 +167,8 @@ def calistir():
 
         hesaplanmis_hf_adlari[onbellek_anahtari] = model_adi
 
-    np.save(ONBELLEK_DIZINI / "meslek_isimleri.npy", np.array(meslek_adlari_duz, dtype=object))
-    np.save(ONBELLEK_DIZINI / "degisken_kodlari.npy",
-            np.array([d["kod"] for d in degisken_satirlari], dtype=object))
+    metin_listesi_kaydet(ONBELLEK_DIZINI / "meslek_isimleri.npy", meslek_adlari_duz)
+    metin_listesi_kaydet(ONBELLEK_DIZINI / "degisken_kodlari.npy", [d["kod"] for d in degisken_satirlari])
 
     print(f"\nTamamlandı. Embedding'ler '{ONBELLEK_DIZINI}' klasörüne kaydedildi.")
 

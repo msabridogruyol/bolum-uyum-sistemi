@@ -17,6 +17,7 @@ from collections import Counter
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -96,7 +97,7 @@ def zor_gun_turu(bolum_id: int, meslek: str | None = Query(None, max_length=200)
     return {"alan": alan, "meslek": meslek, "senaryolar": [_istemci(sid, s) for sid, s in tur], "kaynak_notu": KAYNAK_NOTU}
 
 
-class ZorGunIstek(BaseModel):
+class ZorGunIstek(GirdiModeli):
     bolum_id: int
     meslek: str | None = Field(None, max_length=200)
     secimler: dict[str, int] = Field(default_factory=dict)   # {"m0": 1, "a3": 0, ...}

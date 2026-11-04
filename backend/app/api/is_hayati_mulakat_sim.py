@@ -16,6 +16,7 @@ import json
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -71,7 +72,7 @@ def mulakat_sim(bolum_id: int, db: Session = Depends(get_db), o: Ogrenci = Depen
             "sorular": sorular, "son": son, "kaynak_notu": KAYNAK_NOTU}
 
 
-class MulakatSimIstek(BaseModel):
+class MulakatSimIstek(GirdiModeli):
     bolum_id: int
     secimler: dict[str, int] = Field(default_factory=dict)   # {"0": 1, "1": 0, ...} soru no → seçilen aday (0 / 1)
 

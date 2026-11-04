@@ -10,6 +10,7 @@ tur: k5_baglari | ornek_meslekler
 """
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_super_admin
@@ -21,7 +22,7 @@ from app.models import AdminKullanici
 router = APIRouter(prefix="/admin/veri-yukleme", tags=["Admin — Pipeline veri yükleme"])
 
 
-class DosyaIstek(BaseModel):
+class DosyaIstek(GirdiModeli):
     metin: str = Field(..., max_length=8_000_000)
     dosya_adi: str | None = Field(None, max_length=200)
 

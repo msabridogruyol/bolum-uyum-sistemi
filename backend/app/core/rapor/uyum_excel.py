@@ -11,6 +11,7 @@ Sayfalar:
   Bölüm beklentisi  — bölüm × özellik: bölümün beklediği düzey (katman içi ölçek)
   Yöntemler         — yalnızca süper admin: 10 ÇKKV yönteminin puanı + Kendall W
 """
+from app.core.excel_guvenligi import guvenli_kaydet
 import io
 
 from openpyxl import Workbook
@@ -109,5 +110,5 @@ def cevap_analizi_xlsx(db, o, tur, satirlar: list, ozellikler: list, tam: dict |
                           + [ys.get(a) for a in adlar] + [float(r.kendall_w) if r and r.kendall_w is not None else None])
 
     tampon = io.BytesIO()
-    wb.save(tampon)
+    guvenli_kaydet(wb, tampon)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     return tampon.getvalue()

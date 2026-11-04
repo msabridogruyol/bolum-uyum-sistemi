@@ -142,6 +142,24 @@ class BeklemeHatasi(IsKuraliHatasi):
     """Yeni kod istemek için kısa süre beklenmeli (HTTP 429)."""
 
 
+# [2026-11-04] Güvenlik denetimi: kod başına 5 deneme vardı ama 60 sn'de bir yeni kod alınabildiği için şifreyi bilen biri
+# günde ~7.200 tahmin yapabiliyordu (ayda ~%20 başarı). Hesap başına 24 saatte en çok GUNLUK_KOD kod gönderilir ve toplam
+# GUNLUK_HATALI hatalı denemeden sonra 24 saat yeni kod verilmez / kod kabul edilmez. Sayaç veritabanından (tüm süreçlerde aynı).
+GUNLUK_KOD = 10
+GUNLUK_HATALI = 25
+_GUNLUK_MESAJ = ("Bu hesap için son 24 saatte çok fazla doğrulama kodu istendi ya da yanlış girildi. Güvenliğin için "
+                 "24 saat sonra tekrar dene ya da \"Şifremi unuttum\" ile şifreni yenile.")
+
+
+def _gunluk_kod_durumu(db: Session, kullanici_tipi: str, kullanici_id: uuid.UUID) -> tuple[int, int]:
+    from sqlalchemy import func
+    sinir = _simdi() - timedelta(hours=24)
+    sayi, hatali = (db.query(func.count(DogrulamaKodu.id), func.coalesce(func.sum(DogrulamaKodu.deneme_sayisi), 0))
+                    .filter(DogrulamaKodu.kullanici_tipi == kullanici_tipi, DogrulamaKodu.kullanici_id == kullanici_id,
+                            DogrulamaKodu.olusturulma_zamani >= sinir).one())
+    return int(sayi or 0), int(hatali or 0)
+
+
 def dogrulama_kodu_gonder(db: Session, kullanici_tipi: str, kullanici_id: uuid.UUID, email: str, ad: str,
                           tekrar: bool = False) -> None:
     son = (db.query(DogrulamaKodu)
@@ -152,6 +170,9 @@ def dogrulama_kodu_gonder(db: Session, kullanici_tipi: str, kullanici_id: uuid.U
             kalan = int((KOD_TEKRAR_BEKLEME - (_simdi() - _utc(son.olusturulma_zamani))).total_seconds()) + 1
             raise BeklemeHatasi(f"Yeni kod istemek için {kalan} saniye bekle.")
         return  # tekrarlanan giriş: önceki kod hâlâ geçerli, yeni e-posta gönderilmez
+    sayi, hatali = _gunluk_kod_durumu(db, kullanici_tipi, kullanici_id)
+    if sayi >= GUNLUK_KOD or hatali >= GUNLUK_HATALI:
+        raise BeklemeHatasi(_GUNLUK_MESAJ)
     for eski in db.query(DogrulamaKodu).filter(DogrulamaKodu.kullanici_tipi == kullanici_tipi,
                                                DogrulamaKodu.kullanici_id == kullanici_id,
                                                DogrulamaKodu.kullanildi.is_(False)).all():
@@ -173,6 +194,8 @@ def dogrulama_kodunu_kontrol_et(db: Session, kullanici_tipi: str, kullanici_id: 
          .order_by(DogrulamaKodu.olusturulma_zamani.desc(), DogrulamaKodu.id.desc()).first())
     if k is None or _utc(k.son_kullanma) < _simdi():
         raise IsKuraliHatasi("Kodun süresi doldu. Yeni kod iste.")
+    if _gunluk_kod_durumu(db, kullanici_tipi, kullanici_id)[1] >= GUNLUK_HATALI:
+        raise IsKuraliHatasi(_GUNLUK_MESAJ)
     if k.deneme_sayisi >= KOD_MAKS_DENEME:
         k.kullanildi = True
         db.flush()

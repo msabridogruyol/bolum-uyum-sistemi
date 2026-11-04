@@ -32,6 +32,7 @@ PUT    /yonetim/okul/{okul_id}/tema             — okul rengi (#RRGGBB; boş = 
 GET    /yonetim/okul/{okul_id}/bilgi             — okul tanıtım bilgileri (kuruluş yılı, öğrenci sayısı, tanıtım, iletişim, kadro)
 PUT    /yonetim/okul/{okul_id}/bilgi             — tanıtım bilgilerini güncelle (okul yetkilisi + süper admin)
 """
+from app.core.excel_guvenligi import guvenli_kaydet
 import base64
 import csv
 import io
@@ -42,7 +43,8 @@ from datetime import datetime, timedelta
 
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import Field, BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 
@@ -122,6 +124,8 @@ def _okul_filtresi(okul_id: int) -> tuple[str, dict]:
 def _hizli_hash(sifre: str) -> str:
     # Geçici şifreler ilk girişte zorunlu değiştirildiği için toplu açılışta daha düşük maliyet (10) kullanılır;
     # doğrulama aynı bcrypt fonksiyonuyla yapılır.
+    if len(sifre.encode("utf-8")) > 72:   # [2026-11-04] bcrypt sınırı: 500 yerine açık mesaj
+        raise HTTPException(status_code=400, detail="Dosyadaki geçici şifrelerden biri çok uzun (en fazla 72 karakter).")
     return bcrypt.hashpw(sifre.encode("utf-8"), bcrypt.gensalt(rounds=10)).decode("utf-8")
 
 
@@ -210,17 +214,20 @@ _BASLIK = {
 def _dosyadan_satirlar(dosya_adi: str, icerik_b64: str) -> list[list]:
     """[2026-10-11] Tablo dosyası sınırı: en fazla 10 MB ve 20.000 satır (app/core/yukleme_siniri.py) — öğrenci yükleme,
     okul denemeleri ve İş Hayatı veri dosyaları bu fonksiyondan geçer."""
-    from app.core.yukleme_siniri import TABLO_EN_FAZLA_SATIR, base64_coz, satir_siniri
+    from app.core.yukleme_siniri import (HUCRE_EN_FAZLA_KARAKTER, TABLO_EN_FAZLA_SATIR, TABLO_EN_FAZLA_SUTUN, base64_coz,
+                                         satir_siniri, xlsx_bomba_denetimi)
     veri = base64_coz(icerik_b64)
     ad = (dosya_adi or "").lower()
     if ad.endswith((".xlsx", ".xlsm")) or veri[:2] == b"PK":
+        xlsx_bomba_denetimi(veri)   # [2026-11-04] açılmış boyut / sıkıştırma oranı
         try:
             import openpyxl
             wb = openpyxl.load_workbook(io.BytesIO(veri), read_only=True, data_only=True)
             ws = wb.worksheets[0]
+            ws.reset_dimensions()   # dosyanın ilan ettiği boyuta (ör. A1:XFD2001) güvenilmez
             satirlar, dolu, son_dolu = [], 0, 0
-            for r in ws.iter_rows(values_only=True):
-                satir = [("" if c is None else c) for c in r]
+            for r in ws.iter_rows(max_col=TABLO_EN_FAZLA_SUTUN, values_only=True):
+                satir = [("" if c is None else (c[:HUCRE_EN_FAZLA_KARAKTER] if isinstance(c, str) else c)) for c in r]
                 if any(str(c).strip() for c in satir):
                     dolu, son_dolu = dolu + 1, len(satirlar)
                     if dolu > TABLO_EN_FAZLA_SATIR + 1:   # başlık payı; tamamını belleğe almadan kes
@@ -231,6 +238,9 @@ def _dosyadan_satirlar(dosya_adi: str, icerik_b64: str) -> list[list]:
                 satirlar.append(satir)
         except Exception:
             raise HTTPException(status_code=400, detail="Excel dosyası açılamadı. .xlsx olarak kaydedip tekrar deneyin.")
+        # reset_dimensions sonrası satır uzunlukları değişkendir; eskisi gibi dikdörtgen tablo döner (gerçek dolu genişliğe göre)
+        genislik = max((max((i + 1 for i, c in enumerate(r) if str(c).strip()), default=0) for r in satirlar), default=0)
+        satirlar = [(r + [""] * (genislik - len(r)))[:genislik] for r in satirlar]
         satir_siniri(len([r for r in satirlar if any(str(c).strip() for c in r)]) - 1)
         return satirlar
     if ad.endswith(".xls") or veri[:8] == b"\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1":
@@ -367,7 +377,7 @@ def _xlsx_b64(baslik: str, kolonlar: list[str], satirlar: list[list], not_metni:
         ws.column_dimensions[openpyxl.utils.get_column_letter(j)].width = min(45, uz + 3)
     ws.freeze_panes = ws.cell(row=ilk + 1, column=1)
     b = io.BytesIO()
-    wb.save(b)
+    guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     return base64.b64encode(b.getvalue()).decode()
 
 
@@ -432,52 +442,52 @@ def _durum(o: Ogrenci, il: dict | None) -> tuple[str, str]:
 
 
 # ----------------------------------------------------------------------------- şemalar
-class IlkSifreIstek(BaseModel):
-    yeni_sifre: str
+class IlkSifreIstek(GirdiModeli):
+    yeni_sifre: str = Field(max_length=200)
 
 
-class DosyaIstek(BaseModel):
+class DosyaIstek(GirdiModeli):
     dosya_adi: str
-    icerik_base64: str
+    icerik_base64: str = Field(max_length=20000000)
 
 
-class OgrenciSatir(BaseModel):
-    ad_soyad: str
-    email: str
+class OgrenciSatir(GirdiModeli):
+    ad_soyad: str = Field(max_length=200)
+    email: str = Field(max_length=254)
     sinif: str | None = None
     sube: str | None = None
-    sifre: str | None = None        # [2026-10-10] verilirse geçici şifre olarak kullanılır
+    sifre: str | None = Field(None, max_length=200)        # [2026-10-10] verilirse geçici şifre olarak kullanılır
     ogrenci_no: str | None = None
 
 
-class TopluOlusturIstek(BaseModel):
+class TopluOlusturIstek(GirdiModeli):
     ogrenciler: list[OgrenciSatir]
 
 
-class OgrenciDuzenleIstek(BaseModel):
-    ad_soyad: str | None = None
-    email: str | None = None
+class OgrenciDuzenleIstek(GirdiModeli):
+    ad_soyad: str | None = Field(None, max_length=200)
+    email: str | None = Field(None, max_length=254)
     sinif: str | None = None
     sube: str | None = None
     ogrenci_no: str | None = None
 
 
-class IdlerIstek(BaseModel):
+class IdlerIstek(GirdiModeli):
     idler: list[str]
 
 
-class OkulAtaIstek(BaseModel):
+class OkulAtaIstek(GirdiModeli):
     okul_id: int   # 0 = okul harici
 
 
-class YetkiliEkleIstek(BaseModel):
-    ad_soyad: str
-    email: str
+class YetkiliEkleIstek(GirdiModeli):
+    ad_soyad: str = Field(max_length=200)
+    email: str = Field(max_length=254)
     unvan: str | None = None        # [2026-10-10] görevi / unvanı (isteğe bağlı)
 
 
-class YetkiliDuzenleIstek(BaseModel):
-    ad_soyad: str | None = None
+class YetkiliDuzenleIstek(GirdiModeli):
+    ad_soyad: str | None = Field(None, max_length=200)
     unvan: str | None = None
 
 
@@ -500,6 +510,10 @@ def _moduller(db: Session, okul_id) -> list[str]:
 
 @router.post("/ben/ilk-sifre")
 def ben_ilk_sifre(istek: IlkSifreIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    # [2026-11-04] Güvenlik denetimi: bu uç eski şifre sormaz; yalnızca geçici şifreyle açılmış hesapta çalışır
+    # (öğrencideki /profil/ilk-sifre ile aynı kural). Aksi hâlde ele geçirilmiş bir oturum hesabı kalıcı olarak alırdı.
+    if not yon.sifre_degistirmeli:
+        raise HTTPException(status_code=400, detail="Şifre zaten belirlenmiş; değiştirmek için şifre sıfırlama bağlantısını kullanın.")
     if len(istek.yeni_sifre or "") < 8:
         raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
     if sifre_dogrula(istek.yeni_sifre, yon.sifre_hash):
@@ -689,6 +703,10 @@ def toplu_olustur(okul_id: int, istek: TopluOlusturIstek, db: Session = Depends(
                 o.sifre_hash = _hizli_hash(s["sifre"])
                 o.sifre_degistirmeli = True
                 o.gecici_sifre_sifreli = sifrele(s["sifre"])
+                # [2026-11-04] toplu_sifre_sifirla ile aynı: eski şifreyle açılmış oturumlar ve güvenilir cihazlar düşer
+                from app.models import GuvenilirCihaz
+                oturumlari_gecersiz_kil(o)
+                db.query(GuvenilirCihaz).filter(GuvenilirCihaz.kullanici_tipi == "ogrenci", GuvenilirCihaz.kullanici_id == o.id).delete()
                 olay_yaz(db, o.id, "sifre_sifirlandi", "Toplu yüklemeyle yeni geçici şifre", yapan)
             olay_yaz(db, o.id, "bilgi_guncellendi", "Toplu yükleme", yapan)
             guncellenen += 1
@@ -1180,20 +1198,20 @@ def okul_kayitlari(okul_id: int, gun: int = 30, db: Session = Depends(get_db), y
 
 
 # ----------------------------------------------------------------------------- okul tanıtım bilgileri
-class KadroGirdi(BaseModel):
+class KadroGirdi(GirdiModeli):
     gorev: str
     ad: str
-    eposta: str | None = None
+    eposta: str | None = Field(None, max_length=254)
     telefon: str | None = None
 
 
-class OkulBilgiIstek(BaseModel):
+class OkulBilgiIstek(GirdiModeli):
     kurulus_yili: int | None = None
     ogrenci_sayisi: int | None = None
     tanitim: str | None = None
     adres: str | None = None
     telefon: str | None = None
-    eposta: str | None = None
+    eposta: str | None = Field(None, max_length=254)
     web: str | None = None
     kadro: list[KadroGirdi] = []
 
@@ -1270,7 +1288,7 @@ def okul_bilgi_guncelle(okul_id: int, istek: OkulBilgiIstek, db: Session = Depen
 _HEX = re.compile(r"^#[0-9A-Fa-f]{6}$")
 
 
-class TemaIstek(BaseModel):
+class TemaIstek(GirdiModeli):
     renk: str | None = None          # "#1F3A93" — boş/None = Filizyol'un kendi rengi
 
 
@@ -1291,11 +1309,11 @@ def okul_tema_guncelle(okul_id: int, istek: TemaIstek, db: Session = Depends(get
 
 
 # ----------------------------------------------------------------------------- hedef bölüm yönetimi
-class YonetimHedefIstek(BaseModel):
+class YonetimHedefIstek(GirdiModeli):
     bolum_id: int
 
 
-class HedefHakkiIstek(BaseModel):
+class HedefHakkiIstek(GirdiModeli):
     ek: int = 1
 
 
@@ -1339,7 +1357,7 @@ def yonetim_bolumler(db: Session = Depends(get_db), yon: AdminKullanici = Depend
 
 
 # ----------------------------------------------------------------------------- [2026-10-10] şube / sınıf öğretmeni
-class SubeIstek(BaseModel):
+class SubeIstek(GirdiModeli):
     sinif: str
     sube: str
     ogretmen_ad: str | None = None

@@ -69,8 +69,9 @@ def _tarih(z, saat=False) -> str:
 
 
 def _e(metin) -> str:
-    """Paragraph içinde güvenli metin."""
-    return (str(metin or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;"))
+    """Paragraph içinde güvenli metin. [2026-11-04] Çift tırnak da kaçırılır: öznitelik içinde (ör. <link href="…">) kullanılan
+    öğrenci metni (`https://a"><b>x`) ReportLab ayrıştırıcısını bozup PDF'i 500'e düşürüyordu."""
+    return (str(metin or "").replace("&", "&amp;").replace("<", "&lt;").replace(">", "&gt;").replace('"', "&quot;"))
 
 
 class _Stil:

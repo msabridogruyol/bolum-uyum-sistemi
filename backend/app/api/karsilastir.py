@@ -199,7 +199,7 @@ def karsilastirma_verisi(db: Session, o: Ogrenci, idler: list[int]) -> dict:
             "bolum_id": bid, "bolum_adi": tr_baslik(b.ad), "kisa_aciklama": b.kisa_aciklama,
             **alan.get(bid, {"ust_alan": None, "alt_alan": None}),
             "hedef": bid == hedef,
-            "toplam_uyum": round(float(uyum[bid]), 1) if bid in uyum else None,
+            "toplam_uyum": float(uyum[bid]) if bid in uyum else None,   # [2026-11-04] ham değer; ekran tek kez yuvarlar (çift yuvarlama %99↔%100 farkı yapıyordu)
             "sira": sira.get(bid),
             # "Dikkat" cümlesi metinlerde de var; ayrı alanda (dikkat) gösterildiği için tekrarlanmaz
             "neden": [m for m in (n.get("metinler") or []) if not str(m).startswith("Dikkat")][:4],
@@ -233,7 +233,7 @@ def karsilastir_varsayilan(db: Session = Depends(get_db), o: Ogrenci = Depends(g
     idler = idler[:EN_FAZLA]
     adlar = {b.id: tr_baslik(b.ad) for b in db.query(Bolum).filter(Bolum.id.in_(idler or [-1])).all()}
     return {"bolumler": [{"bolum_id": i, "bolum_adi": adlar.get(i), "hedef": bool(hedef and i == hedef.id),
-                          "toplam_uyum": round(float(uyum[i]), 1) if i in uyum else None} for i in idler]}
+                          "toplam_uyum": float(uyum[i]) if i in uyum else None} for i in idler]}
 
 
 @router.get("/karsilastir")

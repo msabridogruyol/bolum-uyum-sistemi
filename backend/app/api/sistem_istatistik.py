@@ -13,6 +13,7 @@ Performans: her blok tek toplu SQL (öğrenci başına sorgu yok); modül tablol
 KVKK küçük grup (app/core/kucuk_grup.py): okul satırlarında 5'ten az öğrencili okulun oran / ortalamaları gizlenir (sayı görünür);
 tek bir küçük okul seçilirse sayfanın tüm oran / ortalama / dağılımları gizlenir.
 """
+from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
@@ -517,7 +518,7 @@ def istatistik_xlsx(v: dict) -> bytes:
                  + [GIZLI_METIN if o["gizli"] else o["katman"].get(x) for x in kk] for o in v["okullar"]], DIPNOT)
     _xlsx_sayfa(wb, "Paketler", ["Paket", "Aktif okul", "Öğrenci"], [[x["ad"], x["deger"], x["ogrenci"]] for x in v["paketler"]])
     b = io.BytesIO()
-    wb.save(b)
+    guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     return b.getvalue()
 
 
@@ -555,7 +556,7 @@ def audit_log_excel(gun: int = Query(90, ge=0, le=3650), db: Session = Depends(g
                   r.hedef_tablo, r.hedef_id, r.gerekce, r.okul] for r in satir],
                 f"Filizyol · {date.today().strftime('%d.%m.%Y')} · {'Son ' + str(gun) + ' gün' if gun else 'Tüm kayıtlar'} · {len(satir)} kayıt")
     b = io.BytesIO()
-    wb.save(b)
+    guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     denetim_yaz(db, yon, "audit_log_excel", "audit_log", gun or "tum", f"{len(satir)} kayıt")
     db.commit()
     return Response(b.getvalue(), media_type=XLSX, headers={

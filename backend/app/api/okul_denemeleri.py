@@ -18,6 +18,7 @@ from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -190,10 +191,10 @@ def deneme_sablonu(okul_id: int, oturum: str = Query("TYT"), sinif: str | None =
     return {"dosya_adi": f"{oturum}_deneme_sablonu{ek}.xlsx", "icerik_base64": _xlsx_b64(f"{oturum} denemesi", kolonlar, satirlar, not_metni)}
 
 
-class DosyaIstek(BaseModel):
+class DosyaIstek(GirdiModeli):
     oturum: str
     dosya_adi: str
-    icerik_base64: str
+    icerik_base64: str = Field(max_length=20000000)
 
 
 class KaydetIstek(DosyaIstek):

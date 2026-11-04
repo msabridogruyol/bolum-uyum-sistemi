@@ -22,6 +22,7 @@ import uuid
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_admin
@@ -45,18 +46,18 @@ def _sinif(s: str | None) -> str:
     return s if not s.isdigit() else f"{s}. Sınıf"
 
 
-class YeniTestIstek(BaseModel):
+class YeniTestIstek(GirdiModeli):
     tip: str
     ad_soyad: str = Field(min_length=3, max_length=80)
     okul_id: int | None = None
     sinif: str | None = "11"
 
 
-class BaglantiIstek(BaseModel):
+class BaglantiIstek(GirdiModeli):
     saat: int = 24
 
 
-class SenaryoIstek(BaseModel):
+class SenaryoIstek(GirdiModeli):
     asama: str = "tamamlandi"
     yarim: bool = False
     egilim: str = "rastgele"            # rastgele | dengeli | bolum
@@ -70,7 +71,7 @@ class SenaryoIstek(BaseModel):
     tohum: int | None = None
 
 
-class TestGirisIstek(BaseModel):
+class TestGirisIstek(GirdiModeli):
     anahtar: str = Field(min_length=10, max_length=100)
 
 
@@ -204,7 +205,7 @@ DEMO_ADLAR = ["Ada Yıldız", "Mert Kaya", "Elif Demir", "Can Aydın", "Zeynep �
 DEMO_SINIFLAR = ["9", "10", "11", "12"]
 
 
-class DemoOkulIstek(BaseModel):
+class DemoOkulIstek(GirdiModeli):
     okul_adi: str = Field(min_length=3, max_length=80)
     paket: str = "tam"
     ogrenci_sayisi: int = Field(12, ge=1, le=30)

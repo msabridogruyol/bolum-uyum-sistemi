@@ -10,6 +10,7 @@ from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -59,7 +60,7 @@ def _liste(db: Session, ogrenci_id) -> dict:
             "kategoriler": [{"kod": k, **{a: b for a, b in v.items()}} for k, v in KATEGORILER.items()]}
 
 
-class KayitIstek(BaseModel):
+class KayitIstek(GirdiModeli):
     kategori: str
     alt_tur: str | None = Field(default=None, max_length=40)
     baslik: str = Field(min_length=1, max_length=160)

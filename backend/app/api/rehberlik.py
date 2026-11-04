@@ -20,6 +20,7 @@ Okul yetkilisi (rehber öğretmen) + süper admin — modül: rehberlik
   * Son kullanım günlük aktiflikten (ogrenci_aktif_gunler) okunur; "beni hatırla" ile sistemi kullanan öğrenci "girmiyor" sayılmaz.
   * "Yüksek": net düşüşü %30+ ya da 3+ farklı "orta" uyarının birleşmesi. 3+ farklı düşük uyarı → "orta".
 """
+from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
@@ -28,6 +29,7 @@ from zoneinfo import ZoneInfo
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -217,7 +219,7 @@ def erken_uyari(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici
     }
 
 
-class ErteleIstek(BaseModel):
+class ErteleIstek(GirdiModeli):
     kural: str
     gun: int = Field(default=14, ge=1, le=120)
 
@@ -330,7 +332,7 @@ def gorusmeler_excel(okul_id: int, gun: int = Query(365, ge=7, le=800), db: Sess
         oz.cell(row=i, column=len(aylar) + 2, value=sum(1 for g in yapilan if g["konu"] == k))
     oz.column_dimensions["A"].width = 22
     b = io.BytesIO()
-    wb.save(b)
+    guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     denetim_yaz(db, yon, "gorusme_excel", "rehberlik_gorusmeleri", okul_id, f"{len(satirlar)} kayıt", okul_id or None)
     db.commit()
     ad = (okul.ad if okul else "okul_harici").replace(" ", "_")
@@ -348,7 +350,7 @@ def ogrenci_gorusmeleri(ogrenci_id: str, db: Session = Depends(get_db), yon: Adm
             "secenekler": {"turler": TURLER, "konular": KONULAR, "durumlar": DURUMLAR}}
 
 
-class GorusmeIstek(BaseModel):
+class GorusmeIstek(GirdiModeli):
     zaman: datetime
     durum: str = "yapildi"
     tur: str = "bireysel"

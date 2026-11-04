@@ -14,7 +14,8 @@ DELETE /admin/okullar/{id}?hedef_id=   — sil; öğrencisi varsa hedef okula ak
 from datetime import datetime
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel
+from pydantic import Field, BaseModel
+from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
@@ -34,7 +35,7 @@ class OkulOut(BaseModel):
     id: int
     ad: str
     alt_baslik: str | None = None
-    logo: str | None = None
+    logo: str | None = Field(None, max_length=1_000_000)
     aktif_mi: bool                    # amblem bu okulun öğrencilerine gösterilsin mi
     # [2026-10-09] Listede sistemdeki öğrenci sayısı; tekil cevaplarda okulun girdiği sayı (boş olabilir → None)
     ogrenci_sayisi: int | None = 0
@@ -49,7 +50,7 @@ class OkulOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class ErisimIstek(BaseModel):
+class ErisimIstek(GirdiModeli):
     acik: bool
     mesaj: str | None = None          # boş → varsayılan "Sisteminiz şu anda kapalıdır…"
 
@@ -66,7 +67,7 @@ class OkulBilgiOut(BaseModel):
     id: int
     ad: str
     alt_baslik: str | None = None
-    logo: str | None = None
+    logo: str | None = Field(None, max_length=1_000_000)
     kurulus_yili: int | None = None
     ogrenci_sayisi: int | None = None
     tanitim: str | None = None
@@ -81,10 +82,10 @@ class OkulBilgiOut(BaseModel):
     model_config = {"from_attributes": True}
 
 
-class OkulIstek(BaseModel):
+class OkulIstek(GirdiModeli):
     ad: str
     alt_baslik: str | None = None
-    logo: str | None = None          # data URL; boş string → amblemi kaldır
+    logo: str | None = Field(None, max_length=1_000_000)          # data URL; boş string → amblemi kaldır
     aktif_mi: bool | None = None
 
 
