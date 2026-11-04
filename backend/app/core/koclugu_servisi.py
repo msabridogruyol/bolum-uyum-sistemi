@@ -460,7 +460,8 @@ def bolum_ayirt_ediciligi(db: Session, hedef_bolum_id: int, degisken_idler: list
         _AYIRT_ONBELLEK[anahtar] = tablo
     if tablo is None or hedef_bolum_id not in tablo:
         return None
-    return {d: v for d, v in tablo[hedef_bolum_id].items() if d in set(degisken_idler)}
+    kume = set(degisken_idler)
+    return {d: v for d, v in tablo[hedef_bolum_id].items() if d in kume}
 
 
 def _ayirt_tablosu(db: Session, degisken_idler: list[int]) -> dict[int, dict[int, float]] | None:

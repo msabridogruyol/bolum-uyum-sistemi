@@ -17,7 +17,7 @@ from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -238,7 +238,7 @@ def talep_iptal(talep_id: int, db: Session = Depends(get_db), o: Ogrenci = Depen
 
 # ============================================================================= yönetim
 class KocIstek(GirdiModeli):
-    ad_soyad: str = Field(min_length=3, max_length=80)
+    ad_soyad: str = Field(min_length=3, max_length=AD_SOYAD_EN_FAZLA)
     unvan: str | None = Field(default=None, max_length=80)
     hakkinda: str | None = Field(default=None, max_length=1000)
     alanlar: list[str] = Field(default_factory=list)

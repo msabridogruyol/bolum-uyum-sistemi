@@ -195,7 +195,7 @@ def kur() -> int:
         _eksik_kolonlari_ekle(b)
         _varsayilanlari_tamamla(b)
     from app.core.sema_guncelleme import semayi_guncelle
-    s = semayi_guncelle(engine)
+    s = semayi_guncelle(engine, gece=True)   # test şemasına gece göçleri (indeksler) de kurulur
     tablolar = set(inspect(engine).get_table_names())
     eksik = [t for t in KRITIK if t not in tablolar]
     print(f"Şema kuruldu: {len(tablolar)} tablo · hoşgörülen hata: {len(hatalar)} · sema_guncelleme: "

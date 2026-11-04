@@ -109,7 +109,8 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
       setKatmanlar(liste)
       setDegerler(Object.fromEntries(liste.map((k) => [k.katman_kod, String(k.agirlik)])))
       setOnayAdimi(false)
-      setMesaj('Katman ağırlıkları kaydedildi. Yeni ağırlıklar bundan sonraki uyum hesaplamalarında kullanılır.')
+      const gb = await api.geceBakimi().catch(() => null)   // [2026-11-04] ağırlık değişikliği gece bakımında uygulanır
+      setMesaj(`Değişiklik kaydedildi. Yeni ağırlıklar ${gb?.sonraki || 'gece bakımında'} uygulanacak ve bütün uyum skorları yeniden hesaplanacak (Sistem › Gece Bakımı).`)
     } catch (err) {
       setHata(err.detail || 'Kaydedilemedi.')
     } finally {

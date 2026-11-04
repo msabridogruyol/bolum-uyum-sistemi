@@ -23,7 +23,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
-from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
@@ -313,7 +313,7 @@ def mezunlar(okul_id: int, db: Session = Depends(get_db), yon: AdminKullanici = 
 
 
 class MezunIstek(YerlesmeIstek):
-    ad_soyad: str = Field(min_length=3, max_length=120)
+    ad_soyad: str = Field(min_length=3, max_length=AD_SOYAD_EN_FAZLA)
     ogrenci_id: str | None = None
 
 

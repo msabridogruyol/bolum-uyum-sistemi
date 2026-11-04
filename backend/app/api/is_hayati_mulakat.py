@@ -24,7 +24,7 @@ from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin s
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_ogrenci
+from app.api.deps import get_mevcut_ogrenci, get_kvkk_onayli_ogrenci  # [2026-11-04] veri toplayan uçlar güncel KVKK onayı ister
 from app.core import is_hayati_pratik as ihp
 from app.core.database import get_db
 from app.models import Ogrenci
@@ -136,7 +136,7 @@ class PratikIstek(GirdiModeli):
 
 
 @ogrenci_router.post("/mulakat/pratik")
-def pratik_kaydet(istek: PratikIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def pratik_kaydet(istek: PratikIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     soru = _tum_sorular().get(istek.soru_id)
     if soru is None:
         raise HTTPException(404, "Soru bulunamadı.")
@@ -155,7 +155,7 @@ def pratik_kaydet(istek: PratikIstek, db: Session = Depends(get_db), o: Ogrenci 
 
 
 @ogrenci_router.post("/mulakat/pratik/{pratik_id}/geri-bildirim")
-def geri_bildirim(pratik_id: int, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def geri_bildirim(pratik_id: int, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     from app.core.ai_koc_servisi import AsistanKullanilamiyorHatasi, KRIZ_YANITI, kriz_mesaji_mi, openai_ile_konus
     p = db.execute(text("SELECT id, soru_id, cevap, ai_geri_bildirim FROM is_hayati_mulakat WHERE id = :i AND ogrenci_id = :o AND NOT silindi"),
                    {"i": pratik_id, "o": o.id}).first()

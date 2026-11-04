@@ -46,6 +46,8 @@ def _ogrenci_ve_bolum(db):
     oid = uuid.uuid4()
     db.execute(text("""INSERT INTO ogrenciler (id, ad_soyad, email, sifre_hash, okul_id, olusturulma_zamani, guncelleme_zamani)
                        VALUES (:i, 'MS Öğrenci', :e, 'x', :o, now(), now())"""), {"i": oid, "e": f"{oid.hex[:8]}@ms-test.invalid", "o": okul})
+    from tests.conftest import kvkk_onayla
+    kvkk_onayla(db, oid)   # [2026-11-04] veri toplayan uçlar güncel KVKK onayı ister
     db.commit()
     return b, oid, {"Authorization": f"Bearer {erisim_tokeni_uret(oid, 'ogrenci')}"}
 

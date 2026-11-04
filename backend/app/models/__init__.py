@@ -29,7 +29,7 @@ from app.models.koclugu import (
     OgrenciKoclukOturumu, OgrenciKoclukMesaji, GelisimKaynakOnerisi, OgrenciFavoriBolum,
 )
 from app.models.haftalik import OgrenciHaftalikGorev
-from app.models.hesap_guvenligi import KvkkOnayi, DogrulamaKodu, SifreSifirlamaTokeni, GuvenilirCihaz
+from app.models.hesap_guvenligi import KvkkOnayi, DogrulamaKodu, SifreSifirlamaTokeni, GuvenilirCihaz, SifreDegisiklikTalebi
 __all__ = [
     "Ogrenci", "AdminKullanici", "OgrenciHesapOlayi",
     "Katman", "Degisken", "Soru", "SoruSecenegi", "SjtSecenekDegiskenAgirlik",
@@ -47,5 +47,5 @@ __all__ = [
     "GelisimKarsilastirmaYorumu", "OgrenciGelisimAksiyonDurumu", "OgrenciGelisimAdimDurumu", "OgrenciAlanOlcumu",
     "OgrenciKoclukOturumu", "OgrenciKoclukMesaji", "GelisimKaynakOnerisi", "OgrenciFavoriBolum",
     "OgrenciHaftalikGorev",
-    "KvkkOnayi", "DogrulamaKodu", "SifreSifirlamaTokeni", "GuvenilirCihaz",
+    "KvkkOnayi", "DogrulamaKodu", "SifreSifirlamaTokeni", "GuvenilirCihaz", "SifreDegisiklikTalebi",
 ]

@@ -39,6 +39,7 @@ dağılımı tanımlanmamıştı, yalnızca katman-bazlı %20/15/25/40].
 """
 from app.core.metin import turkce_kucult
 import math
+import logging
 from dataclasses import dataclass
 
 import numpy as np
@@ -66,6 +67,8 @@ def _katman_ici_olcekle(matris: np.ndarray, katman_gruplari: list[list[int]]) ->
         sonuc[..., idx] = 50.0 + IPSATIF_OLCEK * (x - ort) / (std + EPS)
     return sonuc
 
+
+log = logging.getLogger("skor_motoru")
 
 @dataclass
 class HesaplamaGirdisi:
@@ -551,58 +554,118 @@ def toplu_nihai_uyum(db: Session, tur_idler, bolum_idler=None) -> dict[int, dict
     return sonuc
 
 
-# [2026-11-04] Yük denetimi: 3.000 öğrencili okulda tek çağrı ~1,7–3,8 sn (786 bin skor satırı). Rehber paneli bir sayfada
-# özet, öğrenci listesi, erken uyarı, Filiz özeti ve hazır raporlar için aynı tur kümesini 4–5 kez, çoğu zaman AYNI ANDA
-# hesaplatıyordu (genel bakış ~14 sn). Sonuç, tur kümesi + ilk_n anahtarıyla kısa süre (SIRALAMA_ONBELLEK_SN) süreç içinde
-# tutulur; aynı anahtarı aynı anda isteyenler ilk hesabı bekler (tek uçuş). Yeni biten tur anahtarı değiştirir (hemen görünür);
-# skorların yeniden hesaplanması (pipeline onayı) en geç SIRALAMA_ONBELLEK_SN sonra yansır — ayrıca siralama_onbellegini_bosalt.
-SIRALAMA_ONBELLEK_SN = 45.0
-_SIRA_ONBELLEK: dict = {}
-_SIRA_KILITLER: dict = {}
-_SIRA_ANA_KILIT = __import__("threading").Lock()
+# [2026-11-04] Yük denetimi: rehber paneli okulun bütün öğrencilerinin ilk 10 önerisini her sayfada yeniden hesaplıyordu
+# (20.000 öğrencide 5,2 milyon skor satırı, ~19 sn; genel bakış 25 sn). İlk 10 öneri tur başına `tur_oneri_ozeti`
+# tablosunda saklanır ve yalnızca girdisi değişince yeniden hesaplanır:
+#   * öğrencinin skorları (ogrenci_bolum_uyum_skorlari / ogrenci_dal_uyum_skorlari) değişince veritabanı tetikleyicisi o turun
+#     satırını siler (göç 0094) — hangi kod yolundan yazılırsa yazılsın;
+#   * bölüm tarafındaki sıralama girdileri (alan haritası, eşitlik bozma verisi, bölüm adları) `surum` özetindedir; değişince
+#     eski satırlar kullanılmaz.
+# Eksik ya da eski satırlar istek sırasında yalnızca o turlar için hesaplanır ve yazılır; gece işi (03:00) hepsini önceden doldurur.
+OZET_ILK_N = 10
 
 
-def siralama_onbellegini_bosalt() -> None:
-    with _SIRA_ANA_KILIT:
-        _SIRA_ONBELLEK.clear()
+def _siralama_girdileri(db: Session):
+    import hashlib
+    v = _bolum_verisi(db) or {}
+    varyans, meslek_sayisi, adlar = v.get("agirlikli_varyans", {}), v.get("etkin_meslek_sayisi", {}), v.get("bolum_adlari", {})
+    alan_of = bolum_alan_haritasi(db)
+    ozet = hashlib.sha1(repr((sorted(varyans.items()), sorted(meslek_sayisi.items()), sorted(adlar.items()),
+                              sorted(alan_of.items()), OZET_ILK_N)).encode()).hexdigest()[:16]
+    return (varyans, meslek_sayisi, adlar, alan_of), ozet
+
+
+def hedef_nihai_uyum(db: Session, tur_bolum: dict) -> dict[int, float]:
+    """[2026-11-04] tur_id -> o turun hedef bölümündeki NİHAİ uyum (öğrencinin ekranındaki sayı). Yalnızca her turun hedefi ve
+    K5 kümesi okunur; toplu_nihai_uyum(bolum_idler=...) bütün öğrencilerin hedeflerinin birleşimini her tur için okuyordu
+    (20.000 öğrencide 5 milyon satır, "Tek bakışta" ~21 sn)."""
+    from sqlalchemy import text as _text
+    tur_bolum = {int(t): int(b) for t, b in tur_bolum.items() if t is not None and b is not None}
+    if not tur_bolum:
+        return {}
+    k5 = _k5_puanlari(db, list(tur_bolum))
+    turlar, bolumler = [], []
+    for t, b in tur_bolum.items():
+        for x in {b} | set(k5.get(t, {})):
+            turlar.append(t)
+            bolumler.append(x)
+    ham: dict[int, dict[int, float]] = {}
+    for t, b, u in db.execute(_text("""
+            SELECT s.tur_id, s.bolum_id, s.toplam_uyum::float8 FROM ogrenci_bolum_uyum_skorlari s
+              JOIN unnest(CAST(:t AS bigint[]), CAST(:b AS integer[])) AS c(tur_id, bolum_id)
+                ON c.tur_id = s.tur_id AND c.bolum_id = s.bolum_id"""), {"t": turlar, "b": bolumler}).all():
+        ham.setdefault(t, {})[b] = u
+    sonuc = {}
+    for t, b in tur_bolum.items():
+        if t in ham and b in ham[t]:
+            sonuc[t] = k5_nihai(ham[t], k5.get(t, {})).get(b)
+    return sonuc
 
 
 def toplu_siralama(db: Session, tur_idler, ilk_n: int | None = None) -> dict[int, list[SiralamaSatiri]]:
     """tur_id -> öğrencinin sonuç ekranındaki sıralama (siralama_getir ile aynı skor ve sıra; kendall_w /
-    yontem_skorlari doldurulmaz). Bölüm tarafı (alan haritası, tie-break verisi) bir kez okunur."""
-    import time as _t
-    turlar = tuple(sorted({int(t) for t in tur_idler if t is not None}))
-    if len(turlar) < 50:   # tek öğrenci / küçük grup: hızlı, önbelleğe gerek yok
+    yontem_skorlari doldurulmaz). ilk_n ≤ 10 ise saklanan özet kullanılır (yukarıya bkz.)."""
+    from sqlalchemy import text as _text
+    turlar = sorted({int(t) for t in tur_idler if t is not None})
+    if not turlar:
+        return {}
+    if ilk_n is None or ilk_n > OZET_ILK_N or len(turlar) < 20:
         return _toplu_siralama_hesapla(db, turlar, ilk_n)
-    anahtar = (hash(turlar), len(turlar), ilk_n)
-    with _SIRA_ANA_KILIT:
-        kilit = _SIRA_KILITLER.setdefault(anahtar, __import__("threading").Lock())
-    with kilit:
-        kayit = _SIRA_ONBELLEK.get(anahtar)
-        if kayit and kayit[1] == turlar and _t.monotonic() - kayit[0] < SIRALAMA_ONBELLEK_SN:
-            return kayit[2]
-        try:
-            sonuc = _toplu_siralama_hesapla(db, turlar, ilk_n)
-        except Exception:
-            with _SIRA_ANA_KILIT:
-                _SIRA_KILITLER.pop(anahtar, None)
-            raise
-        with _SIRA_ANA_KILIT:
-            if len(_SIRA_ONBELLEK) >= 32:
-                for k in sorted(_SIRA_ONBELLEK, key=lambda k: _SIRA_ONBELLEK[k][0])[:16]:
-                    _SIRA_ONBELLEK.pop(k, None)
-                    _SIRA_KILITLER.pop(k, None)
-            _SIRA_ONBELLEK[anahtar] = (_t.monotonic(), turlar, sonuc)
-        return sonuc
+    girdiler, surum = _siralama_girdileri(db)
+    sonuc: dict[int, list[SiralamaSatiri]] = {}
+    for tur_id, bolumler, uyumlar in db.execute(
+            _text("SELECT tur_id, bolumler, uyumlar FROM tur_oneri_ozeti WHERE tur_id = ANY(:t) AND surum = :s"),
+            {"t": turlar, "s": surum}).all():
+        sonuc[tur_id] = [SiralamaSatiri(bolum_id=b, toplam_uyum=float(u)) for b, u in zip(bolumler, uyumlar)][:ilk_n]
+    eksik = [t for t in turlar if t not in sonuc]
+    if eksik:
+        yeni = _toplu_siralama_hesapla(db, eksik, OZET_ILK_N, girdiler)
+        _ozetleri_yaz(db, yeni, surum)
+        for t, satirlar in yeni.items():
+            sonuc[t] = satirlar[:ilk_n]
+    return sonuc
 
 
-def _toplu_siralama_hesapla(db: Session, tur_idler, ilk_n: int | None = None) -> dict[int, list[SiralamaSatiri]]:
+def _ozetleri_yaz(db: Session, ozetler: dict, surum: str) -> None:
+    """Ayrı bağlantıda yazar: çağıran isteğin işlemine (commit/rollback) karışmaz. Yazılamazsa (ör. tur henüz başka işlemde)
+    sessizce geçilir; bir sonraki istekte yeniden hesaplanır."""
+    if not ozetler:
+        return
+    from sqlalchemy import text as _text
+    from app.core.database import engine
+    satirlar = [{"t": t, "b": [s.bolum_id for s in l], "u": [round(float(s.toplam_uyum), 4) for s in l], "s": surum}
+                for t, l in ozetler.items()]
+    try:
+        with engine.begin() as b:
+            for i in range(0, len(satirlar), 1000):
+                b.execute(_text("""INSERT INTO tur_oneri_ozeti (tur_id, bolumler, uyumlar, surum, hesaplama_zamani)
+                                   VALUES (:t, :b, :u, :s, now())
+                                   ON CONFLICT (tur_id) DO UPDATE SET bolumler = EXCLUDED.bolumler, uyumlar = EXCLUDED.uyumlar,
+                                       surum = EXCLUDED.surum, hesaplama_zamani = now()"""), satirlar[i:i + 1000])
+    except Exception:
+        log.warning("tur_oneri_ozeti yazılamadı", exc_info=True)
+
+
+def oneri_ozetlerini_doldur(db: Session, parti: int = 2000) -> int:
+    """Gece işi: tamamlanmış ve özeti eksik/eski olan bütün turların ilk 10 önerisini hesaplayıp yazar."""
+    from sqlalchemy import text as _text
+    _girdiler, surum = _siralama_girdileri(db)
+    eksik = [r[0] for r in db.execute(_text("""
+        SELECT t.id FROM ogrenci_degerlendirme_turu t LEFT JOIN tur_oneri_ozeti z ON z.tur_id = t.id AND z.surum = :s
+         WHERE t.durum = 'tamamlandi' AND z.tur_id IS NULL"""), {"s": surum}).all()]
+    for i in range(0, len(eksik), parti):
+        toplu_siralama(db, eksik[i:i + parti], OZET_ILK_N)
+    return len(eksik)
+
+
+def _toplu_siralama_hesapla(db: Session, tur_idler, ilk_n: int | None = None, girdiler=None) -> dict[int, list[SiralamaSatiri]]:
     harita = toplu_nihai_uyum(db, tur_idler)
     if not harita:
         return {}
-    v = _bolum_verisi(db) or {}
-    varyans, meslek_sayisi, adlar = v.get("agirlikli_varyans", {}), v.get("etkin_meslek_sayisi", {}), v.get("bolum_adlari", {})
-    alan_of = bolum_alan_haritasi(db)
+    if girdiler is None:
+        v = _bolum_verisi(db) or {}
+        girdiler = (v.get("agirlikli_varyans", {}), v.get("etkin_meslek_sayisi", {}), v.get("bolum_adlari", {}), bolum_alan_haritasi(db))
+    varyans, meslek_sayisi, adlar, alan_of = girdiler
     sonuc: dict[int, list[SiralamaSatiri]] = {}
     for t, skorlar in harita.items():
         satirlar = [SiralamaSatiri(bolum_id=b, toplam_uyum=u) for b, u in skorlar.items()]

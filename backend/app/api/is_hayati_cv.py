@@ -33,7 +33,7 @@ from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin s
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
+from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim, get_kvkk_onayli_ogrenci  # [2026-11-04] veri toplayan uçlar güncel KVKK onayı ister
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz, olay_yaz
 from app.core.paketler import okul_modulu
@@ -541,7 +541,7 @@ class CvIstek(GirdiModeli):
 
 
 @ogrenci_router.put("/cv")
-def cv_kaydet(istek: CvIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def cv_kaydet(istek: CvIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     icerik = _temizle(istek.icerik)
     onceki = _kayitli(db, o.id)
     db.execute(text("""
@@ -628,7 +628,7 @@ def _duz_metin(icerik: dict) -> str:
 
 
 @ogrenci_router.post("/cv/ats")
-def ats_kontrol(istek: AtsIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
+def ats_kontrol(istek: AtsIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_kvkk_onayli_ogrenci)):
     """Gizlilik: istek gövdesi (ilan metni, CV) ve sonuç veritabanına yazılmaz, olay günlüğüne de girmez."""
     from app.api.raporlar import _dosya_adi
     from app.core import ats

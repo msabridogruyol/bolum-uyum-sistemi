@@ -17,6 +17,7 @@ net değişimi, katılım ve hedef uyumu ölçütleriyle. Okul kendi öğrencile
 Performans: sabit sayıda toplu SQL; öğrenci başına sorgu yok.
 """
 from __future__ import annotations
+from app.core.kisa_onbellek import ozet_onbellegi  # [2026-11-04] okul özetleri 5 dk
 
 from collections import Counter, defaultdict
 from datetime import date, datetime, timedelta, timezone
@@ -356,6 +357,7 @@ def _bulgular(v: dict, ham_uyari: list, secili_str: set, gecersiz_n: int, rehber
 
 
 # ============================================================================= veri
+@ozet_onbellegi
 def tek_bakista_verisi(db: Session, okul_id: int, sinif: str | None = None, sube: str | None = None) -> dict:
     moduller = set(okul_modulleri(db, okul_id or None))
     kume = ogrenci_kumesi(db, okul_id, sinif, sube)
@@ -436,9 +438,9 @@ def tek_bakista_verisi(db: Session, okul_id: int, sinif: str | None = None, sube
     dusuk = []
     if hedefli:
         # öğrencinin sonuç ekranındaki sayı: K5 etkili nihai uyum (skor_motoru.toplu_nihai_uyum), ham toplam_uyum değil
-        from app.core.skor_motoru import toplu_nihai_uyum
-        nihai = toplu_nihai_uyum(db, [t for t, _ in hedefli.values()], {b for _, b in hedefli.values()})
-        uy = {(t, b): u for t, bu in nihai.items() for b, u in bu.items()}
+        from app.core.skor_motoru import hedef_nihai_uyum
+        nihai = hedef_nihai_uyum(db, {t: b for t, b in hedefli.values()})
+        uy = {(t, hedefli_b): nihai.get(t) for t, hedefli_b in hedefli.values()}
         adlar = {r.id: _baslik(r.ad) for r in db.execute(text("SELECT id, ad FROM bolumler WHERE id = ANY(:b)"),
                                                          {"b": list({b for _, b in hedefli.values()})}).all()}
         for oid, (t, b) in hedefli.items():

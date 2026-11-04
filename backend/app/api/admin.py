@@ -466,18 +466,30 @@ def katman_agirliklarini_guncelle(
         raise HTTPException(status_code=400, detail=f"Veritabanında katman bulunamadı: {', '.join(yok)}.")
 
     onceki = {kod: float(katmanlar[kod].normalizasyon_agirligi or 0) for kod in _AGIRLIK_KATMANLARI}
-    for kod in _AGIRLIK_KATMANLARI:
-        katmanlar[kod].normalizasyon_agirligi = round(float(gelen[kod]), 2)
-    from app.core.skor_motoru import bolum_onbellegini_temizle
-    bolum_onbellegini_temizle()   # [2026-10-11]
     yeni = {kod: round(float(gelen[kod]), 2) for kod in _AGIRLIK_KATMANLARI}
-    from app.core.hesap_yonetimi import denetim_yaz
-    denetim_yaz(db, admin, "katman_agirlik_guncelleme", "katmanlar", "K1-K4",
-                f"Katman ağırlıkları değişti: önce {onceki} → sonra {yeni}")
-    db.commit()
     if onceki != yeni:
-        arka_plan.add_task(_skorlari_arka_planda_hesapla)   # [2026-10-10] kayıtlı uyum skorları yeni ağırlıklarla güncellensin
+        # [2026-11-04] Kullanıcı kuralı: ağırlık değişikliği bütün öğrencilerin skorlarının yeniden yazılmasını gerektirir;
+        # gece bakımında (varsayılan 03:00) ağırlık uygulanır ve skorlar aynı anda yeniden hesaplanır.
+        from app.core.gece_bakimi import kuyruga_ekle
+        from app.core.hesap_yonetimi import denetim_yaz
+        k = kuyruga_ekle(db, "katman_agirliklari", {"agirliklar": yeni, "isteyen_id": str(admin.id)}, admin,
+                         f"Katman ağırlıkları {onceki} → {yeni}")
+        denetim_yaz(db, admin, "katman_agirlik_guncelleme", "katmanlar", "K1-K4",
+                    f"Katman ağırlığı değişikliği gece bakımına alındı ({k['zamanlandi']}): önce {onceki} → sonra {yeni}")
+        db.commit()
     return _katman_agirliklari_oku(db)
+
+
+def katman_agirliklarini_uygula(db: Session, agirliklar: dict, isteyen_id: str | None = None) -> str:
+    """Gece bakımında çalışır; skorların yeniden hesabı bakımın sonunda bir kez yapılır."""
+    katmanlar = {k.kod: k for k in db.query(Katman).filter(Katman.kod.in_(_AGIRLIK_KATMANLARI)).all()}
+    onceki = {kod: float(katmanlar[kod].normalizasyon_agirligi or 0) for kod in _AGIRLIK_KATMANLARI}
+    for kod in _AGIRLIK_KATMANLARI:
+        katmanlar[kod].normalizasyon_agirligi = round(float(agirliklar[kod]), 2)
+    from app.core.skor_motoru import bolum_onbellegini_temizle
+    bolum_onbellegini_temizle()
+    db.commit()
+    return f"{onceki} → {agirliklar}"
 
 
 def _skorlari_arka_planda_hesapla() -> None:
@@ -814,21 +826,33 @@ def pipeline_taslak_detayi(
     )
 
 
-@router.post("/pipeline/taslaklar/{grup}/onayla", status_code=204)
+@router.post("/pipeline/taslaklar/{grup}/onayla")
 def pipeline_taslagini_onayla(
     grup: str,
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_super_admin),  # yalnızca super_admin canlıya alabilir
 ):
     """
-    Taslağı gerçek bolum_agirliklari tablosuna YENİ bir versiyon olarak
-    yazar. Eski versiyon SİLİNMEZ (skor_motoru zaten en yüksek versiyonu
-    kullanıyor) — geçmişe dönük inceleme için durur.
+    [2026-11-04] Kullanıcı kuralı: sistemi yavaşlatan değişiklikler gece bakımında (varsayılan 03:00) uygulanır. Onay, taslağı
+    gece kuyruğuna alır; bakımda taslak YENİ bir versiyon olarak canlıya alınır ve bütün tamamlanmış turların uyum skorları
+    aynı gece yeniden hesaplanır (sıralama ile koçluk ekranı çelişmesin). Eski versiyon SİLİNMEZ.
     """
     var_mi = db.execute(text("SELECT 1 FROM bolum_agirliklari_taslak WHERE yukleme_grubu = :g AND durum = 'bekliyor' LIMIT 1"), {"g": grup}).first()
     if not var_mi:
         raise HTTPException(status_code=404, detail="Onay bekleyen taslak bulunamadı (zaten işlenmiş olabilir).")
+    from app.core.gece_bakimi import kuyruga_ekle
+    k = kuyruga_ekle(db, "pipeline_onay", {"grup": grup, "isteyen_id": str(admin.id)}, admin,
+                     f"Pipeline sonucu ({grup}) canlıya alınacak; uyum skorları yeniden hesaplanacak")
+    _audit_yaz(db, admin, "pipeline_taslagi_onaylama", "bolum_agirliklari_taslak", grup, f"Gece bakımına alındı ({k['zamanlandi']})")
+    db.commit()
+    return {"zamanlandi": k["zamanlandi"], "mesaj": f"Onaylandı. Sonuç {k['zamanlandi']}'te canlıya alınacak ve skorlar yeniden hesaplanacak."}
 
+
+def pipeline_taslagini_uygula(db: Session, grup: str, isteyen_id: str | None = None) -> str:
+    """Gece bakımında çalışır (app/core/gece_bakimi.py). Skorların yeniden hesabı bakımın sonunda bir kez yapılır."""
+    var_mi = db.execute(text("SELECT 1 FROM bolum_agirliklari_taslak WHERE yukleme_grubu = :g AND durum = 'bekliyor' LIMIT 1"), {"g": grup}).first()
+    if not var_mi:
+        return "taslak zaten işlenmiş"
     yeni_versiyon = (db.execute(text("SELECT COALESCE(MAX(versiyon), 0) + 1 FROM bolum_agirliklari")).scalar())
 
     db.execute(
@@ -845,13 +869,13 @@ def pipeline_taslagini_onayla(
     from app.core.skor_motoru import bolum_onbellegini_temizle
     bolum_onbellegini_temizle()   # [2026-10-11] yeni ağırlıklar — yeniden hesaplamadan ÖNCE önbellek boşalsın
 
-    # [2026-10-07] Öğrencilerin bölüm uyum skorları tur bitince bir kez hesaplanıp saklanıyor.
-    # Yeni ağırlıklar canlıya alınınca tüm tamamlanmış turlar yeni ağırlıklarla yeniden hesaplanır;
-    # yoksa sıralama eski, koçluk ekranı yeni ağırlıkları kullanır ve ikisi çelişir.
-    yeniden = uyum_skorlarini_yeniden_hesapla(db)
-    _audit_yaz(db, admin, "pipeline_taslagi_onaylama", "bolum_agirliklari", grup,
-               f"versiyon {yeni_versiyon} olarak canlıya alındı; {yeniden} değerlendirme turu yeniden hesaplandı")
+    from app.core.skor_motoru import bolum_onbellegini_temizle
+    bolum_onbellegini_temizle()
+    admin = db.get(AdminKullanici, uuid.UUID(isteyen_id)) if isteyen_id else None
+    if admin is not None:
+        _audit_yaz(db, admin, "pipeline_taslagi_canliya_alindi", "bolum_agirliklari", grup, f"versiyon {yeni_versiyon} (gece bakımı)")
     db.commit()
+    return f"versiyon {yeni_versiyon} canlıya alındı"
 
 
 def uyum_skorlarini_yeniden_hesapla(db: Session) -> int:
@@ -866,8 +890,6 @@ def uyum_skorlarini_yeniden_hesapla(db: Session) -> int:
         if toplam_uyum_hesapla(db, ogrenci, tur):
             sayi += 1
         db.commit()   # her öğrenciden sonra kaydet: biri hata verirse öncekiler kaybolmasın
-    from app.core.skor_motoru import siralama_onbellegini_bosalt
-    siralama_onbellegini_bosalt()   # [2026-11-04] rehber listeleri yeni skorları hemen görsün
     return sayi
 
 
@@ -876,11 +898,12 @@ def skorlari_yeniden_hesapla(
     db: Session = Depends(get_db),
     admin: AdminKullanici = Depends(get_mevcut_super_admin),
 ):
-    """[2026-10-07] Elle tetikleme (ör. onay sırasında zaman aşımı olduysa)."""
-    sayi = uyum_skorlarini_yeniden_hesapla(db)
-    _audit_yaz(db, admin, "uyum_skorlari_yeniden_hesaplama", "ogrenci_bolum_uyum_skorlari", "tumu", f"{sayi} tur")
+    """[2026-10-07] Elle tetikleme. [2026-11-04] Gece bakımında çalışır (bütün turlar yeniden yazılır; gündüz sistemi yavaşlatır)."""
+    from app.core.gece_bakimi import kuyruga_ekle
+    k = kuyruga_ekle(db, "skor_yeniden_hesap", {}, admin)
+    _audit_yaz(db, admin, "uyum_skorlari_yeniden_hesaplama", "ogrenci_bolum_uyum_skorlari", "tumu", f"Gece bakımına alındı ({k['zamanlandi']})")
     db.commit()
-    return {"yeniden_hesaplanan_tur": sayi}
+    return {"zamanlandi": k["zamanlandi"], "mesaj": f"Skorlar {k['zamanlandi']}'te yeniden hesaplanacak."}
 
 
 @router.post("/pipeline/taslaklar/{grup}/reddet", status_code=204)

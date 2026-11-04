@@ -9,7 +9,7 @@ bulunur. app/schemas/ogrenci.py içindeki hiçbir şema bu alanları içermez.
 from datetime import datetime
 
 from pydantic import Field, BaseModel
-from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 
 
 # --- E8 — Sistem Parametreleri ---
@@ -269,7 +269,7 @@ class SoruAktifIstek(GirdiModeli):
 # --- Yönetici Yönetimi (super_admin only) ---
 
 class YoneticiEkleIstek(GirdiModeli):
-    ad_soyad: str = Field(max_length=200)
+    ad_soyad: str = Field(max_length=AD_SOYAD_EN_FAZLA)
     email: str = Field(max_length=254)
     sifre: str = Field(max_length=200)
     rol: str = "super_admin"  # [2026-10-09] buradan yalnızca süper admin eklenir

@@ -196,6 +196,9 @@ class ZiyaretKaydiMiddleware:
 
 
 app.add_middleware(ZiyaretKaydiMiddleware)
+# [2026-11-04] Yük: büyük JSON yanıtlar sıkıştırılır (20.000 öğrencili okulda öğrenci listesi 10 MB → ~1 MB)
+from fastapi.middleware.gzip import GZipMiddleware  # noqa: E402
+app.add_middleware(GZipMiddleware, minimum_size=2048)
 
 
 class EsZamanliIstekSiniri:
@@ -238,37 +241,10 @@ def _sema_guncelle():
         pass
     import sys as _sys
     if "pytest" not in _sys.modules:   # testler kendi verisini kurar; arka plan işi araya girmesin
-        _threading.Thread(target=_uyum_skorlarini_guncelle, name="uyum-skor-guncelle", daemon=True).start()
-
-
-def _uyum_skorlarini_guncelle():
-    """[2026-10-17] Alan cezasıyla 0'a kırpılmış eski bölüm uyum puanlarını bir kez yeniden hesapla (arka planda)."""
-    import logging
-    try:
-        from app.core.database import SessionLocal
-        from app.core.skor_motoru import eski_uyum_skorlarini_guncelle
-        db = SessionLocal()
-        try:
-            n = eski_uyum_skorlarini_guncelle(db)
-            if n:
-                logging.getLogger("uvicorn.error").info("Bölüm uyum puanları yeniden hesaplandı: %d değerlendirme", n)
-        finally:
-            db.close()
-    except Exception:
-        logging.getLogger("uvicorn.error").exception("Bölüm uyum puanları yeniden hesaplanamadı")
-
-
-def _fotograf_temizligi():
-    try:
-        from app.core.hesap_guvenligi_servisi import eski_fotograflari_temizle
-        db = SessionLocal()
-        try:
-            eski_fotograflari_temizle(db)
-            db.commit()
-        finally:
-            db.close()
-    except Exception:
-        pass
+        # [2026-11-04] Skorların yeniden yazılması, ağır göçler ve saklama temizlikleri açılışta değil gece bakımında (03:00)
+        from app.core.database import engine
+        from app.core.gece_bakimi import zamanlayiciyi_baslat
+        zamanlayiciyi_baslat(engine)
 
 
 def _tuik_hatirlatma():
@@ -291,36 +267,6 @@ def _tuik_hatirlatma():
         pass
 
 
-def _bekleyen_skor_hesabi():
-    """[2026-10-10] Bir göç katman ağırlıklarını değiştirdiyse (tek_seferlik_gocler'de 'bekleyen_skor_hesabi')
-    tamamlanmış turların uyum skorlarını arka planda yeniden hesapla; işaret önce silinir (tek kez çalışsın)."""
-    import threading
-    from sqlalchemy import text as _t
-    try:
-        db = SessionLocal()
-        try:
-            n = db.execute(_t("DELETE FROM tek_seferlik_gocler WHERE ad = 'bekleyen_skor_hesabi'")).rowcount
-            db.commit()
-        finally:
-            db.close()
-    except Exception:
-        return
-    if not n:
-        return
-
-    def _calis():
-        from app.api.admin import uyum_skorlarini_yeniden_hesapla
-        db2 = SessionLocal()
-        try:
-            uyum_skorlarini_yeniden_hesapla(db2)
-        except Exception:
-            db2.rollback()
-        finally:
-            db2.close()
-
-    threading.Thread(target=_calis, name="skor-yeniden-hesap", daemon=True).start()
-
-
 @app.on_event("startup")
 def _baslangic_temizligi():
     """[2026-10-04] KVKK: 6 aydan eski kamera fotoğraflarını sil.
@@ -328,14 +274,12 @@ def _baslangic_temizligi():
     import threading
     import time
 
-    _fotograf_temizligi()
-    _bekleyen_skor_hesabi()
+    # [2026-11-04] Fotoğraf temizliği ve göçlerin istediği skor hesabı gece bakımına taşındı (app/core/gece_bakimi.py)
     _tuik_hatirlatma()
 
     def _dongu():
         while True:
             time.sleep(6 * 3600)
-            _fotograf_temizligi()
             _tuik_hatirlatma()
 
     threading.Thread(target=_dongu, name="fotograf-temizligi", daemon=True).start()
@@ -377,6 +321,8 @@ app.include_router(sozluk_router)                            # [2026-10-11] /ogr
 app.include_router(sozluk_admin_router)                      # [2026-10-11] /admin/sozluk-bildirimleri
 app.include_router(ceviri_router)                            # [2026-10-12] çoklu dil: dil tercihi + içerik çevirisi
 app.include_router(toplu_ogrenci_router)                     # [2026-10-12] /yonetim/okul/{id}/sinif-atlat, /yonetim/ogrenciler/degerlendirme-sifirla
+from app.api.gece_bakimi import router as gece_bakimi_router  # noqa: E402
+app.include_router(gece_bakimi_router)                       # [2026-11-04] Süper admin › Gece bakımı
 app.include_router(kulup_router, dependencies=[_Dep(okul_modulu("kulupler"))])                            # [2026-10-10] okul kulüpleri
 app.include_router(kulup_ogrenci_router, dependencies=[_Dep(ogrenci_modulu("kulupler"))])                    # [2026-10-10] /ogrenci/ilgi-testi
 app.include_router(koc_router)                              # [2026-10-10] anlaşmalı eğitim koçları

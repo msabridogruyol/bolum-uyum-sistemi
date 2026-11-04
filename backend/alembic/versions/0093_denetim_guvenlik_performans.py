@@ -7,7 +7,7 @@ Create Date: 2026-11-04
 [2026-11-04] Ekran ve yük denetimi:
   1) soru_gecerlilik_sonuclari hiçbir göçte oluşturulmamıştı; Süper yönetici → Soru Geçerliliği ekranı ve
      /admin/gecerlilik-girdisi-v2/analiz 500 veriyordu (tablo yok). Sütunlar admin.py yükleme ve okuma sorgularıyla aynı.
-  2) Büyük okulda (3.000 öğrenci, ~100 bin öğrenci sistem geneli) sıralı tarama yapan sorgular için indeksler:
+  2) (Taşındı: indeksler göç 0094'te, gece bakımında CONCURRENTLY kurulur.) Büyük okulda (3.000 öğrenci, ~100 bin öğrenci sistem geneli) sıralı tarama yapan sorgular için indeksler:
      - lower(email): her giriş, şifre sıfırlama ve toplu öğrenci yüklemesinde satır başına 2–3 kez aranıyor.
      - tur_id / ogrenci_id yabancı anahtarları: tur ya da öğrenci silinince (değerlendirme sıfırlama, toplu silme) ilişkili
        tablolarda CASCADE tam tarama yapıyordu (ogrenci_cevaplar on milyonlarca satıra çıkar).
@@ -38,20 +38,6 @@ CREATE TABLE IF NOT EXISTS soru_gecerlilik_sonuclari (
     test_zamani TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 CREATE INDEX IF NOT EXISTS ix_sgs_soru_secenek ON soru_gecerlilik_sonuclari (soru_id, secenek_id, test_zamani DESC);
-CREATE INDEX IF NOT EXISTS ix_ogrenciler_lower_email ON ogrenciler (lower(email));
-CREATE INDEX IF NOT EXISTS ix_admin_kullanicilar_lower_email ON admin_kullanicilar (lower(email));
-CREATE INDEX IF NOT EXISTS ix_ogrenci_cevaplar_tur ON ogrenci_cevaplar (tur_id);
-CREATE INDEX IF NOT EXISTS ix_ogrenci_dal_uyum_tur ON ogrenci_dal_uyum_skorlari (tur_id);
-CREATE INDEX IF NOT EXISTS ix_ogrenci_dal_oturum_tur ON ogrenci_dal_oturumlari (tur_id);
-CREATE INDEX IF NOT EXISTS ix_guvenlik_olay_tur ON guvenlik_olaylari (tur_id);
-CREATE INDEX IF NOT EXISTS ix_guvenlik_foto_tur ON guvenlik_fotograflari (tur_id);
-CREATE INDEX IF NOT EXISTS ix_guvenlik_foto_ogrenci ON guvenlik_fotograflari (ogrenci_id);
-CREATE INDEX IF NOT EXISTS ix_guvenlik_foto_zaman ON guvenlik_fotograflari (cekim_zamani);
-CREATE INDEX IF NOT EXISTS ix_koclugu_oturum_ogrenci ON ogrenci_koclugu_oturumlari (ogrenci_id);
-CREATE INDEX IF NOT EXISTS ix_koclugu_oturum_tur ON ogrenci_koclugu_oturumlari (tur_id);
-CREATE INDEX IF NOT EXISTS ix_sorular_tur ON sorular (tur_id);
-CREATE INDEX IF NOT EXISTS ix_sorular_ortak_katman ON sorular (katman_id) WHERE ogrenci_id IS NULL;
-CREATE INDEX IF NOT EXISTS ix_anket_katilim_ogrenci ON anket_katilim (ogrenci_id);
 UPDATE ogrenciler SET sinif = 'Mezun' WHERE lower(btrim(sinif)) LIKE 'mezun%' AND sinif <> 'Mezun';
 UPDATE ogrenciler SET sinif = 'Aday' WHERE lower(btrim(sinif)) = 'aday' AND sinif <> 'Aday';
 UPDATE ogrenciler SET sube = upper(regexp_replace(btrim(sinif), '^(9|10|11|12)\s*[-/ ]\s*([A-Za-z])$', '\2'))

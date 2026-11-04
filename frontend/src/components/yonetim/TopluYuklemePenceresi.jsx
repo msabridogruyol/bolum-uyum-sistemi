@@ -1,5 +1,6 @@
 // [2026-10-09] Excel/CSV ile toplu öğrenci hesabı açma: dosya → önizleme (satır satır kontrol) → oluştur → geçici şifreler
 import { useState } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { api } from '../../api/client'
 import { Pencere, SifreListesi, base64Indir } from './ortak'
 
@@ -97,7 +98,7 @@ export default function TopluYuklemePenceresi({ okulId, okulAd, onKapat, onBitti
           </div>
           <form className="yp-kutu" onSubmit={(e) => { e.preventDefault(); olustur([tekForm]) }}>
             <div className="yp-kb">👤 Tek öğrenci</div>
-            <input className="auth-input" placeholder="Ad Soyad" value={tekForm.ad_soyad} onChange={(e) => setTekForm({ ...tekForm, ad_soyad: e.target.value })} required minLength={3} />
+            <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" placeholder="Ad Soyad" value={tekForm.ad_soyad} onChange={(e) => setTekForm({ ...tekForm, ad_soyad: e.target.value })} required minLength={3} />
             <div style={{ display: 'flex', gap: 8, margin: '8px 0' }}>
               <select className="auth-input" value={tekForm.sinif} onChange={(e) => setTekForm({ ...tekForm, sinif: e.target.value })}>
                 <option value="">Sınıf…</option>

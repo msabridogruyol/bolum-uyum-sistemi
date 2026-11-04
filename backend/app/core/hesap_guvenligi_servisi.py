@@ -23,7 +23,7 @@ from app.core.katman_servisi import IsKuraliHatasi, parametre_oku
 from app.core import eposta_servisi as ep
 from app.core.kvkk_metinleri import KVKK_SURUM, ONAY_MADDELERI, ZORUNLU_KODLAR, TUM_KODLAR
 from app.models import (
-    Ogrenci, AdminKullanici, KvkkOnayi, DogrulamaKodu, SifreSifirlamaTokeni, GuvenilirCihaz,
+    Ogrenci, AdminKullanici, KvkkOnayi, DogrulamaKodu, SifreSifirlamaTokeni, GuvenilirCihaz, SifreDegisiklikTalebi,
 )
 
 log = logging.getLogger("hesap_guvenligi")
@@ -324,3 +324,100 @@ def eski_fotograflari_temizle(db: Session, gun: int = 180) -> int:
         log.warning("Eski fotoğraf temizliği yapılamadı: %s", hata)
         db.rollback()
         return 0
+
+
+# ----------------------------------------------------------------------------- şifre değişikliği (eski şifre + e-posta kodu)
+# [2026-11-04] Kullanıcı kuralı: şifre değişikliğinde eski şifre sorulur, e-postaya onay kodu gider, kod girilince değişir.
+# Talep: eski şifre doğru → yeni şifrenin karması 10 dk bekler, kod e-postaya gider. Onay: kod doğru → şifre değişir, diğer
+# oturumlar ve güvenilir cihazlar düşer, bilgi e-postası gider. E-posta altyapısı yoksa (yerel geliştirme) ya da hesap süper
+# adminin açtığı test hesabıysa (2 adımlı doğrulamayla aynı istisna) kod adımı atlanır.
+SIFRE_GUNLUK_TALEP = 5
+
+
+def _sifre_kurallari(yeni: str, eski_hash: str) -> None:
+    from app.core.security import SIFRE_EN_FAZLA_BAYT, sifre_dogrula
+    if len(yeni or "") < 8:
+        raise IsKuraliHatasi("Yeni şifre en az 8 karakter olmalı.")
+    if len(yeni.encode("utf-8")) > SIFRE_EN_FAZLA_BAYT:
+        raise IsKuraliHatasi("Şifre çok uzun. En fazla 72 karakter kullanın (Türkçe harfler 2 karakter sayılır).")
+    if sifre_dogrula(yeni, eski_hash):
+        raise IsKuraliHatasi("Yeni şifre eskisiyle aynı olamaz.")
+
+
+def sifre_kodu_gerekli_mi(hesap) -> bool:
+    return ep.eposta_yapilandirildi_mi() and not getattr(hesap, "test_hesabi", False)
+
+
+def sifre_degisikligi_baslat(db: Session, kullanici_tipi: str, hesap, eski_sifre: str, yeni_sifre: str) -> dict:
+    """{"kod_gonderildi": True, "maskeli_eposta"} ya da kod adımı gerekmiyorsa {"kod_gonderildi": False} (şifre değişti)."""
+    from app.core.hiz_siniri import HESAP_DENEME, hesap_kilit_kontrol
+    from app.core.security import sifre_dogrula, sifre_hashle
+    anahtar = f"sifre-degistir:{kullanici_tipi}:{hesap.id}"
+    hesap_kilit_kontrol(anahtar)
+    if not sifre_dogrula(eski_sifre or "", hesap.sifre_hash):
+        HESAP_DENEME.hatali(anahtar)
+        raise IsKuraliHatasi("Şu anki şifre yanlış.")
+    HESAP_DENEME.temizle(anahtar)
+    _sifre_kurallari(yeni_sifre, hesap.sifre_hash)
+    if not sifre_kodu_gerekli_mi(hesap):
+        _sifreyi_uygula(db, kullanici_tipi, hesap, sifre_hashle(yeni_sifre), "Şifresini değiştirdi (kod adımı yok: test hesabı ya da e-posta kapalı)")
+        return {"kod_gonderildi": False}
+    sinir = _simdi() - timedelta(hours=24)
+    son = (db.query(func.count(SifreDegisiklikTalebi.id))
+           .filter(SifreDegisiklikTalebi.kullanici_tipi == kullanici_tipi, SifreDegisiklikTalebi.kullanici_id == hesap.id,
+                   SifreDegisiklikTalebi.olusturulma_zamani >= sinir).scalar() or 0)
+    if son >= SIFRE_GUNLUK_TALEP:
+        raise BeklemeHatasi("Son 24 saatte çok fazla şifre değişikliği istendi. Daha sonra tekrar dene ya da \"Şifremi unuttum\"u kullan.")
+    for eski in db.query(SifreDegisiklikTalebi).filter(SifreDegisiklikTalebi.kullanici_tipi == kullanici_tipi,
+                                                        SifreDegisiklikTalebi.kullanici_id == hesap.id,
+                                                        SifreDegisiklikTalebi.kullanildi.is_(False)).all():
+        eski.kullanildi = True
+    kod = f"{secrets.randbelow(1_000_000):06d}"
+    db.add(SifreDegisiklikTalebi(kullanici_tipi=kullanici_tipi, kullanici_id=hesap.id, yeni_sifre_hash=sifre_hashle(yeni_sifre),
+                                 kod_ozeti=_ozet(f"sd:{hesap.id}:{kod}"), son_kullanma=_simdi() + KOD_GECERLILIK,
+                                 olusturulma_zamani=_simdi()))
+    db.flush()
+    konu, html, metin = ep.sifre_degisikligi_kodu_epostasi((hesap.ad_soyad or "").split(" ")[0], kod)
+    if not ep.eposta_gonder(hesap.email, konu, html, metin):
+        raise IsKuraliHatasi("Onay kodu e-postası gönderilemedi. Birkaç dakika sonra tekrar dene.")
+    return {"kod_gonderildi": True, "maskeli_eposta": maskeli_eposta(hesap.email)}
+
+
+def sifre_degisikligi_onayla(db: Session, kullanici_tipi: str, hesap, kod: str) -> None:
+    t = (db.query(SifreDegisiklikTalebi)
+         .filter(SifreDegisiklikTalebi.kullanici_tipi == kullanici_tipi, SifreDegisiklikTalebi.kullanici_id == hesap.id,
+                 SifreDegisiklikTalebi.kullanildi.is_(False))
+         .order_by(SifreDegisiklikTalebi.olusturulma_zamani.desc(), SifreDegisiklikTalebi.id.desc()).first())
+    if t is None or _utc(t.son_kullanma) < _simdi():
+        raise IsKuraliHatasi("Kodun süresi doldu. Şifre değişikliğini yeniden başlat.")
+    if t.deneme_sayisi >= KOD_MAKS_DENEME:
+        t.kullanildi = True
+        db.flush()
+        raise IsKuraliHatasi("Çok fazla hatalı deneme. Şifre değişikliğini yeniden başlat.")
+    temiz = "".join(ch for ch in str(kod or "") if ch.isdigit())
+    if not hmac.compare_digest(t.kod_ozeti, _ozet(f"sd:{hesap.id}:{temiz}")):
+        t.deneme_sayisi += 1
+        db.flush()
+        kalan = KOD_MAKS_DENEME - t.deneme_sayisi
+        raise IsKuraliHatasi(f"Kod hatalı. {kalan} deneme hakkın kaldı." if kalan > 0 else "Çok fazla hatalı deneme. Şifre değişikliğini yeniden başlat.")
+    t.kullanildi = True
+    _sifreyi_uygula(db, kullanici_tipi, hesap, t.yeni_sifre_hash, "Şifresini değiştirdi (eski şifre + e-posta kodu)")
+    try:
+        konu, html, metin = ep.sifre_degisti_bildirimi_epostasi((hesap.ad_soyad or "").split(" ")[0])
+        ep.eposta_gonder(hesap.email, konu, html, metin)
+    except Exception:   # bilgi e-postası gitmese de değişiklik geçerli
+        log.warning("şifre değişti bildirimi gönderilemedi")
+
+
+def _sifreyi_uygula(db: Session, kullanici_tipi: str, hesap, yeni_hash: str, aciklama: str) -> None:
+    from app.core.security import oturumlari_gecersiz_kil
+    hesap.sifre_hash = yeni_hash
+    hesap.sifre_degistirmeli = False
+    if hasattr(hesap, "gecici_sifre_sifreli"):
+        hesap.gecici_sifre_sifreli = None
+    oturumlari_gecersiz_kil(hesap)
+    db.query(GuvenilirCihaz).filter(GuvenilirCihaz.kullanici_tipi == kullanici_tipi, GuvenilirCihaz.kullanici_id == hesap.id).delete()
+    if kullanici_tipi == "ogrenci":
+        from app.core.hesap_yonetimi import olay_yaz
+        olay_yaz(db, hesap.id, "sifre_degisti", aciklama, "Öğrenci")
+    db.flush()

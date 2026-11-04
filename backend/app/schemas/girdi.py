@@ -10,6 +10,7 @@ Yanıt modelleri bu tabandan türemez (çıktı sınırlanmaz).
 from pydantic import BaseModel, ConfigDict
 
 METIN_EN_FAZLA = 20_000
+AD_SOYAD_EN_FAZLA = 30   # [2026-11-04] kullanıcı kuralı: kişi adı soyadı en fazla 30 karakter (öğrenci, yetkili, yönetici, koç, öğretmen)
 
 
 class GirdiModeli(BaseModel):

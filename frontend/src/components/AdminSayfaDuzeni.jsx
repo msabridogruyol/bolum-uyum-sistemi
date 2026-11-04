@@ -7,7 +7,8 @@ import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { okulBolumleri } from './yonetim/okulBolumleri'
 import { useAdminAuth } from '../context/AdminAuthContext'
 import { api } from '../api/client'
-import { IlkSifrePenceresi, ROL_ADI } from './yonetim/ortak'
+import { IlkSifrePenceresi, Pencere, ROL_ADI } from './yonetim/ortak'
+import SifreDegistirFormu from './SifreDegistirFormu'
 import { okulRenginiUygula } from '../tema'
 import AltSerit from './AltSerit'
 import BildirimZili from './BildirimZili'
@@ -56,6 +57,7 @@ const SUPER_MENU = [
     ['/admin/parametreler', '🎛️', 'Parametreler'],
     ['/admin/audit-log', '📜', 'Audit Log'],
     ['/admin/hata-kayitlari', '🐞', 'Hata Kayıtları'],
+    ['/admin/gece-bakimi', '🌙', 'Gece Bakımı'],   // [2026-11-04]
   ] },
   { grup: 'Yardım', baglantilar: [
     ['/admin/yonetim-rehberi', '🧭', 'Yönetim Rehberi'],   // [2026-11-01] adım adım: neyin nasıl yapıldığı
@@ -75,7 +77,7 @@ export default function AdminSayfaDuzeni() {
   const [bekleyenTalep, setBekleyenTalep] = useState(0)
   const [riskSayisi, setRiskSayisi] = useState(0)   // [2026-10-10] erken uyarı: yüksek seviyeli öğrenci sayısı
   useEffect(() => {
-    if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('rehberlik'))) api.erkenUyari(ben.okul_id).then((v) => setRiskSayisi(v.ozet.yuksek || 0)).catch(() => {})
+    if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('rehberlik'))) api.erkenUyariOzeti(ben.okul_id).then((v) => setRiskSayisi(v.ozet.yuksek || 0)).catch(() => {})
   }, [okulYetkilisi, ben?.okul_id, ben?.moduller, konum.search])
   useEffect(() => {
     if (okulYetkilisi && ben?.okul_id && (!ben.moduller || ben.moduller.includes('kulupler'))) api.kulupTalepleri(ben.okul_id).then((v) => setBekleyenTalep(v.bekleyen || 0)).catch(() => {})
@@ -83,6 +85,7 @@ export default function AdminSayfaDuzeni() {
   // [2026-10-11] Açılış amblemi (oturumda bir kez) + ilk girişte menü tanıtım turu (rol ve pakete göre menüden üretilir)
   const [acilis, setAcilis] = useState(acilisGosterilsinMi)
   const [turAcik, setTurAcik] = useState(false)
+  const [sifrePenceresi, setSifrePenceresi] = useState(false)   // [2026-11-04] şifre değişikliği (eski şifre + e-posta kodu)
   // [2026-10-12] Hesaptaki dil tercihi (giriş ekranında seçildiyse hesaba yazılır)
   useEffect(() => { if (ben) hesapDiliniUygula(ben.dil, (k) => api.dilKaydet(k, 'admin')) }, [ben])
   const turAnahtari = ben ? `tur_goruldu_yonetim_${ben.id || ben.email || ben.ad_soyad}` : null
@@ -141,6 +144,7 @@ export default function AdminSayfaDuzeni() {
             <div className="u-id">{ROL_ADI[rol] || rol}</div>
           </div>
           {zilVar && !menu.mobil && <BildirimZili kapsam="yonetim" />}
+          <button className="back" onClick={() => setSifrePenceresi(true)} title="Şifre değiştir" aria-label="Şifre değiştir">🔑</button>
           <button className="back" onClick={cikisYap} title="Çıkış yap">Çıkış</button>
         </div>
 
@@ -199,6 +203,11 @@ export default function AdminSayfaDuzeni() {
       )}
       {ben?.sifre_degistirmeli && (
         <IlkSifrePenceresi rolMetni="yönetim hesabı" kaydet={(s) => api.yonetimIlkSifre(s)} onTamam={benYenile} onCikis={cikisYap} />
+      )}
+      {sifrePenceresi && (
+        <Pencere baslik="Şifre değiştir" altBaslik="Şu anki şifreniz ve e-postanıza gelen onay koduyla değişir." onKapat={() => setSifrePenceresi(false)}>
+          <SifreDegistirFormu hitap="siz" degistir={api.yonetimSifreDegistir} onayla={api.yonetimSifreOnayla} />
+        </Pencere>
       )}
     </div>
   )

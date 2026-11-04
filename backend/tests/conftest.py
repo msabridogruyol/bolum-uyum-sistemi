@@ -130,3 +130,11 @@ def kisiler(db):
         "ogrenci": {"Authorization": f"Bearer {erisim_tokeni_uret(ogrenci, 'ogrenci')}"},
         "super": {"Authorization": f"Bearer {erisim_tokeni_uret(sa, 'super_admin')}"},
     }
+
+
+@pytest.fixture(autouse=True)
+def _ozet_onbellegini_temizle():
+    """[2026-11-04] Okul özetlerinin 5 dakikalık önbelleği testler arasında taşınmasın."""
+    from app.core.kisa_onbellek import hepsini_bosalt
+    hepsini_bosalt()
+    yield

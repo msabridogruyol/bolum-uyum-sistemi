@@ -4,6 +4,7 @@
 Hiçbir puan burada yeniden hesaplanmaz: ekrandaki sonuçlarla AYNI kaynaklar kullanılır
 (ogrenci_degisken_skorlari, siralama_getir + neden_aciklamalari, koçluk planı, güven skoru).
 """
+from app.core.kisa_onbellek import ozet_onbellegi  # [2026-11-04] okul özetleri 5 dk
 from app.core.metin import turkce_kucult
 from collections import Counter, defaultdict
 from datetime import datetime, timedelta, timezone
@@ -343,6 +344,7 @@ def _ozet_kucuk_grup(v: dict, kapsamli: bool) -> dict:
     return v
 
 
+@ozet_onbellegi(haric=("yonetici",))
 def okul_raporu_verisi(db: Session, okul_id: int, yonetici, sinif: str | None = None, sube: str | None = None) -> dict:
     """[2026-10-10] sinif (ve sube) verilirse sınıf düzeyi / şube raporu: yalnızca o öğrenciler + okul ortalamasıyla karşılaştırma."""
     from app.api.okul_yonetimi import _durum, _ilerleme, okul_ozeti

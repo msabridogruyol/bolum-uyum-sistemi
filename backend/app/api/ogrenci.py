@@ -710,23 +710,35 @@ def sifre_degistir(
     db: Session = Depends(get_db),
     ogrenci: Ogrenci = Depends(get_mevcut_ogrenci),
 ):
-    # [2026-11-04] Ele geçirilmiş bir oturumla eski şifre tahmini: hesap başına hatalı deneme sayacı (girişle aynı kilit)
-    from app.core.hiz_siniri import HESAP_DENEME, hesap_kilit_kontrol
-    anahtar = f"sifre-degistir:{ogrenci.id}"
-    hesap_kilit_kontrol(anahtar)
-    if not sifre_dogrula(istek.eski_sifre, ogrenci.sifre_hash):
-        HESAP_DENEME.hatali(anahtar)
-        raise HTTPException(status_code=400, detail="Şu anki şifren yanlış.")
-    HESAP_DENEME.temizle(anahtar)
-    if len(istek.yeni_sifre) < 8:
-        raise HTTPException(status_code=400, detail="Yeni şifre en az 8 karakter olmalı.")
+    """[2026-11-04] Eski şifre doğrulanır, yeni şifre e-postaya giden onay koduyla değişir (/sifre-degistir/onayla).
+    Kod adımı gerekmiyorsa (test hesabı, e-posta kapalı) şifre hemen değişir ve yeni oturum anahtarları döner."""
+    from app.core import hesap_guvenligi_servisi as hg
+    try:
+        sonuc = hg.sifre_degisikligi_baslat(db, "ogrenci", ogrenci, istek.eski_sifre, istek.yeni_sifre)
+    except hg.BeklemeHatasi as e:
+        db.rollback()
+        raise HTTPException(status_code=429, detail=str(e))
+    except IsKuraliHatasi as e:
+        db.commit()   # hatalı deneme sayaçları kalsın
+        raise HTTPException(status_code=400, detail=str(e))
+    db.commit()
+    if sonuc["kod_gonderildi"]:
+        return sonuc
+    return {"kod_gonderildi": False, **yeni_token_cifti(ogrenci, "ogrenci")}
 
-    ogrenci.sifre_hash = sifre_hashle(istek.yeni_sifre)
-    oturumlari_gecersiz_kil(ogrenci)   # [2026-10-11] diğer cihazlardaki oturumlar düşer; bu cihaza yeni anahtar
-    ogrenci.sifre_degistirmeli = False
-    ogrenci.gecici_sifre_sifreli = None   # [2026-10-10]
-    from app.core.hesap_yonetimi import olay_yaz
-    olay_yaz(db, ogrenci.id, "sifre_degisti", "Ayarlar sayfasından şifresini değiştirdi", "Öğrenci")
+
+class SifreOnayIstek(GirdiModeli):
+    kod: str = Field(max_length=12)
+
+
+@router.post("/profil/sifre-degistir/onayla")
+def sifre_degisikligi_onayla(istek: SifreOnayIstek, db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
+    from app.core import hesap_guvenligi_servisi as hg
+    try:
+        hg.sifre_degisikligi_onayla(db, "ogrenci", ogrenci, istek.kod)
+    except IsKuraliHatasi as e:
+        db.commit()   # deneme sayısı kaydedilsin
+        raise HTTPException(status_code=400, detail=str(e))
     db.commit()
     return yeni_token_cifti(ogrenci, "ogrenci")
 

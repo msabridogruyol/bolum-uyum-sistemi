@@ -1,6 +1,7 @@
 // [2026-10-10] Anlaşmalı eğitim koçları + öğrenci görüşme talepleri — YALNIZCA süper admin.
 // Her koç okul okul atanır (aktif / okul onayı bekleniyor / okul reddetti); öğrenci yalnızca okulunda aktif olanı görür.
 import { useEffect, useState } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { api } from '../../api/client'
 import { Pencere, tarih } from './ortak'
 
@@ -26,7 +27,7 @@ function KocFormu({ ilk, meta, onKaydet, onIptal }) {
     <form className="yp-kutu" style={{ marginBottom: 12 }} onSubmit={kaydet}>
       <div className="yp-kb">{ilk.id ? 'Koçu düzenle' : 'Yeni koç'}</div>
       <div className="kl-form">
-        <input className="auth-input" required minLength={3} maxLength={80} value={f.ad_soyad} onChange={alan('ad_soyad')} placeholder="Ad soyad" />
+        <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" required minLength={3} value={f.ad_soyad} onChange={alan('ad_soyad')} placeholder="Ad soyad" />
         <input className="auth-input" maxLength={80} value={f.unvan || ''} onChange={alan('unvan')} placeholder="Unvan (ör. Kariyer koçu, Psikolojik danışman)" />
         <input className="auth-input" type="number" min={0} max={60} value={f.deneyim_yil} onChange={alan('deneyim_yil')} placeholder="Deneyim (yıl)" />
         <select className="auth-input" value={f.gorusme_sekli} onChange={alan('gorusme_sekli')}>{meta.gorusme.map((g) => <option key={g.kod} value={g.kod}>{g.ad}</option>)}</select>

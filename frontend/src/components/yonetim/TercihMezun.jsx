@@ -1,5 +1,6 @@
 // [2026-10-10] Tercih dönemi (rehber incelemesi) ve mezun takibi.
 import { useCallback, useEffect, useState } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { api } from '../../api/client'
 import { Pencere } from './ortak'
 import { RiskOzeti, TercihTablosu } from '../../pages/TercihSayfasi'
@@ -109,7 +110,7 @@ function MezunFormu({ v, mevcut, onKapat, onKaydet }) {
     <Pencere baslik={mevcut ? 'Mezun kaydını düzenle' : 'Mezun kaydı ekle'} onKapat={() => onKapat(false)}
       alt={<><button className="btn sec" onClick={() => onKapat(false)}>Vazgeç</button><button className="btn" disabled={f.ad_soyad.trim().length < 3} onClick={kaydet}>Kaydet</button></>}>
       <div className="pf-alanlar">
-        <label className="genis"><span>Ad soyad</span><input className="auth-input" disabled={!!mevcut?.ogrenci_id} maxLength={120} value={f.ad_soyad} onChange={s('ad_soyad')} /></label>
+        <label className="genis"><span>Ad soyad</span><input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" disabled={!!mevcut?.ogrenci_id} value={f.ad_soyad} onChange={s('ad_soyad')} /></label>
         <label><span>Mezuniyet / yerleşme yılı</span><input className="auth-input" type="number" min="2000" max="2100" value={f.yil} onChange={s('yil')} /></label>
         <label><span>Durum</span><select className="auth-input" value={f.durum} onChange={s('durum')}>{Object.entries(v.secenekler.durumlar).map(([k, a]) => <option key={k} value={k}>{a}</option>)}</select></label>
         <label className="genis"><span>Üniversite</span><input className="auth-input" maxLength={140} value={f.universite} onChange={s('universite')} /></label>

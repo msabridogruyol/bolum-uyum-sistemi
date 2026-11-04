@@ -6,7 +6,7 @@ pydantic==2.13.4
 pydantic-settings==2.15.0
 email-validator==2.2.0
 psycopg2-binary==2.9.12
-python-jose[cryptography]==3.5.0
+PyJWT==2.15.0   # [2026-11-04] python-jose yerine (bakımsız, CVE)
 bcrypt==5.0.0
 numpy==2.4.4
 openai

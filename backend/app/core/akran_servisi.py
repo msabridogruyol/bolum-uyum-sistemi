@@ -13,6 +13,7 @@ Etik sınır: Bu sonuçlar yalnızca rehber öğretmen / okul yetkilisine göste
 şeklinde sunulmaz. Şube kararında karar destek amaçlıdır, tek ölçüt değildir.
 """
 from __future__ import annotations
+from app.core.kisa_onbellek import ozet_onbellegi
 
 import math
 from collections import defaultdict
@@ -120,29 +121,38 @@ def _ortak_ve_fark(pa: dict, pb: dict, adlar: dict, mat: Matris) -> tuple[list[s
 
 
 # ----------------------------------------------------------------------------- benzer akranlar
+@ozet_onbellegi(kopyala=False)   # salt okunur kullanılır (değiştirilmez)
+def _profiller_onbellekli(db: Session, idler: tuple) -> dict:
+    return profiller(db, list(idler))
+
+
 def benzer_akranlar(db: Session, hedef_id: str, havuz: list, n: int = 5) -> dict:
     """havuz: [(ogrenci_id, ad_soyad, sinif_metni)] — hedef de dahil olabilir."""
     bilgi = {str(i): (ad, sm) for i, ad, sm in havuz}
     bilgi.setdefault(str(hedef_id), ("", ""))
-    prof = profiller(db, list(bilgi.keys()))
+    prof = _profiller_onbellekli(db, tuple(sorted(bilgi.keys())))   # [2026-11-04] okul havuzu 5 dk (20.000 öğrencide ~4,7 sn)
     if str(hedef_id) not in prof:
         return {"durum": "profil_yok", "akranlar": [], "havuz": len(prof)}
     mat = Matris(prof)
     adlar = degisken_adlari(db)
     hi = mat.ix[str(hedef_id)]
     a, ma = mat.z[hi], mat.maske[hi]
-    sonuc = []
+    benzerlik = []
     for oid, i in mat.ix.items():
         if oid == str(hedef_id):
             continue
         c = _cos(a, mat.z[i], ma, mat.maske[i])
-        if c is None:
-            continue
+        if c is not None:
+            benzerlik.append((oid, yuzde(c)))
+    # [2026-11-04] Yük: ortak / farklı yön açıklaması yalnızca gösterilen ilk n akran için hesaplanır (önceden bütün okul için;
+    # 20.000 öğrencide ~5 sn). Sıralama aynı (kararlı sıralama, aynı benzerlik değeri).
+    benzerlik.sort(key=lambda x: -x[1])
+    sonuc = []
+    for oid, b in benzerlik[:n]:
         ortak, fark = _ortak_ve_fark(prof[str(hedef_id)]["puan"], prof[oid]["puan"], adlar, mat)
-        sonuc.append({"id": oid, "ad_soyad": bilgi[oid][0], "sinif": bilgi[oid][1], "benzerlik": yuzde(c),
+        sonuc.append({"id": oid, "ad_soyad": bilgi[oid][0], "sinif": bilgi[oid][1], "benzerlik": b,
                       "ortak_guclu": ortak, "farkli": fark, "dusuk_guven": _dusuk_guven(prof[oid])})
-    sonuc.sort(key=lambda x: -x["benzerlik"])
-    return {"durum": "tamam", "akranlar": sonuc[:n], "havuz": len(prof) - 1,
+    return {"durum": "tamam", "akranlar": sonuc, "havuz": len(prof) - 1,
             "dusuk_guven": _dusuk_guven(prof[str(hedef_id)]), "tamamlanmamis": not prof[str(hedef_id)]["tamam"]}
 
 

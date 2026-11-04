@@ -151,6 +151,7 @@ function ErkenUyari({ okulId, veri, yenile, ogrenciler, formAc, detayAc }) {
   const [kural, setKural] = useState('')
   const [seviye, setSeviye] = useState('')
   const [hata, setHata] = useState(null)
+  const [goster, setGoster] = useState(100)   // [2026-11-04] binlerce kart tek seferde çizilmez
   if (!veri) return <div className="bos-durum yukleniyor">Yükleniyor…</div>
   const liste = veri.ogrenciler.filter((s) => (!kural || s.uyarilar.some((u) => u.kural === kural)) && (!seviye || s.seviye === seviye))
   async function ertele(s) {
@@ -175,7 +176,7 @@ function ErkenUyari({ okulId, veri, yenile, ogrenciler, formAc, detayAc }) {
         <div className="card bos-durum">{veri.ozet.toplam === 0 ? '🎉 Şu an dikkat gerektiren öğrenci yok.' : 'Bu filtrede öğrenci yok.'}</div>
       ) : (
         <div className="eu-liste">
-          {liste.map((s) => (
+          {liste.slice(0, goster).map((s) => (
             <div key={s.ogrenci_id} className={`eu-kart ${s.seviye}`}>
               <div className="eu-sol">
                 <span className={`eu-seviye ${s.seviye}`}>{SEVIYE[s.seviye].ikon} {SEVIYE[s.seviye].ad}</span>
@@ -195,6 +196,11 @@ function ErkenUyari({ okulId, veri, yenile, ogrenciler, formAc, detayAc }) {
               </div>
             </div>
           ))}
+          {liste.length > goster && (
+            <button className="btn sec" style={{ alignSelf: 'center' }} onClick={() => setGoster((n) => n + 200)}>
+              Daha fazla göster ({liste.length - goster} öğrenci daha)
+            </button>
+          )}
         </div>
       )}
       <div className="yp-ince" style={{ marginTop: 12, lineHeight: 1.6 }}>

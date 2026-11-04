@@ -110,6 +110,12 @@ def _cubuklar(satirlar: list[tuple[str, float | None]], genislik=170 * mm, renk=
     return d
 
 
+def _tablo_parcali(st, basliklar, satirlar, genislikler, parca=50, **kw) -> list:
+    """[2026-11-04] Yük: binlerce satırlık tek tablo sayfalara bölünürken ReportLab her sayfada kalan tabloyu yeniden ölçer
+    (20.000 öğrencili okul raporu ~2 dk). Uzun liste başlıklı küçük tablolara bölünür; çıktı aynı görünür, süre doğrusal."""
+    return [_tablo(st, basliklar, satirlar[i:i + parca], genislikler, **kw) for i in range(0, max(len(satirlar), 1), parca)]
+
+
 def _tablo(st, basliklar, satirlar, genislikler, zebra=True, kucuk=False):
     hs = st.hucre if not kucuk else ParagraphStyle("hk", parent=st.hucre, fontSize=7.4, leading=9.5)
     veri = [[Paragraph(f"<b>{_e(b)}</b>", hs) for b in basliklar]]
@@ -964,18 +970,18 @@ def okul_pdf(v: dict, netler: bool = True) -> bytes:
     if v["ogrenciler"]:
         h.append(st.p("Öğrenci listesi", st.h2))
         if sube_mi and netler:
-            h.append(_tablo(st, ["No", "Ad soyad", "Durum", "1. öneri", "Hedef", "Güven", "Son TYT", "Son AYT"],
+            h.extend(_tablo_parcali(st, ["No", "Ad soyad", "Durum", "1. öneri", "Hedef", "Güven", "Son TYT", "Son AYT"],
                             [[x.get("no") or "", x["ad_soyad"] + (" (test)" if x["test"] else ""), x["durum"], x["ilk_bolum"], x["hedef"],
                               f"{yuvarla(x['guven'])}" if x["guven"] is not None else "", _sayi(x.get("son_tyt")) if x.get("son_tyt") is not None else "",
                               _sayi(x.get("son_ayt")) if x.get("son_ayt") is not None else ""] for x in v["ogrenciler"]],
                             [10 * mm, 31 * mm, 23 * mm, 31 * mm, 31 * mm, 16 * mm, 16 * mm, 16 * mm], kucuk=True))
         elif sube_mi:
-            h.append(_tablo(st, ["No", "Ad soyad", "Durum", "1. öneri", "Hedef", "Güven"],
+            h.extend(_tablo_parcali(st, ["No", "Ad soyad", "Durum", "1. öneri", "Hedef", "Güven"],
                             [[x.get("no") or "", x["ad_soyad"] + (" (test)" if x["test"] else ""), x["durum"], x["ilk_bolum"], x["hedef"],
                               f"{yuvarla(x['guven'])}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
                             [12 * mm, 38 * mm, 28 * mm, 40 * mm, 40 * mm, 16 * mm], kucuk=True))
         else:
-            h.append(_tablo(st, ["Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven"],
+            h.extend(_tablo_parcali(st, ["Ad soyad", "Sınıf", "Durum", "1. öneri", "Hedef", "Güven"],
                             [[x["ad_soyad"] + (" (test)" if x["test"] else ""), x["sinif"], x["durum"], x["ilk_bolum"], x["hedef"],
                               f"{yuvarla(x['guven'])}" if x["guven"] is not None else ""] for x in v["ogrenciler"]],
                             [36 * mm, 18 * mm, 29 * mm, 37 * mm, 37 * mm, 17 * mm], kucuk=True))

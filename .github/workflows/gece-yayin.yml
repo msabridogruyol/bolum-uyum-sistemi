@@ -1,0 +1,53 @@
+# [2026-11-04] Kullanıcı kuralı: "sistemde değişiklik yapıldığında her zaman gece 3'te güncellesin".
+#
+# Nasıl çalışır: birleştirilmeye hazır PR'a GitHub'da "gece-yayin" etiketi konur (Merge düğmesine basılmaz).
+# Bu iş her gece 03:00'te (Türkiye; 00:00 UTC) etiketli ve testleri geçmiş PR'ları numara sırasıyla main'e birleştirir.
+# Vercel (arayüz) ve Render (sunucu) main'deki değişikliği kendiliğinden yayınlar; böylece bütün yayınlar gece olur.
+# Sunucudaki ağır işler (göçler, skorların yeniden hesabı) zaten 03:00–06:00 gece bakımında çalışır (app/core/gece_bakimi.py).
+# - Birleştirilemeyen (çakışan, testi kırmızı, taslak) PR atlanır ve PR'a yorum yazılır; etiket kalır, ertesi gece yeniden denenir.
+# - Acil düzeltme gerekirse PR yine elle birleştirilebilir ya da bu iş Actions › "Gece yayini" › Run workflow ile hemen çalıştırılır.
+# - GitHub zamanlanmış işleri birkaç dakika ile bir saat arası gecikmeli başlatabilir; gece bakımı 06:00'ya kadar bekler.
+name: Gece yayini
+
+on:
+  schedule:
+    - cron: "0 0 * * *"
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: gece-yayini
+  cancel-in-progress: false
+
+jobs:
+  birlestir:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Etiketli PR'lari birlestir
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -u
+          prler=$(gh pr list -R "$REPO" --label gece-yayin --state open --base main --json number,isDraft \
+                    --jq 'map(select(.isDraft | not)) | sort_by(.number) | .[].number')
+          if [ -z "$prler" ]; then echo "Bu gece yayinlanacak PR yok."; exit 0; fi
+          for pr in $prler; do
+            echo "== PR #$pr"
+            durum=$(gh pr checks "$pr" -R "$REPO" --json bucket --jq '[.[].bucket] | if length == 0 then "yok" elif all(. == "pass" or . == "skipping") then "gecti" elif any(. == "pending") then "bekliyor" else "kaldi" end' 2>/dev/null || echo "yok")
+            if [ "$durum" = "kaldi" ] || [ "$durum" = "bekliyor" ]; then
+              gh pr comment "$pr" -R "$REPO" --body "Gece yayını: testler $durum olduğu için bu gece birleştirilmedi; etiket duruyor, yarın gece yeniden denenecek."
+              continue
+            fi
+            if gh pr merge "$pr" -R "$REPO" --merge --delete-branch=false; then
+              gh pr edit "$pr" -R "$REPO" --remove-label gece-yayin || true
+              echo "PR #$pr birlestirildi."
+              sleep 20   # sonraki PR'ın tabanı güncellensin (yığın PR'lar sırayla)
+            else
+              gh pr comment "$pr" -R "$REPO" --body "Gece yayını: PR birleştirilemedi (çakışma ya da dal koruması). Lütfen kontrol edin; etiket duruyor."
+            fi
+          done

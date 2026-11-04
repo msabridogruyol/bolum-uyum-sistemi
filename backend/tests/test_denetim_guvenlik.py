@@ -270,27 +270,6 @@ def test_uyum_cift_yuvarlanmaz():
         assert '"toplam_uyum": round(' not in metin, yol
 
 
-def test_siralama_onbellegi_ayni_sonucu_verir(monkeypatch):
-    from app.core import skor_motoru as sm
-    cagri = []
-
-    def sahte(db, turlar, ilk_n=None):
-        cagri.append(turlar)
-        return {t: [t] for t in turlar}
-    monkeypatch.setattr(sm, "_toplu_siralama_hesapla", sahte)
-    sm.siralama_onbellegini_bosalt()
-    turlar = list(range(1, 200))
-    a = sm.toplu_siralama(None, turlar, ilk_n=10)
-    b = sm.toplu_siralama(None, list(reversed(turlar)), ilk_n=10)
-    assert a == b and len(cagri) == 1
-    sm.toplu_siralama(None, turlar + [999], ilk_n=10)   # yeni biten tur anahtarı değiştirir
-    assert len(cagri) == 2
-    sm.toplu_siralama(None, [1, 2], ilk_n=10)            # küçük gruplar önbelleğe alınmaz
-    sm.toplu_siralama(None, [1, 2], ilk_n=10)
-    assert len(cagri) == 4
-    sm.siralama_onbellegini_bosalt()
-
-
 def test_profil_fotografi_ertelenmis():
     from app.models import Ogrenci
     assert Ogrenci.__mapper__.column_attrs["profil_foto_base64"].deferred

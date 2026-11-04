@@ -1,6 +1,7 @@
 // [2026-10-09] Okul paneli — okul bazlı yönetim: özet istatistik, öğrenci hesapları (toplu açma / şifre / silme),
 // okul yetkilileri ve işlem kayıtları. Süper admin her okulu (ve okulId=0: okul harici) görür; okul yetkilisi yalnızca kendi okulunu.
 import { useCallback, useEffect, useMemo, useState } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { Link, useParams, useSearchParams } from 'react-router-dom'
 import RaporSecici from '../../components/RaporSecici'
 import { api } from '../../api/client'
@@ -140,6 +141,13 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
       && sinifUyar(o) && (!durum || o.durum === durum)
   })
   const hepsiSecili = liste.length > 0 && liste.every((o) => secili.has(o.id))
+  // [2026-11-04] Yük: 20.000 satırı tek seferde çizmek tarayıcıyı kilitliyordu; tablo sayfa sayfa (filtre ve "tümünü seç"
+  // bütün listeye uygulanır)
+  const SAYFA = 100
+  const [sayfa, setSayfa] = useState(0)
+  useEffect(() => { setSayfa(0) }, [arama, sinif, durum])
+  const sayfaSayisi = Math.max(1, Math.ceil(liste.length / SAYFA))
+  const gorunen = liste.slice(sayfa * SAYFA, (sayfa + 1) * SAYFA)
 
   function sec(id) { setSecili((s) => { const y = new Set(s); y.has(id) ? y.delete(id) : y.add(id); return y }) }
   function hepsiniSec() { setSecili(hepsiSecili ? new Set() : new Set(liste.map((o) => o.id))) }
@@ -239,6 +247,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
           <button className="btn" style={{ marginTop: 10 }} onClick={() => setYukleme(true)}>+ Öğrenci hesabı aç</button>
         </div>
       ) : (
+        <>
         <div className="yp-tablo-kap">
           <table className="yp-tablo yp-tiklanir">
             <thead>
@@ -248,7 +257,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
               </tr>
             </thead>
             <tbody>
-              {liste.map((o) => (
+              {gorunen.map((o) => (
                 <tr key={o.id} onClick={() => setDetay(o.id)} className={secili.has(o.id) ? 'secili' : ''}>
                   <td onClick={(e) => e.stopPropagation()}><input type="checkbox" checked={secili.has(o.id)} onChange={() => sec(o.id)} aria-label={`${o.ad_soyad} seç`} /></td>
                   <td><b>{o.ad_soyad}</b>{o.test_hesabi && <span className="test-rozet">TEST</span>}<div className="yp-ince">{o.email}</div></td>
@@ -266,6 +275,14 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
             </tbody>
           </table>
         </div>
+          {sayfaSayisi > 1 && (
+            <div className="yp-sayfalama" style={{ display: 'flex', gap: 8, alignItems: 'center', justifyContent: 'center', margin: '10px 0' }}>
+              <button className="yp-mini" disabled={sayfa === 0} onClick={() => setSayfa((n) => Math.max(0, n - 1))}>‹ Önceki</button>
+              <span className="yp-ince">{sayfa * SAYFA + 1}–{Math.min(liste.length, (sayfa + 1) * SAYFA)} / {liste.length}</span>
+              <button className="yp-mini" disabled={sayfa >= sayfaSayisi - 1} onClick={() => setSayfa((n) => Math.min(sayfaSayisi - 1, n + 1))}>Sonraki ›</button>
+            </div>
+          )}
+        </>
       )}
 
       {sinifAtlat && (
@@ -308,7 +325,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
       {hata && <div className="auth-error">{hata}</div>}
       {superAdmin && (
         <form className="yp-kutu yp-form-satir" style={{ marginBottom: 14 }} onSubmit={ekle}>
-          <input className="auth-input" placeholder="Ad Soyad" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
+          <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" placeholder="Ad Soyad" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
           <input className="auth-input" placeholder="Görevi / unvanı (isteğe bağlı)" title="ör. Psikolojik Danışman, Rehber Öğretmen" maxLength={60} value={form.unvan} onChange={(e) => setForm({ ...form, unvan: e.target.value })} />
           <input className="auth-input" type="email" placeholder="E-posta" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} required />
           <button className="btn" type="submit">+ Okul yetkilisi ekle</button>
@@ -331,7 +348,7 @@ function YetkililerSekmesi({ okulId, superAdmin }) {
                 <td>
                   {duzen?.id === y.id ? (
                     <form style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }} onSubmit={(e) => { e.preventDefault(); islem(async () => { await api.okulYetkilisiDuzenle(y.id, { ad_soyad: duzen.ad_soyad, unvan: duzen.unvan }); setDuzen(null); yukle() }) }}>
-                      <input className="yp-sec" value={duzen.ad_soyad} minLength={3} required onChange={(e) => setDuzen({ ...duzen, ad_soyad: e.target.value })} placeholder="Ad soyad" />
+                      <input maxLength={AD_SOYAD_EN_FAZLA} className="yp-sec" value={duzen.ad_soyad} minLength={3} required onChange={(e) => setDuzen({ ...duzen, ad_soyad: e.target.value })} placeholder="Ad soyad" />
                       <input className="yp-sec" value={duzen.unvan} maxLength={60} onChange={(e) => setDuzen({ ...duzen, unvan: e.target.value })} placeholder="Görevi / unvanı" />
                       <button className="yp-mini">Kaydet</button><button type="button" className="yp-mini" onClick={() => setDuzen(null)}>İptal</button>
                     </form>
@@ -514,17 +531,26 @@ export default function OkulPaneliSayfasi() {
   const acikOgrenci = sekme === 'ogrenciler' ? params.get('ogrenci') : null
   const ogrenciDetayKapat = useCallback(() => { if (params.get('ogrenci')) setParams({ sekme: 'ogrenciler' }, { replace: true }) }, [params, setParams])
   const [oz, setOz] = useState(null)
-  const [ogrenciler, setOgrenciler] = useState([])
+  const [ogrenciler, setOgrenciler] = useState(null)   // [2026-11-04] yalnızca gereken sekmede yüklenir (20.000 öğrencide ~10 MB)
+  const [ogrSurum, setOgrSurum] = useState(0)
   const [okullar, setOkullar] = useState([])
   const [hata, setHata] = useState(null)
   const [ogrFiltre, setOgrFiltre] = useState('')
 
   const yenile = useCallback(() => {
     api.okulOzeti(okulId).then(setOz).catch((e) => setHata(e.detail || 'Okul yüklenemedi.'))
-    api.okulOgrencileri(okulId).then(setOgrenciler).catch(() => {})
+    setOgrSurum((n) => n + 1)
   }, [okulId])
   useEffect(() => { setOz(null); setHata(null); yenile() }, [yenile])
   useEffect(() => { if (superAdmin) api.yonetimOkullar().then(setOkullar).catch(() => {}) }, [superAdmin])
+  // [2026-11-04] Öğrenci listesi yalnızca Öğrenciler / Rehberlik / Akran sekmelerinde ve yenilenince yüklenir
+  const listeSekmesi = ['ogrenciler', 'rehberlik', 'akran'].includes(sekme)
+  useEffect(() => {
+    if (!listeSekmesi) return
+    let iptal = false
+    api.okulOgrencileri(okulId).then((l) => { if (!iptal) setOgrenciler(l) }).catch(() => { if (!iptal) setOgrenciler([]) })
+    return () => { iptal = true }
+  }, [listeSekmesi, okulId, ogrSurum])
 
   if (hata) return <div className="pg pg-genis"><div className="auth-error">{hata}</div></div>
   if (!oz) return <div className="pg pg-genis"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
@@ -584,13 +610,13 @@ export default function OkulPaneliSayfasi() {
       {sk === 'raporlar' && okulId > 0 && <OkulRaporMerkezi okulId={okulId} oz={oz} superAdmin={superAdmin} okullar={okullar} onDegisti={yenile}
         onRehberlik={bolumler.some((b) => b.k === 'rehberlik') ? () => setSekme('rehberlik') : null} />}
       {sk === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
-      {sk === 'ogrenciler' && <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} acikOgrenci={acikOgrenci} onDetayKapat={ogrenciDetayKapat} />}
-      {sk === 'rehberlik' && <RehberlikSekmesi okulId={okulId} ogrenciler={ogrenciler} superAdmin={superAdmin} okullar={okullar} yenileOkul={yenile} />}
+      {sk === 'ogrenciler' && (ogrenciler === null ? <div className="bos-durum yukleniyor">Öğrenciler yükleniyor…</div> : <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} acikOgrenci={acikOgrenci} onDetayKapat={ogrenciDetayKapat} />)}
+      {sk === 'rehberlik' && <RehberlikSekmesi okulId={okulId} ogrenciler={ogrenciler || []} superAdmin={superAdmin} okullar={okullar} yenileOkul={yenile} />}
       {sk === 'tercih' && okulId > 0 && <TercihDonemi okulId={okulId} />}
       {sk === 'mezunlar' && okulId > 0 && <Mezunlar okulId={okulId} />}
       {sk === 'anketler' && okulId > 0 && <Anketler okulId={okulId} />}
       {sk === 'denemeler' && okulId > 0 && <OkulDenemeleri okulId={okulId} />}
-      {sk === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler} yenile={yenile} />}
+      {sk === 'akran' && <AkranSekmesi okulId={okulId} ogrenciler={ogrenciler || []} yenile={yenile} />}
       {sk === 'kulupler' && okulId > 0 && <KulupYonetimi okulId={okulId} />}
       {sk === 'takvim' && okulId > 0 && <TakvimYonetimi okulId={okulId} />}
       {sk === 'bilgiler' && <OkulBilgileriSekmesi okulId={okulId} />}

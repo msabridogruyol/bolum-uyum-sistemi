@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { AD_SOYAD_EN_FAZLA } from '../yardimci/sinirlar'
 import DilSecici from '../components/DilSecici'   // [2026-10-12] çoklu dil
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
@@ -88,7 +89,7 @@ export default function GirisSayfasi() {
               {sekme === 'kayit' && (
                 <div className="auth-field">
                   <label className="auth-label">Ad Soyad</label>
-                  <input className="auth-input" value={adSoyad} onChange={(e) => setAdSoyad(e.target.value)} required minLength={2} />
+                  <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" value={adSoyad} onChange={(e) => setAdSoyad(e.target.value)} required minLength={2} />
                 </div>
               )}
               <div className="auth-field">

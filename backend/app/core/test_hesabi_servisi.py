@@ -45,11 +45,15 @@ def anahtar_ozeti(anahtar: str) -> str:
     return hashlib.sha256(anahtar.encode()).hexdigest()
 
 
+TEST_BAGLANTI_EN_FAZLA_SAAT = 24 * 7
+
+
 def giris_anahtari_uret(hesap, saat: int) -> str:
     """Yeni bağlantı anahtarı üretir (eskisi geçersiz olur). Veritabanında yalnızca özeti saklanır."""
     anahtar = secrets.token_urlsafe(24)
     hesap.test_giris_anahtari = anahtar_ozeti(anahtar)
-    hesap.test_giris_bitis = _simdi() + timedelta(hours=max(1, min(saat, 24 * 30)))
+    # [2026-11-04] Güvenlik: bağlantı 2 adımlı doğrulamasız tek kimlik bilgisidir; en çok 7 gün geçerli (önceden 30 gün)
+    hesap.test_giris_bitis = _simdi() + timedelta(hours=max(1, min(saat, TEST_BAGLANTI_EN_FAZLA_SAAT)))
     return anahtar
 
 

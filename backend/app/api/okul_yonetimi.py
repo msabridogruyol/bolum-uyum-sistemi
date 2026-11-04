@@ -44,7 +44,7 @@ from datetime import datetime, timedelta
 import bcrypt
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import Field, BaseModel
-from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
+from app.schemas.girdi import AD_SOYAD_EN_FAZLA, GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import func, text
 from sqlalchemy.orm import Session
 
@@ -321,11 +321,17 @@ def _satirlari_coz(satirlar: list[list]) -> list[dict]:
 def _dogrula(db: Session, satirlar: list[dict], okul_id: int | None = None) -> list[dict]:
     """[2026-10-10] Aynı okulda zaten kayıtlı e-posta → hata değil, 'güncellenecek' (ad, sınıf, no ve verilirse şifre)."""
     gorulen = Counter(s["email"].lower() for s in satirlar if s["email"])
+    # [2026-11-04] Yük: e-postalar satır başına 3 sorgu yerine tek seferde aranır (2.000 satırda ~6.000 sorgu → 2)
+    epostalar = list(gorulen)
+    kayitli = {o.email.lower(): o for o in db.query(Ogrenci).filter(func.lower(Ogrenci.email).in_(epostalar)).all()} if epostalar else {}
+    yonetimde = {e.lower() for (e,) in db.query(AdminKullanici.email).filter(func.lower(AdminKullanici.email).in_(epostalar)).all()} if epostalar else set()
     for s in satirlar:
         hatalar, uyarilar = [], []
         s["guncelle"] = None
         if len(s["ad_soyad"]) < 3:
             hatalar.append("Ad soyad eksik")
+        elif len(s["ad_soyad"]) > AD_SOYAD_EN_FAZLA:   # [2026-11-04] kullanıcı kuralı: en fazla 30 karakter
+            hatalar.append(f"Ad soyad en fazla {AD_SOYAD_EN_FAZLA} karakter olabilir")
         if not s["email"]:
             hatalar.append("E-posta eksik")
         elif not _EPOSTA.match(s["email"]):
@@ -334,8 +340,8 @@ def _dogrula(db: Session, satirlar: list[dict], okul_id: int | None = None) -> l
             hatalar.append("E-posta dosyada birden fazla kez geçiyor")
         elif s["email"].lower().endswith("@ornek.com"):
             hatalar.append("Şablondaki örnek satır — silin")
-        elif _eposta_kullanimda(db, s["email"]):
-            var = db.query(Ogrenci).filter(func.lower(Ogrenci.email) == s["email"].lower()).first()
+        elif s["email"].lower() in kayitli or s["email"].lower() in yonetimde:
+            var = kayitli.get(s["email"].lower())
             if var is not None and (var.okul_id or 0) == (okul_id or 0):
                 s["guncelle"] = str(var.id)
                 ayni = s.get("sifre") and var.sifre_degistirmeli and coz(var.gecici_sifre_sifreli) == s["sifre"]
@@ -452,7 +458,7 @@ class DosyaIstek(GirdiModeli):
 
 
 class OgrenciSatir(GirdiModeli):
-    ad_soyad: str = Field(max_length=200)
+    ad_soyad: str = Field(max_length=AD_SOYAD_EN_FAZLA)
     email: str = Field(max_length=254)
     sinif: str | None = None
     sube: str | None = None
@@ -465,7 +471,7 @@ class TopluOlusturIstek(GirdiModeli):
 
 
 class OgrenciDuzenleIstek(GirdiModeli):
-    ad_soyad: str | None = Field(None, max_length=200)
+    ad_soyad: str | None = Field(None, max_length=AD_SOYAD_EN_FAZLA)
     email: str | None = Field(None, max_length=254)
     sinif: str | None = None
     sube: str | None = None
@@ -481,13 +487,13 @@ class OkulAtaIstek(GirdiModeli):
 
 
 class YetkiliEkleIstek(GirdiModeli):
-    ad_soyad: str = Field(max_length=200)
+    ad_soyad: str = Field(max_length=AD_SOYAD_EN_FAZLA)
     email: str = Field(max_length=254)
     unvan: str | None = None        # [2026-10-10] görevi / unvanı (isteğe bağlı)
 
 
 class YetkiliDuzenleIstek(GirdiModeli):
-    ad_soyad: str | None = Field(None, max_length=200)
+    ad_soyad: str | None = Field(None, max_length=AD_SOYAD_EN_FAZLA)
     unvan: str | None = None
 
 
@@ -523,6 +529,48 @@ def ben_ilk_sifre(istek: IlkSifreIstek, db: Session = Depends(get_db), yon: Admi
     yon.sifre_degistirmeli = False
     yon.gecici_sifre_sifreli = None   # [2026-10-10]
     denetim_yaz(db, yon, "sifre_belirledi", "admin_kullanicilar", yon.id, "İlk girişte kendi şifresini belirledi", yon.okul_id)
+    db.commit()
+    return yeni_token_cifti(yon, yon.rol)
+
+
+class YonetimSifreIstek(GirdiModeli):
+    eski_sifre: str = Field(max_length=200)
+    yeni_sifre: str = Field(max_length=200)
+
+
+class YonetimSifreOnayIstek(GirdiModeli):
+    kod: str = Field(max_length=12)
+
+
+@router.post("/ben/sifre-degistir")
+def ben_sifre_degistir(istek: YonetimSifreIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-11-04] Yönetim hesabı (okul yetkilisi / süper admin) şifre değişikliği: eski şifre + e-posta onay kodu."""
+    from app.core import hesap_guvenligi_servisi as hg
+    from app.core.katman_servisi import IsKuraliHatasi
+    try:
+        sonuc = hg.sifre_degisikligi_baslat(db, "yonetim", yon, istek.eski_sifre, istek.yeni_sifre)
+    except hg.BeklemeHatasi as e:
+        db.rollback()
+        raise HTTPException(status_code=429, detail=str(e))
+    except IsKuraliHatasi as e:
+        db.commit()
+        raise HTTPException(status_code=400, detail=str(e))
+    if not sonuc["kod_gonderildi"]:
+        denetim_yaz(db, yon, "sifre_degisti", "admin_kullanicilar", yon.id, "Şifresini değiştirdi", yon.okul_id)
+    db.commit()
+    return sonuc if sonuc["kod_gonderildi"] else {"kod_gonderildi": False, **yeni_token_cifti(yon, yon.rol)}
+
+
+@router.post("/ben/sifre-degistir/onayla")
+def ben_sifre_onayla(istek: YonetimSifreOnayIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    from app.core import hesap_guvenligi_servisi as hg
+    from app.core.katman_servisi import IsKuraliHatasi
+    try:
+        hg.sifre_degisikligi_onayla(db, "yonetim", yon, istek.kod)
+    except IsKuraliHatasi as e:
+        db.commit()
+        raise HTTPException(status_code=400, detail=str(e))
+    denetim_yaz(db, yon, "sifre_degisti", "admin_kullanicilar", yon.id, "Şifresini değiştirdi (e-posta kodu ile onaylandı)", yon.okul_id)
     db.commit()
     return yeni_token_cifti(yon, yon.rol)
 
@@ -690,17 +738,27 @@ def toplu_olustur(okul_id: int, istek: TopluOlusturIstek, db: Session = Depends(
     _dogrula(db, satirlar, okul_id)
     olusan, hatali, guncellenen = [], [], 0
     yapan = yapan_etiketi(yon)
+    # [2026-11-04] Yük: bcrypt karmaları paralel hesaplanır (bcrypt GIL'i bırakır; 2.000 satırda ~2 dk → ~30 sn)
+    from concurrent.futures import ThreadPoolExecutor
+    for s in satirlar:
+        if not s["hata"] and not s.get("guncelle"):
+            s["_sifre"] = s.get("sifre") or gecici_sifre()
+    karilacak = [s for s in satirlar if not s["hata"] and (s.get("_sifre") or s.get("sifre"))]
+    with ThreadPoolExecutor(max_workers=4) as havuz:
+        for s, h in zip(karilacak, havuz.map(lambda x: _hizli_hash(x.get("_sifre") or x["sifre"]), karilacak)):
+            s["_karma"] = h
     for s in satirlar:
         if s["hata"]:
             hatali.append(s)
             continue
         if s.get("guncelle"):                          # [2026-10-10] kayıtlı öğrenci: bilgileri ve (verildiyse) şifresi güncellenir
+            karma = s.pop("_karma", None)              # yanıtta karma görünmesin
             o = db.get(Ogrenci, uuid.UUID(s["guncelle"]))
             o.ad_soyad, o.sinif, o.sube = s["ad_soyad"], s["sinif"] or o.sinif, s["sube"] or o.sube
             if s.get("ogrenci_no"):
                 o.ogrenci_no = s["ogrenci_no"][:20]
             if s.get("sifre") and not (o.sifre_degistirmeli and coz(o.gecici_sifre_sifreli) == s["sifre"]):
-                o.sifre_hash = _hizli_hash(s["sifre"])
+                o.sifre_hash = karma or _hizli_hash(s["sifre"])
                 o.sifre_degistirmeli = True
                 o.gecici_sifre_sifreli = sifrele(s["sifre"])
                 # [2026-11-04] toplu_sifre_sifirla ile aynı: eski şifreyle açılmış oturumlar ve güvenilir cihazlar düşer
@@ -712,12 +770,11 @@ def toplu_olustur(okul_id: int, istek: TopluOlusturIstek, db: Session = Depends(
             guncellenen += 1
             olusan.append({**s, "id": str(o.id), "gecici_sifre": s.get("sifre") or (coz(o.gecici_sifre_sifreli) if o.sifre_degistirmeli else "(kendi şifresi)")})
             continue
-        sifre = s.get("sifre") or gecici_sifre()
-        o = Ogrenci(ad_soyad=s["ad_soyad"], email=s["email"], sifre_hash=_hizli_hash(sifre), sinif=s["sinif"], sube=s["sube"],
+        sifre = s.pop("_sifre")
+        o = Ogrenci(id=uuid.uuid4(), ad_soyad=s["ad_soyad"], email=s["email"], sifre_hash=s.pop("_karma"), sinif=s["sinif"], sube=s["sube"],
                     okul_id=okul.id if okul else None, okul=okul.ad if okul else None, sifre_degistirmeli=True,
                     olusturulma_zamani=simdi(), gecici_sifre_sifreli=sifrele(sifre), ogrenci_no=(s.get("ogrenci_no") or None))
-        db.add(o)
-        db.flush()
+        db.add(o)   # [2026-11-04] satır başına flush yok; kimlik önceden verilir, kayıtlar commit'te topluca yazılır
         olay_yaz(db, o.id, "hesap_acildi", f"{okul.ad if okul else 'Okul harici'} — toplu hesap açma", yapan)
         olusan.append({**s, "id": str(o.id), "gecici_sifre": sifre})
     denetim_yaz(db, yon, "ogrenci_toplu_ekle", "ogrenciler", okul_id,
@@ -768,6 +825,8 @@ def _listem(db: Session, o) -> list[dict]:
 @router.get("/ogrenci/{ogrenci_id}")
 def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     o = _ogrenci_kapsami(db, yon, ogrenci_id)
+    denetim_yaz(db, yon, "ogrenci_detay_goruntule", "ogrenciler", o.id, o.ad_soyad, o.okul_id)   # [2026-11-04] hassas okuma kaydı
+    db.commit()
     adlar = {b.id: b.ad for b in db.query(Bolum.id, Bolum.ad).all()}
     il = _ilerleme(db, ogrenci_id=o.id).get(o.id)
     kod, etiket = _durum(o, il)
@@ -1113,6 +1172,10 @@ ISLEM_ETIKET = {
     "okul_yetkilisi_sil": "Okul yetkilisi silindi", "okul_yetkilisi_duzenle": "Okul yetkilisi bilgisi güncellendi", "okul_yetkilisi_sifre_sifirla": "Okul yetkilisinin şifresi sıfırlandı",
     "okul_ekle": "Okul eklendi", "okul_guncelle": "Okul bilgisi güncellendi", "okul_sil": "Okul silindi",
     "sifre_belirledi": "Yetkili kendi şifresini belirledi",
+    # [2026-11-04]
+    "sifre_degisti": "Yetkili şifresini değiştirdi", "ogrenci_detay_goruntule": "Öğrenci ayrıntısı görüntülendi",
+    "gorusme_notlari_goruntule": "Görüşme notları görüntülendi", "guvenlik_fotograf_goruntule": "Değerlendirme fotoğrafları görüntülendi",
+    "test_baglanti_giris": "Test bağlantısıyla giriş yapıldı", "gece_isi_iptal": "Gece bakımı işi iptal edildi",
     "okul_bilgi_guncelle": "Okul tanıtım bilgileri güncellendi",
     # [2026-10-12] Eksik işlem adları tamamlandı (kayıtlarda kod yerine okunur ad görünsün; ekran 12 dile çevrilir)
     "anket_olustur": "Anket oluşturuldu", "anket_duzenle": "Anket düzenlendi", "anket_sil": "Anket silindi",
@@ -1199,8 +1262,8 @@ def okul_kayitlari(okul_id: int, gun: int = 30, db: Session = Depends(get_db), y
 
 # ----------------------------------------------------------------------------- okul tanıtım bilgileri
 class KadroGirdi(GirdiModeli):
-    gorev: str
-    ad: str
+    gorev: str = Field(max_length=80)
+    ad: str = Field(max_length=AD_SOYAD_EN_FAZLA)
     eposta: str | None = Field(None, max_length=254)
     telefon: str | None = None
 
@@ -1360,7 +1423,7 @@ def yonetim_bolumler(db: Session = Depends(get_db), yon: AdminKullanici = Depend
 class SubeIstek(GirdiModeli):
     sinif: str
     sube: str
-    ogretmen_ad: str | None = None
+    ogretmen_ad: str | None = Field(None, max_length=AD_SOYAD_EN_FAZLA)
     ogretmen_eposta: str | None = None
 
 
