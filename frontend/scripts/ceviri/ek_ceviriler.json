@@ -2903,5 +2903,33 @@
   "uz": "Manba havolalari:",
   "az": "Mənbə keçidləri:",
   "ko": "출처 링크:"
+ },
+ "Hesaplama:": {
+  "en": "Calculation:",
+  "de": "Berechnung:",
+  "fr": "Calcul :",
+  "ru": "Расчёт:",
+  "es": "Cálculo:",
+  "it": "Calcolo:",
+  "ar": "طريقة الحساب:",
+  "zh": "计算方法：",
+  "hi": "गणना:",
+  "uz": "Hisob-kitob:",
+  "az": "Hesablama:",
+  "ko": "계산 방법:"
+ },
+ "(tahmini)": {
+  "en": "(estimate)",
+  "de": "(Schätzung)",
+  "fr": "(estimation)",
+  "ru": "(оценка)",
+  "es": "(estimación)",
+  "it": "(stima)",
+  "ar": "(تقديري)",
+  "zh": "（估计）",
+  "hi": "(अनुमानित)",
+  "uz": "(taxminiy)",
+  "az": "(təxmini)",
+  "ko": "(추정)"
  }
 }

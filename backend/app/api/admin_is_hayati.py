@@ -516,6 +516,8 @@ class KazancSatiri(GirdiModeli):
 
 class KazancKaydet(GirdiModeli):
     dosya_adi: str | None = Field(None, max_length=200)
+    # [2026-11-04] Verinin ait olduğu ay (ör. Kazanç Yapısı 2023 → 2023-11); enflasyonla güncellemede baz ay. Boşsa yıl ortası alınır.
+    referans_donem: str | None = Field(None, pattern=r"^[0-9]{4}-(0[1-9]|1[0-2])$")
     veri_yili: int = Field(ge=2000, le=2100)
     kaynak: str = Field(min_length=3, max_length=500)
     asgari_brut_o_yil: float = Field(gt=0)
@@ -529,11 +531,14 @@ def kazanc_kaydet(istek: KazancKaydet, db: Session = Depends(get_db), yon: Admin
         raise HTTPException(400, "Aynı ISCO kodu birden fazla satırda var.")
     kaynak = istek.kaynak.strip()
     yid = _yukleme(db, yon, "kazanc", istek.dosya_adi, len(istek.satirlar), len(istek.satirlar), [], istek.veri_yili, kaynak)
-    db.execute(text("""INSERT INTO kazanc_meslek_gruplari (isco_kodu, ad, brut_aylik_ortalama_tl, veri_yili, asgari_brut_o_yil, kaynak, yukleme_id)
-                       VALUES (:isco_kodu, :ad, :brut_aylik_ortalama_tl, :y, :a, :k, :yid)
+    db.execute(text("""INSERT INTO kazanc_meslek_gruplari (isco_kodu, ad, brut_aylik_ortalama_tl, veri_yili, asgari_brut_o_yil, kaynak, yukleme_id,
+                                                          referans_donem)
+                       VALUES (:isco_kodu, :ad, :brut_aylik_ortalama_tl, :y, :a, :k, :yid, :r)
                        ON CONFLICT (isco_kodu, veri_yili) DO UPDATE SET ad = EXCLUDED.ad, brut_aylik_ortalama_tl = EXCLUDED.brut_aylik_ortalama_tl,
-                         asgari_brut_o_yil = EXCLUDED.asgari_brut_o_yil, kaynak = EXCLUDED.kaynak, yukleme_id = EXCLUDED.yukleme_id"""),
-               [{**s.model_dump(), "y": istek.veri_yili, "a": istek.asgari_brut_o_yil, "k": kaynak, "yid": yid} for s in istek.satirlar])
+                         asgari_brut_o_yil = EXCLUDED.asgari_brut_o_yil, kaynak = EXCLUDED.kaynak, yukleme_id = EXCLUDED.yukleme_id,
+                         referans_donem = EXCLUDED.referans_donem"""),
+               [{**s.model_dump(), "y": istek.veri_yili, "a": istek.asgari_brut_o_yil, "k": kaynak, "yid": yid, "r": istek.referans_donem}
+                for s in istek.satirlar])
     denetim_yaz(db, yon, "is_hayati_kazanc_yukle", "kazanc_meslek_gruplari", yid,
                 f"{istek.veri_yili} · {len(istek.satirlar)} meslek grubu · asgari brüt {istek.asgari_brut_o_yil} · {kaynak[:120]}")
     db.commit()
@@ -633,6 +638,13 @@ def _duzey(v):
     return d
 
 
+def _donem(v):
+    t = _metin(v, True, 7)
+    if not re.fullmatch(r"[0-9]{4}-(0[1-9]|1[0-2])", t or ""):
+        raise ValueError("YYYY-AA biçiminde ay (ör. 2026-11)")
+    return t
+
+
 def _bolum(v):
     if v in (None, ""):
         return None
@@ -668,6 +680,12 @@ TABLOLAR = {
         "alanlar": {"il": lambda v: _metin(v, False, 60), "kalem_kodu": lambda v: (_metin(v, True, 40) or "").lower().replace(" ", "_"),
                     "ad": lambda v: _metin(v, True, 120), "aylik_tutar": lambda v: _sayi(v, True, 0), "kaynak": lambda v: _metin(v, True),
                     "tarih": _tarih},
+    },
+    # [2026-11-04] TÜFE genel endeksi (2025=100): eski tutarların güncel tahmini. TÜİK her ayın 3'ünde bir önceki ayı yayımlar.
+    "tufe_endeksi": {
+        "ad": "TÜFE endeksi (aylık)", "sira": "donem DESC", "ara": ["donem", "kaynak"],
+        "alanlar": {"donem": lambda v: _donem(v), "endeks": lambda v: _sayi(v, True, 0.000001),
+                    "yillik_degisim": lambda v: _sayi(v, False, -100), "kaynak": lambda v: _metin(v, True)},
     },
     # [2026-11-04] Karşılaştırma için toplam yaşam maliyeti (Türk-İş her ay yayımlar: yeni dönemi yeni satır olarak ekleyin)
     "yasam_maliyeti_referans": {

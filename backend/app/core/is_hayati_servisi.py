@@ -253,6 +253,68 @@ def _f(v):
     return None if v is None else float(v)
 
 
+# ----------------------------------------------------------------------------- enflasyonla güncelleme (TÜFE)
+# [2026-11-04] Kullanıcı isteği: eski tarihli TL tutarları güncel enflasyonla çarpılarak bugünün TAHMİNİ olarak gösterilir;
+# hesaplama mantığı açıklamada yazar. Formül: güncel tahmin = tutar × (son TÜFE endeksi / verinin ayındaki TÜFE endeksi).
+_AYLAR = ["Ocak", "Şubat", "Mart", "Nisan", "Mayıs", "Haziran", "Temmuz", "Ağustos", "Eylül", "Ekim", "Kasım", "Aralık"]
+
+
+def donem_metni(donem: str | None) -> str | None:
+    """'2023-11' → 'Kasım 2023'."""
+    m = re.fullmatch(r"(\d{4})-(\d{2})", donem or "")
+    return f"{_AYLAR[int(m.group(2)) - 1]} {m.group(1)}" if m and 1 <= int(m.group(2)) <= 12 else donem
+
+
+def _tl_metni(v: float) -> str:
+    return f"{v:,.0f}".replace(",", ".") + " TL"
+
+
+def _sayi_metni(v: float, basamak: int = 2) -> str:
+    return f"{v:,.{basamak}f}".replace(",", "X").replace(".", ",").replace("X", ".")
+
+
+def enflasyon_carpani(db: Session, baz_donem: str | None) -> dict | None:
+    """baz_donem ('YYYY-MM') ile en son TÜFE ayı arasındaki çarpan. Son ay baz aydan sonra değilse ya da endeks yoksa None."""
+    if not baz_donem or not re.fullmatch(r"\d{4}-\d{2}", baz_donem):
+        return None
+    try:
+        son = db.execute(text("SELECT donem, endeks, kaynak FROM tufe_endeksi ORDER BY donem DESC LIMIT 1")).first()
+        baz = db.execute(text("SELECT donem, endeks FROM tufe_endeksi WHERE donem = :d"), {"d": baz_donem}).first()
+    except Exception:   # tablo henüz yoksa (göç uygulanmadan) hesap yapılmaz
+        db.rollback()
+        return None
+    if not son or not baz or son.donem <= baz.donem:
+        return None
+    return {"carpan": float(son.endeks) / float(baz.endeks), "baz_donem": baz.donem, "baz_endeks": float(baz.endeks),
+            "son_donem": son.donem, "son_endeks": float(son.endeks), "kaynak": son.kaynak}
+
+
+def enflasyonla_guncelle(db: Session, tutar: float | None, baz_donem: str | None, ne: str = "Tutar") -> dict | None:
+    """{tutar, carpan, son_donem, hesaplama} — hesaplama: öğrenciye/yöneticiye gösterilen açıklama metni."""
+    if tutar is None:
+        return None
+    c = enflasyon_carpani(db, baz_donem)
+    if c is None:
+        return None
+    yeni = tutar * c["carpan"]
+    artis = (c["carpan"] - 1) * 100
+    hesap = (f"{ne} {donem_metni(c['baz_donem'])} tarihli: {_tl_metni(tutar)}. O aydan {donem_metni(c['son_donem'])}'e kadar "
+             f"fiyatlar %{_sayi_metni(artis, 1)} arttı (TÜİK TÜFE endeksi {_sayi_metni(c['baz_endeks'])} → {_sayi_metni(c['son_endeks'])}). "
+             f"Güncel tahmin = {_tl_metni(tutar)} × {_sayi_metni(c['carpan'], 3)} = {_tl_metni(yeni)}. "
+             "Bu bir tahmindir: gerçek tutar fiyatlarla aynı hızda değişmemiş olabilir.")
+    return {"tutar": round(yeni, -1), "carpan": round(c["carpan"], 4), "baz_donem": c["baz_donem"], "son_donem": c["son_donem"],
+            "son_donem_metni": donem_metni(c["son_donem"]), "hesaplama": hesap}
+
+
+def kamu_donem_bitisi(donem: str | None) -> tuple[str, str] | None:
+    """'2026-2' → ('2026-06', '2026-12'): (dönemden önceki ay = maaşın ayarlandığı fiyat düzeyi, dönemin son ayı)."""
+    m = re.fullmatch(r"(\d{4})-([12])", donem or "")
+    if not m:
+        return None
+    y = int(m.group(1))
+    return (f"{y - 1}-12", f"{y}-06") if m.group(2) == "1" else (f"{y}-06", f"{y}-12")
+
+
 def guncel_asgari(db: Session) -> dict | None:
     r = db.execute(text("""SELECT donem, brut, net, kaynak, yururluk_tarihi FROM asgari_ucret
                             WHERE yururluk_tarihi <= CURRENT_DATE ORDER BY yururluk_tarihi DESC LIMIT 1""")).mappings().first()
@@ -274,8 +336,15 @@ def meslek_isco_haritasi(db: Session, adlar: list[str]) -> dict:
 
 def kazanc_tablosu(db: Session) -> dict:
     """{isco_kodu: satır} — her kod için en yeni veri yılı."""
-    rows = db.execute(text("""SELECT DISTINCT ON (isco_kodu) isco_kodu, ad, brut_aylik_ortalama_tl, veri_yili, asgari_brut_o_yil, kaynak
-                                FROM kazanc_meslek_gruplari ORDER BY isco_kodu, veri_yili DESC""")).mappings().all()
+    try:
+        rows = db.execute(text("""SELECT DISTINCT ON (isco_kodu) isco_kodu, ad, brut_aylik_ortalama_tl, veri_yili, asgari_brut_o_yil, kaynak,
+                                         referans_donem
+                                    FROM kazanc_meslek_gruplari ORDER BY isco_kodu, veri_yili DESC""")).mappings().all()
+    except Exception:   # referans_donem sütunu (0098) henüz yoksa
+        db.rollback()
+        rows = db.execute(text("""SELECT DISTINCT ON (isco_kodu) isco_kodu, ad, brut_aylik_ortalama_tl, veri_yili, asgari_brut_o_yil, kaynak,
+                                         NULL AS referans_donem
+                                    FROM kazanc_meslek_gruplari ORDER BY isco_kodu, veri_yili DESC""")).mappings().all()
     return {r["isco_kodu"]: dict(r) for r in rows}
 
 
@@ -321,7 +390,9 @@ def istihdam_bolum(db: Session, bolum_id: int) -> dict | None:
 
 def kazanc_meslekleri(db: Session, meslekler: list[dict], asgari: dict | None) -> list[dict]:
     """Bölümün meslekleri için kazanç: meslek → ISCO (2 hane; yoksa 1 haneli ana gruba düşer) → TÜİK ortalama brüt.
-    Güncel tahmin = (veri yılı brüt / o yılın asgari brütü) × güncel asgari brüt; net ≈ × (güncel net / güncel brüt)."""
+    [2026-11-04] Güncel tahmin (kullanıcı isteği): brüt × (son TÜFE / verinin referans ayındaki TÜFE); net ≈ brüt × (güncel net
+    asgari / güncel brüt asgari) — kesinti oranı yaklaşığı. TÜFE yoksa eski yöntem: (brüt / o yılın asgari brütü) × güncel asgari brüt.
+    Her meslekte "hesaplama" metni hesabı adım adım yazar."""
     adlar = [m.get("ad") for m in meslekler if m.get("ad")]
     harita = meslek_isco_haritasi(db, adlar)
     tablo = kazanc_tablosu(db)
@@ -343,11 +414,26 @@ def kazanc_meslekleri(db: Session, meslekler: list[dict], asgari: dict | None) -
             o.update({"brut_veri_yili_tl": brut, "veri_yili": satir["veri_yili"], "kaynak": satir["kaynak"],
                       "veri_grup_kodu": satir["isco_kodu"], "veri_grup_adi": satir["ad"],
                       "asgari_kat": round(kat, 2) if kat else None})
-            if kat and asgari:
+            ref = satir.get("referans_donem")
+            ref_tahmini = ref is None
+            ref = ref or f"{satir['veri_yili']}-06"   # referans ayı bilinmiyorsa yıl ortası varsayılır (açıklamada yazar)
+            g = enflasyonla_guncelle(db, brut, ref, "TÜİK ortalama brüt kazanç")
+            if g and asgari:
+                oran = asgari["net"] / asgari["brut"]
+                net = round(g["tutar"] * oran, -1)
+                o.update({"guncel_tahmin_brut_tl": g["tutar"], "guncel_tahmin_net_tl": net, "guncel_donem": g["son_donem_metni"],
+                          "guncelleme_yontemi": "tufe",
+                          "hesaplama": g["hesaplama"] + (" Verinin ayı bilinmediği için yıl ortası (Haziran) alındı." if ref_tahmini else "")
+                          + f" Nete çevirme: brüt × {_sayi_metni(oran, 3)} (güncel net asgari ücretin brüte oranı; vergi ve SGK "
+                          f"kesintisi yaklaşığı) = {_tl_metni(net)}."})
+            elif kat and asgari:
                 tb = kat * asgari["brut"]
                 o["guncel_tahmin_brut_tl"] = round(tb, -1)
                 o["guncel_tahmin_net_tl"] = round(tb * asgari["net"] / asgari["brut"], -1)
                 o["guncel_donem"] = asgari["donem"]
+                o["guncelleme_yontemi"] = "asgari"
+                o["hesaplama"] = (f"TÜİK ortalama brüt kazanç ({satir['veri_yili']}) o yılın asgari brüt ücretinin {_sayi_metni(kat)} katı; "
+                                  f"{asgari['donem']} asgari brüt ücretiyle çarpıldı = {_tl_metni(tb)} brüt.")
         out.append(o)
     return out
 
@@ -360,8 +446,16 @@ def kamu_eslesen(db: Session, bolum_ad: str, meslek_adlari: list[str]) -> list[d
         kel = [_normalize(k) for k in kel if isinstance(k, str) and k.strip()]
         # [2026-11-04] "=tip" → adın tamamı eşit olmalı (kısa sözcükler "tip mühendisliği" gibi adlara yanlışlıkla uymasın)
         if any((h == k[1:].strip()) if k.startswith("=") else (k in h) for k in kel for h in hedef):
-            out.append({"id": r["id"], "kadro_adi": r["kadro_adi"], "net_min": _f(r["net_min"]), "net_max": _f(r["net_max"]),
-                        "donem": r["donem"], "kaynak": r["kaynak"], "aciklama": r["aciklama"], "tahmin": False})
+            o = {"id": r["id"], "kadro_adi": r["kadro_adi"], "net_min": _f(r["net_min"]), "net_max": _f(r["net_max"]),
+                 "donem": r["donem"], "kaynak": r["kaynak"], "aciklama": r["aciklama"], "tahmin": False}
+            # [2026-11-04] Maaş döneminin son ayının TÜFE'si yayımlandıysa dönem geçmiştir: tutar o dönemi ayarlayan fiyat
+            # düzeyinden (dönemden önceki ay) bugüne TÜFE ile taşınır ve TAHMİN olarak gösterilir.
+            bit = kamu_donem_bitisi(r["donem"])
+            c = enflasyon_carpani(db, bit[0]) if bit else None
+            if c and c["son_donem"] >= bit[1]:
+                o["guncel"] = {k: enflasyonla_guncelle(db, o[k], bit[0], "Kamu net maaşı")
+                               for k in ("net_min", "net_max") if o[k] is not None}
+            out.append(o)
     return out
 
 
@@ -370,8 +464,10 @@ def yasam_maliyeti_referans(db: Session) -> list[dict]:
     rows = db.execute(text("""SELECT DISTINCT ON (kod) kod, ad, aylik_tutar, kapsam, donem, kaynak, tarih FROM yasam_maliyeti_referans
                               ORDER BY kod, tarih DESC NULLS LAST, id DESC""")).mappings().all()
     sira = {"bekar_yasam": 0, "aclik_siniri": 1, "yoksulluk_siniri": 2}
+    # Dönemden sonraki aylara ait TÜFE yayımlandıysa tutar bugüne taşınır ("guncel": tutar + hesaplama metni)
     return sorted(({"kod": r["kod"], "ad": r["ad"], "aylik_tutar": _f(r["aylik_tutar"]), "kapsam": r["kapsam"], "donem": r["donem"],
-                    "kaynak": r["kaynak"], "tarih": r["tarih"].isoformat() if r["tarih"] else None} for r in rows),
+                    "kaynak": r["kaynak"], "tarih": r["tarih"].isoformat() if r["tarih"] else None,
+                    "guncel": enflasyonla_guncelle(db, _f(r["aylik_tutar"]), r["donem"], r["ad"])} for r in rows),
                   key=lambda x: (sira.get(x["kod"], 9), x["kod"]))
 
 
@@ -418,8 +514,10 @@ def bolum_verisi(db: Session, bolum_id: int) -> dict | None:
         "bolum": {"id": r.id, "ad": tr_baslik(r.ad), "ogrenim_suresi": d.get("ogrenim_suresi"), "meslek_sayisi": len(meslekler)},
         "istihdam": istihdam,
         "kazanc": {"meslekler": kazanc,
-                   "aciklama": "Meslek grubunun TÜİK ortalama brüt kazancı, veri yılındaki asgari ücrete oranlanıp güncel asgari "
-                               "ücretle çarpılarak bugüne taşınır. Bu bir TAHMİNDİR; ilk iş maaşı genellikle ortalamanın altındadır."},
+                   "aciklama": "Meslek grubunun TÜİK ortalama brüt kazancı, verinin ait olduğu aydan bugüne TÜİK tüketici fiyat "
+                               "endeksiyle (enflasyon) çarpılarak taşınır: güncel tahmin = eski tutar × (son TÜFE / o ayın TÜFE'si). "
+                               "Net tutar, brüt tutarın güncel net/brüt asgari ücret oranıyla çarpılmasıyla yaklaşık bulunur. Bu bir "
+                               "TAHMİNDİR; ilk iş maaşı genellikle ortalamanın altındadır."},
         "kamu": kamu,
         "asgari": asgari,
         "eksik": eksik,

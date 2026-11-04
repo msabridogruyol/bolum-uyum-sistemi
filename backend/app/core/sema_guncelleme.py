@@ -60,6 +60,7 @@ OTOMATIK += ["0095_gece_bakimi_ve_hesap"]   # [2026-11-04] gece bakımı kuyruğ
 # bakımında (03:00, app/core/gece_bakimi.py) ve CONCURRENTLY ile çalışır; açılışta yalnızca hafif göçler uygulanır.
 OTOMATIK += ["0096_sistem_surumleri"]   # [2026-11-04] sistemin güncellenme zamanı
 OTOMATIK += ["0097_veri_kaynaklari_tohumu"]   # [2026-11-04] yaşam maliyeti referansı (Türk-İş), kamu maaşları (AA), YKS 2027
+OTOMATIK += ["0098_tufe_endeksi"]   # [2026-11-04] TÜFE endeksi (eski tutarların güncel tahmini) + kazanç referans ayı
 OTOMATIK_GECE = ["0094_gece_indeksleri"]
 KILIT = 2026101001
 

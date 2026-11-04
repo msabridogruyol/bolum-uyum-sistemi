@@ -144,7 +144,8 @@ function MaasSonuc({ k, tahmin, asgari }) {
       {k.meslek_tahmini && (
         <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 8, lineHeight: 1.55 }}>
           Bu bölümün mesleklerinde <b>ortalama</b> net kazanç (ilk maaş değil): <b>{tl(k.meslek_tahmini.min)}{k.meslek_tahmini.max !== k.meslek_tahmini.min ? ` – ${tl(k.meslek_tahmini.max)}` : ''}</b>
-          <TahminEtiketi /> <span className="yp-ince">({k.meslek_tahmini.meslek_sayisi} meslek · TÜİK {k.meslek_tahmini.veri_yili} · {k.meslek_tahmini.donem} asgari ücretiyle güncellendi)</span>
+          <TahminEtiketi /> <span className="yp-ince">({k.meslek_tahmini.meslek_sayisi} meslek · TÜİK {k.meslek_tahmini.veri_yili} · {k.meslek_tahmini.yontem === 'tufe' ? `TÜFE ile ${k.meslek_tahmini.donem} fiyatlarına taşındı` : `${k.meslek_tahmini.donem} asgari ücretiyle güncellendi`})</span>
+          {k.meslek_tahmini.aciklama && <div className="yp-ince" style={{ marginTop: 2 }}><b>Hesaplama:</b> {k.meslek_tahmini.aciklama}</div>}
         </div>
       )}
       {k.veri_yok && <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>📭 Bu bölüm için kazanç verisi yok.</div>}

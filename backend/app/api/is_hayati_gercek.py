@@ -78,6 +78,7 @@ def gercek_ozet(db: Session, bolum_id: int) -> dict | None:
         kazanc["meslek_tahmini"] = {
             "min": degerler[0], "max": degerler[-1], "meslek_sayisi": len(tah), "tahmin": True,
             "veri_yili": tah[0].get("veri_yili"), "kaynak": tah[0].get("kaynak"), "donem": tah[0].get("guncel_donem"),
+            "yontem": tah[0].get("guncelleme_yontemi"),
             "aciklama": v["kazanc"]["aciklama"]}
     kazanc["veri_yok"] = kazanc["deger"] is None and not kazanc["kazanc_grubu"] and not kazanc["meslek_tahmini"]
     return {"bolum": v["bolum"], "gostergeler": gostergeler, "kazanc": kazanc, "asgari": asgari,
