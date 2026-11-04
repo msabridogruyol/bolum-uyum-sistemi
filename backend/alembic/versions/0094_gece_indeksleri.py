@@ -39,8 +39,15 @@ CREATE INDEX CONCURRENTLY IF NOT EXISTS ix_anket_katilim_ogrenci ON anket_katili
 
 
 def upgrade():
-    with op.get_context().autocommit_block():
-        for komut in [k.strip() for k in SQL.split(";\n") if k.strip()]:
+    komutlar = [k.strip() for k in SQL.split(";\n") if k.strip()]
+    ctx = op.get_context()
+    if getattr(ctx, "_transaction", None) is None and not ctx.as_sql:
+        # Bağlantı zaten işlem dışında (AUTOCOMMIT; ör. scripts/test_semasi_kur.py): doğrudan çalıştır
+        for komut in komutlar:
+            op.execute(komut)
+        return
+    with ctx.autocommit_block():   # CREATE INDEX CONCURRENTLY işlem içinde çalışmaz
+        for komut in komutlar:
             op.execute(komut)
 
 
