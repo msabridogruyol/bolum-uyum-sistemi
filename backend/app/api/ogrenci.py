@@ -859,10 +859,10 @@ def bolum_ornek_meslekleri_getir(
         """),
         {"bid": bolum_id},
     ).mappings().all()
-    # [2026-10-04] Bu haftanın keşif görevi bu bölümse tamamlanır (hata olsa da liste yine döner)
+    # [2026-11-05] Bölüm keşfedildi olarak kaydedilir (gelişim listesinin isteğe bağlı keşif maddesi; hata olsa da liste döner)
     try:
-        from app.core.haftalik_servisi import kesif_isaretle
-        if kesif_isaretle(db, ogrenci, bolum_id):
+        from app.core.gelisim_listesi import kesif_kaydet
+        if kesif_kaydet(db, ogrenci, bolum_id):
             db.commit()
     except Exception:
         db.rollback()

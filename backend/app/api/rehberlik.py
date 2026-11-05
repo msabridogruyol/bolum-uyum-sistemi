@@ -56,7 +56,7 @@ KURALLAR = {
     "yarim_test": "Testi yarıda kaldı",
     "test_baslamadi": "Teste başlamadı",
     "net_dususu": "Netlerinde düşüş",
-    "gorev_birakti": "Görevleri bıraktı",
+    "gelisim_durgun": "Gelişim listesinde ilerlemiyor",
     "hedef_yok": "Hedef bölüm seçmedi",
     "tarama": "Tarama formunda destek ihtiyacı",
 }
@@ -95,20 +95,18 @@ def _net_dususleri(db: Session, idler: list) -> dict:
     return sonuc
 
 
-def _gorev_birakanlar(db: Session, idler: list) -> set:
-    """Son 3 haftada hiç görev tamamlamamış ama önceki 5 haftada en az 2 görev tamamlamış öğrenciler."""
-    if not idler:
-        return set()
-    bugun = datetime.now(timezone.utc)
-    satirlar = db.execute(text("""
-        SELECT ogrenci_id,
-               count(*) FILTER (WHERE tamamlanma_zamani >= :s3) AS yeni,
-               count(*) FILTER (WHERE tamamlanma_zamani < :s3 AND tamamlanma_zamani >= :s8) AS eski
-          FROM ogrenci_haftalik_gorev
-         WHERE ogrenci_id = ANY(:idler) AND durum = 'tamamlandi'
-         GROUP BY ogrenci_id
-    """), {"idler": idler, "s3": bugun - timedelta(days=21), "s8": bugun - timedelta(days=56)}).all()
-    return {r.ogrenci_id for r in satirlar if r.yeni == 0 and r.eski >= 2}
+def _gelisim_durgunlari(db: Session, idler: list) -> dict:
+    """[2026-11-05] Haftalık görevler kaldırıldı ("Görevleri bıraktı" kuralı yerine). Hedef bölümü olan öğrenci, son
+    hareketinden (tamamlanan madde, gelişim listesine girilen kayıt ya da hedefi seçtiği an) bu yana kaç gündür ilerlemiyor:
+    {ogrenci_id: gün}, yalnızca DURGUN_GUN ve üstü. Süre baskısı değil, rehber öğretmene "bir hal hatır sor" bilgisidir."""
+    from app.core.gelisim_listesi import DURGUN_GUN, son_hareketler
+    sonlar = son_hareketler(db, idler)
+    simdi = datetime.now(timezone.utc)
+    out = {}
+    for oid, son in sonlar.items():
+        if son is not None and (simdi - son).days >= DURGUN_GUN:
+            out[oid] = (simdi - son).days
+    return out
 
 
 def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
@@ -123,7 +121,7 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
     moduller = set(okul_modulleri(db, okul_id or None))
     il = _ilerleme(db, okul_id, ogrenci_id, oneri=False) if ogrenci_id is not None else _ilerleme(db, okul_id, oneri=False)
     netler = _net_dususleri(db, idler) if "net_takibi" in moduller else {}
-    gorev = _gorev_birakanlar(db, idler) if "kocluk" in moduller else set()
+    durgun = _gelisim_durgunlari(db, idler) if "kocluk" in moduller else {}
     tarama = {}
     if "anketler" in moduller:   # [2026-10-10] anonim olmayan tarama formlarında destek gerektiren sonuç
         try:
@@ -176,8 +174,9 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
             r.append(("test_baslamadi", "dusuk", "Giriş yaptı ama değerlendirmeye başlamadı."))
         for oturum, ort, son, yuzde in netler.get(o.id, []):
             r.append(("net_dususu", "yuksek" if yuzde >= 30 else "orta", f"{oturum} son deneme {son} net; önceki ortalama {ort} (−%{yuzde})."))
-        if o.id in gorev:
-            r.append(("gorev_birakti", "orta", "Önceki haftalarda görev yapıyordu, son 3 haftada hiç tamamlamadı."))
+        if o.id in durgun:
+            r.append(("gelisim_durgun", "orta" if durgun[o.id] >= 30 else "dusuk",
+                      f"Hedef bölümü var; {durgun[o.id]} gündür gelişim listesinde yeni madde ya da kayıt yok."))
         for baslik, seviye in tarama.get(o.id, []):
             r.append(("tarama", "orta", f"{baslik}: {seviye}."))
         if x.get("durum") == "tamamlandi" and not x.get("hedef") and o.sinif in ("12. Sınıf", "Mezun"):

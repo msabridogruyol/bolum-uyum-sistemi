@@ -249,7 +249,7 @@ export default function SistemHakkindaSayfasi() {
         <Madde><b>Tekrar ölçüm:</b> değer (K1) dışındaki odak alanında her 3 tamamlanan adımda bir, o değişkene en çok etki eden en fazla 5 soru yeniden sorulur</Madde>
         <Madde><b>Tur Karşılaştırması:</b> öğrenci yeniden değerlendirildiğinde (12. sınıf ve mezunlarda en erken 70 gün, diğer sınıflarda 183 gün sonra; varsayılan), önceki turla karşılaştırıp gerçek gelişimi gösterir</Madde>
         <Madde><b>Sonuç e-postası:</b> öğrenci değerlendirmenin son bölümünü bitirince (K1–K4 ve açıldıysa K5 iş türü soruları) sonuç e-postası kendi e-posta adresine otomatik gider; okulun paketinde öğrenci raporları varsa PDF sonuç raporu ektedir. Güven puanı düşük çıkan değerlendirmede gönderilmez; sorunlu bölüm yeniden çözülünce gider. Okul yetkilisi öğrenci detayından yeniden gönderebilir</Madde>
-        <Madde><b>Haftalık görevler:</b> her hafta 3 görev (yolculuk, keşif, yansıtma), seri ve Filiz seviyesi (Tohum → Ulu Çınar)</Madde>
+        <Madde><b>Gelişim listesi:</b> hedef bölüme göre geliştirilecek her alan için yapılacak maddeler (süre yok). Öğrenci her madde için Yapmadım / Yapıyorum / Yaptım seçer ve “şu tarihte şunu yaptım” kayıtları girer; “Yaptım” için en az bir kayıt gerekir. Bölüm keşfi ve 3 soruluk öz değerlendirme isteğe bağlıdır. Filiz seviyesi (Tohum → Ulu Çınar) tamamlanan maddelere bağlıdır; seri yoktur. Okul paneli alan bazında tamamlanmayı ve 14+ gündür ilerlemeyen öğrencileri gösterir</Madde>
       </Bolum>
 
       <Bolum ikon="❓" baslik="7. Soru Tipleri ve Puanlama Mantığı">
@@ -367,7 +367,7 @@ export default function SistemHakkindaSayfasi() {
       </Bolum>
 
       <Bolum ikon="🧩" baslik="11. Okul Modülleri ve Paketler">
-        <Madde><b>Çekirdek (her pakette, çıkarılamaz):</b> değerlendirme, bölüm önerileri, profil, hedef bölüm, <b>koçluk</b> (Koçluğum + haftalık görevler) ve <b>Filiz</b> rehber modu (<code>paketler.ZORUNLU</code>). Bölüm yönlendirme ve koçluk sistemin omurgasıdır; paket ve okul ekranlarında seçilebilir modül olarak gösterilmez</Madde>
+        <Madde><b>Çekirdek (her pakette, çıkarılamaz):</b> değerlendirme, bölüm önerileri, profil, hedef bölüm, <b>koçluk</b> (Koçluğum + gelişim listesi) ve <b>Filiz</b> rehber modu (<code>paketler.ZORUNLU</code>). Bölüm yönlendirme ve koçluk sistemin omurgasıdır; paket ve okul ekranlarında seçilebilir modül olarak gösterilmez</Madde>
         <Madde><b>Paketler:</b> 20 modülün 2'si zorunlu (koçluk, Filiz), 18'i seçilebilir; okulun paketi (Temel / Gelişim / Tam) + okula özel ekle/çıkar ile açılır (etkin = paket ∪ ekle − çıkar ∪ zorunlu). Paket içerikleri veritabanındaki <code>paketler</code> tablosundadır ve Paketler ekranında görülür. Bağımlılık: okul denemeleri → net takibi, Filiz AI → Filiz. Okulsuz öğrenci tüm modülleri görür</Madde>
         <Madde><b>Rehberlik ve erken uyarı:</b> görüşme/randevu/takip kayıtları (notlar öğrenciye gösterilmez) ve 8 kurallı dikkat listesi (giriş yok, uzak kaldı, test yarıda, teste başlamadı, net düşüşü, görevleri bıraktı, tarama formunda destek ihtiyacı, hedef yok); "görüştüm, N gün gösterme" ertelemesi</Madde>
         <Madde><b>Net takibi ve okul denemeleri:</b> deneme netleri, konu takibi, hedef programa son yerleşenin netleriyle kıyas (YÖK Atlas, 7 gün önbellek); okul denemeleri Excel şablonla toplu yüklenir, öğrencinin net takibine düşer, okul/şube/ders ortalamaları hesaplanır</Madde>

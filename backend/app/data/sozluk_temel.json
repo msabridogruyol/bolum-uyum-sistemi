@@ -903,16 +903,6 @@
    ]
   },
   {
-   "k": "seri",
-   "ad": "Seri",
-   "g": "Hedef ve takip",
-   "t": "Haftalık görevlerini art arda kaç hafta yaptığını gösterir. Bir haftada en az 2 görevi bitirirsen o hafta seriye sayılır; bir hafta eksik kalırsa seri yeniden başlar.",
-   "es": [
-    "hafta seri",
-    "serin"
-   ]
-  },
-  {
    "k": "rozet",
    "ad": "Rozet",
    "g": "Hedef ve takip",
@@ -922,12 +912,13 @@
    ]
   },
   {
-   "k": "haftalik_gorev",
-   "ad": "Haftalık görev",
+   "k": "gelisim_listesi",
+   "ad": "Gelişim listesi",
    "g": "Hedef ve takip",
-   "t": "Her hafta sana verilen küçük ve kısa görevler. Kendini tanımana ve hedefine yaklaşmana yardım eder.",
+   "t": "Hedef bölümün için geliştirmen gereken alanlar ve her alanda yapabileceğin maddeler. Her maddeyi yapmadım, yapıyorum ya da yaptım diye işaretlersin; ne yaptığını tarihiyle yazarsın. Süre yok, kendi hızında ilerlersin.",
    "es": [
-    "haftalık görev"
+    "gelişim listesi",
+    "gelişim listem"
    ]
   },
   {

@@ -103,7 +103,8 @@ def ogrenci_kumesi(db: Session, okul_id: int, sinif: str | None = None, sube: st
 
 
 def kocluk_etkinligi(db: Session, ids: list, bas: date, bit: date) -> tuple[set, set]:
-    """(hiç gelişim adımı tamamlayan, aralıkta adım ya da haftalık görev tamamlayan) öğrenci kümeleri."""
+    """(hiç gelişim adımı tamamlayan, aralıkta adım tamamlayan ya da gelişim listesine kayıt giren) öğrenci kümeleri.
+    [2026-11-05] Haftalık görevler kaldırıldı; eski tamamlanmış haftalık görevler geçmiş aralıklar için sayılmaya devam eder."""
     if not ids:
         return set(), set()
     p = {"ids": ids, "bas": bas, "bit": bit}
@@ -118,6 +119,9 @@ def kocluk_etkinligi(db: Session, ids: list, bas: date, bit: date) -> tuple[set,
     aralikta |= {r[0] for r in db.execute(text(f"""
         SELECT DISTINCT ogrenci_id FROM ogrenci_haftalik_gorev WHERE ogrenci_id = ANY(:ids) AND durum = 'tamamlandi'
            AND {TRG % 'tamamlanma_zamani'} BETWEEN :bas AND :bit"""), p).all()}
+    aralikta |= {r[0] for r in db.execute(text(f"""
+        SELECT DISTINCT ogrenci_id FROM ogrenci_gelisim_kayitlari WHERE ogrenci_id = ANY(:ids)
+           AND {TRG % 'zaman'} BETWEEN :bas AND :bit"""), p).all()}
     return adim_ogr, aralikta
 
 
@@ -335,42 +339,19 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
 
     # ------------------------------------------------------------------ Koçluk ve çalışma
     if kocluk_acik:
-        gorev_rows = db.execute(text("""
-            SELECT ogrenci_id, hafta_baslangic, count(*) AS top, count(*) FILTER (WHERE durum = 'tamamlandi') AS biten
-              FROM ogrenci_haftalik_gorev WHERE ogrenci_id = ANY(:ids) GROUP BY 1, 2"""), p).all() if ids else []
-        hafta = defaultdict(lambda: [0, 0, set()])
-        ogr_haftalar = defaultdict(set)
-        for r in gorev_rows:
-            if r.biten:
-                ogr_haftalar[r.ogrenci_id].add(r.hafta_baslangic)
-            if bas - timedelta(days=6) <= r.hafta_baslangic <= bit:
-                hafta[r.hafta_baslangic][0] += r.top
-                hafta[r.hafta_baslangic][1] += r.biten
-                hafta[r.hafta_baslangic][2].add(r.ogrenci_id)
-        # seri: bu haftadan (ya da geçen haftadan) geriye, en az bir görev tamamlanan ardışık hafta sayısı
-        bu_hafta = datetime.now(TR).date()
-        bu_hafta -= timedelta(days=bu_hafta.weekday())
-        seriler = []
-        for i, hs in ogr_haftalar.items():
-            h = bu_hafta if bu_hafta in hs else bu_hafta - timedelta(days=7)
-            n = 0
-            while h in hs:
-                n += 1
-                h -= timedelta(days=7)
-            seriler.append(n)
         adim_say = db.execute(text(f"""
             SELECT count(*), count(DISTINCT ogrenci_id) FROM ogrenci_gelisim_adim_durumu
              WHERE ogrenci_id = ANY(:ids) AND durum = 'tamamlandi' AND {TRG % 'guncelleme_zamani'} BETWEEN :bas AND :bit"""), p).first() if ids else (0, 0)
+        # [2026-11-05] Haftalık görev / seri göstergeleri kaldırıldı → gelişim listesi: hedefli öğrenci, adım dağılımı, durgun öğrenci
+        from app.core.gelisim_listesi import okul_ozeti
+        gl = okul_ozeti(db, ids)
+        kayit = db.execute(text(f"""
+            SELECT count(*) FILTER (WHERE tur = 'adim_kaydi'), count(DISTINCT ogrenci_id) FILTER (WHERE tur = 'adim_kaydi')
+              FROM ogrenci_gelisim_kayitlari WHERE ogrenci_id = ANY(:ids) AND {TRG % 'zaman'} BETWEEN :bas AND :bit"""), p).first() if ids else (0, 0)
         v["kocluk"] = {
             "adim": {"tamamlanan": adim_say[0] or 0, "ogrenci": adim_say[1] or 0, "hic_adim_yapan": len(adim_ogr)},
-            "gorev_haftalik": [{"hafta": h.isoformat(), "toplam": hafta[h][0], "tamamlanan": hafta[h][1],
-                                "oran": _yuzde(hafta[h][1], hafta[h][0]), "ogrenci": len(hafta[h][2])}
-                               for h in haftalar],
-            "gorev_toplam": {"toplam": sum(hafta[h][0] for h in haftalar), "tamamlanan": sum(hafta[h][1] for h in haftalar)},
-            "seri": {"ortalama": _ort([s for s in seriler if s > 0]), "en_uzun": max(seriler, default=0),
-                     "aktif_seri": sum(1 for s in seriler if s > 0), "dagilim": [
-                         {"ad": ad, "deger": sum(1 for s in seriler if lo <= s <= hi)}
-                         for ad, lo, hi in (("1 hafta", 1, 1), ("2–3 hafta", 2, 3), ("4–7 hafta", 4, 7), ("8+ hafta", 8, 10**6))]},
+            "kayit": {"sayi": kayit[0] or 0, "ogrenci": kayit[1] or 0},
+            "liste": gl,
         }
     if "filiz" in moduller and ids:
         f = db.execute(text(f"""
@@ -584,10 +565,11 @@ def istatistik_xlsx(v: dict, okul_adi: str) -> bytes:
                [[s["ad"], s["deger"], s["ogrenci"], s["keyif"]] for s in b["simulasyon"]])
     if v.get("kocluk"):
         kc = v["kocluk"]
-        _sayfa(wb, "Koçluk", ["Hafta (pazartesi)", "Görev", "Tamamlanan", "Oran %", "Öğrenci"],
-               [[h["hafta"], h["toplam"], h["tamamlanan"], h["oran"], h["ogrenci"]] for h in kc["gorev_haftalik"]],
-               f"Aralıkta tamamlanan gelişim adımı: {kc['adim']['tamamlanan']} ({kc['adim']['ogrenci']} öğrenci) · "
-               f"Seri: ortalama {kc['seri']['ortalama'] or 0} hafta, en uzun {kc['seri']['en_uzun']}")
+        gl = kc["liste"]
+        _sayfa(wb, "Koçluk", ["Tamamlanan madde (toplam)", "Hedefi olan öğrenci"], [[d["ad"], d["deger"]] for d in gl["dagilim"]],
+               f"Aralıkta tamamlanan gelişim maddesi: {kc['adim']['tamamlanan']} ({kc['adim']['ogrenci']} öğrenci) · "
+               f"Aralıkta girilen kayıt: {kc['kayit']['sayi']} ({kc['kayit']['ogrenci']} öğrenci) · "
+               f"{gl['durgun_gun']}+ gündür ilerlemeyen: {gl['durgun']} / {gl['hedefli']}")
     if v.get("calisma"):
         c = v["calisma"]
         _sayfa(wb, "Çalışma", ["Ders", "Saat", "Soru"], [[d["ad"], d["saat"], d["soru"]] for d in c["dersler"]],

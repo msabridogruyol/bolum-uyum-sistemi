@@ -25,7 +25,7 @@ const AnketlerSayfasi = tembel(() => import('./pages/AnketlerSayfasi'))
 const PortfolyoSayfasi = tembel(() => import('./pages/PortfolyoSayfasi'))
 const CalismaSayfasi = tembel(() => import('./pages/CalismaSayfasi'))
 const RaporlarimSayfasi = tembel(() => import('./pages/RaporlarimSayfasi'))
-const GorevlerimSayfasi = tembel(() => import('./pages/GorevlerimSayfasi'))
+const GelisimListemSayfasi = tembel(() => import('./pages/GelisimListemSayfasi'))   // [2026-11-05] Görevlerim yerine
 const TakvimSayfasi = tembel(() => import('./pages/TakvimSayfasi'))
 const KutuphanemSayfasi = tembel(() => import('./pages/KutuphanemSayfasi'))
 const NetTakibiSayfasi = tembel(() => import('./pages/NetTakibiSayfasi'))
@@ -149,7 +149,8 @@ function AnaUygulama() {
         <Route path="/koclar" element={<KoclarSayfasi />} />
         <Route path="/kulupler" element={<KuluplerimSayfasi />} />
         <Route path="/profilim/kulup" element={<Navigate to="/kulupler" replace />} />
-        <Route path="/gorevler" element={<GorevlerimSayfasi />} />
+        <Route path="/gelisim" element={<GelisimListemSayfasi />} />
+        <Route path="/gorevler" element={<Navigate to="/gelisim" replace />} />
         <Route path="/takvim" element={<TakvimSayfasi />} />
         <Route path="/kutuphane" element={<KutuphanemSayfasi />} />
         <Route path="/netlerim" element={<NetTakibiSayfasi />} />

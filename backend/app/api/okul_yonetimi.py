@@ -980,10 +980,20 @@ def _kocluk_ozeti(db: Session, o: Ogrenci) -> dict:
                      "zaman": m.olusturulma_zamani}
                     for m in db.query(OgrenciAlanOlcumu).filter(OgrenciAlanOlcumu.ogrenci_id == o.id)
                     .order_by(OgrenciAlanOlcumu.olusturulma_zamani.desc()).all()]
-        return {"adimlar": adimlar, "olcumler": olcumler}
+        # [2026-11-05] Gelişim listesi: alanlar, maddelerin durumu ve öğrencinin tarihli "ne yaptım" kayıtları (öz değerlendirme
+        # cevapları öğrenciye özeldir, gösterilmez)
+        liste = None
+        try:
+            from app.core.gelisim_listesi import liste as gelisim_listesi
+            gl = gelisim_listesi(db, o)
+            liste = {"hedef": gl["hedef"], "alanlar": gl["alanlar"], "guclu_yonler": gl["guclu_yonler"], "ozet": gl["ozet"],
+                     "on_adim": gl["on_adim"]}
+        except Exception:
+            db.rollback()
+        return {"adimlar": adimlar, "olcumler": olcumler, "liste": liste}
     except Exception:
         db.rollback()
-        return {"adimlar": [], "olcumler": []}
+        return {"adimlar": [], "olcumler": [], "liste": None}
 
 
 def _ogrenci_kayitlari(db: Session, o: Ogrenci, katmanlar) -> list[dict]:

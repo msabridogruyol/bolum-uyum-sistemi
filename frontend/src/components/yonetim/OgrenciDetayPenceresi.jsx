@@ -78,13 +78,45 @@ const KATMAN_DURUM = { tamamlandi: '✓ Tamamlandı', devam_ediyor: '… Devam e
 
 // [2026-10-10] Rehber öğretmen için koçluk özeti: tamamlanan adımlar + öğrencinin kısa geri bildirimi + tekrar ölçümler
 const ZORLUK = { kolay: 'Kolay', uygun: 'Uygun', zor: 'Zor' }
+// [2026-11-05] Gelişim listesi: hedef bölüm için alanlar, maddelerin durumu ve öğrencinin tarihli "ne yaptım" kayıtları
+const DURUM_AD = { bekliyor: 'Yapmadı', devam_ediyor: 'Yapıyor', tamamlandi: 'Yaptı' }
+function GelisimListesiOzeti({ l }) {
+  if (!l) return null
+  if (l.on_adim) return <div className="yp-kutu" style={{ marginBottom: 12 }}><div className="yp-kb">Gelişim listesi</div>Henüz açılmadı. Öğrencinin önce yapması gereken: {l.on_adim.baslik}</div>
+  if (!l.alanlar?.length) return null
+  return (
+    <div className="yp-kutu" style={{ marginBottom: 12 }}>
+      <div className="yp-kb">Gelişim listesi <span className="yp-ince" style={{ fontWeight: 500 }}>— {l.hedef?.ad} · {l.ozet.tamamlanan}/{l.ozet.toplam} madde (%{l.ozet.yuzde}){l.ozet.son_ilerleme ? ` · son ilerleme ${tarih(l.ozet.son_ilerleme)}` : ''}</span></div>
+      {l.alanlar.map((a) => (
+        <div key={a.degisken_kod} style={{ marginBottom: 10 }}>
+          <div style={{ fontWeight: 700 }}>{a.ad} <span className="yp-ince" style={{ fontWeight: 500 }}>· {a.tamamlanan}/{a.toplam} madde</span></div>
+          <ul style={{ margin: '4px 0 0', paddingLeft: 18 }}>
+            {a.adimlar.map((m) => (
+              <li key={m.kod} style={{ marginBottom: 4 }}>
+                <span>{m.baslik}</span> <span className="yp-ince">· {DURUM_AD[m.durum] || m.durum}</span>
+                {m.kayitlar?.length > 0 && (
+                  <ul style={{ margin: '2px 0 0', paddingLeft: 16 }}>
+                    {m.kayitlar.map((k, i) => <li key={k.id ?? i} className="yp-ince"><b>{tarih(k.tarih)}</b> — {k.aciklama}</li>)}
+                  </ul>
+                )}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
+      <div className="yp-ince">Öz değerlendirme cevapları öğrenciye özeldir, burada gösterilmez.</div>
+    </div>
+  )
+}
+
 function KoclukOzeti({ k }) {
-  if (!k || (k.adimlar.length === 0 && k.olcumler.length === 0)) return <div className="bos-durum">Öğrenci henüz koçluk adımı tamamlamadı.</div>
+  if (!k || (k.adimlar.length === 0 && k.olcumler.length === 0 && !k.liste)) return <div className="bos-durum">Öğrenci henüz koçluk adımı tamamlamadı.</div>
   return (
     <>
+      <GelisimListesiOzeti l={k.liste} />
       {k.olcumler.length > 0 && (
         <div className="yp-kutu" style={{ marginBottom: 12 }}>
-          <div className="yp-kb">Tekrar ölçümler <span className="yp-ince" style={{ fontWeight: 500 }}>— aynı sorularla önce / sonra (eğilim göstergesi)</span></div>
+          <div className="yp-kb">Ara ölçümler <span className="yp-ince" style={{ fontWeight: 500 }}>— aynı sorularla önce / sonra (eğilim göstergesi)</span></div>
           <table className="yp-tablo">
             <thead><tr><th>Alan</th><th>Önce</th><th>Sonra</th><th>Fark</th><th>Tarih</th></tr></thead>
             <tbody>{k.olcumler.map((m, i) => (

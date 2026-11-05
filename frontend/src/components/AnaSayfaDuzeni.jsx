@@ -198,8 +198,8 @@ export default function AnaSayfaDuzeni() {
           </NavLink>
         )}
         {acik('kocluk') && (
-          <NavLink to="/gorevler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-            ✅ Görevlerim
+          <NavLink to="/gelisim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            🪜 Gelişim listem
           </NavLink>
         )}
         {acik('calisma') && (
