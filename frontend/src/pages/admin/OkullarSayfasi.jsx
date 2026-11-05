@@ -105,7 +105,8 @@ export default function OkullarSayfasi() {
   async function sil() {
     setIsleniyor(true); setHata(null)
     try {
-      await api.okulSil(silme.okul.id, silme.okul.ogrenci_sayisi ? Number(silme.hedef) : undefined)
+      const aktarilacak = silme.okul.demo ? 0 : silme.okul.ogrenci_sayisi - (silme.okul.test_ogrenci_sayisi || 0)
+      await api.okulSil(silme.okul.id, aktarilacak > 0 ? Number(silme.hedef) : undefined)
       setSilme(null); yukle(); mesaj(`"${silme.okul.ad}" silindi.`)
     } catch (err) { setHata(err.detail || 'Silinemedi.') } finally { setIsleniyor(false) }
   }
@@ -208,15 +209,19 @@ export default function OkullarSayfasi() {
               )}
               {silme?.okul.id === o.id ? (
                 <div className="yp-okul-sil">
-                  {o.ogrenci_sayisi > 0 ? (
+                  {/* [2026-11-06] Demo okul tümüyle silinir; test öğrencileri aktarılmaz, verileriyle silinir */}
+                  {o.demo ? (
+                    <span style={{ color: 'var(--re)' }}>Demo okul: {o.ogrenci_sayisi} öğrenci bütün verileriyle silinir.</span>
+                  ) : o.ogrenci_sayisi - (o.test_ogrenci_sayisi || 0) > 0 ? (
                     <>
-                      <span>{o.ogrenci_sayisi} öğrenci şuraya aktarılsın:</span>
+                      <span>{o.ogrenci_sayisi - (o.test_ogrenci_sayisi || 0)} öğrenci şuraya aktarılsın:</span>
                       <select className="yp-sec" value={silme.hedef} onChange={(e) => setSilme({ ...silme, hedef: e.target.value })}>
                         <option value={0}>Okul harici</option>
                         {okullar.filter((x) => x.id !== o.id).map((x) => <option key={x.id} value={x.id}>{x.ad}</option>)}
                       </select>
                     </>
                   ) : <span>Okul silinsin mi?</span>}
+                  {!o.demo && o.test_ogrenci_sayisi > 0 && <span style={{ color: 'var(--re)' }}>{o.test_ogrenci_sayisi} test öğrencisi verileriyle silinir.</span>}
                   {o.yetkili_sayisi > 0 && <span style={{ color: 'var(--re)' }}>{o.yetkili_sayisi} okul yetkilisi hesabı da silinir.</span>}
                   <div style={{ display: 'flex', gap: 6 }}>
                     <button className="btn yp-tehlike" disabled={isleniyor} onClick={sil}>Sil</button>

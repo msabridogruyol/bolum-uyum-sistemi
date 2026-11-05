@@ -367,7 +367,9 @@ def yonetici_sil(
     if hedef.rol == "super_admin" and db.query(AdminKullanici).filter(AdminKullanici.rol == "super_admin").count() <= 1:
         raise HTTPException(status_code=400, detail="Sistemde en az bir süper admin kalmalı.")
     _audit_yaz(db, admin, "yonetici_silme", "admin_kullanicilar", str(hedef.id), f"{hedef.ad_soyad} <{hedef.email}> ({hedef.rol})")
-    db.delete(hedef)
+    db.flush()
+    from app.core.hesap_yonetimi import yoneticiyi_sil
+    yoneticiyi_sil(db, hedef, admin.id)   # [2026-11-06] KVKK onayı, doğrulama kodu, güvenilir cihaz kayıtları da silinir
     db.commit()
 
 
