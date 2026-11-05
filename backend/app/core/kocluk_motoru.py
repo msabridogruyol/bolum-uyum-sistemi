@@ -95,14 +95,14 @@ def uyarlama_metni(kayitlar: list[OgrenciGelisimAdimDurumu]) -> str | None:
     son = biten[0]
     zaman = son.guncelleme_zamani if son.guncelleme_zamani.tzinfo else son.guncelleme_zamani.replace(tzinfo=timezone.utc)
     if datetime.now(timezone.utc) - zaman > timedelta(days=14):
-        return ("İki haftadır yeni adım yok, sorun değil. Bugün sadece 10 dakika ayır ve bu adımın yalnızca ilk maddesini yap. "
+        return ("Bir süredir yeni adım yok, sorun değil. Uygun bir gün 10 dakika ayır ve bu adımın yalnızca ilk maddesini yap. "
                 "Küçük başlamak, hiç başlamamaktan iyidir.")
     if son.zorluk == "zor" or (son.fayda is not None and son.fayda <= 2):
         neden = "zor buldun" if son.zorluk == "zor" else "pek faydalı bulmadın"
         return (f"Son adımı {neden}. Bu adımı küçült: önce yalnızca ilk maddeyi yap, 15-20 dakika yeter. "
                 "Takılırsan Filiz'e sor ya da rehber öğretmeninle konuş.")
     if son.zorluk == "kolay" and (son.fayda or 0) >= 4:
-        return "Son adımı kolay ve faydalı buldun 👏 İstersen bu hafta bir adım daha ekleyebilirsin."
+        return "Son adımı kolay ve faydalı buldun 👏 Hazır hissediyorsan listendeki bir sonraki maddeye geçebilirsin."
     return None
 
 

@@ -344,10 +344,10 @@ def _bulgular(v: dict, ham_uyari: list, secili_str: set, gecersiz_n: int, rehber
     if hu and hu["sayi"]:
         bilgi.append(f"{hu['sayi']} öğrencinin seçtiği hedef bölümle uyumu %{UYUM_DUSUK}'ın altında — koçlukta birlikte değerlendirme fırsatı.")
     if k["kocluk_aktif"] == 0 and k["ogrenci"]:
-        bilgi.append(f"Son {KOCLUK_GUN} günde koçlukta adım ya da görev tamamlayan öğrenci yok.")
+        bilgi.append(f"Son {KOCLUK_GUN} günde koçlukta madde tamamlayan ya da gelişim listesine kayıt giren öğrenci yok.")
     elif k["kocluk_aktif"] and k["ogrenci"]:
         bilgi.append(f"Son {KOCLUK_GUN} günde {k['kocluk_aktif']} öğrenci (%{_tr_sayi(_yuzde(k['kocluk_aktif'], k['ogrenci']), 0)}) "
-                     "koçlukta adım ya da görev tamamladı.")
+                     "koçlukta madde tamamladı ya da gelişim listesine kayıt girdi.")
 
     secim = [("dikkat", m) for m in dikkat[:4]] + [("olumlu", m) for m in olumlu[:2]]
     kalan = [("dikkat", m) for m in dikkat[4:]] + [("olumlu", m) for m in olumlu[2:]] + [("bilgi", m) for m in bilgi]

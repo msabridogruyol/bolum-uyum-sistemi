@@ -358,10 +358,11 @@ def tur_karsilastirmasi_hesapla(db: Session, ogrenci: Ogrenci) -> list[Karsilast
 ODAK_ALAN_SAYISI = 3       # yol haritası en öncelikli 3 gelişim alanına odaklanır (odak ilkesi)
 GUCLU_YON_SAYISI = 2
 ADIM_DURUMLARI = ("planlandi", "devam_ediyor", "tamamlandi")
+# [2026-11-05] Kullanıcı kararı: süre / hafta yok. Aşamalar yalnızca sırayı anlatır (başlangıç → pratik → kalıcı alışkanlık).
 ASAMA_BILGI = {
-    "simdi": ("1. Aşama · Bu hafta başla", "Kısa, hemen yapılabilecek adımlar — 1-2 hafta"),
-    "bu_donem": ("2. Aşama · Önümüzdeki 1-3 ay", "Düzenli pratik ve deneyimlerle ilerle; neyin sana uyduğunu gör"),
-    "uzun_vadede": ("3. Aşama · 6-12 ay", "Kalıcı alışkanlık ve büyük adımlar"),
+    "simdi": ("1. Aşama · Başlangıç", "Kısa, hemen yapılabilecek adımlar"),
+    "bu_donem": ("2. Aşama · Pratik ve deneyim", "Düzenli pratik ve deneyimlerle ilerle; neyin sana uyduğunu gör"),
+    "uzun_vadede": ("3. Aşama · Kalıcı alışkanlık", "Kalıcı alışkanlıklar ve büyük adımlar"),
 }
 _KUCUK = {"ve", "ile", "veya"}
 
@@ -514,7 +515,7 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
          (öncelik = fark büyüklüğü × bölümün o özelliğe verdiği ağırlık).
       2. İçeriği olan ilk 3 özellik "odak alanı" olur; diğerleri "sonra odaklanılacak" listesine girer.
          Böylece öğrenci 31 şeyle değil, en çok fark yaratacak 3 alanla uğraşır.
-      3. Her odak alanın adımları 3 aşamaya dağıtılır: Bu hafta → 1-3 ay → 6-12 ay.
+      3. Her odak alanın adımları 3 aşamaya dağıtılır: Başlangıç → Pratik ve deneyim → Kalıcı alışkanlık (süre yok; [2026-11-05]).
          Bir aşamada odak sırasına göre (en öncelikli alan önce) dizilir.
       4. Güçlü yönlerden en belirgin 2'si için "bu gücü kullan" adımları eklenir.
       5. Sıradaki adım = en erken aşamadaki, en öncelikli alanın tamamlanmamış ilk adımı.

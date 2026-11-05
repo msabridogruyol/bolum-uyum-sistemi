@@ -590,7 +590,7 @@ VELI_ONERILERI = [
     "Önerilen bölümleri birer “kesin karar” değil, keşfedilecek seçenekler olarak görün.",
     "İlgi duyduğu alanlarda bir meslek sahibiyle tanışma, kampüs gezisi ya da kısa bir atölye fırsatı yaratın.",
     "Gelişime açık alanlarda küçük ve düzenli adımları destekleyin; karşılaştırma yerine ilerlemeyi takdir edin.",
-    "Haftalık görevlerini ve yol haritasındaki adımları sorun; bitirdiği adımları kutlayın.",
+    "Gelişim listesindeki maddeleri ve tarihiyle yazdığı kayıtları birlikte okuyun; yaptıklarını fark edip kutlayın.",
     "Sorularınız için okulun rehber öğretmeniyle görüşme planlayın.",
 ]
 VELI_SORULARI = [
@@ -674,7 +674,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
          "Geçerlilik", ("Geçerli" if tur.get("gecerli", True) else "GEÇERSİZ") if tur else "—"],
         ["Kamera doğrulaması", "Var" if g.get("kamera") else "Yok", "İhlaller",
          ", ".join(f"{x['ad']} ({x['sayi']})" for x in g.get("ihlaller", [])) or "Yok"],
-        ["Son giriş", _tarih(a.get("son_giris"), True), "Haftalık görev", f"{a.get('gorev_tamam', 0)} / {a.get('gorev_toplam', 0)} (son 4 hafta: {a.get('son4_hafta', 0)})"],
+        ["Son giriş", _tarih(a.get("son_giris"), True), "Gelişim kaydı", f"{a.get('kayit', 0)} (son 4 hafta: {a.get('son4_hafta', 0)})"],
         ["Yol haritası adımı", str(a.get("adim", 0)), "Listem", ", ".join(v["listem"][:5]) or "—"],
     ]
     h.append(st.p("Özet", st.h2))
@@ -907,7 +907,7 @@ def sinif_ogretmeni_pdf(v: dict, netler: bool = True) -> bytes:
         ["Değerlendirme", durum, "Son giriş", _tarih(a.get("son_giris"), True)],
         ["Hedef bölüm", hd.get("ad") or "Seçilmedi", "Yol haritası",
          f"{il.get('tamamlanan', 0)} / {il['toplam']} adım" if il.get("toplam") else "—"],
-        ["Haftalık görev", f"{a.get('gorev_tamam', 0)} / {a.get('gorev_toplam', 0)}", "Son 4 hafta", f"{a.get('son4_hafta', 0)} görev"],
+        ["Gelişim kaydı", str(a.get("kayit", 0)), "Son ilerleme", _tarih(a.get("son_ilerleme")) if a.get("son_ilerleme") else "—"],
     ], [32 * mm, 55 * mm, 30 * mm, 57 * mm], zebra=False))
     if v["gucluler"]:
         h.append(st.p("Öne çıkan güçlü yönleri", st.h2))
@@ -1134,7 +1134,7 @@ def yonetici_ozeti_pdf(v: dict, okul: dict) -> bytes:
     kpi.setStyle(TableStyle([("BACKGROUND", (0, 0), (-1, -1), ACIK), ("INNERGRID", (0, 0), (-1, -1), 2, colors.white),
                              ("TOPPADDING", (0, 0), (-1, -1), 7), ("BOTTOMPADDING", (0, 0), (-1, -1), 7)]))
     notlar = (["Kritik: erken uyarıda yüksek seviyedeki öğrenci."] if v.get("rehberlik") else [])
-    notlar += (["Koçlukta aktif: son 30 günde gelişim adımı ya da haftalık görev tamamlayan."] if k.get("kocluk_aktif") is not None else [])
+    notlar += (["Koçlukta aktif: son 30 günde gelişim maddesi tamamlayan ya da gelişim listesine kayıt giren."] if k.get("kocluk_aktif") is not None else [])
     notlar += (["Ort. son TYT neti: akademik sıralamadaki kaynağa göre."] if k.get("tyt_kaynak") else [])
     h += [Spacer(1, 6), kpi] + ([st.p(" · ".join(notlar), st.kucuk)] if notlar else [])
 

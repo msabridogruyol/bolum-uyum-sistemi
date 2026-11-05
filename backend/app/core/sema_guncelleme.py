@@ -61,6 +61,7 @@ OTOMATIK += ["0095_gece_bakimi_ve_hesap"]   # [2026-11-04] gece bakımı kuyruğ
 OTOMATIK += ["0096_sistem_surumleri"]   # [2026-11-04] sistemin güncellenme zamanı
 OTOMATIK += ["0097_veri_kaynaklari_tohumu"]   # [2026-11-04] yaşam maliyeti referansı (Türk-İş), kamu maaşları (AA), YKS 2027
 OTOMATIK += ["0098_tufe_endeksi"]   # [2026-11-04] TÜFE endeksi (eski tutarların güncel tahmini) + kazanç referans ayı
+OTOMATIK += ["0099_gelisim_listesi"]   # [2026-11-05] haftalık görev yerine gelişim listesi: keşif ve öz değerlendirme kayıtları
 OTOMATIK_GECE = ["0094_gece_indeksleri"]
 KILIT = 2026101001
 

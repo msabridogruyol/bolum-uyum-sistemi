@@ -129,29 +129,23 @@ function BolumMeslek({ v }) {
 function Kocluk({ v }) {
   const kc = v.kocluk, f = v.filiz, c = v.calisma
   if (!kc && !f && !c) return null
-  const gt = kc?.gorev_toplam
+  const gl = kc?.liste
   return (
-    <Bolum id="kocluk" baslik="Koçluk" aciklama="Seçili tarih aralığındaki gelişim adımları, haftalık görevler, Filiz ve çalışma kayıtları.">
+    <Bolum id="kocluk" baslik="Koçluk" aciklama="Gelişim listesi (hedef bölüm için geliştirilecek alanlar ve yapılan maddeler), Filiz ve çalışma kayıtları.">
       <KpiSatiri>
-        {kc && <KpiKarti etiket="Tamamlanan gelişim adımı" deger={kc.adim.tamamlanan} ikon="🪜" ton="okul" alt={`${kc.adim.ogrenci} öğrenci`} />}
-        {kc && <KpiKarti etiket="Haftalık görev tamamlama" deger={gt.toplam ? Math.round((1000 * gt.tamamlanan) / gt.toplam) / 10 : '—'} birim={gt.toplam ? '%' : undefined}
-          ikon="✅" alt={`${gt.tamamlanan} / ${gt.toplam} görev`} />}
-        {kc && <KpiKarti etiket="Görev serisi süren" deger={kc.seri.aktif_seri} ikon="🔥" alt={`ortalama ${kc.seri.ortalama ?? 0} hafta · en uzun ${kc.seri.en_uzun}`} />}
+        {kc && <KpiKarti etiket="Tamamlanan gelişim maddesi" deger={kc.adim.tamamlanan} ikon="🪜" ton="okul" alt={`aralıkta · ${kc.adim.ogrenci} öğrenci`} />}
+        {kc && <KpiKarti etiket="Girilen “ne yaptım” kaydı" deger={kc.kayit.sayi} ikon="📝" alt={`aralıkta · ${kc.kayit.ogrenci} öğrenci`} />}
+        {gl && <KpiKarti etiket={`${gl.durgun_gun}+ gündür ilerlemeyen`} deger={gl.durgun} ikon="⏸️" ton={gl.durgun ? 'uyari' : undefined}
+          alt={`hedefi olan ${gl.hedefli} öğrenciden`} />}
         {f && <KpiKarti etiket="Filiz'i kullanan" deger={f.ogrenci} ikon="💬" alt={`${f.oturum} sohbet · ${f.mesaj} mesaj · öğrencilerin ${yuzde(f.oran)}`} />}
         {c && <KpiKarti etiket="Kaydedilen çalışma" deger={c.saat} birim="saat" ikon="⏱️" alt={`${c.ogrenci} öğrenci · ${c.program_yapan} öğrencinin programı var`} />}
         {c && <KpiKarti etiket="Çözülen soru" deger={c.soru} ikon="✏️" alt={`isabet ${yuzde(c.isabet)}`} />}
       </KpiSatiri>
       <div className="ist-kartlar">
-        {kc && (
-          <GrafikKarti genis baslik="Haftalık görev tamamlama oranı" aciklama="O hafta verilen görevlerin tamamlanan yüzdesi"
-            tablo={tabloYap(['Hafta (pazartesi)', 'Görev', 'Tamamlanan', 'Oran %', 'Öğrenci'], kc.gorev_haftalik.map((h) => [tarihTR(h.hafta), h.toplam, h.tamamlanan, h.oran, h.ogrenci]))}>
-            <CizgiGrafik x={kc.gorev_haftalik.map((h) => hafta(h.hafta))} seriler={[{ ad: 'Tamamlama', degerler: kc.gorev_haftalik.map((h) => h.oran), renk: OKUL }]}
-              birim="%" yMin={0} yMaks={100} />
-          </GrafikKarti>
-        )}
-        {kc && (
-          <GrafikKarti baslik="Görev serisi" aciklama="En az bir görev tamamlanan ardışık hafta (bu hafta ya da geçen haftadan geriye)" tablo={cubukTablosu('Seri', 'Öğrenci', kc.seri.dagilim)}>
-            <SutunGrafik veri={kc.seri.dagilim} birim="öğrenci" renk={OKUL} />
+        {gl && gl.hedefli > 0 && (
+          <GrafikKarti baslik="Gelişim listesinde ilerleme" aciklama="Hedef bölümü olan öğrencilerin tamamladığı toplam madde (tüm zamanlar)"
+            tablo={cubukTablosu('Tamamlanan madde', 'Öğrenci', gl.dagilim)}>
+            <SutunGrafik veri={gl.dagilim} birim="öğrenci" renk={OKUL} />
           </GrafikKarti>
         )}
         {c && (

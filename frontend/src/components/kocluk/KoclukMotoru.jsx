@@ -52,7 +52,7 @@ export function TamamlaFormu({ adim, onKaydet, onVazgec }) {
         ))}
       </div>
       <div className="tamamla-metinler">
-        <label><div>Ne yaptın? <span>(isteğe bağlı)</span></div>
+        <label><div>Ne yaptın? <span>(bugünün tarihiyle gelişim listene kaydedilir)</span></div>
           <input maxLength={300} value={f.ne_yaptim} placeholder={`ör. ${adim.olcut || 'kısaca yaz'}`} onChange={(e) => setF({ ...f, ne_yaptim: e.target.value })} />
         </label>
         <label><div>Ne öğrendin? <span>(isteğe bağlı)</span></div>
@@ -60,8 +60,7 @@ export function TamamlaFormu({ adim, onKaydet, onVazgec }) {
         </label>
       </div>
       <div className="tamamla-dugmeler">
-        <button className="btn" disabled={bekle} onClick={() => gonder(false)}>{bekle ? <span className="spin" /> : '✓ Kaydet ve bitir'}</button>
-        <button className="btn sec" disabled={bekle} onClick={() => gonder(true)}>Atla, sadece bitir</button>
+        <button className="btn" disabled={bekle || f.ne_yaptim.trim().length < 10} onClick={() => gonder(false)}>{bekle ? <span className="spin" /> : '✓ Kaydet ve bitir'}</button>
         <button className="hg-link" disabled={bekle} onClick={onVazgec}>Vazgeç</button>
       </div>
       <div className="tamamla-not">Cevaplarına bakarak sonraki adımı sana göre ayarlarız. Rehber öğretmenin de gelişimini buradan takip edebilir.</div>

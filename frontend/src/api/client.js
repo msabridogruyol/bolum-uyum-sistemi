@@ -547,7 +547,6 @@ export const api = {
   kutuphaneDuzenle: (id, veri) => put(`/ogrenci/kutuphane/${id}`, veri),
   kutuphaneSil: (id) => del(`/ogrenci/kutuphane/${id}`),
   ogrenciKutuphanesi: (id) => aget(`/yonetim/ogrenci/${id}/kutuphane`),
-  haftalikGecmis: () => get('/haftalik/gecmis'),
   guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),
@@ -596,9 +595,13 @@ export const api = {
   aiKocDurum: () => get('/koclugu/asistan/durum'),
   aiKocOturumuBitir: (oturumId) => post(`/koclugu/asistan/oturum/${oturumId}/bitir`, {}),
 
-  // --- [2026-10-04] Haftalık görevler + seri + Filiz seviyesi ---
-  haftalikGetir: () => get('/haftalik'),
-  haftalikGorevTamamla: (gorevId, yanit) => post(`/haftalik/gorev/${gorevId}/tamamla`, { yanit: yanit ?? null }),
+  // --- [2026-11-05] Gelişim listesi (haftalık görevlerin yerine): alanlar, maddeler, tarihli kayıtlar, Filiz seviyesi ---
+  gelisimListesi: () => get('/gelisim-listesi'),
+  gelisimKayitEkle: (kod, tarih, aciklama) => post(`/gelisim-listesi/adim/${encodeURIComponent(kod)}/kayit`, { tarih, aciklama }),
+  gelisimKayitSil: (id) => del(`/gelisim-listesi/kayit/${id}`),
+  gelisimDurum: (kod, durum) => post(`/gelisim-listesi/adim/${encodeURIComponent(kod)}/durum`, { durum }),
+  ozDegerlendirmeKaydet: (yanit) => post('/gelisim-listesi/oz-degerlendirme', { yanit }),
+  ozDegerlendirmeler: () => get('/gelisim-listesi/oz-degerlendirmeler'),
 
   // --- Admin: Auth ---
   adminGirisYap: async (veri) => {

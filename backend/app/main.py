@@ -35,7 +35,7 @@ from app.api.rehberlik import router as rehberlik_router   # [2026-10-10] rehber
 from app.api.konu_yonetimi import router as konu_yonetimi_router
 from app.api.kulup_uyelik import ogrenci_router as kulup_uyelik_ogrenci_router, router as kulup_uyelik_router
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
-from app.api.haftalik import router as haftalik_router
+from app.api.gelisim_listesi import router as gelisim_listesi_router   # [2026-11-05] haftalık görevlerin yerine
 from app.api.bolum_bilgi import router as bolum_bilgi_router
 
 from app.api.okul import genel_router as okul_genel_router, admin_router as okul_admin_router
@@ -321,7 +321,7 @@ app.include_router(admin_kutup_router, prefix="/admin", tags=["admin"])
 app.include_router(admin_meslek_router, prefix="/admin", tags=["admin"])   # [2026-10-10] Pipeline sayfasındaki meslek yükleme (önceden kayıtlı değildi → 404)
 app.include_router(ai_koc_router, prefix="/koclugu", tags=["koclugu"], dependencies=[_Dep(ogrenci_modulu("filiz"))])
 app.include_router(admin_gelisim_kaynak_router, prefix="/admin", tags=["admin"])
-app.include_router(haftalik_router, prefix="/haftalik", tags=["Haftalık Görevler"], dependencies=[_Dep(ogrenci_modulu("kocluk"))])
+app.include_router(gelisim_listesi_router, prefix="/gelisim-listesi", tags=["Gelişim Listesi"], dependencies=[_Dep(ogrenci_modulu("kocluk"))])
 app.include_router(bolum_bilgi_router, prefix="/bolumler", tags=["Bölüm Bilgi Kartı"])
 app.include_router(okul_genel_router)                       # [2026-10-09] GET /okul/aktif
 app.include_router(okul_admin_router, prefix="/admin")      # [2026-10-09] /admin/okullar

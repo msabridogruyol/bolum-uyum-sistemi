@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import GecersizTurUyarisi from '../components/GecersizTurUyarisi'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
-import HaftalikGorevler from '../components/HaftalikGorevler'
+import { GelisimOzetKarti } from '../components/GelisimListesi'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import { gucluMu } from '../yardimci/seviye'
 import BugunPaneli from '../components/BugunPaneli'
@@ -203,8 +203,8 @@ export default function AnaSayfa() {
         </div>
       )}
 
-      {/* [2026-10-04] Her hafta 3 görev — sistemi düzenli kullanımın merkezi */}
-      {kocluk && <HaftalikGorevler />}
+      {/* [2026-11-05] Haftalık görevler yerine gelişim listesi özeti (süre yok; alanlar ve sıradaki maddeler) */}
+      {kocluk && <GelisimOzetKarti />}
 
       {/* [2026-10-18] Grafik satırı ve kısayol kutuları kaldırıldı (katman ortalaması anlamsızdı; kısayollar menüyü tekrar ediyordu).
           Yerine kısa profil özeti; ayrıntı Profilim'de. */}
