@@ -77,7 +77,7 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Yaşına uygun kısa bir deneyim seç: bir kurumda gönüllülük, okulun yönlendirdiği bir staj ya da bir iş yerinde gözlem. Ücretli bir iş düşünüyorsan yalnızca ailenin onayıyla, yasal izinleri ve sözleşmesi olan, okul saatleri dışında yapılan hafif bir iş olsun.",
             "Fırsat ararken rehberlik servisine, öğretmenlerine ve aile çevrene danış; çalışacağın yeri mutlaka ailenle birlikte değerlendir.",
-            "Deneyim boyunca her gün ya da her iki günde bir 3 satır not al: Saat kaçta başladım, gün nasıl geçti, kendimi nasıl hissettim?",
+            "Deneyim boyunca, çalıştığın günlerin sonunda 3 satır not al: Saat kaçta başladım, gün nasıl geçti, kendimi nasıl hissettim?",
             "Özellikle sabit mesai, belli kurallar ve tekrar eden işler hakkında ne hissettiğine dikkat et.",
             "Deneyim bitince notlarını oku ve \"Bu düzende mutlu olur muyum?\" sorusuna gerekçeli bir cevap yaz.",
         ],
@@ -94,7 +94,7 @@ DETAY: dict[str, dict] = {
             "{bolum} okurken işine yarayabilecek 3 yan beceri listele: bir yabancı dil, bir sertifika ya da ikinci bir uzmanlık alanı.",
             "Her biri için kısa bir not al: Bu beceri hangi işlere kapı açar, ne kadar sürede öğrenilir, nereden öğrenilir?",
             "En gerçekçi olanı seç ve ilk adımını tarihle yaz. Örneğin: \"15 Kasım'da İngilizce kelime çalışmasına başlayacağım.\"",
-            "Bu sayfayı rehber öğretmeninle ya da ailenle paylaş ve dönem sonunda yeniden gözden geçir.",
+            "Bu sayfayı rehber öğretmeninle ya da ailenle paylaş ve ilk adımı attıktan sonra yeniden gözden geçir.",
         ],
         "kontrol": [
             "\"B planım\" başlıklı yazılı bir sayfan var.",
@@ -123,7 +123,7 @@ DETAY: dict[str, dict] = {
             "Bir kâğıda ya da tabloya yılları sırayla yaz: Lise son, Üniversite 1, 2, 3, 4 (bölüm süresi farklıysa ona göre).",
             "“Güvenceli yolları listele” adımında çıkardığın güvenceli yolların şartlarını hatırla; her şartı hangi yılda hazırlamaya başlaman gerektiğini düşün.",
             "Her yılın altına en fazla 2-3 adım yaz: sınav, staj, sertifika, dil. Örneğin: \"3. sınıf yaz: staj\", \"4. sınıf: KPSS hazırlığı\".",
-            "Takvimi duvarına as ya da telefonuna kaydet; her dönem başında bir kez kontrol etmeyi planla.",
+            "Takvimi duvarına as ya da telefonuna kaydet; yeni bir okul yılına ya da sınava hazırlanırken yeniden kontrol et.",
         ],
         "kontrol": [
             "Lise sonundan mezuniyete kadar her yılın yazılı olduğu bir takvimin var.",
@@ -194,15 +194,15 @@ DETAY: dict[str, dict] = {
     },
     "D2-G-5": {
         "nasil": [
-            "Bütçe, birikim ve yatırım temellerini anlatan kısa bir çevrim içi kurs seç; BTK Akademi ya da Khan Academy Türkçe'de ücretsiz seçeneklere bakabilirsin.",
-            "Kursu haftalara böl; haftada 2-3 kez 30'ar dakika ayırarak 4-6 haftada bitirecek şekilde takvimine yaz.",
-            "Her dersten sonra öğrendiğin bir kavramı (ör. gelir-gider dengesi, faiz, acil durum fonu) kendi cümlenle defterine yaz.",
-            "Kurs bitince kendi bütçe tablonu yap: harçlığın ya da gelirin, harcamaların ve biriktirmek istediğin tutar.",
+            "Bütçe, birikim ve yatırımın temellerini anlatan ücretsiz bir çevrim içi kurs ya da video serisi seç; BTK Akademi gibi ücretsiz platformlara ya da okul kütüphanesindeki kaynaklara bakabilirsin.",
+            "Kursu küçük oturumlara böl ve her oturumdan sonra tarihli kısa bir not al.",
+            "Her oturumda öğrendiğin bir kavramı (ör. gelir-gider dengesi, faiz, acil durum fonu) kendi cümlenle defterine yaz.",
+            "Kurs ya da seri bitince kendi bütçe tablonu yap: harçlığın ya da gelirin, harcamaların ve biriktirmek istediğin tutar.",
         ],
         "kontrol": [
-            "Seçtiğin finansal okuryazarlık kursunu bitirdin.",
+            "Seçtiğin kursu ya da video serisini bitirdin.",
+            "Öğrendiğin en az 3 kavramı kendi cümlelerinle yazdın.",
             "Kendi gelir, gider ve birikim kalemlerinin olduğu bir bütçe tablon var.",
-            "Kursta öğrendiğin en az 3 kavramı kendi cümlelerinle açıklayabiliyorsun.",
         ],
         "ipucu": "Yatırım konusunda gerçek para kullanmadan önce mutlaka ailenle konuş; kursun amacı öğrenmek, risk almak değil.",
     },
@@ -238,13 +238,13 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Gelirini artırabilecek ek becerilerden birini seç: yabancı dil, veri analizi (sayılarla bilgi çıkarma) ya da sunum becerisi.",
             "Seçimini yaparken {bolum} alanındaki iş ilanlarında en sık istenen beceriye bak.",
-            "Ücretsiz ya da okulunun sunduğu bir kaynak bul (ör. BTK Akademi, Khan Academy Türkçe, okul kulüpleri) ve ilk modülü belirle.",
-            "Haftada en az 2 kez 30-45 dakika çalışma saati ayır ve takvimine yaz.",
-            "Her hafta sonunda ne öğrendiğini 2 cümleyle not et; ilk modülü bitirdiğinde kendine küçük bir ödül ver.",
+            "Ücretsiz ya da okulunun sunduğu bir kaynak bul (ör. BTK Akademi gibi ücretsiz platformlar, okul kulüpleri) ve ilk modülü belirle.",
+            "Kendine 30-45 dakikalık çalışma oturumları belirle ve her oturumun tarihini yaz.",
+            "Her oturumdan sonra ne öğrendiğini 2 cümleyle not et; ilk modülü bitirdiğinde kendine küçük bir ödül ver.",
         ],
         "kontrol": [
             "Öğrenmek için bir ek beceri seçtin ve nedenini yazdın.",
-            "Haftalık çalışma saatlerin takviminde yazılı.",
+            "Çalışma oturumlarının tarihli kaydı var.",
             "Seçtiğin becerinin ilk modülünü ya da ilk seviyesini tamamladın.",
         ],
         "ipucu": "Aynı anda birden fazla beceriye başlamak yaygın bir hatadır; birini bitirmeden ikincisine geçme.",
@@ -322,13 +322,13 @@ DETAY: dict[str, dict] = {
     "D3-G-6": {
         "nasil": [
             "“Prestij dışı kriterler” adımında belirlediğin 5 kriteri ve verdiğin puanları önüne koy.",
-            "Dönem boyunca öğrendiklerine göre puanlarda bir değişiklik olduysa güncelle.",
+            "Önceki adımlarda öğrendiklerine göre puanlarda bir değişiklik olduysa güncelle.",
             "Kendine sor: \"Bu bölümü kimse duymasa, sadece kendi kriterlerime bakarak seçer miydim?\" Cevabını yaz.",
             "Kararını 3-4 cümlelik bir gerekçeyle yaz. Örneğin: \"Evet, çünkü ilgi ve beceri puanlarım yüksek.\"",
         ],
         "kontrol": [
-            "Kriter puanlarını dönem sonunda tekrar gözden geçirdin.",
-            "Kararını kendi kriterlerine dayanarak yazdın.",
+            "Kriter puanlarını tekrar gözden geçirdin.",
+            "Kararını kendi 5 kriterinle gerekçelendirip yazdın.",
             "Kararındaki gerekçe prestije değil kendi kriterlerine dayanıyor.",
         ],
         "ipucu": "Kararın değiştiyse bu başarısızlık değil; bilinçli düşündüğünü gösterir.",
@@ -345,19 +345,19 @@ DETAY: dict[str, dict] = {
             "Her biri için en az 4 önemli kariyer adımı yazılı.",
             "Kendi yolunda örnek alabileceğin bir adımı söyleyebiliyorsun.",
         ],
-        "ipucu": "Yalnızca ünlü isimlere bakma; çevrendeki bir {bolum} mezunu da sana daha gerçekçi bir yol gösterebilir.",
+        "ipucu": "Yalnızca ünlü isimlere bakma; çevrendeki bir {bolum} mezunu da sana daha gerçekçi bir yol gösterebilir. LinkedIn'e üye olmak istemiyorsan ya da yaşın uygun değilse (LinkedIn'de en düşük üyelik yaşı 16) aynı araştırmayı röportajlar ve üniversitelerin mezun sayfalarıyla yapabilirsin.",
     },
     "D3-U-2": {
         "nasil": [
             "Okulunda duyurulan yarışma, olimpiyat ve proje fırsatlarını rehberlik servisine ya da ilgili öğretmene sor.",
             "{bolum} alanına en yakın olanı seç (ör. TÜBİTAK 2204 Lise Öğrencileri Araştırma Projeleri) ve başvuru şartlarını oku.",
             "Bir danışman öğretmen bul; çoğu proje yarışmasında öğretmen desteği gerekir.",
-            "Son başvuru tarihinden geriye doğru bir hazırlık takvimi yap: konu seçimi, araştırma, yazım ve kontrol haftaları.",
-            "Takvimi öğretmeninle paylaş ve ilk haftanın işine başla.",
+            "Son başvuru tarihinden geriye doğru bir hazırlık takvimi yap: konu seçimi, araştırma, yazım ve kontrol aşamaları.",
+            "Takvimi öğretmeninle paylaş ve ilk aşamanın işine başla.",
         ],
         "kontrol": [
             "Bölümüne yakın bir yarışma, olimpiyat ya da proje seçtin.",
-            "Başvurunu yaptın ya da haftalara bölünmüş bir hazırlık takvimin var.",
+            "Başvurunu yaptın ya da aşamalara bölünmüş bir hazırlık takvimin var.",
             "Bir danışman öğretmenle konuştun.",
         ],
         "ipucu": "Başvuru tarihleri her yıl değişebilir; tarihi her zaman yarışmayı düzenleyen kurumun resmî sayfasından kontrol et.",
@@ -378,17 +378,17 @@ DETAY: dict[str, dict] = {
     },
     "D4-G-2": {
         "nasil": [
-            "{bolum} alanında çalışan birinin insanlara ya da dünyaya etkisini anlatan bir haber, hikâye ya da belgesel ara.",
-            "Arama yaparken \"{bolum}\" ile birlikte \"başarı hikâyesi\", \"belgesel\" ya da \"toplumsal etki\" gibi kelimeler kullanabilirsin.",
-            "Okurken ya da izlerken 3 soruyu not et: Kim, ne yaptı? Kime faydası oldu? Bu iş neden önemliydi?",
-            "Sonra kâğıda bakmadan bu etkiyi 3-4 cümleyle kendi sözlerinle yaz ya da birine anlat.",
+            "{bolum} alanında çalışmış birini seç: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir röportaj bul.",
+            "Okurken ya da izlerken 3 soruyu not et: Ne yaptı? Kime ya da neye faydası oldu? Bu iş ona ne anlam kattı?",
+            "İşinin insanlara ya da dünyaya etkisini gösteren somut bir örneği ayrıca yaz.",
+            "Sonra kâğıda bakmadan bu etkiyi ve işin ona kattığı anlamı 3-4 cümleyle kendi sözlerinle yaz ya da birine anlat.",
         ],
         "kontrol": [
-            "Bu alanın etkisini anlatan bir içerik buldun ve tamamladın.",
-            "Kim, ne yaptı, kime faydası oldu sorularına cevap yazdın.",
-            "Bu etkiyi kendi cümlelerinle anlatabiliyorsun.",
+            "Bu alanda çalışmış birinin hayat hikâyesini okudun ya da izledin.",
+            "Bu kişinin yarattığı bir etkiyi somut bir örnekle yazdın.",
+            "İşin ona kattığı anlamı kendi cümlelerinle anlatabiliyorsun.",
         ],
-        "ipucu": "",
+        "ipucu": "Ünlü olmayan ama işini yıllarca özenle yapmış biri de iyi bir örnektir; yerel gazetelerin röportajlarına da bakabilirsin.",
     },
     "D4-G-3": {
         "nasil": [
@@ -432,24 +432,22 @@ DETAY: dict[str, dict] = {
             "Projenin kime ne kazandırdığını yazabiliyorsun.",
             "Projenin sana nasıl hissettirdiğini en az 3 cümleyle yazdın.",
         ],
-        "ipucu": "Projeyi küçük tut; 1-2 ayda bitirebileceğin basit bir iş, yarım kalan büyük bir projeden daha çok şey öğretir.",
+        "ipucu": "Projeyi küçük tut; kısa sürede bitirebileceğin basit bir iş, yarım kalan büyük bir projeden daha çok şey öğretir.",
     },
     "D4-G-6": {
         "nasil": [
-            "Günlük tutmak, düşüncelerini düzenli olarak bir deftere yazmaktır. Bu iş için bir defter ya da telefonunda bir not dosyası aç.",
-            "Haftada bir gün ve saat belirle (ör. her pazar akşamı 15 dakika) ve telefonuna hatırlatıcı kur.",
-            "Her hafta iki başlık altında yaz: \"Bu alana dair beni heyecanlandıran an\" ve \"Beni sıkan an\". Her birine 2-3 cümle yeter.",
-            "4. haftanın sonunda tüm notları oku ve tekrar eden durumların altını çiz.",
+            "Bu iş için bir defter ya da telefonunda bir not dosyası aç ve adını \"Anlam günlüğü\" koy.",
+            "Bu alana dair seni heyecanlandıran ya da sıkan bir an yaşadığında (bir ders, bir haber, bir sohbet) o gün kısa bir not al; tarihi yaz.",
+            "Her notu iki başlıktan birine koy: \"Beni heyecanlandıran an\" ya da \"Beni sıkan an\". 2-3 cümle yeter.",
+            "En az 6 not biriktiğinde hepsini oku ve tekrar eden durumların altını çiz.",
             "Fark ettiğin örüntüyü tek cümleyle yaz. Örneğin: \"İnsanlarla çalıştığım anlar beni heyecanlandırıyor, ezber kısmı sıkıyor.\"",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer pazar akşamı saat 21.00 olursa, o zaman günlüğüme 15 dakika yazacağım.\"",
-            "Bu 4 hafta bir deneme; amaç bu alanın sana anlamlı gelip gelmediğini fark etmek. İstersen günlüğü sürdürebilirsin; her hafta yazıp yazmadığını işaretlemen yeterli.",
         ],
         "kontrol": [
-            "4 haftanın her biri için yazılmış notların var.",
+            "Günlüğünde en az 6 tarihli not var.",
             "Notlarda hem heyecanlandıran hem sıkan anlar bulunuyor.",
             "Fark ettiğin bir örüntüyü tek cümleyle yazdın.",
         ],
-        "ipucu": "Bir haftayı kaçırırsan bırakma; hatırladığın kadarını yazıp devam et.",
+        "ipucu": "Amaç bu alanın sana anlamlı gelip gelmediğini fark etmek; bir anı kaçırırsan hatırladığın kadarını sonradan yazman da olur.",
     },
     "D4-U-1": {
         "nasil": [
@@ -466,17 +464,17 @@ DETAY: dict[str, dict] = {
     },
     "D4-U-2": {
         "nasil": [
-            "Seçtiğin alt alanla ilgili gönüllülük ya da gözlem fırsatlarını araştır (ör. TEGV, TOG, yerel dernekler, okul kulüpleri).",
-            "Kurumların resmî sayfalarından gönüllülük şartlarını, özellikle yaş sınırını kontrol et; bazıları 18 yaş altı için veli izni ister.",
-            "Başvurudan önce ailenle konuş; okulun rehberlik servisi de güvenilir fırsatlar konusunda yardımcı olabilir.",
-            "Bir etkinliğe katıl ve etkinlik sonrası 3 soruya cevap yaz: Ne yaptım? Ne gözlemledim? Bana anlamlı geldi mi?",
+            "Seçtiğin alt alanla ilgili gönüllülük ya da gözlem fırsatlarını araştır: okul kulüpleri, belediyenin gençlik etkinlikleri ya da yerel derneklerin açık etkinlikleri.",
+            "Okulun rehberlik servisine danış; güvenilir ve yaşına uygun fırsatları bulmana yardım edebilir.",
+            "Katılmadan önce ailenle konuş ve etkinliğin yaş şartını, gerekiyorsa veli iznini kontrol et.",
+            "Bir etkinliğe katıl ve sonrasında 3 soruya cevap yaz: Ne yaptım? Ne gözlemledim? Bana anlamlı geldi mi?",
         ],
         "kontrol": [
-            "Seçtiğin alt alanla ilgili en az bir etkinliğe katıldın.",
-            "Etkinlik sonrası kısa notlarını yazdın.",
+            "Seçtiğin alt alanla ilgili en az bir etkinliğe ailenin bilgisiyle katıldın.",
+            "Etkinliğin sana ne kattığını yazdın.",
             "Bu deneyimin alt alan seçimini destekleyip desteklemediğini söyleyebiliyorsun.",
         ],
-        "ipucu": "Kurumdan hemen cevap gelmeyebilir; aynı anda 2-3 yere başvurmak süreci hızlandırır.",
+        "ipucu": "İlk ulaştığın yerden hemen cevap gelmeyebilir; birkaç seçeneği birlikte değerlendirmek işini kolaylaştırır.",
     },
     "D5-G-1": {
         "nasil": [
@@ -490,7 +488,7 @@ DETAY: dict[str, dict] = {
             "Her örnek için ne yapıldığını ve kime fayda sağladığını yazdın.",
             "Sana en çok dokunan örneği seçtin.",
         ],
-        "ipucu": "",
+        "ipucu": "Haberlerde adı geçen projelerin resmî sayfalarına da bakarsan bilginin doğru olup olmadığını kontrol etmiş olursun.",
     },
     "D5-G-2": {
         "nasil": [
@@ -507,14 +505,14 @@ DETAY: dict[str, dict] = {
     },
     "D5-G-3": {
         "nasil": [
-            "Yaşına uygun bir günlük sivil toplum etkinliği ara (ör. Kızılay, TEGV, LÖSEV, belediye etkinlikleri); kurumların resmî sayfalarına ve okul duyurularına bak.",
-            "Katılmadan önce ailene bilgi ver; mümkünse bir arkadaşınla ya da okul kulübüyle birlikte git.",
+            "Yaşına uygun, tek günlük bir gönüllülük etkinliği ara: okulun sosyal sorumluluk kulübü, belediyenin ya da yerel bir derneğin düzenlediği bir etkinlik. Okul duyurularına ve rehberlik servisine bak.",
+            "Katılmadan önce ailene bilgi ver ve etkinliğin yaş şartını kontrol et; mümkünse bir arkadaşınla ya da okul kulübüyle birlikte git.",
             "Etkinlik günü ne yaptığını, kimlerle tanıştığını ve nasıl hissettiğini aklında tut ya da telefonuna kısa notlar al.",
             "Eve dönünce 5-6 cümlelik bir değerlendirme yaz: Ne yaptım? Beni ne mutlu etti? Ne yordu? Tekrar yapar mıydım?",
         ],
         "kontrol": [
-            "Bir gönüllülük etkinliğine katıldın.",
-            "Etkinlik sonrası kısa bir değerlendirme yazdın.",
+            "Ailenin bilgisiyle bir gönüllülük etkinliğine katıldın.",
+            "Ne yaptığını ve nasıl hissettiğini anlatan kısa bir değerlendirme yazdın.",
             "Bu deneyimin sana nasıl hissettirdiğini birine anlatabiliyorsun.",
         ],
         "ipucu": "Uygun etkinlik bulamazsan okulunun rehberlik servisine ya da sosyal sorumluluk kulübüne sor.",
@@ -579,30 +577,29 @@ DETAY: dict[str, dict] = {
     },
     "D5-U-2": {
         "nasil": [
-            "“Etki alanını belirle” adımında seçtiğin sorunla ilgili çalışan kurumları araştır; okulun rehberlik servisine de danış.",
-            "Kurumların resmî sayfalarından gönüllülük şartlarını ve yaş sınırını kontrol et; ailenle konuşarak bir kurum seç.",
-            "Ayda en az bir kez katılmak için 3 aylık takvimine tarih koy.",
-            "Her katılımdan sonra 2-3 cümlelik not al: Ne yaptım, ne öğrendim?",
+            "“Etki alanını belirle” adımında seçtiğin sorunla ilgili çalışan yerleri araştır: okul kulüpleri, belediye ya da yerel dernekler. Okulun rehberlik servisine de danış.",
+            "Gönüllülük şartlarını ve yaş sınırını kontrol et; ailenle konuşarak yaşına uygun bir yer seç.",
+            "Her katıldığında tarihi yaz ve 2-3 cümlelik not al: Ne yaptım, ne öğrendim?",
+            "En az 3 katılım biriktiğinde notlarını oku ve bu işi sürdürmek isteyip istemediğini bir cümleyle yaz.",
         ],
         "kontrol": [
-            "Seçtiğin sorunla ilgili bir kurumda gönüllü oldun.",
-            "3 ay içinde en az 3 kez katıldın.",
+            "Seçtiğin sorunla ilgili bir yerde ailenin bilgisiyle gönüllü oldun.",
+            "En az 3 katılımın tarihiyle kayıtlı.",
             "Her katılım için kısa notların var.",
         ],
-        "ipucu": "Düzenli gitmek ilk katılımdan daha zordur; tarihleri önceden takvime yazmak ve bir arkadaşla gitmek devam etmeyi kolaylaştırır.",
+        "ipucu": "Düzenli gitmek ilk katılımdan daha zordur; bir arkadaşla gitmek devam etmeyi kolaylaştırır.",
     },
     "D6-G-1": {
         "nasil": [
-            "Bu hafta normalde ailene, arkadaşına ya da öğretmenine soracağın küçük bir konu seç. Örneğin: hangi dersi önce çalışacağın ya da proje konun.",
+            "Normalde ailene, arkadaşına ya da öğretmenine soracağın küçük bir konu seç. Örneğin: hangi dersi önce çalışacağın ya da proje konun.",
             "Kararı vermeden önce seçenekleri ve artı-eksilerini kendin düşün; kimseye danışmadan kararını ver.",
-            "Kararını ve neden öyle karar verdiğini bir cümleyle yaz.",
-            "Hafta sonunda sonucu not et: Ne oldu? Kendi kararımı vermek nasıl hissettirdi? Tekrar olsa yine öyle yapar mıydım?",
-            "Hafta içinde bu küçük kararı ne zaman vereceğini önceden seç ve takvimine yaz. Örneğin: \"Çarşamba akşamı proje konumu kendim seçeceğim.\"",
-            "Bu bir deneme; amaç kendi kararını vermenin sana nasıl geldiğini görmek, bunu alışkanlığa çevirmek değil. Hafta sonunda \"Kararları kendim vermek benim için ne kadar önemli?\" sorusuna 1-2 cümleyle cevap yaz.",
+            "Kararını ve neden öyle karar verdiğini bir cümleyle, tarihiyle yaz.",
+            "Sonuç belli olunca not et: Ne oldu? Kendi kararımı vermek nasıl hissettirdi? Tekrar olsa yine öyle yapar mıydım?",
+            "Bu bir deneme; amaç kendi kararını vermenin sana nasıl geldiğini görmek. Sonunda \"Kararları kendim vermek benim için ne kadar önemli?\" sorusuna 1-2 cümleyle cevap yaz.",
         ],
         "kontrol": [
             "Kendi verdiğin küçük bir kararı yazdın.",
-            "Kararın sonucunu hafta sonunda not ettin.",
+            "Kararın sonucunu not ettin.",
             "Kendi kararını vermenin sana nasıl hissettirdiğini söyleyebiliyorsun.",
         ],
         "ipucu": "Önemli ya da riskli konularda değil, küçük konularda dene; amaç bağımsız karar vermenin sana nasıl geldiğini gözlemlemek.",
@@ -623,14 +620,14 @@ DETAY: dict[str, dict] = {
     },
     "D6-G-3": {
         "nasil": [
-            "Kimsenin sana görev olarak vermediği, ilgini çeken küçük bir proje seç. Örneğin: bir konuda blog yazısı dizisi ya da mini bir araştırma.",
-            "Hedefini bir cümleyle yaz. Örneğin: \"Bir ayda bu konuda 4 kısa yazı yazacağım.\"",
-            "Projeyi haftalara böl ve her hafta ne yapacağını kendin belirle; planı bir kâğıda ya da telefonuna yaz.",
-            "Her hafta sonunda planına uydun mu, kontrol et; gerekirse planı kendin güncelle.",
+            "Kimsenin sana görev olarak vermediği, ilgini çeken küçük bir proje seç. Örneğin: bir konuda kısa yazı dizisi ya da mini bir araştırma.",
+            "Hedefini bir cümleyle yaz. Örneğin: \"Bu konuda 4 kısa yazı yazacağım.\"",
+            "Projeyi aşamalara böl (ör. konu seçimi, araştırma, yazma, son okuma) ve her aşamada ne yapacağını kendin belirle.",
+            "Her aşama bitince tarihli kısa bir not al; plan tutmadıysa kendin güncelle.",
             "Projeyi bitirince en zor ve en keyifli kısmı birer cümleyle not et.",
         ],
         "kontrol": [
-            "Kendi belirlediğin bir hedef ve haftalık planın var.",
+            "Aşamaların ve her birinin tamamlanma tarihinin yazılı olduğu bir planın var.",
             "Projeyi baştan sona kendin planlayıp bitirdin.",
             "Bağımsız çalışmanın en zor ve en keyifli yanını yazabiliyorsun.",
         ],
@@ -638,20 +635,18 @@ DETAY: dict[str, dict] = {
     },
     "D6-G-4": {
         "nasil": [
-            "Her pazar 15 dakika ayır ve gelecek haftanın ders çalışma planını kendin hazırla: hangi gün, hangi ders, ne kadar süre.",
+            "Önündeki birkaç günün ders çalışma planını kimseye sormadan kendin hazırla: hangi gün, hangi ders, ne kadar süre.",
             "Plan yaparken Pomodoro tekniğini deneyebilirsin: 25 dakika odaklanıp çalış, 5 dakika mola ver; 4 turdan sonra uzun mola ver.",
-            "Planı defterine ya da telefonuna yaz ve hafta boyunca yaptıklarını işaretle.",
-            "Hafta sonunda 3 soruya cevap yaz: Planın ne kadarına uydum? Ne işe yaradı? Gelecek hafta neyi değiştireceğim?",
-            "Bunu 4 hafta tekrarla ve son hafta tüm değerlendirmelerini birlikte oku.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer pazar akşam yemeği biterse, o zaman 15 dakika haftalık planımı yapacağım.\"",
-            "Bu 4 hafta bir deneme; amaç kendi planını yapmanın sana uyup uymadığını görmek. Deneme bitince \"Kendi düzenimi kendim kurmak benim için ne kadar önemli?\" sorusuna 1-2 cümleyle cevap yaz.",
+            "Planı defterine ya da telefonuna yaz ve uyguladıkça yaptıklarını işaretle.",
+            "Her planın sonunda 3 soruya cevap yaz: Planın ne kadarına uydum? Ne işe yaradı? Bir sonraki planda neyi değiştireceğim?",
+            "En az 3 plan biriktiğinde değerlendirmelerini birlikte oku ve \"Kendi düzenimi kendim kurmak benim için ne kadar önemli?\" sorusuna 1-2 cümleyle cevap yaz.",
         ],
         "kontrol": [
-            "Kendi hazırladığın 4 haftalık çalışma planın var.",
-            "Her haftanın sonunda yazılmış bir değerlendirmen var.",
+            "Kendi hazırladığın en az 3 çalışma planın var.",
+            "Her planın sonunda yazılmış kısa bir değerlendirmen var.",
             "Kendi planını yapmanın sana uyup uymadığını söyleyebiliyorsun.",
         ],
-        "ipucu": "İlk planlar genelde çok yüklü olur; bir hafta tutmadıysa planı hafiflet, kendini suçlama.",
+        "ipucu": "İlk planlar genelde çok yüklü olur; bir plan tutmadıysa sonrakini hafiflet, kendini suçlama.",
     },
     "D6-G-5": {
         "nasil": [
@@ -670,7 +665,7 @@ DETAY: dict[str, dict] = {
     },
     "D6-G-6": {
         "nasil": [
-            "Bu konudaki önceki adımlarda aldığın notları (kendi kararın, kendi projen, haftalık planların, görüşme notların) önüne koy.",
+            "Bu konudaki önceki adımlarda aldığın notları (kendi kararın, kendi projen, çalışma planların, görüşme notların) önüne koy.",
             "Kendine sor: \"Kendi planımı yaparken mi, net görevler verildiğinde mi daha iyi çalıştım?\" Cevabını yaz.",
             "Üç seçenekten birini seç: yapılandırılmış kurum, yarı bağımsız rol ya da tamamen bağımsız çalışma.",
             "Seçimini deneyimlerinden en az bir örnekle gerekçelendir.",
@@ -679,11 +674,11 @@ DETAY: dict[str, dict] = {
             "Tercih ettiğin çalışma ortamını yazdın.",
             "Seçimini deneyimlerinden bir örnekle gerekçelendirdin.",
         ],
-        "ipucu": "",
+        "ipucu": "Tek bir doğru ortam yoktur; aynı bölümde farklı ortamlarda çalışan insanlar bulunur.",
     },
     "D6-U-1": {
         "nasil": [
-            "{bolum} alanında serbest çalışan ya da girişim (kendi işini kurmak) yapan 2 kişi bul; haber, röportaj, LinkedIn ya da girişimcilik videoları iyi kaynaklardır.",
+            "{bolum} alanında serbest çalışan ya da girişim (kendi işini kurmak) yapan 2 kişi bul; haber, röportaj, LinkedIn (yaşın uygunsa) ya da girişimcilik videoları iyi kaynaklardır.",
             "Her biri için not al: Ne iş yapıyor? Bu noktaya nasıl geldi? Ne zaman bağımsız çalışmaya başladı?",
             "İki kişinin yolunu karşılaştır: ortak yönleri neler, farkları neler?",
             "Sana en ilginç gelen ayrıntıyı bir cümleyle yaz.",
@@ -693,7 +688,7 @@ DETAY: dict[str, dict] = {
             "Her birinin bu noktaya nasıl geldiğini yazdın.",
             "İki örnek arasındaki bir benzerliği ve bir farkı söyleyebiliyorsun.",
         ],
-        "ipucu": "",
+        "ipucu": "LinkedIn'e üye olmak istemiyorsan ya da yaşın uygun değilse (LinkedIn'de en düşük üyelik yaşı 16) aynı araştırmayı röportajlar ve üniversitelerin mezun sayfalarıyla yapabilirsin.",
     },
     "D6-U-2": {
         "nasil": [
@@ -726,7 +721,7 @@ DETAY: dict[str, dict] = {
     },
     "D7-G-2": {
         "nasil": [
-            "Bu hafta yapacağın küçük yaratıcı işi seç: bir poster, kısa bir sunum tasarımı ya da 5-6 fotoğraflık bir seri.",
+            "Yapacağın küçük yaratıcı işi seç: bir poster, kısa bir sunum tasarımı ya da 5-6 fotoğraflık bir seri.",
             "Konusunu belirle; mümkünse {bolum} ile ilgili bir konu seç. Örneğin: bölümün ne iş yaptığını anlatan bir poster.",
             "1-2 saatlik bir zaman ayır ve elindeki araçlarla (kâğıt-kalem, telefon, ücretsiz tasarım uygulamaları) üret.",
             "Bitirince ürünü kaydet ya da fotoğrafla ve yaparken ne hissettiğini bir cümleyle yaz.",
@@ -755,11 +750,10 @@ DETAY: dict[str, dict] = {
     "D7-G-4": {
         "nasil": [
             "Telefonunda \"Estetik gözlem\" adlı bir albüm ya da not dosyası aç.",
-            "İki hafta boyunca sana güzel gelen tasarımları fotoğrafla: bir uygulama ekranı, bir bina, bir afiş, bir ürün ambalajı.",
+            "Sana güzel gelen tasarımları fotoğrafla: bir uygulama ekranı, bir bina, bir afiş, bir ürün ambalajı.",
             "Her fotoğrafın altına bir cümle yaz: \"Bunu güzel buldum çünkü…\" Örneğin: \"…renkler sade ve yazı kolay okunuyor.\"",
-            "İki hafta sonunda notlarını oku ve en çok tekrar eden beğeni nedenini bul.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu iki hafta bir deneme; amaç estetiğin senin için ne kadar önemli olduğunu fark etmek. İki hafta bitince \"Güzel ve özenli tasarlanmış şeylerle uğraşmak benim için ne kadar önemli?\" sorusuna 1-2 cümleyle cevap yaz.",
+            "10 örnek toplayınca notlarını oku ve en çok tekrar eden beğeni nedenini bul.",
+            "Sonunda \"Güzel ve özenli tasarlanmış şeylerle uğraşmak benim için ne kadar önemli?\" sorusuna 1-2 cümleyle cevap yaz.",
         ],
         "kontrol": [
             "En az 10 tasarım örneğinin fotoğrafı var.",
@@ -773,7 +767,7 @@ DETAY: dict[str, dict] = {
             "Bölümle ilgili görsel olarak anlatmak istediğin bir konu seç.",
             "Ürün biçimini seç: infografik (bilgiyi kısa yazı, ikon ve grafikle anlatan görsel), maket ya da sunum.",
             "Önce kâğıda kaba bir taslak çiz; hangi bilgiler nerede olacak, karar ver.",
-            "İşi haftalara böl (araştırma, taslak, üretim, düzeltme) ve 1-2 ayda bitirecek şekilde planla.",
+            "İşi aşamalara böl (araştırma, taslak, üretim, düzeltme) ve her aşama bitince tarihini yaz.",
             "Bitirince ürünü bir öğretmenine, ailene ya da arkadaşlarına göster ve bir geri bildirim not et.",
         ],
         "kontrol": [
@@ -792,18 +786,16 @@ DETAY: dict[str, dict] = {
         ],
         "kontrol": [
             "Deneyimlerini gözden geçirip keyif puanını verdin.",
-            "Kararını gerekçesiyle yazdın.",
+            "Kararını önceki adımlardan 2 örnekle gerekçelendirip yazdın.",
         ],
-        "ipucu": "",
+        "ipucu": "Yaratıcılığı meslek yapmasan da hobi olarak sürdürmek de geçerli ve değerli bir sonuçtur.",
     },
     "D7-U-1": {
         "nasil": [
             "Portfolyo, yaptığın işleri bir arada gösteren dosyadır. Bilgisayarında, telefonunda ya da bulut depolamada \"Portfolyo\" adlı bir klasör aç.",
             "Daha önce yaptığın yaratıcı işleri bul: çizimler, fotoğraflar, sunumlar, projeler. Kâğıt üzerindekilerin fotoğrafını çek.",
             "Her dosyayı tarih ve kısa adla kaydet. Örneğin: \"2026-10_bolum-posteri\".",
-            "Klasöre en az 5 iş ekle ve her ay yeni işlerini eklemek için telefonuna bir hatırlatıcı kur.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Her ayın sonunda portfolyona yeni bir iş ekleyip eklemediğini işaretle; 3 ay sonra bu düzenin sana uyup uymadığını bir cümleyle yaz.",
+            "Klasöre en az 5 iş ekle; bundan sonra her yeni iş bitince onu da ekle.",
         ],
         "kontrol": [
             "\"Portfolyo\" adlı bir klasörün var.",
@@ -831,14 +823,13 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Okulda selamlaştığın ama pek konuşmadığın 3-4 kişiyi ya da ders dışında konuşmadığın bir öğretmenini düşün ve aralarından ikisini seç.",
             "Her biri için önceden bir açılış cümlesi hazırla. Örneğin: \"Dünkü matematik ödevini nasıl çözdün?\" ya da \"Hocam, bu konuyu neden seçtiniz?\"",
-            "Teneffüste, kantinde ya da ders çıkışında, karşındakinin acelesi yokken yanına git ve cümleni söyle.",
-            "Sohbeti uzatmak zorunda değilsin; 2-3 dakika yeterli. Karşındakine bir soru daha sor ve cevabını dinle.",
+            "Teneffüste, kantinde ya da ders çıkışında, karşındakinin acelesi yokken yanına git ve cümleni söyle. Sohbeti uzatmak zorunda değilsin; 2-3 dakika yeterli. Karşındakine bir soru daha sor ve cevabını dinle.",
             "Akşam bir deftere kiminle konuştuğunu ve nasıl hissettiğini bir cümleyle yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Bu hafta en az 2 farklı kişiyle kendin başlattığın bir sohbet yaptın.",
+            "En az 2 farklı kişiyle kendin başlattığın bir sohbet yaptın.",
             "Defterinde bu sohbetlerin kiminle olduğu ve nasıl geçtiği yazıyor.",
             "Bir sonraki sohbet için kullanabileceğin en az bir açılış cümlen hazır.",
         ],
@@ -849,11 +840,11 @@ DETAY: dict[str, dict] = {
             "Enerji haritası, hangi ortamların seni yorduğunu, hangilerinin dinlendirdiğini gösteren basit bir listedir. Defterine iki sütun çiz: \"Beni yordu\" ve \"Beni dinlendirdi\".",
             "Her akşam 5 dakika ayır ve gün içinde bulunduğun sosyal ortamları düşün: sınıf, teneffüs, kalabalık bir grup, bir arkadaşla bire bir sohbet gibi.",
             "Her ortamı uygun sütuna yaz ve yanına enerjini 1 (çok yoruldum) ile 5 (çok dinlendim) arasında puanla.",
-            "Hafta sonunda listeye bak ve tekrar eden ortamları işaretle. Örneğin: \"Kalabalık gruplar beni yoruyor, bire bir sohbetler dinlendiriyor.\"",
+            "Birkaç günlük not birikince listeye bak ve tekrar eden ortamları işaretle. Örneğin: \"Kalabalık gruplar beni yoruyor, bire bir sohbetler dinlendiriyor.\"",
             "Bulduğun örüntüyü sayfanın altına 1-2 cümleyle özetle.",
         ],
         "kontrol": [
-            "7 gün boyunca not aldığın iki sütunlu bir sayfan var.",
+            "En az 5 akşam not aldığın iki sütunlu bir sayfan var.",
             "Seni yoran en az 2, dinlendiren en az 2 ortamı adıyla yazabiliyorsun.",
             "\"Hangi ortamda enerji topluyorum?\" sorusuna bir cümleyle cevap verebiliyorsun.",
         ],
@@ -891,14 +882,14 @@ DETAY: dict[str, dict] = {
     },
     "P1-G-5": {
         "nasil": [
-            "Bu dönem yapacağın grup projelerini (ödev, performans görevi, kulüp projesi) bir listeye yaz.",
+            "Önündeki grup projelerini (ödev, performans görevi, kulüp projesi) bir listeye yaz.",
             "En az birinde koordinasyon ya da sözcülük rolünü iste. Koordinatör toplantıları ve iş takibini düzenler; sözcü grubun çalışmasını sınıfa anlatır.",
-            "Koordinatörsen ilk toplantıda görevleri ve teslim tarihlerini yaz; sonra haftada bir kısa bir kontrol toplantısı ya da mesajlaşması düzenle.",
+            "Koordinatörsen ilk toplantıda görevleri ve teslim tarihlerini yaz; sonra düzenli aralıklarla kısa bir kontrol toplantısı ya da mesajlaşması düzenle.",
             "Sözcüysen grubun ortak fikirlerini not al ve sunumdan önce arkadaşlarınla en az bir kez prova yap.",
             "Proje bitince \"Ekipte neyi iyi yaptım, neyi geliştirebilirim?\" sorusunu 3-4 cümleyle yaz.",
         ],
         "kontrol": [
-            "Bu dönem en az bir grup projesinde sözcülük ya da koordinasyon görevi yaptın.",
+            "En az bir grup projesinde sözcülük ya da koordinasyon görevi yaptın.",
             "Elinde toplantı notları, görev listesi ya da sunum notları gibi bir iz var.",
             "Ekipte ne yaptığını ve neyi geliştirebileceğini yazdığın bir değerlendirme var.",
         ],
@@ -919,6 +910,21 @@ DETAY: dict[str, dict] = {
         ],
         "ipucu": "İçe dönüklük bir eksiklik değil; dinlemek ve derin düşünmek birçok meslekte aranan becerilerdir.",
     },
+    "P1-G-7": {
+        "nasil": [
+            "{bolum} alanında insanlarla yoğun çalışan birini seç (ör. öğretmen, hemşire, satış temsilcisi, avukat): bir röportaj ya da belgesel bul ya da aile çevrenden böyle biriyle konuş.",
+            "Aile çevrenden biriyle konuşacaksan bunu ailenin bilgisiyle yap; tanımadığın biriyle yalnızca ailenin ya da öğretmeninin aracılığıyla, okulda ya da görüntülü görüşmeyle konuş.",
+            "Okurken, izlerken ya da konuşurken 3 soruyu not et: İletişimi nasıl öğrendi? Zor bir insanla karşılaşınca ne yaptı? Onu en çok ne yoruyor?",
+            "Bu kişinin iletişimde kullandığı 3 yöntemi listele. Örneğin: \"Önce dinliyor\", \"Karşısındakinin adını kullanıyor\".",
+            "Birini seç ve nasıl deneyeceğini tek cümleyle yaz. Örneğin: \"Bir sonraki grup çalışmasında önce herkesi dinleyeceğim.\" Denediğinde tarihli kısa bir not ekle.",
+        ],
+        "kontrol": [
+            "Bu kişinin iletişimde kullandığı 3 yöntem yazılı.",
+            "Onu yoran şeyleri de not ettin.",
+            "Bir yöntemi nasıl deneyeceğini yazdın.",
+        ],
+        "ipucu": "İnsanlarla çalışmanın yorucu yanlarını da öğrenmek, bu işin sana uyup uymadığını daha gerçekçi gösterir.",
+    },
     "P1-U-1": {
         "nasil": [
             "Aileni, akrabalarını, öğretmenlerini ve okulun mezunlarını düşün; {bolum} okuyan ya da bu bölümden mezun olan birini tanıyan var mı diye sor.",
@@ -928,15 +934,15 @@ DETAY: dict[str, dict] = {
             "Görüştüğün kişinin adını, iletişim bilgisini (izin verdiyse) ve öğrendiğin 2 şeyi bir deftere ya da telefonundaki bir nota kaydet.",
         ],
         "kontrol": [
-            "{bolum} okuyan ya da mezun 2 kişiyle tanıştın.",
-            "Bu kişilerin iletişim bilgilerini, izinleriyle, bir yere kaydettin.",
+            "{bolum} okuyan ya da mezun 2 kişiyle ailenin ya da öğretmeninin bilgisiyle konuştun.",
+            "İletişim bilgilerini yalnızca kişinin izniyle kaydettin.",
             "Her görüşmeden öğrendiğin en az bir bilgiyi yazdın.",
         ],
         "ipucu": "Kişisel bilgilerini (adres, okul dışı programın gibi) tanımadığın kişilerle paylaşma; görüşmeleri güvenli ortamlarda yap.",
     },
     "P1-U-2": {
         "nasil": [
-            "Önümüzdeki 1-2 ayda okulda olacak etkinlikleri öğren: tören, tanıtım günü, kulüp gösterisi, okul gezisi gibi.",
+            "Yaklaşan okul etkinliklerini öğren: tören, tanıtım günü, kulüp gösterisi, okul gezisi gibi.",
             "Etkinliği düzenleyen öğretmene giderek sunuculuk ya da tanıtım görevi almak istediğini söyle.",
             "Görevi aldığında akışı öğren ve söyleyeceklerini bir kâğıda yaz: açılış cümlesi, bölümler arası geçiş cümleleri, kapanış.",
             "Etkinlikten önce en az 3 kez sesli prova yap; mümkünse bir kez etkinlik yerinde, mikrofonla dene.",
@@ -952,15 +958,14 @@ DETAY: dict[str, dict] = {
     "P2-G-1": {
         "nasil": [
             "Aktif dinleme, karşındakini sözünü kesmeden dinleyip ne dediğini anladığını göstermektir. En basit yolu, cevap vermeden önce onun söylediğini kendi cümlelerinle özetlemektir.",
-            "Bu hafta bir fikir ayrılığı yaşadığında hemen cevap verme; önce \"Yani sen ... diyorsun, doğru mu anladım?\" de.",
-            "Karşındaki \"evet\" derse kendi fikrini söyle; \"hayır\" derse ne demek istediğini tekrar sor.",
+            "Bir fikir ayrılığı yaşadığında hemen cevap verme; önce \"Yani sen ... diyorsun, doğru mu anladım?\" de. Karşındaki \"evet\" derse kendi fikrini söyle; \"hayır\" derse ne demek istediğini tekrar sor.",
             "Konuşma sırasında telefonu bırak, ona dön ve göz teması kur.",
             "Her denemeden sonra telefonundaki bir nota kiminle konuştuğunu ve konuşmanın nasıl ilerlediğini bir cümleyle yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu hafta bir başlangıç denemesi. İşe yaradıysa 8 hafta boyunca fikir ayrılıklarında kaç kez önce özetlediğini say.",
+            "Bu ilk deneme bir başlangıç. İşe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Bu hafta en az 3 konuşmada karşındakini kendi cümlelerinle özetledin.",
+            "En az 3 konuşmada karşındakini kendi cümlelerinle özetledin.",
             "Notunda bu 3 konuşmanın kısa kaydı var.",
             "Özetlemenin konuşmayı nasıl etkilediğini bir cümleyle anlatabiliyorsun.",
         ],
@@ -999,10 +1004,10 @@ DETAY: dict[str, dict] = {
     "P2-G-4": {
         "nasil": [
             "Empati ve iletişim üzerine bir kaynak seç; örneğin Marshall Rosenberg'in \"Şiddetsiz İletişim\" kitabı ya da okul kütüphanesinden bu konuda bir kitap veya makale.",
-            "Kitapsa 3-4 haftaya böl: günde 10-15 sayfa ya da haftada 2-3 bölüm hedefle.",
+            "Kitapsa bölümlere ayırarak oku; her oturumda bir bölüm ya da 10-15 sayfa yeterli.",
             "Okurken sana ilginç gelen fikirlerin altını çiz ya da defterine kısa notlar al.",
             "Bitirdiğinde notlarından günlük hayatta deneyebileceğin 3 fikir seç ve her birini \"Bunu ... durumunda deneyeceğim\" diye yaz.",
-            "Bu fikirlerden en az birini bir hafta içinde dene.",
+            "Bu fikirlerden en az birini bir sonraki uygun durumda dene ve tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Empati ya da iletişim üzerine bir kitabı veya makaleyi okudun.",
@@ -1015,8 +1020,8 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Akran mentorluğu, bir öğrencinin başka bir öğrenciye ders, uyum ya da okul hayatı konusunda destek olmasıdır. Rehberlik servisine okulda böyle bir program olup olmadığını sor.",
             "Program yoksa yeni gelen öğrencilere okulu tanıtmak ya da alt sınıflara ders desteği vermek gibi bir öneriyi rehber öğretmeninle konuş.",
-            "Destek vereceğin kişi ya da grupla düzenli bir zaman belirle; örneğin haftada bir, 30 dakika.",
-            "Her görüşmede önce onu dinle, sonra birlikte bir sonraki hafta için küçük bir hedef koyun.",
+            "Destek vereceğin kişi ya da grupla düzenli bir buluşma zamanı belirleyin; 30 dakika yeterli.",
+            "Her görüşmede önce onu dinle, sonra birlikte bir sonraki buluşma için küçük bir hedef koyun.",
             "Görüşmeleri tarih ve kısa notla bir defterde kaydet; zorlandığın konularda öğretmeninden destek iste.",
         ],
         "kontrol": [
@@ -1040,6 +1045,20 @@ DETAY: dict[str, dict] = {
         ],
         "ipucu": "Hiçbiri tek başına doğru değil; amaç hangi durumda hangisinin sana iyi geldiğini fark etmek.",
     },
+    "P2-G-7": {
+        "nasil": [
+            "Farklı görüşteki insanları bir araya getirmeyi başarmış birini seç: bir öğretmen, takım kaptanı, toplum önderi ya da {bolum} alanından biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Ne yaşadı? Nasıl tepki verdi? Bundan ne öğrendi?",
+            "Bu kişinin uzlaşma için yaptığı 3 davranışı yaz. Örneğin: \"Önce iki tarafı ayrı ayrı dinledi\", \"Ortak hedefi hatırlattı\".",
+            "Bir davranışı seç ve kendi hayatında nasıl deneyeceğini tek cümleyle yaz; denediğinde tarihli kısa bir not ekle.",
+        ],
+        "kontrol": [
+            "Bu kişinin uzlaşma için yaptığı 3 davranış yazılı.",
+            "Kendine uyarlayacağın bir davranışı ve onu hangi durumda deneyeceğini yazdın.",
+        ],
+        "ipucu": "Hikâyeyi okurken \"Ben o durumda ne yapardım?\" diye sormak, okuduğunu kendi hayatına taşımanı kolaylaştırır.",
+    },
     "P2-U-1": {
         "nasil": [
             "Bir grup çalışmasında anlaşmazlık çıktığında hemen taraf tutma; önce iki tarafı da dinle.",
@@ -1057,7 +1076,7 @@ DETAY: dict[str, dict] = {
     },
     "P2-U-2": {
         "nasil": [
-            "Sınır koymak, gücünün ya da zamanının yetmediği bir isteği kibarca geri çevirmektir. Bu ay sana gelen istekleri bir an durup \"Buna gerçekten vaktim var mı?\" diye düşün.",
+            "Sınır koymak, gücünün ya da zamanının yetmediği bir isteği kibarca geri çevirmektir. Sana gelen istekler karşısında bir an durup \"Buna gerçekten vaktim var mı?\" diye düşün.",
             "Hayır demek için kısa bir cümle hazırla. Örneğin: \"Bu hafta sınavlarım var, bu işi alamayacağım ama gelecek hafta yardım edebilirim.\"",
             "Ben-dili kullan: suçlayıcı \"sen\" cümleleri yerine kendi durumunu anlatan \"ben\" cümleleri kur (\"Ben şu an yetişemiyorum\").",
             "Hayır dedikten sonra uzun açıklama yapma ya da özür dilemeye devam etme; gerekçeni bir kez söylemen yeterli.",
@@ -1065,7 +1084,7 @@ DETAY: dict[str, dict] = {
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
-            "Bu ay en az bir isteğe gerekçesini söyleyerek kibarca hayır dedin.",
+            "En az bir isteğe gerekçesini söyleyerek kibarca hayır dedin.",
             "Bu durumu ve nasıl hissettiğini not ettin.",
             "Bir sonraki sefer kullanabileceğin bir hayır cümlen hazır.",
         ],
@@ -1073,16 +1092,15 @@ DETAY: dict[str, dict] = {
     },
     "P3-G-1": {
         "nasil": [
-            "Bir kâğıt ya da defter sayfası al ve bu haftanın tüm ödevlerini, sınavlarını ve çalışmalarını alt alta yaz.",
+            "Bir kâğıt ya da defter sayfası al ve önündeki ödevleri, sınavları ve çalışmaları alt alta yaz.",
             "Her işin yanına teslim ya da sınav tarihini ekle.",
-            "Sayfanın yanına haftanın günlerini yaz ve her işi bir güne ata; tarihi en yakın olanlarla başla.",
-            "Bir güne 3-4'ten fazla iş düşerse bazılarını boş günlere kaydır.",
+            "Her işe yapacağın günü ata; tarihi en yakın olanlarla başla. Bir güne 3-4'ten fazla iş düşerse bazılarını boş günlere kaydır.",
             "Listeyi her gün göreceğin bir yere as ya da telefonunun fotoğraflarına kaydet; biten işin üstünü çiz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Bu haftanın tüm işlerini içeren bir listen var.",
+            "Önündeki işleri içeren bir listen var.",
             "Listedeki her işin yanında hangi gün yapılacağı yazıyor.",
             "Listeyi gün içinde kolayca görebileceğin bir yerde tutuyorsun.",
         ],
@@ -1092,11 +1110,10 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Pomodoro, 25 dakika tek bir işe odaklanıp ardından 5 dakika mola vermeye dayanan bir çalışma yöntemidir. Bir tur 25+5 dakikadır.",
             "Çalışmadan önce yapacağın tek bir işi seç. Örneğin: \"Fizik testinden 15 soru çöz.\"",
-            "Telefonunu sessize al ve başka odaya koy ya da ters çevir; zamanlayıcıyı 25 dakikaya kur.",
-            "Zil çalana kadar sadece o işe odaklan. Aklına başka bir şey gelirse bir kâğıda yazıp işine dön.",
+            "Telefonunu sessize al ve başka odaya koy ya da ters çevir; zamanlayıcıyı 25 dakikaya kur. Zil çalana kadar sadece o işe odaklan. Aklına başka bir şey gelirse bir kâğıda yazıp işine dön.",
             "5 dakikalık molada kalk, su iç ya da biraz yürü; sonra ikinci tura başla. Her günün sonunda kaç tur yaptığını bir tabloya işaretle.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "5 gün boyunca her gün en az 2 Pomodoro turu yaptın.",
@@ -1109,16 +1126,15 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Kullanacağın sistemi seç: kâğıt ajanda, duvar takvimi ya da telefonundaki takvim veya yapılacaklar uygulaması. Sana en kolay gelen ve her gün göreceğin bir şey olsun.",
             "Tüm ödev, sınav ve önemli işlerini teslim tarihleriyle birlikte bu sisteme gir.",
-            "Her akşam 5 dakika ayırıp ertesi günün işlerini kontrol et; yeni gelen görevleri hemen ekle.",
-            "Biten işleri işaretle; yapılamayanları yeni bir güne taşı.",
-            "Her haftanın sonunda sistemin işe yarayıp yaramadığını düşün ve gerekirse küçük bir değişiklik yap.",
+            "Akşamları 5 dakika ayırıp ertesi günün işlerini kontrol et; yeni gelen görevleri hemen ekle, biten işleri işaretle, yapılamayanları yeni bir güne taşı.",
+            "Sistemi kullanmadığın günleri de işaretle; birkaç gün kullandıktan sonra işe yarayıp yaramadığını düşün ve gerekirse küçük bir değişiklik yap.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "4 hafta boyunca tüm görevlerini aynı sisteme yazdın.",
-            "Sisteminde 4 haftaya ait işaretlenmiş görevler görünüyor.",
-            "Sistemini hiç aksatmadan ya da aksattığında hemen geri dönerek kullandın.",
+            "Sistemini en az 15 gün kullandın.",
+            "Kaçırdığın günler işaretli.",
+            "Tüm görevlerin tek bir sistemde duruyor.",
         ],
         "ipucu": "Birden fazla sistem kullanma; her şeyin tek bir yerde olması işini kolaylaştırır.",
     },
@@ -1139,34 +1155,47 @@ DETAY: dict[str, dict] = {
     },
     "P3-G-5": {
         "nasil": [
-            "Bu dönem için 3 akademik hedef yaz; ölçülebilir olsun. Örneğin: \"Matematik ortalamamı 70'ten 80'e çıkarmak\".",
-            "Her hedefi dönemin aylarına böl: her ay için yapacağın 1-2 somut adımı yaz. Örneğin: \"Ekim: haftada 3 kez 20 soru çözmek.\"",
-            "Hedeflerini ve aylık adımlarını bir sayfaya yazıp ajandanın ya da defterinin başına koy.",
-            "Her ayın sonunda 15 dakika ayırıp adımları yapıp yapmadığını kontrol et; gerekirse sonraki ayın adımlarını güncelle.",
-            "Dönem sonunda her hedefin yanına \"ulaştım\" ya da \"ulaşamadım\" yaz ve nedenini bir cümleyle not et.",
+            "3 akademik hedef yaz; ölçülebilir olsun. Örneğin: \"Matematik ortalamamı 70'ten 80'e çıkarmak\".",
+            "Her hedefi 3-4 küçük, somut adıma böl. Örneğin: \"Türev konusunda 50 soru çözmek\", \"Yanlışlarımı öğretmenime sormak\".",
+            "Hedeflerini ve adımlarını bir sayfaya yazıp ajandanın ya da defterinin başına koy.",
+            "Bir adımı bitirdiğinde yanına tarihini yaz; bir adım tıkanırsa onu daha küçük bir adıma çevir.",
+            "Bir hedefe ulaştığında ya da vazgeçtiğinde yanına \"ulaştım\" ya da \"ulaşamadım\" yaz, tarihini ve nedenini bir cümleyle not et.",
         ],
         "kontrol": [
-            "Bu dönem için yazılı 3 akademik hedefin ve aylık adımların var.",
-            "Her ayın sonunda yaptığın kontrolü kaydettin.",
-            "Dönem sonunda her hedefin yanına \"ulaştım / ulaşamadım\" ve nedenini yazdın.",
+            "3 hedefin ve her birinin küçük adımları yazılı.",
+            "Bitirdiğin adımların yanında tarihleri var.",
+            "En az 2 hedefe ulaştın ve ulaştığın tarihi not ettin.",
         ],
         "ipucu": "Ulaşamadığın bir hedef başarısızlık değildir; nedenini anlamak bir sonraki planı güçlendirir.",
     },
     "P3-G-6": {
         "nasil": [
-            "Her pazar için takvimine 10 dakikalık bir \"haftalık gözden geçirme\" zamanı ekle; örneğin akşam 19.00.",
-            "Bu 10 dakikada geçen haftaya bak ve 3 soruyu cevapla: \"Neyi bitirdim?\", \"Ne kaldı?\", \"Ne beni zorladı?\"",
-            "Kalan işleri ve yeni haftanın ödev ve sınavlarını listeye yaz, her birine bir gün ata.",
-            "Yeni hafta için tek bir odak hedefi seç. Örneğin: \"Bu hafta her gün 30 dakika İngilizce.\"",
-            "Defterinin bir sayfasına tarihi yazıp her gözden geçirmeyi işaretle; böylece kaç hafta yaptığını görürsün.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Kendine uygun bir gözden geçirme zamanı seç; ödevlerin biriktiği ya da yeni bir sınav dönemine girdiğin anlar iyi bir fırsattır.",
+            "10 dakika ayır ve 3 soruyu cevapla: \"Son günlerde neyi bitirdim?\", \"Ne kaldı ya da aksadı?\", \"Beni ne zorladı?\"",
+            "Kalan işleri ve yeni ödev ve sınavları listeye yaz, her birine bir gün ata.",
+            "Sonraki adım için tek bir odak hedefi seç. Örneğin: \"Önümüzdeki 5 çalışmada önce İngilizceye 30 dakika ayıracağım.\"",
+            "Her gözden geçirmeyi tarihiyle defterine kaydet; böylece kaç kez yaptığını görürsün.",
         ],
         "kontrol": [
-            "3 ay içinde en az 10 haftalık gözden geçirme yaptın.",
-            "Defterinde her gözden geçirmenin tarihi ve kısa notu var.",
-            "Her yeni haftaya bir plan ve bir odak hedefiyle başladın.",
+            "En az 6 tarihli gözden geçirme notun var.",
+            "Her notta neyin bittiği, neyin aksadığı ve sonraki adım yazılı.",
+            "Gözden geçirmelerinden sonra bir odak hedefiyle devam ettin.",
         ],
-        "ipucu": "Bir pazarı kaçırırsan pazartesi akşamı yapman da sayılır; zinciri tamamen bırakmamak önemli.",
+        "ipucu": "Planladığın zamanı kaçırırsan bir sonraki boş anında yapman da sayılır; önemli olan gözden geçirmeyi tamamen bırakmamak.",
+    },
+    "P3-G-7": {
+        "nasil": [
+            "Disipliniyle bilinen birini seç: bir sporcu, müzisyen ya da {bolum} alanında başarılı biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Günlük düzenini nasıl kurdu? İsteksiz olduğu günlerde ne yaptı? Bundan ne öğrendi?",
+            "Bu kişinin 2 yöntemini kendi cümlelerinle yaz. Örneğin: \"Her işe aynı saatte başlıyor\", \"Canı istemese de 10 dakikayla başlıyor\".",
+            "Bir yöntemi seç ve kendi çalışmana uyarla; her uyguladığında tarihli kısa bir not ekle.",
+        ],
+        "kontrol": [
+            "Bu kişinin 2 yöntemi yazılı.",
+            "Bir yöntemi kendi çalışmana uyguladın ve tarihli notun var.",
+        ],
+        "ipucu": "Başarılı insanların da isteksiz günleri vardır; farkı, o günlerde nasıl başladıklarıdır.",
     },
     "P3-U-1": {
         "nasil": [
@@ -1189,7 +1218,7 @@ DETAY: dict[str, dict] = {
             "Projeyi parçalara ayır (araştırma, yazma, tasarım, prova gibi) ve her parçanın kaç gün süreceğini tahmin et.",
             "Son tarihten geriye doğru sayarak her parçaya bir tarih ve bir sorumlu yaz; bunu bir tablo hâlinde hazırla.",
             "Takvimi grupla paylaş ve herkesin onayını al; itiraz olursa tarihleri birlikte düzenleyin.",
-            "Haftada bir kısa bir mesajla ilerlemeyi sor ve gerekirse takvimi güncelle.",
+            "Düzenli aralıklarla kısa bir mesajla ilerlemeyi sor ve gerekirse takvimi güncelle.",
         ],
         "kontrol": [
             "Ekibin senin hazırladığın takvim ve görev dağılımıyla çalıştı.",
@@ -1201,16 +1230,15 @@ DETAY: dict[str, dict] = {
     "P4-G-1": {
         "nasil": [
             "Nefes egzersizi, nefesini bilinçli olarak yavaşlattığın kısa bir uygulamadır. 4-4-6'da 4 saniye burnundan nefes alır, 4 saniye tutar, 6 saniyede ağzından yavaşça verirsin.",
-            "Sakin bir anda, rahat bir şekilde otur ve bir elini karnına koy. Nefes alırken karnının şiştiğini hissetmeye çalış.",
-            "Saniyeleri içinden sayarak bu döngüyü 5 kez tekrarla; toplam yaklaşık 1-2 dakika sürer.",
+            "Sakin bir anda, rahat bir şekilde otur ve bir elini karnına koy. Nefes alırken karnının şiştiğini hissetmeye çalış. Saniyeleri içinden sayarak bu döngüyü 5 kez tekrarla; toplam yaklaşık 1-2 dakika sürer.",
             "Her gün aynı saatte, örneğin yatmadan önce ya da ders çalışmaya başlamadan, bir kez pratik yap.",
             "Bir takvimde ya da notta her pratik yaptığın günü işaretle; stresli bir anda (sınav öncesi gibi) da kullanmayı dene.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "7 gün boyunca her gün en az bir kez 4-4-6 nefes tekniğini uyguladın.",
-            "Takviminde ya da notunda 7 günün işareti var.",
+            "En az 7 gün pratik yaptın ve her pratiği tarihiyle işaretledin.",
+            "Tekniğin hangi anlarda işine yaradığını not ettin.",
             "Tekniği bir arkadaşına adım adım tarif edebiliyorsun.",
         ],
         "ipucu": "Başın döner ya da rahatsız olursan nefesi tutma kısmını kısalt ya da normal nefesine dön; bu teknik herkese aynı şekilde iyi gelmeyebilir.",
@@ -1218,7 +1246,7 @@ DETAY: dict[str, dict] = {
     "P4-G-2": {
         "nasil": [
             "Tetikleyici, seni strese sokan durum ya da olaydır. Bir sayfaya \"Beni en çok strese sokan 3 durum\" başlığı at.",
-            "Son haftaları düşün ve 3 somut durum yaz. Örneğin: \"Tahtaya kaldırılmak\", \"Deneme sonuçlarının açıklanması\".",
+            "Son zamanları düşün ve 3 somut durum yaz. Örneğin: \"Tahtaya kaldırılmak\", \"Deneme sonuçlarının açıklanması\".",
             "Her durumun altına o anda ne hissettiğini ve bedeninde neyi fark ettiğini kısaca yaz (kalp çarpıntısı, el terlemesi gibi).",
             "Her biri için \"O anda ne yapabilirim?\" sorusuna 1-2 küçük fikir yaz. Örneğin: \"Yavaş nefes almak\", \"Kendime 'hazırlandım' demek\".",
             "Sayfayı sakla; bu durumlardan biri yaşandığında bir fikrini deneyebilirsin.",
@@ -1233,16 +1261,15 @@ DETAY: dict[str, dict] = {
     "P4-G-3": {
         "nasil": [
             "Sana keyifli gelen bir hareket türü seç: tempolu yürüyüş, bisiklet, dans, ip atlama, okul takımında spor ya da evde bir egzersiz videosu.",
-            "Haftalık takvimine 3 gün ve saat yaz. Örneğin: \"Pazartesi, Çarşamba, Cumartesi 17.30-17.50.\"",
-            "Her seferinde en az 20 dakika hareket et; zorlanmadan konuşabileceğin bir tempoyla başla.",
-            "Bir tabloya her haftanın 3 kutusunu çiz ve hareket ettiğin günleri işaretle.",
-            "Hareketten sonra kendini nasıl hissettiğini tek kelimeyle tabloya ekle (\"rahat\", \"yorgun\", \"enerjik\" gibi).",
+            "Her seferinde yaklaşık 20 dakika hareket et; zorlanmadan konuşabileceğin bir tempoyla başla.",
+            "Hareketten önce ve sonra kendini nasıl hissettiğini tek kelimeyle not et (\"gergin\", \"rahat\", \"yorgun\", \"enerjik\" gibi).",
+            "Her hareketin tarihini ve süresini bir tabloya yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu 4 hafta bir başlangıç denemesi. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer (kişiden kişiye değişir); işe yaradıysa en az 8 hafta sürdür ve haftada kaç kez yaptığını say (ör. 3 günde 3).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "4 hafta boyunca her hafta en az 3 kez 20 dakikalık hareket ettin.",
-            "Tablonda 4 haftaya ait işaretli günler var.",
+            "Tablonda en az 10 tarihli hareket kaydı var.",
+            "Kayıtların çoğunda hareket öncesi ve sonrası hissin yazılı.",
             "Hareketin sana nasıl hissettirdiğini bir cümleyle anlatabiliyorsun.",
         ],
         "ipucu": "Bir sağlık sorunun varsa ya da hareket ederken ağrı hissedersen dur ve bir yetişkinle ya da doktorla konuş.",
@@ -1253,7 +1280,7 @@ DETAY: dict[str, dict] = {
             "Sınava başlamadan önce kaygını 1 (hiç kaygılı değilim) ile 10 (çok kaygılıyım) arasında puanla ve kâğıdın köşesine yaz.",
             "Sınavı süre bitene kadar ara vermeden çöz; takıldığın soruyu işaretleyip geç.",
             "Sınav bitince kaygı puanını tekrar yaz ve bir tabloya tarih, sınav öncesi ve sonrası puanı işle.",
-            "Bu provayı 1-2 ay içinde en az 3-4 kez tekrarla ve puanlarının nasıl değiştiğine bak.",
+            "Bu provayı en az 3-4 kez tekrarla ve puanlarının nasıl değiştiğine bak.",
         ],
         "kontrol": [
             "En az 3 denemeyi gerçek sınav koşullarında çözdün.",
@@ -1264,16 +1291,16 @@ DETAY: dict[str, dict] = {
     },
     "P4-G-5": {
         "nasil": [
-            "Hafta içi için bir yatış ve kalkış saati belirle; okul saatine göre gerçekçi olsun. Örneğin: 23.00'te yat, 07.00'de kalk.",
+            "Okul günleri için bir yatış ve kalkış saati belirle; okul saatine göre gerçekçi olsun. Örneğin: 23.00'te yat, 07.00'de kalk.",
             "Telefonuna yatıştan 30 dakika önce çalacak bir hatırlatıcı kur; bu saatten sonra ekranı (telefon, tablet, bilgisayar) bırak.",
             "Bu 30 dakikayı sakin bir işle geçir: kitap okumak, ertesi günün çantasını hazırlamak, hafif müzik dinlemek gibi.",
-            "Bir uyku tablosu çiz; her sabah yattığın ve kalktığın saati yaz.",
-            "Her haftanın sonunda tabloya bak; kaç gün hedefine uyduğunu say ve gerekirse saati biraz düzenle.",
+            "Bir uyku tablosu çiz; her sabah yattığın ve kalktığın saati yaz, rutinine uyduğun geceyi işaretle.",
+            "Birkaç gece sonra tabloya bak; hangi gecelerde uyamadığını ve nedenini gör, gerekirse saati biraz düzenle.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
-            "En az 6 hafta boyunca hafta içi aynı saatlerde yatıp kalkmayı sürdürdün.",
-            "Uyku tablonda bu 6 haftanın kayıtları var.",
+            "Uyku tablonda rutinine uyduğun geceler işaretli.",
+            "En az 20 gece rutinine uydun.",
             "Çoğu akşam ekranı yatmadan 30 dakika önce bıraktın.",
         ],
         "ipucu": "Telefonunu yatağından uzakta şarj etmek, ekranı bırakmayı kolaylaştırır.",
@@ -1293,6 +1320,20 @@ DETAY: dict[str, dict] = {
         ],
         "ipucu": "Destek istemek zayıflık değildir; birçok kişi zor dönemlerde bir yetişkinle konuşmanın işe yaradığını görür.",
     },
+    "P4-G-7": {
+        "nasil": [
+            "Büyük bir maç, sahne ya da sınav öncesi heyecanını nasıl yönettiğini anlatmış birini seç: bir sporcu, sanatçı ya da {bolum} alanında çalışan biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Heyecanı ne zaman hissetti? O an ne yaptı? Bundan ne öğrendi?",
+            "İstersen ailenden ya da öğretmenlerinden birine de sor: \"Önemli bir şeyden önce heyecanını nasıl yönetiyorsun?\"",
+            "Bu kişinin kullandığı 2 yöntemi yaz (ör. hazırlık rutini, kendine söylediği bir cümle) ve birini bir sonraki heyecanlı anında dene; denediğinde tarihli kısa bir not ekle.",
+        ],
+        "kontrol": [
+            "Bu kişinin heyecanla başa çıkmak için kullandığı 2 yöntem yazılı.",
+            "Bir yöntemi kendin denedin ve nasıl gittiğini not ettin.",
+        ],
+        "ipucu": "Biraz heyecan çoğu zaman performansı artırır; ama heyecanın günlük hayatını uzun süre zorluyorsa rehber öğretmeninle konuş.",
+    },
     "P4-U-1": {
         "nasil": [
             "Son birkaç ayı düşün ve baskı altında sakin kaldığın bir anı seç: bir sınav, maç, sunum ya da aile içinde gergin bir an olabilir.",
@@ -1311,7 +1352,7 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Merak ediyorsan okulda zaman baskısı olan bir rolü deneyebilirsin: bilgi yarışması, münazara (iki grubun bir konuyu karşılıklı tartıştığı yarışma) ya da etkinlik organizasyonu gibi. Amaç bu tür ortamların sana uyup uymadığını gözlemlemek.",
             "Danışman öğretmenle konuşup bir görev al ve görevin teslim tarihini ve senden beklenenleri yaz.",
-            "Hazırlık için haftalık bir plan yap ve her hafta küçük bir hedefi tamamla.",
+            "Hazırlığı küçük hedeflere böl ve her birini bitirince tarihiyle işaretle.",
             "Görev anında baskıyı hissedersen sakin kalma yöntemini (yavaş nefes, işi parçalara bölmek) kullan.",
             "Görev bittikten sonra baskı altında neyi iyi yaptığını ve neyi geliştirebileceğini 2-3 cümleyle yaz.",
         ],
@@ -1327,11 +1368,12 @@ DETAY: dict[str, dict] = {
             "Hiç bilmediğin bir konu seç. Fikir bulamazsan kendine sor: \"Hep merak edip hiç araştırmadığım şey ne?\" Örneğin: kara delikler, arıların iletişimi.",
             "Bu konuda yaklaşık 10 dakikalık güvenilir bir video izle ya da bir yazı oku; örneğin bir müze, üniversite ya da bilim kanalının içeriği.",
             "İzlerken ya da okurken en ilginç gelen 2 bilgiyi bir kâğıda yaz.",
-            "Bu iki bilgiyi bir arkadaşına ya da ailene 2 cümleyle anlat.",
+            "Seni en çok neyin şaşırttığını ve nedenini 2-3 cümleyle yaz.",
+            "Yeni konuyu bir arkadaşına ya da ailene 2 cümleyle anlat.",
         ],
         "kontrol": [
-            "Bu hafta hiç bilmediğin bir konuda 10 dakikalık bir içerik izledin ya da okudun.",
-            "Kâğıdında konuyla ilgili 2 bilgi yazılı.",
+            "Hiç bilmediğin bir konuda 10 dakikalık bir içerik izledin ya da okudun.",
+            "Seni şaşırtan şeyi 2-3 cümleyle yazdın.",
             "Yeni konuyu birine 2 cümleyle anlattın.",
         ],
         "ipucu": "Bir konu sıkıcı gelirse yarıda bırakıp başka bir konu seçmen sorun değil.",
@@ -1352,31 +1394,29 @@ DETAY: dict[str, dict] = {
     },
     "P5-G-3": {
         "nasil": [
-            "Bir defterde ya da telefonundaki bir notta \"Merak listesi\" başlıklı bir sayfa aç.",
-            "Her hafta başında merak ettiğin bir soruyu yaz. Örneğin: \"Uçaklar neden havada kalır?\"",
-            "Hafta içinde 15-20 dakika ayırıp cevabı araştır; kitap, ansiklopedi ya da güvenilir internet kaynaklarına bak.",
-            "Cevabı 2-3 cümleyle sorunun altına yaz ve kullandığın kaynağı ekle.",
-            "4 haftanın sonunda listene bak; hangi sorunun seni en çok heyecanlandırdığını işaretle.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu 4 hafta bir başlangıç denemesi. İşe yaradıysa merak listeni 8 hafta sürdür ve kaç hafta soru yazıp araştırdığını işaretle.",
+            "Merakıyla yeni bir şey bulmuş birini seç: bir bilim insanı, mucit ya da {bolum} alanında yeni bir şey denemiş biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Neyi merak etti? Yeni fikrine nasıl ulaştı? Hangi engelle karşılaştı ve ne yaptı?",
+            "Bu kişinin yeni fikirlere ulaşma yolunu ve karşılaştığı bir engeli kendi cümlelerinle 4-5 cümleyle yaz.",
+            "Kendine uyarlayacağın bir davranışı tek cümleyle yaz. Örneğin: \"Merak ettiğim bir soruyu hemen not alıp sonra araştıracağım.\"",
         ],
         "kontrol": [
-            "Listende 4 hafta boyunca yazılmış 4 soru var.",
-            "Her sorunun altında 2-3 cümlelik bir cevap ve kaynağı bulunuyor.",
-            "Seni en çok heyecanlandıran soruyu ve nedenini söyleyebiliyorsun.",
+            "Bu kişinin yeni fikirlere ulaşma yolu yazılı.",
+            "Karşılaştığı bir engeli ve ne yaptığını kendi cümlelerinle yazdın.",
+            "Kendine uyarlayacağın bir davranışı yazdın.",
         ],
-        "ipucu": "",
+        "ipucu": "Belgesel izliyorsan ilginç bir yerde durdurup not almak, sonradan hatırlamanı kolaylaştırır.",
     },
     "P5-G-4": {
         "nasil": [
-            "Önümüzdeki bir ay içinde gidebileceğin etkinlikleri araştır: bilim şenliği, müze, söyleşi, sergi ya da atölye. Okul panosu ve belediyenin duyuruları iyi bir başlangıçtır.",
+            "Yakın zamanda gidebileceğin etkinlikleri araştır: bilim şenliği, müze, söyleşi, sergi ya da atölye. Okul panosu ve belediyenin duyuruları iyi bir başlangıçtır.",
             "Daha önce denemediğin türde bir etkinlik seç ve aileni ya da öğretmenini bilgilendirerek bir tarih belirle.",
             "Etkinlikten önce merak ettiğin bir soruyu yaz; orada bu sorunun cevabını aramaya çalış.",
             "Etkinlik sırasında ilgini çeken 2-3 şeyi not al ya da (izin varsa) fotoğrafını çek.",
             "Dönüşte bu deneyimin sana ne kattığını 2-3 cümleyle yaz.",
         ],
         "kontrol": [
-            "Bu ay daha önce katılmadığın türde bir etkinliğe katıldın.",
+            "Daha önce katılmadığın türde bir etkinliğe katıldın.",
             "Etkinlikte gördüğün ya da öğrendiğin en az 2 şeyi not ettin.",
             "Bu etkinlikte seni neyin şaşırttığını bir cümleyle anlatabiliyorsun.",
         ],
@@ -1385,8 +1425,8 @@ DETAY: dict[str, dict] = {
     "P5-G-5": {
         "nasil": [
             "{bolum} ile ilgili ama hiç bilmediğin bir konu seç. Örneğin bölümün temel bir kavramı ya da kullanılan bir yöntem.",
-            "Ücretsiz ve tanınmış platformlarda bu konuda kısa bir kurs ara; örneğin Khan Academy, BTK Akademi ya da Coursera'daki giriş düzeyi kurslar.",
-            "Kursun toplam süresine bak ve 1-2 ayda bitirebileceğin şekilde haftalık bir plan yap. Örneğin: \"Haftada 2 ders, Salı ve Cumartesi.\"",
+            "Ücretsiz ve tanınmış platformlarda bu konuda kısa bir kurs ara; örneğin Khan Academy, BTK Akademi ya da Coursera'daki giriş düzeyi kurslar (Coursera'da çoğu kurs ücretsiz \"denetleyici/audit\" seçeneğiyle izlenebilir).",
+            "Kursu oturumlara böl; her oturumdan sonra tarihli kısa bir not al.",
             "Her dersten sonra en önemli 1-2 bilgiyi bir deftere yaz.",
             "Kursu bitirince öğrendiklerini 3-4 cümleyle özetle ve konunun seni ilgilendirip ilgilendirmediğini not et.",
         ],
@@ -1399,19 +1439,19 @@ DETAY: dict[str, dict] = {
     },
     "P5-G-6": {
         "nasil": [
-            "3 ay için 3 kitap seç: biri {bolum} ile ilgili, en az biri tamamen farklı bir alandan (roman, tarih, bilim, biyografi gibi) olsun.",
-            "Her kitabın sayfa sayısını 30'a böl; bu, günlük okuman gereken sayfa sayısıdır. Örneğin 300 sayfalık bir kitap için günde 10 sayfa.",
-            "Her gün aynı zamanda oku; örneğin yatmadan önce 20 dakika.",
+            "3 kitap seç: biri {bolum} ile ilgili, en az biri tamamen farklı bir alandan (roman, tarih, bilim, biyografi gibi) olsun.",
+            "Kendine uygun bir okuma zamanı seç; örneğin yatmadan önce 20 dakika. Kısa ama sık okumak, uzun ve seyrek okumaktan daha kolay sürer.",
             "Bir okuma listesi tut: kitabın adı, bitirdiğin tarih ve kitaptan aklında kalan bir cümle.",
-            "Ay sonunda bitiremediysen kendini zorlama; bir sonraki ay kaldığın yerden devam et.",
+            "Bir kitabı bitirince 2-3 cümlelik kısa bir not yaz: Ne anlatıyor, bana ne kattı?",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "3 ay içinde 3 kitap okudun.",
-            "Okuma listende her kitabın adı, bitiş tarihi ve bir cümlelik notu var.",
-            "Okuduğun kitaplardan en az biri alanının dışından.",
+            "En az 3 kitap bitirdin.",
+            "Bu kitaplardan en az biri alanının dışından.",
+            "Okuma listende her kitabın bitiş tarihi ve kısa notu var.",
         ],
-        "ipucu": "Kütüphaneler, kitap almadan okumak için iyi bir seçenek.",
+        "ipucu": "Kütüphaneler, kitap almadan okumak için iyi bir seçenek; bir kitap seni sıkıyorsa değiştirmekte sakınca yok.",
     },
     "P5-U-1": {
         "nasil": [
@@ -1444,16 +1484,15 @@ DETAY: dict[str, dict] = {
     },
     "P6-G-1": {
         "nasil": [
-            "Rutinin, her gün benzer şekilde yaptığın işlerin düzenidir. Bu hafta değiştireceğin tek bir şey seç. Örneğin: farklı bir odada çalışmak ya da derslerin sırasını değiştirmek.",
-            "Değişikliği en az 3 gün boyunca uygula.",
-            "Her gün sonunda 2 soruyu cevapla: \"Kendimi nasıl hissettim?\" ve \"Verimim arttı mı, azaldı mı, aynı mı kaldı?\"",
-            "Hafta sonunda gözlemlerini 2-3 cümleyle özetle: değişiklik sana iyi geldi mi, rahatsız etti mi?",
+            "Rutinin, her gün benzer şekilde yaptığın işlerin düzenidir. Değiştireceğin tek bir şey seç. Örneğin: farklı bir odada çalışmak ya da derslerin sırasını değiştirmek.",
+            "Değişikliği birkaç gün (ör. 3 gün) dene.",
+            "Denediğin her günün sonunda 2 soruyu cevapla: \"Kendimi nasıl hissettim?\" ve \"Verimim arttı mı, azaldı mı, aynı mı kaldı?\"",
+            "Deneme bitince gözlemlerini 2-3 cümleyle özetle: değişiklik sana iyi geldi mi, rahatsız etti mi?",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
         ],
         "kontrol": [
-            "Bu hafta rutininde bilinçli bir değişikliği en az 3 gün denedin.",
-            "Her gün için kısa bir gözlem notun var.",
+            "Rutininde bilinçli bir değişikliği birkaç gün denedin.",
+            "Denediğin günler için kısa gözlem notların var.",
             "Değişikliğin sana nasıl geldiğini 2-3 cümleyle yazdın.",
         ],
         "ipucu": "Değişiklik seni rahatsız ettiyse bu da değerli bir bilgidir; doğru ya da yanlış bir sonuç yok.",
@@ -1474,15 +1513,15 @@ DETAY: dict[str, dict] = {
     },
     "P6-G-3": {
         "nasil": [
-            "Plan B, asıl planın işlemezse uygulayacağın yedek plandır. Önümüzdeki 4 haftanın önemli işlerini yaz (sınav, proje teslimi, maç, etkinlik).",
+            "Plan B, asıl planın işlemezse uygulayacağın yedek plandır. Önündeki önemli işleri yaz (sınav, proje teslimi, maç, etkinlik).",
             "Her iş için \"Bu olmazsa ne yaparım?\" sorusunu sor ve olası bir aksaklık yaz. Örneğin: \"Grup arkadaşım gelmezse.\"",
             "Her aksaklık için bir yedek plan yaz. Örneğin: \"Onun kısmını önceden paylaşmasını isterim, gerekirse ben sunarım.\"",
             "İş tamamlandığında yedek plana ihtiyaç olup olmadığını ve işe yarayıp yaramadığını kısaca not et.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu 4 hafta bir başlangıç denemesi. İşe yaradıysa her önemli iş için yedek plan yazmayı sürdür ve kaç işte yazdığını say (ör. 4 işten 3'ü).",
+            "Bu ilk deneme bir başlangıç. İşe yaradıysa her önemli iş için yedek plan yazmayı sürdür ve her yedek planı tarihiyle not et.",
         ],
         "kontrol": [
-            "4 hafta içinde en az 3 önemli iş için yazılı bir yedek planın vardı.",
+            "En az 3 önemli iş için yazılı bir yedek planın vardı.",
             "Her yedek plan, belirli bir aksaklığa karşı hazırlandı.",
             "Yedek planlardan en az birinin işe yarayıp yaramadığını değerlendirdin.",
         ],
@@ -1497,23 +1536,23 @@ DETAY: dict[str, dict] = {
             "Her rol için kısa bir not al: \"Bu rolde neyi sevdim, neyi zor buldum?\"",
         ],
         "kontrol": [
-            "1-2 ay içinde grup çalışmalarında en az 2 farklı rol üstlendin.",
+            "Grup çalışmalarında en az 2 farklı rol üstlendin.",
             "Her rol için neyi sevdiğini ve neyi zor bulduğunu yazdın.",
             "Hangi rolde kendini daha rahat hissettiğini söyleyebiliyorsun.",
         ],
-        "ipucu": "",
+        "ipucu": "Hiç denemediğin bir rol başta zor gelebilir; bu, o rolün sana uymadığı anlamına gelmez.",
     },
     "P6-G-5": {
         "nasil": [
-            "Temposu değişken ortamlara örnekler: okul etkinliği organizasyonu, bir festivalde gönüllülük, yaz okulu ya da kampı. Okulun rehberlik servisinden bu tür fırsatları sorabilirsin.",
+            "Temposu değişken ortamlara örnekler: okul etkinliği organizasyonu, bir okul şenliğinde görev, okulun düzenlediği bir gezi ya da belediyenin ücretsiz bir etkinliği. Okulun rehberlik servisinden bu tür fırsatları sorabilirsin.",
             "Ailenin izniyle sana uygun bir fırsat seç ve görev almak için başvur.",
-            "Görev süresince her gün akşam 2-3 dakika ayırıp günün nasıl geçtiğini ve plansız gelişmeleri nasıl karşıladığını not et.",
+            "Görev günlerinin sonunda 2-3 dakika ayırıp günün nasıl geçtiğini ve plansız gelişmeleri nasıl karşıladığını not et.",
             "Plansız bir şey olduğunda önce durumu anla, sonra sorumlu kişiye danışarak bir çözüm öner.",
             "Deneyim bitince bu ortamda kendini nasıl hissettiğini 3-4 cümleyle yaz.",
         ],
         "kontrol": [
             "Temposu değişken bir ortamda görev aldın.",
-            "Görev süresince aldığın günlük notların var.",
+            "Görev günlerine ait tarihli notların var.",
             "Değişken bir ortamda kendini nasıl hissettiğini anlatabiliyorsun.",
         ],
         "ipucu": "Yeni ve kalabalık ortamlarda iletişim bilgilerini ailenle paylaş ve sorumlu yetişkinlerin yönlendirmesine uy.",
@@ -1549,34 +1588,31 @@ DETAY: dict[str, dict] = {
     "P6-U-2": {
         "nasil": [
             "Sıkıcı bulduğun ama gerekli olan işleri listele: konu tekrarı, ödev, kelime ezberi, oda düzeni gibi.",
-            "Bu işler için haftada sabit bir zaman dilimi belirle. Örneğin: \"Her gün 17.00-17.45 ödev\" ya da \"Salı ve Perşembe 20.00-20.30 tekrar.\"",
-            "Bu zamanı takvimine ya da telefonuna tekrarlayan bir hatırlatıcı olarak ekle.",
-            "Bu sürede yalnızca listedeki işleri yap; dikkatini dağıtmamak için telefonunu uzaklaştır.",
-            "Her hafta sonunda sabit zamanı kaç gün koruduğunu bir tabloya işaretle.",
+            "Bu işler için sabit bir zaman dilimi belirle. Örneğin: \"Okuldan gelince 17.00-17.45 ödev.\"",
+            "Bu zamanı telefonuna tekrarlayan bir hatırlatıcı olarak ekle; bu sürede yalnızca listedeki işleri yap ve telefonunu uzaklaştır.",
+            "Zaman dilimini koruduğun her günü tarihiyle bir tabloya işaretle.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
             "Rutin işler için yazılı bir sabit zaman dilimin var.",
-            "Bu zaman dilimini 4 hafta boyunca korudun.",
-            "Tablonda her haftanın işaretleri görünüyor.",
+            "Tablonda bu zaman dilimini koruduğun en az 15 gün işaretli.",
         ],
         "ipucu": "Sıkıcı işi keyifli bir şeyin hemen öncesine koymak, ona başlamayı kolaylaştırır.",
     },
     "P7-G-1": {
         "nasil": [
-            "Sonucundan emin olmadığın ama zarar vermeyecek küçük bir adım seç. Örneğin: derste soru sormak, yeni bir yemek denemek ya da bir kulübe başvurmak.",
-            "Yapmadan önce bir kâğıda \"Ne olmasını bekliyorum?\" sorusunun cevabını bir cümleyle yaz.",
-            "Bu hafta içinde adımı at.",
-            "Sonra gerçekte ne olduğunu ve nasıl hissettiğini aynı kâğıda yaz; beklentinle karşılaştır.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu hafta bir başlangıç denemesi. İşe yaradıysa her hafta küçük bir adım atmayı 8 hafta sürdür ve kaç hafta yaptığını işaretle.",
+            "Belirsiz bir yola çıkmış birini seç: bir girişimci, kâşif, sporcu ya da {bolum} alanından biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Neyi göze aldı? Nasıl hazırlandı? İşler ters gidince ne yaptı?",
+            "Bu kişinin aldığı riski, hazırlığını ve ters giden bir anı nasıl yönettiğini 4-5 cümleyle yaz.",
+            "Kendine uyarlayacağın bir davranışı tek cümleyle yaz. Örneğin: \"Yeni bir şeye başlamadan önce ters gidebilecek bir şeyi ve ne yapacağımı yazacağım.\"",
         ],
         "kontrol": [
-            "Bu hafta en az bir küçük risk aldın.",
-            "Kâğıdında beklentin ve gerçekte olan sonuç yazılı.",
-            "Bu deneyimden öğrendiğin bir şeyi bir cümleyle söyleyebiliyorsun.",
+            "Bu kişinin aldığı risk ve nasıl hazırlandığı yazılı.",
+            "Ters giden bir anı nasıl yönettiğini yazdın.",
+            "Kendine uyarlayacağın bir davranışı yazdın.",
         ],
-        "ipucu": "Küçük risk, sağlığını ya da güvenliğini tehlikeye atan bir şey değildir; sadece alışık olmadığın bir adımdır.",
+        "ipucu": "Risk almak düşünmeden atılmak değildir; hikâyelerde en çok hazırlık kısmına dikkat et.",
     },
     "P7-G-2": {
         "nasil": [
@@ -1597,7 +1633,7 @@ DETAY: dict[str, dict] = {
             "Cevabını henüz bilmediğin küçük bir soru seç. Örneğin: \"Bitkiler müzikle daha hızlı büyür mü?\" ya da \"Sınıfımızda en çok hangi uygulama kullanılıyor?\"",
             "Başlamadan önce tahminini yaz; buna hipotez denir, yani sonucun ne olacağına dair önceden yaptığın tahmin.",
             "Basit ve güvenli bir yöntem planla (gözlem, küçük bir anket, evde basit bir deney). Gerekirse öğretmeninden ya da ailenden yardım iste.",
-            "Yaklaşık bir ay boyunca verilerini düzenli olarak bir tabloya kaydet.",
+            "Her ölçümü ya da gözlemi tarihiyle bir tabloya kaydet.",
             "Sonuçları tahmininle karşılaştır ve seni şaşırtan bir bulguyu 2-3 cümleyle yaz.",
         ],
         "kontrol": [
@@ -1610,37 +1646,37 @@ DETAY: dict[str, dict] = {
     "P7-G-4": {
         "nasil": [
             "Karar günlüğü, verdiğin kararları ve sonuçlarını yazdığın bir defter ya da nottur. Bir sayfaya 4 sütun çiz: Tarih, Karar, Neyi bilmiyordum?, Sonuç.",
-            "Bir ay boyunca tüm bilgilere sahip olmadan verdiğin kararları yaz. Örneğin: \"Hangi konuyu önce çalışacağımı seçtim.\"",
+            "Tüm bilgilere sahip olmadan verdiğin kararları yaz. Örneğin: \"Hangi konuyu önce çalışacağımı seçtim.\"",
             "Kararın sonucu belli olduğunda \"Sonuç\" sütununu doldur.",
-            "Her hafta sonunda kararlarına bak ve bir cümle ekle: \"Bu hafta karar verirken neyi fark ettim?\"",
+            "5 karar biriktiğinde hepsine geri dön ve bir cümle ekle: \"Eksik bilgiyle karar verirken neyi fark ettim?\"",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Karar günlüğünde en az 5 karar ve sonucu kayıtlı.",
+            "Karar günlüğünde en az 5 karar ve sonucu tarihiyle kayıtlı.",
             "Her karar için neyi bilmediğini yazdın.",
             "Eksik bilgiyle karar verirken neyi fark ettiğini bir cümleyle söyleyebiliyorsun.",
         ],
-        "ipucu": "Küçük kararları da yazabilirsin; önemli olan düzenli not tutmak.",
+        "ipucu": "Küçük kararları da yazabilirsin; önemli olan her kararı tarihiyle kaydetmek.",
     },
     "P7-G-5": {
         "nasil": [
-            "Daha önce hiç bulunmadığın bir ortam seç: yaz kampı, gençlik programı, yeni bir spor kursu ya da gönüllülük etkinliği. Rehberlik servisinden ya da belediyenden bilgi alabilirsin.",
-            "Seçimini ailenle konuş, izinlerini al ve kayıt işlemlerini birlikte yapın.",
+            "Daha önce hiç bulunmadığın, ücretsiz ve yakın bir ortam seç: okulda yeni bir kulüp, yeni bir spor, okulun düzenlediği bir gezi ya da belediyenin ücretsiz bir gençlik etkinliği. Rehberlik servisinden bilgi alabilirsin.",
+            "Seçimini ailenle konuş ve gerekiyorsa izinlerini al.",
             "Gitmeden önce bu ortamdan beklentini ve seni endişelendiren bir şeyi yaz.",
-            "Ortamdayken her gün 2-3 dakika ayırıp yeni öğrendiğin ya da seni şaşırtan bir şeyi not et.",
-            "Bitince başlangıçtaki endişeni yeniden oku ve ne olduğunu 2-3 cümleyle yaz.",
+            "İlk gün kendini ne kadar rahat hissettiğini 1-10 arası puanla; sonraki bir günde aynı puanı yeniden ver.",
+            "Bitince başlangıçtaki endişeni yeniden oku ve iki puan arasındaki farkı 2-3 cümleyle yaz.",
         ],
         "kontrol": [
-            "Daha önce bulunmadığın bir ortamda en az birkaç gün geçirdin.",
-            "Başlangıçtaki beklentin ve endişen yazılı.",
-            "Bu deneyimin sende neyi değiştirdiğini anlatabiliyorsun.",
+            "Daha önce bulunmadığın bir ortamda yer aldın.",
+            "İlk gün ile sonraki bir gün arasındaki rahatlık puanların yazılı.",
+            "Bu farkı ve deneyimin sende neyi değiştirdiğini kısaca yazdın.",
         ],
         "ipucu": "Yeni bir ortamda kendini güvende hissetmezsen hemen sorumlu yetişkine ve ailene haber ver.",
     },
     "P7-G-6": {
         "nasil": [
-            "Önceki adımlarda aldığın notları (küçük risk, karar günlüğü, yeni ortam) yeniden oku.",
+            "Önceki adımlarda aldığın notları (risk alan birinin hikâyesi, karar günlüğü, yeni ortam, basamaklı meydan okuma) yeniden oku.",
             "Belirsizliğe karşı rahatlığını şu an ve birkaç ay önce için 1-10 arasında puanla; farkı ve nedenini bir cümleyle yaz.",
             "{bolum} içindeki alt alanları listele ve her birinin ne kadar öngörülebilir (önceden tahmin edilebilir, kuralları net) olduğunu araştırarak not et.",
             "Sana uygun görünen alt alanı ve nedenini 3-4 cümlelik bir değerlendirme olarak yaz.",
@@ -1650,7 +1686,7 @@ DETAY: dict[str, dict] = {
             "{bolum} içindeki alt alanları, ne kadar önceden tahmin edilebilir olduklarına göre karşılaştırdın.",
             "3-4 cümlelik yazılı bir değerlendirmen var.",
         ],
-        "ipucu": "",
+        "ipucu": "Belirsizliğe karşı rahatlığın artmadıysa bu bir başarısızlık değil; daha öngörülebilir bir alt alan seçmek de bilinçli bir karardır.",
     },
     "P7-U-1": {
         "nasil": [
@@ -1668,7 +1704,7 @@ DETAY: dict[str, dict] = {
     },
     "P7-U-2": {
         "nasil": [
-            "Artı/eksi listesi, bir kararın iyi ve kötü yanlarını yan yana yazdığın basit bir tablodur. Önümüzdeki ay vereceğin önemli kararları düşün (kulüp seçimi, kurs, yarışmaya katılmak gibi).",
+            "Artı/eksi listesi, bir kararın iyi ve kötü yanlarını yan yana yazdığın basit bir tablodur. Yaklaşan önemli kararlarını düşün (kulüp seçimi, kurs, yarışmaya katılmak gibi).",
             "Bir sayfayı ikiye böl: \"Artılar\" ve \"Eksiler\". Her seçenek için en az 3'er madde yaz.",
             "Her maddenin yanına önemini 1-3 arasında puanla; böylece sadece sayıya değil ağırlığa da bakarsın.",
             "Kararını ver ve listenin altına neden bu kararı verdiğini bir cümleyle yaz.",
@@ -1676,7 +1712,7 @@ DETAY: dict[str, dict] = {
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
-            "Bu ay en az 2 kararda yazılı bir artı/eksi listesi kullandın.",
+            "En az 2 kararda yazılı bir artı/eksi listesi kullandın.",
             "Her listenin altında verdiğin karar ve gerekçesi yazılı.",
             "Bir kararın sonucunu listenle karşılaştırdın.",
         ],
@@ -1684,14 +1720,14 @@ DETAY: dict[str, dict] = {
     },
     "P8-G-1": {
         "nasil": [
-            "Bu hafta içinde olan bir grup çalışması seç ve grubuna küçük bir koordinasyon görevini üstlenebileceğini söyle.",
+            "Yaklaşan bir grup çalışması seç ve grubuna küçük bir koordinasyon görevini üstlenebileceğini söyle.",
             "Koordinasyon, işlerin düzenli yürümesini sağlamaktır. Örneğin herkese uygun bir toplantı saatini sor ve ortak saati belirle.",
             "Ya da yapılacak işleri listele ve kimin hangi işi yapacağını grupla birlikte belirle.",
             "Kararı (saat ya da görev listesi) gruba yazılı olarak gönder.",
             "Görev bitince neyin kolay, neyin zor olduğunu bir cümleyle not et.",
         ],
         "kontrol": [
-            "Bu hafta bir grup çalışmasında koordinasyon görevini tamamladın.",
+            "Bir grup çalışmasında koordinasyon görevini tamamladın.",
             "Gruba gönderdiğin bir toplantı saati ya da görev listesi var.",
             "Bu görevde neyin kolay, neyin zor olduğunu söyleyebiliyorsun.",
         ],
@@ -1700,15 +1736,15 @@ DETAY: dict[str, dict] = {
     "P8-G-2": {
         "nasil": [
             "Üç liderlik tarzını tanı: yönlendiren lider net talimat verir ve kararları kendisi alır; destekleyen lider ekibini dinler ve yardım eder; örnek olan lider işi kendisi yaparak yol gösterir.",
-            "Bu tarzlarla ilgili kısa bir yazı oku ya da video izle; okul kütüphanesi ya da güvenilir bir eğitim sitesi işine yarar.",
-            "Her tarz için tanıdığın birini örnek olarak düşün: bir öğretmen, antrenör ya da takım kaptanı.",
-            "Bir grupta yer aldığın bir anı hatırla ve o an nasıl davrandığını düşün; sana en yakın tarzı seç.",
-            "Seçtiğin tarzı ve nedenini 2-3 cümleyle yaz.",
+            "Bir lider seç: bir takım kaptanı, tarihî bir kişi ya da {bolum} alanında tanınmış biri. Okul ya da halk kütüphanesinin biyografi rafına, TRT Belgesel gibi bir kanala ya da güvenilir bir röportaja bak.",
+            "Okurken ya da izlerken not et: Zor bir anda ne yaptı? Ekibine nasıl davrandı? Bu üç tarzdan hangisini kullandı?",
+            "Bu liderin tarzını bir örnek olayla 2-3 cümleyle yaz.",
+            "Bir grupta yer aldığın bir anı hatırla; sana en yakın tarzı seç ve nedenini 2-3 cümleyle yaz.",
         ],
         "kontrol": [
             "Üç liderlik tarzının farkını bir cümleyle anlatabiliyorsun.",
-            "Sana en yakın tarzı seçtin.",
-            "Bu seçimin gerekçesini kendi deneyiminden bir örnekle yazdın.",
+            "İncelediğin liderin tarzını bir örnek olayla yazdın.",
+            "Sana en yakın tarzı kendi deneyiminden bir örnekle gerekçelendirdin.",
         ],
         "ipucu": "Çoğu kişi duruma göre farklı tarzları birlikte kullanır; tek bir kalıba sığman gerekmez.",
     },
@@ -1717,7 +1753,7 @@ DETAY: dict[str, dict] = {
             "Sınıfında ya da kulübünde yapılabilecek küçük bir etkinlik seç: bilgi yarışması, film gösterimi, kitap değişimi ya da kısa bir turnuva gibi.",
             "Fikrini sınıf öğretmenine ya da kulüp danışmanına anlat ve izin al; tarih ve yer belirleyin.",
             "Yapılacakları listele (duyuru, malzeme, program) ve görevleri gönüllü arkadaşlarınla paylaş.",
-            "Etkinlikten bir hafta önce hazırlıkları kontrol et; eksik olan bir şey varsa planını güncelle.",
+            "Etkinlikten birkaç gün önce hazırlıkları kontrol et; eksik olan bir şey varsa planını güncelle.",
             "Etkinlikten sonra neyin iyi gittiğini ve neyi farklı yapacağını 2-3 cümleyle yaz.",
         ],
         "kontrol": [
@@ -1746,16 +1782,16 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Üye olduğun ya da katılmak istediğin bir kulüpte hangi yönetim görevlerinin olduğunu öğren (başkan yardımcısı, proje sorumlusu, sekreter gibi).",
             "Kulüp danışmanıyla konuşup bir göreve aday ol; seçim varsa neden bu görevi istediğini 2-3 cümleyle anlat.",
-            "Görevi aldığında dönem için 2-3 hedef belirle ve bunları ekiple paylaş.",
-            "Her ay kısa bir toplantı ya da mesajla hedeflere ne kadar yaklaştığınızı kontrol et.",
-            "Dönem sonunda neleri başardığınızı ve neyi öğrendiğini bir sayfada değerlendir.",
+            "Görevi aldığında görev süren için 2-3 hedef belirle ve bunları ekiple paylaş.",
+            "Görev boyunca düzenli aralıklarla kısa bir toplantı ya da mesajla hedeflere ne kadar yaklaştığınızı kontrol et.",
+            "Görev bitince neleri başardığınızı ve neyi öğrendiğini bir sayfada değerlendir.",
         ],
         "kontrol": [
             "Bir kulüpte yönetim görevini bir dönem boyunca sürdürdün.",
-            "Dönem başında yazdığın 2-3 hedef ve aylık kontrol notların var.",
-            "Dönem sonunda yazdığın bir değerlendirme sayfan var.",
+            "Başta yazdığın 2-3 hedef ve tarihli kontrol notların var.",
+            "Görev bitince yazdığın bir değerlendirme sayfan var.",
         ],
-        "ipucu": "Okul derslerinle dengeyi korumak için kulüp işlerine haftalık sabit bir zaman ayır.",
+        "ipucu": "Okul derslerinle dengeyi korumak için kulüp işlerine sabit bir zaman ayır.",
     },
     "P8-G-6": {
         "nasil": [
@@ -1805,18 +1841,17 @@ DETAY: dict[str, dict] = {
     },
     "I1-G-1": {
         "nasil": [
-            "Bu haftaki bütün işlerini (ödevler, sınavlar, kurslar, ev işleri, sosyal planlar) bir kâğıda alt alta yaz; 10 madde civarı yeterli.",
-            "Ortadan bir dikey, bir yatay çizgi çekerek kâğıdı 4 kutuya böl. Bu, Eisenhower matrisidir: işleri önemine ve aciliyetine göre ayıran basit bir tablodur.",
-            "Kutulara şu başlıkları yaz: 1) Önemli ve acil, 2) Önemli ama acil değil, 3) Acil ama önemsiz, 4) Ne önemli ne acil.",
+            "Önündeki işleri (ödevler, sınavlar, kurslar, ev işleri, sosyal planlar) bir kâğıda alt alta yaz; 10 madde civarı yeterli.",
+            "Kâğıdı bir dikey, bir yatay çizgiyle 4 kutuya böl. Bu, Eisenhower matrisidir: işleri önemine ve aciliyetine göre ayıran basit bir tablodur. Kutulara yaz: 1) Önemli ve acil, 2) Önemli ama acil değil, 3) Acil ama önemsiz, 4) Ne önemli ne acil.",
             "Her işi kendine sorarak bir kutuya taşı: \"Bunu yapmazsam hedefime zarar verir mi?\" (önem) ve \"Teslimi 1–2 gün içinde mi?\" (aciliyet). Örneğin: yarınki sınav 1. kutuya girer.",
-            "1. kutudaki işlerden başla; 2. kutudakiler için haftada bir zaman ayır, 4. kutudakileri azaltmayı dene.",
+            "1. kutudaki işlerden başla; 2. kutudakilere de plan içinde yer aç, 4. kutudakileri azaltmayı dene.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu hafta bir başlangıç denemesi. İşe yaradıysa her hafta başında matrisi yeniden doldur ve 8 hafta boyunca kaç hafta yaptığını işaretle.",
+            "Bu ilk deneme bir başlangıç. İşe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Bu haftanın işlerinin 4 kutuya ayrıldığı bir sayfan var.",
+            "Önündeki işleri 4 kutuya ayırdığın bir sayfan var.",
             "Her kutuda en az bir iş yazıyor ya da boş kutunun nedenini biliyorsun.",
-            "Haftaya hangi işle başladığını söyleyebiliyorsun ve o iş 1. kutudan.",
+            "1. kutudan bir işi bitirdin.",
         ],
         "ipucu": "Her şeyi 1. kutuya koymak sık yapılan bir hatadır; sadece gerçekten 1–2 gün içinde yapılması gerekenleri oraya yaz.",
     },
@@ -1838,16 +1873,15 @@ DETAY: dict[str, dict] = {
     "I1-G-3": {
         "nasil": [
             "Her sabah (ya da bir önceki akşam) 3 dakika ayır ve o günkü işlerini aklından geçir.",
-            "İçlerinden en önemli 3 tanesini seç ve bir kâğıda ya da not uygulamasına \"Bugünün 3'ü\" başlığıyla yaz. Örneğin: fizik ödevi, 20 paragraf sorusu, kursa kayıt formu.",
+            "İçlerinden en önemli 3 tanesini seç ve bir kâğıda ya da not uygulamasına tarihle birlikte \"Bugünün 3'ü\" başlığıyla yaz. Örneğin: fizik ödevi, 20 paragraf sorusu, kursa kayıt formu.",
             "Okuldan sonraki boş zamanında telefona ve diğer işlere geçmeden önce bu 3 işi bitirmeye çalış.",
-            "Akşam yaptıklarının yanına tik at; bitmeyen olduysa nedenini tek kelimeyle not et (süre, unuttum, zor geldi).",
-            "Her pazar haftanın kaç gün 3 işini de bitirdiğini say ve bir sonraki haftaya not düş.",
+            "Akşam yaptıklarının yanına tik at; bitmeyen olduysa nedenini tek kelimeyle not et (süre, unuttum, zor geldi). Her 7 kayıtta bir kaç gün 3 işi de bitirdiğini say.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "4 hafta boyunca her gün için yazılmış bir \"Bugünün 3'ü\" listen var.",
-            "Listelerdeki işlerin çoğunun yanında tik var.",
+            "En az 15 gün için tarihli \"Bugünün 3'ü\" listen var.",
+            "Her listede kaç işi bitirdiğin işaretli.",
             "Hangi tür işlerin genelde yarım kaldığını söyleyebiliyorsun.",
         ],
         "ipucu": "3'ten fazla iş yazma; liste uzadıkça hiçbiri öncelik olmaktan çıkar.",
@@ -1872,8 +1906,8 @@ DETAY: dict[str, dict] = {
             "Bir sonraki sınav döneminin tarihlerini öğren ve bir takvimde her sınavı işaretle.",
             "Geriye doğru plan yap: Sınav gününden başlayıp geriye sayarak her ders için tekrar günlerini yerleştir. Örneğin: sınav 20'sinde ise 19'u genel tekrar, 15–18 arası konu çalışması.",
             "Her dersin konularını listele ve konuları bu günlere dağıt; günde en fazla 2–3 ders olsun.",
-            "Haftada bir gün boş bırak; yetişmeyen konuları o güne kaydır.",
-            "Her akşam o günün planına uyup uymadığını takvime işaretle (tik ya da çarpı) ve dönem sonunda kaç gün uyduğunu say.",
+            "Takvimde birkaç boş gün bırak; yetişmeyen konuları o günlere kaydır.",
+            "Her akşam o günün planına uyup uymadığını takvime işaretle (tik ya da çarpı) ve sınavlar bitince kaç gün uyduğunu say.",
         ],
         "kontrol": [
             "Sınav tarihlerinden geriye doğru hazırlanmış bir çalışma takvimin var.",
@@ -1884,29 +1918,30 @@ DETAY: dict[str, dict] = {
     },
     "I1-G-6": {
         "nasil": [
-            "Bir hafta boyunca normal şekilde çalış ve her oturumda kaç dakika dikkatin dağılmadan çalışabildiğini not et; bu senin başlangıç ölçümün.",
-            "Sonraki haftalarda çalışırken telefonu başka odaya koy ya da sessize alıp ters çevir; istersen odak uygulaması kullan.",
+            "İlk 5 çalışma oturumunda normal şekilde çalış ve her oturumda kaç dakika dikkatin dağılmadan çalışabildiğini not et; bu senin başlangıç ölçümün.",
+            "Sonraki oturumlarda telefonu başka odaya koy ya da sessize alıp ters çevir; istersen bir odak uygulaması kullan.",
             "Pomodoro tekniğini dene: 25 dakika tek bir işe odaklan, sonra 5 dakika mola ver. 4 turdan sonra 15–20 dakikalık uzun mola ver.",
-            "Her çalışma gününün sonunda toplam odaklı çalışma süreni bir tabloya yaz.",
-            "1–2 ayın sonunda ilk haftanın ortalamasıyla son haftanın ortalamasını karşılaştır.",
+            "Her oturumun tarihini ve odaklı çalışma süreni bir tabloya yaz.",
+            "Birkaç hafta sonra ilk 5 oturumun ortalamasıyla son 5 oturumun ortalamasını karşılaştır.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
-            "Başlangıç haftası ve sonraki haftalar için odaklı çalışma sürelerini gösteren bir tablon var.",
-            "Son haftadaki ortalama odak süren ilk haftadan daha uzun.",
+            "Başlangıç oturumları ve sonraki oturumlar için tarihli odak sürelerini gösteren bir tablon var.",
+            "İlk 5 oturumun ortalamasını son 5 oturumunkiyle karşılaştırıp yazdın.",
             "Seni en çok hangi dikkat dağıtıcının etkilediğini söyleyebiliyorsun.",
         ],
         "ipucu": "Telefonu sadece \"bakmayacağım\" diye yanında tutmak çoğu zaman işe yaramaz; fiziksel olarak uzaklaştırmak daha etkilidir.",
     },
     "I1-U-1": {
         "nasil": [
-            "{bolum} ile ilgili haftada 1–2 saat ayırabileceğin bir ek çalışma seç: bir çevrim içi kurs dersi, bir kitap bölümü ya da bir belgesel. Örneğin Khan Academy Türkçe'den bir ünite.",
-            "Haftalık planını çıkar: Pazartesiden pazara her günü bir sütun yap ve okul, kurs, ödev gibi sabit işlerini yerleştir.",
-            "Boş kalan saatlere bakarak ek çalışma için 2–3 tane 30–45 dakikalık zaman dilimi seç ve bunları planına yaz.",
-            "Bu saatleri telefonuna hatırlatıcı olarak kur.",
+            "{bolum} ile ilgili bir ek çalışma seç: ücretsiz bir çevrim içi kurs dersi, bir kitap bölümü ya da bir belgesel.",
+            "Mevcut planına bak; okul, ödev ve kurs gibi sabit işlerinin dışında kalan boşlukları bul.",
+            "Ek çalışma için 2–3 tane 30–45 dakikalık zaman dilimi seç ve planına yaz; istersen telefonuna hatırlatıcı kur.",
+            "İlk oturumu yap ve tarihli kısa bir not al: Ne çalıştım, nasıl gitti?",
         ],
         "kontrol": [
-            "Ek çalışmanın gün ve saatlerinin yazılı olduğu bir haftalık planın var.",
+            "Ek çalışma planında yazılı.",
+            "İlk oturumu yaptın ve tarihli notun var.",
             "Hangi ek çalışmayı neden seçtiğini bir cümleyle anlatabiliyorsun.",
         ],
         "ipucu": "Ek çalışmayı yorgun olduğun gece saatlerine koyma; enerjinin yerinde olduğu bir saati seç.",
@@ -1916,7 +1951,7 @@ DETAY: dict[str, dict] = {
             "Bir grup projesinin başında ekibe takvimi hazırlamayı ve takip etmeyi önerebileceğini söyle.",
             "İşi parçalara böl, her parçaya bir sorumlu ve bir bitiş tarihi yaz; teslimden önce 2–3 günlük yedek süre bırak.",
             "Takvimi herkesin görebileceği bir yere koy: ortak bir belge, mesaj grubu ya da basılı bir kâğıt.",
-            "Haftada bir kez ekibe kısa bir durum sorusu sor: \"Bu hafta biten neler var, takılan bir şey var mı?\"",
+            "Düzenli aralıklarla ekibe kısa bir durum sorusu sor: \"Son konuşmamızdan beri biten neler var, takılan bir şey var mı?\"",
             "Gecikme olursa suçlamadan, birlikte yeni tarih belirle ve takvimi güncelle.",
         ],
         "kontrol": [
@@ -1930,13 +1965,13 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Ben-dilini öğren: Karşındakini suçlamak yerine kendi duygunu ve nedenini anlatırsın. Kalıp: \"Ben … hissediyorum, çünkü … . … olursa sevinirim.\"",
             "Bir kâğıda \"sen-dili\" ile söylediğin bir cümle yaz ve ben-diline çevir. Örneğin: \"Sen hep geç kalıyorsun\" yerine \"Beklediğimde endişeleniyorum, çünkü planlarımız kayıyor.\"",
-            "Bu hafta gerginleşen bir konuşmada konuşmaya başlamadan önce bir nefes al ve kalıbı kullan.",
-            "Her kullanımdan sonra kısa not al: Kime söyledin, ne dedin, karşındaki nasıl tepki verdi?",
+            "Bir sonraki gergin konuşmada konuşmaya başlamadan önce bir nefes al ve kalıbı kullan.",
+            "Her kullanımdan sonra tarihli kısa bir not al: Kime söyledin, ne dedin, karşındaki nasıl tepki verdi?",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu hafta bir başlangıç denemesi. İşe yaradıysa 8 hafta boyunca gergin konuşmalarda ben-dilini kaç kez kullandığını say.",
+            "Bu ilk deneme bir başlangıç. İşe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Bir hafta içinde en az 2 kez ben-dili kullandın.",
+            "En az 2 kez ben-dili kullandın.",
             "Bu kullanımları ve karşındakinin tepkisini yazdığın notların var.",
             "Bir sen-dili cümlesini ben-diline çevirebildiğini gösteren bir örneğin var.",
         ],
@@ -1973,9 +2008,9 @@ DETAY: dict[str, dict] = {
     "I2-G-4": {
         "nasil": [
             "Müzakere ve uzlaşma üzerine kısa bir kaynak seç; örneğin Fisher ve Ury'nin \"Evet'e Ulaşmak\" kitabı ya da bu konuda bir özet. Okul kütüphanesine de sorabilirsin.",
-            "Okumayı 3–4 haftaya böl; haftada 2–3 oturum yeterli.",
+            "Kaynağı bölümlere ayırarak oku; her oturumda bir bölüm yeterli.",
             "Her oturumdan sonra defterine aklında kalan bir fikri bir cümleyle yaz. Örneğin: \"Kişiyle sorunu ayır.\"",
-            "Okuma bitince bu fikirlerden günlük hayatında uygulayabileceğin 3 tanesini seç ve her birinin yanına nerede kullanacağını yaz.",
+            "Okuma bitince bu fikirlerden günlük hayatında uygulayabileceğin 3 tanesini seç ve her birinin yanına nerede kullanacağını yaz; birini bir sonraki uygun durumda dene.",
         ],
         "kontrol": [
             "Okuduğun kaynağın adını ve bitirdiğin bölümleri söyleyebiliyorsun.",
@@ -2014,6 +2049,20 @@ DETAY: dict[str, dict] = {
         ],
         "ipucu": "Arkadaşlarından birine yakınsan tarafsız kalmak zordur; bu durumda başka birinin arabulucu olmasını önermek daha doğru olabilir.",
     },
+    "I2-G-7": {
+        "nasil": [
+            "İki tarafın anlaşmazlığını konuşarak çözdüğü gerçek bir örnek bul: sporda, okulda ya da {bolum} alanında. Güvenilir bir haber, TRT Belgesel gibi bir kanaldaki bir belgesel ya da kütüphaneden bir biyografi kullanabilirsin.",
+            "Bir kâğıdı ikiye böl ve her tarafın ne istediğini ayrı ayrı yaz.",
+            "Orta yolun nasıl bulunduğunu yaz: Kim neyden vazgeçti, ne kazandı? Arada aracılık yapan biri var mıydı?",
+            "Bu hikâyeden senin kullanabileceğin bir dersi tek cümleyle yaz. Örneğin: \"Önce ortak hedefi bulmak, tartışmayı yumuşatıyor.\"",
+        ],
+        "kontrol": [
+            "İki tarafın istedikleri ayrı ayrı yazılı.",
+            "Bulunan çözümü kendi cümlelerinle anlattın.",
+            "Kullanabileceğin bir dersi yazdın.",
+        ],
+        "ipucu": "Haberlerde çoğu zaman tek tarafın sesi duyulur; mümkünse iki tarafı da anlatan bir kaynak seç.",
+    },
     "I2-U-1": {
         "nasil": [
             "Yeni bir grup çalışması başladığında anlaşmazlık çıkarsa ne yapılacağını konuşmayı öner.",
@@ -2042,15 +2091,15 @@ DETAY: dict[str, dict] = {
     },
     "I3-G-1": {
         "nasil": [
-            "Bu hafta küçük kararlar için kendine 2 dakikalık bir süre sınırı koy. Küçük kararlar: ne giyeceğin, ne yiyeceğin, hangi dersle başlayacağın gibi geri dönüşü kolay seçimler.",
+            "Küçük kararlar için kendine 2 dakikalık bir süre sınırı koy. Küçük kararlar: ne giyeceğin, ne yiyeceğin, hangi dersle başlayacağın gibi geri dönüşü kolay seçimler.",
             "Karar anında telefonun saatini başlat; 2 dakika içinde seçeneklerden birini seç ve geri dönme.",
-            "Her gün en az bir kararı kısa bir notla kaydet: Karar neydi, süreyi aştın mı?",
-            "Hafta sonunda bu kararlardan pişman olduğun var mı, bak; çoğu zaman olmadığını fark edeceksin.",
+            "Her kararı tarihli kısa bir notla kaydet: Karar neydi, süreyi aştın mı?",
+            "5 karar biriktiğinde notlarına bak: Pişman olduğun var mı? Çoğu zaman olmadığını fark edeceksin.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Bir hafta boyunca süre sınırıyla verdiğin kararları gösteren bir not listen var.",
+            "Süre sınırıyla verdiğin en az 5 küçük kararın tarihli notu var.",
             "Kararların çoğunda 2 dakikayı aşmadın.",
             "Hızlı karar vermenin sana ne kazandırdığını bir cümleyle söyleyebiliyorsun.",
         ],
@@ -2075,26 +2124,26 @@ DETAY: dict[str, dict] = {
             "Kendine bir kural koy: Bir soruda bu sürenin iki katını geçersen soruyu işaretle ve sonrakine geç.",
             "Sınavın sonunda kalan süreyle işaretli sorulara geri dön.",
             "Her denemeden sonra kaç soruyu süresi yetmediği için boş bıraktığını bir tabloya yaz.",
-            "1–2 ay boyunca bu sayının nasıl değiştiğini takip et.",
+            "En az 3 denemeden sonra bu sayının nasıl değiştiğine bak.",
         ],
         "kontrol": [
-            "Her deneme için süreden kaynaklı boş soru sayısını gösteren bir tablon var.",
-            "Son denemelerde süre yetiştirme oranın ilk denemelere göre daha yüksek.",
+            "En az 3 deneme için süreyi yetiştirip yetiştirmediğin ve boş bıraktığın soru sayısı tablonda yazılı.",
+            "İlk ve son denemeni karşılaştırıp süre kullanımında neyin değiştiğini söyleyebiliyorsun.",
             "Takıldığın bir soruyu bırakıp devam ettiğin en az birkaç örnek hatırlıyorsun.",
         ],
         "ipucu": "Bıraktığın soruyu yanlış bildiğinden değil, zaman kazanmak için bıraktın; geri dönmeyi unutma.",
     },
     "I3-G-4": {
         "nasil": [
-            "Kendine uygun bir strateji oyunu seç: satranç, Sudoku, zeka oyunları ya da zamanlı bulmacalar.",
-            "Haftada en az 2 gün için 15–30 dakikalık bir oyun zamanı belirle ve takvimine yaz.",
+            "Kendine uygun bir strateji oyunu seç: satranç, Sudoku, zekâ oyunları ya da süreli bulmacalar.",
+            "Her oyunda kendine bir süre sınırı koy (ör. 15 dakika ya da süreli satranç).",
             "Oynarken her hamleden önce kısa bir an dur ve kendine sor: \"Bu hamlenin sonucu ne olabilir?\"",
-            "Her oyundan sonra takip tablona tarih ve süreyi yaz; ayın sonunda kaç kez oynadığını say.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Her oyundan sonra takip tablona tarihi, süreyi ve sonucu yaz.",
+            "10 oyun biriktiğinde süre baskısında nasıl karar verdiğini 2 cümleyle yaz: Acele ettiğimde ne oluyor, sakin kaldığımda ne oluyor?",
         ],
         "kontrol": [
-            "1–2 ay boyunca haftada en az 2 kez oynadığını gösteren bir takip tablon var.",
-            "Oyunlarda karar verme süren ya da sonuçların hakkında bir değişiklik fark ettin.",
+            "Takip tablonda en az 10 süreli oyun ya da bulmaca tarihiyle yazılı.",
+            "Süre baskısında nasıl karar verdiğine dair 2 cümlelik notun var.",
         ],
         "ipucu": "Sadece eğlencesine hızlı hızlı oynamak yerine bazı oyunlarda hamleni düşünmek için kendine süre ver.",
     },
@@ -2116,8 +2165,8 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Bir defter ya da dosya aç ve adını \"Karar günlüğü\" koy.",
             "Önemli bir karar verdiğinde (ör. bir kursa yazılma, bir arkadaşla konuşma) tarihini ve neyi neden seçtiğini 2–3 cümleyle yaz.",
-            "Bir hafta sonra aynı sayfaya dön ve iki soruyu cevapla: \"Neyi doğru yaptım?\" ve \"Neyi farklı yapardım?\"",
-            "2–3 ay boyunca en az 5 kararı bu şekilde değerlendir.",
+            "Birkaç gün sonra aynı sayfaya dön ve iki soruyu cevapla: \"Neyi doğru yaptım?\" ve \"Neyi farklı yapardım?\"",
+            "En az 5 kararı bu şekilde değerlendir.",
             "Sonunda tüm değerlendirmelere bakıp sık tekrar eden bir alışkanlığını bir cümleyle yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
@@ -2126,7 +2175,22 @@ DETAY: dict[str, dict] = {
             "Her değerlendirmede \"doğru yaptıklarım\" ve \"farklı yapardım\" kısmı dolu.",
             "Karar verirken sık yaptığın bir hatayı ya da güçlü yanını söyleyebiliyorsun.",
         ],
-        "ipucu": "Bir haftalık bekleme önemlidir; kararın hemen ardından yapılan değerlendirme genelde duygusal olur.",
+        "ipucu": "Birkaç gün beklemek önemlidir; kararın hemen ardından yapılan değerlendirme genelde duygusal olur.",
+    },
+    "I3-G-7": {
+        "nasil": [
+            "Zor bir anda karar vermek zorunda kalmış birini seç: bir pilot, doktor, hakem ya da {bolum} alanında çalışan biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Ne yaşadı? Nasıl tepki verdi? Bundan ne öğrendi?",
+            "Kişinin kararını 3 adımda yaz: 1) Elinde hangi bilgi vardı? 2) Ne kadar sürede karar verdi? 3) Ne seçti ve sonuç ne oldu?",
+            "Senin işine yarayacak bir dersi tek cümleyle yaz. Örneğin: \"Önce en önemli tek bilgiye bakıyor.\"",
+        ],
+        "kontrol": [
+            "Kişinin kararı 3 adımda yazılı.",
+            "Kararın hangi bilgiyle ve ne kadar sürede verildiğini yazdın.",
+            "Kendine uyarlayacağın bir dersi not ettin.",
+        ],
+        "ipucu": "Zor anda hızlı karar verenlerin çoğu önceden çok çalışmıştır; hikâyede hazırlık kısmına da dikkat et.",
     },
     "I3-U-1": {
         "nasil": [
@@ -2199,33 +2263,33 @@ DETAY: dict[str, dict] = {
     "I4-G-4": {
         "nasil": [
             "Bir defterde ya da telefonda \"Sözlerim\" adlı bir liste aç ve üç sütun yap: tarih, verdiğin söz, tuttun mu?",
-            "Bir ay boyunca verdiğin küçük sözleri buraya ekle. Örneğin: \"Ahmet'e notlarımı yarın getireceğim\", \"Saat 6'da evde olacağım.\"",
+            "Verdiğin küçük sözleri buraya ekle. Örneğin: \"Ahmet'e notlarımı yarın getireceğim\", \"Saat 6'da evde olacağım.\"",
             "Söz tarihi geldiğinde yanına tik (tuttum) ya da çarpı (tutmadım) koy.",
-            "Haftada bir tutamadığın sözlere bak ve nedenini bir kelimeyle yaz: unuttum, zaman, fazla söz.",
-            "Ay sonunda tuttuğun sözlerin sayısını toplam sözlere oranla.",
+            "10 söz biriktiğinde tutamadıklarına bak ve nedenini bir kelimeyle yaz: unuttum, zaman, fazla söz. Sonra tuttuğun sözleri say.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "4 hafta boyunca tuttuğun bir söz listesi var.",
-            "Listedeki sözlerin büyük çoğunluğunun yanında tik var.",
+            "Listende en az 10 söz tarihiyle yazılı.",
+            "Her sözün yanında tuttun ya da tutmadın işareti var.",
             "Söz tutmanı en çok neyin zorlaştırdığını söyleyebiliyorsun.",
         ],
         "ipucu": "Tutamayacağın sözü vermemek de söz tutmanın bir parçasıdır; \"Bakarım, sana haber vereyim\" diyebilirsin.",
     },
     "I4-G-5": {
         "nasil": [
-            "Etik ve sorumluluk üzerine bir kitap seç; okul kütüphanesine ya da bir öğretmenine yaşına uygun bir öneri sor.",
-            "Kitabın sayfa sayısını 1–2 aya böl ve haftalık okuma hedefini yaz. Örneğin: 200 sayfalık bir kitap için haftada 25–50 sayfa.",
-            "Okurken ilgini çeken fikirleri sayfa numarasıyla birlikte not et.",
-            "Kitap bitince bu fikirlerden 3 tanesini seç ve her birinin {bolum} alanında nasıl karşına çıkabileceğini 2–3 cümleyle yaz.",
+            "Zor bir durumda doğruyu seçmiş birini seç: bir bilim insanı, sporcu, gazeteci ya da {bolum} alanından biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Hangi ikilemle karşılaştı? Neyi göze alarak hangi kararı verdi? Bundan ne öğrendi?",
+            "Kişinin karşılaştığı ikilemi ve verdiği kararı 3-4 cümleyle yaz.",
+            "Bu hikâyenin {bolum} ile bağlantısını yaz: Bu alanda benzer bir ikilemle nasıl karşılaşabilirsin?",
         ],
         "kontrol": [
-            "Kitabı bitirdin.",
-            "Kitaptan 3 fikri {bolum} ile ilişkilendiren bir yazın var.",
-            "Bu fikirlerden birini bir arkadaşına kısaca anlatabiliyorsun.",
+            "Kişinin karşılaştığı ikilem ve verdiği karar yazılı.",
+            "Neyi göze aldığını not ettin.",
+            "Hikâyenin {bolum} ile bağlantısını en az 2 cümleyle yazdın.",
         ],
-        "ipucu": "Çok uzun bir kitapta takılırsan önce kısa bir kitapla başlamak sorun değil; önemli olan bitirmek.",
+        "ipucu": "Uzun bir biyografide takılırsan önce kısa bir belgesel ya da röportajla başlamak sorun değil.",
     },
     "I4-G-6": {
         "nasil": [
@@ -2275,17 +2339,17 @@ DETAY: dict[str, dict] = {
             "Cevabı hemen ardından defterine 2–3 cümleyle not et ve öğretmenine teşekkür et.",
         ],
         "kontrol": [
-            "Bu hafta bir öğretmenine ders dışında soru sordun.",
+            "Bir öğretmenine ders dışında soru sordun.",
             "Aldığın cevabı yazdığın bir notun var.",
         ],
         "ipucu": "Öğretmen o anda müsait değilse \"Ne zaman uygun olursunuz?\" diye sormak da inisiyatif almaktır.",
     },
     "I5-G-2": {
         "nasil": [
-            "Bu hafta çevrende küçük bir sorun fark et ve not al. Örneğin: sınıfta ödev duyuruları karışıyor, grup mesajlarında önemli bilgiler kayboluyor.",
+            "Çevrende küçük bir sorun fark et ve not al. Örneğin: sınıfta ödev duyuruları karışıyor, grup mesajlarında önemli bilgiler kayboluyor.",
             "Sorunu bir cümleyle yaz ve çözmek için atabileceğin küçük bir adım düşün. Örneğin: ödev tarihlerini tahtanın köşesine yazmayı önermek.",
             "Gerekirse sınıf öğretmenine ya da ilgili kişiye fikrini kısaca anlat.",
-            "Adımı at ve bir hafta sonra durumun değişip değişmediğine bak.",
+            "Adımı at ve birkaç gün sonra durumun değişip değişmediğine bak.",
         ],
         "kontrol": [
             "Fark ettiğin bir sorunu ve attığın adımı yazdığın bir notun var.",
@@ -2295,37 +2359,38 @@ DETAY: dict[str, dict] = {
     },
     "I5-G-3": {
         "nasil": [
-            "Başvurabileceğin bir etkinlik, yarışma ya da yaz okulu bul; rehberlik servisine, öğretmenlerine ya da okul duyurularına bak. TÜBİTAK ve Teknofest gibi kurumların lise programları da var.",
-            "Başvuru şartlarını, son tarihi ve istenen belgeleri bir kâğıda yaz.",
-            "Gerekli belgeleri hazırla; motivasyon yazısı isteniyorsa neden katılmak istediğini anlatan kısa bir metin yaz ve bir öğretmenine okut.",
-            "Ailenin bilgisiyle başvuruyu son tarihten en az birkaç gün önce gönder ve onay ekran görüntüsünü sakla.",
+            "Kimse istemeden bir işe girişmiş birini seç: bir girişimci, gönüllü, bilim insanı ya da {bolum} alanından biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: İlk adımı nasıl attı? Hangi engelle karşılaştı? Bundan ne öğrendi?",
+            "Kişinin attığı ilk adımı ve karşılaştığı bir engeli 3-4 cümleyle yaz.",
+            "Senin deneyebileceğin küçük bir ilk adımı tek cümleyle yaz. Örneğin: \"Kulüp danışmanına bir etkinlik fikri sunacağım.\"",
         ],
         "kontrol": [
-            "Bir etkinliğe, yarışmaya ya da yaz okuluna başvuru yaptın.",
-            "Başvurunun gönderildiğini gösteren bir onay ya da kayıt var.",
+            "Kişinin attığı ilk adım yazılı.",
+            "Karşılaştığı bir engeli ve ne yaptığını yazdın.",
+            "Senin deneyebileceğin bir şeyi yazdın.",
         ],
-        "ipucu": "Kabul edilmek bu adımın ölçütü değil; asıl kazanım başvuru sürecini bir kez yaşamak.",
+        "ipucu": "Büyük işlerin çoğu küçük bir ilk adımla başlar; hikâyede o ilk adımın ne kadar küçük olduğuna dikkat et.",
     },
     "I5-G-4": {
         "nasil": [
-            "\"2 dakika kuralı\"nı öğren: Bir iş 2 dakikadan kısa sürecekse onu not alıp ertelemek yerine hemen yaparsın. Örneğin: bir mesaja cevap vermek, çantanı hazırlamak.",
-            "İlk hafta ertelediğin küçük işleri bir kâğıda yaz; bu senin başlangıç listen.",
-            "Sonraki haftalarda aklına küçük bir iş geldiğinde kendine sor: \"Bu 2 dakikada biter mi?\" Bitecekse hemen yap.",
-            "Her hafta sonunda ertelediğin küçük işleri say ve ilk haftayla karşılaştır.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Yapmak isteyip bir türlü başlamadığın 3 şeyi alt alta yaz. Örneğin: bir kulübe katılmak, öğretmenine soru sormak, bir projeye başlamak.",
+            "Her birinin yanına seni durduran şeyi yaz: çekinmek, bilgi eksiği, birinin izin vermesini beklemek, nereden başlayacağını bilmemek gibi.",
+            "Her biri için atabileceğin en küçük ilk adımı yaz; 10 dakikadan kısa sürmeli. Örneğin: \"Kulüp danışmanının hangi gün okulda olduğunu öğrenmek.\"",
+            "En az birinin ilk adımını at ve tarihiyle not et.",
         ],
         "kontrol": [
-            "İlk hafta ve son hafta ertelediğin küçük işlerin sayısını karşılaştırdın.",
-            "Son haftadaki sayı ilk haftadan daha az.",
+            "3 iş ve her birini durduran neden yazılı.",
+            "Her iş için en küçük ilk adım yazılı.",
+            "En az birinin ilk adımını attın ve tarihini not ettin.",
         ],
-        "ipucu": "Kuralı ders çalışırken uygulama; çalışma sırasında aklına gelen küçük işleri not al, molada yap.",
+        "ipucu": "\"Çekiniyorum\" yazmak zayıflık değildir; neyin seni durdurduğunu bilmek onu aşmanın ilk adımıdır.",
     },
     "I5-G-5": {
         "nasil": [
-            "{bolum} ile ilgili, 2–3 ayda yapabileceğin küçük bir proje fikri seç: bir blog, küçük bir araştırma, bir kulüp etkinliği ya da sosyal medya sayfası.",
+            "{bolum} ile ilgili, küçük ve bitirilebilir bir proje fikri seç: bir blog, küçük bir araştırma, bir kulüp etkinliği ya da sosyal medya sayfası.",
             "Projenin amacını, hedef kitlesini ve ilk 3 adımını bir sayfaya yaz.",
-            "Projeyi haftalık parçalara böl. Örneğin: 1. hafta konu listesi, 2. hafta ilk yazı, 3. hafta yayın.",
+            "Projeyi aşamalara böl. Örneğin: 1. aşama konu listesi, 2. aşama ilk yazı, 3. aşama yayın. Her aşama bitince tarihini yaz.",
             "İnternette paylaşacaksan kişisel bilgilerini (adres, okul, telefon) paylaşma ve ailene haber ver.",
             "İlk somut ürünü (ilk yazı, ilk etkinlik, ilk bulgu) ortaya çıkar ve birine göster.",
         ],
@@ -2338,24 +2403,24 @@ DETAY: dict[str, dict] = {
     },
     "I5-G-6": {
         "nasil": [
-            "Bir \"Fırsat listesi\" aç ve her ayın başında {bolum} ile ilgili yeni bir fırsat ara: kurs, yarışma, seminer, okul etkinliği.",
-            "Fırsatları bulmak için okul duyurularına, rehberlik servisine ve TÜBİTAK, Teknofest gibi bilinen kurumların sitelerine bak.",
+            "Bir \"Fırsat listesi\" aç ve {bolum} ile ilgili fırsatları topla: kurs, yarışma, seminer, okul etkinliği.",
+            "Fırsatları bulmak için okul duyurularına, rehberlik servisine ve TÜBİTAK, Teknofest gibi bilinen kurumların resmî sitelerine bak.",
             "Her fırsat için ad, son tarih ve nasıl katılacağını tek satırda yaz.",
-            "Her ay listeden en az birini seç ve değerlendir: başvur, katıl ya da derse kaydol.",
+            "Listeden sana en uygun olanları seç ve ailenin bilgisiyle değerlendir: başvur, katıl ya da kaydol; yaptığın her başvuru ya da katılımın tarihini yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
-            "3 ay boyunca her ay en az bir fırsat yazdığın bir liste var.",
-            "Her ay en az bir fırsatı değerlendirdin (başvuru, katılım, kayıt).",
+            "Listende en az 5 fırsat var.",
+            "En az 2'sine başvurdun ya da katıldın ve tarihleri yazılı.",
         ],
-        "ipucu": "Fırsatları bulduğun gün son tarihlerini takvimine yaz; çoğu fırsat son tarih kaçtığı için kaçar.",
+        "ipucu": "Fırsatı bulduğun gün son tarihini takvimine yaz; çoğu fırsat son tarih kaçtığı için kaçar.",
     },
     "I5-U-1": {
         "nasil": [
             "{bolum} ile ilgili kapsamlı bir fırsat seç: yaz okulu, bilim olimpiyatı, TÜBİTAK lise proje yarışmaları ya da Teknofest yarışmaları gibi.",
             "Başvuru şartlarını ve son tarihi resmî siteden oku ve bir kontrol listesi yap: istenen belgeler, danışman öğretmen gerekiyor mu, ekip mi bireysel mi?",
             "Danışman öğretmen gerekiyorsa bir öğretmenine fikrini anlatıp destek iste; okulun rehberlik servisi de yol gösterebilir.",
-            "1–2 hafta içinde belgeleri tamamla, ailenin bilgisiyle başvuruyu gönder ve onay belgesini sakla.",
+            "Başvurunun son tarihini öğren ve belgeleri ondan önce tamamla; ailenin bilgisiyle başvuruyu gönder ve onay belgesini sakla.",
         ],
         "kontrol": [
             "Kapsamlı bir fırsata başvurunu tamamladın.",
@@ -2368,7 +2433,7 @@ DETAY: dict[str, dict] = {
             "Arkadaşlarınla yapabileceğin bir proje ya da etkinlik fikri seç. Örneğin: okulda bir bilgi yarışması, bir kitap kulübü, bir yardım kampanyası.",
             "Fikri bir sayfada yaz: amaç, ne zaman, kaç kişi, hangi görevler var.",
             "En az 3 arkadaşına fikrini anlat ve her birine bir görev öner; okul içi bir etkinlikse bir öğretmeninden onay al.",
-            "Haftada bir kısa buluşma yaparak ilerlemeyi takip et.",
+            "Düzenli aralıklarla kısa buluşmalar yaparak ilerlemeyi takip et.",
             "Etkinliği ya da projeyi gerçekleştir ve sonunda ekiple neyin iyi gittiğini konuş.",
         ],
         "kontrol": [
@@ -2380,12 +2445,12 @@ DETAY: dict[str, dict] = {
     },
     "I6-G-1": {
         "nasil": [
-            "Bu hafta bir eleştiri aldığında hemen cevap vermek yerine şu cümleyi söyle: \"Teşekkürler, biraz düşüneyim.\"",
+            "Bir eleştiri aldığında hemen cevap vermek yerine şu cümleyi söyle: \"Teşekkürler, biraz düşüneyim.\"",
             "Eleştiriyi dinlerken sözü kesme; karşındakinin ne söylediğini anlamaya çalış.",
             "Gün içinde 5 dakika ayır ve eleştiriyi yaz; altına \"Bunda haklı olduğu bir kısım var mı?\" sorusunun cevabını ekle.",
             "Uygun bir anda istersen karşındakine dönüp ne düşündüğünü sakin bir şekilde söyle.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu hafta bir başlangıç denemesi. İşe yaradıysa 8 hafta boyunca eleştiri aldığın durumlardan kaçında savunmaya geçmeden yanıt verdiğini say.",
+            "Bu ilk deneme bir başlangıç. İşe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "En az bir eleştiriye savunmaya geçmeden yanıt verdin.",
@@ -2426,7 +2491,7 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Geri bildirim aldığın bir çalışmayı (ödev, sunum, yazı) ve aldığın notları önüne koy.",
             "Geri bildirimleri madde madde liste yap ve her birinin yanına nasıl düzelteceğini bir cümleyle yaz.",
-            "Düzeltmeleri 2–3 haftaya yay; her hafta 1–2 maddeyi ele al.",
+            "Düzeltmeleri maddelere ayır; her oturumda 1–2 maddeyi ele al.",
             "Çalışmanın yeni hâlini hazırla ve listedeki maddelerin üstünü çiz.",
             "İstersen yeni hâli aynı kişiye göster ve \"Şimdi nasıl olmuş?\" diye sor.",
         ],
@@ -2439,35 +2504,51 @@ DETAY: dict[str, dict] = {
     },
     "I6-G-5": {
         "nasil": [
-            "Güvendiğin ve seni iyi tanıyan 1–2 kişi seç: bir öğretmen, rehber öğretmen, aile büyüğü ya da bir antrenör.",
-            "Her ay için takvimine bir hatırlatıcı koy ve o kişiye kısa bir soru sor. Örneğin: \"Son bir ayda neyi iyi yaptığımı ve neyi geliştirmem gerektiğini düşünüyorsun?\"",
-            "Cevapları bir defterde aylık olarak tarihle birlikte yaz.",
-            "Her geri bildirimden bir şey seç ve o ay üzerinde çalış.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
+            "Hayatında başarısızlık, ret ya da sert eleştiriyle karşılaşmış birinin otobiyografisini ya da biyografisini seç; okul ya da halk kütüphanesinin biyografi rafına bak, kütüphane görevlisinden öneri iste.",
+            "Kitabı bölümlere ayırarak oku; her bölümden sonra aklında kalan bir cümleyi tarihle yaz.",
+            "Okurken 3 soruyu not et: Hangi eleştiriyle ya da retle karşılaştı? İlk tepkisi ne oldu? Sonra bundan ne öğrendi?",
+            "Kitap bitince bu üç cevabı 4-5 cümleyle bir sayfada topla.",
+            "Kendine uyarlayacağın bir davranışı tek cümleyle yaz. Örneğin: \"Eleştiri aldığımda hemen cevap vermek yerine bir gün düşüneceğim.\"",
         ],
         "kontrol": [
-            "3 ay boyunca her ay alınmış bir geri bildirim notun var.",
-            "Her ay en az bir geri bildirimi uygulamaya çalıştın.",
+            "Kitabı bitirdin.",
+            "Kişinin karşılaştığı bir eleştiri, ilk tepkisi ve sonra çıkardığı ders yazılı.",
+            "Kendine uyarlayacağın bir davranışı yazdın.",
         ],
-        "ipucu": "Hep aynı kişiden geri bildirim almak yerine farklı insanlara sormak daha geniş bir bakış sağlar.",
+        "ipucu": "Otobiyografide kişi kendi hikâyesini anlatır; mümkünse onun hakkında başka birinin yazdığı bir kaynağa da göz at.",
     },
     "I6-G-6": {
         "nasil": [
-            "Gelişim zihniyeti, yeteneklerin çabayla ve öğrenerek gelişebileceği inancıdır. Bu konuda bir kaynak seç; örneğin Carol Dweck'in \"Mindset\" kitabı ya da bu konudaki bir özet.",
-            "Okumayı 1 aya böl; haftada belirli bir bölüm hedefle.",
-            "Okurken aklında kalan fikirleri not al. Örneğin: \"Henüz bilmiyorum\" demek.",
-            "Bu fikirlerden 3'ünü seç ve her biri için hayatında uygulayacağın bir durum yaz.",
-            "Bu 3 fikri uyguladığın anları kısa notlarla kaydet.",
+            "Farklı alanlardan 3 kişi seç: örneğin bir bilim insanı, bir sporcu ve bir sanatçı. Kütüphanedeki biyografilere, TRT Belgesel gibi kanallara ya da güvenilir röportajlara bak.",
+            "Her biri için 3 soruyu cevapla: Hangi başarısızlığı yaşadı? Kim ya da ne onu eleştirdi? Nasıl toparlandı?",
+            "Üç hikâyeyi yan yana koy ve ortak olan bir şeyi bul.",
+            "Kendi hayatından benzer bir anı ekle: Ne oldu, nasıl hissettin, nasıl toparlandın ya da şimdi olsa nasıl toparlanırdın?",
         ],
         "kontrol": [
-            "Kaynağı okudun ve ana fikrini bir cümleyle anlatabiliyorsun.",
-            "3 fikri uyguladığın durumları yazdığın notların var.",
+            "3 kişinin yenilgi ve toparlanma hikâyesi yazılı.",
+            "Üç hikâyedeki ortak bir noktayı buldun.",
+            "Kendi hayatından bir örnek ekledin.",
         ],
-        "ipucu": "Kitap uzun gelirse önce kısa bir video ya da özet izleyerek konuya giriş yapabilirsin.",
+        "ipucu": "Gelişim zihniyeti, yeteneklerin çabayla gelişebileceği inancıdır; \"Yapamıyorum\" yerine \"Henüz yapamıyorum\" demek bu bakışın kısa hâlidir. İstersen Carol Dweck'in \"Mindset\" kitabını ek kaynak olarak okuyabilirsin.",
+    },
+    "I6-G-7": {
+        "nasil": [
+            "{bolum} alanında tanınmış 2 kişi seç; bölümün ya da meslek kuruluşlarının tanıttığı isimlere, güvenilir röportajlara, belgesellere ya da biyografilere bak.",
+            "Her biri için kariyerinde yaşadığı bir ret, hata ya da eleştiri anını bul.",
+            "İkisi için aynı 3 soruyu cevapla: Ne yaşadı? Nasıl tepki verdi? Nasıl toparlandı?",
+            "Cevapları iki sütunlu bir tabloda yan yana yaz ve benzerlik ile farkı birer cümleyle not et.",
+            "Bu meslekte zorluklarla karşılaşırsan işine yarayacak bir davranışı tek cümleyle yaz.",
+        ],
+        "kontrol": [
+            "İki kişinin yaşadığı zorluk ve aldığı eleştiri yazılı.",
+            "İkisinin nasıl toparlandığını karşılaştırmalı olarak yazdın.",
+            "Kendine uyarlayacağın bir davranışı not ettin.",
+        ],
+        "ipucu": "Başarılı insanların zor anlarını bilmek, kendi hatalarını \"bu iş bana göre değil\" diye yorumlamanı önler.",
     },
     "I6-U-1": {
         "nasil": [
-            "Bu ay için \"önemli çalışmalarını\" listele: proje, sunum, yazılı ödev gibi.",
+            "Önündeki önemli çalışmaları listele: proje, sunum, yazılı ödev gibi.",
             "Her çalışmayı bitirdiğinde bir kişiye (öğretmen, arkadaş, aile) kısa bir soru sor: \"Bu çalışmada en iyi olan ve geliştirilebilecek bir şey ne?\"",
             "Cevapları bir tabloda tut: tarih, çalışma, kimden, geri bildirim.",
             "Bir sonraki çalışmaya başlamadan önce tabloya bak ve önceki geri bildirimden birini uygula. Bu, geri bildirim döngüsüdür: iste, uygula, tekrar iste.",
@@ -2485,7 +2566,7 @@ DETAY: dict[str, dict] = {
             "Mezunlara ya da tanımadığın kişilere ulaşmak için ailenin ya da öğretmeninin bilgisi dahilinde hareket et; okulun rehberlik servisinden de yardım isteyebilirsin.",
             "Kısa bir mesaj yaz: Kendini tanıt, {bolum} ile ilgilendiğini söyle ve 20–30 dakikalık bir görüşme rica et.",
             "Görüşmeye 3–5 soru hazırla. Örneğin: \"Bu bölümü seçerken nelere dikkat ettiniz?\" Görüşmeyi okulda ya da çevrim içi gibi güvenli bir ortamda yap.",
-            "Görüşmeden sonra notlarını yaz, teşekkür et ve 1–2 ay içinde ikinci görüşmeyi planla.",
+            "Görüşmeden sonra notlarını yaz, teşekkür et ve ikinci görüşme için birlikte bir tarih belirleyin.",
         ],
         "kontrol": [
             "{bolum} alanında seninle görüşmeyi kabul eden bir mentorun var.",
@@ -2509,16 +2590,15 @@ DETAY: dict[str, dict] = {
     },
     "I7-G-2": {
         "nasil": [
-            "Bu hafta güvenilir bir haber kaynağının ekonomi ya da iş dünyası bölümünden bir haber seç.",
+            "Güvenilir bir haber kaynağının ekonomi ya da iş dünyası bölümünden bir haber seç.",
             "Haberi oku ve bir cümleyle özetle: Ne oldu, kimi etkiliyor?",
-            "Kendine sor: \"Bu haber {bolum} ya da o alanda çalışanlar için ne anlama gelir?\"",
-            "Cevabını 2–3 cümleyle defterine yaz ve tarihi ekle.",
+            "Kendine sor: \"Bu haber {bolum} ya da o alanda çalışanlar için ne anlama gelir?\" Cevabını 2–3 cümleyle defterine yaz ve tarihi ekle.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu hafta bir başlangıç denemesi. İşe yaradıysa her hafta bir haber okumayı 8 hafta sürdür ve kaç hafta yaptığını işaretle.",
+            "Bu ilk deneme bir başlangıç. İşe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Bu hafta bir ekonomi haberi okudun ve özetini yazdın.",
-            "Haberi bölümünle ilişkilendiren 2–3 cümlelik bir notun var.",
+            "En az 3 tarihli haber notun var.",
+            "Her notta haberin özeti ve bölümünle ilişkisi 2–3 cümleyle yazılı.",
         ],
         "ipucu": "Haberde anlamadığın bir terim olursa önce onu ara; bu, iş dünyası dilini öğrenmenin en kolay yolu.",
     },
@@ -2554,8 +2634,8 @@ DETAY: dict[str, dict] = {
     "I7-G-5": {
         "nasil": [
             "Temel işletme ya da yönetim üzerine ücretsiz, kısa bir çevrim içi kurs seç; örneğin BTK Akademi'deki kurslara bakabilirsin.",
-            "Kursun toplam süresini 1–2 aya böl ve haftada 2–3 oturumluk bir plan yap.",
-            "Her dersten sonra 2–3 maddelik not al ve öğrendiğin bir kavramı kendi cümlelerinle yaz.",
+            "Kursu oturumlara böl; her oturumdan sonra tarihli kısa bir not al.",
+            "Notlarına 2–3 madde ekle ve öğrendiğin bir kavramı kendi cümlelerinle yaz.",
             "Kursu tamamla; varsa bitirme sınavına gir ve tamamlama belgesini sakla.",
         ],
         "kontrol": [
@@ -2578,6 +2658,20 @@ DETAY: dict[str, dict] = {
             "Görüşmeden çıkardığın 3 strateji fikrini yazdığın bir listen var.",
         ],
         "ipucu": "Görüşmenin sonunda teşekkür mesajı göndermek ilişkiyi devam ettirmeni kolaylaştırır.",
+    },
+    "I7-G-7": {
+        "nasil": [
+            "Okulda, ailende ya da bir kulüpte alınmış bir karar seç. Örneğin: bir etkinliğin bütçesi, bir kermesin fiyatları, bir gezi yerinin seçimi.",
+            "Kararın amacını tek cümleyle yaz: Bu kararla ne elde edilmek istendi?",
+            "En az 2 seçeneği yaz ve her birinin maliyetini (para, zaman, emek) ve risklerini not et; bilmediğin bilgileri kararı verenlere kibarca sorabilirsin.",
+            "Sen olsan hangi seçeneği tercih ederdin? Gerekçeni 2-3 cümleyle yaz.",
+        ],
+        "kontrol": [
+            "Kararın amacı ve en az 2 seçenek yazılı.",
+            "Her seçeneğin maliyeti ve riskleri not edilmiş.",
+            "Kendi tercihini gerekçesiyle yazdın.",
+        ],
+        "ipucu": "Strateji, hedefe ulaşmak için seçenekleri karşılaştırmaktır; küçük kararlarda pratik yapmak büyük kararları kolaylaştırır.",
     },
     "I7-U-1": {
         "nasil": [
@@ -2626,25 +2720,24 @@ DETAY: dict[str, dict] = {
     "A1-G-2": {
         "nasil": [
             "Her gün için sabit bir 20 dakika seç (ör. akşam yemeğinden sonra) ve telefonunda zamanlayıcı kur.",
-            "Ders kitabından ya da bir soru bankasından bir konu seç; ilk 5–10 dakika kolay, sonra orta, en son zor sorulara geç.",
-            "Takıldığın soruyu 3–4 dakikadan fazla zorlama; yanına yıldız koyup geç, süre bitince çözümüne bak.",
+            "Ders kitabından ya da bir soru bankasından bir konu seç; ilk 5–10 dakika kolay, sonra orta, en son zor sorulara geç. Takıldığın soruyu 3–4 dakikadan fazla zorlama; yanına yıldız koyup geç, süre bitince çözümüne bak.",
             "Hata defteri tut: Yanlış yaptığın her sorunun kısa bir kopyasını, doğru çözümünü ve hatanın nedenini ayrı bir deftere yaz.",
-            "Bir takvim ya da kâğıda 7 kutu çiz; her gün çalıştıktan sonra o günün kutusunu işaretle.",
+            "Bir kâğıda tarih ve soru sayısı sütunları aç; her çalıştığın gün tarihi ve kaç soru çözdüğünü yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "7 günün en az 5'inde takvimdeki kutu işaretli.",
-            "Hata defterinde bu haftadan en az birkaç soru ve çözümü var.",
+            "En az 7 günün tarihi ve o gün çözdüğün soru sayısı yazılı.",
+            "Hata defterinde bu çalışmalardan en az birkaç soru ve çözümü var.",
             "Her gün kolaydan zora doğru soru çözdüğünü örneklerle gösterebiliyorsun.",
         ],
         "ipucu": "Bir günü kaçırırsan bırakma; ertesi gün kaldığın yerden devam et ve seriyi yeniden başlat.",
     },
     "A1-G-3": {
         "nasil": [
-            "Eksik konu tespitinde seçtiğin 3 konuyu sıraya koy ve her birine 2–3 hafta ayır; bir takvime başlangıç tarihlerini yaz.",
+            "Eksik konu tespitinde seçtiğin 3 konuyu sıraya koy ve başladığın tarihleri yaz.",
             "Her konuya önce bir 20 soruluk test çöz ve doğru sayını not et; bu senin başlangıç puanın.",
-            "Konuyu Khan Academy Türkçe videolarından, ders kitabından ya da öğretmeninin önerdiği kaynaktan çalış; haftada en az 3 kez 30–40 dakika ayır.",
+            "Konuyu Khan Academy Türkçe videolarından, ders kitabından ya da öğretmeninin önerdiği kaynaktan çalış; her konu için birkaç oturum ayır ve her oturumdan sonra tarihli kısa bir not al.",
             "Konuyu bitirince aynı zorlukta yeni bir 20 soruluk test çöz ve doğru sayını başlangıç puanının yanına yaz.",
             "Yanlışlarını hata defterine ekle, sonra sıradaki konuya geç.",
         ],
@@ -2657,18 +2750,18 @@ DETAY: dict[str, dict] = {
     },
     "A1-G-4": {
         "nasil": [
-            "Takip etmek istediğin bir soru seç. Örneğin: \"Kaç saat uyuduğum ertesi günkü ders verimimi etkiliyor mu?\"",
-            "2 hafta boyunca her gün aynı saatte verini bir tabloya yaz: Tablo, satırlarda günlerin, sütunlarda ölçtüğün şeylerin (uyku saati, çalışma dakikası) olduğu bir çizelgedir.",
-            "Tabloyu kareli kâğıda ya da Google E-Tablolar, Excel gibi bir programa geçir.",
-            "Grafik çiz: Yatay eksene günleri, dikey eksene ölçtüğün değeri koy ve her günü bir noktayla işaretleyip noktaları birleştir (çizgi grafik).",
-            "Grafiğe bakıp 3–4 cümlelik bir yorum yaz: En yüksek ve en düşük gün hangisi, iki veri birlikte artıp azalıyor mu?",
+            "Bir soru seç ve verini nereden alacağına karar ver: kendi hayatından toplayacağın bir veri (uyku, çalışma süresi) ya da TÜİK, YÖK Atlas gibi açık bir kaynak. Örneğin: \"Son 5 yılda {bolum} kontenjanları nasıl değişti?\"",
+            "Kendi verini topluyorsan her ölçümü tarihiyle yaz; açık veri kullanıyorsan verinin kaynağını ve yılını not et.",
+            "Veriyi bir tabloya aktar (kareli kâğıt, Google E-Tablolar ya da Excel); satır ve sütunlar net etiketli olsun.",
+            "Verine uygun bir grafik çiz: zaman içindeki değişim için çizgi, karşılaştırma için çubuk grafik. Eksenleri adlandır.",
+            "Grafiğin altına 3 cümle yaz: Ne görüyorsun, en dikkat çekici nokta ne, bu veri neyi söylemiyor?",
         ],
         "kontrol": [
-            "En az 10–14 günlük verinin olduğu bir tablon var.",
-            "Tablodaki verilerden çizilmiş, eksenleri adlandırılmış bir grafiğin var.",
-            "Grafiğin altında ne gördüğünü anlatan kısa bir yorum yazılı.",
+            "Verinin ve kaynağının yazılı olduğu bir tablon var.",
+            "Eksenleri ve başlığı etiketli bir grafiğin var.",
+            "Grafiğin söylediğini anlatan 3 cümlelik yorumun hazır.",
         ],
-        "ipucu": "Veriyi unutmamak için telefonuna günlük hatırlatıcı kur.",
+        "ipucu": "\"Bu veri neyi söylemiyor?\" sorusu iyi bir veri okurunu sıradan bir okurdan ayırır.",
     },
     "A1-G-5": {
         "nasil": [
@@ -2687,7 +2780,7 @@ DETAY: dict[str, dict] = {
     "A1-G-6": {
         "nasil": [
             "Ücretsiz bir başlangıç kursu seç; örneğin BTK Akademi'deki Python kursları ya da Khan Academy'deki programlama dersleri.",
-            "Haftada en az 3 gün, 30–45 dakikalık sabit çalışma zamanı belirle ve takvimine yaz.",
+            "Kendine düzenli 30–45 dakikalık çalışma zamanları seç; her oturumu tarihiyle işaretle.",
             "Her dersi izledikten sonra örnek kodu kendin yeniden yaz ve çalıştır; sadece izlemek yetmez.",
             "Öğrendiğin her yeni kavramı (değişken, döngü, koşul gibi) defterine bir cümle ve kısa bir kod örneğiyle not et.",
             "İlk modülleri bitirince küçük bir program yaz. Örneğin: girilen sayıların ortalamasını hesaplayan bir program.",
@@ -2704,19 +2797,19 @@ DETAY: dict[str, dict] = {
             "Matematik öğretmenine ya da rehberlik servisine okulunun katılabileceği yarışmaları sor; TÜBİTAK Bilim Olimpiyatları ve Teknofest gibi bilinen organizasyonları da araştır.",
             "Bulduğun 2–3 yarışma için başvuru tarihi, sınav tarihi ve konu kapsamını bir tabloya yaz.",
             "Sana en uygun ve tarihi yetişebilecek bir yarışmayı seç.",
-            "Hazırlık planı yap: Sınav tarihine kadar kalan haftaları yaz ve her haftaya bir konu ya da geçmiş yıl soru seti ata.",
-            "İlk hafta geçmiş yıllardan bir soru seti çözerek başla ve seviyeni not et.",
+            "Hazırlık planı yap: Sınav tarihine kadar kalan süreyi bölümlere ayır ve her bölüme bir konu ya da geçmiş yıl soru seti ata.",
+            "Geçmiş yıllardan bir soru seti çözerek başla ve seviyeni not et.",
         ],
         "kontrol": [
             "Seçtiğin yarışmanın adı ve tarihleri yazılı.",
-            "Haftalara bölünmüş bir hazırlık planın var.",
-            "Plandaki ilk haftanın çalışmasını yaptın.",
+            "Bölümlere ayrılmış bir hazırlık planın var.",
+            "Plandaki ilk bölümün çalışmasını yaptın.",
         ],
         "ipucu": "Olimpiyat soruları zor gelebilir; ilk denemede az soru çözmen normal.",
     },
     "A1-U-2": {
         "nasil": [
-            "Python'da veri analizi için kısa bir başlangıç kursu seç (ör. BTK Akademi ya da Kaggle Learn'in ücretsiz dersleri) ve haftada 3 gün çalış.",
+            "Python'da veri analizi için ücretsiz, kısa bir başlangıç kursu seç (ör. BTK Akademi; İngilizcen yeterliyse ailenle birlikte hesap açarak Kaggle Learn'in ücretsiz dersleri) ve her oturumdan sonra tarihli kısa bir not al.",
             "Kursta temel araçları öğren: Tabloyu okuma, sütun seçme, ortalama alma ve basit grafik çizme.",
             "{bolum} ile ilgili hazır ve açık bir veri seti bul. Örneğin: hava durumu, nüfus ya da spor istatistikleri; öğretmeninden öneri isteyebilirsin.",
             "Veri setine 2–3 soru sor. Örneğin: \"Hangi yıl en yüksek değer var?\" ve kodla cevapla.",
@@ -2736,11 +2829,11 @@ DETAY: dict[str, dict] = {
             "15 sayfayı okuyunca kaldığın sayfaya ayraç koy ve bir kâğıda tarihi ve sayfa aralığını yaz.",
             "Okuduğun bölümden aklında kalan bir cümleyi ya da olayı kısaca not et.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "Okuma kâğıdında 7 günün tarih ve sayfa aralıkları yazılı.",
-            "Bu hafta en az 100 sayfa okudun.",
+            "Okuma kâğıdında en az 7 günün tarihi ve okuduğun sayfa sayısı yazılı.",
+            "Toplamda en az 100 sayfa okudun.",
             "Okuduğun bölümleri birine birkaç cümleyle anlatabiliyorsun.",
         ],
         "ipucu": "Kitap seni sıkıyorsa 50 sayfa sonra değiştirmekte sakınca yok.",
@@ -2762,20 +2855,19 @@ DETAY: dict[str, dict] = {
     },
     "A2-G-3": {
         "nasil": [
-            "Önümüzdeki 4–6 hafta için her haftaya bir konu belirle; güncel olaylar, okuduğun bir kitap ya da merak ettiğin bir soru olabilir.",
-            "Her hafta yaklaşık 300 kelimelik (bir A4 sayfasının yarısı ile tamamı arası) bir yazı yaz: giriş, iki gelişme paragrafı, sonuç.",
-            "Yazını Türk Dili ve Edebiyatı öğretmenine ya da güvendiğin başka bir öğretmene ver ve kısa bir geri bildirim iste.",
-            "Aldığın geri bildirimi yazının altına not et ve bir sonraki yazında en az bir öneriyi uygula.",
+            "Yazacağın konulardan bir liste yap: güncel olaylar, okuduğun bir kitap ya da merak ettiğin bir soru olabilir.",
+            "Her yazı için yaklaşık 300 kelimelik (bir A4 sayfasının yarısı ile tamamı arası) bir metin yaz: giriş, iki gelişme paragrafı, sonuç. Her yazının tarihini ekle.",
+            "Yazılarından en az birini Türk Dili ve Edebiyatı öğretmenine ya da güvendiğin başka bir öğretmene ver ve kısa bir geri bildirim iste.",
+            "Aldığın geri bildirimle o yazıyı düzelt ve bir sonraki yazında en az bir öneriyi uygula.",
             "Tüm yazılarını tek bir dosya ya da klasörde sırayla sakla.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu 4-6 hafta bir başlangıç denemesi. İşe yaradıysa haftalık yazıyı sürdür ve kaç hafta yazdığını işaretle.",
         ],
         "kontrol": [
-            "Klasöründe en az 4 yazı var.",
-            "En az 2 yazında öğretmen geri bildirimi yazılı.",
+            "Klasöründe en az 4 tarihli yazı var.",
+            "En az bir yazıyı aldığın geri bildirimle düzelttin.",
             "Geri bildirime göre neyi değiştirdiğini bir örnekle gösterebiliyorsun.",
         ],
-        "ipucu": "Öğretmenin her hafta vakit bulamazsa iki yazıyı birlikte götürebilirsin.",
+        "ipucu": "Öğretmenin her yazı için vakit bulamazsa iki yazıyı birlikte götürebilirsin.",
     },
     "A2-G-4": {
         "nasil": [
@@ -2795,7 +2887,7 @@ DETAY: dict[str, dict] = {
     "A2-G-5": {
         "nasil": [
             "Öğretmenine ya da bir üniversite öğrencisine {bolum} alanına giriş için okunabilecek bir kitap ya da makale sor; kütüphanede \"giriş\" kelimesiyle arama da yapabilirsin.",
-            "Metni bölümlere ayır ve haftada birkaç bölüm oku; her bölümün sonunda ana fikri bir cümleyle not et.",
+            "Metni bölümlere ayır; her bölümün sonunda ana fikri bir cümleyle not et.",
             "Bilmediğin terimleri ayrı bir listede topla ve anlamlarını araştır.",
             "Özet çıkar: Bölüm notlarını birleştirerek metnin ana fikirlerini kendi cümlelerinle 1 sayfayı geçmeyecek şekilde yaz.",
             "Özetin sonuna metinden öğrendiğin en ilginç şeyi ve aklına takılan bir soruyu ekle.",
@@ -2812,8 +2904,8 @@ DETAY: dict[str, dict] = {
             "Küçük bir defter ayır ya da telefonunda bir not aç; adını \"Kelime Defterim\" koy.",
             "Okurken bilmediğin her kelimenin altını çiz ya da not al; okumayı bitirince sözlükten (ör. TDK sözlüğü) anlamına bak.",
             "Deftere kelimeyi, anlamını ve onunla kurduğun kendi cümleni yaz.",
-            "Her hafta aynı gün 10–15 dakika ayırıp o haftanın kelimelerini tekrar et; anlamı kapatıp hatırlamaya çalış.",
-            "Hatırladığın kelimelerin yanına tik koy, hatırlamadıklarını bir sonraki hafta yeniden tekrar et.",
+            "Her 10 yeni kelimede bir 10–15 dakika ayırıp son kelimeleri tekrar et; anlamı kapatıp hatırlamaya çalış.",
+            "Hatırladığın kelimelerin yanına tik koy, hatırlamadıklarını bir sonraki tekrarda yeniden çalış.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
@@ -2821,7 +2913,21 @@ DETAY: dict[str, dict] = {
             "Rastgele seçilen 10 kelimeden çoğunun anlamını söyleyebiliyorsun.",
             "Yeni kelimelerden birkaçını yazılarında ya da konuşmalarında kullandın.",
         ],
-        "ipucu": "Haftada 4–5 kelime yeterli; hepsini bir anda öğrenmeye çalışma.",
+        "ipucu": "Az ama sık tekrar etmek, bir anda çok kelime ezberlemekten daha kalıcıdır.",
+    },
+    "A2-G-7": {
+        "nasil": [
+            "İyi yazan ya da konuşan birini seç: bir yazar, gazeteci ya da {bolum} alanında açık anlatımıyla tanınan biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Yazmaya ya da konuşmaya nasıl başladı? Nasıl geliştirdi? Zorlandığında ne yaptı?",
+            "Bu kişinin kullandığı 2 yöntemi yaz. Örneğin: \"Her gün biraz yazıyor\", \"Yazdığını sesli okuyup düzeltiyor\".",
+            "Bir yöntemi bir sonraki yazında dene ve tarihli kısa bir not ekle: Ne değişti?",
+        ],
+        "kontrol": [
+            "Bu kişinin kullandığı 2 yöntem yazılı.",
+            "Bir yöntemi kendi yazında denedin ve notun var.",
+        ],
+        "ipucu": "İyi yazarların çoğu ilk taslağı beğenmez; asıl iş, yeniden okuyup düzeltmektir.",
     },
     "A2-U-1": {
         "nasil": [
@@ -2854,16 +2960,16 @@ DETAY: dict[str, dict] = {
     },
     "A3-G-1": {
         "nasil": [
-            "Rahatça gözlem yapabileceğin bir ortam seç: sınıf, kantin, okul bahçesi ya da bir kafe. Gözlem, olanları yorum katmadan dikkatle izleyip not almaktır.",
-            "Hafta içinde 3 farklı gün, her seferinde 10–15 dakika gözlem yap; kimsenin adını yazma, kimseyi fotoğraflama.",
+            "Rahatça gözlem yapabileceğin tanıdık bir ortam seç: sınıf, okul bahçesi, okul kütüphanesi ya da aile ortamı. Gözlem, olanları yorum katmadan dikkatle izleyip not almaktır.",
+            "3 farklı gözlem oturumu yap, her biri 10–15 dakika olsun; kimsenin adını yazma, kimseyi fotoğraflama.",
             "Ne gördüğünü olduğu gibi yaz. Örneğin: \"Teneffüste çoğu öğrenci aynı köşede toplanıyor.\"",
-            "Örüntü bul: Notlarında birden fazla kez tekrar eden davranışları işaretle; örüntü, sık tekrar eden bir davranış biçimidir.",
+            "Notlarında birden fazla kez tekrar eden davranışları işaretle; örüntü, sık tekrar eden bir davranış biçimidir.",
             "En ilginç 3 örüntüyü seç ve her birinin yanına \"Bunun nedeni ne olabilir?\" sorusuna bir tahmin yaz.",
         ],
         "kontrol": [
             "3 farklı gözlem oturumundan notun var.",
-            "Notlarında tekrar eden 3 örüntü yazılı.",
-            "Her örüntü için olası bir nedeni söyleyebiliyorsun.",
+            "Notlarında tekrar eden 3 örüntü örnekleriyle yazılı.",
+            "Notlarında isim ya da fotoğraf yok.",
         ],
         "ipucu": "İnsanları rahatsız edecek kadar yakından izleme; uzaktan ve doğal davran.",
     },
@@ -2884,7 +2990,7 @@ DETAY: dict[str, dict] = {
     "A3-G-3": {
         "nasil": [
             "İyi bildiğin bir derste zorlanan bir arkadaşını belirle ve ona yardım etmeyi teklif et.",
-            "Haftada bir kez, 30–45 dakikalık bir çalışma zamanı ayarlayın; okul kütüphanesi ya da sınıf uygun bir yer olabilir.",
+            "Arkadaşınla düzenli buluşma zamanları belirleyin (30–45 dakika yeterli); okul kütüphanesi ya da sınıf uygun bir yer olabilir.",
             "Her buluşmada önce arkadaşına neyi anlamadığını sor, sonra konuyu adım adım ve örnekle anlat; cevabı vermek yerine soruyu birlikte çözün.",
             "Buluşmadan sonra tarihi, çalıştığınız konuyu ve neyin işe yaradığını bir deftere yaz.",
         ],
@@ -2912,18 +3018,18 @@ DETAY: dict[str, dict] = {
     },
     "A3-G-5": {
         "nasil": [
-            "Ailenle birlikte gönüllülük fırsatlarını araştır; TEGV, TOG gibi bilinen kurumların ya da okulunun sosyal sorumluluk kulübünün etkinliklerine bak.",
-            "Yaş şartını ve gereken izinleri öğren; 18 yaşından küçüksen veli izni gerekebilir, başvuruyu ailenle birlikte yap.",
-            "Katılacağın etkinliği seç, tarihini takvimine yaz ve önceden yapılacak oryantasyon ya da eğitime katıl.",
-            "Etkinlikte sana verilen görevi yap ve çocuklarla ya da gençlerle çalışırken sorumlu gönüllünün yönlendirmelerine uy.",
-            "Her etkinlikten sonra ne yaptığını ve nasıl hissettiğini 3–4 cümleyle yaz.",
+            "Çocuklara ya da gençlere yönelik etkinlikleri araştır: okulunun sosyal sorumluluk kulübü, alt sınıflara okuma saati, belediyenin ya da yerel bir derneğin oyun ve okuma etkinlikleri.",
+            "Ailenle konuş; etkinliğin yaş şartını ve gereken izinleri birlikte öğrenin. 18 yaşından küçüksen veli izni gerekebilir.",
+            "Katılacağın etkinliği seç ve varsa önceden yapılan tanıtım ya da eğitime katıl.",
+            "Etkinlikte sana verilen görevi yap ve çocuklarla çalışırken sorumlu yetişkinin yönlendirmelerine uy.",
+            "Her etkinlikten sonra tarihi yaz ve ne yaptığını, nasıl hissettiğini 3–4 cümleyle not et.",
         ],
         "kontrol": [
-            "En az 2 etkinliğe gönüllü olarak katıldın.",
+            "Ailenin bilgisiyle en az 2 etkinlikte gönüllü oldun.",
             "Her etkinlik için tarih ve kısa bir not yazılı.",
             "Bu deneyimin sana neler hissettirdiğini anlatabiliyorsun.",
         ],
-        "ipucu": "Kurum seçerken öğretmenine ya da rehberlik servisine danışmak güvenli bir başlangıçtır.",
+        "ipucu": "Yer seçerken öğretmenine ya da rehberlik servisine danışmak güvenli bir başlangıçtır.",
     },
     "A3-G-6": {
         "nasil": [
@@ -2956,7 +3062,7 @@ DETAY: dict[str, dict] = {
     "A3-U-2": {
         "nasil": [
             "Okulunda alt sınıflara yönelik akran mentorluğu, akran rehberliği ya da \"abla-ağabey\" programı olup olmadığını rehberlik servisine sor.",
-            "Mentorluk, deneyimli birinin daha yeni birine düzenli olarak yol göstermesidir; programın sorumluluklarını ve haftalık süresini öğren.",
+            "Mentorluk, deneyimli birinin daha yeni birine düzenli olarak yol göstermesidir; programın sorumluluklarını ve ne kadar zaman gerektirdiğini öğren.",
             "Başvuru formunu doldur ya da rehberlik öğretmenine katılmak istediğini ilet.",
             "Programa katıldıktan sonra her görüşmede ne konuştuğunu ve hangi konuda yardım ettiğini kısaca not et.",
             "Okulunda böyle bir program yoksa rehberlik servisiyle küçük bir program başlatmayı öner.",
@@ -2975,7 +3081,7 @@ DETAY: dict[str, dict] = {
             "Önce nesnenin genel şeklini daire, kare gibi basit şekillerle çiz, sonra ayrıntıları ve gölgeleri ekle.",
             "Mükemmel olmasını bekleme; süre bitince çizimi bırak ve köşesine tarihi yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Defterinde tarihli 7 eskiz var.",
@@ -2988,10 +3094,10 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Uzamsal düşünme, nesneleri zihninde döndürme ve parçaların nasıl birleştiğini hayal etme becerisidir; bunu çalıştıracak bir etkinlik seç.",
             "Seçeneklerden birini dene: Bir origami modeli (kâğıt katlama), 3D yapboz, tangram ya da Rubik küpü; ücretsiz origami çizimlerini internette bulabilirsin.",
-            "Her gün 15–20 dakika ayır; kolay bir modelle başla ve tamamladıkça zorluğu artır.",
+            "Her oturumda 15–20 dakika ayır; kolay bir modelle başla ve tamamladıkça zorluğu artır.",
             "Bitirdiğin her bulmacanın adını ve sana zor gelen adımı kısaca not et; istersen fotoğrafını çek.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "En az 3 bulmaca ya da origami modeli tamamladın.",
@@ -3004,7 +3110,7 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Amacına göre ücretsiz bir araç seç: afiş ve sunum için Canva, ekran ve uygulama tasarımı için Figma, 3D modelleme için Tinkercad.",
             "Hesap açmak gerekiyorsa ailenin bilgisi dahilinde aç; aracın kendi başlangıç eğitimlerini ya da kısa video dersleri izle.",
-            "Haftada 2–3 kez 30 dakika pratik yap; her seferinde bir özelliği öğren (yazı ekleme, renk, hizalama, katman gibi).",
+            "Birkaç kısa pratik oturumu yap; her birinde bir özelliği öğren (yazı ekleme, renk, hizalama, katman gibi).",
             "Basit bir tasarım yap. Örneğin: okul etkinliği için bir afiş, bir uygulama giriş ekranı ya da bir anahtarlık modeli.",
             "Tasarımını kaydet ve bir arkadaşından ya da öğretmeninden görüş al.",
         ],
@@ -3020,7 +3126,7 @@ DETAY: dict[str, dict] = {
             "{bolum} ile ilgili maketini yapacağın bir yapı ya da nesne seç. Örneğin: bir köprü, bir oda planı, bir hücre ya da bir makine parçası.",
             "Maket, bir şeyin küçültülmüş üç boyutlu modelidir; önce kâğıda farklı yönlerden görünüşünü ve yaklaşık ölçülerini gösteren bir eskiz çiz.",
             "Ucuz ve güvenli malzemeler kullan: karton, mukavva, kürdan, oyun hamuru, yapıştırıcı; maket bıçağı kullanacaksan bir yetişkinden yardım iste.",
-            "Haftada 2–3 kez çalışarak maketi parça parça yap; önce taban ve ana gövde, sonra ayrıntılar.",
+            "Maketi parça parça yap; her oturumda bir parçayı bitir: önce taban ve ana gövde, sonra ayrıntılar.",
             "Bitirince fotoğrafını çek ve maketin neyi gösterdiğini anlatan kısa bir açıklama yaz.",
         ],
         "kontrol": [
@@ -3032,25 +3138,25 @@ DETAY: dict[str, dict] = {
     },
     "A4-G-5": {
         "nasil": [
-            "Bulunduğun ilçedeki halk eğitim merkezinin kurs listesine ve yakınındaki üniversitelerin lise öğrencilerine yönelik yaz okullarına bak.",
-            "Çizim, resim, tasarım ya da 3D modelleme gibi ilgi alanına uyan bir atölye seç; yaş şartını ve ücreti kontrol et.",
-            "Ailenle birlikte başvur ve kurs takvimini kendi takvimine işle.",
-            "Atölyede yaptığın her çalışmayı sakla ya da fotoğrafla; portfolyon için malzeme olacak.",
-            "Atölye bitince öğrendiğin en önemli 3 tekniği bir sayfaya yaz.",
+            "Bir mimar, tasarımcı ya da {bolum} alanında çalışan birini seç; TRT Belgesel gibi bir kanalda bir belgesel ya da güvenilir bir röportaj bul.",
+            "İzlerken ya da okurken bir fikrin eskizden ürüne nasıl taşındığını adım adım not et: fikir, taslak, deneme, düzeltme, son hâl.",
+            "Bu kişinin zorlandığı ya da fikrini değiştirdiği bir anı ayrıca yaz.",
+            "Sürecin bir adımını seç ve kendi küçük tasarımında dene. Örneğin: aynı fikir için 3 farklı taslak çizmek.",
+            "Denediğin adımın sana ne kattığını 2-3 cümleyle tarihiyle yaz.",
         ],
         "kontrol": [
-            "Atölyeyi tamamladın; varsa katılım belgen elinde.",
-            "Atölyede yaptığın çalışmaların fotoğrafları ya da kendisi duruyor.",
-            "Öğrendiğin 3 tekniği anlatabiliyorsun.",
+            "Tasarım sürecinin adımları sırasıyla yazılı.",
+            "Bir adımı kendi tasarımında denedin.",
+            "Bu denemenin sana ne kattığını yazdın.",
         ],
-        "ipucu": "Kurs bulamazsan okulundaki görsel sanatlar öğretmenine okul içi bir atölye olup olmadığını sor.",
+        "ipucu": "Tasarımcıların çoğu ilk fikirde durmaz; birden fazla taslak çizmek en iyi fikri bulmayı kolaylaştırır.",
     },
     "A4-G-6": {
         "nasil": [
             "Portfolyo, yaptığın çalışmaları düzenli olarak bir araya topladığın dosyadır; bir klasör ya da bilgisayarda bir dosya aç.",
             "Eskizlerini, dijital tasarımlarını, maketlerinin fotoğraflarını ve atölye çalışmalarını bu klasörde topla.",
             "Her çalışmanın yanına tarih, kullandığın malzeme ya da araç ve bir cümlelik açıklama ekle.",
-            "Her ay klasörüne en az 1–2 yeni çalışma eklemeyi hedefle ve takvimine hatırlatıcı koy.",
+            "Her yeni çalışmanı bitirdiğinde tarihiyle klasöre ekle.",
         ],
         "kontrol": [
             "Klasöründe en az 5 çalışma var.",
@@ -3089,25 +3195,26 @@ DETAY: dict[str, dict] = {
     },
     "A5-G-1": {
         "nasil": [
-            "Doğa, biyoloji ya da kimya üzerine bir belgesel seç; televizyonda, okul kütüphanesinde ya da güvenilir video platformlarında bulabilirsin.",
-            "İzlemeden önce bir kâğıda belgeselin adını ve tarihi yaz.",
-            "İzlerken seni şaşırtan bilgileri hemen not et; gerekirse videoyu durdur.",
-            "Belgesel bitince en şaşırtıcı 3 bilgiyi seç ve her birini kendi cümlenle yeniden yaz.",
+            "Doğa, biyoloji ya da kimya alanında çalışmış bir bilim insanı seç.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Ne üzerinde çalıştı? Nasıl çalışıyordu (gözlem, deney, saha çalışması)? Hangi zorlukla karşılaştı?",
+            "Seni şaşırtan 3 bilgiyi kendi cümlenle yaz.",
+            "Bu kişinin çalışma biçiminden kendine uyarlayacağın bir davranışı tek cümleyle yaz. Örneğin: \"Gözlemlerimi her seferinde tarihiyle not edeceğim.\"",
         ],
         "kontrol": [
-            "Not kâğıdında 3 şaşırtıcı bilgi yazılı.",
-            "Bu bilgilerden birini birine anlatabiliyorsun.",
-            "Belgeselin konusunu bir cümleyle söyleyebiliyorsun.",
+            "Seni şaşırtan 3 bilgi yazılı.",
+            "Bu kişinin nasıl çalıştığını kendi cümlelerinle anlattın.",
+            "Kendine uyarlayacağın bir davranışı yazdın.",
         ],
-        "ipucu": "",
+        "ipucu": "Belgeselde ilginç bir yerde videoyu durdurup not almak, sonradan hatırlamanı kolaylaştırır.",
     },
     "A5-G-2": {
         "nasil": [
             "Güvenli bir deney seç. Örneğin: ıslak pamukta fasulye çimlendirmek ya da kırmızı lahana suyuyla limon, sirke ve karbonatlı suyun rengini karşılaştırmak (pH, bir maddenin asitlik ya da bazlık derecesidir).",
-            "Yalnızca mutfakta bulunan zararsız malzemeler kullan; ocak ya da sıcak su gerekiyorsa bir yetişkinden yardım iste.",
+            "Deneyi ailenin gözetiminde yap ve yalnızca mutfakta bulunan zararsız malzemeler kullan; ocak ya da sıcak su gerekiyorsa o kısmı bir yetişkin yapsın.",
             "Deney günlüğü aç: Tarih, kullandığın malzemeler, yaptıkların ve gözlemlerin için bir sayfa ayır.",
-            "Bir hafta boyunca her gün aynı saatte gözlem yap; bitkinin boyunu ölç ya da renk değişimini yaz, istersen fotoğrafla.",
-            "Hafta sonunda ne beklediğini ve ne olduğunu karşılaştıran 3–4 cümlelik bir sonuç yaz.",
+            "7 gün boyunca her gün aynı saatte gözlem yap; bitkinin boyunu ölç ya da renk değişimini yaz, istersen fotoğrafla.",
+            "Gözlemler bitince ne beklediğini ve ne olduğunu karşılaştıran 3–4 cümlelik bir sonuç yaz.",
         ],
         "kontrol": [
             "Tarihli gözlemlerin olduğu bir deney günlüğün var.",
@@ -3150,7 +3257,7 @@ DETAY: dict[str, dict] = {
             "Fen öğretmeninden danışman olmasını iste; TÜBİTAK 2204 Lise Öğrencileri Araştırma Projeleri gibi yarışmalar danışman öğretmenle yürütülür.",
             "Bir araştırma sorusu belirle ve hipotez yaz: Hipotez, sorunun cevabı hakkındaki test edebileceğin tahmindir. Örneğin: \"Işık süresi artarsa fasulye daha hızlı büyür.\"",
             "Öğretmeninle deney planı yap: neyi değiştireceksin, neyi ölçeceksin, neyi sabit tutacaksın; yalnızca güvenli yöntemler ve öğretmen gözetimi.",
-            "Verilerini düzenli olarak tabloya yaz, grafiğe dök ve haftalık kısa notlar tut.",
+            "Verilerini düzenli olarak tabloya yaz, grafiğe dök ve her ölçümden sonra kısa, tarihli not tut.",
             "Proje raporu yaz: amaç, yöntem, bulgular (tablo ve grafik), sonuç ve kaynaklar başlıklarıyla öğretmenine kontrol ettir.",
         ],
         "kontrol": [
@@ -3162,7 +3269,7 @@ DETAY: dict[str, dict] = {
     },
     "A5-G-6": {
         "nasil": [
-            "Üniversitelerin lise öğrencilerine yönelik yaz bilim okullarını, kamplarını ve TÜBİTAK destekli bilim okulu programlarını araştır; rehberlik servisine ve fen öğretmenine de sor.",
+            "Üniversitelerin lise öğrencilerine yönelik ücretsiz ya da burslu yaz bilim okullarını, kamplarını ve TÜBİTAK destekli bilim okulu programlarını araştır; rehberlik servisine ve fen öğretmenine de sor.",
             "Bulduğun 2–3 program için tarih, yer, konu, yaş şartı ve son başvuru tarihini bir tabloya yaz.",
             "İlgine ve ailenin uygun bulduğu tarih ve yere göre bir program seç.",
             "Başvuru formunu ailenle birlikte doldur; motivasyon yazısı istenirse neden katılmak istediğini anlatan kısa bir paragraf yaz ve öğretmenine okut.",
@@ -3193,7 +3300,7 @@ DETAY: dict[str, dict] = {
         "nasil": [
             "Seçtiğin araştırma sorusunu fen öğretmenine götür ve danışman olmasını iste; TÜBİTAK 2204 gibi yarışmaların takvimine birlikte bakın.",
             "Yarışmanın şartnamesini (kurallarını anlatan belgeyi) okuyun ve son başvuru tarihini takvime yazın.",
-            "Proje planı hazırla: araştırma sorusu, hipotez, yöntem, gerekli malzemeler ve haftalık takvim. Deneyleri yalnızca öğretmen gözetiminde ve güvenli yöntemlerle yap.",
+            "Proje planı hazırla: araştırma sorusu, hipotez, yöntem, gerekli malzemeler ve aşamalara bölünmüş bir takvim. Deneyleri yalnızca öğretmen gözetiminde ve güvenli yöntemlerle yap.",
             "Deneylerini yap, verilerini tabloya yaz ve öğretmeninle düzenli olarak gözden geçir.",
             "Başvuru formunu ve proje raporunu öğretmeninle birlikte hazırla ve süresi içinde gönder.",
         ],
@@ -3202,22 +3309,21 @@ DETAY: dict[str, dict] = {
             "Proje planın ve verilerin yazılı.",
             "Projenin amacını ve yöntemini bir dakikada anlatabiliyorsun.",
         ],
-        "ipucu": "Başvuru tarihleri genellikle erken kapanır; projeye dönem başında başla.",
+        "ipucu": "Başvuru tarihleri genellikle erken kapanır; projeye erkenden başla.",
     },
     "A6-G-1": {
         "nasil": [
             "Bir sağlık sorunun varsa başlamadan önce ailene ve doktoruna danış.",
             "Her gün için 20 dakikalık bir zaman seç; yürüyüş, ip atlama, bisiklet ya da evde hafif egzersiz (esneme, squat, şınav) yapabilirsin.",
-            "Yavaş başla: İlk 5 dakika ısın, son 5 dakika yavaşlayıp esneme yap; ağrı ya da baş dönmesi olursa dur.",
-            "Rahat ayakkabı giy, yanında su bulundur ve yürüyüşü güvenli, aydınlık yerlerde yap.",
+            "Yavaş başla: İlk 5 dakika ısın, son 5 dakika yavaşlayıp esneme yap; ağrı ya da baş dönmesi olursa dur. Rahat ayakkabı giy, yanında su bulundur ve yürüyüşü güvenli, aydınlık yerlerde yap.",
             "Bir kâğıda 7 kutu çiz; her gün ne yaptığını ve kaç dakika sürdüğünü kutuya yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "7 kutunun hepsinde etkinlik ve süre yazılı.",
             "Her gün en az 20 dakika hareket ettin.",
-            "Hafta sonunda kendini nasıl hissettiğini bir cümleyle söyleyebiliyorsun.",
+            "7 günün sonunda kendini nasıl hissettiğini bir cümleyle söyleyebiliyorsun.",
         ],
         "ipucu": "Hava kötüyse evde müzik açıp hareket etmek de sayılır.",
     },
@@ -3247,7 +3353,7 @@ DETAY: dict[str, dict] = {
             "Takviminde düzenli antrenmanlara katıldığını gösteren işaretler var.",
             "Bu sporda öğrendiğin bir tekniği ya da kuralı anlatabiliyorsun.",
         ],
-        "ipucu": "İlk dalı sevmezsen bir ay sonra başka bir dalı denemek de olur.",
+        "ipucu": "İlk dalı sevmezsen bir süre denedikten sonra başka bir dalı denemek de olur.",
     },
     "A6-G-4": {
         "nasil": [
@@ -3265,16 +3371,16 @@ DETAY: dict[str, dict] = {
     },
     "A6-G-5": {
         "nasil": [
-            "Sağlık durumunu bilen bir doktora ya da beden eğitimi öğretmenine danışarak gerçekçi bir hedef seç. Örneğin: \"3 ay sonra 5 km'yi durmadan yürümek ya da koşmak.\"",
-            "Başlangıç noktanı ölç: Bugün kaç dakika ya da kaç km rahatça yürüyebiliyor ya da koşabiliyorsun? Bunu bir deftere yaz.",
-            "Haftada 3–4 gün çalış ve her hafta mesafeyi ya da süreyi yalnızca biraz artır; yavaş ilerlemek sakatlanmayı önler.",
+            "Sağlık durumunu bilen bir doktora ya da beden eğitimi öğretmenine danışarak gerçekçi bir hedef seç. Örneğin: \"5 km'yi durmadan yürümek ya da koşmak.\"",
+            "Başlangıç noktanı ölç: Bugün kaç dakika ya da kaç km rahatça yürüyebiliyor ya da koşabiliyorsun? Bunu tarihiyle bir deftere yaz.",
+            "Düzenli çalış ve her birkaç antrenmanda bir mesafeyi ya da süreyi yalnızca biraz artır; yavaş ilerlemek sakatlanmayı önler.",
             "Her antrenmanda tarihi, mesafeyi ve süreyi defterine yaz.",
             "Ağrı, nefes darlığı ya da baş dönmesi olursa dur ve ailenle birlikte doktora danış.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
         ],
         "kontrol": [
-            "Defterinde 3 aylık düzenli antrenman kayıtları var.",
-            "Başlangıçta yazdığın hedefe ulaştın.",
+            "Defterinde tarihli antrenman kayıtların var.",
+            "Hedefine ulaştın ve ulaştığın tarihi not ettin.",
             "İlk ve son ölçümünü karşılaştırıp gelişimini söyleyebiliyorsun.",
         ],
         "ipucu": "Hasta ya da çok yorgun olduğun günlerde dinlenmek de planın bir parçasıdır.",
@@ -3312,22 +3418,21 @@ DETAY: dict[str, dict] = {
             "Takımında ya da katıldığın bir etkinlikte üstlenebileceğin bir görev seç: kaptan yardımcılığı, malzeme sorumluluğu, antrenman takvimi ya da etkinlik organizasyonu.",
             "Antrenörüne ya da öğretmenine bu sorumluluğu almak istediğini söyle ve beklentilerini sor.",
             "Görevin için basit bir plan yaz: ne yapacaksın, ne zaman, kiminle?",
-            "Görevini düzenli yap ve her hafta neyi iyi yaptığını, neyi geliştirebileceğini kısaca not et.",
+            "Görevini düzenli yap ve her antrenman ya da etkinlikten sonra neyi iyi yaptığını, neyi geliştirebileceğini kısaca not et.",
         ],
         "kontrol": [
             "Takımında ya da bir etkinlikte resmî bir sorumluluk üstlendin.",
-            "Bu görevle ilgili planın ve haftalık notların var.",
+            "Bu görevle ilgili planın ve tarihli notların var.",
             "Sorumluluk alırken yaşadığın bir zorluğu ve nasıl çözdüğünü anlatabiliyorsun.",
         ],
         "ipucu": "Kaptan seçilmesen bile küçük bir organizasyon görevi almak aynı beceriyi geliştirir.",
     },
     "A7-G-1": {
         "nasil": [
-            "Bu hafta teslim edeceğin bir ödev seç.",
+            "Yakında teslim edeceğin bir ödev seç.",
             "Kontrol listesi hazırla: Ödevin tamam sayılması için gereken her şeyi alt alta madde madde yaz. Örneğin: \"Kapakta adım var\", \"Kaynakları ekledim\", \"İmla kontrolü yaptım\".",
             "Ödevin şartlarını (sayfa sayısı, biçim, teslim tarihi) öğretmeninin yönergesinden kontrol edip listeye ekle.",
-            "Teslimden önce listeyi baştan sona oku ve tamamladığın her maddenin yanına tik koy; eksik varsa tamamla.",
-            "Listeyi sakla; bir sonraki ödevde tekrar kullanabilirsin.",
+            "Teslimden önce listeyi baştan sona oku ve tamamladığın her maddenin yanına tik koy; eksik varsa tamamla. Listeyi sakla; bir sonraki ödevde tekrar kullanabilirsin.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
             "Bu ödev bir başlangıç denemesi. İşe yaradıysa sonraki ödevlerinde de listeyi kullan ve kaç ödevde kullandığını say (ör. 4 ödevden 3'ü).",
         ],
@@ -3340,20 +3445,17 @@ DETAY: dict[str, dict] = {
     },
     "A7-G-2": {
         "nasil": [
-            "Bu hafta çalışacağın, işlem ya da sıra içeren bir konu seç. Örneğin: ikinci dereceden denklem çözme ya da bir paragraf sorusunu çözme yöntemi.",
-            "Defterinde sayfanın başına konunun adını yaz.",
-            "Konuyu çalışırken her adımı numaralandırarak alt alta yaz. Örneğin: \"1. Denklemi düzenle. 2. Katsayıları bul. 3. Diskriminantı hesapla.\"",
-            "Her adımın altına kısa bir örnek ekle.",
-            "Notunu kullanarak bir soruyu baştan sona çöz; atlanan bir adım varsa notuna ekle.",
-            "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu konu bir başlangıç denemesi. İşe yaradıysa yeni konularda da adımları numaralandır ve kaç konuda yaptığını say.",
+            "Son birkaç ödevini ya da sınav kâğıdını önüne koy.",
+            "Bilgi eksiğinden değil, adım atlamaktan ya da dikkatsizlikten kaynaklanan hataları bul. Örneğin: işareti yanlış taşımak, birimi yazmamak, soruyu yarım okumak.",
+            "Her hatanın yanına hangi adımda olduğunu yaz: soruyu okuma, işlem, kontrol ya da cevabı yazma.",
+            "Her hata için bir dahaki sefere ekleyeceğin kontrolü tek cümleyle yaz. Örneğin: \"Cevabı yazmadan önce soruyu bir kez daha okuyacağım.\"",
+            "Bu kontrolleri bir kâğıda toplayıp çalışma masana as.",
         ],
         "kontrol": [
-            "Numaralı adımlarla yazılmış bir konu notun var.",
-            "Bu notu kullanarak bir soruyu adım adım çözebiliyorsun.",
-            "Konunun adımlarını sırasıyla ezbere söyleyebiliyorsun.",
+            "En az 3 hata ve her birinin hangi adımda olduğu yazılı.",
+            "Her hata için ekleyeceğin kontrol yazılı.",
         ],
-        "ipucu": "",
+        "ipucu": "Aynı tür hata tekrar ediyorsa bu bir şanssızlık değil, bir alışkanlıktır; tek bir kontrol çoğu zaman yeter.",
     },
     "A7-G-3": {
         "nasil": [
@@ -3375,17 +3477,16 @@ DETAY: dict[str, dict] = {
             "Ders çalışırken izleyeceğin şablonu bir kâğıda yaz ve masana as: 1) Konu özeti, 2) Örnek, 3) Soru çözümü, 4) Tekrar.",
             "Konu özeti: Konunun ana fikirlerini kitaptan okuyup 5–6 satırla kendi cümlelerinle yaz.",
             "Örnek: Kitaptaki ya da öğretmeninin çözdüğü bir örneği adım adım incele; sonra kendi başına 5–10 soru çöz.",
-            "Tekrar: 1–2 gün sonra özetini 5 dakika gözden geçir ve yanlış yaptığın soruları tekrar çöz.",
-            "Bir takvimde şablonu uyguladığın her günü işaretle.",
+            "Tekrar: 1–2 gün sonra özetini 5 dakika gözden geçir ve yanlış yaptığın soruları tekrar çöz. Şablonu her uyguladığında tarihini ve çalıştığın konuyu işaretle.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5).",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
-            "4 hafta boyunca şablonu uyguladığın günler takviminde işaretli.",
+            "Şablonu uyguladığın en az 8 oturum tarihiyle işaretli.",
             "Defterinde aynı sırayla (özet, örnek, soru, tekrar) çalışılmış konular var.",
             "Bu şablonun çalışmanı nasıl etkilediğini bir cümleyle anlatabiliyorsun.",
         ],
-        "ipucu": "",
+        "ipucu": "Şablon ilk oturumlarda yavaş gelebilir; birkaç uygulamadan sonra sıra kendiliğinden oturur.",
     },
     "A7-G-5": {
         "nasil": [
@@ -3404,7 +3505,7 @@ DETAY: dict[str, dict] = {
     "A7-G-6": {
         "nasil": [
             "Yapacağın projeyi seç. Örneğin: bir okul etkinliği, bir maket, bir web sayfası ya da bir araştırma.",
-            "Başlamadan önce projeyi aşamalara böl ve her aşamaya bir bitiş tarihi koy. Örneğin: \"1. Araştırma – 2 hafta, 2. Tasarım – 2 hafta, 3. Üretim – 3 hafta, 4. Sunum – 1 hafta.\"",
+            "Başlamadan önce projeyi aşamalara böl ve her aşamaya bir bitiş tarihi koy. Örneğin: \"1. Araştırma, 2. Tasarım, 3. Üretim, 4. Sunum\"; her aşamanın yanına hedef tarihini yaz.",
             "Bir proje defteri aç ve her aşamada ne yaptığını, ne kadar sürdüğünü ve karşılaştığın sorunları yaz.",
             "Her aşamanın sonunda fotoğraf, taslak ya da dosya gibi bir kanıt ekle.",
             "Proje bitince planlanan ve gerçekleşen tarihleri karşılaştır ve kısa bir değerlendirme yaz.",
@@ -3416,12 +3517,26 @@ DETAY: dict[str, dict] = {
         ],
         "ipucu": "Plan kayarsa sorun değil; nedenini yazmak bir sonraki planı daha iyi yapar.",
     },
+    "A7-G-7": {
+        "nasil": [
+            "{bolum} alanında ya da prosedürlerle çalışan bir meslekte (eczacı, laborant, muhasebeci gibi) çalışan birini seç.",
+            "Bu kişinin iş gününü anlatan bir röportaj ya da TRT Belgesel gibi bir kanalda bir belgesel izle; ya da aile çevrenden böyle biriyle ailenin bilgisiyle konuş.",
+            "3 soruyu not et ya da sor: \"Hangi işlerde kontrol listesi kullanıyorsun?\", \"Neden?\", \"Bir adımı atlarsan ne olur?\"",
+            "Bu kişinin kullandığı 2 düzen yöntemini yaz.",
+            "Birini kendi çalışmana uyarla (ör. ödev teslim listesi) ve uyguladığında tarihli kısa bir not ekle.",
+        ],
+        "kontrol": [
+            "Bu kişinin kullandığı 2 düzen yöntemi yazılı.",
+            "Birini kendi çalışmana uyarladın ve notun var.",
+        ],
+        "ipucu": "Hata yapmanın pahalı olduğu mesleklerde düzen bir tercih değil, gerekliliktir; bu, o işin sana uyup uymadığını düşünmen için iyi bir ipucudur.",
+    },
     "A7-U-1": {
         "nasil": [
             "Bir grup projesinde ekibe iş akışını hazırlamayı teklif et. İş akışı, işin hangi sırayla ve kim tarafından yapılacağını gösteren plandır.",
             "Projeyi küçük görevlere böl ve sırala; her göreve bir sorumlu ve bir tarih yaz.",
             "Planı bir tabloya ya da paylaşılan bir belgeye koy ve ilk toplantıda ekibe sun; önerileri al ve gerekirse güncelle.",
-            "Her hafta kısa bir kontrol yap: hangi görev bitti, hangisi gecikti?",
+            "Her aşama sonrasında kısa bir kontrol yap: hangi görev bitti, hangisi gecikti?",
         ],
         "kontrol": [
             "Görevleri, sorumluları ve tarihleri gösteren bir iş akışı planın var.",
@@ -3466,10 +3581,10 @@ DETAY: dict[str, dict] = {
             "Bir konuyu çalışmaya başlamadan önce defterine şu soruyu yaz: \"Bu konu neden var, neye yarıyor?\"",
             "Kitabın konu girişini, öğretmeninin açıklamasını ya da kısa bir araştırmayı kullanarak cevabı bul.",
             "Cevabı tek cümleyle yaz. Örneğin: \"Türev, bir şeyin ne hızla değiştiğini hesaplamaya yarar.\"",
-            "Bu hafta çalıştığın her konunun başına bu cümleyi ekle.",
+            "Çalıştığın sonraki 5 konunun başına bu cümleyi ekle.",
         ],
         "kontrol": [
-            "Bu hafta çalıştığın konuların her biri için tek cümlelik amaç yazın var.",
+            "En az 5 konu için tek cümlelik amaç yazın var.",
             "Bir konunun ne işe yaradığı sorulduğunda tek cümleyle cevap verebiliyorsun.",
             "Konunun gerçek hayatta kullanıldığı bir yer söyleyebiliyorsun.",
         ],
@@ -3480,16 +3595,16 @@ DETAY: dict[str, dict] = {
             "Farklı derslerden iki konu seç ve aralarında ortak bir nokta ara. Örneğin: fizikteki hız ve matematikteki türev, ya da tarih ve coğrafyadaki göç yolları.",
             "Bağlantıyı 2–3 cümleyle yaz: Bu iki konu nasıl birbirine bağlı?",
             "Bu bağlantıyı bir arkadaşına anlat ve ona mantıklı gelip gelmediğini sor.",
-            "Her hafta bir yeni bağlantı bulmayı hedefle ve hepsini defterinde \"Bağlantılarım\" başlıklı bir sayfada topla.",
+            "Her yeni bağlantıyı defterinde \"Bağlantılarım\" başlıklı bir sayfaya tarihiyle yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu bir başlangıç denemesi. İşe yaradıysa her hafta bir bağlantı bulmayı 8 hafta sürdür ve kaç hafta yaptığını işaretle.",
+            "Bu bir başlangıç. İşe yaradıysa bağlantı aramayı sürdür ve her yeni bağlantıyı tarihiyle not et.",
         ],
         "kontrol": [
             "Defterinde en az 3 disiplinler arası bağlantı yazılı.",
             "Bu bağlantılardan en az birini bir arkadaşına anlattın.",
             "Her bağlantıyı bir iki cümleyle açıklayabiliyorsun.",
         ],
-        "ipucu": "",
+        "ipucu": "En şaşırtıcı bağlantılar genelde birbirinden en uzak görünen dersler arasında çıkar.",
     },
     "A8-G-4": {
         "nasil": [
@@ -3509,7 +3624,7 @@ DETAY: dict[str, dict] = {
     "A8-G-5": {
         "nasil": [
             "Sistem düşüncesi, bir şeyi parçalarıyla ve parçaların birbirini nasıl etkilediğiyle birlikte görmektir; bu konuda giriş düzeyinde bir kitap, makale ya da video seç.",
-            "Kaynağı birkaç haftada oku ve öğrendiğin temel kavramları not et (ör. \"geri besleme döngüsü\": bir sonucun başlangıçtaki nedeni yeniden etkilemesi).",
+            "Kaynağı bölümlere ayırarak oku ve öğrendiğin temel kavramları not et (ör. \"geri besleme döngüsü\": bir sonucun başlangıçtaki nedeni yeniden etkilemesi).",
             "{bolum} ile ilgili bir sistem seç. Örneğin: bir hastanenin işleyişi, bir şehrin ulaşımı ya da bir ekosistem.",
             "Sistemin parçalarını kutulara yaz ve birbirini etkileyenleri oklarla bağla; en az bir geri besleme döngüsü göstermeye çalış.",
             "Diyagramın altına sistemin nasıl işlediğini anlatan 3–4 cümle yaz.",
@@ -3519,7 +3634,7 @@ DETAY: dict[str, dict] = {
             "{bolum} ile ilgili bir sistem diyagramın hazır.",
             "Diyagramındaki bir parçayı değiştirince başka nelerin etkileneceğini açıklayabiliyorsun.",
         ],
-        "ipucu": "",
+        "ipucu": "Diyagramı ilk seferde düzgün çizmek zorunda değilsin; kurşun kalemle başlayıp okları sonradan düzeltebilirsin.",
     },
     "A8-G-6": {
         "nasil": [
@@ -3535,6 +3650,20 @@ DETAY: dict[str, dict] = {
             "Büyük sorunun cevabını bir dakikada özetleyebiliyorsun.",
         ],
         "ipucu": "Kesin bir cevap bulamaman normal; farklı olasılıkları karşılaştırmak da güçlü bir sonuçtur.",
+    },
+    "A8-G-7": {
+        "nasil": [
+            "Farklı alanlardaki bilgileri birleştirerek yeni bir şey yapmış birini seç: bir bilim insanı, girişimci ya da {bolum} alanından biri.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: Hangi alanlardan bilgi topladı? Bunları nasıl bir araya getirdi? Ortaya ne çıktı?",
+            "Birleştirdiği alanları ve sonucu basit bir şemayla çiz (alanlar kutularda, sonuç ortada) ya da 3 cümleyle anlat.",
+            "Kendi derslerinden birleştirebileceğin iki alanı ve bundan ne çıkabileceğini tek cümleyle yaz.",
+        ],
+        "kontrol": [
+            "Bu kişinin birleştirdiği alanlar ve ortaya çıkan sonuç şemayla ya da 3 cümleyle yazılı.",
+            "Kendi birleştirebileceğin iki alanı yazdın.",
+        ],
+        "ipucu": "Yeni fikirlerin çoğu iki eski fikrin yan yana gelmesinden doğar; farklı derslere ilgi duymak bu yüzden değerlidir.",
     },
     "A8-U-1": {
         "nasil": [
@@ -3561,8 +3690,8 @@ DETAY: dict[str, dict] = {
         ],
         "kontrol": [
             "Kendi hatalarına göre hazırlanmış bir kontrol listen var.",
-            "Bir ay boyunca teslimlerinde bu listeyi kullandın.",
-            "Teslimlerindeki ayrıntı hatası sayısı ay başına göre azaldı.",
+            "En az 5 teslimde bu listeyi kullandın.",
+            "Son teslimlerindeki ayrıntı hatası sayısı ilk teslimlerine göre azaldı.",
         ],
         "ipucu": "Listeyi kalemliğine ya da defterinin kapağına yapıştırırsan unutmazsın.",
     },
@@ -3629,7 +3758,7 @@ DETAY: dict[str, dict] = {
             "Kime satacağını ve ürününün fiyatını belirle; satışları ailenin bilgisi dahilinde, yalnızca tanıdığın çevrede ya da okul etkinliklerinde yap.",
             "Gelir-gider tablosu aç: Bir tabloya tarih, açıklama, gider (malzeme vb.) ve gelir (satış) sütunları koy ve her parayı kaydet.",
             "İlk ürününü hazırla ve ilk satışını yap.",
-            "Ay sonunda toplam geliri ve gideri hesapla, kâr ya da zarar ettiğini gör ve neyi değiştireceğini yaz.",
+            "Birkaç satıştan sonra toplam geliri ve gideri hesapla, kâr ya da zarar ettiğini gör ve neyi değiştireceğini yaz.",
         ],
         "kontrol": [
             "İlk satışını yaptın.",
@@ -3652,6 +3781,21 @@ DETAY: dict[str, dict] = {
             "Her tekniğin ne işe yaradığını bir cümleyle açıklayabiliyorsun.",
         ],
         "ipucu": "",
+    },
+    "A9-G-7": {
+        "nasil": [
+            "Türkiye'den ya da dünyadan bir girişimci seç.",
+            "Hakkında bir kaynak bul: okul ya da halk kütüphanesinin biyografi rafına bak, TRT Belgesel gibi bir kanalda bir belgesel ara ya da güvenilir bir gazete veya dergideki bir röportajı bul. Kütüphane görevlisinden ya da bir öğretmeninden öneri isteyebilirsin.",
+            "Okurken ya da izlerken 3 soruyu not et: İlk müşterisini nasıl buldu? Hangi başarısızlığı yaşadı? Bundan ne öğrendi?",
+            "Girişimcinin ilk müşteriyi bulma yolunu 2-3 cümleyle yaz.",
+            "Yaşadığı bir başarısızlıktan çıkardığı dersi ve senin kendine uyarlayacağın bir davranışı birer cümleyle yaz.",
+        ],
+        "kontrol": [
+            "Girişimcinin ilk müşteriyi bulma yolu yazılı.",
+            "Yaşadığı bir başarısızlık ve çıkardığı ders yazılı.",
+            "Kendine uyarlayacağın bir davranışı yazdın.",
+        ],
+        "ipucu": "Girişim hikâyeleri çoğu zaman başarıyı öne çıkarır; başarısızlık kısmını dikkatle okumak daha çok şey öğretir.",
     },
     "A9-U-1": {
         "nasil": [
@@ -3687,7 +3831,7 @@ DETAY: dict[str, dict] = {
 # ============================ [2026-10-09] EK ADIMLARIN DETAYI ============================
 # gelisim_icerigi._EK_GELISIM ile eklenen adımlar (Maarif Modeli eğilim ve okuryazarlık becerileri; SCCT öz yeterlik).
 _EGER_O_ZAMAN = "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\""
-_IKI_AY = "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa en az 8 hafta sürdür ve haftada kaç gün yaptığını say (ör. 7 günde 5)."
+_IKI_AY = "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle."
 
 _EK_DETAY = {
     "P8-G-7": {
@@ -3708,9 +3852,9 @@ _EK_DETAY = {
     "P8-G-8": {
         "nasil": [
             "Liderliğini beğendiğin bir kişi seç: bir öğretmen, kulüp başkanı, takım kaptanı ya da grup ödevindeki bir arkadaşın.",
-            "Bir hafta boyunca onu gözlemle ve 3 davranışını not et: Gruba nasıl yön veriyor, anlaşmazlıkta ne yapıyor, nasıl karar veriyor?",
+            "Onu bir süre gözlemle ve 3 davranışını not et: Gruba nasıl yön veriyor, anlaşmazlıkta ne yapıyor, nasıl karar veriyor?",
             "Bu davranışlardan sana en uygun olanı seç (ör. \"Herkesin fikrini sırayla soruyor\").",
-            "Ertesi hafta bir grup çalışmasında, sınıfta ya da ailende bu davranışı en az bir kez dene.",
+            "Sonra bir grup çalışmasında, sınıfta ya da ailende bu davranışı en az bir kez dene.",
             "Denedikten sonra 3 cümle yaz: Ne yaptın, insanlar nasıl tepki verdi, bir dahaki sefere neyi farklı yaparsın?",
         ],
         "kontrol": [
@@ -3739,14 +3883,14 @@ _EK_DETAY = {
         "nasil": [
             "Seni biraz zorlayan ama gerçekten yapmak istediğin bir şeyi seç: sınıfta konuşmak, yeni biriyle tanışmak, bir kulübe katılmak gibi.",
             "Bunu kolaydan zora 4 basamağa böl. Örneğin: 1) Sınıfta bir soru sor, 2) Bir konuda kısa yorum yap, 3) 1 dakikalık sunum yap, 4) 5 dakikalık sunum yap.",
-            "Her hafta bir basamak çık; bir basamak çok zor gelirse arasına daha küçük bir basamak ekle.",
+            "Bir basamak rahat gelince sonrakine geç ve her basamağın tarihini yaz; bir basamak çok zor gelirse arasına daha küçük bir basamak ekle.",
             "Her basamaktan sonra 1'den 10'a kadar ne kadar gergin olduğunu yaz; çoğu kişide puan zamanla düşer, düşmese de hangi basamağın zor geldiğini görmüş olursun.",
             _EGER_O_ZAMAN,
-            "Bu basamaklar bir başlangıç denemesi. İşe yaradıysa yeni bir hedefle aynı yöntemi sürdür ve her hafta hangi basamakta olduğunu işaretle.",
+            "Bu basamaklar bir başlangıç. İşe yaradıysa yeni bir hedefle aynı yöntemi sürdür ve her basamağın tarihini yaz.",
         ],
         "kontrol": [
             "4 basamağın kolaydan zora yazılı.",
-            "En az 3 basamağı tamamladın.",
+            "En az 3 basamağı tamamladın ve her birinin tarihi yazılı.",
             "Gerginlik puanların kayıtlı ve ilk basamakla son basamağı karşılaştırabiliyorsun.",
         ],
         "ipucu": "Basamakları atlamak yerine küçük tutmak daha iyi çalışır; her başarı bir sonrakini kolaylaştırır.",
@@ -3783,34 +3927,31 @@ _EK_DETAY = {
     },
     "I1-G-7": {
         "nasil": [
-            "Çalışmaya başlamadan önce tek bir iş seç ve bir kâğıda yaz (ör. \"Matematik 2. ünite 10 soru\").",
-            "Telefonunu başka bir odaya koy ya da tamamen kapat; bilgisayarda gereksiz sekmeleri kapat.",
-            "Bir zamanlayıcıyı 25 dakikaya kur ve süre bitene kadar yalnızca o işle uğraş. Aklına başka bir şey gelirse kâğıdın kenarına yaz ve işine dön.",
-            "Süre bitince 5 dakika ara ver: kalk, su iç, biraz yürü. Sonra yeni bir bloğa başla.",
-            "Her gün kaç blok yaptığını bir takvime çentik atarak işaretle.",
-            _EGER_O_ZAMAN,
-            _IKI_AY,
+            "Zamanını iyi yöneten birini seç: {bolum} alanında çalışan biri ya da aile çevrende okul, iş ve ev işlerini birlikte yürüten biri.",
+            "Röportaj ya da biyografi kullanabilirsin; yüz yüze konuşacaksan aile çevrenden birini ailenin bilgisiyle seç ya da öğretmeninden aracı olmasını iste.",
+            "3 soru sor ya da not et: \"Gününü nasıl planlıyorsun?\", \"Çok iş birikince önce neyi yapıyorsun?\", \"Seni en çok ne oyalıyor?\"",
+            "Cevaplardan işine yarayacak 2 yöntemi kendi cümlelerinle yaz. Örneğin: \"Akşamdan yarının 3 işini yazıyor.\"",
+            "Bir yöntemi dene ve her uyguladığında tarihli kısa bir not ekle: Nasıl gitti?",
         ],
         "kontrol": [
-            "2 haftalık takviminde her günün blok sayısı işaretli.",
-            "Günlerin çoğunda en az 2 odak bloğu var.",
-            "Blok sırasında telefonu elinin altında tutmadın.",
+            "Bu kişinin 2 zaman yönetimi yöntemi yazılı.",
+            "Birini denedin ve nasıl gittiğini not ettin.",
         ],
-        "ipucu": "25 dakika uzun gelirse 15 dakikayla başla; önemli olan süre boyunca tek işe bağlı kalmak.",
+        "ipucu": "Herkesin yöntemi herkese uymaz; denediğin yöntem işe yaramazsa ikinciyi dene.",
     },
     "A1-G-7": {
         "nasil": [
-            "İnternette {bolum} ya da bir meslekle ilgili bir iddia bul. Örneğin \"Bu meslek 10 yıl içinde yok olacak\" ya da \"Bu bölüm mezunlarının %90'ı işsiz\".",
-            "Üç şeyi kontrol et: Bunu kim yazmış (uzman mı, reklam mı)? Ne zaman yazılmış? Bir kaynağa, veriye ya da araştırmaya dayanıyor mu?",
-            "Aynı konuyu güvenilir bir kaynakta ara: YÖK Atlas, TÜİK, üniversite sayfaları, meslek örgütleri ya da resmî kurum siteleri.",
-            "İddia doğru mu, kısmen doğru mu, yanlış mı? Kararını gerekçesiyle 2-3 cümleyle yaz.",
+            "{bolum} alanında sayısal düşünmeyi kullanan birini seç: bir mühendis, ekonomist, doktor, mimar ya da istatistikçi olabilir.",
+            "Okul ya da halk kütüphanesindeki bir biyografiye, TRT Belgesel gibi bir kanaldaki bir belgesele ya da güvenilir bir röportaja bak; ya da aile çevrenden böyle biriyle ailenin bilgisiyle konuş.",
+            "3 soruyu not et ya da sor: \"İşinde matematiği nerede kullanıyorsun?\", \"Lisede öğrendiğin hangi konu işine yarıyor?\", \"Sayılarla zorlandığın bir an oldu mu?\"",
+            "Bu kişinin işinde matematiği kullandığı 3 örneği kendi cümlelerinle yaz.",
+            "Bu örneklerden birinin lisedeki hangi konuya dayandığını bul ve not et.",
         ],
         "kontrol": [
-            "İddianın kendisi ve nereden bulduğun yazılı.",
-            "Yazar, tarih ve kaynak bilgilerini kontrol ettin.",
-            "Güvenilir bir kaynağa dayanan bir sonuca vardın.",
+            "Bu kişinin işinde matematiği kullandığı 3 örnek yazılı.",
+            "Örneklerden birini lisedeki bir konuyla ilişkilendirdin.",
         ],
-        "ipucu": "Çok şaşırtıcı ya da korkutucu iddialar daha çok paylaşılır; tam da bu yüzden ilk kontrol edilmesi gerekenler onlardır.",
+        "ipucu": "Matematiğin işte nasıl kullanıldığını görmek, okulda çalıştığın konulara bir amaç kazandırır.",
     },
     "A1-G-8": {
         "nasil": [
@@ -3903,23 +4044,23 @@ _EK_DETAY = {
     },
     "A5-G-7": {
         "nasil": [
-            "Arama motoruna \"{bolum} sürdürülebilirlik\", \"{bolum} iklim\" ya da \"{bolum} çevre\" yazarak araştırmaya başla.",
-            "Bölümünün çevreyle (enerji, su, atık, iklim, biyolojik çeşitlilik) en az 2 bağlantısını bul ve yaz.",
-            "Bu alanda çalışan bir kurum, şirket ya da proje bul. Örneğin bir yenilenebilir enerji projesi ya da bir belediye geri dönüşüm programı.",
-            "Bu proje ya da kurumda {bolum} mezunlarının ne iş yaptığını 2-3 cümleyle yaz.",
+            "Laboratuvar, deney, gezi ya da belgesel gibi bu alandaki deneyimlerinin notlarını önüne koy.",
+            "İki sütun aç: \"Beni heyecanlandıran\" ve \"Beni sıkan\". Her sütuna en az 2 şey yaz. Örneğin: \"Sonucu beklemek heyecanlı\", \"Uzun ölçüm tabloları sıkıcı\".",
+            "Her maddenin yanına bunun hangi deneyimde ortaya çıktığını yaz.",
+            "Kendine sor: \"Bu heyecan ve sıkılma {bolum} okurken ve çalışırken ne kadar karşıma çıkar?\" Cevabını 3-4 cümleyle yaz.",
         ],
         "kontrol": [
-            "Bölümünün çevreyle 2 bağlantısını yazdın.",
-            "Bir örnek kurum ya da proje buldun.",
-            "Bu projede bölüm mezunlarının rolünü açıkladın.",
+            "Heyecanlandıran ve sıkan en az 2'şer şey yazılı.",
+            "Her birinin hangi deneyimden geldiği belli.",
+            "{bolum} için çıkardığın sonucu yazdın.",
         ],
-        "ipucu": "Neredeyse her bölümün çevreyle bir bağlantısı var; bu bağlantı ileride yeni iş alanları da açıyor.",
+        "ipucu": "Sıkıldığın şeyler de değerli bir bilgidir; bir alanın her parçasını sevmek gerekmez, çoğunu sevmek yeterli olabilir.",
     },
     "A5-G-8": {
         "nasil": [
-            "Sınıfında ya da evinde bir hafta boyunca atıkları ölçeceğini ailene ya da öğretmenine söyle.",
+            "Sınıfında ya da evinde 7 gün boyunca atıkları ölçeceğini ailene ya da öğretmenine söyle.",
             "Atıkları türlerine ayır: kâğıt, plastik, cam, yemek artığı. Her gün sayısını ya da yaklaşık ağırlığını (mutfak tartısıyla) not et.",
-            "Bir haftanın sonunda verileri bir tabloya aktar ve her türün toplamını hesapla.",
+            "Ölçüm bitince verileri bir tabloya aktar ve her türün toplamını hesapla.",
             "En çok atık hangi türden çıkıyor? Bunu azaltmak için gerçekten uygulanabilir 2 öneri yaz.",
             "Önerilerini sınıfınla ya da ailenle paylaş ve birini uygulamaya koy.",
         ],
