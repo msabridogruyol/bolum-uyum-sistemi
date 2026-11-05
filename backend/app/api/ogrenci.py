@@ -950,6 +950,9 @@ def guvenlik_fotografi_kaydet(
     _tur_sahipligini_dogrula(db, ogrenci, istek.tur_id)
     if not hg.onay_var_mi(db, "ogrenci", ogrenci.id, "kamera"):   # [2026-10-04] KVKK
         raise HTTPException(status_code=403, detail="Kamera için onay vermedin. Bu yüzden fotoğraf kaydedilmedi.")
+    from app.core.veli_onayi import kamera_izinli   # [2026-11-05] velinin kamera rızası da gerekir
+    if not kamera_izinli(db, ogrenci.id):
+        raise HTTPException(status_code=403, detail="Velin kamera için onay vermedi. Bu yüzden fotoğraf kaydedilmedi.")
 
     db.add(GuvenlikFotografi(
         ogrenci_id=ogrenci.id, tur_id=istek.tur_id,
@@ -965,8 +968,13 @@ def guvenlik_fotografi_kaydet(
 # ============================================================================
 @router.get("/kvkk")
 def kvkk_durumunu_getir(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
-    """guncel=False ise ön yüz zorunlu onay penceresini gösterir (yeni metin sürümü veya eski hesap)."""
-    return hg.kvkk_durumu(db, "ogrenci", ogrenci.id)
+    """guncel=False ise ön yüz zorunlu onay penceresini gösterir (yeni metin sürümü veya eski hesap).
+    [2026-11-05] veli: veli onay formu durumu; kamera_etkin: öğrenci VE (gerekiyorsa) veli kamera rızası."""
+    from app.core.veli_onayi import durum as veli_durum, kamera_izinli
+    d = hg.kvkk_durumu(db, "ogrenci", ogrenci.id)
+    d["veli"] = veli_durum(db, ogrenci.id)
+    d["kamera_etkin"] = bool(d["onaylar"].get("kamera")) and kamera_izinli(db, ogrenci.id)
+    return d
 
 
 @router.post("/kvkk")

@@ -104,6 +104,9 @@ def kvkk_onayla(db, ogrenci_id):
     from app.core.hesap_guvenligi_servisi import kvkk_kaydet
     from app.core.kvkk_metinleri import ZORUNLU_KODLAR
     kvkk_kaydet(db, "ogrenci", ogrenci_id, {k: True for k in ZORUNLU_KODLAR}, None)
+    # [2026-11-05] 18 yaş altı veli onayı kilidi: test öğrencisi reşit olarak işaretlenir (veli onayı testleri kendi satırını yazar)
+    from sqlalchemy import text
+    db.execute(text("INSERT INTO veli_onaylari (ogrenci_id, islem, yapan_ad) VALUES (:o, 'resit', 'test')"), {"o": ogrenci_id})
 
 
 @pytest.fixture

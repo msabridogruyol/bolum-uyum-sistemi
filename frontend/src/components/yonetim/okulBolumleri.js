@@ -6,6 +6,7 @@ export const OKUL_BOLUMLERI = [
   { k: 'istatistik', ad: 'İstatistikler', ikon: '📊', grup: 'Raporlar ve İstatistikler', okul: true, aciklama: 'Katılım, profil, bölüm ve meslek, koçluk, akademik ve rehberlik istatistikleri; sınıf, şube ve tarihe göre' },
   { k: 'raporlar', ad: 'Rapor Merkezi', ikon: '📄', grup: 'Raporlar ve İstatistikler', okul: true, aciklama: 'Hazır raporlar (en aktif / en az aktif öğrenciler, en yüksek net, en aktifler), tek bakışta yönetici özeti (bulgular, ne yapılmalı, kritik öğrenciler, sıralamalar, şube karşılaştırması) ve indirilebilir tüm raporlar' },
   { k: 'ogrenciler', ad: 'Öğrenciler', ikon: '👥', grup: 'Öğrenciler', aciklama: 'Öğrenci hesapları, şifreler, sınıf atama, yeni yılda sınıf atlatma ve öğrenci detayları' },
+  { k: 'onaylar', ad: 'Onay Formları', ikon: '✍️', grup: 'Öğrenciler', aciklama: 'KVKK onayı ve 18 yaş altı veli onay formu: kimde tamam, kimde eksik; formları indirin, imzalı formu alınca işaretleyin' },
   { k: 'siniflar', ad: 'Sınıflar', ikon: '🏷️', grup: 'Öğrenciler', aciklama: 'Şubeler, sınıf öğretmenleri ve şube raporları' },
   { k: 'akran', ad: 'Şube & Akran', ikon: '🤝', grup: 'Öğrenciler', modul: 'akran', aciklama: 'Profili birbirine yakın öğrenciler ve şube dağılımı' },
   { k: 'denemeler', ad: 'Okul Denemeleri', ikon: '📝', grup: 'Akademik', okul: true, modul: 'okul_denemeleri', aciklama: 'Okulun yaptığı denemelerin sonuçlarını Excel ile yükleyin; şube ve ders ortalamaları' },

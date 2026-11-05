@@ -31,6 +31,7 @@ const SUPER_MENU = [
   { grup: 'Okullar ve Kullanıcılar', baglantilar: [
     ['/admin/okullar', '🏫', 'Okullar'],
     ['/admin/okul/0', '🎒', 'Okul Harici Öğrenciler'],
+    ['/admin/onaylar', '✍️', 'Onay Formları'],   // [2026-11-05]
     ['/admin/paketler', '📦', 'Paketler'],
     ['/admin/koclar', '👩‍🏫', 'Eğitim Koçları'],
     ['/admin/yoneticiler', '🛠️', 'Süper Adminler'],
