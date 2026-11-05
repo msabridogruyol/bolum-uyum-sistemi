@@ -21,7 +21,7 @@ KOD2 = "I6-G-2"
 
 def _plan(kodlar=(KOD, KOD2)):
     adimlar = [{"kod": k, "degisken_kod": "I6", "baslik": f"Adım {k}", "aciklama": "Açıklama", "olcut": "Ölçüt",
-                "sure": "30 dk", "asama": "simdi", "tur_etiket": "Okuma", "durum": None} for k in kodlar]
+                "asama": "simdi", "tur_etiket": "Okuma", "durum": None} for k in kodlar]
     return {"odak_alanlari": [{"degisken_kod": "I6", "degisken_adi": "Eleştiriye açıklık", "oncelik_sirasi": 1, "neden_onemli": "Önemli"}],
             "asamalar": [{"kod": "simdi", "ad": "1. Aşama · Başlangıç", "adimlar": adimlar}],
             "guclu_yonler": []}

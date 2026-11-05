@@ -413,12 +413,12 @@ def adim_durumu_guncelle(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, kod
 
 
 def _adim(kod_deg: str, ad: str, grup: str, sira: int, ham: tuple, bolum: str, durumlar: dict) -> dict:
-    asama, baslik, aciklama, tur, sure, olcut = ham
+    asama, baslik, aciklama, tur, olcut = ham
     kod = adim_kodu(kod_deg, grup, sira)
     return {
         "kod": kod, "degisken_kod": kod_deg, "degisken_adi": ad, "asama": asama,
         "baslik": baslik, "aciklama": aciklama.replace("{bolum}", bolum),
-        "tur": tur, "tur_etiket": TUR_ETIKET.get(tur, tur), "sure": sure,
+        "tur": tur, "tur_etiket": TUR_ETIKET.get(tur, tur),
         "olcut": olcut.replace("{bolum}", bolum), "durum": durumlar.get(kod),
         # [2026-10-09] öğrencinin anlayacağı düzeyde adım adım uygulama + kontrol listesi
         "nasil": [m.replace("{bolum}", bolum) for m in DETAY.get(kod, {}).get("nasil", [])],

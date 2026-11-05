@@ -103,7 +103,7 @@ def _plan(db: Session, ogrenci: Ogrenci):
 
 def _adim_kisa(a: dict, asama_ad: dict, kayitlar: dict) -> dict:
     durum = a.get("durum")
-    return {"kod": a["kod"], "baslik": a["baslik"], "aciklama": a.get("aciklama"), "olcut": a.get("olcut"), "sure": a.get("sure"),
+    return {"kod": a["kod"], "baslik": a["baslik"], "aciklama": a.get("aciklama"), "olcut": a.get("olcut"),
             "durum": durum if durum in ("devam_ediyor", "tamamlandi") else "bekliyor",
             "asama": a.get("asama"), "asama_ad": asama_ad.get(a.get("asama")), "kazanim": a.get("kazanim"),
             "tur_etiket": a.get("tur_etiket"), "kayitlar": kayitlar.get(a["kod"], [])}

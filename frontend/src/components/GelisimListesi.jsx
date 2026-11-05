@@ -95,7 +95,7 @@ function Madde({ m, onIslem }) {
         <span className="gl-ikon" aria-hidden="true">{DURUM_IKON[m.durum]}</span>
         <div style={{ flex: 1, minWidth: 0 }}>
           <div className="gl-baslik">{m.baslik}</div>
-          <div className="yp-ince">{[m.tur_etiket, m.sure && `yaklaşık ${m.sure}`, m.asama_ad].filter(Boolean).join(' · ')}</div>
+          <div className="yp-ince">{[m.tur_etiket, m.asama_ad].filter(Boolean).join(' · ')}</div>
           {m.aciklama && <div className="gl-aciklama">{m.aciklama}</div>}
           {m.olcut && <div className="yp-ince" style={{ marginTop: 2 }}><b>Ne zaman “yaptım” diyebilirsin?</b> {m.olcut}</div>}
         </div>

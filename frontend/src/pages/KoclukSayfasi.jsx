@@ -124,7 +124,6 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
         {alanGoster && <Cip renk="var(--pu)" zemin="var(--pul)">{adim.degisken_adi}</Cip>}
         <Cip>{adim.tur_etiket}</Cip>
-        <Cip>⏱ {adim.sure}</Cip>
         {basladi && <Cip renk="var(--am)" zemin="var(--aml)">▶ Devam ediyor</Cip>}
       </div>
       <div style={{ fontSize: 13.5, fontWeight: 700, marginBottom: 4, textDecoration: bitti ? 'line-through' : 'none' }}>{bitti ? '✓ ' : ''}{adim.baslik}</div>
@@ -439,7 +438,7 @@ function OzetSekmesi({ plan, gelisim, sekmeyeGit }) {
           {s ? (
             <>
               <div style={{ minWidth: 0 }}>
-                <div className="koc-siradaki-ust">{s.degisken_adi} · {s.tur_etiket} · ⏱ {s.sure}</div>
+                <div className="koc-siradaki-ust">{s.degisken_adi} · {s.tur_etiket}</div>
                 <div className="koc-siradaki-baslik">{s.baslik}</div>
               </div>
               <span className="koc-siradaki-git">Yol haritamda aç →</span>

@@ -826,7 +826,7 @@ DETAY: dict[str, dict] = {
             "Teneffüste, kantinde ya da ders çıkışında, karşındakinin acelesi yokken yanına git ve cümleni söyle. Sohbeti uzatmak zorunda değilsin; 2-3 dakika yeterli. Karşındakine bir soru daha sor ve cevabını dinle.",
             "Akşam bir deftere kiminle konuştuğunu ve nasıl hissettiğini bir cümleyle yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "En az 2 farklı kişiyle kendin başlattığın bir sohbet yaptın.",
@@ -1097,7 +1097,7 @@ DETAY: dict[str, dict] = {
             "Her işe yapacağın günü ata; tarihi en yakın olanlarla başla. Bir güne 3-4'ten fazla iş düşerse bazılarını boş günlere kaydır.",
             "Listeyi her gün göreceğin bir yere as ya da telefonunun fotoğraflarına kaydet; biten işin üstünü çiz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Önündeki işleri içeren bir listen var.",
@@ -1113,7 +1113,7 @@ DETAY: dict[str, dict] = {
             "Telefonunu sessize al ve başka odaya koy ya da ters çevir; zamanlayıcıyı 25 dakikaya kur. Zil çalana kadar sadece o işe odaklan. Aklına başka bir şey gelirse bir kâğıda yazıp işine dön.",
             "5 dakikalık molada kalk, su iç ya da biraz yürü; sonra ikinci tura başla. Her günün sonunda kaç tur yaptığını bir tabloya işaretle.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "5 gün boyunca her gün en az 2 Pomodoro turu yaptın.",
@@ -1129,7 +1129,7 @@ DETAY: dict[str, dict] = {
             "Akşamları 5 dakika ayırıp ertesi günün işlerini kontrol et; yeni gelen görevleri hemen ekle, biten işleri işaretle, yapılamayanları yeni bir güne taşı.",
             "Sistemi kullanmadığın günleri de işaretle; birkaç gün kullandıktan sonra işe yarayıp yaramadığını düşün ve gerekirse küçük bir değişiklik yap.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Sistemini en az 15 gün kullandın.",
@@ -1234,7 +1234,7 @@ DETAY: dict[str, dict] = {
             "Her gün aynı saatte, örneğin yatmadan önce ya da ders çalışmaya başlamadan, bir kez pratik yap.",
             "Bir takvimde ya da notta her pratik yaptığın günü işaretle; stresli bir anda (sınav öncesi gibi) da kullanmayı dene.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "En az 7 gün pratik yaptın ve her pratiği tarihiyle işaretledin.",
@@ -1265,7 +1265,7 @@ DETAY: dict[str, dict] = {
             "Hareketten önce ve sonra kendini nasıl hissettiğini tek kelimeyle not et (\"gergin\", \"rahat\", \"yorgun\", \"enerjik\" gibi).",
             "Her hareketin tarihini ve süresini bir tabloya yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Tablonda en az 10 tarihli hareket kaydı var.",
@@ -1444,7 +1444,7 @@ DETAY: dict[str, dict] = {
             "Bir okuma listesi tut: kitabın adı, bitirdiğin tarih ve kitaptan aklında kalan bir cümle.",
             "Bir kitabı bitirince 2-3 cümlelik kısa bir not yaz: Ne anlatıyor, bana ne kattı?",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "En az 3 kitap bitirdin.",
@@ -1650,7 +1650,7 @@ DETAY: dict[str, dict] = {
             "Kararın sonucu belli olduğunda \"Sonuç\" sütununu doldur.",
             "5 karar biriktiğinde hepsine geri dön ve bir cümle ekle: \"Eksik bilgiyle karar verirken neyi fark ettim?\"",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Karar günlüğünde en az 5 karar ve sonucu tarihiyle kayıtlı.",
@@ -1877,7 +1877,7 @@ DETAY: dict[str, dict] = {
             "Okuldan sonraki boş zamanında telefona ve diğer işlere geçmeden önce bu 3 işi bitirmeye çalış.",
             "Akşam yaptıklarının yanına tik at; bitmeyen olduysa nedenini tek kelimeyle not et (süre, unuttum, zor geldi). Her 7 kayıtta bir kaç gün 3 işi de bitirdiğini say.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "En az 15 gün için tarihli \"Bugünün 3'ü\" listen var.",
@@ -2096,7 +2096,7 @@ DETAY: dict[str, dict] = {
             "Her kararı tarihli kısa bir notla kaydet: Karar neydi, süreyi aştın mı?",
             "5 karar biriktiğinde notlarına bak: Pişman olduğun var mı? Çoğu zaman olmadığını fark edeceksin.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Süre sınırıyla verdiğin en az 5 küçük kararın tarihli notu var.",
@@ -2267,7 +2267,7 @@ DETAY: dict[str, dict] = {
             "Söz tarihi geldiğinde yanına tik (tuttum) ya da çarpı (tutmadım) koy.",
             "10 söz biriktiğinde tutamadıklarına bak ve nedenini bir kelimeyle yaz: unuttum, zaman, fazla söz. Sonra tuttuğun sözleri say.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Listende en az 10 söz tarihiyle yazılı.",
@@ -2724,7 +2724,7 @@ DETAY: dict[str, dict] = {
             "Hata defteri tut: Yanlış yaptığın her sorunun kısa bir kopyasını, doğru çözümünü ve hatanın nedenini ayrı bir deftere yaz.",
             "Bir kâğıda tarih ve soru sayısı sütunları aç; her çalıştığın gün tarihi ve kaç soru çözdüğünü yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "En az 7 günün tarihi ve o gün çözdüğün soru sayısı yazılı.",
@@ -2829,7 +2829,7 @@ DETAY: dict[str, dict] = {
             "15 sayfayı okuyunca kaldığın sayfaya ayraç koy ve bir kâğıda tarihi ve sayfa aralığını yaz.",
             "Okuduğun bölümden aklında kalan bir cümleyi ya da olayı kısaca not et.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Okuma kâğıdında en az 7 günün tarihi ve okuduğun sayfa sayısı yazılı.",
@@ -3081,7 +3081,7 @@ DETAY: dict[str, dict] = {
             "Önce nesnenin genel şeklini daire, kare gibi basit şekillerle çiz, sonra ayrıntıları ve gölgeleri ekle.",
             "Mükemmel olmasını bekleme; süre bitince çizimi bırak ve köşesine tarihi yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Defterinde tarihli 7 eskiz var.",
@@ -3097,7 +3097,7 @@ DETAY: dict[str, dict] = {
             "Her oturumda 15–20 dakika ayır; kolay bir modelle başla ve tamamladıkça zorluğu artır.",
             "Bitirdiğin her bulmacanın adını ve sana zor gelen adımı kısaca not et; istersen fotoğrafını çek.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "En az 3 bulmaca ya da origami modeli tamamladın.",
@@ -3318,7 +3318,7 @@ DETAY: dict[str, dict] = {
             "Yavaş başla: İlk 5 dakika ısın, son 5 dakika yavaşlayıp esneme yap; ağrı ya da baş dönmesi olursa dur. Rahat ayakkabı giy, yanında su bulundur ve yürüyüşü güvenli, aydınlık yerlerde yap.",
             "Bir kâğıda 7 kutu çiz; her gün ne yaptığını ve kaç dakika sürdüğünü kutuya yaz.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "7 kutunun hepsinde etkinlik ve süre yazılı.",
@@ -3479,7 +3479,7 @@ DETAY: dict[str, dict] = {
             "Örnek: Kitaptaki ya da öğretmeninin çözdüğü bir örneği adım adım incele; sonra kendi başına 5–10 soru çöz.",
             "Tekrar: 1–2 gün sonra özetini 5 dakika gözden geçir ve yanlış yaptığın soruları tekrar çöz. Şablonu her uyguladığında tarihini ve çalıştığın konuyu işaretle.",
             "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\"",
-            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
+            "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle.",
         ],
         "kontrol": [
             "Şablonu uyguladığın en az 8 oturum tarihiyle işaretli.",
@@ -3831,7 +3831,7 @@ DETAY: dict[str, dict] = {
 # ============================ [2026-10-09] EK ADIMLARIN DETAYI ============================
 # gelisim_icerigi._EK_GELISIM ile eklenen adımlar (Maarif Modeli eğilim ve okuryazarlık becerileri; SCCT öz yeterlik).
 _EGER_O_ZAMAN = "Planını tek cümleyle yaz ve görünür bir yere as: \"Eğer [ne zaman / nerede], o zaman [ne yapacağım].\" Örneğin: \"Eğer okuldan gelip çantamı bırakırsam, o zaman hemen bu adımı yapacağım.\""
-_IKI_AY = "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi ortalama yaklaşık 2 ay sürer, ama kişiden kişiye birkaç haftadan birkaç aya kadar değişir; işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle."
+_IKI_AY = "Bu ilk deneme bir başlangıç. Yeni bir davranışın alışkanlığa dönüşmesi zaman alır ve kişiden kişiye değişir; acele etme, işe yaradıysa sürdür ve her uyguladığında tarihli kısa bir not ekle."
 
 _EK_DETAY = {
     "P8-G-7": {

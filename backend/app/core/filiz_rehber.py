@@ -549,7 +549,7 @@ def k_adim(b: Baglam, m: str) -> str:
         return _hedefsiz(b) if not b.plan else "Yol haritandaki tüm adımları tamamlamışsın, tebrikler! 🎉 Güçlü Yönlerin sekmesindeki adımlarla devam edebilirsin."
     nasil = adim.get("nasil") or []
     ilk = f" Önce şunu yap: {nasil[0]}" if nasil else ""
-    return (f"Sıradaki adımın \"{adim['baslik']}\" ({adim.get('alan')}, yaklaşık {adim.get('sure') or 'kısa bir süre'}). "
+    return (f"Sıradaki adımın \"{adim['baslik']}\" ({adim.get('alan')}; süre yok, kendi hızında). "
             f"{adim.get('aciklama') or ''}{ilk} Bitirince Koçluğum → Yol Haritam'da \"Yaptım\"ı işaretle.").replace("  ", " ")
 
 
