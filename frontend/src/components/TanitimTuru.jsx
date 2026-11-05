@@ -23,7 +23,7 @@ const OGRENCI = {
   '/koclugu?sekme=karsilastirma': 'Hedef bölümünün beklediği özelliklerle seni tek tek karşılaştırır: nerede uyumlusun, nerede farkın var.',
   '/calisma': 'Çalışma programın, günlük çalışma süren ve çözdüğün sorular.',
   '/netlerim': 'Deneme netlerin, konu takibin ve hedefinle karşılaştırma.',
-  '/gorevler': 'Her hafta sana özel 3 küçük görev; tamamladıkça serin uzar.',
+  '/gelisim': 'Hedef bölümün için geliştireceğin alanlar ve yapılacaklar; yaptıklarını tarihiyle yazarsın.',
   '/kutuphane': 'Okuduğun kitaplar, izlediklerin ve katıldığın etkinlikler.',
   filiz: 'Filiz, gelişim koçun. Aklına takılan her şeyi ona sorabilirsin.',
   '/takvim': 'Okulunun etkinlikleri, sınav tarihleri ve rehberlik randevuların.',

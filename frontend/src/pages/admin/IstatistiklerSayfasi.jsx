@@ -248,8 +248,8 @@ export default function IstatistiklerSayfasi() {
       <Bolum baslik="Modül Kullanımı" aciklama="Dönem içinde modülü kullanan farklı öğrenci (tercih listesi güncel durumdur)." />
       <KpiSatiri min={170}>
         <KpiKarti etiket="Filiz sohbeti" deger={ay.filiz?.oturum ?? '—'} ikon="💬" alt={`${sayi(v.moduller.find((m) => m.k === 'filiz')?.sayi || 0)} öğrenci mesajı · yapay zekâ / rehber modu ayrımı kaydedilmez`} />
-        <KpiKarti etiket="Haftalık görev tamamlama" deger={ay.haftalik?.toplam ? Math.round((100 * ay.haftalik.tamam) / ay.haftalik.toplam) : '—'} birim={ay.haftalik?.toplam ? '%' : undefined}
-          ikon="✅" alt={ay.haftalik ? `${sayi(ay.haftalik.tamam)} / ${sayi(ay.haftalik.toplam)} görev` : 'Veri yok'} />
+        <KpiKarti etiket="Gelişim listesi kaydı" deger={ay.gelisim ? sayi(ay.gelisim.kayit) : '—'} ikon="📝"
+          alt={ay.gelisim ? `${sayi(ay.gelisim.ogrenci)} öğrenci · ${sayi(ay.gelisim.kesif)} keşif · ${sayi(ay.gelisim.oz)} öz değerlendirme` : 'Veri yok'} />
         <KpiKarti etiket="Meslek simülasyonu" deger={ay.simulasyon?.sayi ?? '—'} ikon="🎬" alt={ay.simulasyon?.keyif != null ? `Ortalama keyif ${sayi(ay.simulasyon.keyif)} / 100` : 'Ortalama keyif —'} />
         <KpiKarti etiket="Rehberlik görüşmesi" deger={ay.rehberlik?.yapildi ?? '—'} ikon="🧭" alt={ay.rehberlik ? `${sayi(ay.rehberlik.planlandi)} planlandı` : 'Veri yok'} />
         <KpiKarti etiket="Portfolyo kaydı" deger={ay.portfolyo?.toplam ?? '—'} ikon="🗂️" alt={ay.portfolyo ? `${sayi(ay.portfolyo.dogrulanan)} rehber doğruladı` : 'Veri yok'} />

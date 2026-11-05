@@ -209,7 +209,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
   // [2026-10-04] KVKK: kamera yalnızca öğrenci "kamera" iznini verdiyse açılır (Ayarlar > Gizlilik ve İzinler)
   const [kameraRizasi, setKameraRizasi] = useState(null)
   useEffect(() => {
-    api.kvkkDurumu().then((d) => setKameraRizasi(!!d.onaylar?.kamera)).catch(() => setKameraRizasi(false))
+    api.kvkkDurumu().then((d) => setKameraRizasi(d.kamera_etkin ?? !!d.onaylar?.kamera))   // [2026-11-05] velinin kamera rızası da gerekir.catch(() => setKameraRizasi(false))
   }, [])
 
   useEffect(() => { turIdRef.current = turId }, [turId])

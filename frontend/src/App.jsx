@@ -25,7 +25,7 @@ const AnketlerSayfasi = tembel(() => import('./pages/AnketlerSayfasi'))
 const PortfolyoSayfasi = tembel(() => import('./pages/PortfolyoSayfasi'))
 const CalismaSayfasi = tembel(() => import('./pages/CalismaSayfasi'))
 const RaporlarimSayfasi = tembel(() => import('./pages/RaporlarimSayfasi'))
-const GorevlerimSayfasi = tembel(() => import('./pages/GorevlerimSayfasi'))
+const GelisimListemSayfasi = tembel(() => import('./pages/GelisimListemSayfasi'))   // [2026-11-05] Görevlerim yerine
 const TakvimSayfasi = tembel(() => import('./pages/TakvimSayfasi'))
 const KutuphanemSayfasi = tembel(() => import('./pages/KutuphanemSayfasi'))
 const NetTakibiSayfasi = tembel(() => import('./pages/NetTakibiSayfasi'))
@@ -46,6 +46,7 @@ const DallarSayfasi = tembel(() => import('./pages/admin/DallarSayfasi'))
 const SorularSayfasi = tembel(() => import('./pages/admin/SorularSayfasi'))
 const ParametrelerSayfasi = tembel(() => import('./pages/admin/ParametrelerSayfasi'))
 const AuditLogSayfasi = tembel(() => import('./pages/admin/AuditLogSayfasi'))
+const ErisimKayitlariSayfasi = tembel(() => import('./pages/admin/ErisimKayitlariSayfasi'))   // [2026-11-05]
 const YoneticilerSayfasi = tembel(() => import('./pages/admin/YoneticilerSayfasi'))
 const SistemHakkindaSayfasi = tembel(() => import('./pages/admin/SistemHakkindaSayfasi'))
 const SoruGecerlilikSayfasi = tembel(() => import('./pages/admin/SoruGecerlilikSayfasi'))
@@ -62,7 +63,8 @@ const KocYonetimSayfasi = tembel(() => import('./pages/admin/KocYonetimSayfasi')
 const YokatlasEslesmeSayfasi = tembel(() => import('./pages/admin/YokatlasEslesmeSayfasi'))
 const GenelTakvimSayfasi = tembel(() => import('./pages/admin/GenelTakvimSayfasi'))
 const AnketPsikometriSayfasi = tembel(() => import('./pages/admin/AnketPsikometriSayfasi'))
-const IstatistiklerSayfasi = tembel(() => import('./pages/admin/IstatistiklerSayfasi'))   // [2026-10-10]
+const IstatistiklerSayfasi = tembel(() => import('./pages/admin/IstatistiklerSayfasi'))
+const OnaylarSayfasi = tembel(() => import('./pages/admin/OnaylarSayfasi'))   // [2026-11-05] KVKK + veli onay formu   // [2026-10-10]
 const RaporMerkeziSayfasi = tembel(() => import('./pages/admin/RaporMerkeziSayfasi'))     // [2026-10-10]
 const TestGirisSayfasi = tembel(() => import('./pages/TestGirisSayfasi'))
 const IsHayatiSayfasi = tembel(() => import('./pages/IsHayatiSayfasi'))                         // [2026-10-10] İş Hayatı
@@ -149,7 +151,8 @@ function AnaUygulama() {
         <Route path="/koclar" element={<KoclarSayfasi />} />
         <Route path="/kulupler" element={<KuluplerimSayfasi />} />
         <Route path="/profilim/kulup" element={<Navigate to="/kulupler" replace />} />
-        <Route path="/gorevler" element={<GorevlerimSayfasi />} />
+        <Route path="/gelisim" element={<GelisimListemSayfasi />} />
+        <Route path="/gorevler" element={<Navigate to="/gelisim" replace />} />
         <Route path="/takvim" element={<TakvimSayfasi />} />
         <Route path="/kutuphane" element={<KutuphanemSayfasi />} />
         <Route path="/netlerim" element={<NetTakibiSayfasi />} />
@@ -188,6 +191,7 @@ function AnaUygulama() {
         {/* [2026-10-09] Öğrenci yönetimi okul bazlı: Okullar → okul paneli */}
         <Route path="ogrenciler" element={<Navigate to="/admin/okullar" replace />} />
         <Route path="audit-log" element={<AuditLogSayfasi />} />
+        <Route path="erisim-kayitlari" element={<ErisimKayitlariSayfasi />} />
         <Route path="hata-kayitlari" element={<HataKayitlariSayfasi />} />
         <Route path="gece-bakimi" element={<GeceBakimiSayfasi />} />
         <Route path="yoneticiler" element={<YoneticilerSayfasi />} />
@@ -211,6 +215,7 @@ function AnaUygulama() {
         <Route path="paketler" element={<PaketlerSayfasi />} />
         <Route path="karsilastirma" element={<KarsilastirmaSayfasi />} />
         <Route path="istatistikler" element={<IstatistiklerSayfasi />} />
+        <Route path="onaylar" element={<OnaylarSayfasi />} />
         <Route path="raporlar" element={<RaporMerkeziSayfasi />} />
       </Route>
     </Routes>

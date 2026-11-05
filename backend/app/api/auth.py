@@ -53,6 +53,8 @@ def _giris_kaydet(db: Session, hesap, rol: str) -> None:
     """[2026-10-09] Başarılı girişte son giriş zamanı ve (öğrenci için) olay kaydı."""
     from app.core.hesap_yonetimi import olay_yaz, simdi
     hesap.son_giris_zamani = simdi()
+    from app.core.erisim_kaydi import giris_olayi
+    giris_olayi("giris", hesap, rol)   # [2026-11-05] erişim kayıtları (süper admin)
     if rol == "ogrenci":
         olay_yaz(db, hesap.id, "giris", None, "Öğrenci")
         from app.core.aktiflik import gune_isle
@@ -107,6 +109,8 @@ def iki_adim_tamamla(db: Session, istek: IkiAdimDogrulaIstek, izinli_roller: set
         hg.dogrulama_kodunu_kontrol_et(db, tip, hesap.id, istek.kod)
     except IsKuraliHatasi as e:
         db.commit()  # deneme sayısı kaydedilsin
+        from app.core.erisim_kaydi import giris_olayi
+        giris_olayi("iki_adim_hatali", hesap, rol)
         raise HTTPException(status_code=400, detail=str(e))
     cihaz = hg.cihaz_kaydet(db, tip, hesap.id) if istek.cihazi_hatirla else None
     _giris_kaydet(db, hesap, rol)
@@ -169,7 +173,12 @@ def giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
     hata = HTTPException(status_code=401, detail="E-posta veya şifre hatalı.")
     email = istek.email.strip().lower()
     from app.core.hiz_siniri import HESAP_DENEME, hesap_kilit_kontrol
-    hesap_kilit_kontrol(email)   # [2026-10-11] hesap başına hatalı şifre sınırı (IP'den bağımsız)
+    from app.core.erisim_kaydi import giris_olayi
+    try:
+        hesap_kilit_kontrol(email)   # [2026-10-11] hesap başına hatalı şifre sınırı (IP'den bağımsız)
+    except HTTPException:
+        giris_olayi("giris_engellendi", eposta=email)
+        raise
 
     ogrenci = db.query(Ogrenci).filter(func.lower(Ogrenci.email) == email).first()
     if ogrenci is not None:
@@ -180,16 +189,20 @@ def giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
         from app.core.hesap_yonetimi import olay_yaz
         olay_yaz(db, ogrenci.id, "giris_hatali", "Yanlış şifre", "Öğrenci")
         db.commit()
+        giris_olayi("giris_hatali", ogrenci, "ogrenci")
         HESAP_DENEME.hatali(email)
         raise hata
 
     yonetici = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email).first()
     if yonetici is None or yonetici.rol not in TEK_GIRIS_ROLLERI or not sifre_dogrula(istek.sifre, yonetici.sifre_hash):
         HESAP_DENEME.hatali(email)
+        bilinen = yonetici is not None and yonetici.rol in TEK_GIRIS_ROLLERI
+        giris_olayi("giris_hatali", yonetici if bilinen else None, yonetici.rol if bilinen else None, eposta=email)
         raise hata
     HESAP_DENEME.temizle(email)
     _karmayi_tazele(yonetici, istek.sifre)
     if yonetici.aktif_mi is False:
+        giris_olayi("giris_engellendi", yonetici, yonetici.rol)
         raise HTTPException(status_code=403, detail="Hesabın devre dışı bırakılmış.")
     return giris_sonucu(db, yonetici, yonetici.rol, istek.yonetim_cihaz_tokeni)
 

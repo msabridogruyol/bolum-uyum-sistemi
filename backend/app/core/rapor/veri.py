@@ -16,7 +16,7 @@ from sqlalchemy.orm import Session
 from app.core.kucuk_grup import DIPNOT, EN_AZ_GRUP, GIZLI_METIN
 from app.models import (
     Bolum, Dal, Degisken, GuvenlikOlayi, Katman, Ogrenci, OgrenciDalOturumu, OgrenciDegerlendirmeTuru,
-    OgrenciDegiskenSkoru, OgrenciFavoriBolum, OgrenciGelisimAdimDurumu, OgrenciHaftalikGorev, Okul,
+    OgrenciDegiskenSkoru, OgrenciFavoriBolum, OgrenciGelisimAdimDurumu, Okul,
 )
 
 
@@ -200,15 +200,22 @@ def ogrenci_raporu_verisi(db: Session, o: Ogrenci) -> dict:
         db.rollback()
 
     # Etkinlik
-    gorev = db.query(OgrenciHaftalikGorev).filter(OgrenciHaftalikGorev.ogrenci_id == o.id).all()
+    # [2026-11-05] Haftalık görevler kaldırıldı: etkinlik = gelişim listesi (tamamlanan madde, tarihli kayıt, son ilerleme)
+    from sqlalchemy import text as _t
+    k = db.execute(_t("""SELECT count(*) FILTER (WHERE tur = 'adim_kaydi') AS kayit,
+                                count(*) FILTER (WHERE tur = 'adim_kaydi' AND zaman >= :s) AS son4, max(zaman) AS son
+                           FROM ogrenci_gelisim_kayitlari WHERE ogrenci_id = :o"""), {"o": o.id, "s": simdi - timedelta(days=28)}).first()
+    adim_q = db.query(OgrenciGelisimAdimDurumu).filter(OgrenciGelisimAdimDurumu.ogrenci_id == o.id,
+                                                      OgrenciGelisimAdimDurumu.durum == "tamamlandi")
+    son_adim = max((a.guncelleme_zamani for a in adim_q.all() if a.guncelleme_zamani), default=None)
+    son_ilerleme = max([z for z in (son_adim, k.son if k else None) if z is not None], default=None)
     v["aktivite"] = {
         "son_giris": o.son_giris_zamani,
-        "gorev_tamam": sum(1 for g in gorev if g.durum == "tamamlandi"),
-        "gorev_toplam": len(gorev),
-        "son4_hafta": sum(1 for g in gorev if g.durum == "tamamlandi" and g.tamamlanma_zamani
-                          and g.tamamlanma_zamani >= simdi - timedelta(days=28)),
-        "adim": db.query(OgrenciGelisimAdimDurumu).filter(OgrenciGelisimAdimDurumu.ogrenci_id == o.id,
-                                                          OgrenciGelisimAdimDurumu.durum == "tamamlandi").count(),
+        "adim": adim_q.count(),
+        "kayit": (k.kayit or 0) if k else 0,
+        "son4_hafta": (k.son4 or 0) if k else 0,   # son 28 günde girilen gelişim kaydı
+        "son_ilerleme": son_ilerleme,
+        "hedef": v.get("hedef") is not None if isinstance(v, dict) else False,
     }
     v["swot"] = swot(v)
     v["netler"] = net_verisi(db, o)   # [2026-10-10] deneme / net takibi
@@ -301,9 +308,9 @@ def swot(v: dict, kitle: str = "rehber") -> dict:
                   "veli": "Bazı bölümlerin yeniden yanıtlanması gerekiyor; sonuçlar şimdilik ön bilgi niteliğindedir."}.get(
             kitle, "Son değerlendirmenin güven puanı eşiğin altında; sonuçlar temkinli yorumlanmalı, ilgili bölümün yeniden yanıtlanması önerilir."))
     a = v.get("aktivite") or {}
-    if v["durum"] == "tamamlandi" and a.get("son4_hafta", 0) == 0:
-        T.append("Son 4 haftada tamamlanmış haftalık görevin yok; her hafta en az birini bitirmeyi hedefle." if sen else
-                 "Son 4 haftada haftalık görev tamamlanmadı; düzenli takip önerilir.")
+    if v["durum"] == "tamamlandi" and a.get("adim", 0) == 0 and a.get("kayit", 0) == 0 and v.get("hedef"):
+        T.append("Gelişim listende henüz yaptığın bir madde yok; listeden sana en kolay geleni seçip başlayabilirsin." if sen else
+                 "Gelişim listesinde henüz yapılan bir madde yok; öğrenciyle başlangıç maddesi birlikte seçilebilir.")
     if v["durum"] != "tamamlandi":
         T.append("Değerlendirmen henüz tamamlanmadı; bölüm önerilerin değerlendirmeni tamamlayınca oluşur." if sen else
                  "Değerlendirme henüz tamamlanmadı; bölüm önerileri değerlendirme tamamlanınca oluşur.")

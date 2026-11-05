@@ -124,7 +124,6 @@ function AdimKarti({ adim, onDurum, vurgulu = false, alanGoster = true }) {
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
         {alanGoster && <Cip renk="var(--pu)" zemin="var(--pul)">{adim.degisken_adi}</Cip>}
         <Cip>{adim.tur_etiket}</Cip>
-        <Cip>⏱ {adim.sure}</Cip>
         {basladi && <Cip renk="var(--am)" zemin="var(--aml)">▶ Devam ediyor</Cip>}
       </div>
       <div style={{ fontSize: 13.5, fontWeight: 700, marginBottom: 4, textDecoration: bitti ? 'line-through' : 'none' }}>{bitti ? '✓ ' : ''}{adim.baslik}</div>
@@ -439,7 +438,7 @@ function OzetSekmesi({ plan, gelisim, sekmeyeGit }) {
           {s ? (
             <>
               <div style={{ minWidth: 0 }}>
-                <div className="koc-siradaki-ust">{s.degisken_adi} · {s.tur_etiket} · ⏱ {s.sure}</div>
+                <div className="koc-siradaki-ust">{s.degisken_adi} · {s.tur_etiket}</div>
                 <div className="koc-siradaki-baslik">{s.baslik}</div>
               </div>
               <span className="koc-siradaki-git">Yol haritamda aç →</span>
@@ -695,39 +694,20 @@ const kisaTarih = (t) => { const d = new Date(t); return `${d.getDate()} ${AY[d.
 
 function GelisimSekmesi({ karsilastirma }) {
   const [g, setG] = useState(null)
-  useEffect(() => { api.gelisimimGetir().then(setG).catch(() => setG({ adimlar: [], haftalar: [], ozet: null })) }, [])
-  const maks = Math.max(1, ...(g?.haftalar || []).map((h) => h.gorev_tamam + h.adim))
+  useEffect(() => { api.gelisimimGetir().then(setG).catch(() => setG({ adimlar: [], ozet: null })) }, [])
 
   return (
     <>
       {g?.ozet && (
         <div className="gm-ozet">
-          <div><b>{g.ozet.tamamlanan_adim}</b><span>tamamlanan adım</span></div>
-          <div><b>{g.ozet.tamamlanan_gorev}</b><span>haftalık görev</span></div>
-          <div><b>{g.ozet.ust_uste_hafta}</b><span>hafta üst üste aktif{g.ozet.ust_uste_hafta >= 3 ? ' 🔥' : ''}</span></div>
-        </div>
-      )}
-      {g?.haftalar?.length > 0 && (
-        <div className="card">
-          <div className="ct">Son 8 hafta</div>
-          <div className="gm-haftalar" role="img" aria-label="Son 8 haftada tamamlanan görev ve adım sayıları">
-            {g.haftalar.map((h, i) => {
-              const top = h.gorev_tamam + h.adim
-              return (
-                <div key={h.hafta} className="gm-hafta" title={`${kisaTarih(h.hafta)} haftası: ${h.gorev_tamam} görev, ${h.adim} adım`}>
-                  <span className="gm-deger">{top || ''}</span>
-                  <div className="gm-sutun"><div style={{ height: `${(top / maks) * 100}%`, animationDelay: `${i * 50}ms` }} /></div>
-                  <span className="gm-etiket">{i === g.haftalar.length - 1 ? 'Bu hafta' : kisaTarih(h.hafta)}</span>
-                </div>
-              )
-            })}
-          </div>
+          <div><b>{g.ozet.tamamlanan_adim}</b><span>tamamlanan madde</span></div>
+          <div><b>{g.ozet.kayit}</b><span>tarihli kayıt</span></div>
         </div>
       )}
       <div className="card">
         <div className="ct">Yaptıkların</div>
         {!g ? <div className="bos-durum yukleniyor" style={{ padding: 12 }}>Yükleniyor…</div> : g.adimlar.length === 0 ? (
-          <div className="ps" style={{ margin: 0 }}>Yol haritandaki bir adımı “Yaptım” diye işaretle. Yaptıkların tarihiyle birlikte burada listelenir.</div>
+          <div className="ps" style={{ margin: 0 }}>Gelişim listendeki bir maddeyi yaptığında ne yaptığını tarihiyle yaz ve “Yaptım” de. Yaptıkların burada listelenir.</div>
         ) : (
           <ol className="gm-zaman">
             {g.adimlar.slice(0, 20).map((a) => (
@@ -808,7 +788,7 @@ export default function KoclukSayfasi() {
     try {
       await api.adimDurumuGuncelle(kod, durum, geriBildirim || {})
       setPlan(await api.gelisimPlaniGetir()) // ilerleme ve sıradaki adım sunucuda yeniden hesaplanır
-      window.dispatchEvent(new CustomEvent('haftalik-guncellendi'))
+      api.gelisimListesi().then((v) => window.dispatchEvent(new CustomEvent('gelisim-guncellendi', { detail: v }))).catch(() => {})
       return null
     } catch (err) {
       return err.detail || 'Kaydedemedik. İnternet bağlantını kontrol et ve tekrar dene.'

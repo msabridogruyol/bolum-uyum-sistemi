@@ -193,8 +193,9 @@ def veli_sunumu_verisi(db: Session, okul, okul_id: int, sinif: str | None, sube:
         try:
             adim = db.execute(text("SELECT count(DISTINCT ogrenci_id) FROM ogrenci_gelisim_adim_durumu "
                                    "WHERE ogrenci_id = ANY(:i) AND durum = 'tamamlandi'"), {"i": ids}).scalar() or 0
-            gorev = db.execute(text("SELECT count(DISTINCT ogrenci_id) FROM ogrenci_haftalik_gorev "
-                                    "WHERE ogrenci_id = ANY(:i) AND durum = 'tamamlandi'"), {"i": ids}).scalar() or 0
+            # [2026-11-05] haftalık görev yerine: gelişim listesine "ne yaptım" kaydı giren öğrenci
+            gorev = db.execute(text("SELECT count(DISTINCT ogrenci_id) FROM ogrenci_gelisim_kayitlari "
+                                    "WHERE ogrenci_id = ANY(:i) AND tur = 'adim_kaydi'"), {"i": ids}).scalar() or 0
             sim = db.execute(text("SELECT count(*), count(DISTINCT ogrenci_id) FROM simulasyon_sonuclari WHERE ogrenci_id = ANY(:i)"),
                              {"i": ids}).first()
             ek["kocluk"] = {"adim": gizle(adim, adim), "gorev": gizle(gorev, gorev),

@@ -283,6 +283,8 @@ export const api = {
   bolumAdaGore: (ad) => get(`/bolumler/ada-gore?ad=${encodeURIComponent(ad)}`),
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
   kvkkDurumu: () => get('/ogrenci/kvkk'),
+  veliOnayiDurumu: () => get('/ogrenci/veli-onayi'),   // [2026-11-05]
+  veliOnayFormum: () => dosyaIndir('/ogrenci/veli-onayi/form'),
   kvkkGuncelle: (onaylar) => post('/ogrenci/kvkk', { onaylar }),
   cikisYap: () => { sunucudaCikis('ogrenci'); tokenlariTemizle('ogrenci') },
   girisYapildiMi: () => !!tokenAl('ogrenci'),
@@ -547,7 +549,6 @@ export const api = {
   kutuphaneDuzenle: (id, veri) => put(`/ogrenci/kutuphane/${id}`, veri),
   kutuphaneSil: (id) => del(`/ogrenci/kutuphane/${id}`),
   ogrenciKutuphanesi: (id) => aget(`/yonetim/ogrenci/${id}/kutuphane`),
-  haftalikGecmis: () => get('/haftalik/gecmis'),
   guvenlikDurumu: (turId) => get(`/ogrenci/guvenlik/durum?tur_id=${turId}`),
   guvenlikFotografiKaydet: (turId, fotoBase64, katmanKod) =>
     post('/ogrenci/guvenlik/fotograf', { tur_id: turId, foto_base64: fotoBase64, katman_kod: katmanKod }),
@@ -596,9 +597,13 @@ export const api = {
   aiKocDurum: () => get('/koclugu/asistan/durum'),
   aiKocOturumuBitir: (oturumId) => post(`/koclugu/asistan/oturum/${oturumId}/bitir`, {}),
 
-  // --- [2026-10-04] Haftalık görevler + seri + Filiz seviyesi ---
-  haftalikGetir: () => get('/haftalik'),
-  haftalikGorevTamamla: (gorevId, yanit) => post(`/haftalik/gorev/${gorevId}/tamamla`, { yanit: yanit ?? null }),
+  // --- [2026-11-05] Gelişim listesi (haftalık görevlerin yerine): alanlar, maddeler, tarihli kayıtlar, Filiz seviyesi ---
+  gelisimListesi: () => get('/gelisim-listesi'),
+  gelisimKayitEkle: (kod, tarih, aciklama) => post(`/gelisim-listesi/adim/${encodeURIComponent(kod)}/kayit`, { tarih, aciklama }),
+  gelisimKayitSil: (id) => del(`/gelisim-listesi/kayit/${id}`),
+  gelisimDurum: (kod, durum) => post(`/gelisim-listesi/adim/${encodeURIComponent(kod)}/durum`, { durum }),
+  ozDegerlendirmeKaydet: (yanit) => post('/gelisim-listesi/oz-degerlendirme', { yanit }),
+  ozDegerlendirmeler: () => get('/gelisim-listesi/oz-degerlendirmeler'),
 
   // --- Admin: Auth ---
   adminGirisYap: async (veri) => {
@@ -711,6 +716,21 @@ export const api = {
   okulTekBakistaPdf: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/tek-bakista/pdf${istatistikSorgu(f)}`, 'admin'),
   veliSunumuIndir: (okulId, f = {}, kitle = 'veli', bicim = 'pptx') => { const q = istatistikSorgu(f); return dosyaIndir(`/yonetim/okul/${okulId}/veli-sunumu${q}${q ? '&' : '?'}kitle=${kitle}&bicim=${bicim}`, 'admin') },   // [2026-10-14] kitle: veli | ogretmen · bicim: pptx | pdf | pdf_notlu
   okulOgrencileri: (okulId) => aget(`/yonetim/okul/${okulId}/ogrenciler`),
+  // --- [2026-11-05] Onay formları: KVKK + veli onay formu tamamlanma durumu ---
+  okulOnaylari: (okulId) => aget(`/yonetim/okul/${okulId}/onaylar`),
+  veliOnayiIsaretle: (okulId, govde) => apost(`/yonetim/okul/${okulId}/onaylar/veli`, govde),
+  veliOnayiGeriAl: (ogrenciId, aciklama) => apost(`/yonetim/ogrenci/${ogrenciId}/veli-onayi/geri-al`, { aciklama }),
+  veliOnayiGecmisi: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/veli-onayi`),
+  veliFormlariIndir: (okulId, { idler, sinif, bekleyenler } = {}) => {
+    const q = new URLSearchParams()
+    if (idler?.length) q.set('idler', idler.join(','))
+    if (sinif) q.set('sinif', sinif)
+    if (bekleyenler) q.set('bekleyenler', 'true')
+    return dosyaIndir(`/yonetim/okul/${okulId}/onaylar/form${q.toString() ? `?${q}` : ''}`, 'admin')
+  },
+  onaylarOkullar: () => aget('/yonetim/onaylar/okullar'),
+  erisimKayitlari: (sorgu) => aget(`/admin/erisim-kayitlari?${sorgu}`),   // [2026-11-05]
+  erisimKayitlariCsv: (sorgu) => dosyaIndir(`/admin/erisim-kayitlari/csv?${sorgu}`, 'admin'),
   yuklemeSablonu: () => aget('/yonetim/sablon'),
   ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),
   ogrencileriOlustur: (okulId, ogrenciler) => apost(`/yonetim/okul/${okulId}/ogrenciler`, { ogrenciler }),

@@ -17,7 +17,7 @@ from app.models import (
 )
 from app.core.katman_servisi import IsKuraliHatasi
 from app.core.skor_motoru import _katman_ici_olcekle
-from app.core.gelisim_icerigi import ICERIK, FAZLA_NEDEN, TUR_ETIKET, ASAMA_SIRASI, adim_kodu
+from app.core.gelisim_icerigi import ICERIK, FAZLA_NEDEN, KALDIRILAN, TUR_ETIKET, ASAMA_SIRASI, adim_kodu
 from app.core.gelisim_detay import DETAY
 import numpy as np
 
@@ -358,10 +358,11 @@ def tur_karsilastirmasi_hesapla(db: Session, ogrenci: Ogrenci) -> list[Karsilast
 ODAK_ALAN_SAYISI = 3       # yol haritası en öncelikli 3 gelişim alanına odaklanır (odak ilkesi)
 GUCLU_YON_SAYISI = 2
 ADIM_DURUMLARI = ("planlandi", "devam_ediyor", "tamamlandi")
+# [2026-11-05] Kullanıcı kararı: süre / hafta yok. Aşamalar yalnızca sırayı anlatır (başlangıç → pratik → kalıcı alışkanlık).
 ASAMA_BILGI = {
-    "simdi": ("1. Aşama · Bu hafta başla", "Kısa, hemen yapılabilecek adımlar — 1-2 hafta"),
-    "bu_donem": ("2. Aşama · Önümüzdeki 1-3 ay", "Düzenli pratik ve deneyimlerle ilerle; neyin sana uyduğunu gör"),
-    "uzun_vadede": ("3. Aşama · 6-12 ay", "Kalıcı alışkanlık ve büyük adımlar"),
+    "simdi": ("1. Aşama · Başlangıç", "Kısa, hemen yapılabilecek adımlar"),
+    "bu_donem": ("2. Aşama · Pratik ve deneyim", "Düzenli pratik ve deneyimlerle ilerle; neyin sana uyduğunu gör"),
+    "uzun_vadede": ("3. Aşama · Kalıcı alışkanlık", "Kalıcı alışkanlıklar ve büyük adımlar"),
 }
 _KUCUK = {"ve", "ile", "veya"}
 
@@ -412,12 +413,12 @@ def adim_durumu_guncelle(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, kod
 
 
 def _adim(kod_deg: str, ad: str, grup: str, sira: int, ham: tuple, bolum: str, durumlar: dict) -> dict:
-    asama, baslik, aciklama, tur, sure, olcut = ham
+    asama, baslik, aciklama, tur, olcut = ham
     kod = adim_kodu(kod_deg, grup, sira)
     return {
         "kod": kod, "degisken_kod": kod_deg, "degisken_adi": ad, "asama": asama,
         "baslik": baslik, "aciklama": aciklama.replace("{bolum}", bolum),
-        "tur": tur, "tur_etiket": TUR_ETIKET.get(tur, tur), "sure": sure,
+        "tur": tur, "tur_etiket": TUR_ETIKET.get(tur, tur),
         "olcut": olcut.replace("{bolum}", bolum), "durum": durumlar.get(kod),
         # [2026-10-09] öğrencinin anlayacağı düzeyde adım adım uygulama + kontrol listesi
         "nasil": [m.replace("{bolum}", bolum) for m in DETAY.get(kod, {}).get("nasil", [])],
@@ -514,7 +515,7 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
          (öncelik = fark büyüklüğü × bölümün o özelliğe verdiği ağırlık).
       2. İçeriği olan ilk 3 özellik "odak alanı" olur; diğerleri "sonra odaklanılacak" listesine girer.
          Böylece öğrenci 31 şeyle değil, en çok fark yaratacak 3 alanla uğraşır.
-      3. Her odak alanın adımları 3 aşamaya dağıtılır: Bu hafta → 1-3 ay → 6-12 ay.
+      3. Her odak alanın adımları 3 aşamaya dağıtılır: Başlangıç → Pratik ve deneyim → Kalıcı alışkanlık (süre yok; [2026-11-05]).
          Bir aşamada odak sırasına göre (en öncelikli alan önce) dizilir.
       4. Güçlü yönlerden en belirgin 2'si için "bu gücü kullan" adımları eklenir.
       5. Sıradaki adım = en erken aşamadaki, en öncelikli alanın tamamlanmamış ilk adımı.
@@ -558,6 +559,8 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
             "durum_tespiti": s.gelisim_karti.durum_tespiti if s.gelisim_karti else None,
         })
         for sira, ham in enumerate(ic["gelisim"], 1):
+            if adim_kodu(s.degisken.kod, "G", sira) in KALDIRILAN and not durumlar.get(adim_kodu(s.degisken.kod, "G", sira)):
+                continue   # [2026-11-05] içerik incelemesinde kaldırılan adım (kodlar kaymasın diye tuple duruyor)
             adim = _adim(s.degisken.kod, s.degisken.ad, "G", sira, ham, bolum_adi, durumlar)
             adim["oncelik_sirasi"] = oncelik_sirasi
             asama_adimlari[adim["asama"]].append(adim)

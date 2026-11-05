@@ -23,6 +23,7 @@ import OkulPaketKarti from '../../components/yonetim/OkulPaketKarti'
 import RehberlikSekmesi from '../../components/yonetim/Rehberlik'
 import OkulDenemeleri from '../../components/yonetim/OkulDenemeleri'
 import OkulIstatistik from '../../components/yonetim/OkulIstatistik'
+import OnayFormlari from '../../components/yonetim/OnayFormlari'   // [2026-11-05] KVKK + veli onay formu
 import OkulRaporMerkezi from '../../components/yonetim/OkulRaporMerkezi'
 import HazirRaporlar from '../../components/yonetim/HazirRaporlar'   // [2026-10-11]
 import Anketler from '../../components/yonetim/Anketler'
@@ -609,6 +610,7 @@ export default function OkulPaneliSayfasi() {
       {sk === 'istatistik' && okulId > 0 && <OkulIstatistik okulId={okulId} />}
       {sk === 'raporlar' && okulId > 0 && <OkulRaporMerkezi okulId={okulId} oz={oz} superAdmin={superAdmin} okullar={okullar} onDegisti={yenile}
         onRehberlik={bolumler.some((b) => b.k === 'rehberlik') ? () => setSekme('rehberlik') : null} />}
+      {sk === 'onaylar' && <OnayFormlari okulId={okulId} />}
       {sk === 'siniflar' && <SiniflarSekmesi okulId={okulId} oz={oz} yenile={yenile} onOgrenciler={(f) => { setOgrFiltre(f); setSekme('ogrenciler') }} />}
       {sk === 'ogrenciler' && (ogrenciler === null ? <div className="bos-durum yukleniyor">Öğrenciler yükleniyor…</div> : <OgrencilerSekmesi key={ogrFiltre} baslangicFiltre={ogrFiltre} okulId={okulId} okulAd={oz.okul.ad} superAdmin={superAdmin} okullar={okullar} ogrenciler={ogrenciler} yenile={yenile} acikOgrenci={acikOgrenci} onDetayKapat={ogrenciDetayKapat} />)}
       {sk === 'rehberlik' && <RehberlikSekmesi okulId={okulId} ogrenciler={ogrenciler || []} superAdmin={superAdmin} okullar={okullar} yenileOkul={yenile} />}

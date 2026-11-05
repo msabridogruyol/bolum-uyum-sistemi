@@ -117,4 +117,8 @@ def get_kvkk_onayli_ogrenci(db: Session = Depends(get_db), ogrenci=Depends(get_m
     from app.core.hesap_guvenligi_servisi import kvkk_durumu
     if not kvkk_durumu(db, "ogrenci", ogrenci.id)["guncel"]:
         raise HTTPException(status_code=403, detail="Devam etmek için önce Kişisel Verilerin Korunması onaylarını tamamla.")
+    # [2026-11-05] 18 yaş altı: imzalı veli onay formu okula ulaşana kadar aynı işlemler kilitli (kullanıcı kararı)
+    from app.core.veli_onayi import KILIT_MESAJI, tamam_mi
+    if not tamam_mi(db, ogrenci.id):
+        raise HTTPException(status_code=403, detail=KILIT_MESAJI)
     return ogrenci

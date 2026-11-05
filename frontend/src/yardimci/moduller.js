@@ -43,7 +43,7 @@ export function useModuller() {
 
 // Öğrenci sayfa yolu → gereken modül
 export const YOL_MODULU = {
-  '/koclugu': 'kocluk', '/gorevler': 'kocluk', '/netlerim': 'net_takibi', '/kutuphane': 'kutuphane',
+  '/koclugu': 'kocluk', '/gelisim': 'kocluk', '/gorevler': 'kocluk', '/netlerim': 'net_takibi', '/kutuphane': 'kutuphane',
   '/takvim': 'takvim', '/calisma': 'calisma', '/portfolyo': 'portfolyo', '/anketler': 'anketler', '/tercih': 'tercih', '/raporlarim': 'ogrenci_raporlari', '/kulupler': 'kulupler', '/koclar': 'egitim_koclari',
   '/is-hayati': 'is_hayati',
 }
