@@ -44,11 +44,13 @@ def veli_formu_pdf(ogrenciler: list[dict], okul: dict) -> bytes:
                                 ("VALIGN", (0, 0), (-1, -1), "MIDDLE"), ("ALIGN", (1, 1), (-1, -1), "CENTER"),
                                 ("TOPPADDING", (0, 0), (-1, -1), 6), ("BOTTOMPADDING", (0, 0), (-1, -1), 6)]))
         akis += [mt, Spacer(1, 8), st.p(_e(VELI_FORM_NOT), st.not_), Spacer(1, 16)]
-        imza = [["Velinin adı soyadı", ""], ["Öğrenciye yakınlığı", ""], ["Tarih", ""], ["İmza", ""]]
-        it = Table([[st.p(f"<b>{a}</b>", st.hucre), st.p(b, st.hucre)] for a, b in imza], colWidths=[45 * mm, 129 * mm],
-                   rowHeights=[11 * mm, 11 * mm, 11 * mm, 18 * mm])
+        # [2026-11-05] Öğrenci de "bilgilendirildim" diye imzalar (basılı belge setiyle aynı)
+        imza = [["", "Veli", "Öğrenci (bilgilendirildim)"], ["Adı soyadı", "", o.get("ad_soyad") or ""],
+                ["Öğrenciye yakınlığı", "", "—"], ["Tarih", "", ""], ["İmza", "", ""]]
+        it = Table([[st.p(f"<b>{a}</b>", st.hucre), st.p(_e(b), st.hucre), st.p(_e(c), st.hucre)] for a, b, c in imza],
+                   colWidths=[38 * mm, 68 * mm, 68 * mm], rowHeights=[8 * mm, 11 * mm, 11 * mm, 11 * mm, 18 * mm])
         it.setStyle(TableStyle([("GRID", (0, 0), (-1, -1), 0.5, CIZGI), ("BACKGROUND", (0, 0), (0, -1), ACIK),
-                                ("VALIGN", (0, 0), (-1, -1), "MIDDLE")]))
+                                ("BACKGROUND", (0, 0), (-1, 0), ACIK), ("VALIGN", (0, 0), (-1, -1), "MIDDLE")]))
         akis += [it, Spacer(1, 10),
                  st.p(f"Form sürümü {VELI_FORM_SURUM} · Aydınlatma metni sürümü {KVKK_SURUM}. İmzalı formu okulunuza teslim ediniz; "
                       "okul formu aldığını sistemde işaretleyince öğrencinin değerlendirmesi açılır. Formun aslı okulda saklanır.", st.kucuk),
