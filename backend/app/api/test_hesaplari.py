@@ -27,11 +27,11 @@ from sqlalchemy.orm import Session
 
 from app.api.deps import get_mevcut_admin
 from app.core.database import get_db
-from app.core.hesap_yonetimi import denetim_yaz, gecici_sifre, ogrenciyi_sil, olay_yaz, simdi
+from app.core.hesap_yonetimi import denetim_yaz, gecici_sifre, olay_yaz, simdi, yoneticiyi_sil
 from app.core.katman_servisi import IsKuraliHatasi
 from app.core.security import erisim_tokeni_uret, sifre_hashle, yenileme_tokeni_uret
 from app.core.test_hesabi_servisi import (
-    ASAMA_ADI, anahtar_ozeti, giris_anahtari_uret, ilerleme_ozeti, ilerlemeyi_sifirla, senaryo_uygula,
+    ASAMA_ADI, anahtar_ozeti, giris_anahtari_uret, ilerleme_ozeti, senaryo_uygula, test_ogrencisini_sil,
 )
 from app.models import AdminKullanici, Bolum, Ogrenci, Okul
 
@@ -296,18 +296,7 @@ def demo_okul_sil(okul_id: int, db: Session = Depends(get_db), admin: AdminKulla
         raise HTTPException(status_code=404, detail="Demo okul bulunamadı (gerçek okullar bu ekrandan silinemez).")
     ad = okul.ad
     try:
-        for o in db.query(Ogrenci).filter(Ogrenci.okul_id == okul_id).all():
-            ilerlemeyi_sifirla(db, o)
-            from sqlalchemy import text
-            with db.begin_nested():
-                db.execute(text("DELETE FROM ogrenci_hesap_olaylari WHERE ogrenci_id = :id"), {"id": o.id})
-            ogrenciyi_sil(db, o)
-        for y in db.query(AdminKullanici).filter(AdminKullanici.okul_id == okul_id).all():
-            _yonetici_baglarini_coz(db, y.id, admin.id)
-            db.delete(y)
-        db.flush()
-        db.delete(okul)
-        db.flush()
+        okulu_tum_verisiyle_sil(db, okul, admin.id)
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail=f"Demo okul silinemedi: {type(e).__name__}: {str(e).splitlines()[0][:200]}")
@@ -321,14 +310,9 @@ def test_hesabi_sil(tip: str, hesap_id: str, db: Session = Depends(get_db), admi
     etiket, okul_id, hid = f"{h.ad_soyad} <{h.email}>", h.okul_id, h.id
     try:
         if tip == "ogrenci":
-            ilerlemeyi_sifirla(db, h)           # bağlı tüm kayıtlar (CASCADE eksik olsa da) önce temizlenir
-            from sqlalchemy import text
-            with db.begin_nested():
-                db.execute(text("DELETE FROM ogrenci_hesap_olaylari WHERE ogrenci_id = :id"), {"id": h.id})
-            ogrenciyi_sil(db, h)
+            test_ogrencisini_sil(db, h)         # bağlı tüm kayıtlar (CASCADE eksik olsa da) önce temizlenir
         else:
-            _yonetici_baglarini_coz(db, h.id, admin.id)
-            db.delete(h)
+            yoneticiyi_sil(db, h, admin.id)     # [2026-11-06] KVKK onayı, doğrulama kodu, güvenilir cihaz da silinir
         db.flush()
     except Exception as e:
         db.rollback()
@@ -337,18 +321,16 @@ def test_hesabi_sil(tip: str, hesap_id: str, db: Session = Depends(get_db), admi
     db.commit()
 
 
-def _yonetici_baglarini_coz(db: Session, silinen_id, yapan_id) -> None:
-    """admin_kullanicilar'a bağlı kayıtlar (audit_log, meslek_dili, parametreler …): bağ NULL yapılır;
-    sütun NULL olamıyorsa kayıt silmeyi yapan süper admine devredilir (kayıt kaybolmaz)."""
-    from sqlalchemy import text
-    baglar = db.execute(text("""
-        SELECT c.conrelid::regclass::text AS tablo, a.attname AS sutun, a.attnotnull AS zorunlu
-        FROM pg_constraint c JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey)
-        WHERE c.contype = 'f' AND c.confrelid = 'admin_kullanicilar'::regclass""")).all()
-    for tablo, sutun, zorunlu in baglar:
-        deger = yapan_id if zorunlu else None
-        with db.begin_nested():
-            db.execute(text(f'UPDATE {tablo} SET "{sutun}" = :d WHERE "{sutun}" = :id'), {"d": deger, "id": silinen_id})
+def okulu_tum_verisiyle_sil(db: Session, okul: Okul, yapan_id) -> None:
+    """[2026-11-06] Demo okulu: öğrenciler (bütün verileriyle), yetkililer ve okulun kendisi (okula bağlı kayıtlar CASCADE).
+    Hem Test Hesapları › demo okul silme hem Okullar › sil (demo okulsa) bunu kullanır."""
+    for o in db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id).all():
+        test_ogrencisini_sil(db, o)
+    for y in db.query(AdminKullanici).filter(AdminKullanici.okul_id == okul.id).all():
+        yoneticiyi_sil(db, y, yapan_id)
+    db.flush()
+    db.delete(okul)
+    db.flush()
 
 
 # ----------------------------------------------------------------------------- bağlantıyla giriş

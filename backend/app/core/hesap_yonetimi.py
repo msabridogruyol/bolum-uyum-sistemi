@@ -41,10 +41,43 @@ def yapan_etiketi(yapan: AdminKullanici) -> str:
     return f"{yapan.ad_soyad} ({'Süper admin' if yapan.rol == 'super_admin' else 'Okul yetkilisi'})"
 
 
+# [2026-11-06] Kullanıcı tipine göre tutulan (yabancı anahtarsız) güvenlik kayıtları: hesap silinince bunlar da silinir
+GUVENLIK_TABLOLARI = ("kvkk_onaylari", "dogrulama_kodlari", "sifre_sifirlama_tokenleri", "guvenilir_cihazlar",
+                      "sifre_degisiklik_talepleri")
+
+
+def _guvenlik_kayitlarini_sil(db: Session, kullanici_tipi: str, kullanici_id) -> None:
+    for tablo in GUVENLIK_TABLOLARI:
+        try:
+            with db.begin_nested():
+                db.execute(text(f"DELETE FROM {tablo} WHERE kullanici_tipi = :t AND kullanici_id = :id"),
+                           {"t": kullanici_tipi, "id": kullanici_id})
+        except Exception:
+            pass  # tablo bu ortamda yoksa geç
+
+
+def yoneticiyi_sil(db: Session, yonetici: AdminKullanici, yapan_id) -> None:
+    """[2026-11-06] Yönetim hesabını (okul yetkilisi / süper admin) siler. Önceden yalnızca db.delete yapılıyordu:
+    KVKK onayı, doğrulama kodu, güvenilir cihaz gibi kayıtlar sahipsiz kalıyordu. admin_kullanicilar'a bağlı kayıtlarda
+    (denetim kaydı, parametreler …) bağ NULL yapılır; sütun NULL olamıyorsa kayıt silmeyi yapana devredilir (kayıt kaybolmaz)."""
+    # Yalnızca veritabanının kendisinin çözmediği bağlar (NO ACTION / RESTRICT); CASCADE ve SET NULL'u veritabanı yapar
+    # (ör. filiz_yonetim_sayac CASCADE: sayaç silinir, başkasına devredilmez).
+    baglar = db.execute(text("""
+        SELECT c.conrelid::regclass::text AS tablo, a.attname AS sutun, a.attnotnull AS zorunlu
+        FROM pg_constraint c JOIN pg_attribute a ON a.attrelid = c.conrelid AND a.attnum = ANY (c.conkey)
+        WHERE c.contype = 'f' AND c.confrelid = 'admin_kullanicilar'::regclass AND c.confdeltype IN ('a', 'r')""")).all()
+    for tablo, sutun, zorunlu in baglar:
+        with db.begin_nested():
+            db.execute(text(f'UPDATE {tablo} SET "{sutun}" = :d WHERE "{sutun}" = :id'),
+                       {"d": yapan_id if zorunlu else None, "id": yonetici.id})
+    _guvenlik_kayitlarini_sil(db, "yonetim", yonetici.id)
+    db.delete(yonetici)
+
+
 def ogrenciyi_sil(db: Session, ogrenci: Ogrenci) -> None:
     """Öğrenciyi ve ona bağlı tüm verileri siler. Tablolar arası bağlar ON DELETE CASCADE (0017);
     kullanıcı tipine göre tutulan (yabancı anahtarsız) güvenlik kayıtları burada ayrıca silinir."""
-    for tablo in ("kvkk_onaylari", "dogrulama_kodlari", "sifre_sifirlama_tokenleri", "guvenilir_cihazlar"):
+    for tablo in GUVENLIK_TABLOLARI:
         try:
             with db.begin_nested():
                 db.execute(text(f"DELETE FROM {tablo} WHERE kullanici_tipi = 'ogrenci' AND kullanici_id = :id"),
