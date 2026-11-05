@@ -729,6 +729,8 @@ export const api = {
     return dosyaIndir(`/yonetim/okul/${okulId}/onaylar/form${q.toString() ? `?${q}` : ''}`, 'admin')
   },
   onaylarOkullar: () => aget('/yonetim/onaylar/okullar'),
+  erisimKayitlari: (sorgu) => aget(`/admin/erisim-kayitlari?${sorgu}`),   // [2026-11-05]
+  erisimKayitlariCsv: (sorgu) => dosyaIndir(`/admin/erisim-kayitlari/csv?${sorgu}`, 'admin'),
   yuklemeSablonu: () => aget('/yonetim/sablon'),
   ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),
   ogrencileriOlustur: (okulId, ogrenciler) => apost(`/yonetim/okul/${okulId}/ogrenciler`, { ogrenciler }),
