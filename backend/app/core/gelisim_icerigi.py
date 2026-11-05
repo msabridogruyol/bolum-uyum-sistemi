@@ -6,7 +6,7 @@ Her değişken için:
   nedir          : Bu özellik ne demek (öğrenci dilinde)
   gelisim_neden  : Öğrenci hedef bölümün beklentisinin ALTINDAYSA neden önemli ({bolum} = hedef bölüm adı)
   guclu_neden    : Öğrenci beklentinin ÜSTÜNDEYSE bu gücü nasıl değerlendirir
-  gelisim        : 6 adım — her aşamada 2 adım (simdi = bu hafta, bu_donem = 1-3 ay, uzun_vadede = 6-12 ay)
+  gelisim        : 6 adım — her aşamada 2 adım (simdi = başlangıç, bu_donem = pratik ve deneyim, uzun_vadede = kalıcı alışkanlık; süre yok)
   guclu          : 2 adım — güçlü yönü hedef bölüm yolunda kullanma
 
 Adım biçimi: (asama, baslik, aciklama, tur, sure, olcut)
@@ -48,10 +48,10 @@ ICERIK = {
         "gelisim": [
             ("simdi", "Gerçek maaşları öğren", "{bolum} mezunlarının başlangıç ve 5. yıl maaş aralıklarını araştır (kariyer siteleri, sektör raporları). Ortalamayı ve uç değerleri ayrı not et.", "arastirma", "45 dk", "Başlangıç ve deneyimli maaş için birer aralık yazdın."),
             ("simdi", "Paranın senin için anlamı", "\"Ne kadar kazanırsam rahat ederim?\" sorusuna aylık gider listesi yaparak cevap ver. Bu, gelir beklentini gerçekçi kılar.", "yansitma", "30 dk", "Kendi tahmini aylık ihtiyaç rakamını hesapladın."),
-            ("bu_donem", "Rekabetçi ortamı gözlemle", "Bu alanda çalışan birine performans hedefleri, prim sistemi ve iş temposunu sor; bunun seni motive mi edeceğini yoksa yoracağını mı düşün.", "gorusme", "30 dk", "Görüşme sonrası \"bu tempo bana uygun mu\" sorusuna yazılı cevap verdin."),
+            ("bu_donem", "Rekabetçi ortamı gözlemle", "Bu alanda çalışan birine (aile çevrenden ya da öğretmeninin aracılığıyla, ailenin bilgisiyle) performans hedeflerini, prim sistemini ve iş temposunu sor. Sonra bu temponun seni motive mi edeceğini, yoksa yoracağını mı düşün.", "gorusme", "30 dk", "Görüşmeyi yaptın ve \"Bu tempo bana uygun mu?\" sorusuna yazılı cevap verdin."),
             ("bu_donem", "Parasal olmayan kazanımları bul", "Bu alanda seni maaş dışında ne tatmin eder (öğrenme, itibar, insanlara yardım)? En az 3 madde çıkar ve bölümde bunların karşılığını ara.", "yansitma", "1 saat", "3 kazanım ve her birinin bölümdeki karşılığını yazdın."),
-            ("uzun_vadede", "Finansal okuryazarlık", "Bütçe, birikim ve yatırım temelleri üzerine kısa bir çevrim içi kurs al (ör. BTK Akademi, Khan Academy Türkçe).", "kurs", "4-6 hafta", "Kursu bitirdin ve kendi bütçe tablonu oluşturdun."),
-            ("uzun_vadede", "Değer–gelir dengesi kararı", "Bir dönem sonunda bulduklarını gözden geçir: Bu bölümün gelir yapısı seninle uyumlu mu? Değilse hangi alt alan (ör. akademi, kamu, sivil toplum) daha uygun?", "yansitma", "1 saat", "Hedef alt alanını gerekçesiyle yazdın."),
+            ("uzun_vadede", "Finansal okuryazarlık", "Bütçe, birikim ve yatırımın temellerini anlatan ücretsiz bir çevrim içi kurs ya da video serisi seç (ör. BTK Akademi gibi ücretsiz platformlar ya da okul kütüphanesinden bir kaynak). Öğrendiklerinle kendi bütçe tablonu yap.", "kurs", "4-6 hafta", "Kursu ya da seriyi bitirdin, öğrendiğin 3 kavramı kendi cümlelerinle yazdın ve bütçe tablonu oluşturdun."),
+            ("uzun_vadede", "Değer–gelir dengesi kararı", "Önceki adımlarda bulduklarını gözden geçir: Bu bölümün gelir yapısı seninle uyumlu mu? Değilse hangi alt alan (ör. akademi, kamu, sivil toplum) daha uygun?", "yansitma", "1 saat", "Hedef alt alanını gerekçesiyle yazdın."),
         ],
         "guclu": [
             ("simdi", "Yüksek kazançlı alt alanlar", "{bolum} içinde en yüksek gelir sağlayan uzmanlık ve sektörleri araştır; giriş şartlarını not et.", "arastirma", "1 saat", "En az 3 yüksek gelirli alt alan ve şartlarını listeledin."),
@@ -68,7 +68,7 @@ ICERIK = {
             ("bu_donem", "Aileyle açık konuşma", "Kendi motivasyonunu (prestijden çok neyi önemsediğini) ailene anlat; onların bu bölümden beklentisini dinle.", "gorusme", "30 dk", "Konuşmayı yaptın ve ortak noktaları not ettin."),
             ("bu_donem", "Prestij dışı kriterler", "Bölüm seçiminde kullanacağın 5 kriteri (ilgi, beceri, iş ortamı, gelir, şehir...) belirle ve hedef bölümü bunlara göre puanla.", "yansitma", "1 saat", "Hedef bölümü 5 kritere göre puanladın."),
             ("uzun_vadede", "Alternatif yol haritası", "Bu bölümün daha az görünür ama sana uygun olabilecek alt alanlarını (araştırma, danışmanlık, sivil toplum) incele.", "arastirma", "2-3 saat", "En az 2 alternatif alt alanı tanıdın ve not ettin."),
-            ("uzun_vadede", "Kararını gözden geçir", "Dönem sonunda tekrar değerlendir: Bu bölümü kendi kriterlerinle de seçer miydin?", "yansitma", "30 dk", "Kararını kendi kriterlerinle gerekçelendirdin."),
+            ("uzun_vadede", "Kararını gözden geçir", "Önceki adımları tamamladıktan sonra tekrar değerlendir: Bu bölümü kendi kriterlerinle de seçer miydin?", "yansitma", "30 dk", "Kararını kendi 5 kriterinle gerekçelendirip yazdın."),
         ],
         "guclu": [
             ("simdi", "Rol modelini bul", "{bolum} alanında saygın bulduğun 2 kişiyi araştır: hangi adımlarla bu noktaya geldiler?", "arastirma", "1 saat", "İki rol modelin kariyer adımlarını not ettin."),
@@ -81,15 +81,15 @@ ICERIK = {
         "guclu_neden": "Yaptığın işin anlamlı olması senin için önemli; {bolum} alanında da benzer ölçüde önemseniyor. Bölümün hangi yönünün sana anlamlı geldiğini netleştirirsen uzmanlık seçerken bunu pusula olarak kullanabilirsin.",
         "gelisim": [
             ("simdi", "\"Neden\" cümleni yaz", "\"{bolum} okumak istiyorum çünkü...\" cümlesini 3 farklı şekilde tamamla. En samimi bulduğunu işaretle.", "yansitma", "15 dk", "Sana en doğru gelen bir \"neden\" cümlen var."),
-            ("simdi", "Etkiyi gör", "Bu alanda çalışan birinin yaptığı işin insanlara/dünyaya etkisini anlatan bir hikâye, haber ya da belgesel bul.", "okuma", "30 dk", "Bu alanın yarattığı bir etkiyi kendi cümlelerinle anlatabiliyorsun."),
+            ("simdi", "Etkiyi gör", "Bu alanda çalışmış birinin hayat hikâyesini bul (biyografi, röportaj ya da TRT Belgesel gibi bir kanalda bir belgesel). İşinin insanlara ya da dünyaya etkisini ve bu işin ona ne anlam kattığını not et.", "okuma", "30-45 dk", "Bu kişinin yarattığı bir etkiyi ve işinin ona kattığı anlamı kendi cümlelerinle yazdın."),
             ("bu_donem", "Mezuna anlamı sor", "Bir {bolum} mezununa \"İşinde seni en çok ne tatmin ediyor?\" diye sor.", "gorusme", "30 dk", "Aldığın cevabı not ettin ve sana uyup uymadığını düşündün."),
             ("bu_donem", "Değer haritası", "Hayatta önemli bulduğun 5 şeyi sırala ve her birinin bu bölümde nasıl karşılık bulabileceğini yaz.", "yansitma", "45 dk", "5 değerin bölümdeki karşılığını eşleştirdin."),
             ("uzun_vadede", "Küçük bir anlamlı proje", "Bu alanla ilgili, birine faydası dokunacak küçük bir proje yap (ör. bir konuyu arkadaşlarına anlatan bir sunum, bir okul kulübü etkinliği).", "proje", "1-2 ay", "Projeyi tamamladın ve sana nasıl hissettirdiğini yazdın."),
-            ("uzun_vadede", "Anlam günlüğü", "Bir ay boyunca, bu alana dair seni heyecanlandıran ya da sıkan anları haftada bir not et.", "aliskanlik", "4 hafta", "4 haftalık notun var ve bir örüntü fark ettin."),
+            ("uzun_vadede", "Anlam günlüğü", "Birkaç hafta boyunca, bu alana dair seni heyecanlandıran ya da sıkan bir an yaşadığında kısa bir not al. Sonra notlarını okuyup tekrar eden şeyleri bul.", "aliskanlik", "5 dk/not", "En az 6 tarihli notun var ve tekrar eden bir örüntüyü bir cümleyle yazdın."),
         ],
         "guclu": [
             ("simdi", "Anlamlı alt alanını seç", "{bolum} içinde sana en anlamlı gelen alt alanı (ör. çocuklar, çevre, adalet, teknoloji) belirle.", "yansitma", "20 dk", "Bir alt alan seçtin ve nedenini yazdın."),
-            ("bu_donem", "Anlamı deneyime çevir", "Seçtiğin alt alanla ilgili bir gönüllülük ya da gözlem fırsatı bul (ör. TEGV, TOG, yerel dernekler).", "deneyim", "1-3 ay", "En az bir etkinliğe katıldın."),
+            ("bu_donem", "Anlamı deneyime çevir", "Seçtiğin alt alanla ilgili, ailenin bilgisiyle yaşına uygun bir gönüllülük ya da gözlem fırsatı bul (ör. okul kulüpleri, belediye ya da yerel dernek etkinlikleri).", "deneyim", "1-3 ay", "En az bir etkinliğe katıldın ve sana ne kattığını yazdın."),
         ],
     },
     "D5": {
@@ -99,14 +99,14 @@ ICERIK = {
         "gelisim": [
             ("simdi", "Toplumsal etkiyi araştır", "{bolum} mezunlarının topluma katkı sağladığı 3 örnek bul (proje, kurum, kişi).", "arastirma", "45 dk", "3 örneği kısaca not ettin."),
             ("simdi", "Kendi katkı tanımın", "\"Topluma katkı\" senin için ne demek: tek tek insanlara yardım mı, sistemleri iyileştirmek mi, bilgi üretmek mi? Birini seç.", "yansitma", "15 dk", "Sana uyan katkı biçimini seçtin."),
-            ("bu_donem", "Tek günlük gönüllülük", "Bir sivil toplum etkinliğine bir gün katıl (ör. Kızılay, TEGV, LÖSEV, yerel belediye etkinlikleri) ve sana nasıl hissettirdiğini gözlemle.", "deneyim", "1 gün", "Etkinliğe katıldın ve kısa bir değerlendirme yazdın."),
-            ("bu_donem", "Hizmet yönünü konuş", "Bu alanda çalışan birine işinin \"insanlarla/toplumla\" kısmının günlük işin ne kadarını oluşturduğunu sor.", "gorusme", "30 dk", "Hizmet yönünün işteki oranını öğrendin."),
+            ("bu_donem", "Tek günlük gönüllülük", "Ailenin bilgisiyle, yaşına uygun bir gönüllülük etkinliğine bir gün katıl (ör. okulun, belediyenin ya da yerel bir derneğin düzenlediği bir etkinlik). Sana nasıl hissettirdiğini gözlemle.", "deneyim", "1 gün", "Etkinliğe katıldın; ne yaptığını ve nasıl hissettiğini anlatan kısa bir değerlendirme yazdın."),
+            ("bu_donem", "Hizmet yönünü konuş", "Bu alanda çalışan birine (aile çevrenden ya da öğretmeninin aracılığıyla) işinin \"insanlarla/toplumla\" ilgili kısmının günlük işin ne kadarını oluşturduğunu sor.", "gorusme", "30 dk", "Hizmet yönünün işteki oranını öğrendin."),
             ("uzun_vadede", "Okul içi sosyal proje", "Arkadaşlarınla okulda küçük bir sosyal sorumluluk projesi başlat (kitap toplama, akran mentorluğu, çevre temizliği).", "proje", "2-3 ay", "Proje en az bir kez hayata geçti."),
             ("uzun_vadede", "Uygunluk kararı", "Deneyimlerinden sonra değerlendir: Bu bölümün hizmet yönü seni tatmin ediyor mu, yoksa daha teknik/bağımsız bir alt alan mı sana uygun?", "yansitma", "30 dk", "Hangi alt alana yöneleceğini gerekçesiyle yazdın."),
         ],
         "guclu": [
             ("simdi", "Etki alanını belirle", "{bolum} ile en çok fark yaratabileceğin toplumsal sorunu seç (ör. eğitim eşitsizliği, sağlık, çevre).", "yansitma", "20 dk", "Bir sorun seçtin ve neden önemli olduğunu yazdın."),
-            ("bu_donem", "Düzenli gönüllülük", "Seçtiğin sorunla ilgili bir kurumda ayda en az bir kez gönüllü ol.", "deneyim", "3 ay", "En az 3 kez katıldın."),
+            ("bu_donem", "Düzenli gönüllülük", "Seçtiğin sorunla ilgili bir kurumda, ailenin bilgisiyle ve yaşına uygun şekilde düzenli olarak gönüllü ol.", "deneyim", "3 ay", "En az 3 kez katıldın ve her katılımı tarihiyle not ettin."),
         ],
     },
     "D6": {
@@ -114,11 +114,11 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında çalışanlar genellikle bağımsız karar verme, kendi işini yönetme ya da serbest çalışma bekliyor. Sen daha yapılandırılmış ve yönlendirilen ortamları tercih ediyorsun; bu alandaki bağımsız çalışma biçimlerinin sana uyup uymadığını şimdiden sınamak, kararını netleştirir.",
         "guclu_neden": "Özerklik senin için önemli; {bolum} alanında da benzer ölçüde önemseniyor. Bu alandaki serbest çalışma, danışmanlık ve girişim yollarını araştırıp sana uyanı seçebilirsin.",
         "gelisim": [
-            ("simdi", "Kendi başına bir karar", "Bu hafta, normalde başkasına soracağın küçük bir konuda (ders planı, proje konusu) kararı kendin ver ve sonucunu gözlemle.", "aliskanlik", "1 hafta", "Kendi verdiğin bir kararın sonucunu not ettin."),
+            ("simdi", "Kendi başına bir karar", "Normalde başkasına soracağın küçük bir konuda (ders planı, proje konusu) kararı kendin ver ve sonucunu gözlemle.", "aliskanlik", "15 dk", "Kendi verdiğin bir kararı ve sonucunu not ettin."),
             ("simdi", "Bağımsız çalışma biçimlerini öğren", "{bolum} alanında serbest çalışma, danışmanlık ve kurumsal çalışma arasındaki farkları araştır.", "arastirma", "45 dk", "Üç çalışma biçiminin farkını anlatabiliyorsun."),
             ("bu_donem", "Kendi kendine proje", "Kimsenin sana görev vermediği, tamamen kendi planladığın küçük bir proje yap (ör. bir konuda blog, mini araştırma).", "proje", "1 ay", "Projeyi baştan sona kendin planlayıp bitirdin."),
-            ("bu_donem", "Haftalık planını kendin kur", "Ders çalışma planını bir ay boyunca kendin hazırla; her hafta sonunda ne işe yaradığını değerlendir.", "aliskanlik", "4 hafta", "4 haftalık planın ve değerlendirmen var."),
-            ("uzun_vadede", "Serbest çalışan biriyle görüş", "Bu alanda bağımsız çalışan biriyle konuş: Özgürlüğün getirdiği sorumluluklar neler?", "gorusme", "30 dk", "Bağımsız çalışmanın artı ve eksilerini yazdın."),
+            ("bu_donem", "Çalışma planını kendin kur", "Ders çalışma planını kimseye sormadan kendin hazırla ve uygula. Her planın sonunda neyin işe yaradığını, neyi değiştireceğini yaz.", "aliskanlik", "20 dk/plan", "Kendi hazırladığın en az 3 plan ve her biri için kısa bir değerlendirme var."),
+            ("uzun_vadede", "Serbest çalışan biriyle görüş", "Bu alanda bağımsız çalışan biriyle (aile çevrenden ya da öğretmeninin aracılığıyla, ailenin bilgisiyle) konuş: Özgürlüğün getirdiği sorumluluklar neler?", "gorusme", "30 dk", "Bağımsız çalışmanın artı ve eksilerini yazdın."),
             ("uzun_vadede", "Uygun çalışma ortamını seç", "Deneyimlerine göre bu bölümde sana uygun ortamı belirle: yapılandırılmış kurum mu, yarı bağımsız rol mü?", "yansitma", "30 dk", "Tercih ettiğin çalışma ortamını gerekçesiyle yazdın."),
         ],
         "guclu": [
@@ -132,11 +132,11 @@ ICERIK = {
         "guclu_neden": "Estetik ve yaratıcılık senin için önemli; {bolum} alanında da benzer ölçüde önemseniyor. Bölümde yaratıcılığına yer açan alt alanları ve projeleri araştırabilirsin.",
         "gelisim": [
             ("simdi", "Alanın yaratıcı yüzünü gör", "{bolum} alanında yaratıcılığın kullanıldığı 3 örnek iş/proje incele.", "arastirma", "45 dk", "3 örneği kısaca not ettin."),
-            ("simdi", "Küçük bir yaratıcı deneme", "Bu hafta küçük bir yaratıcı iş yap: bir poster, kısa bir sunum tasarımı ya da bir fotoğraf serisi.", "deneyim", "1-2 saat", "Bir yaratıcı ürün ortaya koydun."),
+            ("simdi", "Küçük bir yaratıcı deneme", "Küçük bir yaratıcı iş yap: bir poster, kısa bir sunum tasarımı ya da bir fotoğraf serisi.", "deneyim", "1-2 saat", "Bir yaratıcı ürün ortaya koydun."),
             ("bu_donem", "Atölye ya da kurs", "Kısa bir tasarım/sanat atölyesine katıl (halk eğitim merkezleri, belediye atölyeleri, çevrim içi kurslar).", "kurs", "1-2 ay", "Atölyeyi tamamladın."),
-            ("bu_donem", "Estetik gözlem alışkanlığı", "İki hafta boyunca sana güzel gelen tasarımları (uygulama, bina, afiş) fotoğrafla ve nedenini not et.", "aliskanlik", "2 hafta", "En az 10 örnek ve kısa notların var."),
+            ("bu_donem", "Estetik gözlem alışkanlığı", "Bir süre boyunca sana güzel gelen tasarımları (uygulama, bina, afiş) fotoğrafla ve neden güzel bulduğunu bir cümleyle not et.", "aliskanlik", "5 dk/örnek", "En az 10 örnek ve kısa notların var."),
             ("uzun_vadede", "Bölümle ilgili mini tasarım projesi", "Bölümle ilgili bir konuyu görsel olarak anlatan bir ürün hazırla (infografik, maket, sunum).", "proje", "1-2 ay", "Projeyi bitirdin ve birine gösterdin."),
-            ("uzun_vadede", "Uyum değerlendirmesi", "Deneyimlerin sonrasında, bu bölümün yaratıcı kısmından keyif alıp almadığını değerlendir.", "yansitma", "30 dk", "Kararını yazdın."),
+            ("uzun_vadede", "Uyum değerlendirmesi", "Deneyimlerin sonrasında, bu bölümün yaratıcı kısmından keyif alıp almadığını değerlendir.", "yansitma", "30 dk", "Bu bölümün yaratıcı kısmından keyif alıp almadığını, önceki adımlardan 2 örnekle gerekçelendirip yazdın."),
         ],
         "guclu": [
             ("simdi", "Portfolyo klasörü aç", "Yaptığın yaratıcı işleri bir klasörde topla; düzenli olarak yenilerini ekle.", "aliskanlik", "30 dk", "En az 5 işin bulunduğu bir klasörün var."),
@@ -150,15 +150,16 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında çalışanlar günün önemli kısmını insanlarla iletişim içinde geçiriyor (ekip toplantıları, sunumlar, müşteri/danışan görüşmeleri). Sen daha içe dönük bir tarza sahipsin; bu bir zayıflık değil ama sosyal durumlarda kendini rahat hissetmeni sağlayacak alışkanlıklar seni güçlendirir.",
         "guclu_neden": "Sosyal enerjin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Bu yönünü ekip çalışmalarında, sunumlarda ve yeni insanlarla tanışırken kullanabilirsin.",
         "gelisim": [
-            ("simdi", "Bir sohbet başlat", "Bu hafta okulda az tanıdığın biriyle ya da bir öğretmeninle ders dışı kısa bir sohbet başlat.", "aliskanlik", "1 hafta", "En az 2 yeni sohbet başlattın."),
-            ("simdi", "Enerji haritanı çıkar", "Hangi sosyal ortamlar seni yoruyor, hangileri dinlendiriyor? Bir hafta boyunca not al.", "yansitma", "1 hafta", "Seni yoran ve dinlendiren ortamları listeledin."),
+            ("simdi", "Bir sohbet başlat", "Okulda az tanıdığın biriyle ya da bir öğretmeninle ders dışı kısa bir sohbet başlat.", "aliskanlik", "5-10 dk", "En az 2 yeni sohbet başlattın ve nasıl geçtiğini kısaca not ettin."),
+            ("simdi", "Enerji haritanı çıkar", "Hangi sosyal ortamlar seni yoruyor, hangileri dinlendiriyor? Birkaç gün boyunca her akşam kısa bir not al.", "yansitma", "5 dk/gün", "Seni yoran ve dinlendiren ortamları listeledin."),
             ("bu_donem", "Küçük grup sunumu", "Bir derste 3-5 kişilik bir gruba 5 dakikalık bir sunum yap; önceden prova et.", "deneyim", "2-3 hafta", "Sunumu yaptın ve kendine geri bildirim verdin."),
             ("bu_donem", "Bir kulübe katıl", "İlgini çeken bir okul kulübüne katıl ve en az bir etkinlikte görev al.", "deneyim", "1-3 ay", "Kulüpte en az bir görev üstlendin."),
             ("uzun_vadede", "Düzenli ekip çalışması", "Bir dönem boyunca grup projelerinde aktif rol al (toplantı düzenleme, sözcülük).", "proje", "1 dönem", "En az bir grup projesinde sözcülük ya da koordinasyon yaptın."),
             ("uzun_vadede", "Kendi tarzını bul", "İçe dönüklüğünü güce çevir: bire bir iletişim, yazılı iletişim ve dinleme gibi güçlü yanlarını bölümde nasıl kullanacağını planla.", "yansitma", "30 dk", "Güçlü iletişim yollarını ve kullanım alanlarını yazdın."),
+            ("bu_donem", "İnsanlarla çalışan birini tanı", "{bolum} alanında insanlarla yoğun çalışan birinin röportajını ya da belgeselini izle; ya da aile çevrenden böyle biriyle konuş. İletişimi nasıl öğrendiğini ve onu nelerin yorduğunu öğren.", "gorusme", "30-45 dk", "Bu kişinin iletişimde kullandığı 3 yöntemi ve birini nasıl deneyeceğini yazdın."),
         ],
         "guclu": [
-            ("simdi", "Ağını genişlet", "{bolum} okuyan ya da mezun 2 kişiyle tanış (aile çevresi, okulun rehberlik servisi aracılığıyla okul mezunları).", "gorusme", "1-2 hafta", "İki kişiyle tanıştın ve iletişim bilgilerini kaydettin."),
+            ("simdi", "Ağını genişlet", "{bolum} okuyan ya da mezun 2 kişiyle ailenin ya da öğretmeninin bilgisiyle tanış (aile çevresi, okulun rehberlik servisi aracılığıyla okul mezunları).", "gorusme", "1-2 hafta", "İki kişiyle konuştun ve her görüşmeden en az bir not aldın."),
             ("bu_donem", "Liderlik eden sunucu ol", "Okulda bir etkinlikte sunuculuk ya da tanıtım görevi üstlen.", "deneyim", "1-2 ay", "Bir etkinlikte sahne/sunum görevi yaptın."),
         ],
     },
@@ -167,16 +168,17 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında uyumlu ve işbirlikçi çalışmak önemli bir beklenti; ekipler ortak karar alıyor ve insan ilişkileri işin merkezinde. Sen görüşünü net savunan birisin; bu değerli ama karşındakini anlama ve ortak zemin bulma becerin geliştikçe ekip içindeki etkin artar.",
         "guclu_neden": "İşbirliği ve empati, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Bu yönünle ekipte ortak zemin bulmaya yardım edebilirsin; gerektiğinde \"hayır\" diyebildiğinden de emin ol.",
         "gelisim": [
-            ("simdi", "Aktif dinleme denemesi", "Bu hafta bir tartışmada cevap vermeden önce karşındakinin söylediğini kendi cümlelerinle özetle (\"Yani sen ... diyorsun\").", "aliskanlik", "1 hafta", "En az 3 konuşmada bu tekniği kullandın."),
+            ("simdi", "Aktif dinleme denemesi", "Bir tartışmada cevap vermeden önce karşındakinin söylediğini kendi cümlelerinle özetle (\"Yani sen ... diyorsun\").", "aliskanlik", "1 hafta", "En az 3 konuşmada bu tekniği kullandın."),
             ("simdi", "Karşı tarafın gözünden", "Son yaşadığın bir anlaşmazlığı karşı tarafın bakış açısından yaz.", "yansitma", "20 dk", "Karşı tarafın gerekçelerini yazabildin."),
             ("bu_donem", "Ortak karar projesi", "Bir grup çalışmasında herkesin fikrini toplayıp ortak bir karar çıkarmayı üstlen.", "proje", "2-4 hafta", "Grup senin yönettiğin bir süreçle karar aldı."),
             ("bu_donem", "Empati üzerine okuma", "Empati ve iletişim üzerine bir kitap ya da makale oku (ör. \"Şiddetsiz İletişim\" – M. Rosenberg).", "okuma", "3-4 hafta", "Okuduğundan 3 uygulanabilir fikir çıkardın."),
             ("uzun_vadede", "Akran destek rolü", "Okulda akran mentorluğu ya da yeni öğrencilere rehberlik gibi bir role gönüllü ol.", "deneyim", "1 dönem", "Bir dönem boyunca düzenli destek verdin."),
             ("uzun_vadede", "Dengeyi değerlendir", "Net duruşun ile uyumu nasıl dengelediğini değerlendir: hangi durumlarda esnedin, hangilerinde doğru şekilde direndin?", "yansitma", "30 dk", "İki örnek durum ve değerlendirmesini yazdın."),
+            ("bu_donem", "Uzlaşmayı başaran birinin hikâyesi", "Farklı görüşteki insanları bir araya getirmeyi başarmış birinin (bir öğretmen, takım kaptanı, toplum önderi ya da {bolum} alanından biri) hikâyesini oku ya da izle. Zor anlarda nasıl davrandığını incele.", "okuma", "45 dk", "Bu kişinin uzlaşma için yaptığı 3 davranışı ve birini kendi hayatında nasıl deneyeceğini yazdın."),
         ],
         "guclu": [
             ("simdi", "Arabulucu ol", "Bir grup çalışmasında anlaşmazlık çıktığında ortak noktayı bulan kişi olmayı dene.", "deneyim", "2-4 hafta", "Bir anlaşmazlığın çözümüne katkı sağladın."),
-            ("bu_donem", "Sınır koyma pratiği", "Uyumlu insanlar bazen fazla yük alır: bu ay sana uygun olmayan bir isteğe kibarca \"hayır\" demeyi dene.", "aliskanlik", "1 ay", "En az bir kez gerekçesiyle hayır dedin."),
+            ("bu_donem", "Sınır koyma pratiği", "Uyumlu insanlar bazen fazla yük alır: sana uygun olmayan bir isteğe kibarca \"hayır\" demeyi dene.", "aliskanlik", "1 ay", "En az bir kez gerekçesiyle hayır dedin."),
         ],
     },
     "P3": {
@@ -184,12 +186,13 @@ ICERIK = {
         "gelisim_neden": "{bolum} eğitimi ve iş hayatı düzenli, planlı ve sorumlu çalışmayı gerektiriyor (yoğun ders yükü, teslim tarihleri). Planlı çalışma eğilimin bölümün beklediğinden daha düşük; küçük planlama alışkanlıkları edinmek bu alanda işini kolaylaştırır.",
         "guclu_neden": "Planlı ve sorumlu çalışmak, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Bu yönünü uzun vadeli hedeflerine bağlarsan yoğun dönemleri daha rahat geçirebilirsin.",
         "gelisim": [
-            ("simdi", "Haftalık plan", "Bu haftanın ödev ve çalışmalarını bir listeye yaz, her birine gün ata.", "aliskanlik", "15 dk", "Haftalık listen var ve her işin bir günü belli."),
+            ("simdi", "Yapılacaklar listesi", "Önündeki ödev ve çalışmaları bir listeye yaz ve her birine yapacağın günü ata.", "aliskanlik", "15 dk", "Listen hazır ve her işin yanında yapacağın gün yazıyor."),
             ("simdi", "25 dakika kuralı", "Pomodoro tekniğini dene: 25 dakika odaklı çalış, 5 dakika mola ver. Günde en az 2 tur yap.", "aliskanlik", "1 hafta", "5 gün boyunca günde en az 2 tur yaptın."),
-            ("bu_donem", "Takip sistemi kur", "Bir ajanda, takvim ya da uygulama seç ve bir ay boyunca tüm görevlerini oraya yaz.", "aliskanlik", "4 hafta", "4 hafta boyunca sistemini aksatmadan kullandın."),
+            ("bu_donem", "Takip sistemi kur", "Bir ajanda, takvim ya da uygulama seç ve birkaç hafta boyunca tüm görevlerini oraya yaz.", "aliskanlik", "5 dk/gün", "Sistemini en az 15 gün kullandın ve kaçırdığın günleri işaretledin."),
             ("bu_donem", "Erken teslim hedefi", "Bir sonraki ödevini teslim tarihinden 1 gün önce bitirmeyi hedefle.", "proje", "2-3 hafta", "En az bir ödevi erken teslim ettin."),
-            ("uzun_vadede", "Dönemlik hedef planı", "Bu dönem için 3 akademik hedef belirle ve her birini aylık adımlara böl.", "proje", "1 dönem", "Dönem sonunda hedeflerinin en az 2'sine ulaştın."),
-            ("uzun_vadede", "Haftalık gözden geçirme", "Her pazar 10 dakika ayırıp geçen haftayı değerlendir ve yeni haftayı planla.", "aliskanlik", "3 ay", "En az 10 haftalık gözden geçirme yaptın."),
+            ("uzun_vadede", "Hedeflerini adımlara böl", "3 akademik hedef belirle ve her birini küçük, somut adımlara böl. Bir adımı bitirdiğinde tarihini yaz.", "proje", "1 dönem", "3 hedefin ve adımların yazılı; en az 2 hedefe ulaştın ve ulaştığın tarihi not ettin."),
+            ("uzun_vadede", "Düzenli gözden geçirme", "Kendine düzenli bir gözden geçirme zamanı seç. 10 dakika ayırıp son günlerde neyi bitirdiğini, neyin aksadığını yaz ve sonraki adımı planla.", "yansitma", "10 dk", "En az 6 tarihli gözden geçirme notun var."),
+            ("bu_donem", "Disiplinli birinin yöntemi", "Bir sporcunun, müzisyenin ya da {bolum} alanında başarılı birinin biyografisini ya da röportajını oku. Günlük düzenini nasıl kurduğunu ve isteksiz olduğu günlerde ne yaptığını not et.", "okuma", "45 dk", "Bu kişinin 2 yöntemini yazdın ve birini kendi çalışmana uyguladın."),
         ],
         "guclu": [
             ("simdi", "Uzun vadeli hedef", "{bolum} için YKS hedef netlerini ve bölüm hazırlığını içeren bir yıllık plan yap.", "proje", "1 saat", "Ay ay hedeflerin olan bir planın var."),
@@ -201,12 +204,13 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında çalışanlar baskı altında sakin kalmayı gerektiren durumlarla sık karşılaşıyor (yoğun sınavlar, kritik kararlar, zor insanlar). Sen strese bölümün beklediğinden daha hassas olabilirsin; bunu yönetmeyi öğrenmek hem başarını hem de iyi oluşunu korur.",
         "guclu_neden": "Strese karşı hassasiyetin {bolum} için beklenen düzeyi aşmıyor. Yoğun dönemlerde sakin kalmanı sağlayan alışkanlıklarını fark edip sürdürmen yeterli.",
         "gelisim": [
-            ("simdi", "Nefes tekniği", "Stresli anlarda 4-4-6 nefes tekniğini dene: 4 saniye nefes al, 4 saniye tut, 6 saniyede ver. Günde bir kez pratik yap.", "aliskanlik", "1 hafta", "Bir hafta boyunca her gün pratik yaptın."),
+            ("simdi", "Nefes tekniği", "Stresli anlarda 4-4-6 nefes tekniğini dene: 4 saniye nefes al, 4 saniye tut, 6 saniyede ver. Günde bir kez pratik yap.", "aliskanlik", "1 hafta", "En az 7 gün pratik yaptın ve hangi anlarda işine yaradığını not ettin."),
             ("simdi", "Stres tetikleyicilerin", "Seni en çok strese sokan 3 durumu yaz ve her biri için \"o anda ne yapabilirim?\" sorusunu cevapla.", "yansitma", "20 dk", "3 tetikleyici ve çözüm fikrin var."),
-            ("bu_donem", "Düzenli hareket", "Haftada en az 3 kez 20 dakikalık yürüyüş, spor ya da dans gibi bir hareket alışkanlığı edin.", "aliskanlik", "4 hafta", "4 hafta boyunca haftada 3 kez hareket ettin."),
+            ("bu_donem", "Düzenli hareket", "Sevdiğin bir hareket türünü (yürüyüş, spor, dans) seç ve düzenli olarak 20 dakika yap. Hareketten önce ve sonra kendini nasıl hissettiğini kısaca not et.", "aliskanlik", "20 dk", "En az 10 kez hareket ettin ve her seferini tarihiyle not ettin."),
             ("bu_donem", "Sınav provası", "Deneme sınavlarını gerçek sınav koşullarında (süre, sessizlik) çöz; kaygı seviyeni 1-10 arası not et.", "deneyim", "1-2 ay", "En az 3 denemede kaygı puanını not ettin ve nasıl değiştiğine baktın."),
-            ("uzun_vadede", "Uyku ve rutin", "Hafta içi aynı saatte yatıp kalkmayı hedefle; ekranı yatmadan 30 dakika önce bırak.", "aliskanlik", "2-3 ay", "En az 6 hafta düzenli uyku rutini sürdürdün."),
+            ("uzun_vadede", "Uyku ve rutin", "Okul günlerinde aynı saatte yatıp kalkmayı hedefle; ekranı yatmadan 30 dakika önce bırak.", "aliskanlik", "2-3 ay", "Rutinine uyduğun geceleri işaretledin ve en az 20 gece uydun."),
             ("uzun_vadede", "Destek almaktan çekinme", "Kaygın günlük hayatını zorluyorsa okulunun rehberlik servisiyle konuş; bu güçlü bir adımdır.", "gorusme", "ihtiyaç halinde", "Gerekli gördüğünde bir rehber öğretmenle görüştün."),
+            ("bu_donem", "Heyecanla başa çıkan biri", "Bir sporcunun, sanatçının ya da {bolum} alanında çalışan birinin büyük bir maç, sahne ya da sınav öncesi heyecanını nasıl yönettiğini anlattığı bir röportaj ya da biyografi bul. Ailenden ya da öğretmenlerinden birine de aynı soruyu sorabilirsin.", "okuma", "30 dk", "Bu kişinin kullandığı 2 yöntemi yazdın ve birini kendin denedin."),
         ],
         "guclu": [
             ("simdi", "Sakinliğini fark et", "Son zamanlarda baskı altında sakin kaldığın bir anı yaz: o an ne yaptın?", "yansitma", "15 dk", "Kendi sakin kalma yöntemini tarif edebiliyorsun."),
@@ -218,12 +222,12 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanı sürekli gelişiyor; yeni yöntemler, teknolojiler ve bakış açıları öğrenmek işin bir parçası. Yeniliğe açıklığın bölümün beklediğinden daha düşük; merakını küçük adımlarla beslemek, hızla değişen bu alana ayak uydurmanı kolaylaştırır.",
         "guclu_neden": "Merakın ve yeniliğe açıklığın, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Merakını bir konuya odaklarsan yeni şeyleri daha derinlemesine öğrenebilirsin.",
         "gelisim": [
-            ("simdi", "Haftanın yeni konusu", "Bu hafta hiç bilmediğin bir konuda 10 dakikalık bir video izle ya da bir yazı oku.", "okuma", "10-15 dk", "Yeni konuyu birine 2 cümleyle anlatabildin."),
+            ("simdi", "Yeni bir konu", "Hiç bilmediğin bir konuda 10 dakikalık bir video izle ya da bir yazı oku. Sonra seni neyin şaşırttığını 2-3 cümleyle yaz.", "okuma", "10-15 dk", "Seni şaşırtan şeyi yazdın ve yeni konuyu birine 2 cümleyle anlatabildin."),
             ("simdi", "Alandaki yenilikler", "{bolum} alanında son 2 yılda ortaya çıkan bir yeniliği araştır.", "arastirma", "30 dk", "Bir yeniliği ve etkisini not ettin."),
-            ("bu_donem", "Haftalık merak listesi", "Bir ay boyunca her hafta merak ettiğin bir soruyu yaz ve cevabını araştır.", "aliskanlik", "4 hafta", "4 soru ve cevabından oluşan bir listen var."),
+            ("bu_donem", "Meraklı birinin hayatı", "Bir bilim insanının, mucidin ya da {bolum} alanında yeni bir şey denemiş birinin biyografisini oku ya da belgeselini izle. Yeni fikirlere nasıl ulaştığını ve hangi engellerle karşılaştığını yaz.", "okuma", "1-2 saat", "Bu kişinin yeni fikirlere ulaşma yolunu ve karşılaştığı bir engeli kendi cümlelerinle yazdın."),
             ("bu_donem", "Farklı bir etkinlik", "Daha önce denemediğin bir etkinliğe katıl (bilim şenliği, müze, söyleşi).", "deneyim", "1 ay", "Yeni bir etkinliğe katıldın."),
             ("uzun_vadede", "Çevrim içi kurs", "Bölümle ilgili ama hiç bilmediğin bir konuda kısa bir çevrim içi kurs al.", "kurs", "1-2 ay", "Kursu tamamladın."),
-            ("uzun_vadede", "Okuma alışkanlığı", "Ayda bir kitap hedefle; alanın dışından da seç.", "aliskanlik", "3 ay", "3 kitap okudun."),
+            ("uzun_vadede", "Okuma alışkanlığı", "Düzenli kitap okumayı alışkanlık edin; alanının dışından da kitaplar seç.", "aliskanlik", "3 ay", "En az 3 kitap bitirdin (en az biri alanının dışından) ve her biri için kısa bir not yazdın."),
         ],
         "guclu": [
             ("simdi", "Merakını odakla", "{bolum} içinde seni en çok meraklandıran bir alt konuyu seç ve derinleş.", "arastirma", "1 saat", "Bir alt konu seçtin ve 3 kaynak buldun."),
@@ -235,7 +239,7 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında iş günü genellikle değişken: her gün farklı görevler, beklenmedik durumlar ve hızlı uyum gerekiyor. Sen rutini tercih ediyorsun; değişime uyum becerini kademeli olarak artırmak bu alanda rahat etmeni sağlar.",
         "guclu_neden": "Değişken ve hareketli işlerden keyif alman, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Hızlı tempolu işlerde bu yönünü kullanabilirsin; rutin ama gerekli işler için de küçük bir düzen kur.",
         "gelisim": [
-            ("simdi", "Küçük bir değişiklik", "Bu hafta rutininde bilinçli bir değişiklik yap (farklı bir çalışma yeri, farklı bir ders sırası) ve nasıl hissettiğini gözlemle.", "aliskanlik", "1 hafta", "Değişikliği denedin ve gözlemini yazdın."),
+            ("simdi", "Küçük bir değişiklik", "Rutininde bilinçli bir değişiklik yap (farklı bir çalışma yeri, farklı bir ders sırası) ve nasıl hissettiğini gözlemle.", "aliskanlik", "birkaç gün", "Değişikliği denedin ve gözlemini yazdın."),
             ("simdi", "Bir iş gününü incele", "{bolum} alanında çalışan birinin sıradan bir gününde ne kadar değişkenlik olduğunu araştır.", "arastirma", "30 dk", "Bir iş gününün sabit ve değişken kısımlarını ayırdın."),
             ("bu_donem", "Plan B alışkanlığı", "Önemli işlerinde \"bu olmazsa ne yaparım?\" sorusuna önceden cevap hazırla.", "aliskanlik", "4 hafta", "En az 3 işte yedek planın vardı."),
             ("bu_donem", "Farklı görevler", "Grup çalışmalarında her seferinde farklı bir rol üstlen (araştırmacı, sunucu, tasarımcı).", "deneyim", "1-2 ay", "En az 2 farklı rol denedin."),
@@ -244,7 +248,7 @@ ICERIK = {
         ],
         "guclu": [
             ("simdi", "Dinamik alt alanları bul", "{bolum} içinde en hareketli, proje bazlı çalışılan alt alanları araştır.", "arastirma", "45 dk", "En az 2 dinamik alt alan belirledin."),
-            ("bu_donem", "Rutin işleri sisteme bağla", "Sıkıcı bulduğun ama gerekli işler (tekrar, ödev) için sabit bir zaman dilimi belirle.", "aliskanlik", "1 ay", "Rutin işler için sabit zaman dilimini 4 hafta korudun."),
+            ("bu_donem", "Rutin işleri sisteme bağla", "Sıkıcı bulduğun ama gerekli işler (tekrar, ödev) için sabit bir zaman dilimi belirle.", "aliskanlik", "1 ay", "Rutin işler için belirlediğin zaman dilimini en az 15 gün korudun."),
         ],
     },
     "P7": {
@@ -252,11 +256,11 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında belirsizlikle çalışmak sık karşılaşılan bir durum: eksik bilgiyle karar vermek, sonucu belli olmayan projeler yürütmek gerekiyor. Belirsizliğe toleransın bölümün beklediğinden daha düşük; küçük ve güvenli risklerle bu kası geliştirebilirsin.",
         "guclu_neden": "Belirsizlikle başa çıkma rahatlığın, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Yeni ve keşfedilmemiş konularda bu yönünü kullanabilirsin; risk almadan önce kısa bir artı-eksi listesi yapmayı alışkanlık edin.",
         "gelisim": [
-            ("simdi", "Küçük risk", "Bu hafta sonucundan emin olmadığın küçük bir adım at (derste soru sormak, yeni bir yemek denemek, bir kulübe başvurmak).", "aliskanlik", "1 hafta", "En az bir küçük risk aldın ve sonucunu not ettin."),
+            ("simdi", "Risk alan birinin hikâyesi", "Belirsiz bir yola çıkmış birinin (bir girişimci, kâşif, sporcu ya da {bolum} alanından biri) biyografisini, röportajını ya da belgeselini incele. Neyi göze aldığını, nasıl hazırlandığını ve işler ters gidince ne yaptığını yaz.", "okuma", "45 dk-1 saat", "Bu kişinin aldığı bir riski, hazırlığını ve ters giden bir anı nasıl yönettiğini yazdın."),
             ("simdi", "En kötü senaryo", "Seni kaygılandıran bir belirsizlik için \"en kötü ne olabilir, olursa ne yaparım?\" sorusunu yaz.", "yansitma", "15 dk", "En kötü senaryo ve planını yazdın."),
             ("bu_donem", "Cevabı belli olmayan proje", "Sonucu önceden bilinmeyen küçük bir araştırma ya da deney yap.", "proje", "1 ay", "Projeyi bitirdin ve beklenmedik bir sonuçla karşılaştın."),
-            ("bu_donem", "Karar günlüğü", "Bir ay boyunca eksik bilgiyle verdiğin kararları ve sonuçlarını not et.", "aliskanlik", "4 hafta", "En az 5 karar ve sonucunu kaydettin."),
-            ("uzun_vadede", "Yeni bir ortam", "Hiç bilmediğin bir ortamda yer al: yaz kampı, değişim programı, yeni bir spor.", "deneyim", "1-2 hafta", "Yeni ortamda bir süre geçirdin."),
+            ("bu_donem", "Karar günlüğü", "Birkaç hafta boyunca, tüm bilgiye sahip olmadan verdiğin kararları ve sonuçlarını not et.", "aliskanlik", "5 dk/karar", "En az 5 karar ve sonucunu tarihiyle kaydettin."),
+            ("uzun_vadede", "Yeni bir ortam", "Hiç bilmediğin bir ortamda yer al: yeni bir kulüp, yeni bir spor, okulun düzenlediği bir gezi ya da ücretsiz bir yaz etkinliği.", "deneyim", "1-2 hafta", "Yeni ortamda yer aldın ve ilk gün ile sonraki bir gün arasındaki rahatlık farkını kısaca yazdın."),
             ("uzun_vadede", "Belirsizlik değerlendirmesi", "Belirsizliğe karşı rahatlığının nasıl değiştiğini ve bölümde hangi alt alanların daha öngörülebilir olduğunu değerlendir.", "yansitma", "30 dk", "Değerlendirmeni yazdın."),
         ],
         "guclu": [
@@ -269,8 +273,8 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında ilerledikçe ekip yönetme, sorumluluk alma ve karar verme beklentisi artıyor. Liderlik isteğin bölümün beklediğinden daha düşük; liderliğin farklı biçimlerini (yönlendirme, örnek olma, organize etme) küçük ölçekte denemek seni hazırlar.",
         "guclu_neden": "Liderlik isteğin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Şimdiden küçük ekiplerde sorumluluk alarak bu yönünü deneyebilirsin.",
         "gelisim": [
-            ("simdi", "Küçük bir sorumluluk", "Bu hafta bir grup çalışmasında küçük bir koordinasyon görevi üstlen (toplantı saati belirlemek, görev dağıtmak).", "deneyim", "1 hafta", "Bir koordinasyon görevini tamamladın."),
-            ("simdi", "Liderlik türleri", "Farklı liderlik tarzlarını (yönlendiren, destekleyen, örnek olan) araştır ve sana en yakın olanı seç.", "okuma", "30 dk", "Sana uyan liderlik tarzını gerekçesiyle seçtin."),
+            ("simdi", "Küçük bir sorumluluk", "Bir grup çalışmasında küçük bir koordinasyon görevi üstlen (toplantı saati belirlemek, görev dağıtmak).", "deneyim", "1-2 saat", "Bir koordinasyon görevini tamamladın."),
+            ("simdi", "Liderlik türleri", "Farklı liderlik tarzlarını (yönlendiren, destekleyen, örnek olan) araştır. Sonra bir liderin (bir takım kaptanı, tarihî bir kişi ya da {bolum} alanında tanınmış biri) biyografisini ya da röportajını incele ve hangi tarzı kullandığını bul.", "okuma", "45 dk", "İncelediğin liderin tarzını bir örnekle yazdın ve sana en yakın tarzı gerekçesiyle seçtin."),
             ("bu_donem", "Bir etkinlik organize et", "Sınıfta ya da kulüpte küçük bir etkinlik organize et.", "proje", "1 ay", "Etkinlik gerçekleşti."),
             ("bu_donem", "Geri bildirim iste", "Grup arkadaşlarından liderlik ettiğin bir iş hakkında geri bildirim iste.", "gorusme", "1 hafta", "En az 2 kişiden geri bildirim aldın."),
             ("uzun_vadede", "Kulüp görevi", "Bir kulüpte yönetim görevi üstlen (başkan yardımcısı, proje sorumlusu).", "deneyim", "1 dönem", "Bir dönem boyunca yönetim görevini sürdürdün."),
@@ -288,15 +292,15 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında aynı anda birçok iş (dersler, projeler, staj, sınavlar) yürütülüyor ve önceliklendirme başarının anahtarı. Bu becerin alanın beklentisinin altında; birkaç basit teknikle hızla gelişebilir.",
         "guclu_neden": "Zaman yönetimi, senin öne çıkan becerilerinden biri ve {bolum} için beklenen düzeyle uyumlu. Bu beceriyle yoğun dönemlerde bile proje, yarışma ya da kurs gibi fırsatlara yer açabilirsin.",
         "gelisim": [
-            ("simdi", "Önemli–acil tablosu", "Bu haftaki işlerini 4 kutuya ayır: önemli-acil, önemli-acil değil, acil-önemsiz, ikisi de değil. Önce ilk kutudan başla.", "aliskanlik", "20 dk", "Bu haftanın işlerini 4 kutuya ayırdın."),
+            ("simdi", "Önemli–acil tablosu", "Önündeki işleri 4 kutuya ayır: önemli-acil, önemli-acil değil, acil-önemsiz, ikisi de değil. Önce ilk kutudan başla.", "aliskanlik", "20 dk", "İşlerini 4 kutuya ayırdığın bir sayfan var ve ilk kutudan bir işi bitirdin."),
             ("simdi", "Zaman takibi", "İki gün boyunca zamanını nereye harcadığını yarım saatlik dilimlerle not et.", "yansitma", "2 gün", "Zamanını en çok neyin aldığını gördün."),
-            ("bu_donem", "Günün 3 önceliği", "Her sabah günün en önemli 3 işini seç ve önce onları bitir.", "aliskanlik", "4 hafta", "4 hafta boyunca her gün 3 öncelik belirledin."),
+            ("bu_donem", "Günün 3 önceliği", "Her sabah günün en önemli 3 işini seç ve önce onları bitir.", "aliskanlik", "5 dk/gün", "En az 15 gün 3 önceliğini yazdın ve kaçını bitirdiğini işaretledin."),
             ("bu_donem", "Büyük işi böl", "Büyük bir ödevi ya da projeyi küçük parçalara bölüp her parçaya tarih ver.", "proje", "2-4 hafta", "Projeyi parçalara bölerek zamanında bitirdin."),
             ("uzun_vadede", "Sınav dönemi planı", "Bir sonraki sınav dönemi için geriye doğru çalışma takvimi hazırla.", "proje", "1 dönem", "Sınav dönemini takvimine uyarak geçirdin."),
-            ("uzun_vadede", "Dikkat dağıtıcıları azalt", "Çalışırken telefonu başka odaya koy ya da odak uygulaması kullan; etkisini ölç.", "aliskanlik", "1-2 ay", "Odaklı çalışma sürenin arttığını gördün."),
+            ("uzun_vadede", "Dikkat dağıtıcıları azalt", "Çalışırken telefonu başka odaya koy ya da odak uygulaması kullan; etkisini ölç.", "aliskanlik", "1-2 ay", "Başlangıçtaki ve birkaç hafta sonraki odaklı çalışma sürelerini yazıp karşılaştırdın."),
         ],
         "guclu": [
-            ("simdi", "Ek bir hedef ekle", "Zaman yönetimi gücünü kullanarak programına {bolum} ile ilgili ek bir çalışma (kurs, okuma) ekle.", "proje", "30 dk", "Ek çalışmayı haftalık programına yerleştirdin."),
+            ("simdi", "Ek bir hedef ekle", "Zaman yönetimi gücünü kullanarak planına {bolum} ile ilgili ek bir çalışma (kurs, okuma) ekle.", "proje", "30 dk", "Ek çalışmayı planına yerleştirdin ve ilk oturumunu yaptın."),
             ("bu_donem", "Ekibin zaman yöneticisi ol", "Bir grup projesinde iş takvimini sen hazırla ve takip et.", "deneyim", "1 ay", "Proje senin takviminle zamanında bitti."),
         ],
     },
@@ -311,6 +315,7 @@ ICERIK = {
             ("bu_donem", "Müzakere üzerine okuma", "Müzakere ve uzlaşma üzerine kısa bir kaynak oku (ör. \"Evet'e Ulaşmak\" – Fisher & Ury).", "okuma", "3-4 hafta", "3 uygulanabilir fikir çıkardın."),
             ("uzun_vadede", "Münazara ya da model BM", "Münazara kulübü ya da Model Birleşmiş Milletler gibi farklı görüşleri yönetmeyi gerektiren bir etkinliğe katıl.", "deneyim", "1 dönem", "En az bir etkinlikte aktif rol aldın."),
             ("uzun_vadede", "Arabuluculuk pratiği", "Arkadaşların arasındaki küçük bir anlaşmazlıkta tarafsız dinleyici ol.", "deneyim", "ihtiyaç halinde", "Bir anlaşmazlığın sakinleşmesine katkı sağladın."),
+            ("bu_donem", "Bir uzlaşma hikâyesi incele", "İki tarafın anlaşmazlığını konuşarak çözdüğü gerçek bir örneği incele (haber, belgesel ya da biyografi; sporda, okulda ya da {bolum} alanında). Kimin ne istediğini ve orta yolun nasıl bulunduğunu yaz.", "okuma", "45 dk", "Tarafların istediklerini, bulunan çözümü ve senin kullanabileceğin bir dersi yazdın."),
         ],
         "guclu": [
             ("simdi", "Ekip kurallarını sen yaz", "Yeni bir grup çalışmasında ekip için anlaşmazlık çözüm yöntemi öner.", "deneyim", "1 hafta", "Ekip önerini benimsedi."),
@@ -322,12 +327,13 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında zaman baskısı altında, tüm bilgiler elinde olmadan karar vermek sık karşılaşılan bir durum. Bu becerin bölümün beklediği düzeyin altında; karar verme yöntemleri ve kontrollü baskı deneyimleriyle güçlenebilir.",
         "guclu_neden": "Baskı altında karar verme, senin öne çıkan becerilerinden biri ve {bolum} için beklenen düzeyle uyumlu. Verdiğin kararları sonradan gözden geçirirsen bu beceriyi daha da işleyebilirsin.",
         "gelisim": [
-            ("simdi", "Hızlı karar kuralı", "Küçük kararlar için kendine süre sınırı koy (ör. 2 dakika) ve o sürede karar ver.", "aliskanlik", "1 hafta", "Bir hafta boyunca küçük kararları süre sınırıyla verdin."),
+            ("simdi", "Hızlı karar kuralı", "Küçük kararlar için kendine süre sınırı koy (ör. 2 dakika) ve o sürede karar ver.", "aliskanlik", "1 hafta", "En az 5 küçük kararı süre sınırıyla verdin ve not ettin."),
             ("simdi", "Karar sorusu", "Zor bir kararda kendine sor: \"Elimdeki bilgiyle en makul seçenek hangisi, yanılırsam ne olur?\"", "yansitma", "10 dk", "Bu soruyu bir kararında kullandın."),
-            ("bu_donem", "Süreli deneme sınavları", "Deneme sınavlarında soru başına süre hedefi koy; takıldığın soruyu bırakıp devam etmeyi öğren.", "deneyim", "1-2 ay", "Süreyi yetiştirme oranın arttı."),
-            ("bu_donem", "Strateji oyunları", "Satranç, zeka oyunları ya da zamanlı bulmacalarla düzenli pratik yap.", "aliskanlik", "1-2 ay", "Haftada en az 2 kez oynadın."),
+            ("bu_donem", "Süreli deneme sınavları", "Deneme sınavlarında soru başına süre hedefi koy; takıldığın soruyu bırakıp devam etmeyi öğren.", "deneyim", "1-2 ay", "En az 3 denemede süreyi yetiştirip yetiştirmediğini ve boş bıraktığın soru sayısını not ettin."),
+            ("bu_donem", "Strateji oyunları", "Satranç, zekâ oyunları ya da süreli bulmacalarla düzenli pratik yap. Süre baskısında nasıl karar verdiğine dikkat et.", "aliskanlik", "1-2 ay", "En az 10 süreli oyun ya da bulmaca oynadın ve süre baskısında nasıl karar verdiğini 2 cümleyle yazdın."),
             ("uzun_vadede", "Kriz senaryosu çalış", "{bolum} alanında yaşanabilecek bir kriz senaryosunu araştır ve \"ben olsam ne yapardım\" diye çözüm yaz.", "proje", "1-2 saat", "Bir senaryo ve çözüm planın var."),
-            ("uzun_vadede", "Karar sonrası değerlendirme", "Verdiğin önemli kararları bir hafta sonra gözden geçir: neyi doğru yaptın, neyi farklı yapardın?", "aliskanlik", "2-3 ay", "En az 5 karar değerlendirmesi yaptın."),
+            ("uzun_vadede", "Karar sonrası değerlendirme", "Verdiğin önemli kararları birkaç gün sonra gözden geçir: Neyi doğru yaptın, neyi farklı yapardın?", "aliskanlik", "2-3 ay", "En az 5 karar değerlendirmesi yaptın."),
+            ("bu_donem", "Zor anda karar veren biri", "Bir pilotun, doktorun, hakemin ya da {bolum} alanında çalışan birinin zor bir anda nasıl karar verdiğini anlatan bir biyografi, röportaj ya da belgesel bul. Kararı hangi bilgiyle, ne kadar sürede verdiğini incele.", "okuma", "45 dk", "Kişinin kararını 3 adımda yazdın ve senin işine yarayacak bir dersi not ettin."),
         ],
         "guclu": [
             ("simdi", "Zaman baskılı rol", "Yarışma, münazara ya da etkinlik organizasyonu gibi hızlı karar gerektiren bir role gir.", "deneyim", "1-2 ay", "Bir baskılı rolde görev aldın."),
@@ -342,8 +348,8 @@ ICERIK = {
             ("simdi", "Meslek etiği kuralları", "{bolum} alanının meslek etiği kurallarını (meslek örgütü yönetmelikleri) araştır ve 3 temel kuralı not et.", "arastirma", "45 dk", "3 etik kuralı kendi cümlelerinle yazdın."),
             ("simdi", "Gri durum düşün", "Doğru ile kolay olanın çatıştığı bir durum hayal et (ör. kopya, hatayı gizleme); ne yapardın ve neden?", "yansitma", "15 dk", "Bir gri durum ve kararını yazdın."),
             ("bu_donem", "Etik vaka tartışması", "Bu alanda yaşanmış bir etik ihlal haberini bul ve bir arkadaşınla ya da öğretmeninle tartış.", "gorusme", "1 saat", "Vakayı tartıştın ve farklı görüşleri not ettin."),
-            ("bu_donem", "Söz–eylem tutarlılığı", "Bir ay boyunca verdiğin küçük sözleri (randevu, ödev, yardım) tutup tutmadığını takip et.", "aliskanlik", "4 hafta", "Sözlerinin büyük çoğunluğunu tuttun."),
-            ("uzun_vadede", "Etik üzerine okuma", "Etik ve sorumluluk üzerine bir kitap oku ve bölümünle ilişkilendir.", "okuma", "1-2 ay", "Kitabı bitirdin ve 3 fikri bölümle ilişkilendirdin."),
+            ("bu_donem", "Söz–eylem tutarlılığı", "Birkaç hafta boyunca verdiğin küçük sözleri (randevu, ödev, yardım) yaz ve tutup tutmadığını işaretle.", "aliskanlik", "2 dk/söz", "En az 10 sözünü listeledin ve kaçını tuttuğunu işaretledin."),
+            ("uzun_vadede", "Dürüstlüğüyle bilinen birinin hikâyesi", "Zor bir durumda doğruyu seçmiş birinin (bir bilim insanı, sporcu, gazeteci ya da {bolum} alanından biri) biyografisini oku ya da hakkındaki bir belgeseli izle. Neyi göze aldığını ve bunun bölümünle bağlantısını yaz.", "okuma", "2-4 saat", "Kişinin karşılaştığı ikilemi, verdiği kararı ve bölümünle bağlantısını yazdın."),
             ("uzun_vadede", "Kendi ilkelerin", "Meslekte asla yapmayacağın 3 şeyi ve her zaman yapacağın 3 şeyi yaz.", "yansitma", "30 dk", "Kişisel ilke listen hazır."),
         ],
         "guclu": [
@@ -356,12 +362,12 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında başarılı olanlar fırsatları kendileri yaratıyor: staj arıyor, proje başlatıyor, soru soruyor. İnisiyatif alma eğilimin bölümün beklediği düzeyin altında; küçük ilk adımları alışkanlık haline getirmek büyük fark yaratır.",
         "guclu_neden": "İnisiyatif alman, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Bu yönünle fırsatları erken fark edebilirsin; enerjini en önemli hedeflerine yöneltmek için öncelik belirlemeyi unutma.",
         "gelisim": [
-            ("simdi", "Bir soru sor", "Bu hafta bir öğretmenine ders dışında, {bolum} hakkında merak ettiğin bir soru sor.", "gorusme", "10 dk", "Soruyu sordun ve cevabı not ettin."),
+            ("simdi", "Bir soru sor", "Bir öğretmenine ders dışında, {bolum} hakkında merak ettiğin bir soru sor.", "gorusme", "10 dk", "Soruyu sordun ve cevabı not ettin."),
             ("simdi", "Gördüğün bir sorunu çöz", "Çevrende küçük bir sorun fark et (sınıf düzeni, grup iletişimi) ve çözmek için bir adım at.", "deneyim", "1 hafta", "Bir sorunu çözmek için harekete geçtin."),
-            ("bu_donem", "İlk başvuru", "Bir etkinliğe, yarışmaya ya da yaz okuluna başvur.", "deneyim", "1 ay", "Bir başvuru yaptın."),
-            ("bu_donem", "\"Hemen başla\" kuralı", "2 dakikadan kısa sürecek işleri ertelemeden hemen yap.", "aliskanlik", "4 hafta", "Ertelediğin küçük işlerin azaldığını gördün."),
+            ("bu_donem", "İlk adımı atan birinin hikâyesi", "Kimse istemeden bir işe girişmiş birinin (bir girişimci, gönüllü, bilim insanı ya da {bolum} alanından biri) biyografisini, röportajını ya da belgeselini incele. İlk adımı nasıl attığını ve hangi engellerle karşılaştığını yaz.", "okuma", "45 dk-1 saat", "Kişinin attığı ilk adımı, karşılaştığı bir engeli ve senin deneyebileceğin bir şeyi yazdın."),
+            ("simdi", "Seni ne durduruyor?", "Yapmak isteyip başlamadığın 3 şeyi yaz. Her biri için seni durduran şeyi (çekinmek, bilgi eksiği, birinin izin vermesini beklemek) ve atabileceğin en küçük ilk adımı yaz.", "yansitma", "20 dk", "3 iş, her birini durduran neden ve en küçük ilk adım yazılı; en az birinin ilk adımını attın."),
             ("uzun_vadede", "Kendi projeni başlat", "Kimse istemeden, {bolum} ile ilgili kendi projeni başlat (blog, araştırma, kulüp etkinliği).", "proje", "2-3 ay", "Projen hayata geçti."),
-            ("uzun_vadede", "Fırsat listesi", "Her ay bölümle ilgili yeni bir fırsat (kurs, yarışma, etkinlik) bul ve en az birini değerlendir.", "aliskanlik", "3 ay", "3 ay boyunca her ay en az bir fırsat değerlendirdin."),
+            ("uzun_vadede", "Fırsat listesi", "{bolum} ile ilgili fırsatları (kurs, yarışma, etkinlik) bir listede topla ve aralarından seçip değerlendir.", "aliskanlik", "15 dk/fırsat", "Listende en az 5 fırsat var ve en az 2'sine başvurdun ya da katıldın."),
         ],
         "guclu": [
             ("simdi", "Büyük bir fırsata başvur", "{bolum} ile ilgili kapsamlı bir fırsata başvur (yaz okulu, bilim olimpiyatı, TÜBİTAK projesi, Teknofest).", "deneyim", "1-2 hafta", "Başvurunu tamamladın."),
@@ -373,12 +379,13 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında gelişim büyük ölçüde geri bildirimle oluyor: hocalar, yöneticiler ve meslektaşlar işini sürekli değerlendiriyor. Eleştiriye açıklığın bölümün beklediği düzeyin altında; geri bildirimi kişisel algılamadan bir gelişim aracı olarak kullanmayı öğrenmek ilerlemeni hızlandırır.",
         "guclu_neden": "Geri bildirime açıklığın, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Geri bildirimi kendin isteyerek bu yönünü daha çok kullanabilirsin.",
         "gelisim": [
-            ("simdi", "Teşekkür et ve dinle", "Bu hafta aldığın bir eleştiriye cevap vermeden önce \"Teşekkürler, biraz düşüneyim\" de.", "aliskanlik", "1 hafta", "En az bir eleştiriye savunmaya geçmeden yanıt verdin."),
+            ("simdi", "Teşekkür et ve dinle", "Bir eleştiri aldığında hemen cevap vermek yerine \"Teşekkürler, biraz düşüneyim\" de. Sonra eleştiride haklı olabilecek bir noktayı yaz.", "aliskanlik", "5 dk", "En az bir eleştiriye savunmaya geçmeden yanıt verdin ve haklı olabilecek bir noktayı not ettin."),
             ("simdi", "Hata günlüğü", "Bir sınavda yaptığın hataları türlerine göre ayır (bilgi eksiği, dikkat, süre).", "yansitma", "30 dk", "Hata türlerini ve en sık olanını belirledin."),
             ("bu_donem", "Geri bildirim iste", "Bir öğretmeninden bir ödevin ya da sunumun için özel geri bildirim iste: \"Neyi daha iyi yapabilirim?\"", "gorusme", "15 dk", "Geri bildirim aldın ve bir maddeyi uyguladın."),
             ("bu_donem", "Yeniden yap", "Geri bildirim aldığın bir çalışmayı düzeltip yeniden hazırla.", "proje", "2-3 hafta", "Çalışmanın geliştirilmiş hâlini tamamladın."),
-            ("uzun_vadede", "Düzenli değerlendirme", "Ayda bir, güvendiğin birinden genel bir geri bildirim iste.", "aliskanlik", "3 ay", "3 ay boyunca her ay geri bildirim aldın."),
-            ("uzun_vadede", "Gelişim zihniyeti", "Gelişim zihniyeti üzerine bir kaynak oku (ör. Carol Dweck – \"Mindset\").", "okuma", "1 ay", "Okuduğundan 3 fikri hayatına uyguladın."),
+            ("bu_donem", "Bir otobiyografi oku", "Hayatında başarısızlık, ret ya da sert eleştiriyle karşılaşmış birinin otobiyografisini ya da biyografisini oku (okul ya da halk kütüphanesinden). Eleştiriye ilk tepkisini ve sonra ondan ne öğrendiğini not et.", "okuma", "4-6 saat", "Kitabı bitirdin; kişinin karşılaştığı bir eleştiriyi, ilk tepkisini ve sonra çıkardığı dersi yazdın."),
+            ("uzun_vadede", "Farklı hayatlar, farklı yenilgiler", "Farklı alanlardan 3 kişinin (ör. bir bilim insanı, bir sporcu, bir sanatçı) hayatında yaşadığı bir başarısızlığı araştır. Her biri için ne olduğunu, kimin eleştirdiğini ve nasıl toparlandığını yaz. Sonra kendi hayatından benzer bir anı ekle.", "yansitma", "1-2 saat", "3 kişinin yenilgi ve toparlanma hikâyesi ile kendi örneğin yazılı."),
+            ("bu_donem", "Meslekteki zorlukları incele", "{bolum} alanında tanınmış 2 kişinin kariyerinde yaşadığı ret, hata ya da eleştiri anlarını araştır (röportaj, belgesel, biyografi). İkisinin nasıl toparlandığını karşılaştır.", "arastirma", "1 saat", "İki kişinin yaşadığı zorluğu, aldığı eleştiriyi ve nasıl toparlandığını karşılaştırmalı olarak yazdın."),
         ],
         "guclu": [
             ("simdi", "Geri bildirim döngüsü kur", "Her önemli çalışmandan sonra bir kişiden kısa geri bildirim iste.", "aliskanlik", "1 ay", "En az 3 çalışmanda geri bildirim aldın."),
@@ -391,11 +398,12 @@ ICERIK = {
         "guclu_neden": "Stratejik ve ticari farkındalığın, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Bu bakış, ileride yönetim, proje liderliği ya da girişim yollarını değerlendirirken işine yarayabilir.",
         "gelisim": [
             ("simdi", "Bir şirketi tanı", "{bolum} alanında faaliyet gösteren bir şirketin ne sattığını, kime sattığını ve rakiplerini araştır.", "arastirma", "45 dk", "Şirketin iş modelini 3 cümleyle anlatabiliyorsun."),
-            ("simdi", "Ekonomi haberi", "Haftada bir ekonomi/iş dünyası haberi oku ve bölümünle ilişkisini düşün.", "aliskanlik", "1 hafta", "Bir haberi bölümünle ilişkilendirdin."),
+            ("simdi", "Ekonomi haberi", "Güvenilir bir haber kaynağından bir ekonomi ya da iş dünyası haberi seç. Bölümünle ilişkisini 2-3 cümleyle yaz.", "aliskanlik", "15 dk/haber", "En az 3 haberi bölümünle ilişkilendirip not ettin."),
             ("bu_donem", "Mini iş planı", "Küçük bir iş fikri için basit bir plan hazırla: müşteri, maliyet, fiyat, rakip.", "proje", "2-4 hafta", "Tek sayfalık bir iş planın var."),
             ("bu_donem", "Strateji oyunu ya da simülasyon", "İşletme simülasyonu, strateji oyunu ya da girişimcilik yarışmasına katıl.", "deneyim", "1-2 ay", "Bir simülasyon ya da yarışmayı tamamladın."),
             ("uzun_vadede", "İş dünyası kursu", "Temel işletme/yönetim üzerine kısa bir çevrim içi kurs al (ör. BTK Akademi).", "kurs", "1-2 ay", "Kursu tamamladın."),
-            ("uzun_vadede", "Yöneticiyle görüş", "Bu alanda yönetici olan biriyle konuş: kararlarını nasıl veriyor, nelere dikkat ediyor?", "gorusme", "30 dk", "Görüşmeden 3 strateji fikri çıkardın."),
+            ("uzun_vadede", "Yöneticiyle görüş", "Bu alanda yönetici olan biriyle (aile çevrenden ya da öğretmeninin aracılığıyla) konuş: Kararlarını nasıl veriyor, nelere dikkat ediyor?", "gorusme", "30 dk", "Görüşmeden 3 strateji fikri çıkardın."),
+            ("bu_donem", "Bir kararı strateji gözüyle yaz", "Okulda, ailende ya da bir kulüpte alınmış bir kararı seç (ör. bir etkinliğin bütçesi, bir kermesin fiyatları). Amacı, seçenekleri, maliyeti ve riskleri yaz. Sen olsan ne yapardın, gerekçesiyle ekle.", "yansitma", "30 dk", "Kararın amacı, en az 2 seçenek, maliyet ve riskler ile kendi tercihin gerekçesiyle yazılı."),
         ],
         "guclu": [
             ("simdi", "Sektör analizi", "{bolum} alanının bulunduğu sektörün geleceğini (fırsatlar, riskler) araştır.", "arastirma", "1 saat", "Kısa bir sektör analizi yazdın."),
@@ -410,9 +418,9 @@ ICERIK = {
         "guclu_neden": "Sayısal ve sistem odaklı düşünme eğilimin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Analitik derslerde bu eğilimini kullanabilir, veri ve programlamaya ilgini de keşfedebilirsin.",
         "gelisim": [
             ("simdi", "Eksik konu tespiti", "Son matematik sınavlarına bakıp en çok zorlandığın 3 konuyu belirle.", "yansitma", "30 dk", "3 öncelikli konun belli."),
-            ("simdi", "Günlük 20 dakika", "Her gün 20 dakika matematik problemi çöz; kolaydan zora ilerle.", "aliskanlik", "1 hafta", "Bir hafta boyunca her gün çözdün."),
+            ("simdi", "Günlük 20 dakika", "Her gün 20 dakika matematik problemi çöz; kolaydan zora ilerle.", "aliskanlik", "1 hafta", "En az 7 gün çözdün ve her gün çözdüğün soru sayısını yazdın."),
             ("bu_donem", "Konu kapatma", "Belirlediğin 3 konuyu sırayla çalış (ör. Khan Academy Türkçe, okul kaynakları) ve her biri için 20 soruluk test çöz.", "kurs", "1-2 ay", "3 konunun testlerinde başarı oranın arttı."),
-            ("bu_donem", "Veriyle küçük proje", "Kendi hayatından bir veri topla (uyku, çalışma süresi) ve tablo/grafikle yorumla.", "proje", "2-3 hafta", "Veri tablon ve grafiğin hazır."),
+            ("bu_donem", "Veriyle küçük proje", "Kendi hayatından bir veri topla (uyku, çalışma süresi) ya da açık bir veri bul (TÜİK, YÖK Atlas). Veriyi tabloya aktar, bir grafik çiz ve grafiğin söylediğini 3 cümleyle yaz.", "proje", "2-3 saat", "Veri tablon, grafiğin ve 3 cümlelik yorumun hazır."),
             ("uzun_vadede", "Bölümün matematiğini tanı", "{bolum} programında hangi sayısal derslerin olduğunu araştır ve bir tanesinin giriş konusunu incele.", "arastirma", "1-2 saat", "Bölümün sayısal derslerini ve birinin konusunu biliyorsun."),
             ("uzun_vadede", "Programlamaya giriş", "Sayısal düşünmeyi destekleyecek temel bir programlama kursuna başla (ör. Python, BTK Akademi).", "kurs", "2-3 ay", "Kursun ilk modüllerini tamamladın."),
         ],
@@ -426,12 +434,13 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında yoğun okuma, yazılı anlatım ve argüman kurma önemli bir yer tutuyor. Sözel eğilimin bölümün beklentisinin altında; düzenli okuma ve yazma denemeleri, bu tür çalışmaların sana ne kadar uyduğunu görmeni sağlar.",
         "guclu_neden": "Sözel düşünme ve argüman kurma eğilimin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Rapor yazarken, sunum yaparken ve bir görüşü savunurken bu eğilimini kullanabilirsin.",
         "gelisim": [
-            ("simdi", "Günlük 15 sayfa", "Her gün 15 sayfa kitap oku; ilgini çeken bir türden başla.", "aliskanlik", "1 hafta", "Bir hafta boyunca her gün okudun."),
+            ("simdi", "Günlük 15 sayfa", "Her gün 15 sayfa kitap oku; ilgini çeken bir türden başla.", "aliskanlik", "1 hafta", "En az 7 gün okudun ve her gün okuduğun sayfa sayısını yazdın."),
             ("simdi", "Tek paragraf görüş", "Bir güncel konu hakkında tek paragraflık bir görüş yazısı yaz: iddia, gerekçe, örnek.", "proje", "30 dk", "İddia-gerekçe-örnek yapısında bir paragrafın var."),
-            ("bu_donem", "Haftalık yazı", "Her hafta bir konuda 300 kelimelik yazı yaz ve bir öğretmenden geri bildirim al.", "aliskanlik", "4-6 hafta", "En az 4 yazı yazdın."),
+            ("bu_donem", "Düzenli yazı", "Farklı konularda yaklaşık 300 kelimelik yazılar yaz. Yazılarından en az birine bir öğretmenden geri bildirim al ve düzelt.", "aliskanlik", "45 dk/yazı", "En az 4 yazı yazdın ve en az birini geri bildirimle düzelttin."),
             ("bu_donem", "Münazara ya da kitap kulübü", "Okulun münazara ya da kitap kulübüne katıl.", "deneyim", "1-3 ay", "En az 2 oturuma aktif katıldın."),
             ("uzun_vadede", "Alan metni oku", "{bolum} alanına ait bir giriş kitabı ya da makale oku ve özetini çıkar.", "okuma", "1-2 ay", "Bir alan metninin özetini yazdın."),
-            ("uzun_vadede", "Kelime dağarcığı", "Okurken bilmediğin kelimeleri bir defterde topla; haftada bir tekrar et.", "aliskanlik", "3 ay", "En az 50 yeni kelime öğrendin."),
+            ("uzun_vadede", "Kelime dağarcığı", "Okurken bilmediğin kelimeleri bir defterde topla ve düzenli olarak tekrar et.", "aliskanlik", "3 ay", "Defterinde en az 50 kelime ve her biri için bir örnek cümle var."),
+            ("bu_donem", "İyi yazan birinin yolu", "Bir yazarın ya da {bolum} alanında iyi yazan/konuşan birinin otobiyografisini, röportajını ya da belgeselini incele. Yazmayı ya da konuşmayı nasıl geliştirdiğini öğren.", "okuma", "45 dk-1 saat", "Bu kişinin kullandığı 2 yöntemi yazdın ve birini kendi yazında denedin."),
         ],
         "guclu": [
             ("simdi", "Yazı yarışması", "Bir deneme/kompozisyon yarışmasını araştır ve katılmaya karar ver.", "deneyim", "1-2 hafta", "Bir yarışma seçtin."),
@@ -443,11 +452,11 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanı insan davranışını anlamayı ve insanlarla doğrudan çalışmayı gerektiriyor. İnsan odaklı eğilimin bölümün beklentisinin altında; insanları gözlemleme, dinleme ve onlara destek olma deneyimleri bu alana ilgini denemeni ve sana uyup uymadığını görmeni sağlar.",
         "guclu_neden": "İnsan odaklı ilgin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Danışmanlık, eğitim ya da insan kaynakları gibi alt alanları keşfederken bu ilgin sana yol gösterebilir.",
         "gelisim": [
-            ("simdi", "İnsan gözlemi", "Bu hafta bir ortamda (sınıf, kafe) insanların davranışlarını gözlemle ve 3 ilginç örüntü not et.", "deneyim", "1 hafta", "3 gözlem notun var."),
+            ("simdi", "İnsan gözlemi", "Okul, kütüphane ya da aile ortamı gibi tanıdık bir yerde insanların nasıl iletişim kurduğunu gözlemle. Kimseyi rahatsız etme, fotoğraf çekme ve isim yazma; yalnızca davranışları not et.", "deneyim", "15 dk/gözlem", "3 ilginç örüntüyü örnekleriyle not ettin."),
             ("simdi", "Psikolojiye giriş", "Psikoloji ya da insan davranışı üzerine kısa bir video/makale serisi izle.", "okuma", "30-45 dk", "Öğrendiğin bir kavramı birine anlattın."),
             ("bu_donem", "Akran desteği", "Bir arkadaşına ders konusunda düzenli yardım et.", "deneyim", "1 ay", "En az 4 kez destek verdin."),
             ("bu_donem", "İnsanlarla çalışan biriyle görüş", "Öğretmen, psikolog ya da sosyal hizmet uzmanı biriyle işinin insan yönünü konuş.", "gorusme", "30 dk", "Görüşmeden 3 not çıkardın."),
-            ("uzun_vadede", "Gönüllü eğitim", "TEGV, TOG gibi kurumlarda çocuklara ya da gençlere yönelik bir etkinlikte gönüllü ol.", "deneyim", "1-3 ay", "En az 2 etkinlikte gönüllü oldun."),
+            ("uzun_vadede", "Gönüllü eğitim", "Ailenin bilgisiyle okulun, belediyenin ya da yerel bir derneğin çocuklara ya da gençlere yönelik bir etkinliğinde gönüllü ol (ör. küçüklere okuma saati, oyun etkinliği).", "deneyim", "1-3 ay", "En az 2 etkinlikte gönüllü oldun ve her biri hakkında kısa bir not yazdın."),
             ("uzun_vadede", "Uyum değerlendirmesi", "Deneyimlerinden sonra insanlarla yoğun çalışmanın sana enerji mi verdiğini yoksa seni yorduğunu mu değerlendir.", "yansitma", "30 dk", "Değerlendirmeni yazdın."),
         ],
         "guclu": [
@@ -464,7 +473,7 @@ ICERIK = {
             ("simdi", "Uzamsal bulmacalar", "3D bulmaca, origami ya da uzamsal zeka (şekilleri zihinde canlandırma) oyunlarıyla pratik yap.", "aliskanlik", "1 hafta", "En az 3 bulmaca tamamladın."),
             ("bu_donem", "Dijital tasarım aracı", "Ücretsiz bir tasarım aracı öğren (Canva, Figma, Tinkercad) ve basit bir tasarım yap.", "kurs", "2-4 hafta", "Araçla bir tasarım tamamladın."),
             ("bu_donem", "Maket ya da model", "{bolum} ile ilgili bir yapının ya da nesnenin basit bir maketini yap.", "proje", "1 ay", "Maketin hazır."),
-            ("uzun_vadede", "Tasarım atölyesi", "Halk eğitim merkezi ya da üniversite yaz okulunda bir tasarım/çizim atölyesine katıl.", "kurs", "1-2 ay", "Atölyeyi tamamladın."),
+            ("uzun_vadede", "Bir tasarımcının süreci", "Bir mimarın, tasarımcının ya da {bolum} alanında çalışan birinin çalışma sürecini anlatan bir belgesel ya da röportaj izle. Bir fikri eskizden ürüne nasıl taşıdığını adım adım yaz ve bir adımı kendi çalışmanda dene.", "okuma", "1 saat", "Sürecin adımlarını yazdın ve birini kendi tasarımında denedin."),
             ("uzun_vadede", "Portfolyo başlangıcı", "Yaptığın tasarım çalışmalarını tek bir dosyada topla.", "proje", "3 ay", "En az 5 çalışmalık bir portfolyon var."),
         ],
         "guclu": [
@@ -477,12 +486,12 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında laboratuvar, deney ve canlılar/doğa üzerine çalışmak eğitimin önemli bir parçası. Bu eğilimin bölümün beklentisinin altında; uygulamalı deneyimler bu alanın sana ne kadar uygun olduğunu netleştirir.",
         "guclu_neden": "Doğa ve laboratuvar ilgin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Araştırma projelerinde ve uygulamalı derslerde bu ilgini değerlendirebilirsin.",
         "gelisim": [
-            ("simdi", "Belgesel izle", "Doğa, biyoloji ya da kimya üzerine bir belgesel izle ve seni şaşırtan 3 bilgiyi not et.", "okuma", "1 saat", "3 bilgi not ettin."),
-            ("simdi", "Evde basit deney", "Güvenli bir ev deneyi yap (ör. bitki büyütme, pH deneyi) ve gözlemlerini kaydet.", "deneyim", "1 hafta", "Deney günlüğün var."),
+            ("simdi", "Bir bilim insanının hikâyesi", "Doğa, biyoloji ya da kimya alanında çalışmış bir bilim insanının hayatını anlatan bir belgesel izle ya da biyografi oku. Seni şaşırtan 3 bilgiyi ve onun nasıl çalıştığını not et.", "okuma", "1 saat", "Seni şaşırtan 3 bilgiyi ve bu kişinin çalışma biçimini yazdın."),
+            ("simdi", "Evde basit deney", "Ailenin gözetiminde, mutfak malzemeleriyle güvenli bir ev deneyi yap (ör. bitki büyütme, kırmızı lahana suyuyla pH deneyi) ve gözlemlerini kaydet.", "deneyim", "1 hafta", "Deney günlüğün var."),
             ("bu_donem", "Okul laboratuvarı", "Fen öğretmeninden laboratuvar çalışmalarına daha fazla katılma ya da asistanlık fırsatı iste.", "deneyim", "1-2 ay", "En az 2 laboratuvar çalışmasına katıldın."),
             ("bu_donem", "Saha gezisi", "Bir botanik bahçesi, müze, araştırma merkezi ya da doğa gezisine katıl.", "deneyim", "1 gün", "Geziye katıldın ve notlarını yazdın."),
             ("uzun_vadede", "Araştırma projesi", "Fen alanında küçük bir araştırma projesi yap (ör. TÜBİTAK 2204 lise projeleri).", "proje", "3-6 ay", "Proje raporun hazır."),
-            ("uzun_vadede", "Yaz bilim okulu", "Üniversitelerin lise öğrencilerine yönelik yaz bilim okullarını araştır ve birine başvur.", "deneyim", "1-2 hafta", "Başvurunu yaptın."),
+            ("uzun_vadede", "Yaz bilim okulu", "Üniversitelerin lise öğrencilerine yönelik ücretsiz ya da burslu yaz bilim okullarını araştır ve ailenle birlikte birine başvur.", "deneyim", "1-2 hafta", "Başvurunu yaptın."),
         ],
         "guclu": [
             ("simdi", "Araştırma konusu seç", "{bolum} ile ilgili merak ettiğin bir doğa/laboratuvar sorusunu seç.", "yansitma", "30 dk", "Bir araştırma sorun var."),
@@ -498,7 +507,7 @@ ICERIK = {
             ("simdi", "Sahayı gör", "{bolum} alanında sahada çalışan birinin gününü anlatan bir video izle.", "arastirma", "30 dk", "Saha işinin fiziksel yönlerini not ettin."),
             ("bu_donem", "Bir spor dalı", "Bir spor dalına ya da okul takımına katıl.", "deneyim", "1-3 ay", "Düzenli antrenmanlara katıldın."),
             ("bu_donem", "Uygulamalı gönüllülük", "Fiziksel çaba gerektiren bir gönüllülük etkinliğine katıl (ağaç dikme, çevre temizliği).", "deneyim", "1 gün", "Etkinliğe katıldın."),
-            ("uzun_vadede", "Kondisyon hedefi", "3 ay sonra ulaşmak istediğin bir kondisyon hedefi koy (ör. 5 km yürüyüş/koşu).", "aliskanlik", "3 ay", "Hedefine ulaştın."),
+            ("uzun_vadede", "Kondisyon hedefi", "Kendine ulaşabileceğin bir kondisyon hedefi koy (ör. 5 km yürüyüş/koşu) ve küçük adımlarla ilerle.", "aliskanlik", "3 ay", "Hedefine ulaştın ve ulaştığın tarihi not ettin."),
             ("uzun_vadede", "Uyum değerlendirmesi", "Bölümün fiziksel/saha yönünün sana uygun olup olmadığını ve masa başı alt alanları değerlendir.", "yansitma", "30 dk", "Değerlendirmeni yazdın."),
         ],
         "guclu": [
@@ -511,12 +520,13 @@ ICERIK = {
         "gelisim_neden": "{bolum} alanında prosedürlere uygun, adım adım ve sistematik çalışmak önemli bir beklenti (protokoller, standartlar, sıralı işlemler). Bu tarza eğilimin bölümün beklentisinin altında; kontrol listeleri ve sıralı çalışma denemeleri, bu tarzın sana uyup uymadığını görmeni sağlar.",
         "guclu_neden": "Sistematik ve adım adım çalışma eğilimin, senin öne çıkan yönlerinden biri ve {bolum} için beklenen düzeyle uyumlu. Dikkatli ve düzenli iş gereken durumlarda bu eğilimini kullanabilirsin.",
         "gelisim": [
-            ("simdi", "Kontrol listesi", "Bu hafta bir ödevi teslim etmeden önce kontrol listesi hazırla ve madde madde işaretle.", "aliskanlik", "1 hafta", "Kontrol listesiyle bir iş teslim ettin."),
-            ("simdi", "Adım adım not", "Bir konuyu çalışırken adımları numaralandırarak not al.", "aliskanlik", "1 hafta", "Numaralı adımlarla bir konu notun var."),
+            ("simdi", "Kontrol listesi", "Bir ödevi teslim etmeden önce kontrol listesi hazırla ve madde madde işaretle.", "aliskanlik", "20 dk", "Kontrol listesiyle bir iş teslim ettin."),
+            ("simdi", "Hatanın kaynağını bul", "Son birkaç ödev ya da sınavında adım atlamaktan ya da dikkatsizlikten kaynaklanan hataları bul. Her birinin hangi adımda olduğunu ve bir dahaki sefere hangi kontrolü ekleyeceğini yaz.", "yansitma", "30 dk", "En az 3 hata, hangi adımda olduğu ve ekleyeceğin kontrol yazılı."),
             ("bu_donem", "Prosedür takibi", "Bir tarif, montaj talimatı ya da deney protokolünü adım atlamadan uygula.", "deneyim", "1-2 hafta", "Bir protokolü eksiksiz uyguladın."),
-            ("bu_donem", "Sabit çalışma şablonu", "Her ders için aynı sırayı izle: konu özeti → örnek → soru çözümü → tekrar.", "aliskanlik", "4 hafta", "4 hafta boyunca şablonu uyguladın."),
+            ("bu_donem", "Sabit çalışma şablonu", "Her ders için aynı sırayı izle: konu özeti → örnek → soru çözümü → tekrar.", "aliskanlik", "4 hafta", "En az 8 çalışma oturumunda şablonu uyguladın ve işaretledin."),
             ("uzun_vadede", "Standartları tanı", "{bolum} alanında kullanılan standartları ve prosedürleri araştır.", "arastirma", "1-2 saat", "En az 2 standart/prosedürü tanıdın."),
             ("uzun_vadede", "Sistematik proje", "Aşamaları baştan planlanmış bir proje yap ve her aşamayı belgeleyerek ilerle.", "proje", "2-3 ay", "Aşamaları belgelenmiş bir projen var."),
+            ("bu_donem", "Düzenle çalışan birini tanı", "{bolum} alanında ya da prosedürlerle çalışan bir meslekte (eczacı, laborant, muhasebeci gibi) çalışan birinin iş gününü anlatan bir röportaj ya da belgesel izle; ya da aile çevrenden böyle biriyle konuş. Kontrol listelerini neden ve nasıl kullandığını öğren.", "gorusme", "30-45 dk", "Bu kişinin kullandığı 2 düzen yöntemini yazdın ve birini kendi çalışmana uyarladın."),
         ],
         "guclu": [
             ("simdi", "Süreç tasarla", "Grup projelerinde iş akışını adım adım tasarlayan kişi ol.", "deneyim", "2-4 hafta", "Ekibin senin iş akışınla çalıştı."),
@@ -534,6 +544,7 @@ ICERIK = {
             ("bu_donem", "Şemalarla öğren", "Bir ünitenin tamamını tek bir şema/akış diyagramında özetle.", "proje", "2-3 hafta", "Bir ünite şeman hazır."),
             ("uzun_vadede", "Sistem düşüncesi", "Sistem düşüncesi üzerine bir kaynak oku ve {bolum} ile ilgili bir sistemi çiz.", "okuma", "1-2 ay", "Bir sistem diyagramın var."),
             ("uzun_vadede", "Büyük soru projesi", "Bölümünle ilgili büyük bir soruya (ör. \"20 yıl sonra bu meslek nasıl olacak?\") yanıt arayan kısa bir yazı hazırla.", "proje", "1 ay", "Yazını tamamladın."),
+            ("bu_donem", "Büyük resmi gören birini incele", "Farklı alanlardaki bilgileri birleştirerek yeni bir şey yapmış birinin (bir bilim insanı, girişimci ya da {bolum} alanından biri) hikâyesini oku ya da izle. Farklı bilgileri nasıl bir araya getirdiğini yaz.", "okuma", "45 dk-1 saat", "Bu kişinin birleştirdiği alanları ve bundan çıkan sonucu bir şemayla ya da 3 cümleyle anlattın."),
         ],
         "guclu": [
             ("simdi", "Strateji rolü", "Grup projelerinde genel çerçeveyi kuran ve hedefi netleştiren kişi ol.", "deneyim", "2-4 hafta", "Projenin çerçevesini sen çizdin."),
@@ -549,8 +560,9 @@ ICERIK = {
             ("simdi", "Fırsat avı", "Çevrende çözülmemiş 3 problem bul ve her biri için bir çözüm fikri yaz.", "yansitma", "30 dk", "3 problem ve çözüm fikrin var."),
             ("bu_donem", "Küçük satış deneyimi", "Okul kermesinde ya da bir etkinlikte satış/tanıtım görevi üstlen.", "deneyim", "1 gün", "Satış/tanıtım görevini tamamladın."),
             ("bu_donem", "Girişimcilik kulübü", "Girişimcilik kulübüne ya da genç girişimci programlarına katıl.", "deneyim", "1-3 ay", "En az 2 etkinliğe katıldın."),
-            ("uzun_vadede", "Mini girişim", "Küçük bir girişim dene (el yapımı ürün, ders verme, dijital içerik) ve gelir-gider tablosu tut.", "proje", "2-3 ay", "İlk satışını yaptın ve tablon hazır."),
+            ("uzun_vadede", "Mini girişim", "Ailenin onayıyla ve güvenli çevrende küçük bir girişim dene (el yapımı ürün, küçüklere ders verme, dijital içerik) ve gelir-gider tablosu tut.", "proje", "2-3 ay", "İlk satışını yaptın ve tablon hazır."),
             ("uzun_vadede", "İkna becerisi", "İkna ve sunum teknikleri üzerine bir kaynak oku ya da kurs al.", "kurs", "1-2 ay", "Öğrendiğin 3 tekniği bir sunumda kullandın."),
+            ("bu_donem", "Bir girişimcinin hikâyesi", "Türkiye'den ya da dünyadan bir girişimcinin biyografisini, röportajını ya da belgeselini incele. İlk müşterisini nasıl bulduğunu ve hangi başarısızlıkları yaşadığını yaz.", "okuma", "45 dk-1 saat", "Girişimcinin ilk müşteriyi bulma yolunu ve yaşadığı bir başarısızlıktan çıkardığı dersi yazdın."),
         ],
         "guclu": [
             ("simdi", "Bölümde fırsat", "{bolum} alanında girişim fırsatlarını (yeni şirketler, çözülmemiş sorunlar) araştır.", "arastirma", "1 saat", "En az 2 fırsat alanı belirledin."),
@@ -607,11 +619,11 @@ FAZLA_NEDEN = {
 _EK_GELISIM = {
     "P8": [
         ("simdi", "Başarı kanıtların", "Son bir yılda zorlanıp yine de başardığın 5 şeyi yaz ve her birinde senin hangi davranışının işe yaradığını belirt. Kendine güven, geçmiş başarılarını fark ettikçe artar.", "yansitma", "30 dk", "5 başarı ve her birinde işe yarayan davranışın yazılı."),
-        ("bu_donem", "Gözlemle, sonra dene", "Liderliğini beğendiğin birini (öğretmen, kulüp başkanı, takım kaptanı) bir hafta gözlemle; yaptığı bir davranışı seç ve ertesi hafta kendin dene.", "deneyim", "2 hafta", "Gözlem notun ve denediğin davranışın sonucu yazılı."),
+        ("bu_donem", "Gözlemle, sonra dene", "Liderliğini beğendiğin birini (öğretmen, kulüp başkanı, takım kaptanı) bir süre gözlemle. Yaptığı bir davranışı seç ve bir grup çalışmasında kendin dene.", "deneyim", "2 hafta", "Gözlem notun ve denediğin davranışın sonucu yazılı."),
     ],
     "P7": [
         ("simdi", "Zorlandığında kendine ne diyorsun?", "Son zorlandığın bir anı hatırla ve o an kafandan geçen cümleyi yaz. Sonra aynı durumda bir arkadaşına söyleyeceğin cesaretlendirici cümleyi yanına yaz.", "yansitma", "15 dk", "İki cümle de yazılı ve ikincisini bir sonraki zorlukta kullanmaya karar verdin."),
-        ("bu_donem", "Basamaklı meydan okuma", "Seni biraz zorlayan bir şeyi kolaydan zora 4 basamağa böl (ör. sınıfta soru sormak → kısa yorum yapmak → 1 dakikalık sunum → 5 dakikalık sunum) ve her hafta bir basamak çık.", "aliskanlik", "4 hafta", "4 basamağı yazdın ve en az 3'ünü tamamladın."),
+        ("bu_donem", "Basamaklı meydan okuma", "Seni biraz zorlayan bir şeyi kolaydan zora 4 basamağa böl (ör. sınıfta soru sormak → kısa yorum yapmak → 1 dakikalık sunum → 5 dakikalık sunum). Bir basamakta rahatlayınca bir sonrakine geç.", "aliskanlik", "birkaç hafta", "4 basamağı yazdın, en az 3'ünü tamamladın ve her birinin tarihini not ettin."),
     ],
     "I5": [
         ("bu_donem", "Okula bir öneri sun", "Okulda iyileştirilebilecek bir şey seç (kütüphane saatleri, kulüp etkinliği, geri dönüşüm), kısa bir öneri hazırla ve ilgili öğretmene ya da okul yönetimine sun.", "deneyim", "2-3 hafta", "Önerini yazılı olarak hazırladın ve ilgili kişiye ilettin."),
@@ -620,10 +632,10 @@ _EK_GELISIM = {
         ("simdi", "Sorgulayan okur", "Hedef bölümünle ilgili merak ettiğin bir konu seç, hakkında 5 \"neden?\" ya da \"nasıl?\" sorusu yaz ve cevapları en az iki farklı kaynaktan ara. Kaynakların birbirini tutmadığı noktayı not et.", "arastirma", "1 saat", "5 soru, cevapları ve kaynakların farklı şeyler söylediği en az 1 nokta yazılı."),
     ],
     "I1": [
-        ("simdi", "25 dakikalık odak bloğu", "Ders çalışırken 25 dakika boyunca tek bir işe odaklan, telefonu başka odaya koy, sonra 5 dakika ara ver. Her gün en az 2 odak bloğu yap ve kaç blok yaptığını işaretle.", "aliskanlik", "2 hafta", "2 hafta boyunca günlük blok sayını işaretledin ve günlerin çoğunda en az 2 blok var."),
+        ("bu_donem", "Zamanını iyi yöneten birini incele", "{bolum} alanında çalışan birinin ya da aile çevrende yoğun işlerle uğraşan birinin gününü nasıl düzenlediğini öğren (röportaj, biyografi ya da yüz yüze kısa bir sohbet). İşine yarayacak 2 yöntemi seç ve dene.", "gorusme", "30-45 dk", "2 yöntemi yazdın, birini denedin ve nasıl gittiğini not ettin."),
     ],
     "A1": [
-        ("simdi", "Bilgiyi doğrula", "İnternette {bolum} ya da meslekle ilgili bir iddia (haber, video, paylaşım) bul. Kimin yazdığını, tarihini ve kaynağını kontrol et; iddiayı güvenilir bir kaynaktan doğrula ya da çürüt.", "arastirma", "45 dk", "İddia, kontrol ettiğin 3 bilgi (yazar, tarih, kaynak) ve vardığın sonuç yazılı."),
+        ("bu_donem", "Sayılarla çalışan birini tanı", "{bolum} alanında sayısal düşünmeyi kullanan birinin hayatını anlatan bir biyografi, röportaj ya da belgesel incele; ya da aile çevrenden böyle biriyle konuş. İşinde matematiği nerede kullandığını öğren.", "gorusme", "30-45 dk", "Bu kişinin işinde matematiği kullandığı 3 örneği yazdın."),
         ("bu_donem", "Veriyle anlat", "Merak ettiğin bir konuda açık bir veri bul (TÜİK, YÖK Atlas, okul verisi), bir tabloya aktar, bir grafik çiz ve grafiğin söylediğini 3 cümleyle yaz.", "proje", "2-3 hafta", "Tablon, grafiğin ve 3 cümlelik yorumun hazır."),
     ],
     "A4": [
@@ -638,12 +650,25 @@ _EK_GELISIM = {
         ("bu_donem", "Farklı bir hayatı dinle", "Senden farklı bir kültürden, kuşaktan ya da yaşam koşulundan biriyle (büyükanne-büyükbaba, başka şehirden gelen bir arkadaş, bir esnaf) konuş; hayatını, değerlerini ve gençliğini sor.", "gorusme", "30-45 dk", "Görüşmeyi yaptın; seni şaşırtan 3 şeyi ve ortak noktalarınızı yazdın."),
     ],
     "A5": [
-        ("simdi", "Bölümün sürdürülebilirlik bağlantısı", "{bolum} alanının çevre, enerji, su ya da iklimle nasıl bir ilişkisi olduğunu araştır; bu alanda çalışan bir kurum ya da proje bul.", "arastirma", "45 dk", "Bölümünün çevreyle 2 bağlantısını ve 1 örnek projeyi yazdın."),
+        ("uzun_vadede", "Bu alan bana uyuyor mu?", "Laboratuvar, deney ve gezi deneyimlerinden sonra seni en çok neyin heyecanlandırdığını, neyin sıktığını yaz. Bunun {bolum} için ne anlama geldiğini düşün.", "yansitma", "30 dk", "Heyecanlandıran ve sıkan en az 2 şeyi ve {bolum} için çıkardığın sonucu yazdın."),
         ("bu_donem", "Okulun atık ölçümü", "Bir hafta boyunca sınıfında ya da evinde çıkan atığı (kâğıt, plastik, yemek) türüne göre say ya da tart. Sonuçları tabloya dök ve azaltmak için uygulanabilir 2 öneri yaz.", "proje", "2 hafta", "1 haftalık ölçüm tablon ve 2 önerin hazır."),
     ],
 }
 for _kod, _adimlar in _EK_GELISIM.items():
     ICERIK[_kod]["gelisim"].extend(_adimlar)
+
+
+# [2026-11-05] İçerik incelemesi: konusu özelliğe uymayan ya da başka bir adımla örtüşen adımlar listeden KALDIRILDI.
+# Kodlar sıraya bağlı olduğu için tuple'lar silinmez (sonraki adımların kodu kaymasın, öğrenci kayıtları doğru adımda kalsın);
+# plan bu kodları göstermez. Öğrenci kaldırılmadan önce bu adımla ilgili bir durum kaydetmişse adım onun listesinde kalır.
+KALDIRILAN = frozenset({
+    "P7-G-7",   # "Zorlandığında kendine ne diyorsun?" — öz konuşma P4'e daha yakın; P7'de yansıtma adımları var
+    "P8-G-7",   # "Başarı kanıtların" — genel öz güven çalışması; P8'de yansıtma adımı var
+    "I4-G-8",   # "Bir toplumsal sorunu incele" — etikten çok D5 (topluma katkı) konusu
+    "A1-G-8",   # "Veriyle anlat" — içeriği A1-G-4 ile birleştirildi
+    "A3-G-7",   # "Öteki tarafın gözünden" — P2-G-2 ile aynı alıştırma
+    "A5-G-8",   # "Okulun atık ölçümü" — çevre projesi; A5'i G-2, G-3, G-5 daha doğrudan karşılıyor
+})
 
 
 TUR_ETIKET = {

@@ -17,7 +17,7 @@ from app.models import (
 )
 from app.core.katman_servisi import IsKuraliHatasi
 from app.core.skor_motoru import _katman_ici_olcekle
-from app.core.gelisim_icerigi import ICERIK, FAZLA_NEDEN, TUR_ETIKET, ASAMA_SIRASI, adim_kodu
+from app.core.gelisim_icerigi import ICERIK, FAZLA_NEDEN, KALDIRILAN, TUR_ETIKET, ASAMA_SIRASI, adim_kodu
 from app.core.gelisim_detay import DETAY
 import numpy as np
 
@@ -559,6 +559,8 @@ def gelisim_plani_olustur(db: Session, ogrenci: Ogrenci, hedef_bolum_id: int, ga
             "durum_tespiti": s.gelisim_karti.durum_tespiti if s.gelisim_karti else None,
         })
         for sira, ham in enumerate(ic["gelisim"], 1):
+            if adim_kodu(s.degisken.kod, "G", sira) in KALDIRILAN and not durumlar.get(adim_kodu(s.degisken.kod, "G", sira)):
+                continue   # [2026-11-05] içerik incelemesinde kaldırılan adım (kodlar kaymasın diye tuple duruyor)
             adim = _adim(s.degisken.kod, s.degisken.ad, "G", sira, ham, bolum_adi, durumlar)
             adim["oncelik_sirasi"] = oncelik_sirasi
             asama_adimlari[adim["asama"]].append(adim)
