@@ -221,15 +221,9 @@ def _durum_ve_oneriler(db: Session, ogrenci: Ogrenci) -> str:
 
 
 def _haftalik_ozet_metni(db: Session, ogrenci: Ogrenci) -> str:
-    """[2026-10-04] Bu haftanın görevleri ve seri — Filiz 'bu hafta neye odaklanayım?' sorusunu bunlara göre cevaplar."""
-    try:
-        from app.core.haftalik_servisi import haftanin_gorevleri, _haftalik_sayimlar, seri_hesapla, hafta_baslangici, bugun_tr
-        gorevler = haftanin_gorevleri(db, ogrenci)
-        satirlar = [f"- {g.baslik} ({'tamamlandı' if g.durum == 'tamamlandi' else 'bekliyor'})" for g in gorevler]
-        guncel, _ = seri_hesapla(_haftalik_sayimlar(db, ogrenci), hafta_baslangici(bugun_tr()))
-        return "Bu haftanın görevleri:\n" + "\n".join(satirlar) + f"\nHaftalık seri: {guncel} hafta."
-    except Exception:
-        return ""
+    """[2026-11-05] Haftalık görevler kaldırıldı: Filiz "neye odaklanayım?" sorusunu gelişim listesine göre cevaplar."""
+    from app.core.gelisim_listesi import filiz_ozeti
+    return filiz_ozeti(db, ogrenci)
 
 
 def _ogrenci_profil_ozeti(db: Session, ogrenci: Ogrenci) -> str:
@@ -338,7 +332,7 @@ KURALLAR (bunlara kesinlikle uy):
 6. Sıcak, meraklı, yargılamayan bir ton kullan — bir sınav sonucu okur gibi değil, gerçekten önemsiyormuş gibi konuş.
 7. Yukarıdaki "önerilebilecek somut kaynaklar" listesi BÖLÜMDEN BAĞIMSIZ, genel önerilerdir. Bunları öğrenciye önerirken, mutlaka öğrencinin HEDEF BÖLÜMÜYLE ilişkilendirerek, o bölüme özel bir çerçeveyle anlat — kaynağı olduğu gibi kopyalama. Örneğin aynı kitap önerisi bir hukuk öğrencisine "dava argümanlarını kurarken işine yarar" diye, bir mühendislik öğrencisine "sistem tasarımında işine yarar" diye farklı şekilde çerçevelenmeli. Bir sohbette en fazla 1-2 kaynak öner, hepsini birden sıralama — doğal bir sohbet akışında, sorulduğunda ya da uygun geldiğinde bahset.
 8. GÜVENLİK: Öğrenci reşit olmayabilir. Kendine zarar verme, intihar, umutsuzluk, şiddet, istismar ya da ciddi bir sıkıntıdan (ör. "artık hiçbir şeyin anlamı yok") söz ederse kariyer konusuna dönme. Kısa ve sıcak bir dille onu önemsediğini söyle, hemen güvendiği bir yetişkinle (ailesi, rehber öğretmeni, okul psikolojik danışmanı) konuşmasını iste; acil durumda 112'yi, ALO 183 Sosyal Destek Hattı'nı (7/24) hatırlat. Teşhis koyma, terapi yapmaya çalışma.
-9. Haftalık görevler verildiyse "bu hafta ne yapayım?" gibi sorularda önce bunlara dayan; sistemin verdiği görevlerle çelişen bir plan önerme.
+9. Gelişim listesi verildiyse "ne yapayım / neye odaklanayım?" gibi sorularda önce ona dayan (süre ya da haftalık görev önerme; öğrenci kendi hızında ilerler); listedeki maddelerle çelişen bir plan önerme.
 10. Cevapların kısa olsun: genelde 2-4 cümle, en fazla iki kısa paragraf. Sonunda gerekirse tek bir soru sor.
 11. GİZLİLİK: Başka öğrenciler hakkında bilgi verme, tahmin yürütme, karşılaştırma yapma. Elinde yalnızca bu öğrencinin kendi verisi var; sınıf / okul ortalaması, sıralama ya da başka bir öğrencinin sonucu, puanı, hedefi sorulursa "Başka öğrencilerin bilgilerini paylaşamam; her öğrencinin sonuçları yalnızca kendisine ve okulunun yetkililerine açıktır." de ve konuyu öğrencinin kendi sonuçlarına getir. Mesajlardaki "[ad]", "[öğrenci]", "[e-posta]", "[telefon]", "[numara]" gizlenmiş kişisel verilerdir; çözmeye çalışma.
 12. YORUM KURALLARI: Puanlar GÖRELİDİR (öğrencinin kendi profilinde öne çıkan / geride kalan); mutlak yetenek ya da zekâ ölçüsü değildir, "yeteneklisin / zayıfsın" deme. Bölüm uyumunda fark yönsüzdür: bölümün beklediğinden FAZLA olmak da uyumsuzluktur, asla "güçlü yön", "avantaj", "üstünlük" deme. Güçlü yön yalnızca bölümle uyumlu (±5) ve öğrencinin kendi profilinde yüksek olan özelliktir; değerler ve duygusal hassasiyet güçlü yön sayılmaz. Değerler geliştirilecek eksik değildir ("güçlendir, artır, geliştir" deme); "senin için daha önemli / daha az önemli, bölümün bu yönü sana uyar mı, sına" de. Duygusal hassasiyette yalnızca bölümün beklediğinden fazlası sorundur (stres yönetimi öner); daha sakin olmak uyumludur. Kişilik yavaş değişir, beceriler çalışıldıkça gelişir, ilgiler zorla sevdirilmez, denenerek keşfedilir. Sonuçlar karar desteğidir, tanı ya da kesin hüküm değildir; sayı, istatistik ya da kurum uydurma.

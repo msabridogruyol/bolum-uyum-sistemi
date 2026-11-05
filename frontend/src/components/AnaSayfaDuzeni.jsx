@@ -42,6 +42,24 @@ function PaketteYok({ ad }) {
   )
 }
 
+// [2026-11-05] 18 yaş altı: imzalı veli onay formu okula ulaşana kadar değerlendirme ve yapay zekâ destekli bölümler kilitli
+function VeliOnayiSeridi() {
+  const [bekle, setBekle] = useState(false)
+  const [hata, setHata] = useState(null)
+  return (
+    <div className="veli-serit" role="status">
+      <div style={{ flex: 1, minWidth: 0 }}>
+        <b>Veli onay formun bekleniyor</b>
+        <div>Formu indir, velin okuyup imzalasın ve okuluna teslim et. Okulun formu aldığını işaretleyince değerlendirmeye başlayabilirsin. 18 yaşını doldurduysan okuluna kimliğinle başvur.</div>
+        {hata && <div className="auth-error" style={{ margin: '6px 0 0' }}>{hata}</div>}
+      </div>
+      <button className="btn" disabled={bekle} onClick={async () => { setBekle(true); setHata(null); try { await api.veliOnayFormum() } catch (e) { setHata(e.detail || 'Form hazırlanamadı.') } finally { setBekle(false) } }}>
+        {bekle ? <span className="spin" /> : '📄 Formu indir'}
+      </button>
+    </div>
+  )
+}
+
 export default function AnaSayfaDuzeni() {
   const { cikisYap } = useAuth()
   const [ozet, setOzet] = useState(null)
@@ -51,6 +69,7 @@ export default function AnaSayfaDuzeni() {
   const [tanitimAcik, setTanitimAcik] = useState(false)
   const [turTekrar, setTurTekrar] = useState(false)   // Ayarlar'dan yeniden başlatıldıysa bitince profil sayfasına gidilmez
   const [acilis, setAcilis] = useState(acilisGosterilsinMi)
+  const [veliBekliyor, setVeliBekliyor] = useState(false)   // [2026-11-05] 18 yaş altı veli onay formu henüz okula ulaşmadı
   const [kvkkGerekli, setKvkkGerekli] = useState(false) // [2026-10-04] eski hesap veya yeni metin sürümü
   const konum = useLocation()
   const karsilastirmaAcik = konum.pathname === '/koclugu' && new URLSearchParams(konum.search).get('sekme') === 'karsilastirma'
@@ -70,7 +89,7 @@ export default function AnaSayfaDuzeni() {
 
   useEffect(() => {
     if (konum.pathname.startsWith('/katmanlar')) api.durumOzetiGetir().then(setOzet).catch(() => {})
-    api.kvkkDurumu().then((d) => setKvkkGerekli(!d.guncel)).catch(() => {})
+    api.kvkkDurumu().then((d) => { setKvkkGerekli(!d.guncel); setVeliBekliyor(d.veli ? !d.veli.tamam : false) }).catch(() => {})
     api.profilGetir()
       .then((p) => { setProfil(p); if (hesapDiliniUygula(p.dil, (k) => api.dilKaydet(k, 'ogrenci'))) return; if (!tanitimGorulduMu(p)) setTanitimAcik(true) })
       .catch(() => {})
@@ -198,8 +217,8 @@ export default function AnaSayfaDuzeni() {
           </NavLink>
         )}
         {acik('kocluk') && (
-          <NavLink to="/gorevler" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
-            ✅ Görevlerim
+          <NavLink to="/gelisim" className={({ isActive }) => `ni${isActive ? ' active' : ''}`}>
+            🪜 Gelişim listem
           </NavLink>
         )}
         {acik('calisma') && (
@@ -272,6 +291,7 @@ export default function AnaSayfaDuzeni() {
         {/* [2026-10-09] Maskot ana içerik alanının sağ üstünde, başlık satırında durur (sayfayla birlikte kayar) */}
         {!kvkkGerekli && !tanitimAcik && profil && <Maskot profil={profil} ozet={ozet} />}
         <div className="main-icerik">
+          {!kvkkGerekli && veliBekliyor && <VeliOnayiSeridi />}
           {modulBekleniyor ? <div className="pg"><div className="bos-durum yukleniyor">Yükleniyor…</div></div>
             : kapaliModul ? <PaketteYok ad={MODUL_ADI[kapaliModul]} /> : <Outlet context={{ profilYenile, tanitimiAc }} />}
         </div>

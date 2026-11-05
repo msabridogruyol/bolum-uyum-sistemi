@@ -41,7 +41,7 @@ UYUM_BANTLARI = [("Yetiyor (70+)", 70), ("Sınırda (40–69)", 40), ("Yetmiyor 
 # Modül kullanımı: (anahtar, ad, ikon, tablo (ogrenci_id sütunu x'te), ek koşul, zaman sütunu | None, olay birimi)
 MODULLER = [
     ("kocluk", "Koçluk adımı tamamlayan", "🎯", "ogrenci_gelisim_adim_durumu x", "x.durum = 'tamamlandi'", "x.guncelleme_zamani", "adım"),
-    ("haftalik", "Haftalık görev tamamlayan", "✅", "ogrenci_haftalik_gorev x", "x.durum = 'tamamlandi'", "x.tamamlanma_zamani", "görev"),
+    ("gelisim_kaydi", "Gelişim listesine kayıt giren", "📝", "ogrenci_gelisim_kayitlari x", "x.tur = 'adim_kaydi'", "x.zaman", "kayıt"),   # [2026-11-05] haftalık görev yerine
     ("filiz", "Filiz'e yazan", "💬", "ogrenci_koclugu_mesajlari m JOIN ogrenci_koclugu_oturumlari x ON x.id = m.oturum_id",
      "m.rol = 'ogrenci'", "m.olusturulma_zamani", "mesaj"),
     ("simulasyon", "Meslek simülasyonu yapan", "🎬", "simulasyon_sonuclari x", "TRUE", "x.olusturulma_zamani", "simülasyon"),
@@ -261,9 +261,11 @@ def istatistik_verisi(db: Session, donem: str = "30", okul_id: int | None = None
         if r is not None:
             moduller.append({"k": k, "ad": ad, "ikon": ikon, "ogrenci": r[0], "sayi": r[1], "olay": olay, "donemli": zs is not None})
     ayrinti = {}
-    ayrinti["haftalik"] = _guvenli(db, lambda: dict(db.execute(text(
-        f"""SELECT count(*) AS toplam, count(*) FILTER (WHERE x.durum = 'tamamlandi') AS tamam FROM ogrenci_haftalik_gorev x
-            JOIN ogrenciler o ON o.id = x.ogrenci_id WHERE {kosul} {zf('x.olusturulma_zamani')}"""), p).mappings().one()), None)
+    # [2026-11-05] haftalık görev tamamlama oranı yerine: gelişim listesi kayıtları (madde kaydı / keşif / öz değerlendirme)
+    ayrinti["gelisim"] = _guvenli(db, lambda: dict(db.execute(text(
+        f"""SELECT count(*) FILTER (WHERE x.tur = 'adim_kaydi') AS kayit, count(DISTINCT x.ogrenci_id) AS ogrenci,
+                   count(*) FILTER (WHERE x.tur = 'kesif') AS kesif, count(*) FILTER (WHERE x.tur = 'oz_degerlendirme') AS oz
+              FROM ogrenci_gelisim_kayitlari x JOIN ogrenciler o ON o.id = x.ogrenci_id WHERE {kosul} {zf('x.zaman')}"""), p).mappings().one()), None)
     ayrinti["filiz"] = _guvenli(db, lambda: dict(db.execute(text(
         f"""SELECT count(*) AS oturum, count(*) FILTER (WHERE x.durum = 'tamamlandi') AS biten FROM ogrenci_koclugu_oturumlari x
             JOIN ogrenciler o ON o.id = x.ogrenci_id WHERE {kosul} {zf('x.baslama_zamani')}"""), p).mappings().one()), None)

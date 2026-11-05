@@ -282,11 +282,11 @@ def ogrenci_yorumu(v: dict, kitle: str = "ogrenci") -> dict:
     elif not net["oturumlar"] and kitle in ("ogrenci", "rehber"):
         y["yap"].append("Deneme netlerini Net Takibi'ne girersen gidişatını rehber öğretmeninle birlikte izleyebilirsin." if sen else
                         "Öğrencinin deneme sonuçlarını Net Takibi'ne girmesi, gidişatın izlenmesi için önerilir.")
-    toplam, son4 = akt.get("gorev_toplam") or 0, akt.get("son4_hafta") or 0
-    if toplam and son4 < 2 and kitle in ("ogrenci", "rehber", "veli"):
-        y["yap"].append({"ogrenci": "Haftalık görevlerini düzenli yap; her hafta en az birini bitirmek bile fark yaratır.",
-                         "veli": "Çocuğunuza haftalık görevlerini sorun; bitirdiklerini fark edip takdir edin.",
-                         "rehber": f"Son 4 haftada tamamlanan haftalık görev: {son4}; düzenli katılım için kısa bir hatırlatma yapılabilir."}[kitle])
+    # [2026-11-05] Haftalık görevler kaldırıldı: gelişim listesinde madde yapmış ama son 4 haftada kayıt girmemişse nazik hatırlatma
+    if (akt.get("adim") or akt.get("kayit")) and not akt.get("son4_hafta") and kitle in ("ogrenci", "rehber", "veli"):
+        y["yap"].append({"ogrenci": "Gelişim listende kaldığın yerden devam et; bir maddeyi yaptığında ne yaptığını tarihiyle yazman yeterli.",
+                         "veli": "Çocuğunuzla gelişim listesindeki maddelere birlikte bakın; yaptıklarını fark edip takdir edin.",
+                         "rehber": "Son 4 haftada gelişim listesine kayıt girilmemiş; kısa bir görüşmede öğrencinin hangi maddede zorlandığı konuşulabilir."}[kitle])
     y["yap"] = list(dict.fromkeys(y["yap"]))[:6]
 
     # --- Kaçınılacaklar
