@@ -146,6 +146,16 @@ const KONULAR = [
     ],
     not: 'Haftada bir "Başarısız giriş" ve "Reddedilen erişim" sayılarına bakmanız önerilir. Kayıtlar 365 gün saklanır (Parametreler → erisim_kaydi_saklama_gun).',
   },
+  {
+    id: 'kullanimanalizi', grup: 'Onaylar ve kayıtlar', baslik: 'Kim hangi menüde ne kadar süre geçiriyor',
+    ne_zaman: 'Sistemin ne kadar ve nasıl kullanıldığını görmek; hangi okulda, hangi sınıfta ya da hangi menüde kullanımın düşük kaldığını bulmak istediğinizde.',
+    adimlar: [
+      { m: <><E to="/admin/kullanim-analizi">Kullanım Analizi</E>: dönemi (<b>7 / 30 / 90 gün, 1 yıl</b> ya da tarih) ve gerekirse okulu seçin. Rakamlar önceki eşit dönemle karşılaştırılır.</> },
+      { m: <><b>Genel bakış</b>: öğrenci, okul yetkilisi ve süper admin yan yana (kayıtlı, kullanan, katılım, toplam ve kişi başı süre, oturum). <b>Öğrenciler / Okul yetkilileri / Süper adminler</b>: menü ve alt sekme tablosu, gün × saat, süre dağılımı, cihaz, sınıflar.</> },
+      { m: <><b>Okullar</b>: okul okul öğrenci ve yetkili kullanımı; okula tıklayınca bütün rapor o okula süzülür. <b>Kişiler</b>: herkes, hiç kullanmayanlar dahil; kişiye tıklayınca menüleri, günleri, saatleri ve oturumları açılır. Her tablo CSV olarak indirilebilir.</> },
+    ],
+    not: 'Süre "aktif süre"dir: sekme ekranda açık ve kişi son 2 dakikada dokunmuş / tıklamış / yazmış / kaydırmışsa sayılır. Ölçüm bu özellik canlıya alındığı andan başlar; önceki dönemler boş görünür. Test hesapları ve demo okullar varsayılan olarak hariçtir. Kayıtlar 730 gün saklanır (Parametreler → kullanim_suresi_saklama_gun).',
+  },
   // ------------------------------------------------------------------ Sistem ve sunucu
   {
     id: 'depo', grup: 'Sistem ve sunucu', baslik: 'Pipeline veri deposunu bağlamak (Supabase)',
@@ -179,6 +189,7 @@ const EKRANLAR = [
   ['Demo okul, test hesapları', '/admin/test-hesaplari', 'Test Hesapları'],
   ['Veli onay formu ve KVKK onayı tamamlanma durumu', '/admin/onaylar', 'Onay Formları'],
   ['Kim ne zaman girdi, kimin verisine baktı', '/admin/erisim-kayitlari', 'Erişim Kayıtları'],
+  ['Kim hangi menüde ne kadar süre geçiriyor', '/admin/kullanim-analizi', 'Kullanım Analizi'],
   ['Gece çalışan işlerin sırası ve sonraki bakım saati', '/admin/gece-bakimi', 'Gece Bakımı'],
   ['Puanlama ve sistem ayarları', '/admin/parametreler', 'Parametreler'],
   ['Kim ne zaman hangi yönetim işlemini yaptı', '/admin/audit-log', 'Audit Log'],

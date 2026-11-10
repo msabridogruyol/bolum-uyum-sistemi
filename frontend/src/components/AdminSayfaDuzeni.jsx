@@ -5,6 +5,7 @@ import TanitimTuru, { turuBaslat } from './TanitimTuru'   // [2026-10-11] menü 
 import AcilisAmblemi, { acilisGosterilsinMi } from './AcilisAmblemi'   // [2026-10-11] açılış amblemi
 import { Link, NavLink, Navigate, Outlet, useLocation } from 'react-router-dom'
 import { okulBolumleri } from './yonetim/okulBolumleri'
+import { SUPER_MENU } from './yonetim/superMenu'   // [2026-11-11] kullanım analizi de menü adlarını buradan alır
 import { useAdminAuth } from '../context/AdminAuthContext'
 import { api } from '../api/client'
 import { IlkSifrePenceresi, Pencere, ROL_ADI } from './yonetim/ortak'
@@ -18,56 +19,6 @@ import FilizYonetimSohbet from './FilizYonetimSohbet'
 import CevrimiciPanel from './CevrimiciPanel'   // [2026-10-11] sağ altta çevrim içi öğrenciler
 
 const ni = ({ isActive }) => `ni${isActive ? ' active' : ''}`
-
-// [2026-10-10] Süper admin menüsü: [yol, ikon, ad]. Sayfa adları değişmez; yalnızca gruplama.
-const SUPER_MENU = [
-  { grup: 'Genel', baglantilar: [['/admin', '🏠', 'Kontrol Paneli']] },
-  { grup: 'Raporlar ve İstatistikler', baglantilar: [
-    ['/admin/istatistikler', '📊', 'İstatistikler'],
-    ['/admin/raporlar', '📄', 'Rapor Merkezi'],
-    ['/admin/karsilastirma', '⚖️', 'Okul Karşılaştırması'],
-    ['/admin/anket-psikometri', '📐', 'Anket Psikometrisi'],
-  ] },
-  { grup: 'Okullar ve Kullanıcılar', baglantilar: [
-    ['/admin/okullar', '🏫', 'Okullar'],
-    ['/admin/okul/0', '🎒', 'Okul Harici Öğrenciler'],
-    ['/admin/onaylar', '✍️', 'Onay Formları'],   // [2026-11-05]
-    ['/admin/paketler', '📦', 'Paketler'],
-    ['/admin/koclar', '👩‍🏫', 'Eğitim Koçları'],
-    ['/admin/yoneticiler', '🛠️', 'Süper Adminler'],
-    ['/admin/test-hesaplari', '🧪', 'Test Hesapları'],
-  ] },
-  { grup: 'İçerik', baglantilar: [
-    ['/admin/bolumler', '🎓', 'Bölümler'],
-    ['/admin/yokatlas', '🔗', 'YÖK Atlas Eşleştirme'],
-    ['/admin/is-hayati-verileri', '💼', 'İş Hayatı Verileri'],
-    ['/admin/meslek-dili', '🗣️', 'Meslek Dili Sözlüğü'],
-    ['/admin/konular', '📝', 'Konu Listesi (Net Takibi)'],
-    ['/admin/dallar', '🌿', 'Üst Alanlar'],
-    ['/admin/sorular', '❔', 'Soru Bankası'],
-    ['/admin/gelisim-kaynak', '🌱', 'Gelişim Kaynak Havuzu'],
-    ['/admin/takvim', '🗓️', 'Genel Takvim'],
-  ] },
-  { grup: 'Ölçme ve Kalite', baglantilar: [
-    ['/admin/soru-gecerlilik', '🎯', 'Soru Geçerlilik Testi'],
-    ['/admin/guvenlik', '🛡️', 'Güvenlik / Tutarlılık'],
-    ['/admin/pipeline', '⚙️', 'Pipeline Sonuçları'],   // [2026-11-01] sayfa başlığıyla aynı ad
-  ] },
-  { grup: 'Sistem', baglantilar: [
-    ['/admin/veri-kaynaklari', '🗂️', 'Veri Kaynakları'],   // [2026-11-01]
-    ['/admin/parametreler', '🎛️', 'Parametreler'],
-    ['/admin/erisim-kayitlari', '🔎', 'Erişim Kayıtları'],   // [2026-11-05] kim, ne zaman, kimin verisine
-    ['/admin/audit-log', '📜', 'Audit Log'],
-    ['/admin/hata-kayitlari', '🐞', 'Hata Kayıtları'],
-    ['/admin/gece-bakimi', '🌙', 'Gece Bakımı'],   // [2026-11-04]
-  ] },
-  { grup: 'Yardım', baglantilar: [
-    ['/admin/yonetim-rehberi', '🧭', 'Yönetim Rehberi'],   // [2026-11-01] adım adım: neyin nasıl yapıldığı
-    ['/admin/sistem-hakkinda', 'ℹ️', 'Sistem Hakkında'],
-    ['/admin/sss', '❓', 'Okul Yetkilisi SSS'],
-    ['/admin/kaynakca', '📚', 'Kaynakça'],
-  ] },
-]
 
 // [2026-10-09] 3 yetki seviyesi: Süper Admin tüm menüyü görür; Okul Yetkilisi yalnızca kendi okulunun panelini.
 export default function AdminSayfaDuzeni() {

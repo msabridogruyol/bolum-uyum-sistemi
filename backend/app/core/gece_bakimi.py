@@ -278,6 +278,9 @@ def _saklama(db, engine) -> dict:
     g = gun("erisim_kaydi_saklama_gun", 365)   # [2026-11-05]
     if g:
         s["erisim_kaydi"] = db.execute(text("DELETE FROM erisim_kayitlari WHERE zaman < now() - make_interval(days => :g)"), {"g": g}).rowcount
+    g = gun("kullanim_suresi_saklama_gun", 730)   # [2026-11-11]
+    if g:
+        s["kullanim_suresi"] = db.execute(text("DELETE FROM kullanim_sureleri WHERE saat < now() - make_interval(days => :g)"), {"g": g}).rowcount
     g = gun("filiz_mesaj_saklama_gun", 730)
     if g:
         s["filiz_mesaji"] = db.execute(text("DELETE FROM ogrenci_koclugu_mesajlari WHERE olusturulma_zamani < now() - make_interval(days => :g)"),

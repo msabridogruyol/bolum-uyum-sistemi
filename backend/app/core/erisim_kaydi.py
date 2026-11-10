@@ -37,6 +37,7 @@ HARIC = {
     ("POST", "/ogrenci/cevrimici"), ("GET", "/yonetim/cevrimici"),
     ("GET", "/ogrenci/bildirimler"), ("GET", "/yonetim/bildirimler"),
     ("GET", "/yonetim/filiz/ozet"), ("POST", "/istemci-hata"),
+    ("POST", "/ogrenci/kullanim"), ("POST", "/yonetim/kullanim"),   # [2026-11-11] dakikada bir kullanım süresi
 }
 _ATLA_ONEK = ("/saglik", "/docs", "/openapi", "/redoc", "/pipeline-istemci")
 _DOSYA_TURLERI = ("application/pdf", "spreadsheet", "presentation", "wordprocessing", "application/vnd", "text/csv",

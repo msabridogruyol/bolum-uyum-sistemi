@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import { tembel } from './yardimci/tembelYukle'   // [2026-10-11] eski sürüm parçası yüklenemezse sayfayı yeniler
 import { BrowserRouter, Routes, Route, Navigate, useLocation, useParams } from 'react-router-dom'
 import SunucuUyarisi from './components/SunucuUyarisi'   // [2026-10-11] sunucu / bağlantı sorunu şeridi
+import KullanimIzleyici from './components/KullanimIzleyici'   // [2026-11-11] menü bazında kullanım süresi
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { AdminAuthProvider, useAdminAuth } from './context/AdminAuthContext'
 import { BolumBilgiProvider } from './context/BolumBilgiContext'
@@ -47,6 +48,7 @@ const SorularSayfasi = tembel(() => import('./pages/admin/SorularSayfasi'))
 const ParametrelerSayfasi = tembel(() => import('./pages/admin/ParametrelerSayfasi'))
 const AuditLogSayfasi = tembel(() => import('./pages/admin/AuditLogSayfasi'))
 const ErisimKayitlariSayfasi = tembel(() => import('./pages/admin/ErisimKayitlariSayfasi'))   // [2026-11-05]
+const KullanimAnaliziSayfasi = tembel(() => import('./pages/admin/KullanimAnaliziSayfasi'))   // [2026-11-11]
 const YoneticilerSayfasi = tembel(() => import('./pages/admin/YoneticilerSayfasi'))
 const SistemHakkindaSayfasi = tembel(() => import('./pages/admin/SistemHakkindaSayfasi'))
 const SoruGecerlilikSayfasi = tembel(() => import('./pages/admin/SoruGecerlilikSayfasi'))
@@ -192,6 +194,7 @@ function AnaUygulama() {
         <Route path="ogrenciler" element={<Navigate to="/admin/okullar" replace />} />
         <Route path="audit-log" element={<AuditLogSayfasi />} />
         <Route path="erisim-kayitlari" element={<ErisimKayitlariSayfasi />} />
+        <Route path="kullanim-analizi" element={<KullanimAnaliziSayfasi />} />
         <Route path="hata-kayitlari" element={<HataKayitlariSayfasi />} />
         <Route path="gece-bakimi" element={<GeceBakimiSayfasi />} />
         <Route path="yoneticiler" element={<YoneticilerSayfasi />} />
@@ -229,6 +232,7 @@ export default function App() {
       <AdminAuthProvider>
         <BrowserRouter>
           <SunucuUyarisi />
+          <KullanimIzleyici />
           <BolumBilgiProvider>
             <AnaUygulama />
           </BolumBilgiProvider>

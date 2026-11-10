@@ -37,6 +37,8 @@ from app.api.kulup_uyelik import ogrenci_router as kulup_uyelik_ogrenci_router, 
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
 from app.api.gelisim_listesi import router as gelisim_listesi_router   # [2026-11-05] haftalık görevlerin yerine
 from app.api.erisim_kayitlari import router as erisim_kayitlari_router   # [2026-11-05] erişim kayıtları
+from app.api.kullanim_analizi import (router as kullanim_analizi_router, ogrenci_router as kullanim_ogrenci_router,
+                                     yonetim_router as kullanim_yonetim_router)   # [2026-11-11] menü bazında kullanım süresi
 from app.api.onaylar import router as onaylar_router   # [2026-11-05] KVKK + veli onay formu tamamlanma durumu
 from app.api.bolum_bilgi import router as bolum_bilgi_router
 
@@ -113,7 +115,8 @@ app.add_middleware(
 # hiç kaydedilmiyor). Loglama başarısız olsa bile asıl isteği ASLA bozmaz —
 # tüm hata durumları sessizce yutulur.
 
-_HARIC_YOLLAR = {"/saglik", "/docs", "/openapi.json", "/redoc", "/favicon.ico"}
+_HARIC_YOLLAR = {"/saglik", "/docs", "/openapi.json", "/redoc", "/favicon.ico",
+                 "/ogrenci/kullanim", "/yonetim/kullanim"}   # [2026-11-11] dakikada bir süre gönderimi ziyaret sayılmaz
 
 
 def _kullanici_tipini_belirle(request: Request) -> str:
@@ -339,6 +342,9 @@ app.include_router(okul_genel_router)                       # [2026-10-09] GET /
 app.include_router(okul_admin_router, prefix="/admin")      # [2026-10-09] /admin/okullar
 app.include_router(okul_yonetimi_router)
 app.include_router(erisim_kayitlari_router)                  # [2026-11-05] /admin/erisim-kayitlari (süper admin)
+app.include_router(kullanim_analizi_router)                  # [2026-11-11] /admin/kullanim-analizi (süper admin)
+app.include_router(kullanim_ogrenci_router)                  # [2026-11-11] POST /ogrenci/kullanim
+app.include_router(kullanim_yonetim_router)                  # [2026-11-11] POST /yonetim/kullanim
 app.include_router(onaylar_router)                           # [2026-11-05] onay formları (okul yetkilisi, süper admin, öğrenci)
 app.include_router(meslek_dili_router)
 app.include_router(cevap_analizi_router)

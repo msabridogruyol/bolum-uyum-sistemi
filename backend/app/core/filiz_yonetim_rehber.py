@@ -162,6 +162,10 @@ NIYETLER: list[dict] = [
     {"k": "erisim", "rol": (SUPER,), "kalip": ["erisim kayit", "kim girdi", "giris kayit", "kim bakti", "kim bakmis"],
      "metin": "Kim ne zaman giriş yaptı, kimin verisine hangi bölümde erişti: Erişim Kayıtları. Kişiye ya da öğrenciye tıklayınca süzülür.",
      "bag": [("Erişim Kayıtları", "/admin/erisim-kayitlari")]},
+    {"k": "kullanim_analizi", "rol": (SUPER,), "kalip": ["kullanim analiz", "ne kadar sure gecir", "ne kadar zaman gecir", "hangi menude", "kullanim sure", "menude sure", "kac saat kullan"],
+     "metin": "Kim hangi menüde ne kadar süre geçiriyor: Kullanım Analizi. Öğrenciler, okul yetkilileri ve süper adminler ayrı; okul okul "
+              "ve toplam; menü ve alt sekme, gün × saat, cihaz, sınıf ve kişi ayrıntısı. Süre, sekme açık ve kişi etkinken sayılır.",
+     "bag": [("Kullanım Analizi", "/admin/kullanim-analizi")]},
     {"k": "pipeline", "rol": (SUPER,), "kalip": ["pipeline", "agirlik", "taslak", "esco", "sayac", "bilgisayara kur"],
      "metin": "Bölüm verisi yılda bir yenilenir: Pipeline Sonuçları'ndaki sayaç ne zaman gerektiğini söyler. Pipeline kurulu bilgisayarda "
               "çalıştırılır, çıktılar aynı sayfada 3 adımla canlıya alınır; yeni bilgisayar kurulumu da oradan yapılır. "
