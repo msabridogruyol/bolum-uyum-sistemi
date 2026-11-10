@@ -323,7 +323,7 @@ export default function TestHesaplariSayfasi() {
         <button className="btn" type="submit" disabled={bekle}>+ Test hesabı aç</button>
       </form>
       {form.tip === 'okul_yetkilisi' && (
-        <div className="yp-uyari">Okul yetkilisi test hesabı, seçtiğin okulun <b>gerçek öğrencilerini</b> de görür. Tanıtım için yukarıdaki <b>Demo okul</b> kutusunu kullanman önerilir.</div>
+        <div className="yp-uyari">Okul yetkilisi test hesabı yalnızca <b>demo okullarda</b> açılabilir; gerçek bir okulun öğrencilerini göremez. Tanıtım için yukarıdaki <b>Demo okul</b> kutusu en hızlı yoldur.</div>
       )}
       {yeni && (
         <div className="yp-uyari" style={{ display: 'flex', alignItems: 'center', gap: 10, flexWrap: 'wrap' }}>

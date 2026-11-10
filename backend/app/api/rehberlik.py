@@ -55,6 +55,7 @@ KURALLAR = {
     "uzak_kaldi": "Uzun süredir girmiyor",
     "yarim_test": "Testi yarıda kaldı",
     "test_baslamadi": "Teste başlamadı",
+    "veli_onayi_bekliyor": "Onay formu işaretlenmedi",   # [2026-11-11]
     "net_dususu": "Netlerinde düşüş",
     "gelisim_durgun": "Gelişim listesinde ilerlemiyor",
     "hedef_yok": "Hedef bölüm seçmedi",
@@ -148,6 +149,10 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
     except Exception:
         db.rollback()
     bugun_tr = datetime.now(TR).date()
+    # [2026-11-11] Onay formu işaretlenmeyen öğrenci değerlendirmeye başlayamaz (deps.get_kvkk_onayli_ogrenci kilidi);
+    # bu öğrenciye "teste başlamadı" denmez, asıl yapılacak iş (formu işaretlemek) gösterilir.
+    from app.core.veli_onayi import toplu_durum as _onay_durumu
+    onay = _onay_durumu(db, idler)
 
     sonuc = []
     for o in ogrenciler:
@@ -170,7 +175,10 @@ def uyarilari_hesapla(db: Session, okul_id: int, ogrenci_id=None) -> list[dict]:
             r.append(("uzak_kaldi", "orta" if giris_gun >= 30 else "dusuk", f"Sistemi son {giris_gun} gün önce açtı."))
         if kod == "devam" and (giris_gun is None or giris_gun >= 7):
             r.append(("yarim_test", "orta" if (giris_gun or 0) >= 30 else "dusuk", f"Değerlendirmede {x.get('biten', 0)}/{x.get('toplam', 4)} bölümde kaldı."))
-        if kod == "baslamadi" and not hic_acmadi and hesap_gun >= 14:
+        onay_tamam = (onay.get(o.id) or {}).get("tamam", True)
+        if kod == "baslamadi" and not onay_tamam and hesap_gun >= 7:
+            r.append(("veli_onayi_bekliyor", "dusuk", "Onay Formları'nda veli formu ya da 18 yaş işareti yok; değerlendirmeye başlayamıyor."))
+        elif kod == "baslamadi" and not hic_acmadi and hesap_gun >= 14:
             r.append(("test_baslamadi", "dusuk", "Giriş yaptı ama değerlendirmeye başlamadı."))
         for oturum, ort, son, yuzde in netler.get(o.id, []):
             r.append(("net_dususu", "yuksek" if yuzde >= 30 else "orta", f"{oturum} son deneme {son} net; önceki ortalama {ort} (−%{yuzde})."))
