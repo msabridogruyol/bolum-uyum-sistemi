@@ -36,6 +36,7 @@ from app.api.konu_yonetimi import router as konu_yonetimi_router
 from app.api.kulup_uyelik import ogrenci_router as kulup_uyelik_ogrenci_router, router as kulup_uyelik_router
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
 from app.api.gelisim_listesi import router as gelisim_listesi_router   # [2026-11-05] haftalık görevlerin yerine
+from app.api.onaylar import router as onaylar_router   # [2026-11-05] KVKK + veli onay formu tamamlanma durumu
 from app.api.bolum_bilgi import router as bolum_bilgi_router
 
 from app.api.okul import genel_router as okul_genel_router, admin_router as okul_admin_router
@@ -326,6 +327,7 @@ app.include_router(bolum_bilgi_router, prefix="/bolumler", tags=["Bölüm Bilgi 
 app.include_router(okul_genel_router)                       # [2026-10-09] GET /okul/aktif
 app.include_router(okul_admin_router, prefix="/admin")      # [2026-10-09] /admin/okullar
 app.include_router(okul_yonetimi_router)
+app.include_router(onaylar_router)                           # [2026-11-05] onay formları (okul yetkilisi, süper admin, öğrenci)
 app.include_router(meslek_dili_router)
 app.include_router(cevap_analizi_router)
 app.include_router(listem_router)                           # [2026-10-10] /ogrenci/listem

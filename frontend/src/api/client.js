@@ -283,6 +283,8 @@ export const api = {
   bolumAdaGore: (ad) => get(`/bolumler/ada-gore?ad=${encodeURIComponent(ad)}`),
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
   kvkkDurumu: () => get('/ogrenci/kvkk'),
+  veliOnayiDurumu: () => get('/ogrenci/veli-onayi'),   // [2026-11-05]
+  veliOnayFormum: () => dosyaIndir('/ogrenci/veli-onayi/form'),
   kvkkGuncelle: (onaylar) => post('/ogrenci/kvkk', { onaylar }),
   cikisYap: () => { sunucudaCikis('ogrenci'); tokenlariTemizle('ogrenci') },
   girisYapildiMi: () => !!tokenAl('ogrenci'),
@@ -714,6 +716,19 @@ export const api = {
   okulTekBakistaPdf: (okulId, f = {}) => dosyaIndir(`/yonetim/okul/${okulId}/tek-bakista/pdf${istatistikSorgu(f)}`, 'admin'),
   veliSunumuIndir: (okulId, f = {}, kitle = 'veli', bicim = 'pptx') => { const q = istatistikSorgu(f); return dosyaIndir(`/yonetim/okul/${okulId}/veli-sunumu${q}${q ? '&' : '?'}kitle=${kitle}&bicim=${bicim}`, 'admin') },   // [2026-10-14] kitle: veli | ogretmen · bicim: pptx | pdf | pdf_notlu
   okulOgrencileri: (okulId) => aget(`/yonetim/okul/${okulId}/ogrenciler`),
+  // --- [2026-11-05] Onay formları: KVKK + veli onay formu tamamlanma durumu ---
+  okulOnaylari: (okulId) => aget(`/yonetim/okul/${okulId}/onaylar`),
+  veliOnayiIsaretle: (okulId, govde) => apost(`/yonetim/okul/${okulId}/onaylar/veli`, govde),
+  veliOnayiGeriAl: (ogrenciId, aciklama) => apost(`/yonetim/ogrenci/${ogrenciId}/veli-onayi/geri-al`, { aciklama }),
+  veliOnayiGecmisi: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/veli-onayi`),
+  veliFormlariIndir: (okulId, { idler, sinif, bekleyenler } = {}) => {
+    const q = new URLSearchParams()
+    if (idler?.length) q.set('idler', idler.join(','))
+    if (sinif) q.set('sinif', sinif)
+    if (bekleyenler) q.set('bekleyenler', 'true')
+    return dosyaIndir(`/yonetim/okul/${okulId}/onaylar/form${q.toString() ? `?${q}` : ''}`, 'admin')
+  },
+  onaylarOkullar: () => aget('/yonetim/onaylar/okullar'),
   yuklemeSablonu: () => aget('/yonetim/sablon'),
   ogrenciDosyasiOnizle: (okulId, dosyaAdi, icerikBase64) => apost(`/yonetim/okul/${okulId}/onizle`, { dosya_adi: dosyaAdi, icerik_base64: icerikBase64 }),
   ogrencileriOlustur: (okulId, ogrenciler) => apost(`/yonetim/okul/${okulId}/ogrenciler`, { ogrenciler }),

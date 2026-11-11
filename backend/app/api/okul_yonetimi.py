@@ -1193,6 +1193,8 @@ def yetkili_sil(yetkili_id: str, db: Session = Depends(get_db), yon: AdminKullan
 
 # ----------------------------------------------------------------------------- okul kayıtları (log)
 ISLEM_ETIKET = {
+    "veli_onayi_alindi": "Veli onay formu alındı olarak işaretlendi", "veli_onayi_resit": "18 yaşını doldurmuş olarak işaretlendi (veli onayı gerekmez)",
+    "veli_onayi_geri_al": "Veli onayı geri alındı",
     "ogrenci_toplu_ekle": "Öğrenci hesapları açıldı", "ogrenci_sil": "Öğrenci silindi",
     "ogrenci_sifre_sifirla": "Öğrenci şifresi sıfırlandı", "ogrenci_duzenle": "Öğrenci bilgisi düzeltildi",
     "ogrenci_okul_degistir": "Öğrenci okulu değiştirildi", "okul_yetkilisi_ekle": "Okul yetkilisi eklendi",

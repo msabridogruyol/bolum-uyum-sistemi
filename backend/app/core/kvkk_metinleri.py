@@ -91,3 +91,32 @@ YONETIM_FILIZ_REHBER_AYDINLATMA = (
     "Rehber modu: cevaplar SSS'ten, panel sayılarından ve yetkiniz dahilindeki öğrenci kayıtlarından sistem içinde hazırlanır. "
     "Sorularınız kaydedilmez ve hiçbir dış servise gönderilmez."
 )
+
+
+# [2026-11-05] VELİ ONAY FORMU (18 yaş altı öğrenciler; kullanıcı kararı: basılı form + panelden işaret).
+# Öğrenci aydınlatma metni ve onay maddeleri DEĞİŞMEDİ. Bu form aynı maddelerin veli tarafından verilmiş hâlidir;
+# formun arkasında AYDINLATMA_METNI aynen basılır. ŞABLONDUR: yayından önce bir hukukçuya kontrol ettirilmelidir.
+# Form metni değişirse VELI_FORM_SURUM artırılır (kayıtlara hangi sürümün imzalandığı yazılır).
+VELI_FORM_SURUM = "2026-11-v1"
+
+VELI_FORM_GIRIS = (
+    "Velisi bulunduğum öğrencinin Filizyol bölüm ve kariyer uyum sistemini kullanmasına ilişkin olarak, bu formun "
+    "ekinde yer alan Kişisel Verilerin İşlenmesine İlişkin Aydınlatma Metni'ni (sürüm {surum}) okudum. Aşağıdaki "
+    "her madde için tercihimi işaretledim."
+)
+
+# kod, metin, zorunlu mu — öğrencinin ONAY_MADDELERI ile aynı kapsam (veli_beyani yerine bu formun kendisi)
+VELI_FORM_MADDELERI = [
+    ("aydinlatma", "Aydınlatma metnini okudum ve anladım.", True),
+    ("acik_riza_analiz", "Çocuğumun değerlendirme cevaplarının ve kişilik/ilgi analizinin yapılmasına, saklanmasına ve "
+     "sonuçlarının okulunun yetkili öğretmenleriyle (rehber öğretmen dahil) paylaşılmasına açık rıza veriyorum.", True),
+    ("yurt_disi_aktarim", "Çocuğumun verilerinin, yurt dışında sunucuları bulunabilen bulut ve yapay zekâ hizmet "
+     "sağlayıcılarına aktarılmasına açık rıza veriyorum.", True),
+    ("kamera", "Değerlendirme sırasında kimlik doğrulama amacıyla çocuğumun kamerayla fotoğrafının çekilmesine açık "
+     "rıza veriyorum. (İsteğe bağlı; onay verilmezse değerlendirme kamera kullanılmadan yapılır.)", False),
+]
+
+VELI_FORM_NOT = (
+    "Zorunlu ilk üç madde onaylanmadan öğrenci değerlendirmeye ve yapay zekâ destekli bölümlere başlayamaz. "
+    "Verdiğim rızaları okul aracılığıyla ya da " + ILETISIM_EPOSTA + " adresine başvurarak her zaman geri alabileceğimi biliyorum."
+)

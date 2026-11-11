@@ -62,7 +62,8 @@ const KocYonetimSayfasi = tembel(() => import('./pages/admin/KocYonetimSayfasi')
 const YokatlasEslesmeSayfasi = tembel(() => import('./pages/admin/YokatlasEslesmeSayfasi'))
 const GenelTakvimSayfasi = tembel(() => import('./pages/admin/GenelTakvimSayfasi'))
 const AnketPsikometriSayfasi = tembel(() => import('./pages/admin/AnketPsikometriSayfasi'))
-const IstatistiklerSayfasi = tembel(() => import('./pages/admin/IstatistiklerSayfasi'))   // [2026-10-10]
+const IstatistiklerSayfasi = tembel(() => import('./pages/admin/IstatistiklerSayfasi'))
+const OnaylarSayfasi = tembel(() => import('./pages/admin/OnaylarSayfasi'))   // [2026-11-05] KVKK + veli onay formu   // [2026-10-10]
 const RaporMerkeziSayfasi = tembel(() => import('./pages/admin/RaporMerkeziSayfasi'))     // [2026-10-10]
 const TestGirisSayfasi = tembel(() => import('./pages/TestGirisSayfasi'))
 const IsHayatiSayfasi = tembel(() => import('./pages/IsHayatiSayfasi'))                         // [2026-10-10] İş Hayatı
@@ -212,6 +213,7 @@ function AnaUygulama() {
         <Route path="paketler" element={<PaketlerSayfasi />} />
         <Route path="karsilastirma" element={<KarsilastirmaSayfasi />} />
         <Route path="istatistikler" element={<IstatistiklerSayfasi />} />
+        <Route path="onaylar" element={<OnaylarSayfasi />} />
         <Route path="raporlar" element={<RaporMerkeziSayfasi />} />
       </Route>
     </Routes>
