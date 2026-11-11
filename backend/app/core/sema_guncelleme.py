@@ -64,6 +64,7 @@ OTOMATIK += ["0098_tufe_endeksi"]   # [2026-11-04] TÜFE endeksi (eski tutarlar�
 OTOMATIK += ["0099_gelisim_listesi"]   # [2026-11-05] haftalık görev yerine gelişim listesi: keşif ve öz değerlendirme kayıtları
 OTOMATIK += ["0100_veli_onaylari"]   # [2026-11-05] veli onay formu kayıtları (18 yaş altı)
 OTOMATIK += ["0101_erisim_kayitlari"]   # [2026-11-05] erişim kayıtları: kim, ne zaman, kimin verisine (süper admin)
+OTOMATIK += ["0102_kullanim_sureleri"]   # [2026-11-11] menü bazında kullanım süresi (süper admin › Kullanım Analizi)
 OTOMATIK_GECE = ["0094_gece_indeksleri"]
 KILIT = 2026101001
 

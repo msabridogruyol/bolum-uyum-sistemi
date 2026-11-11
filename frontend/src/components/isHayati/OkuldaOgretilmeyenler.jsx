@@ -5,6 +5,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { tl } from './ortak'
+import KullanimDetayi from '../KullanimDetayi'   // [2026-11-11] kullanım analizi: açık içerik
 
 function BordroOrnegi({ b }) {
   if (!b) return <div className="yp-ince">Asgari ücret verisi henüz yüklenmedi. Bu yüzden örneği gösteremiyoruz.</div>
@@ -73,6 +74,7 @@ function Ders({ d, bordro, genelNot, onKapat, onIlerleme }) {
   const kart = d.kartlar[Math.min(k, n - 1)]
   return (
     <div className="card ihd-ders">
+      <KullanimDetayi kod={d.kod} ad={d.baslik} />
       <div className="ihz-tur-ust">
         <button className="yp-mini" onClick={onKapat}>← Dersler</button>
         <b className="ihz-tur-ad">{d.ikon} {d.baslik}</b>

@@ -5,6 +5,7 @@
 // Uçlar: GET /ogrenci/is-hayati/zor-gun/{bolum_id}, GET …/tur?meslek=, POST /ogrenci/is-hayati/zor-gun (backend/app/api/is_hayati_zor_gun.py)
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
+import KullanimDetayi from '../KullanimDetayi'   // [2026-11-11] kullanım analizi: açık içerik
 
 function Baslangic({ z, onBasla, bekle }) {
   const ozel = z.meslekler.filter((m) => m.ozel)
@@ -161,13 +162,15 @@ export default function ZorGunler({ bolum }) {
   if (!z.alan_senaryo_sayisi && !z.meslekler.some((m) => m.ozel)) {
     return <div className="card bos-durum">Bu bölüm için zor gün senaryoları henüz hazırlanmadı.</div>
   }
-  if (ozet) return <Ozet o={ozet} onYeniden={() => basla(tur.meslek)} onBaska={kapat} />
+  const turAdi = tur ? (tur.meslek || `${tur.alan?.ad} alanı`) : null
+  if (ozet) return <><KullanimDetayi kod={turAdi} ad={turAdi} /><Ozet o={ozet} onYeniden={() => basla(tur.meslek)} onBaska={kapat} /></>
   if (!tur) return <>{hata && <div className="auth-error">{hata}</div>}<Baslangic z={z} onBasla={basla} bekle={bekle} /></>
 
   const s = tur.senaryolar[i]
   const son = i === tur.senaryolar.length - 1
   return (
     <div className="card ihz-tur-kap">
+      <KullanimDetayi kod={turAdi} ad={turAdi} />
       <div className="ihz-tur-ust">
         <button className="yp-mini" onClick={kapat}>← Geri</button>
         <b className="ihz-tur-ad">{tur.meslek || `${tur.alan?.ad} alanı`}</b>
