@@ -13,6 +13,7 @@ Performans: her blok tek toplu SQL (öğrenci başına sorgu yok); modül tablol
 KVKK küçük grup (app/core/kucuk_grup.py): okul satırlarında 5'ten az öğrencili okulun oran / ortalamaları gizlenir (sayı görünür);
 tek bir küçük okul seçilirse sayfanın tüm oran / ortalama / dağılımları gizlenir.
 """
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from collections import Counter, defaultdict
@@ -41,7 +42,7 @@ UYUM_BANTLARI = [("Yetiyor (70+)", 70), ("Sınırda (40–69)", 40), ("Yetmiyor 
 # Modül kullanımı: (anahtar, ad, ikon, tablo (ogrenci_id sütunu x'te), ek koşul, zaman sütunu | None, olay birimi)
 MODULLER = [
     ("kocluk", "Koçluk adımı tamamlayan", "🎯", "ogrenci_gelisim_adim_durumu x", "x.durum = 'tamamlandi'", "x.guncelleme_zamani", "adım"),
-    ("haftalik", "Haftalık görev tamamlayan", "✅", "ogrenci_haftalik_gorev x", "x.durum = 'tamamlandi'", "x.tamamlanma_zamani", "görev"),
+    ("gelisim_kaydi", "Gelişim listesine kayıt giren", "📝", "ogrenci_gelisim_kayitlari x", "x.tur = 'adim_kaydi'", "x.zaman", "kayıt"),   # [2026-11-05] haftalık görev yerine
     ("filiz", "Filiz'e yazan", "💬", "ogrenci_koclugu_mesajlari m JOIN ogrenci_koclugu_oturumlari x ON x.id = m.oturum_id",
      "m.rol = 'ogrenci'", "m.olusturulma_zamani", "mesaj"),
     ("simulasyon", "Meslek simülasyonu yapan", "🎬", "simulasyon_sonuclari x", "TRUE", "x.olusturulma_zamani", "simülasyon"),
@@ -261,9 +262,11 @@ def istatistik_verisi(db: Session, donem: str = "30", okul_id: int | None = None
         if r is not None:
             moduller.append({"k": k, "ad": ad, "ikon": ikon, "ogrenci": r[0], "sayi": r[1], "olay": olay, "donemli": zs is not None})
     ayrinti = {}
-    ayrinti["haftalik"] = _guvenli(db, lambda: dict(db.execute(text(
-        f"""SELECT count(*) AS toplam, count(*) FILTER (WHERE x.durum = 'tamamlandi') AS tamam FROM ogrenci_haftalik_gorev x
-            JOIN ogrenciler o ON o.id = x.ogrenci_id WHERE {kosul} {zf('x.olusturulma_zamani')}"""), p).mappings().one()), None)
+    # [2026-11-05] haftalık görev tamamlama oranı yerine: gelişim listesi kayıtları (madde kaydı / keşif / öz değerlendirme)
+    ayrinti["gelisim"] = _guvenli(db, lambda: dict(db.execute(text(
+        f"""SELECT count(*) FILTER (WHERE x.tur = 'adim_kaydi') AS kayit, count(DISTINCT x.ogrenci_id) AS ogrenci,
+                   count(*) FILTER (WHERE x.tur = 'kesif') AS kesif, count(*) FILTER (WHERE x.tur = 'oz_degerlendirme') AS oz
+              FROM ogrenci_gelisim_kayitlari x JOIN ogrenciler o ON o.id = x.ogrenci_id WHERE {kosul} {zf('x.zaman')}"""), p).mappings().one()), None)
     ayrinti["filiz"] = _guvenli(db, lambda: dict(db.execute(text(
         f"""SELECT count(*) AS oturum, count(*) FILTER (WHERE x.durum = 'tamamlandi') AS biten FROM ogrenci_koclugu_oturumlari x
             JOIN ogrenciler o ON o.id = x.ogrenci_id WHERE {kosul} {zf('x.baslama_zamani')}"""), p).mappings().one()), None)
@@ -486,7 +489,7 @@ def istatistik_xlsx(v: dict) -> bytes:
         ["Dönemde tamamlanan tur", k["tur"]], ["Ortalama güven puanı", gz(k["guven_ort"])],
         ["Geçersiz tur", k["gecersiz"]], ["Geçersiz tur oranı (%)", gz(k["gecersiz_orani"])],
         ["Hedef bölüm seçen", k["hedef"]], ["Okul yetkilisi", k["yetkili"]],
-    ], f"Filizyol · {date.today().strftime('%d.%m.%Y')} · {kapsam}. {DIPNOT}")
+    ], f"Filizyol · {bugun_tr().strftime('%d.%m.%Y')} · {kapsam}. {DIPNOT}")
     z = v["zaman"]
     _xlsx_sayfa(wb, "Zaman serisi", [f"Dönem başı ({z['birim']})", "Yeni hesap", "Giriş yapan öğrenci", "Tamamlanan tur"],
                 [[x, z["yeni_hesap"][i], z["giris"][i], z["tur"][i]] for i, x in enumerate(z["x"])])
@@ -535,7 +538,7 @@ def genel_istatistik_excel(donem: str = Query("30"), okul_id: str | None = Query
                 f"{v['filtre']['donem_ad']}, test {'dahil' if test else 'hariç'}")
     db.commit()
     return Response(icerik, media_type=XLSX, headers={
-        "Content-Disposition": f'attachment; filename="filizyol_istatistik_{date.today().isoformat()}.xlsx"', "Cache-Control": "no-store"})
+        "Content-Disposition": f'attachment; filename="filizyol_istatistik_{bugun_tr().isoformat()}.xlsx"', "Cache-Control": "no-store"})
 
 
 @router.get("/audit-log/excel")
@@ -554,13 +557,13 @@ def audit_log_excel(gun: int = Query(90, ge=0, le=3650), db: Session = Depends(g
     _xlsx_sayfa(wb, "Audit Log", ["Zaman", "Yapan", "Rol", "İşlem", "Hedef tablo", "Hedef", "Gerekçe / ayrıntı", "Okul"],
                 [[r.zaman.astimezone(TZ).strftime("%d.%m.%Y %H:%M:%S") if r.zaman else None, r.yapan, rol.get(r.rol, r.rol), r.islem,
                   r.hedef_tablo, r.hedef_id, r.gerekce, r.okul] for r in satir],
-                f"Filizyol · {date.today().strftime('%d.%m.%Y')} · {'Son ' + str(gun) + ' gün' if gun else 'Tüm kayıtlar'} · {len(satir)} kayıt")
+                f"Filizyol · {bugun_tr().strftime('%d.%m.%Y')} · {'Son ' + str(gun) + ' gün' if gun else 'Tüm kayıtlar'} · {len(satir)} kayıt")
     b = io.BytesIO()
     guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     denetim_yaz(db, yon, "audit_log_excel", "audit_log", gun or "tum", f"{len(satir)} kayıt")
     db.commit()
     return Response(b.getvalue(), media_type=XLSX, headers={
-        "Content-Disposition": f'attachment; filename="audit_log_{date.today().isoformat()}.xlsx"', "Cache-Control": "no-store"})
+        "Content-Disposition": f'attachment; filename="audit_log_{bugun_tr().isoformat()}.xlsx"', "Cache-Control": "no-store"})
 
 
 # ----------------------------------------------------------------------------- Kontrol Paneli

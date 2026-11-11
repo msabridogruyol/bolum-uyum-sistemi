@@ -29,6 +29,7 @@ from pathlib import Path
 from fastapi import APIRouter, Depends, HTTPException, Query
 from fastapi.responses import Response
 from pydantic import BaseModel
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -144,7 +145,7 @@ def _egitim_donemi(o: Ogrenci) -> str:
     m = re.match(r"(\d+)", o.sinif or "")
     if not m:
         return ""
-    bugun = date.today()
+    bugun = bugun_tr()
     ogretim_yili = bugun.year if bugun.month >= 9 else bugun.year - 1
     return f"Eylül {ogretim_yili - (int(m.group(1)) - 9)} – devam ediyor"
 

@@ -1275,11 +1275,12 @@ export default function Maskot({ profil, ozet }) {
     if (sayfa) havuz.push(sayfa, sayfa)
     havuz.push(...(KIYAFET_MESAJLARI[kiyafet] || []), ...GENEL_MESAJLAR)
     if (ilkAd) havuz.push(`${ilkAd}, bugün kendin için küçük bir adım atalım mı? 🌱`)
+    // [2026-11-05] Haftalık görev / seri yok: gelişim listesindeki sıradaki madde ve Filiz'in büyümesi
     if (haftalik) {
-      const kalan = haftalik.toplam - haftalik.tamamlanan
-      if (kalan > 0) havuz.push(`Bu hafta ${kalan} görevin kaldı. Ana sayfada seni bekliyorlar! ✅`, `Bu haftanın görevlerinden biri: “${haftalik.gorevler.find((g) => g.durum !== 'tamamlandi')?.baslik}”`)
-      if (haftalik.seri.guncel >= 2) havuz.push(`🔥 ${haftalik.seri.guncel} haftalık serin var, harika gidiyorsun!`)
-      if (haftalik.seviye.sonraki_ad) havuz.push(`${haftalik.seviye.sonraki_ad} olmama ${haftalik.seviye.sonraki_esik - haftalik.seviye.puan} puan kaldı. Bana yardım eder misin? 🌱`)
+      const sira = (haftalik.alanlar || []).flatMap((a) => a.adimlar.filter((x) => x.durum !== 'tamamlandi').map((x) => ({ ...x, alan: a.ad })))[0]
+      if (sira) havuz.push(`Gelişim listende sıradaki madde: “${sira.baslik}” (${sira.alan}). Acele yok, hazır olduğunda 🌱`)
+      if (haftalik.on_adim) havuz.push(`Önce şunu yapalım: ${haftalik.on_adim.baslik} ✅`)
+      if (haftalik.seviye?.sonraki_ad) havuz.push(`${haftalik.seviye.sonraki_ad} olmama ${haftalik.seviye.sonraki_esik - haftalik.seviye.puan} puan kaldı. Bana yardım eder misin? 🌱`)
     }
     mesajSirasi.current = (mesajSirasi.current + 1 + Math.floor(Math.random() * 3)) % havuz.length
     return havuz[mesajSirasi.current]
@@ -1295,10 +1296,10 @@ export default function Maskot({ profil, ozet }) {
 
   // [2026-10-04] haftalık görevler: ilk açılışta çekilir, görev tamamlanınca ana sayfadaki kart olay yayınlar
   useEffect(() => {
-    api.haftalikGetir().then(setHaftalik).catch(() => {})
+    api.gelisimListesi().then(setHaftalik).catch(() => {})
     const dinle = (e) => setHaftalik(e.detail)
-    window.addEventListener('haftalik-guncellendi', dinle)
-    return () => window.removeEventListener('haftalik-guncellendi', dinle)
+    window.addEventListener('gelisim-guncellendi', dinle)
+    return () => window.removeEventListener('gelisim-guncellendi', dinle)
   }, [])
   const seviye = haftalik?.seviye?.no || 1
 
@@ -1344,16 +1345,16 @@ export default function Maskot({ profil, ozet }) {
     depoYaz('maskot_biten_katman', String(biten))
   }, [ozet]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  // seviye atlayınca ve haftanın görevleri bitince kutla
+  // seviye atlayınca ve gelişim listesinde bir madde bitince kutla ([2026-11-05] haftalık görevlerin yerine)
   const oncekiHaftalik = useRef(null)
   useEffect(() => {
     if (!haftalik) return
     const kayitli = Number(depoOku('maskot_seviye', '0'))
     if (kayitli > 0 && haftalik.seviye.no > kayitli) {
       window.setTimeout(() => { oynat('kutla'); efektEkle('yildiz', 14); efektEkle('konfeti', 18); konus(`Büyüdüm! Artık bir ${haftalik.seviye.ad}'ım ${haftalik.seviye.ikon} Teşekkürler!`, true) }, 600)
-    } else if (oncekiHaftalik.current && haftalik.tamamlanan > oncekiHaftalik.current.tamamlanan) {
-      if (haftalik.tamamlanan === haftalik.toplam) { oynat('kutla'); efektEkle('konfeti', 20); konus('Bu haftanın tüm görevleri tamam! 🎉 Pazartesi yenileri gelecek.', true) }
-      else { oynat('zipla'); efektEkle('kalp', 6); konus(haftalik.tamamlanan === haftalik.seri_esigi ? 'Bu haftaki serin güvende! 🔥' : 'Bir görev daha bitti, süpersin! ✅', true) }
+    } else if (oncekiHaftalik.current?.ozet && haftalik.ozet && haftalik.ozet.tamamlanan > oncekiHaftalik.current.ozet.tamamlanan) {
+      if (haftalik.ozet.toplam && haftalik.ozet.tamamlanan === haftalik.ozet.toplam) { oynat('kutla'); efektEkle('konfeti', 20); konus('Gelişim listendeki bütün maddeler tamam! 🎉', true) }
+      else { oynat('zipla'); efektEkle('kalp', 6); konus('Bir madde daha bitti, süpersin! ✅', true) }
     }
     depoYaz('maskot_seviye', String(haftalik.seviye.no))
     oncekiHaftalik.current = haftalik

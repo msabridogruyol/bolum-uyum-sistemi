@@ -3,7 +3,7 @@
 [2026-10-10] Paketler ve modüller.
 
 - Çekirdek (her pakette): değerlendirme, sonuçlar ve bölüm önerileri, Bölümler / Listem, profil, hedef bölüm seçimi,
-  koçluk ve haftalık görevler (sistemin omurgası; [2026-10-19] zorunlu modül), okul paneli (öğrenciler, sınıflar,
+  koçluk ve gelişim listesi (sistemin omurgası; [2026-10-19] zorunlu modül), okul paneli (öğrenciler, sınıflar,
   okul ayarları), temel raporlar, YKS sayacı.
 - Modüller paketlere göre açılır; okul için ayrıca tek tek eklenip çıkarılabilir:
   etkin = paketin modülleri ∪ modul_ekle − modul_cikar.
@@ -22,7 +22,7 @@ from app.core.database import get_db
 
 MODULLER = {
     "bildirimler": {"ad": "Bildirimler", "ikon": "🔔", "aciklama": "Uygulama içi bildirimler ve önemli olaylarda e-posta (kulüp kararı, rehberlik randevusu, kulüp etkinliği)"},
-    "kocluk": {"ad": "Koçluk ve görevler", "ikon": "🎯", "aciklama": "Koçluğum (yol haritası, Sen ve Bölümün, ilham kaynakları, tekrar ölçüm) ve haftalık Görevlerim", "zorunlu": True},
+    "kocluk": {"ad": "Koçluk ve gelişim listesi", "ikon": "🎯", "aciklama": "Koçluğum (yol haritası, Sen ve Bölümün, ilham kaynakları, ara ölçüm) ve Gelişim listem", "zorunlu": True},
     "takvim": {"ad": "Takvim", "ikon": "🗓️", "aciklama": "Öğrenci takvimi ve okul etkinlikleri"},
     "kutuphane": {"ad": "Kütüphanem", "ikon": "📚", "aciklama": "Okuduğu kitaplar, izledikleri ve grafikler"},
     "kulupler": {"ad": "Kulüpler", "ikon": "🎭", "aciklama": "İlgi testi, kulüp önerileri, katılma talepleri ve kulüp duyuruları"},

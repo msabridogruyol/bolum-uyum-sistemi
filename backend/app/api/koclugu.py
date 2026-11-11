@@ -12,6 +12,7 @@ GET  /koclugu/karsilastirma       — tur bazlı önceki/güncel karşılaştır
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.api.deps import get_mevcut_ogrenci
 from app.core.database import get_db
 from app.core.katman_servisi import IsKuraliHatasi, son_tur_getir
@@ -214,6 +215,15 @@ def adim_durumunu_guncelle(
     if hedef is None:
         raise HTTPException(status_code=400, detail="Henüz bir hedef bölümün yok.")
     try:
+        if istek.durum == "tamamlandi":
+            # [2026-11-05] Gelişim listesiyle aynı kural: "yaptım" için en az bir tarihli kayıt. Koçluk ekranından "ne yaptım"
+            # yazılarak tamamlanırsa bu metin bugünün tarihiyle kayıt olarak eklenir.
+            from datetime import date as _date
+            from app.core import gelisim_listesi as gl
+            if (istek.ne_yaptim or "").strip():
+                gl.kayit_ekle(db, ogrenci, adim_kodu, bugun_tr(), istek.ne_yaptim)
+            elif not gl.adim_kayitlari(db, ogrenci, hedef.bolum_id).get(adim_kodu):
+                raise IsKuraliHatasi("“Yaptım” demeden önce ne yaptığını kısaca yaz.")
         adim_durumu_guncelle(db, ogrenci, hedef.bolum_id, adim_kodu, istek.durum)
         if istek.durum == "tamamlandi":
             from app.core.kocluk_motoru import geri_bildirim_kaydet
@@ -306,12 +316,11 @@ def ilham_kaynaklari(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(g
             "aranan_alanlar": [a["degisken_adi"] for a in alanlar]}
 
 
-# [2026-10-10] Gelişimim: tamamlanan adımların zaman çizelgesi + son 8 haftanın görev serisi + özet sayılar.
+# [2026-10-10] Gelişimim: tamamlanan adımların zaman çizelgesi + özet sayılar ([2026-11-05] haftalık seri kaldırıldı).
 # Hedef değişse de geçmiş adımlar silinmez; her adım hangi hedef bölüm için yapıldığıyla döner.
 @router.get("/gelisimim", dependencies=[Depends(_KOCLUK)])
 def gelisimim(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevcut_ogrenci)):
-    from datetime import date, timedelta
-    from app.models import OgrenciGelisimAdimDurumu, OgrenciHaftalikGorev, Degisken
+    from app.models import OgrenciGelisimAdimDurumu, Degisken
 
     ad_of = {d.kod: d.ad for d in db.query(Degisken).all()}
     bolum_of = {b.id: b.ad for b in db.query(Bolum).all()}
@@ -333,33 +342,11 @@ def gelisimim(db: Session = Depends(get_db), ogrenci: Ogrenci = Depends(get_mevc
         adimlar.append({"kod": a.adim_kodu, "baslik": baslik, "ozellik": ozellik, "guclu_yon": "-U-" in a.adim_kodu,
                         "bolum": bolum_of.get(a.hedef_bolum_id), "zaman": a.guncelleme_zamani})
 
-    # Son 8 hafta (Pazartesi başlangıçlı): tamamlanan görev + adım sayısı
-    bugun = date.today()
-    bu_pzt = bugun - timedelta(days=bugun.weekday())
-    haftalar = [bu_pzt - timedelta(weeks=i) for i in range(7, -1, -1)]
-    gorevler = (db.query(OgrenciHaftalikGorev)
-                .filter(OgrenciHaftalikGorev.ogrenci_id == ogrenci.id, OgrenciHaftalikGorev.hafta_baslangic >= haftalar[0]).all())
-    seri = []
-    for h in haftalar:
-        hg = [g for g in gorevler if g.hafta_baslangic == h]
-        adim_say = sum(1 for a in tamam if a.guncelleme_zamani and h <= a.guncelleme_zamani.date() < h + timedelta(days=7))
-        seri.append({"hafta": h.isoformat(), "gorev_tamam": sum(1 for g in hg if g.durum == "tamamlandi"),
-                     "gorev_toplam": len(hg), "adim": adim_say})
-    # Kesintisiz aktif hafta serisi (bu haftadan geriye; bu hafta henüz boşsa geçen haftadan başlar)
-    aktif = [s["gorev_tamam"] + s["adim"] > 0 for s in seri]
-    if aktif and not aktif[-1]:
-        aktif = aktif[:-1]
-    ust_uste = 0
-    for x in reversed(aktif):
-        if not x:
-            break
-        ust_uste += 1
-
+    # [2026-11-05] Haftalık görev / seri kaldırıldı: özet = tamamlanan madde + gelişim listesine girilen tarihli kayıtlar
+    from sqlalchemy import text as _t
+    kayit = db.execute(_t("SELECT count(*) FROM ogrenci_gelisim_kayitlari WHERE ogrenci_id = :o AND tur = 'adim_kaydi'"),
+                       {"o": ogrenci.id}).scalar() or 0
     return {
         "adimlar": adimlar,
-        "haftalar": seri,
-        "ozet": {"tamamlanan_adim": len(adimlar),
-                 "tamamlanan_gorev": db.query(OgrenciHaftalikGorev).filter(OgrenciHaftalikGorev.ogrenci_id == ogrenci.id,
-                                                                          OgrenciHaftalikGorev.durum == "tamamlandi").count(),
-                 "ust_uste_hafta": ust_uste},
+        "ozet": {"tamamlanan_adim": len(adimlar), "kayit": kayit},
     }

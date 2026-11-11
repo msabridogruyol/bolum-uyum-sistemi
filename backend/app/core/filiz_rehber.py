@@ -3,7 +3,7 @@
 [2026-10-10] Filiz Otomatik Rehber — yapay zekâ (API anahtarı) bağlı DEĞİLKEN çalışan kural tabanlı sohbet botu.
 
 - Öğrencinin sistemdeki GERÇEK verilerini kullanır (hedef bölüm, güçlü / gelişim yönleri, yol haritası adımı,
-  haftalık görevler, en uyumlu bölümler, ilham kaynakları, kulüp önerileri, takvim, kütüphane).
+  gelişim listesi, en uyumlu bölümler, ilham kaynakları, kulüp önerileri, takvim, kütüphane).
 - Soruyu anahtar kelimelerle bir konuya eşler; eşleşmezse örnek sorular önerir. Serbest sohbet ETMEZ.
 - Arayüzde "Otomatik rehber — yapay zekâ bağlı değil" etiketiyle gösterilir. API anahtarı eklenince
   hiçbir kod değişikliği olmadan gerçek yapay zekâya geçilir.
@@ -17,6 +17,7 @@ from datetime import date
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.models import Bolum, Ogrenci
 
 # [2026-10-10] "Sorabileceklerin" sekmesi: kategorili örnek sorular. Her soru otomatik rehberde bir konuya eşlenir.
@@ -125,13 +126,18 @@ class Baglam:
         a = (self.plan or {}).get("siradaki_adim")
         return {**a, "alan": a.get("degisken_adi")} if a else None
 
-    def gorevler(self) -> list:
+    def gelisim(self) -> dict | None:
+        """[2026-11-05] Haftalık görevlerin yerine gelişim listesi (alanlar, maddeler, önce yapılacak adım)."""
         try:
-            from app.core.haftalik_servisi import haftanin_gorevleri
-            return haftanin_gorevleri(self.db, self.o)
+            from app.core.gelisim_listesi import liste
+            return liste(self.db, self.o)
         except Exception:
             self.db.rollback()
-            return []
+            return None
+
+    def acik_maddeler(self) -> list[dict]:
+        v = self.gelisim() or {}
+        return [{"alan": a["ad"], **x} for a in v.get("alanlar", []) for x in a["adimlar"] if x["durum"] != "tamamlandi"]
 
     def kaynak(self, tip: str | None = None) -> list[dict]:
         if not self.plan:
@@ -183,19 +189,19 @@ def k_tesekkur(b: Baglam, m: str) -> str:
 
 
 def k_hafta(b: Baglam, m: str) -> str:
-    g = b.gorevler()
-    bekleyen = [x for x in g if x.durum != "tamamlandi"]
-    parca = []
-    if bekleyen:
-        parca.append(f"Bu hafta seni bekleyen {len(bekleyen)} görev var: {_liste([x.baslik for x in bekleyen])}.")
-    elif g:
-        parca.append("Bu haftanın tüm görevlerini bitirmişsin, harika! 🎉")
-    adim = b.simdiki_adim()
-    if adim:
-        parca.append(f"Yol haritanda sıradaki adım \"{adim['baslik']}\" ({adim.get('alan')}). {adim.get('aciklama') or ''}".strip())
-    if not parca:
+    """[2026-11-05] "Ne yapayım / neye odaklanayım?": haftalık görev yok; gelişim listesindeki alanlar ve sıradaki maddeler."""
+    v = b.gelisim() or {}
+    if v.get("on_adim"):
+        return f"Önce şunu yapalım: {v['on_adim']['baslik']}. {v['on_adim'].get('aciklama') or ''}".strip()
+    alanlar = v.get("alanlar") or []
+    if not alanlar:
         return _hedefsiz(b)
-    return " ".join(parca) + " Haftada 1-2 adım yeterli, acele etme. Görevlerim sayfasından devam edebilirsin."
+    parca = []
+    for a in alanlar[:3]:
+        sira = next((x["baslik"] for x in a["adimlar"] if x["durum"] != "tamamlandi"), None)
+        parca.append(f"{a['ad']} ({a['tamamlanan']}/{a['toplam']} madde)" + (f": sıradaki \"{sira}\"" if sira else ": hepsi tamam 🎉"))
+    return ("Gelişim listende şu alanlar var: " + "; ".join(parca) + ". Süre yok; kendi hızında ilerle. "
+            "Bir maddeyi yaptığında Gelişim listem sayfasında tarihiyle ne yaptığını yaz.")
 
 
 def k_guclu(b: Baglam, m: str) -> str:
@@ -321,12 +327,12 @@ def k_takvim(b: Baglam, m: str) -> str:
             SELECT baslik, baslangic FROM takvim_etkinlikleri
              WHERE baslangic >= :b AND ((okul_id IS NULL AND ogrenci_id IS NULL) OR (okul_id = :ok AND ogrenci_id IS NULL) OR ogrenci_id = :o)
                AND (hedef_sinif IS NULL OR hedef_sinif = :sf)
-             ORDER BY baslangic LIMIT 1"""), {"b": date.today(), "ok": b.o.okul_id or -1, "o": b.o.id, "sf": b.o.sinif or ""}).first()
+             ORDER BY baslangic LIMIT 1"""), {"b": bugun_tr(), "ok": b.o.okul_id or -1, "o": b.o.id, "sf": b.o.sinif or ""}).first()
     except Exception:
         b.db.rollback()
         r = None
     if r:
-        gun = (r[1] - date.today()).days
+        gun = (r[1] - bugun_tr()).days
         return f"Takviminde sıradaki etkinlik: \"{r[0]}\" — {r[1].strftime('%d.%m.%Y')} ({'bugün' if gun == 0 else f'{gun} gün sonra'}). Tüm tarihler Takvim sayfasında."
     return "Takviminde yaklaşan bir etkinlik görünmüyor. Kendi hatırlatmalarını Takvim sayfasından ekleyebilirsin."
 
@@ -374,13 +380,13 @@ def k_uyum(b: Baglam, m: str) -> str:
 
 def k_kim(b: Baglam, m: str) -> str:
     return ("Ben Filiz! 🌱 Bölüm ve meslek seçerken yanındayım. Sonuçlarına, hedef bölümüne ve "
-            "görevlerine bakarak sana yol gösteriyorum. \"Sorabileceklerin\" sekmesindeki sorularla başlayabilirsin.")
+            "gelişim listene bakarak sana yol gösteriyorum. \"Sorabileceklerin\" sekmesindeki sorularla başlayabilirsin.")
 
 
 def k_sistem(b: Baglam, m: str) -> str:
     return ("Filizyol dört adımda ilerler: 1) Değerlendirme — değerlerin, kişiliğin, iş ortamı yetkinliklerin ve ilgi alanların; uyumu 70 ve üzeri bölümlerin varsa son adımda iş türü tercihlerin bu bölümleri kendi aralarında yeniden sıralar. "
             "2) Sonuçlar — Profilim'de güçlü yönlerin, önem verdiğin değerler ve bunların Maarif Modeli'ndeki karşılıkları; Bölümler'de sana en uyumlu bölümler ve nedenleri. "
-            "3) Hedef — bir bölüm seçersin; Koçluğum'da kendini bu bölümle karşılaştırırsın ve sana özel bir yol haritası çıkar. 4) Gelişim — haftalık görevler, kulüpler, kütüphanen ve takvimin. "
+            "3) Hedef — bir bölüm seçersin; Koçluğum'da kendini bu bölümle karşılaştırırsın ve sana özel bir yol haritası çıkar. 4) Gelişim — gelişim listen (geliştireceğin alanlar, her alanda yapılacaklar ve tarihli kayıtların), kulüpler, kütüphanen ve takvimin. "
             "Okulunda açıksa İş Hayatı sayfasında Mülakat Simülasyonu ve Düşünme Atölyesi de var. "
             "Ayrıntılar sol menüdeki Sistem Hakkında sayfasında.")
 
@@ -544,7 +550,7 @@ def k_adim(b: Baglam, m: str) -> str:
         return _hedefsiz(b) if not b.plan else "Yol haritandaki tüm adımları tamamlamışsın, tebrikler! 🎉 Güçlü Yönlerin sekmesindeki adımlarla devam edebilirsin."
     nasil = adim.get("nasil") or []
     ilk = f" Önce şunu yap: {nasil[0]}" if nasil else ""
-    return (f"Sıradaki adımın \"{adim['baslik']}\" ({adim.get('alan')}, yaklaşık {adim.get('sure') or 'kısa bir süre'}). "
+    return (f"Sıradaki adımın \"{adim['baslik']}\" ({adim.get('alan')}; süre yok, kendi hızında). "
             f"{adim.get('aciklama') or ''}{ilk} Bitirince Koçluğum → Yol Haritam'da \"Yaptım\"ı işaretle.").replace("  ", " ")
 
 
@@ -575,8 +581,8 @@ def k_bolum_bilgi(b: Baglam, m: str) -> str:
 
 
 def k_motivasyon(b: Baglam, m: str) -> str:
-    gorev = next((x for x in b.gorevler() if x.durum != "tamamlandi"), None)
-    kucuk = f" Bugün sadece şunu dene: \"{gorev.baslik}\" — 10 dakikanı alır." if gorev else ""
+    gorev = next(iter(b.acik_maddeler()), None)
+    kucuk = f" Bugün sadece şunu dene: \"{gorev['baslik']}\" maddesinin ilk küçük adımı." if gorev else ""
     return ("Motivasyonun inip çıkması çok normal. Kimse her gün aynı enerjide değildir. Büyük hedefi küçük parçalara böl. "
             "Bugün yapabileceğin tek ve küçük bir şey seç. Bitirince kendini tebrik et." + kucuk +
             " Uzun süredir böyle hissediyorsan rehber öğretmeninle konuş.")
@@ -617,16 +623,16 @@ _TIP_ADI = {"kitap": "kitap", "film / belgesel": "film", "film": "film", "belges
             "onemli olay": "olay", "yaklasim": "psikolojik_yaklasim", "aktivite": "aktivite"}
 _NASIL_BASLA = {
     "kitap": ("Günde 15-20 sayfa oku. Her bölümün sonunda kendine sor: \"{alan} açısından bu bana ne söylüyor?\" Cevabını 1-2 cümleyle not al. "
-              "Kitap bitince aklında kalan 3 fikri yaz. Bunları bu hafta nasıl deneyebileceğini de yaz."),
+              "Kitap bitince aklında kalan 3 fikri yaz. Bunları nasıl deneyebileceğini de yaz."),
     "film": ("İzlerken {alan} ile ilgili 3 sahneyi not al: karakter ne yaptı, sen olsan ne yapardın? "
              "Bitince 5 dakika ayır. En çok etkilendiğin anı ve ondan çıkardığın dersi yaz."),
     "rol_model": ("Bu kişinin hayatına kısaca bak: hangi zorluklarla karşılaştı, hangi kararları verdi? "
-                  "{alan} konusunda ondan öğrenebileceğin bir davranış seç. Bu hafta onu küçük bir şekilde kendin dene."),
+                  "{alan} konusunda ondan öğrenebileceğin bir davranış seç. Onu küçük bir şekilde kendin dene."),
     "olay": ("Önce olayın kısa bir özetini oku: ne oldu, kimler hangi kararları verdi? Sonra kendine sor: \"{alan} açısından buradan ne ders "
              "çıkarırım?\" Cevabını 3 madde olarak yaz."),
-    "psikolojik_yaklasim": ("Önce yaklaşımın ana fikrini öğren. Sonra bu hafta günlük hayatında bir kez uygula. "
+    "psikolojik_yaklasim": ("Önce yaklaşımın ana fikrini öğren. Sonra günlük hayatında bir kez uygula. "
                             "Hafta sonunda {alan} konusunda neyin değiştiğini kısaca not et."),
-    "aktivite": ("Bu aktiviteyi bu hafta için küçük bir deneme olarak takvimine ekle. "
+    "aktivite": ("Bu aktiviteyi küçük bir deneme olarak takvimine ekle. "
                  "Yaptıktan sonra 2-3 cümle yaz: Nasıl hissettin? {alan} konusunda ne fark ettin?"),
 }
 
@@ -810,7 +816,7 @@ def odev_istegi_mi(t: str) -> bool:
 def k_odev(b: Baglam, m: str) -> str:
     return ("Ödevini senin yerine yapamam; ama nasıl yapacağını planlamana yardım edebilirim. 🌱 Ödevi küçük parçalara böl, "
             "takıldığın yeri bir cümleyle yaz ve öğretmenine ya da bir arkadaşına o noktayı sor. Konuyu anladıktan sonra benzer bir "
-            "soruyu kendin çözmeyi dene. İstersen bu hafta neye odaklanman gerektiğine birlikte bakalım.")
+            "soruyu kendin çözmeyi dene. İstersen gelişim listende neye odaklanman gerektiğine birlikte bakalım.")
 
 
 _AILE = ("ailem", "annem", "babam", "ailemin", "ailemle")
@@ -900,7 +906,7 @@ _ENJEKSIYON = re.compile(
     r"kural\w* (olmayan|yok)|filiz degilsin|kufurlu|(tum|butun) (ogrenci|kullanici|kayit)\w*( \w+)? (dok|goster|listele|ver|indir)|"
     r"guvenlik testi\w*.*kural")
 ENJEKSIYON_YANITI = ("Bu isteği yerine getiremem. 🌱 Kurallarım değiştirilemez; sistem bilgileri ve başka öğrencilerin bilgileri "
-                     "paylaşılmaz. Ben Filiz'im: bölüm ve meslek seçiminde, sonuçların, hedefin ve görevlerin hakkında yardımcı olabilirim.")
+                     "paylaşılmaz. Ben Filiz'im: bölüm ve meslek seçiminde, sonuçların, hedefin ve gelişim listen hakkında yardımcı olabilirim.")
 
 
 def _rota(db: Session, metin: str, moduller: set[str]):
@@ -973,7 +979,7 @@ def otomatik_yanit_kaynakli(db: Session, ogrenci: Ogrenci, metin: str, moduller:
     except Exception:
         db.rollback()
     ornek = random.sample(ORNEK_SORULAR, 3)
-    return Cevap("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin, görevlerin ve gelişiminle ilgili sorularda; bölümler, meslekler ve "
+    return Cevap("Bunu tam anlayamadım. 🌱 Sonuçların, hedefin ve gelişim listenle ilgili sorularda; bölümler, meslekler ve "
                  "sözlükteki kavramlar hakkında da yardım edebilirim. Şunlardan birini deneyebilirsin:", "bilinmiyor", ornek)
 
 

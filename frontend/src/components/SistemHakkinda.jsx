@@ -12,7 +12,7 @@ const OGRENCI = {
     { ikon: '📝', baslik: 'Değerlendirme', metin: 'Dört bölümde soruları cevaplarsın: değerlerin, kişiliğin, iş ortamı yetkinliklerin ve ilgi alanların. Uyumu yüksek çıkan bölümlerin varsa son adımda iş türü soruları bu bölümleri kendi aralarında yeniden sıralar.' },
     { ikon: '🧭', baslik: 'Profilim ve Bölümler', metin: 'Güçlü yönlerini, önem verdiğin değerleri ve sana en uygun bölümleri görürsün. Her bölümün yanında uyum puanı ve "Neden bu bölüm?" açıklaması yazar. Bölümde neler okutulduğuna ve hangi üniversitelerde olduğuna bakabilirsin.' },
     { ikon: '🎯', baslik: 'Hedef ve Koçluğum', metin: 'Bir hedef bölüm seçersin. Koçluğum\'da kendini bu bölümle özellik özellik karşılaştırırsın (Durumum), sana özel yol haritasının adımlarını tamamlarsın (Adımlarım) ve bölümü yakından tanırsın (Bölümünü Tanı).' },
-    { ikon: '🌱', baslik: 'Gelişim', metin: 'Haftalık görevler, takvim, kulüp önerileri, kütüphanen, Filiz ve eğitim koçlarıyla yolculuğun devam eder.' },
+    { ikon: '🌱', baslik: 'Gelişim', metin: 'Gelişim listen, takvim, kulüp önerileri, kütüphanen, Filiz ve eğitim koçlarıyla yolculuğun devam eder.' },
     { ikon: '💼', baslik: 'İş hayatı', metin: 'Bölümlerin iş hayatını tanırsın: maaşlar, zor günler, CV ve mülakat. Mülakat Simülasyonu ile mesleğe ön bakış yapar, Düşünme Atölyesi\'nde her yerde işine yarayacak düşünme araçlarını denersin.' },
   ],
   bilmen: [
@@ -61,7 +61,7 @@ const YONETIM = {
     { ikon: '👥', baslik: 'Hesapları açın', metin: 'Öğrencileri Excel ile toplu yükleyin. Her öğrenci geçici şifreyle girer ve ilk girişte kendi şifresini belirler.' },
     { ikon: '📝', baslik: 'Değerlendirme', metin: 'Öğrenciler dört katmanlı değerlendirmeyi kendi hızlarında çözer; uyumu yüksek bölümleri varsa iş türü sorularıyla bu bölümler kendi aralarında sıralanır. İlerlemeyi Özet ve Sınıflar sekmelerinden izlersiniz.' },
     { ikon: '📊', baslik: 'Sonuç ve rapor', metin: 'Her öğrencinin profilini, bölüm önerilerini ve güven puanını görür; öğrenci, veli, şube ve okul raporları alırsınız. Raporlarda öne çıkan özelliklerin Maarif Modeli karşılıkları da yer alır.' },
-    { ikon: '🎯', baslik: 'Koçluk', metin: 'Her pakette bulunan koçluk, öğrenciyi hedef bölümüyle özellik özellik karşılaştırır ve haftalık görevlerle adım adım bir yol haritası sunar.' },
+    { ikon: '🎯', baslik: 'Koçluk', metin: 'Her pakette bulunan koçluk, öğrenciyi hedef bölümüyle özellik özellik karşılaştırır ve geliştirilecek her alan için yapılacaklar listesi sunar; öğrenci yaptığını tarihiyle kaydeder.' },
     { ikon: '🤝', baslik: 'Rehberlik', metin: 'Akran eşleştirme, şube dağılımı, kulüpler, eğitim koçları ve takvimle rehberlik çalışmalarınızı destekleyin.' },
   ],
   bilmen: [

@@ -24,7 +24,7 @@ function SiradakiAdim({ ozet, katmanlar, hedef, plan, kocluk = true }) {
     ust = 'Hedefin'; baslik = `🎯 ${hedef.bolum_adi || hedef.ad || 'Hedef bölümün'}`; alt = 'Bölüm sayfasında bu bölümün istediği yetkinliklere ve sana ne kadar uyduğuna bakabilirsin.'; dugme = 'Bölümlerime bak'; git = '/bolumler'
   } else if (plan?.siradaki_adim) {
     const s = plan.siradaki_adim
-    ust = `Koçluk · ${s.degisken_adi} · ⏱ ${s.sure}`
+    ust = `Koçluk · ${s.degisken_adi}`
     baslik = s.baslik
     alt = s.kazanim ? `🎁 ${s.kazanim}` : s.aciklama
     dugme = s.durum === 'devam_ediyor' ? 'Devam et' : 'Adımı aç'; git = '/koclugu?sekme=yol'

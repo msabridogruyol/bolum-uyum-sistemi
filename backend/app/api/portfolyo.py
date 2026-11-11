@@ -18,6 +18,7 @@ from datetime import date
 from fastapi import APIRouter, Depends, HTTPException
 from fastapi.responses import Response
 from pydantic import BaseModel, Field
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -136,7 +137,7 @@ def _dogrula(istek: KayitIstek) -> dict:
         raise HTTPException(400, "Geçersiz kayıt türü.")
     if istek.baslangic and istek.bitis and istek.bitis < istek.baslangic:
         raise HTTPException(400, "Bitiş tarihi başlangıçtan önce olamaz.")
-    if istek.baslangic and istek.baslangic > date.today():
+    if istek.baslangic and istek.baslangic > bugun_tr():
         raise HTTPException(400, "Başlangıç tarihi gelecekte olamaz.")
     link = (istek.link or "").strip() or None
     if link and not re.match(r"^https?://", link):

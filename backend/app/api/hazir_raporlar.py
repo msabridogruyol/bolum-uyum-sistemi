@@ -10,7 +10,7 @@ Listeler (her biri en fazla `adet` öğrenci; öğrenci adı, sınıf-şube, de�
   en_yuksek_net    — son TYT toplam neti en yüksek         (net_takibi modülü)
   en_cok_yukselen  — ilk ve son TYT denemesi arasındaki net artışı en yüksek (en az 2 TYT; net_takibi)
   en_cok_calisma   — dönemde en çok çalışma süresi kaydeden (calisma modülü)
-  en_cok_kocluk    — dönemde en çok koçluk adımı + haftalık görev tamamlayan (kocluk modülü)
+  en_cok_kocluk    — dönemde en çok gelişim maddesi tamamlayan ve kayıt giren (kocluk modülü)
 
 Kapsam / yetki: okul_yonetimi._okul_kapsami — okul yetkilisi yalnızca kendi okulu; süper admin herhangi bir okul.
 Test hesapları sayılmaz (okul_istatistik.ogrenci_kumesi). Paket modülü kapalı listeler dönmez.
@@ -143,18 +143,18 @@ def _hazir_raporlar_verisi(db: Session, okul_id: int, gun: int, sinif: str | Non
                          "satirlar": [_satir(harita[i], round(sure[i] / 60, 1)) for i in en],
                          "bos": "Bu dönemde çalışma kaydı yok."})
 
-    # --- koçluk + haftalık görev -----------------------------------------------------------------------------------
+    # --- koçluk: gelişim listesi ([2026-11-05] haftalık görevler kaldırıldı; eski görevler geçmiş dönem için sayılır) -------
     if "kocluk" in moduller:
         adim = say("SELECT ogrenci_id, count(*) FROM ogrenci_gelisim_adim_durumu WHERE ogrenci_id = ANY(CAST(:ids AS uuid[])) "
                    "AND durum = 'tamamlandi' AND guncelleme_zamani >= :bas GROUP BY 1")
-        gorev = say("SELECT ogrenci_id, count(*) FROM ogrenci_haftalik_gorev WHERE ogrenci_id = ANY(CAST(:ids AS uuid[])) "
-                    "AND durum = 'tamamlandi' AND tamamlanma_zamani >= :bas GROUP BY 1")
+        gorev = say("SELECT ogrenci_id, count(*) FROM ogrenci_gelisim_kayitlari WHERE ogrenci_id = ANY(CAST(:ids AS uuid[])) "
+                    "AND tur = 'adim_kaydi' AND zaman >= :bas GROUP BY 1")
         top = {i: adim.get(i, 0) + gorev.get(i, 0) for i in set(adim) | set(gorev)}
         en = sorted(top, key=lambda i: -top[i])[:adet]
-        listeler.append({"kod": "en_cok_kocluk", "ikon": "🎯", "baslik": "Koçluk ve görevlerde en aktifler", "birim": "adım",
-                         "aciklama": f"Son {gun} günde en çok koçluk adımı ve haftalık görev tamamlayan öğrenciler",
-                         "satirlar": [_satir(harita[i], top[i], f"{adim.get(i, 0)} adım · {gorev.get(i, 0)} görev") for i in en],
-                         "bos": "Bu dönemde tamamlanan adım ya da görev yok."})
+        listeler.append({"kod": "en_cok_kocluk", "ikon": "🎯", "baslik": "Gelişim listesinde en aktifler", "birim": "işlem",
+                         "aciklama": f"Son {gun} günde en çok gelişim maddesi tamamlayan ve ne yaptığını kaydeden öğrenciler",
+                         "satirlar": [_satir(harita[i], top[i], f"{adim.get(i, 0)} madde · {gorev.get(i, 0)} kayıt") for i in en],
+                         "bos": "Bu dönemde tamamlanan madde ya da girilen kayıt yok."})
 
     # "hiç açmadı": özet sayfasındaki "Henüz giriş yapmadı" durumuyla aynı tanım (değerlendirmeye başlamışsa açmış demektir)
     hic = sum(1 for o in ogr if not sa(o) and not o.son_giris_zamani and _durum(o, il.get(o.id))[0] not in ("tamamlandi", "devam"))

@@ -567,12 +567,12 @@ def _etkinlik(d: _Deste):
         if k.get("adim") is not None:
             sayilar.append(f"{k['adim']} öğrenci kişisel gelişim adımı tamamladı")
         if k.get("gorev") is not None:
-            sayilar.append(f"{k['gorev']} öğrenci haftalık görevlerini yaptı")
+            sayilar.append(f"{k['gorev']} öğrenci gelişim listesine yaptıklarını tarihiyle kaydetti")
         if k.get("simulasyon") is not None:
             sayilar.append(f"{k['simulasyon']} meslek simülasyonu (“Bir günümü yaşa”) oynandı")
-        kartlar.append(("Koçluk ve görevler", [
+        kartlar.append(("Koçluk ve gelişim listesi", [
             "Kişisel yol haritası: güçlü yönlere ve hedefe göre küçük, uygulanabilir adımlar",
-            "Haftalık görevler: bölüm keşfi, okuma, meslek araştırması",
+            "Gelişim listesi: hedef bölüm için geliştirilecek alanlar ve yapılacaklar; öğrenci kendi hızında ilerler, ne yaptığını tarihiyle yazar",
             "Meslek simülasyonu: bir mesleğin gününü deneyimleyerek tanıma",
         ], sayilar))
     if "is_hayati" in e:

@@ -260,7 +260,7 @@ export default function FilizSohbet() {
                 <div style={{ fontSize: 34 }}>😴</div>
                 <div style={{ fontWeight: 700, marginTop: 6 }}>Filiz şu an dinleniyor</div>
                 <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 4, lineHeight: 1.5 }}>
-                  Okulun sohbeti açınca Filiz burada seninle konuşabilecek. O zamana kadar haftalık görevlerin ana sayfada seni bekliyor.
+                  Okulun sohbeti açınca Filiz burada seninle konuşabilecek. O zamana kadar gelişim listen seni bekliyor.
                 </div>
               </div>
             )}
@@ -270,7 +270,7 @@ export default function FilizSohbet() {
                 <div style={{ fontSize: 30 }}>👋</div>
                 <div style={{ fontWeight: 700, marginTop: 6 }}>Merhaba! Ben Filiz, gelişim koçun.</div>
                 <div style={{ fontSize: 12.5, color: 'var(--tx2)', marginTop: 4, lineHeight: 1.5 }}>
-                  Sonuçlarını, hedef bölümünü, haftalık görevlerini ya da kafana takılan her şeyi konuşabiliriz.
+                  Sonuçlarını, hedef bölümünü, gelişim listeni ya da kafana takılan her şeyi konuşabiliriz.
                 </div>
                 <div style={{ display: 'flex', flexDirection: 'column', gap: 6, marginTop: 14, width: '100%' }}>
                   {oneriler.map((o) => (

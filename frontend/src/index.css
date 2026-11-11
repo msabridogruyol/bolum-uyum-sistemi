@@ -3554,3 +3554,27 @@ button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2p
 .maarif-satir::before{content:"🏛 ";}
 .maarif-kart summary{cursor:pointer;font-weight:700;font-size:13px;color:var(--tx2)}
 .maarif-kart .gp-satir-alt{color:var(--tx3)}
+
+/* [2026-11-05] Gelişim listesi (haftalık görevlerin yerine) */
+.gl-alan{margin-bottom:14px;padding:0;overflow:hidden}
+.gl-alan-bas{display:flex;align-items:center;gap:12px;width:100%;padding:16px 18px;background:none;border:none;cursor:pointer;font-family:var(--fn);color:var(--tx)}
+.gl-alan-bas:hover{background:var(--sur2)}
+.gl-neden{margin:0 18px 10px;font-size:12.5px;line-height:1.5;color:var(--tx2)}
+.gl-olcum{margin:0 18px 10px;padding:8px 12px;border-radius:10px;background:var(--grl);color:var(--gr);font-size:12.5px;font-weight:700}
+.gl-maddeler{list-style:none;margin:0;padding:0 12px 12px;display:flex;flex-direction:column;gap:8px}
+.gl-madde{padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--bor);transition:border-color .18s}
+.gl-madde.gl-devam_ediyor{border-color:var(--am)}
+.gl-madde.gl-tamamlandi{border-color:var(--gr);background:var(--grl)}
+.gl-madde-ust{display:flex;gap:10px;align-items:flex-start}
+.gl-ikon{width:26px;height:26px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;background:var(--sur2);flex-shrink:0}
+.gl-tamamlandi .gl-ikon{background:var(--gr);color:#fff;font-weight:800}
+.gl-baslik{font-size:14px;font-weight:700;line-height:1.35;color:var(--tx)}
+.gl-aciklama{font-size:12.5px;line-height:1.5;color:var(--tx2);margin-top:4px}
+.gl-durumlar{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin:10px 0 0 36px}
+.gl-form{margin:10px 0 0 36px;padding:10px 12px;border-radius:10px;background:var(--sur);border:1px dashed var(--bor2)}
+.gl-kayitlar{list-style:none;margin:10px 0 0 36px;padding:0;display:flex;flex-direction:column;gap:4px}
+.gl-kayitlar li{display:flex;gap:10px;align-items:baseline;font-size:12.5px;line-height:1.45;color:var(--tx2);padding:5px 0;border-top:1px solid var(--bor)}
+.gl-tarih{font-weight:800;color:var(--tx);white-space:nowrap;font-size:12px}
+.gl-istege{display:flex;gap:12px;align-items:center;flex-wrap:wrap;padding:12px 14px;border-radius:12px;background:var(--bg);border:1px solid var(--bor);margin-top:10px}
+.gl-ozet-liste{list-style:none;margin:8px 0 0;padding:0;display:flex;flex-direction:column;gap:6px;font-size:13px}
+@media (max-width: 600px){.gl-durumlar,.gl-form,.gl-kayitlar{margin-left:0}}

@@ -10,6 +10,7 @@ from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -77,7 +78,7 @@ def _degerler(istek: KayitIstek) -> dict:
         raise HTTPException(status_code=400, detail="Geçersiz tür.")
     if istek.durum not in ("istek", "devam", "bitti"):
         raise HTTPException(status_code=400, detail="Geçersiz durum.")
-    if istek.tarih and istek.tarih > date.today():
+    if istek.tarih and istek.tarih > bugun_tr():
         raise HTTPException(status_code=400, detail="Tarih gelecekte bir gün olamaz.")
     t = lambda v: (v or "").strip() or None  # noqa: E731
     return {"ka": istek.kategori, "al": t(istek.alt_tur), "ba": istek.baslik.strip(), "ki": t(istek.kisi), "du": istek.durum,
