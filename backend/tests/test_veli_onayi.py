@@ -91,3 +91,22 @@ def test_form_pdf(db, kisiler, istemci):
     r = istemci.get(f"/yonetim/okul/{kisiler['okul_a']}/onaylar", headers=kisiler["yetkili"])
     ogr = r.json()["ogrenciler"][0]
     assert ogr["kvkk"] is True and ogr["veli"]["islem"] == "resit"
+
+
+def test_erken_uyari_onay_bekleyene_teste_baslamadi_demez(db, kisiler):
+    """[2026-11-11] Onay formu işaretlenmemiş öğrenci değerlendirmeye başlayamaz: 'Teste başlamadı' yerine asıl iş gösterilir."""
+    from app.api.rehberlik import uyarilari_hesapla
+    oid = _ogr(db, kisiler)
+    _veliyi_sifirla(db, oid)
+    db.execute(text("UPDATE ogrenciler SET olusturulma_zamani = now() - interval '20 days', son_giris_zamani = now() - interval '2 days' WHERE id = :o"), {"o": oid})
+    db.commit()
+
+    def kurallar():
+        s = [x for x in uyarilari_hesapla(db, kisiler["okul_a"]) if x["ogrenci_id"] == str(oid)]
+        return {u["kural"] for u in s[0]["uyarilar"]} if s else set()
+    k = kurallar()
+    assert "veli_onayi_bekliyor" in k and "test_baslamadi" not in k
+    db.execute(text("INSERT INTO veli_onaylari (ogrenci_id, islem, yapan_ad) VALUES (:o, 'resit', 'test')"), {"o": oid})
+    db.commit()
+    k = kurallar()
+    assert "test_baslamadi" in k and "veli_onayi_bekliyor" not in k

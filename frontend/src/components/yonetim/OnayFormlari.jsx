@@ -144,7 +144,7 @@ export default function OnayFormlari({ okulId }) {
           <KpiKarti etiket="Veli formu bekleyen" deger={oz.veli_bekleyen} ikon="⏳" ton={oz.veli_bekleyen ? 'uyari' : undefined} alt="Bu öğrenciler değerlendirmeye başlayamaz" />
         </div>
         <div className="yp-ince" style={{ marginTop: 12, lineHeight: 1.5 }}>
-          18 yaşından küçük öğrenci, imzalı veli onay formu okula ulaşıp burada işaretlenene kadar değerlendirmeye ve yapay zekâ destekli bölümlere başlayamaz.
+          Öğrenci, burada işaretlenene kadar değerlendirmeye ve yapay zekâ destekli bölümlere başlayamaz: 18 yaşından küçükse imzalı veli onay formu okula ulaşınca "Veli formu alındı", 18 yaşını doldurmuşsa resmî belgeden doğrulandıktan sonra "18 yaşını doldurmuş" olarak işaretleyin.
           Formu öğrenci de kendi hesabından indirebilir. Test hesapları bu kuraldan muaftır ve sayılara katılmaz.
         </div>
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginTop: 12 }}>

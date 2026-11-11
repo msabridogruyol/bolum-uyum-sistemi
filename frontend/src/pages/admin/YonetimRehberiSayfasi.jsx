@@ -13,16 +13,16 @@ const KONULAR = [
   // ------------------------------------------------------------------ Bölüm verisi (pipeline)
   {
     id: 'yillik', grup: 'Bölüm verisi (pipeline)', baslik: 'Yıllık bölüm verisi güncellemesi',
-    ne_zaman: <>Pipeline Sonuçları'ndaki sayaç <b>"Yaklaşıyor"</b> ya da <b>"Pipeline çalıştırılmalı"</b> dediğinde (yılda bir, ayrıca bölüm / K5 değişikliğinde).</>,
+    ne_zaman: <>Pipeline Sonuçları'ndaki sayaç <b>"Yaklaşıyor"</b> ya da <b>"Pipeline çalıştırılmalı"</b> dediğinde (yılda bir, ayrıca bölüm / K5 değişikliğinde). Sayaç <b>"Çıktılar canlıya alınmalı"</b> diyorsa pipeline'ı yeniden çalıştırmayın; yalnızca Pipeline Sonuçları'ndaki 1–3. adımları (aşağıda 3–5. maddeler) yapın.</>,
     adimlar: [
       { m: <>Pipeline'ın kurulu olduğu bilgisayarda masaüstündeki <b>Filizyol Pipeline</b> kısayoluna çift tıklayın (ya da Komut İstemi'ne şu komutu yapıştırın). Güncel kodu, en son veriyi ve canlı bölüm / K5 listelerini kendisi alır.</>, k: CALISTIR_KOMUTU },
       { m: <>Bitmesini bekleyin (genellikle 10–20 dakika; bir bilgisayardaki ilk gönderim daha uzun sürer). Sonda yeşil <b>"HEPSİ TAMAM"</b> yazar. Kırmızı bir hata çıkarsa adımlar durur; ekrandaki mesajı ve <code>{CIKTI.kayit}</code> dosyasını kontrol edin.</> },
-      { m: <><E to="/admin/pipeline">Pipeline Sonuçları</E> → <b>1. adım</b>: <code>{CIKTI.profil}</code> dosyasını seçin. Önizlemeye bakın, ardından aşağıdaki <b>Geçmiş Yüklemeler</b> listesinde <b>Yayına Al</b> deyin. Tüm öğrencilerin sonuçları kendiliğinden yeniden hesaplanır.</> },
+      { m: <><E to="/admin/pipeline">Pipeline Sonuçları</E> → <b>1. adım</b>: <code>{CIKTI.profil}</code> dosyasını seçin. Önizlemeye bakın, ardından aşağıdaki <b>Geçmiş Yüklemeler</b> listesinde <b>Yayına Al</b> deyin. Sonuç hemen değil, o geceki <E to="/admin/gece-bakimi">Gece Bakımı</E>'nda (varsayılan 03:00) canlıya alınır ve tüm öğrencilerin sonuçları aynı gece yeniden hesaplanır.</> },
       { m: <><b>2. adım</b>: <code>{CIKTI.k5}</code> → önizleme → <b>Canlıya al</b> → <b>Eminim, canlıya al</b>.</> },
       { m: <><b>3. adım</b>: <code>{CIKTI.ornek}</code> → önizleme → <b>Canlıya al</b> → <b>Eminim, canlıya al</b>.</> },
-      { m: <>Sayaç <b>"Güncel"</b> olur ve bir sonraki güncellemeye kalan gün yeniden 365'ten başlar.</> },
+      { m: <>Gece bakımından sonra sayaç <b>"Güncel"</b> olur; bir sonraki yıllık güncellemeye yaklaşık 365 gün kalır. O zamana kadar sayaç <b>"Çıktılar canlıya alınmalı"</b> gösterebilir.</> },
     ],
-    not: <>Hiçbir pipeline adımı canlıya kendiliğinden yazmaz; canlıya alma yalnızca bu 3 adımla olur. 2. ve 3. adımın önizlemesinde "Sistemde olmayan bölüm" uyarısı çıkarsa dosya canlıya alınamaz; 1. adımda eşleşmeyen satırlar önizlemede listelenir.</>,
+    not: <>Hiçbir pipeline adımı canlıya kendiliğinden yazmaz; canlıya alma yalnızca bu 3 adımla olur. 2. ve 3. adımın önizlemesinde "Sistemde olmayan bölüm" ya da "Sistemde olmayan iş türü kodları" uyarısı çıkarsa dosya canlıya alınamaz; 1. adımda eşleşmeyen satırlar önizlemede listelenir.</>,
   },
   {
     id: 'kurulum', grup: 'Bölüm verisi (pipeline)', baslik: 'Pipeline\'ı yeni bir bilgisayara kurmak',
@@ -105,8 +105,46 @@ const KONULAR = [
     adimlar: [
       { m: <><E to="/admin/test-hesaplari">Test Hesapları</E> → <b>🏫 Demo okul</b> kartı: okul adı, paket, öğrenci sayısı ve yetkili adını girip <b>+ Demo okul oluştur</b>. Öğrencilerin değerlendirmeleri gerçek akışla cevaplanır; öğrenci başına 1–2 saniye sürer.</> },
       { m: <>Çıkan okul yetkilisi bağlantısını kopyalayıp paylaşın. Şifre yalnızca o an gösterilir. Bağlantıyı gizli pencerede açın.</> },
-      { m: <>İşiniz bitince aynı ekrandaki <b>Demo okullar</b> listesinde <b>Sil</b> → <b>Eminim, okulu ve tüm verisini sil</b>. Yalnızca demo olarak açılmış okullar bu şekilde silinebilir.</> },
+      { m: <>İşiniz bitince aynı ekrandaki <b>Demo okullar</b> listesinde <b>Sil</b> → <b>Eminim, okulu ve tüm verisini sil</b>. Yalnızca demo olarak açılmış okullar bu şekilde silinebilir. Demo okul <E to="/admin/okullar">Okullar</E> ekranındaki 🗑 → <b>Sil</b> ile de bütün verisiyle silinir.</> },
     ],
+  },
+  {
+    id: 'testhesap', grup: 'Hesaplar ve tanıtım', baslik: 'Tek tek test hesabı açmak',
+    ne_zaman: 'Bir ekranı belirli bir öğrenci ya da okul yetkilisi gözünden denemek istediğinizde.',
+    adimlar: [
+      { m: <><E to="/admin/test-hesaplari">Test Hesapları</E> → <b>Tek tek test hesabı</b>: Öğrenci ya da Okul yetkilisi seçin, ad soyad, okul ve sınıfı girip <b>+ Test hesabı aç</b>. Şifre yalnızca o an gösterilir.</> },
+      { m: <>Satırdaki süre seçimiyle (1 saat – 1 hafta) <b>Bağlantı üret</b>; bağlantıyı gizli pencerede açın.</> },
+      { m: <>Öğrencide <b>İlerlemeyi ayarla →</b> ile aşama ve eğilim seçip <b>Uygula</b>; değerlendirme gerçek akışla cevaplanır.</> },
+    ],
+    not: 'Okul yetkilisi test hesabı yalnızca demo okullarda açılabilir. Test hesapları KVKK, veli onayı ve iki adımlı doğrulamadan muaftır, istatistiklerde sayılmaz.',
+  },
+  {
+    id: 'okulsil', grup: 'Hesaplar ve tanıtım', baslik: 'Gerçek bir okulu silmek',
+    ne_zaman: 'Bir okul sistemden çıktığında.',
+    adimlar: [
+      { m: <><E to="/admin/okullar">Okullar</E> → okulun satırında 🗑 → gerçek öğrencilerin aktarılacağı yeri seçin (<b>Okul harici</b> ya da başka bir okul) → <b>Sil</b>.</> },
+      { m: <>Okuldaki test öğrencileri aktarılmaz, verileriyle silinir; okul yetkilisi hesapları da silinir. İşlem Audit Log'a yazılır.</> },
+    ],
+    not: 'Silmeden önce okulun raporlarını almak isterseniz okulun panelinden Rapor Merkezi\'ni kullanın.',
+  },
+  // ------------------------------------------------------------------ Onaylar ve kayıtlar
+  {
+    id: 'onay', grup: 'Onaylar ve kayıtlar', baslik: 'Veli onay formlarını takip etmek',
+    ne_zaman: 'Okula yeni öğrenci yüklendiğinde ve uygulama başlamadan önce.',
+    adimlar: [
+      { m: <><E to="/admin/onaylar">Onay Formları</E>: okul okul KVKK onayı ve veli onay formu tamamlanma durumu. <b>Yalnızca eksiği olanlar</b> kutusuyla süzün.</> },
+      { m: <>Okulun satırında <b>Aç →</b> ile okul panelindeki <b>Onay Formları</b> bölümüne gidin; formları öğrenci adlarıyla indirin, imzalı formu alınca işaretleyin.</> },
+    ],
+    not: '18 yaşından küçük öğrenci, veli formu işaretlenmeden değerlendirmeye başlayamaz; 18 yaşını doldurmuş öğrenci resmî belgeden doğrulanıp "18 yaşını doldurmuş" olarak işaretlenir. Test hesapları muaftır.',
+  },
+  {
+    id: 'erisimkayit', grup: 'Onaylar ve kayıtlar', baslik: 'Kim ne zaman girdi, kimin verisine baktı',
+    ne_zaman: 'Bir giriş sorununu, yetkisiz erişim denemesini ya da bir öğrencinin verisine kimlerin baktığını incelemek istediğinizde.',
+    adimlar: [
+      { m: <><E to="/admin/erisim-kayitlari">Erişim Kayıtları</E>: tarih aralığı ya da <b>Bugün / 7 gün / 30 gün</b> seçin; kişi türü, olay ve okula göre süzün.</> },
+      { m: <>Bir kişiye tıklayınca onun bütün kayıtları, bir öğrenciye tıklayınca o öğrencinin verisine kimlerin baktığı listelenir. <b>CSV indir</b> ile dışa aktarın.</> },
+    ],
+    not: 'Haftada bir "Başarısız giriş" ve "Reddedilen erişim" sayılarına bakmanız önerilir. Kayıtlar 365 gün saklanır (Parametreler → erisim_kaydi_saklama_gun).',
   },
   // ------------------------------------------------------------------ Sistem ve sunucu
   {
@@ -139,8 +177,11 @@ const EKRANLAR = [
   ['Bölüm verisini yenilemek, canlıya almak, bilgisayar kurmak', '/admin/pipeline', 'Pipeline Sonuçları'],
   ['TÜİK, asgari ücret, kamu maaşları, YKS tarihi gibi verilerin güncelliği', '/admin/veri-kaynaklari', 'Veri Kaynakları'],
   ['Demo okul, test hesapları', '/admin/test-hesaplari', 'Test Hesapları'],
+  ['Veli onay formu ve KVKK onayı tamamlanma durumu', '/admin/onaylar', 'Onay Formları'],
+  ['Kim ne zaman girdi, kimin verisine baktı', '/admin/erisim-kayitlari', 'Erişim Kayıtları'],
+  ['Gece çalışan işlerin sırası ve sonraki bakım saati', '/admin/gece-bakimi', 'Gece Bakımı'],
   ['Puanlama ve sistem ayarları', '/admin/parametreler', 'Parametreler'],
-  ['Kim ne zaman ne yaptı', '/admin/audit-log', 'Audit Log'],
+  ['Kim ne zaman hangi yönetim işlemini yaptı', '/admin/audit-log', 'Audit Log'],
   ['Sistem hataları', '/admin/hata-kayitlari', 'Hata Kayıtları'],
 ]
 
