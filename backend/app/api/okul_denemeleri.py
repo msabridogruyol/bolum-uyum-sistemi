@@ -18,6 +18,7 @@ from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -213,7 +214,7 @@ def deneme_onizle(okul_id: int, istek: DosyaIstek, db: Session = Depends(get_db)
 def deneme_kaydet(okul_id: int, istek: KaydetIstek, db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     if _okul_kapsami(db, yon, okul_id) is None:
         raise HTTPException(400, "Okul harici öğrenciler için okul denemesi yüklenemez.")
-    if istek.tarih > date.today() + timedelta(days=1) or istek.tarih < date.today() - timedelta(days=730):
+    if istek.tarih > bugun_tr() + timedelta(days=1) or istek.tarih < bugun_tr() - timedelta(days=730):
         raise HTTPException(400, "Tarih geçersiz.")
     v = _ayikla(db, okul_id, istek.oturum, istek.dosya_adi, istek.icerik_base64)
     gecerli = [s for s in v["satirlar"] if not s["hata"] and not s["bos"]]

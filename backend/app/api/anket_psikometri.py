@@ -11,6 +11,7 @@ Okulun maddeleri değiştirdiği / eklediği / çıkardığı anketler dışarı
 düzeyinde (anket_yanitlari.cevaplar) saklandığı için dahildir; burada yalnızca toplu istatistik döner, tek yanıt gösterilmez.
 Test hesaplarının (ogrenciler.test_hesabi) anonim olmayan yanıtları dışlanır. Yalnızca tüm likert maddeleri yanıtlanmış satırlar sayılır.
 """
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 import json
@@ -132,5 +133,5 @@ def anket_psikometri_excel(db: Session = Depends(get_db), yon: AdminKullanici = 
     denetim_yaz(db, yon, "anket_psikometri_excel", "anketler", "-", "Anket psikometrisi Excel")
     db.commit()
     return Response(b.getvalue(), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    headers={"Content-Disposition": f'attachment; filename="{_dosya_adi("Anket_psikometrisi", date.today().isoformat())}.xlsx"',
+                    headers={"Content-Disposition": f'attachment; filename="{_dosya_adi("Anket_psikometrisi", bugun_tr().isoformat())}.xlsx"',
                              "Cache-Control": "no-store"})

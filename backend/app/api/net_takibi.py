@@ -16,6 +16,7 @@ from datetime import date, datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -106,7 +107,7 @@ def denemeler(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogr
 
 @router.post("/denemeler")
 def deneme_ekle(istek: DenemeIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
-    if istek.tarih > date.today() + timedelta(days=1) or istek.tarih < date.today() - timedelta(days=730):
+    if istek.tarih > bugun_tr() + timedelta(days=1) or istek.tarih < bugun_tr() - timedelta(days=730):
         raise HTTPException(400, "Tarih geçersiz.")
     temiz, toplam = {}, 0.0
     for kod, v in istek.dersler.items():

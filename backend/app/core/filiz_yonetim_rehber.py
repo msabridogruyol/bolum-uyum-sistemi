@@ -24,6 +24,7 @@ from datetime import date, timedelta
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.core.filiz_rehber import _sade
 
 # ============================================================================= SSS (tek kaynak)
@@ -359,7 +360,7 @@ SEVIYE_SIRA = {"yuksek": 0, "uyari": 1, "bilgi": 2, "olumlu": 3}
 
 def okul_ozeti(db: Session, okul_id: int, bugun: date | None = None) -> list[dict]:
     from app.core.paketler import okul_modulleri
-    bugun = bugun or date.today()
+    bugun = bugun or bugun_tr()
     mod = set(okul_modulleri(db, okul_id))
     B: list[dict] = []
 
