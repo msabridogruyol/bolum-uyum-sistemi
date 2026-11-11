@@ -667,6 +667,8 @@ function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, b
 function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, onSecenekSec, onIleriGit, onGeriGit }) {
   const aktifSoru = sorular[aktifIndex]
   const ikiliMi = aktifSoru.cevap_bicimi === 'encok_enaz'
+  const [eksikUyari, setEksikUyari] = useState(false)   // [2026-11-11] eksik cevapla devama basılınca açıklama
+  useEffect(() => { setEksikUyari(false) }, [aktifIndex])
   const cevap = cevaplar[aktifSoru.id]
   const secilenSecenek = ikiliMi ? null : cevap
   const enCok = ikiliMi ? cevap?.enCok : null
@@ -712,10 +714,30 @@ function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, onSecenekSec
       </div>
       <div className="qnav sn-nav">
         <button className="btn sec" onClick={onGeriGit} disabled={aktifIndex === 0 || gonderiliyor}>← Önceki soru</button>
-        <button className="btn" onClick={onIleriGit} disabled={!cevapTamam || gonderiliyor}>
+        {/* [2026-11-11] Cevap eksikken düğme soluk görünür ama basılabilir: basılınca neyin eksik olduğu açıklanır */}
+        <button className={`btn${!cevapTamam ? ' sn-eksik' : ''}`} aria-disabled={!cevapTamam || undefined}
+                onClick={() => (cevapTamam ? onIleriGit() : setEksikUyari(true))} disabled={gonderiliyor}>
           {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla ✓'}
         </button>
       </div>
+      {eksikUyari && (
+        <div className="sn-eksik-perde" role="presentation" onClick={() => setEksikUyari(false)}>
+          <div className="sn-eksik-kutu" role="alertdialog" aria-modal="true" aria-labelledby="sn-eksik-baslik" onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 34 }}>{ikiliMi ? '☝️' : '👆'}</div>
+            <div id="sn-eksik-baslik" className="sn-eksik-baslik">
+              {!ikiliMi ? 'Önce bir şık seç' : !enCok ? 'Önce sana EN ÇOK uyan şıkkı seç' : 'Şimdi sana EN AZ uyan şıkkı da seç'}
+            </div>
+            <div className="sn-eksik-metin">
+              {!ikiliMi
+                ? 'Devam etmek için sana en uygun gelen şıkkı işaretle.'
+                : !enCok
+                  ? 'Bu soruda iki seçim yapıyorsun: önce sana EN ÇOK uyan şıkkı, sonra EN AZ uyan şıkkı. İkisini de seçince devam edebilirsin.'
+                  : 'EN ÇOK uyan şıkkı seçtin. Devam etmek için kalan şıklardan sana EN AZ uyanı da seç.'}
+            </div>
+            <button className="btn" autoFocus onClick={() => setEksikUyari(false)}>Tamam, seçiyorum</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

@@ -1084,6 +1084,12 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .sn-guven,.sn-kamera-rozet{font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap}
 .sn-guven.iyi{background:var(--grl);color:var(--gr)}.sn-guven.orta{background:var(--aml);color:var(--am)}.sn-guven.kotu{background:var(--rel);color:var(--re)}
 .sn-guven b{font-size:14px}
+/* [2026-11-11] cevap eksikken devam düğmesi: soluk ama basılabilir; basınca açıklama */
+.btn.sn-eksik{opacity:.5;cursor:help}
+.sn-eksik-perde{position:fixed;inset:0;background:rgba(20,16,10,.45);display:flex;align-items:center;justify-content:center;z-index:9000;padding:16px}
+.sn-eksik-kutu{background:var(--sur);border-radius:20px;padding:24px 22px;max-width:400px;width:100%;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:10px;align-items:center}
+.sn-eksik-baslik{font-weight:800;font-size:17px;color:var(--tx)}
+.sn-eksik-metin{font-size:14px;color:var(--tx2);line-height:1.5}
 .sn-kamera-rozet{background:var(--sur2);color:var(--tx3)}.sn-kamera-rozet.acik{background:var(--grl);color:var(--gr)}
 .sn-cik{border:none;background:none;cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;color:var(--tx3);padding:5px 8px;border-radius:8px}
 .sn-cik:hover{background:var(--sur2);color:var(--re)}
