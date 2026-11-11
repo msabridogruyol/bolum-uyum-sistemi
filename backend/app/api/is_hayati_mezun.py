@@ -20,6 +20,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel, Field
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import GirdiModeli, ad_soyad_denetle  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -111,13 +112,13 @@ class HikayeIstek(GirdiModeli):
 def _dogrula(db: Session, istek: HikayeIstek) -> dict:
     if not istek.riza_alindi:
         raise HTTPException(400, "Mezunun bu metnin okul öğrencilerine gösterilmesine açık rıza verdiğini onaylamadan kaydedilemez.")
-    if istek.riza_tarihi > date.today():
+    if istek.riza_tarihi > bugun_tr():
         raise HTTPException(400, "Rıza tarihi gelecekte olamaz.")
     if istek.ad_bicimi not in ("tam", "bas_harf"):
         raise HTTPException(400, "Geçersiz ad gösterimi.")
     if istek.durum not in ("taslak", "yayinda"):
         raise HTTPException(400, "Geçersiz durum.")
-    if istek.mezuniyet_yili > date.today().year:
+    if istek.mezuniyet_yili > bugun_tr().year:
         raise HTTPException(400, "Mezuniyet yılı gelecekte olamaz.")
     cevaplar = {k: (istek.cevaplar.get(k) or "").strip()[:2500] for k in SORU_KODLARI if (istek.cevaplar.get(k) or "").strip()}
     if istek.durum == "yayinda" and len(cevaplar) < 2:

@@ -12,6 +12,7 @@ GET  /koclugu/karsilastirma       — tur bazlı önceki/güncel karşılaştır
 from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.api.deps import get_mevcut_ogrenci
 from app.core.database import get_db
 from app.core.katman_servisi import IsKuraliHatasi, son_tur_getir
@@ -220,7 +221,7 @@ def adim_durumunu_guncelle(
             from datetime import date as _date
             from app.core import gelisim_listesi as gl
             if (istek.ne_yaptim or "").strip():
-                gl.kayit_ekle(db, ogrenci, adim_kodu, _date.today(), istek.ne_yaptim)
+                gl.kayit_ekle(db, ogrenci, adim_kodu, bugun_tr(), istek.ne_yaptim)
             elif not gl.adim_kayitlari(db, ogrenci, hedef.bolum_id).get(adim_kodu):
                 raise IsKuraliHatasi("“Yaptım” demeden önce ne yaptığını kısaca yaz.")
         adim_durumu_guncelle(db, ogrenci, hedef.bolum_id, adim_kodu, istek.durum)

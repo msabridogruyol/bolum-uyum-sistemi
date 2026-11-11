@@ -15,6 +15,7 @@ from fastapi import APIRouter, Depends
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.api.deps import get_mevcut_ogrenci
 from app.core.database import get_db
 from app.models import Ogrenci
@@ -52,7 +53,7 @@ def _yks_tarihi(db: Session, yil: int) -> tuple[date, bool]:
 
 
 def yks_bilgisi(db: Session, sinif: str | None, bugun: date | None = None) -> dict | None:
-    bugun = bugun or date.today()
+    bugun = bugun or bugun_tr()
     no = _sinif_no(sinif)
     if no is None or no < 9:
         return None
@@ -107,7 +108,7 @@ MESAJLAR = {
 
 
 def haftalik_mesaj(yks: dict | None, bugun: date | None = None) -> str:
-    bugun = bugun or date.today()
+    bugun = bugun or bugun_tr()
     if not yks:
         grup = "erken"
     elif not yks["son_sinif"]:

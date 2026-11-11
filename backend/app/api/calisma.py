@@ -16,6 +16,7 @@ from datetime import date, timedelta
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -38,7 +39,7 @@ def _pazartesi(g: date) -> date:
 
 
 def ozet_hesapla(db: Session, ogrenci_id) -> dict:
-    bugun = date.today()
+    bugun = bugun_tr()
     pzt = _pazartesi(bugun)
     plan_dk = db.execute(text("SELECT coalesce(sum(sure_dk), 0) FROM calisma_programi WHERE ogrenci_id = :o"), {"o": ogrenci_id}).scalar() or 0
     kayit = db.execute(text("""
@@ -93,7 +94,7 @@ def calisma(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogren
     kayitlar = db.execute(text("""
         SELECT id, tarih, ders, sure_dk, soru, dogru, yanlis, konu FROM calisma_kayitlari
          WHERE ogrenci_id = :o AND tarih >= :b ORDER BY tarih DESC, id DESC
-    """), {"o": o.id, "b": date.today() - timedelta(days=60)}).all()
+    """), {"o": o.id, "b": bugun_tr() - timedelta(days=60)}).all()
     try:
         konular = etkin_konular(db, o.okul_id)
     except Exception:
@@ -103,7 +104,7 @@ def calisma(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogren
         "dersler": [{"kod": k, "ad": a} for k, a in DERSLER.items()], "gunler": GUNLER, "konular": konular,
         "program": _program(db, o.id),
         "kayitlar": [{**dict(r._mapping), "tarih": r.tarih.isoformat(), "ders_ad": DERSLER.get(r.ders, r.ders)} for r in kayitlar],
-        "ozet": ozet_hesapla(db, o.id), "bugun": date.today().isoformat(),
+        "ozet": ozet_hesapla(db, o.id), "bugun": bugun_tr().isoformat(),
     }
 
 
@@ -146,7 +147,7 @@ class KayitIstek(GirdiModeli):
 def kayit_ekle(istek: KayitIstek, db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
     if istek.ders not in DERSLER:
         raise HTTPException(400, "Geçersiz ders.")
-    if istek.tarih > date.today() or istek.tarih < date.today() - timedelta(days=14):
+    if istek.tarih > bugun_tr() or istek.tarih < bugun_tr() - timedelta(days=14):
         raise HTTPException(400, "En fazla 14 gün öncesine kayıt girebilirsin.")
     if not istek.sure_dk and not istek.soru:
         raise HTTPException(400, "Süre ya da soru sayısından en az birini gir.")
