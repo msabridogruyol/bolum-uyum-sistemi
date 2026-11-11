@@ -31,8 +31,8 @@ export default function YenidenDegerlendirmePenceresi({ durum, onKapat }) {
       <Pencere baslik="🛡️ Bu bölümü yeniden çözmen gerekiyor" onKapat={onKapat}
         alt={<button className="btn sec" onClick={onKapat}>Kapat</button>}>
         <div className="yd-metin">
-          Son değerlendirmende güven puanın düşük çıktı. Bu yüzden sonuçların henüz tam güvenilir sayılmıyor.
-          Tüm değerlendirmeyi baştan çözmene gerek yok: yalnızca aşağıdaki bölümü yeniden çözmen yeterli.
+          Bu bölümü çözerken dikkatini dağıtan birkaç durum oldu; sonuçlarının seni gerçekten anlatması için onu yeniden
+          çözmen gerekiyor. Tüm değerlendirmeyi baştan çözmene gerek yok: yalnızca aşağıdaki bölüm yeterli.
         </div>
         <div className="yd-liste">
           {sorunlu.map((k) => (

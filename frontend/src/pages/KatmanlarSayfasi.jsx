@@ -91,7 +91,7 @@ export default function KatmanlarSayfasi() {
           <span>🛡️</span>
           <div style={{ flex: 1 }}>
             <b>Bir bölümü yeniden çözmen gerekiyor.</b>
-            <div className="yp-ince">{`Son değerlendirmende güven puanın düşük çıktı. Yalnızca şu bölümü tekrar çözmen yeterli: ${(yd.sorunlu_katmanlar || []).map((k) => katmanAdi(k.kod, k.ad)).join(', ')}`}</div>
+            <div className="yp-ince">{`Sonuçlarının seni gerçekten anlatması için yalnızca şu bölümü sakin bir zamanda yeniden çözmen yeterli: ${(yd.sorunlu_katmanlar || []).map((k) => katmanAdi(k.kod, k.ad)).join(', ')}`}</div>
           </div>
           <button className="btn">Ayrıntılar</button>
         </div>

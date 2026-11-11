@@ -245,7 +245,7 @@ def katmani_tekrar_coz(kod: str, db: Session = Depends(get_db), ogrenci: Ogrenci
     if tur is None or tur.durum != "tamamlandi" or tur.sonuc_gecerli_mi is not False:
         raise HTTPException(status_code=400, detail="Bu bölümü şu an tekrar çözemezsin.")
     if katman.kod not in {d["kod"] for d in sorunlu_katmanlar(db, ogrenci, tur)}:
-        raise HTTPException(status_code=400, detail="Yalnızca güven puanı düşük çıkan bölümü tekrar çözebilirsin.")
+        raise HTTPException(status_code=400, detail="Yalnızca yeniden çözmen istenen bölümü tekrar çözebilirsin.")
     katmani_tekrara_ac(db, ogrenci, tur, katman)
     olay_yaz(db, ogrenci.id, "katman_tekrar", f"{katman.kod} güven sorunu nedeniyle tekrar açıldı ({tur.tur_no}. tur)", "Öğrenci")
     db.commit()
