@@ -8,7 +8,9 @@ Süre nasıl ölçülür (frontend/src/yardimci/kullanimIzleyici.js):
   * açık süre  — sekme ekranda (kişi etkin olmasa da). Aktif ≤ açık.
   * ziyaret    — menüye (ya da alt sekmeye) giriş sayısı.
   * oturum     — bir tarayıcı sekmesinde 30 dakikadan uzun ara verilmeden süren kullanım.
-Tarayıcı dakikada bir ve sekme kapanırken gönderir; sunucu (oturum, menü, alt sekme, saat dilimi) başına toplar.
+Üç düzey: menü › alt sekme › içerik (ör. İş Hayatı › Okulda Öğretilmeyenler › "Brüt, net ve bordro okuma"). İçerik, sayfanın
+<KullanimDetayi> ile bildirdiği açık öğe (ders, düşünme aracı, zor gün turu) ya da sayfadaki ikinci seçili sekmedir.
+Tarayıcı dakikada bir ve sekme kapanırken gönderir; sunucu (oturum, menü, alt sekme, içerik, saat dilimi) başına toplar.
 
 Uç noktalar:
   POST /ogrenci/kullanim                       öğrenci sürelerini yazar
@@ -57,6 +59,8 @@ class KullanimKaydi(GirdiModeli):
     menu_ad: str | None = Field(None, max_length=120)
     alt_kod: str = Field("", pattern=r"^[a-z0-9_\-]{0,60}$")
     alt_ad: str | None = Field(None, max_length=120)
+    detay_kod: str = Field("", pattern=r"^[a-z0-9_\-]{0,60}$")   # alt sekmenin içindeki içerik (ders, araç, iç sekme)
+    detay_ad: str | None = Field(None, max_length=120)
     aktif_sn: int = Field(0, ge=0, le=DILIM_EN_FAZLA_SN)
     acik_sn: int = Field(0, ge=0, le=DILIM_EN_FAZLA_SN)
     ziyaret: int = Field(0, ge=0, le=500)
@@ -70,15 +74,17 @@ class KullanimGovdesi(GirdiModeli):
 
 _YAZ_SQL = text("""
 INSERT INTO kullanim_sureleri (saat, kullanici_tipi, ogrenci_id, yonetici_id, okul_id, test_hesabi, oturum_id, cihaz,
-                               menu_kod, menu_ad, alt_kod, alt_ad, aktif_sn, acik_sn, ziyaret, ilk_zaman, son_zaman)
+                               menu_kod, menu_ad, alt_kod, alt_ad, detay_kod, detay_ad, aktif_sn, acik_sn, ziyaret, ilk_zaman, son_zaman)
 VALUES (date_trunc('hour', now()), :tip, CAST(:ogrenci_id AS uuid), CAST(:yonetici_id AS uuid), :okul_id, :test,
-        CAST(:oturum_id AS uuid), :cihaz, :menu_kod, :menu_ad, :alt_kod, :alt_ad, :aktif, :acik, :ziyaret, now(), now())
-ON CONFLICT (oturum_id, menu_kod, alt_kod, saat) DO UPDATE SET
+        CAST(:oturum_id AS uuid), :cihaz, :menu_kod, :menu_ad, :alt_kod, :alt_ad, :detay_kod, :detay_ad, :aktif, :acik, :ziyaret,
+        now(), now())
+ON CONFLICT (oturum_id, menu_kod, alt_kod, detay_kod, saat) DO UPDATE SET
     aktif_sn = LEAST(kullanim_sureleri.aktif_sn + EXCLUDED.aktif_sn, 3600),
     acik_sn = LEAST(kullanim_sureleri.acik_sn + EXCLUDED.acik_sn, 3600),
     ziyaret = kullanim_sureleri.ziyaret + EXCLUDED.ziyaret,
     menu_ad = COALESCE(EXCLUDED.menu_ad, kullanim_sureleri.menu_ad),
     alt_ad = COALESCE(EXCLUDED.alt_ad, kullanim_sureleri.alt_ad),
+    detay_ad = COALESCE(EXCLUDED.detay_ad, kullanim_sureleri.detay_ad),
     cihaz = COALESCE(EXCLUDED.cihaz, kullanim_sureleri.cihaz),
     son_zaman = now()
 WHERE kullanim_sureleri.ogrenci_id IS NOT DISTINCT FROM EXCLUDED.ogrenci_id
@@ -89,22 +95,23 @@ WHERE kullanim_sureleri.ogrenci_id IS NOT DISTINCT FROM EXCLUDED.ogrenci_id
 def _kaydet(db: Session, govde: KullanimGovdesi, tip: str, ogrenci_id=None, yonetici_id=None, okul_id=None, test=False) -> int:
     birlesik: dict[tuple, dict] = {}
     for k in govde.kayitlar:
-        anahtar = (k.menu_kod, k.alt_kod or "")
-        b = birlesik.setdefault(anahtar, {"menu_ad": None, "alt_ad": None, "aktif": 0, "acik": 0, "ziyaret": 0})
+        anahtar = (k.menu_kod, k.alt_kod or "", (k.detay_kod or "") if k.alt_kod else "")
+        b = birlesik.setdefault(anahtar, {"menu_ad": None, "alt_ad": None, "detay_ad": None, "aktif": 0, "acik": 0, "ziyaret": 0})
         b["menu_ad"] = (k.menu_ad or "").strip()[:120] or b["menu_ad"]
         b["alt_ad"] = (k.alt_ad or "").strip()[:120] or b["alt_ad"]
+        b["detay_ad"] = (k.detay_ad or "").strip()[:120] or b["detay_ad"]
         b["aktif"] += k.aktif_sn
         b["acik"] += max(k.acik_sn, k.aktif_sn)     # aktif süre açık sürenin parçasıdır
         b["ziyaret"] += k.ziyaret
     satirlar = []
-    for (menu, alt), b in birlesik.items():
+    for (menu, alt, detay), b in birlesik.items():
         if not (b["aktif"] or b["acik"] or b["ziyaret"]):
             continue
         satirlar.append({
             "tip": tip, "ogrenci_id": str(ogrenci_id) if ogrenci_id else None,
             "yonetici_id": str(yonetici_id) if yonetici_id else None, "okul_id": okul_id, "test": bool(test),
             "oturum_id": str(govde.oturum_id), "cihaz": govde.cihaz, "menu_kod": menu, "menu_ad": b["menu_ad"],
-            "alt_kod": alt, "alt_ad": b["alt_ad"], "aktif": min(b["aktif"], DILIM_EN_FAZLA_SN),
+            "alt_kod": alt, "alt_ad": b["alt_ad"], "detay_kod": detay, "detay_ad": b["detay_ad"] if detay else None, "aktif": min(b["aktif"], DILIM_EN_FAZLA_SN),
             "acik": min(b["acik"], DILIM_EN_FAZLA_SN), "ziyaret": b["ziyaret"],
         })
     if satirlar:
@@ -233,6 +240,56 @@ def _kisi_ozetleri(db: Session, f: Suzgec):
           FROM kullanim_sureleri k WHERE {f.k()} GROUP BY 1, 2"""), f.p()).mappings().all()
 
 
+def _etiket(kod: str) -> str:
+    return kod.replace("-", " ").replace("_", " ").capitalize()
+
+
+def _menu_agaci(db: Session, nerede: str, p: dict, tipli: bool = True) -> dict[str, list[dict]]:
+    """Menü › alt sekme › içerik ağacı (tip başına). Her düzeyde süre, ziyaret ve tekil kişi ayrı sayılır (GROUPING SETS)."""
+    tk = "k.kullanici_tipi, " if tipli else ""
+    son = lambda alan: f"(array_agg(k.{alan} ORDER BY k.son_zaman DESC) FILTER (WHERE k.{alan} IS NOT NULL))[1]"
+    agac: dict[str, dict] = {}
+    for r in db.execute(text(f"""
+            SELECT {"k.kullanici_tipi" if tipli else "'tek'"} AS tip, k.menu_kod, k.alt_kod, k.detay_kod,
+                   GROUPING(k.alt_kod) AS g_alt, GROUPING(k.detay_kod) AS g_detay,
+                   {son("menu_ad")} AS menu_ad, {son("alt_ad")} AS alt_ad, {son("detay_ad")} AS detay_ad,
+                   sum(k.aktif_sn) AS aktif, sum(k.ziyaret) AS ziyaret,
+                   count(DISTINCT {_KID}) FILTER (WHERE k.aktif_sn > 0) AS kisi, max(k.son_zaman) AS son
+              FROM kullanim_sureleri k WHERE {nerede}
+             GROUP BY GROUPING SETS (({tk}k.menu_kod, k.alt_kod, k.detay_kod), ({tk}k.menu_kod, k.alt_kod), ({tk}k.menu_kod))"""),
+            p).mappings():
+        olcu = {"aktif_sn": int(r["aktif"] or 0), "ziyaret": int(r["ziyaret"] or 0), "kullanici": int(r["kisi"] or 0),
+                "son": r["son"].isoformat() if r["son"] else None}
+        m = agac.setdefault(r["tip"], {}).setdefault(r["menu_kod"], {"menu_kod": r["menu_kod"], "menu_ad": None, "_alt": {},
+                                                                    "aktif_sn": 0, "ziyaret": 0, "kullanici": 0})
+        if r["g_alt"]:
+            m.update({"menu_ad": r["menu_ad"] or r["menu_kod"], **olcu})
+            continue
+        if not r["alt_kod"]:
+            continue
+        a = m["_alt"].setdefault(r["alt_kod"], {"alt_kod": r["alt_kod"], "alt_ad": None, "detaylar": [], "aktif_sn": 0, "ziyaret": 0, "kullanici": 0})
+        if r["g_detay"]:
+            a.update({"alt_ad": r["alt_ad"] or _etiket(r["alt_kod"]), **olcu})
+        elif r["detay_kod"]:
+            a["detaylar"].append({"detay_kod": r["detay_kod"], "detay_ad": r["detay_ad"] or _etiket(r["detay_kod"]), **olcu})
+    cikti: dict[str, list[dict]] = {}
+    for tip, menuler in agac.items():
+        l = []
+        for m in menuler.values():
+            altlar = sorted(m.pop("_alt").values(), key=lambda x: -x["aktif_sn"])
+            for a in altlar:
+                a["detaylar"].sort(key=lambda x: -x["aktif_sn"])
+                for d in a["detaylar"]:
+                    d.update({"pay_altta": _oran(d["aktif_sn"], a["aktif_sn"]), "kisi_basi_sn": _ort(d["aktif_sn"], d["kullanici"]),
+                              "ort_ziyaret_sn": _ort(d["aktif_sn"], d["ziyaret"])})
+                a.update({"pay_menude": _oran(a["aktif_sn"], m["aktif_sn"]), "kisi_basi_sn": _ort(a["aktif_sn"], a["kullanici"]),
+                          "ort_ziyaret_sn": _ort(a["aktif_sn"], a["ziyaret"])})
+            m.update({"altlar": altlar, "kisi_basi_sn": _ort(m["aktif_sn"], m["kullanici"]), "ort_ziyaret_sn": _ort(m["aktif_sn"], m["ziyaret"])})
+            l.append(m)
+        cikti[tip] = sorted(l, key=lambda x: -x["aktif_sn"])
+    return cikti
+
+
 def _analiz(db: Session, f: Suzgec) -> dict:
     p = f.p()
     kayitli, sinif_kayitli = _kayitlilar(db, f)
@@ -290,36 +347,16 @@ def _analiz(db: Session, f: Suzgec) -> dict:
     ozet["yetkili"] = ozet_yap(("okul_yetkilisi", "super_admin"))
     ozet["toplam"] = ozet_yap(TIPLER)
 
-    # ---------------------------------------------------------------- menüler (menü ve alt sekme; tekil kişi ayrı ayrı)
-    menuler: dict[str, dict[str, dict]] = {t: {} for t in TIPLER}
-    for r in db.execute(text(f"""
-            SELECT k.kullanici_tipi AS tip, k.menu_kod, COALESCE(k.alt_kod, '') AS alt_kod, GROUPING(k.alt_kod) AS menu_satiri,
-                   (array_agg(k.menu_ad ORDER BY k.son_zaman DESC) FILTER (WHERE k.menu_ad IS NOT NULL))[1] AS menu_ad,
-                   (array_agg(k.alt_ad ORDER BY k.son_zaman DESC) FILTER (WHERE k.alt_ad IS NOT NULL))[1] AS alt_ad,
-                   sum(k.aktif_sn) AS aktif, sum(k.ziyaret) AS ziyaret,
-                   count(DISTINCT {_KID}) FILTER (WHERE k.aktif_sn > 0) AS kisi
-              FROM kullanim_sureleri k WHERE {f.k()}
-             GROUP BY GROUPING SETS ((k.kullanici_tipi, k.menu_kod, k.alt_kod), (k.kullanici_tipi, k.menu_kod))"""), p).mappings():
-        m = menuler.setdefault(r["tip"], {}).setdefault(r["menu_kod"], {"menu_kod": r["menu_kod"], "menu_ad": None, "altlar": []})
-        if r["menu_satiri"]:
-            m.update({"menu_ad": r["menu_ad"] or r["menu_kod"], "aktif_sn": int(r["aktif"] or 0),
-                      "ziyaret": int(r["ziyaret"] or 0), "kullanici": int(r["kisi"] or 0)})
-        elif r["alt_kod"]:
-            m["altlar"].append({"alt_kod": r["alt_kod"], "alt_ad": r["alt_ad"] or r["alt_kod"].replace("-", " ").replace("_", " ").capitalize(),
-                                "aktif_sn": int(r["aktif"] or 0), "ziyaret": int(r["ziyaret"] or 0), "kullanici": int(r["kisi"] or 0)})
+    # ---------------------------------------------------------------- menüler (menü › alt sekme › içerik; tekil kişi her düzeyde ayrı)
+    menuler = _menu_agaci(db, f.k(), p)
     menu_cikti = {}
     for t in TIPLER:
-        top = sum(m.get("aktif_sn", 0) for m in menuler[t].values())
+        l = menuler.get(t, [])
+        top = sum(m["aktif_sn"] for m in l)
         n_aktif = ozet[t]["aktif_kullanici"]
-        l = []
-        for m in menuler[t].values():
-            a = m.get("aktif_sn", 0)
-            alts = sorted(m["altlar"], key=lambda x: -x["aktif_sn"])
-            for x in alts:
-                x["pay_menude"] = _oran(x["aktif_sn"], a)
-            l.append({**m, "altlar": alts, "pay": _oran(a, top), "yayginlik": _oran(m.get("kullanici", 0), n_aktif),
-                      "kisi_basi_sn": _ort(a, m.get("kullanici", 0)), "ort_ziyaret_sn": _ort(a, m.get("ziyaret", 0))})
-        menu_cikti[t] = sorted(l, key=lambda x: -x.get("aktif_sn", 0))
+        for m in l:
+            m.update({"pay": _oran(m["aktif_sn"], top), "yayginlik": _oran(m["kullanici"], n_aktif)})
+        menu_cikti[t] = l
 
     # ---------------------------------------------------------------- okullar
     okul_menu: dict[tuple, tuple[str, int]] = {}
@@ -541,26 +578,10 @@ def kullanici_ayrintisi(
         raise HTTPException(status_code=404, detail="Kişi bulunamadı.")
     p = f.p(kid=str(kullanici_id))
     kk = f"k.saat >= :bas AND k.saat < :bit AND k.{kol} = CAST(:kid AS uuid)"
-    menuler: dict[str, dict] = {}
-    for r in db.execute(text(f"""
-            SELECT k.menu_kod, COALESCE(k.alt_kod, '') AS alt_kod, GROUPING(k.alt_kod) AS menu_satiri,
-                   (array_agg(k.menu_ad ORDER BY k.son_zaman DESC) FILTER (WHERE k.menu_ad IS NOT NULL))[1] AS menu_ad,
-                   (array_agg(k.alt_ad ORDER BY k.son_zaman DESC) FILTER (WHERE k.alt_ad IS NOT NULL))[1] AS alt_ad,
-                   sum(k.aktif_sn) AS aktif, sum(k.ziyaret) AS ziyaret, max(k.son_zaman) AS son
-              FROM kullanim_sureleri k WHERE {kk}
-             GROUP BY GROUPING SETS ((k.menu_kod, k.alt_kod), (k.menu_kod))"""), p).mappings():
-        m = menuler.setdefault(r["menu_kod"], {"menu_kod": r["menu_kod"], "altlar": []})
-        if r["menu_satiri"]:
-            m.update({"menu_ad": r["menu_ad"] or r["menu_kod"], "aktif_sn": int(r["aktif"] or 0), "ziyaret": int(r["ziyaret"] or 0),
-                      "son": r["son"].isoformat() if r["son"] else None})
-        elif r["alt_kod"]:
-            m["altlar"].append({"alt_kod": r["alt_kod"], "alt_ad": r["alt_ad"] or r["alt_kod"], "aktif_sn": int(r["aktif"] or 0),
-                                "ziyaret": int(r["ziyaret"] or 0)})
-    top = sum(m.get("aktif_sn", 0) for m in menuler.values())
-    menu_l = []
-    for m in sorted(menuler.values(), key=lambda x: -x.get("aktif_sn", 0)):
-        m["altlar"].sort(key=lambda x: -x["aktif_sn"])
-        menu_l.append({**m, "pay": _oran(m.get("aktif_sn", 0), top), "ort_ziyaret_sn": _ort(m.get("aktif_sn", 0), m.get("ziyaret", 0))})
+    menu_l = _menu_agaci(db, kk, p, tipli=False).get("tek", [])
+    top = sum(m["aktif_sn"] for m in menu_l)
+    for m in menu_l:
+        m["pay"] = _oran(m["aktif_sn"], top)
     gunluk = {r[0]: int(r[1] or 0) for r in db.execute(text(
         f"SELECT {_GUN}, sum(k.aktif_sn) FROM kullanim_sureleri k WHERE {kk} GROUP BY 1"), p)}
     gunler, g = [], f.bas
@@ -621,17 +642,21 @@ def kullanim_csv(
     else:
         a = _analiz(db, f)
         if tur == "menuler":
-            w.writerow(["Kullanıcı tipi", "Menü", "Alt sekme", "Aktif süre (sa:dk:sn)", "Aktif süre (dk)", "Pay (%)",
-                        "Kullanan kişi", "Yaygınlık (%)", "Kişi başı (dk)", "Ziyaret", "Ziyaret başı (dk)"])
+            w.writerow(["Kullanıcı tipi", "Menü", "Alt sekme", "İçerik", "Aktif süre (sa:dk:sn)", "Aktif süre (dk)",
+                        "Pay (%) (bir üst düzey içinde)", "Kullanan kişi", "Yaygınlık (%)", "Kişi başı (dk)", "Ziyaret", "Ziyaret başı (dk)"])
             for t in TIPLER:
                 for m in a["menuler"][t]:
-                    w.writerow([TIP_ETIKET[t], m["menu_ad"], "", _sure(m.get("aktif_sn")), round(m.get("aktif_sn", 0) / 60, 1),
-                                m["pay"], m.get("kullanici", 0), m["yayginlik"], round(m["kisi_basi_sn"] / 60, 1),
-                                m.get("ziyaret", 0), round(m["ort_ziyaret_sn"] / 60, 1)])
+                    w.writerow([TIP_ETIKET[t], m["menu_ad"], "", "", _sure(m["aktif_sn"]), round(m["aktif_sn"] / 60, 1),
+                                m["pay"], m["kullanici"], m["yayginlik"], round(m["kisi_basi_sn"] / 60, 1),
+                                m["ziyaret"], round(m["ort_ziyaret_sn"] / 60, 1)])
                     for x in m["altlar"]:
-                        w.writerow([TIP_ETIKET[t], m["menu_ad"], x["alt_ad"], _sure(x["aktif_sn"]), round(x["aktif_sn"] / 60, 1),
-                                    x["pay_menude"], x["kullanici"], "", round(_ort(x["aktif_sn"], x["kullanici"]) / 60, 1),
-                                    x["ziyaret"], round(_ort(x["aktif_sn"], x["ziyaret"]) / 60, 1)])
+                        w.writerow([TIP_ETIKET[t], m["menu_ad"], x["alt_ad"], "", _sure(x["aktif_sn"]), round(x["aktif_sn"] / 60, 1),
+                                    x["pay_menude"], x["kullanici"], "", round(x["kisi_basi_sn"] / 60, 1),
+                                    x["ziyaret"], round(x["ort_ziyaret_sn"] / 60, 1)])
+                        for d in x["detaylar"]:
+                            w.writerow([TIP_ETIKET[t], m["menu_ad"], x["alt_ad"], d["detay_ad"], _sure(d["aktif_sn"]),
+                                        round(d["aktif_sn"] / 60, 1), d["pay_altta"], d["kullanici"], "",
+                                        round(d["kisi_basi_sn"] / 60, 1), d["ziyaret"], round(d["ort_ziyaret_sn"] / 60, 1)])
         elif tur == "okullar":
             w.writerow(["Okul", "Kayıtlı öğrenci", "Kullanan öğrenci", "Öğrenci katılım (%)", "Öğrenci toplam (dk)",
                         "Öğrenci kişi başı (dk)", "Öğrenci oturum", "Öğrencide en çok menü", "Kayıtlı yetkili", "Kullanan yetkili",

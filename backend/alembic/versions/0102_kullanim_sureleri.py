@@ -6,8 +6,9 @@ Create Date: 2026-11-11
 
 [2026-11-11] Kullanıcı isteği: "kullanıcıların hangi menüde ne kadar süre geçirdiğinin analizleri; öğrenciler ayrı,
 yetkililer ayrı, her okul ayrı, toplam". Tarayıcı, sekme açık ve kişi etkinken (son 2 dakikada dokunma / tıklama /
-yazma / kaydırma) geçen süreyi menü ve alt sekme bazında sayar, dakikada bir gönderir. Sunucu satırı
-(oturum, menü, alt sekme, saat dilimi) başına toplar: tablo kişi başı ziyaret sayısıyla değil saat × menü ile büyür.
+yazma / kaydırma) geçen süreyi üç düzeyde sayar: menü › alt sekme › içerik (ör. İş Hayatı › Okulda Öğretilmeyenler ›
+Bordro okuma), dakikada bir gönderir. Sunucu satırı (oturum, menü, alt sekme, içerik, saat dilimi) başına toplar: tablo
+kişi başı ziyaret sayısıyla değil saat × menü ile büyür.
 
 Kişi bağı yabancı anahtarla (ON DELETE CASCADE): öğrenci ya da yetkili silinince süre kayıtları da silinir (KVKK).
 Saklama süresi parametre `kullanim_suresi_saklama_gun` (gece bakımında silinir).
@@ -35,13 +36,15 @@ CREATE TABLE IF NOT EXISTS kullanim_sureleri (
     menu_ad VARCHAR(120),
     alt_kod VARCHAR(60) NOT NULL DEFAULT '',
     alt_ad VARCHAR(120),
+    detay_kod VARCHAR(60) NOT NULL DEFAULT '',
+    detay_ad VARCHAR(120),
     aktif_sn INTEGER NOT NULL DEFAULT 0,
     acik_sn INTEGER NOT NULL DEFAULT 0,
     ziyaret INTEGER NOT NULL DEFAULT 0,
     ilk_zaman TIMESTAMPTZ NOT NULL DEFAULT now(),
     son_zaman TIMESTAMPTZ NOT NULL DEFAULT now(),
     CONSTRAINT ck_kullanim_kisi CHECK ((ogrenci_id IS NULL) <> (yonetici_id IS NULL)),
-    CONSTRAINT uq_kullanim_dilim UNIQUE (oturum_id, menu_kod, alt_kod, saat)
+    CONSTRAINT uq_kullanim_dilim UNIQUE (oturum_id, menu_kod, alt_kod, detay_kod, saat)
 );
 CREATE INDEX IF NOT EXISTS ix_kullanim_saat ON kullanim_sureleri (saat);
 CREATE INDEX IF NOT EXISTS ix_kullanim_ogrenci ON kullanim_sureleri (ogrenci_id, saat) WHERE ogrenci_id IS NOT NULL;

@@ -24,14 +24,29 @@ export const kodYap = (s) => String(s || '').toLocaleLowerCase('tr-TR')
   .replace(/ç/g, 'c').replace(/ğ/g, 'g').replace(/ı/g, 'i').replace(/ö/g, 'o').replace(/ş/g, 's').replace(/ü/g, 'u')
   .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60)
 
-/** Sayfadaki seçili sekmenin adı: önce bağlantı sekmeleri (adres değiştiren), sonra sayfa içi sekmeler (role="tab").
- *  Simge ve sayaç rozeti atılır: "🔍 Tüm bölümler" → "Tüm bölümler", "Bekleyen (3)" → "Bekleyen". */
-export function seciliSekmeAdi() {
+const sekmeMetni = (el) => {
+  const m = (el?.textContent || '').replace(/^[^\p{L}\p{N}]+/u, '').replace(/\s*\(?\d+\)?\s*$/, '').replace(/\s+/g, ' ').trim()
+  return m ? m.slice(0, 120) : null
+}
+
+/** Sayfadaki seçili sekmelerin adları, dıştan içe: önce bağlantı sekmeleri (adres değiştiren), sonra sayfa içi
+ *  sekmeler (role="tab"). [0] alt sekme, [1] içerik düzeyi için kullanılır. Simge ve sayaç rozeti atılır:
+ *  "🔍 Tüm bölümler" → "Tüm bölümler", "Bekleyen (3)" → "Bekleyen". */
+export function seciliSekmeAdlari() {
   try {
-    const el = document.querySelector('.pg .sayfa-sekmeleri [aria-current="page"], .pg .sayfa-sekmeleri .aktif')
-      || document.querySelector('.pg [role="tab"][aria-selected="true"], main [role="tab"][aria-selected="true"]')
-    const m = (el?.textContent || '').replace(/^[^\p{L}\p{N}]+/u, '').replace(/\s*\(?\d+\)?\s*$/, '').replace(/\s+/g, ' ').trim()
-    return m ? m.slice(0, 120) : null
+    const l = [...document.querySelectorAll('.pg .sayfa-sekmeleri [aria-current="page"], .pg .sayfa-sekmeleri .aktif'),
+      ...document.querySelectorAll('.pg [role="tab"][aria-selected="true"], main [role="tab"][aria-selected="true"]')]
+    return [...new Set(l)].map(sekmeMetni).filter(Boolean)
+  } catch { return [] }
+}
+
+/** Sayfanın kendisinin bildirdiği içerik (ör. açık ders): <KullanimDetayi kod ad />. En içteki geçerlidir. */
+export function isaretliDetay() {
+  try {
+    const l = document.querySelectorAll('[data-kullanim-detay]')
+    const el = l[l.length - 1]
+    const kod = el && kodYap(el.getAttribute('data-kullanim-detay'))
+    return kod ? { kod, ad: (el.getAttribute('data-kullanim-detay-ad') || '').slice(0, 120) || null } : null
   } catch { return null }
 }
 

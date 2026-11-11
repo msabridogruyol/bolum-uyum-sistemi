@@ -129,3 +129,32 @@ def test_hesap_silinince_sureleri_de_silinir(db, kisiler, istemci):
     ogrenciyi_sil(db, db.get(Ogrenci, oid))
     db.commit()
     assert db.execute(text("SELECT count(*) FROM kullanim_sureleri WHERE ogrenci_id = :i"), {"i": oid}).scalar() == 0
+
+
+@db_gerekli
+def test_ucuncu_duzey_icerik(db, kisiler, istemci):
+    """Menü › alt sekme › içerik: ör. İş Hayatı › Okulda Öğretilmeyenler › tek tek dersler."""
+    oid = _ogrenci_id(db, kisiler["okul_a"])
+    ot = uuid.uuid4()
+    k = lambda detay, ad, sn, z=1: {"menu_kod": "is-hayati", "menu_ad": "İş Hayatı", "alt_kod": "dersler",
+                                   "alt_ad": "Okulda Öğretilmeyenler", "detay_kod": detay, "detay_ad": ad,
+                                   "aktif_sn": sn, "acik_sn": sn, "ziyaret": z}
+    assert _gonder(istemci, "/ogrenci/kullanim", kisiler["ogrenci"], ot, [
+        k("", None, 20), k("bordro", "Brüt, net ve bordro okuma", 300), k("vergi", "Vergi", 100),
+        # alt sekme yokken içerik yazılmaz (menü düzeyine düşer)
+        {"menu_kod": "takvim", "detay_kod": "x", "detay_ad": "X", "aktif_sn": 10},
+    ]).status_code == 200
+    assert db.execute(text("SELECT detay_kod FROM kullanim_sureleri WHERE oturum_id = :o AND menu_kod = 'takvim'"), {"o": ot}).scalar() == ""
+
+    v = istemci.get(f"/admin/kullanim-analizi?okul_id={kisiler['okul_a']}", headers=kisiler["super"]).json()
+    m = next(x for x in v["menuler"]["ogrenci"] if x["menu_kod"] == "is-hayati")
+    assert m["aktif_sn"] == 420 and m["altlar"][0]["alt_ad"] == "Okulda Öğretilmeyenler" and m["altlar"][0]["aktif_sn"] == 420
+    detay = m["altlar"][0]["detaylar"]
+    assert [(d["detay_ad"], d["aktif_sn"], d["kullanici"]) for d in detay] == [("Brüt, net ve bordro okuma", 300, 1), ("Vergi", 100, 1)]
+    assert detay[0]["pay_altta"] == round(100 * 300 / 420, 1)
+
+    d = istemci.get(f"/admin/kullanim-analizi/kullanici?tip=ogrenci&kullanici_id={oid}", headers=kisiler["super"]).json()
+    m = next(x for x in d["menuler"] if x["menu_kod"] == "is-hayati")
+    assert m["altlar"][0]["detaylar"][0]["detay_kod"] == "bordro"
+    c = istemci.get(f"/admin/kullanim-analizi/csv?tur=menuler&okul_id={kisiler['okul_a']}", headers=kisiler["super"]).text
+    assert "Brüt, net ve bordro okuma" in c

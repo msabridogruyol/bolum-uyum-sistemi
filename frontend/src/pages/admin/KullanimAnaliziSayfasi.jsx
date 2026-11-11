@@ -243,49 +243,60 @@ function GenelBakis({ v, csv, kisiAc, okulSec }) {
 }
 
 // ============================================================================ tip paneli (öğrenci / okul yetkilisi / süper admin)
+// Menü › alt sekme › içerik: her düzey tıklanınca bir alttakini açar. Pay, bir üst düzey içindeki paydır.
+const sag = { textAlign: 'right' }
+function MenuSatiri({ duzey, ad, o, pay, payBaslik, yayginlik, acilir, acik, onAc, altSayisi, altEtiket }) {
+  const girinti = [0, 22, 44][duzey]
+  return (
+    <tr style={duzey ? { background: duzey === 1 ? 'var(--bg2, transparent)' : 'var(--bg3, var(--bg2, transparent))' } : undefined}>
+      <td style={{ paddingLeft: 12 + girinti }}>
+        {acilir
+          ? <button type="button" className="hg-link" style={{ fontSize: duzey ? 12.5 : 13, color: 'var(--tx)', fontWeight: duzey ? 500 : 600, textAlign: 'left' }}
+                    aria-expanded={acik} onClick={onAc}>{acik ? '▾' : '▸'} {ad}</button>
+          : duzey ? <span>{ad}</span> : <b>{ad}</b>}
+        {acilir && <span className="yp-ince"> · {altSayisi} {altEtiket}</span>}
+      </td>
+      <td style={sag}>{sureYaz(o.aktif_sn)}</td>
+      <td style={sag} title={payBaslik}>{yuzde(pay)}</td>
+      <td style={sag}>{o.kullanici}</td>
+      <td style={sag}>{duzey ? '' : yuzde(yayginlik)}</td>
+      <td style={sag}>{sureYaz(o.kisi_basi_sn)}</td>
+      <td style={sag}>{o.ziyaret || '—'}</td>
+      <td style={sag}>{o.ziyaret ? sureYaz(o.ort_ziyaret_sn) : '—'}</td>
+    </tr>
+  )
+}
+
 function MenuTablosu({ menuler, kisiSayisi }) {
   const [acik, setAcik] = useState({})
+  const ac = (k) => setAcik((a) => ({ ...a, [k]: !a[k] }))
   if (!menuler.length) return <div className="ist-bos">Henüz veri yok</div>
   return (
     <div className="yp-tablo-kap">
       <table className="yp-tablo">
         <thead><tr>
-          <th>Menü / alt sekme</th><th style={{ textAlign: 'right' }}>Aktif süre</th><th style={{ textAlign: 'right' }}>Pay</th>
-          <th style={{ textAlign: 'right' }} title="Bu menüyü kullanan kişi">Kişi</th>
-          <th style={{ textAlign: 'right' }} title={`Kullanan kişinin dönemde sistemi kullanan ${kisiSayisi} kişiye oranı`}>Yaygınlık</th>
-          <th style={{ textAlign: 'right' }}>Kişi başı</th><th style={{ textAlign: 'right' }}>Ziyaret</th>
-          <th style={{ textAlign: 'right' }} title="Menüye her girişte ortalama kalma süresi">Ziyaret başı</th>
+          <th>Menü › alt sekme › içerik</th><th style={sag}>Aktif süre</th><th style={sag} title="Bir üst düzey içindeki pay">Pay</th>
+          <th style={sag} title="Kullanan kişi">Kişi</th>
+          <th style={sag} title={`Menüyü kullanan kişinin dönemde sistemi kullanan ${kisiSayisi} kişiye oranı`}>Yaygınlık</th>
+          <th style={sag}>Kişi başı</th><th style={sag}>Ziyaret</th>
+          <th style={sag} title="Her girişte ortalama kalma süresi">Ziyaret başı</th>
         </tr></thead>
         <tbody>{menuler.map((m) => (
           <Fragment key={m.menu_kod}>
-            <tr>
-              <td>
-                {m.altlar.length > 0
-                  ? <button type="button" className="hg-link" style={{ fontSize: 13, color: 'var(--tx)', fontWeight: 600 }} aria-expanded={!!acik[m.menu_kod]}
-                            onClick={() => setAcik({ ...acik, [m.menu_kod]: !acik[m.menu_kod] })}>{acik[m.menu_kod] ? '▾' : '▸'} {m.menu_ad}</button>
-                  : <b>{m.menu_ad}</b>}
-                {m.altlar.length > 0 && <span className="yp-ince"> · {m.altlar.length} alt sekme</span>}
-              </td>
-              <td style={{ textAlign: 'right' }}>{sureYaz(m.aktif_sn)}</td>
-              <td style={{ textAlign: 'right' }}>{yuzde(m.pay)}</td>
-              <td style={{ textAlign: 'right' }}>{m.kullanici}</td>
-              <td style={{ textAlign: 'right' }}>{yuzde(m.yayginlik)}</td>
-              <td style={{ textAlign: 'right' }}>{sureYaz(m.kisi_basi_sn)}</td>
-              <td style={{ textAlign: 'right' }}>{m.ziyaret}</td>
-              <td style={{ textAlign: 'right' }}>{sureYaz(m.ort_ziyaret_sn)}</td>
-            </tr>
-            {acik[m.menu_kod] && m.altlar.map((a) => (
-              <tr key={a.alt_kod} style={{ background: 'var(--bg2, transparent)' }}>
-                <td style={{ paddingLeft: 28 }}>{a.alt_ad}</td>
-                <td style={{ textAlign: 'right' }}>{sureYaz(a.aktif_sn)}</td>
-                <td style={{ textAlign: 'right' }} title="Menü içindeki payı">{yuzde(a.pay_menude)}</td>
-                <td style={{ textAlign: 'right' }}>{a.kullanici}</td>
-                <td />
-                <td style={{ textAlign: 'right' }}>{sureYaz(a.kullanici ? a.aktif_sn / a.kullanici : 0)}</td>
-                <td style={{ textAlign: 'right' }}>{a.ziyaret || '—'}</td>
-                <td style={{ textAlign: 'right' }}>{a.ziyaret ? sureYaz(a.aktif_sn / a.ziyaret) : '—'}</td>
-              </tr>
-            ))}
+            <MenuSatiri duzey={0} ad={m.menu_ad} o={m} pay={m.pay} payBaslik="Toplam süredeki payı" yayginlik={m.yayginlik}
+                        acilir={m.altlar.length > 0} acik={!!acik[m.menu_kod]} onAc={() => ac(m.menu_kod)} altSayisi={m.altlar.length} altEtiket="alt sekme" />
+            {acik[m.menu_kod] && m.altlar.map((a) => {
+              const ak = `${m.menu_kod}|${a.alt_kod}`
+              return (
+                <Fragment key={ak}>
+                  <MenuSatiri duzey={1} ad={a.alt_ad} o={a} pay={a.pay_menude} payBaslik={`${m.menu_ad} içindeki payı`}
+                              acilir={a.detaylar?.length > 0} acik={!!acik[ak]} onAc={() => ac(ak)} altSayisi={a.detaylar?.length} altEtiket="içerik" />
+                  {acik[ak] && a.detaylar.map((d) => (
+                    <MenuSatiri key={d.detay_kod} duzey={2} ad={d.detay_ad} o={d} pay={d.pay_altta} payBaslik={`${a.alt_ad} içindeki payı`} />
+                  ))}
+                </Fragment>
+              )
+            })}
           </Fragment>
         ))}</tbody>
       </table>
@@ -302,7 +313,7 @@ function TipPaneli({ v, tip, csv, kisiAc }) {
     <>
       <div className="card"><OzetKpileri o={o} tip={tip} /></div>
       <div className="ist-kartlar">
-        <GrafikKarti genis baslik="Menü ve alt sekme ayrıntısı" aciklama="Menü adına tıklayınca alt sekmeler açılır. Pay: o menünün toplam süredeki payı; alt sekmede menü içindeki payı."
+        <GrafikKarti genis baslik="Menü, alt sekme ve içerik ayrıntısı" aciklama="Üç düzey: menü › alt sekme › içerik (ör. İş Hayatı › Okulda Öğretilmeyenler › tek tek dersler). Ada tıklayınca bir alt düzey açılır. Pay: bir üst düzey içindeki pay."
                      sag={<button type="button" className="btn sec" onClick={() => csv('menuler')}>Menüler CSV</button>}>
           <MenuTablosu menuler={menuler} kisiSayisi={o.aktif_kullanici} />
         </GrafikKarti>
@@ -519,9 +530,8 @@ function KisiAyrintisi({ tip, id, bas, bit, onKapat }) {
             <KpiKarti etiket="Menü ziyareti" deger={v.ozet.ziyaret} ikon="🧭" alt={`son giriş ${tarihYaz(k.son_giris)}`} />
           </KpiSatiri>
           <div className="ist-kartlar" style={{ marginTop: 14 }}>
-            <GrafikKarti genis baslik="Menüler" aciklama="Menü adına tıklayınca alt sekmeler açılır">
-              <MenuTablosu menuler={v.menuler.map((m) => ({ ...m, kullanici: 1, yayginlik: null, kisi_basi_sn: m.aktif_sn,
-                altlar: m.altlar.map((a) => ({ ...a, kullanici: 1, pay_menude: m.aktif_sn ? Math.round((a.aktif_sn / m.aktif_sn) * 1000) / 10 : null })) }))} kisiSayisi={1} />
+            <GrafikKarti genis baslik="Menüler" aciklama="Menü › alt sekme › içerik; ada tıklayınca bir alt düzey açılır">
+              <MenuTablosu menuler={v.menuler.map((m) => ({ ...m, yayginlik: null }))} kisiSayisi={1} />
             </GrafikKarti>
             <GrafikKarti baslik="Günlere göre" aciklama="Aktif süre, dakika"
                          tablo={{ sutunlar: ['Gün', 'Dakika'], satirlar: v.gunluk.map((g) => [g.gun, dk(g.aktif_sn)]) }}>

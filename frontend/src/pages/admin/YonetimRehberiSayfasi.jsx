@@ -151,7 +151,7 @@ const KONULAR = [
     ne_zaman: 'Sistemin ne kadar ve nasıl kullanıldığını görmek; hangi okulda, hangi sınıfta ya da hangi menüde kullanımın düşük kaldığını bulmak istediğinizde.',
     adimlar: [
       { m: <><E to="/admin/kullanim-analizi">Kullanım Analizi</E>: dönemi (<b>7 / 30 / 90 gün, 1 yıl</b> ya da tarih) ve gerekirse okulu seçin. Rakamlar önceki eşit dönemle karşılaştırılır.</> },
-      { m: <><b>Genel bakış</b>: öğrenci, okul yetkilisi ve süper admin yan yana (kayıtlı, kullanan, katılım, toplam ve kişi başı süre, oturum). <b>Öğrenciler / Okul yetkilileri / Süper adminler</b>: menü ve alt sekme tablosu, gün × saat, süre dağılımı, cihaz, sınıflar.</> },
+      { m: <><b>Genel bakış</b>: öğrenci, okul yetkilisi ve süper admin yan yana (kayıtlı, kullanan, katılım, toplam ve kişi başı süre, oturum). <b>Öğrenciler / Okul yetkilileri / Süper adminler</b>: menü › alt sekme › içerik tablosu (ör. İş Hayatı › Okulda Öğretilmeyenler › tek tek dersler), gün × saat, süre dağılımı, cihaz, sınıflar.</> },
       { m: <><b>Okullar</b>: okul okul öğrenci ve yetkili kullanımı; okula tıklayınca bütün rapor o okula süzülür. <b>Kişiler</b>: herkes, hiç kullanmayanlar dahil; kişiye tıklayınca menüleri, günleri, saatleri ve oturumları açılır. Her tablo CSV olarak indirilebilir.</> },
     ],
     not: 'Süre "aktif süre"dir: sekme ekranda açık ve kişi son 2 dakikada dokunmuş / tıklamış / yazmış / kaydırmışsa sayılır. Ölçüm bu özellik canlıya alındığı andan başlar; önceki dönemler boş görünür. Test hesapları ve demo okullar varsayılan olarak hariçtir. Kayıtlar 730 gün saklanır (Parametreler → kullanim_suresi_saklama_gun).',

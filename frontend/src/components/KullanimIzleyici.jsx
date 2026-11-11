@@ -5,7 +5,7 @@
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
 import { aktifDil } from '../yardimci/dil'
-import { ekranCoz, kodYap, seciliSekmeAdi } from '../yardimci/kullanimEkrani'
+import { ekranCoz, isaretliDetay, kodYap, seciliSekmeAdlari } from '../yardimci/kullanimEkrani'
 
 const TIK_MS = 5000
 const BOSTA_MS = 2 * 60 * 1000
@@ -55,14 +55,16 @@ function oturumKimligi(kapsam, kisi, simdi, dokun) {
 }
 
 function kayit(e) {
-  const k = `${e.kapsam}|${e.oturum}|${e.menu_kod}|${e.alt_kod}`
+  const k = `${e.kapsam}|${e.oturum}|${e.menu_kod}|${e.alt_kod}|${e.detay_kod || ''}`
   let r = d.tampon.get(k)
   if (!r) {
     if (d.tampon.size >= TAMPON_EN_FAZLA) return null
-    r = { kapsam: e.kapsam, oturum: e.oturum, menu_kod: e.menu_kod, menu_ad: e.menu_ad, alt_kod: e.alt_kod, alt_ad: e.alt_ad, aktif: 0, acik: 0, ziyaret: 0 }
+    r = { kapsam: e.kapsam, oturum: e.oturum, menu_kod: e.menu_kod, menu_ad: e.menu_ad, alt_kod: e.alt_kod, alt_ad: e.alt_ad,
+          detay_kod: e.detay_kod || '', detay_ad: e.detay_ad || null, aktif: 0, acik: 0, ziyaret: 0 }
     d.tampon.set(k, r)
   }
   if (!r.alt_ad && e.alt_ad) r.alt_ad = e.alt_ad
+  if (!r.detay_ad && e.detay_ad) r.detay_ad = e.detay_ad
   return r
 }
 
@@ -73,13 +75,19 @@ function guncelEkran(simdi, dokun = true) {
   const t = jeton(e.kapsam)
   const p = t && yuk(t)
   if (!p?.sub) return null
+  // Üç düzey: menü (adres) › alt sekme (adres ya da sayfadaki ilk seçili sekme) › içerik (sayfanın bildirdiği içerik,
+  // yoksa sayfadaki ikinci seçili sekme). Sekme adları yalnızca Türkçe arayüzde okunur (başka dilde çeviri olur).
   let { alt_kod, alt_ad } = e
-  if (aktifDil() === 'tr') {
-    const sekme = seciliSekmeAdi()
-    if (sekme && !alt_kod) { alt_kod = kodYap(sekme); alt_ad = sekme }
-    else if (sekme && !alt_ad) alt_ad = sekme   // adresteki sekmenin ekrandaki adı
-  }
-  return { ...e, alt_kod: alt_kod || '', alt_ad, oturum: oturumKimligi(e.kapsam, p.sub, simdi, dokun) }
+  let detay_kod = '', detay_ad = null
+  const tr = aktifDil() === 'tr'
+  const sekmeler = tr ? seciliSekmeAdlari() : []
+  if (sekmeler[0] && !alt_kod) { alt_kod = kodYap(sekmeler[0]); alt_ad = sekmeler[0] }
+  else if (sekmeler[0] && !alt_ad) alt_ad = sekmeler[0]   // adresteki sekmenin ekrandaki adı
+  const isaret = isaretliDetay()
+  if (isaret) { detay_kod = isaret.kod; detay_ad = isaret.ad }
+  else if (sekmeler[1]) { detay_kod = kodYap(sekmeler[1]); detay_ad = sekmeler[1] }
+  if (!alt_kod) { detay_kod = ''; detay_ad = null }
+  return { ...e, alt_kod: alt_kod || '', alt_ad, detay_kod, detay_ad, oturum: oturumKimligi(e.kapsam, p.sub, simdi, dokun) }
 }
 
 function gonder(kapanis = false) {
@@ -91,6 +99,7 @@ function gonder(kapanis = false) {
     const g = `${r.kapsam}|${r.oturum}`
     if (!gruplar.has(g)) gruplar.set(g, { kapsam: r.kapsam, oturum: r.oturum, kayitlar: [], anahtarlar: [] })
     gruplar.get(g).kayitlar.push({ menu_kod: r.menu_kod, menu_ad: r.menu_ad || null, alt_kod: r.alt_kod || '', alt_ad: r.alt_ad || null,
+      detay_kod: r.detay_kod || '', detay_ad: r.detay_ad || null,
       aktif_sn: Math.min(aktif, 3600), acik_sn: Math.min(Math.max(acik, aktif), 3600), ziyaret: r.ziyaret })
     gruplar.get(g).anahtarlar.push([k, aktif * 1000, acik * 1000, r.ziyaret])
   }
@@ -130,7 +139,7 @@ function tik() {
       r.acik += dt
       if (aktifMi) r.aktif += dt
       // ziyaret: menüye girildi ya da sayfa içinde başka sekmeye geçildi (sekme adresle değil sayfadan okunuyorsa)
-      const anahtar = `${e.kapsam}|${e.menu_kod}|${e.alt_kod}`
+      const anahtar = `${e.kapsam}|${e.menu_kod}|${e.alt_kod}|${e.detay_kod}`
       if (d.ziyaretBekliyor || (d.sonAnahtar && d.sonAnahtar !== anahtar)) r.ziyaret += 1
       d.ziyaretBekliyor = false
       d.sonAnahtar = anahtar

@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api } from '../../api/client'
+import KullanimDetayi from '../KullanimDetayi'   // [2026-11-11] kullanım analizi: açık içerik
 
 const ADIMLAR = [['giris', 'Durum'], ['alistirma', 'İlk deneme'], ['arac', 'Araç'], ['okulda', 'Okulda'], ['iste', 'İş hayatında'], ['dene', 'Bu hafta dene']]
 const karistir = (l, tohum) => {
@@ -656,10 +657,10 @@ export default function DusunmeAtolyesi({ bolum }) {
   const secili = v.araclar.find((a) => a.kod === acik)
   const deneyAraci = v.araclar.find((a) => a.alistirma?.tur === 'deney')
   if (params.get('olcum') === '2' && deneyAraci && (v.deney?.ikinci_hazir || v.deney?.olcum2)) {
-    return <IkinciOlcum a={deneyAraci} deney={v.deney} onKaydedildi={yukle}
-      onKapat={() => setParams((p) => { const n = new URLSearchParams(p); n.delete('olcum'); n.delete('arac'); return n })} />
+    return <><KullanimDetayi kod={`${deneyAraci.kod}-ikinci-olcum`} ad={`${deneyAraci.ad} (ikinci ölçüm)`} /><IkinciOlcum a={deneyAraci} deney={v.deney} onKaydedildi={yukle}
+      onKapat={() => setParams((p) => { const n = new URLSearchParams(p); n.delete('olcum'); n.delete('arac'); return n })} /></>
   }
-  if (secili) return <Modul key={secili.kod} a={secili} onKapat={() => ac(null)} onKaydedildi={yukle} />
+  if (secili) return <><KullanimDetayi kod={secili.kod} ad={secili.ad} /><Modul key={secili.kod} a={secili} onKapat={() => ac(null)} onKaydedildi={yukle} /></>
   return (
     <div className="da">
       <div className="card da-giris">
