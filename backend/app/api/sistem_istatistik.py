@@ -13,6 +13,7 @@ Performans: her blok tek toplu SQL (öğrenci başına sorgu yok); modül tablol
 KVKK küçük grup (app/core/kucuk_grup.py): okul satırlarında 5'ten az öğrencili okulun oran / ortalamaları gizlenir (sayı görünür);
 tek bir küçük okul seçilirse sayfanın tüm oran / ortalama / dağılımları gizlenir.
 """
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from collections import Counter, defaultdict
@@ -488,7 +489,7 @@ def istatistik_xlsx(v: dict) -> bytes:
         ["Dönemde tamamlanan tur", k["tur"]], ["Ortalama güven puanı", gz(k["guven_ort"])],
         ["Geçersiz tur", k["gecersiz"]], ["Geçersiz tur oranı (%)", gz(k["gecersiz_orani"])],
         ["Hedef bölüm seçen", k["hedef"]], ["Okul yetkilisi", k["yetkili"]],
-    ], f"Filizyol · {date.today().strftime('%d.%m.%Y')} · {kapsam}. {DIPNOT}")
+    ], f"Filizyol · {bugun_tr().strftime('%d.%m.%Y')} · {kapsam}. {DIPNOT}")
     z = v["zaman"]
     _xlsx_sayfa(wb, "Zaman serisi", [f"Dönem başı ({z['birim']})", "Yeni hesap", "Giriş yapan öğrenci", "Tamamlanan tur"],
                 [[x, z["yeni_hesap"][i], z["giris"][i], z["tur"][i]] for i, x in enumerate(z["x"])])
@@ -537,7 +538,7 @@ def genel_istatistik_excel(donem: str = Query("30"), okul_id: str | None = Query
                 f"{v['filtre']['donem_ad']}, test {'dahil' if test else 'hariç'}")
     db.commit()
     return Response(icerik, media_type=XLSX, headers={
-        "Content-Disposition": f'attachment; filename="filizyol_istatistik_{date.today().isoformat()}.xlsx"', "Cache-Control": "no-store"})
+        "Content-Disposition": f'attachment; filename="filizyol_istatistik_{bugun_tr().isoformat()}.xlsx"', "Cache-Control": "no-store"})
 
 
 @router.get("/audit-log/excel")
@@ -556,13 +557,13 @@ def audit_log_excel(gun: int = Query(90, ge=0, le=3650), db: Session = Depends(g
     _xlsx_sayfa(wb, "Audit Log", ["Zaman", "Yapan", "Rol", "İşlem", "Hedef tablo", "Hedef", "Gerekçe / ayrıntı", "Okul"],
                 [[r.zaman.astimezone(TZ).strftime("%d.%m.%Y %H:%M:%S") if r.zaman else None, r.yapan, rol.get(r.rol, r.rol), r.islem,
                   r.hedef_tablo, r.hedef_id, r.gerekce, r.okul] for r in satir],
-                f"Filizyol · {date.today().strftime('%d.%m.%Y')} · {'Son ' + str(gun) + ' gün' if gun else 'Tüm kayıtlar'} · {len(satir)} kayıt")
+                f"Filizyol · {bugun_tr().strftime('%d.%m.%Y')} · {'Son ' + str(gun) + ' gün' if gun else 'Tüm kayıtlar'} · {len(satir)} kayıt")
     b = io.BytesIO()
     guvenli_kaydet(wb, b)  # [2026-11-04] formül enjeksiyonu: app/core/excel_guvenligi.py
     denetim_yaz(db, yon, "audit_log_excel", "audit_log", gun or "tum", f"{len(satir)} kayıt")
     db.commit()
     return Response(b.getvalue(), media_type=XLSX, headers={
-        "Content-Disposition": f'attachment; filename="audit_log_{date.today().isoformat()}.xlsx"', "Cache-Control": "no-store"})
+        "Content-Disposition": f'attachment; filename="audit_log_{bugun_tr().isoformat()}.xlsx"', "Cache-Control": "no-store"})
 
 
 # ----------------------------------------------------------------------------- Kontrol Paneli

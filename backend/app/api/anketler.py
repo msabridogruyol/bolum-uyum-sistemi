@@ -11,6 +11,7 @@ Anonimlik: anonim ankette yanıt satırında ogrenci_id ve şube TUTULMAZ (yaln�
 anket_katilim tablosunda yalnızca "bir kez yanıtlama" kontrolü için durur ve yanıtla eşleştirilemez.
 Anonim olmayan tarama formlarında öğrenci kendi seviyesini ve önerisini görür; rehber öğrenci bazında listeyi görür.
 """
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 import json
@@ -71,7 +72,7 @@ def _hedef_sayisi(db: Session, a: dict) -> int:
 def _ozet(db: Session, a: dict, katilim: int | None = None) -> dict:
     if katilim is None:
         katilim = db.execute(text("SELECT count(*) FROM anket_katilim WHERE anket_id = :i"), {"i": a["id"]}).scalar() or 0
-    bugun = date.today()
+    bugun = bugun_tr()
     acik = a["durum"] == "yayinda" and (not a["baslangic"] or a["baslangic"] <= bugun) and (not a["bitis"] or a["bitis"] >= bugun)
     return {"id": a["id"], "baslik": a["baslik"], "aciklama": a["aciklama"], "sablon": a["sablon"], "anonim": a["anonim"],
             "durum": a["durum"], "durum_adi": DURUMLAR[a["durum"]], "acik": acik, "hedef": a["hedef"],

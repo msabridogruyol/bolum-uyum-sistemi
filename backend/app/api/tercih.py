@@ -23,6 +23,7 @@ from datetime import date
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import AD_SOYAD_ALAN_SINIRI, AD_SOYAD_EN_FAZLA, GirdiModeli, ad_soyad_denetle  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -197,8 +198,8 @@ class YerlesmeIstek(GirdiModeli):
 def _mezun_kaydi_yaz(db: Session, okul_id: int, ogrenci: Ogrenci | None, ad: str, istek: YerlesmeIstek, kaynak: str, mezun_id: int | None = None):
     if istek.durum not in MEZUN_DURUM:
         raise HTTPException(400, "Geçersiz durum.")
-    yil = istek.yil or date.today().year
-    if yil < 2000 or yil > date.today().year + 1:
+    yil = istek.yil or bugun_tr().year
+    if yil < 2000 or yil > bugun_tr().year + 1:
         raise HTTPException(400, "Yıl geçersiz.")
     bolum_id = istek.bolum_id if istek.bolum_id and db.execute(text("SELECT 1 FROM bolumler WHERE id = :i"), {"i": istek.bolum_id}).first() else None
     hedef_ad, ayni, oneri = None, None, None

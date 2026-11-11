@@ -26,6 +26,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.zaman import simdi_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.api.deps import get_mevcut_ogrenci
 from app.api.listem import _alanlar, _son_tamamlanan_tur, uyum_haritasi
 from app.core.database import get_db
@@ -250,7 +251,7 @@ def karsilastir_pdf(bolumler: str | None = Query(None), ids: str | None = Query(
     from app.core.rapor.veri import okul_bilgisi
     v = karsilastirma_verisi(db, o, _idler(bolumler, ids))
     icerik = karsilastirma_pdf(v, okul_bilgisi(db, o.okul_id), o.ad_soyad)
-    return _cevap(icerik, "pdf", _dosya_adi("Bolum_Karsilastirma", o.ad_soyad, datetime.now().strftime("%Y%m%d")))
+    return _cevap(icerik, "pdf", _dosya_adi("Bolum_Karsilastirma", o.ad_soyad, simdi_tr().strftime("%Y%m%d")))
 
 
 # ============================================================================= PDF
@@ -266,7 +267,7 @@ def karsilastirma_pdf(v: dict, okul: dict, ad_soyad: str) -> bytes:
     from reportlab.platypus import Paragraph, Spacer
     from app.core.rapor.pdf import _belge, _e, _tablo
 
-    doc, tampon, st = _belge("Bölüm karşılaştırma", okul, datetime.now())
+    doc, tampon, st = _belge("Bölüm karşılaştırma", okul, simdi_tr())
     kol = v["bolumler"]
     n = len(kol)
     etiket_gen = 34 * mm

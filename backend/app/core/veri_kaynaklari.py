@@ -20,6 +20,7 @@ from pathlib import Path
 
 from sqlalchemy import text
 from sqlalchemy.orm import Session
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 
 _VERI = Path(__file__).resolve().parent.parent / "data"
 SONUCLAR = {"guncel": "Kontrol ettim, güncel", "guncellendi": "Güncelledim", "sorun": "Sorun var"}
@@ -397,7 +398,7 @@ def durum_hesapla(olcum: dict | None, son_kontrol: dict | None, aralik: int, sim
 
 
 def liste(db: Session, bugun: date | None = None) -> dict:
-    bugun = bugun or date.today()
+    bugun = bugun or bugun_tr()
     simdi = datetime.now(timezone.utc)
     kontroller = _kontroller(db)
     out = []
@@ -440,7 +441,7 @@ def gecmis(db: Session, kod: str, adet: int = 50) -> list[dict]:
 def hatirlat(db: Session, bugun: date | None = None) -> int:
     """Sistemde olmayan, yeni dönemi beklenen ya da kontrol zamanı geçmiş kaynaklar için süper adminlere ayda en çok bir
     özet bildirim (tek_seferlik_gocler işaretiyle). TÜİK istihdamın kendi yıllık hatırlatması (tuik_baglanti) ayrıca sürer."""
-    bugun = bugun or date.today()
+    bugun = bugun or bugun_tr()
     v = liste(db, bugun)
     sorunlu = [k for k in v["kaynaklar"] if k["durum"] in ("yok", "bekleniyor", "kontrol_zamani", "sorun")]
     if not sorunlu:
