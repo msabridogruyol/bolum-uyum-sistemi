@@ -84,7 +84,7 @@ class PlanAdimiOut(BaseModel):
     aciklama: str
     tur: str
     tur_etiket: str
-    sure: str
+    # [2026-11-11] sure kaldırıldı: gelişim adımlarında süre yok (f409f53); şemada zorunlu kaldığı için plan 500 veriyordu
     olcut: str
     durum: str | None = None
     nasil: list[str] = []        # [2026-10-09] "Nasıl yaparsın?" — adım adım
