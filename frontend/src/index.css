@@ -3588,3 +3588,24 @@ button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2p
 /* [2026-11-05] Veli onay formu bekleniyor şeridi (öğrenci) */
 .veli-serit{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:0 0 16px;padding:14px 18px;border-radius:14px;background:var(--aml);border:1px solid var(--am);color:var(--tx);font-size:13.5px;line-height:1.5}
 .veli-serit b{font-size:14.5px}
+
+/* [2026-11-11] Yazarak aranan açılır liste (components/Secim.jsx) ve öneri kutusu (components/OneriKutusu.jsx) */
+.secim-dugme{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;cursor:pointer;box-sizing:border-box}
+.secim-dugme:disabled{cursor:not-allowed;opacity:.6}
+.secim-deger{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.secim-ok{color:var(--tx3);font-size:11px;flex:none}
+.secim-panel{position:absolute;left:0;top:calc(100% + 4px);z-index:10000;min-width:100%;width:max-content;max-width:min(420px,92vw);background:var(--sur);border:1.5px solid var(--bor2);border-radius:12px;box-shadow:0 12px 32px rgba(40,30,10,.18);padding:6px;box-sizing:border-box}
+.secim-ara{width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid var(--bor2);border-radius:9px;background:var(--sur2);color:var(--tx);font:inherit;font-size:13px;margin-bottom:4px}
+.secim-ara:focus{outline:none;border-color:var(--pu)}
+.secim-liste{list-style:none;margin:0;padding:0;max-height:300px;overflow:auto;min-height:0}
+.secim-panel .secim-liste{flex:1 1 auto}
+ul.secim-panel.secim-liste{padding:6px;max-height:320px}
+.secim-oge{padding:8px 10px;border-radius:8px;font-size:13px;color:var(--tx);cursor:pointer;display:flex;justify-content:space-between;gap:10px;line-height:1.35}
+.secim-oge b{color:var(--pud);font-weight:800}
+.secim-oge.isaretli{background:var(--pul)}
+.secim-oge.secili{font-weight:800}
+.secim-oge.kapali{opacity:.45;cursor:not-allowed}
+.secim-grup{padding:8px 10px 3px;font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em}
+.secim-bos{padding:10px;font-size:12.5px;color:var(--tx3)}
+.oneri-liste{width:100%;max-width:none}
+.oneri-alt{color:var(--tx3);font-size:11.5px;white-space:nowrap}

@@ -3,6 +3,7 @@
 // Dil adları kendi dillerinde yazılır ve çevrilmez (translate="no").
 import { DILLER, aktifDil, dilDegistir } from '../yardimci/dil'
 import { api } from '../api/client'
+import Secim from './Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 export default function DilSecici({ kapsam = null, gorunum = 'kucuk' }) {
   const dil = aktifDil()
@@ -12,9 +13,9 @@ export default function DilSecici({ kapsam = null, gorunum = 'kucuk' }) {
     dilDegistir(kod, kaydet)
   }
   const secici = (
-    <select className={`dil-secici ${gorunum}`} value={dil} onChange={degistir} aria-label="Dil" translate="no">
+    <Secim className={`dil-secici ${gorunum}`} value={dil} onChange={degistir} aria-label="Dil" translate="no">
       {DILLER.map((d) => <option key={d.kod} value={d.kod}>{d.bayrak} {d.ad}</option>)}
-    </select>
+    </Secim>
   )
   if (gorunum !== 'kart') return secici
   return (

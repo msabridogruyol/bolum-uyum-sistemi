@@ -5,6 +5,7 @@ import { Fragment, useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api } from '../../api/client'
 import { tarih } from '../../components/yonetim/ortak'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const SEKMELER = [
   ['istihdam', '📊 TÜİK İstihdam Göstergeleri'],
@@ -226,16 +227,16 @@ function Sihirbaz({ tur, ozet, onBitti }) {
             <span className="yp-ince">{okuma.satir_sayisi} veri satırı</span>
             {tur === 'istihdam' && (
               <label className="yp-ince">Düzey sütunu yoksa:
-                <select className="yp-sec" value={varsayilanDuzey} onChange={(e) => setVarsayilanDuzey(e.target.value)} style={{ marginLeft: 6 }}>
+                <Secim className="yp-sec" value={varsayilanDuzey} onChange={(e) => setVarsayilanDuzey(e.target.value)} style={{ marginLeft: 6 }}>
                   <option value="lisans">Lisans</option><option value="onlisans">Önlisans</option><option value="">Belirtme</option>
-                </select>
+                </Secim>
               </label>
             )}
             {tur === 'kazanc' && (
               <label className="yp-ince">Tutar türü:
-                <select className="yp-sec" value={tutarTuru} onChange={(e) => setTutarTuru(e.target.value)} style={{ marginLeft: 6 }}>
+                <Secim className="yp-sec" value={tutarTuru} onChange={(e) => setTutarTuru(e.target.value)} style={{ marginLeft: 6 }}>
                   <option value="yillik">Yıllık (12'ye bölünür)</option><option value="aylik">Aylık</option>
-                </select>
+                </Secim>
               </label>
             )}
           </div>
@@ -243,11 +244,11 @@ function Sihirbaz({ tur, ozet, onBitti }) {
             {okuma.alanlar.map((a) => (
               <label key={a.kod} style={{ fontSize: 12, fontWeight: 600 }}>
                 {a.ad}{a.zorunlu && <span style={{ color: 'var(--re)' }}> *</span>}
-                <select className="yp-sec" style={{ width: '100%', marginTop: 3 }} value={eslesme[a.kod] ?? ''}
+                <Secim className="yp-sec" style={{ width: '100%', marginTop: 3 }} value={eslesme[a.kod] ?? ''}
                   onChange={(e) => setEslesme((m) => ({ ...m, [a.kod]: e.target.value === '' ? null : Number(e.target.value) }))}>
                   <option value="">— yok —</option>
                   {okuma.basliklar.map((b) => <option key={b.i} value={b.i}>{b.i + 1}. {b.ad}</option>)}
-                </select>
+                </Secim>
               </label>
             ))}
           </div>
@@ -288,10 +289,10 @@ function Sihirbaz({ tur, ozet, onBitti }) {
                       <td>{DUZEY[s.duzey] || '—'}</td><td>{sayi(s.istihdam_orani)}</td><td>{sayi(s.is_bulma_suresi_ay)}</td><td>{sayi(s.alan_uyum_orani)}</td>
                       <td>{KAZANC_GRUBU[s.kazanc_grubu] || (s.kazanc_tl != null ? `${sayi(s.kazanc_tl, 0)} TL` : '—')}</td>
                       <td style={{ minWidth: 260 }}>
-                        <select className="yp-sec" style={{ width: '100%' }} value={s.bolum_id || ''} onChange={(e) => satirGuncelle(i, { bolum_id: Number(e.target.value) || null })}>
+                        <Secim className="yp-sec" style={{ width: '100%' }} value={s.bolum_id || ''} onChange={(e) => satirGuncelle(i, { bolum_id: Number(e.target.value) || null })}>
                           <option value="">— eşleşmesiz bırak —</option>
                           {onizleme.bolumler.map((b) => <option key={b.id} value={b.id}>{b.ad}</option>)}
-                        </select>
+                        </Secim>
                         <div className="yp-ince" style={{ marginTop: 3 }}>
                           {s.durum === 'otomatik' && <span className="kc-durum kc-durum-gr">✓ otomatik</span>}
                           {s.durum === 'oneri' && <span className="kc-durum kc-durum-am">öneri %{s.skor}</span>}
@@ -361,10 +362,10 @@ function Girdi({ k, deger, onDegis }) {
   const ortak = { className: 'yp-sec', style: { width: k.genislik || '100%' } }
   if (k.tip === 'secim') {
     return (
-      <select {...ortak} value={deger ?? ''} onChange={(e) => onDegis(e.target.value || null)}>
+      <Secim {...ortak} value={deger ?? ''} onChange={(e) => onDegis(e.target.value || null)}>
         <option value="">—</option>
         {Object.entries(k.secenekler || {}).map(([d, e]) => <option key={d} value={d}>{e}</option>)}
-      </select>
+      </Secim>
     )
   }
   const v = k.tip === 'liste' && Array.isArray(deger) ? deger.join(', ') : (deger ?? '')
@@ -583,10 +584,10 @@ function IscoSekmesi() {
               <td>{s.kaynak === 'elle' ? <span className="kc-durum kc-durum-pu">elle</span> : s.guven === 'yuksek' ? <span className="kc-durum kc-durum-gr">yüksek</span>
                 : s.guven === 'orta' ? <span className="kc-durum kc-durum-am">orta</span> : <span className="kc-durum kc-durum-tx3">{s.kaynak === 'eksik' ? 'tabloda yok' : 'boş'}</span>}</td>
               <td style={{ minWidth: 300 }}>
-                <select className="yp-sec" style={{ width: '100%' }} value={s.isco_kodu || ''} onChange={(e) => kaydet(s.meslek_adi, e.target.value)}>
+                <Secim className="yp-sec" style={{ width: '100%' }} value={s.isco_kodu || ''} onChange={(e) => kaydet(s.meslek_adi, e.target.value)}>
                   <option value="">— belirsiz —</option>
                   {(v?.isco || []).map((g) => <option key={g.kod} value={g.kod}>{g.kod} · {g.ad}</option>)}
-                </select>
+                </Secim>
               </td>
             </tr>
           ))}</tbody>

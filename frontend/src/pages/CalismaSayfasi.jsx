@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
+import Secim from '../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const GUN_KISA = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz']
 const AY = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
@@ -78,7 +79,7 @@ function KayitFormu({ v, varsayilan, onKaydet }) {
       <div className="cl-alanlar">
         <label><span>Tarih</span><input className="auth-input" type="date" min={enEski} max={v.bugun} value={f.tarih} onChange={s('tarih')} /></label>
         <label className="genis"><span>Ders</span>
-          <select className="auth-input" value={f.ders} onChange={(e) => setF({ ...f, ders: e.target.value, konu: '' })}>{v.dersler.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}</select>
+          <Secim className="auth-input" value={f.ders} onChange={(e) => setF({ ...f, ders: e.target.value, konu: '' })}>{v.dersler.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}</Secim>
         </label>
         <label><span>Süre (dk)</span><input className="auth-input" type="number" min="0" max="720" step="5" value={f.sure_dk} onChange={s('sure_dk')} /></label>
         <label><span>Çözülen soru</span><input className="auth-input" type="number" min="0" max="1000" value={f.soru} onChange={s('soru')} placeholder="0" /></label>
@@ -205,8 +206,8 @@ function ProgramSekmesi({ v, setV }) {
             {yeni?.gun === gi ? (
               <form className="cl-yeni" onSubmit={ekle}>
                 <input className="auth-input" type="time" required value={yeni.baslangic} onChange={(e) => setYeni({ ...yeni, baslangic: e.target.value })} />
-                <select className="auth-input" value={yeni.ders} onChange={(e) => setYeni({ ...yeni, ders: e.target.value })}>{v.dersler.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}</select>
-                <select className="auth-input" value={yeni.sure_dk} onChange={(e) => setYeni({ ...yeni, sure_dk: e.target.value })}>{[30, 45, 60, 90, 120, 150, 180].map((d) => <option key={d} value={d}>{d} dk</option>)}</select>
+                <Secim className="auth-input" value={yeni.ders} onChange={(e) => setYeni({ ...yeni, ders: e.target.value })}>{v.dersler.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}</Secim>
+                <Secim className="auth-input" value={yeni.sure_dk} onChange={(e) => setYeni({ ...yeni, sure_dk: e.target.value })}>{[30, 45, 60, 90, 120, 150, 180].map((d) => <option key={d} value={d}>{d} dk</option>)}</Secim>
                 <input className="auth-input" maxLength={80} placeholder="Not (isteğe bağlı)" value={yeni.notlar || ''} onChange={(e) => setYeni({ ...yeni, notlar: e.target.value })} />
                 <div style={{ display: 'flex', gap: 4 }}><button className="yp-mini">Ekle</button><button type="button" className="yp-mini" onClick={() => setYeni(null)}>Vazgeç</button></div>
               </form>

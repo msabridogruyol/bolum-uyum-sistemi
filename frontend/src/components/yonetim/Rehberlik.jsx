@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import { Pencere } from './ortak'
 import OgrenciDetayPenceresi from './OgrenciDetayPenceresi'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const SEVIYE = {
   yuksek: { ad: 'Yüksek', ikon: '▲', sinif: 'yuksek' },
@@ -81,10 +82,10 @@ export function GorusmeFormu({ ogrenci, ogrenciler, mevcut, varsayilan = {}, sec
         </div>
         <label><span>{planli ? 'Randevu zamanı' : 'Görüşme zamanı'}</span><input className="auth-input" type="datetime-local" required value={f.zaman} onChange={s('zaman')} /></label>
         <label><span>Görüşme türü</span>
-          <select className="auth-input" value={f.tur} onChange={s('tur')}>{Object.entries(secenekler.turler).map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}</select>
+          <Secim className="auth-input" value={f.tur} onChange={s('tur')}>{Object.entries(secenekler.turler).map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}</Secim>
         </label>
         <label><span>Konu</span>
-          <select className="auth-input" value={f.konu} onChange={s('konu')}>{Object.entries(secenekler.konular).map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}</select>
+          <Secim className="auth-input" value={f.konu} onChange={s('konu')}>{Object.entries(secenekler.konular).map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}</Secim>
         </label>
         <label><span>Başlık <small>(isteğe bağlı)</small></span><input className="auth-input" maxLength={120} value={f.baslik} onChange={s('baslik')} placeholder="ör. Deneme sonuçları" /></label>
         {!planli && (

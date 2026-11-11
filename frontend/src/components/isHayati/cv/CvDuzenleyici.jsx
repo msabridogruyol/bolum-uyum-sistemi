@@ -1,5 +1,6 @@
 // [2026-10-10] CV Atölyesi → CV oluşturucu: kişisel bilgiler (yalnızca gerekenler), profil, bölümler (sırala / gizle / düzenle).
 import { useState } from 'react'
+import Secim from '../../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 export const yeniId = () => Math.random().toString(36).slice(2, 12)
 
@@ -88,7 +89,7 @@ function Diller({ ogeler, onDegis, seviyeler }) {
       {ogeler.map((d, i) => (
         <div key={i} className="pf-dil">
           <input className="auth-input" maxLength={30} value={d.dil} placeholder="Dil" onChange={(e) => onDegis(ogeler.map((x, j) => (j === i ? { ...x, dil: e.target.value } : x)))} />
-          <select className="auth-input" value={d.seviye} onChange={(e) => onDegis(ogeler.map((x, j) => (j === i ? { ...x, seviye: e.target.value } : x)))}>{seviyeler.map((s) => <option key={s}>{s}</option>)}</select>
+          <Secim className="auth-input" value={d.seviye} onChange={(e) => onDegis(ogeler.map((x, j) => (j === i ? { ...x, seviye: e.target.value } : x)))}>{seviyeler.map((s) => <option key={s}>{s}</option>)}</Secim>
           <button type="button" className="hg-link" onClick={() => onDegis(ogeler.filter((_, j) => j !== i))}>Sil</button>
         </div>
       ))}

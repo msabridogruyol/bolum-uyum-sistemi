@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const OLAY_ETIKET = {
   tam_ekrandan_cikti: '🔴 Tam ekrandan çıktı',
@@ -102,12 +103,12 @@ export default function GuvenlikSayfasi() {
           <input type="checkbox" checked={yalnizGecersiz} onChange={(e) => setYalnizGecersiz(e.target.checked)} />
           Yalnızca Geçersiz Sonuçlar
         </label>
-        <select className="auth-input" style={{ width: 220 }} value={enAzKritikOlay} onChange={(e) => setEnAzKritikOlay(Number(e.target.value))}>
+        <Secim className="auth-input" style={{ width: 220 }} value={enAzKritikOlay} onChange={(e) => setEnAzKritikOlay(Number(e.target.value))}>
           <option value={0}>Tüm Kritik Olay Sayıları</option>
           <option value={1}>En Az 1 Kritik Olay</option>
           <option value={3}>En Az 3 Kritik Olay</option>
           <option value={5}>En Az 5 Kritik Olay</option>
-        </select>
+        </Secim>
       </div>
 
       {turlar && turlar.length >= 300 && (

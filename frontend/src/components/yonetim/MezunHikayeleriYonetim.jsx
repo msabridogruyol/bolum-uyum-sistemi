@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { Pencere } from './ortak'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const basHarf = (ad) => (ad || '').replace(/\./g, ' ').split(/\s+/).filter(Boolean).map((p) => `${p[0].toLocaleUpperCase('tr-TR')}.`).join(' ') || 'Mezun'
 const bugun = () => new Date().toISOString().slice(0, 10)
@@ -32,14 +33,14 @@ function HikayeFormu({ v, okulId, mevcut, onKapat }) {
       <div className="pf-alanlar">
         <label><span>Mezunun adı soyadı</span><input className="auth-input" maxLength={120} value={f.mezun_ad} onChange={s('mezun_ad')} /></label>
         <label><span>Öğrencilere nasıl görünsün? <small>(mezunun tercihi)</small></span>
-          <select className="auth-input" value={f.ad_bicimi} onChange={s('ad_bicimi')}>
+          <Secim className="auth-input" value={f.ad_bicimi} onChange={s('ad_bicimi')}>
             <option value="bas_harf">Yalnızca baş harfler ({basHarf(f.mezun_ad)})</option>
             <option value="tam">Tam adı ({f.mezun_ad || 'Ad Soyad'})</option>
-          </select>
+          </Secim>
         </label>
         <label><span>Mezuniyet yılı</span><input className="auth-input" type="number" min="1950" max={new Date().getFullYear()} value={f.mezuniyet_yili} onChange={s('mezuniyet_yili')} /></label>
         <label><span>Okuduğu bölüm</span>
-          <select className="auth-input" value={f.bolum_id} onChange={s('bolum_id')}><option value="">— seç (eşleştirme için önerilir) —</option>{v.bolumler.map((b) => <option key={b.id} value={b.id}>{b.ad}</option>)}</select>
+          <Secim className="auth-input" value={f.bolum_id} onChange={s('bolum_id')}><option value="">— seç (eşleştirme için önerilir) —</option>{v.bolumler.map((b) => <option key={b.id} value={b.id}>{b.ad}</option>)}</Secim>
         </label>
         <label><span>Bölüm adı <small>(listede yoksa ya da farklı yazılsın istiyorsanız)</small></span><input className="auth-input" maxLength={160} value={f.bolum_ad} onChange={s('bolum_ad')} /></label>
         <label><span>Üniversite</span><input className="auth-input" maxLength={160} value={f.universite} onChange={s('universite')} /></label>

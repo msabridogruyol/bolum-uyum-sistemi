@@ -2,18 +2,16 @@
 // Üstte bölüm seçici (varsayılan: hedef bölüm, yoksa 1. öneri; tüm bölümlerden aranabilir), kısa veri şeridi, altta sekmeler.
 // Sekmeler components/isHayati/sekmeler.js'de tanımlıdır; her biri { bolum, veri, ogrenci } alır. Seçili bölüm ve sekme URL'de
 // (?bolum=ID&sekme=kod) tutulur.
-import { Suspense, useEffect, useMemo, useState } from 'react'
+import { Suspense, useEffect, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import { SEKMELER, VARSAYILAN_SEKME } from '../components/isHayati/sekmeler'
 import VerilerHakkinda from '../components/isHayati/VerilerHakkinda'
+import OneriKutusu from '../components/OneriKutusu'   // [2026-11-11] ortak öneri kutusu
 import { KAZANC_GRUBU_RENK, ay, yuzde } from '../components/isHayati/ortak'
 
 function BolumSecici({ ozet, secili, onSec }) {
   const [ara, setAra] = useState('')
-  const [acik, setAcik] = useState(false)
-  const kucuk = (s) => (s || '').toLocaleLowerCase('tr-TR')
-  const sonuclar = useMemo(() => (ara.trim().length < 2 ? [] : ozet.bolumler.filter((b) => kucuk(b.ad).includes(kucuk(ara.trim()))).slice(0, 12)), [ara, ozet])
   const hizli = [...(ozet.hedef ? [{ ...ozet.hedef, etiket: '🎯 Hedefin' }] : []),
     ...ozet.oneriler.filter((o) => o.id !== ozet.hedef?.id).map((o) => ({ ...o, etiket: `${o.sira}. öneri` }))]
   return (
@@ -26,19 +24,9 @@ function BolumSecici({ ozet, secili, onSec }) {
           </button>
         ))}
         <div style={{ position: 'relative', marginLeft: hizli.length ? 'auto' : 0, minWidth: 220, flex: hizli.length ? '0 1 280px' : 1 }}>
-          <input className="yp-sec" style={{ width: '100%' }} value={ara} placeholder="🔎 Başka bir bölüm ara…"
-            onChange={(e) => { setAra(e.target.value); setAcik(true) }} onFocus={() => setAcik(true)}
-            onBlur={() => setTimeout(() => setAcik(false), 150)} aria-label="Bölüm ara" />
-          {acik && sonuclar.length > 0 && (
-            <div role="listbox" style={{ position: 'absolute', zIndex: 20, top: '100%', left: 0, right: 0, marginTop: 4, background: 'var(--sur)', border: '1.5px solid var(--bor)', borderRadius: 10, maxHeight: 280, overflow: 'auto', boxShadow: '0 8px 24px rgba(0,0,0,.12)' }}>
-              {sonuclar.map((b) => (
-                <div key={b.id} role="option" aria-selected={secili === b.id} tabIndex={0}
-                  onMouseDown={() => { onSec(b.id); setAra(''); setAcik(false) }}
-                  onKeyDown={(e) => { if (e.key === 'Enter') { onSec(b.id); setAra(''); setAcik(false) } }}
-                  style={{ padding: '8px 12px', fontSize: 13, cursor: 'pointer', borderBottom: '1px solid var(--bor)' }}>{b.ad}</div>
-              ))}
-            </div>
-          )}
+          <OneriKutusu className="yp-sec" style={{ width: '100%' }} value={ara} onChange={setAra} kaynak={ozet.bolumler}
+            placeholder="🔎 Başka bir bölüm ara…" ariaLabel="Bölüm ara" enFazla={12}
+            onSec={(b) => { onSec(b.id); setAra('') }} />
         </div>
       </div>
       {!hizli.length && <div className="yp-ince" style={{ marginTop: 8 }}>Hedef bölüm seçince ya da değerlendirmeni bitirince önerilerin burada görünür.</div>}

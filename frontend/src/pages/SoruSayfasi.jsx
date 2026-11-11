@@ -610,7 +610,6 @@ export default function SoruSayfasi({ mod = 'katman' }) {
             onIleriGit={ileriGit}
             onGeriGit={geriGit}
             onCik={sinavdanCik}
-            guven={guven}
             kameraDurumu={kameraRizasi ? kameraDurumu : 'yok'}
           />
         )}
@@ -627,7 +626,7 @@ const FILIZLENME_MESAJLARI = [
   'İçtenlikle verdiğin her cevap, sonucunu daha isabetli yapar.',
 ]
 
-function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, baslik, onSecenekSec, onIleriGit, onGeriGit, onCik, guven, kameraDurumu }) {
+function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, baslik, onSecenekSec, onIleriGit, onGeriGit, onCik, kameraDurumu }) {
   const katman = KATMAN_BILGI[kod] || { ikon: '🌻', ad: baslik || kod }
   // [2026-10-10] Mola: uzun bölümlerde (8+ soru) yarıya gelince bir kez kısa nefes molası önerilir
   const yari = Math.floor(sorular.length / 2)

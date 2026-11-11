@@ -2,6 +2,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { Pencere } from './ortak'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const SINIFLAR = ['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun']
 const AY = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
@@ -66,7 +67,7 @@ function Duzenleyici({ okulId, kaynak, mevcut, turler, onKapat, onKaydet }) {
           <div style={{ flex: 1, minWidth: 0, display: 'grid', gap: 6 }}>
             <input className="auth-input" maxLength={300} disabled={kilitli} placeholder="Soru metni" value={s.metin} onChange={(e) => soru(i, { metin: e.target.value })} />
             <div className="an-soru-alt">
-              <select className="auth-input" disabled={kilitli} value={s.tur} onChange={(e) => soru(i, { tur: e.target.value })}>{Object.entries(turler).map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}</select>
+              <Secim className="auth-input" disabled={kilitli} value={s.tur} onChange={(e) => soru(i, { tur: e.target.value })}>{Object.entries(turler).map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}</Secim>
               {s.tur !== 'acik' && <label><input type="checkbox" disabled={kilitli} checked={s.zorunlu} onChange={(e) => soru(i, { zorunlu: e.target.checked })} /> Zorunlu</label>}
               {s.tur === 'likert' && f.sablon && <label title="Olumlu ifadeli madde: puanlamada ters çevrilir"><input type="checkbox" disabled={kilitli} checked={!!s.ters} onChange={(e) => soru(i, { ters: e.target.checked })} /> Ters puanlanır</label>}
             </div>

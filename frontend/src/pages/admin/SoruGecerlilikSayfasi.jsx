@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 // [DÜZELTME] Önceki sürüm script etiketini ekleyip HİÇ BEKLEMİYORDU — kullanıcı
 // script tam inmeden butona basarsa "kütüphane yüklenemedi" hatası çıkıyordu
@@ -341,11 +342,11 @@ export default function SoruGecerlilikSayfasi() {
             <button className={filtre === 'sorunlu' ? 'btn' : 'btn sec'} onClick={() => setFiltre('sorunlu')}>
               Yalnızca Sorunlu ({ozet.kismi_dogru + ozet.hic_dogru_degil})
             </button>
-            <select className="auth-input" style={{ width: 160 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
+            <Secim className="auth-input" style={{ width: 160 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
               <option value="hepsi">Tüm Tipler</option>
               <option value="likert">Yalnızca Likert</option>
               <option value="sjt">Yalnızca SJT</option>
-            </select>
+            </Secim>
           </div>
 
           <div className="ll">

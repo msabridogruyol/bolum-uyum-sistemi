@@ -2,6 +2,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import { DurumRozeti } from './ortak'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const SINIFLAR = ['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf']
 
@@ -48,9 +49,9 @@ export function AkranListesi({ ogrenciId }) {
     <div>
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginBottom: 10, flexWrap: 'wrap' }}>
         <span className="yp-ince">Karşılaştırılan grup:</span>
-        <select className="yp-sec" value={kapsam} onChange={(e) => setKapsam(e.target.value)}>
+        <Secim className="yp-sec" value={kapsam} onChange={(e) => setKapsam(e.target.value)}>
           <option value="okul">Tüm okul</option><option value="sinif">Yalnızca aynı sınıf düzeyi</option>
-        </select>
+        </Secim>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
       {!v && !hata && <div className="bos-durum">Hesaplanıyor…</div>}
@@ -119,7 +120,7 @@ function SubeDagilimi({ okulId, ogrenciler, yenile }) {
       <div className="ct">Şube dağılımı önerisi</div>
       <div className="ak-form">
         <label>Sınıf düzeyi
-          <select className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)}>{SINIFLAR.map((s) => <option key={s}>{s}</option>)}</select>
+          <Secim className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)}>{SINIFLAR.map((s) => <option key={s}>{s}</option>)}</Secim>
         </label>
         <label>Şubeler (virgülle)
           <input className="yp-sec" value={subeMetni} onChange={(e) => setSubeMetni(e.target.value.toUpperCase())} placeholder="A, B, C" />
@@ -158,9 +159,9 @@ function SubeDagilimi({ okulId, ogrenciler, yenile }) {
                   {g.ogrenciler.map((o) => (
                     <li key={o.id} className={o.profil ? '' : 'ak-profilsiz'}>
                       <span>{o.ad_soyad}{o.eski_sube && o.eski_sube !== g.sube && <em> ({o.eski_sube === 'Aday' ? 'aday' : `eski: ${o.eski_sube}`})</em>}</span>
-                      <select aria-label="Şubeyi değiştir" value={g.sube} onChange={(e) => tasi(o.id, e.target.value)}>
+                      <Secim aria-label="Şubeyi değiştir" value={g.sube} onChange={(e) => tasi(o.id, e.target.value)}>
                         {oneri.subeler.map((x) => <option key={x.sube}>{x.sube}</option>)}
-                      </select>
+                      </Secim>
                     </li>
                   ))}
                 </ul>
@@ -196,7 +197,7 @@ function AdayDetay({ aday, okulId, onAtandi }) {
       <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 8 }}>
         <div className="yp-kb" style={{ margin: 0 }}>{aday.ad_soyad}</div>
         <span className="yp-ince">karşılaştırılan sınıf:</span>
-        <select className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)}>{SINIFLAR.map((s) => <option key={s}>{s}</option>)}</select>
+        <Secim className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)}>{SINIFLAR.map((s) => <option key={s}>{s}</option>)}</Secim>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
       {!v && !hata && <div className="bos-durum">Hesaplanıyor…</div>}

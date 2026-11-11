@@ -7,6 +7,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../../api/client'
 import { DURUM, puanRengi } from './CvKontrol'
+import Secim from '../../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const LISTEDE_DE = { tarih: 'Tarih biçimi tutarlı', tek_sayfa: 'Tek sayfa', iletisim: 'İletişim bilgisi tam' }
 const TUR = { zorunlu: { ad: 'Zorunlu', renk: 'var(--re)' }, tercih: { ad: 'Tercih', renk: 'var(--gr)' }, genel: { ad: 'İlanda geçiyor', renk: 'var(--tx3)' }, gizli: { ad: 'Satır arası', renk: 'var(--am)' } }
@@ -195,9 +196,9 @@ export default function AtsKontrol({ icerik, degisti, bolum, onGit }) {
         </div>
         {kaynak === 'ornek' ? (
           <div>
-            <select className="auth-input" value={ilanId} onChange={(e) => setIlanId(e.target.value)} aria-label="Örnek ilan">
+            <Secim className="auth-input" value={ilanId} onChange={(e) => setIlanId(e.target.value)} aria-label="Örnek ilan">
               {ilanlar.map((x) => <option key={x.id} value={x.id}>{x.baslik} — {x.tur}{x.ilgili ? ' (bölümünle ilgili)' : ''}</option>)}
-            </select>
+            </Secim>
             <div className="yp-ince" style={{ marginTop: 4 }}>Örnek ilanlar gerçek değildir. “İlan okuma” sekmesindekilerle aynıdır.</div>
           </div>
         ) : (

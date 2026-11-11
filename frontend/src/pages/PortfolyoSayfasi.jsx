@@ -1,6 +1,7 @@
 // [2026-10-10] Portfolyom — sertifika, yarışma, gönüllülük, proje … kayıtları (okul onayı), hakkımda / yetenekler / diller, PDF özgeçmiş.
 import { useEffect, useState } from 'react'
 import { api } from '../api/client'
+import Secim from '../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const AY = ['Oca', 'Şub', 'Mar', 'Nis', 'May', 'Haz', 'Tem', 'Ağu', 'Eyl', 'Eki', 'Kas', 'Ara']
 const ayYil = (t) => { if (!t) return ''; const [y, m] = t.split('-'); return `${AY[Number(m) - 1]} ${y}` }
@@ -134,7 +135,7 @@ function Profil({ v, setV }) {
       {f.diller.map((d, i) => (
         <div key={i} className="pf-dil">
           <input className="auth-input" maxLength={30} value={d.dil} placeholder="Dil" onChange={(e) => setF({ ...f, diller: f.diller.map((x, j) => j === i ? { ...x, dil: e.target.value } : x) })} />
-          <select className="auth-input" value={d.seviye} onChange={(e) => setF({ ...f, diller: f.diller.map((x, j) => j === i ? { ...x, seviye: e.target.value } : x) })}>{v.dil_seviyeleri.map((s) => <option key={s}>{s}</option>)}</select>
+          <Secim className="auth-input" value={d.seviye} onChange={(e) => setF({ ...f, diller: f.diller.map((x, j) => j === i ? { ...x, seviye: e.target.value } : x) })}>{v.dil_seviyeleri.map((s) => <option key={s}>{s}</option>)}</Secim>
           <button className="hg-link" onClick={() => setF({ ...f, diller: f.diller.filter((_, j) => j !== i) })}>Sil</button>
         </div>
       ))}

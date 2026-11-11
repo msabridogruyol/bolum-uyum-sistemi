@@ -5,6 +5,8 @@
 // Satır bazında en iyi değer vurgulanır; veri olmayan hücrede "—" ve kısa açıklama (uydurma yok).
 import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import OneriKutusu from '../components/OneriKutusu'
+import { useBolumAdlari } from '../yardimci/bolumAdlari'
 import { api } from '../api/client'
 import FavoriYildiz, { useListem } from '../components/FavoriYildiz'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
@@ -38,6 +40,7 @@ function Secici({ secili, setSecili, adlar }) {
   const [oneri, setOneri] = useState([])
   const [q, setQ] = useState('')
   const [sonuc, setSonuc] = useState(null)
+  const bolumAdlari = useBolumAdlari()   // [2026-11-11] yazarken öneri; öneriye tıklanınca bölüm doğrudan eklenir
   useEffect(() => { api.siralamaGetir(10).then((l) => setOneri(liste(l))).catch(() => setOneri([])) }, [])
   const [elle, setElle] = useState(false)   // kullanıcı seçiciyi kendisi açtıysa otomatik kapatma
   useEffect(() => {
@@ -80,7 +83,8 @@ function Secici({ secili, setSecili, adlar }) {
         {oneri.length > 0 && (<><div className="kr-baslik">🌟 Sana en uygun</div><div className="kr-cipler">{oneri.map(cip)}</div></>)}
         {fav?.length > 0 && (<><div className="kr-baslik">⭐ Listemden</div><div className="kr-cipler">{fav.map(cip)}</div></>)}
         <form onSubmit={ara} className="ks-ara">
-          <input className="auth-input" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Tüm bölümlerde ara… (örn. Psikoloji)" aria-label="Bölüm ara" />
+          <OneriKutusu kapStyle={{ flex: 1 }} value={q} onChange={setQ} kaynak={bolumAdlari} ariaLabel="Bölüm ara"
+            placeholder="Tüm bölümlerde ara… (örn. Psikoloji)" onSec={(b) => { ekle({ bolum_id: b.id, bolum_adi: b.ad }); setQ('') }} />
           <button className="btn sec" type="submit">Ara</button>
         </form>
         {sonuc && <div className="kr-cipler" style={{ marginTop: 10 }}>{sonuc.length ? sonuc.map(cip) : <span className="yp-ince">Sonuç yok.</span>}</div>}

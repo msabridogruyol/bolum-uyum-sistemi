@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback, useRef } from 'react'
 import K5BankasiPaneli from './K5BankasiPaneli'
 import { api } from '../../api/client'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const KATMAN_ID = { K1: 1, K2: 2, K3: 3, K4: 4, K5: 5 }
 const KATMAN_ADI = {
@@ -345,16 +346,16 @@ function YeniSoruFormu({ onEklendi }) {
         <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
           <div style={{ flex: 1 }}>
             <label className="auth-label">Katman</label>
-            <select className="auth-input" value={katmanKod} onChange={(e) => setKatmanKod(e.target.value)}>
+            <Secim className="auth-input" value={katmanKod} onChange={(e) => setKatmanKod(e.target.value)}>
               {Object.keys(KATMAN_ID).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
-            </select>
+            </Secim>
           </div>
           <div style={{ flex: 1 }}>
             <label className="auth-label">Soru Tipi</label>
-            <select className="auth-input" value={soruTipi} onChange={(e) => tipDegistir(e.target.value)}>
+            <Secim className="auth-input" value={soruTipi} onChange={(e) => tipDegistir(e.target.value)}>
               <option value="likert">Likert (5'li ölçek)</option>
               <option value="sjt">SJT (durumsal yargı)</option>
-            </select>
+            </Secim>
           </div>
         </div>
 
@@ -362,9 +363,9 @@ function YeniSoruFormu({ onEklendi }) {
           <div style={{ display: 'flex', gap: 10, marginBottom: 14, alignItems: 'flex-end' }}>
             <div style={{ flex: 1 }}>
               <label className="auth-label">Ölçtüğü Değişken</label>
-              <select className="auth-input" value={degiskenId} onChange={(e) => setDegiskenId(Number(e.target.value))}>
+              <Secim className="auth-input" value={degiskenId} onChange={(e) => setDegiskenId(Number(e.target.value))}>
                 {DEGISKENLER.map((d) => <option key={d.id} value={d.id}>{d.kod}</option>)}
-              </select>
+              </Secim>
             </div>
             <label style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 12.5, fontWeight: 600, color: 'var(--tx2)', paddingBottom: 11 }}>
               <input type="checkbox" checked={tersKodlanmisMi} onChange={(e) => setTersKodlanmisMi(e.target.checked)} />
@@ -417,14 +418,14 @@ function YeniSoruFormu({ onEklendi }) {
 
                 {s.agirliklar.map((a, ai) => (
                   <div key={ai} style={{ display: 'flex', gap: 8, marginBottom: 6, alignItems: 'center' }}>
-                    <select
+                    <Secim
                       className="auth-input"
                       style={{ width: 100 }}
                       value={a.degisken_id}
                       onChange={(e) => sjtAgirlikGuncelle(i, ai, 'degisken_id', Number(e.target.value))}
                     >
                       {DEGISKENLER.map((d) => <option key={d.id} value={d.id}>{d.kod}</option>)}
-                    </select>
+                    </Secim>
                     <input
                       className="auth-input"
                       type="number" step="0.05" min="-1" max="1"
@@ -734,26 +735,26 @@ export default function SorularSayfasi() {
           onChange={(e) => setArama(e.target.value)}
         />
         {aktifKatman === 'K5' && (
-          <select className="auth-input" style={{ width: 220 }} value={dalFiltre} onChange={(e) => setDalFiltre(e.target.value)}>
+          <Secim className="auth-input" style={{ width: 220 }} value={dalFiltre} onChange={(e) => setDalFiltre(e.target.value)}>
             <option value="">Tüm dallar</option>
             {dallar.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}
-          </select>
+          </Secim>
         )}
-        <select className="auth-input" style={{ width: 170 }} value={degiskenFiltre} onChange={(e) => setDegiskenFiltre(e.target.value)}>
+        <Secim className="auth-input" style={{ width: 170 }} value={degiskenFiltre} onChange={(e) => setDegiskenFiltre(e.target.value)}>
           <option value="">Tüm değişkenler</option>
           {degiskenler.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}
-        </select>
-        <select className="auth-input" style={{ width: 140 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
+        </Secim>
+        <Secim className="auth-input" style={{ width: 140 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
           <option value="">Tüm tipler</option>
           <option value="likert">Yalnızca Likert</option>
           <option value="sjt">Yalnızca SJT</option>
           <option value="kutup">Yalnızca Kutup</option>
-        </select>
-        <select className="auth-input" style={{ width: 150 }} value={aktifFiltre} onChange={(e) => setAktifFiltre(e.target.value)}>
+        </Secim>
+        <Secim className="auth-input" style={{ width: 150 }} value={aktifFiltre} onChange={(e) => setAktifFiltre(e.target.value)}>
           <option value="">Aktif + Pasif</option>
           <option value="aktif">Yalnızca Aktif</option>
           <option value="pasif">Yalnızca Pasif</option>
-        </select>
+        </Secim>
         <div style={{ flex: 1 }} />
         <button className="btn sec" onClick={() => setAktifSekme((s) => (s === 'toplu' ? null : 'toplu'))}>
           {aktifSekme === 'toplu' ? 'Kapat' : '⬆ Toplu Yükle'}

@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
+import OneriKutusu from '../components/OneriKutusu'   // [2026-11-11] yazarken öneri
+import { useBolumAdlari } from '../yardimci/bolumAdlari'
 import { api } from '../api/client'
 import { BolumBilgiIcerik } from '../components/BolumBilgiPenceresi'
 import FavoriYildiz from '../components/FavoriYildiz'
@@ -15,6 +17,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
   const [secili, setSecili] = useState(null)
   const navigate = useNavigate()
   const [parametreler] = useSearchParams()
+  const bolumAdlari = useBolumAdlari()
   const hedefBolumId = Number(parametreler.get('bolum')) || null
 
   // [2026-10-04] Haftalık keşif görevinden gelindiyse: bölümü ara ve doğrudan aç
@@ -28,7 +31,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
     if (bulunan) setSecili(bulunan)
   }, [sonuclar]) // eslint-disable-line react-hooks/exhaustive-deps
 
-  async function aramaYap(terim) {
+  async function aramaYap(terim, acilacakId = null) {
     const t = (terim ?? sorgu).trim()
     if (t.length < 2) {
       setHata('En az 2 harf yaz.')
@@ -39,7 +42,9 @@ export default function KesfetSayfasi({ gomulu = false }) {
     setSorgu(t)
     setSecili(null)
     try {
-      setSonuclar(await api.kesfetAra(t))
+      const l = await api.kesfetAra(t)
+      setSonuclar(l)
+      if (acilacakId) { const b = l.find((s) => s.bolum_id === acilacakId); if (b) setSecili(b) }   // [2026-11-11] öneriden seçilen bölüm açılır
     } catch (err) {
       setHata(err.detail || 'Arama yapamadık. Tekrar dene.')
     } finally {
@@ -60,14 +65,8 @@ export default function KesfetSayfasi({ gomulu = false }) {
       </div>}
 
       <form onSubmit={ara} style={{ display: 'flex', gap: 8, marginBottom: sonuclar ? 20 : 14 }}>
-        <input
-          className="auth-input"
-          style={{ flex: 1 }}
-          value={sorgu}
-          onChange={(e) => setSorgu(e.target.value)}
-          placeholder="örn. Tıp, Ekonometri, Hukuk..."
-          autoFocus={!gomulu}
-        />
+        <OneriKutusu kapStyle={{ flex: 1 }} value={sorgu} onChange={setSorgu} kaynak={bolumAdlari}
+          onSec={(b) => aramaYap(b.ad, b.id)} placeholder="örn. Tıp, Ekonometri, Hukuk..." autoFocus={!gomulu} />
         <button className="btn" type="submit" disabled={yukleniyor}>
           {yukleniyor ? <span className="spin" /> : '🔍 Ara'}
         </button>

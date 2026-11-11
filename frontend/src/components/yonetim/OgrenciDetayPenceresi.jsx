@@ -16,6 +16,7 @@ import OgrenciCalisma from './OgrenciCalisma'
 import OgrenciPortfolyo from './OgrenciPortfolyo'
 import { OgrenciTercih } from './TercihMezun'
 import CevapAnaliziSekmesi from './CevapAnaliziSekmesi'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 // [2026-10-09] Hedef bölüm: öğrenci en fazla 3 kez değiştirebilir; okul yetkilisi / süper admin hedefi değiştirebilir
 // (öğrencinin hakkından düşmez) ya da ek hak verebilir.
@@ -36,10 +37,10 @@ function HedefYonetimi({ d, ogrenciId, bekle, islem, yenile }) {
           <button className="yp-mini" disabled={bekle} onClick={ac}>Hedefini ben değiştireyim</button>
         ) : (
           <>
-            <select className="yp-sec" value={secim} onChange={(e) => setSecim(e.target.value)} disabled={!bolumler}>
+            <Secim className="yp-sec" value={secim} onChange={(e) => setSecim(e.target.value)} disabled={!bolumler}>
               <option value="">{bolumler ? 'Bölüm seç…' : 'Yükleniyor…'}</option>
               {(bolumler || []).map((b) => <option key={b.id} value={b.id}>{b.ad}</option>)}
-            </select>
+            </Secim>
             <button className="yp-mini" disabled={bekle || !secim} onClick={() => islem(async () => { await api.yonetimOgrenciHedef(ogrenciId, Number(secim)); setSecim(null); yenile() })}>Kaydet</button>
             <button className="yp-mini" onClick={() => setSecim(null)}>Vazgeç</button>
           </>
@@ -312,10 +313,10 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
           <div className="yp-form-satir">
             <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" value={duzen.ad_soyad} onChange={(e) => setDuzen({ ...duzen, ad_soyad: e.target.value })} placeholder="Ad Soyad" required />
             <input className="auth-input" type="email" value={duzen.email} onChange={(e) => setDuzen({ ...duzen, email: e.target.value })} placeholder="E-posta" required />
-            <select className="auth-input" value={duzen.sinif} onChange={(e) => setDuzen({ ...duzen, sinif: e.target.value })}>
+            <Secim className="auth-input" value={duzen.sinif} onChange={(e) => setDuzen({ ...duzen, sinif: e.target.value })}>
               <option value="">Sınıf…</option>
               {['Aday', '9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].map((s) => <option key={s}>{s}</option>)}
-            </select>
+            </Secim>
             <input className="auth-input" style={{ maxWidth: 80 }} value={duzen.sube} maxLength={2} onChange={(e) => setDuzen({ ...duzen, sube: e.target.value })} placeholder="Şube" />
             <input className="auth-input" style={{ maxWidth: 120 }} value={duzen.ogrenci_no} maxLength={20} onChange={(e) => setDuzen({ ...duzen, ogrenci_no: e.target.value })} placeholder="Öğrenci no" />
           </div>
@@ -389,9 +390,9 @@ export default function OgrenciDetayPenceresi({ ogrenciId, superAdmin, okullar, 
             {h.ilgi_alanlari && <div style={{ gridColumn: '1 / -1' }}><span>İlgi alanları</span><b style={{ fontWeight: 500 }}>{h.ilgi_alanlari}</b></div>}
             {superAdmin && (
               <div><span>Okulu</span>
-                <select className="yp-sec" value={h.okul_id} disabled={bekle} onChange={(e) => okulDegistir(e.target.value)}>
+                <Secim className="yp-sec" value={h.okul_id} disabled={bekle} onChange={(e) => okulDegistir(e.target.value)}>
                   {okullar.map((o) => <option key={o.id} value={o.id}>{o.ad}</option>)}
-                </select>
+                </Secim>
               </div>
             )}
           </div>

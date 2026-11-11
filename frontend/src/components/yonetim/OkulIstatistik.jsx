@@ -9,6 +9,7 @@ import {
 } from '../istatistik'
 import { katmanAdi } from '../../yardimci/katmanAdlari'
 import { useOkulModulleri } from '../../yardimci/moduller'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const OKUL = 'var(--okul-c, var(--ist-k1))'
 const BOLUMLER = [
@@ -165,7 +166,7 @@ function Akademik({ v }) {
   const [ot, setOt] = useState(a?.oturumlar?.[0] || 'TYT')
   if (!a) return null
   const secici = a.oturumlar.length > 1 && (
-    <select className="yp-sec" value={ot} onChange={(e) => setOt(e.target.value)} aria-label="Oturum">{a.oturumlar.map((o) => <option key={o}>{o}</option>)}</select>
+    <Secim className="yp-sec" value={ot} onChange={(e) => setOt(e.target.value)} aria-label="Oturum">{a.oturumlar.map((o) => <option key={o}>{o}</option>)}</Secim>
   )
   const subeler = a.subeler[ot] || [], dersler = a.dersler[ot] || []
   return (
@@ -307,17 +308,17 @@ export default function OkulIstatistik({ okulId }) {
   return (
     <div className="ois">
       <div className="yp-arac ois-filtre" role="group" aria-label="Filtreler">
-        <select className="yp-sec" value={sinif} onChange={(e) => { setSinif(e.target.value); setSube('') }} aria-label="Sınıf düzeyi">
+        <Secim className="yp-sec" value={sinif} onChange={(e) => { setSinif(e.target.value); setSube('') }} aria-label="Sınıf düzeyi">
           <option value="">Tüm sınıf düzeyleri</option>
           {secenekler.map((s) => <option key={s.sinif} value={s.sinif}>{s.sinif}</option>)}
-        </select>
-        <select className="yp-sec" value={sube} onChange={(e) => setSube(e.target.value)} disabled={!sinif || !subeler.length} aria-label="Şube">
+        </Secim>
+        <Secim className="yp-sec" value={sube} onChange={(e) => setSube(e.target.value)} disabled={!sinif || !subeler.length} aria-label="Şube">
           <option value="">{sinif ? 'Tüm şubeler' : 'Şube (önce sınıf)'}</option>
           {subeler.map((s) => <option key={s} value={s}>{sinif.replace('. Sınıf', '')}-{s}</option>)}
-        </select>
-        <select className="yp-sec" value={aralik} onChange={(e) => setAralik(e.target.value === 'ozel' ? 'ozel' : Number(e.target.value))} aria-label="Tarih aralığı">
+        </Secim>
+        <Secim className="yp-sec" value={aralik} onChange={(e) => setAralik(e.target.value === 'ozel' ? 'ozel' : Number(e.target.value))} aria-label="Tarih aralığı">
           {ARALIKLAR.map(([d, a]) => <option key={d} value={d}>{a}</option>)}
-        </select>
+        </Secim>
         {aralik === 'ozel' && (
           <>
             <input type="date" className="yp-sec" value={ozel.bas} max={ozel.bit} onChange={(e) => setOzel({ ...ozel, bas: e.target.value })} aria-label="Başlangıç" />

@@ -9,6 +9,7 @@ import { CizgiGrafik, DURUM, GrafikKarti, Halka, KATEGORIK, KpiKarti, KpiSatiri,
 import OgrenciDetayPenceresi from './OgrenciDetayPenceresi'
 import { onceSure } from './ortak'
 import { OkulRaporYorumu } from '../RaporYorumu'   // [2026-10-12] ne yapılmalı
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const OKUL = 'var(--okul-c, var(--ist-k1))'
 const yuzde = (v) => (v == null ? '—' : bicim(v, '%', 0))
@@ -359,14 +360,14 @@ export default function OkulTekBakista({ okulId, superAdmin, okullar, onDegisti,
     <>
     <div className="ois otb">
       <div className="yp-arac ois-filtre" role="group" aria-label="Filtreler">
-        <select className="yp-sec" value={sinif} onChange={(e) => { setSinif(e.target.value); setSube('') }} aria-label="Sınıf düzeyi">
+        <Secim className="yp-sec" value={sinif} onChange={(e) => { setSinif(e.target.value); setSube('') }} aria-label="Sınıf düzeyi">
           <option value="">Tüm sınıf düzeyleri</option>
           {secenekler.map((s) => <option key={s.sinif} value={s.sinif}>{s.sinif}</option>)}
-        </select>
-        <select className="yp-sec" value={sube} onChange={(e) => setSube(e.target.value)} disabled={!sinif || !subeler.length} aria-label="Şube">
+        </Secim>
+        <Secim className="yp-sec" value={sube} onChange={(e) => setSube(e.target.value)} disabled={!sinif || !subeler.length} aria-label="Şube">
           <option value="">{sinif ? 'Tüm şubeler' : 'Şube (önce sınıf)'}</option>
           {subeler.map((s) => <option key={s} value={s}>{sinif.replace('. Sınıf', '')}-{s}</option>)}
-        </select>
+        </Secim>
         {bekle && v && <span className="spin" aria-label="Yükleniyor" />}
         <div style={{ flex: 1 }} />
         <button type="button" className="rd-dugme" disabled={!v || pdf} onClick={pdfIndir}

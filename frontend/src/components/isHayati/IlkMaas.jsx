@@ -5,6 +5,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import { tl, TahminEtiketi } from './ortak'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const SAYI = (v) => Math.round(Number(v)).toLocaleString('tr-TR')
 const KONUT = [
@@ -173,18 +174,18 @@ export default function IlkMaas({ veri, ogrenci }) {
         </div>
         <div style={{ marginTop: 10 }}>
           {kaynak === 'meslek' && (veriliMeslek.length ? (
-            <select className="yp-sec" style={{ width: '100%', maxWidth: 460 }} value={meslekAd} onChange={(e) => setMeslekAd(e.target.value)} aria-label="Meslek seç">
+            <Secim className="yp-sec" style={{ width: '100%', maxWidth: 460 }} value={meslekAd} onChange={(e) => setMeslekAd(e.target.value)} aria-label="Meslek seç">
               {meslekler.map((m) => <option key={m.meslek} value={m.meslek} disabled={!m.guncel_tahmin_net_tl}>{m.meslek}{m.guncel_tahmin_net_tl ? ` — ~${SAYI(m.guncel_tahmin_net_tl)} TL (tahmini)` : ' — veri yok'}</option>)}
-            </select>
+            </Secim>
           ) : <div style={{ fontSize: 12.5, color: 'var(--tx2)' }}>📭 Bu bölümün meslekleri için henüz kazanç verisi yok. Asgari ücretle ya da kendi yazdığın bir tutarla hesaplayabilirsin.</div>)}
           {kaynak === 'kamu' && (
             <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
-              <select className="yp-sec" style={{ flex: '1 1 240px' }} value={kamuId} onChange={(e) => setKamuId(e.target.value)} aria-label="Kamu kadrosu">
+              <Secim className="yp-sec" style={{ flex: '1 1 240px' }} value={kamuId} onChange={(e) => setKamuId(e.target.value)} aria-label="Kamu kadrosu">
                 {veri.kamu.map((k) => <option key={k.id} value={k.id}>{k.kadro_adi} ({k.net_min == null || k.net_max == null || k.net_min === k.net_max ? tl(k.net_min ?? k.net_max) : `${tl(k.net_min)} – ${tl(k.net_max)}`})</option>)}
-              </select>
-              {(() => { const k = veri.kamu.find((x) => String(x.id) === String(kamuId)); return k && k.net_min != null && k.net_max != null && k.net_min !== k.net_max })() && <select className="yp-sec" value={kamuUc} onChange={(e) => setKamuUc(e.target.value)} aria-label="Aralıkta nerede">
+              </Secim>
+              {(() => { const k = veri.kamu.find((x) => String(x.id) === String(kamuId)); return k && k.net_min != null && k.net_max != null && k.net_min !== k.net_max })() && <Secim className="yp-sec" value={kamuUc} onChange={(e) => setKamuUc(e.target.value)} aria-label="Aralıkta nerede">
                 <option value="alt">Alt uç</option><option value="orta">Orta</option><option value="ust">Üst uç</option>
-              </select>}
+              </Secim>}
             </div>
           )}
           {kaynak === 'kendi' && (
@@ -208,10 +209,10 @@ export default function IlkMaas({ veri, ogrenci }) {
         <Baslik no="2">Nerede ve nasıl yaşıyorsun?</Baslik>
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 10 }}>
           <label htmlFor="ihm-il" style={{ fontSize: 13, fontWeight: 700 }}>Şehir</label>
-          <select id="ihm-il" className="yp-sec" value={il} onChange={(e) => { setIl(e.target.value); setElle({}) }}>
+          <Secim id="ihm-il" className="yp-sec" value={il} onChange={(e) => { setIl(e.target.value); setElle({}) }}>
             <option value="">Türkiye geneli</option>
             {(gider?.iller || []).map((x) => <option key={x} value={x}>{x}</option>)}
-          </select>
+          </Secim>
           {gider && !gider.iller?.length && <span className="yp-ince">Henüz il bazında veri yüklenmedi.</span>}
         </div>
         <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--tx3)', marginBottom: 4 }}>KONUT</div>

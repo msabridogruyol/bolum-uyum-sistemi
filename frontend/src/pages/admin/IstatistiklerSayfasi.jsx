@@ -10,6 +10,7 @@ import {
 // [2026-10-10] Erken uyarı seviyeleri durum renkleriyle (yüksek = kritik)
 const SEVIYE_RENK = { 'Yüksek': DURUM.kritik.renk, 'Orta': DURUM.uyari.renk, 'Düşük': DURUM.iyi.renk }
 import { BANTLAR } from '../../yardimci/seviye'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const DONEMLER = [['30', 'Son 30 gün'], ['90', 'Son 90 gün'], ['yil', 'Bu eğitim yılı'], ['tum', 'Tümü']]
 const GIZLI = "5'ten az öğrenci"
@@ -126,11 +127,11 @@ export default function IstatistiklerSayfasi() {
           <button key={k} type="button" className={filtre.donem === k ? 'secili' : ''} aria-pressed={filtre.donem === k} onClick={() => degis('donem', k)}>{ad}</button>
         ))}
       </div>
-      <select className="yp-sec" aria-label="Okul" value={filtre.okul_id} onChange={(e) => degis('okul_id', e.target.value)}>
+      <Secim className="yp-sec" aria-label="Okul" value={filtre.okul_id} onChange={(e) => degis('okul_id', e.target.value)}>
         <option value="">Tüm okullar</option>
         {(v?.okul_secenekleri || []).map((o) => <option key={o.id} value={o.id}>{o.ad}{o.aktif ? '' : ' (pasif)'}</option>)}
         <option value="0">Okul harici öğrenciler</option>
-      </select>
+      </Secim>
       <label className="sis-onay">
         <input type="checkbox" checked={filtre.test} onChange={(e) => degis('test', e.target.checked)} /> Test hesaplarını dahil et
       </label>

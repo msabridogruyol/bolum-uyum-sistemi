@@ -6,6 +6,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import { KpiKarti } from '../istatistik/KpiKarti'
 import { Pencere, tarih } from './ortak'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const bugunISO = () => {
   const d = new Date()
@@ -178,13 +179,13 @@ export default function OnayFormlari({ okulId }) {
       <div className="card">
         <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 10 }}>
           <div className="ct" style={{ margin: 0, flex: 1 }}>Öğrenciler</div>
-          <select className="yp-sec" value={filtre} onChange={(e) => setFiltre(e.target.value)} aria-label="Durum">
+          <Secim className="yp-sec" value={filtre} onChange={(e) => setFiltre(e.target.value)} aria-label="Durum">
             <option value="eksik">Eksik olanlar</option><option value="tamam">Tamamlananlar</option><option value="hepsi">Tümü</option>
-          </select>
+          </Secim>
           {v.siniflar.length > 1 && (
-            <select className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)} aria-label="Sınıf">
+            <Secim className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)} aria-label="Sınıf">
               <option value="">Tüm sınıflar</option>{v.siniflar.map((s) => <option key={s.sinif} value={s.sinif}>{s.sinif}</option>)}
-            </select>
+            </Secim>
           )}
           <input className="auth-input" style={{ width: 200 }} placeholder="Ad ile ara" value={ara} onChange={(e) => setAra(e.target.value)} />
         </div>

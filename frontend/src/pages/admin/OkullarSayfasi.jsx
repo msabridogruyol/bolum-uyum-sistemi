@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../api/client'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const BOS_FORM = { id: null, ad: '', alt_baslik: '', logo: null, aktif_mi: true }
 const LOGO_PIKSEL = 256          // raster amblemler bu boyuta küçültülür
@@ -215,10 +216,10 @@ export default function OkullarSayfasi() {
                   ) : o.ogrenci_sayisi - (o.test_ogrenci_sayisi || 0) > 0 ? (
                     <>
                       <span>{o.ogrenci_sayisi - (o.test_ogrenci_sayisi || 0)} öğrenci şuraya aktarılsın:</span>
-                      <select className="yp-sec" value={silme.hedef} onChange={(e) => setSilme({ ...silme, hedef: e.target.value })}>
+                      <Secim className="yp-sec" value={silme.hedef} onChange={(e) => setSilme({ ...silme, hedef: e.target.value })}>
                         <option value={0}>Okul harici</option>
                         {okullar.filter((x) => x.id !== o.id).map((x) => <option key={x.id} value={x.id}>{x.ad}</option>)}
-                      </select>
+                      </Secim>
                     </>
                   ) : <span>Okul silinsin mi?</span>}
                   {!o.demo && o.test_ogrenci_sayisi > 0 && <span style={{ color: 'var(--re)' }}>{o.test_ogrenci_sayisi} test öğrencisi verileriyle silinir.</span>}

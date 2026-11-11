@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { api } from '../../api/client'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const DURUMLAR = ['taslak', 'guclu_kanitli', 'gozden_gecirilmeli']
 
@@ -88,7 +89,7 @@ function DalKarti({ dal, onDurumGuncelle }) {
         </div>
 
         {k5Adimi ? null : degistiriliyor ? (
-          <select
+          <Secim
             className="auth-input"
             style={{ width: 200 }}
             value={dal.dogrulama_durumu}
@@ -97,7 +98,7 @@ function DalKarti({ dal, onDurumGuncelle }) {
             autoFocus
           >
             {DURUMLAR.map((du) => <option key={du} value={du}>{DURUM_BILGI[du].etiket}</option>)}
-          </select>
+          </Secim>
         ) : (
           <button className="btn sec" onClick={() => setDegistiriliyor(true)}>Durumu Değiştir</button>
         )}

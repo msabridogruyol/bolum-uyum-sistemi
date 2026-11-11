@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { api } from '../../api/client'
 import { csvIndir } from '../istatistik'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const DONEM_AD = { 7: 'Son 7 gün', 30: 'Son 30 gün', 90: 'Son 3 ay', 365: 'Son 1 yıl' }
 
@@ -74,21 +75,21 @@ export default function HazirRaporlar({ okulId, kompakt = false, onTumu }) {
         <div className="hr-filtre">
           {!kompakt && v?.secenekler?.length > 0 && (
             <>
-              <select value={filtre.sinif} onChange={(e) => setFiltre({ sinif: e.target.value, sube: '' })} aria-label="Sınıf">
+              <Secim value={filtre.sinif} onChange={(e) => setFiltre({ sinif: e.target.value, sube: '' })} aria-label="Sınıf">
                 <option value="">Tüm sınıflar</option>
                 {v.secenekler.map((s) => <option key={s.sinif} value={s.sinif}>{s.sinif}</option>)}
-              </select>
+              </Secim>
               {subeler.length > 0 && (
-                <select value={filtre.sube} onChange={(e) => setFiltre((f) => ({ ...f, sube: e.target.value }))} aria-label="Şube">
+                <Secim value={filtre.sube} onChange={(e) => setFiltre((f) => ({ ...f, sube: e.target.value }))} aria-label="Şube">
                   <option value="">Tüm şubeler</option>
                   {subeler.map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
+                </Secim>
               )}
             </>
           )}
-          <select value={gun} onChange={(e) => setGun(Number(e.target.value))} aria-label="Dönem">
+          <Secim value={gun} onChange={(e) => setGun(Number(e.target.value))} aria-label="Dönem">
             {(v?.donemler || [7, 30, 90, 365]).map((d) => <option key={d} value={d}>{DONEM_AD[d]}</option>)}
-          </select>
+          </Secim>
           {kompakt && onTumu && <button type="button" className="ak-link" onClick={onTumu}>Tüm raporlar →</button>}
         </div>
       </div>

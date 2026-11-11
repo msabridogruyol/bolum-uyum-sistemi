@@ -8,6 +8,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { api } from '../../api/client'
 import { tarih } from './ortak'
 import { gelisimeAcikMi, gucluMu } from '../../yardimci/seviye'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 // [2026-10-10] Özellik puanı bantları (Güçlü 62+, Gelişime açık 40 altı)
 const renk = (p) => (p == null ? 'var(--tx3)' : gucluMu(p) ? 'var(--gr)' : gelisimeAcikMi(p) ? 'var(--re)' : 'var(--tx2)')
@@ -348,9 +349,9 @@ export default function CevapAnaliziSekmesi({ ogrenciId }) {
       </div>
       <div className="ca-ust">
         {d.turlar.length > 1 && (
-          <select className="yp-sec" value={d.tur.tur_no} onChange={(e) => { setTurNo(Number(e.target.value)); setSecim(null); setEklenen([]) }}>
+          <Secim className="yp-sec" value={d.tur.tur_no} onChange={(e) => { setTurNo(Number(e.target.value)); setSecim(null); setEklenen([]) }}>
             {d.turlar.map((t) => <option key={t.tur_no} value={t.tur_no}>{t.tur_no}. değerlendirme{t.durum !== 'tamamlandi' ? ' (devam ediyor)' : ''}</option>)}
-          </select>
+          </Secim>
         )}
         <span className="yp-ince">
           {d.cevaplar.length} cevap · {d.ozellikler.length} özellik

@@ -10,6 +10,7 @@ import { useOkulModulleri } from '../../yardimci/moduller'
 import { base64Indir } from './ortak'
 import OkulTekBakista from './OkulTekBakista'
 import HazirRaporlar from './HazirRaporlar'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const GERCEK_SINIF = ['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf']
 const tarihTR = (iso) => (iso ? new Date(`${String(iso).slice(0, 10)}T00:00:00`).toLocaleDateString('tr-TR') : '')
@@ -121,10 +122,10 @@ function RaporIndir({ okulId, oz }) {
   }, [okulId])   // eslint-disable-line react-hooks/exhaustive-deps
 
   const subeSecici = (deger, setDeger, sinifDahil = false) => (
-    <select className="yp-sec" value={deger} onChange={(e) => setDeger(e.target.value)} aria-label="Kapsam">
+    <Secim className="yp-sec" value={deger} onChange={(e) => setDeger(e.target.value)} aria-label="Kapsam">
       {sinifDahil && siniflar.map((s) => <option key={s} value={`s:${s}`}>{s} (tüm şubeler)</option>)}
       {subeler.map((s) => <option key={s.etiket} value={`b:${s.sinif}|${s.sube}`}>{s.etiket}{s.ogretmen?.ad ? ` · ${s.ogretmen.ad}` : ''} ({s.ogrenci})</option>)}
-    </select>
+    </Secim>
   )
   const sinifRaporu = (d, tur, bicim) => { const k = kapsamCoz(d); return api.sinifRaporuIndir(okulId, k.sinif, k.sube, tur, bicim, net) }
 
@@ -171,7 +172,7 @@ function RaporIndir({ okulId, oz }) {
         <RaporKarti ikon="🏫" baslik="Okul genel raporu" aciklama="Tamamlama oranları, sınıflar, alan dağılımı, ortak güçlü yönler, deneme özeti, öğrenci listesi. Excel: özet, sınıflar ve tüm öğrenciler."
           dugmeler={[{ ad: '📄 PDF', fn: () => api.okulRaporuIndir(okulId, 'pdf', net) }, { ad: '📊 Excel', ikincil: true, fn: () => api.okulRaporuIndir(okulId, 'xlsx', net) }]} />
         <RaporKarti ikon="🏷️" baslik="Sınıf düzeyi raporu" aciklama="Bir sınıf düzeyinin şube karşılaştırması, alanlar, ortak güçlü yönler ve deneme özeti."
-          kapsam={siniflar.length ? <select className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)} aria-label="Sınıf düzeyi">{siniflar.map((s) => <option key={s}>{s}</option>)}</select> : kapsamYok}
+          kapsam={siniflar.length ? <Secim className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)} aria-label="Sınıf düzeyi">{siniflar.map((s) => <option key={s}>{s}</option>)}</Secim> : kapsamYok}
           dugmeler={[{ ad: '📄 PDF', pasif: !sinif, fn: () => api.sinifRaporuIndir(okulId, sinif, null, 'ozet', 'pdf', net) },
             { ad: '📊 Excel', ikincil: true, pasif: !sinif, fn: () => api.sinifRaporuIndir(okulId, sinif, null, 'ozet', 'xlsx', net) }]} />
         <RaporKarti ikon="👥" baslik="Şube raporu" aciklama="Şubenin durumu, alanları, okul ortalamasıyla karşılaştırması ve öğrenci listesi (okul numarası sırasıyla)."
@@ -182,15 +183,15 @@ function RaporIndir({ okulId, oz }) {
       {acik('gelismis_raporlar') && (
         <Grup baslik="Veli toplantısı" aciklama="PowerPoint ya da PDF sunum, iki sürüm. Veli sürümü toplantıda perdeye yansıtılır; öğretmen sürümü sınıf öğretmeninin hazırlığı içindir. İkisinde de öğrenci adı, öğrenci bazlı sonuç, uyarı listesi ve net bilgisi yoktur.">
           <RaporKarti ikon="🎤" baslik="Veli toplantısı sunumu" aciklama="Filizyol'un velilere sade anlatımı, katılım, öne çıkan ortak özellikler, en çok önerilen alanlar ve bölümler, hedef seçimi, koçluk ve İş Hayatı, velilerin nasıl destek olabileceği, yaklaşan etkinlikler ve rehberlik servisi iletişimi. Her slaytta öğretmen için konuşma notu var; PowerPoint'te notlar bölümünde, notlu PDF'te slaytın altında."
-            ek={<select className="yp-sec" value={veliKitle} onChange={(e) => setVeliKitle(e.target.value)} aria-label="Sunum sürümü">
+            ek={<Secim className="yp-sec" value={veliKitle} onChange={(e) => setVeliKitle(e.target.value)} aria-label="Sunum sürümü">
               <option value="veli">Veli sürümü (toplantıda gösterilir)</option>
               <option value="ogretmen">Öğretmen sürümü (velilerle paylaşılmaz)</option>
-            </select>}
-            kapsam={<select className="yp-sec" value={veliKapsam} onChange={(e) => setVeliKapsam(e.target.value)} aria-label="Sunum kapsamı">
+            </Secim>}
+            kapsam={<Secim className="yp-sec" value={veliKapsam} onChange={(e) => setVeliKapsam(e.target.value)} aria-label="Sunum kapsamı">
               <option value="">Tüm okul</option>
               {siniflar.map((s) => <option key={s} value={`s:${s}`}>{s} (tüm şubeler)</option>)}
               {subeler.map((s) => <option key={s.etiket} value={`b:${s.sinif}|${s.sube}`}>{s.etiket} ({s.ogrenci})</option>)}
-            </select>}
+            </Secim>}
             not="Veli sürümünde 5'ten az öğrenciye dayanan değerler gösterilmez; 5'ten az öğrencili şubede yalnızca genel anlatım slaytları yer alır. Öğretmen sürümünde tüm sayılar görünür; velilerle paylaşılmamalıdır. PowerPoint düzenlenebilir; PDF her cihazda aynı görünür. Okul rengi ve (PNG/JPEG ise) logosu kullanılır."
             dugmeler={[{ ad: '📽️ PowerPoint', fn: () => api.veliSunumuIndir(okulId, kapsamCoz(veliKapsam), veliKitle, 'pptx') },
               { ad: '📄 PDF (slayt)', fn: () => api.veliSunumuIndir(okulId, kapsamCoz(veliKapsam), veliKitle, 'pdf') },
@@ -213,14 +214,14 @@ function RaporIndir({ okulId, oz }) {
 
       <Grup baslik="İstatistikler" aciklama="İstatistikler ekranındaki tüm göstergeler, sayfa sayfa.">
         <RaporKarti ikon="📊" baslik="İstatistikler (Excel)" aciklama="Özet göstergeler, haftalık katılım, huni, şubeler, özellik ortalamaları, bölümler, iş türü tercihleri ve paketinizdeki modüllere göre koçluk, deneme, rehberlik, anket, tercih, mezun ve kulüp sayfaları."
-          kapsam={<select className="yp-sec" value={istKapsam} onChange={(e) => setIstKapsam(e.target.value)} aria-label="Kapsam">
+          kapsam={<Secim className="yp-sec" value={istKapsam} onChange={(e) => setIstKapsam(e.target.value)} aria-label="Kapsam">
             <option value="">Tüm okul</option>
             {siniflar.map((s) => <option key={s} value={`s:${s}`}>{s}</option>)}
             {subeler.map((s) => <option key={s.etiket} value={`b:${s.sinif}|${s.sube}`}>{s.etiket}</option>)}
-          </select>}
-          ek={<select className="yp-sec" value={istGun} onChange={(e) => setIstGun(Number(e.target.value))} aria-label="Tarih aralığı">
+          </Secim>}
+          ek={<Secim className="yp-sec" value={istGun} onChange={(e) => setIstGun(Number(e.target.value))} aria-label="Tarih aralığı">
             {[[30, 'Son 30 gün'], [90, 'Son 90 gün'], [180, 'Son 6 ay'], [365, 'Son 1 yıl']].map(([g, a]) => <option key={g} value={g}>{a}</option>)}
-          </select>}
+          </Secim>}
           dugmeler={[{ ad: '📊 Excel', fn: () => api.okulIstatistikExcel(okulId, { ...kapsamCoz(istKapsam), bas: geri(istGun), bit: bugun() }) }]} />
       </Grup>
 
@@ -228,17 +229,17 @@ function RaporIndir({ okulId, oz }) {
         {acik('okul_denemeleri') && (
           <RaporKarti ikon="📝" baslik="Okul denemesi sonuçları" aciklama="Seçilen denemede öğrenci başına ders netleri ve toplam net, sıralı. CSV dosyası Excel'de açılır."
             kapsam={denemeler == null ? <span className="yp-ince">Yükleniyor…</span> : denemeler.length ? (
-              <select className="yp-sec" value={deneme} onChange={(e) => setDeneme(e.target.value)} aria-label="Deneme">
+              <Secim className="yp-sec" value={deneme} onChange={(e) => setDeneme(e.target.value)} aria-label="Deneme">
                 {denemeler.map((d) => <option key={d.id} value={d.id}>{tarihTR(d.tarih)} · {d.ad} ({d.oturum}, {d.katilim} öğrenci)</option>)}
-              </select>) : <span className="yp-ince">Henüz yüklenmiş deneme yok.</span>}
+              </Secim>) : <span className="yp-ince">Henüz yüklenmiş deneme yok.</span>}
             dugmeler={[{ ad: '📊 Excel (CSV)', pasif: !deneme, fn: denemeCsv }]} />
         )}
         {acik('anketler') && (
           <RaporKarti ikon="📋" baslik="Anket sonuçları" aciklama="Seçilen anketin yanıtları. Anonim anketlerde isim ve tarih yer almaz, küçük sınıflar birleştirilir; yanıt sayısı eşiğin altındaysa dosya verilmez."
             kapsam={anketler == null ? <span className="yp-ince">Yükleniyor…</span> : anketler.length ? (
-              <select className="yp-sec" value={anket} onChange={(e) => setAnket(e.target.value)} aria-label="Anket">
+              <Secim className="yp-sec" value={anket} onChange={(e) => setAnket(e.target.value)} aria-label="Anket">
                 {anketler.map((a) => <option key={a.id} value={a.id}>{`${a.baslik} (${a.katilim} yanıt)`}</option>)}
-              </select>) : <span className="yp-ince">Yayınlanmış anket yok.</span>}
+              </Secim>) : <span className="yp-ince">Yayınlanmış anket yok.</span>}
             dugmeler={[{ ad: '📊 Excel', pasif: !anket, fn: () => api.anketExcel(Number(anket)) }]} />
         )}
         {acik('rehberlik') && (

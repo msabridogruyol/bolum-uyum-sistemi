@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { api } from '../../api/client'
 import { Pencere, onceSure, tarih } from '../../components/yonetim/ortak'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const SURELER = [[1, '1 saat'], [24, '1 gün'], [72, '3 gün'], [168, '1 hafta']]   // [2026-11-04] en çok 7 gün (sunucu da sınırlar)
 const BOS_SENARYO = {
@@ -21,10 +22,10 @@ function BolumSec({ bolumler, deger, onChange, yerTutucu = 'Bölüm seçin…' }
   return (
     <div style={{ display: 'flex', gap: 6, flex: 1, minWidth: 220 }}>
       <input className="auth-input" style={{ margin: 0, width: 110 }} placeholder="süz…" value={q} onChange={(e) => setQ(e.target.value)} />
-      <select className="yp-sec" style={{ flex: 1, minWidth: 0 }} value={deger} onChange={(e) => onChange(e.target.value)}>
+      <Secim className="yp-sec" style={{ flex: 1, minWidth: 0 }} value={deger} onChange={(e) => onChange(e.target.value)}>
         <option value="">{yerTutucu}</option>
         {liste.map((b) => <option key={b.id} value={b.id}>{b.ad}</option>)}
-      </select>
+      </Secim>
     </div>
   )
 }
@@ -64,23 +65,23 @@ function SenaryoPenceresi({ ogrenci, bolumler, onKapat, onTamam }) {
       </>}>
       <div className="th-form">
         <label>Aşama
-          <select className="yp-sec" value={f.asama} onChange={d('asama')}>
+          <Secim className="yp-sec" value={f.asama} onChange={d('asama')}>
             <option value="baslamadi">Hiç başlamadı</option>
             <option value="k1">K1 bitti</option>
             <option value="k2">K1–K2 bitti</option>
             <option value="k3">K1–K3 bitti</option>
             <option value="k5_bekliyor">K1–K4 bitti, iş türü soruları (K5) bekliyor</option>
             <option value="tamamlandi">Değerlendirme tamamlandı (sonuçlar hazır)</option>
-          </select>
+          </Secim>
         </label>
         {!dortBitti && <label className="th-onay"><input type="checkbox" checked={f.yarim} onChange={d('yarim')} /> Sıradaki katman yarıda kalsın</label>}
 
         <label>Cevap eğilimi
-          <select className="yp-sec" value={f.egilim} onChange={d('egilim')}>
+          <Secim className="yp-sec" value={f.egilim} onChange={d('egilim')}>
             <option value="rastgele">Rastgele profil (her seferinde farklı)</option>
             <option value="dengeli">Dengeli / ortalama öğrenci</option>
             <option value="bolum">Belirli bir bölüme yatkın</option>
-          </select>
+          </Secim>
         </label>
         {f.egilim === 'bolum' && (
           <label>Yatkın olduğu bölüm
@@ -103,11 +104,11 @@ function SenaryoPenceresi({ ogrenci, bolumler, onKapat, onTamam }) {
         {tamam && (
           <>
             <label>Hedef bölüm
-              <select className="yp-sec" value={f.hedef} onChange={d('hedef')}>
+              <Secim className="yp-sec" value={f.hedef} onChange={d('hedef')}>
                 <option value="otomatik">1. sıradaki öneri</option>
                 <option value="bolum">Belirli bir bölüm</option>
                 <option value="yok">Hedef seçmemiş olsun</option>
-              </select>
+              </Secim>
             </label>
             {f.hedef === 'bolum' && (
               <label>Hedef
@@ -175,9 +176,9 @@ function BaglantiHucresi({ tip, h, yenile }) {
   }
   return (
     <div style={{ display: 'flex', gap: 6, alignItems: 'center', flexWrap: 'wrap' }}>
-      <select className="yp-sec" value={saat} onChange={(e) => setSaat(Number(e.target.value))} style={{ width: 96 }}>
+      <Secim className="yp-sec" value={saat} onChange={(e) => setSaat(Number(e.target.value))} style={{ width: 96 }}>
         {SURELER.map(([s, ad]) => <option key={s} value={s}>{ad}</option>)}
-      </select>
+      </Secim>
       <button className="yp-mini" onClick={uret} disabled={bekle}>{h.baglanti_var ? 'Yeni bağlantı' : 'Bağlantı üret'}</button>
       {h.baglanti_var && <span className="yp-ince">aktif · {tarih(h.baglanti_bitis)}'e kadar <button className="hg-link" onClick={iptal}>iptal</button></span>}
       {hata && <span className="auth-error" style={{ margin: 0, padding: '4px 8px', fontSize: 12 }}>{hata}</span>}
@@ -222,9 +223,9 @@ function DemoOkulKarti({ d, yenile }) {
       </div>
       <form className="yp-form-satir" onSubmit={ac}>
         <input className="auth-input" style={{ margin: 0 }} value={f.okul_adi} onChange={(e) => setF({ ...f, okul_adi: e.target.value })} placeholder="Okul adı" required minLength={3} maxLength={80} />
-        <select className="yp-sec" value={f.paket} onChange={(e) => setF({ ...f, paket: e.target.value })}>
+        <Secim className="yp-sec" value={f.paket} onChange={(e) => setF({ ...f, paket: e.target.value })}>
           <option value="temel">Temel paket</option><option value="gelisim">Gelişim paketi</option><option value="tam">Tam paket</option>
-        </select>
+        </Secim>
         <label className="yp-ince">Öğrenci sayısı{' '}
           <input className="yp-sec" type="number" min={1} max={30} style={{ width: 70 }} value={f.ogrenci_sayisi} onChange={(e) => setF({ ...f, ogrenci_sayisi: e.target.value })} />
         </label>
@@ -306,19 +307,19 @@ export default function TestHesaplariSayfasi() {
 
       <div className="ct">Tek tek test hesabı</div>
       <form className="yp-kutu yp-form-satir" style={{ marginBottom: 14 }} onSubmit={ac}>
-        <select className="yp-sec" value={form.tip} onChange={(e) => setForm({ ...form, tip: e.target.value })}>
+        <Secim className="yp-sec" value={form.tip} onChange={(e) => setForm({ ...form, tip: e.target.value })}>
           <option value="ogrenci">Öğrenci</option>
           <option value="okul_yetkilisi">Okul yetkilisi</option>
-        </select>
+        </Secim>
         <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" placeholder="Ad Soyad (örn. Deneme Öğrenci)" value={form.ad_soyad} onChange={(e) => setForm({ ...form, ad_soyad: e.target.value })} required minLength={3} />
-        <select className="yp-sec" value={form.okul_id} onChange={(e) => setForm({ ...form, okul_id: e.target.value })} required={form.tip === 'okul_yetkilisi'}>
+        <Secim className="yp-sec" value={form.okul_id} onChange={(e) => setForm({ ...form, okul_id: e.target.value })} required={form.tip === 'okul_yetkilisi'}>
           <option value="">{form.tip === 'ogrenci' ? 'Okul harici' : 'Okul seçin…'}</option>
           {(d?.okullar || []).map((o) => <option key={o.id} value={o.id}>{o.ad}</option>)}
-        </select>
+        </Secim>
         {form.tip === 'ogrenci' && (
-          <select className="yp-sec" value={form.sinif} onChange={(e) => setForm({ ...form, sinif: e.target.value })}>
+          <Secim className="yp-sec" value={form.sinif} onChange={(e) => setForm({ ...form, sinif: e.target.value })}>
             {['9', '10', '11', '12', 'Mezun'].map((s) => <option key={s} value={s}>{s}{s !== 'Mezun' ? '. Sınıf' : ''}</option>)}
-          </select>
+          </Secim>
         )}
         <button className="btn" type="submit" disabled={bekle}>+ Test hesabı aç</button>
       </form>

@@ -1,6 +1,7 @@
 // [2026-10-10] Takvim yönetimi: süper admin genel tarihleri (sınav, başvuru, tercih), okul yetkilisi okul etkinliklerini girer.
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const BOS = { baslik: '', aciklama: '', tur: 'okul', baslangic: '', bitis: '', saat: '', hedef_sinif: '', link: '' }
 const GUN = (d) => new Date(d).toLocaleDateString('tr-TR', { day: 'numeric', month: 'long', year: 'numeric' })
@@ -41,13 +42,13 @@ export default function TakvimYonetimi({ okulId }) {
         <form className="yp-kutu" style={{ marginBottom: 12 }} onSubmit={kaydet}>
           <div className="kl-form">
             <input className="auth-input" required minLength={2} maxLength={120} value={form.baslik} onChange={(e) => setForm({ ...form, baslik: e.target.value })} placeholder="Başlık" />
-            <select className="auth-input" value={form.tur} onChange={(e) => setForm({ ...form, tur: e.target.value })}>{v.turler.map((t) => <option key={t.kod} value={t.kod}>{t.ikon} {t.ad}</option>)}</select>
+            <Secim className="auth-input" value={form.tur} onChange={(e) => setForm({ ...form, tur: e.target.value })}>{v.turler.map((t) => <option key={t.kod} value={t.kod}>{t.ikon} {t.ad}</option>)}</Secim>
             <input className="auth-input" type="date" required value={form.baslangic} onChange={(e) => setForm({ ...form, baslangic: e.target.value })} title="Başlangıç" />
             <input className="auth-input" type="date" value={form.bitis || ''} min={form.baslangic} onChange={(e) => setForm({ ...form, bitis: e.target.value })} title="Bitiş (isteğe bağlı)" />
             <input className="auth-input" type="time" value={form.saat || ''} onChange={(e) => setForm({ ...form, saat: e.target.value })} title="Saat (isteğe bağlı)" />
-            <select className="auth-input" value={form.hedef_sinif || ''} onChange={(e) => setForm({ ...form, hedef_sinif: e.target.value })}>
+            <Secim className="auth-input" value={form.hedef_sinif || ''} onChange={(e) => setForm({ ...form, hedef_sinif: e.target.value })}>
               <option value="">Tüm sınıflar</option>{v.siniflar.map((s) => <option key={s}>{s}</option>)}
-            </select>
+            </Secim>
             <input className="auth-input" maxLength={300} value={form.link || ''} onChange={(e) => setForm({ ...form, link: e.target.value })} placeholder="Duyuru bağlantısı (isteğe bağlı)" />
             <input className="auth-input" maxLength={600} value={form.aciklama || ''} onChange={(e) => setForm({ ...form, aciklama: e.target.value })} placeholder="Açıklama (isteğe bağlı)" />
           </div>

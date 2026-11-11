@@ -281,6 +281,7 @@ export const api = {
   bolumKarsilastirPdf: (idler) => dosyaIndir(`/ogrenci/karsilastir/pdf?bolumler=${idler.join(',')}`),   // [2026-10-11]
   gelisimimGetir: () => get('/koclugu/gelisimim'),
   bolumAdaGore: (ad) => get(`/bolumler/ada-gore?ad=${encodeURIComponent(ad)}`),
+  bolumAdlari: () => get('/bolumler/adlar'),   // [2026-11-11] yazarken öneri listesi
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
   kvkkDurumu: () => get('/ogrenci/kvkk'),
   veliOnayiDurumu: () => get('/ogrenci/veli-onayi'),   // [2026-11-05]
