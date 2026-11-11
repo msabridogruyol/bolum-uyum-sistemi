@@ -1,7 +1,9 @@
 // [2026-11-11] Kullanım analizi: adres → hangi menü / alt sekme. Menü adları kenar menüsündekiyle aynıdır (Türkçe kaynak metin;
 // arayüz başka dilde olsa da rapor Türkçe ad gösterir). Alt sekme: adresteki ?sekme / ikinci yol parçası; adreste yoksa
-// sayfadaki seçili sekmenin (role="tab") adı — yalnızca arayüz Türkçeyken (başka dilde sekme adı çeviri olur).
+// sayfadaki seçili sekmenin (role="tab") adı. Sekme adı çeviri katmanından Türkçe aslıyla okunur (dil.kaynakMetin):
+// İngilizce arayüzdeki "Cover letter" de raporda "Ön yazı" satırına yazılır.
 import { OKUL_BOLUMLERI } from '../components/yonetim/okulBolumleri'
+import { kaynakMetin } from './dil'
 import { SUPER_MENU } from '../components/yonetim/superMenu'
 
 const OGRENCI_MENU = [
@@ -25,7 +27,8 @@ export const kodYap = (s) => String(s || '').toLocaleLowerCase('tr-TR')
   .replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '').slice(0, 60)
 
 const sekmeMetni = (el) => {
-  const m = (el?.textContent || '').replace(/^[^\p{L}\p{N}]+/u, '').replace(/\s*\(?\d+\)?\s*$/, '').replace(/\s+/g, ' ').trim()
+  // arayüz başka dilde olsa da Türkçe kaynak ad (rapor her dilde aynı satıra yazar)
+  const m = kaynakMetin(el).replace(/^[^\p{L}\p{N}]+/u, '').replace(/\s*\(?\d+\)?\s*$/, '').replace(/\s+/g, ' ').trim()
   return m ? m.slice(0, 120) : null
 }
 

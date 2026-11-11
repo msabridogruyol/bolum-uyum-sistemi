@@ -4,7 +4,6 @@
 // Oturum: aynı sekmede 30 dakikadan uzun etkinlik arası olursa yeni oturum başlar. Ad, puan ya da içerik gönderilmez.
 import { useEffect } from 'react'
 import { useLocation } from 'react-router-dom'
-import { aktifDil } from '../yardimci/dil'
 import { ekranCoz, isaretliDetay, kodYap, seciliSekmeAdlari } from '../yardimci/kullanimEkrani'
 
 const TIK_MS = 5000
@@ -68,7 +67,7 @@ function kayit(e) {
   return r
 }
 
-/** Adresle gelen ekranın kimliği + adreste alt sekme yoksa sayfadaki seçili sekme (yalnızca Türkçe arayüzde). */
+/** Adresle gelen ekranın kimliği + adreste alt sekme yoksa sayfadaki seçili sekme (Türkçe aslıyla, her dilde). */
 function guncelEkran(simdi, dokun = true) {
   const e = d.ekran
   if (!e) return null
@@ -76,11 +75,10 @@ function guncelEkran(simdi, dokun = true) {
   const p = t && yuk(t)
   if (!p?.sub) return null
   // Üç düzey: menü (adres) › alt sekme (adres ya da sayfadaki ilk seçili sekme) › içerik (sayfanın bildirdiği içerik,
-  // yoksa sayfadaki ikinci seçili sekme). Sekme adları yalnızca Türkçe arayüzde okunur (başka dilde çeviri olur).
+  // yoksa sayfadaki ikinci seçili sekme). Sekme adları çeviriden önceki Türkçe aslıyla okunur (dil.kaynakMetin).
   let { alt_kod, alt_ad } = e
   let detay_kod = '', detay_ad = null
-  const tr = aktifDil() === 'tr'
-  const sekmeler = tr ? seciliSekmeAdlari() : []
+  const sekmeler = seciliSekmeAdlari()   // Türkçe kaynak adlar: arayüz dili fark etmez
   if (sekmeler[0] && !alt_kod) { alt_kod = kodYap(sekmeler[0]); alt_ad = sekmeler[0] }
   else if (sekmeler[0] && !alt_ad) alt_ad = sekmeler[0]   // adresteki sekmenin ekrandaki adı
   const isaret = isaretliDetay()

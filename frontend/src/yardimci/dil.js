@@ -282,6 +282,19 @@ const OZNITELIK = ['placeholder', 'title', 'aria-label', 'alt']
 const OZ_ORIJINAL = new WeakMap() // eleman → { ad: { tr, yazilan } }
 const ATLA_ETIKET = new Set(['SCRIPT', 'STYLE', 'TEXTAREA', 'NOSCRIPT', 'CODE', 'PRE'])
 
+/** [2026-11-11] Elemanın Türkçe kaynak metni: ekranda başka dile çevrilmiş olsa da çevrilmeden önceki metin döner
+ *  (her çevrilen metin düğümünün aslı ORIJINAL'de tutulur). Kullanım analizi sekme adlarını dilden bağımsız okur. */
+export function kaynakMetin(el) {
+  if (!el) return ''
+  const w = document.createTreeWalker(el, NodeFilter.SHOW_TEXT)
+  let s = ''
+  for (let n = w.nextNode(); n; n = w.nextNode()) {
+    const k = ORIJINAL.get(n)
+    s += k && n.nodeValue === k.yazilan ? k.tr : n.nodeValue
+  }
+  return s
+}
+
 function cevrilmezMi(el) {
   for (let e = el; e && e.nodeType === 1; e = e.parentElement) {
     if (ATLA_ETIKET.has(e.tagName)) return true
