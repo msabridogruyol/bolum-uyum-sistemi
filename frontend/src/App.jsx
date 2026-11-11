@@ -49,6 +49,7 @@ const ParametrelerSayfasi = tembel(() => import('./pages/admin/ParametrelerSayfa
 const AuditLogSayfasi = tembel(() => import('./pages/admin/AuditLogSayfasi'))
 const ErisimKayitlariSayfasi = tembel(() => import('./pages/admin/ErisimKayitlariSayfasi'))   // [2026-11-05]
 const KullanimAnaliziSayfasi = tembel(() => import('./pages/admin/KullanimAnaliziSayfasi'))   // [2026-11-11]
+const TopluHesapSayfasi = tembel(() => import('./pages/admin/TopluHesapSayfasi'))   // [2026-11-11] toplu hesap + hoş geldin e-postası
 const YoneticilerSayfasi = tembel(() => import('./pages/admin/YoneticilerSayfasi'))
 const SistemHakkindaSayfasi = tembel(() => import('./pages/admin/SistemHakkindaSayfasi'))
 const SoruGecerlilikSayfasi = tembel(() => import('./pages/admin/SoruGecerlilikSayfasi'))
@@ -195,6 +196,7 @@ function AnaUygulama() {
         <Route path="audit-log" element={<AuditLogSayfasi />} />
         <Route path="erisim-kayitlari" element={<ErisimKayitlariSayfasi />} />
         <Route path="kullanim-analizi" element={<KullanimAnaliziSayfasi />} />
+        <Route path="toplu-hesap" element={<TopluHesapSayfasi />} />
         <Route path="hata-kayitlari" element={<HataKayitlariSayfasi />} />
         <Route path="gece-bakimi" element={<GeceBakimiSayfasi />} />
         <Route path="yoneticiler" element={<YoneticilerSayfasi />} />

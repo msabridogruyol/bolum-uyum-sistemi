@@ -37,6 +37,7 @@ from app.api.kulup_uyelik import ogrenci_router as kulup_uyelik_ogrenci_router, 
 from app.api.admin_gelisim_kaynak import router as admin_gelisim_kaynak_router
 from app.api.gelisim_listesi import router as gelisim_listesi_router   # [2026-11-05] haftalık görevlerin yerine
 from app.api.erisim_kayitlari import router as erisim_kayitlari_router   # [2026-11-05] erişim kayıtları
+from app.api.toplu_hesap import router as toplu_hesap_router
 from app.api.kullanim_analizi import (router as kullanim_analizi_router, ogrenci_router as kullanim_ogrenci_router,
                                      yonetim_router as kullanim_yonetim_router)   # [2026-11-11] menü bazında kullanım süresi
 from app.api.onaylar import router as onaylar_router   # [2026-11-05] KVKK + veli onay formu tamamlanma durumu
@@ -342,6 +343,7 @@ app.include_router(okul_genel_router)                       # [2026-10-09] GET /
 app.include_router(okul_admin_router, prefix="/admin")      # [2026-10-09] /admin/okullar
 app.include_router(okul_yonetimi_router)
 app.include_router(erisim_kayitlari_router)                  # [2026-11-05] /admin/erisim-kayitlari (süper admin)
+app.include_router(toplu_hesap_router)                       # [2026-11-11] /yonetim/toplu-hesap: Excel ile öğrenci + yetkili hesabı, hoş geldin e-postası
 app.include_router(kullanim_analizi_router)                  # [2026-11-11] /admin/kullanim-analizi (süper admin)
 app.include_router(kullanim_ogrenci_router)                  # [2026-11-11] POST /ogrenci/kullanim
 app.include_router(kullanim_yonetim_router)                  # [2026-11-11] POST /yonetim/kullanim

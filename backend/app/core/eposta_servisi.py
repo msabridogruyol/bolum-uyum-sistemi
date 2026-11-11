@@ -192,3 +192,91 @@ def sonuc_raporu_epostasi(ad: str, tarih: str, ekli: bool, giris_adresi: str | N
     metin = (f"Merhaba {ad},\n\n{tarih} tarihinde değerlendirmeni tamamladın.\n{ek_cumle}\n"
              + (f"\nSonuçların: {giris_adresi}\n" if giris_adresi else "") + "\nFilizyol")
     return konu, html, metin
+
+
+# ----------------------------------------------------------------------------- hoş geldin e-postaları
+# [2026-11-11] Toplu hesap açılışında ve "okulun tamamına hoş geldin e-postası" düğmesiyle gönderilir.
+# Öğrenciye "sen", okul yetkilisine "siz" diliyle; ikisinde de giriş adresi, e-posta ve (varsa) geçici şifre yer alır.
+def _giris_kutusu(giris_adresi: str, eposta: str, gecici_sifre: str | None, siz: bool) -> str:
+    satir = lambda k, v: (f'<tr><td style="padding:5px 10px 5px 0;color:#7A7157;font-size:13px;white-space:nowrap">{k}</td>'
+                          f'<td style="padding:5px 0;font-size:13.5px;font-weight:bold;word-break:break-all">{v}</td></tr>')
+    if gecici_sifre:
+        sifre = (f'<span style="font-family:Consolas,monospace;background:#FBE4D2;color:#C86530;padding:2px 8px;border-radius:6px">'
+                 f'{_html.escape(gecici_sifre)}</span>')
+    else:
+        sifre = ('<span style="font-weight:normal">Belirlediğiniz şifre (hatırlamıyorsanız giriş ekranında “Şifremi unuttum”)</span>' if siz
+                 else '<span style="font-weight:normal">Belirlediğin şifre (hatırlamıyorsan giriş ekranında “Şifremi unuttum”)</span>')
+    return (f'<div style="background:#FAF7EF;border:1px solid #ece5d3;border-radius:12px;padding:12px 14px;margin:14px 0">'
+            f'<div style="font-size:12px;font-weight:bold;color:#A79C7C;letter-spacing:.5px;margin-bottom:4px">GİRİŞ BİLGİLERİ</div>'
+            f'<table style="border-collapse:collapse">{satir("Adres", _html.escape(giris_adresi))}{satir("E-posta", _html.escape(eposta))}'
+            f'{satir("Geçici şifre" if gecici_sifre else "Şifre", sifre)}</table></div>')
+
+
+def _madde_listesi(maddeler: list[tuple[str, str]]) -> str:
+    return "".join(f'<div style="margin:0 0 9px 0;font-size:13.5px;line-height:1.55"><b>{_html.escape(b)}</b> — {_html.escape(a)}</div>'
+                   for b, a in maddeler)
+
+
+def ogrenci_hosgeldin_epostasi(ad: str, okul: str | None, eposta: str, gecici_sifre: str | None,
+                               giris_adresi: str) -> tuple[str, str, str]:
+    ad_h, okul_h = _html.escape(ad or ""), _html.escape(okul or "Okulun")
+    konu = "Filizyol'a hoş geldin — hesabın hazır"
+    maddeler = [("Değerlendirme", "İlgilerini, güçlü yönlerini ve çalışma biçimini beş boyutta tanırsın."),
+                ("Sana uygun bölümler", "Sonuçlarına göre bölüm ve meslek önerilerini görür, bölümleri karşılaştırırsın."),
+                ("Hedef ve yol haritası", "Bir hedef bölüm seçtiğinde ona giden gelişim planın hazırlanır."),
+                ("İş hayatı", "Mesleklerin gerçek dünyadaki karşılığını ve okulda öğretilmeyen becerileri keşfedersin.")]
+    ilk = ("İlk girişte geçici şifreni kendi belirleyeceğin bir şifreyle değiştirmen istenir." if gecici_sifre
+           else "Giriş yaptıktan sonra değerlendirmeye kaldığın yerden devam edebilirsin.")
+    html = _sablon(f"Hoş geldin, {ad_h}! 🌱", f"""
+      <p style="font-size:14px;line-height:1.6"><b>{okul_h}</b> seni Filizyol'a dahil etti; hesabın aktif hale getirildi.</p>
+      <p style="font-size:14px;line-height:1.6">Filizyol, kendini tanıman ve sana uygun yolu bulman için hazırlanmış bir yönlendirme sistemidir.
+      Neler yapabileceğin:</p>
+      {_madde_listesi(maddeler)}
+      {_giris_kutusu(giris_adresi, eposta, gecici_sifre, siz=False)}
+      {_buton(giris_adresi, "Filizyol'a giriş yap")}
+      <p style="font-size:12.5px;color:#7A7157;line-height:1.6">{ilk} Soruları acele etmeden, kendin gibi cevaplaman sonuçların
+      doğruluğu için önemlidir. 18 yaşından küçüksen okulun senden veli onay formu isteyebilir.</p>""",
+        alt_not="Bu e-posta, okulun senin için Filizyol hesabı açtığı için gönderildi. Şifreni kimseyle paylaşma. "
+                "Bir yanlışlık olduğunu düşünüyorsan rehber öğretmenine haber ver.")
+    metin = (f"Merhaba {ad},\n\n{okul or 'Okulun'} seni Filizyol'a dahil etti; hesabın aktif hale getirildi.\n\n"
+             "Filizyol, kendini tanıman ve sana uygun yolu bulman için hazırlanmış bir yönlendirme sistemidir.\n"
+             + "".join(f"- {b}: {a}\n" for b, a in maddeler)
+             + f"\nGiriş adresi: {giris_adresi}\nE-posta: {eposta}\n"
+             + (f"Geçici şifre: {gecici_sifre}\n" if gecici_sifre else "Şifre: belirlediğin şifre (hatırlamıyorsan \"Şifremi unuttum\")\n")
+             + f"\n{ilk}\nŞifreni kimseyle paylaşma.\n\nFilizyol")
+    return konu, html, metin
+
+
+def yetkili_hosgeldin_epostasi(ad: str, okul: str | None, unvan: str | None, eposta: str, gecici_sifre: str | None,
+                               giris_adresi: str) -> tuple[str, str, str]:
+    ad_h, okul_h = _html.escape(ad or ""), _html.escape(okul or "okulunuz")
+    gorev = f" ({_html.escape(unvan)})" if unvan else ""
+    konu = "Filizyol — hoş geldiniz, sisteminiz aktif hale getirilmiştir"
+    maddeler = [("Öğrenci hesapları", "Excel ile toplu hesap açma, geçici şifre listesi, hoş geldin e-postası."),
+                ("İlerleme ve sonuçlar", "Öğrencilerin değerlendirme durumu, sınıf ve şube bazında sonuçlar."),
+                ("Rehberlik", "Öğrenci bazında görüşme notları, hedef bölüm ve gelişim planı takibi."),
+                ("Raporlar", "Okul raporları ve Excel çıktıları; veli onay formu takibi.")]
+    adimlar = ["Giriş yapın ve geçici şifrenizi kendi şifrenizle değiştirin." if gecici_sifre else "Giriş yapın.",
+               "Okul bilgilerinizi ve amblemi kontrol edin.",
+               "Öğrenci hesaplarını açın (Excel ile toplu yükleme).",
+               "Öğrencilerinize tek tuşla hoş geldin e-postası gönderin."]
+    html = _sablon("Hoş geldiniz, sisteminiz aktif hale getirilmiştir", f"""
+      <p style="font-size:14px;line-height:1.6">Sayın {ad_h}{gorev},</p>
+      <p style="font-size:14px;line-height:1.6"><b>{okul_h}</b> için Filizyol okul yetkilisi hesabınız oluşturuldu ve kullanıma açıldı.</p>
+      <p style="font-size:14px;line-height:1.6">Filizyol, öğrencilerin ilgi, yetenek ve çalışma biçimlerini beş boyutta değerlendirip
+      onlara uygun bölüm ve meslekleri gösteren bir rehberlik sistemidir. Okul paneli şunları sunar:</p>
+      {_madde_listesi(maddeler)}
+      {_giris_kutusu(giris_adresi, eposta, gecici_sifre, siz=True)}
+      {_buton(giris_adresi, "Okul paneline giriş yap")}
+      <div style="font-size:13px;line-height:1.6;color:#4A4430"><b>İlk adımlar</b><ol style="margin:6px 0 0 18px;padding:0">
+      {"".join(f"<li>{_html.escape(a)}</li>" for a in adimlar)}</ol></div>
+      <p style="font-size:12.5px;color:#7A7157;line-height:1.6;margin-top:12px">Giriş ekranı öğrencilerle aynıdır; e-posta adresinize göre
+      okul paneline yönlendirilirsiniz.</p>""",
+        alt_not="Bu e-posta, Filizyol okul yetkilisi hesabınız açıldığı için gönderildi. Şifrenizi kimseyle paylaşmayın.")
+    metin = (f"Sayın {ad}{f' ({unvan})' if unvan else ''},\n\n{okul or 'Okulunuz'} için Filizyol okul yetkilisi hesabınız oluşturuldu "
+             "ve kullanıma açıldı.\n\n"
+             + "".join(f"- {b}: {a}\n" for b, a in maddeler)
+             + f"\nGiriş adresi: {giris_adresi}\nE-posta: {eposta}\n"
+             + (f"Geçici şifre: {gecici_sifre}\n" if gecici_sifre else "Şifre: belirlediğiniz şifre (hatırlamıyorsanız \"Şifremi unuttum\")\n")
+             + "\nİlk adımlar:\n" + "".join(f"{i}. {a}\n" for i, a in enumerate(adimlar, 1)) + "\nFilizyol")
+    return konu, html, metin

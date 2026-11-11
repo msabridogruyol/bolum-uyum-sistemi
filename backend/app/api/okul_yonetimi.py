@@ -34,6 +34,7 @@ PUT    /yonetim/okul/{okul_id}/bilgi             — tanıtım bilgilerini günc
 """
 from app.core.kisa_onbellek import ozet_onbellegi
 from app.core.excel_guvenligi import guvenli_kaydet
+from app.core.zaman import simdi_tr
 import base64
 import csv
 import io
@@ -82,6 +83,7 @@ OLAY_ETIKET = {
     "sinif_atladi": "Sınıf atladı", "sinif_atlatma_geri_alindi": "Sınıf atlatma geri alındı",
     "degerlendirme_sifirlandi": "Değerlendirmesi sıfırlandı", "yeniden_degerlendirme_izni": "Yeniden değerlendirme izni verildi",
     "katman_tekrar": "Değerlendirme bölümü tekrar açıldı", "sonuc_epostasi": "Sonuç e-postası",
+    "hosgeldin_epostasi": "Hoş geldin e-postası gönderildi", "hosgeldin_epostasi_hata": "Hoş geldin e-postası gönderilemedi",
     "rapor_indir": "Rapor indirdi", "ozgecmis_indir": "Özgeçmişini indirdi", "cv_paylasim": "CV paylaşım bağlantısı",
 }
 
@@ -209,6 +211,9 @@ _BASLIK = {
     # [2026-10-10] isteğe bağlı: şifre (verilirse geçici şifre olarak kullanılır) ve öğrenci numarası
     "sifre": {"sifre", "parola", "gecicisifre", "password", "sifresi"},
     "ogrenci_no": {"ogrencino", "no", "numara", "okulno", "ogrencinumarasi", "okulnumarasi", "numarasi"},
+    # [2026-11-11] toplu hesap açma (app/api/toplu_hesap.py): görev "Öğrenci" → öğrenci, diğerleri → okul yetkilisi (unvan)
+    "gorev": {"gorev", "gorevi", "unvan", "unvani", "pozisyon", "kullanicituru", "hesapturu"},
+    "okul": {"okul", "okuladi", "okulu", "kurum", "kurumadi", "okulunadi"},
 }
 
 
@@ -284,9 +289,10 @@ def _satirlari_coz(satirlar: list[list]) -> list[dict]:
     satirlar = [r for r in satirlar if any(str(c).strip() for c in r)]
     if not satirlar:
         raise HTTPException(status_code=400, detail="Dosyada satır bulunamadı.")
-    # başlık satırı: ilk 6 satırda e-posta sütunu tanınan ilk satır (şablondaki açıklama satırı atlanır)
+    # başlık satırı: ilk 30 satırda e-posta sütunu tanınan ilk satır (markalı şablondaki amblem / açıklama satırları atlanır;
+    # app/core/filizyol_excel.BASLIK_EN_GEC_SATIR)
     bas_no, kolon = 0, {}
-    for n, aday in enumerate(satirlar[:6]):
+    for n, aday in enumerate(satirlar[:30]):
         k = {}
         for i, b in enumerate(_norm(c) for c in aday):
             for alan, adlar in _BASLIK.items():
@@ -313,7 +319,8 @@ def _satirlari_coz(satirlar: list[list]) -> list[dict]:
         if sifre.startswith("("):          # giriş listesindeki "(kendi şifresi)" / "(sıfırlanmalı)" açıklamaları şifre değildir
             sifre = ""
         sonuc.append({"satir": no, "ad_soyad": re.sub(r"\s+", " ", ad_soyad).strip(), "sinif": sinif, "sube": sube,
-                      "email": al(r, "email").replace(" ", ""), "sifre": sifre, "ogrenci_no": ogr_no})
+                      "email": al(r, "email").replace(" ", ""), "sifre": sifre, "ogrenci_no": ogr_no,
+                      "gorev": re.sub(r"\s+", " ", al(r, "gorev")).strip(), "okul": re.sub(r"\s+", " ", al(r, "okul")).strip()})
     if len(satirlar) - 1 > EN_FAZLA_SATIR:
         raise HTTPException(status_code=400, detail=f"Tek seferde en fazla {EN_FAZLA_SATIR} öğrenci yüklenebilir.")
     return sonuc
@@ -722,11 +729,14 @@ def okul_ogrencileri(okul_id: int, db: Session = Depends(get_db), yon: AdminKull
 # ----------------------------------------------------------------------------- toplu hesap açma
 @router.get("/sablon")
 def sablon(yon: AdminKullanici = Depends(get_mevcut_yonetim)):
-    return {"dosya_adi": "ogrenci_yukleme_sablonu.xlsx", "icerik_base64": _xlsx_b64(
-        "Öğrenciler", ["Ad Soyad", "Öğrenci No", "Sınıf", "Şube", "E-posta", "Şifre"],
+    from app.core.filizyol_excel import markali_xlsx_b64   # [2026-11-11] Filizyol markalı şablon
+    return {"dosya_adi": "ogrenci_yukleme_sablonu.xlsx", "icerik_base64": markali_xlsx_b64(
+        "Öğrenci Yükleme Şablonu", ["Ad Soyad", "Öğrenci No", "Sınıf", "Şube", "E-posta", "Şifre"],
         [["Ayşe Yılmaz", "1234", 11, "A", "ayse.yilmaz@ornek.com", ""], ["Mehmet Demir", "1235", 12, "B", "mehmet.demir@ornek.com", "Filiz2026"]],
-        "Örnek satırları silip kendi öğrencilerinizi yazın. Sınıf: 9, 10, 11, 12 veya Mezun. Şube, öğrenci no ve şifre isteğe bağlı "
-        "(şifre boşsa sistem üretir). Kayıtlı bir e-posta yazarsanız o öğrencinin bilgileri güncellenir.")}
+        aciklama=["Örnek satırları silip kendi öğrencilerinizi yazın. Sınıf: 9, 10, 11, 12 veya Mezun. Şube, öğrenci no ve şifre "
+                  "isteğe bağlı (şifre boşsa sistem üretir). Kayıtlı bir e-posta yazarsanız o öğrencinin bilgileri güncellenir.",
+                  "Başlık satırını ve sütun adlarını değiştirmeyin; üstteki Filizyol satırları yüklemede atlanır."],
+        sayfa_adi="Öğrenciler")}
 
 
 @router.post("/okul/{okul_id}/onizle")
@@ -804,11 +814,16 @@ def toplu_olustur(okul_id: int, istek: TopluOlusturIstek, db: Session = Depends(
 
 
 def _giris_listesi_xlsx(okul: Okul | None, kayitlar: list[dict]) -> str:
-    return _xlsx_b64("Giriş Bilgileri", ["Ad Soyad", "Öğrenci No", "Sınıf", "Şube", "E-posta", "Şifre"],
-                     [[k["ad_soyad"], k.get("ogrenci_no") or "", k.get("sinif") or "", k.get("sube") or "", k["email"], k["gecici_sifre"]]
-                      for k in kayitlar],
-                     f"{okul.ad if okul else 'Okul harici'} — giriş adresi: sitenin /giris sayfası. Geçici şifre ilk girişte "
-                     f"değiştirilir. Bu dosyayı güvenli saklayın. Bu dosyayı düzenleyip 'Excel ile toplu' ekranından geri yükleyebilirsiniz.")
+    # [2026-11-11] Filizyol markalı: amblem, kısa açıklama, kullanım notları ve gizlilik notu (app/core/filizyol_excel.py)
+    from app.core.config import settings
+    from app.core.filizyol_excel import GIRIS_ACIKLAMASI, GIZLILIK, markali_xlsx_b64
+    adres = f"{(settings.FRONTEND_URL or '').rstrip('/')}/giris" if settings.FRONTEND_URL else "sitenin /giris sayfası"
+    return markali_xlsx_b64(
+        "Öğrenci Giriş Bilgileri", ["Ad Soyad", "Öğrenci No", "Sınıf", "Şube", "E-posta", "Şifre"],
+        [[k["ad_soyad"], k.get("ogrenci_no") or "", k.get("sinif") or "", k.get("sube") or "", k["email"], k["gecici_sifre"]]
+         for k in kayitlar],
+        alt_baslik=f"{okul.ad if okul else 'Okul harici'} · {simdi_tr():%d.%m.%Y %H:%M} · {len(kayitlar)} hesap",
+        aciklama=[m.format(adres=adres) for m in GIRIS_ACIKLAMASI], sayfa_adi="Giriş Bilgileri", gizlilik=GIZLILIK)
 
 
 @router.get("/okul/{okul_id}/giris-listesi")
@@ -1194,6 +1209,9 @@ def yetkili_sil(yetkili_id: str, db: Session = Depends(get_db), yon: AdminKullan
 
 # ----------------------------------------------------------------------------- okul kayıtları (log)
 ISLEM_ETIKET = {
+    # [2026-11-11] toplu hesap açma ve hoş geldin e-postaları (app/api/toplu_hesap.py)
+    "toplu_hesap_ac": "Toplu hesap açıldı (Excel)", "hosgeldin_toplu": "Hoş geldin e-postası gönderimi başlatıldı",
+    "hosgeldin_epostasi": "Hoş geldin e-postası gönderildi", "hosgeldin_epostasi_hata": "Hoş geldin e-postası gönderilemedi",
     "veli_onayi_alindi": "Veli onay formu alındı olarak işaretlendi", "veli_onayi_resit": "18 yaşını doldurmuş olarak işaretlendi (veli onayı gerekmez)",
     "veli_onayi_geri_al": "Veli onayı geri alındı",
     "ogrenci_toplu_ekle": "Öğrenci hesapları açıldı", "ogrenci_sil": "Öğrenci silindi",
