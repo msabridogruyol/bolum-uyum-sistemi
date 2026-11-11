@@ -25,6 +25,12 @@ def _bolum(db: Session, bolum_id: int) -> Bolum:
     return b
 
 
+@router.get("/adlar")
+def bolum_adlari(db: Session = Depends(get_db)):
+    """[2026-11-11] Yayındaki bütün bölümlerin adı (yazarken öneri listesi için; tek istekte, istemcide süzülür)."""
+    return [{"id": b.id, "ad": b.ad} for b in db.query(Bolum.id, Bolum.ad).filter(Bolum.durum == "yayinda").order_by(Bolum.ad).all()]
+
+
 @router.get("/ada-gore")
 def bolum_ada_gore(ad: str = Query(..., min_length=2), db: Session = Depends(get_db)):
     b = db.query(Bolum).filter(Bolum.ad == ad.strip()).first()

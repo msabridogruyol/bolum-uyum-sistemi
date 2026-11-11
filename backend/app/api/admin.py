@@ -454,21 +454,21 @@ def katman_agirliklarini_guncelle(
     gelen = {str(k).strip().upper(): v for k, v in istek.agirliklar.items()}
     bilinmeyen = sorted(set(gelen) - set(_AGIRLIK_KATMANLARI))
     if bilinmeyen:
-        raise HTTPException(status_code=400, detail=f"Bilinmeyen katman kodu: {', '.join(bilinmeyen)}. Yalnızca K1, K2, K3 ve K4 ağırlığı ayarlanabilir.")
+        raise HTTPException(status_code=400, detail=f"Bilinmeyen boyut kodu: {', '.join(bilinmeyen)}. Yalnızca B1, B2, B3 ve B4 ağırlığı ayarlanabilir.")
     eksik = [k for k in _AGIRLIK_KATMANLARI if k not in gelen]
     if eksik:
-        raise HTTPException(status_code=400, detail=f"Dört katmanın ağırlığı birlikte gönderilmeli; eksik: {', '.join(eksik)}.")
+        raise HTTPException(status_code=400, detail=f"Dört boyutun ağırlığı birlikte gönderilmeli; eksik: {', '.join(eksik)}.")
     for kod, deger in gelen.items():
         if deger is None or deger != deger or deger < 0 or deger > 100:
             raise HTTPException(status_code=400, detail=f"{kod} ağırlığı 0 ile 100 arasında olmalı (gelen: {deger}).")
     toplam = round(sum(gelen.values()), 2)
     if abs(toplam - 100.0) > 0.01:
-        raise HTTPException(status_code=400, detail=f"Ağırlıkların toplamı 100 olmalı; şu an {toplam:g}. Farkı ({100 - toplam:+g}) katmanlara dağıtın.")
+        raise HTTPException(status_code=400, detail=f"Ağırlıkların toplamı 100 olmalı; şu an {toplam:g}. Farkı ({100 - toplam:+g}) boyutlara dağıtın.")
 
     katmanlar = {k.kod: k for k in db.query(Katman).filter(Katman.kod.in_(_AGIRLIK_KATMANLARI)).all()}
     yok = [k for k in _AGIRLIK_KATMANLARI if k not in katmanlar]
     if yok:
-        raise HTTPException(status_code=400, detail=f"Veritabanında katman bulunamadı: {', '.join(yok)}.")
+        raise HTTPException(status_code=400, detail=f"Veritabanında boyut bulunamadı: {', '.join(yok)}.")
 
     onceki = {kod: float(katmanlar[kod].normalizasyon_agirligi or 0) for kod in _AGIRLIK_KATMANLARI}
     yeni = {kod: round(float(gelen[kod]), 2) for kod in _AGIRLIK_KATMANLARI}
@@ -478,9 +478,9 @@ def katman_agirliklarini_guncelle(
         from app.core.gece_bakimi import kuyruga_ekle
         from app.core.hesap_yonetimi import denetim_yaz
         k = kuyruga_ekle(db, "katman_agirliklari", {"agirliklar": yeni, "isteyen_id": str(admin.id)}, admin,
-                         f"Katman ağırlıkları {onceki} → {yeni}")
+                         f"Boyut ağırlıkları {onceki} → {yeni}")
         denetim_yaz(db, admin, "katman_agirlik_guncelleme", "katmanlar", "K1-K4",
-                    f"Katman ağırlığı değişikliği gece bakımına alındı ({k['zamanlandi']}): önce {onceki} → sonra {yeni}")
+                    f"Boyut ağırlığı değişikliği gece bakımına alındı ({k['zamanlandi']}): önce {onceki} → sonra {yeni}")
         db.commit()
     else:
         # Şu an geçerli değerlere geri dönüldü: bekleyen gece işi varsa iptal edilir (gece boşuna yeniden hesap yapılmaz).
@@ -626,7 +626,7 @@ def soru_ekle(
 
     katman = db.get(Katman, istek.katman_id)
     if katman is None:
-        raise HTTPException(status_code=404, detail="Katman bulunamadı.")
+        raise HTTPException(status_code=404, detail="Boyut bulunamadı.")
 
     soru = Soru(
         katman_id=istek.katman_id, degisken_id=istek.degisken_id, soru_tipi=istek.soru_tipi,
@@ -1385,7 +1385,7 @@ def sorulari_toplu_yukle(
             continue
         katman_id = katman_map.get(grup["katman_kod"])
         if katman_id is None:
-            hatalar.append(f"{gecici_id}: bilinmeyen katman kodu '{grup['katman_kod']}'")
+            hatalar.append(f"{gecici_id}: bilinmeyen boyut kodu '{grup['katman_kod']}'")
             continue
         if len(grup["secenekler"]) < 2:
             hatalar.append(f"{gecici_id}: en az 2 seçenek gerekli")

@@ -5,6 +5,7 @@ import { api } from '../../api/client'
 import { Pencere } from './ortak'
 import { RiskOzeti, TercihTablosu } from '../../pages/TercihSayfasi'
 import MezunHikayeleriYonetim from './MezunHikayeleriYonetim'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const DURUM_RENK = { taslak: 'var(--tx3)', incelemede: 'var(--am)', onaylandi: 'var(--gr)', duzeltme: 'var(--re)' }
 
@@ -112,14 +113,14 @@ function MezunFormu({ v, mevcut, onKapat, onKaydet }) {
       <div className="pf-alanlar">
         <label className="genis"><span>Ad soyad</span><input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" disabled={!!mevcut?.ogrenci_id} value={f.ad_soyad} onChange={s('ad_soyad')} /></label>
         <label><span>Mezuniyet / yerleşme yılı</span><input className="auth-input" type="number" min="2000" max="2100" value={f.yil} onChange={s('yil')} /></label>
-        <label><span>Durum</span><select className="auth-input" value={f.durum} onChange={s('durum')}>{Object.entries(v.secenekler.durumlar).map(([k, a]) => <option key={k} value={k}>{a}</option>)}</select></label>
+        <label><span>Durum</span><Secim className="auth-input" value={f.durum} onChange={s('durum')}>{Object.entries(v.secenekler.durumlar).map(([k, a]) => <option key={k} value={k}>{a}</option>)}</Secim></label>
         <label className="genis"><span>Üniversite</span><input className="auth-input" maxLength={140} value={f.universite} onChange={s('universite')} /></label>
         <label><span>Bölüm</span>
-          <select className="auth-input" value={f.bolum_id || ''} onChange={(e) => { const id = Number(e.target.value) || null; const b = v.bolumler.find((x) => x.id === id); setF({ ...f, bolum_id: id, bolum_ad: b ? b.ad : f.bolum_ad }) }}>
+          <Secim className="auth-input" value={f.bolum_id || ''} onChange={(e) => { const id = Number(e.target.value) || null; const b = v.bolumler.find((x) => x.id === id); setF({ ...f, bolum_id: id, bolum_ad: b ? b.ad : f.bolum_ad }) }}>
             <option value="">— seç —</option>{v.bolumler.map((b) => <option key={b.id} value={b.id}>{b.ad}</option>)}
-          </select>
+          </Secim>
         </label>
-        <label><span>Burs</span><select className="auth-input" value={f.burs} onChange={s('burs')}><option value="">—</option>{v.secenekler.burslar.map((b) => <option key={b}>{b}</option>)}</select></label>
+        <label><span>Burs</span><Secim className="auth-input" value={f.burs} onChange={s('burs')}><option value="">—</option>{v.secenekler.burslar.map((b) => <option key={b}>{b}</option>)}</Secim></label>
         <label><span>Başarı sırası</span><input className="auth-input" type="number" min="1" value={f.siralama} onChange={s('siralama')} /></label>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
@@ -181,7 +182,7 @@ function MezunKayitlari({ okulId }) {
       <div className="card">
         <div className="ct" style={{ display: 'flex', justifyContent: 'space-between', gap: 10 }}>
           <span>Mezun kayıtları</span>
-          <select className="auth-input" style={{ width: 'auto', padding: '4px 8px' }} value={yil} onChange={(e) => setYil(e.target.value)}><option value="">Tüm yıllar</option>{v.yillar.map((y) => <option key={y.yil}>{y.yil}</option>)}</select>
+          <Secim className="auth-input" style={{ width: 'auto', padding: '4px 8px' }} value={yil} onChange={(e) => setYil(e.target.value)}><option value="">Tüm yıllar</option>{v.yillar.map((y) => <option key={y.yil}>{y.yil}</option>)}</Secim>
         </div>
         {kayit.length === 0 ? <div className="bos-durum">Henüz mezun kaydı yok.</div> : (
           <table className="yp-tablo">

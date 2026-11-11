@@ -218,7 +218,7 @@ def dal_sorulari(db: Session, ogrenci: Ogrenci, dal: Dal, tur: OgrenciDegerlendi
 def _sorulari_uret(db: Session, ogrenci: Ogrenci, tur: OgrenciDegerlendirmeTuru) -> list[Soru]:
     k5_katman = db.query(Katman).filter(Katman.kod == "K5").first()
     if k5_katman is None:
-        raise IsKuraliHatasi("K5 katmanı tanımlı değil. Rehber öğretmenine bildir.")
+        raise IsKuraliHatasi("B5 boyutu tanımlı değil. Rehber öğretmenine bildir.")
     kume = kume_sec(db, ogrenci, tur)
     baglar = _baglar(db, [b for b, _ in kume])
     cumleler = _cumleler(db, {e for d in baglar.values() for e in d})

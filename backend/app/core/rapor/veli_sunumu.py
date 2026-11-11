@@ -430,7 +430,7 @@ def _nedir(d: _Deste, katmanlar: list[tuple[str, str]]):
         _metin(sl, SOL, 6.72, GEN, 0.25, "Bu kapsamda henüz öğrenci yok." if d.ogretmen else
                f"Bu kapsamda {d.v['esik']}'ten az öğrenci olduğu için toplu sonuçlar paylaşılmamaktadır "
                "(kişisel verilerin korunması).", 11, GRI)
-    _not(sl, "Sistemi kısaca tanıtın: öğrenci dört katmanda sorular yanıtlıyor; sonra en uygun çıkan bölümleri karşılaştıran iş türü soruları geliyor. "
+    _not(sl, "Sistemi kısaca tanıtın: öğrenci dört boyutta sorular yanıtlıyor; sonra en uygun çıkan bölümleri karşılaştıran iş türü soruları geliyor. "
              "Özellikle vurgulayın: bu bir sınav değil, doğru ya da yanlış cevap yok. Sonuçlar bir yön gösterir, kesin karar vermez. "
              "Psikolojik bir tanı aracı da değildir.")
 

@@ -1,6 +1,7 @@
 // [2026-10-11] Süper admin → Sistem → Hata Kayıtları: sunucu ve tarayıcı hataları, parmak izine göre gruplu.
 import { useCallback, useEffect, useState } from 'react'
 import { hataKayitlariApi } from '../../api/hataKayitlari'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const KULLANICI = { ogrenci: 'Öğrenci', okul_yetkilisi: 'Okul yetkilisi', super_admin: 'Süper admin', anonim: 'Oturumsuz' }
 
@@ -113,12 +114,12 @@ export default function HataKayitlariSayfasi() {
       )}
 
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center', marginBottom: 12 }}>
-        <select className="yp-sec" value={f.durum} onChange={(e) => setF({ ...f, durum: e.target.value })}>
+        <Secim className="yp-sec" value={f.durum} onChange={(e) => setF({ ...f, durum: e.target.value })}>
           <option value="acik">Açık</option><option value="cozuldu">Çözüldü</option><option value="hepsi">Hepsi</option>
-        </select>
-        <select className="yp-sec" value={f.kaynak} onChange={(e) => setF({ ...f, kaynak: e.target.value })}>
+        </Secim>
+        <Secim className="yp-sec" value={f.kaynak} onChange={(e) => setF({ ...f, kaynak: e.target.value })}>
           <option value="">Sunucu + tarayıcı</option><option value="sunucu">Sunucu</option><option value="istemci">Tarayıcı</option>
-        </select>
+        </Secim>
         <input className="auth-input" style={{ flex: '1 1 220px', width: 'auto', padding: '7px 11px' }} placeholder="Ara: hata türü, mesaj, yol ya da hata kodu"
           value={f.ara} onChange={(e) => setF({ ...f, ara: e.target.value })} />
         <button className="yp-mini" onClick={yukle}>↻ Yenile</button>

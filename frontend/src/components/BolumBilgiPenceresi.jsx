@@ -4,6 +4,7 @@ import { api } from '../api/client'
 import FavoriYildiz from './FavoriYildiz'
 import { KarsilastirDugmesi } from './KarsilastirSepeti'
 import { puanTuruMetni } from '../yardimci/puanTuru'
+import Secim from './Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const SEKMELER = [
   { kod: 'genel', ad: 'Genel Bakış' },
@@ -276,21 +277,21 @@ function Universiteler({ bolumId }) {
     <>
       <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 10 }}>
         <input placeholder="Üniversite ara…" value={arama} onChange={(e) => setArama(e.target.value)} style={{ ...secim, flex: '1 1 150px' }} />
-        <select value={il} onChange={(e) => setIl(e.target.value)} style={secim}>
+        <Secim value={il} onChange={(e) => setIl(e.target.value)} style={secim}>
           <option value="">Tüm şehirler</option>
           {iller.map((x) => <option key={x} value={x}>{x}</option>)}
-        </select>
-        <select value={tur} onChange={(e) => setTur(e.target.value)} style={secim}>
+        </Secim>
+        <Secim value={tur} onChange={(e) => setTur(e.target.value)} style={secim}>
           <option value="">Tüm üniversiteler</option>
           <option value="DEVLET">Devlet</option>
           <option value="VAKIF">Vakıf</option>
           <option value="DIGER">KKTC / yurt dışı</option>
-        </select>
-        <select value={siralama} onChange={(e) => setSiralama(e.target.value)} style={secim}>
+        </Secim>
+        <Secim value={siralama} onChange={(e) => setSiralama(e.target.value)} style={secim}>
           <option value="basari">Başarı sırasına göre</option>
           <option value="kontenjan">Kontenjana göre</option>
           <option value="ad">Üniversite adına göre</option>
-        </select>
+        </Secim>
       </div>
       <div className="ps" style={{ margin: '0 0 10px', fontSize: 12 }}>
         {liste.length} program · {veri.yil ? `${veri.yil} yerleştirme verileri` : 'son yerleştirme verileri'} · Kaynak: YÖK Atlas.

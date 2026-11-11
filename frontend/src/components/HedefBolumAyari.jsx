@@ -4,6 +4,8 @@ import { useEffect, useRef, useState } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
 import BolumAdi from './BolumAdi'
+import OneriKutusu from './OneriKutusu'   // [2026-11-11] yazarken öneri
+import { useBolumAdlari } from '../yardimci/bolumAdlari'
 
 export default function HedefBolumAyari() {
   const [durum, setDurum] = useState(null)
@@ -39,6 +41,7 @@ export default function HedefBolumAyari() {
   const hedef = durum?.hedef
   const hakBitti = hedef && durum.kalan_hak <= 0
 
+  const bolumAdlari = useBolumAdlari()
   function sec(b) {
     setHata(null); setMesaj(null)
     if (hedef && hedef.bolum_id === b.bolum_id) return
@@ -123,7 +126,8 @@ export default function HedefBolumAyari() {
             </>
           )}
           <form onSubmit={ara} style={{ display: 'flex', gap: 8, margin: '12px 0 0' }}>
-            <input className="auth-input" style={{ flex: 1, margin: 0 }} value={sorgu} onChange={(e) => setSorgu(e.target.value)} placeholder="ya da bölüm ara…" />
+            <OneriKutusu kapStyle={{ flex: 1 }} style={{ margin: 0 }} value={sorgu} onChange={setSorgu} kaynak={bolumAdlari}
+              placeholder="ya da bölüm ara…" onSec={(b) => sec({ bolum_id: b.id, bolum_adi: b.ad })} />
             <button className="btn sec" type="submit">Ara</button>
           </form>
           {sonuclar && (

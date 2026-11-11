@@ -165,7 +165,7 @@ def _liste(adlar: list[str]) -> str:
 def _hedefsiz(b: Baglam) -> str:
     d = b.degerlendirme()
     if d["durum"] == "yok":
-        return "Önce değerlendirmeye başlaman gerekiyor. Sol menüden 📝 Değerlendirme'yi aç ve K1 (Değerler) ile başla. Sonuçların çıkınca sana daha net şeyler söyleyebilirim."
+        return "Önce değerlendirmeye başlaman gerekiyor. Sol menüden 📝 Değerlendirme'yi aç ve B1 (Değerler) ile başla. Sonuçların çıkınca sana daha net şeyler söyleyebilirim."
     if d["durum"] != "tamamlandi":
         return f"Değerlendirmenin {d['biten']}/{d['toplam']} bölümünü bitirdin. Kalanları da bitir. O zaman güçlü yönlerini ve sana uygun bölümleri görürsün, daha çok konuşabiliriz."
     ilk = b.ilk_bolumler()
@@ -395,12 +395,12 @@ def k_sistem(b: Baglam, m: str) -> str:
 def k_maarif(b: Baglam, m: str) -> str:
     return ("Okulunda uygulanan Türkiye Yüzyılı Maarif Modeli değerler, eğilimler (merak, sorumluluk, empati gibi) ve beceriler "
             "(iş birliği, karar verme gibi) tanımlar. Filizyol, her özelliğinin bu kavramlardan hangilerine yakın olduğunu gösterir: "
-            "Profilim'deki \"Güçlü yönlerinin Maarif Modeli'ndeki karşılıkları\" kartında ve katman sayfalarında. "
+            "Profilim'deki \"Güçlü yönlerinin Maarif Modeli'ndeki karşılıkları\" kartında ve boyut sayfalarında. "
             "Bu yorumsal bir ilişkilendirmedir; puanlarını ve bölüm önerilerini etkilemez.")
 
 
 def k_is_turu(b: Baglam, m: str) -> str:
-    return ("İş türü soruları (K5), ilk dört bölümü bitirdiğinde sana en yakın çıkan bölümler (uyumu 70 ve üzeri olanlar; en az 5, "
+    return ("İş türü soruları (B5), ilk dört bölümü bitirdiğinde sana en yakın çıkan bölümler (uyumu 70 ve üzeri olanlar; en az 5, "
             "en fazla 20) için açılır. Bu bölümlerde yapılan işlerden hangilerini daha çok seçtiğine göre bölümler yalnızca kendi "
             "aralarında yer değiştirir; bu yüzden ilk 10 listende küçük değişiklikler olabilir. Diğer bölümler etkilenmez; asıl "
             "belirleyici ilk dört bölümdür.")
@@ -769,7 +769,7 @@ KONULAR = [
     (("hangi bolum", "bolum oner", "uygun bolum", "meslek", "bolumler", "onerirsin", "ne onerir", "bana ne uygun", "en uygun",
       "bolumu sirala", "bolumleri sirala",
       "ilgi alanlarim", "ilgi alanima"), k_bolum_oner),
-    (("test", "degerlendirme", "katman", "kac soru", "sorulari nasil cevap", "cevaplamali", "neredeyim"), k_test),
+    (("test", "degerlendirme", "katman", "boyut", "kac soru", "sorulari nasil cevap", "cevaplamali", "neredeyim"), k_test),
     (("merhaba", "selam", "gunaydin", "iyi aksam", "hey", "naber", "nasilsin"), k_selam),
 ]
 

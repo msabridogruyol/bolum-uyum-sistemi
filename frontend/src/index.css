@@ -1084,6 +1084,12 @@ a.yp-mini{text-decoration:none;display:inline-flex;align-items:center}
 .sn-guven,.sn-kamera-rozet{font-size:12.5px;font-weight:700;padding:5px 11px;border-radius:999px;white-space:nowrap}
 .sn-guven.iyi{background:var(--grl);color:var(--gr)}.sn-guven.orta{background:var(--aml);color:var(--am)}.sn-guven.kotu{background:var(--rel);color:var(--re)}
 .sn-guven b{font-size:14px}
+/* [2026-11-11] cevap eksikken devam düğmesi: soluk ama basılabilir; basınca açıklama */
+.btn.sn-eksik{opacity:.5;cursor:help}
+.sn-eksik-perde{position:fixed;inset:0;background:rgba(20,16,10,.45);display:flex;align-items:center;justify-content:center;z-index:9000;padding:16px}
+.sn-eksik-kutu{background:var(--sur);border-radius:20px;padding:24px 22px;max-width:400px;width:100%;text-align:center;box-shadow:0 18px 50px rgba(0,0,0,.25);display:flex;flex-direction:column;gap:10px;align-items:center}
+.sn-eksik-baslik{font-weight:800;font-size:17px;color:var(--tx)}
+.sn-eksik-metin{font-size:14px;color:var(--tx2);line-height:1.5}
 .sn-kamera-rozet{background:var(--sur2);color:var(--tx3)}.sn-kamera-rozet.acik{background:var(--grl);color:var(--gr)}
 .sn-cik{border:none;background:none;cursor:pointer;font:inherit;font-size:12.5px;font-weight:700;color:var(--tx3);padding:5px 8px;border-radius:8px}
 .sn-cik:hover{background:var(--sur2);color:var(--re)}
@@ -3582,3 +3588,24 @@ button.msim-karo:focus-visible{outline:3px solid var(--okul-c);outline-offset:2p
 /* [2026-11-05] Veli onay formu bekleniyor şeridi (öğrenci) */
 .veli-serit{display:flex;gap:14px;align-items:center;flex-wrap:wrap;margin:0 0 16px;padding:14px 18px;border-radius:14px;background:var(--aml);border:1px solid var(--am);color:var(--tx);font-size:13.5px;line-height:1.5}
 .veli-serit b{font-size:14.5px}
+
+/* [2026-11-11] Yazarak aranan açılır liste (components/Secim.jsx) ve öneri kutusu (components/OneriKutusu.jsx) */
+.secim-dugme{display:flex;align-items:center;justify-content:space-between;gap:8px;text-align:left;cursor:pointer;box-sizing:border-box}
+.secim-dugme:disabled{cursor:not-allowed;opacity:.6}
+.secim-deger{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;min-width:0}
+.secim-ok{color:var(--tx3);font-size:11px;flex:none}
+.secim-panel{position:absolute;left:0;top:calc(100% + 4px);z-index:10000;min-width:100%;width:max-content;max-width:min(420px,92vw);background:var(--sur);border:1.5px solid var(--bor2);border-radius:12px;box-shadow:0 12px 32px rgba(40,30,10,.18);padding:6px;box-sizing:border-box}
+.secim-ara{width:100%;box-sizing:border-box;padding:8px 10px;border:1.5px solid var(--bor2);border-radius:9px;background:var(--sur2);color:var(--tx);font:inherit;font-size:13px;margin-bottom:4px}
+.secim-ara:focus{outline:none;border-color:var(--pu)}
+.secim-liste{list-style:none;margin:0;padding:0;max-height:300px;overflow:auto;min-height:0}
+.secim-panel .secim-liste{flex:1 1 auto}
+ul.secim-panel.secim-liste{padding:6px;max-height:320px}
+.secim-oge{padding:8px 10px;border-radius:8px;font-size:13px;color:var(--tx);cursor:pointer;display:flex;justify-content:space-between;gap:10px;line-height:1.35}
+.secim-oge b{color:var(--pud);font-weight:800}
+.secim-oge.isaretli{background:var(--pul)}
+.secim-oge.secili{font-weight:800}
+.secim-oge.kapali{opacity:.45;cursor:not-allowed}
+.secim-grup{padding:8px 10px 3px;font-size:11px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:.04em}
+.secim-bos{padding:10px;font-size:12.5px;color:var(--tx3)}
+.oneri-liste{width:100%;max-width:none}
+.oneri-alt{color:var(--tx3);font-size:11.5px;white-space:nowrap}

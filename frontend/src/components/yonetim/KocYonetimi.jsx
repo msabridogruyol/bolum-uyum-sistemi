@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react'
 import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { api } from '../../api/client'
 import { Pencere, tarih } from './ortak'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const BOS = { ad_soyad: '', gorunen_ad: '', unvan: '', hakkinda: '', alanlar: [], konular: [], deneyim_yil: '', gorusme_sekli: 'online', ucret_bilgisi: '', eposta: '', telefon: '', aktif: true }
 const yerelZaman = (t) => {
@@ -30,7 +31,7 @@ function KocFormu({ ilk, meta, onKaydet, onIptal }) {
         <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" required minLength={3} value={f.ad_soyad} onChange={alan('ad_soyad')} placeholder="Ad soyad" />
         <input className="auth-input" maxLength={80} value={f.unvan || ''} onChange={alan('unvan')} placeholder="Unvan (ör. Kariyer koçu, Psikolojik danışman)" />
         <input className="auth-input" type="number" min={0} max={60} value={f.deneyim_yil} onChange={alan('deneyim_yil')} placeholder="Deneyim (yıl)" />
-        <select className="auth-input" value={f.gorusme_sekli} onChange={alan('gorusme_sekli')}>{meta.gorusme.map((g) => <option key={g.kod} value={g.kod}>{g.ad}</option>)}</select>
+        <Secim className="auth-input" value={f.gorusme_sekli} onChange={alan('gorusme_sekli')}>{meta.gorusme.map((g) => <option key={g.kod} value={g.kod}>{g.ad}</option>)}</Secim>
         <input className="auth-input" maxLength={60} value={f.gorunen_ad || ''} onChange={alan('gorunen_ad')} placeholder={`Öğrencinin gördüğü ad (boşsa: ${(f.ad_soyad || 'Ad Soyad').split(' ').filter(Boolean).slice(0, -1).join(' ') || 'Ad'} ${((f.ad_soyad || 'S').trim().split(' ').pop() || 'S')[0]}.)`} title="Öğrenci koçun tam adını görmez; boş bırakırsanız ad + soyadın baş harfi gösterilir." />
         <input className="auth-input" maxLength={120} value={f.ucret_bilgisi || ''} onChange={alan('ucret_bilgisi')} placeholder="Ücret / anlaşma notu (öğrenci görmez)" />
         <input className="auth-input" type="email" maxLength={120} value={f.eposta || ''} onChange={alan('eposta')} placeholder="E-posta (öğrenci görmez)" />
@@ -89,7 +90,7 @@ function TalepSatiri({ t, durumlar, okulGoster, onKaydedildi }) {
           {t.durum === 'iptal' ? <div className="yp-ince">Öğrenci bu talebi iptal etti.</div> : (
             <>
               <div className="kl-form" style={{ marginTop: 10 }}>
-                <select className="auth-input" value={f.durum} onChange={(e) => setF({ ...f, durum: e.target.value })}>{durumlar.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}</select>
+                <Secim className="auth-input" value={f.durum} onChange={(e) => setF({ ...f, durum: e.target.value })}>{durumlar.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}</Secim>
                 <input className="auth-input" type="datetime-local" value={f.randevu_zamani} onChange={(e) => setF({ ...f, randevu_zamani: e.target.value })} title="Randevu zamanı" />
                 <input className="auth-input" maxLength={500} value={f.ogrenciye_not} onChange={(e) => setF({ ...f, ogrenciye_not: e.target.value })} placeholder="Öğrenciye not (öğrenci görür)" />
                 <input className="auth-input" maxLength={1000} value={f.ic_not} onChange={(e) => setF({ ...f, ic_not: e.target.value })} placeholder="İç not (yalnızca yönetim görür)" />
@@ -147,7 +148,7 @@ function OkulAtamaPenceresi({ koc, meta, onKapat, onKaydedildi }) {
               <tr key={o.id} className={v ? '' : 'kl-pasif'}>
                 <td><input type="checkbox" checked={!!v} onChange={(e) => ac(o.id, e.target.checked)} aria-label={`${o.ad} ata`} /></td>
                 <td><b>{o.ad}</b></td>
-                <td>{v ? <select className="yp-sec" value={v.durum} onChange={(e) => degistir(o.id, 'durum', e.target.value)}>{meta.okul_durumlari.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}</select> : <span className="yp-ince">Atanmadı</span>}</td>
+                <td>{v ? <Secim className="yp-sec" value={v.durum} onChange={(e) => degistir(o.id, 'durum', e.target.value)}>{meta.okul_durumlari.map((d) => <option key={d.kod} value={d.kod}>{d.ad}</option>)}</Secim> : <span className="yp-ince">Atanmadı</span>}</td>
                 <td>{v ? <input className="yp-sec" style={{ width: '100%' }} maxLength={300} value={v.notlar} onChange={(e) => degistir(o.id, 'notlar', e.target.value)} placeholder="İsteğe bağlı" /> : null}</td>
               </tr>
             )
@@ -200,9 +201,9 @@ export default function KocYonetimi() {
         <div style={{ display: 'flex', gap: 8, alignItems: 'center', flexWrap: 'wrap', marginBottom: 12 }}>
           <div className="ct" style={{ margin: 0, marginRight: 'auto' }}>Görüşme talepleri {talepler.bekleyen > 0 && <span className="kc-rozet">{talepler.bekleyen} bekleyen</span>}</div>
           {talepOkullari.length > 1 && (
-            <select className="yp-sec" value={okulFiltre} onChange={(e) => setOkulFiltre(e.target.value)}>
+            <Secim className="yp-sec" value={okulFiltre} onChange={(e) => setOkulFiltre(e.target.value)}>
               <option value="">Tüm okullar</option>{talepOkullari.map(([id, ad]) => <option key={id} value={id}>{ad}</option>)}
-            </select>
+            </Secim>
           )}
           <div className="kc-filtre" style={{ margin: 0 }}>
             {[['acik', 'Açık'], ['kapali', 'Sonuçlanan'], ['hepsi', 'Tümü']].map(([k, ad]) => <button key={k} className={filtre === k ? 'aktif' : ''} onClick={() => setFiltre(k)}>{ad}</button>)}

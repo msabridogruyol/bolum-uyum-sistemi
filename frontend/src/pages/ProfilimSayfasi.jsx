@@ -5,6 +5,7 @@ import { tembel } from '../yardimci/tembelYukle'   // [2026-10-11] eski sürüm 
 import { NavLink, Navigate, useParams } from 'react-router-dom'
 import PuanRehberi from '../components/PuanRehberi'
 import { OgrenciRaporYorumu } from '../components/RaporYorumu'   // [2026-10-12]
+import { boyutKodu } from '../yardimci/katmanAdlari'   // [2026-11-11] K1–K5 → B1–B5 gösterimi
 
 const GenelSonuclarSayfasi = tembel(() => import('./GenelSonuclarSayfasi'))
 const KatmanDetaySayfasi = tembel(() => import('./KatmanDetaySayfasi'))
@@ -34,7 +35,7 @@ export default function ProfilimSayfasi() {
         {SEKMELER.map((s) => (
           <NavLink key={s.kod || 'genel'} to={s.kod ? `/profilim/${s.kod}` : '/profilim'} end
             className={({ isActive }) => (isActive ? 'aktif' : '')}>
-            <span aria-hidden="true">{s.ikon}</span> {s.ad}{s.kod && !s.etiketsiz && <small>{s.kod}</small>}
+            <span aria-hidden="true">{s.ikon}</span> {s.ad}{s.kod && !s.etiketsiz && <small>{boyutKodu(s.kod)}</small>}
           </NavLink>
         ))}
       </nav>

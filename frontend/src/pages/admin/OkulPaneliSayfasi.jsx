@@ -29,6 +29,7 @@ import HazirRaporlar from '../../components/yonetim/HazirRaporlar'   // [2026-10
 import Anketler from '../../components/yonetim/Anketler'
 import { Mezunlar, TercihDonemi } from '../../components/yonetim/TercihMezun'
 import { OkulModulleriContext } from '../../yardimci/moduller'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 function Cubuk({ deger, toplam, renk = 'var(--pu)' }) {
   const y = toplam ? Math.round((100 * deger) / toplam) : 0
@@ -185,18 +186,18 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
       {hata && <div className="auth-error">{hata}</div>}
       <div className="yp-arac">
         <input className="auth-input" style={{ maxWidth: 260 }} placeholder="İsim veya e-posta ara…" value={arama} onChange={(e) => setArama(e.target.value)} />
-        <select className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)}>
+        <Secim className="yp-sec" value={sinif} onChange={(e) => setSinif(e.target.value)}>
           <option value="">Tüm sınıflar</option>
           {siniflar.map(([sf, subeler]) => [
             <option key={sf} value={`s:${sf}`}>{sf}{subeler.length ? ' (tüm şubeler)' : ''}</option>,
             ...subeler.map((sb) => <option key={`${sf}|${sb}`} value={`b:${sf}|${sb}`}>&nbsp;&nbsp;{sf.replace('. Sınıf', '')}-{sb}</option>),
           ])}
-        </select>
-        <select className="yp-sec" value={durum} onChange={(e) => setDurum(e.target.value)}>
+        </Secim>
+        <Secim className="yp-sec" value={durum} onChange={(e) => setDurum(e.target.value)}>
           <option value="">Tüm durumlar</option>
           <option value="giris_yok">Henüz giriş yapmadı</option><option value="baslamadi">Teste başlamadı</option>
           <option value="devam">Devam ediyor</option><option value="tamamlandi">Testi tamamladı</option>
-        </select>
+        </Secim>
         <div style={{ flex: 1 }} />
         <button className="btn sec" disabled={bekle} title="Tüm öğrenciler: ad soyad, no, sınıf, e-posta, şifre (geçiciyse). Düzenleyip geri yükleyebilirsiniz."
           onClick={() => topluIslem(async () => { const r = await api.girisListesi(okulId); base64Indir(r.dosya_adi, r.icerik_base64) })}>⬇ Giriş listesi (Excel)</button>
@@ -213,9 +214,9 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
           <b>{secili.size} öğrenci seçili</b>
           <button className="btn sec" disabled={bekle} onClick={sifreSifirla}>🔑 Şifrelerini sıfırla</button>
           <span className="yp-sinif-ata">
-            <select className="yp-sec" value={sinifAta.sinif} onChange={(e) => setSinifAta({ ...sinifAta, sinif: e.target.value })}>
+            <Secim className="yp-sec" value={sinifAta.sinif} onChange={(e) => setSinifAta({ ...sinifAta, sinif: e.target.value })}>
               <option value="">Sınıf…</option>{['Aday', '9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].map((s) => <option key={s}>{s}</option>)}
-            </select>
+            </Secim>
             <input className="auth-input" style={{ width: 64, margin: 0 }} maxLength={2} placeholder="Şube" value={sinifAta.sube} onChange={(e) => setSinifAta({ ...sinifAta, sube: e.target.value.toUpperCase() })} />
             <button className="btn sec" disabled={bekle || (!sinifAta.sinif && !sinifAta.sube)} onClick={sinifVer}>Sınıfı ata</button>
           </span>
@@ -389,12 +390,12 @@ function KayitlarSekmesi({ okulId }) {
   return (
     <>
       <div className="yp-arac">
-        <select className="yp-sec" value={gun} onChange={(e) => setGun(Number(e.target.value))}>
+        <Secim className="yp-sec" value={gun} onChange={(e) => setGun(Number(e.target.value))}>
           {[7, 30, 90, 365].map((g) => <option key={g} value={g}>Son {g} gün</option>)}
-        </select>
-        <select className="yp-sec" value={tur} onChange={(e) => setTur(e.target.value)}>
+        </Secim>
+        <Secim className="yp-sec" value={tur} onChange={(e) => setTur(e.target.value)}>
           <option value="">Tüm kayıtlar</option><option value="yonetim">Yönetim işlemleri</option><option value="ogrenci">Öğrenci girişleri</option>
-        </select>
+        </Secim>
         <span className="yp-ince">{gosterilen.length} kayıt</span>
       </div>
       {!liste ? <div className="bos-durum yukleniyor">Yükleniyor…</div> : gosterilen.length === 0 ? <div className="bos-durum">Bu aralıkta kayıt yok.</div> : (
@@ -477,9 +478,9 @@ function OkulBilgileriSekmesi({ okulId }) {
           <div className="ct">Kadro (müdür, müdür yardımcıları, rehber öğretmen / psikolojik danışman…)</div>
           {f.kadro.map((k, i) => (
             <div key={i} className="okb-kadro-satir">
-              <select className="auth-input" value={gorevler.includes(k.gorev) ? k.gorev : 'Diğer'} onChange={kisi(i, 'gorev')}>
+              <Secim className="auth-input" value={gorevler.includes(k.gorev) ? k.gorev : 'Diğer'} onChange={kisi(i, 'gorev')}>
                 {gorevler.map((g) => <option key={g}>{g}</option>)}
-              </select>
+              </Secim>
               <input className="auth-input" value={k.ad} onChange={kisi(i, 'ad')} placeholder="Ad Soyad" />
               <div className="okb-kadro-tus">
                 <button type="button" className="yp-mini" disabled={i === 0} onClick={() => kisiTasi(i, -1)} title="Yukarı">↑</button>

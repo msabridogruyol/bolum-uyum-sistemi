@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../api/client'
 import { Pencere } from '../components/yonetim/ortak'
+import Secim from '../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const DURUM_RENK = { beklemede: 'am', onaylandi: 'gr', tamamlandi: 'pu', reddedildi: 'tx3', iptal: 'tx3' }
 const basHarf = (ad) => ad.split(/\s+/).filter((x) => !/\.$/.test(x)).slice(0, 2).map((x) => x[0]).join('').toLocaleUpperCase('tr-TR')
@@ -33,7 +34,7 @@ function TalepFormu({ koc, konular, onKapat, onGonderildi }) {
           </div>
         )}
         <label className="auth-label">Konu</label>
-        <select className="auth-input" value={f.konu} onChange={alan('konu')}>{konular.map((k) => <option key={k}>{k}</option>)}</select>
+        <Secim className="auth-input" value={f.konu} onChange={alan('konu')}>{konular.map((k) => <option key={k}>{k}</option>)}</Secim>
         <label className="auth-label">Sana uygun zaman (isteğe bağlı)</label>
         <input className="auth-input" maxLength={120} value={f.tercih_zamani} onChange={alan('tercih_zamani')} placeholder="ör. Hafta içi 16:00 sonrası, Cumartesi sabah" />
         <label className="auth-label">Konuşmak istediklerin (isteğe bağlı)</label>

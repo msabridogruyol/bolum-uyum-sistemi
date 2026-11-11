@@ -5,6 +5,7 @@
 import { Fragment, useEffect, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { api } from '../../api/client'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const DURUM = {
   yok: ['✗ Sistemde yok', 're'],
@@ -39,11 +40,11 @@ function KontrolFormu({ k, onKaydet }) {
   }
   return (
     <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', alignItems: 'center' }}>
-      <select className="yp-sec" value={sonuc} onChange={(e) => setSonuc(e.target.value)}>
+      <Secim className="yp-sec" value={sonuc} onChange={(e) => setSonuc(e.target.value)}>
         <option value="guncel">Kontrol ettim, güncel</option>
         <option value="guncellendi">Güncelledim</option>
         <option value="sorun">Sorun var</option>
-      </select>
+      </Secim>
       <input className="yp-sec" style={{ flex: 1, minWidth: 160 }} value={notlar} maxLength={1000} onChange={(e) => setNotlar(e.target.value)}
         placeholder={sonuc === 'sorun' ? 'Sorunu kısaca yazın (zorunlu)' : 'Not (isteğe bağlı): kaynak, dönem…'} />
       <button className="yp-mini" disabled={bekle || (sonuc === 'sorun' && !notlar.trim())} onClick={kaydet}>Kaydet</button>

@@ -9,5 +9,11 @@ export const KATMAN_BILGI = {
 }
 export function katmanAdi(kod, ad) {
   if (ad && ad.trim() && ad.trim().toUpperCase() !== (kod || '').toUpperCase()) return ad.trim()
-  return KATMAN_BILGI[(kod || '').toUpperCase()]?.ad || kod
+  return KATMAN_BILGI[(kod || '').toUpperCase()]?.ad || boyutKodu(kod)
+}
+
+// [2026-11-11] Kullanıcı kararı: ekranda "Katman" yerine "Boyut"; kodlar K1–K5 yerine B1–B5 gösterilir.
+// Sistemdeki kod (K1…K5, adres /katmanlar/K1, veritabanı) değişmez; yalnızca gösterilen metin çevrilir.
+export function boyutKodu(kod) {
+  return typeof kod === 'string' ? kod.replace(/^K([1-5])(?![0-9A-Za-z])/, 'B$1') : kod
 }

@@ -31,8 +31,8 @@ ASAMALAR = {
     "baslamadi": 0, "k1": 1, "k2": 2, "k3": 3, "k5_bekliyor": 4, "tamamlandi": 4,
 }
 ASAMA_ADI = {
-    "baslamadi": "Hiç başlamadı", "k1": "K1 bitti", "k2": "K1–K2 bitti", "k3": "K1–K3 bitti",
-    "k5_bekliyor": "K1–K4 bitti, iş türü soruları (K5) bekliyor", "tamamlandi": "Değerlendirme tamamlandı",
+    "baslamadi": "Hiç başlamadı", "k1": "B1 bitti", "k2": "B1–B2 bitti", "k3": "B1–B3 bitti",
+    "k5_bekliyor": "B1–B4 bitti, iş türü soruları (B5) bekliyor", "tamamlandi": "Değerlendirme tamamlandı",
 }
 
 
@@ -319,8 +319,8 @@ def ilerleme_ozeti(db: Session, o: Ogrenci) -> str:
         OgrenciKatmanOturumu.ogrenci_id == o.id, OgrenciKatmanOturumu.tur_id == tur.id,
         OgrenciKatmanOturumu.durum == "tamamlandi", Katman.kosullu_mu.is_(False)).count()
     if tur.durum != "tamamlandi":
-        return f"{tur.tur_no}. tur · {biten}/4 katman"
+        return f"{tur.tur_no}. tur · {biten}/4 boyut"
     dallar = db.query(OgrenciDalOturumu).filter(OgrenciDalOturumu.ogrenci_id == o.id, OgrenciDalOturumu.tur_id == tur.id).all()
     if any(d.durum != "tamamlandi" for d in dallar):
-        return f"{tur.tur_no}. tur · K5 bekliyor"
+        return f"{tur.tur_no}. tur · B5 bekliyor"
     return f"{tur.tur_no}. tur · tamamlandı"

@@ -301,7 +301,7 @@ def sayac_durumu(db: Session) -> dict:
             return []
 
     eksik_nedeni = 0
-    for tablo, ad in (("bolum_agirliklari", "bölüm profili"), ("bolum_k5_baglari", "K5 iş türü bağı"),
+    for tablo, ad in (("bolum_agirliklari", "bölüm profili"), ("bolum_k5_baglari", "B5 iş türü bağı"),
                       ("bolum_ornek_meslekler", "örnek meslek listesi")):
         eksik = eksik_bolumler(tablo)
         if eksik:
@@ -314,7 +314,7 @@ def sayac_durumu(db: Session) -> dict:
         if g.get("bolumler") and g["bolumler"] != canli["ozet"]["bolumler"]:
             nedenler.append("Son pipeline çalıştırmasından sonra bölüm listesi ya da bölüm kısa açıklamaları değişti.")
         if g.get("k5") and g["k5"] != canli["ozet"]["k5"]:
-            nedenler.append("Son pipeline çalıştırmasından sonra K5 iş türleri ya da etkinlik cümleleri değişti.")
+            nedenler.append("Son pipeline çalıştırmasından sonra B5 iş türleri ya da etkinlik cümleleri değişti.")
         if g.get("degiskenler") and g["degiskenler"] != canli["ozet"]["degiskenler"]:
             notlar.append("Özellik adı / tanımı değişti. Puanlar özellik kutup cümlelerinden (veri/degisken_kutuplari.csv) "
                           "hesaplandığı için pipeline'ı yeniden çalıştırmak gerekmez; kutup cümlelerinin yeni tanıma uygunluğu "

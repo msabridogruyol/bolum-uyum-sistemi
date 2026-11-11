@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../../api/client'
 import RaporDugmeleri from '../../components/RaporDugmeleri'
 import { base64Indir } from '../../components/yonetim/ortak'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const TOPLU = [
   ['toplu_veli', '👪 Veli raporları'],
@@ -74,11 +75,11 @@ export default function RaporMerkeziSayfasi() {
 
       <div className="sis-bolum-baslik"><h2>Okul raporları</h2><p>Önce okulu seçin; sınıf ve şube listesi okulun kayıtlarından gelir.</p></div>
       <div className="sis-filtreler">
-        <select className="yp-sec" aria-label="Okul" value={okulId} onChange={(e) => setOkulId(e.target.value)} style={{ minWidth: 240 }}>
+        <Secim className="yp-sec" aria-label="Okul" value={okulId} onChange={(e) => setOkulId(e.target.value)} style={{ minWidth: 240 }}>
           <option value="">Okul seçin…</option>
           {okullar.map((o) => <option key={o.id} value={String(o.id)}>{o.ad}{o.aktif_mi === false ? ' (pasif)' : ''}</option>)}
           <option value="0">Okul harici öğrenciler</option>
-        </select>
+        </Secim>
         {ozet && <span className="yp-ince">{ozet.toplam} öğrenci · {ozet.tamamlayan} testi tamamladı</span>}
         {netVar && (
           <label className="sis-onay"><input type="checkbox" checked={netler} onChange={(e) => setNetler(e.target.checked)} /> Deneme ve net bilgilerini ekle</label>
@@ -92,7 +93,7 @@ export default function RaporMerkeziSayfasi() {
         !ozetHata && <div className="bos-durum yukleniyor">Yükleniyor…</div>
       ) : (
         <div className="ist-kartlar">
-          <RaporKarti ikon="🏫" baslik="Okul genel raporu" aciklama={`${okulAdi}: katılım durumu, sınıf ve şube kırılımları, alan dağılımı, katman ortalamaları, öğrenci listesi.`}
+          <RaporKarti ikon="🏫" baslik="Okul genel raporu" aciklama={`${okulAdi}: katılım durumu, sınıf ve şube kırılımları, alan dağılımı, boyut ortalamaları, öğrenci listesi.`}
             secenekler={[
               { anahtar: 'pdf', ad: 'PDF', ikon: '📄', indir: () => api.okulRaporuIndir(okulId, 'pdf', net) },
               { anahtar: 'xlsx', ad: 'Excel', ikon: '📊', indir: () => api.okulRaporuIndir(okulId, 'xlsx', net) },
@@ -102,29 +103,29 @@ export default function RaporMerkeziSayfasi() {
               { anahtar: 'pdf', ad: 'PDF', ikon: '📄', indir: sart(sinif, 'Önce sınıf düzeyi seçin.', () => api.sinifRaporuIndir(okulId, sinif, null, 'ozet', 'pdf', net)) },
               { anahtar: 'xlsx', ad: 'Excel', ikon: '📊', indir: sart(sinif, 'Önce sınıf düzeyi seçin.', () => api.sinifRaporuIndir(okulId, sinif, null, 'ozet', 'xlsx', net)) },
             ]}>
-            <select className="yp-sec" aria-label="Sınıf düzeyi" value={sinif} onChange={(e) => setSinif(e.target.value)}>
+            <Secim className="yp-sec" aria-label="Sınıf düzeyi" value={sinif} onChange={(e) => setSinif(e.target.value)}>
               <option value="">Sınıf düzeyi seçin…</option>
               {siniflar.map((s) => <option key={s.sinif} value={s.sinif}>{s.sinif} ({s.ogrenci} öğrenci)</option>)}
-            </select>
+            </Secim>
           </RaporKarti>
           <RaporKarti ikon="🚪" baslik="Şube raporu" aciklama="Şubenin durumu, alanları, okul ortalamasıyla karşılaştırma ve öğrenci listesi (sınıf öğretmeni için)."
             secenekler={[
               { anahtar: 'pdf', ad: 'PDF', ikon: '📄', indir: sart(secSube, 'Önce şube seçin.', () => api.sinifRaporuIndir(okulId, secSube.sinif, secSube.sube || null, 'ozet', 'pdf', net)) },
               { anahtar: 'xlsx', ad: 'Excel', ikon: '📊', indir: sart(secSube, 'Önce şube seçin.', () => api.sinifRaporuIndir(okulId, secSube.sinif, secSube.sube || null, 'ozet', 'xlsx', net)) },
             ]}>
-            <select className="yp-sec" aria-label="Şube" value={sube} onChange={(e) => setSube(e.target.value)}>
+            <Secim className="yp-sec" aria-label="Şube" value={sube} onChange={(e) => setSube(e.target.value)}>
               <option value="">Şube seçin…</option>
               {subeler.map((s) => <option key={`${s.sinif}|${s.sube}`} value={`${s.sinif}|${s.sube}`}>{subeAdi(s)} ({s.ogrenci} öğrenci)</option>)}
-            </select>
+            </Secim>
           </RaporKarti>
           <RaporKarti ikon="📚" baslik="Toplu bireysel raporlar" aciklama="Seçilen sınıf düzeyindeki ya da şubedeki her öğrencinin bireysel raporu tek PDF’te (veli toplantısı, sınıf öğretmeni). En çok 80 öğrenci."
             secenekler={[
               { anahtar: 'pdf', ad: 'Toplu PDF', ikon: '📄', indir: sart(topluSec, 'Önce sınıf ya da şube seçin.', () => api.sinifRaporuIndir(okulId, topluSec.sinif, topluSec.sube, topluTur, 'pdf', net)) },
             ]}>
-            <select className="yp-sec" aria-label="Rapor türü" value={topluTur} onChange={(e) => setTopluTur(e.target.value)}>
+            <Secim className="yp-sec" aria-label="Rapor türü" value={topluTur} onChange={(e) => setTopluTur(e.target.value)}>
               {TOPLU.map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}
-            </select>
-            <select className="yp-sec" aria-label="Sınıf ya da şube" value={topluKapsam} onChange={(e) => setTopluKapsam(e.target.value)}>
+            </Secim>
+            <Secim className="yp-sec" aria-label="Sınıf ya da şube" value={topluKapsam} onChange={(e) => setTopluKapsam(e.target.value)}>
               <option value="">Sınıf / şube seçin…</option>
               {siniflar.map((s) => (
                 <optgroup key={s.sinif} label={s.sinif}>
@@ -132,7 +133,7 @@ export default function RaporMerkeziSayfasi() {
                   {subeler.filter((x) => x.sinif === s.sinif && x.sube).map((x) => <option key={x.sube} value={`${x.sinif}|${x.sube}`}>{subeAdi(x)} ({x.ogrenci})</option>)}
                 </optgroup>
               ))}
-            </select>
+            </Secim>
             {topluSayi > 80 && <span className="yp-ince" style={{ color: 'var(--re)' }}>{topluSayi} öğrenci: şube seçin.</span>}
           </RaporKarti>
           <RaporKarti ikon="🔑" baslik="Giriş listesi" aciklama="Okulun tüm öğrencileri: ad soyad, no, sınıf, e-posta ve geçici şifre (kendi şifresini belirleyenlerde “kendi şifresi”). Gizli bilgi içerir."
@@ -148,11 +149,11 @@ export default function RaporMerkeziSayfasi() {
 
       <div className="sis-bolum-baslik"><h2>Sistem geneli raporlar</h2><p>Tüm okulları kapsayan raporlar; kurumlara iletilebilir.</p></div>
       <div className="ist-kartlar">
-        <RaporKarti ikon="📊" baslik="İstatistikler" aciklama="İstatistikler sayfasının tamamı: özet göstergeler, zaman serisi, huni, katman puanları, bölümler, alanlar, modül kullanımı, okul tablosu, paketler (test hesapları hariç)."
+        <RaporKarti ikon="📊" baslik="İstatistikler" aciklama="İstatistikler sayfasının tamamı: özet göstergeler, zaman serisi, huni, boyut puanları, bölümler, alanlar, modül kullanımı, okul tablosu, paketler (test hesapları hariç)."
           secenekler={[{ anahtar: 'xlsx', ad: 'Excel', ikon: '📊', indir: () => api.sistemIstatistikExcel({ donem }) }]}>
-          <select className="yp-sec" aria-label="Dönem" value={donem} onChange={(e) => setDonem(e.target.value)}>
+          <Secim className="yp-sec" aria-label="Dönem" value={donem} onChange={(e) => setDonem(e.target.value)}>
             <option value="30">Son 30 gün</option><option value="90">Son 90 gün</option><option value="yil">Bu eğitim yılı</option><option value="tum">Tümü</option>
-          </select>
+          </Secim>
           <Link to="/admin/istatistikler" className="ak-link">Filtreli görünüm →</Link>
         </RaporKarti>
         <RaporKarti ikon="⚖️" baslik="Okul karşılaştırması" aciklama="Tüm okulların katılım ve sonuç göstergeleri yan yana. Belirli okullar için Okul Karşılaştırması sayfasında seçim yapın."
@@ -163,9 +164,9 @@ export default function RaporMerkeziSayfasi() {
           secenekler={[{ anahtar: 'xlsx', ad: 'Excel', ikon: '📊', indir: () => api.anketPsikometriExcel() }]} />
         <RaporKarti ikon="📜" baslik="Audit Log" aciklama="Yönetim işlemlerinin kaydı: zaman, yapan, işlem, hedef, gerekçe ve okul."
           secenekler={[{ anahtar: 'xlsx', ad: 'Excel', ikon: '📊', indir: () => api.auditLogExcel(auditGun) }]}>
-          <select className="yp-sec" aria-label="Süre" value={auditGun} onChange={(e) => setAuditGun(Number(e.target.value))}>
+          <Secim className="yp-sec" aria-label="Süre" value={auditGun} onChange={(e) => setAuditGun(Number(e.target.value))}>
             <option value={30}>Son 30 gün</option><option value={90}>Son 90 gün</option><option value={365}>Son 1 yıl</option><option value={0}>Tümü</option>
-          </select>
+          </Secim>
         </RaporKarti>
       </div>
       <div className="yp-ince" style={{ marginTop: 6 }}>

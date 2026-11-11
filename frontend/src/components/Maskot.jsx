@@ -618,12 +618,12 @@ function sayfaMesaji(yol, ozet, hedef) {
   const biten = ozet?.tamamlanan_katman_sayisi ?? 0
   const toplam = ozet?.toplam_ana_katman_sayisi ?? 4
   if (yol === '/katmanlar') {
-    if (biten === 0) return 'İlk katmanla başlayalım: Değerler! 🌱'
-    if (biten < toplam) return `${biten}/${toplam} katman tamam, harika gidiyorsun! Sıradaki seni bekliyor.`
+    if (biten === 0) return 'İlk boyutla başlayalım: Değerler! 🌱'
+    if (biten < toplam) return `${biten}/${toplam} boyut tamam, harika gidiyorsun! Sıradaki seni bekliyor.`
     // [2026-10-12] K5 de bittiyse "iş türü sorularını bitir" denmez
     const k5Acilan = ozet?.k5_acilan_dal_sayisi ?? 0
     if (k5Acilan > 0 && (ozet?.k5_tamamlanan_dal_sayisi ?? 0) >= k5Acilan) return 'Değerlendirmenin tamamını bitirdin! 🎉 Sonuçların hazır; bölüm önerilerine göz at.'
-    return 'Tüm katmanlar bitti! 🎉 İş türü sorularını da bitirince sonuçların hazır.'
+    return 'Tüm boyutlar bitti! 🎉 İş türü sorularını da bitirince sonuçların hazır.'
   }
   if (yol === '/bolumler/tum') return 'Bir bölüme tıkla, örnek mesleklerine bak. Beğendiğini ☆ ile listene ekle! 🔍'
   if (yol === '/bolumler/karsilastir') return 'Aklındaki 2-3 bölümü yan yana koy, farkları gör. ⚖️'
@@ -632,7 +632,7 @@ function sayfaMesaji(yol, ozet, hedef) {
   if (yol.startsWith('/profilim')) return 'Bu senin profilin: güçlü yönlerin ve gelişebileceğin alanlar. 🧭'
   if (yol === '/koclugu') return hedef ? `Hedefin ${hedef}. Bugün yol haritandan bir adımı işaretle!` : 'Henüz hedefin yok. Önerilen bölümlerden birini seçmeye ne dersin?'
   if (yol === '/profil') return 'Profilini doldurursan seni daha iyi tanırım. 😊'
-  if (biten === 0) return 'Hazırsan Değerlendirme\'den ilk katmana başlayalım!'
+  if (biten === 0) return 'Hazırsan Değerlendirme\'den ilk boyuta başlayalım!'
   return null
 }
 
@@ -1340,7 +1340,7 @@ export default function Maskot({ profil, ozet }) {
     if (biten == null) return
     const kayitli = Number(depoOku('maskot_biten_katman', '-1'))
     if (kayitli >= 0 && biten > kayitli) {
-      window.setTimeout(() => { oynat('kutla'); efektEkle('konfeti', 18); konus(`Bir katman daha bitti! ${biten}/${ozet.toplam_ana_katman_sayisi} 🎉`, true) }, 1800)
+      window.setTimeout(() => { oynat('kutla'); efektEkle('konfeti', 18); konus(`Bir boyut daha bitti! ${biten}/${ozet.toplam_ana_katman_sayisi} 🎉`, true) }, 1800)
     }
     depoYaz('maskot_biten_katman', String(biten))
   }, [ozet]) // eslint-disable-line react-hooks/exhaustive-deps

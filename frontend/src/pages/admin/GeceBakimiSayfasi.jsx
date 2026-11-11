@@ -28,7 +28,7 @@ export default function GeceBakimiSayfasi() {
       <div className="ph">
         <div className="pt">Gece Bakımı</div>
         <div className="ps">Sistemi yavaşlatan işler gündüz değil her gece {v?.saat || '03:00'}'te (Türkiye saati) yapılır: veritabanı güncellemeleri,
-          pipeline sonucunu canlıya alma, katman ağırlığı değişikliği ve uyum skorlarının yeniden hesabı. Bakım saati Parametreler'de
+          pipeline sonucunu canlıya alma, boyut ağırlığı değişikliği ve uyum skorlarının yeniden hesabı. Bakım saati Parametreler'de
           (<code>gece_bakim_saati</code>) değiştirilebilir.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}

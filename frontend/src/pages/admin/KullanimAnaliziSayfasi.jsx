@@ -7,6 +7,7 @@ import { Pencere } from '../../components/yonetim/ortak'
 import {
   CizgiGrafik, GrafikKarti, Halka, IsiHaritasi, KpiKarti, KpiSatiri, SutunGrafik, YatayCubuk,
 } from '../../components/istatistik'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const gun = (fark = 0) => {
   const d = new Date(); d.setDate(d.getDate() - fark)
@@ -86,11 +87,11 @@ export default function KullanimAnaliziSayfasi() {
           ))}
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10, marginTop: 10, alignItems: 'center' }}>
-          <select className="auth-input" style={{ flex: '1 1 220px', maxWidth: 360 }} value={s.okul_id} onChange={(e) => uygula({ okul_id: e.target.value })} aria-label="Okul">
+          <Secim className="auth-input" style={{ flex: '1 1 220px', maxWidth: 360 }} value={s.okul_id} onChange={(e) => uygula({ okul_id: e.target.value })} aria-label="Okul">
             <option value="">Tüm okullar (toplam)</option>
             <option value="0">Okul harici öğrenciler</option>
             {okullar.map((x) => <option key={x.id} value={x.id}>{x.ad}{x.demo ? ' (demo)' : ''}</option>)}
-          </select>
+          </Secim>
           <label className="yp-ince" style={{ display: 'flex', gap: 6, alignItems: 'center' }}>
             <input type="checkbox" checked={s.test_dahil} onChange={(e) => uygula({ test_dahil: e.target.checked })} /> Test hesapları ve demo okullar dahil
           </label>
@@ -378,10 +379,10 @@ function OkullarPaneli({ v, csv, okulSec }) {
     <div className="ist-kartlar">
       <GrafikKarti genis baslik="Okul okul kullanım" aciklama="Öğrenci ve okul yetkilisi ayrı. Okula tıklayınca bütün rapor o okula süzülür."
                    sag={<>
-                     <select className="auth-input" style={{ width: 210 }} value={sira} onChange={(e) => setSira(e.target.value)} aria-label="Sıralama">
+                     <Secim className="auth-input" style={{ width: 210 }} value={sira} onChange={(e) => setSira(e.target.value)} aria-label="Sıralama">
                        <option value="toplam">Toplam süreye göre</option><option value="ogr_katilim">Öğrenci katılımına göre</option>
                        <option value="ogr_kisi">Öğrenci kişi başı süreye göre</option><option value="yet_toplam">Yetkili süresine göre</option><option value="ad">Ada göre</option>
-                     </select>
+                     </Secim>
                      <button type="button" className="btn sec" onClick={() => csv('okullar')}>Okullar CSV</button>
                    </>}>
         {!l.length ? <div className="ist-bos">Henüz veri yok</div> : (
@@ -449,22 +450,22 @@ function KisilerPaneli({ sorgu, csv, kisiAc, siniflar }) {
   return (
     <div className="card">
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 12 }}>
-        <select className="auth-input" style={{ flex: '1 1 150px' }} value={f.tip} onChange={(e) => setF({ ...f, tip: e.target.value, sinif: '' })} aria-label="Kullanıcı tipi">
+        <Secim className="auth-input" style={{ flex: '1 1 150px' }} value={f.tip} onChange={(e) => setF({ ...f, tip: e.target.value, sinif: '' })} aria-label="Kullanıcı tipi">
           {Object.entries(TIP_TEKIL).map(([k, a]) => <option key={k} value={k}>{a}</option>)}
-        </select>
+        </Secim>
         {f.tip === 'ogrenci' && (
-          <select className="auth-input" style={{ flex: '1 1 130px' }} value={f.sinif} onChange={(e) => setF({ ...f, sinif: e.target.value })} aria-label="Sınıf">
+          <Secim className="auth-input" style={{ flex: '1 1 130px' }} value={f.sinif} onChange={(e) => setF({ ...f, sinif: e.target.value })} aria-label="Sınıf">
             <option value="">Tüm sınıflar</option>
             {siniflar.filter((s) => s.sinif !== 'Belirtilmemiş').map((s) => <option key={s.sinif} value={s.sinif}>{s.sinif}</option>)}
-          </select>
+          </Secim>
         )}
-        <select className="auth-input" style={{ flex: '1 1 150px' }} value={f.yalniz} onChange={(e) => setF({ ...f, yalniz: e.target.value })} aria-label="Kullanım">
+        <Secim className="auth-input" style={{ flex: '1 1 150px' }} value={f.yalniz} onChange={(e) => setF({ ...f, yalniz: e.target.value })} aria-label="Kullanım">
           <option value="hepsi">Herkes</option><option value="kullanan">Yalnızca kullananlar</option><option value="kullanmayan">Hiç kullanmayanlar</option>
-        </select>
-        <select className="auth-input" style={{ flex: '1 1 170px' }} value={f.siralama} onChange={(e) => setF({ ...f, siralama: e.target.value })} aria-label="Sıralama">
+        </Secim>
+        <Secim className="auth-input" style={{ flex: '1 1 170px' }} value={f.siralama} onChange={(e) => setF({ ...f, siralama: e.target.value })} aria-label="Sıralama">
           <option value="aktif_cok">En çok süre</option><option value="aktif_az">En az süre</option><option value="son">Son kullanım</option>
           <option value="oturum">Oturum sayısı</option><option value="gun">Aktif gün</option><option value="ad">Ad</option>
-        </select>
+        </Secim>
         <input className="auth-input" style={{ flex: '2 1 200px' }} placeholder="Ad veya e-posta" value={ara} onChange={(e) => setAra(e.target.value)}
                onKeyDown={(e) => e.key === 'Enter' && setF({ ...f, ara })} />
         <button type="button" className="btn sec" onClick={() => setF({ ...f, ara })}>Ara</button>

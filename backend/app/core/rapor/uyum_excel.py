@@ -11,6 +11,7 @@ Sayfalar:
   Bölüm beklentisi  — bölüm × özellik: bölümün beklediği düzey (katman içi ölçek)
   Yöntemler         — yalnızca süper admin: 10 ÇKKV yönteminin puanı + Kendall W
 """
+from app.core.katman_adlari import boyut_kodu as _bk   # [2026-11-11] K1–K5 → B1–B5 gösterimi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 
@@ -67,12 +68,12 @@ def cevap_analizi_xlsx(db, o, tur, satirlar: list, ozellikler: list, tam: dict |
         secilen = next((x["metin"] for x in c["secenekler"] if x["secildi"]), "")
         en_az = next((x["metin"] for x in c["secenekler"] if x["en_az"]), "")
         katki = {k["kod"]: k["puan"] for k in c["katkilar"]}
-        ws.append([c["sira"], c["katman"], c["tip_ad"] + (" (ters)" if c["ters"] else ""), c["soru"], secilen, en_az]
+        ws.append([c["sira"], _bk(c["katman"]), c["tip_ad"] + (" (ters)" if c["ters"] else ""), c["soru"], secilen, en_az]
                   + [katki.get(k) for k in kodlar])
 
     ws = _sayfa(wb, "Özellikler", ["Kod", "Özellik", "Katman", "Puan", "Cevap sayısı", "Katkı veren sorular (#)"], [7, 34, 8, 8, 12, 50])
     for x in ozellikler:
-        ws.append([x["kod"], x["ad"], x.get("katman"), x.get("puan"), x["cevap_sayisi"], ", ".join(str(i) for i in x["cevaplar"])])
+        ws.append([x["kod"], x["ad"], _bk(x.get("katman")), x.get("puan"), x["cevap_sayisi"], ", ".join(str(i) for i in x["cevaplar"])])
 
     if tam is not None:
         g, K = tam["girdi"], tam["katki"]
@@ -82,7 +83,7 @@ def cevap_analizi_xlsx(db, o, tur, satirlar: list, ozellikler: list, tam: dict |
         ws_f = _sayfa(wb, "Uyum (fark)", bas + kod, gen)
         ws_k = _sayfa(wb, "Katkılar", bas + kod, gen)
         ws_b = _sayfa(wb, "Bölüm beklentisi", bas + kod, gen)
-        ws_f.append(["", "Öğrenci (katman içi ölçek)", ""] + [round(float(v), 1) for v in g.ogrenci_olcekli])
+        ws_f.append(["", "Öğrenci (boyut içi ölçek)", ""] + [round(float(v), 1) for v in g.ogrenci_olcekli])
         for n, s in enumerate(tam["sira"], 1):
             i = tam["satir_of"][s.bolum_id]
             ad = g.bolum_adlari.get(s.bolum_id)

@@ -326,7 +326,7 @@ def sistem_surumu():
 
 app.include_router(auth.router, prefix="/auth", tags=["Kimlik Doğrulama"])
 app.include_router(admin_auth.router, prefix="/admin/auth", tags=["Yönetim — Giriş"])
-app.include_router(ogrenci.router, prefix="/ogrenci", tags=["Öğrenci — Katman Akışı (D2-D5)"])
+app.include_router(ogrenci.router, prefix="/ogrenci", tags=["Öğrenci — Boyut Akışı (D2-D5)"])
 app.include_router(koclugu.router, prefix="/koclugu", tags=["Koçluk — Bölüm F"])
 app.include_router(admin.router, prefix="/admin", tags=["Yönetim — E1-E9"])
 app.include_router(admin_guvenlik_router, prefix="/admin", tags=["admin"])

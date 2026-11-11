@@ -4,6 +4,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import { KpiKarti } from '../../components/istatistik/KpiKarti'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const gun = (fark = 0) => {
   const d = new Date(); d.setDate(d.getDate() - fark)
@@ -72,16 +73,16 @@ export default function ErisimKayitlariSayfasi() {
           ))}
         </div>
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginTop: 10 }}>
-          <select className="auth-input" style={{ flex: '1 1 150px' }} value={s.kullanici_tipi} onChange={(e) => setS({ ...s, kullanici_tipi: e.target.value })} aria-label="Kişi türü">
+          <Secim className="auth-input" style={{ flex: '1 1 150px' }} value={s.kullanici_tipi} onChange={(e) => setS({ ...s, kullanici_tipi: e.target.value })} aria-label="Kişi türü">
             {TIPLER.map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}
-          </select>
-          <select className="auth-input" style={{ flex: '1 1 170px' }} value={s.olay} onChange={(e) => setS({ ...s, olay: e.target.value })} aria-label="Olay">
+          </Secim>
+          <Secim className="auth-input" style={{ flex: '1 1 170px' }} value={s.olay} onChange={(e) => setS({ ...s, olay: e.target.value })} aria-label="Olay">
             {OLAYLAR.map(([k, ad]) => <option key={k} value={k}>{ad}</option>)}
-          </select>
-          <select className="auth-input" style={{ flex: '1 1 190px' }} value={s.okul_id} onChange={(e) => setS({ ...s, okul_id: e.target.value })} aria-label="Okul">
+          </Secim>
+          <Secim className="auth-input" style={{ flex: '1 1 190px' }} value={s.okul_id} onChange={(e) => setS({ ...s, okul_id: e.target.value })} aria-label="Okul">
             <option value="">Tüm okullar</option>
             {okullar.map((x) => <option key={x.id} value={x.id}>{x.ad}</option>)}
-          </select>
+          </Secim>
           <input className="auth-input" style={{ flex: '1 1 170px' }} placeholder="Kişi (ad veya e-posta)" value={s.kisi} onChange={(e) => setS({ ...s, kisi: e.target.value })}
                  onKeyDown={(e) => e.key === 'Enter' && uygula({})} />
           <input className="auth-input" style={{ flex: '1 1 170px' }} placeholder="Verisine bakılan öğrenci" value={s.hedef} onChange={(e) => setS({ ...s, hedef: e.target.value })}

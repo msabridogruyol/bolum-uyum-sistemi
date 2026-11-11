@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { t as cevirT } from '../yardimci/dil'   // [2026-10-12] çoklu dil
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
-import { KATMAN_BILGI } from '../yardimci/katmanAdlari'
+import { KATMAN_BILGI, boyutKodu } from '../yardimci/katmanAdlari'
 import { seviyeEtiketi, seviyeRengi } from '../yardimci/seviye'
 import YenidenDegerlendirmePenceresi from '../components/YenidenDegerlendirmePenceresi'
 
@@ -51,7 +51,7 @@ const SORU_TIPI = {
   likert: { ad: 'Katılım sorusu', ikon: '📏', kisa: 'Bu ifade seni ne kadar anlatıyor?', uzun: 'Bir cümle okursun. Bu cümlenin sana ne kadar uyduğunu seçersin: “Kesinlikle katılmıyorum”dan “Kesinlikle katılıyorum”a kadar. Ortadaki şık “kararsızım” demek. Yine de olabildiğince net seçmeye çalış.' },
   kutup: { ad: 'Tercih sorusu', ikon: '⚖️', kisa: 'İki uçtan hangisine daha yakınsın?', uzun: 'Ekranda iki farklı tercih görürsün. Hangisine ne kadar yakın olduğunu seçersin: “Kesinlikle A” · “Daha çok A” · “Daha çok B” · “Kesinlikle B”. İkisi de iyi olabilir. Sana daha yakın olanı seç.' },
   sjt: { ad: 'Durum sorusu', ikon: '🎬', kisa: 'Sen olsan ne yapardın?', uzun: 'Gerçek hayattan bir durum okursun. O durumda olsan büyük ihtimalle ne yapacağını seçersin. “En çok / en az” sorularında iki seçim yaparsın: önce sana EN ÇOK uyan şıkkı, sonra EN AZ uyan şıkkı seç.' },
-  kontrol: { ad: 'Dikkat sorusu', ikon: '👀', kisa: 'Soruda ne isteniyorsa onu seç.', uzun: 'Arada dikkatli okuyup okumadığını gösteren kısa sorular var. Soruda hangi şık isteniyorsa onu seçmen yeterli. Bu sorular özellik puanlarını değil, güven puanını etkiler.' },
+  kontrol: { ad: 'Dikkat sorusu', ikon: '👀', kisa: 'Soruda ne isteniyorsa onu seç.', uzun: 'Arada dikkatli okuyup okumadığını gösteren kısa sorular var. Soruda hangi şık isteniyorsa onu seçmen yeterli. Bu sorular özellik puanlarını etkilemez; cevaplarının dikkatle verildiğini gösterir.' },
 }
 
 function GuvenlikUyariKatmani({ tamEkranaGeriDon, onErkenBitir }) {
@@ -120,7 +120,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
       <div style={{ textAlign: 'center', marginBottom: 22 }}>
         <div style={{ fontSize: 44, marginBottom: 8 }}>{katman.ikon}</div>
         <div style={{ fontFamily: 'var(--fd)', fontSize: 26, fontWeight: 700 }}>{katman.ad}</div>
-        <div style={{ fontSize: 14, color: 'var(--tx3)', fontWeight: 600, marginTop: 4 }}>{altBaslik || `${kod} katmanına başlıyorsun`} · {sorular.length} soru · ~{tahminiDakika} dk</div>
+        <div style={{ fontSize: 14, color: 'var(--tx3)', fontWeight: 600, marginTop: 4 }}>{altBaslik || `${boyutKodu(kod)} boyutuna başlıyorsun`} · {sorular.length} soru · ~{tahminiDakika} dk</div>
       </div>
 
       <div className="sn-bolum">
@@ -140,8 +140,8 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
         <div className="sn-bolum-bas">🛡️ Başlamadan önce kuralları oku</div>
         <ul>
           <li>Değerlendirme <b>tam ekranda</b> yapılır. Sistem şunları kaydeder: tam ekrandan çıkmak, <b>başka sekme ya da pencereye geçmek</b>, <b>ikinci ekran</b> kullanmak, <b>ekran görüntüsü tuşuna</b> basmak ve <b>kopyalama denemeleri</b>.</li>
-          <li>Bunların her biri <b>güven puanını</b> düşürür. Bu puanı ekranın üstünde anlık görürsün. Güven puanın <b>50'nin altına düşerse değerlendirmen geçersiz sayılır</b>. O zaman yalnızca güven sorunu çıkan bölümü yeniden çözmen gerekir; diğer bölümlerdeki cevapların korunur.</li>
-          <li>Arada birkaç kısa <b>dikkat sorusu</b> var. Bunlara verdiğin cevaplar da güven puanına katılır; ekranda anlık görünmez, değerlendirme bitince hesaba katılır.</li>
+          <li>Bu durumlar sık olursa sonuçların seni doğru anlatmayabilir. O zaman yalnızca o bölümü <b>sakin bir zamanda yeniden çözmen</b> istenir; diğer bölümlerdeki cevapların korunur.</li>
+          <li>Arada birkaç kısa <b>dikkat sorusu</b> var. Soruda hangi şık isteniyorsa onu seç.</li>
           <li>Ekran kaydı almak ya da başkasından yardım almak da kurallara aykırı. Soruları kendin cevapla. Sonuçların ancak <b>yalnızca seni</b> anlatırsa işine yarar.</li>
           <li>Ara vermen gerekirse çıkabilirsin. Cevapların kayıtlı kalır. Döndüğünde <b>kaldığın sorudan</b> devam edersin.</li>
         </ul>
@@ -240,7 +240,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         if (dalMi) setDalAdi(veri.dal_adi || null)
       })
       .catch((e) => {
-        setHata(e.detail || (dalMi ? 'İş türü soruları açılamadı.' : 'Katman açılamadı.'))
+        setHata(e.detail || (dalMi ? 'İş türü soruları açılamadı.' : 'Boyut açılamadı.'))
         // [2026-10-12] Bekleme süresi / güven kuralına takıldıysa durumu açılır pencerede göster
         if (!dalMi) api.degerlendirmeDurumu().then((d) => { if (['guven_sorunu', 'bekleme'].includes(d?.durum)) setYdDurum(d) }).catch(() => {})
       })
@@ -479,7 +479,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         setTamamlandi(sonuc)
         if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
       } catch (e) {
-        setHata(e.detail || 'Katman tamamlanamadı.')
+        setHata(e.detail || 'Boyut tamamlanamadı.')
       } finally {
         setGonderiliyor(false)
       }
@@ -501,7 +501,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
       {uyari && (
         <div className="sn-uyari" role="alert" key={uyari.zaman}>
           <b>⚠️ {uyari.metin}</b>
-          <span>Bu durum kaydedildi. Güven puanın: <b>{uyari.puan}</b>/100 · {uyari.esik}'nin altına düşerse değerlendirmen geçersiz sayılabilir.</span>
+          <span>Bu durum kaydedildi. Sonuçlarının seni doğru anlatması için tam ekranda ve bu sayfada kalmaya devam et.</span>
         </div>
       )}
       {kameraRizasi && basladiMi && !tamamlandi && <KameraOnizleme videoRef={videoRef} />}
@@ -535,20 +535,23 @@ export default function SoruSayfasi({ mod = 'katman' }) {
                 <div className="bitis-cipler">
                   {[...tamamlandi.sonuclar].sort((a, b) => b.puan - a.puan).slice(0, 3).map((x) => <span key={x.degisken_id}>{x.degisken_adi}</span>)}
                 </div>
-                <div className="bitis-alt">Bu bölümde en çok bu üç özelliğin öne çıktı. Bütün katmanları bitirince bölüm önerilerin bunlara göre hesaplanır.</div>
+                <div className="bitis-alt">Bu bölümde en çok bu üç özelliğin öne çıktı. Bütün boyutları bitirince bölüm önerilerin bunlara göre hesaplanır.</div>
               </div>
             )}
 
-            {guven && (
-              <div className={`sn-sonuc-guven ${guven.guven_puani < guven.esik ? 'kotu' : ''}`}>
-                🛡️ Güven puanın: <b>{guven.guven_puani}</b>/100
-                {guven.ihlaller.length ? <> · {guven.ihlaller.map((i) => `${i.ad} (${i.sayi})`).join(', ')}</> : ' · kural dışı durum yok, teşekkürler!'}
+            {/* [2026-11-11] Kullanıcı kararı: öğrenci güven puanını görmez. Düşükse yumuşak bir dille yeniden çözmesi istenir. */}
+            {guven && (guven.guven_puani < guven.esik ? (
+              <div className="sn-sonuc-guven kotu">
+                🌱 Bu bölümde dikkatini dağıtan birkaç durum oldu. Sonuçlarının seni gerçekten anlatması için bu bölümü
+                sakin bir zamanda yeniden çözmen gerekecek. Diğer bölümlerdeki cevapların korunur.
               </div>
-            )}
+            ) : !guven.ihlaller.length && (
+              <div className="sn-sonuc-guven">🛡️ Kurallara uyduğun için teşekkürler!</div>
+            ))}
             {tamamlandi.sonuclar.length === 0 ? (
               <div className="veri-yok-grafik">
                 <div className="vg-ikon">📊</div>
-                <div className="vg-metin">Bu katman için henüz sonuç hesaplanmadı.</div>
+                <div className="vg-metin">Bu boyut için henüz sonuç hesaplanmadı.</div>
               </div>
             ) : (
               <details className="card bitis-detay">
@@ -593,7 +596,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
               try { await api.kvkkGuncelle({ kamera: true }); setKameraRizasi(true) } catch { /* izin kaydedilemedi */ }
             }}
             baslik={dalMi ? (dalAdi || 'İş Türü Soruları') : undefined}
-            altBaslik={dalMi ? 'K5 — sana özel iş türü sorularına başlıyorsun' : undefined}
+            altBaslik={dalMi ? 'B5 — sana özel iş türü sorularına başlıyorsun' : undefined}
           />
         ) : (
           <SoruIcerigiDuzeni
@@ -607,7 +610,6 @@ export default function SoruSayfasi({ mod = 'katman' }) {
             onIleriGit={ileriGit}
             onGeriGit={geriGit}
             onCik={sinavdanCik}
-            guven={guven}
             kameraDurumu={kameraRizasi ? kameraDurumu : 'yok'}
           />
         )}
@@ -624,7 +626,7 @@ const FILIZLENME_MESAJLARI = [
   'İçtenlikle verdiğin her cevap, sonucunu daha isabetli yapar.',
 ]
 
-function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, baslik, onSecenekSec, onIleriGit, onGeriGit, onCik, guven, kameraDurumu }) {
+function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, baslik, onSecenekSec, onIleriGit, onGeriGit, onCik, kameraDurumu }) {
   const katman = KATMAN_BILGI[kod] || { ikon: '🌻', ad: baslik || kod }
   // [2026-10-10] Mola: uzun bölümlerde (8+ soru) yarıya gelince bir kez kısa nefes molası önerilir
   const yari = Math.floor(sorular.length / 2)
@@ -643,17 +645,11 @@ function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, b
     )
   }
   const mesaj = FILIZLENME_MESAJLARI[aktifIndex % FILIZLENME_MESAJLARI.length]
-  const puan = guven?.guven_puani ?? 100
-  const esik = guven?.esik ?? 50
-  const puanSinif = puan < esik ? 'kotu' : puan < esik + 20 ? 'orta' : 'iyi'
   return (
     <div className="sn-duzen">
       <div className="sn-ust">
         <div className="sn-katman"><span>{katman.ikon}</span><b>{katman.ad}</b></div>
         <div className="sn-rozetler">
-          <span className={`sn-guven ${puanSinif}`} title={guven?.ihlaller?.length ? guven.ihlaller.map((i) => `${i.ad}: ${i.sayi}`).join(' · ') : 'Kural dışı durum yok'}>
-            🛡️ Güven puanı <b>{puan}</b>
-          </span>
           <span className={`sn-kamera-rozet ${kameraDurumu}`}>{kameraDurumu === 'acik' ? '📷 Kamera açık' : kameraDurumu === 'yok' ? '📷 Kamera kapalı' : '📷 Kamera kapalı'}</span>
           <button className="sn-cik" onClick={onCik}>Çık ✕</button>
         </div>
@@ -670,6 +666,8 @@ function SoruIcerigiDuzeni({ sorular, aktifIndex, cevaplar, gonderiliyor, kod, b
 function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, onSecenekSec, onIleriGit, onGeriGit }) {
   const aktifSoru = sorular[aktifIndex]
   const ikiliMi = aktifSoru.cevap_bicimi === 'encok_enaz'
+  const [eksikUyari, setEksikUyari] = useState(false)   // [2026-11-11] eksik cevapla devama basılınca açıklama
+  useEffect(() => { setEksikUyari(false) }, [aktifIndex])
   const cevap = cevaplar[aktifSoru.id]
   const secilenSecenek = ikiliMi ? null : cevap
   const enCok = ikiliMi ? cevap?.enCok : null
@@ -715,10 +713,30 @@ function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, onSecenekSec
       </div>
       <div className="qnav sn-nav">
         <button className="btn sec" onClick={onGeriGit} disabled={aktifIndex === 0 || gonderiliyor}>← Önceki soru</button>
-        <button className="btn" onClick={onIleriGit} disabled={!cevapTamam || gonderiliyor}>
-          {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla ✓'}
+        {/* [2026-11-11] Cevap eksikken düğme soluk görünür ama basılabilir: basılınca neyin eksik olduğu açıklanır */}
+        <button className={`btn${!cevapTamam ? ' sn-eksik' : ''}`} aria-disabled={!cevapTamam || undefined}
+                onClick={() => (cevapTamam ? onIleriGit() : setEksikUyari(true))} disabled={gonderiliyor}>
+          {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Boyutu tamamla ✓'}
         </button>
       </div>
+      {eksikUyari && (
+        <div className="sn-eksik-perde" role="presentation" onClick={() => setEksikUyari(false)}>
+          <div className="sn-eksik-kutu" role="alertdialog" aria-modal="true" aria-labelledby="sn-eksik-baslik" onClick={(e) => e.stopPropagation()}>
+            <div style={{ fontSize: 34 }}>{ikiliMi ? '☝️' : '👆'}</div>
+            <div id="sn-eksik-baslik" className="sn-eksik-baslik">
+              {!ikiliMi ? 'Önce bir şık seç' : !enCok ? 'Önce sana EN ÇOK uyan şıkkı seç' : 'Şimdi sana EN AZ uyan şıkkı da seç'}
+            </div>
+            <div className="sn-eksik-metin">
+              {!ikiliMi
+                ? 'Devam etmek için sana en uygun gelen şıkkı işaretle.'
+                : !enCok
+                  ? 'Bu soruda iki seçim yapıyorsun: önce sana EN ÇOK uyan şıkkı, sonra EN AZ uyan şıkkı. İkisini de seçince devam edebilirsin.'
+                  : 'EN ÇOK uyan şıkkı seçtin. Devam etmek için kalan şıklardan sana EN AZ uyanı da seç.'}
+            </div>
+            <button className="btn" autoFocus onClick={() => setEksikUyari(false)}>Tamam, seçiyorum</button>
+          </div>
+        </div>
+      )}
     </div>
   )
 }

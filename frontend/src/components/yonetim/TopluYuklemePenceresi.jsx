@@ -3,6 +3,7 @@ import { useState } from 'react'
 import { AD_SOYAD_EN_FAZLA } from '../../yardimci/sinirlar'
 import { api } from '../../api/client'
 import { Pencere, SifreListesi, base64Indir } from './ortak'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 function dosyayiOku(dosya) {
   return new Promise((coz, reddet) => {
@@ -100,10 +101,10 @@ export default function TopluYuklemePenceresi({ okulId, okulAd, onKapat, onBitti
             <div className="yp-kb">👤 Tek öğrenci</div>
             <input maxLength={AD_SOYAD_EN_FAZLA} className="auth-input" placeholder="Ad Soyad" value={tekForm.ad_soyad} onChange={(e) => setTekForm({ ...tekForm, ad_soyad: e.target.value })} required minLength={3} />
             <div style={{ display: 'flex', gap: 8, margin: '8px 0' }}>
-              <select className="auth-input" value={tekForm.sinif} onChange={(e) => setTekForm({ ...tekForm, sinif: e.target.value })}>
+              <Secim className="auth-input" value={tekForm.sinif} onChange={(e) => setTekForm({ ...tekForm, sinif: e.target.value })}>
                 <option value="">Sınıf…</option>
                 {['Aday', '9', '10', '11', '12', 'Mezun'].map((s) => <option key={s} value={s}>{s === 'Mezun' || s === 'Aday' ? s : `${s}. Sınıf`}</option>)}
-              </select>
+              </Secim>
               <input className="auth-input" style={{ width: 90 }} placeholder="Şube" maxLength={2} value={tekForm.sube} onChange={(e) => setTekForm({ ...tekForm, sube: e.target.value })} />
             </div>
             <input className="auth-input" type="email" placeholder="E-posta" value={tekForm.email} onChange={(e) => setTekForm({ ...tekForm, email: e.target.value })} required />

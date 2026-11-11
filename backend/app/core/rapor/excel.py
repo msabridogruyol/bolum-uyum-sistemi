@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 """[2026-10-10] Excel raporları: öğrenci (tüm puanlar, öneriler, SWOT) ve okul (özet, sınıflar, öğrenciler)."""
+from app.core.katman_adlari import boyut_kodu as _bk   # [2026-11-11] K1–K5 → B1–B5 gösterimi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from datetime import datetime
@@ -55,7 +56,7 @@ def ogrenci_xlsx(v: dict, netler: bool = True, yonetim: bool = False) -> bytes:
         ["Rapor tarihi", v["tarih"]],
     ], [24, 60], renk)
     _sayfa(wb, "Özellik puanları", ["Katman", "Özellik", "Puan", "Düzey", "Durum tespiti", "Öneri"],
-           [[kt["kod"], x["ad"], x["puan"], x["seviye"], x.get("yorum") or "", x.get("oneri") or ""]
+           [[_bk(kt["kod"]), x["ad"], x["puan"], x["seviye"], x.get("yorum") or "", x.get("oneri") or ""]
             for kt in v["katmanlar"] for x in kt["ozellikler"]] + [["K5", x["ad"], x["puan"], "", "", ""] for x in v["k5"]],
            [9, 34, 8, 14, 60, 60], renk)
     _sayfa(wb, "Bölüm önerileri", ["Sıra", "Bölüm", "Alan", "Uyum %", "Örtüşen özellikler", "Dikkat"],
@@ -97,8 +98,8 @@ def okul_xlsx(v: dict, netler: bool = True) -> bytes:
         ["Okul", v["okul"]["ad"]], *kapsam_satir, ["Öğrenci", o.get("toplam")], ["Giriş yapan", _gz(o.get("giris_yapan"))],
         ["Teste başlayan", _gz(o.get("teste_baslayan"))], ["Tamamlayan", _gz(o.get("tamamlayan"))], ["Hedef seçen", _gz(o.get("hedef_secen"))],
         ["Güven eşiği altında", _gz(v["gecersiz"])], ["Rapor tarihi", v["tarih"]],
-    ] + [[f"Katman ortalaması · {k['kod']} {k['ad']}", k["ortalama"]] for k in v["katman_ort"]]
-      + ([["Katman ortalamaları", GIZLI_METIN]] if (v.get("kucuk_grup") or {}).get("profil_gizli") else [])
+    ] + [[f"Boyut ortalaması · {_bk(k['kod'])} {k['ad']}", k["ortalama"]] for k in v["katman_ort"]]
+      + ([["Boyut ortalamaları", GIZLI_METIN]] if (v.get("kucuk_grup") or {}).get("profil_gizli") else [])
       + [[f"Okul ortalaması · {k} ", x] for k, x in okul_ort.items()]
       + ([["Gizlilik", DIPNOT]] if (v.get("kucuk_grup") or {}).get("uygulandi") else []), [40, 30], renk)
     if o.get("subeler"):

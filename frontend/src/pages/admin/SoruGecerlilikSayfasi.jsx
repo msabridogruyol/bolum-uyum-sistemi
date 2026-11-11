@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
+import { boyutKodu } from '../../yardimci/katmanAdlari'   // [2026-11-11] K1–K5 → B1–B5 gösterimi
 
 // [DÜZELTME] Önceki sürüm script etiketini ekleyip HİÇ BEKLEMİYORDU — kullanıcı
 // script tam inmeden butona basarsa "kütüphane yüklenemedi" hatası çıkıyordu
@@ -261,7 +263,7 @@ export default function SoruGecerlilikSayfasi() {
 
           {analiz && (
             <div className="card" style={{ marginBottom: 18 }}>
-              <div className="ct">Katman Bazlı Geçerlilik Analizi</div>
+              <div className="ct">Boyut Bazlı Geçerlilik Analizi</div>
               <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.7, marginBottom: 12 }}>
                 <p style={{ margin: '0 0 8px' }}>
                   <b>Ölçüt:</b> 3 bağımsız dil modelinden en az 2'sinin aynı değişkeni işaret etmesi
@@ -275,13 +277,13 @@ export default function SoruGecerlilikSayfasi() {
                   "tatmin edici/kabul edilebilir" uyum düzeyi olarak yaygın kabul görür (Graham,
                   Milanowski &amp; Miller, 2012; McHugh, 2012) ve Landis &amp; Koch'un (1977) kappa
                   sınıflandırmasında "önemli ölçüde – neredeyse mükemmel" uyum kategorisine karşılık
-                  gelir. Bu nedenle her <b>katman</b> kendi içinde en az <b>%{analiz.katman_esigi_yuzde}</b>'e
+                  gelir. Bu nedenle her <b>boyut</b> kendi içinde en az <b>%{analiz.katman_esigi_yuzde}</b>'e
                   (minimum kabul edilebilir eşik), sistemin <b>genel ortalaması</b> ise en az
                   <b> %{analiz.genel_esik_yuzde}</b>'e (tatmin edici düzey) ulaşmalıdır.
                 </p>
                 <p style={{ margin: 0 }}>
                   "Rastgele Baseline" sütunu, üç modelin şansla en az ikisinin aynı adayı seçme
-                  ihtimalini, o katmandaki gerçek aday sayısına göre matematiksel olarak hesaplar —
+                  ihtimalini, o boyuttaki gerçek aday sayısına göre matematiksel olarak hesaplar —
                   gerçek oranın bu şans seviyesine ne kadar yakın ya da uzak olduğunu görmek için
                   referans noktasıdır.
                 </p>
@@ -302,7 +304,7 @@ export default function SoruGecerlilikSayfasi() {
               <table style={{ width: '100%', fontSize: 12.5, borderCollapse: 'collapse' }}>
                 <thead>
                   <tr style={{ borderBottom: '1.5px solid var(--bor)' }}>
-                    <th style={{ textAlign: 'left', padding: '6px 8px' }}>Katman</th>
+                    <th style={{ textAlign: 'left', padding: '6px 8px' }}>Boyut</th>
                     <th style={{ textAlign: 'right', padding: '6px 8px' }}>Birim</th>
                     <th style={{ textAlign: 'right', padding: '6px 8px' }}>≥2/3 Doğru</th>
                     <th style={{ textAlign: 'right', padding: '6px 8px' }}>Rastgele Baseline</th>
@@ -313,7 +315,7 @@ export default function SoruGecerlilikSayfasi() {
                 <tbody>
                   {analiz.katmanlar.map((k) => (
                     <tr key={k.katman_kod} style={{ borderBottom: '1px solid var(--bor)' }}>
-                      <td style={{ padding: '7px 8px', fontWeight: 700 }}>{k.katman_kod}</td>
+                      <td style={{ padding: '7px 8px', fontWeight: 700 }}>{boyutKodu(k.katman_kod)}</td>
                       <td style={{ padding: '7px 8px', textAlign: 'right', color: 'var(--tx2)' }}>{k.toplam_birim}</td>
                       <td style={{ padding: '7px 8px', textAlign: 'right', fontWeight: 700 }}>
                         {k.en_az_2_3_orani}% <span style={{ color: 'var(--tx3)', fontWeight: 400 }}>({k.en_az_2_3_sayisi}/{k.toplam_birim})</span>
@@ -341,11 +343,11 @@ export default function SoruGecerlilikSayfasi() {
             <button className={filtre === 'sorunlu' ? 'btn' : 'btn sec'} onClick={() => setFiltre('sorunlu')}>
               Yalnızca Sorunlu ({ozet.kismi_dogru + ozet.hic_dogru_degil})
             </button>
-            <select className="auth-input" style={{ width: 160 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
+            <Secim className="auth-input" style={{ width: 160 }} value={tipFiltre} onChange={(e) => setTipFiltre(e.target.value)}>
               <option value="hepsi">Tüm Tipler</option>
               <option value="likert">Yalnızca Likert</option>
               <option value="sjt">Yalnızca SJT</option>
-            </select>
+            </Secim>
           </div>
 
           <div className="ll">
@@ -360,7 +362,7 @@ export default function SoruGecerlilikSayfasi() {
                     {s.kaynak_tipi === 'sjt' && (
                       <div className="ld" style={{ fontStyle: 'italic' }}>Senaryo: {s.soru_metni}</div>
                     )}
-                    <div className="ld">{s.katman_kod} · Beklenen değişken: <b>{s.gercek_degisken_kod}</b></div>
+                    <div className="ld">{boyutKodu(s.katman_kod)} · Beklenen değişken: <b>{s.gercek_degisken_kod}</b></div>
                   </div>
                   <span className={`bdg ${s.kac_model_dogru === 3 ? 'bdg-done' : s.kac_model_dogru === 0 ? 'bdg-lock' : 'bdg-prog'}`}>
                     {s.kac_model_dogru}/3 model doğru

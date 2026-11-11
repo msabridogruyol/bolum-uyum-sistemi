@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from 'react'
 import { api } from '../../api/client'
+import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const DURUMLAR = ['taslak', 'guclu_kanitli', 'gozden_gecirilmeli']
 
@@ -71,12 +72,12 @@ function DalKarti({ dal, onDurumGuncelle }) {
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 6 }}>
             <span style={{ fontSize: 14.5, fontWeight: 700 }}>{dal.ad}</span>
             <span className="bdg bdg-lock">{dal.kod}</span>
-            {k5Adimi ? <span className="bdg bdg-done">K5 adımı</span> : <span className={`bdg ${bilgi.renk}`}>{bilgi.etiket}</span>}
+            {k5Adimi ? <span className="bdg bdg-done">B5 adımı</span> : <span className={`bdg ${bilgi.renk}`}>{bilgi.etiket}</span>}
             {dal.kullanimda === false && <span className="bdg bdg-lock">Kullanım dışı (eski yapı)</span>}
           </div>
           <div style={{ fontSize: 12, color: 'var(--tx2)', lineHeight: 1.5, marginBottom: 8 }}>
             {k5Adimi
-              ? 'Öğrenciye açılan tek K5 adımı. Soruları, öğrencinin uyum kümesindeki bölümlerin iş türlerinden öğrenciye özel üretilir; bu yüzden burada bölüm, değişken ve soru sayısı görünmez.'
+              ? 'Öğrenciye açılan tek B5 adımı. Soruları, öğrencinin uyum kümesindeki bölümlerin iş türlerinden öğrenciye özel üretilir; bu yüzden burada bölüm, değişken ve soru sayısı görünmez.'
               : bilgi.aciklama}
           </div>
           {!k5Adimi && <div style={{ display: 'flex', gap: 16, fontSize: 11.5, color: 'var(--tx3)', fontWeight: 600 }}>
@@ -88,7 +89,7 @@ function DalKarti({ dal, onDurumGuncelle }) {
         </div>
 
         {k5Adimi ? null : degistiriliyor ? (
-          <select
+          <Secim
             className="auth-input"
             style={{ width: 200 }}
             value={dal.dogrulama_durumu}
@@ -97,7 +98,7 @@ function DalKarti({ dal, onDurumGuncelle }) {
             autoFocus
           >
             {DURUMLAR.map((du) => <option key={du} value={du}>{DURUM_BILGI[du].etiket}</option>)}
-          </select>
+          </Secim>
         ) : (
           <button className="btn sec" onClick={() => setDegistiriliyor(true)}>Durumu Değiştir</button>
         )}
@@ -186,7 +187,7 @@ export default function DallarSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Üst Alanlar</div>
-        <div className="ps">17 üst alan (U01–U17) bölümlerin alan etiketidir: listelerde ve raporlarda gruplama, İş Hayatı alan içerikleri, eğitim koçu eşleştirmesi ve K5 iş türlerinin gruplanması için kullanılır. Öğrenciye soru açmaz. K5 tek adımdır ("İş türü tercihleri"): soruları, öğrencinin uyumu 70 ve üzeri olan bölümlerinin (en az 5, en fazla 20) iş türlerinden üretilir ve yalnızca bu bölümlerin kendi aralarındaki sırasını değiştirir. "Taslak" durumu bir hata değildir; bölümlerin alana atanmasının henüz tek yöntemle doğrulandığını gösterir.</div>
+        <div className="ps">17 üst alan (U01–U17) bölümlerin alan etiketidir: listelerde ve raporlarda gruplama, İş Hayatı alan içerikleri, eğitim koçu eşleştirmesi ve B5 iş türlerinin gruplanması için kullanılır. Öğrenciye soru açmaz. B5 tek adımdır ("İş türü tercihleri"): soruları, öğrencinin uyumu 70 ve üzeri olan bölümlerinin (en az 5, en fazla 20) iş türlerinden üretilir ve yalnızca bu bölümlerin kendi aralarındaki sırasını değiştirir. "Taslak" durumu bir hata değildir; bölümlerin alana atanmasının henüz tek yöntemle doğrulandığını gösterir.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 

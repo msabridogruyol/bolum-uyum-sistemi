@@ -281,6 +281,7 @@ export const api = {
   bolumKarsilastirPdf: (idler) => dosyaIndir(`/ogrenci/karsilastir/pdf?bolumler=${idler.join(',')}`),   // [2026-10-11]
   gelisimimGetir: () => get('/koclugu/gelisimim'),
   bolumAdaGore: (ad) => get(`/bolumler/ada-gore?ad=${encodeURIComponent(ad)}`),
+  bolumAdlari: () => get('/bolumler/adlar'),   // [2026-11-11] yazarken öneri listesi
   kvkkMetinleri: () => get('/auth/kvkk-metinleri'),
   kvkkDurumu: () => get('/ogrenci/kvkk'),
   veliOnayiDurumu: () => get('/ogrenci/veli-onayi'),   // [2026-11-05]
@@ -779,6 +780,7 @@ export const api = {
     ...(turNo ? { tur_no: turNo } : {}), ...(bolumler?.length ? { bolumler: bolumler.join(',') } : {}) })}`),
   cevapAnaliziExcel: (ogrenciId, turNo) => dosyaIndir(`/yonetim/ogrenci/${ogrenciId}/cevap-analizi.xlsx${turNo ? `?tur_no=${turNo}` : ''}`, 'admin'),
   okulTemaKaydet: (okulId, renk) => aput(`/yonetim/okul/${okulId}/tema`, { renk }),
+  okulCevrimiciAyari: (okulId, acik) => aput(`/yonetim/okul/${okulId}/ogrenci-cevrimici`, { acik }),   // [2026-11-11]
   // [2026-10-09] Meslek dili sözlüğü — okulId 0 = genel sürüm (süper admin)
   meslekDiliListe: (okulId) => aget(`/yonetim/meslek-dili?okul_id=${okulId}`),
   meslekDiliGetir: (okulId, bolumId) => aget(`/yonetim/meslek-dili/${bolumId}?okul_id=${okulId}`),

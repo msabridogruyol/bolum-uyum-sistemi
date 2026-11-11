@@ -891,16 +891,16 @@ def ogrenci_detay(ogrenci_id: str, db: Session = Depends(get_db), yon: AdminKull
             oneriler = [{"sira": i + 1, "bolum": adlar.get(s.bolum_id, "?"), "uyum": round(float(s.toplam_uyum), 1),
                          "alan": getattr(s, "alan", None)} for i, s in enumerate(siralama_getir(db, o, tur, ilk_n=10))]
             if any(d["durum"] != "tamamlandi" for d in tur_listesi[0]["dallar"]):
-                sonuc_notu = "İş türü soruları (K5) bitmediği için liste kesinleşmedi."
+                sonuc_notu = "İş türü soruları (B5) bitmediği için liste kesinleşmedi."
         except Exception:
             db.rollback()
             # yedek: kayıtlı uyum skorlarından ham sıralama (K5 küme içi sıralaması olmadan)
             ham = db.execute(text("SELECT bolum_id, toplam_uyum FROM ogrenci_bolum_uyum_skorlari WHERE tur_id = :t "
                                   "ORDER BY toplam_uyum DESC LIMIT 10"), {"t": turlar[0]["id"]}).all()
             oneriler = [{"sira": i + 1, "bolum": adlar.get(b, "?"), "uyum": round(float(u), 1), "alan": None} for i, (b, u) in enumerate(ham)]
-            sonuc_notu = "Ham uyum sıralaması gösteriliyor (K5'in küme içi sıralaması uygulanmadı)." if ham else "Sonuç listesi hesaplanamadı."
+            sonuc_notu = "Ham uyum sıralaması gösteriliyor (B5'in küme içi sıralaması uygulanmadı)." if ham else "Sonuç listesi hesaplanamadı."
     else:
-        sonuc_notu = "Öğrenci K1–K4 bölümlerini tamamladığında öneri listesi burada görünür."
+        sonuc_notu = "Öğrenci B1–B4 bölümlerini tamamladığında öneri listesi burada görünür."
     hedef = None
     if il and il.get("hedef"):
         # öğrencinin sonuç ekranı / öneri listesiyle aynı sayı: K5 etkili nihai uyum (skoru olan en son tur)
@@ -1224,7 +1224,7 @@ ISLEM_ETIKET = {
     "is_hayati_kayit_duzenle": "İş hayatı kaydı düzenlendi", "is_hayati_kayit_sil": "İş hayatı kaydı silindi",
     "is_hayati_meslek_isco": "Meslek grubu eşleştirmesi değiştirildi", "is_hayati_meslek_isco_json": "Meslek grubu eşleştirmeleri yüklendi",
     "is_hayati_yukleme_sil": "Veri yüklemesi silindi", "veri_kaynagi_kontrol": "Veri kaynağı kontrol kaydı bırakıldı", "pipeline_veri_yukleme": "Pipeline verisi canlıya alındı", "pipeline_veri_geri_yukleme": "Pipeline verisi önceki sürüme döndürüldü", "pipeline_kurulum_dosyasi": "Pipeline kurulum dosyası indirildi", "pipeline_cihaz_kaldirma": "Pipeline bilgisayar erişimi kaldırıldı", "demo_okul_ac": "Demo okul oluşturuldu", "demo_okul_sil": "Demo okul silindi", "istatistik_excel": "İstatistikler indirildi (Excel)",
-    "katman_agirlik_guncelleme": "Katman ağırlıkları güncellendi", "katman_sorulari_komple_silme": "Katman soruları silindi",
+    "katman_agirlik_guncelleme": "Boyut ağırlıkları güncellendi", "katman_sorulari_komple_silme": "Boyut soruları silindi",
     "koc_ekle": "Eğitim koçu eklendi", "koc_duzenle": "Eğitim koçu düzenlendi", "koc_sil": "Eğitim koçu silindi",
     "koc_okullari": "Eğitim koçunun okulları güncellendi", "koc_talep_guncelle": "Koçluk talebi güncellendi",
     "konu_ekle": "Sınav konusu eklendi", "konu_duzenle": "Sınav konusu düzenlendi", "konu_gizle": "Sınav konusu gizlendi",
@@ -1243,7 +1243,7 @@ ISLEM_ETIKET = {
     "okul_deneme_yukle": "Okul denemesi yüklendi", "okul_deneme_sil": "Okul denemesi silindi",
     "okul_karsilastirma_excel": "Okul karşılaştırması indirildi (Excel)", "okul_paket": "Okul paketi değiştirildi",
     "okul_sistemi_ac": "Okulun sistemi açıldı", "okul_sistemi_kapat": "Okulun sistemi kapatıldı",
-    "okul_tema_guncelle": "Okul görünümü güncellendi",
+    "okul_tema_guncelle": "Okul görünümü güncellendi", "okul_cevrimici_ayari": "Öğrencilerde çevrim içi listesi ayarı",
     "paket_ekle": "Paket eklendi", "paket_duzenle": "Paket düzenlendi", "paket_sil": "Paket silindi",
     "portfolyo_dogrula": "Portfolyo kaydı doğrulandı", "rapor_indir": "Rapor indirildi",
     "risk_ertele": "Erken uyarı ertelendi", "sinif_atlat": "Sınıf atlatma yapıldı", "sinif_atlat_geri_al": "Sınıf atlatma geri alındı",
@@ -1318,7 +1318,7 @@ def _bilgi_out(okul: Okul) -> dict:
             "kurulus_yili": okul.kurulus_yili, "ogrenci_sayisi": okul.ogrenci_sayisi, "tanitim": okul.tanitim,
             "adres": okul.adres, "telefon": okul.telefon, "eposta": okul.eposta, "web": okul.web,
             "kadro": okul.kadro or [], "bilgi_guncelleme_zamani": okul.bilgi_guncelleme_zamani, "gorevler": GOREVLER,
-            "tema_renk": okul.tema_renk}
+            "tema_renk": okul.tema_renk, "ogrenci_cevrimici_acik": bool(okul.ogrenci_cevrimici_acik)}
 
 
 def _kirp(v: str | None, n: int) -> str | None:
@@ -1402,6 +1402,24 @@ def okul_tema_guncelle(okul_id: int, istek: TemaIstek, db: Session = Depends(get
     denetim_yaz(db, yon, "okul_tema_guncelle", "okullar", okul.id, f"{okul.ad}: okul rengi {okul.tema_renk or 'varsayılan'}", okul.id)
     db.commit()
     return {"tema_renk": okul.tema_renk}
+
+
+class CevrimiciAyarIstek(GirdiModeli):
+    acik: bool
+
+
+@router.put("/okul/{okul_id}/ogrenci-cevrimici")
+def okul_ogrenci_cevrimici(okul_id: int, istek: CevrimiciAyarIstek, db: Session = Depends(get_db),
+                           yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-11-11] Öğrenciler 'şu an çevrim içi' listesini görsün mü (varsayılan kapalı). Yetkili her zaman görür."""
+    okul = _okul_kapsami(db, yon, okul_id)
+    if okul is None:
+        raise HTTPException(status_code=400, detail="Okul harici grup için bu ayar yok.")
+    okul.ogrenci_cevrimici_acik = bool(istek.acik)
+    denetim_yaz(db, yon, "okul_cevrimici_ayari", "okullar", okul.id,
+                f"{okul.ad}: öğrencilerde çevrim içi listesi {'açık' if okul.ogrenci_cevrimici_acik else 'kapalı'}", okul.id)
+    db.commit()
+    return {"ogrenci_cevrimici_acik": okul.ogrenci_cevrimici_acik}
 
 
 # ----------------------------------------------------------------------------- hedef bölüm yönetimi

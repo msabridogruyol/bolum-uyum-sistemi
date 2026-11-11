@@ -97,7 +97,7 @@ export default function SonucSayfasi({ gomulu = false }) {
             <div className="taslak-onizleme-overlay">
               <div className="to-ikon">🌟</div>
               <div className="to-metin">
-                K1–K4'ün hepsini bitirince sonuçların burada görünecek. Şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} katman tamamlandı.
+                B1–B4'ün hepsini bitirince sonuçların burada görünecek. Şu an {ozet.tamamlanan_katman_sayisi}/{ozet.toplam_ana_katman_sayisi} boyut tamamlandı.
               </div>
             </div>
           </div>

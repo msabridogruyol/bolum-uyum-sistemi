@@ -1,6 +1,7 @@
 // [2026-10-10] Tercihlerim — 12. sınıf / mezun: tercih listesi (en çok 24), güvenli / dengeli / riskli, Filizyol uyumu, rehber onayı, sonucumu bildir.
 import { useEffect, useState } from 'react'
 import { api } from '../api/client'
+import Secim from '../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 export const RISK = {
   guvenli: { ad: 'Güvenli', ikon: '●', renk: 'var(--gr)', zemin: 'var(--grl)' },
@@ -82,14 +83,14 @@ function SatirFormu({ v, mevcut, onTamam, onVazgec }) {
       <div className="pf-alanlar">
         <label className="genis"><span>Üniversite</span><input className="auth-input" required minLength={2} maxLength={140} value={f.universite} onChange={s('universite')} placeholder="ör. Orta Doğu Teknik Üniversitesi" /></label>
         <label><span>Bölüm (Filizyol listesinden)</span>
-          <select className="auth-input" value={f.bolum_id || ''} onChange={bolumSec}>
+          <Secim className="auth-input" value={f.bolum_id || ''} onChange={bolumSec}>
             <option value="">— listede yok / seçme —</option>
             {v.bolumler.map((b) => <option key={b.id} value={b.id}>{b.ad}{b.uyum != null ? ` · %${b.uyum} uyum` : ''}</option>)}
-          </select>
+          </Secim>
         </label>
         <label><span>Program adı</span><input className="auth-input" required minLength={2} maxLength={160} value={f.bolum_ad} onChange={s('bolum_ad')} placeholder="ör. Maden Mühendisliği (İngilizce)" /></label>
-        <label><span>Üniversite türü</span><select className="auth-input" value={f.tur} onChange={s('tur')}>{Object.entries(v.secenekler.turler).map(([k, a]) => <option key={k} value={k}>{a}</option>)}</select></label>
-        <label><span>Burs / ücret</span><select className="auth-input" value={f.burs || ''} onChange={s('burs')}><option value="">—</option>{v.secenekler.burslar.map((b) => <option key={b}>{b}</option>)}</select></label>
+        <label><span>Üniversite türü</span><Secim className="auth-input" value={f.tur} onChange={s('tur')}>{Object.entries(v.secenekler.turler).map(([k, a]) => <option key={k} value={k}>{a}</option>)}</Secim></label>
+        <label><span>Burs / ücret</span><Secim className="auth-input" value={f.burs || ''} onChange={s('burs')}><option value="">—</option>{v.secenekler.burslar.map((b) => <option key={b}>{b}</option>)}</Secim></label>
         <label><span>Şehir</span><input className="auth-input" maxLength={40} value={f.sehir || ''} onChange={s('sehir')} /></label>
         <label><span>Geçen yıl taban başarı sırası <small>(YÖK Atlas)</small></span><input className="auth-input" type="number" min="1" value={f.taban_siralama ?? ''} onChange={s('taban_siralama')} placeholder="ör. 88000" /></label>
         <label className="genis"><span>Not <small>(isteğe bağlı)</small></span><input className="auth-input" maxLength={200} value={f.notlar || ''} onChange={s('notlar')} /></label>
@@ -121,15 +122,15 @@ function SonucumuBildir({ v, onKaydet }) {
       ) : (
         <form onSubmit={kaydet}>
           <div className="pf-alanlar">
-            <label><span>Durum</span><select className="auth-input" value={f.durum} onChange={(e) => setF({ ...f, durum: e.target.value })}>{Object.entries(v.secenekler.mezun_durumlari).map(([k, a]) => <option key={k} value={k}>{a}</option>)}</select></label>
+            <label><span>Durum</span><Secim className="auth-input" value={f.durum} onChange={(e) => setF({ ...f, durum: e.target.value })}>{Object.entries(v.secenekler.mezun_durumlari).map(([k, a]) => <option key={k} value={k}>{a}</option>)}</Secim></label>
             {f.durum === 'yerlesti' && <>
               <label><span>Üniversite</span><input className="auth-input" maxLength={140} value={f.universite} onChange={(e) => setF({ ...f, universite: e.target.value })} /></label>
               <label><span>Bölüm</span>
-                <select className="auth-input" value={f.bolum_id || ''} onChange={(e) => { const id = Number(e.target.value) || null; const b = v.bolumler?.find((x) => x.id === id); setF({ ...f, bolum_id: id, bolum_ad: b ? b.ad : f.bolum_ad }) }}>
+                <Secim className="auth-input" value={f.bolum_id || ''} onChange={(e) => { const id = Number(e.target.value) || null; const b = v.bolumler?.find((x) => x.id === id); setF({ ...f, bolum_id: id, bolum_ad: b ? b.ad : f.bolum_ad }) }}>
                   <option value="">— seç —</option>{(v.bolumler || []).map((b) => <option key={b.id} value={b.id}>{b.ad}</option>)}
-                </select>
+                </Secim>
               </label>
-              <label><span>Burs</span><select className="auth-input" value={f.burs} onChange={(e) => setF({ ...f, burs: e.target.value })}><option value="">—</option>{v.secenekler.burslar.map((b) => <option key={b}>{b}</option>)}</select></label>
+              <label><span>Burs</span><Secim className="auth-input" value={f.burs} onChange={(e) => setF({ ...f, burs: e.target.value })}><option value="">—</option>{v.secenekler.burslar.map((b) => <option key={b}>{b}</option>)}</Secim></label>
             </>}
             <label><span>Başarı sıran <small>(isteğe bağlı)</small></span><input className="auth-input" type="number" min="1" value={f.siralama} onChange={(e) => setF({ ...f, siralama: e.target.value })} /></label>
           </div>
@@ -185,7 +186,7 @@ export default function TercihSayfasi() {
       <div className="card">
         <div className="ct">Puan ve sıralama bilgin</div>
         <div className="tr-bilgi">
-          <label><span>Puan türü</span><select className="auth-input" value={bilgi.puan_turu} onChange={(e) => { setBilgi({ ...bilgi, puan_turu: e.target.value }); setDegisti(true) }}><option value="">—</option>{v.secenekler.puan_turleri.map((p) => <option key={p}>{p}</option>)}</select></label>
+          <label><span>Puan türü</span><Secim className="auth-input" value={bilgi.puan_turu} onChange={(e) => { setBilgi({ ...bilgi, puan_turu: e.target.value }); setDegisti(true) }}><option value="">—</option>{v.secenekler.puan_turleri.map((p) => <option key={p}>{p}</option>)}</Secim></label>
           <label><span>Başarı sıran</span><input className="auth-input" type="number" min="1" value={bilgi.siralama} onChange={(e) => { setBilgi({ ...bilgi, siralama: e.target.value }); setDegisti(true) }} placeholder="Sonucundaki sıra ya da denemene göre tahmini sıra" /></label>
           <label><span>Puanın <small>(isteğe bağlı)</small></span><input className="auth-input" type="number" step="0.001" value={bilgi.puan} onChange={(e) => { setBilgi({ ...bilgi, puan: e.target.value }); setDegisti(true) }} /></label>
         </div>

@@ -1,18 +1,21 @@
-import { useEffect, useState, useRef } from 'react'
+import { useEffect, useState, useRef, useCallback } from 'react'
 import { AD_SOYAD_EN_FAZLA } from '../yardimci/sinirlar'
 import DilSecici from '../components/DilSecici'   // [2026-10-12] çoklu dil
 import { useNavigate, useOutletContext, useSearchParams } from 'react-router-dom'
 import { api } from '../api/client'
+import OneriKutusu from '../components/OneriKutusu'
 import SifreDegistirFormu from '../components/SifreDegistirFormu'
 import { profilEksikMi } from '../components/AnaSayfaDuzeni'
 import { GizlilikKarti } from '../components/KvkkBilesenleri'
 import HedefBolumAyari from '../components/HedefBolumAyari'
+import Secim from '../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 // [2026-10-11] Çevrim içi görünürlük: okulundaki öğrencilerin sağ alttaki listesinde adın görünsün mü
 function CevrimiciAyari() {
   const [gizli, setGizli] = useState(null)
-  useEffect(() => { api.cevrimiciBuradayim().then((v) => setGizli(!!v.gizli)).catch(() => {}) }, [])
-  if (gizli === null) return null
+  const [goster, setGoster] = useState(false)   // [2026-11-11] okul öğrencilerde çevrim içi listesini açmadıysa ayar gizli
+  useEffect(() => { api.cevrimiciBuradayim().then((v) => { setGizli(!!v.gizli); setGoster(v.goster !== false) }).catch(() => {}) }, [])
+  if (gizli === null || !goster) return null
   return (
     <div className="card" style={{ marginTop: 20 }}>
       <div className="ct">Çevrim İçi Görünürlük</div>
@@ -108,6 +111,9 @@ export default function ProfilAyarlariSayfasi() {
     }
   }
 
+  // [2026-11-11] yazarken öneri: sunucudaki meslek araması (200 ms bekleyerek)
+  const meslekOnerisi = useCallback((q) => api.meslekAra(q).then((l) => (l || []).map((m) => ({ id: m.id, ad: m.ad }))), [])
+
   function meslekSec(meslek) {
     setTaslak((t) => ({ ...t, hedef_meslek_id: meslek.id, hedef_meslek_adi: meslek.ad }))
     setMeslekSonuclari(null)
@@ -156,7 +162,7 @@ export default function ProfilAyarlariSayfasi() {
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)' }}>
           <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>👋 Başlamadan önce profilini tamamla</div>
           <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5 }}>
-            Ad soyadını ve sınıfını yaz, sonra <b>Kaydet</b> düğmesine bas. Ardından ana sayfadan ilk katmana başlayabilirsin. Diğer alanları doldurmak zorunda değilsin.
+            Ad soyadını ve sınıfını yaz, sonra <b>Kaydet</b> düğmesine bas. Ardından ana sayfadan ilk boyuta başlayabilirsin. Diğer alanları doldurmak zorunda değilsin.
           </div>
         </div>
       )}
@@ -210,10 +216,10 @@ export default function ProfilAyarlariSayfasi() {
                   {[profil?.sinif, profil?.sube].filter(Boolean).join(' / ') || 'Okulun henüz girmedi'}
                 </div>
               ) : (
-                <select className="auth-input" value={taslak.sinif || ''} onChange={(e) => alanGuncelle('sinif', e.target.value)} required>
+                <Secim className="auth-input" value={taslak.sinif || ''} onChange={(e) => alanGuncelle('sinif', e.target.value)} required>
                   <option value="">Seç…</option>
                   {['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].concat(taslak.sinif && !['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun'].includes(taslak.sinif) ? [taslak.sinif] : []).map((s) => <option key={s} value={s}>{s}</option>)}
-                </select>
+                </Secim>
               )}
             </div>
           </div>
@@ -225,9 +231,9 @@ export default function ProfilAyarlariSayfasi() {
             </div>
             <div className="auth-field" style={{ flex: 1 }}>
               <label className="auth-label">Cinsiyet <span style={{ color: 'var(--tx3)', fontWeight: 500 }}>(isteğe bağlı)</span></label>
-              <select className="auth-input" value={taslak.cinsiyet || ''} onChange={(e) => alanGuncelle('cinsiyet', e.target.value)}>
+              <Secim className="auth-input" value={taslak.cinsiyet || ''} onChange={(e) => alanGuncelle('cinsiyet', e.target.value)}>
                 {CINSIYET_SECENEKLERI.map((c) => <option key={c.deger} value={c.deger}>{c.etiket}</option>)}
-              </select>
+              </Secim>
             </div>
           </div>
 
@@ -262,7 +268,8 @@ export default function ProfilAyarlariSayfasi() {
               </div>
             )}
             <div style={{ display: 'flex', gap: 8 }}>
-              <input className="auth-input" style={{ flex: 1 }} value={mesleklAramaMetni} onChange={(e) => setMesleklAramaMetni(e.target.value)} placeholder="Meslek ara... (örn. Yazılım Mühendisi)" />
+              <OneriKutusu kapStyle={{ flex: 1 }} value={mesleklAramaMetni} onChange={setMesleklAramaMetni} enAz={2}
+                kaynak={meslekOnerisi} onSec={meslekSec} placeholder="Meslek ara... (örn. Yazılım Mühendisi)" />
               <button type="button" className="btn sec" onClick={meslekAra}>Ara</button>
             </div>
             {meslekSonuclari && (

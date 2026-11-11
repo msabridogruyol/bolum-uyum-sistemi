@@ -11,4 +11,11 @@ KATMAN_ADI = {
 def katman_adi(kod: str | None, ad: str | None = None) -> str:
     if ad and ad.strip() and ad.strip().upper() != (kod or "").upper():
         return ad.strip()
-    return KATMAN_ADI.get((kod or "").upper(), kod or "")
+    return KATMAN_ADI.get((kod or "").upper(), boyut_kodu(kod) or "")
+
+
+def boyut_kodu(kod):
+    """[2026-11-11] Kullanıcı kararı: ekranda "Katman" yerine "Boyut", K1–K5 yerine B1–B5. Sistemdeki kod (K1…K5) değişmez;
+    yalnızca kullanıcıya gösterilen metin çevrilir."""
+    import re
+    return re.sub(r"^K([1-5])(?![0-9A-Za-z])", r"B\1", kod) if isinstance(kod, str) else kod

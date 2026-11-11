@@ -75,7 +75,7 @@ def on_adim(db: Session, ogrenci: Ogrenci) -> dict | None:
                     "link": "/katmanlar"}
         return None
     if bekleyen_dal_var_mi(db, ogrenci, tur):
-        return {"tur": "k5", "baslik": "İş türü (K5) sorularını tamamla",
+        return {"tur": "k5", "baslik": "İş türü (B5) sorularını tamamla",
                 "aciklama": "Bölüm önerilerin ve gelişim listen bu adımdan sonra hazırlanır.", "link": "/katmanlar"}
     if aktif_hedef_getir(db, ogrenci) is None:
         return {"tur": "hedef", "baslik": "Önerilen bölümlerinden birini hedef seç",

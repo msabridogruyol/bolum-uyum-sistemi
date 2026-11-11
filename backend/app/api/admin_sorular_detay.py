@@ -13,6 +13,7 @@ PUT /admin/sorular-detay/secenek/{id}       — seçenek metnini günceller
 """
 
 from pydantic import BaseModel
+from app.core.katman_adlari import boyut_kodu as _bk   # [2026-11-11] K1–K5 → B1–B5 gösterimi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import func
 from sqlalchemy.orm import Session
@@ -453,7 +454,7 @@ def _katman_silme_ozeti(db: Session, katman_kod: str):
     from app.models import OgrenciCevap
     katman = db.query(Katman).filter(Katman.kod == katman_kod).first()
     if katman is None:
-        raise HTTPException(status_code=404, detail=f"Katman bulunamadı: {katman_kod}")
+        raise HTTPException(status_code=404, detail=f"Boyut bulunamadı: {katman_kod}")
     # öğrenciye özel K5 soruları soru bankası değildir; tur / öğrenciyle birlikte silinir
     soru_idler = [s.id for s in db.query(Soru.id).filter(Soru.katman_id == katman.id, Soru.ogrenci_id.is_(None)).all()]
     cevap_sayisi = ogrenci_sayisi = 0
@@ -498,7 +499,7 @@ def katmanin_tum_sorularini_sil(
     if (onay or "").strip().upper() != "SIL":
         raise HTTPException(
             status_code=400,
-            detail=(f"Bu işlem {katman_kod} katmanının {len(soru_idler)} sorusunu ve {cevap_sayisi} öğrenci cevabını "
+            detail=(f"Bu işlem {_bk(katman_kod)} boyutunun {len(soru_idler)} sorusunu ve {cevap_sayisi} öğrenci cevabını "
                     f"({ogrenci_sayisi} öğrenci) kalıcı siler; onaylamak için isteğe onay=SIL ekleyin."),
         )
 
@@ -514,7 +515,7 @@ def katmanin_tum_sorularini_sil(
     db.query(Soru).filter(Soru.id.in_(soru_idler)).delete(synchronize_session=False)
 
     denetim_yaz(db, admin, "katman_sorulari_komple_silme", "sorular", katman_kod,
-                f"{katman_kod} katmanının {len(soru_idler)} sorusu ve {cevap_sayisi} öğrenci cevabı "
+                f"{_bk(katman_kod)} boyutunun {len(soru_idler)} sorusu ve {cevap_sayisi} öğrenci cevabı "
                 f"({ogrenci_sayisi} öğrenci) kalıcı silindi")
     db.commit()
 

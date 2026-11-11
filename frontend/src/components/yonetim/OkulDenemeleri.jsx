@@ -3,6 +3,7 @@ import { useCallback, useEffect, useState } from 'react'
 import { NetCizgisi } from '../RaporGrafikleri'   // [2026-10-11] okul ortalaması eğilimi
 import { api } from '../../api/client'
 import { Pencere, base64Indir } from './ortak'
+import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const SINIFLAR = ['9. Sınıf', '10. Sınıf', '11. Sınıf', '12. Sınıf', 'Mezun']
 const OTURUM_RENK = { TYT: 'var(--kt-izleme, #2a78d6)', AYT: 'var(--kt-kitap, #eb6834)', YDT: 'var(--kt-kurs, #1baf7a)' }
@@ -68,10 +69,10 @@ function Yukleme({ okulId, onBitti, onVazgec }) {
                     style={oturum === o ? { borderColor: OTURUM_RENK[o] } : undefined}>{o}</button>
                 ))}
               </div>
-              <select className="auth-input" style={{ width: 'auto' }} value={sinif} onChange={(e) => setSinif(e.target.value)}>
+              <Secim className="auth-input" style={{ width: 'auto' }} value={sinif} onChange={(e) => setSinif(e.target.value)}>
                 {SINIFLAR.map((s) => <option key={s}>{s}</option>)}
                 <option value="">Tüm okul</option>
-              </select>
+              </Secim>
               <button className="btn sec" type="button" onClick={sablon}>📥 {oturum} şablonunu indir</button>
             </div>
           </div>

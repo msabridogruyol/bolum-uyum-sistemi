@@ -65,6 +65,7 @@ OTOMATIK += ["0099_gelisim_listesi"]   # [2026-11-05] haftalık görev yerine ge
 OTOMATIK += ["0100_veli_onaylari"]   # [2026-11-05] veli onay formu kayıtları (18 yaş altı)
 OTOMATIK += ["0101_erisim_kayitlari"]   # [2026-11-05] erişim kayıtları: kim, ne zaman, kimin verisine (süper admin)
 OTOMATIK += ["0102_kullanim_sureleri"]   # [2026-11-11] menü bazında kullanım süresi (süper admin › Kullanım Analizi)
+OTOMATIK += ["0103_ogrenci_cevrimici_ayari"]   # [2026-11-11] öğrencide çevrim içi listesi okul ayarıyla (varsayılan kapalı)
 OTOMATIK_GECE = ["0094_gece_indeksleri"]
 KILIT = 2026101001
 

@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { api } from '../api/client'
 import KutuphaneGrafikleri from '../components/KutuphaneGrafikleri'
+import Secim from '../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
 const BOS = (kategori) => ({ kategori, alt_tur: '', baslik: '', kisi: '', durum: 'bitti', puan: null, notlar: '', tarih: '', sayfa: '' })
 
@@ -97,9 +98,9 @@ export default function KutuphanemSayfasi() {
           <div className="kl-form">
             <input className="auth-input" required maxLength={160} autoFocus value={form.baslik} onChange={(e) => setForm({ ...form, baslik: e.target.value })} placeholder="Adı" />
             <input className="auth-input" maxLength={120} value={form.kisi} onChange={(e) => setForm({ ...form, kisi: e.target.value })} placeholder={`${k.kisi} (isteğe bağlı)`} />
-            <select className="auth-input" value={form.alt_tur} onChange={(e) => setForm({ ...form, alt_tur: e.target.value })}>
+            <Secim className="auth-input" value={form.alt_tur} onChange={(e) => setForm({ ...form, alt_tur: e.target.value })}>
               <option value="">Türü (isteğe bağlı)</option>{k.alt.map((a) => <option key={a}>{a}</option>)}
-            </select>
+            </Secim>
             {form.kategori === 'kitap' && <input className="auth-input" type="number" min={1} max={5000} value={form.sayfa} onChange={(e) => setForm({ ...form, sayfa: e.target.value })} placeholder="Sayfa sayısı (isteğe bağlı)" />}
             {form.durum !== 'istek' && <input className="auth-input" type="date" max={new Date().toISOString().slice(0, 10)} value={form.tarih} onChange={(e) => setForm({ ...form, tarih: e.target.value })} title="Ne zaman?" />}
           </div>

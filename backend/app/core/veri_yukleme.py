@@ -22,7 +22,7 @@ import re
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
-TURLER = {"k5_baglari": "K5 iş türü bağları", "ornek_meslekler": "Örnek meslekler"}
+TURLER = {"k5_baglari": "B5 iş türü bağları", "ornek_meslekler": "Örnek meslekler"}
 _LITERAL = re.compile(r"\s*(?:'((?:[^']|'')*)'|(-?\d+(?:\.\d+)?)|(NULL))\s*(?:,|$)", re.I)
 _SATIR = re.compile(r"^\s*\((.*)\)\s*,?\s*$")
 EN_FAZLA_SATIR = 20000
@@ -87,7 +87,7 @@ def ayristir(tur: str, metin: str) -> list[dict]:
             for b, k, g in _sql_degerleri(metin, 3):
                 satirlar.append({"bolum": b.strip(), "kod": k.strip(), "bag": _sayi(g)})
         if not satirlar:
-            raise VeriHatasi("K5 bağı satırı bulunamadı. C:\\pipeline\\cikti\\k5_baglari_veri.sql dosyasını seçin.")
+            raise VeriHatasi("B5 bağı satırı bulunamadı. C:\\pipeline\\cikti\\k5_baglari_veri.sql dosyasını seçin.")
         for s in satirlar:
             if s["bag"] is None or not (0 < s["bag"] <= 1):
                 raise VeriHatasi(f"{s['bolum']} · {s['kod']}: bağ değeri 0 ile 1 arasında olmalı.")

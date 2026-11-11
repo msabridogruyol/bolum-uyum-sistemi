@@ -14,11 +14,11 @@ export default function GecersizTurUyarisi({ ozet }) {
     }}>
       <span style={{ fontSize: 22 }}>⚠️</span>
       <div style={{ flex: 1, minWidth: 220 }}>
-        <div style={{ fontWeight: 800, color: 'var(--tx)' }}>Bu değerlendirme doğrulanamadı</div>
+        <div style={{ fontWeight: 800, color: 'var(--tx)' }}>Bir bölümü yeniden çözmen gerekiyor</div>
         <div style={{ fontSize: 13, color: 'var(--tx2)', marginTop: 2 }}>
-          Bazı bölümlerde cevapların doğrulanamadı (ör. dikkat sorularında hata, sekme değiştirme ya da tam ekrandan
-          çıkma). Sonuçlarını yine de görebilirsin. Tüm değerlendirmeyi baştan yapman gerekmez; sorun çıkan bölümü
-          yeniden yanıtlaman yeterli.
+          Bir bölümü çözerken dikkatini dağıtan birkaç durum oldu (ör. sekme değiştirme ya da tam ekrandan çıkma). Bu
+          sonuçlar şimdilik ön bilgi sayılır. Tüm değerlendirmeyi baştan yapman gerekmez; o bölümü sakin bir zamanda
+          yeniden çözmen yeterli.
         </div>
       </div>
       <button className="btn" onClick={() => navigate('/katmanlar')}>Sorunlu bölümü yeniden çöz →</button>

@@ -68,10 +68,10 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
     api.katmanlariListele()
       .then((liste) => {
         const bulunan = liste.find((k) => k.kod === kod)
-        if (!bulunan) throw new Error('Katman bulunamadı.')
+        if (!bulunan) throw new Error('Boyut bulunamadı.')
         setKatman(bulunan)
       })
-      .catch((e) => setHata(e.detail || e.message || 'Katman bilgisi alınamadı.'))
+      .catch((e) => setHata(e.detail || e.message || 'Boyut bilgisi alınamadı.'))
 
     api.katmanSonucuGetir(kod)
       .then(setSonuc)
@@ -114,7 +114,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
           <div>
             <div className="pt">{katmanAdi(kod, katman.ad)}</div>
             <div className="ps">
-              {sonuc.sonuclar.length || KATMAN_BOYUT_SAYISI[kod]} özellik · Puanlar bu katmandaki diğer özelliklerine göre görelidir; bir yetenek ölçüsü değildir.
+              {sonuc.sonuclar.length || KATMAN_BOYUT_SAYISI[kod]} özellik · Puanlar bu boyuttaki diğer özelliklerine göre görelidir; bir yetenek ölçüsü değildir.
             </div>
           </div>
           <span className={`bdg ${katman.durum === 'tamamlandi' ? 'bdg-done' : 'bdg-lock'}`} style={{ fontSize: 11, padding: '4px 10px' }}>
@@ -160,11 +160,11 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
                 </div>
                 <div className="taslak-onizleme-overlay">
                   <div className="to-ikon">📊</div>
-                  <div className="to-metin">Bu katmanı henüz tamamlamadın.</div>
+                  <div className="to-metin">Bu boyutu henüz tamamlamadın.</div>
                 </div>
               </div>
               <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate(`/katmanlar/${kod}`)}>
-                {katman.durum === 'devam_ediyor' ? 'Kaldığın Yerden Devam Et' : 'Bu Katmana Başla'}
+                {katman.durum === 'devam_ediyor' ? 'Kaldığın Yerden Devam Et' : 'Bu Boyuta Başla'}
               </button>
             </>
           ) : (
@@ -195,7 +195,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
               {sonuc.sonuclar.length === 0 && (
                 <div className="veri-yok-grafik">
                   <div className="vg-ikon">📊</div>
-                  <div className="vg-metin">Bu katman için sonuç bulunamadı.</div>
+                  <div className="vg-metin">Bu boyut için sonuç bulunamadı.</div>
                 </div>
               )}
 
@@ -226,7 +226,7 @@ export default function KatmanDetaySayfasi({ gomulu = false }) {
             <div className="card" style={{ marginBottom: 0 }}>
               <div className="ct">🎯 {hedef.bolum_adi} ile karşılaştırma</div>
               {hedefKarsilastirma.length === 0 ? (
-                <div className="ps" style={{ margin: 0 }}>Bu katman için henüz karşılaştırma verisi yok.</div>
+                <div className="ps" style={{ margin: 0 }}>Bu boyut için henüz karşılaştırma verisi yok.</div>
               ) : (
                 <>
                   <div className="drl" style={{ marginBottom: 12 }}>

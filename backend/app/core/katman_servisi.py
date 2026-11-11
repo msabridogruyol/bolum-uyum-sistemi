@@ -12,6 +12,7 @@ from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import Session
 
+from app.core.katman_adlari import boyut_kodu as _bk   # [2026-11-11] K1–K5 → B1–B5 gösterimi
 from app.models import (
     Ogrenci, Katman, Soru, SoruSecenegi, SjtSecenekDegiskenAgirlik,
     OgrenciDegerlendirmeTuru, OgrenciKatmanOturumu, OgrenciCevap,
@@ -70,7 +71,7 @@ def son_tur_getir(db: Session, ogrenci: Ogrenci) -> OgrenciDegerlendirmeTuru:
         .first()
     )
     if tur is None:
-        raise IsKuraliHatasi("Henüz bir değerlendirme turun yok. Önce K1-K4'ü tamamla.")
+        raise IsKuraliHatasi("Henüz bir değerlendirme turun yok. Önce B1-B4'ü tamamla.")
     return tur
 
 
@@ -205,7 +206,7 @@ def katman_oturumu_baslat(
     # görebiliyor, cevap değiştirip katmanı yeniden puanlatabiliyordu. Güven sorunu / yönetim isteğiyle tekrar
     # çözme katmani_tekrara_ac ile oturumu silerek yapılır; bu kontrol onu etkilemez.
     if oturum is not None and oturum.durum == "tamamlandi":
-        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
+        raise IsKuraliHatasi(f"{_bk(katman.kod)} boyutunu bu turda zaten tamamladın.")
 
     if oturum is not None and oturum.kilitlenen_soru_id_listesi:
         soru_idler = oturum.kilitlenen_soru_id_listesi
@@ -359,7 +360,7 @@ def cevaplari_puanla(db: Session, sorular: dict, cevaplar: list, onb: dict | Non
             # EN AZ seçilen 0, seçilmeyen şıklar 50. Ağırlık (w) 1'den küçükse
             # puan 50'ye doğru çekilir: 50 + (puan - 50) × w.
             if cevap.en_az_secenek_id is None:
-                raise IsKuraliHatasi("Bir soruda 'en az uyan' şıkkı seçmedin. Katmanı bitirmek için onu da seç.")
+                raise IsKuraliHatasi("Bir soruda 'en az uyan' şıkkı seçmedin. Boyutu bitirmek için onu da seç.")
             soru_secenekleri = _soru_secenekleri(soru.id)
             for sec in soru_secenekleri:
                 if sec.id == cevap.secenek_id:
@@ -418,7 +419,7 @@ def katmani_tamamla(
     hesaplamasında (guvenlik_servisi.py) kullanılır.
     """
     if oturum.durum == "tamamlandi":   # [2026-10-30] aynı katman ikinci kez puanlanmaz
-        raise IsKuraliHatasi(f"{katman.kod} katmanını bu turda zaten tamamladın.")
+        raise IsKuraliHatasi(f"{_bk(katman.kod)} boyutunu bu turda zaten tamamladın.")
     soru_idler = oturum.kilitlenen_soru_id_listesi or []
     sorular = {s.id: s for s in db.query(Soru).filter(Soru.id.in_(soru_idler)).all()}
 
@@ -430,7 +431,7 @@ def katmani_tamamla(
     cevaplanan_soru_idler = {c.soru_id for c in cevaplar}
     eksik = set(soru_idler) - cevaplanan_soru_idler
     if eksik:
-        raise IsKuraliHatasi(f"{len(eksik)} soruyu henüz cevaplamadın. Katmanı bitirmek için hepsini cevapla.")
+        raise IsKuraliHatasi(f"{len(eksik)} soruyu henüz cevaplamadın. Boyutu bitirmek için hepsini cevapla.")
 
     # değişken_id -> puan listesi (K5 dal soruları da aynı fonksiyonu kullanır)
     degisken_puanlari = cevaplari_puanla(db, sorular, cevaplar)
