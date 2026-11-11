@@ -167,3 +167,8 @@ def test_eposta_sablonlari_hedef_kitleye_gore():
     assert "hoş geldin" in k1.lower() and "kemr-4827" in h1 and "https://site/giris" in h1
     assert "aktif hale getirilmiştir" in k2 and "Sayın Zeynep (Müdür)" in m2 and "Şifremi unuttum" in m2
     assert "<script" not in ep.ogrenci_hosgeldin_epostasi("<script>", None, "a@b.com", None, "u")[1]
+    # okulun paketinde olmayan özellik e-postada anılmaz; madde listesi / iç işlem metni yok
+    _, _, m3 = ep.ogrenci_hosgeldin_epostasi("Ayşe", "X", "a@b.com", None, "u", ["kocluk", "net_takibi"])
+    assert "Net Takibi" in m3 and "İş Hayatı" not in m3
+    _, _, m4 = ep.yetkili_hosgeldin_epostasi("Zeynep", "X", None, "z@b.com", "kemr-4827", "u", ["kocluk"])
+    assert "paketinde" not in m4 and "Excel" not in m4 and "geçici şifre listesi" not in m4
