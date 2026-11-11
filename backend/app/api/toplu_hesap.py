@@ -330,6 +330,8 @@ def hosgeldin_gonder(db: Session, is_id: str | None, alicilar: list[tuple[str, u
     from app.core import eposta_servisi as ep
     adres, bekle = _giris_adresi(), _bekleme()
     okul_adlari = {o.id: o.ad for o in db.query(Okul).all()}
+    from app.core.paketler import okul_modulleri
+    paket: dict = {}   # okul_id → modüller (e-postada yalnızca okulun paketindeki özellikler anılır)
     sayac = {"gonderilen": 0, "hatali": 0}
     for n, (tur, kid) in enumerate(alicilar):
         k = db.get(Ogrenci if tur == "ogrenci" else AdminKullanici, kid)
@@ -337,10 +339,13 @@ def hosgeldin_gonder(db: Session, is_id: str | None, alicilar: list[tuple[str, u
             continue
         sifre = coz(k.gecici_sifre_sifreli) if k.sifre_degistirmeli and k.gecici_sifre_sifreli else None
         okul = okul_adlari.get(k.okul_id)
+        if k.okul_id not in paket:
+            paket[k.okul_id] = okul_modulleri(db, k.okul_id) if k.okul_id else None
         if tur == "ogrenci":
-            konu, html, metin = ep.ogrenci_hosgeldin_epostasi(k.ad_soyad, okul, k.email, sifre, adres)
+            konu, html, metin = ep.ogrenci_hosgeldin_epostasi(k.ad_soyad, okul, k.email, sifre, adres, paket[k.okul_id])
         else:
-            konu, html, metin = ep.yetkili_hosgeldin_epostasi(k.ad_soyad, okul, getattr(k, "unvan", None), k.email, sifre, adres)
+            konu, html, metin = ep.yetkili_hosgeldin_epostasi(k.ad_soyad, okul, getattr(k, "unvan", None), k.email, sifre, adres,
+                                                          paket[k.okul_id])
         basarili = ep.eposta_gonder(k.email, konu, html, metin)
         sayac["gonderilen" if basarili else "hatali"] += 1
         islem = "hosgeldin_epostasi" if basarili else "hosgeldin_epostasi_hata"
@@ -414,11 +419,13 @@ def hosgeldin_onizleme(tur: str = Query("ogrenci", pattern="^(ogrenci|yetkili)$"
     from app.core import eposta_servisi as ep
     okul = (db.get(Okul, okul_id) if okul_id else None) or (db.get(Okul, yon.okul_id) if yon.okul_id else None)
     ad = okul.ad if okul else "Örnek Lisesi"
+    from app.core.paketler import TUMU, okul_modulleri
+    moduller = okul_modulleri(db, okul.id) if okul else TUMU   # okul seçilmediyse tüm paket örneği
     if tur == "ogrenci":
-        konu, html, _ = ep.ogrenci_hosgeldin_epostasi("Ayşe Yılmaz", ad, "ayse.yilmaz@ornek.com", "kemr-4827", _giris_adresi())
+        konu, html, _ = ep.ogrenci_hosgeldin_epostasi("Ayşe Yılmaz", ad, "ayse.yilmaz@ornek.com", "kemr-4827", _giris_adresi(), moduller)
     else:
         konu, html, _ = ep.yetkili_hosgeldin_epostasi("Zeynep Kaya", ad, "Rehber Öğretmen", "zeynep.kaya@ornek.com", "kemr-4827",
-                                                      _giris_adresi())
+                                                      _giris_adresi(), moduller)
     return {"konu": konu, "html": html}
 
 
