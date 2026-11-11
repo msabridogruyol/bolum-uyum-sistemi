@@ -26,13 +26,21 @@ def admin_giris_yap(istek: GirisIstekV2, db: Session = Depends(get_db)):
     hata = HTTPException(status_code=401, detail="E-posta veya şifre hatalı.")
     email = istek.email.strip().lower()
     from app.core.hiz_siniri import HESAP_DENEME, hesap_kilit_kontrol
-    hesap_kilit_kontrol(email)   # [2026-10-11] hesap başına hatalı şifre sınırı
+    from app.core.erisim_kaydi import giris_olayi   # [2026-11-05] erişim kayıtları (süper admin)
+    try:
+        hesap_kilit_kontrol(email)   # [2026-10-11] hesap başına hatalı şifre sınırı
+    except HTTPException:
+        giris_olayi("giris_engellendi", eposta=email)
+        raise
     admin = db.query(AdminKullanici).filter(func.lower(AdminKullanici.email) == email).first()
     if admin is None or admin.rol not in YONETIM_ROLLERI or not sifre_dogrula(istek.sifre, admin.sifre_hash):
         HESAP_DENEME.hatali(email)
+        bilinen = admin is not None and admin.rol in YONETIM_ROLLERI
+        giris_olayi("giris_hatali", admin if bilinen else None, admin.rol if bilinen else None, eposta=email)
         raise hata
     HESAP_DENEME.temizle(email)
     if admin.aktif_mi is False:
+        giris_olayi("giris_engellendi", admin, admin.rol)
         raise HTTPException(status_code=403, detail="Hesabın devre dışı bırakılmış.")
     if admin.rol == "okul_yetkilisi":
         # [2026-10-11] Okul yetkilileri öğrencilerle aynı giriş ekranını kullanır (/giris)

@@ -46,6 +46,7 @@ const DallarSayfasi = tembel(() => import('./pages/admin/DallarSayfasi'))
 const SorularSayfasi = tembel(() => import('./pages/admin/SorularSayfasi'))
 const ParametrelerSayfasi = tembel(() => import('./pages/admin/ParametrelerSayfasi'))
 const AuditLogSayfasi = tembel(() => import('./pages/admin/AuditLogSayfasi'))
+const ErisimKayitlariSayfasi = tembel(() => import('./pages/admin/ErisimKayitlariSayfasi'))   // [2026-11-05]
 const YoneticilerSayfasi = tembel(() => import('./pages/admin/YoneticilerSayfasi'))
 const SistemHakkindaSayfasi = tembel(() => import('./pages/admin/SistemHakkindaSayfasi'))
 const SoruGecerlilikSayfasi = tembel(() => import('./pages/admin/SoruGecerlilikSayfasi'))
@@ -190,6 +191,7 @@ function AnaUygulama() {
         {/* [2026-10-09] Öğrenci yönetimi okul bazlı: Okullar → okul paneli */}
         <Route path="ogrenciler" element={<Navigate to="/admin/okullar" replace />} />
         <Route path="audit-log" element={<AuditLogSayfasi />} />
+        <Route path="erisim-kayitlari" element={<ErisimKayitlariSayfasi />} />
         <Route path="hata-kayitlari" element={<HataKayitlariSayfasi />} />
         <Route path="gece-bakimi" element={<GeceBakimiSayfasi />} />
         <Route path="yoneticiler" element={<YoneticilerSayfasi />} />

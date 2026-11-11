@@ -56,6 +56,7 @@ const SUPER_MENU = [
   { grup: 'Sistem', baglantilar: [
     ['/admin/veri-kaynaklari', '🗂️', 'Veri Kaynakları'],   // [2026-11-01]
     ['/admin/parametreler', '🎛️', 'Parametreler'],
+    ['/admin/erisim-kayitlari', '🔎', 'Erişim Kayıtları'],   // [2026-11-05] kim, ne zaman, kimin verisine
     ['/admin/audit-log', '📜', 'Audit Log'],
     ['/admin/hata-kayitlari', '🐞', 'Hata Kayıtları'],
     ['/admin/gece-bakimi', '🌙', 'Gece Bakımı'],   // [2026-11-04]

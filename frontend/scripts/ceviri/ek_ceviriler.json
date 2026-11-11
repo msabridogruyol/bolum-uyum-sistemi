@@ -3897,5 +3897,19 @@
   "uz": "18 yoshga to‘lgan deb belgilash",
   "az": "18 yaşı tamam kimi qeyd et",
   "ko": "만 18세 이상으로 표시"
+ },
+ "Erişim Kayıtları": {
+  "en": "Access Logs",
+  "de": "Zugriffsprotokolle",
+  "fr": "Journaux d'accès",
+  "ru": "Журнал доступа",
+  "es": "Registros de acceso",
+  "it": "Registri di accesso",
+  "ar": "سجلات الوصول",
+  "zh": "访问日志",
+  "hi": "एक्सेस लॉग",
+  "uz": "Kirish jurnallari",
+  "az": "Giriş qeydləri",
+  "ko": "접근 기록"
  }
 }
