@@ -30,6 +30,7 @@ from fastapi.responses import Response
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.api.deps import get_mevcut_yonetim
 from app.api.okul_istatistik import _baslik, _sinif_sira, _yuzde, ogrenci_kumesi
 from app.api.okul_yonetimi import _durum, _ilerleme, _okul_kapsami, sube_etiketi
@@ -229,7 +230,7 @@ def veli_sunumu(okul_id: int, sinif: str | None = None, sube: str | None = None,
     db.commit()
     ad = _dosya_adi(("Veli_Toplantisi_Ogretmen" if kitle == "ogretmen" else "Veli_Toplantisi") + ("_Notlu" if bicim == "pdf_notlu" else ""),
                     okul.ad if okul else "Okul_harici",
-                                             v["kapsam"] if v["kapsam_tur"] != "okul" else None, date.today().strftime("%Y%m%d"))
+                                             v["kapsam"] if v["kapsam_tur"] != "okul" else None, bugun_tr().strftime("%Y%m%d"))
     mime, uzanti, _ = BICIMLER[bicim]
     return Response(content=icerik, media_type=mime,
                     headers={"Content-Disposition": f'attachment; filename="{ad}.{uzanti}"', "Cache-Control": "no-store"})

@@ -17,6 +17,7 @@ import urllib.error
 import urllib.parse
 import urllib.request
 from datetime import date
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 
 IZINLI_ALAN = "tuik.gov.tr"
 EN_FAZLA_BAYT = 10 * 1024 * 1024   # [2026-10-11] 25 → 10 MB: yukleme_siniri.TABLO_EN_FAZLA_BAYT ile aynı
@@ -108,7 +109,7 @@ HATIRLATMA_AY_GUN = (7, 15)   # TÜİK Yükseköğretim İstihdam Göstergeleri 
 def guncelleme_durumu(db, bugun: date | None = None) -> dict:
     """Beklenen veri yılı (bugün 15 Temmuz'u geçtiyse geçen yıl, değilse iki yıl önce) yüklü mü?"""
     from sqlalchemy import text
-    bugun = bugun or date.today()
+    bugun = bugun or bugun_tr()
     beklenen = bugun.year - 1 if (bugun.month, bugun.day) >= HATIRLATMA_AY_GUN else bugun.year - 2
     son = db.execute(text("SELECT MAX(veri_yili) FROM istihdam_gostergeleri")).scalar()
     return {"son_veri_yili": son, "beklenen_veri_yili": beklenen, "guncel": son is not None and son >= beklenen}
