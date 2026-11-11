@@ -109,6 +109,18 @@ const KONULAR = [
     ],
   },
   {
+    // [2026-11-11]
+    id: 'toplu', grup: 'Hesaplar ve tanıtım', baslik: 'Okula toplu hesap açmak ve hoş geldin e-postası göndermek',
+    ne_zaman: 'Bir okul sisteme başlarken (öğrenciler ve okul yetkilileri tek dosyayla) ya da sonradan herkese giriş bilgilerini e-postayla iletmek istediğinizde.',
+    adimlar: [
+      { m: <><E to="/admin/toplu-hesap">Toplu Hesap ve Hoş Geldin</E> → <b>⬇ Şablonu indir</b>. Her satıra bir kişi: <b>Ad Soyad, E-posta, Görev, Okul</b> (öğrencilerde isteğe bağlı Sınıf, Şube). Görev <b>Öğrenci</b> ise öğrenci hesabı; başka bir görev (Rehber Öğretmen, Müdür Yardımcısı…) okul yetkilisi hesabı açar ve unvan olarak kaydedilir.</> },
+      { m: <>Okul sütunu boşsa listeden <b>varsayılan okulu</b> seçin. <b>Dosya yükle</b> → önizlemede her satırın durumu görünür: hatalı satırlar ve zaten kayıtlı e-postalar atlanır.</> },
+      { m: <><b>Açılan hesaplara hoş geldin e-postası gönder</b> işaretliyken <b>… hesabı aç</b>. Filizyol markalı giriş bilgileri Excel'i otomatik iner; e-postaların ilerlemesi aynı ekranda görünür.</> },
+      { m: <>Sonradan bir okulun tamamına göndermek için aynı sayfadaki <b>Okulun tamamına hoş geldin e-postası</b> kartında okulu seçin → kime (herkese / öğrencilere / yetkililere) → <b>Yalnız daha önce gönderilmemiş olanlara</b> → <b>Gönder</b>. Okul yetkilisi aynı kartı Okul paneli › Öğrenciler › <b>✉ Hoş geldin e-postası</b> düğmesinden kendi öğrencileri için kullanır.</> },
+    ],
+    not: <>E-postada geçici şifre yalnızca hesap hâlâ geçici şifredeyse yer alır; şifresini değiştirmiş kişiye “Şifremi unuttum” yolu yazılır. Excel dosyası şifre içerir: yalnızca ilgili kişilere iletin. E-posta sağlayıcısının günlük gönderim sınırı aşılırsa kalanlar ertesi gün “yalnız gönderilmemiş” seçeneğiyle gönderilir.</>,
+  },
+  {
     id: 'testhesap', grup: 'Hesaplar ve tanıtım', baslik: 'Tek tek test hesabı açmak',
     ne_zaman: 'Bir ekranı belirli bir öğrenci ya da okul yetkilisi gözünden denemek istediğinizde.',
     adimlar: [

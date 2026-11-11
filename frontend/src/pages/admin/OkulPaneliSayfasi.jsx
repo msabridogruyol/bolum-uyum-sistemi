@@ -7,6 +7,7 @@ import RaporSecici from '../../components/RaporSecici'
 import { api } from '../../api/client'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import TopluYuklemePenceresi from '../../components/yonetim/TopluYuklemePenceresi'
+import HosgeldinKarti from '../../components/yonetim/HosgeldinKarti'   // [2026-11-11]
 import OgrenciDetayPenceresi from '../../components/yonetim/OgrenciDetayPenceresi'
 import SinifAtlatPenceresi from '../../components/yonetim/SinifAtlatPenceresi'   // [2026-10-12] yeni eğitim yılı
 import { DurumRozeti, Pencere, SifreHucresi, SifreListesi, base64Indir, onceSure, tarih } from '../../components/yonetim/ortak'
@@ -113,6 +114,7 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
   const [durum, setDurum] = useState('')
   const [secili, setSecili] = useState(new Set())
   const [yukleme, setYukleme] = useState(false)
+  const [hosgeldin, setHosgeldin] = useState(false)   // [2026-11-11] hoş geldin e-postası penceresi
   const [detay, setDetay] = useState(acikOgrenci)
   // [2026-10-11] Derin bağlantı: ?sekme=ogrenciler&ogrenci=<id> (Filiz yönetim asistanının "Öğrenci detayı" bağlantısı)
   useEffect(() => { if (acikOgrenci) setDetay(acikOgrenci) }, [acikOgrenci])
@@ -205,6 +207,10 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
           <button className="btn sec" title="Yeni eğitim yılında bütün öğrencileri bir üst sınıfa geçirir (12 → Mezun). Seçili öğrenciler sınıfında kalır."
             onClick={() => setSinifAtlat(true)}>🎓 Sınıf atlat (yeni yıl)</button>
         )}
+        {okulId > 0 && (
+          <button className="btn sec" title="Okulun öğrencilerine (süper admin: yetkililerine de) giriş bilgileriyle hoş geldin e-postası"
+            onClick={() => setHosgeldin(true)}>✉ Hoş geldin e-postası</button>
+        )}
         <button className="btn" onClick={() => setYukleme(true)}>+ Öğrenci ekle / Excel yükle</button>
       </div>
       {bilgi && <div className="yp-uyari-yesil" style={{ marginBottom: 10 }}>{bilgi} <button className="yp-mini" onClick={() => setBilgi(null)}>Tamam</button></div>}
@@ -293,6 +299,12 @@ function OgrencilerSekmesi({ okulId, okulAd, superAdmin, okullar, ogrenciler, ye
           onKapat={() => setSinifAtlat(false)} onBitti={() => { setSecili(new Set()); yenile() }} />
       )}
       {yukleme && <TopluYuklemePenceresi okulId={okulId} okulAd={okulAd} onKapat={() => setYukleme(false)} onBitti={yenile} />}
+      {hosgeldin && (
+        <Pencere genis baslik="Hoş geldin e-postası" altBaslik={okulAd} onKapat={() => setHosgeldin(false)}
+          alt={<button className="btn" onClick={() => setHosgeldin(false)}>Kapat</button>}>
+          <HosgeldinKarti key={okulId} okulId={okulId} baslik={false} />
+        </Pencere>
+      )}
       {detay && <OgrenciDetayPenceresi ogrenciId={detay} superAdmin={superAdmin} okullar={okullar} onKapat={() => { setDetay(null); onDetayKapat?.() }} onDegisti={yenile} />}
       {sifreler && (
         <Pencere genis baslik={`${sifreler.kayitlar.length} öğrencinin şifresi sıfırlandı`} onKapat={() => setSifreler(null)}
