@@ -1187,7 +1187,8 @@ def yetkili_sil(yetkili_id: str, db: Session = Depends(get_db), yon: AdminKullan
     _super(yon)
     y = _yetkili(db, yetkili_id)
     denetim_yaz(db, yon, "okul_yetkilisi_sil", "admin_kullanicilar", y.id, f"{y.ad_soyad} <{y.email}>", y.okul_id)
-    db.delete(y)
+    from app.core.hesap_yonetimi import yoneticiyi_sil
+    yoneticiyi_sil(db, y, yon.id)   # [2026-11-06] KVKK onayı, doğrulama kodu, güvenilir cihaz kayıtları da silinir
     db.commit()
 
 

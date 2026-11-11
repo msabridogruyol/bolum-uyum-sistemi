@@ -85,6 +85,16 @@ def ilerlemeyi_sifirla(db: Session, o: Ogrenci) -> None:
     db.flush()
 
 
+def test_ogrencisini_sil(db: Session, o: Ogrenci) -> None:
+    """[2026-11-06] Test / demo öğrencisini bütün verisiyle siler (önce bağlı kayıtlar, CASCADE eksik olsa da; sonra hesap).
+    Test hesapları, demo okul ve okul silme aynı yolu kullanır."""
+    from app.core.hesap_yonetimi import ogrenciyi_sil
+    ilerlemeyi_sifirla(db, o)
+    with db.begin_nested():
+        db.execute(text("DELETE FROM ogrenci_hesap_olaylari WHERE ogrenci_id = :id"), {"id": o.id})
+    ogrenciyi_sil(db, o)
+
+
 # ----------------------------------------------------------------------------- cevap seçimi
 def hedef_profil(db: Session, egilim: str, bolum_id: int | None, rnd: random.Random) -> dict[int, float]:
     """degisken_id → öğrencinin bu özellikte "olmasını istediğimiz" puan (0-100)."""

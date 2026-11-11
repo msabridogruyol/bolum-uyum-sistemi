@@ -46,6 +46,8 @@ class OkulOut(BaseModel):
     erisim_acik: bool = True          # [2026-10-11] okulun sistemi açık mı (kapalıysa giriş yapılamaz)
     kapali_mesaji: str | None = None
     erisim_guncelleme_zamani: datetime | None = None
+    demo: bool = False                # [2026-11-06] silme ekranı: demo okul tümüyle silinir
+    test_ogrenci_sayisi: int = 0      # [2026-11-06] silmede aktarılmaz, verileriyle silinir
 
     model_config = {"from_attributes": True}
 
@@ -125,13 +127,16 @@ def okullari_listele(db: Session = Depends(get_db), admin: AdminKullanici = Depe
                .group_by(Ogrenci.okul_id).all())
     yon = dict(db.query(AdminKullanici.okul_id, func.count(AdminKullanici.id))
                .filter(AdminKullanici.okul_id.isnot(None)).group_by(AdminKullanici.okul_id).all())
+    test = dict(db.query(Ogrenci.okul_id, func.count(Ogrenci.id)).filter(Ogrenci.okul_id.isnot(None), Ogrenci.test_hesabi.is_(True))
+                .group_by(Ogrenci.okul_id).all())
     from sqlalchemy import text as _t
     paket_ad = dict(db.execute(_t("SELECT kod, ad FROM paketler")).all())
     return [OkulOut(id=o.id, ad=o.ad, alt_baslik=o.alt_baslik, logo=o.logo, aktif_mi=o.aktif_mi,
                     ogrenci_sayisi=ogr.get(o.id, 0), yetkili_sayisi=yon.get(o.id, 0),
                     paket=o.paket, paket_ad=paket_ad.get(o.paket, o.paket),
                     erisim_acik=o.erisim_acik is not False, kapali_mesaji=o.kapali_mesaji,
-                    erisim_guncelleme_zamani=o.erisim_guncelleme_zamani)
+                    erisim_guncelleme_zamani=o.erisim_guncelleme_zamani,
+                    demo=bool(getattr(o, "demo", False)), test_ogrenci_sayisi=test.get(o.id, 0))
             for o in db.query(Okul).order_by(Okul.ad).all()]
 
 
@@ -191,19 +196,37 @@ def okul_erisimi(okul_id: int, istek: ErisimIstek, db: Session = Depends(get_db)
 @admin_router.delete("/{okul_id}", status_code=204)
 def okul_sil(okul_id: int, hedef_id: int | None = Query(None), db: Session = Depends(get_db),
              admin: AdminKullanici = Depends(get_mevcut_admin)):
-    """Okulun öğrencileri hedef okula (0 = okul harici) aktarılır; okul yetkilisi hesapları okulla birlikte silinir."""
+    """Okulun gerçek öğrencileri hedef okula (0 = okul harici) aktarılır; okul yetkilisi hesapları okulla birlikte silinir.
+    [2026-11-06] Kullanıcı bildirimi: "okulu silince test verileri silinmiyor". Önceden test / demo öğrencileri de gerçek
+    öğrenciler gibi aktarılıyordu (bütün verileriyle okul harici listesine düşüyordu). Şimdi: demo okul tümüyle silinir
+    (Test Hesapları › demo okul silme ile aynı yol); gerçek okuldaki test öğrencileri aktarılmaz, verileriyle silinir;
+    yetkililerin KVKK onayı, doğrulama kodu ve güvenilir cihaz kayıtları da silinir."""
+    from app.core.hesap_yonetimi import yoneticiyi_sil
+    from app.core.test_hesabi_servisi import test_ogrencisini_sil
     okul = _okul(db, okul_id)
-    sayi = db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id).count()
+    if getattr(okul, "demo", False):
+        from app.api.test_hesaplari import okulu_tum_verisiyle_sil
+        ad = okul.ad
+        okulu_tum_verisiyle_sil(db, okul, admin.id)
+        denetim_yaz(db, admin, "okul_sil", "okullar", okul_id, f"{ad} — demo okul, bütün verisiyle silindi", None)
+        db.commit()
+        return
+    gercek = Ogrenci.test_hesabi.isnot(True)
+    sayi = db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id, gercek).count()
     if sayi:
         if hedef_id is None or hedef_id == okul_id:
             raise HTTPException(status_code=409, detail=f"Bu okulda {sayi} öğrenci var; silmeden önce aktarılacakları yeri seçin.")
         hedef = _okul(db, hedef_id) if hedef_id else None
-        db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id).update(
+        db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id, gercek).update(
             {Ogrenci.okul_id: hedef.id if hedef else None, Ogrenci.okul: hedef.ad if hedef else None}, synchronize_session=False)
+    testler = db.query(Ogrenci).filter(Ogrenci.okul_id == okul.id, Ogrenci.test_hesabi.is_(True)).all()
+    for o in testler:
+        test_ogrencisini_sil(db, o)
     yoneticiler = db.query(AdminKullanici).filter(AdminKullanici.okul_id == okul.id).all()
     for y in yoneticiler:
-        db.delete(y)
+        yoneticiyi_sil(db, y, admin.id)
+    db.flush()
     denetim_yaz(db, admin, "okul_sil", "okullar", okul.id,
-                f"{okul.ad} — {sayi} öğrenci aktarıldı, {len(yoneticiler)} okul yetkilisi silindi", okul.id)
+                f"{okul.ad} — {sayi} öğrenci aktarıldı, {len(testler)} test öğrencisi ve {len(yoneticiler)} okul yetkilisi silindi", okul.id)
     db.delete(okul)
     db.commit()
