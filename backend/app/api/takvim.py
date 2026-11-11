@@ -12,6 +12,7 @@ from zoneinfo import ZoneInfo
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy import text
 from sqlalchemy.orm import Session
@@ -71,7 +72,7 @@ def _degerler(istek: EtkinlikIstek, kisisel: bool = False) -> dict:
 # ============================================================================= öğrenci
 @ogrenci_router.get("/takvim")
 def ogrenci_takvim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)):
-    bas = date.today() - timedelta(days=45)
+    bas = bugun_tr() - timedelta(days=45)
     satirlar = db.execute(text("""
         SELECT * FROM takvim_etkinlikleri
          WHERE COALESCE(bitis, baslangic) >= :bas
@@ -112,7 +113,7 @@ def ogrenci_takvim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcu
     except Exception:
         db.rollback()
     sonuc.sort(key=lambda x: (x["baslangic"], x["saat"] or ""))
-    return {"etkinlikler": sonuc, "turler": [{"kod": k, **v} for k, v in TURLER.items()], "bugun": date.today()}
+    return {"etkinlikler": sonuc, "turler": [{"kod": k, **v} for k, v in TURLER.items()], "bugun": bugun_tr()}
 
 
 @ogrenci_router.post("/takvim", status_code=201)
@@ -144,7 +145,7 @@ def yonetim_takvim(okul_id: int | None = None, db: Session = Depends(get_db), yo
         okul_id = yon.okul_id
     elif okul_id:
         _okul_kapsami(db, yon, okul_id)
-    bas = date.today() - timedelta(days=120)
+    bas = bugun_tr() - timedelta(days=120)
     satirlar = db.execute(text("""
         SELECT * FROM takvim_etkinlikleri WHERE ogrenci_id IS NULL AND COALESCE(bitis, baslangic) >= :bas
            AND (okul_id IS NULL""" + (" OR okul_id = :ok" if okul_id else "") + ") ORDER BY baslangic, id"),

@@ -20,6 +20,7 @@ Okul yetkilisi (rehber öğretmen) + süper admin — modül: rehberlik
   * Son kullanım günlük aktiflikten (ogrenci_aktif_gunler) okunur; "beni hatırla" ile sistemi kullanan öğrenci "girmiyor" sayılmaz.
   * "Yüksek": net düşüşü %30+ ya da 3+ farklı "orta" uyarının birleşmesi. 3+ farklı düşük uyarı → "orta".
 """
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.core.kisa_onbellek import ozet_onbellegi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
@@ -252,7 +253,7 @@ def risk_ertele(ogrenci_id: str, istek: ErteleIstek, db: Session = Depends(get_d
     db.execute(text("""
         INSERT INTO risk_ertelemeleri (ogrenci_id, kural, bitis, olusturan) VALUES (:o, :k, :b, :y)
         ON CONFLICT (ogrenci_id, kural) DO UPDATE SET bitis = EXCLUDED.bitis, olusturan = EXCLUDED.olusturan, olusturulma_zamani = now()
-    """), {"o": o.id, "k": istek.kural, "b": date.today() + timedelta(days=istek.gun), "y": yon.ad_soyad})
+    """), {"o": o.id, "k": istek.kural, "b": bugun_tr() + timedelta(days=istek.gun), "y": yon.ad_soyad})
     denetim_yaz(db, yon, "risk_ertele", "ogrenciler", o.id, f"{KURALLAR[istek.kural]} · {istek.gun} gün", o.okul_id)
     from app.core.kisa_onbellek import hepsini_bosalt
     hepsini_bosalt()   # menüdeki risk sayısı hemen güncellensin
@@ -302,11 +303,11 @@ def okul_gorusmeleri(okul_id: int, gun: int = Query(90, ge=7, le=400), db: Sessi
     takip = _sinif_ekle(db.execute(text(SECIM + f" WHERE {kosul} AND g.takip_tarihi IS NOT NULL AND NOT g.takip_tamam "
                                          "AND g.durum = 'yapildi' ORDER BY g.takip_tarihi"), p).all())
     yapilan = [g for g in gecmis if g["durum"] == "yapildi"]
-    bu_ay = date.today().replace(day=1).isoformat()
+    bu_ay = bugun_tr().replace(day=1).isoformat()
     return {
         "gecmis": gecmis, "yaklasan": yaklasan, "takipler": takip,
         "ozet": {"bu_ay": sum(1 for g in yapilan if g["tarih"] >= bu_ay), "donem": len(yapilan),
-                 "ogrenci": len({g["ogrenci_id"] for g in yapilan}), "geciken_takip": sum(1 for g in takip if g["takip_tarihi"] < date.today().isoformat()),
+                 "ogrenci": len({g["ogrenci_id"] for g in yapilan}), "geciken_takip": sum(1 for g in takip if g["takip_tarihi"] < bugun_tr().isoformat()),
                  "konular": [{"kod": k, "ad": KONULAR.get(k, k), "sayi": n} for k, n in Counter(g["konu"] for g in yapilan).most_common()]},
         "secenekler": {"turler": TURLER, "konular": KONULAR, "durumlar": DURUMLAR},
     }
@@ -359,7 +360,7 @@ def gorusmeler_excel(okul_id: int, gun: int = Query(365, ge=7, le=800), db: Sess
     db.commit()
     ad = (okul.ad if okul else "okul_harici").replace(" ", "_")
     return Response(b.getvalue(), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    headers={"Content-Disposition": f'attachment; filename="rehberlik_gorusmeleri_{date.today().isoformat()}.xlsx"',
+                    headers={"Content-Disposition": f'attachment; filename="rehberlik_gorusmeleri_{bugun_tr().isoformat()}.xlsx"',
                              "X-Dosya-Adi": f"{ad}_rehberlik_gorusmeleri.xlsx".encode("ascii", "ignore").decode()})
 
 

@@ -14,6 +14,7 @@ from fastapi.responses import Response
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.zaman import simdi_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.api.deps import get_mevcut_ogrenci, get_mevcut_yonetim
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
@@ -195,7 +196,7 @@ def okul_raporu(okul_id: int, bicim: str = Query("pdf"), sinif: str | None = Que
         denetim_yaz(db, yon, "rapor_indir", "okullar", okul_id, f"{kapsam_adi}: toplu {TOPLU_TUR[tur][0]} raporu ({len(ogrenciler)} öğrenci)", okul_id or None)
         db.commit()
         from datetime import datetime
-        return _cevap(cikti.getvalue(), "pdf", _dosya_adi(TOPLU_TUR[tur][1], kapsam_adi, datetime.now().strftime("%Y%m%d")))
+        return _cevap(cikti.getvalue(), "pdf", _dosya_adi(TOPLU_TUR[tur][1], kapsam_adi, simdi_tr().strftime("%Y%m%d")))
 
     if tur != "ozet":
         raise HTTPException(status_code=400, detail="Geçersiz rapor türü.")

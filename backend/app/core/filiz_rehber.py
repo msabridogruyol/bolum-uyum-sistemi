@@ -17,6 +17,7 @@ from datetime import date
 from sqlalchemy import text
 from sqlalchemy.orm import Session
 
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.models import Bolum, Ogrenci
 
 # [2026-10-10] "Sorabileceklerin" sekmesi: kategorili örnek sorular. Her soru otomatik rehberde bir konuya eşlenir.
@@ -326,12 +327,12 @@ def k_takvim(b: Baglam, m: str) -> str:
             SELECT baslik, baslangic FROM takvim_etkinlikleri
              WHERE baslangic >= :b AND ((okul_id IS NULL AND ogrenci_id IS NULL) OR (okul_id = :ok AND ogrenci_id IS NULL) OR ogrenci_id = :o)
                AND (hedef_sinif IS NULL OR hedef_sinif = :sf)
-             ORDER BY baslangic LIMIT 1"""), {"b": date.today(), "ok": b.o.okul_id or -1, "o": b.o.id, "sf": b.o.sinif or ""}).first()
+             ORDER BY baslangic LIMIT 1"""), {"b": bugun_tr(), "ok": b.o.okul_id or -1, "o": b.o.id, "sf": b.o.sinif or ""}).first()
     except Exception:
         b.db.rollback()
         r = None
     if r:
-        gun = (r[1] - date.today()).days
+        gun = (r[1] - bugun_tr()).days
         return f"Takviminde sıradaki etkinlik: \"{r[0]}\" — {r[1].strftime('%d.%m.%Y')} ({'bugün' if gun == 0 else f'{gun} gün sonra'}). Tüm tarihler Takvim sayfasında."
     return "Takviminde yaklaşan bir etkinlik görünmüyor. Kendi hatırlatmalarını Takvim sayfasından ekleyebilirsin."
 

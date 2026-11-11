@@ -6,6 +6,7 @@ Ayrı bir "kurum yöneticisi" rolü yoktur; karşılaştırma süper adminde, Ex
 GET /yonetim/okul-karsilastirma            — tüm okullar, metrikler
 GET /yonetim/okul-karsilastirma/excel?okullar=1,2,3
 """
+from app.core.zaman import bugun_tr   # [2026-11-11] Türkiye saatiyle bugün / şimdi
 from app.core.excel_guvenligi import guvenli_kaydet
 import io
 from datetime import date, datetime, timedelta, timezone
@@ -60,7 +61,7 @@ def _okul_metrikleri(db: Session, okul: Okul) -> dict:
             SELECT avg(toplam_net), count(*) FROM (
                 SELECT DISTINCT ON (ogrenci_id) toplam_net FROM ogrenci_denemeleri
                  WHERE ogrenci_id = ANY(:i) AND oturum = 'TYT' AND tarih >= :b ORDER BY ogrenci_id, tarih DESC, id DESC) x
-        """), {"i": ids, "b": date.today() - timedelta(days=90)}).one()
+        """), {"i": ids, "b": bugun_tr() - timedelta(days=90)}).one()
         m["tyt"] = gizle(round(float(v), 1), vn) if v is not None else None   # [2026-10-10] 5'ten az deneme girene dayanıyorsa gizli
         m["tyt_n"] = vn
     if "rehberlik" in moduller:
@@ -127,7 +128,7 @@ def karsilastirma_excel(okullar: str | None = Query(None), db: Session = Depends
     for i, o in enumerate(liste, 2):
         for j, val in enumerate([o["ad"], o["paket"]] + [GIZLI_METIN if m["k"] in (o.get("gizli_alanlar") or []) else o.get(m["k"]) for m in METRIKLER], 1):
             ws.cell(row=i, column=j, value=val)
-    ws.cell(row=len(liste) + 3, column=1, value=f"Filizyol · {date.today().strftime('%d.%m.%Y')} · Boş hücre: modül okulun paketinde yok, veri yok "
+    ws.cell(row=len(liste) + 3, column=1, value=f"Filizyol · {bugun_tr().strftime('%d.%m.%Y')} · Boş hücre: modül okulun paketinde yok, veri yok "
                                                 f"ya da {GIZLI_METIN} içeriyor.").font = Font(italic=True, color="7A5C00")
     ws.cell(row=len(liste) + 4, column=1, value=DIPNOT).font = Font(italic=True, color="7A5C00")
     for j in range(1, len(kol) + 1):
@@ -137,4 +138,4 @@ def karsilastirma_excel(okullar: str | None = Query(None), db: Session = Depends
     denetim_yaz(db, yon, "okul_karsilastirma_excel", "okullar", ",".join(str(o["id"]) for o in liste), f"{len(liste)} okul")
     db.commit()
     return Response(b.getvalue(), media_type="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    headers={"Content-Disposition": f'attachment; filename="okul_karsilastirma_{date.today().isoformat()}.xlsx"', "Cache-Control": "no-store"})
+                    headers={"Content-Disposition": f'attachment; filename="okul_karsilastirma_{bugun_tr().isoformat()}.xlsx"', "Cache-Control": "no-store"})
