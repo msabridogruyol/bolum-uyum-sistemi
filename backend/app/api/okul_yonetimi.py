@@ -1318,7 +1318,7 @@ def _bilgi_out(okul: Okul) -> dict:
             "kurulus_yili": okul.kurulus_yili, "ogrenci_sayisi": okul.ogrenci_sayisi, "tanitim": okul.tanitim,
             "adres": okul.adres, "telefon": okul.telefon, "eposta": okul.eposta, "web": okul.web,
             "kadro": okul.kadro or [], "bilgi_guncelleme_zamani": okul.bilgi_guncelleme_zamani, "gorevler": GOREVLER,
-            "tema_renk": okul.tema_renk}
+            "tema_renk": okul.tema_renk, "ogrenci_cevrimici_acik": bool(okul.ogrenci_cevrimici_acik)}
 
 
 def _kirp(v: str | None, n: int) -> str | None:
@@ -1402,6 +1402,24 @@ def okul_tema_guncelle(okul_id: int, istek: TemaIstek, db: Session = Depends(get
     denetim_yaz(db, yon, "okul_tema_guncelle", "okullar", okul.id, f"{okul.ad}: okul rengi {okul.tema_renk or 'varsayılan'}", okul.id)
     db.commit()
     return {"tema_renk": okul.tema_renk}
+
+
+class CevrimiciAyarIstek(GirdiModeli):
+    acik: bool
+
+
+@router.put("/okul/{okul_id}/ogrenci-cevrimici")
+def okul_ogrenci_cevrimici(okul_id: int, istek: CevrimiciAyarIstek, db: Session = Depends(get_db),
+                           yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+    """[2026-11-11] Öğrenciler 'şu an çevrim içi' listesini görsün mü (varsayılan kapalı). Yetkili her zaman görür."""
+    okul = _okul_kapsami(db, yon, okul_id)
+    if okul is None:
+        raise HTTPException(status_code=400, detail="Okul harici grup için bu ayar yok.")
+    okul.ogrenci_cevrimici_acik = bool(istek.acik)
+    denetim_yaz(db, yon, "okul_cevrimici_ayari", "okullar", okul.id,
+                f"{okul.ad}: öğrencilerde çevrim içi listesi {'açık' if okul.ogrenci_cevrimici_acik else 'kapalı'}", okul.id)
+    db.commit()
+    return {"ogrenci_cevrimici_acik": okul.ogrenci_cevrimici_acik}
 
 
 # ----------------------------------------------------------------------------- hedef bölüm yönetimi

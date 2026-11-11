@@ -107,6 +107,8 @@ class Okul(Base):
     erisim_guncelleme_zamani: Mapped[datetime | None] = mapped_column(DateTime(timezone=True), nullable=True)
     # [2026-11-01] (0087) Test Hesapları ekranından açılan tanıtım (demo) okulu; yalnızca demo okul tek tuşla silinir
     demo: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default='false', default=False)
+    # [2026-11-11] öğrenciler 'şu an çevrim içi' listesini görsün mü (okul yetkilisi açar; yetkili her zaman görür)
+    ogrenci_cevrimici_acik: Mapped[bool] = mapped_column(Boolean, nullable=False, server_default='false', default=False)
 
 
 class MeslekDili(Base):

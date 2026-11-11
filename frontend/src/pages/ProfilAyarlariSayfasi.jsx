@@ -11,8 +11,9 @@ import HedefBolumAyari from '../components/HedefBolumAyari'
 // [2026-10-11] Çevrim içi görünürlük: okulundaki öğrencilerin sağ alttaki listesinde adın görünsün mü
 function CevrimiciAyari() {
   const [gizli, setGizli] = useState(null)
-  useEffect(() => { api.cevrimiciBuradayim().then((v) => setGizli(!!v.gizli)).catch(() => {}) }, [])
-  if (gizli === null) return null
+  const [goster, setGoster] = useState(false)   // [2026-11-11] okul öğrencilerde çevrim içi listesini açmadıysa ayar gizli
+  useEffect(() => { api.cevrimiciBuradayim().then((v) => { setGizli(!!v.gizli); setGoster(v.goster !== false) }).catch(() => {}) }, [])
+  if (gizli === null || !goster) return null
   return (
     <div className="card" style={{ marginTop: 20 }}>
       <div className="ct">Çevrim İçi Görünürlük</div>

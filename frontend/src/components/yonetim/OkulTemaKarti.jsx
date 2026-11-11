@@ -34,8 +34,10 @@ export default function OkulTemaKarti({ okulId }) {
   const [bekle, setBekle] = useState(false)
   const [mesaj, setMesaj] = useState(null)
 
+  const [cevrimici, setCevrimici] = useState(null)   // [2026-11-11] öğrencilerde çevrim içi listesi
+  const [cvBekle, setCvBekle] = useState(false)
   useEffect(() => {
-    api.okulBilgi(okulId).then((d) => { setKayitli(d.tema_renk || null); setSecim(d.tema_renk || null) })
+    api.okulBilgi(okulId).then((d) => { setKayitli(d.tema_renk || null); setSecim(d.tema_renk || null); setCevrimici(!!d.ogrenci_cevrimici_acik) })
       .catch((e) => setMesaj({ tur: 'hata', metin: e.detail || 'Okul rengi yüklenemedi.' }))
   }, [okulId])
 
@@ -56,6 +58,7 @@ export default function OkulTemaKarti({ okulId }) {
   const ozel = secim && !OKUL_PALETI.some((p) => p.renk && p.renk.toLowerCase() === secim.toLowerCase())
 
   return (
+    <>
     <div className="card tm-kart">
       <div className="tm-duzen">
         <div>
@@ -93,5 +96,26 @@ export default function OkulTemaKarti({ okulId }) {
         </div>
       </div>
     </div>
+    {cevrimici !== null && (
+      <div className="card" style={{ marginTop: 16 }}>
+        <div style={{ fontSize: 16, fontWeight: 800, color: 'var(--tx)' }}>Öğrencilerde çevrim içi listesi</div>
+        <label style={{ display: 'flex', alignItems: 'flex-start', gap: 10, fontSize: 13.5, cursor: 'pointer', lineHeight: 1.5, marginTop: 8 }}>
+          <input type="checkbox" checked={cevrimici} disabled={cvBekle} style={{ marginTop: 3 }}
+            onChange={async (e) => {
+              const yeni = e.target.checked
+              setCvBekle(true); setCevrimici(yeni)
+              try { const v = await api.okulCevrimiciAyari(okulId, yeni); setCevrimici(!!v.ogrenci_cevrimici_acik) } catch { setCevrimici(!yeni) } finally { setCvBekle(false) }
+            }} />
+          <span>
+            Öğrenciler sağ alttaki "şu an çevrim içi" listesini görsün.
+            <span style={{ display: 'block', fontSize: 12, color: 'var(--tx3)' }}>
+              Kapalıyken öğrenciler bu listeyi görmez; siz okulunuzdaki çevrim içi öğrencileri her zaman görürsünüz. Açıkken
+              öğrenciler okullarındaki çevrim içi öğrencilerin yalnızca adını, soyadının baş harfini ve sınıfını görür.
+            </span>
+          </span>
+        </label>
+      </div>
+    )}
+    </>
   )
 }

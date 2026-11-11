@@ -7,6 +7,7 @@ PUT  /ogrenci/cevrimici/gizlilik     — öğrenci: listede görünmeyi kapat / 
 GET  /yonetim/cevrimici?okul_id=     — okul yetkilisi: kendi okulu; süper admin: seçilen okul ya da tüm okullar
 
 Gizlilik:
+  * [2026-11-11] Öğrencinin listeyi görmesi okul ayarına bağlı (okullar.ogrenci_cevrimici_acik, varsayılan kapalı).
   * Öğrenci yalnızca KENDİ OKULUNDAKİ çevrim içi öğrencileri görür; yalnızca ad + soyadın baş harfi ve sınıf-şube.
     Puan, sonuç, okul dışı bilgi yok. Okul harici (okulsuz) öğrenci liste görmez.
   * "Gizli" seçen öğrenci kimsenin listesinde görünmez (yönetim yine sayıyı görür, adını görmez).
@@ -69,14 +70,18 @@ def buradayim(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogr
         db.execute(text("UPDATE ogrenciler SET son_gorulme = :s WHERE id = :i"), {"s": simdi, "i": o.id})
         gune_isle(db, o.id)   # [2026-10-11] günün ilk açılışı işaretlenir (beni hatırla ile açık kalan oturumlar da sayılır)
         db.commit()
-    if not o.okul_id:
-        return {"gizli": bool(o.cevrimici_gizli), "toplam": 0, "sinifim": [], "digerleri": [], "kesildi": False}
+    # [2026-11-11] Sinyal her zaman kaydedilir (yetkili çevrim içi öğrencileri görür); öğrenciye liste yalnızca okul
+    # ayarı açıksa döner (Okul Ayarları › Görünüm, varsayılan kapalı).
+    goster = bool(o.okul_id) and bool(db.execute(text("SELECT ogrenci_cevrimici_acik FROM okullar WHERE id = :i"),
+                                                 {"i": o.okul_id}).scalar())
+    if not goster:
+        return {"goster": False, "gizli": bool(o.cevrimici_gizli), "toplam": 0, "sinifim": [], "digerleri": [], "kesildi": False}
     satir = _cevrimici(db, o.okul_id, haric_id=o.id)
     sinifim = [s for s in satir if o.sinif and s.sinif == o.sinif and (s.sube or "") == (o.sube or "")]
     digerleri = [s for s in satir if s not in sinifim]
     kalan = max(0, LISTE_EN_FAZLA - len(sinifim))
     f = lambda s: {"ad": _kisa_ad(s.ad_soyad), "sinif": _sinif_metni(s.sinif, s.sube)}
-    return {"gizli": bool(o.cevrimici_gizli), "toplam": len(satir),
+    return {"goster": True, "gizli": bool(o.cevrimici_gizli), "toplam": len(satir),
             "sinifim": [f(s) for s in sinifim[:LISTE_EN_FAZLA]], "digerleri": [f(s) for s in digerleri[:kalan]],
             "kesildi": len(sinifim) + len(digerleri) > LISTE_EN_FAZLA}
 

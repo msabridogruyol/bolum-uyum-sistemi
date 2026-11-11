@@ -42,9 +42,10 @@ export default function CevrimiciPanel({ kapsam = 'ogrenci', okulId = null }) {
     return () => document.removeEventListener('keydown', kapat)
   }, [acik])
 
-  if (!veri) return null
-  const toplam = veri.toplam || 0
   const ogrenci = kapsam === 'ogrenci'
+  // [2026-11-11] Öğrencide liste okul ayarıyla açılır (varsayılan kapalı); "buradayım" sinyali yine gider.
+  if (!veri || (ogrenci && veri.goster === false)) return null
+  const toplam = veri.toplam || 0
 
   return (
     <div className="cv-kap" data-sozluk-yok>
