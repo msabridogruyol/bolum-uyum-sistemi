@@ -250,7 +250,7 @@ def okul_istatistik_verisi(db: Session, okul_id: int, sinif: str | None = None, 
     huni = [{"ad": "Hesabı açılan", "deger": toplam}, {"ad": "Giriş yaptı", "deger": giris_huni},
             {"ad": "Teste başladı", "deger": baslayan}]
     huni += [{"ad": f"{kod} tamamlandı", "deger": katman_tamam.get(kod, 0)} for kod, _ in katmanlar]
-    huni += [{"ad": "K5 tamamlandı", "deger": k5_tamam}, {"ad": "Hedef bölüm seçti", "deger": hedef_secen}]
+    huni += [{"ad": "B5 tamamlandı", "deger": k5_tamam}, {"ad": "Hedef bölüm seçti", "deger": hedef_secen}]
     if kocluk_acik:
         huni.append({"ad": "Koçluk adımı tamamladı", "deger": len(adim_ogr)})
     gruplar = defaultdict(Counter)
@@ -532,7 +532,7 @@ def istatistik_xlsx(v: dict, okul_adi: str) -> bytes:
         ["Öğrenci", k["ogrenci"]], ["Giriş yapan (hiç)", k["giris_yapan"]], ["Son 7 gün aktif", k["aktif_7"]],
         ["Aralıkta giriş yapan", k["aralikta_giris"]], ["Teste başlayan", k["teste_baslayan"]],
         ["Testi tamamlayan", k["tamamlayan"]], ["Tamamlama oranı (%)", k["tamamlama_orani"]],
-        ["K5 (iş türü soruları) tamamlayan", k["k5_tamamlayan"]], ["Hedef bölüm seçen", k["hedef_secen"]],
+        ["B5 (iş türü soruları) tamamlayan", k["k5_tamamlayan"]], ["Hedef bölüm seçen", k["hedef_secen"]],
         ["Ortalama güven puanı", k["ort_guven"]], ["Son değerlendirmesi doğrulanamayan öğrenci", k["gecersiz_tur"]],
         *([["Koçlukta aktif öğrenci (aralıkta)", k["kocluk_aktif"]]] if k.get("kocluk_aktif") is not None else []),
     ], ust)
@@ -546,8 +546,8 @@ def istatistik_xlsx(v: dict, okul_adi: str) -> bytes:
     pr = v["profil"]
     kodlar = [x["kod"] for x in pr["katmanlar"]]
     if pr["katman_ort"]:
-        _sayfa(wb, "Katman ortalamaları", ["Kapsam"] + kodlar, [[g["ad"]] + [g["degerler"].get(c) for c in kodlar] for g in pr["katman_ort"]])
-        _sayfa(wb, "Şube × katman", ["Şube"] + kodlar, [[g["ad"]] + [g["degerler"].get(c) for c in kodlar] for g in pr["sube_katman"]])
+        _sayfa(wb, "Boyut ortalamaları", ["Kapsam"] + kodlar, [[g["ad"]] + [g["degerler"].get(c) for c in kodlar] for g in pr["katman_ort"]])
+        _sayfa(wb, "Şube × boyut", ["Şube"] + kodlar, [[g["ad"]] + [g["degerler"].get(c) for c in kodlar] for g in pr["sube_katman"]])
         _sayfa(wb, "Özellikler", ["Öne çıkanlar", "Katman", "Ortalama", "", "En az öne çıkanlar", "Katman", "Ortalama"],
                [[*(lambda a: [a["ad"], a["katman"], a["ortalama"]] if a else ["", "", ""])(pr["guclu"][i] if i < len(pr["guclu"]) else None), "",
                  *(lambda a: [a["ad"], a["katman"], a["ortalama"]] if a else ["", "", ""])(pr["zayif"][i] if i < len(pr["zayif"]) else None)]
@@ -559,7 +559,7 @@ def istatistik_xlsx(v: dict, okul_adi: str) -> bytes:
             for i in range(max(len(b["ilk_oneri"]), len(b["hedef"])))],
            f"Hedefi ilk 10 önerisinde olan: {b['uyum']['ilk10']} / {b['uyum']['hedefli_tamamlayan']} (%{b['uyum']['oran'] or 0})")
     if b["k5_alan"]:
-        _sayfa(wb, "K5 iş türleri", ["En çok öne çıkan iş türü", "Öğrenci"], [[a["ad"], a["deger"]] for a in b["k5_alan"]])
+        _sayfa(wb, "B5 iş türleri", ["En çok öne çıkan iş türü", "Öğrenci"], [[a["ad"], a["deger"]] for a in b["k5_alan"]])
     if b.get("simulasyon"):
         _sayfa(wb, "Simülasyonlar", ["Meslek", "Simülasyon", "Öğrenci", "Ortalama keyif"],
                [[s["ad"], s["deger"], s["ogrenci"], s["keyif"]] for s in b["simulasyon"]])

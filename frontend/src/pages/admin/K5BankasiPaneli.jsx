@@ -25,7 +25,7 @@ export default function K5BankasiPaneli() {
   const [veri, setVeri] = useState(null)
   const [hata, setHata] = useState(null)
   const [arama, setArama] = useState('')
-  const yukle = () => api.k5BankasiGetir().then(setVeri).catch((e) => setHata(e.detail || 'K5 bankası yüklenemedi.'))
+  const yukle = () => api.k5BankasiGetir().then(setVeri).catch((e) => setHata(e.detail || 'B5 bankası yüklenemedi.'))
   useEffect(() => { yukle() }, [])
 
   const isTurleri = useMemo(() => {
@@ -41,9 +41,9 @@ export default function K5BankasiPaneli() {
   return (
     <div>
       <div className="card" style={{ marginBottom: 14 }}>
-        <div className="ct">K5 — iş türü soru bankası</div>
+        <div className="ct">B5 — iş türü soru bankası</div>
         <div className="ps" style={{ margin: 0 }}>
-          K5 soruları her öğrenciye özel üretilir: K1-K4 uyumu ≥ 70 olan bölümlerin (en fazla 20) bağlı iş türlerinin
+          B5 soruları her öğrenciye özel üretilir: B1-B4 uyumu ≥ 70 olan bölümlerin (en fazla 20) bağlı iş türlerinin
           cümleleri aşağıdaki köklerle birleştirilir. {veri.is_turleri.length} iş türü · {cumleSayisi} aktif cümle ·
           {' '}{veri.kokler.filter((k) => k.aktif_mi).length} aktif kök. Metin değişikliği yalnızca bundan sonra üretilecek
           soruları etkiler; öğrencinin başlamış turundaki sorular değişmez.

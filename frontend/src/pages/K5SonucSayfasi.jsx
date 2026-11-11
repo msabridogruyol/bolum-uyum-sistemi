@@ -12,7 +12,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.k5Durumu().then(setK5Durum).catch((e) => setHata(e.detail || 'K5 durumu alınamadı.'))
+    api.k5Durumu().then(setK5Durum).catch((e) => setHata(e.detail || 'B5 durumu alınamadı.'))
     api.katmanSonucuGetir('K5').then(setSonuc).catch(() => setSonuc(null))
   }, [])
 
@@ -30,7 +30,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
       <div className="ph">
         <div className="pt">İş Türü Tercihleri — Sonuçların</div>
         <div className="ps">
-          İlk dört katmanda sana en uygun çıkan bölümler, bu bölümlerde yapılan işlerle ilgili sorularla kendi aralarında
+          İlk dört boyutta sana en uygun çıkan bölümler, bu bölümlerde yapılan işlerle ilgili sorularla kendi aralarında
           karşılaştırılır. Burada hangi işleri daha çok seçtiğini görürsün.
         </div>
       </div>
@@ -56,7 +56,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
               <div className="taslak-onizleme-overlay">
                 <div className="to-ikon">🌻</div>
                 <div className="to-metin">
-                  İlk dört katmanı bitirince sana özel iş türü soruları açılır; sonuçların burada görünecek.
+                  İlk dört boyutu bitirince sana özel iş türü soruları açılır; sonuçların burada görünecek.
                 </div>
               </div>
             </div>
@@ -87,7 +87,7 @@ export default function K5SonucSayfasi({ gomulu = false }) {
               </div>
               <div className="ps" style={{ margin: 0 }}>
                 Puan 0-100 arasıdır; 50 bu işi ne öne çıkardığını ne de geri plana attığını gösterir. Bu tercihler yalnızca sana en
-                uygun çıkan bölümlerin kendi aralarındaki sırasını değiştirebilir; asıl belirleyici ilk dört katmandır.
+                uygun çıkan bölümlerin kendi aralarındaki sırasını değiştirebilir; asıl belirleyici ilk dört boyuttur.
               </div>
             </>
           )}

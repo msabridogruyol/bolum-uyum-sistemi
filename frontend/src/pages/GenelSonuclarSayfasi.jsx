@@ -17,7 +17,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail || 'Katmanlar yüklenemedi.'))
+    api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail || 'Boyutlar yüklenemedi.'))
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum({ acilan: [], ilgi_gosterilen: [] }))
     api.durumOzetiGetir().then(setOzet).catch(() => setOzet(null))
   }, [])
@@ -76,18 +76,18 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
       <div className="ph" style={gomulu ? { display: 'none' } : undefined}>
         <div className="pt">Genel Sonuçlar</div>
         <div className="ps">
-          Tüm katmanların özet profili · {tamamlanan}/{sayilan.length} katman tamamlandı
+          Tüm boyutların özet profili · {tamamlanan}/{sayilan.length} boyut tamamlandı
         </div>
       </div>
       {!gomulu && <GecersizTurUyarisi ozet={ozet} />}
 
       {k5Bekliyor && (
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)', marginBottom: 16 }}>
-          <div className="ct">Bir adım kaldı: İş Türü Soruları (K5)</div>
+          <div className="ct">Bir adım kaldı: İş Türü Soruları (B5)</div>
           <div className="ps" style={{ margin: '0 0 12px' }}>
             Sana en uygun çıkan bölümleri karşılaştıran, sana özel iş türü soruları açıldı. Bu soruları bitirince bölüm önerilerin hazırlanacak.
           </div>
-          <button className="btn" onClick={() => navigate('/katmanlar')}>K5'e Devam Et →</button>
+          <button className="btn" onClick={() => navigate('/katmanlar')}>B5'e Devam Et →</button>
         </div>
       )}
 
@@ -137,7 +137,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
             <div className="taslak-onizleme-overlay">
               <div className="to-ikon">📊</div>
               <div className="to-metin">
-                K1–K4'ün hepsini bitirince güçlü yönlerin, önem verdiğin değerler ve gelişime açık yönlerin burada görünecek. Şu an {tamamlanan}/{sayilan.length} katman tamamlandı.
+                B1–B4'ün hepsini bitirince güçlü yönlerin, önem verdiğin değerler ve gelişime açık yönlerin burada görünecek. Şu an {tamamlanan}/{sayilan.length} boyut tamamlandı.
               </div>
             </div>
           </div>
@@ -205,7 +205,7 @@ export default function GenelSonuclarSayfasi({ gomulu = false }) {
       )}
 
       {k5Bekliyor ? (
-        <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>İş Türü Sorularına (K5) Devam Et →</button>
+        <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/katmanlar')}>İş Türü Sorularına (B5) Devam Et →</button>
       ) : !gomulu && (
         <button className="btn full" style={{ marginTop: 16 }} onClick={() => navigate('/')}>Ana Sayfaya Dön</button>
       )}

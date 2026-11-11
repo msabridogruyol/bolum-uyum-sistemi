@@ -187,7 +187,7 @@ def ogrenci_yaniti(db: Session, yon, kayitlar: list[G.OgrenciKaydi]) -> dict:
         elif r.tur_durum == "tamamlandi":
             deg = "değerlendirmeyi tamamladı"
         else:
-            deg = f"değerlendirmede {r.biten or 0} katman tamamlandı"
+            deg = f"değerlendirmede {r.biten or 0} boyut tamamlandı"
         giris = (f"son giriş {r.son_giris_zamani.strftime('%d.%m.%Y')}" if r is not None and r.son_giris_zamani else "henüz giriş yapmadı")
         sinif = " ".join(x for x in (k.sinif, f"({k.sube})" if k.sube else None) if x)
         bilgi = " · ".join(x for x in (sinif or None, (k.okul_ad or "okul harici") if yon.rol == R.SUPER else None,

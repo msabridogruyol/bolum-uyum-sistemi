@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef } from 'react'
 import K5BankasiPaneli from './K5BankasiPaneli'
 import { api } from '../../api/client'
 import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
+import { boyutKodu } from '../../yardimci/katmanAdlari'   // [2026-11-11] K1–K5 → B1–B5 gösterimi
 
 const KATMAN_ID = { K1: 1, K2: 2, K3: 3, K4: 4, K5: 5 }
 const KATMAN_ADI = {
@@ -345,7 +346,7 @@ function YeniSoruFormu({ onEklendi }) {
       <form onSubmit={gonder}>
         <div style={{ display: 'flex', gap: 10, marginBottom: 14 }}>
           <div style={{ flex: 1 }}>
-            <label className="auth-label">Katman</label>
+            <label className="auth-label">Boyut</label>
             <Secim className="auth-input" value={katmanKod} onChange={(e) => setKatmanKod(e.target.value)}>
               {Object.keys(KATMAN_ID).map((k) => <option key={k} value={k}>{KATMAN_ADI[k]}</option>)}
             </Secim>
@@ -521,7 +522,7 @@ function SoruKarti({ soru, sira, onGuncelle }) {
         </div>
         <div style={{ flex: 1 }}>
           <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 6 }}>
-            <span className="bdg bdg-prog">{soru.katman_kod}</span>
+            <span className="bdg bdg-prog">{boyutKodu(soru.katman_kod)}</span>
             {soru.dal_adi && <span className="bdg" style={{ background: 'var(--tll)', color: 'var(--tl)' }}>{soru.dal_adi}</span>}
             <span className="bdg bdg-lock">{{likert:'Likert', sjt:'SJT', kutup:'Kutup', kontrol:'Kontrol'}[soru.soru_tipi] || soru.soru_tipi}</span>
             {soru.degisken_adi && <span className="bdg bdg-lock">{soru.b_ucu_degisken_adi ? 'A: ' : ''}{soru.degisken_adi}</span>}
@@ -680,7 +681,7 @@ export default function SorularSayfasi() {
   }
 
   async function katmaniSil() {
-    if (silmeYazisi.trim() !== aktifKatman) return
+    if (silmeYazisi.trim().toUpperCase() !== boyutKodu(aktifKatman)) return
     setSiliniyor(true)
     setHata(null)
     try {
@@ -700,7 +701,7 @@ export default function SorularSayfasi() {
     <div className="pg pg-genis">
       <div className="ph">
         <div className="pt">Soru Bankası</div>
-        <div className="ps">Her katmanın kendi sekmesi altında; arayıp, filtreleyip, doğrudan düzenleyebilirsiniz.</div>
+        <div className="ps">Her boyutun kendi sekmesi altında; arayıp, filtreleyip, doğrudan düzenleyebilirsiniz.</div>
       </div>
       {hata && <div className="auth-error">{hata}</div>}
 
@@ -718,7 +719,7 @@ export default function SorularSayfasi() {
               marginBottom: -1.5, transition: 'all .12s',
             }}
           >
-            {k} — {KATMAN_ADI[k]}
+            {boyutKodu(k)} — {KATMAN_ADI[k]}
           </button>
         ))}
       </div>
@@ -767,7 +768,7 @@ export default function SorularSayfasi() {
           style={{ color: 'var(--re)', borderColor: 'var(--re)' }}
           onClick={() => setAktifSekme((s) => (s === 'sil' ? null : 'sil'))}
         >
-          {aktifSekme === 'sil' ? 'Kapat' : `🗑 ${aktifKatman}'i Komple Sil`}
+          {aktifSekme === 'sil' ? 'Kapat' : `🗑 ${boyutKodu(aktifKatman)}'i Komple Sil`}
         </button>
       </div>
 
@@ -783,16 +784,16 @@ export default function SorularSayfasi() {
       )}
       {aktifKatman !== 'K5' && aktifSekme === 'sil' && (
         <div className="card" style={{ marginBottom: 20, borderColor: 'var(--re)', background: 'var(--rel)' }}>
-          <div className="ct" style={{ color: 'var(--re)' }}>⚠️ {aktifKatman} Katmanını Komple Sil</div>
+          <div className="ct" style={{ color: 'var(--re)' }}>⚠️ {boyutKodu(aktifKatman)} Boyutunu Komple Sil</div>
           <div className="ps" style={{ margin: '0 0 12px' }}>
-            Bu işlem <b>{aktifKatman}</b> katmanındaki <b>tüm soruları, şıkları ve o sorulara verilmiş
-            öğrenci cevaplarını kalıcı olarak siler</b> — geri alınamaz. Diğer katmanlara dokunmaz.
-            Devam etmek için aşağıya <b>{aktifKatman}</b> yazın:
+            Bu işlem <b>{boyutKodu(aktifKatman)}</b> boyutundaki <b>tüm soruları, şıkları ve o sorulara verilmiş
+            öğrenci cevaplarını kalıcı olarak siler</b> — geri alınamaz. Diğer boyutlara dokunmaz.
+            Devam etmek için aşağıya <b>{boyutKodu(aktifKatman)}</b> yazın:
           </div>
           <div style={{ margin: '0 0 12px', padding: '10px 12px', borderRadius: 8, background: 'var(--sur)', border: '1px solid var(--re)', fontSize: 13 }}>
             {!silmeOzeti ? 'Silinecek kayıtlar sayılıyor…'
               : silmeOzeti.hata ? 'Silinecek kayıt sayısı alınamadı.'
-              : silmeOzeti.soru_sayisi === 0 ? <>Bu katmanda silinecek soru yok.</>
+              : silmeOzeti.soru_sayisi === 0 ? <>Bu boyutta silinecek soru yok.</>
               : <>Silinecek: <b>{silmeOzeti.soru_sayisi} soru</b> ve <b style={{ color: 'var(--re)' }}>{silmeOzeti.cevap_sayisi} öğrenci cevabı</b>
                   {silmeOzeti.etkilenen_ogrenci_sayisi > 0 && <> ({silmeOzeti.etkilenen_ogrenci_sayisi} öğrenci)</>}.
                   {silmeOzeti.cevap_sayisi > 0 && <> Bu cevaplar kalıcı silinir; cevapları korumak için soruları silmek yerine pasife alın.</>}</>}
@@ -803,16 +804,16 @@ export default function SorularSayfasi() {
               style={{ width: 160 }}
               value={silmeYazisi}
               onChange={(e) => setSilmeYazisi(e.target.value)}
-              placeholder={aktifKatman}
+              placeholder={boyutKodu(aktifKatman)}
               autoComplete="off"
             />
             <button
               className="btn"
               style={{ background: 'var(--re)', borderColor: 'var(--re)' }}
-              disabled={silmeYazisi.trim() !== aktifKatman || siliniyor || !silmeOzeti || silmeOzeti.hata || silmeOzeti.soru_sayisi === 0}
+              disabled={silmeYazisi.trim().toUpperCase() !== boyutKodu(aktifKatman) || siliniyor || !silmeOzeti || silmeOzeti.hata || silmeOzeti.soru_sayisi === 0}
               onClick={katmaniSil}
             >
-              {siliniyor ? <span className="spin" /> : `Evet, ${aktifKatman}'i Sil`}
+              {siliniyor ? <span className="spin" /> : `Evet, ${boyutKodu(aktifKatman)}'i Sil`}
             </button>
           </div>
         </div>

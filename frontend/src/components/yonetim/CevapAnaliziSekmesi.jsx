@@ -9,6 +9,7 @@ import { api } from '../../api/client'
 import { tarih } from './ortak'
 import { gelisimeAcikMi, gucluMu } from '../../yardimci/seviye'
 import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
+import { boyutKodu } from '../../yardimci/katmanAdlari'   // [2026-11-11] K1–K5 → B1–B5 gösterimi
 
 // [2026-10-10] Özellik puanı bantları (Güçlü 62+, Gelişime açık 40 altı)
 const renk = (p) => (p == null ? 'var(--tx3)' : gucluMu(p) ? 'var(--gr)' : gelisimeAcikMi(p) ? 'var(--re)' : 'var(--tx2)')
@@ -33,7 +34,7 @@ const kisaAd = (ad) => {
 function KatkiCip({ k, onTik }) {
   return (
     <button className="ca-katki" style={{ background: zemin(k.puan), color: renk(k.puan) }} onClick={() => onTik?.(k.id)}
-      title={`${k.ad} (${k.katman}) — bu cevabın katkısı: ${sayi(k.puan)} / 100`}>
+      title={`${k.ad} (${boyutKodu(k.katman)}) — bu cevabın katkısı: ${sayi(k.puan)} / 100`}>
       <b>{k.kod}</b> {k.ad} <span>{sayi(k.puan, 0)}</span>
     </button>
   )
@@ -45,7 +46,7 @@ function CevapKarti({ c, onOzellik }) {
     <div className="ca-cevap">
       <div className="ca-cevap-ust">
         <span className="ca-no">#{c.sira}</span>
-        <span className="ca-etiket">{c.katman}</span>
+        <span className="ca-etiket">{boyutKodu(c.katman)}</span>
         <span className="ca-etiket">{c.tip_ad}{encok ? ' · en çok / en az' : ''}{c.ters ? ' · ters kodlu' : ''}</span>
         <span className="yp-ince" style={{ marginLeft: 'auto' }}>{tarih(c.zaman)}</span>
       </div>
@@ -124,7 +125,7 @@ function UyumMatrisi({ m, kip, setKip, onOzellik, bolumListesi, onBolumEkle, onV
           <thead>
             <tr>
               <th className="ca-m-ozellik">Özellik</th>
-              <th title="Öğrencinin bu özellikteki değeri (katman içi ölçek, 50 = profilinin ortası)">Öğrenci</th>
+              <th title="Öğrencinin bu özellikteki değeri (boyut içi ölçek, 50 = profilinin ortası)">Öğrenci</th>
               {m.bolumler.map((b) => (
                 <th key={b.bolum_id} className={b.hedef ? 'hedef' : ''} title={b.bolum}>
                   <span className="ca-m-sira">{b.sira}.</span> {kisaAd(b.bolum)}
@@ -181,7 +182,7 @@ function NedenDokumu({ m, onOzellik }) {
         <span className="ca-etki-uyum">%{sayi(b.uyum, 0)}</span>
       </div>
       {b.k5_katkisi != null && (
-        <div className="yp-ince" style={{ marginBottom: 8 }}>K5 (iş türü soruları) etkisi: <b>{isaretli(b.k5_katkisi, 1)}</b> puan (özellik katkılarına ek olarak)</div>
+        <div className="yp-ince" style={{ marginBottom: 8 }}>B5 (iş türü soruları) etkisi: <b>{isaretli(b.k5_katkisi, 1)}</b> puan (özellik katkılarına ek olarak)</div>
       )}
       <div className="ca-etki-iki">
         {[['Puanı yükselten', b.yukselten, 'var(--gr)'], ['Puanı düşüren', b.dusuren, 'var(--re)']].map(([baslik, l, r]) => (

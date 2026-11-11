@@ -59,7 +59,7 @@ def kutup_sorularini_toplu_yukle(
     for i, satir in enumerate(istek.satirlar, start=1):
         katman = db.query(Katman).filter(Katman.kod == satir.katman_kod).first()
         if katman is None:
-            hatalar.append(f"Satır {i}: katman bulunamadı ({satir.katman_kod})")
+            hatalar.append(f"Satır {i}: boyut bulunamadı ({satir.katman_kod})")
             continue
 
         a_degisken = db.query(Degisken).filter(Degisken.kod == satir.a_degisken_kod).first()

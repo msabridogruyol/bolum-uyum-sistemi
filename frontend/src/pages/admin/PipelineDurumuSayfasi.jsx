@@ -312,7 +312,7 @@ function PipelineSayacKarti({ durum }) {
         </ul>
       )}
       <div className="yp-ince" style={{ marginBottom: 6 }}>
-        Canlıya alma: bölüm profilleri {tarih(s.canliya_alma.bolum_profili)} · K5 bağları {tarih(s.canliya_alma.k5_baglari)} ·
+        Canlıya alma: bölüm profilleri {tarih(s.canliya_alma.bolum_profili)} · B5 bağları {tarih(s.canliya_alma.k5_baglari)} ·
         örnek meslekler {tarih(s.canliya_alma.ornek_meslekler)}
       </div>
       {(s.durum === 'gerekli' || s.durum === 'yaklasiyor') && (
@@ -604,8 +604,8 @@ export default function PipelineDurumuSayfasi() {
       )}
 
       <div style={{ marginTop: 20 }}>
-        <VeriAdimKarti no={2} tur="k5_baglari" baslik="K5 iş türü bağları" dosyaYolu={CIKTI.k5}
-          aciklama="Her bölümün hangi iş türlerine bağlı olduğu (K5 soruları ve küme içi sıralama bu bağlarla çalışır)." />
+        <VeriAdimKarti no={2} tur="k5_baglari" baslik="B5 iş türü bağları" dosyaYolu={CIKTI.k5}
+          aciklama="Her bölümün hangi iş türlerine bağlı olduğu (B5 soruları ve küme içi sıralama bu bağlarla çalışır)." />
         <VeriAdimKarti no={3} tur="ornek_meslekler" baslik="Örnek meslekler" dosyaYolu={CIKTI.ornek}
           aciklama="Bölüm sayfasında ve Karşılaştır'da görünen örnek meslek listeleri (bölüm başına en fazla 5)." />
       </div>

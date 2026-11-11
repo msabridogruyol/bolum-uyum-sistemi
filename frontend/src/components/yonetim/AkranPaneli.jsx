@@ -15,7 +15,7 @@ function BenzerlikCubugu({ deger }) {
 function EtikNot() {
   return (
     <div className="ak-not">
-      Benzerlik, K1–K4 sonuçlarının okul ortalamasına göre <b>aynı yönde ayrışmasıdır</b> (%50 = ilişkisiz, %100 = çok benzer).
+      Benzerlik, B1–B4 sonuçlarının okul ortalamasına göre <b>aynı yönde ayrışmasıdır</b> (%50 = ilişkisiz, %100 = çok benzer).
       Yalnızca rehberlik amaçlıdır: öğrenciye "şuna benziyorsun" şeklinde paylaşılmamalı, şube kararında tek ölçüt olmamalıdır.
     </div>
   )
@@ -201,7 +201,7 @@ function AdayDetay({ aday, okulId, onAtandi }) {
       </div>
       {hata && <div className="auth-error">{hata}</div>}
       {!v && !hata && <div className="bos-durum">Hesaplanıyor…</div>}
-      {v?.durum === 'profil_yok' && <div className="bos-durum">Aday henüz testi çözmedi. K1 ve K2 tamamlanınca şube uyumu görünür.</div>}
+      {v?.durum === 'profil_yok' && <div className="bos-durum">Aday henüz testi çözmedi. B1 ve B2 tamamlanınca şube uyumu görünür.</div>}
       {v?.durum === 'tamam' && (
         <>
           {(v.tamamlanmamis || v.dusuk_guven) && <div className="yp-uyari">{v.tamamlanmamis ? 'Test tamamlanmadı; sonuç ön bilgidir. ' : ''}{v.dusuk_guven ? 'Güven puanı düşük.' : ''}</div>}

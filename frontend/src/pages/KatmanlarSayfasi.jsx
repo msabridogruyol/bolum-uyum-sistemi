@@ -44,7 +44,7 @@ export default function KatmanlarSayfasi() {
   const navigate = useNavigate()
 
   useEffect(() => {
-    api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail || 'Katmanlar yüklenemedi.'))
+    api.katmanlariListele().then(setKatmanlar).catch((e) => setHata(e.detail || 'Boyutlar yüklenemedi.'))
     api.k5Durumu().then(setK5Durum).catch(() => setK5Durum(null))
     api.aktifHedefGetir().then(setHedef).catch(() => setHedef(null))
     api.profilGetir().then(setProfil).catch(() => {})
@@ -258,19 +258,19 @@ export default function KatmanlarSayfasi() {
             <div className="ct">💛 Seni Motive Eden</div>
             {enGucluDeger ? (
               <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.65 }}>
-                Değerler katmanına göre senin için en önemli şey: <b style={{ color: 'var(--tx)' }}>{enGucluDeger.degisken_adi}</b>.
+                Değerler boyutuna göre senin için en önemli şey: <b style={{ color: 'var(--tx)' }}>{enGucluDeger.degisken_adi}</b>.
                 {' '}{profilYuzde === 100 ? 'Bölümler sayfasında bunu sağlayabilecek bölümleri görebilirsin.' : 'Değerlendirmeyi bitirince bunu sağlayabilecek bölümleri bulabilirsin.'}
               </div>
             ) : (
               <div className="taslak-onizleme">
                 <div className="taslak-onizleme-icerik">
                   <div style={{ fontSize: 13, color: 'var(--tx2)', lineHeight: 1.65 }}>
-                    Değerler katmanına göre senin için en önemli şey: <b>Anlam / yaşam amacı</b>.
+                    Değerler boyutuna göre senin için en önemli şey: <b>Anlam / yaşam amacı</b>.
                     {' '}Değerlendirmeyi bitirince bunu sağlayabilecek bölümleri bulabilirsin.
                   </div>
                 </div>
                 <div className="taslak-onizleme-overlay">
-                  <div className="to-metin" style={{ fontSize: 11.5 }}>K1'i bitirince seni motive eden şey burada görünecek</div>
+                  <div className="to-metin" style={{ fontSize: 11.5 }}>B1'i bitirince seni motive eden şey burada görünecek</div>
                 </div>
               </div>
             )}

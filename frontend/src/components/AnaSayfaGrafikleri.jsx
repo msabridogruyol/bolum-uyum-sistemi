@@ -79,19 +79,19 @@ export default function AnaSayfaGrafikleri({ katmanVerisi, gucluYonler, siralama
       </div>
       <div className="gr-satir">
         <div className="gr-panel">
-          <div className="gr-baslik">Katmanlara göre profilin</div>
-          <div className="gr-alt">Her katmandaki özelliklerinin ortalaması (0–100)</div>
+          <div className="gr-baslik">Boyutlara göre profilin</div>
+          <div className="gr-alt">Her boyuttaki özelliklerinin ortalaması (0–100)</div>
           <KatmanSutunlari veriler={katmanVerisi} />
         </div>
         <div className="gr-panel">
           <div className="gr-baslik">En güçlü yönlerin</div>
-          <div className="gr-alt">Tüm katmanlarda en yüksek puanlı 6 özelliğin</div>
-          {gucluYonler.length ? <YatayCubuklar satirlar={gucluYonler} renk="var(--gr)" /> : <div className="gr-bos">Katmanları tamamladıkça burada görünecek</div>}
+          <div className="gr-alt">Tüm boyutlarda en yüksek puanlı 6 özelliğin</div>
+          {gucluYonler.length ? <YatayCubuklar satirlar={gucluYonler} renk="var(--gr)" /> : <div className="gr-bos">Boyutları tamamladıkça burada görünecek</div>}
         </div>
         <div className="gr-panel">
           <div className="gr-baslik">Bölüm uyum sıralaman</div>
           <div className="gr-alt">Sana en uygun 10 bölüm ve aralarındaki fark</div>
-          {siralama?.length ? <UyumSiralamasi siralama={siralama} onTik={onBolumAc} /> : <div className="gr-bos">K1–K4 bitince bölüm uyumların burada görünecek</div>}
+          {siralama?.length ? <UyumSiralamasi siralama={siralama} onTik={onBolumAc} /> : <div className="gr-bos">B1–B4 bitince bölüm uyumların burada görünecek</div>}
         </div>
       </div>
     </div>

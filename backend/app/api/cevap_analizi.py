@@ -42,7 +42,7 @@ TIP_ADI = {"likert": "Likert", "sjt": "Durum sorusu", "kutup": "İki uç", "kont
 OKUMA_NOTU = ("Uyum puanı göreli: tüm bölümler içinde öğrencinin profiline yakınlık (100 = en yakın, 0 = en uzak). "
               "Katkı = bu özellik olmasaydı puan ne kadar değişirdi (artı: yükseltiyor, eksi: düşürüyor); katkı da göreli "
               "olduğundan, farkı olan bir özellik öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan daha yakınsa artı çıkabilir. "
-              "Fark = öğrenci − bölüm beklentisi (katman içi ölçek, yönsüz): |fark| < 5 uyumlu, 5–15 fazla / eksik, 15+ belirgin fazla / belirgin eksik. "
+              "Fark = öğrenci − bölüm beklentisi (boyut içi ölçek, yönsüz): |fark| < 5 uyumlu, 5–15 fazla / eksik, 15+ belirgin fazla / belirgin eksik. "
               "Fazla olmak da uyumsuzluktur, avantaj sayılmaz; duygusal hassasiyette (P4) yalnızca fazlası fark sayılır.")
 
 

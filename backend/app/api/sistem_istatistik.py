@@ -393,8 +393,8 @@ def istatistik_verisi(db: Session, donem: str = "30", okul_id: int | None = None
         {"ad": "Hesap açıldı", "deger": n},
         {"ad": "Giriş yaptı", "deger": sum(1 for r in ogr if r["giris"])},
         {"ad": "Teste başladı", "deger": sum(1 for r in ogr if r["basladi"] or r["tamamladi"])},
-        {"ad": "K1–K4 tamamladı", "deger": tamamlayan},
-        {"ad": "K5 tamamladı", "deger": sum(1 for r in ogr if r["k5"])},
+        {"ad": "B1–B4 tamamladı", "deger": tamamlayan},
+        {"ad": "B5 tamamladı", "deger": sum(1 for r in ogr if r["k5"])},
         {"ad": "Hedef seçti", "deger": kpi["hedef"]},
         {"ad": "Koçlukta ≥1 adım", "deger": sum(1 for r in ogr if r["kocluk"])},
     ]
@@ -495,9 +495,9 @@ def istatistik_xlsx(v: dict) -> bytes:
                 [[x, z["yeni_hesap"][i], z["giris"][i], z["tur"][i]] for i, x in enumerate(z["x"])])
     _xlsx_sayfa(wb, "Huni", ["Adım", "Öğrenci", "İlk adıma göre (%)"],
                 [[h["ad"], h["deger"], _oran(h["deger"], v["huni"][0]["deger"])] for h in v["huni"]], "Güncel durum (dönemden bağımsız).")
-    _xlsx_sayfa(wb, "Katman puanları", ["Katman", "Ortalama", "Öğrenci"],
+    _xlsx_sayfa(wb, "Boyut puanları", ["Katman", "Ortalama", "Öğrenci"],
                 [[x["kod"], gz(x["ortalama"]), x["n"]] for x in v["katmanlar"]],
-                "Öğrencinin dönem içindeki son tamamlanmış turu; katman puanı = katmandaki özellik puanlarının ortalaması (0–100).")
+                "Öğrencinin dönem içindeki son tamamlanmış turu; boyut puanı = boyuttaki özellik puanlarının ortalaması (0–100).")
     _xlsx_sayfa(wb, "Önerilen bölümler", ["Bölüm (1. sıra)", "Öğrenci"], [[x["ad"], x["deger"]] for x in v["onerilen"]])
     _xlsx_sayfa(wb, "Hedeflenen bölümler", ["Bölüm", "Hedefleyen", "Yetiyor (70+)", "Sınırda (40–69)", "Yetmiyor (<40)", "Hesaplanmadı"],
                 [[x["ad"], x["deger"], x["yetiyor"], x["sinirda"], x["yetmiyor"], x["yok"]] for x in v["hedeflenen"]])

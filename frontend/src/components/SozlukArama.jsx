@@ -7,6 +7,7 @@ import { Link } from 'react-router-dom'
 import { api } from '../api/client'
 import { useBolumBilgi } from '../context/BolumBilgiContext'
 import { sozlukAra, sozlukDinle, sozlukYukle, sozlukYuklendiMi, toplamTerim } from '../yardimci/sozluk'
+import { boyutKodu } from '../yardimci/katmanAdlari'   // [2026-11-11] K1–K5 → B1–B5 gösterimi
 
 const ONERILER = ['net', 'taban puan', 'başarı sırası', 'TYT', 'güçlü yön', 'KPSS', 'staj', 'brüt maaş']
 
@@ -47,7 +48,7 @@ export function TerimKarti({ t, buyuk = false }) {
   return (
     <div className={`sz-kart${buyuk ? ' buyuk' : ''}${t.tur ? ` ${t.tur}` : ''}`}>
       <div className="sz-ad">{t.tur === 'bolum' ? '🎓 ' : t.tur === 'meslek' ? '💼 ' : ''}{t.ad}</div>
-      <div className="sz-grup">{t.tur === 'ozellik' ? `Değerlendirmede ölçülen özellik${t.katman ? ` · ${t.katman}` : ''}` : t.g}</div>
+      <div className="sz-grup">{t.tur === 'ozellik' ? `Değerlendirmede ölçülen özellik${t.katman ? ` · ${boyutKodu(t.katman)}` : ''}` : t.g}</div>
       <div className="sz-tanim">{uzun && !acik ? `${t.t.slice(0, 240).replace(/\s+\S*$/, '')}…` : t.t}
         {uzun && <button type="button" className="sz-devam" onClick={() => setAcik((v) => !v)}>{acik ? 'kısalt' : 'devamı'}</button>}
       </div>

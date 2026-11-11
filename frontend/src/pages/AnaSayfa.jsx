@@ -89,7 +89,7 @@ export default function AnaSayfa() {
           <div className="pt">Merhaba, {ilkAd} 👋</div>
           <div className="ps">
             {ozet.tur_tamamlandi_mi
-              ? 'Tüm katmanları bitirdin. İşte bölüm uyum profilin.'
+              ? 'Tüm boyutları bitirdin. İşte bölüm uyum profilin.'
               : `Yolculuğunun %${tamamlananYuzde}'ini tamamladın.`}
           </div>
           <div className="as-kimlik" onClick={() => navigate('/profilim')} title="Profilime git">

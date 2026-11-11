@@ -32,7 +32,7 @@ KILIT = 2026110403
 PENCERE_SONU_SAAT = 6          # 03:00'te kaçırılırsa (sunucu kapalıydı) 06:00'ya kadar yine çalışır
 KUYRUK_TURLERI = {
     "pipeline_onay": "Pipeline sonucunu canlıya alma",
-    "katman_agirliklari": "Katman ağırlıklarını değiştirme",
+    "katman_agirliklari": "Boyut ağırlıklarını değiştirme",
     "skor_yeniden_hesap": "Uyum skorlarını yeniden hesaplama",
 }
 _BUYUK_TABLOLAR = ("ogrenci_bolum_uyum_skorlari", "ogrenci_cevaplar", "ogrenci_degisken_skorlari", "ogrenci_dal_uyum_skorlari",

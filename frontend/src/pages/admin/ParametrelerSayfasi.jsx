@@ -1,6 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
 import { useAdminAuth } from '../../context/AdminAuthContext'
 import { api } from '../../api/client'
+import { boyutKodu } from '../../yardimci/katmanAdlari'   // [2026-11-11] K1–K5 → B1–B5 gösterimi
 
 // [2026-10-19] Yeniden değerlendirme sıklığı ayrı kartta düzenlenir (genel listede gösterilmez)
 const SIKLIK_ANAHTARLARI = ['yeniden_degerlendirme_gun_12', 'yeniden_degerlendirme_yillik_hak']
@@ -86,13 +87,13 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
         setKatmanlar(liste)
         setDegerler(Object.fromEntries(liste.map((k) => [k.katman_kod, String(hedef(k))])))
       })
-      .catch((e) => setHata(e.detail || 'Katman ağırlıkları yüklenemedi.'))
+      .catch((e) => setHata(e.detail || 'Boyut ağırlıkları yüklenemedi.'))
   }, [])
 
   useEffect(() => { yukle() }, [yukle])
 
   if (!katmanlar) {
-    return <div className="card" style={{ marginBottom: 20 }}><div className="ct">Katman ağırlıkları</div><div className="ps">{hata || 'Yükleniyor…'}</div></div>
+    return <div className="card" style={{ marginBottom: 20 }}><div className="ct">Boyut ağırlıkları</div><div className="ps">{hata || 'Yükleniyor…'}</div></div>
   }
 
   const sayilar = Object.fromEntries(katmanlar.map((k) => [k.katman_kod, Number(String(degerler[k.katman_kod] ?? '').replace(',', '.'))]))
@@ -128,21 +129,21 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
 
   return (
     <div className="card" style={{ marginBottom: 20 }}>
-      <div className="ct">Katman ağırlıkları</div>
+      <div className="ct">Boyut ağırlıkları</div>
       <div className="ps" style={{ margin: '0 0 12px' }}>
-        Bölüm uyum skorunda her ana katmanın payı (%). Dört değerin toplamı 100 olmalı. Skor motoru bu değerleri doğrudan kullanır.
+        Bölüm uyum skorunda her ana boyutun payı (%). Dört değerin toplamı 100 olmalı. Skor motoru bu değerleri doğrudan kullanır.
       </div>
       {hata && <div className="auth-error">{hata}</div>}
       {mesaj && <div style={{ marginBottom: 10, fontSize: 13, color: 'var(--gr, #15803d)', fontWeight: 600 }}>{mesaj}</div>}
       {bekleyenVar && !mesaj && (
         <div style={{ marginBottom: 10, fontSize: 13, color: 'var(--am, #b45309)', fontWeight: 600 }}>
-          Alanlardaki değerler gece bakımında uygulanacak. Şu an geçerli olan: {katmanlar.map((k) => `${k.katman_kod} %${k.agirlik}`).join(', ')}.
+          Alanlardaki değerler gece bakımında uygulanacak. Şu an geçerli olan: {katmanlar.map((k) => `${boyutKodu(k.katman_kod)} %${k.agirlik}`).join(', ')}.
         </div>
       )}
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 12, alignItems: 'flex-end' }}>
         {katmanlar.map((k) => (
           <label key={k.katman_kod} style={{ display: 'flex', flexDirection: 'column', gap: 4, fontSize: 12, fontWeight: 600 }}>
-            <span title={k.ad}>{k.katman_kod} · {k.ad}</span>
+            <span title={k.ad}>{boyutKodu(k.katman_kod)} · {k.ad}</span>
             <input
               className="auth-input"
               style={{ width: 110, borderColor: gecersiz.includes(k) ? 'var(--re)' : undefined }}
@@ -168,7 +169,7 @@ function KatmanAgirliklariKarti({ duzenlenebilir }) {
         <div style={{ marginTop: 12, padding: '10px 12px', borderRadius: 8, border: '1px solid var(--re)', background: 'var(--rel)' }}>
           <div style={{ fontSize: 13, marginBottom: 10 }}>
             <b>Bu değişiklik tüm öğrencilerin bölüm sıralamasını etkiler.</b> Yeni değerler:{' '}
-            {katmanlar.map((k) => `${k.katman_kod} %${sayilar[k.katman_kod]}`).join(', ')}. Emin misiniz?
+            {katmanlar.map((k) => `${boyutKodu(k.katman_kod)} %${sayilar[k.katman_kod]}`).join(', ')}. Emin misiniz?
           </div>
           <div style={{ display: 'flex', gap: 10 }}>
             <button className="btn" style={{ background: 'var(--re)', borderColor: 'var(--re)' }} disabled={!kaydedilebilir} onClick={kaydet}>

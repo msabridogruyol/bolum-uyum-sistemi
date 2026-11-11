@@ -67,14 +67,14 @@ function SenaryoPenceresi({ ogrenci, bolumler, onKapat, onTamam }) {
         <label>Aşama
           <Secim className="yp-sec" value={f.asama} onChange={d('asama')}>
             <option value="baslamadi">Hiç başlamadı</option>
-            <option value="k1">K1 bitti</option>
-            <option value="k2">K1–K2 bitti</option>
-            <option value="k3">K1–K3 bitti</option>
-            <option value="k5_bekliyor">K1–K4 bitti, iş türü soruları (K5) bekliyor</option>
+            <option value="k1">B1 bitti</option>
+            <option value="k2">B1–B2 bitti</option>
+            <option value="k3">B1–B3 bitti</option>
+            <option value="k5_bekliyor">B1–B4 bitti, iş türü soruları (B5) bekliyor</option>
             <option value="tamamlandi">Değerlendirme tamamlandı (sonuçlar hazır)</option>
           </Secim>
         </label>
-        {!dortBitti && <label className="th-onay"><input type="checkbox" checked={f.yarim} onChange={d('yarim')} /> Sıradaki katman yarıda kalsın</label>}
+        {!dortBitti && <label className="th-onay"><input type="checkbox" checked={f.yarim} onChange={d('yarim')} /> Sıradaki boyut yarıda kalsın</label>}
 
         <label>Cevap eğilimi
           <Secim className="yp-sec" value={f.egilim} onChange={d('egilim')}>
@@ -90,7 +90,7 @@ function SenaryoPenceresi({ ogrenci, bolumler, onKapat, onTamam }) {
         )}
 
         {f.asama !== 'baslamadi' && (
-          <label>Son katmanı kaç gün önce bitirdi
+          <label>Son boyutu kaç gün önce bitirdi
             <input className="auth-input" type="number" min={0} max={400} value={f.gun_once} onChange={d('gun_once')} style={{ margin: 0, maxWidth: 120 }} />
           </label>
         )}

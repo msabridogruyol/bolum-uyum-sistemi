@@ -181,7 +181,7 @@ export default function IstatistiklerSayfasi() {
         <KpiKarti etiket="Aktif okul" deger={k.okul} ikon="🏫" alt={`${sayi(k.okul_paketli)} tanesine paket atanmış`} />
         <KpiKarti etiket="Öğrenci" deger={k.ogrenci} ikon="🎓" alt={filtre.test ? 'Test hesapları dahil' : 'Test hesapları hariç'} />
         <KpiKarti etiket="Son 7 günde aktif" deger={k.aktif7} ikon="⚡" alt={`Son 30 gün: ${sayi(k.aktif30)}`} />
-        <KpiKarti etiket="Testi tamamlayan" deger={k.tamamlayan} ikon="✅" ton="iyi" alt="En az bir K1–K4 turu" />
+        <KpiKarti etiket="Testi tamamlayan" deger={k.tamamlayan} ikon="✅" ton="iyi" alt="En az bir B1–B4 turu" />
         <KpiKarti etiket="Tamamlama oranı" deger={k.tamamlama_orani ?? (gizliSayfa ? GIZLI : '—')} birim={k.tamamlama_orani != null ? '%' : undefined} ikon="📈" />
         <KpiKarti etiket="Ortalama güven puanı" deger={k.guven_ort ?? (gizliSayfa ? GIZLI : '—')} ikon="🛡️" alt={`${sayi(k.tur)} tamamlanan tur (dönem)`} />
         <KpiKarti etiket="Geçersiz tur oranı" deger={k.gecersiz_orani ?? (gizliSayfa ? GIZLI : '—')} birim={k.gecersiz_orani != null ? '%' : undefined} ikon="⚠️"
@@ -192,7 +192,7 @@ export default function IstatistiklerSayfasi() {
 
       <Bolum baslik="Katılım" aciklama="Hesap açılışından koçluğa kadar öğrencilerin ilerleyişi." />
       <div className="ist-kartlar">
-        <GrafikKarti genis baslik={`Zaman içinde etkinlik (${z.birim}lük)`} aciklama="Yeni açılan öğrenci hesabı, giriş yapan farklı öğrenci ve tamamlanan K1–K4 turu"
+        <GrafikKarti genis baslik={`Zaman içinde etkinlik (${z.birim}lük)`} aciklama="Yeni açılan öğrenci hesabı, giriş yapan farklı öğrenci ve tamamlanan B1–B4 turu"
           tablo={{ sutunlar: [`Dönem başı (${z.birim})`, 'Yeni hesap', 'Giriş yapan öğrenci', 'Tamamlanan tur'], satirlar: z.x.map((x, i) => [x, z.yeni_hesap[i], z.giris[i], z.tur[i]]) }}>
           <CizgiGrafik x={xEt} seriler={[
             { ad: 'Yeni hesap', degerler: z.yeni_hesap, renk: KATEGORIK[0] },
@@ -213,7 +213,7 @@ export default function IstatistiklerSayfasi() {
       <Bolum baslik="Sonuçlar" aciklama="Öğrencinin dönem içinde tamamladığı son tur esas alınır." />
       <div className="ist-kartlar">
         <GrafikKarti baslik={`Puan dağılımı — ${secKatman || ''}`} aciklama="Arka plan bantları: düzey etiketleri (Gelişime açık … Çok güçlü)"
-          sag={<div className="sis-mini-sec" role="group" aria-label="Katman seç">{katKod.map((kk) => (
+          sag={<div className="sis-mini-sec" role="group" aria-label="Boyut seç">{katKod.map((kk) => (
             <button key={kk} type="button" className="ist-dugme" aria-pressed={kk === secKatman} onClick={() => setKatman(kk)}>{kk}</button>
           ))}</div>}
           tablo={histogramTablosu(kat?.degerler || [])} csv={`puan-dagilimi-${secKatman}`}>
@@ -296,7 +296,7 @@ export default function IstatistiklerSayfasi() {
           <IsiHaritasi satirBasligi="Okul" satirlar={isiOkullar.map((o) => o.ad)} sutunlar={ISI_METRIK.map(([, a]) => a)}
             degerler={isiOkullar.map((o) => ISI_METRIK.map(([m]) => o[m]))} bicim="%" aralik={[0, 100]} />
         </GrafikKarti>
-        <GrafikKarti baslik="Okul × katman ortalaması" aciklama="Dönemde tamamlanan son turlar; 5'ten az tamamlayanı olan okulda gösterilmez"
+        <GrafikKarti baslik="Okul × boyut ortalaması" aciklama="Dönemde tamamlanan son turlar; 5'ten az tamamlayanı olan okulda gösterilmez"
           tablo={{ sutunlar: ['Okul', ...katKod], satirlar: isiOkullar.map((o) => [o.ad, ...katKod.map((kk) => o.katman[kk])]) }} csv="okul-katman">
           <IsiHaritasi satirBasligi="Okul" satirlar={isiOkullar.map((o) => o.ad)} sutunlar={katKod}
             degerler={isiOkullar.map((o) => katKod.map((kk) => o.katman[kk]))} bicim="puan" aralik={[0, 100]} />

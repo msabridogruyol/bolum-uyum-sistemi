@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useCallback } from 'react'
 import { t as cevirT } from '../yardimci/dil'   // [2026-10-12] çoklu dil
 import { useParams, useNavigate } from 'react-router-dom'
 import { api } from '../api/client'
-import { KATMAN_BILGI } from '../yardimci/katmanAdlari'
+import { KATMAN_BILGI, boyutKodu } from '../yardimci/katmanAdlari'
 import { seviyeEtiketi, seviyeRengi } from '../yardimci/seviye'
 import YenidenDegerlendirmePenceresi from '../components/YenidenDegerlendirmePenceresi'
 
@@ -120,7 +120,7 @@ function KatmanTanitimEkrani({ kod, sorular, onBasla, cikisYapiliyor, baslik, al
       <div style={{ textAlign: 'center', marginBottom: 22 }}>
         <div style={{ fontSize: 44, marginBottom: 8 }}>{katman.ikon}</div>
         <div style={{ fontFamily: 'var(--fd)', fontSize: 26, fontWeight: 700 }}>{katman.ad}</div>
-        <div style={{ fontSize: 14, color: 'var(--tx3)', fontWeight: 600, marginTop: 4 }}>{altBaslik || `${kod} katmanına başlıyorsun`} · {sorular.length} soru · ~{tahminiDakika} dk</div>
+        <div style={{ fontSize: 14, color: 'var(--tx3)', fontWeight: 600, marginTop: 4 }}>{altBaslik || `${boyutKodu(kod)} boyutuna başlıyorsun`} · {sorular.length} soru · ~{tahminiDakika} dk</div>
       </div>
 
       <div className="sn-bolum">
@@ -240,7 +240,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         if (dalMi) setDalAdi(veri.dal_adi || null)
       })
       .catch((e) => {
-        setHata(e.detail || (dalMi ? 'İş türü soruları açılamadı.' : 'Katman açılamadı.'))
+        setHata(e.detail || (dalMi ? 'İş türü soruları açılamadı.' : 'Boyut açılamadı.'))
         // [2026-10-12] Bekleme süresi / güven kuralına takıldıysa durumu açılır pencerede göster
         if (!dalMi) api.degerlendirmeDurumu().then((d) => { if (['guven_sorunu', 'bekleme'].includes(d?.durum)) setYdDurum(d) }).catch(() => {})
       })
@@ -479,7 +479,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
         setTamamlandi(sonuc)
         if (document.fullscreenElement) document.exitFullscreen?.().catch(() => {})
       } catch (e) {
-        setHata(e.detail || 'Katman tamamlanamadı.')
+        setHata(e.detail || 'Boyut tamamlanamadı.')
       } finally {
         setGonderiliyor(false)
       }
@@ -535,7 +535,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
                 <div className="bitis-cipler">
                   {[...tamamlandi.sonuclar].sort((a, b) => b.puan - a.puan).slice(0, 3).map((x) => <span key={x.degisken_id}>{x.degisken_adi}</span>)}
                 </div>
-                <div className="bitis-alt">Bu bölümde en çok bu üç özelliğin öne çıktı. Bütün katmanları bitirince bölüm önerilerin bunlara göre hesaplanır.</div>
+                <div className="bitis-alt">Bu bölümde en çok bu üç özelliğin öne çıktı. Bütün boyutları bitirince bölüm önerilerin bunlara göre hesaplanır.</div>
               </div>
             )}
 
@@ -551,7 +551,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
             {tamamlandi.sonuclar.length === 0 ? (
               <div className="veri-yok-grafik">
                 <div className="vg-ikon">📊</div>
-                <div className="vg-metin">Bu katman için henüz sonuç hesaplanmadı.</div>
+                <div className="vg-metin">Bu boyut için henüz sonuç hesaplanmadı.</div>
               </div>
             ) : (
               <details className="card bitis-detay">
@@ -596,7 +596,7 @@ export default function SoruSayfasi({ mod = 'katman' }) {
               try { await api.kvkkGuncelle({ kamera: true }); setKameraRizasi(true) } catch { /* izin kaydedilemedi */ }
             }}
             baslik={dalMi ? (dalAdi || 'İş Türü Soruları') : undefined}
-            altBaslik={dalMi ? 'K5 — sana özel iş türü sorularına başlıyorsun' : undefined}
+            altBaslik={dalMi ? 'B5 — sana özel iş türü sorularına başlıyorsun' : undefined}
           />
         ) : (
           <SoruIcerigiDuzeni
@@ -716,7 +716,7 @@ function SoruIcerigi({ sorular, aktifIndex, cevaplar, gonderiliyor, onSecenekSec
         {/* [2026-11-11] Cevap eksikken düğme soluk görünür ama basılabilir: basılınca neyin eksik olduğu açıklanır */}
         <button className={`btn${!cevapTamam ? ' sn-eksik' : ''}`} aria-disabled={!cevapTamam || undefined}
                 onClick={() => (cevapTamam ? onIleriGit() : setEksikUyari(true))} disabled={gonderiliyor}>
-          {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Katmanı tamamla ✓'}
+          {gonderiliyor ? <span className="spin" /> : aktifIndex < sorular.length - 1 ? 'Sonraki soru →' : 'Boyutu tamamla ✓'}
         </button>
       </div>
       {eksikUyari && (

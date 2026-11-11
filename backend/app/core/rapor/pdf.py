@@ -22,6 +22,7 @@ from reportlab.platypus import (
     BaseDocTemplate, Flowable, Frame, KeepTogether, PageTemplate, Paragraph, Spacer, Table, TableStyle,
 )
 
+from app.core.katman_adlari import boyut_kodu as _bk   # [2026-11-11] K1–K5 → B1–B5 gösterimi
 from app.core.kucuk_grup import DIPNOT, GIZLI_METIN   # [2026-10-10] KVKK küçük grup gizleme
 from app.core.rapor.veri import yuvarla   # [2026-10-14] gösterilen sayılar: yarım yukarı (ekrandaki Math.round ile aynı)
 from app.core.seviye import gelisime_acik_mi, guclu_mu   # [2026-10-10] ortak düzey bantları
@@ -314,8 +315,8 @@ def _bitmedi_notu(st, v):
     if v["durum"] == "tamamlandi":
         return []
     metin = {"baslamadi": "Öğrenci değerlendirmeye henüz başlamadı.",
-             "devam": "Değerlendirme henüz tamamlanmadı; aşağıdaki bilgiler tamamlanan katmanlara dayanır, bölüm önerileri oluşmadı.",
-             "k5_bekliyor": "İş türü soruları (K5) bekliyor; uyumu 70 ve üzeri bölümlerin kendi aralarındaki sırası bu adım tamamlanınca netleşir."}.get(v["durum"], "")
+             "devam": "Değerlendirme henüz tamamlanmadı; aşağıdaki bilgiler tamamlanan boyutlara dayanır, bölüm önerileri oluşmadı.",
+             "k5_bekliyor": "İş türü soruları (B5) bekliyor; uyumu 70 ve üzeri bölümlerin kendi aralarındaki sırası bu adım tamamlanınca netleşir."}.get(v["durum"], "")
     return [st.p(_e(metin), st.not_), Spacer(1, 4)]
 
 
@@ -668,7 +669,7 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
     g = v.get("guvenlik") or {}
     a = v.get("aktivite") or {}
     ozet = [
-        ["Durum", {"tamamlandi": "Tamamlandı", "devam": "Devam ediyor", "k5_bekliyor": "K5 bekliyor", "baslamadi": "Başlamadı"}.get(v["durum"], v["durum"]),
+        ["Durum", {"tamamlandi": "Tamamlandı", "devam": "Devam ediyor", "k5_bekliyor": "B5 bekliyor", "baslamadi": "Başlamadı"}.get(v["durum"], v["durum"]),
          "Tur sayısı", str(tur.get("tur_sayisi", 0))],
         ["Güven puanı", f"{yuvarla(tur['guven'])} / 100" if tur.get("guven") is not None else "—",
          "Geçerlilik", ("Geçerli" if tur.get("gecerli", True) else "GEÇERSİZ") if tur else "—"],
@@ -685,13 +686,13 @@ def yonetici_pdf(v: dict, netler: bool = True) -> bytes:
     y = ogrenci_yorumu(v, "rehber")
     h += _yorum_bolumu(st, y, "rehber")
     if v["katmanlar"]:
-        h.append(st.p("Katman sonuçları", st.h2))
-        h.append(st.p("Puanlar her katmanda öğrencinin kendi özellikleri arasında görelidir; katman ortalaması bu yüzden gösterilmez.", st.not_))
+        h.append(st.p("Boyut sonuçları", st.h2))
+        h.append(st.p("Puanlar her boyutta öğrencinin kendi özellikleri arasında görelidir; boyut ortalaması bu yüzden gösterilmez.", st.not_))
         for k in v["katmanlar"]:
-            h.append(KeepTogether([st.p(f"{k['kod']} · {_e(k['ad'])}", st.h3),
+            h.append(KeepTogether([st.p(f"{_bk(k['kod'])} · {_e(k['ad'])}", st.h3),
                                    _cubuklar([(x["ad"], x.get("ham", x["puan"])) for x in k["ozellikler"]]), Spacer(1, 5)]))
     if v["k5"]:
-        h.append(st.p("İş türü tercihleri (K5)", st.h2))
+        h.append(st.p("İş türü tercihleri (B5)", st.h2))
         h.append(_cubuklar([(x["ad"], x["puan"]) for x in v["k5"]]))
     h += _maarif_bolumu(st, v["gucluler"][:6], "Güçlü yönlerin Maarif Modeli'ndeki karşılıkları")
     if v["bolumler"]:
@@ -824,7 +825,7 @@ def _uyum_aciklama_eki(st, ek: dict) -> list:
     h = [PageBreak(), st.p("Ek: Uyum açıklaması", st.h2),
          st.p("Bu ek yalnızca okul yetkilisi / rehberlik içindir; öğrenci ve veli raporlarında yer almaz. Uyum puanı göreli: "
               "Tüm bölümler içinde öğrencinin profiline yakınlık (100 = en yakın). <b>Fark</b> = öğrenci − bölüm beklentisi "
-              "(katman içi ölçek): |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin (kırmızı). "
+              "(boyut içi ölçek): |fark| &lt; 5 uyumlu (yeşil), 5–15 fazla / az (turuncu), 15+ belirgin (kırmızı). "
               "<b>Katkı</b> = bu özellik hesaba katılmasaydı uyum puanı ne kadar değişirdi (artı yükseltiyor, eksi düşürüyor). "
               "Katkı da göreli bir ölçüdür: bir özellikte fark olsa bile öğrenci o özellikte bu bölüme diğer bölümlerin çoğundan "
               "daha yakınsa katkı artı çıkabilir.",
@@ -861,7 +862,7 @@ def _uyum_aciklama_eki(st, ek: dict) -> list:
         for b in bolumler:
             def liste(xs, b=b):
                 return "; ".join(f"{oz[x['j']]['ad']} ({_isaretli(x['katki'], 1)}, {_SINIF_AD[b['hucreler'][x['j']]['sinif']]})" for x in xs) or "—"
-            k5 = f" · K5 {_isaretli(b['k5_katkisi'], 1)}" if b.get("k5_katkisi") is not None else ""
+            k5 = f" · B5 {_isaretli(b['k5_katkisi'], 1)}" if b.get("k5_katkisi") is not None else ""
             satirlar.append([f"{b['sira']}. {b['bolum']} (%{yuvarla(b['uyum'])}{k5})", liste(b["yukselten"]), liste(b["dusuren"])])
         h.append(_tablo(st, ["Bölüm", "Yükselten", "Düşüren"], satirlar, [44 * mm, 65 * mm, 65 * mm], kucuk=True))
     cevaplar = ek.get("cevaplar") or []
@@ -877,7 +878,7 @@ def _uyum_aciklama_eki(st, ek: dict) -> list:
                 katki = "Dikkat kontrolü: " + ("doğru" if c["kontrol"]["dogru"] else "yanlış")
             else:
                 katki = ", ".join(f"{k['kod']} {yuvarla(k['puan'])}" for k in c["katkilar"]) or "—"
-            satirlar.append([str(c["sira"]), c["katman"], c["soru"], cevap, katki])
+            satirlar.append([str(c["sira"]), _bk(c["katman"]), c["soru"], cevap, katki])
         h.append(_tablo(st, ["#", "Katman", "Soru", "Cevap", "Katkı"], satirlar,
                         [7 * mm, 14 * mm, 68 * mm, 50 * mm, 35 * mm], kucuk=True))
     return h

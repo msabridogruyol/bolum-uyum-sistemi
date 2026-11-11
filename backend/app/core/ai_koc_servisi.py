@@ -204,20 +204,20 @@ def _durum_ve_oneriler(db: Session, ogrenci: Ogrenci) -> str:
     try:
         tur = son_tur_getir(db, ogrenci)
     except IsKuraliHatasi:
-        return "Henüz hiçbir değerlendirme katmanına başlamamış; ilk adımı K1 (Değerler) katmanı."
+        return "Henüz hiçbir değerlendirme boyutuna başlamamış; ilk adımı B1 (Değerler) boyutu."
     toplam = db.query(Katman).filter(Katman.kosullu_mu.is_(False)).count()
     biten = (db.query(OgrenciKatmanOturumu).join(Katman, Katman.id == OgrenciKatmanOturumu.katman_id)
              .filter(OgrenciKatmanOturumu.ogrenci_id == ogrenci.id, OgrenciKatmanOturumu.tur_id == tur.id,
                      OgrenciKatmanOturumu.durum == "tamamlandi", Katman.kosullu_mu.is_(False)).count())
     if tur.durum != "tamamlandi":
-        return f"Değerlendirmenin {biten}/{toplam} katmanını tamamladı; bölüm önerileri tüm katmanlar bitince çıkacak."
+        return f"Değerlendirmenin {biten}/{toplam} boyutunu tamamladı; bölüm önerileri tüm boyutlar bitince çıkacak."
     try:
         from app.core.skor_motoru import siralama_getir
         ilk3 = siralama_getir(db, ogrenci, tur, ilk_n=3)
         adlar = ", ".join(f"{db.get(Bolum, s.bolum_id).ad} (%{round(s.toplam_uyum)})" for s in ilk3)
-        return f"Tüm katmanları tamamladı. Sistemin önerdiği en uyumlu bölümler: {adlar}. Hedef seçmesi için koçluk sayfasına yönlendirebilirsin."
+        return f"Tüm boyutları tamamladı. Sistemin önerdiği en uyumlu bölümler: {adlar}. Hedef seçmesi için koçluk sayfasına yönlendirebilirsin."
     except Exception:
-        return "Tüm katmanları tamamladı; koçluk sayfasından bir hedef bölüm seçebilir."
+        return "Tüm boyutları tamamladı; koçluk sayfasından bir hedef bölüm seçebilir."
 
 
 def _haftalik_ozet_metni(db: Session, ogrenci: Ogrenci) -> str:
@@ -243,7 +243,7 @@ def _ogrenci_profil_ozeti(db: Session, ogrenci: Ogrenci) -> str:
     try:
         tur = son_tur_getir(db, ogrenci)
     except IsKuraliHatasi:
-        return f"Hedef bölümü: {bolum_adi}. Henüz K1-K4 değerlendirmesi tamamlanmamış."
+        return f"Hedef bölümü: {bolum_adi}. Henüz B1-B4 değerlendirmesi tamamlanmamış."
 
     gap_satirlari = gap_analizi_hesapla(db, ogrenci, tur, hedef.bolum_id)
     if not gap_satirlari:
@@ -293,7 +293,7 @@ def _ogrenci_profil_ozeti(db: Session, ogrenci: Ogrenci) -> str:
 
 
 SAYFA_ADLARI = {
-    "/": "ana sayfa", "/katmanlar": "değerlendirme katmanları", "/sonuc": "bölüm uyum sonuçları",
+    "/": "ana sayfa", "/katmanlar": "değerlendirme boyutları", "/sonuc": "bölüm uyum sonuçları",
     "/kesfet": "bölüm keşfetme", "/bolumler": "sana uygun bölümler", "/bolumler/tum": "tüm bölümleri keşfetme",
     "/bolumler/karsilastir": "bölüm karşılaştırma", "/bolumler/listem": "favori bölüm listesi", "/profilim": "kişisel profil sonuçları", "/koclugu": "hedef bölüm koçluğu ve yol haritası", "/profil": "profil ayarları",
 }

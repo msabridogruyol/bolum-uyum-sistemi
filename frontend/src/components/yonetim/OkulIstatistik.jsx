@@ -7,7 +7,7 @@ import {
   CizgiGrafik, GrafikKarti, Halka, Huni, KATEGORIK, KpiKarti, KpiSatiri, SutunGrafik,
   YatayCubuk, YiginSutun, bicim,
 } from '../istatistik'
-import { katmanAdi } from '../../yardimci/katmanAdlari'
+import { katmanAdi, boyutKodu } from '../../yardimci/katmanAdlari'
 import { useOkulModulleri } from '../../yardimci/moduller'
 import Secim from '../Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
 
@@ -70,13 +70,13 @@ function Katilim({ v }) {
 // ----------------------------------------------------------------------------- Profil
 function Profil({ v }) {
   const p = v.profil
-  const kAd = (kod) => `${kod} · ${katmanAdi(kod, p.katmanlar.find((k) => k.kod === kod)?.ad)}`
+  const kAd = (kod) => `${boyutKodu(kod)} · ${katmanAdi(kod, p.katmanlar.find((k) => k.kod === kod)?.ad)}`
   if (!p.tamamlayan) {
     return <Bolum id="profil" baslik="Profil"><div className="card bos-durum">Profil istatistikleri değerlendirmeyi tamamlayan öğrenciler oldukça oluşur.</div></Bolum>
   }
-  const ozellikTablosu = (l) => tabloYap(['Özellik', 'Katman', 'Ortalama', 'Öğrenci'], l.map((x) => [x.ad, x.katman, x.ortalama, x.n]))
+  const ozellikTablosu = (l) => tabloYap(['Özellik', 'Boyut', 'Ortalama', 'Öğrenci'], l.map((x) => [x.ad, x.katman, x.ortalama, x.n]))
   return (
-    <Bolum id="profil" baslik="Profil" aciklama={`Değerlendirmeyi tamamlayan ${p.tamamlayan} öğrencinin son sonuçları${p.gecersiz_haric ? ` (güven puanı eşiğin altında kalan ${p.gecersiz_haric} öğrenci ortalamalara katılmadı)` : ''}. Puanlar her öğrencinin kendi profili içinde görelidir (0–100); bu yüzden katman ortalamaları gösterilmez.`}>
+    <Bolum id="profil" baslik="Profil" aciklama={`Değerlendirmeyi tamamlayan ${p.tamamlayan} öğrencinin son sonuçları${p.gecersiz_haric ? ` (güven puanı eşiğin altında kalan ${p.gecersiz_haric} öğrenci ortalamalara katılmadı)` : ''}. Puanlar her öğrencinin kendi profili içinde görelidir (0–100); bu yüzden boyut ortalamaları gösterilmez.`}>
       <div className="ist-kartlar">
         <GrafikKarti baslik="En öne çıkan 8 özellik" aciklama="Ortalaması en yüksek özellikler (değerler ve duygusal hassasiyet hariç)" tablo={ozellikTablosu(p.guclu)}>
           <YatayCubuk veri={p.guclu.map((x) => ({ ad: x.ad, deger: x.ortalama, alt: kAd(x.katman) + (x.maarif ? ` · Maarif: ${x.maarif}` : '') }))} maks={100} birim="puan" renk={OKUL} />
@@ -103,7 +103,7 @@ function BolumMeslek({ v }) {
         <KpiKarti etiket="Hedefi ilk 10 önerisinde" deger={b.uyum.oran == null ? '—' : b.uyum.oran} birim={b.uyum.oran == null ? undefined : '%'} ikon="🎯" ton="okul"
           alt={`${b.uyum.ilk10} / ${b.uyum.hedefli_tamamlayan} hedef seçmiş ve testi tamamlamış öğrenci`} />
         <KpiKarti etiket="Hedef bölüm seçen" deger={v.kpi.hedef_secen} ikon="📌" alt={`${v.kpi.ogrenci} öğrenciden`} />
-        <KpiKarti etiket="K5 iş türü sorularını bitiren" deger={v.kpi.k5_tamamlayan} ikon="🌻" />
+        <KpiKarti etiket="B5 iş türü sorularını bitiren" deger={v.kpi.k5_tamamlayan} ikon="🌻" />
       </KpiSatiri>
       <div className="ist-kartlar">
         <GrafikKarti baslik="1. sırada önerilen bölümler" aciklama="Testi tamamlayanların en üst önerisi" tablo={cubukTablosu('Bölüm', 'Öğrenci', b.ilk_oneri)}>
@@ -112,7 +112,7 @@ function BolumMeslek({ v }) {
         <GrafikKarti baslik="Hedeflenen bölümler" aciklama="Öğrencilerin seçtiği hedef bölüm" tablo={cubukTablosu('Bölüm', 'Öğrenci', b.hedef)}>
           <YatayCubuk veri={b.hedef} birim="öğrenci" enFazla={10} />
         </GrafikKarti>
-        <GrafikKarti baslik="K5 iş türü dağılımı" aciklama="K5'i bitiren öğrencilerin en çok öne çıkardığı iş türü (her öğrenci bir kez sayılır)" tablo={cubukTablosu('İş türü', 'Öğrenci', b.k5_alan)}>
+        <GrafikKarti baslik="B5 iş türü dağılımı" aciklama="B5'i bitiren öğrencilerin en çok öne çıkardığı iş türü (her öğrenci bir kez sayılır)" tablo={cubukTablosu('İş türü', 'Öğrenci', b.k5_alan)}>
           <YatayCubuk veri={b.k5_alan} birim="öğrenci" enFazla={10} renk={KATEGORIK[2]} />
         </GrafikKarti>
         {b.simulasyon && (
@@ -344,7 +344,7 @@ export default function OkulIstatistik({ okulId }) {
             <KpiKarti etiket="Giriş yapan" deger={k.giris_yapan} ikon="🔑" alt={`${yuzde(k.ogrenci ? (100 * k.giris_yapan) / k.ogrenci : null)} · aralıkta ${k.aralikta_giris}`} />
             <KpiKarti etiket="Son 7 gün aktif" deger={k.aktif_7} ikon="⚡" />
             <KpiKarti etiket="Testi tamamlayan" deger={k.tamamlayan} ikon="✅" ton="iyi" alt={`${yuzde(k.tamamlama_orani)} · ${k.teste_baslayan} başladı`} />
-            <KpiKarti etiket="K5 tamamlayan" deger={k.k5_tamamlayan} ikon="🌻" />
+            <KpiKarti etiket="B5 tamamlayan" deger={k.k5_tamamlayan} ikon="🌻" />
             <KpiKarti etiket="Hedef seçen" deger={k.hedef_secen} ikon="🎯" />
             <KpiKarti etiket="Ortalama güven puanı" deger={k.ort_guven ?? '—'} ikon="🛡️" alt="testi tamamlayanlarda (0–100)" />
             <KpiKarti etiket="Güveni düşük sonuç" deger={k.gecersiz_tur} ikon="⚠️" ton={k.gecersiz_tur ? 'uyari' : 'notr'} alt="son değerlendirmesi güven eşiğinin altında kalan öğrenci" />

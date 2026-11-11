@@ -7,6 +7,7 @@ POST /ogrenci/katmanlar/{kod}/tamamla       — katmanı bitir, değişken puanl
 """
 from fastapi import APIRouter, BackgroundTasks, Depends, HTTPException
 from pydantic import Field, BaseModel
+from app.core.katman_adlari import boyut_kodu as _bk   # [2026-11-11] K1–K5 → B1–B5 gösterimi
 from app.schemas.girdi import GirdiModeli  # [2026-11-04] istek gövdesi metin sınırı
 from sqlalchemy.orm import Session
 from sqlalchemy import text, func
@@ -94,7 +95,7 @@ def _yorumlari_ekle(db: Session, sonuclar: list[KatmanSonucSatiri]) -> list[Katm
 def _katman_bul(db: Session, kod: str) -> Katman:
     katman = db.query(Katman).filter(Katman.kod == kod.upper()).first()
     if katman is None:
-        raise HTTPException(status_code=404, detail=f"Katman bulunamadı: {kod}")
+        raise HTTPException(status_code=404, detail=f"Boyut bulunamadı: {kod}")
     return katman
 
 
@@ -191,7 +192,7 @@ def katmani_baslat(
                 if k.id not in tamamlananlar
             ]
             if eksik:
-                raise IsKuraliHatasi(f"Katmanlar sırayla ilerler. Önce {eksik[0].kod} — {eksik[0].ad} katmanını tamamlamalısın.")
+                raise IsKuraliHatasi(f"Boyutlar sırayla ilerler. Önce {_bk(eksik[0].kod)} — {eksik[0].ad} boyutunu tamamlamalısın.")
         oturum, sorular = katman_oturumu_baslat(db, ogrenci, katman, tur)
     except IsKuraliHatasi as e:
         db.rollback()
@@ -289,7 +290,7 @@ def katmani_tamamla_uc_nokta(
         .first()
     )
     if oturum is None:
-        raise HTTPException(status_code=400, detail="Bu katmana henüz başlamadın.")
+        raise HTTPException(status_code=400, detail="Bu boyuta henüz başlamadın.")
 
     try:
         sonuclar = katmani_tamamla(db, ogrenci, katman, tur, oturum)
@@ -501,7 +502,7 @@ def bolum_siralamasi_getir(
     if bekleyen_dal_var_mi(db, ogrenci, tur):
         raise HTTPException(
             status_code=409,
-            detail="Sonuçlarını görmek için önce sana özel iş türü (K5) sorularını tamamla.",
+            detail="Sonuçlarını görmek için önce sana özel iş türü (B5) sorularını tamamla.",
         )
 
     siralama = siralama_getir(db, ogrenci, tur, ilk_n=max(1, min(ilk_n, 10)))

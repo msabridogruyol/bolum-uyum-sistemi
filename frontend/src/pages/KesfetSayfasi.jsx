@@ -135,7 +135,7 @@ export default function KesfetSayfasi({ gomulu = false }) {
                 <div>
                   <div style={{ fontSize: 11, color: 'var(--tx3)', fontWeight: 700, textTransform: 'uppercase' }}>Seçilen Bölüm</div>
                   <div style={{ fontSize: 13, color: 'var(--tx2)', marginTop: 2 }}>
-                    {secili.toplam_uyum !== null ? 'Değerlendirmene göre bu bölümle uyumun:' : 'Uyumunu görmek için katmanları tamamla.'}
+                    {secili.toplam_uyum !== null ? 'Değerlendirmene göre bu bölümle uyumun:' : 'Uyumunu görmek için boyutları tamamla.'}
                   </div>
                 </div>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 14 }}>

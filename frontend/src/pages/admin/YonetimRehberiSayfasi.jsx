@@ -13,9 +13,9 @@ const KONULAR = [
   // ------------------------------------------------------------------ Bölüm verisi (pipeline)
   {
     id: 'yillik', grup: 'Bölüm verisi (pipeline)', baslik: 'Yıllık bölüm verisi güncellemesi',
-    ne_zaman: <>Pipeline Sonuçları'ndaki sayaç <b>"Yaklaşıyor"</b> ya da <b>"Pipeline çalıştırılmalı"</b> dediğinde (yılda bir, ayrıca bölüm / K5 değişikliğinde). Sayaç <b>"Çıktılar canlıya alınmalı"</b> diyorsa pipeline'ı yeniden çalıştırmayın; yalnızca Pipeline Sonuçları'ndaki 1–3. adımları (aşağıda 3–5. maddeler) yapın.</>,
+    ne_zaman: <>Pipeline Sonuçları'ndaki sayaç <b>"Yaklaşıyor"</b> ya da <b>"Pipeline çalıştırılmalı"</b> dediğinde (yılda bir, ayrıca bölüm / B5 değişikliğinde). Sayaç <b>"Çıktılar canlıya alınmalı"</b> diyorsa pipeline'ı yeniden çalıştırmayın; yalnızca Pipeline Sonuçları'ndaki 1–3. adımları (aşağıda 3–5. maddeler) yapın.</>,
     adimlar: [
-      { m: <>Pipeline'ın kurulu olduğu bilgisayarda masaüstündeki <b>Filizyol Pipeline</b> kısayoluna çift tıklayın (ya da Komut İstemi'ne şu komutu yapıştırın). Güncel kodu, en son veriyi ve canlı bölüm / K5 listelerini kendisi alır.</>, k: CALISTIR_KOMUTU },
+      { m: <>Pipeline'ın kurulu olduğu bilgisayarda masaüstündeki <b>Filizyol Pipeline</b> kısayoluna çift tıklayın (ya da Komut İstemi'ne şu komutu yapıştırın). Güncel kodu, en son veriyi ve canlı bölüm / B5 listelerini kendisi alır.</>, k: CALISTIR_KOMUTU },
       { m: <>Bitmesini bekleyin (genellikle 10–20 dakika; bir bilgisayardaki ilk gönderim daha uzun sürer). Sonda yeşil <b>"HEPSİ TAMAM"</b> yazar. Kırmızı bir hata çıkarsa adımlar durur; ekrandaki mesajı ve <code>{CIKTI.kayit}</code> dosyasını kontrol edin.</> },
       { m: <><E to="/admin/pipeline">Pipeline Sonuçları</E> → <b>1. adım</b>: <code>{CIKTI.profil}</code> dosyasını seçin. Önizlemeye bakın, ardından aşağıdaki <b>Geçmiş Yüklemeler</b> listesinde <b>Yayına Al</b> deyin. Sonuç hemen değil, o geceki <E to="/admin/gece-bakimi">Gece Bakımı</E>'nda (varsayılan 03:00) canlıya alınır ve tüm öğrencilerin sonuçları aynı gece yeniden hesaplanır.</> },
       { m: <><b>2. adım</b>: <code>{CIKTI.k5}</code> → önizleme → <b>Canlıya al</b> → <b>Eminim, canlıya al</b>.</> },
@@ -54,8 +54,8 @@ const KONULAR = [
     not: 'Son 5 veri sürümü ve son 30 günün sürümleri saklanır. Hiçbir durumda canlı sistem etkilenmez.',
   },
   {
-    id: 'liste', grup: 'Bölüm verisi (pipeline)', baslik: 'Bölüm listesi ya da K5 cümleleri değiştiğinde',
-    ne_zaman: 'Bölüm eklendiğinde, adı değiştirildiğinde, kaldırıldığında ya da Soru Bankası\'nda K5 iş türü cümleleri değiştirildiğinde.',
+    id: 'liste', grup: 'Bölüm verisi (pipeline)', baslik: 'Bölüm listesi ya da B5 cümleleri değiştiğinde',
+    ne_zaman: 'Bölüm eklendiğinde, adı değiştirildiğinde, kaldırıldığında ya da Soru Bankası\'nda B5 iş türü cümleleri değiştirildiğinde.',
     adimlar: [
       { m: <>Sayaç bunu kendisi yakalar ve <b>"Pipeline çalıştırılmalı"</b> der.</> },
       { m: <>"Yıllık bölüm verisi güncellemesi" adımlarını uygulayın. Pipeline yeni listeyi canlıdan alır: adı değişen bölümün verisi yeni adına taşınır, yeni bölüm eklenir, kaldırılan bölüm çıkarılır.</> },
@@ -83,7 +83,7 @@ const KONULAR = [
     id: 'geri', grup: 'Bölüm verisi (pipeline)', baslik: 'Yanlış veri canlıya alındıysa geri dönmek',
     ne_zaman: 'Canlıya aldığınız bir çıktının hatalı olduğunu fark ettiğinizde.',
     adimlar: [
-      { m: <><b>K5 bağları / örnek meslekler:</b> Pipeline Sonuçları → ilgili adımda <b>Önceki sürümler</b> → <b>Bu sürüme dön</b> → <b>Eminim, bu sürüme dön</b>. Dönmeden önceki hâl de yedeklenir.</> },
+      { m: <><b>B5 bağları / örnek meslekler:</b> Pipeline Sonuçları → ilgili adımda <b>Önceki sürümler</b> → <b>Bu sürüme dön</b> → <b>Eminim, bu sürüme dön</b>. Dönmeden önceki hâl de yedeklenir.</> },
       { m: <><b>Bölüm profilleri:</b> pipeline her çalıştırmada önceki çıktıyı <code>C:\pipeline\yedekler\bolum_agirliklari_&lt;tarih&gt;.xlsx</code> olarak saklar. Önceki dosyayı 1. adımla yükleyip <b>Yayına Al</b> deyin.</> },
     ],
   },
@@ -96,7 +96,7 @@ const KONULAR = [
       { m: <><b>Nasıl güncellenir?</b> bölümündeki numaralı adımları uygulayın. Her kaynağın hangi ekrandan, hangi dosyayla güncellendiği orada yazar.</> },
       { m: <>Bitince aynı yerde <b>Güncelledim</b> (ya da yalnızca baktıysanız <b>Kontrol ettim, güncel</b>) seçip <b>Kaydet</b> deyin. Kayıt Audit Log'a da yazılır.</> },
     ],
-    not: 'Bölüm profilleri, K5 bağları, örnek meslekler ve meslekler de bu ekranda görünür; onların güncellemesi pipeline adımlarıyla yapılır.',
+    not: 'Bölüm profilleri, B5 bağları, örnek meslekler ve meslekler de bu ekranda görünür; onların güncellemesi pipeline adımlarıyla yapılır.',
   },
   // ------------------------------------------------------------------ Hesaplar ve tanıtım
   {

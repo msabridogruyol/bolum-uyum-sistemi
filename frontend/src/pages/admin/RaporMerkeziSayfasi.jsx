@@ -93,7 +93,7 @@ export default function RaporMerkeziSayfasi() {
         !ozetHata && <div className="bos-durum yukleniyor">Yükleniyor…</div>
       ) : (
         <div className="ist-kartlar">
-          <RaporKarti ikon="🏫" baslik="Okul genel raporu" aciklama={`${okulAdi}: katılım durumu, sınıf ve şube kırılımları, alan dağılımı, katman ortalamaları, öğrenci listesi.`}
+          <RaporKarti ikon="🏫" baslik="Okul genel raporu" aciklama={`${okulAdi}: katılım durumu, sınıf ve şube kırılımları, alan dağılımı, boyut ortalamaları, öğrenci listesi.`}
             secenekler={[
               { anahtar: 'pdf', ad: 'PDF', ikon: '📄', indir: () => api.okulRaporuIndir(okulId, 'pdf', net) },
               { anahtar: 'xlsx', ad: 'Excel', ikon: '📊', indir: () => api.okulRaporuIndir(okulId, 'xlsx', net) },
@@ -149,7 +149,7 @@ export default function RaporMerkeziSayfasi() {
 
       <div className="sis-bolum-baslik"><h2>Sistem geneli raporlar</h2><p>Tüm okulları kapsayan raporlar; kurumlara iletilebilir.</p></div>
       <div className="ist-kartlar">
-        <RaporKarti ikon="📊" baslik="İstatistikler" aciklama="İstatistikler sayfasının tamamı: özet göstergeler, zaman serisi, huni, katman puanları, bölümler, alanlar, modül kullanımı, okul tablosu, paketler (test hesapları hariç)."
+        <RaporKarti ikon="📊" baslik="İstatistikler" aciklama="İstatistikler sayfasının tamamı: özet göstergeler, zaman serisi, huni, boyut puanları, bölümler, alanlar, modül kullanımı, okul tablosu, paketler (test hesapları hariç)."
           secenekler={[{ anahtar: 'xlsx', ad: 'Excel', ikon: '📊', indir: () => api.sistemIstatistikExcel({ donem }) }]}>
           <Secim className="yp-sec" aria-label="Dönem" value={donem} onChange={(e) => setDonem(e.target.value)}>
             <option value="30">Son 30 gün</option><option value="90">Son 90 gün</option><option value="yil">Bu eğitim yılı</option><option value="tum">Tümü</option>

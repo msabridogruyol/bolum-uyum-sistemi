@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { api } from '../../api/client'
 import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
+import { boyutKodu } from '../../yardimci/katmanAdlari'   // [2026-11-11] K1–K5 → B1–B5 gösterimi
 
 const OLAY_ETIKET = {
   tam_ekrandan_cikti: '🔴 Tam ekrandan çıktı',
@@ -47,7 +48,7 @@ function TurDetayModal({ turId, onKapat }) {
               {detay.olaylar.length === 0 && <div className="ps">Hiç güvenlik olayı kaydedilmedi.</div>}
               {detay.olaylar.map((o) => (
                 <div key={o.id} style={{ display: 'flex', justifyContent: 'space-between', fontSize: 12.5, padding: '6px 0', borderBottom: '1px solid var(--bor)' }}>
-                  <span>{OLAY_ETIKET[o.olay_tipi] || o.olay_tipi} {o.katman_kod && `(${o.katman_kod})`}</span>
+                  <span>{OLAY_ETIKET[o.olay_tipi] || o.olay_tipi} {o.katman_kod && `(${boyutKodu(o.katman_kod)})`}</span>
                   <span style={{ color: 'var(--tx2)' }}>{new Date(o.olay_zamani).toLocaleString('tr-TR')}</span>
                 </div>
               ))}

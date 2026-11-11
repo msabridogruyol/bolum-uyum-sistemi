@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from 'react'
 import { api } from '../../api/client'
 import Secim from '../../components/Secim'   // [2026-11-11] uzun açılır listeler yazarak aranır
+import { boyutKodu } from '../../yardimci/katmanAdlari'   // [2026-11-11] K1–K5 → B1–B5 gösterimi
 
 const KATMANLAR = ['K1', 'K2', 'K3', 'K4']
 const KATMAN_ADI = { K1: 'Değerler', K2: 'Kişilik', K3: 'İş Ortamı', K4: 'Alan Eğilimi' }
@@ -61,7 +62,7 @@ function KaynakKarti({ kaynak, onGuncelle, onSil }) {
   return (
     <div className="card" style={{ marginBottom: 10 }}>
       <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap', marginBottom: 8, alignItems: 'center' }}>
-        <span className="bdg bdg-prog">{kaynak.katman_kod}</span>
+        <span className="bdg bdg-prog">{boyutKodu(kaynak.katman_kod)}</span>
         <span className="bdg bdg-lock">{kaynak.degisken_adi}</span>
         <span className="bdg bdg-lock">{ARALIK_ADI[kaynak.aralik]}</span>
         <span className="bdg" style={{ background: 'var(--sur2)', color: TIP_RENK[kaynak.kaynak_tipi] }}>{TIP_ADI[kaynak.kaynak_tipi]}</span>
@@ -115,7 +116,7 @@ function YeniKaynakFormu({ aktifKatman, degiskenler, onEklendi, onKapat }) {
 
   return (
     <form onSubmit={gonder} className="card" style={{ borderColor: 'var(--pu)', marginBottom: 16 }}>
-      <div className="ct">Yeni Kaynak Ekle — {aktifKatman}</div>
+      <div className="ct">Yeni Kaynak Ekle — {boyutKodu(aktifKatman)}</div>
       {hata && <div className="auth-error">{hata}</div>}
       <div style={{ display: 'flex', gap: 8, marginBottom: 10, flexWrap: 'wrap' }}>
         <Secim className="auth-input" style={{ flex: '1 1 160px' }} value={degiskenKod} onChange={(e) => setDegiskenKod(e.target.value)}>
@@ -199,7 +200,7 @@ export default function GelisimKaynakSayfasi() {
               marginBottom: -1.5,
             }}
           >
-            {k} — {KATMAN_ADI[k]}
+            {boyutKodu(k)} — {KATMAN_ADI[k]}
           </button>
         ))}
       </div>

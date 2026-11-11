@@ -162,7 +162,7 @@ export default function ProfilAyarlariSayfasi() {
         <div className="card" style={{ borderColor: 'var(--pu)', background: 'var(--pul)' }}>
           <div style={{ fontSize: 15, fontWeight: 700, marginBottom: 4 }}>👋 Başlamadan önce profilini tamamla</div>
           <div style={{ fontSize: 12.5, color: 'var(--tx2)', lineHeight: 1.5 }}>
-            Ad soyadını ve sınıfını yaz, sonra <b>Kaydet</b> düğmesine bas. Ardından ana sayfadan ilk katmana başlayabilirsin. Diğer alanları doldurmak zorunda değilsin.
+            Ad soyadını ve sınıfını yaz, sonra <b>Kaydet</b> düğmesine bas. Ardından ana sayfadan ilk boyuta başlayabilirsin. Diğer alanları doldurmak zorunda değilsin.
           </div>
         </div>
       )}

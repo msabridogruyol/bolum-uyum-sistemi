@@ -35,7 +35,7 @@ function GucDagilimi({ guclu, orta, gelisim }) {
           </div>
         ))}
       </div>
-      <div className="gr-not">Toplam {guclu + orta + gelisim} özellik · K2–K4 (değerler ve duygusal hassasiyet hariç)</div>
+      <div className="gr-not">Toplam {guclu + orta + gelisim} özellik · B2–B4 (değerler ve duygusal hassasiyet hariç)</div>
     </>
   )
 }

@@ -621,7 +621,7 @@ function HedefKarti({ hedef, plan }) {
 // ---------------------------------------------------------------- 3) Güçlü yönler
 function GucluSekmesi({ plan, onDurum }) {
   if (!plan) return <div className="bos-durum">Plan hazırlanıyor…</div>
-  if (!plan.guclu_yonler.length) return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefe göre henüz öne çıkan bir güçlü yönün yok. Güçlü yön, hem bölümün beklediği düzeyde olduğun hem de kendi profilinde yüksek olan özelliklerindir. Katmanları yeniden tamamladığında burası güncellenir.</div></div>
+  if (!plan.guclu_yonler.length) return <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefe göre henüz öne çıkan bir güçlü yönün yok. Güçlü yön, hem bölümün beklediği düzeyde olduğun hem de kendi profilinde yüksek olan özelliklerindir. Boyutları yeniden tamamladığında burası güncellenir.</div></div>
   return (
     <>
       <div className="ps" style={{ marginBottom: 14 }}>Bu özellikler kendi profilinde öne çıkıyor ve {plan.hedef_bolum_adi} de bu düzeyi bekliyor. Aşağıdaki adımlarla onları somut deneyimlere dönüştürebilirsin.</div>
@@ -662,7 +662,7 @@ function KarsilastirmaSekmesi({ gelisim, hedef }) {
         <div className="dli"><div className="ddt" style={{ background: 'var(--tx3)' }} /> {hedef.bolum_adi}</div>
       </div>
       <div className="ps" style={{ margin: '0 0 14px', fontSize: 11.5 }}>
-        Bu karşılaştırma bölüm önerisi değildir; hedef bölümüne hazırlanırken nelere odaklanacağını gösterir. Her katmanda bir özelliğinin, diğer özelliklerine göre ne kadar öne çıktığına bakıyor ve bunu bölümün beklentisiyle karşılaştırıyoruz. İki çubuk aynı ölçekte. Bölümün beklentisine yakın olmak uyumu artırır; fazlası da azı da bir farktır. Açıklama için özelliğin adına dokun.
+        Bu karşılaştırma bölüm önerisi değildir; hedef bölümüne hazırlanırken nelere odaklanacağını gösterir. Her boyutta bir özelliğinin, diğer özelliklerine göre ne kadar öne çıktığına bakıyor ve bunu bölümün beklentisiyle karşılaştırıyoruz. İki çubuk aynı ölçekte. Bölümün beklentisine yakın olmak uyumu artırır; fazlası da azı da bir farktır. Açıklama için özelliğin adına dokun.
       </div>
       <div className="koc-etiket-rehber">
         <span><b style={{ color: 'var(--gr)' }}>Uyumlu</b> bölümün beklediği düzeydesin</span>
@@ -827,7 +827,7 @@ export default function KoclukSayfasi() {
         )}
 
         {hedef && gelisim && gelisim.length === 0 && (
-          <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefle karşılaştırma yapmak için henüz veri yok. Önce katmanlarını tamamla.</div></div>
+          <div className="card"><div className="ps" style={{ margin: 0 }}>Bu hedefle karşılaştırma yapmak için henüz veri yok. Önce boyutlarını tamamla.</div></div>
         )}
 
         {veriVar && (
