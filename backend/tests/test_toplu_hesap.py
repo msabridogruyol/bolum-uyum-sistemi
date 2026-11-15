@@ -126,6 +126,9 @@ def test_okul_yetkilisi_yalniz_kendi_okuluna_ogrenci_acar(istemci, db, ortam):
     assert istemci.post("/yonetim/toplu-hesap/hosgeldin", headers=ortam["yet"], json={"okul_id": ortam["b"]}).status_code == 403
     assert istemci.post("/yonetim/toplu-hesap/hosgeldin", headers=ortam["yet"],
                         json={"okul_id": ortam["a"], "kime": "yetkili"}).status_code == 403
+    # [2026-11-15] güvenlik denetimi: e-posta önizlemesi başka okulun adını göstermez
+    r = istemci.get(f"/yonetim/toplu-hesap/hosgeldin/onizleme?tur=ogrenci&okul_id={ortam['b']}", headers=ortam["yet"])
+    assert r.status_code == 200 and "Anadolu" not in r.json()["html"] and "Fen Lisesi" in r.json()["html"]
 
 
 @db_gerekli

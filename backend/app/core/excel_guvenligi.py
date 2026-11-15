@@ -43,3 +43,38 @@ def guvenli_kaydet(wb, hedef) -> None:
     formulleri_metne_cevir(wb)
     tarihleri_metne_cevir(wb)
     wb.save(hedef)
+
+
+# [2026-11-15] Güvenlik denetimi — CSV formül enjeksiyonu. CSV'de hücre türü yoktur: Excel "=", "+", "-", "@" (ve sekme /
+# satır başı) ile başlayan metni formül sayar. Kullanıcının yazdığı ad soyad ya da erişim kaydındaki istek yolu
+# ("+cmd|' /C calc'!A0" gibi) yöneticinin bilgisayarında çalışabilirdi. Bu karakterlerle başlayan METİN başına ' alır
+# (Excel'de görünmez, değer metin kalır). Sayılar (ör. -3,5) olduğu gibi kalır.
+_CSV_TEHLIKELI = ("=", "+", "-", "@", "\t", "\r")
+
+
+def csv_hucre(deger):
+    if isinstance(deger, str) and deger.startswith(_CSV_TEHLIKELI):
+        return "'" + deger
+    return deger
+
+
+def csv_satir(degerler) -> list:
+    return [csv_hucre(d) for d in degerler]
+
+
+class _GuvenliCsvYazici:
+    def __init__(self, yazici):
+        self._y = yazici
+
+    def writerow(self, degerler):
+        return self._y.writerow(csv_satir(degerler))
+
+    def writerows(self, satirlar):
+        for s in satirlar:
+            self.writerow(s)
+
+
+def guvenli_csv_yazici(tampon, **ayar):
+    """csv.writer yerine: her hücre csv_hucre'den geçer. Tüm CSV dışa aktarımları bunu kullanır."""
+    import csv
+    return _GuvenliCsvYazici(csv.writer(tampon, **ayar))

@@ -7,8 +7,9 @@ Yalnızca süper admin. Kayıtlar app/core/erisim_kaydi.py tarafından yazılır
 """
 from __future__ import annotations
 
-import csv
 import io
+
+from app.core.excel_guvenligi import guvenli_csv_yazici
 from datetime import date, datetime, time, timedelta, timezone
 from zoneinfo import ZoneInfo
 
@@ -131,7 +132,7 @@ def erisim_kayitlari_csv(suzgec=Depends(_parametreler), db: Session = Depends(ge
     nerede, p = suzgec
     satirlar = db.execute(text(f"{_SECIM} {nerede} ORDER BY e.zaman DESC, e.id DESC LIMIT 50000"), p).all()
     tampon = io.StringIO()
-    y = csv.writer(tampon, delimiter=";")
+    y = guvenli_csv_yazici(tampon, delimiter=";")   # [2026-11-15] CSV formül enjeksiyonu
     y.writerow(["Zaman", "Kişi", "Kişi türü", "E-posta", "Kişinin okulu", "Olay", "Bölüm", "Hedef öğrenci", "Hedef okul",
                 "Sonuç", "IP", "Yöntem", "Yol"])
     for r in satirlar:

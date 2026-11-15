@@ -23,8 +23,9 @@ Test hesapları ve demo okullar varsayılan olarak hesaba katılmaz (test_dahil=
 """
 from __future__ import annotations
 
-import csv
 import io
+
+from app.core.excel_guvenligi import guvenli_csv_yazici
 import statistics
 import uuid
 from dataclasses import dataclass
@@ -629,7 +630,7 @@ def kullanim_csv(
 ):
     tampon = io.StringIO()
     tampon.write("﻿")
-    w = csv.writer(tampon, delimiter=";")
+    w = guvenli_csv_yazici(tampon, delimiter=";")   # [2026-11-15] CSV formül enjeksiyonu
     if tur == "kullanicilar":
         sql, p = _kisi_listesi_sql(f, tip, None, None, "hepsi")
         w.writerow(["Ad soyad", "E-posta", "Okul", "Sınıf", "Şube", "Aktif süre (sa:dk:sn)", "Aktif süre (dk)", "Oturum",
