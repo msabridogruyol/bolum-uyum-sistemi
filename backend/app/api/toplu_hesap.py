@@ -412,6 +412,8 @@ def hosgeldin_ozet(okul_id: int = Query(...), db: Session = Depends(get_db), yon
 def hosgeldin_onizleme(tur: str = Query("ogrenci", pattern="^(ogrenci|yetkili)$"), okul_id: int | None = None,
                        db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     from app.core import eposta_servisi as ep
+    if yon.rol == "okul_yetkilisi":   # [2026-11-15] güvenlik denetimi: başka okulun adı / paketi görünmesin
+        okul_id = yon.okul_id
     okul = (db.get(Okul, okul_id) if okul_id else None) or (db.get(Okul, yon.okul_id) if yon.okul_id else None)
     ad = okul.ad if okul else "Örnek Lisesi"
     if tur == "ogrenci":
