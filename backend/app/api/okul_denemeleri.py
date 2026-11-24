@@ -27,7 +27,7 @@ from app.api.deps import get_mevcut_yonetim
 from app.api.okul_yonetimi import _dosyadan_satirlar, _norm, _okul_kapsami, _sinif_metni, _xlsx_b64
 from app.core.database import get_db
 from app.core.hesap_yonetimi import denetim_yaz
-from app.core.sinav_yapisi import TESTLER, net_hesapla
+from app.core.sinav_yapisi import BRANS_TESTLERI, TESTLER, TUM_TESTLER, UST_BRANSLARI, net_hesapla
 from app.models import AdminKullanici, Ogrenci
 
 router = APIRouter(prefix="/yonetim", tags=["Okul denemeleri"])
@@ -35,8 +35,11 @@ router = APIRouter(prefix="/yonetim", tags=["Okul denemeleri"])
 OTURUMLAR = ("TYT", "AYT", "YDT")
 # Başlıkta tanınan ders adları (normalize edilmiş) → test kodu
 DERS_ADLARI = {
+    # [2026-11-24] TYT Fen branşları (Fizik/Kimya/Biyoloji) de okul yüklemesinde tanınır; aggregate "Fen" ya da üç branş
     "TYT": {"tyt_trk": ["turkce", "trk", "tur"], "tyt_sos": ["sosyal", "sosyalbilimler", "sos"],
-            "tyt_mat": ["temelmatematik", "matematik", "mat"], "tyt_fen": ["fen", "fenbilimleri"]},
+            "tyt_mat": ["temelmatematik", "matematik", "mat"], "tyt_fen": ["fen", "fenbilimleri"],
+            "tyt_fiz": ["fizik", "fiz", "tytfizik", "tytfiz"], "tyt_kim": ["kimya", "kim", "tytkimya", "tytkim"],
+            "tyt_biy": ["biyoloji", "bio", "biy", "tytbiyoloji", "tytbiy"]},
     "AYT": {"ayt_mat": ["matematik", "mat"], "ayt_fiz": ["fizik", "fiz"], "ayt_kim": ["kimya", "kim"], "ayt_bio": ["biyoloji", "bio", "biy"],
             "ayt_tde": ["turkdilivedebiyati", "edebiyat", "tde", "turkdiliedebiyat"], "ayt_trh1": ["tarih1"], "ayt_cog1": ["cografya1", "cog1"],
             "ayt_trh2": ["tarih2"], "ayt_cog2": ["cografya2", "cog2"], "ayt_fel": ["felsefegrubu", "felsefe", "fel"],
@@ -48,6 +51,21 @@ EKLER = (("dogru", "d"), ("yanlis", "y"), ("net", "net"), ("d", "d"), ("y", "y")
 
 def _testler(oturum: str) -> list[str]:
     return [k for k, v in TESTLER.items() if v[0] == oturum]
+
+
+def _testler_tum(oturum: str) -> list[str]:
+    """[2026-11-24] Aggregate testler + branşlar (TYT Fen için Fizik/Kimya/Biyoloji) — yüklemede hepsi tanınır."""
+    return [k for k, v in TUM_TESTLER.items() if v[0] == oturum]
+
+
+def _deneme_testleri(satirlar, oturum: str) -> list[str]:
+    """Bir denemenin gösterilecek test seti: kayıtlı derslerde hangi kodlar geçiyorsa (branş ya da aggregate),
+    TUM_TESTLER sırasına göre. Boşsa aggregate test setine düşer."""
+    sira = _testler_tum(oturum)
+    oku = lambda x: (x.dersler if hasattr(x, "dersler") else x.get("dersler")) or {}  # noqa: E731
+    var = {k for x in satirlar for k in oku(x)}
+    present = [k for k in sira if k in var]
+    return present or _testler(oturum)
 
 
 def _baslik_coz(baslik: list) -> tuple[dict, dict]:
@@ -122,30 +140,35 @@ def _ayikla(db: Session, okul_id: int, oturum: str, dosya_adi: str, icerik: str)
             elif len(adaylar) > 1:
                 hatalar.append("Bu adla birden fazla öğrenci var; öğrenci numarasını yazın")
         dersler, toplam, bos = {}, 0.0, True
-        for kod in _testler(oturum):
+        for kod in _testler_tum(oturum):   # [2026-11-24] aggregate + branş kodları
             d, y, n = (_sayi(al(r, ders.get((kod, a)))) for a in ("d", "y", "net"))
             if "hata" in (d, y, n):
-                hatalar.append(f"{TESTLER[kod][1]}: sayı değil")
+                hatalar.append(f"{TUM_TESTLER[kod][1]}: sayı değil")
                 continue
             if d is None and y is None and n is None:
                 continue
             bos = False
-            soru = TESTLER[kod][2]
+            soru = TUM_TESTLER[kod][2]
             if d is not None or y is not None:
                 d, y = int(d or 0), int(y or 0)
                 if d < 0 or y < 0 or d + y > soru:
-                    hatalar.append(f"{TESTLER[kod][1]}: doğru + yanlış {soru}'ı geçemez")
+                    hatalar.append(f"{TUM_TESTLER[kod][1]}: doğru + yanlış {soru}'ı geçemez")
                     continue
                 net = net_hesapla(d, y)
                 if n is not None and abs(n - net) > 0.3:
-                    uyarilar.append(f"{TESTLER[kod][1]}: dosyadaki net ({n}) D/Y ile uyuşmuyor; {net} kullanıldı")
+                    uyarilar.append(f"{TUM_TESTLER[kod][1]}: dosyadaki net ({n}) D/Y ile uyuşmuyor; {net} kullanıldı")
                 dersler[kod] = {"d": d, "y": y, "net": net}
             else:
                 if n < -soru / 4 or n > soru:
-                    hatalar.append(f"{TESTLER[kod][1]}: net geçersiz")
+                    hatalar.append(f"{TUM_TESTLER[kod][1]}: net geçersiz")
                     continue
                 dersler[kod] = {"d": None, "y": None, "net": round(n, 2)}
             toplam += dersler[kod]["net"]
+        # [2026-11-24] Aynı satırda hem aggregate TYT Fen hem branşı girilemez (çift sayım)
+        for ust, brans in UST_BRANSLARI.items():
+            if ust in dersler and any(b in dersler for b in brans):
+                hatalar.append(f"{TESTLER[ust][1]} için ya toplu neti ya da branşları yazın, ikisini birden değil")
+                toplam -= sum(dersler.get(b, {}).get("net", 0) or 0 for b in brans)
         if bos and not ham_no and not ham_ad:
             continue
         if bos:
@@ -163,17 +186,19 @@ def _ayikla(db: Session, okul_id: int, oturum: str, dosya_adi: str, icerik: str)
     if not sonuc:
         raise HTTPException(400, "Dosyada öğrenci satırı bulunamadı.")
     gecerli = [s for s in sonuc if not s["hata"] and not s["bos"]]
-    return {"satirlar": sonuc, "testler": [{"kod": k, "ad": TESTLER[k][1], "soru": TESTLER[k][2]} for k in _testler(oturum)],
+    gosterilecek = _deneme_testleri(gecerli or sonuc, oturum)
+    return {"satirlar": sonuc, "testler": [{"kod": k, "ad": TUM_TESTLER[k][1], "soru": TUM_TESTLER[k][2]} for k in gosterilecek],
             "ozet": {"toplam": len(sonuc), "gecerli": len(gecerli), "hatali": sum(1 for s in sonuc if s["hata"]),
                      "bos": sum(1 for s in sonuc if s["bos"] and not s["hata"]),
                      "ortalama": round(sum(s["toplam_net"] for s in gecerli) / len(gecerli), 2) if gecerli else None},
-            "taninan_dersler": sorted({TESTLER[k][1] for (k, _a) in ders})}
+            "taninan_dersler": sorted({TUM_TESTLER[k][1] for (k, _a) in ders})}
 
 
 # ----------------------------------------------------------------------------- şablon
 @router.get("/okul/{okul_id}/deneme-sablonu")
-def deneme_sablonu(okul_id: int, oturum: str = Query("TYT"), sinif: str | None = Query(None), db: Session = Depends(get_db),
-                   yon: AdminKullanici = Depends(get_mevcut_yonetim)):
+def deneme_sablonu(okul_id: int, oturum: str = Query("TYT"), sinif: str | None = Query(None),
+                   brans: bool = Query(False),   # [2026-11-24] TYT Fen yerine Fizik/Kimya/Biyoloji sütunları
+                   db: Session = Depends(get_db), yon: AdminKullanici = Depends(get_mevcut_yonetim)):
     okul = _okul_kapsami(db, yon, okul_id)
     if oturum not in OTURUMLAR or okul is None:
         raise HTTPException(400, "Geçersiz oturum.")
@@ -181,14 +206,18 @@ def deneme_sablonu(okul_id: int, oturum: str = Query("TYT"), sinif: str | None =
     if sinif:
         q = q.filter(Ogrenci.sinif == sinif)
     ogrenciler = sorted([o for o in q.all() if not getattr(o, "test_hesabi", False)], key=lambda o: (o.sinif or "", o.sube or "", o.ad_soyad.lower()))
+    kodlar = _testler(oturum)
+    if brans and oturum == "TYT":   # tyt_fen -> tyt_fiz, tyt_kim, tyt_biy
+        kodlar = [k for k in kodlar if k != "tyt_fen"] + list(UST_BRANSLARI["tyt_fen"])
     kolonlar = ["Öğrenci No", "Ad Soyad", "Sınıf"]
-    for k in _testler(oturum):
-        kolonlar += [f"{TESTLER[k][1]} D", f"{TESTLER[k][1]} Y"]
+    for k in kodlar:
+        kolonlar += [f"{TUM_TESTLER[k][1]} D", f"{TUM_TESTLER[k][1]} Y"]
     satirlar = [[o.ogrenci_no or "", o.ad_soyad, _sinif_metni(o)] + [""] * (len(kolonlar) - 3) for o in ogrenciler]
     not_metni = (f"{oturum} denemesi: her ders için doğru (D) ve yanlış (Y) sayısını yazın; net otomatik hesaplanır. "
                  "Sınava girmeyen öğrencinin satırını boş bırakın. Yayınevi dosyanızdaki sütunları buraya kopyalayabilirsiniz. "
-                 "Yalnızca net varsa “Türkçe Net” gibi bir sütun da eklenebilir.")
-    ek = f"_{sinif.replace('. Sınıf', '').replace(' ', '')}" if sinif else ""
+                 "Yalnızca net varsa “Türkçe Net” gibi bir sütun da eklenebilir."
+                 + (" TYT Fen branş kırılımı: Fizik, Kimya, Biyoloji ayrı sütunlardır." if brans and oturum == "TYT" else ""))
+    ek = (f"_{sinif.replace('. Sınıf', '').replace(' ', '')}" if sinif else "") + ("_brans" if brans and oturum == "TYT" else "")
     return {"dosya_adi": f"{oturum}_deneme_sablonu{ek}.xlsx", "icerik_base64": _xlsx_b64(f"{oturum} denemesi", kolonlar, satirlar, not_metni)}
 
 
@@ -283,14 +312,14 @@ def okul_deneme_detay(deneme_id: int, db: Session = Depends(get_db), yon: AdminK
         raise HTTPException(404, "Deneme bulunamadı.")
     _okul_kapsami(db, yon, r["okul_id"])
     satirlar = sorted(_istatistik(db, [deneme_id]).get(deneme_id, []), key=lambda x: -float(x.toplam_net))
-    testler = _testler(r["oturum"])
+    testler = _deneme_testleri(satirlar, r["oturum"])   # [2026-11-24] branş kullanıldıysa branş sütunları gösterilir
     sube = defaultdict(list)
     for x in satirlar:
         sube[f"{(x.sinif or '').replace('. Sınıf', '')}-{x.sube}" if x.sube and x.sinif != "Mezun" else (x.sinif or "—")].append(x)
     ders_ort = lambda grup, k: _ort([(x.dersler or {}).get(k, {}).get("net") for x in grup])  # noqa: E731
     return {
         "deneme": {"id": r["id"], "ad": r["ad"], "tarih": r["tarih"].isoformat(), "oturum": r["oturum"], "olusturan": r["olusturan"]},
-        "testler": [{"kod": k, "ad": TESTLER[k][1], "soru": TESTLER[k][2]} for k in testler],
+        "testler": [{"kod": k, "ad": TUM_TESTLER[k][1], "soru": TUM_TESTLER[k][2]} for k in testler],
         "okul": {"katilim": len(satirlar), "ortalama": _ort([float(x.toplam_net) for x in satirlar]),
                  "dersler": {k: ders_ort(satirlar, k) for k in testler}},
         "subeler": sorted([{"sube": s, "katilim": len(l), "ortalama": _ort([float(x.toplam_net) for x in l]),

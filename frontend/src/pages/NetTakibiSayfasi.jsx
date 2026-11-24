@@ -95,7 +95,12 @@ function DenemeFormu({ yapi, onKaydet, onVazgec }) {
   const [f, setF] = useState({ tarih: bugunISO(), oturum: 'TYT', ad: '', dersler: {} })
   const [hata, setHata] = useState(null)
   const [bekle, setBekle] = useState(false)
-  const testler = yapi.testler.filter((t) => t.oturum === f.oturum)
+  const [brans, setBrans] = useState(false)   // [2026-11-24] TYT Fen'i Fizik/Kimya/Biyoloji olarak gir
+  const temelTestler = yapi.testler.filter((t) => t.oturum === f.oturum)
+  const fenBrans = (yapi.brans_testleri || {}).tyt_fen || []
+  const bransAcik = brans && f.oturum === 'TYT' && fenBrans.length > 0
+  const testler = bransAcik ? temelTestler.flatMap((t) => (t.kod === 'tyt_fen' ? fenBrans : [t])) : temelTestler
+  const bransTemizle = () => setF((p) => { const d = { ...p.dersler }; delete d.tyt_fen; fenBrans.forEach((b) => delete d[b.kod]); return { ...p, dersler: d } })
   const deger = (k, a) => f.dersler[k]?.[a] ?? ''
   const yaz = (k, a, v) => setF({ ...f, dersler: { ...f.dersler, [k]: { ...f.dersler[k], [a]: v === '' ? '' : Math.max(0, parseInt(v, 10) || 0) } } })
   const net = (k) => { const d = Number(f.dersler[k]?.d || 0), y = Number(f.dersler[k]?.y || 0); return d - y / 4 }
@@ -122,6 +127,12 @@ function DenemeFormu({ yapi, onKaydet, onVazgec }) {
         </label>
         <label style={{ flex: 1 }}>Deneme adı <span>(isteğe bağlı)</span><input maxLength={80} value={f.ad} placeholder="ör. 345 TYT Deneme 3" onChange={(e) => setF({ ...f, ad: e.target.value })} /></label>
       </div>
+      {f.oturum === 'TYT' && fenBrans.length > 0 && (
+        <label className="nt-brans-sec">
+          <input type="checkbox" checked={brans} onChange={(e) => { setBrans(e.target.checked); bransTemizle() }} />
+          TYT Fen'i branş olarak gir (Fizik / Kimya / Biyoloji)
+        </label>
+      )}
       <table className="nt-form-tablo">
         <thead><tr><th>Ders</th><th>Soru</th><th>Doğru</th><th>Yanlış</th><th>Boş</th><th>Net</th></tr></thead>
         <tbody>

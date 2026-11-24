@@ -411,7 +411,7 @@ export const api = {
   calismaKayitSil: (id) => del(`/ogrenci/calisma/kayit/${id}`),
   ogrenciCalismaOzeti: (ogrenciId) => aget(`/yonetim/ogrenci/${ogrenciId}/calisma`),
   // [2026-10-10] Okul denemeleri
-  denemeSablonu: (okulId, oturum, sinif) => aget(`/yonetim/okul/${okulId}/deneme-sablonu?oturum=${oturum}${sinif ? `&sinif=${encodeURIComponent(sinif)}` : ''}`),
+  denemeSablonu: (okulId, oturum, sinif, brans) => aget(`/yonetim/okul/${okulId}/deneme-sablonu?oturum=${oturum}${sinif ? `&sinif=${encodeURIComponent(sinif)}` : ''}${brans ? '&brans=1' : ''}`),
   denemeOnizle: (okulId, v) => apost(`/yonetim/okul/${okulId}/deneme-onizle`, v),
   okulDenemesiKaydet: (okulId, v) => apost(`/yonetim/okul/${okulId}/okul-denemeleri`, v),
   okulDenemeleri: (okulId) => aget(`/yonetim/okul/${okulId}/okul-denemeleri`),
