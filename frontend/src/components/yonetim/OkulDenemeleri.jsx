@@ -24,6 +24,7 @@ function dosyayiOku(dosya) {
 function Yukleme({ okulId, onBitti, onVazgec }) {
   const [oturum, setOturum] = useState('TYT')
   const [sinif, setSinif] = useState('12. Sınıf')
+  const [brans, setBrans] = useState(false)   // [2026-11-24] TYT Fen branş kırılımlı şablon
   const [ad, setAd] = useState('')
   const [tarih, setTarih] = useState(new Date().toISOString().slice(0, 10))
   const [dosya, setDosya] = useState(null)        // { ad, b64 }
@@ -33,7 +34,7 @@ function Yukleme({ okulId, onBitti, onVazgec }) {
 
   async function sablon() {
     setHata(null)
-    try { const s = await api.denemeSablonu(okulId, oturum, sinif); base64Indir(s.dosya_adi, s.icerik_base64) } catch (e) { setHata(e.detail || 'Şablon indirilemedi.') }
+    try { const s = await api.denemeSablonu(okulId, oturum, sinif, brans); base64Indir(s.dosya_adi, s.icerik_base64) } catch (e) { setHata(e.detail || 'Şablon indirilemedi.') }
   }
   async function sec(e) {
     const f = e.target.files?.[0]; e.target.value = ''
@@ -75,6 +76,12 @@ function Yukleme({ okulId, onBitti, onVazgec }) {
               </Secim>
               <button className="btn sec" type="button" onClick={sablon}>📥 {oturum} şablonunu indir</button>
             </div>
+            {oturum === 'TYT' && (
+              <label className="nt-brans-sec" style={{ marginTop: 8 }}>
+                <input type="checkbox" checked={brans} onChange={(e) => setBrans(e.target.checked)} />
+                TYT Fen'i branş olarak (Fizik / Kimya / Biyoloji) — şablonda ayrı sütunlar
+              </label>
+            )}
           </div>
         </div>
         <div className="od-adim">
