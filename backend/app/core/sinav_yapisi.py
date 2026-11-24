@@ -127,6 +127,40 @@ PUAN_TURU_KONU_DERSLERI = {
 }
 KONU_DURUMLARI = ("baslamadi", "calisiyor", "bitti", "tekrar")
 
+# [2026-11-24] TYT Fen'in isteğe bağlı branş kırılımı (rehberlik birimi raporu: "TYT Fen yerine Fizik, Kimya, Biyoloji").
+# Öğrenci/okul ya toplu "tyt_fen" (20) girer ya da üç branşı girer; ikisi bir arada girilemez. Branşların soru toplamı
+# tyt_fen ile aynıdır (7+7+6=20) ve atlas alanı "tytFenNet"tir, böylece hedef karşılaştırmasında otomatik TYT Fen'e toplanır.
+# AYT fen branşları (fizik/kimya/biyoloji) zaten ayrı testlerdir; bu yalnızca TYT tarafını böler.
+BRANS_TESTLERI: dict[str, tuple[str, str, int, str]] = {
+    "tyt_fiz": ("TYT", "TYT Fizik", 7, "tytFenNet"),
+    "tyt_kim": ("TYT", "TYT Kimya", 7, "tytFenNet"),
+    "tyt_biy": ("TYT", "TYT Biyoloji", 6, "tytFenNet"),
+}
+BRANS_UST = {"tyt_fiz": "tyt_fen", "tyt_kim": "tyt_fen", "tyt_biy": "tyt_fen"}   # branş kodu -> toplu test kodu
+UST_BRANSLARI = {"tyt_fen": ["tyt_fiz", "tyt_kim", "tyt_biy"]}                    # toplu test -> branşları
+TUM_TESTLER: dict[str, tuple[str, str, int, str]] = {**TESTLER, **BRANS_TESTLERI}   # girişte tanınan tüm kodlar
+
+assert all(sum(BRANS_TESTLERI[b][2] for b in brans) == TESTLER[ust][2] for ust, brans in UST_BRANSLARI.items()), \
+    "Branş soru sayıları toplu testin soru sayısıyla eşleşmiyor"
+
+
+def branslari_topla(dersler: dict) -> dict:
+    """Hedef karşılaştırması ve atlas eşlemesi için branşları toplu teste indirir (ör. tyt_fiz+tyt_kim+tyt_biy -> tyt_fen).
+    Girişte toplu test zaten varsa dokunmaz. dersler: {kod: {"d","y","net"}}."""
+    out = {k: v for k, v in dersler.items() if k not in BRANS_UST}
+    birikim: dict[str, dict] = {}
+    for kod, v in dersler.items():
+        ust = BRANS_UST.get(kod)
+        if not ust:
+            continue
+        b = birikim.setdefault(ust, {"d": 0, "y": 0, "net": 0.0})
+        b["d"] += int(v.get("d", 0) or 0)
+        b["y"] += int(v.get("y", 0) or 0)
+        b["net"] = round(b["net"] + float(v.get("net", 0) or 0), 2)
+    for ust, b in birikim.items():
+        out.setdefault(ust, b)   # öğrenci hem branş hem toplu girmediyse (giriş bunu zaten engeller) branş toplamı kullanılır
+    return out
+
 
 def net_hesapla(dogru: int, yanlis: int) -> float:
     return round(dogru - yanlis / 4, 2)

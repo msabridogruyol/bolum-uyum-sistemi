@@ -25,8 +25,8 @@ from app.api.deps import get_mevcut_ogrenci
 from app.core.kucuk_grup import EN_AZ_GRUP
 from app.core.database import get_db
 from app.core.sinav_yapisi import (
-    KONU_DERSLERI, KONU_DURUMLARI, PUAN_TURU_AD, PUAN_TURU_KONU_DERSLERI, PUAN_TURU_TESTLERI, TESTLER, net_hesapla,
-    puan_turu_normalize,
+    BRANS_TESTLERI, BRANS_UST, KONU_DERSLERI, KONU_DURUMLARI, PUAN_TURU_AD, PUAN_TURU_KONU_DERSLERI, PUAN_TURU_TESTLERI,
+    TESTLER, TUM_TESTLER, UST_BRANSLARI, branslari_topla, net_hesapla, puan_turu_normalize,
 )
 from app.models import Bolum, Ogrenci
 
@@ -58,7 +58,7 @@ def _puan_turu(db: Session, o: Ogrenci) -> str:
 
 
 def _test_listesi(kodlar: list[str]) -> list[dict]:
-    return [{"kod": k, "oturum": TESTLER[k][0], "ad": TESTLER[k][1], "soru": TESTLER[k][2]} for k in kodlar]
+    return [{"kod": k, "oturum": TUM_TESTLER[k][0], "ad": TUM_TESTLER[k][1], "soru": TUM_TESTLER[k][2]} for k in kodlar]
 
 
 # ----------------------------------------------------------------------------- yapı
@@ -74,6 +74,8 @@ def yapi(db: Session = Depends(get_db), o: Ogrenci = Depends(get_mevcut_ogrenci)
         "hedef_bolum": {"id": b.id, "ad": b.ad} if b else None,
         "testler": _test_listesi(PUAN_TURU_TESTLERI[pt]),
         "tum_testler": _test_listesi(list(TESTLER)),
+        # [2026-11-24] TYT Fen isteğe bağlı branş kırılımı: frontend "TYT Fen" yerine Fizik/Kimya/Biyoloji girdirebilir
+        "brans_testleri": {ust: _test_listesi(brans) for ust, brans in UST_BRANSLARI.items()},
         "konu_dersleri": [{"kod": k, "oturum": KONU_DERSLERI[k][0], "ad": KONU_DERSLERI[k][1], "konular": liste.get(k, [])}
                           for k in konu_dersleri if liste.get(k)],
     }
@@ -111,17 +113,21 @@ def deneme_ekle(istek: DenemeIstek, db: Session = Depends(get_db), o: Ogrenci = 
         raise HTTPException(400, "Tarih geçersiz.")
     temiz, toplam = {}, 0.0
     for kod, v in istek.dersler.items():
-        if kod not in TESTLER or TESTLER[kod][0] != istek.oturum:
+        if kod not in TUM_TESTLER or TUM_TESTLER[kod][0] != istek.oturum:   # [2026-11-24] TUM_TESTLER: TYT Fen branşları dahil
             raise HTTPException(400, f"Bu ders bu oturumda yok: {kod}")
         d, y = int(v.get("d", 0) or 0), int(v.get("y", 0) or 0)
-        soru = TESTLER[kod][2]
+        soru = TUM_TESTLER[kod][2]
         if d < 0 or y < 0 or d + y > soru:
-            raise HTTPException(400, f"{TESTLER[kod][1]}: doğru + yanlış en fazla {soru} olabilir.")
+            raise HTTPException(400, f"{TUM_TESTLER[kod][1]}: doğru + yanlış en fazla {soru} olabilir.")
         net = net_hesapla(d, y)
         temiz[kod] = {"d": d, "y": y, "net": net}
         toplam += net
     if not temiz:
         raise HTTPException(400, "En az bir dersin sonucunu gir.")
+    # [2026-11-24] Aynı denemede hem toplu TYT Fen hem de branşı girilemez (çift sayım olurdu).
+    for ust, brans in UST_BRANSLARI.items():
+        if ust in temiz and any(b in temiz for b in brans):
+            raise HTTPException(400, f"{TESTLER[ust][1]} için ya toplu neti ya da branşları (Fizik/Kimya/Biyoloji) gir, ikisini birden değil.")
     r = db.execute(text("INSERT INTO ogrenci_denemeleri (ogrenci_id, tarih, oturum, ad, dersler, toplam_net) "
                         "VALUES (:o, :t, :ot, :ad, CAST(:d AS JSONB), :tn) RETURNING id, tarih, oturum, ad, dersler, toplam_net"),
                    {"o": o.id, "t": istek.tarih, "ot": istek.oturum, "ad": (istek.ad or "").strip() or None,
@@ -297,7 +303,7 @@ def kiyas_hesapla(db: Session, o: Ogrenci) -> dict:
     son: dict[str, list[float]] = {}
     for oturum in ("TYT", "AYT", "YDT"):
         for r in [x for x in rows if x.oturum == oturum][:KIYAS_DENEME_SAYISI]:
-            for kod, v in (r.dersler or {}).items():
+            for kod, v in branslari_topla(r.dersler or {}).items():   # [2026-11-24] branşlar hedef kıyası için TYT Fen'e toplanır
                 son.setdefault(kod, []).append(float(v.get("net", 0)))
     satirlar = []
     for kod in PUAN_TURU_TESTLERI[pt]:
